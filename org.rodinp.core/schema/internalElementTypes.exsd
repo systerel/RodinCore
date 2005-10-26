@@ -3,12 +3,12 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="fileElementTypes" name="%fileElementTypes"/>
+         <meta.schema plugin="org.rodinp.core" id="internalElementTypes" name="%internalElementTypes"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;The Rodin platform contains an extensible database.  In particular, new kind of file elements can be added to the database.
+         &lt;p&gt;The Rodin platform contains an extensible database.  In particular, new kind of internal elements can be added to the database.
 &lt;/p&gt;&lt;p&gt;
-This extension point allows plugins writers to register new types of Rodin file elements.
+This extension point allows plugins writers to register new types of internal Rodin elements.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -16,7 +16,7 @@ This extension point allows plugins writers to register new types of Rodin file 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="fileElementType" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="internalElementType" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -45,12 +45,17 @@ This extension point allows plugins writers to register new types of Rodin file 
       </complexType>
    </element>
 
-   <element name="fileElementType">
+   <element name="internalElementType">
+      <annotation>
+         <documentation>
+            Description of an internal element type:
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier for this file element type (simple id token, unique
+                  the identifier for this internal element type (simple id token, unique
 for element types within the extension namespace). The token cannot contain dot
 (.) or whitespace.
                </documentation>
@@ -59,28 +64,28 @@ for element types within the extension namespace). The token cannot contain dot
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the human-readable name of this file element type
+                  the human-readable name of this internal element type
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="named" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  true if elements of this type have a name
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of a subclass of &lt;code&gt;org.rodinp.core.RodinFile&lt;/code&gt;
+                  the fully-qualified name of a subclass of &lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.rodinp.core.RodinFile"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.InternalElement"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="content-type-id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The full id of the content type for these files.  Must be a subtype of the &lt;code&gt;org.rodinp.core.rodin&lt;/code&gt; content type.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -109,12 +114,19 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The specified class must subclass &lt;code&gt;org.rodinp.core.RodinFile&lt;/code&gt; and provide a constructor with the following signature:
+         If the element type is named (&lt;code&gt;named&lt;/code&gt; attribute is true), the specified class must subclass
+&lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt; and provide a constructor with the following signature:
 &lt;pre&gt;
-    public ClassName(org.rodinp.core.IRodinElement parent, String fileName)
+    public ClassName(org.rodinp.core.IRodinElement parent, String name);
 &lt;/pre&gt;
 
-Moreover, the first instruction of that constructor must be:
+Otherwise (unnamed element type), the specified class must subclass
+&lt;code&gt;org.rodinp.core.UnnamedInternalElement&lt;/code&gt; and provide a constructor with the following signature:
+&lt;pre&gt;
+    public ClassName(org.rodinp.core.IRodinElement parent);
+&lt;/pre&gt;
+
+In both cases, the first instruction of that constructor must be:
 &lt;pre&gt;
     super(parent);
 &lt;/pre&gt;

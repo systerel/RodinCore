@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="fileElementTypes" name="%fileElementTypes" schema="schema/fileElementTypes.exsd"/>
+   <extension-point id="internalElementTypes" name="%internalElementTypes" schema="schema/internalElementTypes.exsd"/>
    <extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type
 			id="rodin"
