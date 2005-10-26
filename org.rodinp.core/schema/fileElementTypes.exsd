@@ -111,12 +111,12 @@ for element types within the extension namespace). The token cannot contain dot
       <documentation>
          The specified class must subclass &lt;code&gt;org.rodinp.core.RodinFile&lt;/code&gt; and provide a constructor with the following signature:
 &lt;pre&gt;
-    public ClassName(org.rodinp.core.IRodinElement parent, String fileName)
+    public ClassName(org.eclipse.core.resources.IFile file, org.rodinp.core.IRodinElement parent)
 &lt;/pre&gt;
 
 Moreover, the first instruction of that constructor must be:
 &lt;pre&gt;
-    super(parent);
+    super(file, parent);
 &lt;/pre&gt;
       </documentation>
    </annotation>

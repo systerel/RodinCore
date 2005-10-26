@@ -114,22 +114,25 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         If the element type is named (&lt;code&gt;named&lt;/code&gt; attribute is true), the specified class must subclass
-&lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt; and provide a constructor with the following signature:
+         &lt;p&gt;If the element type is named (&lt;code&gt;named&lt;/code&gt; attribute is &lt;code&gt;true&lt;/code&gt;), the specified class must subclass
+&lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt; and provide a constructor looking like the following:
 &lt;pre&gt;
-    public ClassName(org.rodinp.core.IRodinElement parent, String name);
-&lt;/pre&gt;
-
+    public ClassName(String name, org.rodinp.core.IRodinElement parent) {
+        super(name, parent);
+        // user code goes here
+    }
+&lt;/pre&gt;&lt;/p&gt;
+&lt;p&gt;
 Otherwise (unnamed element type), the specified class must subclass
-&lt;code&gt;org.rodinp.core.UnnamedInternalElement&lt;/code&gt; and provide a constructor with the following signature:
+&lt;code&gt;org.rodinp.core.UnnamedInternalElement&lt;/code&gt; and provide a constructor looking like
+the following:
 &lt;pre&gt;
-    public ClassName(org.rodinp.core.IRodinElement parent);
-&lt;/pre&gt;
+    public ClassName(String type, org.rodinp.core.IRodinElement parent) {
+        super(type, parent);
+        // user code goes here
+    }
+&lt;/pre&gt;&lt;/p&gt;
 
-In both cases, the first instruction of that constructor must be:
-&lt;pre&gt;
-    super(parent);
-&lt;/pre&gt;
       </documentation>
    </annotation>
 
