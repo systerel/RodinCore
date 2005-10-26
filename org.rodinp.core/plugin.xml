@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="fileElementTypes" name="%fileElementTypes" schema="schema/fileElementTypes.exsd"/>
+   <extension point="org.eclipse.core.runtime.contentTypes">
+		<content-type
+			id="rodin"
+			name="%rodinContentTypeName" 
+			priority="high"
+			file-extensions="rodin"
+			base-type="org.eclipse.core.runtime.xml">
+		</content-type>
+   </extension>
+   <extension
+         id="rodinnature"
+         name="%RodinNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.rodinp.internal.core.RodinProject"/>
+      </runtime>
+   </extension>
+
+</plugin>
