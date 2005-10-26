@@ -65,8 +65,8 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @param parent
 	 *            The parent of Rodin element
 	 */
-	protected RodinElement(RodinElement parent) {
-		this.parent = parent;
+	protected RodinElement(IRodinElement parent) {
+		this.parent = (RodinElement) parent;
 	}
 
 	/**

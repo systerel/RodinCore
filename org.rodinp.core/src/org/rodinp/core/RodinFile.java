@@ -77,7 +77,8 @@ public abstract class RodinFile extends Openable {
 			throw newNotPresentException();
 		}
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) info;
-		return fileInfo.parseFile(pm, this);
+		return false;
+		// return fileInfo.parseFile(pm, this);
 	}
 
 	@Override

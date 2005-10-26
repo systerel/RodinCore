@@ -43,7 +43,7 @@ public abstract class InternalElement extends RodinElement {
 	 */
 	public int occurrenceCount = 1;
 
-	public InternalElement(String name, RodinElement parent) {
+	public InternalElement(String name, IRodinElement parent) {
 		super(parent);
 		this.name = name;
 		// Name must not be empty
