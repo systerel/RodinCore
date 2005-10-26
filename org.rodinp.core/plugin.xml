@@ -13,7 +13,7 @@
    </extension>
    <extension
          id="rodinnature"
-         name="%RodinNature"
+         name="%rodinNatureName"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run class="org.rodinp.internal.core.RodinProject"/>
