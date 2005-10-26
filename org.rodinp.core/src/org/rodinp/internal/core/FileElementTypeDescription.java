@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import java.lang.reflect.Constructor;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -17,49 +15,31 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinFile;
+import org.rodinp.internal.core.util.Util;
 
-public class FileElementTypeDescription {
+public class FileElementTypeDescription extends ElementTypeDescription<RodinFile> {
 
-	private String id;
-	private String name;
-	private String contentTypeId;
+	// Content type associated to this file element type
+	// (cached value)
 	private IContentType contentType;
-	private String className;
-	private Class<? extends RodinFile> classObject;
-	private Constructor<? extends RodinFile> constructor;
-	private IConfigurationElement configurationElement;
+
+	// Unique identifier of the associated content type
+	private String contentTypeId;
 	
 	public FileElementTypeDescription(IConfigurationElement configurationElement) {
-		this.id = configurationElement.getAttributeAsIs("id");
-		this.name = configurationElement.getAttribute("name");
+		super(configurationElement);
 		this.contentTypeId = configurationElement.getAttributeAsIs("content-type-id");
-		this.className = configurationElement.getAttributeAsIs("class");
-		this.configurationElement = configurationElement;
 	}
 
-	public Class<? extends RodinFile> getClassObject() {
-		if (classObject == null) {
-			computeConstructor();
-		}
-		return classObject;
-	}
-
-	public Constructor<? extends RodinFile> getConstructor() {
-		if (constructor == null) {
-			computeConstructor();
-		}
-		return constructor;
-	}
-
-	private void computeConstructor() {
-		String bundleName = configurationElement.getNamespace();
-		Bundle bundle = Platform.getBundle(bundleName);
+	@Override
+	protected void computeConstructor() {
+		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
-			Class<?> clazz = bundle.loadClass(className);
+			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(RodinFile.class);
 			constructor = classObject.getConstructor(IFile.class, IRodinElement.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Util.log(e, "Can't find constructor for element type " + getId());
 		}
 	}
 
@@ -73,14 +53,6 @@ public class FileElementTypeDescription {
 
 	public String getContentTypeId() {
 		return contentTypeId;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 }
