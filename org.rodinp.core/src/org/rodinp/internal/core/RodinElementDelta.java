@@ -95,7 +95,7 @@ public class RodinElementDelta extends SimpleDelta implements
 		// if a child delta is added to a compilation unit delta or below,
 		// it's a fine grained delta
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		if (manager.isMemberElementType(this.changedElement.getElementType())) {
+		if (manager.isInternalElementType(this.changedElement.getElementType())) {
 			this.fineGrained();
 		}
 
