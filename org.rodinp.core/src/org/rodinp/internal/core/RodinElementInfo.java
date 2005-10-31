@@ -113,4 +113,22 @@ public class RodinElementInfo {
 	public void setChildren(RodinElement[] children) {
 		this.children = children;
 	}
+
+	public void addChildBefore(RodinElement child, RodinElement sibling) {
+		if (sibling == null) {
+			addChild(child);
+			return;
+		}
+		int length = children.length;
+		for (int i = 0; i < length; ++i) {
+			if (children[i].equals(sibling)) {
+				RodinElement[] newChildren = new RodinElement[length + 1];
+				System.arraycopy(children, 0, newChildren, 0, i);
+				newChildren[i] = child;
+				System.arraycopy(children, i, newChildren, i+1, length - i);
+				children = newChildren;
+				return;
+			}
+		}
+	}
 }
