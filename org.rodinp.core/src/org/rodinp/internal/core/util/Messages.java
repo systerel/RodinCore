@@ -58,6 +58,7 @@ public final class Messages /*extends NLS*/ {
 	public static String status_OK;
 	public static String operation_cancelled;
 	public static String operation_createFileProgress;
+	public static String operation_createInternalElementProgress;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
