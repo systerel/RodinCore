@@ -52,8 +52,8 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 	protected String name;
 
 	/**
-	 * When executed, this operation will create a compilation unit with the
-	 * given name. The name should have the ".java" suffix.
+	 * When executed, this operation will create a Rodin file with the
+	 * given name. The name should be a valid name for a Rodin file.
 	 */
 	public CreateRodinFileOperation(IRodinProject project,
 			String name, boolean force) {
@@ -149,6 +149,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 	 */
 	@Override
 	public IRodinDBStatus verify() {
+		super.verify();
 		if (getParentElement() == null) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
