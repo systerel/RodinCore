@@ -19,8 +19,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinFile;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * Manager for Rodin element types.
@@ -32,11 +35,6 @@ import org.rodinp.core.RodinFile;
  * </p>
  * 
  * @author Laurent Voisin
- * 
- */
-/**
- * @author lvoisin
- *
  */
 public class ElementTypeManager {
 
@@ -150,17 +148,52 @@ public class ElementTypeManager {
 		return fileElementTypeIds.containsKey(elementType);
 	}
 
+	// Local id of the fileElementTypes extension point of this plugin
+	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
+	
+	// Access to internal element type descriptions using their unique id
+	private HashMap<String, InternalElementTypeDescription> internalElementTypeIds;
+
+	private void computeInternalElementTypes() {
+		internalElementTypeIds = new HashMap<String, InternalElementTypeDescription>();
+		
+		// Read the extension point extensions.
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = 
+			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, INTERNAL_ELEMENT_TYPES_ID);
+		for (IConfigurationElement element: elements) {
+			InternalElementTypeDescription description = new InternalElementTypeDescription(element);
+			internalElementTypeIds.put(description.getId(), description);
+		}
+	}
+
 	/**
-	 * Tells whether the given Rodin element type is a member element type.
+	 * Tells whether the given Rodin element type is an internal element type.
 	 * 
 	 * @param elementType
 	 *   the element type to test
-	 * @return <code>true</code> iff it is a member element type
+	 * @return <code>true</code> iff it is an internal element type
 	 */
-	public boolean isMemberElementType(String elementType) {
-		// return memberElementClasses.containsKey(elementType);
-		// TODO implement isMemberElementType()
-		return false;
+	public boolean isInternalElementType(String elementType) {
+		if (internalElementTypeIds== null) {
+			computeInternalElementTypes();
+		}
+		return internalElementTypeIds.containsKey(elementType);
+	}
+	
+	/**
+	 * Returns the full description of the given internal element type.
+	 * 
+	 * @param elementType
+	 *            the element type to retrieve
+	 * @return the element type description or <code>null</code> if this
+	 *         element type is unknown.
+	 */
+	public InternalElementTypeDescription getInternalElementTypeDescription(String elementType) {
+		if (internalElementTypeIds== null) {
+			computeInternalElementTypes();
+		}
+		return internalElementTypeIds.get(elementType);
 	}
 	
 	/**
@@ -190,6 +223,41 @@ public class ElementTypeManager {
 	 */
 	public boolean isValidFileName(String fileName) {
 		return getFileElementTypeDescription(fileName) != null;
+	}
+	
+	/**
+	 * Creates a new internal element handle.
+	 * 
+	 * @param type
+	 *            the type of the element to create
+	 * @param name
+	 *            the name of the element to create. Must be <code>null</code>
+	 *            for an unnamed element.
+	 * @param parent
+	 *            the new element's parent
+	 * @return a handle on the internal element or <code>null</code> if the
+	 *         element type is unknown
+	 */
+	public InternalElement createInternalElementHandle(String type, String name, IRodinElement parent) {
+		InternalElementTypeDescription description = getInternalElementTypeDescription(type);
+		if (description == null) {
+			// TODO create a default node for unknown types
+			// When the type is unknown, this means that the plugin that contributed it is no
+			// longer around.  However, we should not erase all information stored by this plugin.
+			// We should rather use a default implementation.
+			return null;		// Not a valid element type
+		}
+		Constructor<? extends InternalElement> constructor = description.getConstructor();
+		try {
+			if (description.isNamed()) {
+				return constructor.newInstance(name, parent);
+			} else {
+				return constructor.newInstance(type, parent);
+			}
+		} catch (Exception e) {
+			Util.log(e, "Error when constructing instance of type " + type);
+			return null;
+		}
 	}
 	
 }
