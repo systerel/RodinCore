@@ -19,6 +19,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.Openable;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinFile;
 
 /**
  * This class is used by <code>RodinDBManager</code> to update the RodinDB
@@ -182,6 +183,9 @@ public class DBUpdater {
 		Openable element = (Openable) delta.getElement();
 		if (element.getElementType() == IRodinElement.RODIN_PROJECT) {
 			project = (IRodinProject) element;
+		}
+		if (element instanceof RodinFile) {
+			processChildren = false;
 		}
 
 		switch (delta.getKind()) {
