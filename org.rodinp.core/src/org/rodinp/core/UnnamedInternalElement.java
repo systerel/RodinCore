@@ -18,6 +18,7 @@ public class UnnamedInternalElement extends InternalElement {
 		this.type = type;
 	}
 
+	@Override
 	public String getElementType() {
 		return type;
 	}
