@@ -292,6 +292,7 @@ public class RodinProject
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public String getElementType() {
 		return RODIN_PROJECT;
 	}

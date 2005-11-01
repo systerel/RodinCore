@@ -150,8 +150,6 @@ public abstract class RodinFile extends Openable implements IParent {
 		return REM_EXTERNAL;
 	}
 
-	public abstract String getElementType();
-	
 	/**
 	 * Returns a handle to a top-level internal element with the given type and
 	 * name. This is a handle-only method. The internal element may or may not

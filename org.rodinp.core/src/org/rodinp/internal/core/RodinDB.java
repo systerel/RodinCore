@@ -165,6 +165,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public String getElementType() {
 		return RODIN_DATABASE;
 	}
