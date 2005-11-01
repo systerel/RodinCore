@@ -101,12 +101,12 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 				contents = Util.trimSpaceChars(contents);
 				if (contents.length() != 0) {
 					// True text node
-					if (textNodeProcessed) {
+					if (textNodeProcessed || ! (parentInfo instanceof InternalElementInfo)) {
 						// Two text nodes for the same parent
 						throw newMalformedError(rodinParent);
 					}
 					textNodeProcessed = true;
-					// TODO store the text in the rodinParent.
+					((InternalElementInfo) parentInfo).setContents(contents);
 				}
 				break;
 			default:
@@ -156,7 +156,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		internalElements.remove(element);
 	}
 
-	public synchronized RodinElementInfo getElementInfo(InternalElement element) {
+	public synchronized InternalElementInfo getElementInfo(InternalElement element) {
 		return internalElements.get(element);
 	}
 
@@ -200,7 +200,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		} else {
 			result.append("\n>");
 			for (RodinElement child: children) {
-				appendElement(result, child, "\n");
+				appendElement(result, (InternalElement) child, "\n");
 			}
 			result.append("</");
 			result.append(elementType);
@@ -209,7 +209,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return result.toString();
 	}
 
-	private void appendElement(StringBuilder result, RodinElement element, String tabs) {
+	private void appendElement(StringBuilder result, InternalElement element, String tabs) {
 		String childTabs = tabs + "\t";
 		String elementType = element.getElementType();
 		result.append("<");
@@ -224,20 +224,24 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		// TODO save attributes here
 		
 		RodinElement[] children = RodinElement.NO_ELEMENTS;
+		String contents = "";
 		try {
 			children = element.getChildren();
+			contents = element.getContents();
 		} catch (RodinDBException e) {
+			Util.log(e, "Unexpected exception while saving a Rodin file.");
 			assert false;
 		}
-		if (children.length == 0) {
+		if (children.length == 0 && contents.length() == 0) {
 			result.append(tabs);
 			result.append("/>");
 		} else {
 			result.append(childTabs);
 			result.append(">");
 			for (RodinElement child: children) {
-				appendElement(result, child, childTabs);
+				appendElement(result, (InternalElement) child, childTabs);
 			}
+			appendEscapedString(result, contents);
 			result.append("</");
 			result.append(elementType);
 			result.append(tabs);
