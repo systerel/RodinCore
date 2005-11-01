@@ -160,7 +160,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IParent
 	 */
-	public IRodinElement[] getChildren() throws RodinDBException {
+	public RodinElement[] getChildren() throws RodinDBException {
 		Object elementInfo = getElementInfo();
 		if (elementInfo instanceof RodinElementInfo) {
 			return ((RodinElementInfo) elementInfo).getChildren();
@@ -229,6 +229,11 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @see IRodinElement
 	 */
 	public abstract String getElementName();
+
+	/**
+	 * @see IRodinElement
+	 */
+	public abstract String getElementType();
 
 	/*
 	 * Creates a Rodin element handle from the given memento. The given token is
