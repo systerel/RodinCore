@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eventb.core; singleton:=true
+Bundle-Version: 0.0.0
+Bundle-Activator: org.eventb.core.EventBPlugin
+Bundle-Vendor: ETH Zurich
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.rodinp.core;visibility:=reexport
+Eclipse-AutoStart: true
