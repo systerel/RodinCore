@@ -20,7 +20,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.internal.core.CreateInternalElementOperation;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.OpenableElementInfo;
+import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
@@ -34,7 +37,7 @@ import org.rodinp.internal.core.util.MementoTokenizer;
  * to the <code>org.rodinp.core.fileElementTypes</code> extension point.
  * </p>
  */
-public abstract class RodinFile extends Openable {
+public abstract class RodinFile extends Openable implements IParent {
 	
 	/**
 	 * The platform project this <code>IRodinProject</code> is based on
@@ -77,8 +80,8 @@ public abstract class RodinFile extends Openable {
 			throw newNotPresentException();
 		}
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) info;
-		return false;
-		// return fileInfo.parseFile(pm, this);
+		//return false;
+		return fileInfo.parseFile(pm, this);
 	}
 
 	@Override
@@ -86,6 +89,53 @@ public abstract class RodinFile extends Openable {
 		return new RodinFileElementInfo();
 	}
 
+	/**
+	 * Creates and returns a new internal element in this file with the given
+	 * type and name. As a side effect, this file is opened if it was not already.
+	 * 
+	 * <p>
+	 * A new internal element is always created by this method, whether there
+	 * already exists an element with the same name or not.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the internal element to create
+	 * @param name
+	 *            name of the internal element to create. Should be
+	 *            <code>null</code> if the new element is unnamed.
+	 * @param nextSibling
+	 *            succesor node of the internal element to create. Must be a
+	 *            child of this element or <code>null</code> (in that latter
+	 *            case, the new element will be the last child of this element).
+	 * @param monitor
+	 *            the given progress monitor
+	 * @exception RodinDBException
+	 *                if the element could not be created. Reasons include:
+	 *                <ul>
+	 *                <li> This Rodin element does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                creating an underlying resource
+	 *                <li> The given type is unknown
+	 *                </ul>
+	 * @return an internal element in this file with the specified type and name
+	 */
+	public InternalElement createInternalElement(String type, String name,
+			InternalElement nextSibling, IProgressMonitor monitor)
+			throws RodinDBException {
+		
+		InternalElement result = getInternalElement(type, name);
+		if (result == null) {
+			IRodinDBStatus status =
+				new RodinDBStatus(IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE, type);
+			throw new RodinDBException(status);
+		}
+		CreateInternalElementOperation op =
+			new CreateInternalElementOperation(result, nextSibling);
+		op.runOperation(monitor);
+		return result;
+	}
+	
 	@Override
 	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
@@ -101,6 +151,23 @@ public abstract class RodinFile extends Openable {
 	}
 
 	public abstract String getElementType();
+	
+	/**
+	 * Returns a handle to a top-level internal element with the given type and
+	 * name. This is a handle-only method. The internal element may or may not
+	 * be present.
+	 * 
+	 * @param type
+	 *            type of the internal element
+	 * @param name
+	 *            name of the internal element
+	 * @return the internal element with the given type and name or
+	 *         <code>null</code> if the given element type is unknown.
+	 */
+	public InternalElement getInternalElement(String type, String name) {
+		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		return manager.createInternalElementHandle(type, name, this);
+	}
 
 	public IPath getPath() {
 		return file.getFullPath();
@@ -132,5 +199,17 @@ public abstract class RodinFile extends Openable {
 	@Override
 	public boolean isConsistent() {
 		return hasUnsavedChanges();
+	}
+
+	@Override
+	public void save(IProgressMonitor progress, boolean force) throws RodinDBException {
+		super.save(progress, force);
+		
+		// Then save the file contents.
+		if (! hasUnsavedChanges())
+			return;
+
+		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
+		info.saveToFile(this, force, progress);
 	}
 }
