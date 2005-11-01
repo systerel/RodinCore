@@ -317,7 +317,6 @@ public abstract class Openable extends RodinElement implements IOpenable {
 			throw new RodinDBException(new RodinDBStatus(
 					IRodinDBStatusConstants.READ_ONLY, this));
 		}
-		// TODO save element contents.
 	}
 
 }
