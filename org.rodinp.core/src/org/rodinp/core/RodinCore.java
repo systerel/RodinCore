@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
+import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.util.MementoTokenizer;
@@ -220,6 +221,15 @@ public class RodinCore extends Plugin {
 
 		// Note: String#intern() cannot be used as on some VMs this prevents the
 		// string from being garbage collected
+	}
+
+	/**
+	 * Returns a new empty region.
+	 * 
+	 * @return a new empty region
+	 */
+	public static IRegion newRegion() {
+		return new Region();
 	}
 
 	@Override

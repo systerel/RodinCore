@@ -208,6 +208,16 @@ public interface IRodinElement extends IAdaptable {
 	IResource getUnderlyingResource() throws RodinDBException;
 
 	/**
+	 * Returns whether this element is an ancestor of the given element.
+	 * 
+	 * @param element
+	 *            the element to test as a descendent
+	 * @return <code>true</code> iff this element is an ancestor of the given
+	 *         element
+	 */
+	boolean isAncestorOf(IRodinElement element);
+
+	/**
 	 * Returns whether this Rodin element is read-only. An element is read-only
 	 * if its structure cannot be modified by the Rodin database. 
 	 * <p>
