@@ -206,4 +206,11 @@ public interface IRodinDBStatusConstants {
 	 */
 	int MALFORMED_FILE_ERROR = 988;
 
+	/**
+	 * Status indicating that an internal element could not be created because
+	 * its type is not known by the database. The element type can be retrieved
+	 * using <code>getString</code> on the status object.
+	 */
+	int INVALID_INTERNAL_ELEMENT_TYPE = 989;
+
 }
