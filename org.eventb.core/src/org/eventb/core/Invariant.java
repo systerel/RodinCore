@@ -5,7 +5,7 @@ import org.rodinp.core.InternalElement;
 
 public class Invariant extends InternalElement {
 	
-	public final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant";
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant";
 
 	public Invariant(String name, IRodinElement parent) {
 		super(name, parent);

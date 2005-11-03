@@ -19,7 +19,7 @@ import org.rodinp.core.RodinFile;
  */
 public class Context extends RodinFile {
 	
-	static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context";
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context";
 
 	/**
 	 *  Constructor used by the Rodin database. 

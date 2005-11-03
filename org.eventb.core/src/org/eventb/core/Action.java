@@ -5,7 +5,7 @@ import org.rodinp.core.InternalElement;
 
 public class Action extends InternalElement {
 	
-	public final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action";
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action";
 
 	public Action(String name, IRodinElement parent) {
 		super(name, parent);

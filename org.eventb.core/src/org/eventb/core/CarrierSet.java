@@ -5,7 +5,7 @@ import org.rodinp.core.InternalElement;
 
 public class CarrierSet extends InternalElement {
 	
-	public final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".carrierSet";
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".carrierSet";
 
 	public CarrierSet(String name, IRodinElement parent) {
 		super(name, parent);

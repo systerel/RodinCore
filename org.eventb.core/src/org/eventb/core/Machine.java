@@ -19,7 +19,7 @@ import org.rodinp.core.RodinFile;
  */
 public class Machine extends RodinFile {
 	
-	static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine";
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine";
 
 	/**
 	 *  Constructor used by the Rodin database. 
