@@ -42,7 +42,7 @@ public abstract class ElementTypeDescription<T extends RodinElement> {
 
 	public ElementTypeDescription(IConfigurationElement configurationElement) {
 		this.bundleName = configurationElement.getNamespace();
-		this.id = configurationElement.getAttributeAsIs("id");
+		this.id = this.bundleName + "." + configurationElement.getAttributeAsIs("id");
 		this.name = configurationElement.getAttribute("name");
 		this.className = configurationElement.getAttributeAsIs("class");
 	}
