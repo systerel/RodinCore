@@ -214,6 +214,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *		exception occurs while accessing its corresponding resource.
 	 * @return all of the Rodin files in this project
 	 */
-	IRodinElement[] getRodinFiles() throws RodinDBException;
+	RodinFile[] getRodinFiles() throws RodinDBException;
 	
 }
