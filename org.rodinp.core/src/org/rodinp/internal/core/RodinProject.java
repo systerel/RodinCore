@@ -556,8 +556,11 @@ public class RodinProject
 		return getRodinFile(name);
 	}
 
-	public IRodinElement[] getRodinFiles() throws RodinDBException {
-		return getChildren();
+	public RodinFile[] getRodinFiles() throws RodinDBException {
+		IRodinElement[] children = getChildren();
+		RodinFile[] result = new RodinFile[children.length];
+		System.arraycopy(children, 0, result, 0, children.length);
+		return result;
 	}
 	
 	/**

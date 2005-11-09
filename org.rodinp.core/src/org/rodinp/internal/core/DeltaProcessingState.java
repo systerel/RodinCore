@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -39,6 +40,11 @@ public class DeltaProcessingState implements IResourceChangeListener {
 	 * The delta processor for the current thread.
 	 */
 	private ThreadLocal<DeltaProcessor> deltaProcessors = new ThreadLocal<DeltaProcessor>();
+	
+	/**
+	 * This is a cache of the projects before any project addition/deletion has started.
+	 */
+	public IRodinProject[] dbProjectsCache;
 	
 	/*
 	 * Need to clone defensively the listener information, in case some listener is reacting to some notification iteration by adding/changing/removing

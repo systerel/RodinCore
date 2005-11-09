@@ -134,6 +134,14 @@ public class DeltaProcessor {
 
 		switch (resource.getType()) {
 			case IResource.ROOT :
+				// Update cache of old projects 
+				if (this.state.dbProjectsCache == null) {
+					try {
+						this.state.dbProjectsCache = this.manager.getRodinDB().getRodinProjects();
+					} catch (RodinDBException e) {
+						// Rodin database doesn't exist: never happens
+					}
+				}
 				processChildren = true;
 				break;
 			case IResource.PROJECT :
@@ -165,7 +173,7 @@ public class DeltaProcessor {
 									this.manager.removePerProjectInfo(rodinProject);
 								}
 							} else if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-								boolean wasRodinProject = this.manager.getRodinDB().findRodinProject(project) != null;
+								boolean wasRodinProject = this.manager.getRodinDB().findOldRodinProject(project) != null;
 								boolean isRodinProject = RodinProject.hasRodinNature(project);
 								if (wasRodinProject != isRodinProject) { 
 									// workaround for bug 15168 circular errors not reported 
@@ -264,7 +272,7 @@ public class DeltaProcessor {
 				} else {
 					// Rodin project may have been been closed or removed (look for
 					// element amongst old Rodin project s list).
-					element =  (Openable) this.manager.getRodinDB().findRodinProject(proj);
+					element =  (Openable) this.manager.getRodinDB().findOldRodinProject(proj);
 				}
 			}
 		} else {
@@ -297,6 +305,12 @@ public class DeltaProcessor {
 
 			RodinProject rodinProject = (RodinProject)RodinCore.create(project);
 			rodinProject.close();
+			
+			// Also update cache of old projects
+			if (this.state.dbProjectsCache == null) {
+				this.state.dbProjectsCache = this.manager.getRodinDB().getRodinProjects();
+			}
+
 			this.removeFromParentInfo(rodinProject);
 		} catch (RodinDBException e) {
 			// Rodin project doesn't exist: ignore
@@ -693,16 +707,16 @@ public class DeltaProcessor {
 				// find out the element type
 				String elementType;
 				IProject proj = (IProject) res;
-				boolean wasRodinProject = this.manager.getRodinDB().findRodinProject(proj) != null;
+				boolean wasRodinProject = this.manager.getRodinDB().findOldRodinProject(proj) != null;
 				boolean isRodinProject = RodinProject.hasRodinNature(proj);
 				if (!wasRodinProject && !isRodinProject) {
 					elementType = null;
 				} else {
 					elementType = IRodinElement.RODIN_PROJECT; 
+
+					// traverse delta
+					this.traverseProjectDelta(delta, elementType);
 				}
-				
-				// traverse delta
-				this.traverseProjectDelta(delta, elementType);
 				
 				if (elementType == null
 						|| (wasRodinProject != isRodinProject && (delta.getKind()) == IResourceDelta.CHANGED)) {
@@ -787,16 +801,21 @@ public class DeltaProcessor {
 				case IResourceChangeEvent.POST_CHANGE :
 					if (isAffectedBy(delta)) { // avoid populating for SYNC or MARKER deltas
 						try {
-							stopDeltas();
-							checkProjectsBeingAddedOrRemoved(delta);
-							IRodinElementDelta translatedDelta = processResourceDelta(delta);
-							if (translatedDelta != null) { 
-								registerRodinDBDelta(translatedDelta);
+							try {
+								stopDeltas();
+								checkProjectsBeingAddedOrRemoved(delta);
+								IRodinElementDelta translatedDelta = processResourceDelta(delta);
+								if (translatedDelta != null) { 
+									registerRodinDBDelta(translatedDelta);
+								}
+							} finally {
+								startDeltas();
 							}
+							fire(null, ElementChangedEvent.POST_CHANGE);
 						} finally {
-							startDeltas();
+							// Cleanup cache of old projects 
+							this.state.dbProjectsCache = null;
 						}
-						fire(null, ElementChangedEvent.POST_CHANGE);
 					}
 					return;
 					
@@ -947,7 +966,7 @@ public class DeltaProcessor {
 							}
 						} else {
 							RodinDB javaModel = this.manager.getRodinDB();
-							boolean wasRodinProject = javaModel.findRodinProject(res) != null;
+							boolean wasRodinProject = javaModel.findOldRodinProject(res) != null;
 							if (wasRodinProject) {
 								close(element);
 								removeFromParentInfo(element);
@@ -961,7 +980,7 @@ public class DeltaProcessor {
 					if ((flags & IResourceDelta.DESCRIPTION) != 0) {
 						IProject res = (IProject)delta.getResource();
 						RodinDB javaModel = this.manager.getRodinDB();
-						boolean wasRodinProject = javaModel.findRodinProject(res) != null;
+						boolean wasRodinProject = javaModel.findOldRodinProject(res) != null;
 						boolean isRodinProject = RodinProject.hasRodinNature(res);
 						if (wasRodinProject != isRodinProject) {
 							// project's nature has been added or removed

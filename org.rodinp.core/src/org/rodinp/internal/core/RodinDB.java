@@ -148,10 +148,10 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * Finds the given project in the list of the Rodin database's children.
 	 * Returns null if not found.
 	 */
-	public IRodinProject findRodinProject(IProject project) {
+	public IRodinProject findOldRodinProject(IProject project) {
 		 // TODO check if Workaround for bug 15168 is needed here 
 		try {
-			for (IRodinProject rodinProject: getRodinProjects()) {
+			for (IRodinProject rodinProject: getOldRodinProjects()) {
 				if (project.equals(rodinProject.getProject())) {
 					return rodinProject;
 				}
@@ -205,6 +205,17 @@ public class RodinDB extends Openable implements IRodinDB {
 		return 0;
 	}
 
+	/**
+	 * Returns the list of Rodin projects before resource delta processing
+	 * has started.
+	 */
+	public IRodinProject[] getOldRodinProjects() throws RodinDBException {
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		return manager.deltaState.dbProjectsCache == null ? 
+				this.getRodinProjects() : 
+				manager.deltaState.dbProjectsCache; 
+	}
+	
 	/**
 	 * @see IRodinDB
 	 */
