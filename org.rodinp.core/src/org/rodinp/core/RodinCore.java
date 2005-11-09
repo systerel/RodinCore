@@ -173,8 +173,8 @@ public class RodinCore extends Plugin {
 	 *         <code>null</code> if unable to associate the given file with a
 	 *         Rodin element
 	 */
-	public static IRodinElement create(IFile file) {
-		return RodinDBManager.create(file, null/* unknown Rodin project */);
+	public static RodinFile create(IFile file) {
+		return (RodinFile) RodinDBManager.create(file, null/* unknown Rodin project */);
 	}
 
 	/**
