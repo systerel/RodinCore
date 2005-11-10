@@ -103,7 +103,10 @@ public abstract class RodinElement extends PlatformObject implements
 		if (this.parent == null)
 			return super.equals(o);
 
-		// assume instanceof check is done in subclass
+		if (! (o instanceof RodinElement)) {
+			return false;
+		}
+		
 		RodinElement other = (RodinElement) o;
 		return getElementName().equals(other.getElementName())
 				&& this.parent.equals(other.parent);
