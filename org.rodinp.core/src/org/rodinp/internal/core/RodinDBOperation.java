@@ -535,7 +535,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 */
 	protected boolean isTopLevelOperation() {
 		Stack<RodinDBOperation> stack = this.getCurrentOperationStack();
-		return ! stack.isEmpty() && stack.peek() == this;
+		return ! stack.isEmpty() && stack.firstElement() == this;
 	}
 	
 	/*
@@ -731,7 +731,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 				// - the operation did produce some delta(s)
 				// - but the operation has not modified any resource
 				if (this.isTopLevelOperation()) {
-					if ((deltaProcessor.rodinDBDeltas.size() > previousDeltaCount || !deltaProcessor.reconcileDeltas.isEmpty()) 
+					if ((deltaProcessor.rodinDBDeltas.size() > previousDeltaCount) 
 							&& !this.hasModifiedResource()) {
 						deltaProcessor.fire(null, DeltaProcessor.DEFAULT_CHANGE_EVENT);
 					} // else deltas are fired while processing the resource delta
