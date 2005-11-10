@@ -157,15 +157,19 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * Creates and returns a Rodin file element for the given file, its project
 	 * being the given project. Returns <code>null</code> if unable to
-	 * recognize the file type.
+	 * recognize the file type or the file is not a direct child of its project.
 	 */
 	public static RodinFile createRodinFileFrom(IFile file, IRodinProject project) {
 
 		if (file == null) return null;
 
+		if (file.getParent() != file.getProject())
+			return null;
+
 		if (project == null) {
 			project = RodinCore.create(file.getProject());
 		}
+		
 		return project.getRodinFile(file.getName());
 	}
 	
