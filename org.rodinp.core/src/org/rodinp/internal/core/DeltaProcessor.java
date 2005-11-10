@@ -321,7 +321,7 @@ public class DeltaProcessor {
 	 * <li>If the element is a project, do nothing, and do not process
 	 * children, as when a project is created it does not yet have any
 	 * natures - specifically a java nature.
-	 * <li>If the elemet is not a project, process it as added (see
+	 * <li>If the element is not a project, process it as added (see
 	 * <code>basicElementAdded</code>.
 	 * </ul>
 	 */
@@ -360,9 +360,26 @@ public class DeltaProcessor {
 					close(element);
 			
 					currentDelta().added(element);
+			} else {
+				// element is moved
+				addToParentInfo(element);
+				close(element);
+				
+				IPath movedFromPath = delta.getMovedFromPath();
+				IResource res = delta.getResource();
+				IFile movedFromFile = res.getWorkspace().getRoot().getFile(movedFromPath);
+				String movedFromType = this.elementType(movedFromFile);
+				Openable movedFromElement = this.createElement(movedFromFile, movedFromType);
+				if (movedFromElement == null) {
+					// moved from a non-Rodin file
+					currentDelta().added(element);
+				} else {
+					currentDelta().movedTo(element, movedFromElement);
+				}
 			}
 			
-			// reset project's  caches 
+			// reset project's caches
+			// TODO make that finer grained when project caches are implemented.
 			RodinProject project = element.getRodinProject();
 			this.projectCachesToReset.add(project);						
 		}
@@ -387,6 +404,7 @@ public class DeltaProcessor {
 			// element is moved
 			close(element);
 			removeFromParentInfo(element);
+			
 			IPath movedToPath = delta.getMovedToPath();
 			IResource res = delta.getResource();
 			IResource movedToRes;
@@ -405,10 +423,7 @@ public class DeltaProcessor {
 			}
 
 			// find the element type of the moved from element
-			String movedToType = 
-				this.elementType(
-					movedToRes,
-					element.getParent().getElementType());
+			String movedToType = this.elementType(movedToRes);
 
 			// reset current element as it might be inside a nested root (popUntilPrefixOf() may use the outer root)
 			this.currentElement = null;
@@ -436,13 +451,12 @@ public class DeltaProcessor {
 		}
 	}
 	/*
-	 * Returns the type of the java element the given delta matches to.
+	 * Returns the type of the Rodin element the given delta matches to.
 	 * Returns <code>null</code> if unknown (e.g. a non-Rodin resource)
 	 */
-	private String elementType(IResource res, String parentType) {
-		if (parentType == IRodinElement.RODIN_DATABASE) {
-				// case of a movedTo or movedFrom project (other cases are handled in processResourceDelta(...)
-				return IRodinElement.RODIN_PROJECT;
+	private String elementType(IResource res) {
+		if (res instanceof IProject) {
+			return IRodinElement.RODIN_PROJECT;
 		} else if (res.getType() == IResource.FILE) {
 			ElementTypeManager elementTypeManager = ElementTypeManager.getElementTypeManager();
 			return elementTypeManager.getFileElementType((IFile) res);
@@ -743,7 +757,7 @@ public class DeltaProcessor {
 	 * caches and their dependents.
 	 */
 	private void resetProjectCaches() {
-		// Not implemented in prototype.
+		// TODO implement when project caches are there
 	}
 	
 	/*
@@ -877,7 +891,7 @@ public class DeltaProcessor {
 		IResource res = delta.getResource();
 		switch (res.getType()) {
 		case IResource.FILE:
-			String elementType = elementType(res, RodinDB.RODIN_PROJECT);
+			String elementType = elementType(res);
 			if (elementType != null) {
 				this.updateCurrentDeltaAndIndex(delta, elementType);
 			} else {
@@ -1001,6 +1015,7 @@ public class DeltaProcessor {
 							return false; // when a project's nature is added/removed don't process children
 						}
 					}
+					return true; // something changed within the project and we don't know what.
 				}
 				return true;
 		}
