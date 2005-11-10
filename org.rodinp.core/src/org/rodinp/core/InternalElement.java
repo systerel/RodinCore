@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.internal.core.CreateInternalElementOperation;
+import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.RodinDBManager;
@@ -113,6 +114,25 @@ public abstract class InternalElement extends RodinElement implements IParent {
 		return manager.createInternalElementHandle(type, childName, this);
 	}
 
+	/**
+	 * Deletes this element, forcing if specified and necessary.
+	 *
+	 * @param force a flag controlling whether underlying resources that are not
+	 *    in sync with the local file system will be tolerated (same as the force flag
+	 *	  in IResource operations).
+	 * @param monitor a progress monitor
+	 * @exception RodinDBException if this element could not be deleted. Reasons include:
+	 * <ul>
+	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> A <code>CoreException</code> occurred while updating an underlying resource (CORE_EXCEPTION)</li>
+	 * <li> This element is read-only (READ_ONLY)</li>
+	 * </ul>
+	 */
+	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
+		new DeleteElementsOperation(this, force).runOperation(monitor);
+	}
+
+	
 	@Override
 	public boolean equals(Object o) {
 		if (! (o instanceof InternalElement))
@@ -176,6 +196,11 @@ public abstract class InternalElement extends RodinElement implements IParent {
 		} catch (RodinDBException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public RodinFile getRodinFile() {
+		return getOpenableParent();
 	}
 
 	public IResource getUnderlyingResource() throws RodinDBException {

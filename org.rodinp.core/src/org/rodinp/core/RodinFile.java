@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.internal.core.CreateInternalElementOperation;
+import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -136,6 +137,24 @@ public abstract class RodinFile extends Openable implements IParent {
 		return result;
 	}
 	
+	/**
+	 * Deletes this element, forcing if specified and necessary.
+	 *
+	 * @param force a flag controlling whether underlying resources that are not
+	 *    in sync with the local file system will be tolerated (same as the force flag
+	 *	  in IResource operations).
+	 * @param monitor a progress monitor
+	 * @exception RodinDBException if this element could not be deleted. Reasons include:
+	 * <ul>
+	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> A <code>CoreException</code> occurred while updating an underlying resource (CORE_EXCEPTION)</li>
+	 * <li> This element is read-only (READ_ONLY)</li>
+	 * </ul>
+	 */
+	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
+		new DeleteResourceElementsOperation(this, force).runOperation(monitor);
+	}
+
 	@Override
 	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {

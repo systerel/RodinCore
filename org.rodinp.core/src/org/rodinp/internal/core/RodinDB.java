@@ -123,19 +123,18 @@ public class RodinDB extends Openable implements IRodinDB {
 		return new RodinDBInfo();
 	}
 
-//	/**
-//	 * @see IRodinDB
-//	 */
-//	public void delete(IRodinElement[] elements, boolean force,
-//			IProgressMonitor monitor) throws RodinDBException {
-//		if (elements != null && elements.length > 0 && elements[0] != null
-//				&& elements[0].getElementType() < IRodinElement.TYPE) {
-//			new DeleteResourceElementsOperation(elements, force)
-//					.runOperation(monitor);
-//		} else {
-//			new DeleteElementsOperation(elements, force).runOperation(monitor);
-//		}
-//	}
+	/**
+	 * @see IRodinDB
+	 */
+	public void delete(IRodinElement[] elements, boolean force,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (elements != null && elements.length > 0 && elements[0] instanceof IOpenable) {
+			new DeleteResourceElementsOperation(elements, force).runOperation(monitor);
+		} else {
+			new DeleteElementsOperation(elements, force).runOperation(monitor);
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {

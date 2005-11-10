@@ -153,7 +153,8 @@ public interface IRodinElementDelta {
      * is not set). 
 	 */
 	public int F_FINE_GRAINED = 0x04000;
-
+	// TODO check utility of FINE_GRAINED flag for deltas.
+	
 	/**
 	 * Returns deltas for the children that have been added.
 	 * @return deltas for the children that have been added

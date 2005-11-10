@@ -145,6 +145,19 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return manager.createInternalElementHandle(rodinType, name, rodinParent);
 	}
 
+	public void deleteElement(InternalElement element) {
+		// First remove the element from its parent.
+		RodinElement parent = element.getParent();
+		try {
+			parent.getElementInfo().removeChild(element);
+		} catch (RodinDBException e) {
+			// parent doesn't exist!
+		}
+
+		// Then, remove the element and all its descendants from this file.
+		removeElement(element);
+	}
+
 	private static RodinDBException newMalformedError(IRodinElement rodinElement) {
 		IRodinDBStatus status = new RodinDBStatus(
 				IRodinDBStatusConstants.MALFORMED_FILE_ERROR, 
@@ -152,8 +165,16 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return new RodinDBException(status);
 	}
 
-	public synchronized void remove(InternalElement element) {
+	// Removes an element and all its descendants from this file.
+	protected synchronized void removeElement(InternalElement element) {
+		InternalElementInfo info = internalElements.get(element);
 		internalElements.remove(element);
+		changed = true;
+		if (info != null) {
+			for (RodinElement child: info.getChildren()) {
+				removeElement((InternalElement) child);
+			}
+		}
 	}
 
 	public synchronized InternalElementInfo getElementInfo(InternalElement element) {

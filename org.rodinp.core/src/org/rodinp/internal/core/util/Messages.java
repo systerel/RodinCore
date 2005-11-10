@@ -59,6 +59,8 @@ public final class Messages /*extends NLS*/ {
 	public static String operation_cancelled;
 	public static String operation_createFileProgress;
 	public static String operation_createInternalElementProgress;
+	public static String operation_deleteElementProgress;
+	public static String operation_deleteResourceProgress;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

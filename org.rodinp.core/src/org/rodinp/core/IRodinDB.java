@@ -13,6 +13,7 @@ package org.rodinp.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Represent the root Rodin element corresponding to the workspace. Since there
@@ -119,33 +120,33 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 //			IRodinElement[] siblings, String[] renamings, boolean replace,
 //			IProgressMonitor monitor) throws RodinDBException;
 
-//	/**
-//	 * Deletes the given elements, forcing the operation if necessary and
-//	 * specified.
-//	 * 
-//	 * @param elements
-//	 *            the elements to delete
-//	 * @param force
-//	 *            a flag controlling whether underlying resources that are not
-//	 *            in sync with the local file system will be tolerated
-//	 * @param monitor
-//	 *            a progress monitor
-//	 * @exception RodinDBException
-//	 *                if an element could not be deleted. Reasons include:
-//	 *                <ul>
-//	 *                <li> There is no element to process
-//	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
-//	 *                empty</li>
-//	 *                <li> A specified element does not exist
-//	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-//	 *                <li> A <code>CoreException</code> occurred while
-//	 *                updating an underlying resource</li>
-//	 *                <li> An element is read-only (<code>READ_ONLY</code>)
-//	 *                </li>
-//	 *                </ul>
-//	 */
-//	void delete(IRodinElement[] elements, boolean force,
-//			IProgressMonitor monitor) throws RodinDBException;
+	/**
+	 * Deletes the given elements, forcing the operation if necessary and
+	 * specified.
+	 * 
+	 * @param elements
+	 *            the elements to delete
+	 * @param force
+	 *            a flag controlling whether underlying resources that are not
+	 *            in sync with the local file system will be tolerated
+	 * @param monitor
+	 *            a progress monitor
+	 * @exception RodinDBException
+	 *                if an element could not be deleted. Reasons include:
+	 *                <ul>
+	 *                <li> There is no element to process
+	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
+	 *                empty</li>
+	 *                <li> A specified element does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                updating an underlying resource</li>
+	 *                <li> An element is read-only (<code>READ_ONLY</code>)
+	 *                </li>
+	 *                </ul>
+	 */
+	void delete(IRodinElement[] elements, boolean force,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns the Rodin project with the given name. This is a handle-only

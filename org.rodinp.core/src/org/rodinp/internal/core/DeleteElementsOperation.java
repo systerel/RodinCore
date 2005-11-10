@@ -1,0 +1,164 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * Strongly inspired by org.eclipse.jdt.internal.core.DeleteElementsOperation.java which is
+ * 
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.rodinp.internal.core;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IRegion;
+import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.InternalElement;
+import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinFile;
+import org.rodinp.internal.core.util.Messages;
+
+/**
+ * This operation deletes a collection of elements (and
+ * all of their children).
+ * If an element does not exist, it is ignored.
+ *
+ * <p>NOTE: This operation only deletes elements contained within leaf resources -
+ * that is, elements within Rodin files. To delete a Rodin file or
+ * a folder, etc (which have an actual resource), a DeleteResourcesOperation
+ * should be used.
+ */
+public class DeleteElementsOperation extends MultiOperation {
+	
+	/**
+	 * The elements this operation processes grouped by Rodin file
+	 * @see #processElements()
+	 * Keys are compilation units,
+	 * values are <code>IRegion</code>s of elements to be processed in each
+	 * compilation unit.
+	 */ 
+	protected Map<RodinFile, IRegion> childrenToRemove;
+
+	/**
+	 * When executed, this operation will delete the given elements. The elements
+	 * to delete cannot be <code>null</code> or empty, and must be contained within a
+	 * compilation unit.
+	 */
+	protected DeleteElementsOperation(IRodinElement[] elementsToDelete, boolean force) {
+		super(elementsToDelete, force);
+	}
+	
+	/**
+	 * When executed, this operation will delete the given element. The element
+	 * to delete cannot be <code>null</code> or empty, and must be contained within a
+	 * compilation unit.
+	 */
+	public DeleteElementsOperation(IRodinElement elementToDelete, boolean force) {
+		super(elementToDelete, force);
+	}
+	
+	private void deleteElement(IRodinElement elementToRemove, RodinFile rodinFile) throws RodinDBException {
+		// ensure file is consistent (noop if already consistent)
+		rodinFile.makeConsistent(this.progressMonitor);
+		RodinFileElementInfo fileInfo = (RodinFileElementInfo) rodinFile.getElementInfo();
+		fileInfo.deleteElement((InternalElement) elementToRemove);
+	}
+
+	/**
+	 * @see MultiOperation
+	 */
+	@Override
+	protected String getMainTaskName() {
+		return Messages.operation_deleteElementProgress; 
+	}
+	
+	@Override
+	protected ISchedulingRule getSchedulingRule() {
+		if (this.elementsToProcess != null && this.elementsToProcess.length == 1) {
+			IResource resource = this.elementsToProcess[0].getResource();
+			if (resource != null)
+				return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
+		}
+		return super.getSchedulingRule();
+	}
+	
+	/**
+	 * Groups the elements to be processed by their Rodin file.
+	 * If parent/child combinations are present, children are
+	 * discarded (only the parents are processed). Removes any
+	 * duplicates specified in elements to be processed.
+	 */
+	protected void groupElements() throws RodinDBException {
+		childrenToRemove = new HashMap<RodinFile, IRegion>(1);
+		for (IRodinElement element: elementsToProcess) {
+			RodinFile rf = getRodinFileFor(element);
+			if (rf == null) {
+				error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+			} else {
+				IRegion region = childrenToRemove.get(rf);
+				if (region == null) {
+					region = new Region();
+					childrenToRemove.put(rf, region);
+				}
+				region.add(element);
+			}
+		}
+		IRodinElement[] model = new IRodinElement[childrenToRemove.size()];
+		elementsToProcess = childrenToRemove.keySet().toArray(model);
+	}
+	
+	/**
+	 * Deletes all requested element from the given Rodin file
+	 * @see MultiOperation
+	 */
+	@Override
+	protected void processElement(IRodinElement element) throws RodinDBException {
+		RodinFile rf = (RodinFile) element;
+	
+		RodinElementDelta delta = new RodinElementDelta(rf);
+		IRodinElement[] rfElements = childrenToRemove.get(rf).getElements();
+		for (int i = 0, length = rfElements.length; i < length; i++) {
+			IRodinElement e = rfElements[i];
+			if (e.exists()) {
+				deleteElement(e, rf);
+				delta.removed(e);
+			}
+		}
+		if (delta.getAffectedChildren().length > 0) {
+			rf.save(getSubProgressMonitor(1), force);
+			addDelta(delta);
+			this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE);
+		}
+	}
+	
+	/**
+	 * @see MultiOperation
+	 * This method first group the elements by <code>RodinFile</code>,
+	 * and then processes the <code>RodinFile</code>.
+	 */
+	@Override
+	protected void processElements() throws RodinDBException {
+		groupElements();
+		super.processElements();
+	}
+	
+	/**
+	 * @see MultiOperation
+	 */
+	@Override
+	protected void verify(IRodinElement element) throws RodinDBException {
+		for (IRodinElement child: childrenToRemove.get(element).getElements()) {
+			if (child.getCorrespondingResource() != null)
+				error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, child);
+
+			if (child.isReadOnly())
+				error(IRodinDBStatusConstants.READ_ONLY, child);
+		}
+	}
+}

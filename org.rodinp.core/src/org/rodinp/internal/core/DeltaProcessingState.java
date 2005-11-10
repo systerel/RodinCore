@@ -44,6 +44,7 @@ public class DeltaProcessingState implements IResourceChangeListener {
 	/**
 	 * This is a cache of the projects before any project addition/deletion has started.
 	 */
+	// TODO move dbProjectsCache in DeltaProcessor, so that it's ThreadLocal!
 	public IRodinProject[] dbProjectsCache;
 	
 	/*
