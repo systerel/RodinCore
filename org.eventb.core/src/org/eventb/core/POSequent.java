@@ -1,13 +1,14 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core;
 
 import java.util.ArrayList;
 
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.result.type.TypeEnvironment;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinDBException;
@@ -29,13 +30,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class POSequent extends InternalElement {
 
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".posequent";
-	
-	private TypeEnvironment typeEnvironment = null;
-	
-	private POHypothesis hypothesis = null;
-	
-	private POAnyPredicate goal = null;
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent";
 	
 	/**
 	 * @param name
@@ -58,43 +53,30 @@ public class POSequent extends InternalElement {
 		return getElementName();
 	}
 	
-	public TypeEnvironment getTypeEnvironment() throws RodinDBException {
-		FormulaFactory factory = ((POFile) getOpenable()).getFormulaFactory();
-		if(typeEnvironment == null) {
-			typeEnvironment = new TypeEnvironment();
-			for(IRodinElement element : getChildrenOfType(POIdentifier.ELEMENT_TYPE)) {
-				POIdentifier typeExpression = (POIdentifier) element;
-				String name = typeExpression.getElementName();
-				Expression expr = factory.parseExpression(typeExpression.getContents()).getParsedExpression();
-				
-				assert expr != null;
-				typeEnvironment.addIdent(factory.makeFreeIdentifier(name, null), expr);
-			}
-		}
-		return typeEnvironment;
+	public POIdentifier[] getIdentifiers() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(POIdentifier.ELEMENT_TYPE);
+		POIdentifier[] identifiers = new POIdentifier[list.size()];
+		list.toArray(identifiers);
+		return identifiers;
 	}
 	
 	public POHypothesis getHypothesis() throws RodinDBException {
-		if(hypothesis == null) {
-			ArrayList<IRodinElement> list = getChildrenOfType(POHypothesis.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getChildrenOfType(POHypothesis.ELEMENT_TYPE);
 			
-			assert list.size() == 1;
+		assert list.size() == 1;
 			
-			hypothesis = (POHypothesis) list.get(0);
-		}
+		POHypothesis hypothesis = (POHypothesis) list.get(0);
 		return hypothesis;
 	}
 	
 	public POAnyPredicate getGoal() throws RodinDBException {
-		if(goal == null) {
-			ArrayList<IRodinElement> list = getChildrenOfType(POPredicate.ELEMENT_TYPE);
-			if(list.size() == 0)
-				list = getChildrenOfType(POPredicateForm.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getChildrenOfType(POPredicate.ELEMENT_TYPE);
+		if(list.size() == 0)
+			list = getChildrenOfType(POPredicateForm.ELEMENT_TYPE);
 			
-			assert list.size() == 1;
+		assert list.size() == 1;
 			
-			goal = (POAnyPredicate) list.get(0);
-		}
+		POAnyPredicate goal = (POAnyPredicate) list.get(0);
 		return goal;
 	}
 	

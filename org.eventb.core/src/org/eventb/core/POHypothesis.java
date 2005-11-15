@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core;
 
 import org.rodinp.core.RodinDBException;
@@ -19,11 +23,7 @@ import org.rodinp.core.UnnamedInternalElement;
  */
 public class POHypothesis extends UnnamedInternalElement {
 
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".pohypothesis";
-	
-	private POPredicateSet gobalHypothesis = null;
-	
-	private POAnyPredicate[] localHypothesis = null;
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poHypothesis";
 	
 	/**
 	 * @param type
@@ -43,20 +43,15 @@ public class POHypothesis extends UnnamedInternalElement {
 	}
 	
 	public POPredicateSet getGlobalHypothesis() throws RodinDBException {
+		POPredicateSet gobalHypothesis = ((POFile) getOpenable()).getPredicateSet(getContents());
 		
-		if(gobalHypothesis == null) {
-			gobalHypothesis = ((POFile) getOpenable()).getPredicateSet(getContents());
-		
-			assert gobalHypothesis != null;
-		}
+		assert gobalHypothesis != null;
 		
 		return gobalHypothesis;
 	}
 	
 	public POAnyPredicate[] getLocalHypothesis() throws RodinDBException {
-		if(localHypothesis == null) {
-			localHypothesis = (POAnyPredicate[]) getChildren();
-		}
+		POAnyPredicate[] localHypothesis = (POAnyPredicate[]) getChildren();
 		return localHypothesis;
 	}
 

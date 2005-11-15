@@ -1,7 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core;
 
 import org.eventb.core.result.type.TypeEnvironment;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinElement;
 import org.rodinp.core.UnnamedInternalElement;
@@ -18,9 +24,7 @@ import org.rodinp.core.UnnamedInternalElement;
  */
 public class POPredicateForm extends UnnamedInternalElement {
 
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".popredicateform";
-	
-	private POAnyPredicate anyPredicate = null;
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicateForm";
 	
 	public POPredicateForm(String type, RodinElement parent) {
 		super(type, parent);
@@ -40,9 +44,8 @@ public class POPredicateForm extends UnnamedInternalElement {
 	}
 	
 	public POAnyPredicate getPredicate() throws RodinDBException {
-		if(anyPredicate == null) {
-			anyPredicate = (POAnyPredicate) getChildren()[0];
-		}
+		assert getChildren().length == 1;
+		POAnyPredicate anyPredicate = (POAnyPredicate) getChildren()[0];
 		return anyPredicate;
 	}
 

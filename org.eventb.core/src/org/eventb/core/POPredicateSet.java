@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core;
 
 import java.util.ArrayList;
@@ -18,10 +22,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class POPredicateSet extends InternalElement {
 
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".popredicateset";
-	
-	private POPredicateSet[] predicateSets = null;
-	private POPredicate[] predicates = null;
+	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicateSet";
 	
 	/**
 	 * @param name
@@ -41,20 +42,16 @@ public class POPredicateSet extends InternalElement {
 	}
 	
 	public POPredicate[] getPredicates() throws RodinDBException {
-		if(predicates == null) {
-			ArrayList<IRodinElement> list = getChildrenOfType(POPredicate.ELEMENT_TYPE);
-			predicates = new POPredicate[list.size()];
-			list.toArray(predicates);
-		}
+		ArrayList<IRodinElement> list = getChildrenOfType(POPredicate.ELEMENT_TYPE);
+		POPredicate[] predicates = new POPredicate[list.size()];
+		list.toArray(predicates);
 		return predicates;
 	}
 	
 	public POPredicateSet[] getPredicateSets() throws RodinDBException {
-		if(predicateSets == null) {
-			ArrayList<IRodinElement> list = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
-			predicateSets = new POPredicateSet[list.size()];
-			list.toArray(predicateSets);
-		}
+		ArrayList<IRodinElement> list = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
+		POPredicateSet[] predicateSets = new POPredicateSet[list.size()];
+		list.toArray(predicateSets);
 		return predicateSets;
 	}
 
