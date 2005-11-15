@@ -19,6 +19,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinFile;
+import org.rodinp.core.UnnamedInternalElement;
 
 /**
  * This class is used to perform operations on multiple <code>IRodinElement</code>.
@@ -125,7 +126,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Returns the new name for <code>element</code>, or <code>null</code>
 	 * if there are no renamings specified.
 	 */
-	protected String getNewNameFor(IRodinElement element) throws RodinDBException {
+	protected String getNewNameFor(IRodinElement element) {
 		String newName = null;
 		if (this.renamings != null)
 			newName = this.renamings.get(element);
@@ -246,15 +247,19 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * for the types of the <code>element</code> and <code>destination</code>.
 	 */
 	protected void verifyDestination(IRodinElement element, IRodinElement destination) throws RodinDBException {
-		if (destination == null || !destination.exists())
+		if (destination == null || ! destination.exists())
 			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
-
-		if (! (element instanceof InternalElement)) {
-			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
-		}
 		
-		if (! (destination instanceof InternalElement || destination instanceof RodinFile)) {
-			error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
+		if (element instanceof RodinFile) {
+			if (! (destination instanceof RodinProject)) {
+				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
+			}
+		} else if (element instanceof InternalElement) {
+			if (! (destination instanceof InternalElement || destination instanceof RodinFile)) {
+				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
+			}
+		} else {
+			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
 		}
 	}
 
@@ -263,7 +268,25 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * valid for that type of Rodin element.
 	 */
 	protected void verifyRenaming(IRodinElement element) throws RodinDBException {
-		// There is currently no restriction on internal element names.
+		if (element instanceof RodinFile) {
+			String newName = getNewNameFor(element);
+			ElementTypeManager mgr = ElementTypeManager.getElementTypeManager();
+			if (! mgr.isValidFileName(newName)) {
+				throw new RodinDBException(new RodinDBStatus(
+						IRodinDBStatusConstants.INVALID_NAME, element, newName));
+			}
+		} else if (element instanceof UnnamedInternalElement) {
+			// Unnamed internal elements can not be renamed
+			String newName = getNewNameFor(element);
+			if (newName != null) {
+				throw new RodinDBException(new RodinDBStatus(
+						IRodinDBStatusConstants.INVALID_NAME, element, newName));
+			}
+		} else if (element instanceof InternalElement) {
+			// There is currently no restriction on internal element names.
+		} else {
+			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+		}
 	}
 	
 	/**
