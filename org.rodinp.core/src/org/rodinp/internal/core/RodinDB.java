@@ -149,7 +149,6 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * Returns null if not found.
 	 */
 	public IRodinProject findOldRodinProject(IProject project) {
-		 // TODO check if Workaround for bug 15168 is needed here 
 		try {
 			for (IRodinProject rodinProject: getOldRodinProjects()) {
 				if (project.equals(rodinProject.getProject())) {
