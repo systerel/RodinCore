@@ -28,6 +28,7 @@ import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
+import org.rodinp.internal.core.util.Messages;
 
 
 /**
@@ -38,7 +39,7 @@ import org.rodinp.internal.core.util.MementoTokenizer;
  * to the <code>org.rodinp.core.fileElementTypes</code> extension point.
  * </p>
  */
-public abstract class RodinFile extends Openable implements IParent {
+public abstract class RodinFile extends Openable implements IParent, IElementManipulation {
 	
 	/**
 	 * The platform project this <code>IRodinProject</code> is based on
@@ -83,6 +84,26 @@ public abstract class RodinFile extends Openable implements IParent {
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) info;
 		//return false;
 		return fileInfo.parseFile(pm, this);
+	}
+
+	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void copy(IRodinElement container, IRodinElement sibling,
+			String rename, boolean replace, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		if (container == null) {
+			throw new IllegalArgumentException(Messages.operation_nullContainer); 
+		}
+		IRodinElement[] elements = new IRodinElement[] {this};
+		IRodinElement[] containers = new IRodinElement[] {container};
+		String[] renamings = null;
+		if (rename != null) {
+			renamings = new String[] {rename};
+		}
+		getRodinDB().copy(elements, containers, null, renamings, replace, monitor);
+		
 	}
 
 	@Override
@@ -137,19 +158,8 @@ public abstract class RodinFile extends Openable implements IParent {
 		return result;
 	}
 	
-	/**
-	 * Deletes this element, forcing if specified and necessary.
-	 *
-	 * @param force a flag controlling whether underlying resources that are not
-	 *    in sync with the local file system will be tolerated (same as the force flag
-	 *	  in IResource operations).
-	 * @param monitor a progress monitor
-	 * @exception RodinDBException if this element could not be deleted. Reasons include:
-	 * <ul>
-	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * <li> A <code>CoreException</code> occurred while updating an underlying resource (CORE_EXCEPTION)</li>
-	 * <li> This element is read-only (READ_ONLY)</li>
-	 * </ul>
+	/* (non-Javadoc)
+	 * @see IElementManipulation
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteResourceElementsOperation(this, force).runOperation(monitor);

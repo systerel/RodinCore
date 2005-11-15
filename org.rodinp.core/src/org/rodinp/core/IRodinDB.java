@@ -58,67 +58,66 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 */
 	boolean contains(IResource resource);
 
-//	/**
-//	 * Copies the given elements to the specified container(s). If one container
-//	 * is specified, all elements are copied to that container. If more than one
-//	 * container is specified, the number of elements and containers must match,
-//	 * and each element is copied to its associated container.
-//	 * <p>
-//	 * Optionally, each copy can be positioned before a sibling element. If
-//	 * <code>null</code> is specified for a given sibling, the copy is
-//	 * inserted as the last child of its associated container.
-//	 * </p>
-//	 * <p>
-//	 * Optionally, each copy can be renamed. If <code>null</code> is specified
-//	 * for the new name, the copy is not renamed.
-//	 * </p>
-//	 * <p>
-//	 * Optionally, any existing child in the destination container with the same
-//	 * name can be replaced by specifying <code>true</code> for force.
-//	 * Otherwise an exception is thrown in the event that a name collision
-//	 * occurs.
-//	 * </p>
-//	 * 
-//	 * @param elements
-//	 *            the elements to copy
-//	 * @param containers
-//	 *            the container, or list of containers
-//	 * @param siblings
-//	 *            the list of siblings element any of which may be
-//	 *            <code>null</code>; or <code>null</code>
-//	 * @param renamings
-//	 *            the list of new names any of which may be <code>null</code>;
-//	 *            or <code>null</code>
-//	 * @param replace
-//	 *            <code>true</code> if any existing child in a target
-//	 *            container with the target name should be replaced, and
-//	 *            <code>false</code> to throw an exception in the event of a
-//	 *            name collision
-//	 * @param monitor
-//	 *            a progress monitor
-//	 * @exception RodinDBException
-//	 *                if an element could not be copied. Reasons include:
-//	 *                <ul>
-//	 *                <li> There is no element to process
-//	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
-//	 *                empty</li>
-//	 *                <li> A specified element, container, or sibling does not
-//	 *                exist (ELEMENT_DOES_NOT_EXIST)</li>
-//	 *                <li> A <code>CoreException</code> occurred while
-//	 *                updating an underlying resource</li>
-//	 *                <li> A container is of an incompatible type (<code>INVALID_DESTINATION</code>)</li>
-//	 *                <li> A sibling is not a child of it associated container (<code>INVALID_SIBLING</code>)</li>
-//	 *                <li> A new name is invalid (<code>INVALID_NAME</code>)</li>
-//	 *                <li> A child in its associated container already exists
-//	 *                with the same name and <code>replace</code> has been
-//	 *                specified as <code>false</code> (<code>NAME_COLLISION</code>)</li>
-//	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)
-//	 *                </li>
-//	 *                </ul>
-//	 */
-//	void copy(IRodinElement[] elements, IRodinElement[] containers,
-//			IRodinElement[] siblings, String[] renamings, boolean replace,
-//			IProgressMonitor monitor) throws RodinDBException;
+	/**
+	 * Copies the given elements to the specified container(s). If one container
+	 * is specified, all elements are copied to that container. If more than one
+	 * container is specified, the number of elements and containers must match,
+	 * and each element is copied to its associated container.
+	 * <p>
+	 * Optionally, each copy can be positioned before a sibling element. If
+	 * <code>null</code> is specified for a given sibling, the copy is
+	 * inserted as the last child of its associated container.
+	 * </p>
+	 * <p>
+	 * Optionally, each copy can be renamed. If <code>null</code> is specified
+	 * for the new name, the copy is not renamed.
+	 * </p>
+	 * <p>
+	 * Optionally, any existing child in the destination container with the same
+	 * name can be replaced by specifying <code>true</code> for force.
+	 * Otherwise an exception is thrown in the event that a name collision
+	 * occurs.
+	 * </p>
+	 * 
+	 * @param elements
+	 *            the elements to copy
+	 * @param containers
+	 *            the container, or list of containers
+	 * @param siblings
+	 *            the list of sibling elements, any of which may be
+	 *            <code>null</code>; or <code>null</code>
+	 * @param renamings
+	 *            the list of new names, any of which may be <code>null</code>;
+	 *            or <code>null</code>
+	 * @param replace
+	 *            <code>true</code> if any existing child in a target
+	 *            container with the target name should be replaced, and
+	 *            <code>false</code> to throw an exception in the event of a
+	 *            name collision
+	 * @param monitor
+	 *            a progress monitor
+	 * @exception RodinDBException
+	 *                if an element could not be copied. Reasons include:
+	 *                <ul>
+	 *                <li> There is no element to process
+	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
+	 *                empty</li>
+	 *                <li> A specified element, container, or sibling does not
+	 *                exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                updating an underlying resource</li>
+	 *                <li> A container is of an incompatible type (<code>INVALID_DESTINATION</code>)</li>
+	 *                <li> A sibling is not a child of it associated container (<code>INVALID_SIBLING</code>)</li>
+	 *                <li> A new name is invalid (<code>INVALID_NAME</code>)</li>
+	 *                <li> A child in its associated container already exists
+	 *                with the same name and <code>replace</code> has been
+	 *                specified as <code>false</code> (<code>NAME_COLLISION</code>)</li>
+	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)</li>
+	 *                </ul>
+	 */
+	void copy(IRodinElement[] elements, IRodinElement[] containers,
+			IRodinElement[] siblings, String[] renamings, boolean replace,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Deletes the given elements, forcing the operation if necessary and

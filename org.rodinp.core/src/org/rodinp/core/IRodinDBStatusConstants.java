@@ -213,4 +213,10 @@ public interface IRodinDBStatusConstants {
 	 */
 	int INVALID_INTERNAL_ELEMENT_TYPE = 989;
 
+	/**
+	 * Status indicating that the number of renamings supplied to a copy or move
+	 * operation does not match the number of elements that were supplied.
+	 */
+	int INDEX_OUT_OF_BOUNDS = 990;
+
 }

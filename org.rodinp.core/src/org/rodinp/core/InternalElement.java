@@ -21,6 +21,7 @@ import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
+import org.rodinp.internal.core.util.Messages;
 
 /**
  * Common implementationfor all internal elements.
@@ -33,7 +34,7 @@ import org.rodinp.internal.core.util.MementoTokenizer;
  * 
  * @author Laurent Voisin
  */
-public abstract class InternalElement extends RodinElement implements IParent {
+public abstract class InternalElement extends RodinElement implements IParent, IElementManipulation {
 	
 	/* Name of this internal element */
 	private String name;
@@ -54,6 +55,30 @@ public abstract class InternalElement extends RodinElement implements IParent {
 		// Name must not be empty
 		if (name == null || name.length() == 0)
 			throw new IllegalArgumentException();
+	}
+
+	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void copy(IRodinElement container, IRodinElement sibling,
+			String rename, boolean replace, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		if (container == null) {
+			throw new IllegalArgumentException(Messages.operation_nullContainer); 
+		}
+		IRodinElement[] elements= new IRodinElement[] {this};
+		IRodinElement[] containers= new IRodinElement[] {container};
+		IRodinElement[] siblings= null;
+		if (sibling != null) {
+			siblings= new IRodinElement[] {sibling};
+		}
+		String[] renamings= null;
+		if (rename != null) {
+			renamings= new String[] {rename};
+		}
+		getRodinDB().copy(elements, containers, siblings, renamings, replace, monitor);
+		
 	}
 
 	@Override
@@ -109,29 +134,29 @@ public abstract class InternalElement extends RodinElement implements IParent {
 		return result;
 	}
 
-	public InternalElement getInternalElement(String type, String childName) {
+	/**
+	 * Returns a handle to a child internal element with the given type and
+	 * name. This is a handle-only method. The child element may or may not
+	 * be present.
+	 * 
+	 * @param childType
+	 *            type of the child element
+	 * @param childName
+	 *            name of the child element
+	 * @return the child internal element with the given type and name or
+	 *         <code>null</code> if the given element type is unknown.
+	 */
+	public InternalElement getInternalElement(String childType, String childName) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		return manager.createInternalElementHandle(type, childName, this);
+		return manager.createInternalElementHandle(childType, childName, this);
 	}
 
-	/**
-	 * Deletes this element, forcing if specified and necessary.
-	 *
-	 * @param force a flag controlling whether underlying resources that are not
-	 *    in sync with the local file system will be tolerated (same as the force flag
-	 *	  in IResource operations).
-	 * @param monitor a progress monitor
-	 * @exception RodinDBException if this element could not be deleted. Reasons include:
-	 * <ul>
-	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * <li> A <code>CoreException</code> occurred while updating an underlying resource (CORE_EXCEPTION)</li>
-	 * <li> This element is read-only (READ_ONLY)</li>
-	 * </ul>
+	/* (non-Javadoc)
+	 * @see IElementManipulation
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteElementsOperation(this, force).runOperation(monitor);
 	}
-
 	
 	@Override
 	public boolean equals(Object o) {
@@ -158,7 +183,7 @@ public abstract class InternalElement extends RodinElement implements IParent {
 	}
 
 	/*
-	 * Update the occurence count of the receiver and creates a Java element handle from the given memento.
+	 * Update the occurence count of the receiver and creates a Rodin element handle from the given memento.
 	 */
 	public IRodinElement getHandleUpdatingCountFromMemento(MementoTokenizer memento) {
 		if (!memento.hasMoreTokens()) return this;
