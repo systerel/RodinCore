@@ -98,22 +98,23 @@ public class RodinDB extends Openable implements IRodinDB {
 		return false;
 	}
 
-//	/**
-//	 * @see IRodinDB
-//	 */
-//	public void copy(IRodinElement[] elements, IRodinElement[] containers,
-//			IRodinElement[] siblings, String[] renamings, boolean force,
-//			IProgressMonitor monitor) throws RodinDBException {
-//		if (elements != null && elements.length > 0 && elements[0] != null
-//				&& elements[0].getElementType() < IRodinElement.TYPE) {
-//			runOperation(new CopyResourceElementsOperation(elements,
-//					containers, force), elements, siblings, renamings, monitor);
-//		} else {
-//			runOperation(
-//					new CopyElementsOperation(elements, containers, force),
-//					elements, siblings, renamings, monitor);
-//		}
-//	}
+	/*
+	 * @see IRodinDB
+	 */
+	public void copy(IRodinElement[] elements, IRodinElement[] containers,
+			IRodinElement[] siblings, String[] renamings, boolean force,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (elements != null && elements.length > 0 && elements[0] != null
+				&& elements[0] instanceof IOpenable) {
+			runOperation(new CopyResourceElementsOperation(elements,
+					containers, force), elements, siblings, renamings, monitor);
+		} else {
+			runOperation(
+					new CopyElementsOperation(elements, containers, force),
+					elements, siblings, renamings, monitor);
+		}
+	}
 
 	/**
 	 * Returns a new element info for this element.
@@ -123,7 +124,7 @@ public class RodinDB extends Openable implements IRodinDB {
 		return new RodinDBInfo();
 	}
 
-	/**
+	/*
 	 * @see IRodinDB
 	 */
 	public void delete(IRodinElement[] elements, boolean force,
@@ -288,6 +289,21 @@ public class RodinDB extends Openable implements IRodinDB {
 	 */
 	public IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
+	}
+
+	/**
+	 * Configures and runs the <code>MultiOperation</code>.
+	 */
+	public void runOperation(MultiOperation op, IRodinElement[] elements,
+			IRodinElement[] siblings, String[] renamings,
+			IProgressMonitor monitor) throws RodinDBException {
+		op.setRenamings(renamings);
+		if (siblings != null) {
+			for (int i = 0; i < elements.length; i++) {
+				op.setInsertBefore(elements[i], siblings[i]);
+			}
+		}
+		op.runOperation(monitor);
 	}
 
 	/**

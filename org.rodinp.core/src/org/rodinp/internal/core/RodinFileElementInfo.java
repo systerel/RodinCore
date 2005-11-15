@@ -145,7 +145,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return manager.createInternalElementHandle(rodinType, name, rodinParent);
 	}
 
-	public void deleteElement(InternalElement element) {
+	protected void deleteElement(InternalElement element) {
 		// First remove the element from its parent.
 		RodinElement parent = element.getParent();
 		try {
@@ -166,7 +166,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	// Removes an element and all its descendants from this file.
-	protected synchronized void removeElement(InternalElement element) {
+	private synchronized void removeElement(InternalElement element) {
 		InternalElementInfo info = internalElements.get(element);
 		internalElements.remove(element);
 		changed = true;
@@ -291,4 +291,59 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 	}
 
+	/**
+	 * Renames an element within this file.
+	 * 
+	 * @param source
+	 *            the source element
+	 * @param dest
+	 *            the destination element
+	 */
+	protected synchronized void rename(InternalElement source, InternalElement dest) {
+		assert source.getParent().equals(dest.getParent());
+		
+		// TODO Auto-generated method stub
+	}
+
+	// dest must be an element of the Rodin file associated to this info.
+	protected synchronized void copy(InternalElement source,
+			InternalElementInfo sourceInfo, InternalElement dest,
+			InternalElement nextSibling) {
+		
+		RodinElement destParent = dest.getParent();
+		RodinElementInfo destParentInfo;
+		if (destParent instanceof RodinFile) {
+			destParentInfo = this;
+		} else {
+			destParentInfo = getElementInfo((InternalElement) destParent);
+		}
+		destParentInfo.addChildBefore(dest, nextSibling);
+		clone(source, sourceInfo, dest);
+	}
+
+	// Clones deeply the source element.
+	private synchronized void clone(InternalElement source,
+			InternalElementInfo sourceInfo, InternalElement dest) {
+
+		InternalElementInfo destInfo = dest.createElementInfo();
+		addElement(dest, destInfo);
+		
+		destInfo.setContents(sourceInfo.getContents());
+		// TODO copy attributes
+
+		// Copy children
+		RodinElement[] sourceChildren = sourceInfo.getChildren();
+		int length = sourceChildren.length;
+		InternalElement[] destChildren = new InternalElement[length];
+		for (int i = 0; i < length; ++ i) {
+			InternalElement sourceChild = (InternalElement) sourceChildren[i];
+			InternalElement destChild = dest.getInternalElement(
+					sourceChild.getElementName(),
+					sourceChild.getElementName());
+			destChildren[i] = destChild;
+			clone(sourceChild, getElementInfo(sourceChild), destChild);
+		}
+		
+	}
+	
 }
