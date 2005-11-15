@@ -49,7 +49,7 @@ public class RodinDBCache {
 	/**
 	 * Cache of open Rodin files
 	 */
-	protected ElementCache openableCache;
+	protected OpenableCache openableCache;
 
 	/**
 	 * Cache of open members of openable Rodin elements
@@ -60,7 +60,7 @@ public class RodinDBCache {
 		// NB: Don't use a LRUCache for projects as they are constantly reopened
 		// (e.g. during delta processing)
 		this.projectCache = new HashMap<IRodinProject, RodinElementInfo>(DEFAULT_PROJECT_SIZE);
-		this.openableCache = new ElementCache(DEFAULT_OPENABLE_SIZE);
+		this.openableCache = new OpenableCache(DEFAULT_OPENABLE_SIZE);
 		this.memberCache = new HashMap<IRodinElement, RodinElementInfo>(DEFAULT_MEMBER_SIZE);
 	}
 

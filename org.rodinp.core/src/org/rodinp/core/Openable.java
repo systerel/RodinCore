@@ -200,7 +200,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		}
 		// TODO define how we record that an openable has changed
 		// For projects and folders, should go down recursively on children
-		// looking for a file element with unsaved changes.
+		// looking for a file element with unsaved changes ?
 		
 		return false;
 	}
