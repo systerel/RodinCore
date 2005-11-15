@@ -31,7 +31,6 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 			beginTask(Messages.operation_createInternalElementProgress, 2);
 			RodinElement parent = newElement.getParent();
 			RodinFile file = newElement.getOpenableParent();
-			// TODO Pass a submonitor here?
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
 			InternalElementInfo newInfo = newElement.createElementInfo(); 
 			fileInfo.addElement(newElement, newInfo);

@@ -13,7 +13,6 @@ public class InternalElementInfo extends RodinElementInfo {
 
 	public InternalElementInfo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getContents() {
