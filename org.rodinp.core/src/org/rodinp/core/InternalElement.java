@@ -34,7 +34,7 @@ import org.rodinp.internal.core.util.Messages;
  * 
  * @author Laurent Voisin
  */
-public abstract class InternalElement extends RodinElement implements IParent, IElementManipulation {
+public abstract class InternalElement extends RodinElement implements IInternalParent, IElementManipulation {
 	
 	/* Name of this internal element */
 	private String name;
@@ -134,17 +134,8 @@ public abstract class InternalElement extends RodinElement implements IParent, I
 		return result;
 	}
 
-	/**
-	 * Returns a handle to a child internal element with the given type and
-	 * name. This is a handle-only method. The child element may or may not
-	 * be present.
-	 * 
-	 * @param childType
-	 *            type of the child element
-	 * @param childName
-	 *            name of the child element
-	 * @return the child internal element with the given type and name or
-	 *         <code>null</code> if the given element type is unknown.
+	/* (non-Javadoc)
+	 * @see IInternalParent
 	 */
 	public InternalElement getInternalElement(String childType, String childName) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
@@ -277,11 +268,19 @@ public abstract class InternalElement extends RodinElement implements IParent, I
 	/**
 	 * Returns the child with the given name or <code>null</code> is there is no such child.
 	 * @param childName
-	 *   the name of the child
+	 *   the name of the child.  Must not be <code>null</code>
 	 * @return the child with the given name
 	 */
-	protected RodinElement getChild(String childName) {
-		// TODO implement getChild
+	protected InternalElement getChild(String childName) {
+		try {
+			RodinElement[] children = this.getChildren();
+			for (RodinElement child: children) {
+				if (childName.equals(child.getElementName()))
+					return (InternalElement) child;
+			}
+		} catch (RodinDBException e) {
+			// ignore
+		}
 		return null;
 	}
 

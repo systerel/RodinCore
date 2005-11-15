@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -125,20 +126,13 @@ public class CopyElementsOperation extends MultiOperation {
 	 * @return the destination element for the given element
 	 */
 	private InternalElement getDestElement(InternalElement element) {
-		IRodinElement destParent = getDestinationParent(element);
+		IInternalParent destParent = (IInternalParent) getDestinationParent(element);
 		String newName = getNewNameFor(element);
 		if (newName == null) {
 			newName = element.getElementName();
 		}
 		String newType = element.getElementType();
-		
-		InternalElement result;
-		if (destParent instanceof RodinFile) {
-			result = ((RodinFile) destParent).getInternalElement(newType, newName);
-		} else {
-			result = ((InternalElement) destParent).getInternalElement(newType, newName);
-		}
-		return result;
+		return destParent.getInternalElement(newType, newName);
 	}
 
 	/**

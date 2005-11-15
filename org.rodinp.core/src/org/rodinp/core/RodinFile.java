@@ -39,7 +39,7 @@ import org.rodinp.internal.core.util.Messages;
  * to the <code>org.rodinp.core.fileElementTypes</code> extension point.
  * </p>
  */
-public abstract class RodinFile extends Openable implements IParent, IElementManipulation {
+public abstract class RodinFile extends Openable implements IInternalParent, IElementManipulation {
 	
 	/**
 	 * The platform project this <code>IRodinProject</code> is based on
@@ -179,17 +179,8 @@ public abstract class RodinFile extends Openable implements IParent, IElementMan
 		return REM_EXTERNAL;
 	}
 
-	/**
-	 * Returns a handle to a top-level internal element with the given type and
-	 * name. This is a handle-only method. The internal element may or may not
-	 * be present.
-	 * 
-	 * @param type
-	 *            type of the internal element
-	 * @param name
-	 *            name of the internal element
-	 * @return the internal element with the given type and name or
-	 *         <code>null</code> if the given element type is unknown.
+	/* (non-Javadoc)
+	 * @see IInternalParent
 	 */
 	public InternalElement getInternalElement(String type, String name) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();

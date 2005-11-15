@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -75,7 +76,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 	private void addChildren(
 			Element parent, 
-			RodinElement rodinParent,
+			IInternalParent rodinParent,
 			RodinElementInfo parentInfo) throws RodinDBException {
 		
 		NodeList list = parent.getChildNodes();
@@ -135,14 +136,10 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		changed = true;
 	}
 
-	private InternalElement create(Element element, RodinElement rodinParent) {
+	private InternalElement create(Element element, IInternalParent rodinParent) {
 		String rodinType = element.getTagName();
 		String name = element.getAttribute("name");
-		
-		// TODO use rodinParent.create(rodinType, name)
-		
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		return manager.createInternalElementHandle(rodinType, name, rodinParent);
+		return rodinParent.getInternalElement(rodinType, name);
 	}
 
 	protected void deleteElement(InternalElement element) {
