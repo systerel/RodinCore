@@ -92,13 +92,6 @@ public class RodinElementDelta extends SimpleDelta implements
 			this.changeFlags |= F_CHILDREN;
 		}
 
-		// if a child delta is added to a compilation unit delta or below,
-		// it's a fine grained delta
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		if (manager.isInternalElementType(this.changedElement.getElementType())) {
-			this.fineGrained();
-		}
-
 		if (fAffectedChildren.length == 0) {
 			fAffectedChildren = new IRodinElementDelta[] { child };
 			return;
@@ -148,12 +141,10 @@ public class RodinElementDelta extends SimpleDelta implements
 			case CHANGED:
 				switch (child.getKind()) {
 				case ADDED: // child was changed then added -> it is added
-				case REMOVED: // child was changed then removed -> it is
-								// removed
+				case REMOVED: // child was changed then removed -> it is removed
 					fAffectedChildren[existingChildIndex] = child;
 					return;
-				case CHANGED: // child was changed then changed -> it is
-								// changed
+				case CHANGED: // child was changed then changed -> it is changed
 					IRodinElementDelta[] children = child.getAffectedChildren();
 					for (int i = 0; i < children.length; i++) {
 						RodinElementDelta childsChild = (RodinElementDelta) children[i];
@@ -161,23 +152,12 @@ public class RodinElementDelta extends SimpleDelta implements
 					}
 
 					// update flags
-					boolean childHadContentFlag = (child.changeFlags & F_CONTENT) != 0;
-					boolean existingChildHadChildrenFlag = (existingChild.changeFlags & F_CHILDREN) != 0;
 					existingChild.changeFlags |= child.changeFlags;
 
-					// remove F_CONTENT flag if existing child had F_CHILDREN
-					// flag set
-					// (case of fine grained delta (existing child) and delta
-					// coming from
-					// DeltaProcessor (child))
-					if (childHadContentFlag && existingChildHadChildrenFlag) {
-						existingChild.changeFlags &= ~F_CONTENT;
-					}
-
-					// add the non-java resource deltas if needed
+					// add the non-Rodin resource deltas if needed
 					// note that the child delta always takes precedence over
 					// this existing child delta
-					// as non-java resource deltas are always created last (by
+					// as non-Rodin resource deltas are always created last (by
 					// the DeltaProcessor)
 					IResourceDelta[] resDeltas = child.getResourceDeltas();
 					if (resDeltas != null) {
@@ -354,13 +334,6 @@ public class RodinElementDelta extends SimpleDelta implements
 	}
 
 	/**
-	 * Mark this delta as a fine-grained delta.
-	 */
-	public void fineGrained() {
-		changed(F_FINE_GRAINED);
-	}
-
-	/**
 	 * @see IRodinElementDelta
 	 */
 	public IRodinElementDelta[] getAddedChildren() {
@@ -530,12 +503,8 @@ public class RodinElementDelta extends SimpleDelta implements
 	protected void insertDeltaTree(IRodinElement element,
 			RodinElementDelta delta) {
 		RodinElementDelta childDelta = createDeltaTree(element, delta);
-		if (!this.equalsAndSameParent(element, getElement())) { // handle case
-																// of two jars
-																// that can be
-																// equals but
-																// not in the
-																// same project
+		if (!this.equalsAndSameParent(element, getElement())) {
+			// handle case of two elements that can be equals but not in the same project
 			addAffectedChild(childDelta);
 		}
 	}
@@ -714,16 +683,10 @@ public class RodinElementDelta extends SimpleDelta implements
 					.append("MOVED_TO(" + ((RodinElement) getMovedToElement()).toStringWithAncestors() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			prev = true;
 		}
-		if ((flags & IRodinElementDelta.F_REORDER) != 0) {
+		if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
 			buffer.append("REORDERED"); //$NON-NLS-1$
-			prev = true;
-		}
-		if ((flags & IRodinElementDelta.F_FINE_GRAINED) != 0) {
-			if (prev)
-				buffer.append(" | "); //$NON-NLS-1$
-			buffer.append("FINE GRAINED"); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((flags & IRodinElementDelta.F_OPENED) != 0) {
