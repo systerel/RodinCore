@@ -90,7 +90,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 	private RodinElementDelta getDeltaFor(IRodinProject rodinProject) {
 		RodinElementDelta delta = deltasPerProject.get(rodinProject);
 		if (delta == null) {
-			delta = new RodinElementDelta(rodinProject);
+			delta = newRodinElementDelta();
 			deltasPerProject.put(rodinProject, delta);
 		}
 		return delta;
