@@ -57,13 +57,6 @@ public class SimpleDelta {
 	}
 
 	/*
-	 * Mark this delta has a having a modifiers change
-	 */
-	public void modifiers() {
-		changed(IRodinElementDelta.F_MODIFIERS);
-	}
-
-	/*
 	 * Marks this delta as removed
 	 */
 	public void removed() {
@@ -93,14 +86,7 @@ public class SimpleDelta {
 	}
 
 	protected boolean toDebugString(StringBuffer buffer, int flags) {
-		boolean prev = false;
-		if ((flags & IRodinElementDelta.F_MODIFIERS) != 0) {
-			if (prev)
-				buffer.append(" | "); //$NON-NLS-1$
-			buffer.append("MODIFIERS CHANGED"); //$NON-NLS-1$
-			prev = true;
-		}
-		return prev;
+		return false;
 	}
 
 	@Override
