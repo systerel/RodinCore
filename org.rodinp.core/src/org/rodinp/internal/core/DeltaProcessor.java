@@ -9,7 +9,6 @@ package org.rodinp.internal.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -77,12 +76,6 @@ public class DeltaProcessor {
 	 */
 	public ArrayList<IRodinElementDelta> rodinDBDeltas= new ArrayList<IRodinElementDelta>();
 	
-	/*
-	 * Queue of reconcile deltas on working copies that have yet to be fired.
-	 * This is a table form IWorkingCopy to IRodinElementDelta
-	 */
-	public HashMap reconcileDeltas = new HashMap();
-
 	/*
 	 * Turns delta firing on/off. By default it is on.
 	 */
@@ -510,11 +503,9 @@ public class DeltaProcessor {
 		switch (eventType) {
 			case DEFAULT_CHANGE_EVENT:
 				firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-				fireReconcileDelta(listeners, listenerMask, listenerCount);
 				break;
 			case ElementChangedEvent.POST_CHANGE:
 				firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-				fireReconcileDelta(listeners, listenerMask, listenerCount);
 				break;
 		}
 	}
@@ -537,24 +528,6 @@ public class DeltaProcessor {
 			notifyListeners(deltaToNotify, ElementChangedEvent.POST_CHANGE, listeners, listenerMask, listenerCount);
 		} 
 	}		
-	private void fireReconcileDelta(
-		IElementChangedListener[] listeners,
-		int[] listenerMask,
-		int listenerCount) {
-
-
-		IRodinElementDelta deltaToNotify = mergeDeltas(this.reconcileDeltas.values());
-		if (DEBUG){
-			System.out.println("FIRING POST_RECONCILE Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
-			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
-		}
-		if (deltaToNotify != null) {
-			// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
-			this.reconcileDeltas = new HashMap();
-		
-			notifyListeners(deltaToNotify, ElementChangedEvent.POST_RECONCILE, listeners, listenerMask, listenerCount);
-		} 
-	}
 	/*
 	 * Returns whether a given delta contains some information relevant to the RodinDB,
 	 * in particular it will not consider SYNC or MARKER only deltas.
@@ -598,9 +571,9 @@ public class DeltaProcessor {
 	/*
 	 * Merges all awaiting deltas.
 	 */
-	private IRodinElementDelta mergeDeltas(Collection deltas) {
+	private IRodinElementDelta mergeDeltas(Collection<IRodinElementDelta> deltas) {
 		if (deltas.size() == 0) return null;
-		if (deltas.size() == 1) return (IRodinElementDelta)deltas.iterator().next();
+		if (deltas.size() == 1) return deltas.iterator().next();
 		
 		if (VERBOSE) {
 			System.out.println("MERGING " + deltas.size() + " DELTAS ["+Thread.currentThread()+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
