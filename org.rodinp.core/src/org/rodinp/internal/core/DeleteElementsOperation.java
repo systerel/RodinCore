@@ -64,8 +64,6 @@ public class DeleteElementsOperation extends MultiOperation {
 	}
 	
 	private void deleteElement(IRodinElement elementToRemove, RodinFile rodinFile) throws RodinDBException {
-		// ensure file is consistent (noop if already consistent)
-		rodinFile.makeConsistent(this.progressMonitor);
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) rodinFile.getElementInfo();
 		fileInfo.deleteElement((InternalElement) elementToRemove);
 	}
@@ -121,7 +119,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	protected void processElement(IRodinElement element) throws RodinDBException {
 		RodinFile rf = (RodinFile) element;
 	
-		RodinElementDelta delta = new RodinElementDelta(rf);
+		RodinElementDelta delta = newRodinElementDelta();
 		IRodinElement[] rfElements = childrenToRemove.get(rf).getElements();
 		for (int i = 0, length = rfElements.length; i < length; i++) {
 			IRodinElement e = rfElements[i];
@@ -130,11 +128,7 @@ public class DeleteElementsOperation extends MultiOperation {
 				delta.removed(e);
 			}
 		}
-		if (delta.getAffectedChildren().length > 0) {
-			rf.save(getSubProgressMonitor(1), force);
-			addDelta(delta);
-			this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE);
-		}
+		addDelta(delta);
 	}
 	
 	/**
