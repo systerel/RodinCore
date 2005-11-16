@@ -335,10 +335,16 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		for (int i = 0; i < length; ++ i) {
 			InternalElement sourceChild = (InternalElement) sourceChildren[i];
 			InternalElement destChild = dest.getInternalElement(
-					sourceChild.getElementName(),
+					sourceChild.getElementType(),
 					sourceChild.getElementName());
 			destChildren[i] = destChild;
-			clone(sourceChild, getElementInfo(sourceChild), destChild);
+
+			try {
+				InternalElementInfo sourceChildInfo = sourceChild.getElementInfo(null);
+				clone(sourceChild, sourceChildInfo, destChild);
+			} catch (RodinDBException e) {
+				Util.log(e, "when cloning an internal element sub-tree");
+			}
 		}
 		
 	}
