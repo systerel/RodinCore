@@ -13,59 +13,71 @@ package org.rodinp.core;
 import org.eclipse.core.resources.IResourceDelta;
 
 /**
- * TODO Update comment and code below. Add F_REORDER
- * 
  * A Rodin element delta describes changes in Rodin element between two discrete
- * points in time.  Given a delta, clients can access the element that has 
+ * points in time. Given a delta, clients can access the element that has
  * changed, and any children that have changed.
  * <p>
- * Deltas have a different status depending on the kind of change they represent.  
- * The list below summarizes each status (as returned by <code>getKind</code>)
- * and its meaning (see individual constants for a more detailled description):
+ * Deltas have a different status depending on the kind of change they
+ * represent. The list below summarizes each status (as returned by
+ * <code>getKind</code>) and its meaning (see individual constants for a more
+ * detailled description):
  * <ul>
- * <li><code>ADDED</code> - The element described by the delta has been added.</li>
- * <li><code>REMOVED</code> - The element described by the delta has been removed.</li>
- * <li><code>CHANGED</code> - The element described by the delta has been changed in some way.  
- * Specification of the type of change is provided by <code>getFlags</code> which returns the following values:
+ * <li><code>ADDED</code> - The element described by the delta has been
+ * added.</li>
+ * <li><code>REMOVED</code> - The element described by the delta has been
+ * removed.</li>
+ * <li><code>CHANGED</code> - The element described by the delta has been
+ * changed in some way. Specification of the type of change is provided by
+ * <code>getFlags</code> which returns the following values:
  * <ul>
- * <li><code>F_CHILDREN</code> - A child of the element has changed in some way.  This flag
- * is only valid if the element is an <code>IParent</code>.</li>
- * <li><code>F_CLOSED</code> - The underlying <code>IProject</code>
- * has been closed. This flag is only valid if the element is an <code>IRodinProject</code>.</li>
- * <li><code>F_CONTENT</code> - The contents of the element have been altered.  This flag
- * is only valid for elements which correspond to files.</li>
- *<li><code>F_FINE_GRAINED</code> - The delta is a fine-grained delta, that is, an analysis down
- * to the members level was done to determine if there were structural changes to members of the element.</li>
- * <li><code>F_MODIFIERS</code> - The modifiers on the element have changed in some way. 
- * This flag is only valid if the element is an <code>IMember</code>.</li>
- * <li><code>F_OPENED</code> - The underlying <code>IProject</code>
- * has been opened. This flag is only valid if the element is an <code>IRodinProject</code>.</li>
+ * <li><code>F_CHILDREN</code> - A child of the element has changed in some
+ * way. This flag is only valid if the element is an <code>IParent</code>.</li>
+ * <li><code>F_CLOSED</code> - The underlying <code>IProject</code> has
+ * been closed. This flag is only valid if the element is an
+ * <code>IRodinProject</code>.</li>
+ * <li><code>F_CONTENT</code> - The contents of the element have been
+ * altered. This flag is only valid for elements which correspond to files or
+ * internal elements.</li>
+ * <li><code>F_REORDERED</code> - The element has changed position in its
+ * parent. This flag is only valid if the element is an
+ * <code>IInternalElement</code>.</li>
+ * <li><code>F_OPENED</code> - The underlying <code>IProject</code> has
+ * been opened. This flag is only valid if the element is an
+ * <code>IRodinProject</code>.</li>
  * </ul>
  * </li>
  * </ul>
  * </p>
  * <p>
- * Move operations are indicated by other change flags, layered on top
- * of the change flags described above. If element A is moved to become B,
- * the delta for the  change in A will have status <code>REMOVED</code>,
- * with change flag <code>F_MOVED_TO</code>. In this case,
- * <code>getMovedToElement</code> on delta A will return the handle for B.
- * The  delta for B will have status <code>ADDED</code>, with change flag
- * <code>F_MOVED_FROM</code>, and <code>getMovedFromElement</code> on delta
- * B will return the handle for A. (Note, the handle to A in this case represents
- * an element that no longer exists).
+ * Move operations are indicated by other change flags, layered on top of the
+ * change flags described above. If element A is moved to become B, the delta
+ * for the change in A will have status <code>REMOVED</code>, with change
+ * flag <code>F_MOVED_TO</code>. In this case, <code>getMovedToElement</code>
+ * on delta A will return the handle for B. The delta for B will have status
+ * <code>ADDED</code>, with change flag <code>F_MOVED_FROM</code>, and
+ * <code>getMovedFromElement</code> on delta B will return the handle for A.
+ * (Note, the handle to A in this case represents an element that no longer
+ * exists).
  * </p>
  * <p>
- * Note that the move change flags only describe the changes to a single element, they
- * do not imply anything about the parent or children of the element.
+ * Note that the move change flags only describe the changes to a single
+ * element, they do not imply anything about the parent or children of the
+ * element.
  * </p>
  * <p>
- * No assumptions should be made on whether the Rodin element delta tree is rooted at the <code>IRodinDB</code>
- * level or not.
+ * The <code>F_REORDERED</code> flag is triggered by changes to the order of a
+ * child element with respect to its siblings. It does not mean that the child
+ * element was added, removed or changed. When a child is moved from one place
+ * to another inside the same parent, an element delta is generated for that
+ * child element with the <code>F_REORDERED</code> flag.
  * </p>
  * <p>
- * <code>IRodinElementDelta</code> object are not valid outside the dynamic scope
- * of the notification.
+ * No assumptions should be made on whether the Rodin element delta tree is
+ * rooted at the <code>IRodinDB</code> level or not.
+ * </p>
+ * <p>
+ * <code>IRodinElementDelta</code> object are not valid outside the dynamic
+ * scope of the notification.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -100,17 +112,16 @@ public interface IRodinElementDelta {
 	public int F_CONTENT = 0x00001;
 
 	/**
-	 * Change flag indicating that the modifiers of the element have changed.
-	 * This flag is only valid if the element is an <code>IMember</code>. 
-	 */
-	// TODO see if F_MODIFIERS is useful.
-	public int F_MODIFIERS = 0x00002;
-
-	/**
 	 * Change flag indicating that there are changes to the children of the element.
 	 * This flag is only valid if the element is an <code>IParent</code>. 
 	 */
-	public int F_CHILDREN = 0x00008;
+	public int F_CHILDREN = 0x00002;
+
+	/**
+	 * Change flag indicating that the element has changed position relatively to its siblings.
+	 * This flag is only valid if the element is an <code>IInternalElement</code>. 
+	 */
+	public int F_REORDERED= 0x00004;
 
 	/**
 	 * Change flag indicating that the element was moved from another location.
@@ -125,36 +136,17 @@ public interface IRodinElementDelta {
 	public int F_MOVED_TO = 0x00020;
 
 	/**
-	 * Change flag indicating that the element has changed position relatively to its siblings. 
-	 */
-	public int F_REORDER = 0x00100;
-
-	/**
 	 * Change flag indicating that the underlying <code>IProject</code> has been
 	 * opened. This flag is only valid if the element is an <code>IRodinProject</code>. 
 	 */
-	public int F_OPENED = 0x00200;
+	public int F_OPENED = 0x00100;
 
 	/**
 	 * Change flag indicating that the underlying <code>IProject</code> has been
 	 * closed. This flag is only valid if the element is an <code>IRodinProject</code>. 
 	 */
-	public int F_CLOSED = 0x00400;
+	public int F_CLOSED = 0x00200;
 
-	/**
-	 * Change flag indicating that this is a fine-grained delta, that is, an analysis down
-	 * to the members level was done to determine if there were structural changes to
-	 * members.
-	 * <p>
-	 * Clients can use this flag to find out if a compilation unit 
-     * that have a <code>F_CONTENT</code> change should assume that there are 
-     * no finer grained changes (<code>F_FINE_GRAINED</code> is set) or if 
-     * finer grained changes were not considered (<code>F_FINE_GRAINED</code> 
-     * is not set). 
-	 */
-	public int F_FINE_GRAINED = 0x04000;
-	// TODO check utility of FINE_GRAINED flag for deltas.
-	
 	/**
 	 * Returns deltas for the children that have been added.
 	 * @return deltas for the children that have been added
