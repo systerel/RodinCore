@@ -19,12 +19,12 @@
    <extension
          point="org.rodinp.core.fileElementTypes">
       <fileElementType
-            class="org.eventb.core.Machine"
+            class="org.eventb.core.basis.Machine"
             content-type-id="org.eventb.core.machine"
             id="machine"
             name="%eventBMachine"/>
       <fileElementType
-            class="org.eventb.core.Context"
+            class="org.eventb.core.basis.Context"
             content-type-id="org.eventb.core.context"
             id="context"
             name="%eventBContext"/>
@@ -32,47 +32,47 @@
    <extension
          point="org.rodinp.core.internalElementTypes">
       <internalElementType
-            class="org.eventb.core.CarrierSet"
+            class="org.eventb.core.basis.CarrierSet"
             id="carrierSet"
             name="%eventBCarrierSet"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Constant"
+            class="org.eventb.core.basis.Constant"
             id="constant"
             name="%eventBConstant"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Axiom"
+            class="org.eventb.core.basis.Axiom"
             id="axiom"
             name="%eventBAxiom"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Theorem"
+            class="org.eventb.core.basis.Theorem"
             id="theorem"
             name="%eventBTheorem"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Variable"
+            class="org.eventb.core.basis.Variable"
             id="variable"
             name="%eventBVariable"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Invariant"
+            class="org.eventb.core.basis.Invariant"
             id="invariant"
             name="%eventBInvariant"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Event"
+            class="org.eventb.core.basis.Event"
             id="event"
             name="%eventBEvent"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Guard"
+            class="org.eventb.core.basis.Guard"
             id="guard"
             name="%eventBGuard"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.Action"
+            class="org.eventb.core.basis.Action"
             id="action"
             name="%eventBAction"
             
