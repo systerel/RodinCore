@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.IRodinElement;
 
 /**
  * The <code>LRUCache</code> is a hashtable that stores a finite number of
@@ -498,8 +498,8 @@ public class LRUCache<K, V> implements Cloneable {
 		Object value;
 
 		ComparableEntry(Object key, Object value) {
-			if (key instanceof RodinElement) {
-				this.name = ((RodinElement) key).getElementName();
+			if (key instanceof IRodinElement) {
+				this.name = ((IRodinElement) key).getElementName();
 			} else {
 				this.name = key.toString();
 			}
