@@ -39,7 +39,7 @@ public class Context extends RodinFile implements IContext {
 	/**
 	 *  Constructor used by the Rodin database. 
 	 */
-	protected Context(IFile file, IRodinElement parent) {
+	public Context(IFile file, IRodinElement parent) {
 		super(file, parent);
 	}
 

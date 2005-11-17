@@ -32,7 +32,7 @@ public class Machine extends RodinFile implements IMachine {
 	/**
 	 *  Constructor used by the Rodin database. 
 	 */
-	protected Machine(IFile file, IRodinElement parent) {
+	public Machine(IFile file, IRodinElement parent) {
 		super(file, parent);
 	}
 
