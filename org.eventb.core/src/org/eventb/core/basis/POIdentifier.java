@@ -8,8 +8,8 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IPOIdentifier;
-import org.eventb.core.ast.Expression;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
@@ -36,9 +36,8 @@ public class POIdentifier extends InternalElement implements IPOIdentifier {
 		return getElementName();
 	}
 	
-	public Expression getType() {
-		// TODO parse type expression
-		return null;
+	public String getType() throws RodinDBException {
+		return getContents();
 	}
 
 
