@@ -1,6 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
@@ -21,8 +27,6 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class Axiom extends InternalElement implements IAxiom {
 	
-	public final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".axiom";
-
 	public Axiom(String name, IRodinElement parent) {
 		super(name, parent);
 	}

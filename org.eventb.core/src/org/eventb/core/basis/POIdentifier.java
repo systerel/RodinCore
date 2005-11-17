@@ -7,33 +7,39 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eventb.core.IEvent;
+import org.eventb.core.IPOIdentifier;
+import org.eventb.core.ast.Expression;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
 
 /**
- * Implementation of Event-B events as an extension of the Rodin database.
+ * @author halstefa
+ * 
+ * A type expression is a pair (NAME, EXPR).
  * <p>
- * This class is intended to be implemented by clients that want to extend this
- * internal element type.
- * </p>
- * <p>
- * This class should not be used in any other way than subclassing it
- * in a database extension. In particular, clients should not use it,
- * but rather use its associated interface <code>IEvent</code>.
+ * It defines a type with name NAME and described by expression EXPR.
  * </p>
  *
- * @author Laurent Voisin
  */
-public class Event extends InternalElement implements IEvent {
-	
-	public Event(String name, IRodinElement parent) {
+public class POIdentifier extends InternalElement implements IPOIdentifier {
+
+	public POIdentifier(String name, IRodinElement parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
+	
+	public String getName() {
+		return getElementName();
+	}
+	
+	public Expression getType() {
+		// TODO parse type expression
+		return null;
+	}
+
 
 }

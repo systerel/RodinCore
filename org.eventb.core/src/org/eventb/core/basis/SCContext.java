@@ -5,40 +5,31 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
-import org.eventb.core.IMachine;
+import org.eventb.core.ISCContext;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.basis.RodinFile;
 
 /**
- * Implementation of Event-B (unchecked) machines as an extension of the Rodin database.
- * <p>
- * This class is intended to be implemented by clients that want to extend this
- * file element type.
- * </p>
- * <p>
- * This class should not be used in any other way than subclassing it
- * in a database extension. In particular, clients should not use it,
- * but rather use its associated interface <code>IMachine</code>.
- * </p>
+ * @author halstefa
  *
- * @author Laurent Voisin
  */
-public class Machine extends RodinFile implements IMachine {
-	
+public class SCContext extends Context implements ISCContext {
+
 	/**
 	 *  Constructor used by the Rodin database. 
 	 */
-	protected Machine(IFile file, IRodinElement parent) {
+	public SCContext(IFile file, IRodinElement parent) {
 		super(file, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.RodinElement#getElementType()
+	 */
 	@Override
 	public String getElementType() {
-		return ELEMENT_TYPE;
+		return ISCContext.ELEMENT_TYPE;
 	}
 
 }
