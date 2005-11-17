@@ -8,10 +8,16 @@
 
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IContext;
+import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 
 /**
@@ -30,8 +36,6 @@ import org.rodinp.core.basis.RodinFile;
  */
 public class Context extends RodinFile implements IContext {
 	
-	static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context";
-
 	/**
 	 *  Constructor used by the Rodin database. 
 	 */
@@ -42,6 +46,34 @@ public class Context extends RodinFile implements IContext {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
+	}
+
+	public ICarrierSet[] getCarrierSets() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
+		CarrierSet[] carrierSets = new CarrierSet[list.size()];
+		list.toArray(carrierSets);
+		return carrierSets; 
+	}
+	
+	public Constant[] getConstants() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IConstant.ELEMENT_TYPE);
+		Constant[] constants = new Constant[list.size()];
+		list.toArray(constants);
+		return constants; 
+	}
+	
+	public Axiom[] getAxioms() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		Axiom[] axioms = new Axiom[list.size()];
+		list.toArray(axioms);
+		return axioms; 
+	}
+	
+	public Theorem[] getTheorems() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		Theorem[] theorems = new Theorem[list.size()];
+		list.toArray(theorems);
+		return theorems;
 	}
 
 }
