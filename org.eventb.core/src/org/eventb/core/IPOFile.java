@@ -5,20 +5,20 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
 package org.eventb.core;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for Event-B (unchecked) machines.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
- * @author Laurent Voisin
+ * @author halstefa
+ *
  */
-public interface IMachine extends IRodinFile {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine";
-
-	// No additional methods
+public interface IPOFile extends IRodinFile {
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poFile";
+	
+	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
+	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	public IPOSequent[] getSequents() throws RodinDBException;
 }
