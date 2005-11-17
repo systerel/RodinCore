@@ -5,20 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
 
 /**
- * Common protocol for Event-B theorems.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
- * @author Laurent Voisin
+ * @author halstefa
+ *
  */
-public interface ITheorem extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem";
+public interface IPOIdentifier extends IInternalElement {
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier";
 
-	// No additional methods
+	public String getName();
 }

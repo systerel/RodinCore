@@ -5,20 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for Event-B theorems.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
- * @author Laurent Voisin
+ * @author halstefa
+ *
  */
-public interface ITheorem extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem";
-
-	// No additional methods
+public interface IPOSequent extends IInternalElement {
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent";
+	
+	public String getName();
+	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	public IPOHypothesis getHypothesis() throws RodinDBException;
+	public IPOAnyPredicate getGoal() throws RodinDBException;
+	public String getHint(String hintName) throws RodinDBException;
 }
