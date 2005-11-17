@@ -97,8 +97,6 @@
             class="org.eventb.core.basis.Action"
             id="action"
             name="%eventBAction"
-            
-            
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.POIdentifier"

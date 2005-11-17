@@ -9,4 +9,5 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;visibility:=reexport
 Eclipse-AutoStart: true
-Export-Package: org.eventb.core
+Export-Package: org.eventb.core,
+ org.eventb.core.basis
