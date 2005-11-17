@@ -11,7 +11,7 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResource;
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * Holds cached structure and properties for a Rodin element. Subclassed to

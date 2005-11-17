@@ -35,10 +35,10 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinElement;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 /**

@@ -16,10 +16,10 @@ import java.util.Map;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinFile;
-import org.rodinp.core.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.RodinFile;
+import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
  * This class is used to perform operations on multiple <code>IRodinElement</code>.

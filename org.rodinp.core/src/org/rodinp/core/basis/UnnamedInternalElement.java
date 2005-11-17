@@ -5,14 +5,29 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.rodinp.core;
+package org.rodinp.core.basis;
 
-public class UnnamedInternalElement extends InternalElement {
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.RodinCore;
+
+/**
+ * This abstract class is intended to be implemented by clients that contribute
+ * to the <code>org.rodinp.core.internalElementTypes</code> extension point.
+ * <p>
+ * This abstract class should not be used in any other way than subclassing it
+ * in database extensions. In particular, database clients should not use it,
+ * but rather use its associated interface <code>IUnnamedInternalElement</code>.
+ * </p>
+ * 
+ * @see IUnnamedInternalElement
+ */
+public class UnnamedInternalElement extends InternalElement implements IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
 	private String type;
 
-	public UnnamedInternalElement(String type, RodinElement parent) {
+	public UnnamedInternalElement(String type, IRodinElement parent) {
 		super(RodinCore.getRodinCore().intern(REM_TYPE_PREFIX + type),
 				parent);
 		this.type = type;

@@ -50,11 +50,11 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinElement;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -170,7 +170,7 @@ public class RodinDBManager implements ISaveParticipant {
 			project = RodinCore.create(file.getProject());
 		}
 		
-		return project.getRodinFile(file.getName());
+		return (RodinFile) project.getRodinFile(file.getName());
 	}
 	
 	/**

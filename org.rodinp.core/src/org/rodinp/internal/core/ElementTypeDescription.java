@@ -11,7 +11,7 @@ package org.rodinp.internal.core;
 import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * Implements the internal description of an element type contributed by a plugin.

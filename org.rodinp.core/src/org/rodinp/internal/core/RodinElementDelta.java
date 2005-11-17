@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResourceDelta;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * @see IRodinElementDelta

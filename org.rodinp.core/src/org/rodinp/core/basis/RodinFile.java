@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     IBM Corporation - added J2SE 1.5 support
  *******************************************************************************/
-package org.rodinp.core;
+package org.rodinp.core.basis;
 
 import java.util.Map;
 
@@ -20,6 +20,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
@@ -30,7 +36,6 @@ import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 
-
 /**
  * Represents an entire Rodin file. File elements need to be opened before they
  * can be navigated or manipulated.
@@ -38,8 +43,15 @@ import org.rodinp.internal.core.util.Messages;
  * This abstract class is intended to be implemented by clients that contribute
  * to the <code>org.rodinp.core.fileElementTypes</code> extension point.
  * </p>
+ * <p>
+ * This abstract class should not be used in any other way than subclassing it
+ * in database extensions. In particular, database clients should not use it,
+ * but rather use its associated interface <code>IRodinFile</code>.
+ * </p>
+ * 
+ * @see IRodinFile
  */
-public abstract class RodinFile extends Openable implements IInternalParent, IElementManipulation {
+public abstract class RodinFile extends Openable implements IRodinFile {
 	
 	/**
 	 * The platform project this <code>IRodinProject</code> is based on
@@ -51,22 +63,8 @@ public abstract class RodinFile extends Openable implements IInternalParent, IEl
 		this.file = file;
 	}
 	
-	/**
-	 * Finds the elements in this file that correspond to the given element. An
-	 * element A corresponds to an element B if:
-	 * <ul>
-	 * <li>A has the same element name as B.
-	 * <li>The parent of A corresponds to the parent of B recursively up to
-	 * their respective files.
-	 * <li>A exists.
-	 * </ul>
-	 * Returns <code>null</code> if no such Rodin elements can be found or if
-	 * the given element is not included in a file.
-	 * 
-	 * @param element
-	 *            the given element
-	 * @return the found elements in this file that correspond to the given
-	 *         element
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinFile#findElements(org.rodinp.core.IRodinElement)
 	 */
 	public IRodinElement[] findElements(IRodinElement element) {
 		// TODO implement findElements().
@@ -143,7 +141,7 @@ public abstract class RodinFile extends Openable implements IInternalParent, IEl
 	 * @return an internal element in this file with the specified type and name
 	 */
 	public InternalElement createInternalElement(String type, String name,
-			InternalElement nextSibling, IProgressMonitor monitor)
+			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, name);
@@ -187,10 +185,16 @@ public abstract class RodinFile extends Openable implements IInternalParent, IEl
 		return manager.createInternalElementHandle(type, name, this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinFile#getPath()
+	 */
 	public IPath getPath() {
 		return file.getFullPath();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinFile#getResource()
+	 */
 	public IFile getResource() {
 		return file;
 	}
@@ -200,6 +204,9 @@ public abstract class RodinFile extends Openable implements IInternalParent, IEl
 		return file.getName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinFile#hasUnsavedChanges()
+	 */
 	@Override
 	public boolean hasUnsavedChanges() {
 		if (isOpen()) {

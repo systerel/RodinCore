@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.util;
 
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 public class MementoTokenizer {
 	private static final String EXTERNAL = Character.toString(RodinElement.REM_EXTERNAL);

@@ -11,8 +11,8 @@
 package org.rodinp.internal.core;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.Openable;
 
 /**
  * An LRU cache of <code>RodinElements</code>.

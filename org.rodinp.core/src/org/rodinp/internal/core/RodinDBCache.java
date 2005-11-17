@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.Openable;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinFile;
 
 /**
  * The cache of Rodin elements to their respective info.

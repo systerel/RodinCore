@@ -24,12 +24,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinElement;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.MementoTokenizer;
 
 /**
@@ -556,9 +557,9 @@ public class RodinProject
 		return getRodinFile(name);
 	}
 
-	public RodinFile[] getRodinFiles() throws RodinDBException {
+	public IRodinFile[] getRodinFiles() throws RodinDBException {
 		IRodinElement[] children = getChildren();
-		RodinFile[] result = new RodinFile[children.length];
+		IRodinFile[] result = new IRodinFile[children.length];
 		System.arraycopy(children, 0, result, 0, children.length);
 		return result;
 	}

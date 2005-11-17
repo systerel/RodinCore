@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
 
 /**

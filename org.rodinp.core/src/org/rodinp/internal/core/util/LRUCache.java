@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * The <code>LRUCache</code> is a hashtable that stores a finite number of

@@ -9,4 +9,5 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport
 Eclipse-AutoStart: true
-Export-Package: org.rodinp.core
+Export-Package: org.rodinp.core,
+ org.rodinp.core.basis

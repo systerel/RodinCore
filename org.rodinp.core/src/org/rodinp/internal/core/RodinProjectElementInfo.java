@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 
 /** 
  * Info for IRodinProject.

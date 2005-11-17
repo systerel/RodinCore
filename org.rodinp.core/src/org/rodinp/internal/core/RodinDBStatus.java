@@ -20,7 +20,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinElement;
+import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.util.Messages;
 
 /**

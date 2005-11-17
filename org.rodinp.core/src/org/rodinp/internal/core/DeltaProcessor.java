@@ -29,9 +29,9 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.Openable;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.Util;
 

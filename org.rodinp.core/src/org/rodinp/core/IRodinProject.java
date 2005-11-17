@@ -126,7 +126,7 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 * @param name the given name
 	 * @return the Rodin file with the specified name in this project
 	 */
-	RodinFile getRodinFile(String name);
+	IRodinFile getRodinFile(String name);
 	
 	/**
 	 * Returns whether this project has been built at least once and thus
@@ -205,7 +205,7 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *                </ul>
 	 * @return a Rodin file in this project with the specified name
 	 */
-	RodinFile createRodinFile(String name, boolean force, IProgressMonitor monitor) throws RodinDBException;
+	IRodinFile createRodinFile(String name, boolean force, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns all the Rodin files in this project.
@@ -214,6 +214,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *		exception occurs while accessing its corresponding resource.
 	 * @return all of the Rodin files in this project
 	 */
-	RodinFile[] getRodinFiles() throws RodinDBException;
+	IRodinFile[] getRodinFiles() throws RodinDBException;
 	
 }

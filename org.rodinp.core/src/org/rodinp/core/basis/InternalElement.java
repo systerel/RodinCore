@@ -5,13 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.rodinp.core;
+package org.rodinp.core.basis;
 
 import java.util.HashMap;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
@@ -24,17 +30,17 @@ import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 
 /**
- * Common implementationfor all internal elements.
+ * This abstract class is intended to be implemented by clients that contribute
+ * to the <code>org.rodinp.core.internalElementTypes</code> extension point.
  * <p>
- * Internal elements are elements of the database that are stored within files.
+ * This abstract class should not be used in any other way than subclassing it
+ * in database extensions. In particular, database clients should not use it,
+ * but rather use its associated interface <code>IInternalElement</code>.
  * </p>
  * 
- * TODO describe internal element
- * TODO extract an interface for it
- * 
- * @author Laurent Voisin
+ * @see IInternalElement
  */
-public abstract class InternalElement extends RodinElement implements IInternalParent, IElementManipulation {
+public abstract class InternalElement extends RodinElement implements IInternalElement {
 	
 	/* Name of this internal element */
 	private String name;
@@ -86,40 +92,11 @@ public abstract class InternalElement extends RodinElement implements IInternalP
 		return new InternalElementInfo();
 	}
 	
-	/**
-	 * Creates and returns a new internal element in this element with the given
-	 * type and name. As a side effect, the file containing this element is opened
-	 * if it was not already.
-	 * 
-	 * <p>
-	 * A new internal element is always created by this method, whether there
-	 * already exists an element with the same name or not.
-	 * </p>
-	 * 
-	 * @param type
-	 *            type of the internal element to create
-	 * @param childName
-	 *            name of the internal element to create. Should be
-	 *            <code>null</code> if the new element is unnamed.
-	 * @param nextSibling
-	 *            succesor node of the internal element to create. Must be a
-	 *            child of this element or <code>null</code> (in that latter
-	 *            case, the new element will be the last child of this element).
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be created. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                creating an underlying resource
-	 *                <li> The given type is unknown (INVALID_INTERNAL_ELEMENT_TYPE)
-	 *                </ul>
-	 * @return an internal element in this file with the specified type and name
+	/* (non-Javadoc)
+	 * @see IInternalParent
 	 */
 	public InternalElement createInternalElement(String type, String childName,
-			InternalElement nextSibling, IProgressMonitor monitor)
+			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, childName);
@@ -198,15 +175,24 @@ public abstract class InternalElement extends RodinElement implements IInternalP
 		return REM_INTERNAL;
 	}
 
+	/* (non-Javadoc)
+	 * @see IRodinElement
+	 */
 	public IResource getCorrespondingResource() {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see IRodinElement
+	 */
 	public IPath getPath() {
 		return getOpenableParent().getPath();
 	}
 
-	public IResource getResource() {
+	/* (non-Javadoc)
+	 * @see IRodinElement
+	 */
+	public IFile getResource() {
 		try {
 			return getUnderlyingResource();
 		} catch (RodinDBException e) {
@@ -219,11 +205,11 @@ public abstract class InternalElement extends RodinElement implements IInternalP
 		return getOpenableParent();
 	}
 
-	public IResource getUnderlyingResource() throws RodinDBException {
-		return getOpenableParent().getCorrespondingResource();
+	public IFile getUnderlyingResource() throws RodinDBException {
+		return getOpenableParent().getResource();
 	}
 
-	/**
+	/*
 	 * Returns the closest openable ancestor of this element (that is its
 	 * enclosing file element). Should never return <code>null</code>.
 	 * 
@@ -256,7 +242,7 @@ public abstract class InternalElement extends RodinElement implements IInternalP
 		}
 	}
 	
-	/**
+	/*
 	 * @see IParent 
 	 */
 	@Override
@@ -299,79 +285,29 @@ public abstract class InternalElement extends RodinElement implements IInternalP
 		throw newNotPresentException();
 	}
 
-	/**
-	 * Returns the contents of this internal element. The file containing this
-	 * internal element is opened if it was not already.
-	 * 
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @return the contents of this element.
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalElement#getContents()
 	 */
 	public String getContents() throws RodinDBException {
 		return getContents(null);
 	}
 
-	/**
-	 * Returns the contents of this internal element. The file containing this
-	 * internal element is opened if it was not already.
-	 * 
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @return the contents of this element.
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalElement#getContents(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String getContents(IProgressMonitor monitor) throws RodinDBException {
 		return getElementInfo(monitor).getContents();
 	}
 
-	/**
-	 * Sets the contents of this internal element to the provided string. The
-	 * file containing this internal element is opened if it was not already.
-	 * 
-	 * @param contents
-	 *            the new contents to set
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalElement#setContents(java.lang.String)
 	 */
 	public void setContents(String contents) throws RodinDBException {
 		setContents(contents, null);
 	}
 
-	/**
-	 * Sets the contents of this internal element to the provided string. The
-	 * file containing this internal element is opened if it was not already.
-	 * 
-	 * @param contents
-	 *            the new contents to set
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalElement#setContents(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
 		getElementInfo(null).setContents(contents);

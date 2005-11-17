@@ -3,21 +3,22 @@ package org.rodinp.internal.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinElement;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 public class CreateInternalElementOperation extends RodinDBOperation{
 
 	private InternalElement newElement;
-	private InternalElement nextSibling;
+	private IInternalElement nextSibling;
 	
-	public CreateInternalElementOperation(InternalElement newElement, InternalElement nextSibling) {
+	public CreateInternalElementOperation(InternalElement newElement, IInternalElement nextSibling) {
 		super(new IRodinElement[] { newElement });
 		this.newElement = newElement;
 		this.nextSibling = nextSibling;
@@ -34,7 +35,7 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
 			InternalElementInfo newInfo = newElement.createElementInfo(); 
 			fileInfo.addElement(newElement, newInfo);
-			parent.getElementInfo().addChildBefore(newElement, nextSibling);
+			parent.getElementInfo().addChildBefore(newElement, (InternalElement) nextSibling);
 			delta.added(newElement);
 			addDelta(delta);
 			worked(1);

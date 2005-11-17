@@ -18,15 +18,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.InternalElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinElement;
-import org.rodinp.core.RodinFile;
-import org.rodinp.core.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
+import org.rodinp.core.basis.UnnamedInternalElement;
 import org.rodinp.internal.core.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -139,7 +140,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	private InternalElement create(Element element, IInternalParent rodinParent) {
 		String rodinType = element.getTagName();
 		String name = element.getAttribute("name");
-		return rodinParent.getInternalElement(rodinType, name);
+		return (InternalElement) rodinParent.getInternalElement(rodinType, name);
 	}
 
 	protected void deleteElement(InternalElement element) {
@@ -163,18 +164,18 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	// Removes an element and all its descendants from this file.
-	private synchronized void removeElement(InternalElement element) {
+	private synchronized void removeElement(IInternalElement element) {
 		InternalElementInfo info = internalElements.get(element);
 		internalElements.remove(element);
 		changed = true;
 		if (info != null) {
 			for (RodinElement child: info.getChildren()) {
-				removeElement((InternalElement) child);
+				removeElement((IInternalElement) child);
 			}
 		}
 	}
 
-	public synchronized InternalElementInfo getElementInfo(InternalElement element) {
+	public synchronized InternalElementInfo getElementInfo(IInternalElement element) {
 		return internalElements.get(element);
 	}
 
@@ -303,7 +304,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	// dest must be an element of the Rodin file associated to this info.
-	protected synchronized void copy(InternalElement source,
+	protected synchronized void copy(IInternalElement source,
 			InternalElementInfo sourceInfo, InternalElement dest,
 			InternalElement nextSibling) {
 		
@@ -312,14 +313,14 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		if (destParent instanceof RodinFile) {
 			destParentInfo = this;
 		} else {
-			destParentInfo = getElementInfo((InternalElement) destParent);
+			destParentInfo = getElementInfo((IInternalElement) destParent);
 		}
 		destParentInfo.addChildBefore(dest, nextSibling);
 		clone(source, sourceInfo, dest);
 	}
 
 	// Clones deeply the source element.
-	private synchronized void clone(InternalElement source,
+	private synchronized void clone(IInternalElement source,
 			InternalElementInfo sourceInfo, InternalElement dest) {
 
 		InternalElementInfo destInfo = dest.createElementInfo();
@@ -331,7 +332,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		// Copy children
 		RodinElement[] sourceChildren = sourceInfo.getChildren();
 		int length = sourceChildren.length;
-		InternalElement[] destChildren = new InternalElement[length];
+		IInternalElement[] destChildren = new IInternalElement[length];
 		for (int i = 0; i < length; ++ i) {
 			InternalElement sourceChild = (InternalElement) sourceChildren[i];
 			InternalElement destChild = dest.getInternalElement(

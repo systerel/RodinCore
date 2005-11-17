@@ -17,9 +17,9 @@ import java.util.Iterator;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.Openable;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinFile;
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinFile;
 
 /**
  * This class is used by <code>RodinDBManager</code> to update the RodinDB

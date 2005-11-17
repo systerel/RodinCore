@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.InternalElement;
+import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Util;
 
 /**

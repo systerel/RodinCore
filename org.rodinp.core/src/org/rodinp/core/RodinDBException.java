@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-
 import org.rodinp.internal.core.RodinDBStatus;
 
 /**
