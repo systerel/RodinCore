@@ -15,6 +15,18 @@
             id="context"
             name="%eventBContext"
             priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="bcm"
+            id="scMachine"
+            name="%eventBSCMachine"
+            priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="bcc"
+            id="scContext"
+            name="%eventBSCContext"
+            priority="normal"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -28,6 +40,16 @@
             content-type-id="org.eventb.core.context"
             id="context"
             name="%eventBContext"/>
+      <fileElementType
+            class="org.eventb.core.basis.SCMachine"
+            content-type-id="org.eventb.core.scMachine"
+            id="scMachine"
+            name="%eventBSCMachine"/>
+      <fileElementType
+            class="org.eventb.core.basis.SCContext"
+            content-type-id="org.eventb.core.scContext"
+            id="scContext"
+            name="%eventBSCContext"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -77,6 +99,21 @@
             name="%eventBAction"
             
             
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POIdentifier"
+            id="poIdentifier"
+            name="%eventBpoIdentifier"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCAxiomSet"
+            id="scAxiomSet"
+            name="%eventBscAxiomSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCTheoremSet"
+            id="scTheoremSet"
+            name="%eventBscTheoremSet"
             named="true"/>
    </extension>
 
