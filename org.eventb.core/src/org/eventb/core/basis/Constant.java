@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
