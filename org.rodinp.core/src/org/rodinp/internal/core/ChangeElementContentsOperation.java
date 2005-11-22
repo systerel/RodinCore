@@ -14,21 +14,22 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
-public class CreateInternalElementOperation extends RodinDBOperation{
+public class ChangeElementContentsOperation extends RodinDBOperation{
 
-	private InternalElement newElement;
-	private IInternalElement nextSibling;
+	private InternalElement element;
+	private String newContents;
 	
-	public CreateInternalElementOperation(InternalElement newElement, IInternalElement nextSibling) {
-		super(new IRodinElement[] { newElement });
-		this.newElement = newElement;
-		this.nextSibling = nextSibling;
+	public ChangeElementContentsOperation(InternalElement element, String newContents) {
+		super(new IRodinElement[] { element });
+		this.element = element;
+		this.newContents = newContents;
 	}
 
 	@Override
@@ -36,14 +37,11 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 		RodinElementDelta delta = newRodinElementDelta();
 
 		try {
-			beginTask(Messages.operation_createInternalElementProgress, 2);
-			RodinElement parent = newElement.getParent();
-			RodinFile file = newElement.getOpenableParent();
+			beginTask(Messages.operation_changeElementContentsProgress, 2);
+			RodinFile file = element.getOpenableParent();
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
-			InternalElementInfo newInfo = newElement.createElementInfo(); 
-			fileInfo.addElement(newElement, newInfo);
-			parent.getElementInfo().addChildBefore(newElement, (InternalElement) nextSibling);
-			delta.added(newElement);
+			fileInfo.changeDescendantContents(element, newContents);
+			delta.changed(element, IRodinElementDelta.F_CONTENT);
 			addDelta(delta);
 			worked(1);
 		} finally {
@@ -53,30 +51,32 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 
 	@Override
 	protected ISchedulingRule getSchedulingRule() {
-		IResource resource = newElement.getOpenableParent().getResource();
+		IResource resource = element.getOpenableParent().getResource();
 		IWorkspace workspace = resource.getWorkspace();
 		if (resource.exists()) {
 			return workspace.getRuleFactory().modifyRule(resource);
 		} else {
-			return workspace.getRuleFactory().createRule(resource);
+			return super.getSchedulingRule();
 		}
 	}
 
 	/**
 	 * Possible failures:
 	 * <ul>
-	 * <li>NO_ELEMENTS_TO_PROCESS - the newElement supplied to the operation is
+	 * <li>NO_ELEMENTS_TO_PROCESS - the element supplied to the operation is
 	 * <code>null</code>.
-	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a different parent.
+	 * <li>ELEMENT_DOES_NOT_EXIST - the element supplied to the operation
+	 * doesn't exist yet.
 	 * </ul>
 	 */
 	@Override
 	public IRodinDBStatus verify() {
 		super.verify();
-		if (nextSibling != null && nextSibling.getParent() != newElement.getParent()) {
-			return new RodinDBStatus(IRodinDBStatusConstants.INVALID_SIBLING,
-					nextSibling);
+		if (! element.exists()) {
+			return new RodinDBStatus(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+					element);
 		}
+		// TODO check for NULL contents
 		return RodinDBStatus.VERIFIED_OK;
 	}
 }

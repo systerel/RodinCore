@@ -64,6 +64,7 @@ public final class Messages /*extends NLS*/ {
 	public static String operation_nullContainer;
 	public static String operation_copyResourceProgress;
 	public static String operation_copyElementProgress;
+	public static String operation_changeElementContentsProgress;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

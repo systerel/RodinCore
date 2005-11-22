@@ -18,6 +18,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.ChangeElementContentsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
@@ -310,7 +311,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 * @see org.rodinp.core.IInternalElement#setContents(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
-		getElementInfo(null).setContents(contents);
+		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
 	}
 
 }

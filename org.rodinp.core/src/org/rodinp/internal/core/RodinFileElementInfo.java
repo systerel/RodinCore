@@ -347,7 +347,12 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 				Util.log(e, "when cloning an internal element sub-tree");
 			}
 		}
-		
+	}
+
+	public void changeDescendantContents(InternalElement descendant, String newContents) {
+		InternalElementInfo info = getElementInfo(descendant);
+		info.setContents(newContents);
+		changed = true;
 	}
 	
 }
