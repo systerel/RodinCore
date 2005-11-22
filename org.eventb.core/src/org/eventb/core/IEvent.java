@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IEvent extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event";
 
 	// No additional methods
 }

@@ -16,7 +16,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOSequent extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent";
 	
 	public String getName();
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;

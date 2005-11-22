@@ -9,12 +9,15 @@
 package org.eventb.core;
 
 import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author halstefa
  *
  */
 public interface ISCAxiomSet extends IUnnamedInternalElement {
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet";
+	
+	public IAxiom[] getAxioms() throws RodinDBException;
 	
 }

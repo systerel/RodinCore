@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IAxiom extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".axiom";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".axiom";
 
 	// No additional methods
 }

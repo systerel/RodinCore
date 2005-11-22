@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IConstant extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".constant";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".constant";
 
 	// No additional methods
 }

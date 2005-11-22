@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinFile;
  * @author Laurent Voisin
  */
 public interface IMachine extends IRodinFile {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine";
 
 	// No additional methods
 }

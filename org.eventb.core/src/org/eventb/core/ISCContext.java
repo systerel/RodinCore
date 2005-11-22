@@ -8,6 +8,8 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.RodinDBException;
+
 
 /**
  * @author halstefa
@@ -16,5 +18,7 @@ package org.eventb.core;
 public interface ISCContext extends IContext {
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext";
 	
-//	 No additional methods
+	public IAxiom[] getOldAxioms() throws RodinDBException;
+	public ITheorem[] getOldTheorems() throws RodinDBException;
+	
 }

@@ -19,6 +19,6 @@ import org.rodinp.core.IInternalElement;
  */
 public interface IAction extends IInternalElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action";
 	// No additional methods
 }

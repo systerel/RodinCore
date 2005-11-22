@@ -16,7 +16,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOHypothesis extends IUnnamedInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poHypothesis";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poHypothesis";
 	
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException;
 	public IPOAnyPredicate[] getLocalHypothesis() throws RodinDBException;

@@ -15,7 +15,7 @@ import org.rodinp.core.IInternalElement;
  *
  */
 public interface IPOIdentifier extends IInternalElement {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier";
 
 	public String getName();
 }

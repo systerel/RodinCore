@@ -13,7 +13,7 @@ package org.eventb.core;
  *
  */
 public interface IPOPredicate extends IPOAnyPredicate {
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicate";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicate";
 	
 	public String getName();
 }

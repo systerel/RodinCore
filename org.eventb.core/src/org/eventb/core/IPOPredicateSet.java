@@ -16,7 +16,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOPredicateSet extends IInternalElement {
-	public static final String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicateSet";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicateSet";
 	
 	public IPOPredicate[] getPredicates() throws RodinDBException;
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException;
