@@ -10,14 +10,12 @@ package org.rodinp.internal.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
@@ -67,16 +65,21 @@ public class ChangeElementContentsOperation extends RodinDBOperation{
 	 * <code>null</code>.
 	 * <li>ELEMENT_DOES_NOT_EXIST - the element supplied to the operation
 	 * doesn't exist yet.
+	 * <li>NULL_STRING - the contents supplied to the operation is
+	 * <code>null</code>.
 	 * </ul>
 	 */
 	@Override
 	public IRodinDBStatus verify() {
 		super.verify();
 		if (! element.exists()) {
-			return new RodinDBStatus(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
 					element);
 		}
-		// TODO check for NULL contents
+		if (newContents == null) {
+			return new RodinDBStatus(IRodinDBStatusConstants.NULL_STRING);
+		}
 		return RodinDBStatus.VERIFIED_OK;
 	}
 }
