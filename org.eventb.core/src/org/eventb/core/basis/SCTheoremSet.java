@@ -8,8 +8,12 @@
 
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+
 import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
@@ -28,6 +32,13 @@ public class SCTheoremSet extends UnnamedInternalElement implements ISCTheoremSe
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
+	}
+	
+	public Theorem[] getTheorems() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		Theorem[] theorems = new Theorem[list.size()];
+		list.toArray(theorems);
+		return theorems;
 	}
 
 }
