@@ -14,6 +14,10 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author halstefa
  *
+ * An axiom set contains theorems of abstractions of a context, or
+ * of seen contexts (and their abstractions. Element names of theorems
+ * are not unique in a theorem set. The origin of a theorem can be determined
+ * by a corresponding attribute.
  */
 public interface ISCTheoremSet extends IUnnamedInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scTheoremSet";
