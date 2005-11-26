@@ -897,7 +897,8 @@ public class RodinDBManager implements ISaveParticipant {
 			builderFactory.setXIncludeAware(false);
 		}
 		try {
-			// TODO see how builders could be shared (take care of multi-threading)
+			// TODO see how DOM builders could be shared (take care of multi-threading)
+			// TODO register an error handler to the builder
 			return builderFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			Util.log(e, "Can't get a DOM builder");
