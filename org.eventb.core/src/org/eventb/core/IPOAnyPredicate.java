@@ -15,5 +15,5 @@ import org.rodinp.core.IUnnamedInternalElement;
  *
  */
 public interface IPOAnyPredicate extends IUnnamedInternalElement {
-	// This interface unifies access to IPOPredicate and IPOPredicateForm
+	// This interface unifies access to IPOPredicate and IPOModifiedPredicate
 }
