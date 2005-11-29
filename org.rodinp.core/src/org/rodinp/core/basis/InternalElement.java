@@ -29,6 +29,7 @@ import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * This abstract class is intended to be implemented by clients that contribute
@@ -301,6 +302,30 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void move(IRodinElement container, IRodinElement sibling,
+			String rename, boolean replace, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		if (container == null) {
+			throw new IllegalArgumentException(Messages.operation_nullContainer); 
+		}
+		IRodinElement[] elements= new IRodinElement[] {this};
+		IRodinElement[] containers= new IRodinElement[] {container};
+		IRodinElement[] siblings= null;
+		if (sibling != null) {
+			siblings= new IRodinElement[] {sibling};
+		}
+		String[] renamings= null;
+		if (rename != null) {
+			renamings= new String[] {rename};
+		}
+		getRodinDB().move(elements, containers, siblings, renamings, replace, monitor);
+		
+	}
+
+	/* (non-Javadoc)
 	 * @see org.rodinp.core.IInternalElement#setContents(java.lang.String)
 	 */
 	public void setContents(String contents) throws RodinDBException {
@@ -312,6 +337,20 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 */
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
 		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
+	}
+
+	@Override
+	public Object toStringInfo(int tab, StringBuffer buffer) {
+		RodinElementInfo info = null;
+		try {
+			RodinFile rf = getOpenableParent();
+			RodinFileElementInfo rfInfo = (RodinFileElementInfo) rf.getElementInfo();
+			info = rfInfo.getElementInfo(this);
+		} catch (RodinDBException e) {
+			Util.log(e, "can't read element info in toStringInfo");
+		}
+		this.toStringInfo(tab, buffer, info);
+		return info;
 	}
 
 }
