@@ -15,7 +15,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ISees extends IUnnamedInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".sees";
 	
 	public String getSeenContext() throws RodinDBException;
 }
