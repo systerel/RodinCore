@@ -35,6 +35,14 @@ public class MoveElementsOperation extends CopyElementsOperation {
 		super(elementsToMove, destContainers, force);
 	}
 
+	public MoveElementsOperation(IRodinElement[] elementsToMove, boolean force) {
+		super(elementsToMove, force);
+	}
+
+	public MoveElementsOperation(IRodinElement elementToMove, boolean force) {
+		super(elementToMove, force);
+	}
+
 	@Override
 	protected String getMainTaskName() {
 		return Messages.operation_moveElementProgress;

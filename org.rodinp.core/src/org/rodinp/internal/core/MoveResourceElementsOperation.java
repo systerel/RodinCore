@@ -11,6 +11,7 @@
 package org.rodinp.internal.core;
 
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -33,6 +34,19 @@ public class MoveResourceElementsOperation extends CopyResourceElementsOperation
 	public MoveResourceElementsOperation(IRodinElement[] elementsToMove,
 			IRodinElement[] destContainers, boolean force) {
 		super(elementsToMove, destContainers, force);
+	}
+
+	public MoveResourceElementsOperation(IRodinElement[] elementsToMove, boolean force) {
+		super(elementsToMove, force);
+	}
+
+	public MoveResourceElementsOperation(IRodinElement elementToMove,
+			IRodinElement destContainer, boolean force) {
+		super(elementToMove, destContainer, force);
+	}
+
+	public MoveResourceElementsOperation(RodinFile elementToMove, boolean force) {
+		super(elementToMove, force);
 	}
 
 	@Override

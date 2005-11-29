@@ -29,7 +29,9 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
+import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
@@ -244,6 +246,14 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		}
 		getRodinDB().move(elements, containers, null, renamings, replace, monitor);
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
+		MultiOperation op = new RenameResourceElementsOperation(this, name, replace);
+		op.runOperation(monitor);
 	}
 
 	@Override

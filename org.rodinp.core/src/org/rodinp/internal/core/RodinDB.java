@@ -363,4 +363,15 @@ public class RodinDB extends Openable implements IRodinDB {
 		}
 	}
 
+	public void rename(IRodinElement[] elements, String[] names, boolean replace, IProgressMonitor monitor) throws RodinDBException {
+		MultiOperation op;
+		if (elements != null && elements.length > 0 && elements[0] != null
+				&& elements[0] instanceof IOpenable) {
+			op = new RenameResourceElementsOperation(elements, names, replace);
+		} else {
+			op = new RenameElementsOperation(elements, names, replace);
+		}
+		op.runOperation(monitor);
+	}
+
 }

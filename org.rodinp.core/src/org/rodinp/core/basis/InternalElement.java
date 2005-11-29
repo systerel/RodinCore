@@ -23,6 +23,8 @@ import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
+import org.rodinp.internal.core.MultiOperation;
+import org.rodinp.internal.core.RenameElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
@@ -323,6 +325,14 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 		getRodinDB().move(elements, containers, siblings, renamings, replace, monitor);
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void rename(String newName, boolean replace, IProgressMonitor monitor) throws RodinDBException {
+		MultiOperation op = new RenameElementsOperation(this, newName, replace);
+		op.runOperation(monitor);
 	}
 
 	/* (non-Javadoc)

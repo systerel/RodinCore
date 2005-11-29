@@ -64,9 +64,17 @@ public class CopyElementsOperation extends MultiOperation {
 	public CopyElementsOperation(IRodinElement[] elementsToCopy,
 			IRodinElement destContainer, boolean force) {
 
-		this(elementsToCopy, new IRodinElement[] {destContainer}, force);
+		super(elementsToCopy, new IRodinElement[] {destContainer}, force);
 	}
 	
+	public CopyElementsOperation(IRodinElement[] elementsToCopy, boolean force) {
+		super(elementsToCopy, force);
+	}
+	
+	public CopyElementsOperation(IRodinElement elementToCopy, boolean force) {
+		super(elementToCopy, force);
+	}
+
 	/*
 	 * Returns the <code>String</code> to use as the main task name
 	 * for progress monitoring.
@@ -94,12 +102,7 @@ public class CopyElementsOperation extends MultiOperation {
 		InternalElement dest = getDestElement(source);
 		RodinFileElementInfo rfInfo = getRodinFileElementInfo(dest);
 
-		// TODO fix Rodin deltas for rename.
-		if (isRename()) {
-			rfInfo.rename(source, dest);
-			delta.removed(element);
-			delta.added(dest);
-		} else if (source.equals(dest)) {
+		if (source.equals(dest)) {
 			if (rfInfo.reorder(source, nextSibling)) {
 				delta.changed(source, IRodinElementDelta.F_REORDERED);
 			}
@@ -112,14 +115,20 @@ public class CopyElementsOperation extends MultiOperation {
 					error(IRodinDBStatusConstants.NAME_COLLISION, element);
 				}
 			}
-			rfInfo.copy(source, sourceInfo, dest, nextSibling);
-
-			// Supprimer l'élément si Move.
+			if (isRename()) {
+				rfInfo.rename(source, dest);
+			} else {
+				rfInfo.copy(source, sourceInfo, dest, nextSibling);
+			}
+			
 			if (isMove()) {
-				RodinFile rfSource = source.getOpenableParent();
-				RodinFileElementInfo rfSourceInfo = 
-					(RodinFileElementInfo) rfSource.getElementInfo(getSubProgressMonitor(1));
-				rfSourceInfo.delete(source);
+				if (! isRename()) {
+					// Remove source element
+					RodinFile rfSource = source.getOpenableParent();
+					RodinFileElementInfo rfSourceInfo = 
+						(RodinFileElementInfo) rfSource.getElementInfo(getSubProgressMonitor(1));
+					rfSourceInfo.delete(source);
+				}
 				delta.movedFrom(source, dest);
 				delta.movedTo(dest, source);
 			} else {

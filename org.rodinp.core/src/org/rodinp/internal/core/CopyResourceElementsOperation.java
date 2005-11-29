@@ -82,6 +82,20 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 		super(resourcesToCopy, destContainers, force);
 	}
 	
+	public CopyResourceElementsOperation(IRodinElement[] resourcesToCopy, boolean force) {
+		super(resourcesToCopy, force);
+	}
+	
+	public CopyResourceElementsOperation(IRodinElement resourceToCopy,
+			IRodinElement destContainer, boolean force) {
+
+		super(resourceToCopy, destContainer, force);
+	}
+	
+	public CopyResourceElementsOperation(RodinFile resourceToCopy, boolean force) {
+		super(resourceToCopy, force);
+	}
+
 	/**
 	 * Returns the <code>RodinElementDelta</code> for <code>rodinProject</code>,
 	 * creating it and putting it in <code>fDeltasPerProject</code> if

@@ -253,44 +253,39 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 			IRodinElement[] siblings, String[] renamings, boolean replace,
 			IProgressMonitor monitor) throws RodinDBException;
 
-//	/**
-//	 * Renames the given elements as specified. If one container is specified,
-//	 * all elements are renamed within that container. If more than one
-//	 * container is specified, the number of elements and containers must match,
-//	 * and each element is renamed within its associated container.
-//	 * 
-//	 * @param elements
-//	 *            the elements to rename
-//	 * @param destinations
-//	 *            the container, or list of containers
-//	 * @param names
-//	 *            the list of new names
-//	 * @param replace
-//	 *            <code>true</code> if an existing child in a target container
-//	 *            with the target name should be replaced, and
-//	 *            <code>false</code> to throw an exception in the event of a
-//	 *            name collision
-//	 * @param monitor
-//	 *            a progress monitor
-//	 * @exception RodinDBException
-//	 *                if an element could not be renamed. Reasons include:
-//	 *                <ul>
-//	 *                <li> There is no element to process
-//	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
-//	 *                empty</li>
-//	 *                <li> A specified element does not exist
-//	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-//	 *                <li> A <code>CoreException</code> occurred while
-//	 *                updating an underlying resource
-//	 *                <li> A new name is invalid (<code>INVALID_NAME</code>)
-//	 *                <li> A child already exists with the same name and
-//	 *                <code>replace</code> has been specified as
-//	 *                <code>false</code> (<code>NAME_COLLISION</code>)
-//	 *                <li> An element is read-only (<code>READ_ONLY</code>)
-//	 *                </ul>
-//	 */
-//	void rename(IRodinElement[] elements, IRodinElement[] destinations,
-//			String[] names, boolean replace, IProgressMonitor monitor)
-//			throws RodinDBException;
+	/**
+	 * Renames the given elements as specified.
+	 * 
+	 * @param elements
+	 *            the elements to rename
+	 * @param names
+	 *            the list of new names. Must not be <code>null</code> or
+	 *            contain <code>null</code>. Must have the same length as
+	 *            <code>elements</code>.
+	 * @param replace
+	 *            <code>true</code> if an existing element with the target
+	 *            name should be replaced, and <code>false</code> to throw an
+	 *            exception in the event of a name collision
+	 * @param monitor
+	 *            a progress monitor
+	 * @exception RodinDBException
+	 *                if an element could not be renamed. Reasons include:
+	 *                <ul>
+	 *                <li> There is no element to process
+	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
+	 *                empty</li>
+	 *                <li> A specified element does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                updating an underlying resource
+	 *                <li> A new name is invalid (<code>INVALID_NAME</code>)
+	 *                <li> A child already exists with the same name and
+	 *                <code>replace</code> has been specified as
+	 *                <code>false</code> (<code>NAME_COLLISION</code>)
+	 *                <li> An element is read-only (<code>READ_ONLY</code>)
+	 *                </ul>
+	 */
+	void rename(IRodinElement[] elements, String[] names, boolean replace,
+			IProgressMonitor monitor) throws RodinDBException;
 
 }

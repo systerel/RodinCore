@@ -46,7 +46,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Keyed by elements being processed, and
 	 * values are the corresponding destination parent.
 	 */
-	protected Map<IRodinElement, IRodinElement> newParents;
+	private Map<IRodinElement, IRodinElement> newParents;
 	
 	/**
 	 * This table presents the data in <code>renamingList</code> in a more
@@ -90,6 +90,12 @@ public abstract class MultiOperation extends RodinDBOperation {
 		}
 	}
 
+	public MultiOperation(IRodinElement elementToProcess, IRodinElement parentElement, boolean force) {
+		super(elementToProcess, force);
+		this.newParents = new HashMap<IRodinElement, IRodinElement>(1);
+		this.newParents.put(elementToProcess, parentElement);
+	}
+
 	/**
 	 * Convenience method to create a <code>RodinDBException</code>
 	 * embending a <code>RodinDBStatus</code>.
@@ -114,6 +120,8 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Returns the parent of the element being copied/moved/renamed.
 	 */
 	protected IRodinElement getDestinationParent(IRodinElement child) {
+		if (this.newParents == null)
+			return child.getParent();
 		return this.newParents.get(child);
 	}
 	

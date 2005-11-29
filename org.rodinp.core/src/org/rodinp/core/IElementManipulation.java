@@ -95,24 +95,24 @@ public interface IElementManipulation {
 	 */
 	void move(IRodinElement container, IRodinElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws RodinDBException;
 	
-//	/**
-//	 * Renames this element to the given name.
-//	 *
-//	 * @param name the new name for the element
-//	 * @param replace <code>true</code> if any existing element with the target name
-//	 *   should be replaced, and <code>false</code> to throw an exception in the
-//	 *   event of a name collision
-//	 * @param monitor a progress monitor
-//	 * @exception RodinDBException if this element could not be renamed. Reasons include:
-//	 * <ul>
-//	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-//	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
-//	 * <li> The new name is invalid (INVALID_NAME)
-//	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
-//	 *		and <code>replace</code> has been specified as <code>false</code>
-//	 * <li> This element is read-only (READ_ONLY) 
-//	 * </ul>
-//	 */
-//	void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException;
+	/**
+	 * Renames this element to the given name.
+	 *
+	 * @param name the new name for the element
+	 * @param replace <code>true</code> if any existing element with the target name
+	 *   should be replaced, and <code>false</code> to throw an exception in the
+	 *   event of a name collision
+	 * @param monitor a progress monitor
+	 * @exception RodinDBException if this element could not be renamed. Reasons include:
+	 * <ul>
+	 * <li> This Rodin element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> The new name is invalid (INVALID_NAME)
+	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
+	 *		and <code>replace</code> has been specified as <code>false</code>
+	 * <li> This element is read-only (READ_ONLY) 
+	 * </ul>
+	 */
+	void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException;
 
 }
