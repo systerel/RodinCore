@@ -345,4 +345,22 @@ public class RodinDB extends Openable implements IRodinDB {
 		return "";
 	}
 
+	/*
+	 * @see IRodinDB
+	 */
+	public void move(IRodinElement[] elements, IRodinElement[] containers,
+			IRodinElement[] siblings, String[] renamings, boolean force,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (elements != null && elements.length > 0 && elements[0] != null
+				&& elements[0] instanceof IOpenable) {
+			runOperation(new MoveResourceElementsOperation(elements,
+					containers, force), elements, siblings, renamings, monitor);
+		} else {
+			runOperation(
+					new MoveElementsOperation(elements, containers, force),
+					elements, siblings, renamings, monitor);
+		}
+	}
+
 }

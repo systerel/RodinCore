@@ -14,6 +14,7 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
@@ -93,26 +94,36 @@ public class CopyElementsOperation extends MultiOperation {
 		InternalElement dest = getDestElement(source);
 		RodinFileElementInfo rfInfo = getRodinFileElementInfo(dest);
 
-		// TODO fix Rodin deltas for rename and move.
+		// TODO fix Rodin deltas for rename.
 		if (isRename()) {
 			rfInfo.rename(source, dest);
 			delta.removed(element);
 			delta.added(dest);
+		} else if (source.equals(dest)) {
+			if (rfInfo.reorder(source, nextSibling)) {
+				delta.changed(source, IRodinElementDelta.F_REORDERED);
+			}
 		} else {
 			if (dest.exists()) {
 				if (this.force) {
-					rfInfo.deleteElement(dest);
+					rfInfo.delete(dest);
+					delta.removed(dest);
 				} else {
 					error(IRodinDBStatusConstants.NAME_COLLISION, element);
 				}
 			}
 			rfInfo.copy(source, sourceInfo, dest, nextSibling);
-			delta.added(dest);
 
 			// Supprimer l'élément si Move.
 			if (isMove()) {
-				DeleteElementsOperation deleteOp = new DeleteElementsOperation(element, this.force);
-				executeNestedOperation(deleteOp, 1);
+				RodinFile rfSource = source.getOpenableParent();
+				RodinFileElementInfo rfSourceInfo = 
+					(RodinFileElementInfo) rfSource.getElementInfo(getSubProgressMonitor(1));
+				rfSourceInfo.delete(source);
+				delta.movedFrom(source, dest);
+				delta.movedTo(dest, source);
+			} else {
+				delta.added(dest);
 			}
 		}
 		addDelta(delta);

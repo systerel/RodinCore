@@ -38,12 +38,16 @@ import org.eclipse.core.resources.IResourceDelta;
  * <li><code>F_CONTENT</code> - The contents of the element have been
  * altered. This flag is only valid for elements which correspond to files or
  * internal elements.</li>
- * <li><code>F_REORDERED</code> - The element has changed position in its
- * parent. This flag is only valid if the element is an
- * <code>IInternalElement</code>.</li>
  * <li><code>F_OPENED</code> - The underlying <code>IProject</code> has
  * been opened. This flag is only valid if the element is an
  * <code>IRodinProject</code>.</li>
+ * <li><code>F_REORDERED</code> - The element has changed position in its
+ * parent. This flag is only valid if the element is an
+ * <code>IInternalElement</code>.</li>
+ * <li><code>F_REPLACED</code> - The element (and its children) has been
+ * completely replaced by another element (and its children). The deltas for the
+ * children of this element are not given in the delta tree. This flag is only
+ * valid if the element is an <code>IInternalElement</code>.</li>
  * </ul>
  * </li>
  * </ul>
@@ -70,6 +74,13 @@ import org.eclipse.core.resources.IResourceDelta;
  * element was added, removed or changed. When a child is moved from one place
  * to another inside the same parent, an element delta is generated for that
  * child element with the <code>F_REORDERED</code> flag.
+ * </p>
+ * <p>
+ * The <code>F_REPLACED</code> flag is triggered by a deletion followed by an
+ * addition of the same element.  It thus specifies only a coarse grain change. 
+ * In particular, no comparison is done between the children before deletion and
+ * the children after addition.  When encountering this flag, clients should
+ * therefore recompute from scratch the set of children of the replaced element.
  * </p>
  * <p>
  * No assumptions should be made on whether the Rodin element delta tree is
@@ -121,7 +132,14 @@ public interface IRodinElementDelta {
 	 * Change flag indicating that the element has changed position relatively to its siblings.
 	 * This flag is only valid if the element is an <code>IInternalElement</code>. 
 	 */
-	public int F_REORDERED= 0x00004;
+	public int F_REORDERED = 0x00004;
+
+	/**
+	 * Change flag indicating that the element (and its children) have been
+	 * replaced by a new element (with a new set of children). This flag is only
+	 * valid if the element is an <code>IInternalElement</code>.
+	 */
+	public int F_REPLACED = 0x00008;
 
 	/**
 	 * Change flag indicating that the element was moved from another location.

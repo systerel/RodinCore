@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.CreateResourceElementsOperation.java which is
+ * Strongly inspired by org.eclipse.jdt.internal.core.CopyResourceElementsOperation.java which is
  * 
  * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials

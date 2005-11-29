@@ -16,19 +16,18 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 public class CreateInternalElementOperation extends RodinDBOperation{
 
 	private InternalElement newElement;
-	private IInternalElement nextSibling;
+	private InternalElement nextSibling;
 	
 	public CreateInternalElementOperation(InternalElement newElement, IInternalElement nextSibling) {
 		super(new IRodinElement[] { newElement });
 		this.newElement = newElement;
-		this.nextSibling = nextSibling;
+		this.nextSibling = (InternalElement) nextSibling;
 	}
 
 	@Override
@@ -37,12 +36,9 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 
 		try {
 			beginTask(Messages.operation_createInternalElementProgress, 2);
-			RodinElement parent = newElement.getParent();
 			RodinFile file = newElement.getOpenableParent();
 			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
-			InternalElementInfo newInfo = newElement.createElementInfo(); 
-			fileInfo.addElement(newElement, newInfo);
-			parent.getElementInfo().addChildBefore(newElement, (InternalElement) nextSibling);
+			fileInfo.create(newElement, nextSibling);
 			delta.added(newElement);
 			addDelta(delta);
 			worked(1);

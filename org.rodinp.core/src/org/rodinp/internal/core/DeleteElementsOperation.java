@@ -65,7 +65,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	
 	private void deleteElement(IRodinElement elementToRemove, RodinFile rodinFile) throws RodinDBException {
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) rodinFile.getElementInfo();
-		fileInfo.deleteElement((InternalElement) elementToRemove);
+		fileInfo.delete((InternalElement) elementToRemove);
 	}
 
 	/**

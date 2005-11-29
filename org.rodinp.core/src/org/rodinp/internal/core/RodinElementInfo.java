@@ -20,15 +20,15 @@ import org.rodinp.core.basis.RodinElement;
 public class RodinElementInfo {
 
 	/**
+	 * Shared empty collection used for efficiency.
+	 */
+	static IResource[] NO_NON_RODIN_RESOURCES = new IResource[] {};
+
+	/**
 	 * Collection of handles of immediate children of this object. This is an
 	 * empty array if this element has no children.
 	 */
 	private RodinElement[] children;
-
-	/**
-	 * Shared empty collection used for efficiency.
-	 */
-	static IResource[] NO_NON_RODIN_RESOURCES = new IResource[] {};
 
 	public RodinElementInfo() {
 		this.children = RodinElement.NO_ELEMENTS;
@@ -44,12 +44,21 @@ public class RodinElementInfo {
 		}
 	}
 
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new Error();
+	public void addChildBefore(RodinElement child, RodinElement sibling) {
+		if (sibling == null) {
+			addChild(child);
+			return;
+		}
+		int length = children.length;
+		for (int i = 0; i < length; ++i) {
+			if (children[i].equals(sibling)) {
+				RodinElement[] newChildren = new RodinElement[length + 1];
+				System.arraycopy(children, 0, newChildren, 0, i);
+				newChildren[i] = child;
+				System.arraycopy(children, i, newChildren, i+1, length - i);
+				children = newChildren;
+				return;
+			}
 		}
 	}
 
@@ -57,6 +66,15 @@ public class RodinElementInfo {
 		return this.children;
 	}
 
+	private int getIndex(RodinElement child) {
+		final int length = children.length;
+		for (int i = 0; i < length; i++) {
+			if (child.equals(children[i])) {
+				return i;
+			}
+		}
+		return length;
+	}
 	/**
 	 * Adds the new element to a new array that contains all of the elements of
 	 * the old array. Returns the new array.
@@ -110,25 +128,39 @@ public class RodinElementInfo {
 		}
 	}
 
-	public void setChildren(RodinElement[] children) {
-		this.children = children;
+	// Returns true if a change was made to the children order.
+	public boolean reorderBefore(RodinElement child, RodinElement nextSibling) {
+		int srcIndex = getIndex(child);
+		int dstIndex;
+		if (nextSibling == null) {
+			dstIndex = children.length;
+		} else {
+			dstIndex = getIndex(nextSibling);
+		}
+		if (srcIndex == dstIndex || srcIndex == dstIndex - 1) {
+			return false;
+		}
+
+		if (srcIndex < dstIndex) {
+			-- dstIndex;
+			System.arraycopy(children, srcIndex + 1, children, srcIndex, dstIndex - srcIndex);
+		} else {
+			System.arraycopy(children, dstIndex, children, dstIndex + 1, srcIndex - dstIndex);
+		}
+		children[dstIndex] = child;
+		return true;
 	}
 
-	public void addChildBefore(RodinElement child, RodinElement sibling) {
-		if (sibling == null) {
-			addChild(child);
-			return;
-		}
-		int length = children.length;
-		for (int i = 0; i < length; ++i) {
-			if (children[i].equals(sibling)) {
-				RodinElement[] newChildren = new RodinElement[length + 1];
-				System.arraycopy(children, 0, newChildren, 0, i);
-				newChildren[i] = child;
-				System.arraycopy(children, i, newChildren, i+1, length - i);
-				children = newChildren;
+	public void replaceChild(RodinElement source, RodinElement dest) {
+		for (int i = 0; i < children.length; i++) {
+			if (source.equals(children[i])) {
+				children[i] = dest;
 				return;
 			}
 		}
+	}
+
+	public void setChildren(RodinElement[] children) {
+		this.children = children;
 	}
 }

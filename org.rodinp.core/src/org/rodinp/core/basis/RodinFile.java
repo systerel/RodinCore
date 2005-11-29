@@ -226,6 +226,26 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return hasUnsavedChanges();
 	}
 
+	/* (non-Javadoc)
+	 * @see IElementManipulation
+	 */
+	public void move(IRodinElement container, IRodinElement sibling,
+			String rename, boolean replace, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		if (container == null) {
+			throw new IllegalArgumentException(Messages.operation_nullContainer); 
+		}
+		IRodinElement[] elements = new IRodinElement[] {this};
+		IRodinElement[] containers = new IRodinElement[] {container};
+		String[] renamings = null;
+		if (rename != null) {
+			renamings = new String[] {rename};
+		}
+		getRodinDB().move(elements, containers, null, renamings, replace, monitor);
+		
+	}
+
 	@Override
 	public void save(IProgressMonitor progress, boolean force) throws RodinDBException {
 		super.save(progress, force);

@@ -25,7 +25,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see #getAffectedChildren()
 	 */
-	protected IRodinElementDelta[] fAffectedChildren = fgEmptyDelta;
+	protected RodinElementDelta[] fAffectedChildren = fgEmptyDelta;
 
 	/*
 	 * The element that this delta describes the change to.
@@ -56,7 +56,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * Empty array of IRodinElementDelta
 	 */
-	protected static IRodinElementDelta[] fgEmptyDelta = new IRodinElementDelta[] {};
+	protected static RodinElementDelta[] fgEmptyDelta = new RodinElementDelta[] {};
 
 	/**
 	 * Creates the root delta. To create the nested delta hierarchies use the
@@ -93,7 +93,7 @@ public class RodinElementDelta extends SimpleDelta implements
 		}
 
 		if (fAffectedChildren.length == 0) {
-			fAffectedChildren = new IRodinElementDelta[] { child };
+			fAffectedChildren = new RodinElementDelta[] { child };
 			return;
 		}
 		RodinElementDelta existingChild = null;
@@ -104,7 +104,7 @@ public class RodinElementDelta extends SimpleDelta implements
 						child.getElement())) { // handle case of two jars that
 												// can be equals but not in the
 												// same project
-					existingChild = (RodinElementDelta) fAffectedChildren[i];
+					existingChild = fAffectedChildren[i];
 					existingChildIndex = i;
 					break;
 				}
@@ -129,6 +129,7 @@ public class RodinElementDelta extends SimpleDelta implements
 				switch (child.getKind()) {
 				case ADDED: // child was removed then added -> it is changed
 					child.kind = CHANGED;
+					child.changeFlags |= F_CONTENT | F_CHILDREN | F_REORDERED | F_REPLACED;
 					fAffectedChildren[existingChildIndex] = child;
 					return;
 				case CHANGED: // child was removed then changed -> it is
@@ -323,8 +324,7 @@ public class RodinElementDelta extends SimpleDelta implements
 			return this;
 		} else {
 			for (int i = 0; i < fAffectedChildren.length; i++) {
-				RodinElementDelta delta = ((RodinElementDelta) fAffectedChildren[i])
-						.find(e);
+				RodinElementDelta delta = fAffectedChildren[i].find(e);
 				if (delta != null) {
 					return delta;
 				}
@@ -404,33 +404,17 @@ public class RodinElementDelta extends SimpleDelta implements
 	 * Returns the delta for a given element. Only looks below this delta.
 	 */
 	protected RodinElementDelta getDeltaFor(IRodinElement element) {
-		if (this.equalsAndSameParent(getElement(), element)) // handle case
-																// of two jars
-																// that can be
-																// equals but
-																// not in the
-																// same project
+		if (this.equalsAndSameParent(getElement(), element)) {
+			// handle case of two jars that can be equals but not in the same project
 			return this;
+		}
 		if (fAffectedChildren.length == 0)
 			return null;
 		int childrenCount = fAffectedChildren.length;
 		for (int i = 0; i < childrenCount; i++) {
-			RodinElementDelta delta = (RodinElementDelta) fAffectedChildren[i];
-			if (this.equalsAndSameParent(delta.getElement(), element)) { // handle
-																			// case
-																			// of
-																			// two
-																			// jars
-																			// that
-																			// can
-																			// be
-																			// equals
-																			// but
-																			// not
-																			// in
-																			// the
-																			// same
-																			// project
+			RodinElementDelta delta = fAffectedChildren[i];
+			if (this.equalsAndSameParent(delta.getElement(), element)) { 
+				// handle case of two jars that can be equals but not in the same project
 				return delta;
 			} else {
 				delta = delta.getDeltaFor(element);
@@ -487,10 +471,10 @@ public class RodinElementDelta extends SimpleDelta implements
 	 * Adds the new element to a new array that contains all of the elements of
 	 * the old array. Returns the new array.
 	 */
-	protected IRodinElementDelta[] growAndAddToArray(
-			IRodinElementDelta[] array, IRodinElementDelta addition) {
-		IRodinElementDelta[] old = array;
-		array = new IRodinElementDelta[old.length + 1];
+	protected RodinElementDelta[] growAndAddToArray(
+			RodinElementDelta[] array, RodinElementDelta addition) {
+		RodinElementDelta[] old = array;
+		array = new RodinElementDelta[old.length + 1];
 		System.arraycopy(old, 0, array, 0, old.length);
 		array[old.length] = addition;
 		return array;
@@ -573,9 +557,9 @@ public class RodinElementDelta extends SimpleDelta implements
 	 * Removes the element from the array. Returns the a new array which has
 	 * shrunk.
 	 */
-	protected IRodinElementDelta[] removeAndShrinkArray(
-			IRodinElementDelta[] old, int index) {
-		IRodinElementDelta[] array = new IRodinElementDelta[old.length - 1];
+	protected RodinElementDelta[] removeAndShrinkArray(
+			RodinElementDelta[] old, int index) {
+		RodinElementDelta[] array = new RodinElementDelta[old.length - 1];
 		if (index > 0)
 			System.arraycopy(old, 0, array, 0, index);
 		int rest = old.length - index - 1;
@@ -687,6 +671,12 @@ public class RodinElementDelta extends SimpleDelta implements
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
 			buffer.append("REORDERED"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((flags & IRodinElementDelta.F_REPLACED) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("REPLACED"); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((flags & IRodinElementDelta.F_OPENED) != 0) {

@@ -66,35 +66,35 @@ public interface IElementManipulation {
 	 */
 	void delete(boolean force, IProgressMonitor monitor) throws RodinDBException;
 	
-//	/**
-//	 * Moves this element to the given container.
-//	 *
-//	 * @param container the container
-//	 * @param sibling the sibling element before which the element should be inserted,
-//	 *   or <code>null</code> if the element should be inserted as the last child of
-//	 *   the container
-//	 * @param rename the new name for the element, or <code>null</code> if the
-//	 *   element retains its name
-//	 * @param replace <code>true</code> if any existing child in the container with
-//	 *   the target name should be replaced, and <code>false</code> to throw an
-//	 *   exception in the event of a name collision
-//	 * @param monitor a progress monitor
-//	 * @exception RodinDBException if this element could not be moved. Reasons include:
-//	 * <ul>
-//	 * <li> This Rodin element, container element, or sibling does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-//	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
-//	 * <li> The container is of an incompatible type (INVALID_DESTINATION)
-//	 * <li> The sibling is not a child of the given container (INVALID_SIBLING)
-//	 * <li> The new name is invalid (INVALID_NAME)
-//	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
-//	 *		and <code>replace</code> has been specified as <code>false</code>
-//	 * <li> The container or this element is read-only (READ_ONLY) 
-//	 * </ul>
-//	 *
-//	 * @exception IllegalArgumentException if container is <code>null</code>
-//	 */
-//	void move(IRodinElement container, IRodinElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws RodinDBException;
-//	
+	/**
+	 * Moves this element to the given container.
+	 *
+	 * @param container the container
+	 * @param sibling the sibling element before which the element should be inserted,
+	 *   or <code>null</code> if the element should be inserted as the last child of
+	 *   the container
+	 * @param rename the new name for the element, or <code>null</code> if the
+	 *   element retains its name
+	 * @param replace <code>true</code> if any existing child in the container with
+	 *   the target name should be replaced, and <code>false</code> to throw an
+	 *   exception in the event of a name collision
+	 * @param monitor a progress monitor
+	 * @exception RodinDBException if this element could not be moved. Reasons include:
+	 * <ul>
+	 * <li> This Rodin element, container element, or sibling does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> The container is of an incompatible type (INVALID_DESTINATION)
+	 * <li> The sibling is not a child of the given container (INVALID_SIBLING)
+	 * <li> The new name is invalid (INVALID_NAME)
+	 * <li> A child in the container already exists with the same name (NAME_COLLISION)
+	 *		and <code>replace</code> has been specified as <code>false</code>
+	 * <li> The container or this element is read-only (READ_ONLY) 
+	 * </ul>
+	 *
+	 * @exception IllegalArgumentException if container is <code>null</code>
+	 */
+	void move(IRodinElement container, IRodinElement sibling, String rename, boolean replace, IProgressMonitor monitor) throws RodinDBException;
+	
 //	/**
 //	 * Renames this element to the given name.
 //	 *
