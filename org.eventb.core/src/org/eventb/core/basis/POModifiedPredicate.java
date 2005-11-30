@@ -8,7 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IPOAnyPredicate;
-import org.eventb.core.IPOPredicateForm;
+import org.eventb.core.IPOModifiedPredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
@@ -23,9 +23,9 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  * SUBST is stored in the contents and PRED is the only child.
  *
  */
-public class POPredicateForm extends UnnamedInternalElement implements IPOPredicateForm {
+public class POModifiedPredicate extends UnnamedInternalElement implements IPOModifiedPredicate {
 
-	public POPredicateForm(String type, IRodinElement parent) {
+	public POModifiedPredicate(String type, IRodinElement parent) {
 		super(type, parent);
 		// TODO Auto-generated constructor stub
 	}

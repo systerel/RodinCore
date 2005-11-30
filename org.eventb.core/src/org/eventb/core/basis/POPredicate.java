@@ -18,8 +18,8 @@ import org.rodinp.core.IRodinElement;
  */
 public class POPredicate extends POAnyPredicate implements IPOPredicate {
 
-	public POPredicate(IRodinElement parent) {
-		super(ELEMENT_TYPE, parent);
+	public POPredicate(String type, IRodinElement parent) {
+		super(type, parent);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -13,7 +13,7 @@ import org.eventb.core.IPOAnyPredicate;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
-import org.eventb.core.IPOPredicateForm;
+import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOSequent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -29,7 +29,7 @@ import org.rodinp.core.basis.InternalElement;
  * The type environment (TYPE_ENV) specifies type of identifiers local to the sequent.
  * (The type environment is contained in the sequent in form of POTypeExpressions.)
  * There is one hypothesis (HYP) in the sequent. It is of type POHypothesis.
- * There is one goal (GOAL) in the sequent. It is a POPredicate or a POPredicateForm.
+ * There is one goal (GOAL) in the sequent. It is a POPredicate or a POModifiedPredicate.
  * Hints (HINTS) are associated with a sequent in form of attributes.
  * </p>
  *
@@ -76,7 +76,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 	public IPOAnyPredicate getGoal() throws RodinDBException {
 		ArrayList<IRodinElement> list = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
 		if(list.size() == 0)
-			list = getChildrenOfType(IPOPredicateForm.ELEMENT_TYPE);
+			list = getChildrenOfType(IPOModifiedPredicate.ELEMENT_TYPE);
 			
 		assert list.size() == 1;
 			

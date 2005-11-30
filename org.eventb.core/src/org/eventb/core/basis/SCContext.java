@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.IAxiom;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.ISCAxiomSet;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCTheoremSet;
@@ -42,7 +43,10 @@ public class SCContext extends Context implements ISCContext {
 	public IAxiom[] getOldAxioms() throws RodinDBException {
 		ArrayList<IRodinElement> axiomSetList = getChildrenOfType(ISCAxiomSet.ELEMENT_TYPE);
 		
-		assert axiomSetList.size() == 1;
+		assert axiomSetList.size() <= 1;
+		
+		if(axiomSetList.size()==0)
+			return new IAxiom[0];
 		
 		ISCAxiomSet axiomSet = (ISCAxiomSet) axiomSetList.get(0);
 		return axiomSet.getAxioms();
@@ -51,10 +55,21 @@ public class SCContext extends Context implements ISCContext {
 	public ITheorem[] getOldTheorems() throws RodinDBException {
 		ArrayList<IRodinElement> theoremSetList = getChildrenOfType(ISCTheoremSet.ELEMENT_TYPE);
 		
-		assert theoremSetList.size() == 1;
+		assert theoremSetList.size() <= 1;
+		
+		if(theoremSetList.size()==0)
+			return new ITheorem[0];
 		
 		ISCTheoremSet theoremSet = (ISCTheoremSet) theoremSetList.get(0);
 		return theoremSet.getTheorems();
+	}
+	
+	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
+		ArrayList<IRodinElement> identifierList = getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
+		
+		IPOIdentifier[] identifiers = new IPOIdentifier[identifierList.size()];
+		identifierList.toArray(identifiers);
+		return identifiers; 
 	}
 
 }

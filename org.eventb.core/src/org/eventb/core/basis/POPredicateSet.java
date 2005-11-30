@@ -9,6 +9,7 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
+import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.rodinp.core.IRodinElement;
@@ -18,8 +19,10 @@ import org.rodinp.core.basis.InternalElement;
 /**
  * @author halstefa
  * 
- * A predicate set consists of other predicate sets and some predicates.
+ * A predicate set consists of predicates and perhaps a predicate set 
+ * whose name is stored in the contents field.
  * Note, that predicates can be identified by their NAME attributes.
+ * if the contents equals the empty string there is no contained predicate set.
  *
  */
 public class POPredicateSet extends InternalElement implements IPOPredicateSet {
@@ -48,11 +51,10 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return predicates;
 	}
 	
-	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IPOPredicateSet.ELEMENT_TYPE);
-		IPOPredicateSet[] predicateSets = new IPOPredicateSet[list.size()];
-		list.toArray(predicateSets);
-		return predicateSets;
+	public IPOPredicateSet getPredicateSet() throws RodinDBException {
+		IPOPredicateSet sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+	
+		return sup;
 	}
 
 }

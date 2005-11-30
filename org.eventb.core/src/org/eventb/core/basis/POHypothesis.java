@@ -22,7 +22,7 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  * <p>
  * The contents of the hypothesis is a reference to a predicate set (GLOBAL_HYP).
  * The children of the hypothesis are the local hypotheses (LOCAL_HYP).
- * The children are of either of type POPredicate or POPredicateForm.
+ * The children are of either of type POPredicate or POModifiedPredicate.
  * </p>
  */
 public class POHypothesis extends UnnamedInternalElement implements IPOHypothesis {
