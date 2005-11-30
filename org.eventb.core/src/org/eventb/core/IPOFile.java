@@ -16,7 +16,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOFile extends IRodinFile {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poFile";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poFile"; //$NON-NLS-1$
 	
 	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;

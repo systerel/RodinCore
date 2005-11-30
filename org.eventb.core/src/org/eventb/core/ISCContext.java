@@ -28,9 +28,10 @@ import org.rodinp.core.RodinDBException;
  * Theorems and Axioms of abstractions of a context are refered to as "old".
  */
 public interface ISCContext extends IContext {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext";
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext"; //$NON-NLS-1$
 	
 	public IAxiom[] getOldAxioms() throws RodinDBException;
 	public ITheorem[] getOldTheorems() throws RodinDBException;
+	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	
 }

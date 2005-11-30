@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface ITheorem extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem"; //$NON-NLS-1$
 
 	// No additional methods
 }

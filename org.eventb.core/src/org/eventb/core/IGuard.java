@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IGuard extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".guard";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".guard"; //$NON-NLS-1$
 
 	// No additional methods
 }

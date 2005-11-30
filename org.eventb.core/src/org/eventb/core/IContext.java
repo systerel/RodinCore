@@ -19,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 public interface IContext extends IRodinFile {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context"; //$NON-NLS-1$
 
 	public ICarrierSet[] getCarrierSets() throws RodinDBException;
 	public IConstant[] getConstants() throws RodinDBException;

@@ -20,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * by a corresponding attribute.
  */
 public interface ISCTheoremSet extends IUnnamedInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scTheoremSet";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scTheoremSet"; //$NON-NLS-1$
 	
 	public ITheorem[] getTheorems() throws RodinDBException;
 }

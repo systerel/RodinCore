@@ -15,8 +15,8 @@ import org.rodinp.core.RodinDBException;
  * @author halstefa
  *
  */
-public interface IPOPredicateForm extends IUnnamedInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicateForm";
+public interface IPOModifiedPredicate extends IUnnamedInternalElement {
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poModifiedPredicate"; //$NON-NLS-1$
 	
 	public String getSubstitution() throws RodinDBException;
 	public IPOAnyPredicate getPredicate() throws RodinDBException;

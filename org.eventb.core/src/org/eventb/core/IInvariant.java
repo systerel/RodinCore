@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IInvariant extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant"; //$NON-NLS-1$
 
 	// No additional methods
 }

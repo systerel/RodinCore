@@ -13,6 +13,6 @@ package org.eventb.core;
  *
  */
 public interface ISCMachine extends IMachine {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine"; //$NON-NLS-1$
 
 }

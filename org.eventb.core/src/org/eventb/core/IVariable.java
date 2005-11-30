@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IVariable extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variable";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variable"; //$NON-NLS-1$
 
 	// No additional methods
 }

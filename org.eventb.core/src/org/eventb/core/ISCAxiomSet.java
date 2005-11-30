@@ -20,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * by a corresponding attribute.
  */
 public interface ISCAxiomSet extends IUnnamedInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet";
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet"; //$NON-NLS-1$
 	
 	public IAxiom[] getAxioms() throws RodinDBException;
 	
