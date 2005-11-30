@@ -459,7 +459,6 @@ public abstract class RodinElement extends PlatformObject implements
 				info = newElements.get(this);
 			}
 			if (info == null) {
-				// TODO see if need to do some cleanup here.
 				throw newNotPresentException();
 			}
 			if (!hadTemporaryCache) {

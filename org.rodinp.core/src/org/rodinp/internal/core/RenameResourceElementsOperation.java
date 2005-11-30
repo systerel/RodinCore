@@ -53,7 +53,7 @@ public class RenameResourceElementsOperation extends
 		if (!(element instanceof IRodinFile)) {
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
 		}
-		// TODO check for primary working copy.
+		// check here for primary working copy when they're introduced.
 		verifyRenaming(element);
 	}
 }
