@@ -71,6 +71,12 @@ public class CopyElementsOperation extends MultiOperation {
 		super(elementsToCopy, force);
 	}
 	
+	public CopyElementsOperation(IRodinElement elementToCopy,
+			IRodinElement destContainer, boolean force) {
+
+		super(elementToCopy, destContainer, force);
+	}
+	
 	public CopyElementsOperation(IRodinElement elementToCopy, boolean force) {
 		super(elementToCopy, force);
 	}

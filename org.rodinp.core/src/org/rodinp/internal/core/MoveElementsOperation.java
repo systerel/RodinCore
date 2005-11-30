@@ -39,6 +39,11 @@ public class MoveElementsOperation extends CopyElementsOperation {
 		super(elementsToMove, force);
 	}
 
+	public MoveElementsOperation(IRodinElement elementToMove,
+			IRodinElement destContainer, boolean force) {
+		super(elementToMove, destContainer, force);
+	}
+
 	public MoveElementsOperation(IRodinElement elementToMove, boolean force) {
 		super(elementToMove, force);
 	}

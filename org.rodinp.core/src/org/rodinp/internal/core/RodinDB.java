@@ -215,7 +215,7 @@ public class RodinDB extends Openable implements IRodinDB {
 				manager.deltaState.dbProjectsCache; 
 	}
 	
-	/**
+	/*
 	 * @see IRodinDB
 	 */
 	public IRodinProject getRodinProject(String projectName) {
@@ -245,7 +245,7 @@ public class RodinDB extends Openable implements IRodinDB {
 		}
 	}
 
-	/**
+	/*
 	 * @see IRodinDB
 	 */
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
@@ -254,7 +254,7 @@ public class RodinDB extends Openable implements IRodinDB {
 
 	}
 
-	/**
+	/*
 	 * @see IRodinDB
 	 */
 	public IResource[] getNonRodinResources() throws RodinDBException {
@@ -275,7 +275,7 @@ public class RodinDB extends Openable implements IRodinDB {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	/**
+	/*
 	 * @see IOpenable
 	 */
 	@Override
@@ -305,7 +305,7 @@ public class RodinDB extends Openable implements IRodinDB {
 		op.runOperation(monitor);
 	}
 
-	/**
+	/*
 	 * @private Debugging purposes
 	 */
 	@Override
@@ -363,6 +363,9 @@ public class RodinDB extends Openable implements IRodinDB {
 		}
 	}
 
+	/*
+	 * @see IRodinDB
+	 */
 	public void rename(IRodinElement[] elements, String[] names, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		MultiOperation op;
 		if (elements != null && elements.length > 0 && elements[0] != null

@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
@@ -496,6 +497,21 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	public String readableName() {
 		return this.getElementName();
+	}
+
+	/**
+	 * Configures and runs the <code>MultiOperation</code>.
+	 */
+	protected void runOperation(MultiOperation op, IRodinElement sibling,
+			String newName, IProgressMonitor monitor) throws RodinDBException {
+
+		if (sibling != null) {
+			op.setInsertBefore(this, sibling);
+		}
+		if (newName != null) {
+			op.setRenamings(new String[] { newName });
+		}
+		op.runOperation(monitor);
 	}
 
 	protected String tabString(int tab) {

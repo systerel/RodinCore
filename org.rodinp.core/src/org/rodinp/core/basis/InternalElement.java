@@ -19,11 +19,12 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.ChangeElementContentsOperation;
+import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
-import org.rodinp.internal.core.MultiOperation;
+import org.rodinp.internal.core.MoveElementsOperation;
 import org.rodinp.internal.core.RenameElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -77,18 +78,8 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		if (container == null) {
 			throw new IllegalArgumentException(Messages.operation_nullContainer); 
 		}
-		IRodinElement[] elements= new IRodinElement[] {this};
-		IRodinElement[] containers= new IRodinElement[] {container};
-		IRodinElement[] siblings= null;
-		if (sibling != null) {
-			siblings= new IRodinElement[] {sibling};
-		}
-		String[] renamings= null;
-		if (rename != null) {
-			renamings= new String[] {rename};
-		}
-		getRodinDB().copy(elements, containers, siblings, renamings, replace, monitor);
-		
+		runOperation(new CopyElementsOperation(this, container, replace),
+				sibling, rename, monitor);
 	}
 
 	@Override
@@ -109,9 +100,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 				new RodinDBStatus(IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE, type);
 			throw new RodinDBException(status);
 		}
-		CreateInternalElementOperation op =
-			new CreateInternalElementOperation(result, nextSibling);
-		op.runOperation(monitor);
+		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
 		return result;
 	}
 
@@ -313,17 +302,8 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		if (container == null) {
 			throw new IllegalArgumentException(Messages.operation_nullContainer); 
 		}
-		IRodinElement[] elements= new IRodinElement[] {this};
-		IRodinElement[] containers= new IRodinElement[] {container};
-		IRodinElement[] siblings= null;
-		if (sibling != null) {
-			siblings= new IRodinElement[] {sibling};
-		}
-		String[] renamings= null;
-		if (rename != null) {
-			renamings= new String[] {rename};
-		}
-		getRodinDB().move(elements, containers, siblings, renamings, replace, monitor);
+		runOperation(new MoveElementsOperation(this, container, replace),
+				sibling, rename, monitor);
 		
 	}
 
@@ -331,8 +311,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 * @see IElementManipulation
 	 */
 	public void rename(String newName, boolean replace, IProgressMonitor monitor) throws RodinDBException {
-		MultiOperation op = new RenameElementsOperation(this, newName, replace);
-		op.runOperation(monitor);
+		new RenameElementsOperation(this, newName, replace).runOperation(monitor);
 	}
 
 	/* (non-Javadoc)

@@ -26,10 +26,10 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -96,14 +96,8 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (container == null) {
 			throw new IllegalArgumentException(Messages.operation_nullContainer); 
 		}
-		IRodinElement[] elements = new IRodinElement[] {this};
-		IRodinElement[] containers = new IRodinElement[] {container};
-		String[] renamings = null;
-		if (rename != null) {
-			renamings = new String[] {rename};
-		}
-		getRodinDB().copy(elements, containers, null, renamings, replace, monitor);
-		
+		runOperation(new CopyResourceElementsOperation(this, container, replace),
+				sibling, rename, monitor);
 	}
 
 	@Override
@@ -111,36 +105,8 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return new RodinFileElementInfo();
 	}
 
-	/**
-	 * Creates and returns a new internal element in this file with the given
-	 * type and name. As a side effect, this file is opened if it was not already.
-	 * 
-	 * <p>
-	 * A new internal element is always created by this method, whether there
-	 * already exists an element with the same name or not.
-	 * </p>
-	 * 
-	 * @param type
-	 *            type of the internal element to create
-	 * @param name
-	 *            name of the internal element to create. Should be
-	 *            <code>null</code> if the new element is unnamed.
-	 * @param nextSibling
-	 *            succesor node of the internal element to create. Must be a
-	 *            child of this element or <code>null</code> (in that latter
-	 *            case, the new element will be the last child of this element).
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be created. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                creating an underlying resource
-	 *                <li> The given type is unknown
-	 *                </ul>
-	 * @return an internal element in this file with the specified type and name
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalParent#createInternalElement(java.lang.String, java.lang.String, org.rodinp.core.IInternalElement, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public InternalElement createInternalElement(String type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
@@ -152,9 +118,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 				new RodinDBStatus(IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE, type);
 			throw new RodinDBException(status);
 		}
-		CreateInternalElementOperation op =
-			new CreateInternalElementOperation(result, nextSibling);
-		op.runOperation(monitor);
+		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
 		return result;
 	}
 	
@@ -238,22 +202,15 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (container == null) {
 			throw new IllegalArgumentException(Messages.operation_nullContainer); 
 		}
-		IRodinElement[] elements = new IRodinElement[] {this};
-		IRodinElement[] containers = new IRodinElement[] {container};
-		String[] renamings = null;
-		if (rename != null) {
-			renamings = new String[] {rename};
-		}
-		getRodinDB().move(elements, containers, null, renamings, replace, monitor);
-		
+		runOperation(new CopyResourceElementsOperation(this, container, replace),
+				sibling, rename, monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see IElementManipulation
 	 */
 	public void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
-		MultiOperation op = new RenameResourceElementsOperation(this, name, replace);
-		op.runOperation(monitor);
+		new RenameResourceElementsOperation(this, name, replace).runOperation(monitor);
 	}
 
 	@Override

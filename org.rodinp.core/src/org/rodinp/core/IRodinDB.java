@@ -259,9 +259,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 * @param elements
 	 *            the elements to rename
 	 * @param names
-	 *            the list of new names. Must not be <code>null</code> or
-	 *            contain <code>null</code>. Must have the same length as
-	 *            <code>elements</code>.
+	 *            the list of new names. Must not be <code>null</code>.
+	 *            Must have the same length as <code>elements</code>.
 	 * @param replace
 	 *            <code>true</code> if an existing element with the target
 	 *            name should be replaced, and <code>false</code> to throw an
