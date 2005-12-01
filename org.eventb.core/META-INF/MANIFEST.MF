@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis
+Bundle-ClassPath: Rodin.jar
