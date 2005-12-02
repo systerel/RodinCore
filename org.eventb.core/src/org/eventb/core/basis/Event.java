@@ -7,8 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
+import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
@@ -35,5 +41,26 @@ public class Event extends InternalElement implements IEvent {
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
+	
+	public IVariable[] getVariables() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		Variable[] variables = new Variable[list.size()];
+		list.toArray(variables);
+		return variables; 
+	}
 
+	public IGuard[] getGuards() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IGuard.ELEMENT_TYPE);
+		Guard[] guards = new Guard[list.size()];
+		list.toArray(guards);
+		return guards; 
+	}
+	
+	public IAction[] getActions() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IAction.ELEMENT_TYPE);
+		Action[] actions = new Action[list.size()];
+		list.toArray(actions);
+		return actions; 
+	}
+	
 }
