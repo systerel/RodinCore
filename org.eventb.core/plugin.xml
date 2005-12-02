@@ -27,6 +27,12 @@
             id="scContext"
             name="%eventBSCContext"
             priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="bpo"
+            id="poFile"
+            name="%eventBpoFile"
+            priority="normal"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -50,6 +56,11 @@
             content-type-id="org.eventb.core.scContext"
             id="scContext"
             name="%eventBSCContext"/>
+      <fileElementType
+            class="org.eventb.core.basis.POFile"
+            content-type-id="org.eventb.core.poFile"
+            id="org.eventb.core.fileElementType1"
+            name="%eventBpoFile"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -112,6 +123,36 @@
             class="org.eventb.core.basis.SCTheoremSet"
             id="scTheoremSet"
             name="%eventBscTheoremSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POPredicateSet"
+            id="poPredicateSet"
+            name="%eventBpoPredicateSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POPredicate"
+            id="poPredicate"
+            name="%eventBpoPredicate"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POModifiedPredicate"
+            id="poModifiedPredicate"
+            name="%eventBpoModifiedPredicate"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POSequent"
+            id="poSequent"
+            name="%eventBpoSequent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POHypothesis"
+            id="poHypothesis"
+            name="%eventBpoHypothesis"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Sees"
+            id="sees"
+            name="%eventBSees"
             named="true"/>
    </extension>
 
