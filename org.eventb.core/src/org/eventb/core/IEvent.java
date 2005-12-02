@@ -8,6 +8,7 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for Event-B events.
@@ -20,5 +21,7 @@ import org.rodinp.core.IInternalElement;
 public interface IEvent extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event"; //$NON-NLS-1$
 
-	// No additional methods
+	public IVariable[] getVariables() throws RodinDBException;
+	public IGuard[] getGuards() throws RodinDBException;
+	public IAction[] getActions() throws RodinDBException;
 }

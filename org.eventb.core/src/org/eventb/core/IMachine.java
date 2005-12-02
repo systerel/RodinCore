@@ -8,6 +8,7 @@
 package org.eventb.core;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for Event-B (unchecked) machines.
@@ -20,5 +21,8 @@ import org.rodinp.core.IRodinFile;
 public interface IMachine extends IRodinFile {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machine"; //$NON-NLS-1$
 
-	// No additional methods
+	public IVariable[] getVariables() throws RodinDBException;
+	public ITheorem[] getTheorems() throws RodinDBException;
+	public IInvariant[] getInvariants() throws RodinDBException;
+	public IEvent[] getEvents() throws RodinDBException;
 }

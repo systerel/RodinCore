@@ -8,9 +8,16 @@
 
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
+import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
+import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 
 /**
@@ -40,5 +47,31 @@ public class Machine extends RodinFile implements IMachine {
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
-
+	
+	public IVariable[] getVariables() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		Variable[] variables = new Variable[list.size()];
+		list.toArray(variables);
+		return variables; 
+	}
+	public ITheorem[] getTheorems() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		Theorem[] theorems = new Theorem[list.size()];
+		list.toArray(theorems);
+		return theorems; 
+	}
+	
+	public IInvariant[] getInvariants() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		Invariant[] invariants = new Invariant[list.size()];
+		list.toArray(invariants);
+		return invariants; 
+	}
+	
+	public IEvent[] getEvents() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IEvent.ELEMENT_TYPE);
+		Event[] events = new Event[list.size()];
+		list.toArray(events);
+		return events; 
+	}
 }
