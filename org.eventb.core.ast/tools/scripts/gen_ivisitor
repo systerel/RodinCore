@@ -1,0 +1,70 @@
+#!/usr/bin/perl -W
+#
+#  Generates the IVisitor methods for the AST nodes.
+#
+
+use integer;
+use strict;
+
+sub visit($$$);
+sub enter($$$);
+
+while (<>) {
+    next if m/^\s*$/;
+    my ($nat, $class, $tag, $name) = split;
+    if ($nat eq 'leaf') {
+	visit($class, $tag, $name);
+    } elsif ($nat eq 'parent') {
+	enter($class, $tag, $name);
+    } else {
+	die;
+    }
+    print "\n";
+}
+
+sub visit($$$) {
+    my ($class, $tag, $name) = @_;
+    print <<EOT;
+	/**
+	 * Visits a <code>$tag</code> node.
+	 *
+	 * \@param $name
+	 *             the node to visit
+	 * \@return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * \@see Formula#accept(IVisitor)
+	 */
+	boolean visit$tag($class $name);
+EOT
+}
+
+sub enter($$$) {
+    my ($class, $tag, $name) = @_;
+    print <<EOT;
+	/**
+	 * Enters a <code>$tag</code> node.
+	 *
+	 * \@param $name
+	 *             the node which is entered
+	 * \@return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * \@see Formula#accept(IVisitor)
+	 */
+	boolean enter$tag($class $name);
+
+	/**
+	 * Exits a <code>$tag</code> node.
+	 *
+	 * \@param $name
+	 *             the node which is exited
+	 * \@return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * \@see Formula#accept(IVisitor)
+	 */
+	boolean exit$tag($class $name);
+EOT
+}
+

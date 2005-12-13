@@ -1,0 +1,831 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
+
+import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.internal.core.ast.ParseResult;
+
+COMPILER Bmath
+    
+    private boolean isIdentList() {
+    	scanner.ResetPeek();
+        Token next = scanner.Peek();
+        int kind = next.kind;
+        return kind == _COMMA || kind == _QDOT;
+    }
+
+    // Returns <code>true</code> if the lookahead token is a left parenthesis
+    // that starts a predicate, <code>false</code> otherwise.
+    private boolean isParPredicate() {
+    	scanner.ResetPeek();
+
+        if (la.kind != _LPAR) {
+        	// Lookahead token is not a left parenthesis
+        	return false;
+        }
+        
+        Token next = scanner.Peek();
+        if (next.kind == _QUNION || next.kind == _QINTER || next.kind == _LAMBDA) {
+        	// Short circuit: if the parenthesis starts a quantified expression, we now
+        	// for sure that it contains only the whole expression, not a predicate.
+        	return false;
+        }
+        
+        // Skip to the matching right parenthesis
+    	int parLvl = 1;
+		while (parLvl != 0) {
+        	if (next.kind == _LPAR) {
+        		++ parLvl;
+        	} else if (next.kind == _RPAR) {
+        		-- parLvl;
+        	} else if (next.kind == _EOF) {
+        		// Unbalanced parenthesis! Just return any value.
+        		return false;
+        	}
+        	next = scanner.Peek();
+		}
+        
+        // Now, let's look at the token that follows the right parenthesis
+        switch (next.kind) {
+        	case _EOF:
+        	case _MID:
+        	case _RPAR:
+        	case _RBRACE:
+			case _LAND:
+			case _LOR:
+			case _LEQV:
+			case _LIMP:
+        		return true;
+        	default:
+        		return false;
+        }
+    }
+
+	private boolean isCSet() {
+		scanner.ResetPeek();
+		Token next = la;
+		int parLvl = 0;
+		Stack<Integer> s = new Stack<Integer>();
+		while (true) {
+			if (next.kind == _LBRACE) {
+				parLvl = parLvl + 1;
+			}
+			else if (next.kind == _RBRACE) {
+				if (parLvl == 0) {
+					return false;
+				}
+				else {
+					parLvl = parLvl - 1;
+				}
+			}
+			else if (next.kind == _LAMBDA || next.kind == _QUNION || next.kind == _QINTER) {
+				s.push(parLvl);
+			}
+			else if (next.kind == _MID) {
+				if (parLvl == 0 && s.isEmpty()) {
+					return true;
+				}
+				else if (!s.isEmpty()) {
+					if (s.lastElement() == parLvl) {
+						s.pop();
+					}
+				}
+			}
+			if (next.kind == _EOF) {
+				return false;
+			}
+			next = scanner.Peek();
+		}
+	}
+
+    // this class is immutable
+    // represent a quantifier together with its bound identifiers and starting position.
+    // used for a QuantifiedPredicate when parsing sequences of 
+    // quantifiers (e.g. FORALL x,y EXISTS z)
+    private static class Quantifier {
+        final int tag;
+        final List<BoundIdentDecl> boundIdentifiers;
+        final int startPos;
+        
+        Quantifier(int tag, List<BoundIdentDecl> boundIdentifiers, int startPos) {
+            this.tag = tag;
+            this.boundIdentifiers = boundIdentifiers;
+            this.startPos = startPos;
+        }
+    }
+    
+    private class Binding {
+    	private HashMap<String, Integer> binders;
+    	private int maxCount = -1;
+ 
+    	// Creates an empty binding.
+        Binding() {
+        	binders = new HashMap<String, Integer>();
+        }
+    	
+        // Creates a new binding based on <code>base</code> and extended
+        // with <code>idents</code>
+		Binding(Binding base, List<BoundIdentDecl> idents) {
+        	binders = new HashMap<String, Integer>(base.binders);
+			int index = base.maxCount;
+    		for (BoundIdentDecl ident: idents) {
+    			binders.put(ident.getName(), ++ index);
+    		}
+    		maxCount = index;
+    	}
+
+		// Returns the index to use for the identifier <code>name</code>
+		// or -1 if the name is free under this binding.
+		int getBoundIndex(String name) {
+			Integer index = binders.get(name);
+			if (index == null) {
+				return -1;
+			}
+			else {
+				return maxCount - index;
+			}
+		}
+    }
+
+ 
+    // Creates an identifier for the given token.
+    //
+    // Takes care of the bindings.
+    private Identifier makeIdent(Token token, Binding binding) {
+    	int index = binding.getBoundIndex(token.val);
+    	SourceLocation loc = new SourceLocation(token.pos, token.pos+token.val.length());
+    	if (index == -1) {
+			return factory.makeFreeIdentifier(token.val, loc);
+    	}
+    	else {
+        	return factory.makeBoundIdentifier(index, loc);
+		}
+    }
+
+TOKENS
+
+	LPAR
+	RPAR
+	LBRACKET
+	RBRACKET
+	LBRACE
+	RBRACE
+	EXPN
+	NOT
+	CPROD
+	LAMBDA
+	UPTO
+	NATURAL
+	NATURAL1
+	POW
+	POW1
+	INTEGER
+	TFUN
+	REL
+	TSUR
+	TINJ
+	MAPSTO
+	LIMP
+	LEQV
+	PFUN
+	FORALL
+	EXISTS
+	EMPTYSET
+	IN
+	NOTIN
+	SETMINUS
+	MUL
+	BCOMP
+	PPROD
+	LAND
+	LOR
+	BINTER
+	BUNION
+	EQUAL		
+	NOTEQUAL	
+	LT			
+	LE			
+	GT			
+	GE			
+	SUBSET		
+	NOTSUBSET	
+	SUBSETEQ	
+	NOTSUBSETEQ	
+	DPROD
+	BTRUE
+	BFALSE
+	QINTER
+	QUNION
+	QDOT
+	RANRES
+	DOMRES
+	PSUR
+	PINJ
+	TBIJ
+	DOMSUB
+	RANSUB
+	TREL
+	SREL
+	STREL
+	OVR
+	FCOMP
+	COMMA
+	PLUS
+	MINUS
+	DIV
+	MID
+	CONVERSE
+	BOOL
+	TRUE
+	FALSE
+	KPRED
+	KSUCC
+	MOD
+	KBOOL
+	KCARD
+	KUNION
+	KINTER
+	KDOM
+	KRAN
+	KID
+	KFINITE
+	KPRJ1
+	KPRJ2
+	KMIN
+	KMAX
+	DOT
+	IDENT
+	INTLIT
+
+
+PRODUCTIONS
+
+    Bmath  =
+        IF(clazz == Predicate.class)
+        Predicate <out Predicate inpred, new Binding()>               (. result.setParsedPredicate(inpred); .)
+    |
+//        IF(clazz == Expression.class)
+        Expression <out Expression inexpr, new Binding()>             (. result.setParsedExpression(inexpr); .)
+    .
+    
+    Expression <out Expression expr, 
+                Binding binding>
+    												         (. expr = null; .)
+    =       
+        LAMBDA                                               (. int pos = t.pos;
+                                                                Expression inlambdaexpr;
+                                                                Predicate inpred;
+                                                                Expression inexpr; .)
+        IdentPattern <out inlambdaexpr>                      (. // LAMBDA implicit quantifier
+                                                                List<BoundIdentDecl> freeIdents = new Vector<BoundIdentDecl>();
+                                                                inlambdaexpr = inlambdaexpr.bindAllFreeIdents(freeIdents, factory);
+                                                                binding = new Binding(binding, freeIdents); .)
+        QDOT
+        Predicate <out inpred, binding>
+        MID
+        Expression <out inexpr, binding>                     (. Expression pair = factory.makeBinaryExpression(Formula.MAPSTO, inlambdaexpr, inexpr, null);
+                                                                expr = factory.makeQuantifiedExpression(Formula.CSET, freeIdents, inpred, pair, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()), QuantifiedExpression.Form.Lambda); .)
+    |
+        QUNION                                               (. int pos = t.pos; .)
+        (
+            IF(isIdentList())
+            IdentList <out List<BoundIdentDecl> inidentlist> (. binding = new Binding(binding, inidentlist); .)
+            QDOT
+            Predicate <out Predicate inpred, binding>
+            MID
+            Expression <out Expression inexpr, binding>      (. expr = factory.makeQuantifiedExpression(Formula.QUNION, inidentlist, inpred, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()), QuantifiedExpression.Form.Explicit); .)
+        |
+            Expression <out Expression inexpr, new Binding()>
+            MID                                              (. // QUNION implicit quantifier
+                                                                List<BoundIdentDecl> freeIdents = new Vector<BoundIdentDecl>();
+                                                                inexpr = inexpr.bindAllFreeIdents(freeIdents, factory);
+                                                                binding = new Binding(binding, freeIdents); .)
+            Predicate <out Predicate inpred, binding>        (. expr = factory.makeQuantifiedExpression(Formula.QUNION, freeIdents, inpred, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()), QuantifiedExpression.Form.Implicit); .)
+        )
+    |
+        QINTER                                               (. int pos = t.pos; .)
+        (
+            IF(isIdentList())
+            IdentList <out List<BoundIdentDecl> inidentlist> (. binding = new Binding(binding, inidentlist); .)
+            QDOT
+            Predicate <out Predicate inpred, binding>
+            MID
+            Expression <out Expression inexpr, binding>      (. expr = factory.makeQuantifiedExpression(Formula.QINTER, inidentlist, inpred, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()), QuantifiedExpression.Form.Explicit); .)
+        |
+            Expression <out Expression inexpr, new Binding()>
+            MID                                              (. // QINTER implicit quantifier
+                                                                List<BoundIdentDecl> freeIdents = new Vector<BoundIdentDecl>();
+                                                                inexpr = inexpr.bindAllFreeIdents(freeIdents, factory);
+                                                                binding = new Binding(binding, freeIdents); .)
+            Predicate <out Predicate inpred, binding>        (. expr = factory.makeQuantifiedExpression(Formula.QINTER, freeIdents, inpred, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()), QuantifiedExpression.Form.Implicit); .)
+        )
+    |
+        PairExpression <out expr, binding>
+    .
+    
+    PairExpression <out Expression expr, Binding binding>
+    =                                                         (. Expression inexpr; .)
+        RelationSetExpr <out inexpr, binding>             (. expr = inexpr; .)
+        {
+            MAPSTO
+            RelationSetExpr <out inexpr, binding>         (. expr = factory.makeBinaryExpression(Formula.MAPSTO, expr, inexpr, new SourceLocation(expr.getSourceLocation().getStart(), inexpr.getSourceLocation().getEnd())); .)
+        }
+    .
+    
+    RelationSetExpr <out Expression expr, Binding binding>
+    =                                                          (. Expression inexpr; .)
+        SetExpr <out inexpr, binding>                      (. expr = inexpr; .)
+        {
+            RelationalSetOp <out int tag>                        
+            SetExpr <out inexpr, binding>                  (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(expr.getSourceLocation().getStart(), inexpr.getSourceLocation().getEnd())); .)
+        }
+    .
+    
+    RelationalSetOp <out int tag>
+                                (. tag = -1; .)
+    = REL                       (. tag = Formula.REL; .)
+    | TREL                      (. tag = Formula.TREL; .)
+    | SREL                      (. tag = Formula.SREL; .)
+    | STREL                     (. tag = Formula.STREL; .)
+    | PFUN                      (. tag = Formula.PFUN; .)
+    | TFUN                      (. tag = Formula.TFUN; .)
+    | PINJ                      (. tag = Formula.PINJ; .)
+    | TINJ                      (. tag = Formula.TINJ; .)
+    | PSUR                      (. tag = Formula.PSUR; .)
+    | TSUR                      (. tag = Formula.TSUR; .)
+    | TBIJ                      (. tag = Formula.TBIJ; .)
+    .   
+    
+    SetExpr <out Expression expr, Binding binding>
+    = 
+        IntervalExpr <out Expression inexpr, binding>  (. int pos = inexpr.getSourceLocation().getStart(); .)
+                                                       (. expr = inexpr; .)         
+        (
+            BUNION                                     (. List<Expression> unionlist = new ArrayList<Expression>();
+                                                          unionlist.add(expr); .)
+            IntervalExpr <out inexpr, binding>         (. unionlist.add(inexpr); .)
+            {
+                BUNION
+                IntervalExpr <out inexpr, binding>     (. unionlist.add(inexpr); .)
+            }
+                                                       (. expr = factory.makeAssociativeExpression(Formula.BUNION, unionlist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        |
+            CPROD
+            IntervalExpr <out inexpr, binding>         (. expr = factory.makeBinaryExpression(Formula.CPROD, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            {
+                CPROD
+                IntervalExpr <out inexpr, binding>     (. expr = factory.makeBinaryExpression(Formula.CPROD, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            }
+        |
+            OVR                                            (. List<Expression> ovrlist = new ArrayList<Expression>(); .)
+                                                           (. ovrlist.add(expr); .)
+            IntervalExpr <out inexpr, binding>         (. ovrlist.add(inexpr); .)
+            {
+                OVR
+                IntervalExpr <out inexpr, binding>     (. ovrlist.add(inexpr); .)
+            }
+                                                           (. expr = factory.makeAssociativeExpression(Formula.OVR, ovrlist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        |
+            BCOMP                                          (. List<Expression> bcomplist = new ArrayList<Expression>(); .)
+                                                           (. bcomplist.add(expr); .)
+            IntervalExpr <out inexpr, binding>         (. bcomplist.add(inexpr); .)
+            {
+                BCOMP
+                IntervalExpr <out inexpr, binding>     (. bcomplist.add(inexpr); .)
+            }
+                                                           (. expr = factory.makeAssociativeExpression(Formula.BCOMP, bcomplist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+
+        |
+            PPROD
+            IntervalExpr <out inexpr, binding>         (. expr = factory.makeBinaryExpression(Formula.PPROD, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        |
+            [                                              (. int tag; .)
+                (
+                    DOMRES                                 (. tag = Formula.DOMRES; .)
+                |
+                    DOMSUB                                 (. tag = Formula.DOMSUB; .)
+                )
+                IntervalExpr <out inexpr, binding>     (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            ]
+            (
+                DPROD
+                IntervalExpr <out inexpr, binding>     (. expr = factory.makeBinaryExpression(Formula.DPROD, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            |
+                FCOMP                                      (. List<Expression> fcomplist = new ArrayList<Expression>(); .)
+                                                           (. fcomplist.add(expr); .)
+                IntervalExpr <out inexpr, binding>     (. fcomplist.add(inexpr); .)
+                {
+                    FCOMP
+                    IntervalExpr <out inexpr, binding> (. fcomplist.add(inexpr); .)
+                }
+                                                           (. expr = factory.makeAssociativeExpression(Formula.FCOMP, fcomplist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)                
+                [
+                    RangeModifier <out int tag>
+                    IntervalExpr <out inexpr, binding> (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+                ]
+            |
+                BINTER                                     (. List<Expression> binterlist = new ArrayList<Expression>(); .)
+                                                           (. binterlist.add(expr); .)
+                IntervalExpr <out inexpr, binding>     (. binterlist.add(inexpr); .)
+                {
+                    BINTER
+                    IntervalExpr <out inexpr, binding> (. binterlist.add(inexpr); .)
+                }
+                                                           (. expr = factory.makeAssociativeExpression(Formula.BINTER, binterlist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+                [
+                    SETMINUS
+                    IntervalExpr <out inexpr, binding> (. expr = factory.makeBinaryExpression(Formula.SETMINUS, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+                |
+                    RangeModifier <out int tag>
+                    IntervalExpr <out inexpr, binding> (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+                ]
+            |
+                SETMINUS
+                IntervalExpr <out inexpr, binding>     (. expr = factory.makeBinaryExpression(Formula.SETMINUS, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            |
+                RangeModifier <out int tag>
+                IntervalExpr <out inexpr, binding>     (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            |
+                /* Nothing */
+            )
+        )
+    .
+
+    RangeModifier <out int tag>
+                              (. tag = -1; .)
+    = RANRES                  (. tag = Formula.RANRES; .)
+    | RANSUB                  (. tag = Formula.RANSUB; .)
+    .
+    
+    IntervalExpr <out Expression expr, Binding binding> 
+    =                                                       (. Expression inexpr; .)
+        ArithmeticExpr <out inexpr, binding>            (. expr = inexpr; .)
+        [
+            UPTO
+            ArithmeticExpr <out inexpr, binding>        (. expr = factory.makeBinaryExpression(Formula.UPTO, expr, inexpr, new SourceLocation(expr.getSourceLocation().getStart(), inexpr.getSourceLocation().getEnd())); .)
+        ]
+    .
+    
+    ArithmeticExpr <out Expression expr, Binding binding> 
+    =                                                         (. Expression inexpr; 
+                                                                 int pos = -1; .)
+        [
+            MINUS                                             (. pos = t.pos; .)
+        ]
+        Term <out inexpr, binding>                        (. if (pos == -1) {
+                                                                     expr = inexpr;
+                                                                     pos = inexpr.getSourceLocation().getStart();
+                                                                 }
+                                                                 else {
+                                                                     expr = factory.makeUnaryExpression(Formula.UNMINUS, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()));
+                                                                 } .)
+        (
+															  (. boolean lastIsPlus = false; 
+            													 int lastPlusPos = 0;
+            													 List<Expression> pluslist = new ArrayList<Expression>();
+            													 pluslist.add(expr); .)
+            {
+       			(
+                	PLUS									  (. lastIsPlus = true; .)
+                |
+                	MINUS                                     (. lastIsPlus = false; 
+                												  .)
+                )
+                Term <out inexpr, binding>                (. if (lastIsPlus) {
+                	 												pluslist.add(inexpr);
+                	 												lastPlusPos = inexpr.getSourceLocation().getEnd();
+                	 											 }
+                	 											 else {
+                	 												if (pluslist.size() == 1) {
+                	 											 		expr = factory.makeBinaryExpression(Formula.MINUS, pluslist.get(0), inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd()));
+                	 												}
+                	 												else {
+                														expr = factory.makeAssociativeExpression(Formula.PLUS, pluslist, new SourceLocation(pos, lastPlusPos));
+                	 											 		expr = factory.makeBinaryExpression(Formula.MINUS, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); 
+                	 											 	}
+                                                                	pluslist = new ArrayList<Expression>(); 
+                                                                	pluslist.add(expr);
+                                                                 } .)
+                                                              
+            }
+           													  (. if (lastIsPlus) {
+																	expr = factory.makeAssociativeExpression(Formula.PLUS, pluslist, new SourceLocation(pos, lastPlusPos));
+                                                                 }.)
+        )
+    .
+    
+    Term <out Expression expr, Binding binding> 
+    =                                               (. Expression inexpr; .)
+        Factor <out inexpr, binding>            (. int pos = inexpr.getSourceLocation().getStart();
+                                                       expr = inexpr; .)
+        (
+            [
+                                                    (. int tag; .)
+                (
+                    DIV                             (. tag = Formula.DIV; .)
+                |
+                    MOD                             (. tag = Formula.MOD; .)
+                )
+                Factor <out inexpr, binding>    (. expr = factory.makeBinaryExpression(tag, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            ]
+        |
+            MUL                                     (. List<Expression> factlist = new ArrayList<Expression>(); .)
+                                                    (. factlist.add(expr); .)
+            Factor <out inexpr, binding>        (. factlist.add(inexpr); .)
+            {
+                MUL                                 
+                Factor <out inexpr, binding>    (. factlist.add(inexpr); .)         
+            }
+                                                    (. expr = factory.makeAssociativeExpression(Formula.MUL, factlist, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        )
+    .
+    
+    Factor <out Expression expr, Binding binding> 
+    =                                                 (. Expression inexpr; .)
+        Image <out inexpr, binding>               (. int pos = inexpr.getSourceLocation().getStart();
+                                                         expr = inexpr; .)
+        [
+            EXPN
+            Image <out inexpr, binding>           (. expr = factory.makeBinaryExpression(Formula.EXPN, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        ]
+    .
+    
+    Image <out Expression expr, Binding binding> 
+    =                                                 (. Expression inexpr; .)
+        Primary <out inexpr, binding>             (. int pos = inexpr.getSourceLocation().getStart();
+                                                         expr = inexpr; .)
+        {
+            LBRACKET
+            Expression <out inexpr, binding>
+            RBRACKET                                  (. expr = factory.makeBinaryExpression(Formula.RELIMAGE, expr, inexpr, new SourceLocation(pos, t.pos)); .)
+        |
+            LPAR
+            Expression <out inexpr, binding>
+            RPAR                                      (. expr = factory.makeBinaryExpression(Formula.FUNIMAGE, expr, inexpr, new SourceLocation(pos, t.pos)); .)
+        }
+    .
+    
+    Primary <out Expression expr, Binding binding>
+    =                                                    (. expr = null; .)
+        SimpleExpr <out Expression inexpr, binding> (. expr = inexpr; .)
+                                                         (. int pos = inexpr.getSourceLocation().getStart(); .)
+        {
+            CONVERSE                                     (. expr = factory.makeUnaryExpression(Formula.CONVERSE, expr, new SourceLocation(pos, t.pos)); .)
+        }
+    .
+
+    
+    SimpleExpr <out Expression expr, Binding binding>
+                                                         (. expr = null; .)
+    =
+    
+        KBOOL                                            (. int pos = t.pos; .)
+        LPAR
+        Predicate <out Predicate inpred, binding>
+        RPAR                                             (. expr = factory.makeBoolExpression(inpred, new SourceLocation(pos, t.pos)); .)
+    |
+        UnaryOp <out int[] tagpos>
+        LPAR
+        Expression <out Expression inexpr, binding>
+        RPAR                                             (. expr = factory.makeUnaryExpression(tagpos[0], inexpr, new SourceLocation(tagpos[1] ,t.pos)); .)
+    |
+        LPAR
+        Expression <out Expression inexpr, binding> (. expr = inexpr; .)
+        RPAR
+    |
+        LBRACE
+       	(
+    		IF(isCSet())                                          (. int pos = t.pos; .)
+      		(
+            	IF(isIdentList())								  // CSET explicit quantifier
+            	IdentList <out List<BoundIdentDecl> inidentlist>
+            	                                                  (. binding = new Binding(binding, inidentlist); .)
+            	QDOT
+            	Predicate <out Predicate inpred, binding>
+           		MID
+            	Expression <out Expression inexpr, binding>       (. expr = factory.makeQuantifiedExpression(Formula.CSET, inidentlist, inpred, inexpr, new SourceLocation(pos, t.pos), QuantifiedExpression.Form.Explicit); .)
+       		|
+            	Expression <out Expression inexpr, new Binding()>
+            	MID                                              (. // CSET implicit quantifier
+            	                                                    List<BoundIdentDecl> freeIdents = new Vector<BoundIdentDecl>();
+                                                                    inexpr = inexpr.bindAllFreeIdents(freeIdents, factory);
+                                                                    binding = new Binding(binding, freeIdents); .)
+            	Predicate <out Predicate inpred, binding> 
+         		      											 (. expr = factory.makeQuantifiedExpression(Formula.CSET, freeIdents, inpred, inexpr, new SourceLocation(pos, t.pos), QuantifiedExpression.Form.Implicit); .)
+        	)
+        |
+                                                                 (. int pos = t.pos;
+                                                                    List<Expression> explist = new ArrayList<Expression>(); .)
+        	[
+            	Expression <out Expression inexpr, binding>      (. explist.add(inexpr); .)
+            	{
+                	COMMA
+                	Expression <out inexpr, binding>             (. explist.add(inexpr); .)
+            	}                                                
+            ] 													 (. expr = factory.makeSetExtension(explist, new SourceLocation(pos, t.pos)); .)
+        )
+        RBRACE                             
+    |
+        INTEGER     (. expr = factory.makeAtomicExpression(Formula.INTEGER, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        NATURAL     (. expr = factory.makeAtomicExpression(Formula.NATURAL, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        NATURAL1    (. expr = factory.makeAtomicExpression(Formula.NATURAL1, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        BOOL        (. expr = factory.makeAtomicExpression(Formula.BOOL, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        TRUE        (. expr = factory.makeAtomicExpression(Formula.TRUE, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        FALSE       (. expr = factory.makeAtomicExpression(Formula.FALSE, new SourceLocation(t.pos, t.pos+t.val.length())); .) 
+    |
+        EMPTYSET    (. expr = factory.makeAtomicExpression(Formula.EMPTYSET, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        KPRED       (. expr = factory.makeAtomicExpression(Formula.KPRED, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        KSUCC       (. expr = factory.makeAtomicExpression(Formula.KSUCC, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        IDENT       (. expr = makeIdent(t, binding); .)
+    |
+        INTLIT      (. expr =  factory.makeIntegerLiteral(new BigInteger(t.val), new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    .
+
+    UnaryOp <out int[] tagpos>
+               (. tagpos = null; .)
+    = KCARD    (. tagpos = new int[]{Formula.KCARD, t.pos}; .)
+    | POW      (. tagpos = new int[]{Formula.POW, t.pos}; .)
+    | POW1     (. tagpos = new int[]{Formula.POW1, t.pos}; .)
+    | KUNION   (. tagpos = new int[]{Formula.KUNION, t.pos}; .)
+    | KINTER   (. tagpos = new int[]{Formula.KINTER, t.pos}; .)
+    | KDOM     (. tagpos = new int[]{Formula.KDOM, t.pos}; .)
+    | KRAN     (. tagpos = new int[]{Formula.KRAN, t.pos}; .)
+    | KID      (. tagpos = new int[]{Formula.KID, t.pos}; .)
+    | KPRJ1    (. tagpos = new int[]{Formula.KPRJ1, t.pos}; .)
+    | KPRJ2    (. tagpos = new int[]{Formula.KPRJ2, t.pos}; .)
+    | KMIN     (. tagpos = new int[]{Formula.KMIN, t.pos}; .)
+    | KMAX     (. tagpos = new int[]{Formula.KMAX, t.pos}; .)
+    .
+
+    IdentList <out List<BoundIdentDecl> idents> 
+    =                             (. idents = new Vector<BoundIdentDecl>(); .)
+        IDENT                     (. idents.add(factory.makeBoundIdentDecl(t.val, new SourceLocation(t.pos, t.pos+t.val.length()))); .)
+        {
+            COMMA
+            IDENT                 (. idents.add(factory.makeBoundIdentDecl(t.val, new SourceLocation(t.pos, t.pos+t.val.length()))); .)
+        }
+    .
+
+    IdentPattern <out Expression expr> = 
+        IdentPatternAtom <out Expression inexpr> (. int pos = inexpr.getSourceLocation().getStart(); .)
+                                                  (. expr = inexpr; .)
+        {
+            MAPSTO
+            IdentPatternAtom <out inexpr>         (. expr = factory.makeBinaryExpression(Formula.MAPSTO, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+        }
+    .
+
+    IdentPatternAtom <out Expression expr>   (. expr = null; .) =
+        LPAR 
+        IdentPattern <out Expression inexpr> (. expr = inexpr; .)
+        RPAR
+    |
+        IDENT                                 (. expr = factory.makeFreeIdentifier(t.val, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+        
+    .
+    
+    Predicate <out Predicate pred, Binding binding> 
+    =                                                   (. // stack of parsed quantifiers
+                                                           Stack<Quantifier> quantStack = new Stack<Quantifier>();
+                                                           List<BoundIdentDecl> boundIdents; .)
+        {
+            FORALL                                      (. int startPos = t.pos; .)
+            IdentList <out boundIdents>
+                                                        (. binding = new Binding(binding, boundIdents);
+                                                           quantStack.push(new Quantifier(Formula.FORALL, boundIdents, startPos)); .)
+            QDOT
+        |
+            EXISTS                                      (. int startPos = t.pos; .)
+            IdentList <out boundIdents>
+                                                        (. binding = new Binding(binding, boundIdents);
+                                                           quantStack.push(new Quantifier(Formula.EXISTS, boundIdents, startPos)); .)
+            QDOT
+        }
+        UnquantifiedPredicate <out pred, binding>
+                                                        (. int endPos = pred.getSourceLocation().getEnd();
+                                                           while (! quantStack.isEmpty()) {
+                                                              Quantifier quant = quantStack.pop();
+                                                              SourceLocation location = new SourceLocation(quant.startPos, endPos);
+                                                              pred = factory.makeQuantifiedPredicate(quant.tag,
+                                                              		quant.boundIdentifiers,
+                                                              		pred, location);
+                                                           } .)
+    .
+
+    UnquantifiedPredicate <out Predicate pred, Binding binding>
+    =                                                 (. Predicate inpred; .)
+        SimplePredicate <out pred, binding>     (. int pos = pred.getSourceLocation().getStart(); .)
+        [
+            LIMP
+            SimplePredicate <out inpred, binding> (. pred = factory.makeBinaryPredicate(Formula.LIMP, pred, inpred, new SourceLocation(pos, inpred.getSourceLocation().getEnd())); .)
+        |
+            LEQV
+            SimplePredicate <out inpred, binding> (. pred = factory.makeBinaryPredicate(Formula.LEQV, pred, inpred, new SourceLocation(pos, inpred.getSourceLocation().getEnd())); .)
+                                                         
+        ]
+    .
+    
+    SimplePredicate <out Predicate pred, Binding binding> 
+    =
+        LiteralPredicate <out pred, binding>           (. int pos = pred.getSourceLocation().getStart();
+        												  Predicate inpred; .)
+        [
+            LAND                                       (. // list of associative predicate
+                                                          List<Predicate> predlist = new ArrayList<Predicate>();
+                                                          predlist.add(pred); .)
+            LiteralPredicate <out inpred, binding>     (. predlist.add(inpred); .)
+            {
+                LAND
+                LiteralPredicate <out inpred, binding> (. predlist.add(inpred); .)
+            }
+                                                       (. pred = factory.makeAssociativePredicate(Formula.LAND, predlist, new SourceLocation(pos, inpred.getSourceLocation().getEnd())); .)
+        |
+            LOR                                        (. List<Predicate> predlist = new ArrayList<Predicate>();
+                                                          predlist.add(pred); .)
+            LiteralPredicate <out inpred, binding>     (. predlist.add(inpred); .)
+            {
+                LOR
+                LiteralPredicate <out inpred, binding> (. predlist.add(inpred); .)
+            }
+                                                       (. pred = factory.makeAssociativePredicate(Formula.LOR, predlist, new SourceLocation(pos, inpred.getSourceLocation().getEnd())); .)
+        ]
+    .
+    
+    LiteralPredicate <out Predicate pred, Binding binding> 
+    =                                             (. Predicate inpred;
+                                                     // stack for keeping position of the NOT
+                                                     Stack<Integer> nstack = new Stack<Integer>(); .)
+        {
+            NOT                                   (. nstack.push(t.pos); .)
+        }
+        AtomicPredicate <out inpred, binding> (. pred = inpred;
+                                                     while (! nstack.isEmpty()) {
+                                                         pred = factory.makeUnaryPredicate(Formula.NOT, inpred, new SourceLocation(nstack.pop(), inpred.getSourceLocation().getEnd())); 
+                                                         inpred = pred;
+                                                     }
+                                                   .)
+    .
+    
+    AtomicPredicate <out Predicate pred, Binding binding>
+                                            (. pred = null;
+                                               Predicate inpred; .)
+    =
+        BFALSE                              (. pred = factory.makeLiteralPredicate(Formula.BFALSE, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        BTRUE                               (. pred = factory.makeLiteralPredicate(Formula.BTRUE, new SourceLocation(t.pos, t.pos+t.val.length())); .)
+    |
+        KFINITE                             (. int begin = t.pos; .)
+        LPAR
+        Expression <out Expression inexpr, binding>
+        RPAR                                (. pred = factory.makeSimplePredicate(Formula.KFINITE, inexpr, new SourceLocation(begin, t.pos)); .)
+    |
+        IF (! isParPredicate())
+        PairExpression <out Expression leftinexpr, binding>
+        Relop <out int tag>
+        PairExpression <out Expression rightinexpr, binding>
+                                            (. pred = factory.makeRelationalPredicate(tag, leftinexpr, rightinexpr, new SourceLocation(leftinexpr.getSourceLocation().getStart(), rightinexpr.getSourceLocation().getEnd())); .)
+    |
+        LPAR
+        Predicate <out inpred, binding> (. pred = inpred; .)
+        RPAR
+    .
+
+    Relop <out int tag>
+                  (. tag = 0; .) 
+    = EQUAL       (. tag = Formula.EQUAL; .)
+    | NOTEQUAL    (. tag = Formula.NOTEQUAL; .)
+    | IN          (. tag = Formula.IN; .)
+    | NOTIN       (. tag = Formula.NOTIN; .)
+    | SUBSET      (. tag = Formula.SUBSET; .)
+    | NOTSUBSET   (. tag = Formula.NOTSUBSET; .)
+    | SUBSETEQ    (. tag = Formula.SUBSETEQ; .)
+    | NOTSUBSETEQ (. tag = Formula.NOTSUBSETEQ; .)
+    | LT          (. tag = Formula.LT; .)
+    | LE          (. tag = Formula.LE; .)
+    | GT          (. tag = Formula.GT; .)
+    | GE          (. tag = Formula.GE; .)
+    .
+
+
+END Bmath.

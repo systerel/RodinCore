@@ -1,0 +1,83 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
+package org.eventb.core.ast;
+
+/**
+ * Denotes a product type.
+ * 
+ * @author Laurent Voisin
+ */
+public class ProductType extends Type {
+	
+	// First component of this type
+	private Type left;
+
+	// Second component of this type
+	private Type right;
+
+	/**
+	 * Creates a new instance of this type.
+	 */
+	public ProductType(Type left, Type right) {
+		super(left.isSolved() && right.isSolved());
+		this.left = left;
+		this.right = right;
+	}
+
+	@Override
+	protected Expression buildExpression(FormulaFactory factory) {
+		Expression leftExpr = left.toExpression(factory);
+		Expression rightExpr = right.toExpression(factory);
+		return factory.makeBinaryExpression(Formula.CPROD, leftExpr, rightExpr, null);
+	}
+
+	@Override
+	protected void buildString(StringBuilder buffer) {
+		left.buildString(buffer);
+		
+		buffer.append('\u00d7');
+		
+		final boolean rightNeedsParen = (right instanceof ProductType);
+		if (rightNeedsParen) buffer.append('(');
+		right.buildString(buffer);
+		if (rightNeedsParen) buffer.append(')');
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (! (o instanceof ProductType)) return false;
+		ProductType other = (ProductType) o;
+		return left.equals(other.left) && right.equals(other.right);
+	}
+	
+	/**
+	 * Returns the first component of this type.
+	 * 
+	 * @return Returns the first component of this type
+	 */
+	public Type getLeft() {
+		return left;
+	}
+
+	/**
+	 * Returns the second component of this type.
+	 * 
+	 * @return Returns the second component of this type
+	 */
+	public Type getRight() {
+		return right;
+	}
+
+	@Override
+	public int hashCode() {
+		return left.hashCode() * 17 + right.hashCode();
+	}
+	
+}
