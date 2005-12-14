@@ -134,12 +134,18 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return map.hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ast.ITypeEnvironment#isEmpty()
+	 */
+	public boolean isEmpty() {
+		return map.isEmpty();
 	}
 
 	// solves the unknown types (names who have type variable as their

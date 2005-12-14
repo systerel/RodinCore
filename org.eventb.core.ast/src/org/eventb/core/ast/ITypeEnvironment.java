@@ -112,4 +112,12 @@ public interface ITypeEnvironment {
 	 */
 	Type getType(String name);
 
+	/**
+	 * Returs whether this type environment is empty.
+	 * 
+	 * @return <code>true</code> iff this environment doesn't contain any
+	 *         mapping.
+	 */
+	boolean isEmpty();
+
 }
