@@ -93,7 +93,7 @@ public interface ITypeEnvironment {
 	 * @return <code>true</code> iff the given type environment is a subset of
 	 *         this type environment
 	 */
-	boolean containsAll(TypeEnvironment typenv);
+	boolean containsAll(ITypeEnvironment typenv);
 
 	/**
 	 * Returns the set of all names mapped in this type environment.

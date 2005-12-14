@@ -92,11 +92,12 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#containsAll(org.eventb.internal.core.typecheck.TypeEnvironment)
 	 */
-	public boolean containsAll(TypeEnvironment typenv){
+	public boolean containsAll(ITypeEnvironment typenv){
 		if (this == typenv)
 			return true;
-		for (String name : typenv.map.keySet()){
-			if (! this.getType(name).equals(typenv.getType(name)))
+		final TypeEnvironment other = (TypeEnvironment) typenv;
+		for (String name : other.map.keySet()){
+			if (! this.getType(name).equals(other.getType(name)))
 				return false;
 		}
 		return true;
