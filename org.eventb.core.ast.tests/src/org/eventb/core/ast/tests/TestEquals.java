@@ -26,7 +26,7 @@ import org.eventb.core.ast.QuantifiedExpression;
  */
 public class TestEquals extends TestCase {
 	
-	private static FormulaFactory ff = new FormulaFactory();
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	private class TestItem<T extends Formula<T>> {
 		T[] formulas;

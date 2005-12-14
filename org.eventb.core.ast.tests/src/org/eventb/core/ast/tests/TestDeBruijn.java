@@ -21,7 +21,7 @@ public class TestDeBruijn extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		formulaFactory = new FormulaFactory();
+		formulaFactory = FormulaFactory.getDefault();
 	}
 	
 	private class TestItem {

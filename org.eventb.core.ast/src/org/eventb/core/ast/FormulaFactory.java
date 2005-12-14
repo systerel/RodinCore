@@ -35,10 +35,9 @@ public class FormulaFactory {
 		return DEFAULT_INSTANCE;
 	}
 
-	// TODO make this a singleton.
-//	protected FormulaFactory() {
-//		// Nothing to do
-//	}
+	private FormulaFactory() {
+		// Nothing to do
+	}
 
 	/**
 	 * Returns a new associative expression

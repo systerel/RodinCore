@@ -48,7 +48,7 @@ import org.eventb.core.ast.QuantifiedExpression;
  */
 public class TestBoundIdentRenaming extends TestCase {
 	
-	private static FormulaFactory ff = new FormulaFactory();
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	private List<TestItem> testItems = new Vector<TestItem>();
 

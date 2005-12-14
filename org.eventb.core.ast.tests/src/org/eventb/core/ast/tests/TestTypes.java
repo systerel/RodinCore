@@ -25,7 +25,7 @@ import org.eventb.core.ast.Type;
  */
 public class TestTypes extends TestCase {
 	
-	private FormulaFactory ff = new FormulaFactory();
+	private FormulaFactory ff = FormulaFactory.getDefault();
 	private FormulaFactory tf = FormulaFactory.getDefault();
 	
 	private FreeIdentifier id_S = ff.makeFreeIdentifier("S", null);

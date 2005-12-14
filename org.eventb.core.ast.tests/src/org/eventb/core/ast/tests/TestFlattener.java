@@ -26,7 +26,7 @@ import org.eventb.core.ast.UnaryExpression;
  */
 public class TestFlattener extends TestCase {
 
-	private static FormulaFactory ff = new FormulaFactory();
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	@Override
 	protected void setUp() throws Exception {

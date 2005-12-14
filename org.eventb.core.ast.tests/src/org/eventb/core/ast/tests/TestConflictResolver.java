@@ -36,7 +36,7 @@ public class TestConflictResolver extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		ff = new FormulaFactory();
+		ff = FormulaFactory.getDefault();
 
 		final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 		final FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);

@@ -40,7 +40,7 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public class TestAST extends TestCase {
 	
-	private FormulaFactory ff = new FormulaFactory();
+	private FormulaFactory ff = FormulaFactory.getDefault();
 
 	private FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	private FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);

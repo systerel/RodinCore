@@ -43,7 +43,7 @@ public class TestLegibility extends TestCase {
 
 	private List<TestItem> testItems;
 
-	private FormulaFactory ff = new FormulaFactory();
+	private FormulaFactory ff = FormulaFactory.getDefault();
 
 	final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	final FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);

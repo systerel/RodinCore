@@ -43,7 +43,7 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public class TestParser extends TestCase {
 	
-	private static FormulaFactory ff = new FormulaFactory();
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	private static FreeIdentifier id_x = mFreeIdentifier("x");
 	private static FreeIdentifier id_y = mFreeIdentifier("y");

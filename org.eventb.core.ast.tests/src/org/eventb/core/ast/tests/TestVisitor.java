@@ -44,7 +44,7 @@ import org.eventb.core.ast.UnaryPredicate;
 
 public class TestVisitor extends TestCase {
 	
-	FormulaFactory ff = new FormulaFactory();
+	FormulaFactory ff = FormulaFactory.getDefault();
 	
 	private static class TestItem {
 		Formula formula;

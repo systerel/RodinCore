@@ -49,7 +49,7 @@ import org.eventb.core.ast.SourceLocation;
  */
 public class TestFreeIdents extends TestCase {
 	
-	private static FormulaFactory ff = new FormulaFactory();
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	private static final BoundIdentDecl[] NO_BOUND_IDENT_DECL = new BoundIdentDecl[0];
 	

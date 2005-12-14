@@ -36,7 +36,7 @@ import org.eventb.core.ast.Type;
  */
 public class TestSubstituteFormula extends TestCase {
 
-	public static final FormulaFactory ff = new FormulaFactory(); 
+	public static final FormulaFactory ff = FormulaFactory.getDefault(); 
 	
 	private static Map<FreeIdentifier, Expression> ms(FreeIdentifier[] ids, Expression[] exps) {
 		assert ids.length == exps.length;
