@@ -2,8 +2,6 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
-import org.eventb.internal.core.typecheck.TypeEnvironment;
-
 /**
  * Common protocol for type environments.
  * <p>
