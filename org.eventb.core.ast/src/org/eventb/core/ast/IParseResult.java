@@ -15,6 +15,21 @@ package org.eventb.core.ast;
 public interface IParseResult extends IResult {
 
 	/**
+	 * Returns the parsed expression.
+	 * <p>
+	 * A <code>null</code> result is returned in the following cases
+	 * (exhaustive list):
+	 * <ul>
+	 * <li>errors were encountered during parsing,</li>
+	 * <li>the parser was not configured for parsing an expression.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the parsed expression or <code>null</code> in case of error
+	 */
+	Expression getParsedExpression();
+
+	/**
 	 * Returns the parsed predicate.
 	 * <p>
 	 * A <code>null</code> result is returned in the following cases
@@ -30,18 +45,18 @@ public interface IParseResult extends IResult {
 	Predicate getParsedPredicate();
 
 	/**
-	 * Returns the parsed expression.
+	 * Returns the parsed type.
 	 * <p>
 	 * A <code>null</code> result is returned in the following cases
 	 * (exhaustive list):
 	 * <ul>
 	 * <li>errors were encountered during parsing,</li>
-	 * <li>the parser was not configured for parsing an expression.</li>
+	 * <li>the parser was not configured for parsing a type.</li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return the parsed expression or <code>null</code> in case of error
+	 * @return the parsed type or <code>null</code> in case of error
 	 */
-	Expression getParsedExpression();
+	Type getParsedType();
 
 }

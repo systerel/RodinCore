@@ -7,6 +7,7 @@ package org.eventb.core.ast;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
@@ -495,7 +496,9 @@ public class FormulaFactory {
 	 * @return the result of the parse
 	 */
 	public IParseResult parseExpression(String formula) {
-		Parser parser = new Parser(Expression.class, new Scanner(formula), this);
+		ParseResult result = new ParseResult(this);
+		Scanner scanner = new Scanner(formula, result);
+		Parser parser = new Parser(Expression.class, scanner, result);
 		parser.Parse();
 		return parser.getResult();
 	}
@@ -507,9 +510,28 @@ public class FormulaFactory {
 	 * @return the result of the parse
 	 */
 	public IParseResult parsePredicate(String formula) {
-		Parser parser = new Parser(Predicate.class, new Scanner(formula), this);
+		ParseResult result = new ParseResult(this);
+		Scanner scanner = new Scanner(formula, result);
+		Parser parser = new Parser(Predicate.class, scanner, result);
 		parser.Parse();
 		return parser.getResult();
+	}
+
+	/**
+	 * Parses the specified type and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @return the result of the parse
+	 */
+	public IParseResult parseType(String formula) {
+		ParseResult result = new ParseResult(this);
+		Scanner scanner = new Scanner(formula, result);
+		Parser parser = new Parser(Expression.class, scanner, result);
+		parser.Parse();
+		if (result.isSuccess()) {
+			result.convertToType();
+		}
+		return result;
 	}
 
 	/**

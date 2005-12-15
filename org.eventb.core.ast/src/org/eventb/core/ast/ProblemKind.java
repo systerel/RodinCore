@@ -75,7 +75,12 @@ public enum ProblemKind {
 	/**
 	 * Argument 0 is the location (i.e. start) of the variable causing the problem
 	 */
-	TypeUnknown ("Variable has an unknown type at: %1$d");
+	TypeUnknown ("Variable has an unknown type at: %1$d"),
+	
+	/**
+	 * No parameter
+	 */
+	InvalidTypeExpression("Expression doesn't denote a type");
 	
 	
 	private String message;

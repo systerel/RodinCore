@@ -15,6 +15,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Type;
 
 
@@ -130,6 +131,26 @@ public class TestTypes extends TestCase {
 				}
 			}
 		}
+	}
+	
+	public void testTypeParser() {
+		for (TestItem item : items) {
+			IParseResult result = ff.parseType(item.image);
+			assertTrue(result.isSuccess());
+			assertEquals(item.type, result.getParsedType());
+		}
+		
+		// test wrong type formulas
+		String[] illFormed = new String[] {
+				"ℕ", "ℙ(ℕ)", "ℙ1(ℤ)", "S ⇸ T"
+		};
+		for (String input: illFormed) {
+			IParseResult result = ff.parseType(input);
+			assertFalse(result.isSuccess());
+			assertNull(result.getParsedExpression());
+			assertNull(result.getParsedType());
+		}
+		
 	}
 	
 	// TODO add test of type equality with expression derived from it.
