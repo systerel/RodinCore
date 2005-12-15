@@ -6,6 +6,8 @@ package org.eventb.core.ast.tests;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.parser.Token;
@@ -121,18 +123,19 @@ public class TestLexer extends TestCase {
          * Tests all the tokens that are needed to construct an event-B formula.
          */
         public void testToken() {
-
-                // Check that all tokens are listed.
-                assertEquals("Length of string table", Parser.getMaxT(), toBeLexed.length);
-
-                // Check each token string through the lexical analyser.
-                for (int kind = 0; kind < toBeLexed.length; ++ kind) {
-                        for (String str : toBeLexed[kind]) {
-                                Scanner scanner = new Scanner(str);
-                                Token t = scanner.Scan();
-                                assertEquals(str, t.val);
-                                assertEquals(kind, t.kind);
-                        }
-                }
+        	
+        	// Check that all tokens are listed.
+        	assertEquals("Length of string table", Parser.getMaxT(), toBeLexed.length);
+        	
+        	// Check each token string through the lexical analyser.
+        	for (int kind = 0; kind < toBeLexed.length; ++ kind) {
+        		for (String str : toBeLexed[kind]) {
+        			ParseResult result = new ParseResult(FormulaFactory.getDefault());
+        			Scanner scanner = new Scanner(str, result);
+        			Token t = scanner.Scan();
+        			assertEquals(str, t.val);
+        			assertEquals(kind, t.kind);
+        		}
+        	}
         }
 }
