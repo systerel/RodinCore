@@ -6,6 +6,8 @@ import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
@@ -30,11 +32,14 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 
 
 /**
@@ -513,7 +518,7 @@ public class TestFreeIdents extends TestCase {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.isWellFormed()'
 	 */
-	public final void testIsWellFormed() {
+	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
 			assertTrue("Should be well-formed: " + testItem.formula, testItem.formula.isWellFormed());
 			FreeIdentifier[] result = testItem.formula.getFreeIdentifiers();
@@ -528,5 +533,68 @@ public class TestFreeIdents extends TestCase {
 		
 		isWellFormedSpecialCases();
 	}
+	
+	private void checkFreeIdent(FreeIdentifier ident, String name, Type type) {
+		assertEquals(name, ident.getName());
+		assertEquals(type, ident.getType());
+	}
+	
 
+	/**
+	 * Test method for 'org.eventb.core.ast.FormulaFactory.makeFreshIdentifiers()'
+	 */
+	public void testMakeFreshIdentifiers() {
+		final ITypeEnvironment tenv = ff.makeTypeEnvironment();
+		tenv.addGivenSet("S");
+		
+		BoundIdentDecl bd_x1 = mBoundIdentDecl("x");
+		BoundIdentDecl bd_x2 = mBoundIdentDecl("x");
+		BoundIdentDecl bd_y = mBoundIdentDecl("y");
+		BoundIdentDecl bd_z = mBoundIdentDecl("z");
+		
+		BoundIdentifier b0 = mBoundIdentifier(0);
+		BoundIdentifier b1 = mBoundIdentifier(1);
+		BoundIdentifier b2 = mBoundIdentifier(2);
+		BoundIdentifier b3 = mBoundIdentifier(3);
+
+		final Expression INT = mAtomicExpression(Formula.INTEGER);
+		final Expression BOOL = mAtomicExpression(Formula.BOOL);
+		final Expression S = ff.makeFreeIdentifier("S", null);
+		
+		Predicate pred = mQuantifiedPredicate(
+				mList(bd_x1, bd_x2, bd_y, bd_z),
+				mAssociativePredicate(Formula.LAND,
+						mRelationalPredicate(Formula.IN, b3, INT),
+						mRelationalPredicate(Formula.IN, b2, BOOL),
+						mRelationalPredicate(Formula.IN, b1, BOOL),
+						mRelationalPredicate(Formula.IN, b0, S))
+		);
+		ITypeCheckResult tcResult = pred.typeCheck(tenv);
+		assertTrue("Initial type-check failed", tcResult.isSuccess());
+		
+		// Create one fresh identifier 
+		FreeIdentifier[] idents = ff.makeFreshIdentifiers(mList(bd_x1), tenv);
+		assertEquals(idents.length, 1);
+		checkFreeIdent(idents[0], "x", bd_x1.getType());
+		
+		// Create two fresh identifiers 
+		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_y), tenv);
+		assertEquals(idents.length, 2);
+		checkFreeIdent(idents[0], "x0", bd_x1.getType());
+		checkFreeIdent(idents[1], "y", bd_y.getType());
+		
+		// Create three fresh identifiers 
+		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_y, bd_z), tenv);
+		assertEquals(idents.length, 3);
+		checkFreeIdent(idents[0], "x1", bd_x1.getType());
+		checkFreeIdent(idents[1], "y0", bd_y.getType());
+		checkFreeIdent(idents[2], "z", bd_z.getType());
+		
+		// Create two fresh identifiers with similar bound decl 
+		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_x2), tenv);
+		assertEquals(idents.length, 2);
+		checkFreeIdent(idents[0], "x2", bd_x1.getType());
+		checkFreeIdent(idents[1], "x3", bd_x2.getType());
+	}
+	
 }

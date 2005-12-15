@@ -127,6 +127,32 @@ class QuantifiedHelper {
 		return newName;
 	}
 	
+	// resolve (locally) quantified names so that they do not conflict with the given type environment
+	protected static FreeIdentifier[] resolveIdents(BoundIdentDecl[] boundHere,
+			final ITypeEnvironment environment, FormulaFactory factory) {
+		
+		final int length = boundHere.length;
+		FreeIdentifier[] result = new FreeIdentifier[length];
+		
+		StringSetAccess access = new StringSetAccess() {
+			public boolean contains(String string) {
+				return environment.contains(string);
+			}
+		};
+
+		// Create the new identifiers.
+		for (int i = 0; i < length; i++) {
+			assert boundHere[i].getType() != null;
+			
+			String name = solve(boundHere[i].getName(), access);
+			result[i] = factory.makeFreeIdentifier(name, boundHere[i].getSourceLocation());
+			result[i].setType(boundHere[i].getType(), null);
+			environment.addName(name, result[i].getType());
+		}
+		
+		return result;
+	}
+
 	private static interface StringSetAccess {
 		boolean contains(String string);
 	}

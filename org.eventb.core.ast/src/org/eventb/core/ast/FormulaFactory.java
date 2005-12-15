@@ -522,6 +522,35 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Creates fresh identifiers corresponding to some bound identifier
+	 * declarations and inserts them into the type environment.
+	 * <p>
+	 * For each bound identifier declaration, a free identifier is created. This
+	 * new identifier has a name that does not occur in the given type
+	 * environment and is based on the given declaration. It is guaranteed that
+	 * not two free identifiers in the result bear the same name.
+	 * </p>
+	 * <p>
+	 * The given bound identifier declarations must be typed. The types are then
+	 * stored in the typing environment for the corresponding fresh free
+	 * identifier created.
+	 * </p>
+	 * 
+	 * @param boundIdents
+	 *            array of bound identifier declarations for which corresponding
+	 *            fresh free identifiers should be created. Each declaration
+	 *            must be typed.
+	 * @param environment
+	 *            type environment relative to which fresh free identifiers are
+	 *            created and into which they are inserted
+	 * @return an array of fresh free identifiers
+	 */
+	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
+			ITypeEnvironment environment) {
+		return QuantifiedHelper.resolveIdents(boundIdents, environment, this);
+	}
+
+	/**
 	 * Returns the type which corresponds to the carrier-set with the given
 	 * name.
 	 * 
