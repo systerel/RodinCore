@@ -4,7 +4,6 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.internal.core.ast.ParseResult;
 
 /**
 * Event B mathematical formulas lexer
@@ -18,7 +17,7 @@ import org.eventb.internal.core.ast.ParseResult;
 %function next_token
 
 %{
-	protected ParseResult result = new ParseResult();
+	protected ParseResult result;
 
 	private Token symbol(int kind) {
 		return new Token(kind, yytext(), yychar);

@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
-import org.eventb.internal.core.ast.ParseResult;
-
 /**
  * This class maps the JFlex lexer with the Coco/R scanner. Note that
  * the lexer returns the first recognized token of a string.
@@ -34,9 +32,11 @@ public class Scanner {
 	 * Creates a new scanner that takes its input from <code>str</code>.
 	 * 
 	 * @param str the string to read from.
+	 * @param result the result of this scan and parse
 	 */
-	public Scanner(String str) {
+	public Scanner(String str, ParseResult result) {
 		lexer = new Lexer(new StringReader(str));
+		lexer.result = result;
 	}
 	
 	private Token getNextToken() {
