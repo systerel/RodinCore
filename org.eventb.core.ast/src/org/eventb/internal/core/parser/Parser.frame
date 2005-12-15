@@ -72,18 +72,18 @@ public class Parser {
 
 	/**
 	 * Creates a new parser that reads tokens produced by
-	 * <code>scanner</code> and creates the resulting Abstract Syntax Tree
-	 * using <code>factory</code>.
+	 * <code>scanner</code> and creates the resulting Abstract Syntax Tree.
+	 * The outcome of both scanning and parsing is stored in the given result.
 	 * 
 	 * @param clazz Formula class that this parser recognises
 	 * @param scanner the scanner to get input tokens from
-	 * @param factory the formula factory to use to create the AST
+	 * @param result the result of scan and parse
 	 */
-	public Parser(Class<? extends Formula> clazz, Scanner scanner, FormulaFactory factory) {
+	public Parser(Class<? extends Formula> clazz, Scanner scanner, ParseResult result) {
 		this.scanner = scanner;
-		this.factory = factory;
+		this.factory = result.factory;
 		this.clazz = clazz;
-		result = scanner.getResult();
+		this.result = result;
 		
 	    assert clazz == Predicate.class || clazz == Expression.class;
 	}

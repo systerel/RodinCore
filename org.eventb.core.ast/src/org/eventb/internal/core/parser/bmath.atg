@@ -16,7 +16,6 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.internal.core.ast.ParseResult;
 
 COMPILER Bmath
     
