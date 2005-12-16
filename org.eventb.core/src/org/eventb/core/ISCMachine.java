@@ -8,6 +8,8 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.RodinDBException;
+
 /**
  * @author halstefa
  *
@@ -15,4 +17,12 @@ package org.eventb.core;
 public interface ISCMachine extends IMachine {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine"; //$NON-NLS-1$
 
+	ICarrierSet[] getCarrierSets() throws RodinDBException;
+	IConstant[] getConstants() throws RodinDBException;
+	ISCAxiomSet[] getAxiomSets() throws RodinDBException;
+	ISCTheoremSet[] getTheoremSets() throws RodinDBException;
+	IAxiom[] getOldAxioms() throws RodinDBException;
+	ITheorem[] getOldTheorems() throws RodinDBException;
+	IInvariant[] getOldInvariants() throws RodinDBException;
+	IPOIdentifier[] getIdentifiers() throws RodinDBException;
 }

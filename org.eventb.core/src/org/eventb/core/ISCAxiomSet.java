@@ -8,7 +8,7 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -19,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * are not unique in an axiom set. The origin of an axiom can be determined
  * by a corresponding attribute.
  */
-public interface ISCAxiomSet extends IUnnamedInternalElement {
+public interface ISCAxiomSet extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet"; //$NON-NLS-1$
 	
 	public IAxiom[] getAxioms() throws RodinDBException;
