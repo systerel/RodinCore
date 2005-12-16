@@ -7,8 +7,9 @@ Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.rodinp.core;visibility:=reexport
+ org.rodinp.core;visibility:=reexport,
+ org.rodinp.core.builder,
+ org.eventb.core.ast;visibility:=reexport
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis
-Bundle-ClassPath: Rodin.jar

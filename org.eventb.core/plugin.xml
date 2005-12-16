@@ -125,6 +125,21 @@
             name="%eventBscTheoremSet"
             named="true"/>
       <internalElementType
+            class="org.eventb.core.basis.SCInvariantSet"
+            id="scInvariantSet"
+            name="%eventBscInvariantSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCEvent"
+            id="scEvent"
+            name="%eventBscEvent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Sees"
+            id="sees"
+            name="%eventBSees"
+            named="true"/>
+      <internalElementType
             class="org.eventb.core.basis.POPredicateSet"
             id="poPredicateSet"
             name="%eventBpoPredicateSet"
@@ -148,11 +163,6 @@
             class="org.eventb.core.basis.POHypothesis"
             id="poHypothesis"
             name="%eventBpoHypothesis"
-            named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.Sees"
-            id="sees"
-            name="%eventBSees"
             named="true"/>
    </extension>
 
