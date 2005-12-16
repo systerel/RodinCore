@@ -10,18 +10,19 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
-import org.eventb.core.IAxiom;
-import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.IInvariant;
+import org.eventb.core.ISCInvariantSet;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author halstefa
+ *
  */
-public class SCAxiomSet extends InternalElement implements ISCAxiomSet {
+public class SCInvariantSet extends InternalElement implements ISCInvariantSet {
 
-	public SCAxiomSet(String name, IRodinElement parent) {
+	public SCInvariantSet(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
@@ -33,11 +34,10 @@ public class SCAxiomSet extends InternalElement implements ISCAxiomSet {
 		return ELEMENT_TYPE;
 	}
 
-	public IAxiom[] getAxioms() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IAxiom.ELEMENT_TYPE);
-		IAxiom[] axioms = new Axiom[list.size()];
-		list.toArray(axioms);
-		return axioms; 
+	public IInvariant[] getInvariants() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		IInvariant[] invariants = new Invariant[list.size()];
+		list.toArray(invariants);
+		return invariants; 
 	}
-	
 }

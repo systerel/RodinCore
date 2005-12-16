@@ -14,16 +14,16 @@ import org.eventb.core.ISCTheoremSet;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author halstefa
  *
  */
-public class SCTheoremSet extends UnnamedInternalElement implements ISCTheoremSet {
+public class SCTheoremSet extends InternalElement implements ISCTheoremSet {
 
-	public SCTheoremSet(String type, IRodinElement parent) {
-		super(type, parent);
+	public SCTheoremSet(String name, IRodinElement parent) {
+		super(name, parent);
 	}
 
 	/* (non-Javadoc)

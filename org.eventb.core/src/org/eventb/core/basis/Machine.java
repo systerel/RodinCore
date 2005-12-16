@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
+import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
@@ -73,5 +74,16 @@ public class Machine extends RodinFile implements IMachine {
 		Event[] events = new Event[list.size()];
 		list.toArray(events);
 		return events; 
+	}
+	
+	public ISees[] getSees() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ISees.ELEMENT_TYPE);
+		
+		// for now:
+		assert list.size() <= 1;
+		
+		Sees[] sees = new Sees[list.size()];
+		list.toArray(sees);
+		return sees; 
 	}
 }
