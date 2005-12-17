@@ -93,6 +93,8 @@ public class BinaryExpression extends Expression {
 		BitSet commonTempLeft, commonTempRight;
 		BitSet temp;
 		
+		propagateLeft.set(Formula.STARTTAG);
+
 		propagateLeft.set(Formula.CSET);
 		propagateLeft.set(Formula.QUNION);
 		propagateLeft.set(Formula.QINTER);

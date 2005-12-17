@@ -4,6 +4,7 @@ import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.FCOMP;
@@ -16,8 +17,8 @@ import static org.eventb.core.ast.Formula.FIRST_QUANTIFIED_PREDICATE;
 import static org.eventb.core.ast.Formula.FIRST_RELATIONAL_PREDICATE;
 import static org.eventb.core.ast.Formula.FIRST_UNARY_EXPRESSION;
 import static org.eventb.core.ast.Formula.FIRST_UNARY_PREDICATE;
-import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.MUL;
@@ -38,7 +39,6 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
-import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.ITestHelper.ASSOCIATIVE_EXPRESSION_LENGTH;
@@ -79,7 +79,7 @@ import org.eventb.core.ast.QuantifiedExpression;
  */
 public class TestUnparse extends TestCase {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -105,197 +105,295 @@ public class TestUnparse extends TestCase {
 
 	private static IntegerLiteral two = ff.makeIntegerLiteral(Common.TWO, null);
 	
-	private static class TestPair {
+	private static abstract class TestPair {
 		String image;
-		Predicate formula;
-		TestPair(String image, Predicate formula) {
+		TestPair(String image) {
 			this.image = image;
-			this.formula = formula;
+		}
+		abstract Formula getFormula();
+		void parseAndCheck(String input) {
+			// This check ensures that there is no unnecessary external parenthesis in
+			// the given string
+			if (input.charAt(0) != '(')
+				return;
+			final int length = input.length();
+			int count = 1;
+			for (int i = 1; i < length; i++) {
+				switch (input.charAt(i)) {
+				case '(':
+					++ count;
+					break;
+				case ')':
+					-- count;
+					if (count == 0) {
+						assertFalse("'" + input + "' contains unnecessary external parentheses",
+								i == length - 1);
+						return;
+					}
+					break;
+				}
+			}
+			assertFalse("'" + input + "' contains unbalanced parentheses", true);
 		}
 	}
 	
+	private static class ExprTestPair extends TestPair {
+		Expression formula;
+		ExprTestPair(String image, Expression formula) {
+			super(image);
+			this.formula = formula;
+		}
+		@Override 
+		Expression getFormula() {
+			return formula;
+		}
+		@Override 
+		void parseAndCheck(String input) {
+			super.parseAndCheck(input);
+			IParseResult result = ff.parseExpression(input);
+			assertTrue("Parse failed", result.isSuccess());
+			assertEquals("Unexpected parser result", formula, result.getParsedExpression());
+		}
+	}
+	
+	private static class PredTestPair extends TestPair {
+		Predicate formula;
+		PredTestPair(String image, Predicate formula) {
+			super(image);
+			this.formula = formula;
+		}
+		@Override 
+		Predicate getFormula() {
+			return formula;
+		}
+		@Override 
+		void parseAndCheck(String input) {
+			super.parseAndCheck(input);
+			IParseResult result = ff.parsePredicate(input);
+			assertTrue("Parse failed", result.isSuccess());
+			assertEquals("Unexpected parser result", formula, result.getParsedPredicate());
+		}
+	}
+
 	/*
 	 * this verifies that each child of an associative expression is treated the
 	 * same way by the parser/unparser
 	 */
-	private TestPair[] associativeExpressionTestPairs = new TestPair[] {
+	private ExprTestPair[] associativeExpressionTestPairs = new ExprTestPair[] {
 			// {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
-			new TestPair(
-					"finite(x\u2217y\u222ax\u2217y\u222ax\u2217y)",
+			new ExprTestPair(
+					"x\u2217y\u222ax\u2217y\u222ax\u2217y",
 					buildExpression(MUL, BUNION)
-			), new TestPair(
-					"finite((x\u222ay)\u2217(x\u222ay)\u2217(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay)\u2217(x\u222ay)\u2217(x\u222ay)",
 					buildExpression(BUNION, MUL)
-			), new TestPair(
-					"finite(x+y\u222ax+y\u222ax+y)",
+			), new ExprTestPair(
+					"x+y\u222ax+y\u222ax+y",
 					buildExpression(PLUS, BUNION)
-			), new TestPair(
-					"finite((x\u222ay)+(x\u222ay)+(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay)+(x\u222ay)+(x\u222ay)",
 					buildExpression(BUNION, PLUS)
-			), new TestPair(
-					"finite((x\ue103y)\u222a(x\ue103y)\u222a(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y)\u222a(x\ue103y)\u222a(x\ue103y)",
 					buildExpression(OVR, BUNION)
-			), new TestPair(
-					"finite((x\u222ay)\ue103(x\u222ay)\ue103(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay)\ue103(x\u222ay)\ue103(x\u222ay)",
 					buildExpression(BUNION, OVR)
-			), new TestPair(
-					"finite((x;y)\u222a(x;y)\u222a(x;y))",
+			), new ExprTestPair(
+					"(x;y)\u222a(x;y)\u222a(x;y)",
 					buildExpression(FCOMP, BUNION)
-			), new TestPair(
-					"finite((x\u222ay);(x\u222ay);(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay);(x\u222ay);(x\u222ay)",
 					buildExpression(BUNION, FCOMP)
-			), new TestPair(
-					"finite((x\u2218y)\u222a(x\u2218y)\u222a(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y)\u222a(x\u2218y)\u222a(x\u2218y)",
 					buildExpression(BCOMP, BUNION)
-			), new TestPair(
-					"finite((x\u222ay)\u2218(x\u222ay)\u2218(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay)\u2218(x\u222ay)\u2218(x\u222ay)",
 					buildExpression(BUNION, BCOMP)
-			), new TestPair(
-					"finite((x\u2229y)\u222a(x\u2229y)\u222a(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y)\u222a(x\u2229y)\u222a(x\u2229y)",
 					buildExpression(BINTER, BUNION)
-			), new TestPair(
-					"finite((x\u222ay)\u2229(x\u222ay)\u2229(x\u222ay))",
+			), new ExprTestPair(
+					"(x\u222ay)\u2229(x\u222ay)\u2229(x\u222ay)",
 					buildExpression(BUNION, BINTER)
-			), new TestPair(
-					"finite((x\u2218y)\u2229(x\u2218y)\u2229(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y)\u2229(x\u2218y)\u2229(x\u2218y)",
 					buildExpression(BCOMP, BINTER)
-			), new TestPair(
-					"finite((x\u2229y)\u2218(x\u2229y)\u2218(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y)\u2218(x\u2229y)\u2218(x\u2229y)",
 					buildExpression(BINTER, BCOMP)
-			), new TestPair(
-					"finite((x;y)\u2229(x;y)\u2229(x;y))",
+			), new ExprTestPair(
+					"(x;y)\u2229(x;y)\u2229(x;y)",
 					buildExpression(FCOMP, BINTER)
-			), new TestPair(
-					"finite((x\u2229y);(x\u2229y);(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y);(x\u2229y);(x\u2229y)",
 					buildExpression(BINTER, FCOMP)
-			), new TestPair(
-					"finite((x\ue103y)\u2229(x\ue103y)\u2229(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y)\u2229(x\ue103y)\u2229(x\ue103y)",
 					buildExpression(OVR, BINTER)
-			), new TestPair(
-					"finite((x\u2229y)\ue103(x\u2229y)\ue103(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y)\ue103(x\u2229y)\ue103(x\u2229y)",
 					buildExpression(BINTER, OVR)
-			), new TestPair(
-					"finite(x+y\u2229x+y\u2229x+y)",
+			), new ExprTestPair(
+					"x+y\u2229x+y\u2229x+y",
 					buildExpression(PLUS, BINTER)
-			), new TestPair(
-					"finite((x\u2229y)+(x\u2229y)+(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y)+(x\u2229y)+(x\u2229y)",
 					buildExpression(BINTER, PLUS)
-			), new TestPair(
-					"finite(x\u2217y\u2229x\u2217y\u2229x\u2217y)",
+			), new ExprTestPair(
+					"x\u2217y\u2229x\u2217y\u2229x\u2217y",
 					buildExpression(MUL, BINTER)
-			), new TestPair(
-					"finite((x\u2229y)\u2217(x\u2229y)\u2217(x\u2229y))",
+			), new ExprTestPair(
+					"(x\u2229y)\u2217(x\u2229y)\u2217(x\u2229y)",
 					buildExpression(BINTER, MUL)
-			), new TestPair(
-					"finite((x;y)\u2218(x;y)\u2218(x;y))",
+			), new ExprTestPair(
+					"(x;y)\u2218(x;y)\u2218(x;y)",
 					buildExpression(FCOMP, BCOMP)
-			), new TestPair(
-					"finite((x\u2218y);(x\u2218y);(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y);(x\u2218y);(x\u2218y)",
 					buildExpression(BCOMP, FCOMP)
-			), new TestPair(
-					"finite((x\ue103y)\u2218(x\ue103y)\u2218(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y)\u2218(x\ue103y)\u2218(x\ue103y)",
 					buildExpression(OVR, BCOMP)
-			), new TestPair(
-					"finite((x\u2218y)\ue103(x\u2218y)\ue103(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y)\ue103(x\u2218y)\ue103(x\u2218y)",
 					buildExpression(BCOMP, OVR)
-			), new TestPair(
-					"finite(x+y\u2218x+y\u2218x+y)",
+			), new ExprTestPair(
+					"x+y\u2218x+y\u2218x+y",
 					buildExpression(PLUS, BCOMP)
-			), new TestPair(
-					"finite((x\u2218y)+(x\u2218y)+(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y)+(x\u2218y)+(x\u2218y)",
 					buildExpression(BCOMP, PLUS)
-			), new TestPair(
-					"finite(x\u2217y\u2218x\u2217y\u2218x\u2217y)",
+			), new ExprTestPair(
+					"x\u2217y\u2218x\u2217y\u2218x\u2217y",
 					buildExpression(MUL, BCOMP)
-			), new TestPair(
-					"finite((x\u2218y)\u2217(x\u2218y)\u2217(x\u2218y))",
+			), new ExprTestPair(
+					"(x\u2218y)\u2217(x\u2218y)\u2217(x\u2218y)",
 					buildExpression(BCOMP, MUL)
-			), new TestPair(
-					"finite((x\ue103y);(x\ue103y);(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y);(x\ue103y);(x\ue103y)",
 					buildExpression(OVR, FCOMP)
-			), new TestPair(
-					"finite((x;y)\ue103(x;y)\ue103(x;y))",
+			), new ExprTestPair(
+					"(x;y)\ue103(x;y)\ue103(x;y)",
 					buildExpression(FCOMP, OVR)
-			), new TestPair(
-					"finite(x+y;x+y;x+y)",
+			), new ExprTestPair(
+					"x+y;x+y;x+y",
 					buildExpression(PLUS, FCOMP)
-			), new TestPair(
-					"finite((x;y)+(x;y)+(x;y))",
+			), new ExprTestPair(
+					"(x;y)+(x;y)+(x;y)",
 					buildExpression(FCOMP, PLUS)
-			), new TestPair(
-					"finite(x\u2217y;x\u2217y;x\u2217y)",
+			), new ExprTestPair(
+					"x\u2217y;x\u2217y;x\u2217y",
 					buildExpression(MUL, FCOMP)
-			), new TestPair(
-					"finite((x;y)\u2217(x;y)\u2217(x;y))",
+			), new ExprTestPair(
+					"(x;y)\u2217(x;y)\u2217(x;y)",
 					buildExpression(FCOMP, MUL)
-			), new TestPair(
-					"finite(x+y\ue103x+y\ue103x+y)",
+			), new ExprTestPair(
+					"x+y\ue103x+y\ue103x+y",
 					buildExpression(PLUS, OVR)
-			), new TestPair(
-					"finite((x\ue103y)+(x\ue103y)+(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y)+(x\ue103y)+(x\ue103y)",
 					buildExpression(OVR, PLUS)
-			), new TestPair(
-					"finite(x\u2217y\ue103x\u2217y\ue103x\u2217y)",
+			), new ExprTestPair(
+					"x\u2217y\ue103x\u2217y\ue103x\u2217y",
 					buildExpression(MUL, OVR)
-			), new TestPair(
-					"finite((x\ue103y)\u2217(x\ue103y)\u2217(x\ue103y))",
+			), new ExprTestPair(
+					"(x\ue103y)\u2217(x\ue103y)\u2217(x\ue103y)",
 					buildExpression(OVR, MUL)
-			), new TestPair(
-					"finite(x\u2217y+x\u2217y+x\u2217y)",
+			), new ExprTestPair(
+					"x\u2217y+x\u2217y+x\u2217y",
 					buildExpression(MUL, PLUS)
-			), new TestPair(
-					"finite((x+y)\u2217(x+y)\u2217(x+y))",
+			), new ExprTestPair(
+					"(x+y)\u2217(x+y)\u2217(x+y)",
 					buildExpression(PLUS, MUL)
 			),
 	};
+
+	private Predicate btrueEquivBtrue = mBinaryPredicate(LEQV, btrue, btrue);
+	private Predicate btrueAndBtrue = mAssociativePredicate(LAND, btrue, btrue);
+	private Predicate btrueOrBtrue = mAssociativePredicate(LOR, btrue, btrue);
 	
-	private TestPair[] associativePredicateTestPairs = new TestPair[] {
-//		"((\u22a4\u21d4\u22a4)\u21d4(\u22a4\u21d4\u22a4))\u21d4(\u22a4\u21d4\u22a4)",
-//		ff.makeAssociativePredicate(new Predicate[]{ff.makeAssociativePredicate(new Predicate[]{ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null),ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null)},LEQV,null), ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null)},LEQV,null),
-//		"(\u22a4\u21d4\u22a4)\u21d4((\u22a4\u21d4\u22a4)\u21d4(\u22a4\u21d4\u22a4))",
-//		ff.makeAssociativePredicate(new Predicate[]{ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null), ff.makeAssociativePredicate(new Predicate[]{ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null),ff.makeAssociativePredicate(new Predicate[]{btrue,btrue},LEQV,null)},LEQV,null)},LEQV,null),
-//		// not correct
-//		"(\u22a4\u21d4\u22a4)\u2227(\u22a4\u21d4\u22a4)\u2227(\u22a4\u21d4\u22a4)",
-//		buildPredicates(LEQV, LAND),
-//		"\u22a4\u2227\u22a4\u21d4\u22a4\u2227\u22a4\u21d4\u22a4\u2227\u22a4",
-//		buildPredicates(LAND, LEQV),
-//		"(\u22a4\u21d4\u22a4)\u2228(\u22a4\u21d4\u22a4)\u2228(\u22a4\u21d4\u22a4)",
-//		buildPredicates(LEQV, LOR),
-//		"\u22a4\u2228\u22a4\u21d4\u22a4\u2228\u22a4\u21d4\u22a4\u2228\u22a4",
-//		buildPredicates(LOR, LEQV),
-			new TestPair(
+	private PredTestPair[] associativePredicateTestPairs = new PredTestPair[] {
+			new PredTestPair(
+					"((\u22a4\u21d4\u22a4)\u21d4(\u22a4\u21d4\u22a4))\u21d4(\u22a4\u21d4\u22a4)",
+					mBinaryPredicate(LEQV,
+							mBinaryPredicate(LEQV, btrueEquivBtrue, btrueEquivBtrue),
+							btrueEquivBtrue)
+			), new PredTestPair(
+					"(\u22a4\u21d4\u22a4)\u21d4((\u22a4\u21d4\u22a4)\u21d4(\u22a4\u21d4\u22a4))",
+					mBinaryPredicate(LEQV,
+							btrueEquivBtrue,
+							mBinaryPredicate(LEQV, btrueEquivBtrue, btrueEquivBtrue))
+			), new PredTestPair(
+					"(\u22a4\u21d4\u22a4)\u2227(\u22a4\u21d4\u22a4)\u2227(\u22a4\u21d4\u22a4)",
+					mAssociativePredicate(LAND,
+							btrueEquivBtrue,
+							btrueEquivBtrue, 
+							btrueEquivBtrue)
+			), new PredTestPair(
+					"(\u22a4\u2227\u22a4\u21d4\u22a4\u2227\u22a4)\u21d4\u22a4\u2227\u22a4",
+					mBinaryPredicate(LEQV,
+							mBinaryPredicate(LEQV, btrueAndBtrue, btrueAndBtrue),
+							btrueAndBtrue)
+			), new PredTestPair(
+					"\u22a4\u2227\u22a4\u21d4(\u22a4\u2227\u22a4\u21d4\u22a4\u2227\u22a4)",
+					mBinaryPredicate(LEQV,
+							btrueAndBtrue,
+							mBinaryPredicate(LEQV, btrueAndBtrue, btrueAndBtrue))
+
+			), new PredTestPair(
+					"(\u22a4\u21d4\u22a4)\u2228(\u22a4\u21d4\u22a4)\u2228(\u22a4\u21d4\u22a4)",
+					mAssociativePredicate(LOR,
+							btrueEquivBtrue,
+							btrueEquivBtrue, 
+							btrueEquivBtrue)
+			), new PredTestPair(
+					"(\u22a4\u2228\u22a4\u21d4\u22a4\u2228\u22a4)\u21d4\u22a4\u2228\u22a4",
+					mBinaryPredicate(LEQV,
+							mBinaryPredicate(LEQV, btrueOrBtrue, btrueOrBtrue),
+							btrueOrBtrue)
+			), new PredTestPair(
+					"\u22a4\u2228\u22a4\u21d4(\u22a4\u2228\u22a4\u21d4\u22a4\u2228\u22a4)",
+					mBinaryPredicate(LEQV,
+							btrueOrBtrue,
+							mBinaryPredicate(LEQV, btrueOrBtrue, btrueOrBtrue))
+			), new PredTestPair(
 					"(\u22a4\u2227\u22a4)\u2227(\u22a4\u2227\u22a4)\u2227(\u22a4\u2227\u22a4)",
 					buildPredicate(LAND, LAND)
-			), new TestPair(
+			), new PredTestPair(
 					"(\u22a4\u2227\u22a4)\u2228(\u22a4\u2227\u22a4)\u2228(\u22a4\u2227\u22a4)",
 					buildPredicate(LAND, LOR)
-			), new TestPair(
+			), new PredTestPair(
 					"(\u22a4\u2228\u22a4)\u2227(\u22a4\u2228\u22a4)\u2227(\u22a4\u2228\u22a4)",
 					buildPredicate(LOR, LAND)
-			), new TestPair(
+			), new PredTestPair(
 					"(\u22a4\u2228\u22a4)\u2228(\u22a4\u2228\u22a4)\u2228(\u22a4\u2228\u22a4)",
 					buildPredicate(LOR, LOR)
 			),
 	};
 			
 	// test empty setext
-	private TestPair[] uncommonFormulaeTestPairs = new TestPair[] {
-			new TestPair(
-					"finite({})",
-					mSimplePredicate(mSetExtension())
-					), new TestPair(
-					"finite(A ◁ f;g)",
-					mSimplePredicate(mAssociativeExpression(FCOMP,
+	private ExprTestPair[] uncommonFormulaeTestPairs = new ExprTestPair[] {
+			new ExprTestPair(
+					"{}",
+					mSetExtension()
+			), new ExprTestPair(
+					"A ◁ f;g",
+					mAssociativeExpression(FCOMP,
 							mBinaryExpression(DOMRES, id_A, id_f),
 							id_g 
-					))
+					)
+			), new ExprTestPair(
+					"x × y",
+					mBinaryExpression(CPROD, id_x, id_y)
 // TODO restore test of optimality of toString()
-//			), new TestPair(
-//					"finite(f;g ▷ A)",
-//					mSimplePredicate(mAssociativeExpression(FCOMP,
+//			), new ExprTestPair(
+//					"f;g ▷ A",
+//					mAssociativeExpression(FCOMP,
 //							id_f, 
 //							mBinaryExpression(RANRES, id_g, id_A)
-//					))
+//					)
 			),
 	};
 	
@@ -307,13 +405,12 @@ public class TestUnparse extends TestCase {
 		);
 	}
 	
-	private Predicate buildExpression(int firstTag, int secondTag) {
-		return mSimplePredicate(
-				mAssociativeExpression(secondTag,
-						mAssociativeExpression(firstTag, id_x, id_y),
-						mAssociativeExpression(firstTag, id_x, id_y),
-						mAssociativeExpression(firstTag, id_x, id_y)
-				));
+	private Expression buildExpression(int firstTag, int secondTag) {
+		return mAssociativeExpression(secondTag,
+				mAssociativeExpression(firstTag, id_x, id_y),
+				mAssociativeExpression(firstTag, id_x, id_y),
+				mAssociativeExpression(firstTag, id_x, id_y)
+		);
 	}
 	
 	//--------------------------------------------------------------
@@ -837,23 +934,17 @@ public class TestUnparse extends TestCase {
 		return formulae; 
 	}
 	
-	// this test is for making sure that an associative expression treats all
+	// this test ensures that an associative expression treats all
 	// its children the same way
 	private void routineTestStringFormula(TestPair[] pairs) {
-		IParseResult result = null;
 		for (TestPair pair: pairs) {
-			String formula = pair.formula.toString();
-			String formulaParenthesized = pair.formula.toStringFullyParenthesized();
+			String formula = pair.getFormula().toString();
+			String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
 			assertEquals("\nTest failed on original String: "+pair.image+"\nUnparser produced: "+formula+"\n",
 					pair.image, formula);
 			
-			result = ff.parsePredicate(formulaParenthesized);
-			assertTrue("Parse failed on formula: " + formulaParenthesized, result.isSuccess());
-			assertEquals(pair.formula, result.getParsedPredicate());
-			
-			result = ff.parsePredicate(formula);
-			assertTrue("Parse failed on formula: " + formula, result.isSuccess());
-			assertEquals(pair.formula, result.getParsedPredicate());
+			pair.parseAndCheck(formula);
+			pair.parseAndCheck(formulaParenthesized);
 		}
 	}
 	
@@ -870,99 +961,45 @@ public class TestUnparse extends TestCase {
 	 * Test of automatically generated formulae
 	 */
 	public void testUnparse() {
-		
-		routineTest(constructAssociativeAssociativeTrees(), true);
-		
-		routineTest(constructBinaryBinaryTrees(), true);
-		
-		routineTest(constructUnaryUnaryTrees(), true);
-		
-		routineTest(constructQuantifiedQuantifiedTrees(), true);
-		
-		routineTest(constructAssociativeBinaryTrees(), true);
-		
-		routineTest(constructAssociativeUnaryTrees(), true);
-	
-		routineTest(constructBinaryUnaryTrees(), true);
-		
-		routineTest(constructQuantifiedBinaryTrees(), true);
-		
-		routineTest(constructQuantifiedAssociativeTree(), true);
-		
-		routineTest(constructQuantifiedUnaryTree(), true);
-		
-		routineTest(constructAssociativeAssociativePredicateTree(),false);
-		
-		routineTest(constructBinaryBinaryPredicateTrees(),false);
-		
-		routineTest(constructUnaryUnaryPredicateTrees(),false);
-		
-		routineTest(constructAssociativeBinaryPredicateTrees(),false);
-		
-		routineTest(constructAssociativeUnaryPredicateTrees(),false);
-		
-		routineTest(constructBinaryUnaryPredicateTrees(),false);
-		
-		routineTest(constructQuantifiedQuantifiedPredicateTrees(),false);
-		
-		routineTest(constructQuantifiedBinaryPredicateTrees(),false);
-		
-		routineTest(constructQuantifiedAssociativePredicateTrees(),false);
-		
-		routineTest(constructQuantifiedUnaryPredicateTrees(),false);
-		
-		routineTest(constructRelop(),false);
-		
-		routineTest(constructQuantifierWithPredicate(),true);
+		routineTest(constructAssociativeAssociativeTrees());
+		routineTest(constructBinaryBinaryTrees());
+		routineTest(constructUnaryUnaryTrees());
+		routineTest(constructQuantifiedQuantifiedTrees());
+		routineTest(constructAssociativeBinaryTrees());
+		routineTest(constructAssociativeUnaryTrees());
+		routineTest(constructBinaryUnaryTrees());
+		routineTest(constructQuantifiedBinaryTrees());
+		routineTest(constructQuantifiedAssociativeTree());
+		routineTest(constructQuantifiedUnaryTree());
+		routineTest(constructAssociativeAssociativePredicateTree());
+		routineTest(constructBinaryBinaryPredicateTrees());
+		routineTest(constructUnaryUnaryPredicateTrees());
+		routineTest(constructAssociativeBinaryPredicateTrees());
+		routineTest(constructAssociativeUnaryPredicateTrees());
+		routineTest(constructBinaryUnaryPredicateTrees());
+		routineTest(constructQuantifiedQuantifiedPredicateTrees());
+		routineTest(constructQuantifiedBinaryPredicateTrees());
+		routineTest(constructQuantifiedAssociativePredicateTrees());
+		routineTest(constructQuantifiedUnaryPredicateTrees());
+		routineTest(constructRelop());
+		routineTest(constructQuantifierWithPredicate());
 	}
 	
 	
-	private void routineTest (Formula[] formulae, boolean isExpr) {
-		IParseResult result = null;
-		String formula = null;
-		String formulaParenthesized = null;
-		Predicate temp = null;
+	private void routineTest (Formula[] formulae) {
 		for (int i = 0; i < formulae.length; i++) {
-			if (isExpr) {
-				Expression expr = (Expression) formulae[i];
-				temp = ff.makeSimplePredicate(KFINITE, expr, null);
+			TestPair pair;
+			if (formulae[i] instanceof Expression) {
+				pair = new ExprTestPair(null, (Expression) formulae[i]);
+			} else {
+				pair = new PredTestPair(null, (Predicate) formulae[i]);
 			}
-			else {
-				temp = (Predicate) formulae[i];
-			}
-			formula = temp.toString();
-			formulaParenthesized = temp.toStringFullyParenthesized();
-			result = ff.parsePredicate(formula);
-			assertTrue("Parser failed on formula: "+ formula + "\nInput Tree was:\n"+ temp.getSyntaxTree() + "\n",
-					result.isSuccess());
-			assertEquals(
-					"\nTest failed on original tree:\n"
-					+ temp.getSyntaxTree()
-					+ "Fully parenthesized: "
-					+ temp.toStringFullyParenthesized()
-					+ "\n" + "\nTest returned string: " + formula
-					+ "\nParser produced tree:\n"
-					+ result.getParsedPredicate().getSyntaxTree()
-					+ "Fully parenthesized: "
-					+ result.getParsedPredicate().toStringFullyParenthesized()
-					+ "\n\n" + "Parser problems: "
-					+ result.toString() + "\n",
-					result.getParsedPredicate(), temp);
-			assertEquals(result.getParsedPredicate().toString(), formula);
 			
-			// toStringFullyParenthesized
-			result = ff.parsePredicate(formulaParenthesized);
-			assertTrue("Parser failed on formula: "+ formulaParenthesized + "\nInput Tree was:\n"+ temp.getSyntaxTree() + "\n",
-					result.isSuccess());
-			assertEquals(
-					"\nTest parenthesized failed on original tree:\n"
-					+ temp.getSyntaxTree()
-					+ "\n" + "\nTest returned string: " + formulaParenthesized
-					+ "\nParser produced tree:\n"
-					+ result.getParsedPredicate().getSyntaxTree()
-					+ "\n\n" + "Parser problems: "
-					+ result.toString() + "\n",
-					result.getParsedPredicate(), temp);
+			String formula = pair.getFormula().toString();
+			String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
+			
+			pair.parseAndCheck(formula);
+			pair.parseAndCheck(formulaParenthesized);
 		}
 	}
 }

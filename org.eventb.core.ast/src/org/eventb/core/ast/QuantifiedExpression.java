@@ -132,6 +132,8 @@ public class QuantifiedExpression extends Expression {
 		BitSet propagate = new BitSet();
 		BitSet propagateRight = new BitSet();
 		
+		propagate.set(Formula.STARTTAG);
+
 		propagate.set(Formula.CSET);
 		propagate.set(Formula.QUNION);
 		propagate.set(Formula.QINTER);

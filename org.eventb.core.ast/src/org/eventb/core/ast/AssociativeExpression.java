@@ -88,6 +88,8 @@ public class AssociativeExpression extends Expression {
 		BitSet commonTempLeft, commonTempRight;
 		BitSet temp;
 		
+		propagateLeft.set(Formula.STARTTAG);
+
 		propagateLeft.set(Formula.CSET);
 		propagateLeft.set(Formula.QUNION);
 		propagateLeft.set(Formula.QINTER);
@@ -130,6 +132,7 @@ public class AssociativeExpression extends Expression {
 		propagateLeft.set(Formula.TSUR);
 		propagateLeft.set(Formula.TBIJ);
 		propagateLeft.set(Formula.MAPSTO);
+		
 		propagateRight = (BitSet)propagateLeft.clone();
 		// is not below but reachable without parentheses only right child
 		propagateRight.set(Formula.FUNIMAGE);
