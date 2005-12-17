@@ -115,7 +115,7 @@ public class TestLexer extends TestCase {
                 { "min"				   			 },	// _KMIN
                 { "max"				   			 },	// _KMAX
                 { ".", "\u2024"		   			 },	// _DOT
-                { "x", "_toto"		   			 },	// _IDENT
+                { "x", "_toto", "x'"  			 },	// _IDENT
                 { "2", "001"		   			 }	// _INTLIT
         };
         

@@ -30,6 +30,7 @@ WhiteSpace = [:space:] | [\u0009-\u000d\u001c-\u001f]
    which can not be part of them (contrary to Java). */
 Identifier =  !(![:jletter:] | "\u03bb") (!(![:jletterdigit:] | "\u03bb"))*
 IntegerLiteral = [:digit:]([:digit:])*
+Prime = "'"
 FullStop = "." | "\u2024"
 
 %%
@@ -131,7 +132,7 @@ FullStop = "." | "\u2024"
 "min"                 { return symbol(Parser._KMIN); }
 "max"                 { return symbol(Parser._KMAX); }
 {FullStop}            { return symbol(Parser._DOT); }
-{Identifier}          { return symbol(Parser._IDENT); }
+{Identifier}{Prime}?  { return symbol(Parser._IDENT); }
 {IntegerLiteral}      { return symbol(Parser._INTLIT); }
 {WhiteSpace}+         { /* ignore */ }
 <<EOF>>               { return symbol(Parser._EOF); }

@@ -28,23 +28,52 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class FreeIdentifier extends Identifier {
 	
+	// Name without trailing prime
+	private final String bareName;
+	
+	// Full name
 	private final String name;
 	
 	protected FreeIdentifier(String name, int tag, SourceLocation location) {
 		super(tag, location, name.hashCode());
 		this.name = name;
+		final int endIndex = name.length() - 1;
+		if (name.charAt(endIndex) == '\'') {
+			this.bareName = name.substring(0, endIndex);
+		} else {
+			this.bareName = name;
+		}
 		assert tag == Formula.FREE_IDENT;
 		assert name != null;
 		assert name.length() != 0;
 	}
 	
 	/**
-	 * Returns the name of this identifier.
+	 * Returns the bare name of this identifier, that is its name with a
+	 * trailing prime removed.
 	 * 
-	 * @return the name of this identifier
+	 * @return the bare name of this identifier
+	 */
+	public String getBareName() {
+		return bareName;
+	}
+
+	/**
+	 * Returns the full name of this identifier.
+	 * 
+	 * @return the full name of this identifier
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Tells whether this identifier is primed.
+	 * 
+	 * @return <code>true</code> iff this identifier is primed
+	 */
+	public boolean isPrimed() {
+		return name != bareName;
 	}
 
 	@Override
@@ -142,9 +171,9 @@ public class FreeIdentifier extends Identifier {
 
 	@Override
 	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		if (replacement.getClass() == FreeReplacement.class) {
+		if (replacement instanceof FreeReplacement) {
 			Info info = ((FreeReplacement) replacement).getInfo(this);
-			if(info == null)
+			if (info == null)
 				return this;
 			else {
 				Expression expr = info.getExpression();
@@ -152,12 +181,12 @@ public class FreeIdentifier extends Identifier {
 				// the types must correspond!
 				assert this.getType() == null || this.getType().equals(expr.getType());
 				
-				if(info.isIndexClosed())
+				if (info.isIndexClosed())
 					return expr;
 				else
 					return expr.adjustIndicesAbsolute(noOfBoundVars, formulaFactory);
 			}
-		} else if(replacement.getClass() == BindReplacement.class) {
+		} else if (replacement instanceof BindReplacement) {
 			Integer index = ((BindReplacement) replacement).getIndex(this);
 			
 			if(index == null) 

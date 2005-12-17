@@ -67,7 +67,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * @return the type associated to the given identifier
 	 */
 	public Type getIdentType(FreeIdentifier ident) {
-		String name = ident.getName();
+		String name = ident.getBareName();
 		Type result = initialTypeEnvironment.getType(name); 
 		if (result != null) {
 			return result;
