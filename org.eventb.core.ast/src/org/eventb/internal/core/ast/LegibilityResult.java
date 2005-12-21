@@ -4,6 +4,7 @@
  */
 package org.eventb.internal.core.ast;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,15 +23,22 @@ import org.eventb.core.ast.FreeIdentifier;
 public class LegibilityResult extends AbstractResult {
 	
 	// list of the encountered free and bound variables
-	private Map<String, FreeIdentifier> freeIdents;
-	private Map<String, BoundIdentDecl> boundIdentDecls;
+	private final Map<String, FreeIdentifier> freeIdents;
+	private final Map<String, BoundIdentDecl> boundIdentDecls;
 	
 	/**
 	 * 
 	 */
-	public LegibilityResult() {
-		this.freeIdents = new HashMap<String, FreeIdentifier>();
+	public LegibilityResult(Collection<FreeIdentifier> context) {
 		this.boundIdentDecls = new HashMap<String, BoundIdentDecl>();
+		if (context == null) {
+			this.freeIdents = new HashMap<String, FreeIdentifier>();
+		} else {
+			this.freeIdents = new HashMap<String, FreeIdentifier>(context.size());
+			for (FreeIdentifier ident: context) {
+				this.freeIdents.put(ident.getName(), ident);
+			}
+		}
 	}
 	
 	/**

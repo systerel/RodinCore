@@ -1123,14 +1123,18 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Checks whether a formula is legible.
 	 * <p>
-	 * For a formula to be legible, a bound identifier must not appear free
-	 * in the formula, and a bound identifier can be bound at exactly one place.
+	 * For a formula to be legible, a bound identifier must not appear free in
+	 * the formula, and a bound identifier can be bound at exactly one place.
 	 * </p>
+	 * 
+	 * @param context
+	 *            collection of identifiers occurring free in the context of
+	 *            this formula or <code>null</code>.
 	 * 
 	 * @return the result of the legibility checker
 	 */
-	public final IResult isLegible() {
-		LegibilityResult result = new LegibilityResult();
+	public final IResult isLegible(Collection<FreeIdentifier> context) {
+		LegibilityResult result = new LegibilityResult(context);
 		isLegible(result, new BoundIdentDecl[0]);
 		return result;
 	}
@@ -1391,7 +1395,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * For a formula to be well-formed, a bound identifier must not appear free
 	 * in the formula, and a bound identifier can be bound at exactly one place.
 	 * <p>
-	 * Method {@link Formula#isLegible()} in fact calls this method with a
+	 * Method {@link Formula#isLegible(Collection)} in fact calls this method with a
 	 * new result and an empty array.
 	 * 
 	 * @param result

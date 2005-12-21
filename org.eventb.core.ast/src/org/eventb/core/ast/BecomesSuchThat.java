@@ -173,6 +173,11 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] boundAbove) {
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.isLegible(result, boundAbove);
+			if (! result.isSuccess())
+				return;
+		}
 		for (BoundIdentDecl decl: primedIdents) {
 			decl.isLegible(result, boundAbove);
 			if (! result.isSuccess()) {

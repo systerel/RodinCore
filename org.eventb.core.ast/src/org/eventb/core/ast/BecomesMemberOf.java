@@ -57,13 +57,19 @@ public class BecomesMemberOf extends Assignment {
 		setExpr.collectNamesAbove(names, boundNames, offset);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#getSyntaxTree(java.lang.String[], java.lang.String)
-	 */
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		// TODO Auto-generated method stub
-		return null;
+		final String childTabs = tabs + '\t';
+		
+		final StringBuilder result = new StringBuilder();
+		result.append(tabs);
+		result.append(this.getClass().getSimpleName());
+		result.append(" [:∈]\n");
+		for (FreeIdentifier ident: assignedIdents) {
+			result.append(ident.getSyntaxTree(boundNames, childTabs));
+		}
+		result.append(setExpr.getSyntaxTree(boundNames, childTabs));
+		return result.toString();
 	}
 
 	@Override
@@ -92,10 +98,13 @@ public class BecomesMemberOf extends Assignment {
 	 * @see org.eventb.core.ast.Formula#isLegible(org.eventb.internal.core.ast.LegibilityResult, org.eventb.core.ast.BoundIdentDecl[])
 	 */
 	@Override
-	protected void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
-		// TODO Auto-generated method stub
-
+	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.isLegible(result, quantifiedIdents);
+			if (! result.isSuccess())
+				return;
+		}
+		setExpr.isLegible(result, quantifiedIdents);
 	}
 
 	/* (non-Javadoc)

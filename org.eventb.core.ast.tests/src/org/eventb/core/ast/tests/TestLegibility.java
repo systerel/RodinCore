@@ -4,7 +4,45 @@
  */
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.EMPTYSET;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.EXPN;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.INTEGER;
+import static org.eventb.core.ast.Formula.KUNION;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.MUL;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,15 +50,13 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
 
 /**
  * Unit test of the well-formedness checker.
@@ -29,109 +65,103 @@ import org.eventb.core.ast.QuantifiedExpression;
  */
 public class TestLegibility extends TestCase {
 	
-	private static final class TestItem {
-		String input;
-		Predicate formula;
+	private static final class TestItem<T extends Formula<T>> {
+		T formula;
 		boolean expectedResult;
 		
-		TestItem(String input, Predicate formula, boolean result) {
-			expectedResult = result;
+		TestItem(T formula, boolean expectedResult) {
+			this.expectedResult = expectedResult;
 			this.formula = formula;
-			this.input = input;
 		}
 	}
 
 	private List<TestItem> testItems;
 
-	private FormulaFactory ff = FormulaFactory.getDefault();
-
-	final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
-	final FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
-	final FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
-	final FreeIdentifier id_s = ff.makeFreeIdentifier("s", null);
-	final FreeIdentifier id_t = ff.makeFreeIdentifier("t", null);
-	final FreeIdentifier id_u = ff.makeFreeIdentifier("u", null);
-	final FreeIdentifier id_a = ff.makeFreeIdentifier("a", null);
-	final FreeIdentifier id_b = ff.makeFreeIdentifier("b", null);
+	final FreeIdentifier id_x = mFreeIdentifier("x");
+	final FreeIdentifier id_y = mFreeIdentifier("y");
+	final FreeIdentifier id_z = mFreeIdentifier("z");
+	final FreeIdentifier id_s = mFreeIdentifier("s");
+	final FreeIdentifier id_t = mFreeIdentifier("t");
+	final FreeIdentifier id_u = mFreeIdentifier("u");
+	final FreeIdentifier id_a = mFreeIdentifier("a");
+	final FreeIdentifier id_b = mFreeIdentifier("b");
 	
-	final BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
-	final BoundIdentDecl bd_y = ff.makeBoundIdentDecl("y", null);
-	final BoundIdentDecl bd_z = ff.makeBoundIdentDecl("z", null);
-	final BoundIdentDecl bd_s = ff.makeBoundIdentDecl("s", null);
-	final BoundIdentDecl bd_t = ff.makeBoundIdentDecl("t", null);
-	final BoundIdentDecl bd_u = ff.makeBoundIdentDecl("u", null);
+	final BoundIdentDecl bd_x = mBoundIdentDecl("x");
+	final BoundIdentDecl bd_y = mBoundIdentDecl("y");
+	final BoundIdentDecl bd_z = mBoundIdentDecl("z");
+	final BoundIdentDecl bd_s = mBoundIdentDecl("s");
+	final BoundIdentDecl bd_t = mBoundIdentDecl("t");
+	final BoundIdentDecl bd_u = mBoundIdentDecl("u");
 
-	final Expression b0 = ff.makeBoundIdentifier(0, null);
-	final Expression b1 = ff.makeBoundIdentifier(1, null);
+	final BoundIdentDecl bd_xp = mBoundIdentDecl("x'");
+	final BoundIdentDecl bd_yp = mBoundIdentDecl("y'");
+	final BoundIdentDecl bd_zp = mBoundIdentDecl("z'");
 
-	final LiteralPredicate bfalse = ff.makeLiteralPredicate(Formula.BFALSE, null);
+	final Expression b0 = mBoundIdentifier(0);
+	final Expression b1 = mBoundIdentifier(1);
+	final Expression b2 = mBoundIdentifier(2);
+	final Expression b3 = mBoundIdentifier(3);
+
+	final LiteralPredicate bfalse = mLiteralPredicate(BFALSE);
 	
+	final Expression emptySet = mAtomicExpression(EMPTYSET);
+	final Expression sint = mAtomicExpression(INTEGER);
+	final Expression set_x_in_int = mQuantifiedExpression(CSET, Implicit, 
+			mList(bd_x), mRelationalPredicate(IN, b0, sint), b0
+	);
+	final Expression set_s_in_int = mQuantifiedExpression(CSET, Implicit, 
+			mList(bd_s), mRelationalPredicate(IN, b0, sint), b0
+	);
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		testItems = new ArrayList<TestItem>();
-		final Expression emptySet = ff.makeAtomicExpression(Formula.EMPTYSET, null);
-		final Expression sint = ff.makeAtomicExpression(Formula.INTEGER, null);
-		final Expression set_x_in_int =
-			ff.makeQuantifiedExpression(
-				Formula.CSET,
-				mList(bd_x),
-				ff.makeRelationalPredicate(Formula.IN, b0, sint, null), b0, null, QuantifiedExpression.Form.Implicit);
-
+		testItems = new ArrayList<TestItem>(Arrays.asList(simpleTests));
+		
 		// Implicit comprehension set with enclosed comprehension set on the right
-		TestItem item1 = new TestItem(
-				"{ y \u2229 {x | x \u2208 \u2124} | y = \u2205 } = { \u2205 }",
-				ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						ff.makeQuantifiedExpression(
-							Formula.CSET,
-							mList(bd_y),
-							ff.makeRelationalPredicate(Formula.EQUAL, b0, emptySet, null), ff.makeAssociativeExpression(Formula.BINTER, new Expression[]{b0, set_x_in_int}, null), null, QuantifiedExpression.Form.Implicit),
-						ff.makeSetExtension(Arrays.asList(emptySet), null), null),
-				true);
+		TestItem item1 = new TestItem<Predicate>(
+				mRelationalPredicate(EQUAL,
+						mQuantifiedExpression(CSET, Implicit,
+								mList(bd_y),
+								mRelationalPredicate(EQUAL, b0, emptySet),
+								mAssociativeExpression(BINTER, b0, set_x_in_int)
+						), mSetExtension(emptySet)
+				), true);
 		testItems.add(item1);
 		
 		// Implicit comprehension set with enclosed comprehension set on the left
-		TestItem item2 = new TestItem(
-				"{ {x | x \u2208 \u2124} \u2229 y | y = \u2205 } = { \u2205 }",
-				ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						ff.makeQuantifiedExpression(
-							Formula.CSET,
-							mList(bd_y),
-							ff.makeRelationalPredicate(Formula.EQUAL, b0, emptySet, null), ff.makeAssociativeExpression(Formula.BINTER, new Expression[]{set_x_in_int, b0}, null), null, QuantifiedExpression.Form.Implicit),
-						ff.makeSetExtension(Arrays.asList(emptySet), null), null),
-				true);
+		TestItem item2 = new TestItem<Predicate>(
+				mRelationalPredicate(EQUAL,
+						mQuantifiedExpression(CSET, Implicit,
+								mList(bd_y), 
+								mRelationalPredicate(EQUAL, b0, emptySet),
+								mAssociativeExpression(BINTER, set_x_in_int, b0)
+						), mSetExtension(emptySet)
+				), true);
 		testItems.add(item2);
 
 		final Expression set_x_in_b0 =
-			ff.makeQuantifiedExpression(
-				Formula.CSET,
-				mList(bd_x),
-				ff.makeRelationalPredicate(Formula.IN, b0, b1, null), b0, null, QuantifiedExpression.Form.Implicit);
+			mQuantifiedExpression(CSET, Implicit, 
+					mList(bd_x), mRelationalPredicate(IN, b0, b1), b0);
 
-		TestItem item3 = new TestItem(
-				"{ y \u2229 {x | x \u2208 y} | y = \u2205 } = { \u2205 }",
-				ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						ff.makeQuantifiedExpression(
-							Formula.CSET,
-							mList(bd_y),
-							ff.makeRelationalPredicate(Formula.EQUAL, b0, emptySet, null), ff.makeAssociativeExpression(Formula.BINTER, new Expression[]{b0, set_x_in_b0}, null), null, QuantifiedExpression.Form.Implicit),
-						ff.makeSetExtension(Arrays.asList(emptySet), null), null),
+		TestItem item3 = new TestItem<Predicate>(
+				mRelationalPredicate(EQUAL,
+						mQuantifiedExpression(CSET, Implicit,
+							mList(bd_y), 
+							mRelationalPredicate(EQUAL, b0, emptySet),
+							mAssociativeExpression(BINTER, b0, set_x_in_b0)),
+						mSetExtension(mList(emptySet))),
 				true);
 		testItems.add(item3);
 
-		TestItem item4 = new TestItem(
-				"{ {x | x \u2208 y} \u2229 y  | y = \u2205 } = { \u2205 }",
-				ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						ff.makeQuantifiedExpression(
-							Formula.CSET,
-							mList(bd_y),
-							ff.makeRelationalPredicate(Formula.EQUAL, b0, emptySet, null), ff.makeAssociativeExpression(Formula.BINTER, new Expression[]{set_x_in_b0, b0}, null), null, QuantifiedExpression.Form.Implicit),
-						ff.makeSetExtension(Arrays.asList(emptySet), null), null),
+		TestItem item4 = new TestItem<Predicate>(
+				mRelationalPredicate(EQUAL,
+						mQuantifiedExpression(CSET, Implicit,
+							mList(bd_y), 
+							mRelationalPredicate(EQUAL, b0, emptySet),
+							mAssociativeExpression(BINTER, set_x_in_b0, b0)),
+						mSetExtension(emptySet)),
 				true);
 		testItems.add(item4);
 
@@ -140,287 +170,483 @@ public class TestLegibility extends TestCase {
 
 	
 	
-	private Object[] testPairs = new Object[]{
+	private TestItem[] simpleTests = new TestItem[] {
 			// Pred
-			"\u22a5", 
-			bfalse,
-			true,
-			"finite(x)",
-			ff.makeSimplePredicate(Formula.KFINITE,id_x,null),
-			true,
-			"x=x",
-			ff.makeRelationalPredicate(Formula.EQUAL,id_x,id_x,null),
-			true,
-			"\u00ac\u22a5",
-			ff.makeUnaryPredicate(Formula.NOT,bfalse,null),
-			true,
-			"\u22a5\u2227\u22a5",
-			ff.makeAssociativePredicate(Formula.LAND,new Predicate[]{
-							bfalse,
-							bfalse},null),
-			true,
-			"\u22a5\u21d2\u22a5",
-			ff.makeBinaryPredicate(Formula.LIMP,bfalse,bfalse,null),
-			true,
+			new TestItem<Predicate>( 
+					bfalse,
+					true
+			), new TestItem<Predicate>(
+					mSimplePredicate(id_x),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, id_x, id_x),
+					true
+			), new TestItem<Predicate>(
+					mUnaryPredicate(NOT, bfalse),
+					true
+			), new TestItem<Predicate>(
+					mAssociativePredicate(LAND, bfalse, bfalse),
+					true
+			), new TestItem<Predicate>(
+					mBinaryPredicate(LIMP, bfalse, bfalse),
+					true
+			),
 			
 			// QuantPred + Pred
-			"\u2200x,y,z\u22c5\u22a5",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),bfalse,null),
-			true,
-			"\u2203x,y\u22c5\u2203s,t\u22c5\u22a5",
-			ff.makeQuantifiedPredicate(Formula.EXISTS,mList(bd_x,bd_y),ff.makeQuantifiedPredicate(Formula.EXISTS,mList(bd_s,bd_t),bfalse,null),null),
-			true,
-			"\u2203x,y\u22c5\u2203s,y\u22c5\u22a5",
-			ff.makeQuantifiedPredicate(Formula.EXISTS,mList(bd_x,bd_y),ff.makeQuantifiedPredicate(Formula.EXISTS,mList(bd_s,bd_y),bfalse,null),null),
-			false, // bound in 2 places
-			"bool(\u2200x\u22c5\u22a5)=x",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x),bfalse,null),null),id_x,null),
-			false,
-			"bool(\u2200x\u22c5\u22a5)=y",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x),bfalse,null),null),id_y,null),
-			true,
-			"x=bool(\u2200x\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL,id_x,ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x),bfalse,null),null),null),
-			false,
-			"\u2200x,y,z\u22c5x=x",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeRelationalPredicate(Formula.EQUAL,id_x,id_x,null),null),
-			false,
-			"\u2200x,y,z\u22c5x=x",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeRelationalPredicate(Formula.EQUAL,ff.makeBoundIdentifier(2,null),ff.makeBoundIdentifier(2,null),null),null),
-			true,
-			
-			"\u2200x,y,z\u22c5finite({x,y\u22c5\u22a5\u2223z})",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x,bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),null),null),
-			false,
-			"\u2200x,y,z\u22c5finite({s,t\u22c5\u22a5\u2223z})",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),null),null),
-			false,
-			"\u2200x,y,z\u22c5finite({s,t\u22c5\u22a5\u2223z})",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x, bd_y, bd_z),ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,ff.makeBoundIdentifier(2,null),null, QuantifiedExpression.Form.Explicit),null),null),
-			true,
-			"\u2200x,y,z\u22c5finite({s,t\u22c5\u22a5\u2223t})",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,id_t,null, QuantifiedExpression.Form.Explicit),null),null),
-			false,
-			"\u2200x,y,z\u22c5finite({s,t\u22c5\u22a5\u2223t})",
-			ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x,bd_y,bd_z),ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,ff.makeBoundIdentifier(0,null),null, QuantifiedExpression.Form.Explicit),null),null),
-			true,
-			
+			new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z), bfalse),
+					true
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(EXISTS, 
+							mList(bd_x, bd_y), 
+							mQuantifiedPredicate(EXISTS, mList(bd_s, bd_t), bfalse)
+					), 
+					true
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(EXISTS, 
+							mList(bd_x,bd_y), 
+							mQuantifiedPredicate(EXISTS, mList(bd_s, bd_y), bfalse)
+					),
+					false // bound in 2 places
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse)),
+							id_x
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse)),
+							id_y
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							id_x,
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse))
+					),
+					false
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mRelationalPredicate(EQUAL, id_x, id_x)
+					),
+					false
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mRelationalPredicate(EQUAL, b2, b2)
+					),
+					true
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mSimplePredicate(
+									mQuantifiedExpression(CSET, Explicit,
+											mList(bd_x, bd_y), bfalse, id_z))
+					),
+					false
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mSimplePredicate(
+									mQuantifiedExpression(CSET, Explicit, 
+											mList(bd_s, bd_t), bfalse, id_z))
+					),
+					false
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL, 
+							mList(bd_x, bd_y, bd_z),
+							mSimplePredicate(
+									mQuantifiedExpression(CSET, Explicit,
+											mList(bd_s, bd_t), bfalse, b2))
+					),
+					true
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mSimplePredicate(
+									mQuantifiedExpression(CSET, Explicit,
+											mList(bd_s, bd_t), bfalse, id_t))
+					),
+					false
+			), new TestItem<Predicate>(
+					mQuantifiedPredicate(FORALL,
+							mList(bd_x, bd_y, bd_z),
+							mSimplePredicate(
+									mQuantifiedExpression(CSET, Explicit,
+											mList(bd_s, bd_t), bfalse, b0))
+					),
+					true
+			),			
 			
 			// QuantExpr + Expr
-			"{x,y\u22c5\u22a5\u2223z}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x,bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=x",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),id_x,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223z}={s,t\u22c5\u22a5\u2223u}",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,id_u,null, QuantifiedExpression.Form.Explicit),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}={x,y\u22c5\u22a5\u2223z}",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223{x,y\u22c5\u22a5\u2223z}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223{s,t\u22c5\u22a5\u2223u}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,id_u,null, QuantifiedExpression.Form.Explicit),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223{s,t\u22c5\u22a5\u2223x}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,id_x,null, QuantifiedExpression.Form.Explicit),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223{s,t\u22c5\u22a5\u2223x}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,ff.makeBoundIdentifier(3,null),null, QuantifiedExpression.Form.Explicit),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223{s,t\u22c5\u22a5\u2223t}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_s, bd_t),bfalse,ff.makeBoundIdentifier(0,null),null, QuantifiedExpression.Form.Explicit),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}={s,t}",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeSetExtension(new Expression[]{id_s,id_t},null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}={x,t}",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeSetExtension(new Expression[]{id_x,id_t},null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223{s,t}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeSetExtension(new Expression[]{id_s,id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223{x,t}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeSetExtension(new Expression[]{id_x,id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223{x,t}}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeSetExtension(new Expression[]{ff.makeBoundIdentifier(1,null),id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223union(z)}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeUnaryExpression(Formula.KUNION,id_z,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223union(x)}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeUnaryExpression(Formula.KUNION,id_x,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223union(x)}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeUnaryExpression(Formula.KUNION,ff.makeBoundIdentifier(1,null),null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=union(s)",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeUnaryExpression(Formula.KUNION,id_s,null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=union(x)",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeUnaryExpression(Formula.KUNION,id_x,null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223s^t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeBinaryExpression(Formula.EXPN,id_s,id_t,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223x^t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeBinaryExpression(Formula.EXPN,id_x,id_t,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223x^t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeBinaryExpression(Formula.EXPN,ff.makeBoundIdentifier(1,null),id_t,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=s^t",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBinaryExpression(Formula.EXPN,id_s,id_t,null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=x^t",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBinaryExpression(Formula.EXPN,id_x,id_t,null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223z}=s*t",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeAssociativeExpression(Formula.MUL,new Expression[]{id_s,id_t},null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=x*t",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeAssociativeExpression(Formula.MUL,new Expression[]{id_x,id_t},null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223s*t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeAssociativeExpression(Formula.MUL,new Expression[]{id_s,id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223x*t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeAssociativeExpression(Formula.MUL,new Expression[]{id_x,id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u22a5\u2223x*t}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,ff.makeAssociativeExpression(Formula.MUL,new Expression[]{ff.makeBoundIdentifier(1,null),id_t},null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			
-			"{x,y\u22c5\u22a5\u2223z}=bool(\u2200x,y\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x, bd_y),bfalse,null),null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223z}=bool(\u2200s,t\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t),bfalse,null),null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223s}=bool(\u2200s,t\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_s,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t),bfalse,null),null),null),
-			false,
+			new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							id_a
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							id_x
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mQuantifiedExpression(CSET, Explicit, mList(bd_s, bd_t), bfalse, id_u)),
+							true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z)),
+							false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse, 
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y), bfalse, id_z)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y), 
+							bfalse,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_s, bd_t), bfalse, id_u)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y), 
+							bfalse,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_s, bd_t), bfalse, id_x)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y),
+							bfalse,
+							mQuantifiedExpression(CSET, Explicit, 
+									mList(bd_s, bd_t), bfalse, b3)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_s, bd_t), bfalse, b0)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mSetExtension(id_s, id_t)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, 
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z), 
+							mSetExtension(id_x, id_t)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y), 
+							bfalse,
+							mSetExtension(id_s, id_t)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse, 
+							mSetExtension(id_x, id_t)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse, 
+							mSetExtension(b1, id_t)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y),
+							bfalse,
+							mUnaryExpression(KUNION, id_z)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y), 
+							bfalse,
+							mUnaryExpression(KUNION, id_x)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y),
+							bfalse,
+							mUnaryExpression(KUNION, b1)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mUnaryExpression(KUNION, id_s)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mUnaryExpression(KUNION, id_x)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y), 
+							bfalse,
+							mBinaryExpression(EXPN, id_s, id_t)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse,
+							mBinaryExpression(EXPN, id_x, id_t)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y),
+							bfalse, 
+							mBinaryExpression(EXPN, b1, id_t)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mBinaryExpression(EXPN, id_s, id_t)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mBinaryExpression(EXPN, id_x, id_t)
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, 
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mAssociativeExpression(MUL, id_s, id_t)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mAssociativeExpression(MUL, id_x, id_t)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y), 
+							bfalse, 
+							mAssociativeExpression(MUL, id_s, id_t)
+					),
+					true
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit, 
+							mList(bd_x, bd_y),
+							bfalse,
+							mAssociativeExpression(MUL, id_x, id_t)
+					),
+					false
+			), new TestItem<Expression>(
+					mQuantifiedExpression(CSET, Explicit,
+							mList(bd_x, bd_y),
+							bfalse,
+							mAssociativeExpression(MUL, b1, id_t)
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z), 
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x, bd_y), bfalse))
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, 
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_s, bd_t), bfalse))
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_s),
+							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_s, bd_t), bfalse))
+					),
+					false
+			),	
 			
 			// QuantExpr + QuantPred
-			"{x,y\u22c5\u2200x,y,z\u22c5\u22a5\u2223b}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
-							ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x, bd_y, bd_z),bfalse,null),id_b,null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u2200s,t,u\u22c5\u22a5\u2223b}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
-							ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),id_b,null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u2200s,t,u\u22c5\u22a5\u2223x}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
-							ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),id_x,null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u2200s,t,u\u22c5\u22a5\u2223u}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
-							ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),id_u,null, QuantifiedExpression.Form.Explicit),id_a,null),
-			false,
-			"{x,y\u22c5\u2200s,t,u\u22c5\u22a5\u2223x}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
-							ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),ff.makeBoundIdentifier(1,null),null, QuantifiedExpression.Form.Explicit),id_a,null),
-			true,
-			"{x,y\u22c5\u22a5\u2223z}=bool(\u2200x,y,z\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL, ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_x, bd_y, bd_z),bfalse,null),null),null),
-			false,
-			"{x,y\u22c5\u22a5\u2223z}=bool(\u2200s,t,u\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL, ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_z,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),null),null),
-			true,
-			"{x,y\u22c5\u22a5\u2223s}=bool(\u2200s,t,u\u22c5\u22a5)",
-			ff.makeRelationalPredicate(Formula.EQUAL, ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),bfalse,id_s,null, QuantifiedExpression.Form.Explicit),ff.makeBoolExpression(ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),null),null),
-			false,
-			
+			new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y),
+									mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z),
+											bfalse
+									), id_b
+							), id_a
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y),
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse
+									), id_b
+							), id_a
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y),
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse
+									), id_x
+							), id_a
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y),
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse
+									), id_u
+							), id_a
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit,
+									mList(bd_x, bd_y),
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse
+									), b1
+							), id_a
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mBoolExpression(
+									mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z), bfalse))
+					),
+					false
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
+							mBoolExpression(
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse))
+					),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_s),
+							mBoolExpression(
+									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse))
+					),
+					false
+			),
+
 			// Only Exprs
-			"union(x)=y",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeUnaryExpression(Formula.KUNION,id_x,null),id_y,null),
-			true,
-			"bool(\u22a5)=y",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeBoolExpression(bfalse,null),id_y,null),
-			true,
-			"{x,y}=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeSetExtension(new Expression[]{id_x,id_y},null),id_a,null),
-			true,
-			"x=2",
-			ff.makeRelationalPredicate(Formula.EQUAL,id_x,ff.makeIntegerLiteral(Common.TWO,null),null),
-			true,
-			"x^y=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeBinaryExpression(Formula.EXPN,id_x,id_y,null),id_a,null),
-			true,
-			"x*x=a",
-			ff.makeRelationalPredicate(Formula.EQUAL,ff.makeAssociativeExpression(Formula.MUL,new Expression[]{id_x,id_x},null),id_a,null),
-			true,
+			new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, mUnaryExpression(KUNION, id_x), id_y),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, mBoolExpression(bfalse), id_y),
+					true
+			), new TestItem<Expression>(
+					mSetExtension(id_x, id_y),
+					true
+			), new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL, id_x, mIntegerLiteral(2)),
+					true
+			), new TestItem<Expression>(
+					mBinaryExpression(EXPN, id_x, id_y),
+					true
+			), new TestItem<Expression>(
+					mAssociativeExpression(MUL, id_x, id_x),
+					true
+			),
+			
+			
+			// Assignments
+			new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x), mList(id_x)),
+					true
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x), mList(set_x_in_int)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x), mList(set_s_in_int)),
+					true
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x, id_y), mList(id_y, id_x)),
+					true
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x, id_y), mList(set_x_in_int, id_t)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_y, id_x), mList(set_x_in_int, id_t)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x, id_y, id_z), mList(id_y, id_z, id_x)),
+					true
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_x, id_y, id_z), mList(set_x_in_int, id_t, id_u)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_y, id_x, id_z), mList(set_x_in_int, id_t, id_u)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesEqualTo(mList(id_z, id_y, id_x), mList(set_x_in_int, id_t, id_u)),
+					false
+			), new TestItem<Assignment>(
+					mBecomesMemberOf(id_x, id_y),
+					true
+			), new TestItem<Assignment>(
+					mBecomesMemberOf(id_x, set_x_in_int),
+					false
+			), new TestItem<Assignment>(
+					mBecomesSuchThat(mList(id_x), mList(bd_xp), mRelationalPredicate(EQUAL, b0, id_x)),
+					true
+			), new TestItem<Assignment>(
+					mBecomesSuchThat(mList(id_x), mList(bd_xp), mRelationalPredicate(EQUAL, b0, set_x_in_int)),
+					false
+			),
 	};
 
-	
 	
 	/**
 	 * Main test routine.
 	 */
-	public void testWellFormedNess() {
-		IParseResult parseResult = null;
-		Predicate formula = null;
-		boolean result;
-		boolean expResult = false;
-		int i = 0;
-		String syntaxTree = null;
-		try {
-			for (i=0; i < testPairs.length; i+=3) {
-				formula = (Predicate) testPairs[i+1];
-				expResult = (Boolean) testPairs[i+2];
-				result = formula.isLegible().isSuccess();
-				try {
-					syntaxTree = formula.getSyntaxTree();
-				}
-				catch (Exception e) {
-					syntaxTree = e.toString();
-				}
-				assertEquals("\nTesting syntax tree:\n"+syntaxTree+"\nResult obtained: "+(result?"":"NOT")+" well-formed\n"+"Result expected: "+(expResult?"":"NOT")+" well-formed\n",result,expResult);
-				if (expResult) {
-					try {
-						parseResult = ff.parsePredicate((String) testPairs[i]);
-						assertEquals("\nTest failed on: "+formula+"\nParser result: "+parseResult,parseResult.getParsedPredicate(), formula);
-					} catch (Exception e) {
-						e.printStackTrace();
-						fail("\nTest failed on parsing: "+formula+"\nParser result: "+parseResult);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("\nTesting:\n"+syntaxTree+"Result expected: "+(expResult?"":"NOT")+" well-formed\n");
-		}
-	}
-
-	/**
-	 * Second test routine (for difficult cases).
-	 */
-	public void testWellFormedNess2() {
-		IParseResult parseResult = null;
-		boolean result;
-		String syntaxTree = null;
+	@SuppressWarnings("unchecked")
+	public void testLegibility() {
 		for (TestItem item : testItems) {
-			result = item.formula.isLegible().isSuccess();
-			try {
-				syntaxTree = item.formula.getSyntaxTree();
-			} catch (Exception e) {
-				syntaxTree = e.toString();
-			}
+			boolean result = item.formula.isLegible(null).isSuccess();
+			String syntaxTree = item.formula.getSyntaxTree();
 			assertEquals("\nTesting syntax tree:\n" + syntaxTree
 					+ "\nResult obtained: " + (result ? "" : "NOT")
 					+ " well-formed\n" + "Result expected: "
 					+ (item.expectedResult ? "" : "NOT") + " well-formed\n",
 					item.expectedResult, result);
-
-			parseResult = ff.parsePredicate(item.input);
-			assertEquals("\nTest failed on: " + item.input
-					+ "\nParser result: " + parseResult, item.formula,
-					parseResult.getParsedPredicate());
 		}
 	}
 }
