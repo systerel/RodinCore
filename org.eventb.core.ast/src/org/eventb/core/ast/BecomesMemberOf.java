@@ -66,13 +66,9 @@ public class BecomesMemberOf extends Assignment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#isWellFormed(int)
-	 */
 	@Override
 	protected boolean isWellFormed(int noOfBoundVars) {
-		// TODO Auto-generated method stub
-		return false;
+		return setExpr.isWellFormed(noOfBoundVars);
 	}
 
 	@Override

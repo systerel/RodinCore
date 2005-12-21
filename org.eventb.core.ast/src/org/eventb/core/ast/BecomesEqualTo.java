@@ -97,13 +97,13 @@ public class BecomesEqualTo extends Assignment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#isWellFormed(int)
-	 */
 	@Override
 	protected boolean isWellFormed(int noOfBoundVars) {
-		// TODO Auto-generated method stub
-		return false;
+		for (Expression value: values) {
+			if (! value.isWellFormed(noOfBoundVars))
+				return false;
+		}
+		return true;
 	}
 
 	@Override
