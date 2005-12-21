@@ -141,6 +141,11 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
+	public final boolean isTypeChecked() {
+		return typeChecked;
+	}
+
+	@Override
 	protected final Assignment substituteAll(int noOfBoundVars, Replacement replacement,
 			FormulaFactory formulaFactory) {
 		// Should never happen

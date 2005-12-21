@@ -59,7 +59,7 @@ import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 
 /**
- * Unit test of the well-formedness checker.
+ * Unit test of the legibility checker.
  * 
  * @author franz
  */
@@ -644,8 +644,8 @@ public class TestLegibility extends TestCase {
 			String syntaxTree = item.formula.getSyntaxTree();
 			assertEquals("\nTesting syntax tree:\n" + syntaxTree
 					+ "\nResult obtained: " + (result ? "" : "NOT")
-					+ " well-formed\n" + "Result expected: "
-					+ (item.expectedResult ? "" : "NOT") + " well-formed\n",
+					+ " legible\n" + "Result expected: "
+					+ (item.expectedResult ? "" : "NOT") + " legible\n",
 					item.expectedResult, result);
 		}
 	}

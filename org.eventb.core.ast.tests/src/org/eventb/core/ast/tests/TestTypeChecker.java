@@ -1335,6 +1335,10 @@ public class TestTypeChecker extends TestCase {
 					item.result, result.isSuccess());
 			assertEquals("\nResult typenv differ for: " + item.formula + "\n",
 						item.inferredEnv, result.getInferredEnvironment());
+			
+			if (result.isSuccess()) {
+				assertTrue(formula.isTypeChecked());
+			}
 		}
 	}
 	
@@ -1353,6 +1357,10 @@ public class TestTypeChecker extends TestCase {
 					item.result, result.isSuccess());
 			assertEquals("\nResult typenv differ for: " + item.formula + "\n",
 						item.inferredEnv, result.getInferredEnvironment());
+			
+			if (result.isSuccess()) {
+				assertTrue(formula.isTypeChecked());
+			}
 		}
 	}
 }

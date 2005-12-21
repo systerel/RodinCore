@@ -255,13 +255,4 @@ public class BecomesSuchThat extends Assignment {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#isTypeChecked()
-	 */
-	@Override
-	public boolean isTypeChecked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
