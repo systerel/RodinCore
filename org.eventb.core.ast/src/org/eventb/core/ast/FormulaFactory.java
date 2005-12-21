@@ -132,6 +132,134 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new "becomes equal to" assignment.
+	 * <p>
+	 * @param ident
+	 *            identifier which is assigned to (left-hand side)
+	 * @param value
+	 *            after-value for this identifier (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes equal to" assignment
+	 */
+	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier ident,
+			Expression value, SourceLocation location) {
+		return new BecomesEqualTo(ident, value, location);
+	}
+
+	/**
+	 * Returns a new "becomes equal to" assignment.
+	 * <p>
+	 * @param idents
+	 *            array of identifier which are assigned to (left-hand side)
+	 * @param values
+	 *            array of after-values for these identifiers (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes equal to" assignment
+	 */
+	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier[] idents,
+			Expression[] values, SourceLocation location) {
+		return new BecomesEqualTo(idents, values, location);
+	}
+
+	/**
+	 * Returns a new "becomes equal to" assignment.
+	 * <p>
+	 * @param idents
+	 *            list of identifier which are assigned to (left-hand side)
+	 * @param values
+	 *            list of after-values for these identifiers (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes equal to" assignment
+	 */
+	public BecomesEqualTo makeBecomesEqualTo(List<FreeIdentifier> idents,
+			List<Expression> values, SourceLocation location) {
+		return new BecomesEqualTo(idents, values, location);
+	}
+
+	/**
+	 * Returns a new "becomes member of" assignment.
+	 * <p>
+	 * @param ident
+	 *            identifier which is assigned to (left-hand side)
+	 * @param setExpr
+	 *            set to which the after-value belongs (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes member of" assignment
+	 */
+	public BecomesMemberOf makeBecomesMemberOf(FreeIdentifier ident,
+			Expression setExpr, SourceLocation location) {
+		return new BecomesMemberOf(ident, setExpr, location);
+	}
+
+	/**
+	 * Returns a new "becomes such that" assignment.
+	 * <p>
+	 * @param ident
+	 *            identifier which is assigned to (left-hand side)
+	 * @param primedIdent
+	 *            bound identifier declaration for primed identifier (after values)
+	 * @param condition
+	 *            condition on before and after values of this identifier (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes such that" assignment
+	 */
+	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier ident,
+			BoundIdentDecl primedIdent, Predicate condition,
+			SourceLocation location) {
+		return new BecomesSuchThat(ident, primedIdent, condition, location);
+	}
+
+	/**
+	 * Returns a new "becomes such that" assignment.
+	 * <p>
+	 * @param idents
+	 *            array of identifiers that are assigned to (left-hand side)
+	 * @param primedIdents
+	 *            array of bound identifier declarations for primed identifiers (after values)
+	 * @param condition
+	 *            condition on before and after values of these identifiers (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes such that" assignment
+	 */
+	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier[] idents,
+			BoundIdentDecl[] primedIdents, Predicate condition,
+			SourceLocation location) {
+		return new BecomesSuchThat(idents, primedIdents, condition, location);
+	}
+
+	/**
+	 * Returns a new "becomes such that" assignment.
+	 * <p>
+	 * @param idents
+	 *            list of identifiers that are assigned to (left-hand side)
+	 * @param primedIdents
+	 *            list of bound identifier declarations for primed identifiers (after values)
+	 * @param condition
+	 *            condition on before and after values of these identifiers (right-hand side)
+	 * @param location
+	 *            the location of the assignment
+	 * 
+	 * @return a new "becomes such that" assignment
+	 */
+	public BecomesSuchThat makeBecomesSuchThat(List<FreeIdentifier> idents,
+			List<BoundIdentDecl> primedIdents, Predicate condition,
+			SourceLocation location) {
+		return new BecomesSuchThat(idents, primedIdents, condition, location);
+	}
+
+	/**
 	 * Returns a new binary expression
 	 * <p>
 	 * {MAPSTO, REL, TREL, SREL, STREL, PFUN, TFUN, PINJ, TINJ, PSUR, TSUR,
@@ -395,6 +523,21 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new singleton set.
+	 * <p>
+	 * {SETEXT}
+	 * </p>
+	 * @param expression
+	 *            the unique member of this singleton set
+	 * @param location
+	 *            the location of the set extension
+	 * @return a new set extension
+	 */
+	public SetExtension makeSetExtension(Expression expression, SourceLocation location) {
+		return new SetExtension(expression, location);
+	}
+
+	/**
 	 * Returns a new set extension
 	 * <p>
 	 * {SETEXT}
@@ -487,6 +630,20 @@ public class FormulaFactory {
 	public UnaryPredicate makeUnaryPredicate(int tag, Predicate child,
 			SourceLocation location) {
 		return new UnaryPredicate(child, tag, location);
+	}
+	
+	/**
+	 * Parses the specified formula and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @return the result of the parse
+	 */
+	public IParseResult parseAssignment(String formula) {
+		ParseResult result = new ParseResult(this);
+		Scanner scanner = new Scanner(formula, result);
+		Parser parser = new Parser(Assignment.class, scanner, result);
+		parser.Parse();
+		return parser.getResult();
 	}
 	
 	/**

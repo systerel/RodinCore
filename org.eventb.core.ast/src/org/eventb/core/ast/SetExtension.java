@@ -31,6 +31,13 @@ public class SetExtension extends Expression {
 	// children
 	private final Expression[] members;
 	
+	protected SetExtension(Expression expression, SourceLocation location) {
+		super(SETEXT, location, expression.hashCode());
+		this.members = new Expression[] {expression};
+
+		checkPreconditions();
+	}
+
 	protected SetExtension(Expression[] expressions, SourceLocation location) {
 		super(SETEXT, location, combineHashCodes(expressions));
 		this.members = new Expression[expressions.length];

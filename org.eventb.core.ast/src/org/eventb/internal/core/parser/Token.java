@@ -29,6 +29,10 @@ public class Token {
 		this.kind = kind;
 	}
 	
+	public int getEnd() {
+		return pos + val.length();
+	}
+	
 	@Override
 	public String toString() {
 		return "Kind: " + kind + " Pos: " + pos;

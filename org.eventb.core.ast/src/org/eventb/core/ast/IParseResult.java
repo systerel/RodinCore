@@ -15,6 +15,21 @@ package org.eventb.core.ast;
 public interface IParseResult extends IResult {
 
 	/**
+	 * Returns the parsed assignment.
+	 * <p>
+	 * A <code>null</code> result is returned in the following cases
+	 * (exhaustive list):
+	 * <ul>
+	 * <li>errors were encountered during parsing,</li>
+	 * <li>the parser was not configured for parsing an assignment.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the parsed assignment or <code>null</code> in case of error
+	 */
+	Assignment getParsedAssignment();
+
+	/**
 	 * Returns the parsed expression.
 	 * <p>
 	 * A <code>null</code> result is returned in the following cases

@@ -62,6 +62,9 @@ public class TestLexer extends TestCase {
                 { "\u2228" 			   			 },	// _LOR
                 { "\u2229" 			   			 },	// _BINTER
                 { "\u222a" 			   			 },	// _BUNION
+                { "\u2254"			  			 }, // _BEQ
+                { ":\u2208"			             }, //_BMO
+                { ":|"				             }, // _BST
                 { "="      			   			 },	// _EQUAL
                 { "\u2260" 			   			 },	// _NOTEQUAL
                 { "<"      			   			 },	// _LT

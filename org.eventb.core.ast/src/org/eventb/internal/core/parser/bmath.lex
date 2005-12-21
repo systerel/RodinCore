@@ -75,6 +75,9 @@ FullStop = "." | "\u2024"
 "\u2228"              { return symbol(Parser._LOR); }
 "\u2229"              { return symbol(Parser._BINTER); }
 "\u222a"              { return symbol(Parser._BUNION); }
+"\u2254"			  { return symbol(Parser._BECEQ); }
+":\u2208"			  { return symbol(Parser._BECMO); }
+":|"				  { return symbol(Parser._BECST); }
 "="                   { return symbol(Parser._EQUAL); }
 "\u2260"              { return symbol(Parser._NOTEQUAL); }
 "<"                   { return symbol(Parser._LT); }

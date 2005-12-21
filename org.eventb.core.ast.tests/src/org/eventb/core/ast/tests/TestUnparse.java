@@ -31,6 +31,9 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -52,6 +55,7 @@ import static org.eventb.core.ast.tests.ITestHelper.UNARY_EXPRESSION_LENGTH;
 import static org.eventb.core.ast.tests.ITestHelper.UNARY_PREDICATE_LENGTH;
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -90,6 +94,9 @@ public class TestUnparse extends TestCase {
 	private static FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
 	private static FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
 	private static FreeIdentifier id_t = ff.makeFreeIdentifier("t", null);
+	private static FreeIdentifier id_u = ff.makeFreeIdentifier("u", null);
+	private static FreeIdentifier id_v = ff.makeFreeIdentifier("v", null);
+	private static FreeIdentifier id_S = ff.makeFreeIdentifier("S", null);
 	private static FreeIdentifier id_f = ff.makeFreeIdentifier("f", null);
 	private static FreeIdentifier id_A = ff.makeFreeIdentifier("A", null);
 	private static FreeIdentifier id_g = ff.makeFreeIdentifier("g", null);
@@ -98,8 +105,13 @@ public class TestUnparse extends TestCase {
 	private static BoundIdentDecl bd_y = ff.makeBoundIdentDecl("y", null);
 	private static BoundIdentDecl bd_z = ff.makeBoundIdentDecl("z", null);
 
+	private static BoundIdentDecl bd_xp = ff.makeBoundIdentDecl("x'", null);
+	private static BoundIdentDecl bd_yp = ff.makeBoundIdentDecl("y'", null);
+	private static BoundIdentDecl bd_zp = ff.makeBoundIdentDecl("z'", null);
+
 	private static BoundIdentifier b0 = ff.makeBoundIdentifier(0, null);
 	private static BoundIdentifier b1 = ff.makeBoundIdentifier(1, null);
+	private static BoundIdentifier b2 = ff.makeBoundIdentifier(2, null);
 
 	private static LiteralPredicate btrue = ff.makeLiteralPredicate(BTRUE, null);
 
@@ -172,6 +184,25 @@ public class TestUnparse extends TestCase {
 			IParseResult result = ff.parsePredicate(input);
 			assertTrue("Parse failed", result.isSuccess());
 			assertEquals("Unexpected parser result", formula, result.getParsedPredicate());
+		}
+	}
+
+	private static class AssignTestPair extends TestPair {
+		Assignment formula;
+		AssignTestPair(String image, Assignment formula) {
+			super(image);
+			this.formula = formula;
+		}
+		@Override 
+		Assignment getFormula() {
+			return formula;
+		}
+		@Override 
+		void parseAndCheck(String input) {
+			super.parseAndCheck(input);
+			IParseResult result = ff.parseAssignment(input);
+			assertTrue("Parse failed", result.isSuccess());
+			assertEquals("Unexpected parser result", formula, result.getParsedAssignment());
 		}
 	}
 
@@ -397,6 +428,42 @@ public class TestUnparse extends TestCase {
 			),
 	};
 	
+	AssignTestPair[] assignmentTestPairs = new AssignTestPair[] {
+			new AssignTestPair(
+					"x ≔ y",
+					mBecomesEqualTo(mList(id_x), mList(id_y))
+			), new AssignTestPair(
+					"x,y ≔ z, t",
+					mBecomesEqualTo(mList(id_x, id_y), mList(id_z, id_t))
+			), new AssignTestPair(
+					"x,y,z ≔ t, u, v",
+					mBecomesEqualTo(mList(id_x, id_y, id_z), mList(id_t, id_u, id_v))
+			), new AssignTestPair(
+					"x :∈ S",
+					mBecomesMemberOf(id_x, id_S)
+			), new AssignTestPair(
+					"x :| x'=x",
+					mBecomesSuchThat(mList(id_x), mList(bd_xp),
+							mRelationalPredicate(Formula.EQUAL, b0, id_x)
+					)
+			), new AssignTestPair(
+					"x,y :| x'=y∧y'=x",
+					mBecomesSuchThat(mList(id_x, id_y), mList(bd_xp, bd_yp),
+							mAssociativePredicate(Formula.LAND,
+									mRelationalPredicate(Formula.EQUAL, b1, id_y),
+									mRelationalPredicate(Formula.EQUAL, b0, id_x)
+							))
+			), new AssignTestPair(
+					"x,y,z :| x'=y∧y'=z∧z'=x",
+					mBecomesSuchThat(mList(id_x, id_y, id_z), mList(bd_xp, bd_yp, bd_zp),
+							mAssociativePredicate(Formula.LAND,
+									mRelationalPredicate(Formula.EQUAL, b2, id_y),
+									mRelationalPredicate(Formula.EQUAL, b1, id_z),
+									mRelationalPredicate(Formula.EQUAL, b0, id_x)
+							))
+			),
+	};
+
 	private Predicate buildPredicate(int firstTag, int secondTag) {
 		return mAssociativePredicate(secondTag,
 				mAssociativePredicate(firstTag, btrue, btrue),
@@ -955,6 +1022,7 @@ public class TestUnparse extends TestCase {
 		routineTestStringFormula(associativeExpressionTestPairs);
 		routineTestStringFormula(associativePredicateTestPairs);
 		routineTestStringFormula(uncommonFormulaeTestPairs);
+		routineTestStringFormula(assignmentTestPairs);
 	}
 	
 	/**

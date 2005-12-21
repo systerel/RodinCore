@@ -90,6 +90,27 @@ public abstract class Formula<T extends Formula<T>> {
 	public final static int SETEXT = 5;
 
 	/**
+	 * <code>BECOMES_EQUAL_TO</code> represents a "becomes equal to"
+	 * assignment, e.g., <code>x ≔ x + 1</code>. Can only be a
+	 * BecomesEqualTo AST node.
+	 */
+	public final static int BECOMES_EQUAL_TO = 6;
+
+	/**
+	 * <code>BECOMES_MEMBER_OF</code> represents a "becomes member of"
+	 * assignment, e.g., <code>x :∈ S</code>. Can only be a
+	 * BecomesMemberOf AST node.
+	 */
+	public final static int BECOMES_MEMBER_OF = 7;
+
+	/**
+	 * <code>BECOMES_SUCH_THAT</code> represents a "becomes such that"
+	 * assignment, e.g., <code>x :| x < x'</code>. Can only be a
+	 * BecomesSuchThat AST node.
+	 */
+	public final static int BECOMES_SUCH_THAT = 8;
+
+	/**
 	 * First tag for a relational predicate.
 	 * 
 	 * @see RelationalPredicate
@@ -1178,6 +1199,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * first occurence of each identifier, when reading the formula from left to
 	 * right.
 	 * </p>
+	 * <p>
+	 * This operation is not supported by assignments.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            the formula factory to use for creating the result.
@@ -1206,6 +1230,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * The order is defined by the iterator associated to the collection. The
 	 * exact same order must be used to create the quantified formula that will
 	 * contain the result.
+	 * </p>
+	 * <p>
+	 * This operation is not supported by assignments.
 	 * </p>
 	 * 
 	 * @param identsToBind
@@ -1236,7 +1263,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * The <code>offset</code> parameter contains the number of quantifiers
 	 * that lie between the root of the formula and this node.
 	 * </p>
-	 * 
+	 * <p>
+	 * This operation is not supported by assignments.
+	 * </p>
+	 *
 	 * @param binding
 	 *            binding to use
 	 * @param offset
@@ -1260,6 +1290,9 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Substitutes free identifiers by expressions as specified by replacement.
 	 * The types of the suggested replacements must correspond!
+	 * <p>
+	 * This operation is not supported by assignments.
+	 * </p>
 	 * @param map The substitution to be carried out
 	 * @param formulaFactory
 	 * @return Returns the substituted formula
@@ -1286,6 +1319,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * If the substitution <code>map</code> refers to indices that are not
 	 * in present in the node <code>predicate</code> an <code>ArrayIndexOutOfBoundsException</code>
 	 * occurs.
+	 * </p><p>
+	 * This operation is not supported by assignments.
+	 * </p>
 	 * @param predicate The quantified predicate on which the substitution should be performed
 	 * @param map The substitution
 	 * @param formulaFactory formula factory to use for building the result

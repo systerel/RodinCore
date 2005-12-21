@@ -1,6 +1,7 @@
 package org.eventb.internal.core.parser;
 
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -25,6 +26,9 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Formula factory to use for building formulas
 	protected final FormulaFactory factory;
 	
+	// Parsed assignment
+	private Assignment assignment = null;
+
 	// Parsed expression
 	private Expression expression = null;
 
@@ -84,6 +88,16 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.eventb.internal.core.ast.IParseResult#getParsedAssignment()
+	 */
+	public Assignment getParsedAssignment() {
+		if (!isSuccess())
+			return null;
+		return assignment;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedExpression()
 	 */
 	public Expression getParsedExpression() {
@@ -118,6 +132,17 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	public void resetParsedFormula() {
 		this.predicate = null;
 		this.expression = null;
+		this.assignment = null;
+	}
+
+	/**
+	 * Sets the parsed assignment.
+	 * 
+	 * @param formula
+	 *            the assignment being parsed
+	 */
+	public void setParsedAssignment(Assignment formula) {
+		this.assignment = formula;
 	}
 
 	/**

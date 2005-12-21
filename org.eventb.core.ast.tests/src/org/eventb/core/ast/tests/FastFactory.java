@@ -5,6 +5,9 @@ import java.math.BigInteger;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.BecomesMemberOf;
+import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
@@ -69,6 +72,19 @@ public class FastFactory {
 		return ff.makeAtomicExpression(tag, null);
 	}
 
+	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier[] lhs, Expression[] rhs) {
+		return ff.makeBecomesEqualTo(lhs, rhs, null);
+	}
+
+	public static BecomesMemberOf mBecomesMemberOf(FreeIdentifier lhs, Expression rhs) {
+		return ff.makeBecomesMemberOf(lhs, rhs, null);
+	}
+	
+	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs,
+			BoundIdentDecl[] primed, Predicate rhs) {
+		return ff.makeBecomesSuchThat(lhs, primed, rhs, null);
+	}
+	
 	public static BinaryExpression mBinaryExpression(Expression left,
 			Expression right) {
 		return mBinaryExpression(Formula.MINUS, left, right);
@@ -107,6 +123,10 @@ public class FastFactory {
 
 	public static IntegerLiteral mIntegerLiteral() {
 		return ff.makeIntegerLiteral(BigInteger.ZERO, null);
+	}
+
+	public static IntegerLiteral mIntegerLiteral(int value) {
+		return ff.makeIntegerLiteral(new BigInteger(Integer.toString(value)), null);
 	}
 
 	public static BoundIdentDecl[] mList(BoundIdentDecl... idents) {
