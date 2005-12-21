@@ -9,7 +9,7 @@ package org.eventb.core.basis;
 
 import org.eventb.core.IAction;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
  * Implementation of Event-B actions as an extension of the Rodin database.
@@ -25,7 +25,7 @@ import org.rodinp.core.basis.InternalElement;
  *
  * @author Laurent Voisin
  */
-public class Action extends InternalElement implements IAction {
+public class Action extends UnnamedInternalElement implements IAction {
 	
 	public Action(String name, IRodinElement parent) {
 		super(name, parent);

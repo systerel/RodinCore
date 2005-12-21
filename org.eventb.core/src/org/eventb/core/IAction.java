@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * Common protocol for Event-B actions.
@@ -17,7 +17,7 @@ import org.rodinp.core.IInternalElement;
  *
  * @author Laurent Voisin
  */
-public interface IAction extends IInternalElement {
+public interface IAction extends IUnnamedInternalElement {
 
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action"; //$NON-NLS-1$
 	// No additional methods
