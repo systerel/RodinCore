@@ -30,9 +30,6 @@ public class BecomesMemberOf extends Assignment {
 		this.setExpr = setExpr;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#flatten(org.eventb.core.ast.FormulaFactory)
-	 */
 	@Override
 	public Assignment flatten(FormulaFactory factory) {
 		final Expression newSetExpr = setExpr.flatten(factory);
@@ -42,24 +39,22 @@ public class BecomesMemberOf extends Assignment {
 				newSetExpr, getSourceLocation());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#collectFreeIdentifiers(java.util.LinkedHashSet)
-	 */
 	@Override
-	protected void collectFreeIdentifiers(
-			LinkedHashSet<FreeIdentifier> freeIdents) {
-		// TODO Auto-generated method stub
-
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.collectFreeIdentifiers(freeIdents);
+		}
+		setExpr.collectFreeIdentifiers(freeIdents);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#collectNamesAbove(java.util.Set, java.lang.String[], int)
-	 */
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames,
 			int offset) {
-		// TODO Auto-generated method stub
 
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.collectNamesAbove(names, boundNames, offset);
+		}
+		setExpr.collectNamesAbove(names, boundNames, offset);
 	}
 
 	/* (non-Javadoc)

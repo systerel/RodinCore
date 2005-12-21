@@ -53,33 +53,39 @@ public class BecomesEqualTo extends Assignment {
 		assert assignedIdents.length == values.length;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#flatten(org.eventb.core.ast.FormulaFactory)
-	 */
 	@Override
 	public Assignment flatten(FormulaFactory factory) {
-		// TODO Auto-generated method stub
-		return null;
+		final Expression[] newValues = new Expression[values.length];
+		boolean changed = false;
+		for (int i = 0; i < values.length; i++) {
+			newValues[i] = values[i].flatten(factory);
+			changed |= newValues[i] != values[i];
+		}
+		if (! changed)
+			return this;
+		return factory.makeBecomesEqualTo(assignedIdents, values, getSourceLocation());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#collectFreeIdentifiers(java.util.LinkedHashSet)
-	 */
 	@Override
-	protected void collectFreeIdentifiers(
-			LinkedHashSet<FreeIdentifier> freeIdents) {
-		// TODO Auto-generated method stub
-
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.collectFreeIdentifiers(freeIdents);
+		}
+		for (Expression value: values) {
+			value.collectFreeIdentifiers(freeIdents);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#collectNamesAbove(java.util.Set, java.lang.String[], int)
-	 */
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames,
 			int offset) {
-		// TODO Auto-generated method stub
-
+		
+		for (FreeIdentifier ident: assignedIdents) {
+			ident.collectNamesAbove(names, boundNames, offset);
+		}
+		for (Expression value: values) {
+			value.collectNamesAbove(names, boundNames, offset);
+		}
 	}
 
 	/* (non-Javadoc)

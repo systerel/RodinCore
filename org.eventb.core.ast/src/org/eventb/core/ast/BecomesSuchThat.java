@@ -118,7 +118,7 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
 		for (FreeIdentifier ident: assignedIdents) {
-			freeIdents.add(ident);
+			ident.collectFreeIdentifiers(freeIdents);
 		}
 		condition.collectFreeIdentifiers(freeIdents);
 	}
@@ -126,7 +126,7 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
 		for (FreeIdentifier ident: assignedIdents) {
-			names.add(ident.getName());
+			ident.collectNamesAbove(names, boundNames, offset);
 		}
 		final String[] newBoundNames = catenateBoundIdentLists(boundNames, primedIdents);
 		final int newOffset = offset + primedIdents.length;
