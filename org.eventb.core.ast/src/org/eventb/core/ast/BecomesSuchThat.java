@@ -80,7 +80,7 @@ public class BecomesSuchThat extends Assignment {
 	}
 	
 	private void checkPreconditions() {
-		assert this.primedIdents.length == getAssignedIdentifiers().length;
+		assert this.primedIdents.length == assignedIdents.length;
 	}
 	
 	/**
@@ -111,13 +111,13 @@ public class BecomesSuchThat extends Assignment {
 		Predicate newCondition = condition.flatten(factory);
 		if (newCondition == condition)
 			return this;
-		return factory.makeBecomesSuchThat(getAssignedIdentifiers(), primedIdents,
+		return factory.makeBecomesSuchThat(assignedIdents, primedIdents,
 				newCondition, getSourceLocation());
 	}
 
 	@Override
 	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		for (FreeIdentifier ident: getAssignedIdentifiers()) {
+		for (FreeIdentifier ident: assignedIdents) {
 			freeIdents.add(ident);
 		}
 		condition.collectFreeIdentifiers(freeIdents);
@@ -125,7 +125,7 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
-		for (FreeIdentifier ident: getAssignedIdentifiers()) {
+		for (FreeIdentifier ident: assignedIdents) {
 			names.add(ident.getName());
 		}
 		final String[] newBoundNames = catenateBoundIdentLists(boundNames, primedIdents);
@@ -158,14 +158,17 @@ public class BecomesSuchThat extends Assignment {
 				&& condition.equals(other.condition, withAlphaConversion);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#typeCheck(org.eventb.internal.core.typecheck.TypeCheckResult, org.eventb.core.ast.BoundIdentDecl[])
-	 */
 	@Override
-	protected void typeCheck(TypeCheckResult result,
-			BoundIdentDecl[] quantifiedIdentifiers) {
-		// TODO Auto-generated method stub
-
+	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
+		final SourceLocation loc = getSourceLocation();
+		for (int i = 0; i < primedIdents.length; i++) {
+			assignedIdents[i].typeCheck(result, boundAbove);
+			primedIdents[i].typeCheck(result, boundAbove);
+			result.unify(assignedIdents[i].getType(), primedIdents[i].getType(), loc);
+		}
+		
+		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, primedIdents);
+		condition.typeCheck(result, boundBelow);
 	}
 
 	@Override
@@ -189,13 +192,14 @@ public class BecomesSuchThat extends Assignment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#solveType(org.eventb.internal.core.typecheck.TypeUnifier)
-	 */
 	@Override
 	protected boolean solveType(TypeUnifier unifier) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = true;
+		for (BoundIdentDecl ident : primedIdents) {
+			result &= ident.solveType(unifier);
+		}
+		result &= condition.solveType(unifier);
+		return finalizeTypeCheck(result, unifier);
 	}
 
 	@Override

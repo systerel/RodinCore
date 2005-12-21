@@ -112,14 +112,14 @@ public class BecomesEqualTo extends Assignment {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#typeCheck(org.eventb.internal.core.typecheck.TypeCheckResult, org.eventb.core.ast.BoundIdentDecl[])
-	 */
 	@Override
-	protected void typeCheck(TypeCheckResult result,
-			BoundIdentDecl[] quantifiedIdentifiers) {
-		// TODO Auto-generated method stub
-
+	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
+		final SourceLocation loc = getSourceLocation();
+		for (int i = 0; i < values.length; i++) {
+			assignedIdents[i].typeCheck(result, boundAbove);
+			values[i].typeCheck(result, boundAbove);
+			result.unify(assignedIdents[i].getType(), values[i].getType(), loc);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -141,13 +141,13 @@ public class BecomesEqualTo extends Assignment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#solveType(org.eventb.internal.core.typecheck.TypeUnifier)
-	 */
 	@Override
 	protected boolean solveType(TypeUnifier unifier) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = true;
+		for (Expression value: values) {
+			result &= value.solveType(unifier);
+		}
+		return finalizeTypeCheck(result, unifier);
 	}
 
 	@Override

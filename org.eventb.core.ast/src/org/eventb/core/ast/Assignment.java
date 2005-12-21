@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
  * Common implementation for event-B assignments.
@@ -32,6 +33,9 @@ import org.eventb.internal.core.ast.Replacement;
 public abstract class Assignment extends Formula<Assignment> {
 
 	protected final FreeIdentifier[] assignedIdents;
+	
+	// True iff this formula has been type-checked
+	private boolean typeChecked;
 	
 	/**
 	 * Creates a new assignment with the given arguments.
@@ -96,6 +100,15 @@ public abstract class Assignment extends Formula<Assignment> {
 		// Should never happen
 		assert false;
 		return this;
+	}
+
+	protected final boolean finalizeTypeCheck(boolean childrenOK, TypeUnifier unifier) {
+		assert typeChecked == false || typeChecked == childrenOK;
+		typeChecked = childrenOK;
+		for (FreeIdentifier ident: assignedIdents) {
+			typeChecked &= ident.solveType(unifier);
+		}
+		return typeChecked;
 	}
 
 	/**

@@ -38,7 +38,7 @@ public class BecomesMemberOf extends Assignment {
 		final Expression newSetExpr = setExpr.flatten(factory);
 		if (newSetExpr == setExpr)
 			return this;
-		return factory.makeBecomesMemberOf(getAssignedIdentifiers()[0],
+		return factory.makeBecomesMemberOf(assignedIdents[0],
 				newSetExpr, getSourceLocation());
 	}
 
@@ -87,14 +87,14 @@ public class BecomesMemberOf extends Assignment {
 				&& setExpr.equals(other.setExpr, withAlphaConversion);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#typeCheck(org.eventb.internal.core.typecheck.TypeCheckResult, org.eventb.core.ast.BoundIdentDecl[])
-	 */
 	@Override
-	protected void typeCheck(TypeCheckResult result,
-			BoundIdentDecl[] quantifiedIdentifiers) {
-		// TODO Auto-generated method stub
+	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
+		final FreeIdentifier lhs = assignedIdents[0];
+		lhs.typeCheck(result, boundAbove);
+		setExpr.typeCheck(result, boundAbove);
 
+		final SourceLocation loc = getSourceLocation();
+		result.unify(setExpr.getType(), result.makePowerSetType(lhs.getType()), loc);
 	}
 
 	/* (non-Javadoc)
@@ -116,13 +116,10 @@ public class BecomesMemberOf extends Assignment {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#solveType(org.eventb.internal.core.typecheck.TypeUnifier)
-	 */
 	@Override
 	protected boolean solveType(TypeUnifier unifier) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = setExpr.solveType(unifier);
+		return finalizeTypeCheck(result, unifier);
 	}
 
 	@Override

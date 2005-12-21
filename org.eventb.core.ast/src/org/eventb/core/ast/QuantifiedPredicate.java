@@ -187,11 +187,11 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] boundAbove) {
 		for (BoundIdentDecl ident : quantifiedIdentifiers) {
-			ident.typeCheck(result, quantifiedIdentifiers);
+			ident.typeCheck(result, boundAbove);
 		}
-		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(quantifiedIdents, quantifiedIdentifiers);
+		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, quantifiedIdentifiers);
 		pred.typeCheck(result, boundBelow);
 	}
 	
