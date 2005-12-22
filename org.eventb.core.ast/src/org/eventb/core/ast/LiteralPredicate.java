@@ -35,6 +35,8 @@ public class LiteralPredicate extends Predicate {
 	protected LiteralPredicate(int tag, SourceLocation location) {
 			super(tag, location, 0);
 			assert tag >= firstTag && tag < firstTag+tags.length;
+			// Always type-checked.
+			finalizeTypeCheck(true);
 	}
 
 	@Override
