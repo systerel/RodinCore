@@ -35,6 +35,7 @@ public class TestAll {
 		suite.addTestSuite(TestWD.class);
 		suite.addTestSuite(TestSubstituteFormula.class);
 		suite.addTestSuite(TestTypes.class);
+		suite.addTestSuite(TestFIS.class);
 		//$JUnit-END$
 		return suite;
 	}
