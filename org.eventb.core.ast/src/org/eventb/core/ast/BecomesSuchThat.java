@@ -11,6 +11,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.QuantifiedHelper.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -193,8 +194,8 @@ public class BecomesSuchThat extends Assignment {
 	 */
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		// TODO Auto-generated method stub
-		return null;
+		Predicate wdCondition = condition.getWDPredicateRaw(formulaFactory);
+		return getWDSimplifyQ(formulaFactory, FORALL, primedIdents, wdCondition);
 	}
 
 	@Override
@@ -253,6 +254,27 @@ public class BecomesSuchThat extends Assignment {
 	public boolean accept(IVisitor visitor) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {		
+		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
+		if(condition.equals(btrue))
+			return btrue;
+		else
+			return formulaFactory.makeQuantifiedPredicate(EXISTS, primedIdents, condition, getSourceLocation()); 
+	}
+
+	@Override
+	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
+		QuantifiedPredicate qPredicate = formulaFactory.makeQuantifiedPredicate(FORALL, primedIdents, condition, getSourceLocation());
+		HashMap<Integer, Expression> map = new HashMap<Integer, Expression>(primedIdents.length * 4 / 3 + 1);
+		ITypeEnvironment typeEnvironment = formulaFactory.makeTypeEnvironment();
+		FreeIdentifier[] identifiers = formulaFactory.makeFreshIdentifiers(primedIdents, typeEnvironment);
+		for(int i=0; i<identifiers.length; i++) {
+			map.put(i, identifiers[i]);
+		}
+		return qPredicate.substituteBoundIdents(qPredicate, map, formulaFactory);
 	}
 
 }

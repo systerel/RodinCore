@@ -152,5 +152,31 @@ public abstract class Assignment extends Formula<Assignment> {
 		assert false;
 		return null;
 	}
+	
+	/**
+	 * Return the (flattened) fisibility predicate for this assignment.
+	 * An exception is thrown if this assignment was not type checked.
+	 * @param formulaFactory factory to use for creating the predicate
+	 * @return Returns the fisibility predicate
+	 */
+	public Predicate getFISPredicate(FormulaFactory formulaFactory) {
+		assert isTypeChecked();
+		return getFISPredicateRaw(formulaFactory).flatten(formulaFactory);
+	}
+	
+	protected abstract Predicate getFISPredicateRaw(FormulaFactory formulaFactory);
+	
+	/**
+	 * Return the (flattened) before-after predicate corresponding to the assignment.
+	 * An exception is thrown if this assignment was not type checked.
+	 * @param formulaFactory factory to use for creating the predicate
+	 * @return Returns the before-after predicate
+	 */
+	public Predicate getBAPredicate(FormulaFactory formulaFactory) {
+		assert isTypeChecked();
+		return getBAPredicateRaw(formulaFactory).flatten(formulaFactory);
+	}
+	
+	protected abstract Predicate getBAPredicateRaw(FormulaFactory formulaFactory);
 
 }

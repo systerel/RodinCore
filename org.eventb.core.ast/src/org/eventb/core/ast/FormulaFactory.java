@@ -379,6 +379,24 @@ public class FormulaFactory {
 			SourceLocation location) {
 		return new FreeIdentifier(name, Formula.FREE_IDENT, location);
 	}
+	
+	/**
+	 * Creates a node that contains a primed free identifier.
+	 * 
+	 * @param identifier An unprimed identifier that is the template for the primed one.
+	 * An exception is thrown if it is already primed.
+	 * @return The identifier passed as parameter with a prime appended.
+	 */
+	public FreeIdentifier makePrimedFreeIdentifier(FreeIdentifier identifier) {
+		
+		String name = identifier.getName();
+		assert name.charAt(name.length()-1) != '\'';
+		
+		FreeIdentifier primedIdentifier = makeFreeIdentifier(name + "'", identifier.getSourceLocation());
+		primedIdentifier.setType(identifier.getType(), null);
+		
+		return primedIdentifier;
+	}
 
 	/**
 	 * Returns a new integer literal.

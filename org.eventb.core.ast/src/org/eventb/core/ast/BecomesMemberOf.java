@@ -112,8 +112,7 @@ public class BecomesMemberOf extends Assignment {
 	 */
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		// TODO Auto-generated method stub
-		return null;
+		return setExpr.getWDPredicate(formulaFactory);
 	}
 
 	@Override
@@ -150,6 +149,18 @@ public class BecomesMemberOf extends Assignment {
 	public boolean accept(IVisitor visitor) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {
+		Expression emptySet = formulaFactory.makeAtomicExpression(EMPTYSET, getSourceLocation());
+		return formulaFactory.makeRelationalPredicate(NOTEQUAL, setExpr, emptySet, getSourceLocation());
+	}
+
+	@Override
+	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
+		FreeIdentifier primedIdentifier = formulaFactory.makePrimedFreeIdentifier(assignedIdents[0]);
+		return formulaFactory.makeRelationalPredicate(IN, primedIdentifier, setExpr, getSourceLocation());
 	}
 
 }

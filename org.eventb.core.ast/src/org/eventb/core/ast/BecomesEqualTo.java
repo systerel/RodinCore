@@ -158,8 +158,7 @@ public class BecomesEqualTo extends Assignment {
 	 */
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		// TODO Auto-generated method stub
-		return null;
+		return getWDConjunction(formulaFactory, values);
 	}
 
 	@Override
@@ -210,6 +209,24 @@ public class BecomesEqualTo extends Assignment {
 	public boolean accept(IVisitor visitor) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {
+		return formulaFactory.makeLiteralPredicate(BTRUE, getSourceLocation());
+	}
+
+	@Override
+	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
+		Predicate[] predicates = new Predicate[assignedIdents.length];
+		for(int i=0; i<assignedIdents.length; i++) {
+			FreeIdentifier primedIdentifier = formulaFactory.makePrimedFreeIdentifier(assignedIdents[i]);
+			predicates[i] = formulaFactory.makeRelationalPredicate(EQUAL, primedIdentifier, values[i], null);
+		}
+		if(predicates.length > 1)
+			return formulaFactory.makeAssociativePredicate(LAND, predicates, getSourceLocation());
+		else
+			return predicates[0];
 	}
 
 }
