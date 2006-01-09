@@ -95,14 +95,14 @@ public class SCMachine extends Machine implements ISCMachine {
 	}
 	
 	public IInvariant[] getOldInvariants() throws RodinDBException {
-		ArrayList<IRodinElement> axiomSetList = getChildrenOfType(ISCAxiomSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> invariantSetList = getChildrenOfType(ISCInvariantSet.ELEMENT_TYPE);
 		
-		assert axiomSetList.size() <= 1;
+		assert invariantSetList.size() <= 1;
 		
-		if(axiomSetList.size()==0)
+		if(invariantSetList.size()==0)
 			return new IInvariant[0];
 		
-		ISCInvariantSet invariantSet = (ISCInvariantSet) axiomSetList.get(0);
+		ISCInvariantSet invariantSet = (ISCInvariantSet) invariantSetList.get(0);
 		return invariantSet.getInvariants();
 	}
 
