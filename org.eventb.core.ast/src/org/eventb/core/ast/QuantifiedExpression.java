@@ -113,6 +113,7 @@ public class QuantifiedExpression extends Expression {
 	private void checkPreconditions() {
 		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
 		assert quantifiedIdentifiers != null;
+		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
 		assert expr != null;
 

@@ -70,6 +70,7 @@ public class QuantifiedPredicate extends Predicate {
 	private void checkPreconditions() {
 		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
 		assert quantifiedIdentifiers != null;
+		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
 	}
 
