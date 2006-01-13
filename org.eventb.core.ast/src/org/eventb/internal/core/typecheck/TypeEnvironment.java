@@ -96,8 +96,9 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		if (this == typenv)
 			return true;
 		final TypeEnvironment other = (TypeEnvironment) typenv;
-		for (String name : other.map.keySet()){
-			if (! this.getType(name).equals(other.getType(name)))
+		for (Entry<String, Type> entry: other.map.entrySet()){
+			String name = entry.getKey();
+			if (! entry.getValue().equals(this.getType(name)))
 				return false;
 		}
 		return true;
