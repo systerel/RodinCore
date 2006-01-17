@@ -14,7 +14,6 @@ package org.eventb.ui.internal.editors;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -217,12 +216,12 @@ public class EventMasterSection
 	 * Handle add (new element) action.
 	 */
 	private void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Event Name", "Name of the new event", "event" + counter, null);
-		dialog.open();
-		String name = dialog.getValue();
-		if (name != null) {
+//		InputDialog dialog = new InputDialog(null, "Event Name", "Name of the new event", "event" + counter, null);
+//		dialog.open();
+//		String name = dialog.getValue();
+//		if (name != null) {
 			try {
-				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, name, null, null);
+				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "event" + counter, null, null);
 				counter++;
 				commit();
 				getViewer().setSelection(new StructuredSelection(event));
@@ -230,8 +229,8 @@ public class EventMasterSection
 			catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-		}
-		dialog.close();
+//		}
+//		dialog.close();
 	}
 	
 	

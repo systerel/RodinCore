@@ -15,7 +15,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -55,7 +54,6 @@ public class EventMasterSectionActionGroup
 	
 	// The counter used to create automatic name for new elements.
 	private int counter;
-
 	
 	/**
 	 * Constructor: Create the actions
@@ -76,19 +74,12 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 									try {
-										InputDialog dialog = new InputDialog(null, "Variable Name", "Name of the new variable", "var" + counter, null);
-										dialog.open();
-										String name = dialog.getValue();
-										if (name != null) {
-											IInternalElement variable = event.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
-											counter++;
-											viewer.refresh(event, true);
-											viewer.setSelection(new StructuredSelection(variable));
-											section.markDirty();
-											((EventBFormPage) section.block.getPage()).notifyChangeListeners();
-
-										}
-										dialog.close();
+										IInternalElement variable = event.createInternalElement(IVariable.ELEMENT_TYPE, "var" + counter, null, null);
+										counter++;
+										viewer.refresh(event, true);
+										viewer.setSelection(new StructuredSelection(variable));
+										section.markDirty();
+										((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 									}
 									catch (RodinDBException e) {
 										e.printStackTrace();
