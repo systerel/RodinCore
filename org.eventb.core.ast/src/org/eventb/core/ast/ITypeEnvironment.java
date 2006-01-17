@@ -25,8 +25,8 @@ public interface ITypeEnvironment {
 	/**
 	 * Adds all mappings of the given type environment to this environment.
 	 * <p>
-	 * The given type environment must have a disjoint domain with this type
-	 * environment, i.e., their set of names must be disjoint.
+	 * All names that are common to this type environment and the given one
+	 * must be associated with the same type in both type environments.
 	 * </p>
 	 * 
 	 * @param other
@@ -37,8 +37,11 @@ public interface ITypeEnvironment {
 	/**
 	 * Adds a given set to this environment.
 	 * <p>
-	 * The given name must not yet be inside this environment. It will be
-	 * assigned its power set as type.
+	 * The given name will be assigned its power set as type.
+	 * </p>
+	 * <p>
+	 * If the given name already occurs in this environment, it must be
+	 * associated with its power set.
 	 * </p>
 	 * 
 	 * @param name
@@ -49,7 +52,8 @@ public interface ITypeEnvironment {
 	/**
 	 * Adds a name and its specified type in the type environment.
 	 * <p>
-	 * The given name must not yet be inside this environment.
+	 * If the given name already occurs in this environment, it must be
+	 * associated with the given type.
 	 * </p>
 	 * 
 	 * @param name

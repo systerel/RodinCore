@@ -59,8 +59,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	 * @see org.eventb.core.ast.ITypeEnvironment#addGivenSet(java.lang.String)
 	 */
 	public void addGivenSet(String name) {
-		assert ! map.containsKey(name);
-		map.put(name, ff.makePowerSetType(ff.makeGivenType(name)));
+		addName(name, ff.makePowerSetType(ff.makeGivenType(name)));
 	}
 
 	/* (non-Javadoc)
