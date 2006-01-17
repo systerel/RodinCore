@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="RODIN"
+            id="org.eventb.eventBKeyboard">
+      </category>
+      <view
+            name="Event-B Keyboard"
+            icon="icons/keyboard.gif"
+            category="org.eventb.eventBKeyboard"
+            class="org.eventb.eventBKeyboard.internal.views.EventBKeyboardView"
+            id="org.eventb.eventBKeyboard.internal.views.EventBKeyboardView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="org.eventb.eventBKeyboard.views.EventBKeyboardView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true"/>
+      <toc file="tocconcepts.xml"/>
+      <toc file="tocgettingstarted.xml"/>
+      <toc file="tocreference.xml"/>
+      <toc file="tocsamples.xml"/>
+      <toc file="toctasks.xml"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+         <themeElementCategory label="%eventBPresentation.label" id="org.eventb.eventBKeyboard.presentation"/>
+      <fontDefinition
+            categoryId="org.eventb.eventBKeyboard.presentation"
+            id="org.eventb.eventBKeyboard.textFont"
+            isEditable="true"
+            defaultsTo="org.eventb.eventBKeyboard.braveSansMono"
+            label="%eventBKeyboardFontDefinition.label">
+         <description>
+            %eventBKeyboardFontDefinition.description
+         </description>
+      </fontDefinition>
+      <fontDefinition
+            id="org.eventb.eventBKeyboard.braveSansMono"
+            isEditable="false"
+            label="%eventBKeyboardBraveSansMono.label"
+            value="Brave Sans Mono-regular-12">
+         <description>
+            %eventBKeyboardBraveSansMono.description
+         </description>
+	  </fontDefinition>
+   </extension>
+   <extension-point id="translators" name="EventB Keyboard Translators" schema="schema/translators.exsd"/>
+   <extension
+         point="org.eventb.eventBKeyboard.translators">
+      <translator
+      	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardTextTranslator">
+      </translator>
+      <translator
+      	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardMathTranslator">
+      </translator>
+   </extension>
+</plugin>
