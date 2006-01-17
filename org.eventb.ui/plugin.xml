@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.eventb.ui"
+            name="Event-B"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.ui.views.ProjectExplorer"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.ProjectExplorer"
+            name="Project Explorer"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.ui.provers.ProofTreeUI"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.provers.ProofTreeUI"
+            name="Proof Tree UI"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.ui.provers.RemainingGoals"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.provers.RemainingGoals"
+            name="Remaining Goals"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.ui.provers.ProofControl"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.provers.ProofControl"
+            name="Proof Control"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.ui.provers.ProofInformation"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.provers.ProofInformation"
+            name="Proof Information"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eventb.ui.views.ProjectExplorer"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eventb.ui.views.ProofTree"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective"/>
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eventb.ui.views.ProofControl"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eventb.ui.views.RemainingGoals"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eventb.ui.views.ProofInformation"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eventb.ui.editors.EventBEditor"
+            contributorClass="org.eventb.ui.editors.EventBEditorContributor"
+            extensions="bum, bcm"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.editors.EventBEditor"
+            name="Event-B Editor"/>
+      <editor
+            class="org.eventb.ui.provers.ProverUI"
+            contributorClass="org.eventb.ui.provers.ProverUIContributor"
+            extensions="pob"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.provers.ProverUI"
+            name="Prover User Interface"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eventb.ui"
+            name="Event-B Wizards"/>
+      <wizard
+            category="org.eventb.ui"
+            class="org.eventb.ui.wizards.NewProjectWizard"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.wizards.NewProjectWizard"
+            name="Event-B Project"/>
+      <wizard
+            category="org.eventb.ui"
+            class="org.eventb.ui.wizards.NewConstructWizard"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.wizards.NewConstructWizard"
+            name="Event-B Construct"/>
+   </extension>
+   <extension-point id="machinePages" name="Event-B Machine Form Page" schema="schema/machinePages.exsd"/>
+   <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>
+   <extension
+         point="org.eventb.ui.machinePages">
+      <page class="org.eventb.ui.internal.editors.DependenciesPage"/>
+      <page class="org.eventb.ui.internal.editors.VariablesPage"/>
+      <page class="org.eventb.ui.internal.editors.InvariantsPage"/>
+      <page class="org.eventb.ui.internal.editors.TheoremsPage"/>
+      <page class="org.eventb.ui.internal.editors.EventsPage"/>
+   </extension>
+   <extension
+         point="org.eventb.ui.contextPages">
+      <page class="org.eventb.ui.internal.editors.CarrierSetsPage"/>
+      <page class="org.eventb.ui.internal.editors.ConstantsPage"/>
+      <page class="org.eventb.ui.internal.editors.AxiomsPage"/>
+      <page class="org.eventb.ui.internal.editors.TheoremsPage"/>
+   </extension>
+
+</plugin>
