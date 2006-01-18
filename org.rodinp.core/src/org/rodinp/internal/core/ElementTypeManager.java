@@ -189,7 +189,7 @@ public class ElementTypeManager {
 	 * @return the element type description or <code>null</code> if this
 	 *         element type is unknown.
 	 */
-	public InternalElementTypeDescription getInternalElementTypeDescription(String elementType) {
+	private InternalElementTypeDescription getInternalElementTypeDescription(String elementType) {
 		if (internalElementTypeIds== null) {
 			computeInternalElementTypes();
 		}
