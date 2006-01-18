@@ -19,10 +19,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISharedImages;
@@ -32,9 +34,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.prover.ProverUI;
 import org.eventb.ui.wizards.NewConstructWizard;
 import org.eventb.ui.wizards.NewProjectWizard;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -183,40 +188,40 @@ public class ProjectExplorerActionGroup
 	private void linkToProverUI(Object obj) {
 		// TODO To be removed
 		
-//		String editorId = ProverUI.EDITOR_ID;
-//		IRodinFile construct;
+		String editorId = ProverUI.EDITOR_ID;
+		IRodinFile construct;
 //		
-//		// open the dummy IRodinFile file
-//		IRodinDB db = EventBUIPlugin.getRodinDatabase();
-//		IRodinProject prj = db.getRodinProject("Marriage");
-//		construct = prj.getRodinFile("NewModel.bum");
+		// open the dummy IRodinFile file
+		IRodinDB db = EventBUIPlugin.getRodinDatabase();
+		IRodinProject prj = db.getRodinProject("Marriage");
+		construct = prj.getRodinFile("NewModel.bum");
 //		
 //		//if (!(obj instanceof IRodinProject)) {
 //			//construct = (IRodinFile) TreeNode.getOpenable(obj); 
 //			// System.out.println("Top construct: " + construct.toString());
 //			
-//			try {
-//				// Getting the reference to the editor that opens the construct
-////				IEditorReference editorReference = isOpen(construct);
-//				//ProverUI editor;
+			try {
+				// Getting the reference to the editor that opens the construct
+//				IEditorReference editorReference = isOpen(construct);
+				//ProverUI editor;
 ////			
 ////				if (editorReference != null) {
 ////					editor = (EventBEditor) editorReference.getEditor(true);
 ////					EventBUIPlugin.getActivePage().activate(editor);
 ////				}
 ////				else {
-//				
-//				IEditorInput fileInput = new FileEditorInput(construct.getResource());
-//				EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
+				
+				IEditorInput fileInput = new FileEditorInput(construct.getResource());
+				EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
 ////				}
 //				//if (obj instanceof Leaf) editor.getContentOutlinePage().setTreeSelection(new StructuredSelection(obj));
 //				//editor.setSelection(obj);
-//			} catch (PartInitException e) {
-//				MessageDialog.openError(null, null, "Error open the editor");
-//				e.printStackTrace();
-//				// TODO EventBUIPlugin.logException(e);
-//			}
-		//}
+			} catch (PartInitException e) {
+				MessageDialog.openError(null, null, "Error open the editor");
+				e.printStackTrace();
+				// TODO EventBUIPlugin.logException(e);
+			}
+//		}
 		return;
 	}
 	
