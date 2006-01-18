@@ -8,8 +8,8 @@
 
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.QuantifiedHelper.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
+import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

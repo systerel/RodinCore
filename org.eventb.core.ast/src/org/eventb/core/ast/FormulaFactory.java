@@ -744,7 +744,7 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
 			ITypeEnvironment environment) {
-		return QuantifiedHelper.resolveIdents(boundIdents, environment, this);
+		return QuantifiedUtil.resolveIdents(boundIdents, environment, this);
 	}
 
 	/**

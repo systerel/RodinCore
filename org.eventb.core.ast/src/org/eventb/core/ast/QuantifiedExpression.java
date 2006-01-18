@@ -5,10 +5,10 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
-import static org.eventb.core.ast.QuantifiedHelper.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
-import static org.eventb.core.ast.QuantifiedHelper.resolveIdents;
+import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
 
 import java.util.BitSet;
 import java.util.HashSet;
