@@ -128,6 +128,16 @@ public class EventMasterSection
 	 */
 	class MasterLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
+			if (obj instanceof IAction) {
+				try {
+					return ((IAction) obj).getContents();
+				}
+				catch (RodinDBException e) {
+					// TODO Handle Exception
+					e.printStackTrace();
+					return "";
+				}
+			}
 			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
 			return obj.toString();
 		}
@@ -291,7 +301,6 @@ public class EventMasterSection
 		setButtonEnabled(DELETE_INDEX, hasSelection);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
-	
 	}
 	
 

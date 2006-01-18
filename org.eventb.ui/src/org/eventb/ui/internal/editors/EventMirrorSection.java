@@ -108,7 +108,7 @@ public class EventMirrorSection
 			
 				for (int j = 0; j < actions.length; j++) {
 					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + makeHyperlink(actions[j].getElementName()) + ": " + ((IInternalElement) actions[j]).getContents();
+					formString = formString + makeHyperlink(((IInternalElement) actions[j]).getContents());
 					formString = formString + "</li>";
 				}
 				formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
@@ -153,7 +153,7 @@ public class EventMirrorSection
 							}
 						}
 						for (int j = 0; j < actions.length; j++) {
-							if (e.getHref().equals(actions[j].getElementName())) {
+							if (e.getHref().equals(((IInternalElement) actions[j]).getContents())) {
 								editor.setSelection(actions[j]);
 							}
 						}

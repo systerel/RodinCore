@@ -132,7 +132,8 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 									try {
-										IInternalElement action = event.createInternalElement(IAction.ELEMENT_TYPE, "action" + counter++, null, null);
+										IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+										action.setContents(EventBUIPlugin.SUB_DEFAULT);
 										viewer.refresh(event, true);
 										viewer.setSelection(new StructuredSelection(action));
 										section.markDirty();

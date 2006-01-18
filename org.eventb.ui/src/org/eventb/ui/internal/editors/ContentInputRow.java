@@ -11,11 +11,15 @@
 
 package org.eventb.ui.internal.editors;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.ui.editors.IEventBInputText;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -62,9 +66,33 @@ public class ContentInputRow
 		if (dirty) {
 			try {
 				IInternalElement input = page.getInput();
-				System.out.println("Commit: " + input + " to be " + textInput.getText());
-				input.setContents(textInput.getText());
-				((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
+				if (input instanceof IUnnamedInternalElement) {
+					System.out.println("Commit: " + input + " to be " + textInput.getText());
+					input.setContents(textInput.getText());
+					
+					SectionPart masterPart = page.getBlock().getMasterPart();
+					boolean expand = false;
+					if (masterPart instanceof EventBTreePartWithButtons) {
+						TreeViewer viewer = ((EventBTreePartWithButtons) masterPart).getViewer();
+						expand = viewer.getExpandedState(input);
+					}
+	
+					if (masterPart instanceof EventBTablePartWithButtons) {
+						System.out.println("Master refresh");
+						((EventBTablePartWithButtons) masterPart).commit();
+						//((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
+					}
+					else if (masterPart instanceof EventBTreePartWithButtons) {
+						System.out.println("Master refresh");
+						TreeViewer viewer = ((EventBTreePartWithButtons) masterPart).getViewer();
+						Control control = viewer.getControl();
+						control.setRedraw(false);
+						((EventBTreePartWithButtons) masterPart).commit();
+						//viewer.setSelection(new StructuredSelection(input));
+						viewer.setExpandedState(input, expand);
+						control.setRedraw(true);
+					}
+				}
 			}
 			catch (RodinDBException e) {
 				e.printStackTrace();

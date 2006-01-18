@@ -65,10 +65,10 @@ public class ActionDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        NameInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the action");
-		addRow(name);
+        //NameInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the action");
+		//addRow(name);
 
-		substitution = new ContentInputRow(this, toolkit, comp, "subsitution*", "Subsitution associated with the action");
+		substitution = new ContentInputRow(this, toolkit, comp, "substitution*", "Substitution associated with the action");
 		addRow(substitution);
         
         GridData gd = new GridData(GridData.FILL_BOTH);

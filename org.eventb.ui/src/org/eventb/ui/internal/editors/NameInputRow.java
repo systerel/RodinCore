@@ -12,7 +12,6 @@
 package org.eventb.ui.internal.editors;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -93,7 +92,7 @@ public class NameInputRow
 						if (masterPart instanceof EventBTablePartWithButtons) {
 							System.out.println("Master refresh");
 							((EventBTablePartWithButtons) masterPart).commit();
-							((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
+							//((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
 						}
 						else if (masterPart instanceof EventBTreePartWithButtons) {
 							System.out.println("Master refresh");
@@ -101,7 +100,7 @@ public class NameInputRow
 							Control control = viewer.getControl();
 							control.setRedraw(false);
 							((EventBTreePartWithButtons) masterPart).commit();
-							viewer.setSelection(new StructuredSelection(input));
+							//viewer.setSelection(new StructuredSelection(input));
 							viewer.setExpandedState(input, expand);
 							control.setRedraw(true);
 						}
