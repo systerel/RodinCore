@@ -17,6 +17,7 @@ import static org.eventb.core.ast.Formula.FIRST_QUANTIFIED_PREDICATE;
 import static org.eventb.core.ast.Formula.FIRST_RELATIONAL_PREDICATE;
 import static org.eventb.core.ast.Formula.FIRST_UNARY_EXPRESSION;
 import static org.eventb.core.ast.Formula.FIRST_UNARY_PREDICATE;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LOR;
@@ -42,6 +43,7 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.ITestHelper.ASSOCIATIVE_EXPRESSION_LENGTH;
@@ -404,8 +406,8 @@ public class TestUnparse extends TestCase {
 			),
 	};
 			
-	// test empty setext
-	private ExprTestPair[] uncommonFormulaeTestPairs = new ExprTestPair[] {
+	// Various special cases for expressions
+	private ExprTestPair[] specialExprTestPairs = new ExprTestPair[] {
 			new ExprTestPair(
 					"{}",
 					mSetExtension()
@@ -428,6 +430,45 @@ public class TestUnparse extends TestCase {
 			),
 	};
 	
+	private PredTestPair[] specialPredTestPairs = new PredTestPair[] {
+			new PredTestPair(
+					"∀x⋅∀y⋅∀z⋅finite(x∪y∪z∪t)",
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y),
+					mQuantifiedPredicate(FORALL, mList(bd_z),
+							mSimplePredicate(
+									mAssociativeExpression(BUNION, b2, b1, b0, id_t)
+							)
+					)))
+			), new PredTestPair(
+					"∀x⋅∀x0⋅finite(x∪x0)",
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+							mSimplePredicate(
+									mAssociativeExpression(BUNION, b1, b0)
+							)
+					))
+			), new PredTestPair(
+					"∀x⋅∀x0⋅∀x1⋅finite(x∪x0∪x1)",
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+							mSimplePredicate(
+									mAssociativeExpression(BUNION, b2, b1, b0)
+							)
+					)))
+			), new PredTestPair(
+					"∀x⋅∀y⋅∀y0⋅finite(x∪y∪y0)",
+					mQuantifiedPredicate(FORALL, mList(bd_x),
+					mQuantifiedPredicate(FORALL, mList(bd_y),
+					mQuantifiedPredicate(FORALL, mList(bd_y),
+							mSimplePredicate(
+									mAssociativeExpression(BUNION, b2, b1, b0)
+							)
+					)))
+			),
+	};
+
 	AssignTestPair[] assignmentTestPairs = new AssignTestPair[] {
 			new AssignTestPair(
 					"x ≔ y",
@@ -1021,7 +1062,8 @@ public class TestUnparse extends TestCase {
 	public void testStringFormula() {
 		routineTestStringFormula(associativeExpressionTestPairs);
 		routineTestStringFormula(associativePredicateTestPairs);
-		routineTestStringFormula(uncommonFormulaeTestPairs);
+		routineTestStringFormula(specialExprTestPairs);
+		routineTestStringFormula(specialPredTestPairs);
 		routineTestStringFormula(assignmentTestPairs);
 	}
 	
