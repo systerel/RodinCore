@@ -38,6 +38,7 @@ public class TestAll {
 		suite.addTestSuite(TestBA.class);
 		suite.addTestSuite(TestFIS.class);
 		suite.addTestSuite(TestTypeEnvironment.class);
+		suite.addTestSuite(TestCollectNamesAbove.class);
 		// suite.addTestSuite(TestTypedConstructor.class);
 		//$JUnit-END$
 		return suite;
