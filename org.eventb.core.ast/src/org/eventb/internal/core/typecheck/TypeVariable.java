@@ -47,7 +47,7 @@ public class TypeVariable extends Type {
 
 	@Override
 	protected void buildString(StringBuilder buffer) {
-		buffer.append('\'' + index);
+		buffer.append("'" + index);
 	}
 
 	@Override
