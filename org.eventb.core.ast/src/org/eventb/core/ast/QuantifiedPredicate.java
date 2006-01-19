@@ -216,11 +216,28 @@ public class QuantifiedPredicate extends Predicate {
 		pred.collectFreeIdentifiers(freeIdents);
 	}
 
+	/**
+	 * Returns the list of all names that either occur free in this formula, or
+	 * have been quantified somewhere above this node (that is closer to the
+	 * root of the tree).
+	 * 
+	 * @param boundNames
+	 *            array of names that are declared above this formula. These
+	 *            names must be stored in the order in which they appear when
+	 *            the formula is written from left to right
+	 * @return the list of all names that occur in this formula and are not
+	 *         declared within.
+	 */
+	public Set<String> collectNamesAbove(String[] boundNames) {
+		Set<String> result = new HashSet<String>();
+		pred.collectNamesAbove(result, boundNames, quantifiedIdentifiers.length);
+		return result;
+	}
+
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
-		final String[] newBoundNames = catenateBoundIdentLists(boundNames, quantifiedIdentifiers);
 		final int newOffset = offset + quantifiedIdentifiers.length;
-		pred.collectNamesAbove(names, newBoundNames, newOffset);
+		pred.collectNamesAbove(names, boundNames, newOffset);
 	}
 
 	@Override

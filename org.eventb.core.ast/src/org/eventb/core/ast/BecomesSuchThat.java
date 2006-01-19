@@ -129,9 +129,8 @@ public class BecomesSuchThat extends Assignment {
 		for (FreeIdentifier ident: assignedIdents) {
 			ident.collectNamesAbove(names, boundNames, offset);
 		}
-		final String[] newBoundNames = catenateBoundIdentLists(boundNames, primedIdents);
 		final int newOffset = offset + primedIdents.length;
-		condition.collectNamesAbove(names, newBoundNames, newOffset);
+		condition.collectNamesAbove(names, boundNames, newOffset);
 	}
 
 	@Override
