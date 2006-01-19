@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -83,6 +80,11 @@ public class TestSubstituteFormula extends TestCase {
 			assertTrue(formula.toString(), exptresult.isSuccess());
 
 			Predicate result = formula.substituteFreeIdents(sbs, ff);
+			
+			// TODO remove type-check below when type synthesizer is implemented
+			result.typeCheck(tenv);
+			assertTrue(formula.toString(), result.isTypeChecked());
+			
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
 		}
 		
@@ -120,6 +122,11 @@ public class TestSubstituteFormula extends TestCase {
 			QuantifiedPredicate qformula = (QuantifiedPredicate) formula;
 			Predicate iresult = qformula.getPredicate().substituteFreeIdents(sbsMap, ff);
 			Predicate result = ff.makeQuantifiedPredicate(qformula.getTag(), qformula.getBoundIdentifiers(), iresult, null);
+
+			// TODO remove type-check below when type synthesizer is implemented
+			result.typeCheck(tenv);
+			assertTrue(formula.toString(), result.isTypeChecked());
+			
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
 		}
 		
@@ -206,7 +213,7 @@ public class TestSubstituteFormula extends TestCase {
 		return ff.makeRelationalPredicate(Formula.LT, l, r, null);
 	}
 	
-	private static QuantifiedPredicate forall(BoundIdentDecl[] bd, Predicate pr) {
+	static QuantifiedPredicate forall(BoundIdentDecl[] bd, Predicate pr) {
 		return ff.makeQuantifiedPredicate(Formula.FORALL, bd, pr, null);
 	}
 	
@@ -214,10 +221,10 @@ public class TestSubstituteFormula extends TestCase {
 		return ff.makeQuantifiedPredicate(Formula.EXISTS, bd, pr, null);
 	}
 	
-	private static BoundIdentDecl[] BD(String...strings) {
-		BoundIdentDecl[] bd = new BoundIdentDecl[strings.length];
-		for(int i=0; i<strings.length; i++)
-			bd[i] = ff.makeBoundIdentDecl(strings[i], null);
+	static BoundIdentDecl[] BD(String... names) {
+		BoundIdentDecl[] bd = new BoundIdentDecl[names.length];
+		for(int i=0; i<names.length; i++)
+			bd[i] = ff.makeBoundIdentDecl(names[i], null);
 		return bd;
 	}
 	
@@ -360,6 +367,11 @@ public class TestSubstituteFormula extends TestCase {
 			assertTrue(predicate.toString(), exptresult.isSuccess());
 
 			Predicate result = predicate.substituteBoundIdents(subpred, map, ff);
+
+			// TODO remove type-check below when type synthesizer is implemented
+			result.typeCheck(tenv);
+			assertTrue(predicate.toString(), result.isTypeChecked());
+			
 			assertEquals(predicate + "\n" + map + "\n", expected, result);
 		}
 		
@@ -388,11 +400,22 @@ public class TestSubstituteFormula extends TestCase {
 			}
 			
 			// Type-check the expected result before comparing it
-			ITypeCheckResult exptresult = expected.typeCheck(tenv);
-			assertTrue(predicate.toString(), exptresult.isSuccess());
+			typeCheck(expected);
 
 			Predicate result = predicate.substituteBoundIdents(subpred, map, ff);
+
+			// TODO remove type-check below when type synthesizer is implemented
+			typeCheck(result);
+			
 			assertEquals(predicate + "\n" + map + "\n", expected, result);
+		}
+		
+		private void typeCheck(Predicate pred) {
+			// Close the predicate with additional bound identifiers so that it can typecheck.
+			Predicate closed = forall(BD("a", "b", "c", "d", "e"), pred);
+			assertTrue(closed.isWellFormed());
+			closed.typeCheck(tenv);
+			assertTrue("Can't typecheck " + pred.toString(), pred.isTypeChecked());
 		}
 		
 	}
