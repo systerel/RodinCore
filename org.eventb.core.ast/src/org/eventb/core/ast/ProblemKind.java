@@ -80,7 +80,12 @@ public enum ProblemKind {
 	/**
 	 * No parameter
 	 */
-	InvalidTypeExpression("Expression doesn't denote a type");
+	InvalidTypeExpression("Expression doesn't denote a type"),
+	
+	/**
+	 * Unlocated failure when type-checking
+	 */
+	TypeCheckFailure("Couldn't infer some types");
 	
 	
 	private String message;

@@ -200,10 +200,16 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 				}
 			}
 		}
+		if (failed && isSuccess()) {
+			// Couldn't root any error message on a source location
+			addProblem(new ASTProblem(
+					null, ProblemKind.TypeCheckFailure, ProblemSeverities.Error
+			));
+		}
+		
 		if (!isSuccess()) {
 			return;
 		}
-		assert ! failed : "Error should have been reported"; 
 		// it's time to solve the type environment
 		inferredTypeEnvironment.solveVariables(unifier);
 	}
