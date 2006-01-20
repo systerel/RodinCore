@@ -8,7 +8,6 @@
 
 package org.eventb.core.ast;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,12 +105,12 @@ public abstract class QuantifiedUtil {
 	 * @param boundHere
 	 *            array of bound identifier declarations to make free.
 	 * @param usedNames
-	 *            array of names that are reserved (usually occurring already
+	 *            set of names that are reserved (usually occurring already
 	 *            free in the formula)
 	 * @return a list of new names that are distinct from each other and do not
 	 *         occur in the list of used names
 	 */
-	public static String[] resolveIdents(BoundIdentDecl[] boundHere, final HashSet<String> usedNames) {
+	public static String[] resolveIdents(BoundIdentDecl[] boundHere, final Set<String> usedNames) {
 		final int length = boundHere.length;
 		String[] result = new String[length];
 		
