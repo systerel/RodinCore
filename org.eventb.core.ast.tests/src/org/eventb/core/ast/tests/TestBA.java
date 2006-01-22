@@ -63,7 +63,7 @@ public class TestBA extends TestCase {
 			this.tenv = tenv;
 		}
 		
-		public void test() throws Exception {
+		public void doTest() throws Exception {
 			IParseResult resIn = ff.parseAssignment(input);
 			assertTrue(resIn.isSuccess());
 			Assignment inA = resIn.getParsedAssignment();
@@ -93,9 +93,9 @@ public class TestBA extends TestCase {
 			new TestItem("x:|x'∈A", "x'∈A", defaultTEnv)
 	};
 	
-	public void testFIS() throws Exception {
-		for(TestItem item : testItems)
-			item.test();
+	public void testBA() throws Exception {
+		for (TestItem item : testItems)
+			item.doTest();
 	}
 
 	
