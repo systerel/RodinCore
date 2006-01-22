@@ -18,11 +18,11 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import junit.framework.TestCase;
 
@@ -56,15 +56,15 @@ public class TestFreeIdents extends TestCase {
 	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-	private static final BoundIdentDecl[] NO_BOUND_IDENT_DECL = new BoundIdentDecl[0];
+	private static final FreeIdentifier[] NO_FREE_IDENT = new FreeIdentifier[0];
 	
-	private class TestItem {
+	private static class TestItem {
 		Formula<? extends Formula> formula;
-		BoundIdentDecl[] freeIdents;
+		FreeIdentifier[] freeIdents;
 		Formula<? extends Formula> boundFormula;
 		
 		TestItem(Formula<? extends Formula> formula,
-				BoundIdentDecl[] freeIdents,
+				FreeIdentifier[] freeIdents,
 				Formula<? extends Formula> boundFormula) {
 			this.formula = formula;
 			this.freeIdents = freeIdents;
@@ -111,97 +111,97 @@ public class TestFreeIdents extends TestCase {
 			// Basic test "x"
 			new TestItem(
 					ids[x][0],
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					bs[0][0]
 			),
 			// Basic test "x + y"
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mAssociativeExpression(bs[1][0], bs[0][1])
 			),
 			// AssociativeExpression
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1], ids[z][2]),
-					mList(bds[x][0], bds[y][1], bds[z][2]),
+					mList(ids[x][0], ids[y][1], ids[z][2]),
 					mAssociativeExpression(bs[2][0], bs[1][1], bs[0][2])
 			),
 			// AssociativeExpression with same ident twice
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1], ids[x][2]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mAssociativeExpression(bs[1][0], bs[0][1], bs[1][2])
 			),
 			// AssociativePredicate
 			new TestItem(
 					mAssociativePredicate(mpred(ids[x][0]), mpred(ids[y][1]), mpred(ids[z][2])),
-					mList(bds[x][0], bds[y][1], bds[z][2]),
+					mList(ids[x][0], ids[y][1], ids[z][2]),
 					mAssociativePredicate(mpred(bs[2][0]), mpred(bs[1][1]), mpred(bs[0][2]))
 			),
 			// AssociativePredicate with same ident twice
 			new TestItem(
 					mAssociativePredicate(mpred(ids[x][0]), mpred(ids[y][1]), mpred(ids[x][2])),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mAssociativePredicate(mpred(bs[1][0]), mpred(bs[0][1]), mpred(bs[1][2]))
 			),
 			// AtomicExpression
 			new TestItem(
 					mAtomicExpression(),
-					NO_BOUND_IDENT_DECL,
+					NO_FREE_IDENT,
 					mAtomicExpression()
 			),
 			// BinaryExpression
 			new TestItem(
 					mBinaryExpression(ids[x][0], ids[y][1]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mBinaryExpression(bs[1][0], bs[0][1])
 			),
 			// BinaryExpression with same ident twice
 			new TestItem(
 					mBinaryExpression(ids[x][0], ids[x][1]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mBinaryExpression(bs[0][0], bs[0][1])
 			),
 			// BinaryPredicate
 			new TestItem(
 					mBinaryPredicate(mpred(ids[x][0]), mpred(ids[y][1])),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mBinaryPredicate(mpred(bs[1][0]), mpred(bs[0][1]))
 			),
 			// BinaryPredicate with same ident twice
 			new TestItem(
 					mBinaryPredicate(mpred(ids[x][0]), mpred(ids[x][1])),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mBinaryPredicate(mpred(bs[0][0]), mpred(bs[0][1]))
 			),
 			// BoolExpression
 			new TestItem(
 					mBoolExpression(mpred(ids[x][0])),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mBoolExpression(mpred(bs[0][0]))
 			),
 			// BoundIdentifier
 			new TestItem(
 					bs[0][0],
-					NO_BOUND_IDENT_DECL,
+					NO_FREE_IDENT,
 					bs[0][0]
 			),
 			// FreeIdentifier
 			new TestItem(
 					ids[x][0],
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					bs[0][0]
 			),
 			// IntegerLiteral
 			new TestItem(
 					mIntegerLiteral(),
-					NO_BOUND_IDENT_DECL,
+					NO_FREE_IDENT,
 					mIntegerLiteral()
 			),
 			// LiteralPredicate
 			new TestItem(
 					mLiteralPredicate(),
-					NO_BOUND_IDENT_DECL,
+					NO_FREE_IDENT,
 					mLiteralPredicate()
 			),
 			// QuantifiedExpression
@@ -210,7 +210,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(ids[y][1], bs[0][2]), 
 							mBinaryExpression(ids[z][3], bs[0][4])),
-					mList(bds[y][1], bds[z][3]),
+					mList(ids[y][1], ids[z][3]),
 					mQuantifiedExpression(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[2][1], bs[0][2]), 
@@ -222,7 +222,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(ids[y][1], bs[0][2]), 
 							mBinaryExpression(ids[y][3], bs[0][4])),
-					mList(bds[y][1]),
+					mList(ids[y][1]),
 					mQuantifiedExpression(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[1][1], bs[0][2]), 
@@ -233,7 +233,7 @@ public class TestFreeIdents extends TestCase {
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(ids[y][1], bs[0][2])), 
-					mList(bds[y][1]),
+					mList(ids[y][1]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[1][1], bs[0][2]))
@@ -241,49 +241,49 @@ public class TestFreeIdents extends TestCase {
 			// RelationalPredicate
 			new TestItem(
 					mRelationalPredicate(ids[x][0], ids[y][1]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mRelationalPredicate(bs[1][0], bs[0][1])
 			),
 			// RelationalPredicate with same ident twice
 			new TestItem(
 					mRelationalPredicate(ids[x][0], ids[x][1]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mRelationalPredicate(bs[0][0], bs[0][1])
 			),
 			// SetExtension
 			new TestItem(
 					mSetExtension(ids[x][0], ids[y][1], ids[z][2]),
-					mList(bds[x][0], bds[y][1], bds[z][2]),
+					mList(ids[x][0], ids[y][1], ids[z][2]),
 					mSetExtension(bs[2][0], bs[1][1], bs[0][2])
 			),
 			// SetExtension with same ident twice
 			new TestItem(
 					mSetExtension(ids[x][0], ids[y][1], ids[x][2]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mSetExtension(bs[1][0], bs[0][1], bs[1][2])
 			),
 			// SimplePredicate
 			new TestItem(
 					mpred(ids[x][0]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mpred(bs[0][0])
 			),
 			// UnaryExpression
 			new TestItem(
 					mUnaryExpression(ids[x][0]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mUnaryExpression(bs[0][0])
 			),
 			// UnaryPredicate
 			new TestItem(
 					mUnaryPredicate(mpred(ids[x][0])),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mUnaryPredicate(mpred(bs[0][0]))
 			),
 			// Test with already bound ident
 			new TestItem(
 					mSetExtension(ids[x][0], bs[0][1]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mSetExtension(bs[0][0], bs[1][1])
 			),
 			
@@ -301,7 +301,7 @@ public class TestFreeIdents extends TestCase {
 													mList(bds[z][6]),
 													mRelationalPredicate(bs[0][7], ids[y][8]),
 													bs[0][9])))),
-					mList(bds[y][2], bds[z][4]),
+					mList(ids[y][2], ids[z][4]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mAssociativePredicate(
@@ -320,37 +320,37 @@ public class TestFreeIdents extends TestCase {
 			// Formula "x", bind "x"
 			new TestItem(
 					ids[x][0],
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					bs[0][0]
 			),
 			// Formula "x + y", bind "x, y"
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1]),
-					mList(bds[x][0], bds[y][1]),
+					mList(ids[x][0], ids[y][1]),
 					mAssociativeExpression(bs[1][0], bs[0][1])
 			),
 			// Formula "x + y", bind "x"
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1]),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mAssociativeExpression(bs[0][0], ids[y][1])
 			),
 			// Formula "x + y", bind "y"
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1]),
-					mList(bds[y][1]),
+					mList(ids[y][1]),
 					mAssociativeExpression(ids[x][0], bs[0][1])
 			),
 			// Formula "x", bind "y"
 			new TestItem(
 					ids[x][0],
-					mList(bds[y][0]),
+					mList(ids[y][0]),
 					ids[x][0]
 			),
 			// Formula "x + y", bind "x, z"
 			new TestItem(
 					mAssociativeExpression(ids[x][0], ids[y][1]),
-					mList(bds[x][0], bds[z][1]),
+					mList(ids[x][0], ids[z][1]),
 					mAssociativeExpression(bs[1][0], ids[y][1])
 			),
 			// Formula "!x.x = y", bind "x"
@@ -359,7 +359,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
 					),
-					mList(bds[x][0]),
+					mList(ids[x][0]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
@@ -371,7 +371,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
 					),
-					mList(bds[y][0]),
+					mList(ids[y][0]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], bs[1][2])
@@ -383,7 +383,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
 					),
-					mList(bds[z][0]),
+					mList(ids[z][0]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
@@ -395,7 +395,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
 					),
-					mList(bds[x][0], bds[z][0]),
+					mList(ids[x][0], ids[z][0]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
@@ -407,7 +407,7 @@ public class TestFreeIdents extends TestCase {
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], ids[y][2])
 					),
-					mList(bds[x][0], bds[y][0], bds[z][0]),
+					mList(ids[x][0], ids[y][0], ids[z][0]),
 					mQuantifiedPredicate(
 							mList(bds[x][0]),
 							mRelationalPredicate(bs[0][1], bs[2][2])
@@ -420,7 +420,7 @@ public class TestFreeIdents extends TestCase {
 	}
 
 	// Check equality of arrays of identifiers, including source locations.
-	private void assertEquals(String msg, BoundIdentDecl[] expected, BoundIdentDecl[] actual) {
+	private void assertEquals(String msg, FreeIdentifier[] expected, FreeIdentifier[] actual) {
 		assertEquals(msg, expected.length, actual.length);
 		for (int i = 0; i < actual.length; i++) {
 			// Same identifier
@@ -431,20 +431,18 @@ public class TestFreeIdents extends TestCase {
 	}
 	
 	// Check equality of arrays of identifiers, including source locations.
-	private void assertEquals(String msg, BoundIdentDecl[] expected, FreeIdentifier[] actual) {
-		assertEquals(msg, expected.length, actual.length);
-		for (int i = 0; i < actual.length; i++) {
-			// Same identifier
-			assertEquals(msg, expected[i].getName(), actual[i].getName());
+	private void assertEquals(String msg, FreeIdentifier[] expected, List<BoundIdentDecl> actual) {
+		assertEquals(msg, expected.length, actual.size());
+		for (int i = 0; i < expected.length; i++) {
+			// Same name
+			assertEquals(msg, expected[i].getName(), actual.get(i).getName());
 			// Same location
-			assertEquals(msg, expected[i].getSourceLocation(), actual[i].getSourceLocation());
+			assertEquals(msg, expected[i].getSourceLocation(), actual.get(i).getSourceLocation());
+			// Same type
+			assertEquals(msg, expected[i].getType(), actual.get(i).getType());
 		}
 	}
 	
-	// Check equality of arrays of identifiers, including source locations.
-	private void assertEquals(String msg, BoundIdentDecl[] expected, List<BoundIdentDecl> actual) {
-		assertEquals(msg, expected, actual.toArray(new BoundIdentDecl[actual.size()]));
-	}
 	
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.getFreeIdentifiers()'
@@ -463,7 +461,7 @@ public class TestFreeIdents extends TestCase {
 	public final void testBindAllFreeIdents() {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
-			List<BoundIdentDecl> actualIdents = new Vector<BoundIdentDecl>();
+			List<BoundIdentDecl> actualIdents = new ArrayList<BoundIdentDecl>();
 			Formula result = testItem.formula.bindAllFreeIdents(actualIdents, ff);
 			assertEquals(msg, testItem.freeIdents, actualIdents);
 			assertEquals(msg, testItem.boundFormula, result);
@@ -475,18 +473,11 @@ public class TestFreeIdents extends TestCase {
 	 */
 	public final void testBindTheseIdents() {
 		for (TestItem testItem : testItemsBindPartial) {
-			List<BoundIdentDecl> identsToBind = Arrays.asList(testItem.freeIdents);
+			List<FreeIdentifier> identsToBind = Arrays.asList(testItem.freeIdents);
 			String msg = "binding " + identsToBind + " in " + testItem.formula.toString();
 			Formula result = testItem.formula.bindTheseIdents(identsToBind, ff);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
-	}
-	
-	private final List<String> boundToString(BoundIdentDecl[] decl) {
-		LinkedList<String> list = new LinkedList<String>();
-		for(int i=0; i<decl.length; i++)
-			list.add(decl[i].getName());
-		return list;
 	}
 	
 	private final List<String> freeToString(FreeIdentifier[] free) {
@@ -523,7 +514,7 @@ public class TestFreeIdents extends TestCase {
 			assertTrue("Should be well-formed: " + testItem.formula, testItem.formula.isWellFormed());
 			FreeIdentifier[] result = testItem.formula.getFreeIdentifiers();
 			TreeSet<String> freeIds = new TreeSet<String>(freeToString(result));
-			freeIds.removeAll(boundToString(testItem.freeIdents));
+			freeIds.removeAll(freeToString(testItem.freeIdents));
 			boolean varBound = freeIds.size() < result.length;
 			if(varBound)
 				assertFalse("Should not be well-formed: " + testItem.boundFormula, testItem.boundFormula.isWellFormed());
