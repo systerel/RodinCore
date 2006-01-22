@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -229,13 +229,12 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Expression newLeft = left.substituteAll(noOfBoundVars, replacement, formulaFactory);
-		Expression newRight = right.substituteAll(noOfBoundVars, replacement, formulaFactory);
+	public RelationalPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+		Expression newLeft = left.applySubstitution(subst, ff);
+		Expression newRight = right.applySubstitution(subst, ff);
 		if(newLeft == left && newRight == right)
 			return this;
-		else
-			return formulaFactory.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
+		return ff.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
 }

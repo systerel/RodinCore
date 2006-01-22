@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -410,13 +410,13 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected AssociativeExpression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
+	public AssociativeExpression applySubstitution(Substitution subst, FormulaFactory ff) {
 		Expression[] newChildren = new Expression[children.length]; 
-		boolean equal = getSubstitutedList(noOfBoundVars, children, replacement, newChildren, formulaFactory);
+		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
 		if (equal) {
 			return this;
 		} else {
-			return formulaFactory.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
+			return ff.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
 		}
 	}
 

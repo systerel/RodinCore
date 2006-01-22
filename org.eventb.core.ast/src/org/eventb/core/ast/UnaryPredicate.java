@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -144,12 +144,11 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Predicate newChild = child.substituteAll(noOfBoundVars, replacement,formulaFactory);
-		if(newChild == child)
+	public UnaryPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+		Predicate newChild = child.applySubstitution(subst, ff);
+		if (newChild == child)
 			return this;
-		else
-			return formulaFactory.makeUnaryPredicate(getTag(), newChild, getSourceLocation());
+		return ff.makeUnaryPredicate(getTag(), newChild, getSourceLocation());
 	}
 
 }

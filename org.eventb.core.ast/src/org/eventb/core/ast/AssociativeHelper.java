@@ -5,7 +5,7 @@
 package org.eventb.core.ast;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 
 
 /**
@@ -31,12 +31,14 @@ import org.eventb.internal.core.ast.Replacement;
 		return true;
 	}
 
-	protected static boolean getSubstitutedList(int noOfBoundVars, Formula[] list, Replacement replacement, Formula[] newList, FormulaFactory formulaFactory) {
+	protected static boolean getSubstitutedList(Formula[] list,
+			Substitution subst, Formula[] newList, FormulaFactory ff) {
+
 		assert list.length == newList.length;
 		boolean equal = true;
-		for(int i=0; i<list.length; i++) {
-			newList[i] = list[i].substituteAll(noOfBoundVars, replacement, formulaFactory);
-			if(newList[i] != list[i])
+		for (int i = 0; i < list.length; i++) {
+			newList[i] = list[i].applySubstitution(subst, ff);
+			if (newList[i] != list[i])
 				equal = false;
 		}
 		return equal;

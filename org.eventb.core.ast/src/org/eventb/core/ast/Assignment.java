@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
@@ -146,8 +146,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	protected final Assignment substituteAll(int noOfBoundVars, Replacement replacement,
-			FormulaFactory formulaFactory) {
+	public final Assignment applySubstitution(Substitution subst, FormulaFactory ff) {
 		// Should never happen
 		assert false;
 		return null;

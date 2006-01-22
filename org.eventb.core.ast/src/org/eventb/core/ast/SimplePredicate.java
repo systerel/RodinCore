@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -143,12 +143,11 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Expression newChild = child.substituteAll(noOfBoundVars, replacement,formulaFactory);
-		if(newChild == child)
+	public SimplePredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+		Expression newChild = child.applySubstitution(subst, ff);
+		if (newChild == child)
 			return this;
-		else
-			return formulaFactory.makeSimplePredicate(getTag(), newChild, getSourceLocation());
+		return ff.makeSimplePredicate(getTag(), newChild, getSourceLocation());
 	}
 
 }

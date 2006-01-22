@@ -10,14 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.AdjustFreeReplacement;
-import org.eventb.internal.core.ast.AdjustUnbindReplacement;
-import org.eventb.internal.core.ast.BindReplacement;
-import org.eventb.internal.core.ast.FormulaReplacement;
-import org.eventb.internal.core.ast.FreeReplacement;
+import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
-import org.eventb.internal.core.ast.UnbindReplacement;
+import org.eventb.internal.core.ast.SimpleSubstitution;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -1077,7 +1073,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Returns the left-aligned string representation of the syntax tree.
 	 * <p>
 	 * This method is for debugging purpose. It returns a string that represents
-	 * the AST.
+	 * the AST of this formula.
+	 * </p>
 	 * 
 	 * @return Returns the printable syntax tree.
 	 */
@@ -1218,12 +1215,14 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final T bindAllFreeIdents(List<BoundIdentDecl> boundIdentDecls,
 			FormulaFactory factory) {
+		
+		assert boundIdentDecls.size() == 0;
 		LinkedHashSet<FreeIdentifier> list = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(list);
 		for (FreeIdentifier ident: list) {
 			boundIdentDecls.add(factory.makeBoundIdentDecl(ident));
 		}
-		return bindTheseIdents(boundIdentDecls, factory);
+		return bindTheseIdents(list, factory);
 	}
 
 	/**
@@ -1240,21 +1239,21 @@ public abstract class Formula<T extends Formula<T>> {
 	 * </p>
 	 * 
 	 * @param identsToBind
-	 *            ordered collection of bound identifier declarations
+	 *            ordered collection of free identifier to bind
 	 * @param factory
 	 *            factory to use to create the result
 	 * @return a copy of this formula with the specified identifiers bound
 	 */
-	public final T bindTheseIdents(Collection<BoundIdentDecl> identsToBind,
+	public final T bindTheseIdents(Collection<FreeIdentifier> identsToBind,
 			FormulaFactory factory) {
 
 		// Fast return when there is nothing to change.
 		if (identsToBind.size() == 0) {
 			return getTypedThis();
 		}
-
-		BindReplacement bindReplacement = new BindReplacement(identsToBind);
-		return substituteAll(0, bindReplacement, factory);
+		
+		Substitution subst = new BindingSubstitution(identsToBind, factory);
+		return applySubstitution(subst, factory);
 	}
 
 	// Needed by the restricted genericity of Java 5
@@ -1283,83 +1282,38 @@ public abstract class Formula<T extends Formula<T>> {
 			int offset, FormulaFactory factory);
 
 	/**
-	 * Applies the (simultaneous) substitution to this formula.
-	 * @param noOfBoundVars number of bound variables encountered up to the present location
-	 * @param replacement The substitution to be applied.
-	 * @param formulaFactory formula factory to use for building the result
-	 * @return The formula with the specified identifiers replaced by the corresponding expressions.
-	 */
-	protected abstract T substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory);
-	
-	/**
-	 * Substitutes free identifiers by expressions as specified by replacement.
-	 * The types of the suggested replacements must correspond!
+	 * Applies the given substitution to this formula.
 	 * <p>
-	 * This operation is not supported by assignments.
+	 * This operation is made public for technical reasons.  It is not part
+	 * of the public API of the AST library and must not be used by clients.
 	 * </p>
-	 * @param map The substitution to be carried out
-	 * @param formulaFactory
-	 * @return Returns the substituted formula
+	 * @param subst
+	 *            the substitution to apply
+	 * @param ff
+	 *            factory to use for building the result
+	 * @return this formula with the given substitution applied to it
 	 */
-	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory formulaFactory) {
-		FreeReplacement replacement = new FreeReplacement(map);
-		return substituteAll(0, replacement, formulaFactory);
-	}
+	public abstract T applySubstitution(Substitution subst, FormulaFactory ff);
 	
 	/**
-	 * Add offset to all deBruijn indices that are not locally bound in the formula.
-	 * This is a helper method for free identifier substitution.
-	 * @param offset Index offset of the new enclosing Expression
-	 * @param formulaFactory formula factory to use for building the result
-	 * @return Returns the adjusted formula
-	 */
-	protected T adjustIndicesAbsolute(int offset, FormulaFactory formulaFactory) {
-		return substituteAll(0, new AdjustFreeReplacement(offset), formulaFactory);
-	}
-	
-	/**
-	 * Substitutes bound identifiers of a sub-predicate by expressions.
+	 * Substitutes all occurrences of some free identifiers by their
+	 * corresponding expressions as specified by the given map.
 	 * <p>
-	 * If the substitution <code>map</code> refers to indices that are not
-	 * in present in the node <code>predicate</code> an <code>ArrayIndexOutOfBoundsException</code>
-	 * occurs.
+	 * For each entry of the given map, the free identifier and the replacement
+	 * expression must both be typed and bear the same type.
 	 * </p><p>
 	 * This operation is not supported by assignments.
 	 * </p>
-	 * @param predicate The quantified predicate on which the substitution should be performed
-	 * @param map The substitution
-	 * @param formulaFactory formula factory to use for building the result
-	 * @return The substituted formula
+	 * 
+	 * @param map
+	 *            The substitution to be carried out
+	 * @param ff
+	 *            formula factory to use for building the result
+	 * @return this formula after application of the substitution
 	 */
-	// TODO make this method static or else move it to QuantifiedPredicate
-	public T substituteBoundIdents(QuantifiedPredicate predicate, Map<Integer, Expression> map, FormulaFactory formulaFactory) {
-		return substituteAll(0, new FormulaReplacement(predicate, map), formulaFactory);
-	}
-	
-	/**
-	 * Add offset to all deBruijn indices that are not locally bound in the formula.
-	 * This is done relative to disappearing bound identifiers. This is a helper method
-	 * for bound identifier substitution.
-	 * @param offset Index offset of the new enclosing Expression
-	 * @param replacement The substitution 
-	 * @param formulaFactory formula factory to use for building the result
-	 * @return The substituted formula
-	 */
-	protected T adjustIndicesRelative(int offset, UnbindReplacement replacement, FormulaFactory formulaFactory) {
-		return substituteAll(0, new AdjustUnbindReplacement(offset, replacement), formulaFactory);
-	}
-	
-	/**
-	 * Instantiates bound variables, .i.e. "unbinds" them.
-	 * @param map The substitution to apply
-	 * @param numVars the length of the bound identifier vector relative to which map is specified.
-	 * 		This is just the number of bound identifiers attached to the quantified node to which
-	 * 		<code>map</code> is applied.
-	 * @param formulaFactory formula factory to use for building the result
-	 * @return The substituted formula
-	 */
-	protected T unbindTheseIndices(Map<Integer, Expression> map, int numVars, FormulaFactory formulaFactory) {
-		return substituteAll(0, new UnbindReplacement(map, numVars), formulaFactory);
+	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
+		SimpleSubstitution subst = new SimpleSubstitution(map, ff);
+		return applySubstitution(subst, ff);
 	}
 	
 	/**

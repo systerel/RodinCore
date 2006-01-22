@@ -4,8 +4,6 @@
  */
 package org.eventb.core.ast;
 
-
-
 /**
  * Helper class for implementing quantified formulae of event-B.
  * <p>

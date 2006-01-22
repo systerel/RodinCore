@@ -8,11 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.BindReplacement;
-import org.eventb.internal.core.ast.FreeReplacement;
-import org.eventb.internal.core.ast.Info;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -141,35 +138,8 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		if (replacement.getClass() == FreeReplacement.class) {
-			Info info = ((FreeReplacement) replacement).getInfo(this);
-			if(info == null)
-				return this;
-			else {
-				Expression expr = info.getExpression();
-				
-				// the types must correspond!
-				assert this.getType() == null || this.getType().equals(expr.getType());
-				
-				if(info.isIndexClosed())
-					return expr;
-				else
-					return expr.adjustIndicesAbsolute(noOfBoundVars, formulaFactory);
-			}
-		} else if(replacement.getClass() == BindReplacement.class) {
-			Integer index = ((BindReplacement) replacement).getIndex(this);
-			
-			if(index == null) 
-				return this;
-			else {
-				BoundIdentifier newBound = formulaFactory.makeBoundIdentifier(index + noOfBoundVars, getSourceLocation());
-				newBound.setType(getType(), null);
-				return newBound;
-			}
-			
-		} else
-			return this;
+	public Expression applySubstitution(Substitution subst, FormulaFactory ff) {
+		return subst.getReplacement(this);
 	}
 
 }

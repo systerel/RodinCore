@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.FormulaReplacement;
+import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
-import org.eventb.internal.core.ast.UnbindReplacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -283,33 +282,60 @@ public class QuantifiedPredicate extends Predicate {
 		return pred.isWellFormed(newNoOfBoundVars);
 	}
 
+	/**
+	 * Substitutes all occurrences of some identifiers bound by this quantified
+	 * expression by their corresponding replacement expressions.
+	 * <p>
+	 * The replacements to do are specified by the given array. This array must
+	 * have exactly the same length as the array returned by
+	 * {@link #getBoundIdentifiers()}. Each element of the given array
+	 * specifies the replacement expression for the bound identifier declaration
+	 * with the same index. The element can be <code>null</code>, in which
+	 * case the corresponding bound identifier declaration will be kept (no
+	 * substitution will be done for it).
+	 * </p>
+	 * <p>
+	 * For instance, if this method is applied to the predicate
+	 * <pre>
+	 *    ∀x,y· x = y + 1
+	 * </pre>
+	 * with the replacement <code>{null, "a"}</code>, then the result
+	 * is
+	 * <pre>
+	 *    ∀x· x = a + 1
+	 * </pre>
+	 * If, instead, the replacement is <code>{"a", "b"}</code>, then the result is
+	 * <pre>
+	 *    a = b + 1
+	 * </pre>
+	 * </p>
+	 * @param replacements
+	 *         an array of replacement expressions.  Its length must be the number of
+	 *         identifiers bound by this quantified expression. Some elements can be <code>null</code>
+	 * @param formulaFactory
+	 *            formula factory to use for building the result
+	 * @return This formula after application of the substitution.
+	 */
+	// TODO add example to test cases.
+	public Predicate substituteBoundIdents(Expression[] replacements, FormulaFactory formulaFactory) {
+		BoundIdentSubstitution subst = 
+			new BoundIdentSubstitution(quantifiedIdentifiers, replacements, formulaFactory);
+		Predicate newPred = pred.applySubstitution(subst, formulaFactory);
+		List<BoundIdentDecl> newBoundIdentDecls = subst.getNewDeclarations();
+		if (newBoundIdentDecls.isEmpty())
+			return newPred;
+		return formulaFactory.makeQuantifiedPredicate(getTag(), newBoundIdentDecls, newPred, getSourceLocation());
+	}
+	
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		if(replacement.getClass() == FormulaReplacement.class && ((FormulaReplacement) replacement).getPredicate() == this) {
-			Map<Integer, Expression> map = ((FormulaReplacement) replacement).getMap();
-			if(map.size() == 0)
-				return this;
-			UnbindReplacement unbindReplacement = new UnbindReplacement(map, quantifiedIdentifiers.length);
-			Predicate newPred = pred.substituteAll(0, unbindReplacement, formulaFactory);
-			int newSize = quantifiedIdentifiers.length - map.size();
-			if(newSize == 0)
-				return newPred;
-			else {
-				BoundIdentDecl[] newQuantifiedIdentifiers = new BoundIdentDecl[newSize];
-				for(int i=0; i<quantifiedIdentifiers.length; i++) {
-					int j = unbindReplacement.getDisplacement(i);
-					if(j >= 0)
-						newQuantifiedIdentifiers[j] = quantifiedIdentifiers[i];
-				}
-				return formulaFactory.makeQuantifiedPredicate(getTag(), newQuantifiedIdentifiers, newPred, getSourceLocation());
-			}
-		} else {
-			Predicate newPred = pred.substituteAll(noOfBoundVars + quantifiedIdentifiers.length, replacement, formulaFactory);
-			if(newPred == pred)
-				return this;
-			else
-				return formulaFactory.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
-		}
+	public QuantifiedPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
+		subst.enter(nbOfBoundIdentDecls);
+		Predicate newPred = pred.applySubstitution(subst, ff);
+		subst.exit(nbOfBoundIdentDecls);
+		if (newPred == pred)
+			return this;
+		return ff.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
 	}
 
 }

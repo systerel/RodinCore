@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -219,13 +219,12 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Predicate newLeft = left.substituteAll(noOfBoundVars, replacement, formulaFactory);
-		Predicate newRight = right.substituteAll(noOfBoundVars, replacement, formulaFactory);
+	public BinaryPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+		Predicate newLeft = left.applySubstitution(subst, ff);
+		Predicate newRight = right.applySubstitution(subst, ff);
 		if(newLeft == left && newRight == right)
 			return this;
-		else
-			return formulaFactory.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
+		return ff.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
 }

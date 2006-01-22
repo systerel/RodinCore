@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -271,12 +271,12 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
+	public AssociativePredicate applySubstitution(Substitution subst, FormulaFactory ff) {
 		Predicate[] newChildren = new Predicate[children.length]; 
-		boolean equal = getSubstitutedList(noOfBoundVars, children, replacement, newChildren, formulaFactory);
-		if(equal)
+		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
+		if (equal)
 			return this;
-		else
-			return formulaFactory.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
+		return ff.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
 	}
+
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -636,13 +636,12 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Expression newLeft = left.substituteAll(noOfBoundVars, replacement, formulaFactory);
-		Expression newRight = right.substituteAll(noOfBoundVars, replacement, formulaFactory);
+	public BinaryExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+		Expression newLeft = left.applySubstitution(subst, ff);
+		Expression newRight = right.applySubstitution(subst, ff);
 		if(newLeft == left && newRight == right)
 			return this;
-		else
-			return formulaFactory.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
+		return ff.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
 	}
 	
 }

@@ -326,7 +326,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(FreeIdentifier ident) {
 		return new BoundIdentDecl(ident.getName(), Formula.BOUND_IDENT_DECL,
-				ident.getSourceLocation());
+				ident.getSourceLocation(), ident.getType());
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(String name,
 			SourceLocation location) {
-		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location);
+		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location, null);
 	}
 
 	/**

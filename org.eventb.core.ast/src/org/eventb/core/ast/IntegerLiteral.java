@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -118,7 +118,7 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
+	public IntegerLiteral applySubstitution(Substitution subst, FormulaFactory ff) {
 		return this;
 	}
 

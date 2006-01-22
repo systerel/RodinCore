@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -395,12 +395,11 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Expression newChild = child.substituteAll(noOfBoundVars, replacement,formulaFactory);
-		if(newChild == child)
+	public UnaryExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+		Expression newChild = child.applySubstitution(subst, ff);
+		if (newChild == child)
 			return this;
-		else
-			return formulaFactory.makeUnaryExpression(getTag(), newChild, getSourceLocation());
+		return ff.makeUnaryExpression(getTag(), newChild, getSourceLocation());
 	}
 
 }

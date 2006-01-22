@@ -11,12 +11,13 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -266,14 +267,10 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
-		QuantifiedPredicate qPredicate = formulaFactory.makeQuantifiedPredicate(FORALL, primedIdents, condition, getSourceLocation());
-		HashMap<Integer, Expression> map = new HashMap<Integer, Expression>(primedIdents.length * 4 / 3 + 1);
 		ITypeEnvironment typeEnvironment = formulaFactory.makeTypeEnvironment();
-		FreeIdentifier[] identifiers = formulaFactory.makeFreshIdentifiers(primedIdents, typeEnvironment);
-		for(int i=0; i<identifiers.length; i++) {
-			map.put(i, identifiers[i]);
-		}
-		return qPredicate.substituteBoundIdents(qPredicate, map, formulaFactory);
+		FreeIdentifier[] freeIdents = formulaFactory.makeFreshIdentifiers(primedIdents, typeEnvironment);
+		Substitution subst = new BoundIdentSubstitution(primedIdents, freeIdents, formulaFactory);
+		return condition.applySubstitution(subst, formulaFactory);
 	}
 
 }

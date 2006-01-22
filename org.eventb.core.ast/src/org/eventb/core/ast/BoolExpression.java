@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -135,12 +135,11 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Predicate newChild = child.substituteAll(noOfBoundVars, replacement, formulaFactory);
-		if(newChild == child)
+	public BoolExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+		Predicate newChild = child.applySubstitution(subst, ff);
+		if (newChild == child)
 			return this;
-		else
-			return formulaFactory.makeBoolExpression(newChild, getSourceLocation());
+		return ff.makeBoolExpression(newChild, getSourceLocation());
 	}
 
 }

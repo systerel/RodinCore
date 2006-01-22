@@ -8,13 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.AdjustFreeReplacement;
-import org.eventb.internal.core.ast.AdjustUnbindReplacement;
-import org.eventb.internal.core.ast.BindReplacement;
-import org.eventb.internal.core.ast.Info;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
-import org.eventb.internal.core.ast.UnbindReplacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -154,59 +149,8 @@ public class BoundIdentifier extends Identifier {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		if (replacement.getClass() == AdjustFreeReplacement.class) {
-			if(boundIndex < noOfBoundVars)
-				return this;
-			else {
-				int  offset = ((AdjustFreeReplacement) replacement).getOffset();
-				BoundIdentifier id = formulaFactory.makeBoundIdentifier(boundIndex + offset, getSourceLocation());
-				id.setType(getType(), null);
-				return id;
-			}
-		} else if(replacement.getClass() == BindReplacement.class) {
-			if (boundIndex < noOfBoundVars) {
-				//  Tightly bound so not changed
-				return this;
-			} else {
-				int offset = ((BindReplacement) replacement).size();
-				BoundIdentifier id = formulaFactory.makeBoundIdentifier(boundIndex + offset, getSourceLocation());
-				id.setType(getType(), null);
-				return id;
-			}
-		} else if(replacement.getClass() == UnbindReplacement.class) {
-			if(boundIndex < noOfBoundVars)
-				return this;
-			else {
-				UnbindReplacement unbindReplacement = (UnbindReplacement) replacement;
-				int relOffset = unbindReplacement.getDisplacement(boundIndex - noOfBoundVars);
-				if(relOffset >= 0)
-					return formulaFactory.makeBoundIdentifier(relOffset + noOfBoundVars, getSourceLocation());
-				else {
-					Info info = unbindReplacement.getInfo(boundIndex - noOfBoundVars);
-					Expression expr = info.getExpression();
-					
-					assert getType().equals(expr.getType());
-					
-					if(info.isIndexClosed())
-						return expr;
-					else
-						return expr.adjustIndicesRelative(noOfBoundVars, unbindReplacement, formulaFactory);
-				}
-			}
-		} else if (replacement.getClass() == AdjustUnbindReplacement.class) {
-			if(boundIndex < noOfBoundVars)
-				return this;
-			else {
-				AdjustUnbindReplacement relativeReplacement = (AdjustUnbindReplacement) replacement;
-				int offset = relativeReplacement.getOffset();
-				int relOffset = offset + noOfBoundVars + relativeReplacement.getMaxDisplacement(boundIndex);
-				BoundIdentifier id = formulaFactory.makeBoundIdentifier(boundIndex + relOffset, getSourceLocation());
-				id.setType(getType(), null);
-				return id;
-			}
-		} else
-			return this;
+	public Expression applySubstitution(Substitution subst, FormulaFactory ff) {
+		return subst.getReplacement(this);
 	}
 
 }

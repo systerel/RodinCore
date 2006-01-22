@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -218,13 +218,12 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
+	public SetExtension applySubstitution(Substitution subst, FormulaFactory ff) {
 		Expression[] newMembers = new Expression[members.length];
-		boolean equal = getSubstitutedList(noOfBoundVars, members, replacement, newMembers,formulaFactory);
-		if(equal)
+		boolean equal = getSubstitutedList(members, subst, newMembers, ff);
+		if (equal)
 			return this;
-		else
-			return formulaFactory.makeSetExtension(newMembers, getSourceLocation());
+		return ff.makeSetExtension(newMembers, getSourceLocation());
 	}
 
 }

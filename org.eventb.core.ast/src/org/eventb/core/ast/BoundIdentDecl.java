@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -35,9 +35,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	private final String name;
 	private Type type;
 	
-	protected BoundIdentDecl(String name, int tag, SourceLocation location) {
+	protected BoundIdentDecl(String name, int tag, SourceLocation location, Type type) {
 		super(tag, location, name.hashCode());
 		this.name = name;
+		this.type = type;
 		assert tag == Formula.BOUND_IDENT_DECL;
 		assert name != null;
 		assert name.length() != 0;
@@ -171,15 +172,15 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected BoundIdentDecl substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		// this method should never be called
-		assert false;
-		return null;
+	public boolean isTypeChecked() {
+		return type != null;
 	}
 
 	@Override
-	public boolean isTypeChecked() {
-		return type != null;
+	public BoundIdentDecl applySubstitution(Substitution subst, FormulaFactory ff) {
+		// this method should never be called
+		assert false;
+		return this;
 	}
 
 }

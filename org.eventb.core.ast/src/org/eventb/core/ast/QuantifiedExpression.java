@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Replacement;
+import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -560,13 +560,15 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	protected Expression substituteAll(int noOfBoundVars, Replacement replacement, FormulaFactory formulaFactory) {
-		Expression newExpr = expr.substituteAll(noOfBoundVars + quantifiedIdentifiers.length, replacement, formulaFactory);
-		Predicate newPred = pred.substituteAll(noOfBoundVars + quantifiedIdentifiers.length, replacement, formulaFactory);
-		if(newPred == pred && newExpr == expr)
+	public QuantifiedExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
+		subst.enter(nbOfBoundIdentDecls);
+		Predicate newPred = pred.applySubstitution(subst, ff);
+		Expression newExpr = expr.applySubstitution(subst, ff);
+		subst.exit(nbOfBoundIdentDecls);
+		if (newPred == pred && newExpr == expr)
 			return this;
-		else
-			return formulaFactory.makeQuantifiedExpression(getTag(), quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
+		return ff.makeQuantifiedExpression(getTag(), quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
 	}
 
 }
