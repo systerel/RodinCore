@@ -316,7 +316,6 @@ public class QuantifiedPredicate extends Predicate {
 	 *            formula factory to use for building the result
 	 * @return This formula after application of the substitution.
 	 */
-	// TODO add example to test cases.
 	public Predicate instantiate(Expression[] replacements, FormulaFactory formulaFactory) {
 		BoundIdentSubstitution subst = 
 			new BoundIdentSubstitution(quantifiedIdentifiers, replacements, formulaFactory);
