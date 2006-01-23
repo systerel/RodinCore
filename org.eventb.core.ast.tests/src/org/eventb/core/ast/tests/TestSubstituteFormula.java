@@ -190,6 +190,7 @@ public class TestSubstituteFormula extends TestCase {
 	private static FreeIdentifier id_A = ff.makeFreeIdentifier("A", null);
 	private static FreeIdentifier id_f = ff.makeFreeIdentifier("f", null);
 	private static FreeIdentifier id_a = ff.makeFreeIdentifier("a", null);
+	private static FreeIdentifier id_b = ff.makeFreeIdentifier("b", null);
 
 	public static final ITypeEnvironment tenv = mTypeEnvironment(
 			mList(
@@ -320,7 +321,8 @@ public class TestSubstituteFormula extends TestCase {
 			forall(BD("x"), in(bd(0), INTEGER)),
 			forall(BD("m"), eq(bd(0), bd(1))),
 			forall(BD("h","i","j","k"), limp(eq(plus(bd(3),bd(2),bd(1),bd(0)),minus(bd(5),bd(4))), lt(bd(2),bd(5)))),
-			forall(BD("h","i","j","k"), limp(eq(plus(bd(3),bd(2),bd(1),bd(0)),minus(bd(5),bd(4))), exists(BD("z"),lt(plus(bd(0),bd(3)),bd(6)))))
+			forall(BD("h","i","j","k"), limp(eq(plus(bd(3),bd(2),bd(1),bd(0)),minus(bd(5),bd(4))), exists(BD("z"),lt(plus(bd(0),bd(3)),bd(6))))),
+			forall(BD("x", "y"), eq(bd(1), plus(bd(0), num(1)))),
 	};
 	
 	PredicateBuilder[] spa = new PredicateBuilder[] {
@@ -363,6 +365,8 @@ public class TestSubstituteFormula extends TestCase {
 							eq(plus(apply(id_f, bd(4)), bd(1), plus(bd(3),num(1)), bd(0)), minus(bd(3),bd(2))),
 							exists(BD("z"), lt(plus(bd(0), bd(2)), bd(4)))))
 			)),
+			forall(BD("x"), eq(bd(0), plus(id_a, num(1)))),
+			eq(id_a, plus(id_b, num(1))),
 	};
 	
 	Expression[] sea = new Expression[] {
@@ -371,7 +375,7 @@ public class TestSubstituteFormula extends TestCase {
 			apply(id_f, num(5)),
 			minus(num(9), id_y),
 			apply(id_f, bd(2)),
-			plus(bd(1),num(1))
+			plus(bd(1),num(1)),
 	};
 	
 	static class UTestItem extends TestItem {
@@ -415,7 +419,7 @@ public class TestSubstituteFormula extends TestCase {
 			typeCheck(expected);
 			assertTrue(predicate.toString(), expected.isTypeChecked());
 
-			Predicate result = subpred.substituteBoundIdents(map, ff);
+			Predicate result = subpred.instantiate(map, ff);
 			result = builder.build(result);
 
 			// TODO remove type-check below when type synthesizer is implemented
@@ -446,6 +450,9 @@ public class TestSubstituteFormula extends TestCase {
 			new UTestItem(spa[3], tra[3], mList(null, sea[4], sea[5], null), spr[4]),
 			new BTestItem(pra[2], mp(pxx[0],pxx[1]), prb[4]),
 			new UTestItem(spa[3], tra[3], mList(sea[4], null, sea[5], null), spr[5]),
+			// Tqo examples from Javadoc of QuantifiedPredicate.instantiate()
+			new UTestItem(spa[0], tra[4], mList(null, id_a), spr[6]),
+			new UTestItem(spa[0], tra[4], mList(id_a, id_b), spr[7]),
 	};
 	
 	public void testSubstitutionStandard() {
@@ -474,7 +481,7 @@ public class TestSubstituteFormula extends TestCase {
 		expected.typeCheck(te);
 		assertTrue(expected.isTypeChecked());
         
-        Predicate result = pred.substituteBoundIdents(witnesses, ff);
+        Predicate result = pred.instantiate(witnesses, ff);
 		// TODO remove this code when synthesis typeCheck is implemented
         result.typeCheck(te);
 		assertTrue(result.isTypeChecked());
