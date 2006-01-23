@@ -24,7 +24,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
@@ -49,6 +48,7 @@ public class TestSubstituteFormula extends TestCase {
 		return map;
 	}
 	
+	/* Abstract class for tests */
 	private static abstract class TestItem {
 		abstract void doTest();
 		// TODO remove this method when synthesis typeCheck is implemented
@@ -81,17 +81,17 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			ITypeCheckResult tresult = formula.typeCheck(tenv);
-			assertTrue(formula.toString(), tresult.isSuccess());
+			formula.typeCheck(tenv);
+			assertTrue(formula.toString(), formula.isTypeChecked());
 			
 			for(Expression expression : sbs.values()) {
-				ITypeCheckResult tcr = expression.typeCheck(tenv);
-				assertTrue(expression.toString(), tcr.isSuccess());
+				expression.typeCheck(tenv);
+				assertTrue(expression.toString(), expression.isTypeChecked());
 			}
 			
 			// Type-check the expected result before comparing it
-			ITypeCheckResult exptresult = expected.typeCheck(tenv);
-			assertTrue(formula.toString(), exptresult.isSuccess());
+			expected.typeCheck(tenv);
+			assertTrue(formula.toString(), expected.isTypeChecked());
 
 			Predicate result = formula.substituteFreeIdents(sbs, ff);
 			
@@ -109,35 +109,35 @@ public class TestSubstituteFormula extends TestCase {
 
 	}
 	
+	// Test for checking standard substitutions applied within a quantified predicate
 	static class BTestItem extends TestItem { 
-		public final Predicate formula;
+		public final QuantifiedPredicate formula;
 		public final Predicate[] sbs;
 		public final Predicate expected;
 		
 		public BTestItem(Predicate formula, Predicate[] sbs, Predicate expected) {
-			this.formula = formula;
+			this.formula = (QuantifiedPredicate) formula;
 			this.sbs = sbs;
 			this.expected = expected;
 		}
 		
 		@Override
 		public void doTest() {
-			ITypeCheckResult tresult = formula.typeCheck(tenv);
-			assertTrue(formula.toString(), tresult.isSuccess());
+			formula.typeCheck(tenv);
+			assertTrue(formula.toString(), formula.isTypeChecked());
 			
 			for(Predicate predicate : sbs) {
-				ITypeCheckResult tcr = predicate.typeCheck(tenv);
-				assertTrue(predicate.toString(), tcr.isSuccess());
+				predicate.typeCheck(tenv);
+				assertTrue(predicate.toString(), predicate.isTypeChecked());
 			}
 
 			// Type-check the expected result before comparing it
-			ITypeCheckResult exptresult = expected.typeCheck(tenv);
-			assertTrue(formula.toString(), exptresult.isSuccess());
+			expected.typeCheck(tenv);
+			assertTrue(formula.toString(), expected.isTypeChecked());
 
 			Map<FreeIdentifier, Expression> sbsMap = makeSBS(sbs);
-			QuantifiedPredicate qformula = (QuantifiedPredicate) formula;
-			Predicate iresult = qformula.getPredicate().substituteFreeIdents(sbsMap, ff);
-			Predicate result = ff.makeQuantifiedPredicate(qformula.getTag(), qformula.getBoundIdentifiers(), iresult, null);
+			Predicate iresult = formula.getPredicate().substituteFreeIdents(sbsMap, ff);
+			Predicate result = ff.makeQuantifiedPredicate(formula.getTag(), formula.getBoundIdentifiers(), iresult, null);
 
 			// TODO remove type-check below when type synthesizer is implemented
 			result.typeCheck(tenv);
@@ -304,11 +304,11 @@ public class TestSubstituteFormula extends TestCase {
 			forall(BD("a", "x"), limp(in(bd(0),id_A),eq(id_y,bd(1))))
 	};
 	
-	public static FreeIdentifier fst(Predicate p) {
+	static FreeIdentifier fst(Predicate p) {
 		return (FreeIdentifier) ((RelationalPredicate) ((BinaryPredicate) ((QuantifiedPredicate) p).getPredicate()).getRight()).getLeft();
 	}
 	
-	public static Expression snd(Predicate p) {
+	static Expression snd(Predicate p) {
 		return ((RelationalPredicate) ((BinaryPredicate) ((QuantifiedPredicate) p).getPredicate()).getRight()).getRight();
 	}
 	
@@ -405,8 +405,8 @@ public class TestSubstituteFormula extends TestCase {
 		@Override
 		public void doTest() {
 			Predicate predicate = builder.build(subpred);
-			ITypeCheckResult tresult = predicate.typeCheck(tenv);
-			assertTrue(predicate.toString(), tresult.isSuccess());
+			predicate.typeCheck(tenv);
+			assertTrue(predicate.toString(), predicate.isTypeChecked());
 			
 			for(Expression expr : map) {
 				if (expr != null) {
@@ -461,7 +461,7 @@ public class TestSubstituteFormula extends TestCase {
 		}
 	}
 	
-	public final void testSubst(){
+	public void testSubst() {
 		QuantifiedPredicate pred =
 			mQuantifiedPredicate(EXISTS, BD("x", "y"),
 					mRelationalPredicate(EQUAL, bd(0),
