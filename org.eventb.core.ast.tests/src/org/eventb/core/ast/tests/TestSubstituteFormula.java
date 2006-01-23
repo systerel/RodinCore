@@ -54,14 +54,14 @@ public class TestSubstituteFormula extends TestCase {
 		// TODO remove this method when synthesis typeCheck is implemented
 		protected void typeCheck(Predicate pred) {
 			// Close the predicate with additional bound identifiers so that it can typecheck.
-			Predicate closed = forall(BD("a", "b", "c", "d", "e", "f"), pred);
+			Predicate closed = forall(BD("a", "b", "c", "d", "e"), pred);
 			assertTrue(closed.isWellFormed());
 			closed.typeCheck(tenv);
 			assertTrue("Can't typecheck " + pred.toString(), pred.isTypeChecked());
 		}
 		protected void typeCheck(Expression expr) {
 			// Close the predicate with additional bound identifiers so that it can typecheck.
-			Predicate closed = forall(BD("a", "b", "c", "d", "e", "f"), in(expr, INTEGER));
+			Predicate closed = forall(BD("a", "b", "c", "d", "e"), in(expr, INTEGER));
 			assertTrue(closed.isWellFormed());
 			closed.typeCheck(tenv);
 			assertTrue("Can't typecheck " + expr.toString(), expr.isTypeChecked());
@@ -357,7 +357,12 @@ public class TestSubstituteFormula extends TestCase {
 			)),
 			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
 					forall(BD("h","k"), limp(eq(plus(bd(1),apply(id_f, bd(4)),plus(bd(3),num(1)),bd(0)),minus(bd(3),bd(2))), exists(BD("z"),lt(plus(bd(0),apply(id_f, bd(5))),bd(4)))))
-			))
+			)),
+			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
+					forall(BD("i","k"), limp(
+							eq(plus(apply(id_f, bd(4)), bd(1), plus(bd(3),num(1)), bd(0)), minus(bd(3),bd(2))),
+							exists(BD("z"), lt(plus(bd(0), bd(2)), bd(4)))))
+			)),
 	};
 	
 	Expression[] sea = new Expression[] {
@@ -439,7 +444,8 @@ public class TestSubstituteFormula extends TestCase {
 			new UTestItem(spa[2], tra[2], mList(null, sea[2], sea[3], null), spr[2]),
 			new UTestItem(spa[2], tra[2], mList(null, sea[4], sea[5], null), spr[3]),
 			new UTestItem(spa[3], tra[3], mList(null, sea[4], sea[5], null), spr[4]),
-			new BTestItem(pra[2], mp(pxx[0],pxx[1]), prb[4])
+			new BTestItem(pra[2], mp(pxx[0],pxx[1]), prb[4]),
+			new UTestItem(spa[3], tra[3], mList(sea[4], null, sea[5], null), spr[5]),
 	};
 	
 	public void testSubstitutionStandard() {
