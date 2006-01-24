@@ -643,5 +643,20 @@ public class BinaryExpression extends Expression {
 			return this;
 		return ff.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
 	}
+
+	@Override
+	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		Type leftAsType = left.toType(factory);
+		Type rightAsType = right.toType(factory);
+		Type result = factory.makeProductType(leftAsType, rightAsType);
+		switch (getTag()) {
+		case CPROD:
+			return result;
+		case REL:
+			return factory.makePowerSetType(result);
+		default:
+			throw new InvalidExpressionException();
+		}
+	}
 	
 }

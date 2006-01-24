@@ -96,4 +96,21 @@ public abstract class Expression extends Formula<Expression> {
 		}
 	}
 
+	/**
+	 * Returns the type corresponding to this expression.
+	 * <p>
+	 * The returned type is <em>not</em> the type of this expression.
+	 * </p>
+	 * 
+	 * @param factory
+	 *            factory to use for building the result
+	 * @return the type represented by this expression
+	 * @throws InvalidExpressionException
+	 *             when this expression doesn't denote a type
+	 * @see Type#toExpression(FormulaFactory)
+	 */
+	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		throw new InvalidExpressionException();
+	}
+	
 }

@@ -157,4 +157,16 @@ public class AtomicExpression extends Expression {
 		return this;
 	}
 
+	@Override
+	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		switch (getTag()) {
+		case INTEGER:
+			return factory.makeIntegerType();
+		case BOOL:
+			return factory.makeBooleanType();
+		default:
+			throw new InvalidExpressionException();
+		}
+	}
+
 }

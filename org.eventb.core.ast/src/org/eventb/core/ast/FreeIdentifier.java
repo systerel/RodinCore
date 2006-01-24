@@ -142,4 +142,9 @@ public class FreeIdentifier extends Identifier {
 		return subst.getReplacement(this);
 	}
 
+	@Override
+	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		return factory.makeGivenType(getName());
+	}
+
 }

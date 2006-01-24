@@ -283,8 +283,12 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	/**
-	 * Substitutes all occurrences of some identifiers bound by this quantified
-	 * expression by their corresponding replacement expressions.
+	 * Instantiates this quantified predicate with the given expressions.
+	 * <p>
+	 * Instantiating means substituting all occurrences of some identifiers
+	 * bound by this quantified predicate by their corresponding replacement
+	 * expressions.
+	 * </p>
 	 * <p>
 	 * The replacements to do are specified by the given array. This array must
 	 * have exactly the same length as the array returned by
@@ -297,21 +301,23 @@ public class QuantifiedPredicate extends Predicate {
 	 * <p>
 	 * For instance, if this method is applied to the predicate
 	 * <pre>
-	 *    ∀x,y· x = y + 1
+	 *     ∀x,y· x = y + 1
 	 * </pre>
-	 * with the replacement <code>{null, "a"}</code>, then the result
-	 * is
+	 * with the replacement <code>{null, "a"}</code>, then the result is
 	 * <pre>
-	 *    ∀x· x = a + 1
+	 *     ∀x· x = a + 1
 	 * </pre>
-	 * If, instead, the replacement is <code>{"a", "b"}</code>, then the result is
+	 * If, instead, the replacement is <code>{"a", "b"}</code>, then the
+	 * result is
 	 * <pre>
-	 *    a = b + 1
+	 * a = b + 1
 	 * </pre>
 	 * </p>
+	 * 
 	 * @param replacements
-	 *         an array of replacement expressions.  Its length must be the number of
-	 *         identifiers bound by this quantified expression. Some elements can be <code>null</code>
+	 *            an array of replacement expressions. Its length must be the
+	 *            number of identifiers bound by this quantified expression.
+	 *            Some elements can be <code>null</code>
 	 * @param formulaFactory
 	 *            formula factory to use for building the result
 	 * @return This formula after application of the substitution.

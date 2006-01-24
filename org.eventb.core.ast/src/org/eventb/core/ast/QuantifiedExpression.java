@@ -571,4 +571,8 @@ public class QuantifiedExpression extends Expression {
 		return ff.makeQuantifiedExpression(getTag(), quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
 	}
 
+	// TODO add instantiation of condition
+
+	// TODO add instantiation of subexpression
+
 }

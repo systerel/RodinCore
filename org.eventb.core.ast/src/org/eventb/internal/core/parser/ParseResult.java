@@ -2,17 +2,14 @@ package org.eventb.internal.core.parser;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.internal.core.ast.AbstractResult;
 
 /**
@@ -47,45 +44,16 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 */
 	public void convertToType() {
 		assert this.isSuccess();
-		this.type = convertToType(this.expression);
-	}
-
-	// TODO move to Expression when it's hidden.
-	// Ugly glitch, but can not use dynamic polymorphism, because
-	// this class doesn't belong to the API package.
-	private Type convertToType(Expression expr) {
-		switch (expr.getTag()) {
-		case Formula.FREE_IDENT:
-			return factory.makeGivenType(((FreeIdentifier) expr).getName());
-		case Formula.INTEGER:
-			return factory.makeIntegerType();
-		case Formula.BOOL:
-			return factory.makeBooleanType();
-		case Formula.POW:
-			Type childType = convertToType(((UnaryExpression) expr).getChild());
-			if (childType == null) return null; 
-			return factory.makePowerSetType(childType);
-		case Formula.CPROD:
-			Type leftType = convertToType(((BinaryExpression) expr).getLeft());
-			if (leftType == null) return null; 
-			Type rightType = convertToType(((BinaryExpression) expr).getRight());
-			if (rightType == null) return null; 
-			return factory.makeProductType(leftType, rightType);
-		case Formula.REL:
-			leftType = convertToType(((BinaryExpression) expr).getLeft());
-			if (leftType == null) return null; 
-			rightType = convertToType(((BinaryExpression) expr).getRight());
-			if (rightType == null) return null; 
-			return factory.makeRelationalType(leftType, rightType);
-		default:
+		try {
+			type = expression.toType(factory);
+		} catch (InvalidExpressionException e) {
 			addProblem(new ASTProblem(
-					expr.getSourceLocation(), 
+					expression.getSourceLocation(), 
 					ProblemKind.InvalidTypeExpression, 
 					ProblemSeverities.Error));
-			return null;
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedAssignment()

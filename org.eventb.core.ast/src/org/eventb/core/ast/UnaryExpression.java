@@ -402,4 +402,12 @@ public class UnaryExpression extends Expression {
 		return ff.makeUnaryExpression(getTag(), newChild, getSourceLocation());
 	}
 
+	@Override
+	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		if (getTag() != POW)
+			throw new InvalidExpressionException();
+		Type childAsType = child.toType(factory);
+		return factory.makePowerSetType(childAsType);
+	}
+
 }
