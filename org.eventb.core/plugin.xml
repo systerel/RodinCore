@@ -110,9 +110,19 @@
             name="%eventBAction"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.POIdentifier"
-            id="poIdentifier"
-            name="%eventBpoIdentifier"
+            class="org.eventb.core.basis.SCVariable"
+            id="scVariable"
+            name="%eventBscVariable"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCCarrierSet"
+            id="scCarrierSet"
+            name="%eventBscCarrierSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCConstant"
+            id="scConstant"
+            name="%eventBscConstant"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.SCAxiomSet"
@@ -135,9 +145,9 @@
             name="%eventBscEvent"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.Sees"
-            id="sees"
-            name="%eventBSees"
+            class="org.eventb.core.basis.POIdentifier"
+            id="poIdentifier"
+            name="%eventBpoIdentifier"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.POPredicateSet"
@@ -163,6 +173,11 @@
             class="org.eventb.core.basis.POHypothesis"
             id="poHypothesis"
             name="%eventBpoHypothesis"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Sees"
+            id="sees"
+            name="%eventBSees"
             named="true"/>
    </extension>
 
