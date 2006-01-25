@@ -11,15 +11,15 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IPOIdentifier;
 import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.ISCCarrierSet;
+import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInvariantSet;
 import org.eventb.core.ISCMachine;
 import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -46,18 +46,32 @@ public class SCMachine extends Machine implements ISCMachine {
 		return ISCMachine.ELEMENT_TYPE;
 	}
 
-	public ICarrierSet[] getCarrierSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
-		CarrierSet[] carrierSets = new CarrierSet[list.size()];
+	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		SCCarrierSet[] carrierSets = new SCCarrierSet[list.size()];
 		list.toArray(carrierSets);
 		return carrierSets; 
 	}
 	
-	public IConstant[] getConstants() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IConstant.ELEMENT_TYPE);
-		Constant[] constants = new Constant[list.size()];
+	public ISCConstant[] getSCConstants() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		SCConstant[] constants = new SCConstant[list.size()];
 		list.toArray(constants);
 		return constants; 
+	}
+	
+	public ISCVariable[] getSCVariables() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
+		SCVariable[] constants = new SCVariable[list.size()];
+		list.toArray(constants);
+		return constants; 
+	}
+	
+	public ISCEvent[] getSCEvents() throws RodinDBException {
+		ArrayList<IRodinElement> list = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
+		SCEvent[] events = new SCEvent[list.size()];
+		list.toArray(events);
+		return events; 
 	}
 	
 	public ISCAxiomSet[] getAxiomSets() throws RodinDBException {
@@ -116,14 +130,6 @@ public class SCMachine extends Machine implements ISCMachine {
 		
 		ISCTheoremSet theoremSet = (ISCTheoremSet) theoremSetList.get(0);
 		return theoremSet.getTheorems();
-	}
-	
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
-		
-		IPOIdentifier[] identifiers = new IPOIdentifier[identifierList.size()];
-		identifierList.toArray(identifiers);
-		return identifiers; 
 	}
 
 }

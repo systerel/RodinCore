@@ -11,8 +11,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IPOIdentifier;
 import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.ISCCarrierSet;
+import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCTheoremSet;
 import org.eventb.core.ITheorem;
@@ -64,10 +65,18 @@ public class SCContext extends Context implements ISCContext {
 		return theoremSet.getTheorems();
 	}
 	
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
+	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
+		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
 		
-		IPOIdentifier[] identifiers = new IPOIdentifier[identifierList.size()];
+		SCCarrierSet[] identifiers = new SCCarrierSet[identifierList.size()];
+		identifierList.toArray(identifiers);
+		return identifiers; 
+	}
+	
+	public ISCConstant[] getSCConstants() throws RodinDBException {
+		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		
+		SCConstant[] identifiers = new SCConstant[identifierList.size()];
 		identifierList.toArray(identifiers);
 		return identifiers; 
 	}

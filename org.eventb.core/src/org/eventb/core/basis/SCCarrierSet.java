@@ -8,34 +8,22 @@
 
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
-import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCVariable;
+import org.eventb.core.ISCCarrierSet;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author halstefa
  *
  */
-public class SCEvent extends Event implements ISCEvent {
+public class SCCarrierSet extends CarrierSet implements ISCCarrierSet {
 	
-	public SCEvent(String name, IRodinElement parent) {
+	public SCCarrierSet(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 	
 	@Override
 	public String getElementType() {
-		return ISCEvent.ELEMENT_TYPE;
+		return ISCCarrierSet.ELEMENT_TYPE;
 	}
-	
-	public ISCVariable[] getSCVariables() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
-		
-		SCVariable[] identifiers = new SCVariable[identifierList.size()];
-		identifierList.toArray(identifiers);
-		return identifiers; 
-	}
-}
 
+}
