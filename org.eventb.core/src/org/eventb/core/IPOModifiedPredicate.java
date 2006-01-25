@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**

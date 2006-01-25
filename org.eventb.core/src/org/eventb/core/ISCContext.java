@@ -30,8 +30,9 @@ import org.rodinp.core.RodinDBException;
 public interface ISCContext extends IContext {
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext"; //$NON-NLS-1$
 	
-	public IAxiom[] getOldAxioms() throws RodinDBException;
-	public ITheorem[] getOldTheorems() throws RodinDBException;
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
+	ISCConstant[] getSCConstants() throws RodinDBException;
+	IAxiom[] getOldAxioms() throws RodinDBException;
+	ITheorem[] getOldTheorems() throws RodinDBException;
 	
 }

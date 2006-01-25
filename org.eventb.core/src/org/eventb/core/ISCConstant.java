@@ -8,15 +8,12 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.RodinDBException;
-
 /**
  * @author halstefa
  *
  */
-public interface ISCEvent extends IEvent {
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scEvent"; //$NON-NLS-1$
+public interface ISCConstant extends IConstant {
 	
-	ISCVariable[] getSCVariables() throws RodinDBException;
+	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scConstant"; //$NON-NLS-1$
 
 }

@@ -15,14 +15,15 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ISCMachine extends IMachine {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine"; //$NON-NLS-1$
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine"; //$NON-NLS-1$
 
-	ICarrierSet[] getCarrierSets() throws RodinDBException;
-	IConstant[] getConstants() throws RodinDBException;
+	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
+	ISCConstant[] getSCConstants() throws RodinDBException;
+	ISCVariable[] getSCVariables() throws RodinDBException;
+	ISCEvent[] getSCEvents() throws RodinDBException;
 	ISCAxiomSet[] getAxiomSets() throws RodinDBException;
 	ISCTheoremSet[] getTheoremSets() throws RodinDBException;
 	IAxiom[] getOldAxioms() throws RodinDBException;
 	ITheorem[] getOldTheorems() throws RodinDBException;
 	IInvariant[] getOldInvariants() throws RodinDBException;
-	IPOIdentifier[] getIdentifiers() throws RodinDBException;
 }
