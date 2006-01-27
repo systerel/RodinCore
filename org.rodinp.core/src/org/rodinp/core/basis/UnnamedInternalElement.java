@@ -34,7 +34,7 @@ public class UnnamedInternalElement extends InternalElement implements IUnnamedI
 	}
 
 	@Override
-	public String getElementType() {
+	public final String getElementType() {
 		return type;
 	}
 

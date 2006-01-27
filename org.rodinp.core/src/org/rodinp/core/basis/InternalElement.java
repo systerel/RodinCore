@@ -264,7 +264,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	@Override
-	public String getElementName() {
+	public final String getElementName() {
 		return name;
 	}
 
