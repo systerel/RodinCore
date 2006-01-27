@@ -48,29 +48,29 @@ public class Context extends RodinFile implements IContext {
 		return ELEMENT_TYPE;
 	}
 
-	public ICarrierSet[] getCarrierSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
+	public CarrierSet[] getCarrierSets() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ICarrierSet.ELEMENT_TYPE);
 		CarrierSet[] carrierSets = new CarrierSet[list.size()];
 		list.toArray(carrierSets);
 		return carrierSets; 
 	}
 	
 	public Constant[] getConstants() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IConstant.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IConstant.ELEMENT_TYPE);
 		Constant[] constants = new Constant[list.size()];
 		list.toArray(constants);
 		return constants; 
 	}
 	
 	public Axiom[] getAxioms() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IAxiom.ELEMENT_TYPE);
 		Axiom[] axioms = new Axiom[list.size()];
 		list.toArray(axioms);
 		return axioms; 
 	}
 	
 	public Theorem[] getTheorems() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ITheorem.ELEMENT_TYPE);
 		Theorem[] theorems = new Theorem[list.size()];
 		list.toArray(theorems);
 		return theorems;

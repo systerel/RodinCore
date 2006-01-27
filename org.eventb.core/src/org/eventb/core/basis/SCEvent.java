@@ -31,7 +31,7 @@ public class SCEvent extends Event implements ISCEvent {
 	}
 	
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
+		ArrayList<IRodinElement> identifierList = getFilteredChildrenList(ISCVariable.ELEMENT_TYPE);
 		
 		SCVariable[] identifiers = new SCVariable[identifierList.size()];
 		identifierList.toArray(identifiers);

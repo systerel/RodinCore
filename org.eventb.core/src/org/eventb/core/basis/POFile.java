@@ -49,14 +49,14 @@ public class POFile extends RodinFile implements IPOFile {
 	}
 	
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(POIdentifier.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(POIdentifier.ELEMENT_TYPE);
 		POIdentifier[] identifiers = new POIdentifier[list.size()];
 		list.toArray(identifiers);
 		return identifiers;
 	}
 
 	public IPOSequent[] getSequents() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(POSequent.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(POSequent.ELEMENT_TYPE);
 		POSequent[] sequents = new POSequent[list.size()];
 		list.toArray(sequents);
 		return sequents;

@@ -25,19 +25,10 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  */
 public class POModifiedPredicate extends UnnamedInternalElement implements IPOModifiedPredicate {
 
-	public POModifiedPredicate(String type, IRodinElement parent) {
-		super(type, parent);
-		// TODO Auto-generated constructor stub
+	public POModifiedPredicate(IRodinElement parent) {
+		super(ELEMENT_TYPE, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.RodinElement#getElementType()
-	 */
-	@Override
-	public String getElementType() {
-		return ELEMENT_TYPE;
-	}
-	
 	public String getSubstitution() throws RodinDBException {
 		return getContents();
 	}

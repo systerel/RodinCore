@@ -35,7 +35,7 @@ public class SCInvariantSet extends InternalElement implements ISCInvariantSet {
 	}
 
 	public IInvariant[] getInvariants() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IInvariant.ELEMENT_TYPE);
 		IInvariant[] invariants = new Invariant[list.size()];
 		list.toArray(invariants);
 		return invariants; 

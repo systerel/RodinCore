@@ -18,22 +18,10 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  */
 public class Sees extends UnnamedInternalElement implements ISees {
 
-	/**
-	 * @param type
-	 * @param parent
-	 */
-	public Sees(String type, IRodinElement parent) {
-		super(type, parent);
+	public Sees(IRodinElement parent) {
+		super(ELEMENT_TYPE, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.RodinElement#getElementType()
-	 */
-	@Override
-	public String getElementType() {
-		return ELEMENT_TYPE;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISees#getSeenContext()
 	 */

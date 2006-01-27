@@ -50,34 +50,34 @@ public class Machine extends RodinFile implements IMachine {
 	}
 	
 	public IVariable[] getVariables() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IVariable.ELEMENT_TYPE);
 		Variable[] variables = new Variable[list.size()];
 		list.toArray(variables);
 		return variables; 
 	}
 	public ITheorem[] getTheorems() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ITheorem.ELEMENT_TYPE);
 		Theorem[] theorems = new Theorem[list.size()];
 		list.toArray(theorems);
 		return theorems; 
 	}
 	
 	public IInvariant[] getInvariants() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IInvariant.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IInvariant.ELEMENT_TYPE);
 		Invariant[] invariants = new Invariant[list.size()];
 		list.toArray(invariants);
 		return invariants; 
 	}
 	
 	public IEvent[] getEvents() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IEvent.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IEvent.ELEMENT_TYPE);
 		Event[] events = new Event[list.size()];
 		list.toArray(events);
 		return events; 
 	}
 	
 	public ISees[] getSees() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISees.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISees.ELEMENT_TYPE);
 		
 		// for now:
 		assert list.size() <= 1;

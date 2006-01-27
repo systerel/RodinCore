@@ -27,13 +27,8 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  */
 public class Action extends UnnamedInternalElement implements IAction {
 	
-	public Action(String name, IRodinElement parent) {
-		super(name, parent);
-	}
-	
-	@Override
-	public String getElementType() {
-		return IAction.ELEMENT_TYPE;
+	public Action(IRodinElement parent) {
+		super(ELEMENT_TYPE, parent);
 	}
 
 }

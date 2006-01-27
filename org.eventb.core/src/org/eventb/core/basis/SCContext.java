@@ -42,7 +42,7 @@ public class SCContext extends Context implements ISCContext {
 	}
 
 	public IAxiom[] getOldAxioms() throws RodinDBException {
-		ArrayList<IRodinElement> axiomSetList = getChildrenOfType(ISCAxiomSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> axiomSetList = getFilteredChildrenList(ISCAxiomSet.ELEMENT_TYPE);
 		
 		assert axiomSetList.size() <= 1;
 		
@@ -54,7 +54,7 @@ public class SCContext extends Context implements ISCContext {
 	}
 
 	public ITheorem[] getOldTheorems() throws RodinDBException {
-		ArrayList<IRodinElement> theoremSetList = getChildrenOfType(ISCTheoremSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> theoremSetList = getFilteredChildrenList(ISCTheoremSet.ELEMENT_TYPE);
 		
 		assert theoremSetList.size() <= 1;
 		
@@ -66,7 +66,7 @@ public class SCContext extends Context implements ISCContext {
 	}
 	
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> identifierList = getFilteredChildrenList(ISCCarrierSet.ELEMENT_TYPE);
 		
 		SCCarrierSet[] identifiers = new SCCarrierSet[identifierList.size()];
 		identifierList.toArray(identifiers);
@@ -74,7 +74,7 @@ public class SCContext extends Context implements ISCContext {
 	}
 	
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		ArrayList<IRodinElement> identifierList = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		ArrayList<IRodinElement> identifierList = getFilteredChildrenList(ISCConstant.ELEMENT_TYPE);
 		
 		SCConstant[] identifiers = new SCConstant[identifierList.size()];
 		identifierList.toArray(identifiers);

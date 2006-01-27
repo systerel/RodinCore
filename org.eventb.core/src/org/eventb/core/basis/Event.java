@@ -43,21 +43,21 @@ public class Event extends InternalElement implements IEvent {
 	}
 	
 	public IVariable[] getVariables() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IVariable.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IVariable.ELEMENT_TYPE);
 		Variable[] variables = new Variable[list.size()];
 		list.toArray(variables);
 		return variables; 
 	}
 
 	public IGuard[] getGuards() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IGuard.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IGuard.ELEMENT_TYPE);
 		Guard[] guards = new Guard[list.size()];
 		list.toArray(guards);
 		return guards; 
 	}
 	
 	public IAction[] getActions() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IAction.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IAction.ELEMENT_TYPE);
 		Action[] actions = new Action[list.size()];
 		list.toArray(actions);
 		return actions; 

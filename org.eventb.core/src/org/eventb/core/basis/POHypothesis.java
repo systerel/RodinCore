@@ -32,22 +32,15 @@ import org.rodinp.core.basis.UnnamedInternalElement;
 public class POHypothesis extends UnnamedInternalElement implements IPOHypothesis {
 
 	/**
-	 * @param type
+	 * Creates a new PO hypothesis handle.
+	 * 
 	 * @param parent
+	 *            parent of this node
 	 */
-	public POHypothesis(String type, IRodinElement parent) {
-		super(type, parent);
-		// TODO Auto-generated constructor stub
+	public POHypothesis(IRodinElement parent) {
+		super(ELEMENT_TYPE, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.RodinElement#getElementType()
-	 */
-	@Override
-	public String getElementType() {
-		return ELEMENT_TYPE;
-	}
-	
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException {
 		IPOPredicateSet gobalHypothesis = ((IPOFile) getOpenable()).getPredicateSet(getContents());
 		
@@ -57,8 +50,8 @@ public class POHypothesis extends UnnamedInternalElement implements IPOHypothesi
 	}
 	
 	public IPOAnyPredicate[] getLocalHypothesis() throws RodinDBException {
-		List<IRodinElement> predicates = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
-		List<IRodinElement> modifiedPredicates = getChildrenOfType(IPOModifiedPredicate.ELEMENT_TYPE);
+		List<IRodinElement> predicates = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
+		List<IRodinElement> modifiedPredicates = getFilteredChildrenList(IPOModifiedPredicate.ELEMENT_TYPE);
 		IPOAnyPredicate[] localHypothesis = new IPOAnyPredicate[predicates.size() + modifiedPredicates.size()];
 		int i = 0;
 		for(IRodinElement predicate : predicates) {

@@ -58,14 +58,14 @@ public class POSequent extends InternalElement implements IPOSequent {
 	}
 	
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOIdentifier.ELEMENT_TYPE);
 		IPOIdentifier[] identifiers = new IPOIdentifier[list.size()];
 		list.toArray(identifiers);
 		return identifiers;
 	}
 	
 	public IPOHypothesis getHypothesis() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IPOHypothesis.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOHypothesis.ELEMENT_TYPE);
 			
 		assert list.size() == 1;
 			
@@ -74,9 +74,9 @@ public class POSequent extends InternalElement implements IPOSequent {
 	}
 	
 	public IPOAnyPredicate getGoal() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
 		if(list.size() == 0)
-			list = getChildrenOfType(IPOModifiedPredicate.ELEMENT_TYPE);
+			list = getFilteredChildrenList(IPOModifiedPredicate.ELEMENT_TYPE);
 			
 		assert list.size() == 1;
 			

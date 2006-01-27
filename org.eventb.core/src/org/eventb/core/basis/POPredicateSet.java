@@ -45,7 +45,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 	
 	public IPOPredicate[] getPredicates() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
 		IPOPredicate[] predicates = new IPOPredicate[list.size()];
 		list.toArray(predicates);
 		return predicates;

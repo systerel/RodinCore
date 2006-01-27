@@ -35,7 +35,7 @@ public class SCTheoremSet extends InternalElement implements ISCTheoremSet {
 	}
 	
 	public Theorem[] getTheorems() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ITheorem.ELEMENT_TYPE);
 		Theorem[] theorems = new Theorem[list.size()];
 		list.toArray(theorems);
 		return theorems;

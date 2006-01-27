@@ -47,49 +47,49 @@ public class SCMachine extends Machine implements ISCMachine {
 	}
 
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCCarrierSet.ELEMENT_TYPE);
 		SCCarrierSet[] carrierSets = new SCCarrierSet[list.size()];
 		list.toArray(carrierSets);
 		return carrierSets; 
 	}
 	
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCConstant.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCConstant.ELEMENT_TYPE);
 		SCConstant[] constants = new SCConstant[list.size()];
 		list.toArray(constants);
 		return constants; 
 	}
 	
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCVariable.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCVariable.ELEMENT_TYPE);
 		SCVariable[] constants = new SCVariable[list.size()];
 		list.toArray(constants);
 		return constants; 
 	}
 	
 	public ISCEvent[] getSCEvents() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCEvent.ELEMENT_TYPE);
 		SCEvent[] events = new SCEvent[list.size()];
 		list.toArray(events);
 		return events; 
 	}
 	
 	public ISCAxiomSet[] getAxiomSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCAxiomSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCAxiomSet.ELEMENT_TYPE);
 		ISCAxiomSet[] axiomSets = new ISCAxiomSet[list.size()];
 		list.toArray(axiomSets);
 		return axiomSets; 
 	}
 	
 	public ISCTheoremSet[] getTheoremSets() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCTheoremSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCTheoremSet.ELEMENT_TYPE);
 		ISCTheoremSet[] theoremSets = new ISCTheoremSet[list.size()];
 		list.toArray(theoremSets);
 		return theoremSets; 
 	}
 	
 	public IAxiom[] getOldAxioms() throws RodinDBException {
-		ArrayList<IRodinElement> axiomSetList = getChildrenOfType(ISCAxiomSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> axiomSetList = getFilteredChildrenList(ISCAxiomSet.ELEMENT_TYPE);
 		
 		assert axiomSetList.size() <= 1;
 		
@@ -102,14 +102,14 @@ public class SCMachine extends Machine implements ISCMachine {
 
 	@Override
 	public ISCEvent[] getEvents() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(ISCEvent.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCEvent.ELEMENT_TYPE);
 		SCEvent[] events = new SCEvent[list.size()];
 		list.toArray(events);
 		return events; 
 	}
 	
 	public IInvariant[] getOldInvariants() throws RodinDBException {
-		ArrayList<IRodinElement> invariantSetList = getChildrenOfType(ISCInvariantSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> invariantSetList = getFilteredChildrenList(ISCInvariantSet.ELEMENT_TYPE);
 		
 		assert invariantSetList.size() <= 1;
 		
@@ -121,7 +121,7 @@ public class SCMachine extends Machine implements ISCMachine {
 	}
 
 	public ITheorem[] getOldTheorems() throws RodinDBException {
-		ArrayList<IRodinElement> theoremSetList = getChildrenOfType(ISCTheoremSet.ELEMENT_TYPE);
+		ArrayList<IRodinElement> theoremSetList = getFilteredChildrenList(ISCTheoremSet.ELEMENT_TYPE);
 		
 		assert theoremSetList.size() <= 1;
 		

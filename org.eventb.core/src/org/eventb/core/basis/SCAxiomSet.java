@@ -34,7 +34,7 @@ public class SCAxiomSet extends InternalElement implements ISCAxiomSet {
 	}
 
 	public IAxiom[] getAxioms() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IAxiom.ELEMENT_TYPE);
 		IAxiom[] axioms = new Axiom[list.size()];
 		list.toArray(axioms);
 		return axioms; 
