@@ -30,6 +30,15 @@ public class BecomesMemberOf extends Assignment {
 		this.setExpr = setExpr;
 	}
 
+	/**
+	 * Returns the set that occurs in the right-hand side of this assignment.
+	 * 
+	 * @return the set on the right-hand side of this assignment
+	 */
+	public Expression getSet() {
+		return setExpr;
+	}
+	
 	@Override
 	public Assignment flatten(FormulaFactory factory) {
 		final Expression newSetExpr = setExpr.flatten(factory);

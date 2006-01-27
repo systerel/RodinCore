@@ -53,6 +53,19 @@ public class BecomesEqualTo extends Assignment {
 		assert assignedIdents.length == values.length;
 	}
 	
+	/**
+	 * Returns the expressions that occur in the right-hand side of this
+	 * assignment.
+	 * 
+	 * @return an array containing the expressions on the right-hand side of
+	 *         this assignment
+	 */
+	public Expression[] getExpressions() {
+		Expression[] result = new Expression[values.length];
+		System.arraycopy(values, 0, result, 0, values.length);
+		return result;
+	}
+	
 	@Override
 	public Assignment flatten(FormulaFactory factory) {
 		final Expression[] newValues = new Expression[values.length];
