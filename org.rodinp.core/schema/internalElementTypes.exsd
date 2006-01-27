@@ -127,12 +127,14 @@ Otherwise (unnamed element type), the specified class must subclass
 &lt;code&gt;org.rodinp.core.UnnamedInternalElement&lt;/code&gt; and provide a constructor looking like
 the following:
 &lt;pre&gt;
-    public ClassName(String type, org.rodinp.core.IRodinElement parent) {
-        super(type, parent);
+    public ClassName(org.rodinp.core.IRodinElement parent) {
+        super(ELEMENT_TYPE, parent);
         // user code goes here
     }
-&lt;/pre&gt;&lt;/p&gt;
-
+&lt;/pre&gt;
+where &lt;samp&gt;ELEMENT_TYPE&lt;/samp&gt; is a string containing the fully qualified name of this
+unnamed element type.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
