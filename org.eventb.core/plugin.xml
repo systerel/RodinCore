@@ -179,6 +179,16 @@
             id="sees"
             name="%eventBSees"
             named="false"/>
+      <internalElementType
+            class="org.eventb.core.basis.Refines"
+            id="refines"
+            name="%eventBRefines"
+            named="false"/>
+      <internalElementType
+            class="org.eventb.core.basis.Witness"
+            id="witness"
+            name="%eventBWitness"
+            named="true"/>
    </extension>
 
 </plugin>
