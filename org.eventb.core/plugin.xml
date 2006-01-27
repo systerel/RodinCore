@@ -108,7 +108,7 @@
             class="org.eventb.core.basis.Action"
             id="action"
             name="%eventBAction"
-            named="true"/>
+            named="false"/>
       <internalElementType
             class="org.eventb.core.basis.SCVariable"
             id="scVariable"
@@ -178,7 +178,7 @@
             class="org.eventb.core.basis.Sees"
             id="sees"
             name="%eventBSees"
-            named="true"/>
+            named="false"/>
    </extension>
 
 </plugin>
