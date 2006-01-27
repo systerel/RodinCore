@@ -12,6 +12,7 @@ package org.rodinp.core.basis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -188,7 +189,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 *            the given type (must be a canonical String)
 	 * @see String#intern()
 	 */
-	public ArrayList<IRodinElement> getChildrenOfType(String type) throws RodinDBException {
+	public ArrayList<IRodinElement> getFilteredChildrenList(String type) throws RodinDBException {
 		IRodinElement[] children = getChildren();
 		int size = children.length;
 		ArrayList<IRodinElement> list = new ArrayList<IRodinElement>(size);
@@ -201,6 +202,17 @@ public abstract class RodinElement extends PlatformObject implements
 		return list;
 	}
 
+	/**
+	 * @see IParent
+	 */
+	public IRodinElement[] getChildrenOfType(String type) throws RodinDBException {
+		List<IRodinElement> list = getFilteredChildrenList(type);
+		if (list.size() == 0)
+			return NO_ELEMENTS;
+		return list.toArray(new IRodinElement[list.size()]);
+	}
+
+	
 	/**
 	 * @see InternalElement
 	 */
