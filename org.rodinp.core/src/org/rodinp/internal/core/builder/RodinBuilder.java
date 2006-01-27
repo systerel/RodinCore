@@ -7,39 +7,211 @@
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.rodinp.core.IRodinDBMarker;
+import org.rodinp.core.builder.IInterrupt;
+import org.rodinp.internal.core.util.Util;
 
 public class RodinBuilder extends IncrementalProjectBuilder {
-
+	
 	public static boolean DEBUG = false;
+	
+//	private final ElementTypeManager elementTypeManager = ElementTypeManager.getElementTypeManager();
+	
+	BuildState state;
+	
+	@Override
+	protected void startupOnInitialize() {
+        // add builder init logic here
+		
+		state = null;
+     }
+	
+	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			IResource resource = delta.getResource();
+			switch (delta.getKind()) {
+			case IResourceDelta.ADDED:
+				// handle added resource
+				
+				if(createNode(resource) != null)
+					markNodeDated(resource);
+				break;
+			case IResourceDelta.REMOVED:
+				// handle removed resource
+				Node node = state.graph.getNode(resource.getFullPath());
+				if(node == null)
+					break;
+				state.graph.removeNodeFromGraph(node, makeInterrupt(), new NullProgressMonitor());
+				break;
+			case IResourceDelta.CHANGED:
+				// handle changed resource
+				markNodeDated(resource);
+				break;
+			}
+			//return true to continue visiting children.
+			return true;
+		}
+	}
+	
+	// this is hardcoded for now but bust be replaced by a
+	// request to the repository!
+	Node createNode(IResource resource) {
+		if(resource instanceof IFile) {
+// TODO the builder should only react to creation of files whose content type
+//		is recognised as 'RODIN'. For the moment we use file extensions.
+//			IFile file = (IFile) resource;
+//			String elementType = elementTypeManager.getFileElementType(file);
+//			if(elementType == null)
+//				return null;
+			Node node = state.graph.getNode(resource.getFullPath());
+			
+			if(node == null) {
+				node = new Node();
+				node.setPath(resource.getFullPath());
+				state.graph.addNodeToGraph(node);
+			}
+			return node;
+
+		}
+		return null;
+	}
+
+	class RodinBuilderResourceVisitor implements IResourceVisitor {
+		
+		public boolean visit(IResource resource) {
+			markNodeDated(resource);
+			//return true to continue visiting children.
+			return true;
+		}
+	}
+
+	protected static void deleteMarkers(IFile file) {
+		try {
+			file.deleteMarkers(IRodinDBMarker.RODIN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			Util.log(e, "when deleting markers");
+		}
+	}
 
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) { // throws CoreException {
-		// TODO Auto-generated method stub
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+			throws CoreException {
+		
+		if (DEBUG) {
+			String kindImage = 
+				kind == FULL_BUILD ? "full" :
+				kind == AUTO_BUILD ? "auto" :
+				kind == INCREMENTAL_BUILD ? "incremental" :
+				"unknown";
+			System.out.println("Starting " + kindImage + " build.");
+		}
+		
+		if (state == null)
+			state = BuildState.getBuildState(getProject(), monitor);
+		if (kind == FULL_BUILD) {
+			fullBuild(monitor);
+		} else {
+			IResourceDelta delta = getDelta(getProject());
+			if (delta == null) {
+				fullBuild(monitor);
+			} else {
+				incrementalBuild(delta, monitor);
+			}
+		}
 		return null;
 	}
-
-	public static Object readState(IProject project, DataInputStream in) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	IInterrupt makeInterrupt() {
+		return new IInterrupt() {
+			
+			public boolean isInterrupted() {
+				return RodinBuilder.this.isInterrupted();
+			}
+		};
 	}
 
-	public static void writeState(Object savedState, DataOutputStream out) {
-		// TODO Auto-generated method stub
-	}
-
-	public static void buildStarting() {
-		// TODO Auto-generated method stub
-	}
-
+	/**
+	 * Hook allowing to reset some static state after a complete build iteration.
+	 * This hook is invoked during POST_AUTO_BUILD notification
+	 */
 	public static void buildFinished() {
-		// TODO Auto-generated method stub
+		// build has finished
+    }
+    
+	private void buildGraph(IProgressMonitor monitor) throws CoreException {
+		state.graph.buildGraph(makeInterrupt(), monitor);
+	}
+	
+	/**
+	 * Hook allowing to initialize some static state before a complete build iteration.
+	 * This hook is invoked during PRE_AUTO_BUILD notification
+	 */
+	public static void buildStarting() {
+		// build is about to start
+	}
+
+	private void cleanGraph(IProgressMonitor monitor) throws CoreException {
+		state.graph.cleanGraph(makeInterrupt(), monitor);
+	}
+	
+	void markNodeDated(IResource resource) {
+		if (resource instanceof IFile) {
+			Node node = state.graph.getNode(resource.getFullPath());
+			if(node == null) {
+				if(DEBUG)
+					System.out.println(getClass().getName() + ": Node not in dependency graph " + resource.getName()); //$NON-NLS-1$
+				node = createNode(resource);
+			}
+			if(node != null)
+				node.setDated(true);
+			// graph.extract(node);
+			else if(DEBUG)
+				System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
+		}
+	}
+
+	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
+		try {
+			getProject().accept(new RodinBuilderResourceVisitor());
+		} catch (CoreException e) {
+			Util.log(e, "during builder full build");
+		}
+		cleanGraph(monitor);
+		buildGraph(monitor);
+	}
+	
+	@Override
+	protected void clean(IProgressMonitor monitor) {
+        try {
+        	cleanGraph(monitor);
+        } catch(CoreException e) {
+			Util.log(e, "during builder clean");
+		}
+     }
+
+	protected void incrementalBuild(IResourceDelta delta,
+			IProgressMonitor monitor) throws CoreException {
+		// the visitor does the work.
+		delta.accept(new RodinBuilderDeltaVisitor());
+		buildGraph(monitor);
 	}
 
 }

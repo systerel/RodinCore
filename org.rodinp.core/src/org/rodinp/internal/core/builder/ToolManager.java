@@ -1,0 +1,155 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.rodinp.internal.core.builder;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.builder.IAutomaticTool;
+import org.rodinp.core.builder.IExtractor;
+import org.rodinp.internal.core.util.Util;
+
+/**
+ * This class implements the repository of tools known to the Rodin Builder.
+ * <p>
+ * Tools are registered through the extension point "autoTools".
+ * </p>
+ * 
+ * TODO make this class dynamic aware
+ * 
+ * @author Stefan Hallerstede
+ * @author Laurent Voisin
+ */
+public class ToolManager {
+	
+	/**
+	 * The singleton ToolManager instance.
+	 */
+	private static final ToolManager MANAGER = new ToolManager();  
+	
+	// Local id of the automatic tools extension point of this plugin
+	private static final String AUTO_TOOLS_ID = "autoTools";
+
+	private static final IExtractor[] NO_EXTRACTOR = new IExtractor[0];
+	
+	public static ToolManager getToolManager() {
+		return MANAGER;
+	}
+
+	// Map from extractor id to extractor description
+	private HashMap<String, ExtractorDescription> extractors;
+	
+	// Map from input type to list of extractor description
+	private HashMap<String, List<ExtractorDescription>> extractorsForType;
+	
+	// Map from tool id to tool description
+	private HashMap<String, ToolDescription> tools;
+	
+	// singleton class
+	private ToolManager() {
+		// empty on purpose (fields are initialized to null by default).
+	}
+	
+	private void add(ExtractorDescription extractorDesc) {
+		final String id = extractorDesc.getId();
+		extractors.put(id, extractorDesc);
+		for (String inputType : extractorDesc.getInputTypes()) {
+			addExtractorForType(extractorDesc, inputType);
+		}
+	}
+	
+	private void addExtractorForType(ExtractorDescription extractorDesc, String inputType) {
+		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
+		if (extractorSet == null) {
+			extractorSet = new LinkedList<ExtractorDescription>();
+			extractorsForType.put(inputType, extractorSet);
+		}
+		if (! extractorSet.contains(extractorDesc)) {
+			extractorSet.add(extractorDesc);
+		}
+	}
+	
+	private void add(ToolDescription toolDesc) {
+		final String id = toolDesc.getId();
+		if (tools.get(id) != null)
+			Util.log(null, "Duplicate tool for id " + id); //$NON-NLS-1$
+		tools.put(id, toolDesc);
+	}
+
+	private void computeToolList() {
+		if (tools != null)
+			// already done
+			return;
+		
+		tools = new HashMap<String, ToolDescription>();
+		extractors = new HashMap<String, ExtractorDescription>();
+		extractorsForType = new HashMap<String, List<ExtractorDescription>>();
+		
+		// Read the extension point extensions.
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = 
+			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, AUTO_TOOLS_ID);
+		for (IConfigurationElement element: elements) {
+			ToolDescription toolDesc = new ToolDescription(element);
+			add(toolDesc);
+			IConfigurationElement[] children = element.getChildren();
+			for (IConfigurationElement child : children) {
+				ExtractorDescription extractorDesc = new ExtractorDescription(child, toolDesc);
+				add(extractorDesc);
+			}
+		}
+	}
+	
+	public IExtractor[] getExtractors(String inputType) {
+		computeToolList();
+		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
+		if (extractorSet == null || extractorSet.size() == 0) {
+			return NO_EXTRACTOR;
+		}
+		IExtractor[] result = new IExtractor[extractorSet.size()];
+		int idx = 0;
+		for (ExtractorDescription extractorDescription : extractorSet) {
+			result[idx ++] = extractorDescription.getExtractor();
+		}
+		return result;
+	}
+
+	public IAutomaticTool getTool(String id) {
+		computeToolList();
+		return tools.get(id).getTool();
+	}
+	
+	@SuppressWarnings("unused")
+	private void removeExtractor(String id) {
+		final ExtractorDescription extractorDesc = extractors.get(id);
+		if (extractorDesc != null) {
+			for (String inputType : extractorDesc.getInputTypes()) {
+				removeExtractorForType(inputType, extractorDesc);
+			}
+			extractors.remove(id);
+		}
+	}
+	
+	private void removeExtractorForType(String inputType, ExtractorDescription extractorDesc) {
+		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
+		if (extractorSet != null) { 
+			extractorSet.remove(extractorDesc);
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private void removeTool(String id) {
+		tools.remove(id);
+	}
+	
+}
