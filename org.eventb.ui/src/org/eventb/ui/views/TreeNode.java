@@ -11,7 +11,6 @@
 
 package org.eventb.ui.views;
 
-import org.eventb.ui.Utils;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -63,7 +62,12 @@ public class TreeNode
 	 * @return An array of IRodinElement.
 	 */
 	public IRodinElement [] getChildren() {
-		return Utils.getChildrenOfType(parent, childrenType);
+		try {
+			return parent.getChildrenOfType(childrenType);
+		}
+		catch (RodinDBException e) {
+			return new IRodinElement[0];
+		}
 	}
 	
 	

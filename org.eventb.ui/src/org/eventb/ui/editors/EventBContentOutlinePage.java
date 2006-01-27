@@ -202,7 +202,7 @@ public class EventBContentOutlinePage
 	/**
 	 * Method declared on ContentOutlinePage.
 	 * This is called when there is a selection change in the tree. This responses 
-	 * by selecting the first element of the select in the editor.
+	 * by selecting the first element of the selection in the editor.
 	 * <p>
 	 * @param event the selection event
 	 */

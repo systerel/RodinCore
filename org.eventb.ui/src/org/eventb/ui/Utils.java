@@ -12,8 +12,6 @@
 
 package org.eventb.ui;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -34,7 +32,6 @@ import org.eventb.core.IVariable;
 import org.eventb.ui.views.TreeNode;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -176,6 +173,7 @@ public class Utils {
 
 	/**
 	 * Method to return the openable for an object (IRodinElement or TreeNode).
+	 * <p>
 	 * @param node A Rodin Element or a tree node
 	 * @return The IRodinFile corresponding to the input object
 	 */
@@ -184,22 +182,6 @@ public class Utils {
 		else if (node instanceof IRodinElement) return ((IRodinElement) node).getOpenable();
 		
 		return null;
-	}
-
-
-	// TODO Should be replaced by a database method
-	public static IRodinElement [] getChildrenOfType(IParent parent, String type) {
-		ArrayList<IRodinElement> list = new ArrayList<IRodinElement>();
-		try {
-			IRodinElement [] children = parent.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].getElementType().equals(type)) list.add(children[i]);
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return (IRodinElement []) list.toArray(new IRodinElement[list.size()]);
 	}
 
 

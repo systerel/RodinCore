@@ -65,7 +65,6 @@ public class ProjectExplorerActionGroup
 	public static Action deleteAction;
 	public static Action proveAction;
 	
-
 	/**
 	 * Constructor: Create the actions.
 	 * @param projectExplorer The project explorer
@@ -83,7 +82,6 @@ public class ProjectExplorerActionGroup
 								NewProjectWizard wizard = new NewProjectWizard();
 								WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
 								dialog.create();
-								//SWTUtil.setDialogSize(dialog, 500, 500);
 								dialog.open();
 							}
 						});
@@ -194,7 +192,7 @@ public class ProjectExplorerActionGroup
 		// open the dummy IRodinFile file
 		IRodinDB db = EventBUIPlugin.getRodinDatabase();
 		IRodinProject prj = db.getRodinProject("Marriage");
-		construct = prj.getRodinFile("NewModel.bum");
+		construct = prj.getRodinFile("m0.bum");
 //		
 //		//if (!(obj instanceof IRodinProject)) {
 //			//construct = (IRodinFile) TreeNode.getOpenable(obj); 
@@ -213,7 +211,7 @@ public class ProjectExplorerActionGroup
 				
 				IEditorInput fileInput = new FileEditorInput(construct.getResource());
 				EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-////				}
+//				}
 //				//if (obj instanceof Leaf) editor.getContentOutlinePage().setTreeSelection(new StructuredSelection(obj));
 //				//editor.setSelection(obj);
 			} catch (PartInitException e) {
@@ -251,12 +249,11 @@ public class ProjectExplorerActionGroup
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menu) {
-		// TODO Auto-generated method stub
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
 			MenuManager newMenu = new MenuManager("&New");
 			
-			IStructuredSelection ssel = (IStructuredSelection) sel; 
+			IStructuredSelection ssel = (IStructuredSelection) sel;
 			newMenu.add(newProjectAction);
 			newMenu.add(new Separator());
 			if (ssel.size() == 1) {
@@ -267,9 +264,10 @@ public class ProjectExplorerActionGroup
 			}
 			menu.add(newMenu);
 			menu.add(deleteAction);
-			menu.add(proveAction);
+			if ((ssel.size() == 1) && (ssel.getFirstElement() instanceof IRodinFile)) menu.add(proveAction);
 			menu.add(new Separator());
 			drillDownAdapter.addNavigationActions(menu);
+			
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);

@@ -77,7 +77,7 @@ public class EventBUIPlugin
 	/**
 	 * Default values for creating RODIN Elements 
 	 */
-	public static final String INV_DEFAULT = "true";
+	public static final String INV_DEFAULT = "⊤";
 	public static final String SUB_DEFAULT = "skip";
 	
 	// The shared instance.

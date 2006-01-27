@@ -12,65 +12,12 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProjectExplorer"
             name="Project Explorer"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.ui.provers.ProofTreeUI"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.provers.ProofTreeUI"
-            name="Proof Tree UI"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.ui.provers.RemainingGoals"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.provers.RemainingGoals"
-            name="Remaining Goals"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.ui.provers.ProofControl"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.provers.ProofControl"
-            name="Proof Control"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.ui.provers.ProofInformation"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.provers.ProofInformation"
-            name="Proof Information"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
          <view
                id="org.eventb.ui.views.ProjectExplorer"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofTree"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective"/>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofControl"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.RemainingGoals"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofInformation"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList"/>
@@ -85,13 +32,6 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.EventBEditor"
             name="Event-B Editor"/>
-      <editor
-            class="org.eventb.ui.provers.ProverUI"
-            contributorClass="org.eventb.ui.provers.ProverUIContributor"
-            extensions="pob"
-            icon="icons/sample.gif"
-            id="org.eventb.ui.provers.ProverUI"
-            name="Prover User Interface"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

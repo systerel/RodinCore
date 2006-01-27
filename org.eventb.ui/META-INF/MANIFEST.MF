@@ -14,5 +14,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.ui.views,
  org.eventb.eventBKeyboard,
- org.eventb.core
+ org.eventb.core,
+ org.eventb.ui.prover
 Eclipse-AutoStart: true

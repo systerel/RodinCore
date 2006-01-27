@@ -162,22 +162,27 @@ public class SeeSection
 		});
 		
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-		IRodinElement [] seenContexts = Utils.getChildrenOfType(rodinFile, ISees.ELEMENT_TYPE);
-		if (seenContexts.length != 0) {
-			seen = (IInternalElement) seenContexts[0];
-			try {
-				contextText.setText(seen.getContents());
+		try {
+			IRodinElement [] seenContexts = rodinFile.getChildrenOfType(ISees.ELEMENT_TYPE);
+			if (seenContexts.length != 0) {
+				seen = (IInternalElement) seenContexts[0];
+				try {
+					contextText.setText(seen.getContents());
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				chooseButton.setSelection(true);
 			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
+			else {
+				nullButton.setSelection(true);
+				contextText.setEnabled(false);
+				browseButton.setEnabled(false);
+				seen = null;
 			}
-			chooseButton.setSelection(true);
 		}
-		else {
-			nullButton.setSelection(true);
-			contextText.setEnabled(false);
-			browseButton.setEnabled(false);
-			seen = null;
+		catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 
 		toolkit.paintBordersFor(comp);
@@ -313,19 +318,24 @@ public class SeeSection
 	        }
 
 	        IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-	        IRodinElement [] contexts = Utils.getChildrenOfType((IParent) rodinFile.getParent(), IContext.ELEMENT_TYPE);
-	        for (int i = 0; i < contexts.length; i++) {
-		        Button button = new Button(composite, SWT.RADIO);
-		        button.setText(Utils.getFileNameWithoutExtension(contexts[i].getElementName()));
-		        button.addSelectionListener(new ButtonSelectionListener(button.getText()));
-		        try {
-		        	if (seen.getContents().equals(button.getText())) {
-		        		button.setSelection(true);
-		        	}
+	        try {
+	        	IRodinElement [] contexts = ((IParent) rodinFile.getParent()).getChildrenOfType(IContext.ELEMENT_TYPE);
+		        for (int i = 0; i < contexts.length; i++) {
+			        Button button = new Button(composite, SWT.RADIO);
+			        button.setText(Utils.getFileNameWithoutExtension(contexts[i].getElementName()));
+			        button.addSelectionListener(new ButtonSelectionListener(button.getText()));
+			        try {
+			        	if (seen.getContents().equals(button.getText())) {
+			        		button.setSelection(true);
+			        	}
+			        }
+			        catch (RodinDBException e) {
+			        	e.printStackTrace();
+			        }
 		        }
-		        catch (RodinDBException e) {
-		        	e.printStackTrace();
-		        }
+	        }
+	        catch (RodinDBException e) {
+	        	e.printStackTrace();
 	        }
 	        
 	        applyDialogFont(composite);

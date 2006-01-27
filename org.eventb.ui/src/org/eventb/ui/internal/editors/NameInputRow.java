@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.ui.Utils;
 import org.eventb.ui.editors.IEventBInputText;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -77,7 +76,7 @@ public class NameInputRow
 						IRodinElement parent = input.getParent();
 						input.rename(name, false, null);
 						
-						IRodinElement [] children = Utils.getChildrenOfType((IParent) parent, input.getElementType());
+						IRodinElement [] children = ((IParent) parent).getChildrenOfType(input.getElementType());
 						int i;
 						for (i = 0; i < children.length; i++) {
 							if (children[i].getElementName().equals(name)) {
