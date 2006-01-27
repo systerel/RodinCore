@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -55,6 +57,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
+import org.rodinp.internal.core.builder.BuildState;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -207,7 +210,7 @@ public class RodinDBManager implements ISaveParticipant {
 	public static class PerProjectInfo {
 		
 		public IProject project;
-		public Object savedState;
+		public BuildState savedState;
 		public boolean triedRead;
 		public Map resolvedPathToRawEntries; // reverse map from resolved path to raw entries
 		public IPath outputLocation;
@@ -358,7 +361,7 @@ public class RodinDBManager implements ISaveParticipant {
 	 *
 	 * For use by image builder and evaluation support only
 	 */
-	public Object getLastBuiltState(IProject project, IProgressMonitor monitor) {
+	public BuildState getLastBuiltState(IProject project, IProgressMonitor monitor) {
 		if (!RodinProject.hasRodinNature(project)) {
 			if (RodinBuilder.DEBUG)
 				System.out.println(project + " is not a Rodin project"); //$NON-NLS-1$
@@ -533,7 +536,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * Reads the build state for the relevant project.
 	 */
-	protected Object readState(IProject project) throws CoreException {
+	protected BuildState readState(IProject project) throws CoreException {
 		File file = getSerializationFile(project);
 		if (file != null && file.exists()) {
 			try {
@@ -546,7 +549,7 @@ public class RodinDBManager implements ISaveParticipant {
 					if (!kind.equals("STATE")) //$NON-NLS-1$
 						throw new IOException(Messages.build_wrongFileFormat); 
 					if (in.readBoolean())
-						return RodinBuilder.readState(project, in);
+						return BuildState.read(project, in);
 					if (RodinBuilder.DEBUG)
 						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
 				} finally {
@@ -681,7 +684,7 @@ public class RodinDBManager implements ISaveParticipant {
 					out.writeBoolean(false);
 				} else {
 					out.writeBoolean(true);
-					RodinBuilder.writeState(info.savedState, out);
+					info.savedState.write(out);
 				}
 			} finally {
 				out.close();
@@ -738,13 +741,38 @@ public class RodinDBManager implements ISaveParticipant {
 			saveState(info, context);
 			return;
 		}
+
+		ArrayList<IStatus> saveStatuses = null; // lazy initialized
+		ArrayList<PerProjectInfo> infos = null;
+		synchronized(this.perProjectInfos) {
+			infos = new ArrayList<PerProjectInfo>(this.perProjectInfos.values());
+		}
+		for (PerProjectInfo info: infos) {
+			try {
+				saveState(info, context);
+			} catch (CoreException e) {
+				if (saveStatuses == null)
+					saveStatuses= new ArrayList<IStatus>();
+				saveStatuses.add(e.getStatus());
+			}
+		}
+		if (saveStatuses != null) {
+			IStatus[] stats= new IStatus[saveStatuses.size()];
+			saveStatuses.toArray(stats);
+			throw new CoreException(new MultiStatus(
+					RodinCore.PLUGIN_ID,
+					IStatus.ERROR,
+					stats,
+					Messages.build_cannotSaveStates,
+					null)); 
+		}
 	}
 
 
 	/**
 	 * Sets the last built state for the given project, or null to reset it.
 	 */
-	public void setLastBuiltState(IProject project, Object state) {
+	public void setLastBuiltState(IProject project, BuildState state) {
 		if (RodinProject.hasRodinNature(project)) {
 			// should never be requested on non-Rodin projects
 			PerProjectInfo info = getPerProjectInfo(project, true /*create if missing*/);
