@@ -69,6 +69,7 @@ public final class Messages /*extends NLS*/ {
 	public static String operation_moveElementProgress;
 	public static String operation_renameResourceProgress;
 	public static String operation_renameElementProgress;
+	public static String build_cannotSaveStates;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
