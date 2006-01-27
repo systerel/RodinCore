@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="test"
+            id="content-type-test"
+            name="org.rodinp.core.tests.content-type-test"
+            priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="ctx"
+            id="context"
+            name="Test context"
+            priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="csc"
+            id="scContext"
+            name="test checked context"
+            priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="po"
+            id="poFile"
+            name="test PO file"
+            priority="normal"/>
+   </extension>
+   <extension
+         point="org.rodinp.core.fileElementTypes">
+      <fileElementType
+            class="org.rodinp.core.tests.RodinTestFile"
+            content-type-id="org.rodinp.core.tests.content-type-test"
+            id="test"
+            name="org.rodinp.core.tests.test"/>
+      <fileElementType
+            class="org.rodinp.core.tests.builder.basis.Context"
+            content-type-id="org.rodinp.core.tests.context"
+            id="context"
+            name="Context"/>
+      <fileElementType
+            class="org.rodinp.core.tests.builder.basis.SCContext"
+            content-type-id="org.rodinp.core.tests.scContext"
+            id="scContext"
+            name="Checked Context"/>
+      <fileElementType
+            class="org.rodinp.core.tests.builder.basis.POFile"
+            content-type-id="org.rodinp.core.tests.poFile"
+            id="poFile"
+            name="PO File"/>
+   </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.rodinp.core.tests.NamedElement"
+            id="namedElement"
+            name="org.rodinp.core.tests.namedElement"
+            named="true"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.Dependency"
+            id="dependency"
+            name="Dependency to another file"
+            named="true"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.Data"
+            id="data"
+            name="Arbitrary data"
+            named="false"/>
+   </extension>
+   <extension
+         point="org.rodinp.core.autoTools">
+      <tool
+            class="org.rodinp.core.tests.builder.SCTool"
+            id="testSC"
+            name="Dumb Static Checker">
+         <extractor
+               class="org.rodinp.core.tests.builder.SCTool"
+               id="xTestSC"
+               name="Dumb Static Checker Extractor">
+            <inputType id="org.rodinp.core.tests.context"/>
+         </extractor>
+      </tool>
+   </extension>
+
+</plugin>
