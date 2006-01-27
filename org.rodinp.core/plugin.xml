@@ -3,6 +3,7 @@
 <plugin>
    <extension-point id="fileElementTypes" name="%fileElementTypes" schema="schema/fileElementTypes.exsd"/>
    <extension-point id="internalElementTypes" name="%internalElementTypes" schema="schema/internalElementTypes.exsd"/>
+   <extension-point id="autoTools" name="%autoToolsName" schema="schema/autoTools.exsd"/>
    <extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type
 			id="rodin"
@@ -19,6 +20,15 @@
       <runtime>
          <run class="org.rodinp.internal.core.RodinProject"/>
       </runtime>
+      <builder id="org.rodinp.core.rodinbuilder"/>
+   </extension>
+   <extension
+         id="rodinbuilder"
+         name="%rodinBuilderName"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="org.rodinp.internal.core.builder.RodinBuilder"/>
+      </builder>
    </extension>
 
 </plugin>
