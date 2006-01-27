@@ -36,7 +36,10 @@ public class InternalElementTypeDescription extends ElementTypeDescription<Inter
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(InternalElement.class);
-			constructor = classObject.getConstructor(String.class, IRodinElement.class);
+			if (this.named)
+				constructor = classObject.getConstructor(String.class, IRodinElement.class);
+			else
+				constructor = classObject.getConstructor(IRodinElement.class);
 		} catch (Exception e) {
 			Util.log(e, "Can't find constructor for element type " + getId());
 		}

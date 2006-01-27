@@ -190,7 +190,7 @@ public class ElementTypeManager {
 	 *         element type is unknown.
 	 */
 	private InternalElementTypeDescription getInternalElementTypeDescription(String elementType) {
-		if (internalElementTypeIds== null) {
+		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}
 		return internalElementTypeIds.get(elementType);
@@ -252,7 +252,7 @@ public class ElementTypeManager {
 			if (description.isNamed()) {
 				return constructor.newInstance(name, parent);
 			} else {
-				return constructor.newInstance(type, parent);
+				return constructor.newInstance(parent);
 			}
 		} catch (Exception e) {
 			Util.log(e, "Error when constructing instance of type " + type);
