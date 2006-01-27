@@ -31,6 +31,20 @@ public interface IParent {
 	IRodinElement[] getChildren() throws RodinDBException;
 
 	/**
+	 * Returns the immediate children of this element that are of the given
+	 * type. The order on children is maintained while extracting them.
+	 * 
+	 * @param type
+	 *            type of the children to retrieve. It must be a canonical String.
+	 * @return the immediate children of this element that are of the given type
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 * @see String#intern()
+	 */
+	IRodinElement[] getChildrenOfType(String type) throws RodinDBException;
+
+	/**
 	 * Returns whether this element has one or more immediate children. This is
 	 * a convenience method, and may be more efficient than testing whether
 	 * <code>getChildren</code> is an empty array.
