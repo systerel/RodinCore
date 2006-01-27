@@ -158,12 +158,12 @@
             class="org.eventb.core.basis.POPredicate"
             id="poPredicate"
             name="%eventBpoPredicate"
-            named="true"/>
+            named="false"/>
       <internalElementType
             class="org.eventb.core.basis.POModifiedPredicate"
             id="poModifiedPredicate"
             name="%eventBpoModifiedPredicate"
-            named="true"/>
+            named="false"/>
       <internalElementType
             class="org.eventb.core.basis.POSequent"
             id="poSequent"
@@ -173,7 +173,7 @@
             class="org.eventb.core.basis.POHypothesis"
             id="poHypothesis"
             name="%eventBpoHypothesis"
-            named="true"/>
+            named="false"/>
       <internalElementType
             class="org.eventb.core.basis.Sees"
             id="sees"
