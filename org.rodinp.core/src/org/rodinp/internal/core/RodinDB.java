@@ -249,7 +249,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinDB
 	 */
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
-		ArrayList<IRodinElement> list = getChildrenOfType(RODIN_PROJECT);
+		ArrayList<IRodinElement> list = getFilteredChildrenList(RODIN_PROJECT);
 		return list.toArray(new IRodinProject[list.size()]);
 
 	}
