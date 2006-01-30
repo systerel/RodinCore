@@ -17,5 +17,6 @@ import org.rodinp.core.IInternalElement;
 public interface IPOIdentifier extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier"; //$NON-NLS-1$
 
-	public String getName();
+	public String getName();	
+	public String getType();
 }
