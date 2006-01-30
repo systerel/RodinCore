@@ -190,5 +190,30 @@
             name="%eventBWitness"
             named="true"/>
    </extension>
+   <extension
+         point="org.rodinp.core.autoTools">
+      <tool
+            class="org.eventb.internal.core.protosc.ContextSC"
+            id="contextSC"
+            name="%contextSCTool">
+         <extractor
+               class="org.eventb.internal.core.protosc.ContextSC"
+               id="machineSC"
+               name="%contextExtractor">
+            <inputType id="org.eventb.core.context"/>
+         </extractor>
+      </tool>
+      <tool
+            class="org.eventb.internal.core.protosc.MachineSC"
+            id="machineSC"
+            name="%machineSCTool">
+         <extractor
+               class="org.eventb.internal.core.protosc.MachineSC"
+               id="machineSC"
+               name="%machineExtractor">
+            <inputType id="org.eventb.core.machine"/>
+         </extractor>
+      </tool>
+   </extension>
 
 </plugin>
