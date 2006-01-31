@@ -30,5 +30,13 @@
          <run class="org.rodinp.internal.core.builder.RodinBuilder"/>
       </builder>
    </extension>
+   <extension
+         id="problem"
+         name="%rodinProblemMarkerName"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+   </extension>
 
 </plugin>
