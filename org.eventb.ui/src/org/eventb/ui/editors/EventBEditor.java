@@ -311,13 +311,13 @@ public class EventBEditor
 			return;
 		}
 
-		if (element instanceof IAxiom) {
-			this.setActivePage(AxiomsPage.PAGE_ID);
-		}
-		
 		if (element instanceof ISees) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
+		}
+		
+		if (element instanceof IAxiom) {
+			this.setActivePage(AxiomsPage.PAGE_ID);
 		}
 		
 		else if (element instanceof ITheorem) {
