@@ -96,11 +96,15 @@ public abstract class EventBDetailsSection
 	 */
 	public void commit(boolean onSave) {
 		System.out.println("COMMIT");
+		super.commit(onSave);
 		for (int i = 0; i < rows.size(); i++)
 			((EventBInputRow) rows.get(i)).commit();
-		super.commit(onSave);
 	}
 
+	public void doSave(boolean onSave) {
+		for (int i = 0; i < rows.size(); i++)
+			((EventBInputRow) rows.get(i)).commit();
+	}
 	
 	/**
 	 * Return the Master Detail block that holds this detail section.
