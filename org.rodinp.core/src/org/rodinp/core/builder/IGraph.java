@@ -64,6 +64,10 @@ public interface IGraph {
 	/**
 	 * Adds a dependency controlled by the user to the graph.
 	 * 
+	 * @param origin
+	 *            The origin of this dependency.
+	 *            This should be a resource visible to the user,
+	 *            i.e. not a derived resource.
 	 * @param source
 	 *            The source of the dependency.
 	 * @param target
