@@ -26,6 +26,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author halstefa
@@ -33,6 +34,8 @@ import org.rodinp.core.IRodinFile;
  */
 public class CommonSC implements ISCProblemList {
 
+	public static final boolean DEBUG = true;
+	
 	protected LinkedList<SCProblem> problems;
 	
 	public CommonSC() {
@@ -44,10 +47,28 @@ public class CommonSC implements ISCProblemList {
 		
 	}
 	
+	protected void issueProblems(IRodinFile file) {
+		for(SCProblem problem : problems) {
+			addMarker((IRodinFile) problem.getElement().getOpenable(), problem.getElement(), problem.getMessage(), problem.getSeverity());
+			if(DEBUG)
+				System.out.println(getClass().getName() + ": " + problem.getMessage());
+		}
+	}
+	
 	public static void makeError(String message) throws CoreException {
 		throw new CoreException (
 				new Status(IStatus.ERROR, EventBPlugin.getPlugin().getBundle().getSymbolicName(), Platform.PLUGIN_ERROR, message, null)
 				);
+	}
+	
+	private String printElement(IRodinElement element) {
+		String elementType = element.getElementType();
+		String result = elementType.substring(elementType.lastIndexOf('.')+1);
+		if(element instanceof IUnnamedInternalElement)
+			result = result + " in " + printElement(element.getParent());
+		else if(element instanceof IInternalElement)
+			result = result + " " + ((IInternalElement) element).getElementName(); 
+		return result;
 	}
 	
 	protected void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
@@ -55,8 +76,9 @@ public class CommonSC implements ISCProblemList {
 			IMarker marker = rodinFile.getResource().createMarker(IRodinDBMarker.RODIN_PROBLEM_MARKER);
 			
 			// TODO: correctly implement marker location
-			marker.setAttribute(IMarker.LOCATION, element);
-			marker.setAttribute(IMarker.MESSAGE, message);
+			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
+			marker.setAttribute(IMarker.MESSAGE, "(" + printElement(element) + ") " + message);
+			marker.setAttribute(IMarker.SEVERITY, severity);
 		} catch(CoreException e) {
 			// can safely ignore
 		}

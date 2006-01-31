@@ -47,8 +47,6 @@ import org.rodinp.core.builder.IInterrupt;
  */
 public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
-	public static final boolean DEBUG = true;
-	
 	@SuppressWarnings("unused")
 	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
@@ -80,6 +78,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		contextCache = new ContextCache(context, this);
 		axiomPredicateMap = new HashMap<String, Predicate>(contextCache.getAxioms().length * 4 / 3 + 1);
 		theoremPredicateMap = new HashMap<String, Predicate>(contextCache.getTheorems().length * 4 / 3 + 1);
+		problems.clear();
 	}
 	
 	public boolean run(
@@ -87,12 +86,15 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
+		if(DEBUG)
+			System.out.println(getClass().getName() + " running.");
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
-		file.delete(true, monitor); // dangerous ?
+//		file.delete(true, monitor); // dangerous ?
 		
 		ISCContext newSCContext = (ISCContext) RodinCore.create(file);
-		newSCContext.open(monitor);
+//		newSCContext.open(monitor);
 		
 		// TODO: the explicit file extension should be replaced by a request to the content type manager
 		IFile contextFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("buc"));
@@ -145,8 +147,9 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		retractUntypedConstants();
 		commitTheorems();
 		
-		createCheckedContext();
+//		createCheckedContext();
 		
+		issueProblems(context);
 	}
 	
 	private void commitCarrierSets() throws RodinDBException {

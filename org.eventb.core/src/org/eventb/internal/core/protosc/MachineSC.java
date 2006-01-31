@@ -42,7 +42,6 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
 import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -93,6 +92,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		theoremPredicateMap = new HashMap<String, Predicate>(machineCache.getTheorems().length * 4 / 3 + 1);
 		guardPredicateMap =  new HashMap<String, Predicate>(machineCache.getEvents().length * 20 / 3 + 1);
 		actionSubstititionMap =  new HashMap<String, Assignment>(machineCache.getEvents().length * 20 / 3 + 1);
+		problems.clear();
 	}
 
 	/* (non-Javadoc)
@@ -103,15 +103,18 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
+		if(DEBUG)
+			System.out.println(getClass().getName() + " running.");
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
-		file.delete(true, monitor); // dangerous ?
+//		file.delete(true, monitor); // dangerous ?
 		
 		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
-		newSCMachine.open(monitor);
+//		newSCMachine.open(monitor);
 		
 		// TODO: the explicit file extension should be replaced by a request to the content type manager
-		IFile machineFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("muc"));
+		IFile machineFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("bum"));
 		
 		IMachine machineIn = (IMachine) RodinCore.create(machineFile);
 		if(!machineIn.exists())
@@ -169,7 +172,9 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		commitTheorems();
 		commitEvents();
 		
-		createCheckedMachine();
+//		createCheckedMachine();
+		
+		issueProblems(machine);
 	}
 
 	private void commitVariables() throws RodinDBException {
