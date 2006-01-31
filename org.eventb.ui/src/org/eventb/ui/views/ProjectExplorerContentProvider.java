@@ -223,6 +223,7 @@ public class ProjectExplorerContentProvider
 	 * Return the list of children for a particular parent.
 	 */
 	public Object [] getChildren(Object parent) {
+		System.out.println("Get children for " + parent);
 		if (parent instanceof IMachine) {
 			IMachine mch = (IMachine) parent;
 			if (elementsMap.containsKey(mch)) {
@@ -284,6 +285,7 @@ public class ProjectExplorerContentProvider
 		if (parent instanceof IRodinFile) return true;
 		try {			
 			if (parent instanceof IParent)	return ((IParent) parent).hasChildren();
+			if (parent instanceof TreeNode) return ((TreeNode) parent).hasChildren();
 		}
 		catch (CoreException e) {
 			e.printStackTrace();
