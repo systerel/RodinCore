@@ -9,6 +9,10 @@ package org.rodinp.internal.core.builder;
 
 import java.io.Serializable;
 
+/**
+ * @author Stefan Hallerstede
+ *
+ */
 public class Link implements Serializable {
 	/**
 	 * 

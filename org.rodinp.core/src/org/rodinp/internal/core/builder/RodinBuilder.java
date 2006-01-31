@@ -21,21 +21,30 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.core.builder.IInterrupt;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Util;
 
+/**
+ * @author Stefan Hallerstede
+ *
+ */
 public class RodinBuilder extends IncrementalProjectBuilder {
 	
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 	
 //	private final ElementTypeManager elementTypeManager = ElementTypeManager.getElementTypeManager();
 	
 	BuildState state;
+	
+	ElementTypeManager elementTypeManager;
 	
 	@Override
 	protected void startupOnInitialize() {
         // add builder init logic here
 		
 		state = null;
+		
+		elementTypeManager = ElementTypeManager.getElementTypeManager();
      }
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
@@ -77,10 +86,10 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		if(resource instanceof IFile) {
 // TODO the builder should only react to creation of files whose content type
 //		is recognised as 'RODIN'. For the moment we use file extensions.
-//			IFile file = (IFile) resource;
-//			String elementType = elementTypeManager.getFileElementType(file);
-//			if(elementType == null)
-//				return null;
+			IFile file = (IFile) resource;
+			String elementType = elementTypeManager.getFileElementType(file);
+			if(elementType == null)
+				return null;
 			Node node = state.graph.getNode(resource.getFullPath());
 			
 			if(node == null) {

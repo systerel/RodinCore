@@ -19,7 +19,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public class GraphHandler implements IGraph {
@@ -49,9 +49,10 @@ public class GraphHandler implements IGraph {
 			node.setProducerId(producerId);
 			node.setPhantom(false);
 		} else
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Node already exists: " + node.getName(), null)); //$NON-NLS-1$
+			node.setProducerId(producerId);
+//			throw new CoreException(new Status(IStatus.ERROR,
+//					RodinCore.PLUGIN_ID, 
+//					Platform.PLUGIN_ERROR, "Node already exists: " + node.getName(), null)); //$NON-NLS-1$
 		if(RodinBuilder.DEBUG)
 			System.out.println(getClass().getName() + ": Node added: " + node.getName()); //$NON-NLS-1$
 		node.setDated(true);
@@ -195,10 +196,10 @@ public class GraphHandler implements IGraph {
 			throw new CoreException(new Status(IStatus.ERROR,
 					RodinCore.PLUGIN_ID, 
 					Platform.PLUGIN_ERROR, "Unknown node: " + target, null));
-		if(!current.hasSuccessor(node))
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Cannot remove dependencies for target: " + node.getName(), null));
+//		if(!current.hasSuccessor(node))
+//			throw new CoreException(new Status(IStatus.ERROR,
+//					RodinCore.PLUGIN_ID, 
+//					Platform.PLUGIN_ERROR, "Cannot remove dependencies for target: " + node.getName(), null));
 		node.removeLinks(id);
 		node.setDated(true);
 		graph.setInstable();

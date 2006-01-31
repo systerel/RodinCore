@@ -28,7 +28,7 @@ import org.rodinp.core.builder.TempMarkerHelper;
 import org.rodinp.internal.core.ElementTypeManager;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public class Node implements Serializable {
@@ -219,7 +219,7 @@ public class Node implements Serializable {
 	}
 	
 	protected String printNode() {
-		String res = name + " :";
+		String res = name  + (isDated() ? "[D]" : "[N]") + " :";
 		for(Node node : succNodes) {
 			res = res + " " + node.name;
 		}

@@ -27,6 +27,10 @@ import org.rodinp.core.builder.IInterrupt;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.internal.core.util.Util;
 
+/**
+ * @author Stefan Hallerstede
+ *
+ */
 public class Graph implements Serializable {
 	
 	/**
@@ -204,7 +208,7 @@ public class Graph implements Serializable {
 	}
 	
 	public void removeNodeFromGraph(Node node, IInterrupt interrupt, IProgressMonitor monitor) {
-		Collection<Node> values = nodes.values();
+		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node n : values)
 			n.done = true;
 		node.markReachable();
@@ -224,6 +228,7 @@ public class Graph implements Serializable {
 	
 	private void clean(Node node, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
 		String toolName = node.getProducerId();
+		node.setDated(true);
 		if(toolName == null || toolName.equals("")) //$NON-NLS-1$
 			return;
 		IAutomaticTool tool = getManager().getTool(node.getProducerId());
@@ -232,7 +237,7 @@ public class Graph implements Serializable {
 	
 	public void cleanGraph(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IStatus> vStats = null; // lazy initialized
-		Collection<Node> values = nodes.values();
+		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node node : values) {
 			try {
 				clean(node, interrupt, monitor);
