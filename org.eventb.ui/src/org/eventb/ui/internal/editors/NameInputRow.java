@@ -112,10 +112,10 @@ public class NameInputRow
 			}
 			
 			dirty = false;
+			page.markDirty();
 		}
 	}
 	
-
 	/**
 	 * Creating the input text field part. 
 	 */

@@ -63,11 +63,12 @@ public class ContentInputRow
 	 * Commit the change and notify the listeners.
 	 */
 	public void commit() {
+		
 		if (dirty) {
 			try {
 				IInternalElement input = page.getInput();
 				if (input instanceof IUnnamedInternalElement) {
-					System.out.println("Commit: " + input + " to be " + textInput.getText());
+//					System.out.println("Commit content: " + input + " to be " + textInput.getText());
 					input.setContents(textInput.getText());
 					
 					SectionPart masterPart = page.getBlock().getMasterPart();
@@ -78,12 +79,10 @@ public class ContentInputRow
 					}
 	
 					if (masterPart instanceof EventBTablePartWithButtons) {
-						System.out.println("Master refresh");
 						((EventBTablePartWithButtons) masterPart).commit();
 						//((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
 					}
 					else if (masterPart instanceof EventBTreePartWithButtons) {
-						System.out.println("Master refresh");
 						TreeViewer viewer = ((EventBTreePartWithButtons) masterPart).getViewer();
 						Control control = viewer.getControl();
 						control.setRedraw(false);
@@ -93,11 +92,17 @@ public class ContentInputRow
 						control.setRedraw(true);
 					}
 				}
+				else if (input instanceof IInternalElement) {
+//					System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
+					input.setContents(textInput.getText());
+					((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
+				}
 			}
 			catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 			dirty = false;
+			page.markDirty();
 		}
 	}
 	
