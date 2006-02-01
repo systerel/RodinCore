@@ -72,6 +72,10 @@ public class FastFactory {
 		return ff.makeAtomicExpression(tag, null);
 	}
 
+	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident, Expression value) {
+		return ff.makeBecomesEqualTo(ident, value, null);
+	}
+	
 	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier[] lhs, Expression[] rhs) {
 		return ff.makeBecomesEqualTo(lhs, rhs, null);
 	}
@@ -83,6 +87,14 @@ public class FastFactory {
 	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs,
 			BoundIdentDecl[] primed, Predicate rhs) {
 		return ff.makeBecomesSuchThat(lhs, primed, rhs, null);
+	}
+	
+	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs, Predicate rhs) {
+		BoundIdentDecl[] primed = new BoundIdentDecl[lhs.length];
+		for (int i = 0; i < lhs.length; i++) {
+			primed[i] = ff.makeBoundIdentDecl(lhs[i]);
+		}
+		return mBecomesSuchThat(lhs, primed, rhs);
 	}
 	
 	public static BinaryExpression mBinaryExpression(Expression left,
@@ -234,5 +246,5 @@ public class FastFactory {
 	public static UnaryPredicate mUnaryPredicate(Predicate child) {
 		return mUnaryPredicate(Formula.NOT, child);
 	}
-	
+
 }
