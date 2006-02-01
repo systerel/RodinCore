@@ -87,12 +87,12 @@ public class ConstantMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new constant", "const" + counter, null);
+		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new constant", "cst" + counter, null);
 		dialog.open();
 		String name = dialog.getValue();
 		if (name != null) 
 			try {
-				IInternalElement constant = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, "const" + counter, null, null);
+				IInternalElement constant = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
 				counter++;
 				this.getViewer().setInput(rodinFile);
 				this.getViewer().setSelection(new StructuredSelection(constant));

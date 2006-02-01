@@ -231,7 +231,7 @@ public class EventMasterSection
 //		String name = dialog.getValue();
 //		if (name != null) {
 			try {
-				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "event" + counter, null, null);
+				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + counter, null, null);
 				counter++;
 				commit();
 				getViewer().setSelection(new StructuredSelection(event));

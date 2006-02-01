@@ -81,6 +81,7 @@ public class EventBUIPlugin
 	public static final String INV_DEFAULT = PRD_DEFAULT;
 	public static final String AXM_DEFAULT = PRD_DEFAULT;
 	public static final String THM_DEFAULT = PRD_DEFAULT;
+	public static final String GRD_DEFAULT = PRD_DEFAULT;
 	public static final String SUB_DEFAULT = "skip";
 	
 	// The shared instance.
