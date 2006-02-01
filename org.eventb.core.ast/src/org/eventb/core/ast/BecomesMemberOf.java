@@ -172,4 +172,9 @@ public class BecomesMemberOf extends Assignment {
 		return formulaFactory.makeRelationalPredicate(IN, primedIdentifier, setExpr, getSourceLocation());
 	}
 
+	@Override
+	public FreeIdentifier[] getUsedIdentifiers() {
+		return setExpr.getFreeIdentifiers();
+	}
+
 }

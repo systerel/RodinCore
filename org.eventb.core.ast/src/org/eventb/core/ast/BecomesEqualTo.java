@@ -242,4 +242,14 @@ public class BecomesEqualTo extends Assignment {
 			return predicates[0];
 	}
 
+	@Override
+	public FreeIdentifier[] getUsedIdentifiers() {
+		LinkedHashSet<FreeIdentifier> freeIdents = new LinkedHashSet<FreeIdentifier>();
+		for (Expression expr: values) {
+			expr.collectFreeIdentifiers(freeIdents);
+		}
+		FreeIdentifier[] model = new FreeIdentifier[freeIdents.size()];
+		return freeIdents.toArray(model);
+	}
+
 }

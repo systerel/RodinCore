@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,10 +153,12 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 	
 	/**
-	 * Return the (flattened) fisibility predicate for this assignment.
-	 * An exception is thrown if this assignment was not type checked.
-	 * @param formulaFactory factory to use for creating the predicate
-	 * @return Returns the fisibility predicate
+	 * Returns the (flattened) feasibility predicate of this assignment. An
+	 * exception is thrown if this assignment was not type checked.
+	 * 
+	 * @param formulaFactory
+	 *            factory to use for creating the predicate
+	 * @return Returns the feasibility predicate
 	 */
 	public Predicate getFISPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
@@ -166,10 +168,12 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected abstract Predicate getFISPredicateRaw(FormulaFactory formulaFactory);
 	
 	/**
-	 * Return the (flattened) before-after predicate corresponding to the assignment.
-	 * An exception is thrown if this assignment was not type checked.
-	 * @param formulaFactory factory to use for creating the predicate
-	 * @return Returns the before-after predicate
+	 * Returns the (flattened) before-after predicate of this assignment. An
+	 * exception is thrown if this assignment was not type checked.
+	 * 
+	 * @param formulaFactory
+	 *            factory to use for creating the predicate
+	 * @return Returns the before-after predicate of this assignment
 	 */
 	public Predicate getBAPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
@@ -178,4 +182,16 @@ public abstract class Assignment extends Formula<Assignment> {
 	
 	protected abstract Predicate getBAPredicateRaw(FormulaFactory formulaFactory);
 
+	
+	/**
+	 * Returns an array of the free identifiers that occur on the right-hand
+	 * side of this assignment. The free identifiers are extracted using
+	 * {@link Formula#getFreeIdentifiers()} applied to all formulas that are
+	 * part of the right-hand side of this assignment.
+	 * 
+	 * @return all free identifiers that occur in the right-hand side of this
+	 *         assignment.
+	 */
+	public abstract FreeIdentifier[] getUsedIdentifiers();
+	
 }

@@ -273,4 +273,9 @@ public class BecomesSuchThat extends Assignment {
 		return condition.applySubstitution(subst, formulaFactory);
 	}
 
+	@Override
+	public FreeIdentifier[] getUsedIdentifiers() {
+		return condition.getFreeIdentifiers();
+	}
+
 }

@@ -1,8 +1,13 @@
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
@@ -15,6 +20,7 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
@@ -26,6 +32,7 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -588,4 +595,61 @@ public class TestFreeIdents extends TestCase {
 		checkFreeIdent(idents[1], "x3", bd_x2.getType());
 	}
 	
+	private void typeCheck(Formula formula, ITypeEnvironment te) {
+		formula.typeCheck(te);
+		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
+	}
+	
+	private void typeCheck(Formula[] formulas, ITypeEnvironment te) {
+		for (Formula formula: formulas) {
+			typeCheck(formula, te);
+		}
+	}
+	
+	/**
+	 * Test method for 'org.eventb.core.ast.Assignment.getUsedIdentifiers()'
+	 */
+	public void testGetUsedIdentifiers() {
+		final Type INT = ff.makeIntegerType();
+		final ITypeEnvironment te = 
+			mTypeEnvironment(mList("x", "y", "z"), mList(INT, INT, INT));
+
+		/* Becomes equal to with two identifiers, one being used. */
+		Assignment assignment = mBecomesEqualTo(mList(ids[x][0], ids[y][1]), mList(ids[y][2], ids[z][3]));
+		typeCheck(assignment, te);
+		FreeIdentifier[] expected = mList(ids[y][2], ids[z][3]);
+		typeCheck(expected, te);
+		FreeIdentifier[] actual = assignment.getUsedIdentifiers();
+		assertEquals(assignment.toString(), expected, actual);
+		
+		/* Becomes member of with lhs identifier unused. */
+		assignment = mBecomesMemberOf(ids[x][0], mSetExtension(ids[y][1]));
+		typeCheck(assignment, te);
+		expected = mList(ids[y][1]);
+		typeCheck(expected, te);
+		actual = assignment.getUsedIdentifiers();
+		assertEquals(assignment.toString(), expected, actual);
+		
+		/* Becomes member of with lhs identifier used. */
+		assignment = mBecomesMemberOf(ids[x][0], mSetExtension(ids[x][1]));
+		typeCheck(assignment, te);
+		expected = mList(ids[x][1]);
+		typeCheck(expected, te);
+		actual = assignment.getUsedIdentifiers();
+		assertEquals(assignment.toString(), expected, actual);
+		
+		/* Becomes such that with two identifiers, one being used. */
+		assignment = mBecomesSuchThat(mList(ids[x][0], ids[y][1]),
+				mAssociativePredicate(LAND,
+						mRelationalPredicate(EQUAL, bs[0][2], ids[y][3]),
+						mRelationalPredicate(EQUAL, bs[1][4], ids[z][5])
+				)
+		);
+		typeCheck(assignment, te);
+		expected = mList(ids[y][3], ids[z][5]);
+		typeCheck(expected, te);
+		actual = assignment.getUsedIdentifiers();
+		assertEquals(assignment.toString(), expected, actual);
+	}
+
 }
