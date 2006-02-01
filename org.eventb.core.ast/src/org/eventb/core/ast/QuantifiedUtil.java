@@ -110,20 +110,27 @@ public abstract class QuantifiedUtil {
 	 * @return a list of new names that are distinct from each other and do not
 	 *         occur in the list of used names
 	 */
-	public static String[] resolveIdents(BoundIdentDecl[] boundHere, final Set<String> usedNames) {
+	public static String[] resolveIdents(BoundIdentDecl[] boundHere, Set<String> usedNames) {
 		final int length = boundHere.length;
 		String[] result = new String[length];
 		
+		// Currently, there is no way to pass a formula factory to this method,
+		// as it might be called from the classical toString() method.  So, we use
+		// the default factory provided with the AST library.  But, that prevents
+		// clients from adding new reverved identifier names!
+		// TODO how to add new reserved identifier names
+		final FormulaFactory factory = FormulaFactory.getDefault();
+		
 		// Create the new identifiers.
 		for (int i = 0; i < length; i++) {
-			result[i] = solve(boundHere[i].getName(), usedNames);
+			result[i] = solve(boundHere[i].getName(), usedNames, factory);
 			usedNames.add(result[i]);
 		}
 		
 		return result;
 	}
 
-	private static String solve(String name, Set<String> usedNames) {
+	private static String solve(String name, Set<String> usedNames, FormulaFactory factory) {
 		if (! usedNames.contains(name)) {
 			// Not used, this name is OK.
 			return name;
@@ -135,7 +142,7 @@ public abstract class QuantifiedUtil {
 		do {
 			++ sname.suffix;
 			newName = sname.toString();
-		} while (usedNames.contains(newName));
+		} while (usedNames.contains(newName) || !factory.isValidIdentifierName(newName));
 		
 		return newName;
 	}
@@ -146,7 +153,7 @@ public abstract class QuantifiedUtil {
 	// @see FormulaFactory#makeFreshIdentifiers(BoundIdentDecl[], ITypeEnvironment)
 	//
 	protected static FreeIdentifier[] resolveIdents(BoundIdentDecl[] boundHere,
-			final ITypeEnvironment environment, FormulaFactory factory) {
+			ITypeEnvironment environment, FormulaFactory factory) {
 		
 		final int length = boundHere.length;
 		FreeIdentifier[] result = new FreeIdentifier[length];
@@ -155,7 +162,7 @@ public abstract class QuantifiedUtil {
 		for (int i = 0; i < length; i++) {
 			assert boundHere[i].getType() != null;
 			
-			String name = solve(boundHere[i].getName(), environment.getNames());
+			String name = solve(boundHere[i].getName(), environment.getNames(), factory);
 			result[i] = factory.makeFreeIdentifier(name, boundHere[i].getSourceLocation());
 			result[i].setType(boundHere[i].getType(), null);
 			environment.addName(name, result[i].getType());

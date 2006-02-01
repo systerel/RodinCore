@@ -37,6 +37,8 @@ import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
@@ -466,6 +468,17 @@ public class TestUnparse extends TestCase {
 									mAssociativeExpression(BUNION, b2, b1, b0)
 							)
 					)))
+			), new PredTestPair(
+					"∀prj0⋅∀prj3⋅finite(prj∪prj0∪prj3)",
+					mQuantifiedPredicate(FORALL, mList(mBoundIdentDecl("prj")),
+					mQuantifiedPredicate(FORALL, mList(mBoundIdentDecl("prj")),
+							mSimplePredicate(
+									mAssociativeExpression(BUNION,
+											mFreeIdentifier("prj"),
+											b1, b0
+									)
+							)
+					))
 			),
 	};
 
