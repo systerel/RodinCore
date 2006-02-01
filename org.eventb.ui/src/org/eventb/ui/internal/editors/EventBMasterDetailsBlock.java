@@ -144,7 +144,7 @@ public abstract class EventBMasterDetailsBlock
 	 * Dynamically register the detail pages by setting the page provider.
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
-		detailsPart.setPageLimit(5);
+		detailsPart.setPageLimit(1); // Set this to 1 in order to cope with changing name
 		detailsPart.setPageProvider(this);
 	}
 
