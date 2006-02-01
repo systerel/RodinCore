@@ -51,7 +51,7 @@ public enum ProblemKind {
 	ParserException ("Parser exception: %1$s"),
 	
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location
+	 * Argument 0 is the contents of the token, argument 1 is the location
 	 */
 	LexerError ("Lexer error at %2$d, token not recognized: %1$s"),
 	
