@@ -16,6 +16,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -488,4 +489,61 @@ public class TestSubstituteFormula extends TestCase {
         assertEquals(pred.toString(), expected, result);
 	}
 
+	private void typeCheck(Formula formula, ITypeEnvironment te) {
+		formula.typeCheck(te);
+		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
+	}
+	
+	/**
+	 * Examples given in the Javadoc of
+	 * {@link Formula#applyAssignment(BecomesEqualTo, FormulaFactory)}.
+	 */
+	public void testApplyAssignment() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		Expression expr = plus(id_x, id_y);
+		typeCheck(expr, te);
+		
+		// First example
+		BecomesEqualTo assignment = ff.makeBecomesEqualTo(id_x, num(0), null);
+		typeCheck(assignment, te);
+		Expression expExpr = plus(num(0), id_y);
+		typeCheck(expExpr, te);
+		Expression actual = expr.applyAssignment(assignment, ff);
+		// TODO remove typecheck below
+		typeCheck(actual, te);
+		assertEquals(expExpr, actual);
+		
+		// Second example
+		assignment = ff.makeBecomesEqualTo(id_x, plus(id_x, num(1)), null);
+		typeCheck(assignment, te);
+		expExpr = plus(plus(id_x, num(1)), id_y);
+		typeCheck(expExpr, te);
+		actual = expr.applyAssignment(assignment, ff);
+		// TODO remove typecheck below
+		typeCheck(actual, te);
+		assertEquals(expExpr, actual);
+		
+		// Third example
+		assignment = ff.makeBecomesEqualTo(mList(id_x, id_y), mList(id_y, id_x), null);
+		typeCheck(assignment, te);
+		expExpr = plus(id_y, id_x);
+		typeCheck(expExpr, te);
+		actual = expr.applyAssignment(assignment, ff);
+		// TODO remove typecheck below
+		typeCheck(actual, te);
+		assertEquals(expExpr, actual);
+		
+		// Example with a predicate and a bound variable capture
+		Predicate pred = forall(BD("y"), eq(bd(0), id_x));
+		typeCheck(pred, te);
+		assignment = ff.makeBecomesEqualTo(id_x, id_y, null);
+		typeCheck(assignment, te);
+		Predicate expPred = forall(BD("z"), eq(bd(0), id_y));
+		typeCheck(expPred, te);
+		Predicate actualPred = pred.applyAssignment(assignment, ff);
+		// TODO remove typecheck below
+		typeCheck(actualPred, te);
+		assertEquals(expPred, actualPred);
+	}
+	
 }

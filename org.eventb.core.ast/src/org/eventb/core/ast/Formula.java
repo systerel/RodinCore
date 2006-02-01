@@ -4,6 +4,7 @@
 package org.eventb.core.ast;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1282,10 +1283,47 @@ public abstract class Formula<T extends Formula<T>> {
 			int offset, FormulaFactory factory);
 
 	/**
+	 * Applies the given assignment to this formula.
+	 * <p>
+	 * This method builds a new formula where each occurrence of a free
+	 * identifier which is assigned to, is replaced by the corresponding
+	 * expression in the assignment. All substitutions are done in parallel.
+	 * </p>
+	 * <p>
+	 * For instance, applying the assignment <code>x := 0</code> to the
+	 * formula <code>x + y</code> gives the result formula <code>0 + y</code>.
+	 * Similarly, applying <code>x := x + 1</code> to <code>x + y</code>
+	 * gives <code>(x + 1) + y</code>. Finally, applying
+	 * <code>x,y := y,x</code> to <code>x + y</code> gives
+	 * <code>y + x</code>.
+	 * </p>
+	 * <p>
+	 * This operation is not supported by assignments.
+	 * </p>
+	 * 
+	 * @param assignment
+	 *            the assignment to apply
+	 * @param ff
+	 *            factory to use for building the result
+	 * @return this formula with the given assignment applied to it
+	 */
+	public final T applyAssignment(BecomesEqualTo assignment, FormulaFactory ff) {
+		FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
+		Expression[] exprs = assignment.getExpressions();
+		final int length = idents.length;
+		Map<FreeIdentifier, Expression> map =
+			new HashMap<FreeIdentifier, Expression>(length * 4/3 + 1);
+		for (int i = 0; i < length; i++) {
+			map.put(idents[i], exprs[i]);
+		}
+		return substituteFreeIdents(map, ff);
+	}
+	
+	/**
 	 * Applies the given substitution to this formula.
 	 * <p>
 	 * This operation is made public for technical reasons.  It is not part
-	 * of the public API of the AST library and must not be used by clients.
+	 * of the published API of the AST library and must not be used by clients.
 	 * </p>
 	 * @param subst
 	 *            the substitution to apply
