@@ -68,9 +68,6 @@ public class EventMirrorSection
 				IRodinElement [] lvars = events[i].getChildrenOfType(IVariable.ELEMENT_TYPE);
 				IRodinElement [] guards = events[i].getChildrenOfType(IGuard.ELEMENT_TYPE);
 				IRodinElement [] actions = events[i].getChildrenOfType(IAction.ELEMENT_TYPE);
-//				IRodinElement [] lvars = Utils.getChildrenOfType((IParent) events[i], IVariable.ELEMENT_TYPE);
-//				IRodinElement [] guards = Utils.getChildrenOfType((IParent) events[i], IGuard.ELEMENT_TYPE);
-//				IRodinElement [] actions = Utils.getChildrenOfType((IParent) events[i], IAction.ELEMENT_TYPE);
 				
 				if (lvars.length != 0) {
 					formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
@@ -143,9 +140,6 @@ public class EventMirrorSection
 						IRodinElement [] lvars = events[i].getChildrenOfType(IVariable.ELEMENT_TYPE);
 						IRodinElement [] guards = events[i].getChildrenOfType(IGuard.ELEMENT_TYPE);
 						IRodinElement [] actions = events[i].getChildrenOfType(IAction.ELEMENT_TYPE);
-//						IRodinElement [] lvars = Utils.getChildrenOfType((IParent) events[i], IVariable.ELEMENT_TYPE);
-//						IRodinElement [] guards = Utils.getChildrenOfType((IParent) events[i], IGuard.ELEMENT_TYPE);
-//						IRodinElement [] actions = Utils.getChildrenOfType((IParent) events[i], IAction.ELEMENT_TYPE);
 						for (int j = 0; j < lvars.length; j++) {
 							if (e.getHref().equals(lvars[j].getElementName())) {
 								editor.setSelection(lvars[j]);

@@ -90,19 +90,20 @@ public class CarrierSetMasterSection
 		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new carrier Set", "set" + counter, null);
 		dialog.open();
 		String name = dialog.getValue();
-		try {
-			IInternalElement carrierSet = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
-			counter++;
-			this.getViewer().setInput(rodinFile);
-			this.getViewer().setSelection(new StructuredSelection(carrierSet));
-			this.markDirty();
-			((EventBFormPage) block.getPage()).notifyChangeListeners();
-			updateButtons();
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		dialog.close();
+		if (name != null)
+			try {
+				IInternalElement carrierSet = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
+				counter++;
+				this.getViewer().setInput(rodinFile);
+				this.getViewer().setSelection(new StructuredSelection(carrierSet));
+				this.markDirty();
+				((EventBFormPage) block.getPage()).notifyChangeListeners();
+				updateButtons();
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+//		dialog.close();
 	}
 	
 

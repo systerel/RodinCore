@@ -115,6 +115,7 @@ public class SeeSection
 						seen.delete(true, null);
 						seen = null;
 						markDirty();
+						page.notifyChangeListeners();
 					}
 					catch (RodinDBException exception) {
 						exception.printStackTrace();
@@ -216,11 +217,11 @@ public class SeeSection
 		else { // Change the element
 			try {
 				System.out.println("Change sees clause");
-				if (!(seen.getContents().equals(contextText.getText()))) {
+//				if (!(seen.getContents().equals(contextText.getText()))) {
 					seen.setContents(context);
 					markDirty();
 					page.notifyChangeListeners();
-				}
+//				}
 			}
 			catch (RodinDBException exception) {
 				exception.printStackTrace();
@@ -324,13 +325,16 @@ public class SeeSection
 			        Button button = new Button(composite, SWT.RADIO);
 			        button.setText(Utils.getFileNameWithoutExtension(contexts[i].getElementName()));
 			        button.addSelectionListener(new ButtonSelectionListener(button.getText()));
-			        try {
-			        	if (seen.getContents().equals(button.getText())) {
-			        		button.setSelection(true);
+			        if (seen != null) {
+			        	try {
+			        		if (seen.getContents().equals(button.getText())) {
+			        			button.setSelection(true);
+			        		}
 			        	}
-			        }
-			        catch (RodinDBException e) {
-			        	e.printStackTrace();
+			        	catch (RodinDBException e) {
+			        		// TODO Handle Exception
+			        		e.printStackTrace();
+			        	}
 			        }
 		        }
 	        }

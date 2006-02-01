@@ -77,7 +77,10 @@ public class EventBUIPlugin
 	/**
 	 * Default values for creating RODIN Elements 
 	 */
-	public static final String INV_DEFAULT = "⊤";
+	public static final String PRD_DEFAULT = "⊤";
+	public static final String INV_DEFAULT = PRD_DEFAULT;
+	public static final String AXM_DEFAULT = PRD_DEFAULT;
+	public static final String THM_DEFAULT = PRD_DEFAULT;
 	public static final String SUB_DEFAULT = "skip";
 	
 	// The shared instance.

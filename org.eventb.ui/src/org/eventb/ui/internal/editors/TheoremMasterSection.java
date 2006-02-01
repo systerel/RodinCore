@@ -21,6 +21,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
 import org.eventb.core.ITheorem;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.Utils.ElementLabelProvider;
 import org.eventb.ui.editors.EventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -81,17 +82,17 @@ public class TheoremMasterSection
 	public TheoremMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block);
-		if (parent instanceof IMachine)
+		if (rodinFile instanceof IMachine)
 			try {
-				counter = ((IMachine) parent).getTheorems().length;
+				counter = ((IMachine) rodinFile).getTheorems().length;
 			}
 			catch (RodinDBException e) {
 				// TODO Exception handle
 				e.printStackTrace();
 			}
-		if (parent instanceof IContext)
+		else if (rodinFile instanceof IContext)
 			try {
-				counter = ((IContext) parent).getTheorems().length;
+				counter = ((IContext) rodinFile).getTheorems().length;
 			}
 			catch (RodinDBException e) {
 				// TODO Exception handle
@@ -105,7 +106,8 @@ public class TheoremMasterSection
 	 */
 	protected void handleAdd() {
 		try {
-			IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thrm" + counter++, null, null);
+			IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm" + counter++, null, null);
+			theorem.setContents(EventBUIPlugin.THM_DEFAULT);
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(theorem));
 			this.markDirty();

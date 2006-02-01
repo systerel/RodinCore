@@ -160,6 +160,12 @@ public abstract class EventBMasterDetailsBlock
 	 * <p>
 	 * @param onSave <code>true</code> if the call is made from a save action 
 	 */
-	public abstract void doSave(boolean onSave);
+	public void doSave(boolean onSave) {
+		if (detailsPart != null) {
+			EventBDetailsSection page = ((EventBDetailsSection) this.detailsPart.getCurrentPage());
+			if (page != null) page.doSave(onSave);
+		}
+	}
+
 	
 }

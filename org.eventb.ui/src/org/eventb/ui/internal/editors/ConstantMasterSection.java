@@ -90,9 +90,9 @@ public class ConstantMasterSection
 		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new constant", "const" + counter, null);
 		dialog.open();
 		String name = dialog.getValue();
-		if (name != null) {
+		if (name != null) 
 			try {
-				IInternalElement constant = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
+				IInternalElement constant = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, "const" + counter, null, null);
 				counter++;
 				this.getViewer().setInput(rodinFile);
 				this.getViewer().setSelection(new StructuredSelection(constant));
@@ -103,7 +103,6 @@ public class ConstantMasterSection
 			catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-		}
 		dialog.close();
 	}
 	

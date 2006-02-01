@@ -74,7 +74,7 @@ public class TheoremsPage
 			composite.setLayout(layout);
 
 			// Axiom mirror section.
-			AxiomMirrorSection axiomMirrorSection = new AxiomMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+			AxiomMirrorSection axiomMirrorSection = new AxiomMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(axiomMirrorSection);
 			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
 			gd.heightHint = 200;
@@ -85,7 +85,7 @@ public class TheoremsPage
 			page.addChangedListener(axiomMirrorSection);
 			
 			// Theorem mirror section.
-			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(theoremMirrorSection);
 			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
 			gd.heightHint = 200;
@@ -96,7 +96,7 @@ public class TheoremsPage
 			page.addChangedListener(theoremMirrorSection);
 
 			// Carrier set mirror section.
-			CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+			CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(carrierSetMirrorSection);
 			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
 			gd.heightHint = 100;
@@ -105,7 +105,7 @@ public class TheoremsPage
 			page.addChangedListener(carrierSetMirrorSection);
 			
 			// Constant set mirror section.
-			ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+			ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(constantMirrorSection);
 			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
 			gd.heightHint = 100;

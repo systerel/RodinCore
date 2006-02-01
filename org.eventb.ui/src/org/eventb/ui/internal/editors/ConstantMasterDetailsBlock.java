@@ -73,13 +73,4 @@ public class ConstantMasterDetailsBlock
 		return;
 	}
 	
-
-	/**
-	 * Saving the information on the master detail block. 
-	 */
-	public void doSave(boolean onSave) {
-		if (detailsPart != null) 
-			((EventBDetailsSection) this.detailsPart.getCurrentPage()).doSave(onSave);
-	}
-
 }

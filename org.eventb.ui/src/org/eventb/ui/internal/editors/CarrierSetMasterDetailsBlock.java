@@ -77,13 +77,4 @@ public class CarrierSetMasterDetailsBlock
 		spart.setSelection(element);
 	}
 
-
-	/**
-	 * Saving the information on the master detail block. 
-	 */
-	public void doSave(boolean onSave) {
-		if (detailsPart != null) 
-			((EventBDetailsSection) this.detailsPart.getCurrentPage()).doSave(onSave);
-	}
-
 }

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -63,7 +64,7 @@ public abstract class EventBMirrorSection
      * @param rodinFile The Rodin File
      */
     public EventBMirrorSection(FormPage page, Composite parent, int style, String title, String description, IRodinFile rodinFile) {
-		super(parent, page.getManagedForm().getToolkit(), style);
+		super(parent, page.getManagedForm().getToolkit(), ExpandableComposite.TWISTIE | style);
 		this.page = page;
 		this.rodinFile = rodinFile;
 		FormToolkit toolkit = page.getManagedForm().getToolkit();

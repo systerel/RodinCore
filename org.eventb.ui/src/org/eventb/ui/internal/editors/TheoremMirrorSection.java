@@ -44,7 +44,7 @@ public class TheoremMirrorSection
      * @param page The Form Page that this mirror section belong to
      * @param parent The Composite parent 
      * @param style The style for the section
-     * @param rodinFile The Rodin File which the constants belong to
+     * @param rodinFile The Rodin File which the theorems belong to
      */
 	public TheoremMirrorSection(FormPage page, Composite parent, int style, IRodinFile rodinFile) {
 		super(page, parent, style, title, description, rodinFile);

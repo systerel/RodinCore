@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContext;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.Utils.ElementLabelProvider;
 import org.eventb.ui.editors.EventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -88,7 +89,8 @@ public class AxiomMasterSection
 	 */
 	protected void handleAdd() {
 		try {
-			IInternalElement axiom = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axiom"+ counter++, null, null);
+			IInternalElement axiom = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm"+ counter++, null, null);
+			axiom.setContents(EventBUIPlugin.AXM_DEFAULT);
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(axiom));
 			((EventBFormPage) block.getPage()).notifyChangeListeners();
