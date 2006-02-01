@@ -7,6 +7,7 @@ package org.eventb.core.ast;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.eventb.internal.core.parser.Lexer;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
@@ -814,5 +815,19 @@ public class FormulaFactory {
 	public PowerSetType makeRelationalType(Type left, Type right) {
 		return makePowerSetType(makeProductType(left, right));
 	}
-
+	
+	/**
+	 * Returns whether the given name is a valid identifier name (that is an
+	 * identifier name which is not used as a keyword in event-B concrete
+	 * syntax).
+	 * 
+	 * @param name
+	 *            the name to test
+	 * @return <code>true</code> if the given name is a valid name for an
+	 *         identifier
+	 */
+	public boolean isValidIdentifierName(String name) {
+		return Lexer.isValidIdentifierName(name);
+	}
+	
 }
