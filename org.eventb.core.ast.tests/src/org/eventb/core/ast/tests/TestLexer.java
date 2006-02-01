@@ -4,9 +4,14 @@
  */
 package org.eventb.core.ast.tests;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
@@ -95,7 +100,7 @@ public class TestLexer extends TestCase {
                 { ";"      			   			 },	// _FCOMP
                 { "," 	   			   			 },	// _COMMA
                 { "+" 	   			   			 },	// _PLUS
-                { "-" 	   			   			 },	// _MINUS
+                { "\u2212"   			   		 },	// _MINUS
                 { "\u00f7" 	   			   		 },	// _DIV
                 { "|", "\u2223"		   			 },	// _MID
                 { "~"	   			   			 },	// _CONVERSE
@@ -122,6 +127,10 @@ public class TestLexer extends TestCase {
                 { "2", "001"		   			 }	// _INTLIT
         };
         
+        private static final String[] invalidStrings = new String[] {
+        	"-",
+        };
+        
         /**
          * Tests all the tokens that are needed to construct an event-B formula.
          */
@@ -139,6 +148,25 @@ public class TestLexer extends TestCase {
         			assertEquals(str, t.val);
         			assertEquals(kind, t.kind);
         		}
+        	}
+        }
+
+        /**
+         * Ensure that invalid tokens get rejected.
+         */
+        public void testInvalidStrings() {
+        	FormulaFactory ff = FormulaFactory.getDefault();
+        	for (String string : invalidStrings) {
+    			final ParseResult result = new ParseResult(ff);
+    			Scanner scanner = new Scanner(string, result);
+    			Token t = scanner.Scan();
+    			assertTrue("Scanner should have succeeded", result.isSuccess());
+    			assertTrue(t.kind == 0);	// _EOF
+    			List<ASTProblem> problems = result.getProblems();
+    			assertEquals("Should get one problem", 1, problems.size());
+    			ASTProblem problem = problems.get(0);
+    			assertEquals("The problem should be a warning", ProblemSeverities.Warning, problem.getSeverity());
+    			assertEquals("The problem should be a lexer error", ProblemKind.LexerError, problem.getMessage());
         	}
         }
 }

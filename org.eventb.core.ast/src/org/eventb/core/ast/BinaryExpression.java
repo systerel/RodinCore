@@ -58,7 +58,7 @@ public class BinaryExpression extends Expression {
 		"\u25b7",  // RANRES
 		"\u2a65",  // RANSUB
 		"\u2025",  // UPTO
-		"-",       // MINUS
+		"\u2212",  // MINUS
 		"\u00f7",  // DIV
 		"mod",     // MOD
 		"\u005e",  // EXPN

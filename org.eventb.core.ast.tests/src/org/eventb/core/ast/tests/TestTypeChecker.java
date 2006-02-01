@@ -475,56 +475,56 @@ public class TestTypeChecker extends TestCase {
 							mList(INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("-x+y+z=a",
+			new TestItem("−x+y+z=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
 							mList(INTEGER, INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("x-y=a",
+			new TestItem("x−y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y"),
 							mList(INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("x-y-z=a",
+			new TestItem("x−y−z=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
 							mList(INTEGER, INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("-x-y=a",
+			new TestItem("−x−y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y"),
 							mList(INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("x-y+z-x=a",
+			new TestItem("x−y+z−x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
 							mList(INTEGER, INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("-x-y+z-x=a",
+			new TestItem("−x−y+z−x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
 							mList(INTEGER, INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("x+y-z+x=a",
+			new TestItem("x+y−z+x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
 							mList(INTEGER, INTEGER, INTEGER, INTEGER)
 					)
 			),
-			new TestItem("-x+y-z+x=a",
+			new TestItem("−x+y−z+x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x",    "y",    "z"),
@@ -1037,7 +1037,7 @@ public class TestTypeChecker extends TestCase {
 //			// UnBound
 //			new TestItem("finite(\u22c3x\u2223\u22a5)",
 //			
-//			new TestItem("finite(\u22c3y-x\u2223\u22a5)",
+//			new TestItem("finite(\u22c3y−x\u2223\u22a5)",
 //			
 //			
 //			// UnBound
@@ -1059,7 +1059,7 @@ public class TestTypeChecker extends TestCase {
 //			// UnBound
 //			new TestItem("finite(\u22c2x\u2223\u22a5)",
 //			
-//			new TestItem("finite(\u22c2y-x\u2223\u22a5)",
+//			new TestItem("finite(\u22c2y−x\u2223\u22a5)",
 //			
 			
 			// Special formulas

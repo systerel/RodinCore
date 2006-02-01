@@ -46,7 +46,7 @@ public class UnaryExpression extends Expression {
 		"min",    // KMIN
 		"max",    // KMAX
 		"~",      // CONVERSE
-		"-"       // UNMINUS
+		"\u2212"  // UNMINUS
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;

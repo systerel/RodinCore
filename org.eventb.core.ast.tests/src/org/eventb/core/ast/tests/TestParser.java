@@ -536,29 +536,29 @@ public class TestParser extends TestCase {
 					"x+y+z", 
 					mAssociativeExpression(Formula.PLUS, id_x, id_y, id_z) 
 			), new ExprTestPair(
-					"-x+y+z", 
+					"−x+y+z", 
 					mAssociativeExpression(Formula.PLUS, 
 							mUnaryExpression(Formula.UNMINUS, id_x), 
 							id_y, 
 							id_z
 					) 
 			), new ExprTestPair(
-					"x-y", 
+					"x−y", 
 					mBinaryExpression(Formula.MINUS, id_x, id_y) 
 			), new ExprTestPair(
-					"x-y-z", 
+					"x−y−z", 
 					mBinaryExpression(Formula.MINUS, 
 							mBinaryExpression(Formula.MINUS, id_x, id_y), 
 							id_z
 					) 
 			), new ExprTestPair(
-					"-x-y", 
+					"−x−y", 
 					mBinaryExpression(Formula.MINUS, 
 							mUnaryExpression(Formula.UNMINUS, id_x), 
 							id_y
 					) 
 			), new ExprTestPair(
-					"x-y+z-t", 
+					"x−y+z−t", 
 					mBinaryExpression(Formula.MINUS, 
 							mAssociativeExpression(Formula.PLUS, 
 									mBinaryExpression(Formula.MINUS, id_x, id_y), 
@@ -566,7 +566,7 @@ public class TestParser extends TestCase {
 							), id_t
 					) 
 			), new ExprTestPair(
-					"-x-y+z-t", 
+					"−x−y+z−t", 
 					mBinaryExpression(Formula.MINUS, 
 							mAssociativeExpression(Formula.PLUS, 
 									mBinaryExpression(Formula.MINUS, 
@@ -576,7 +576,7 @@ public class TestParser extends TestCase {
 							), id_t
 					) 
 			), new ExprTestPair(
-					"x+y-z+t", 
+					"x+y−z+t", 
 					mAssociativeExpression(Formula.PLUS, 
 							mBinaryExpression(Formula.MINUS, 
 									mAssociativeExpression(Formula.PLUS, id_x, id_y), 
@@ -584,7 +584,7 @@ public class TestParser extends TestCase {
 							), id_t
 					) 
 			), new ExprTestPair(
-					"-x+y-z+t", 
+					"−x+y−z+t", 
 					mAssociativeExpression(Formula.PLUS, 
 							mBinaryExpression(Formula.MINUS, 
 									mAssociativeExpression(Formula.PLUS, 
@@ -912,7 +912,7 @@ public class TestParser extends TestCase {
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c3 x-y \u2223\u22a5", 
+					"\u22c3 x−y \u2223\u22a5", 
 					mQuantifiedExpression(Formula.QUNION, Implicit,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MINUS, b1, b0)
@@ -962,7 +962,7 @@ public class TestParser extends TestCase {
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c2y-x\u2223\u22a5", 
+					"\u22c2y−x\u2223\u22a5", 
 					mQuantifiedExpression(Formula.QINTER, Implicit,
 							mList(bd_y, bd_x), bfalse, 
 							mBinaryExpression(Formula.MINUS, b1, b0)

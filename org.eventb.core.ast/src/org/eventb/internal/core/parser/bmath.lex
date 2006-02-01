@@ -27,7 +27,8 @@ import org.eventb.core.ast.SourceLocation;
 WhiteSpace = [:space:] | [\u0009-\u000d\u001c-\u001f]
 
 /* For identifiers, we have to take care of the lambda sign
-   which can not be part of them (contrary to Java). */
+ * which can not be part of them (contrary to Java).
+ */
 Identifier =  !(![:jletter:] | "\u03bb") (!(![:jletterdigit:] | "\u03bb"))*
 IntegerLiteral = [:digit:]([:digit:])*
 Prime = "'"
@@ -111,7 +112,7 @@ FullStop = "." | "\u2024"
 ";"                   { return symbol(Parser._FCOMP); }
 ","                   { return symbol(Parser._COMMA); }
 "+"                   { return symbol(Parser._PLUS); }
-"-"                   { return symbol(Parser._MINUS); }
+"\u2212"              { return symbol(Parser._MINUS); }
 "\u00f7"			  { return symbol(Parser._DIV); }
 "|"                   |
 "\u2223"              { return symbol(Parser._MID); }
