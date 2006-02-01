@@ -49,9 +49,6 @@ public class SourceLocation {
 		return end;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SourceLocation) {
@@ -59,5 +56,10 @@ public class SourceLocation {
 			return temp.end == end && temp.start == start;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return start + ":" + end;
 	}
 }
