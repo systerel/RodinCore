@@ -38,9 +38,10 @@ public class Context extends RodinFile implements IContext {
 		IRodinElement[] deps;
 		deps = this.getChildrenOfType(IDependency.ELEMENT_TYPE);
 		IContext[] result = new IContext[deps.length];
+		final IRodinProject rodinProject = getRodinProject();
 		for (int i = 0; i < deps.length; i++) {
 			String depName = deps[i].getElementName();
-			result[i] = (IContext) getRodinProject().getRodinFile(depName + ".ctx");
+			result[i] = (IContext) rodinProject.getRodinFile(depName + ".ctx");
 		}
 		return result;
 	}

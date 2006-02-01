@@ -56,14 +56,88 @@ public class BuilderTest extends AbstractBuilderTest {
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(null);
+		ToolTrace.flush();
 
 		ctx.delete(true, null);
 		runBuilder(
 				"SC clean /P/x.csc"
 		);
 	}
+	
+	/**
+	 * Ensures dependency is followed if source of dependency is created before target 
+	 */
+	public void testOneTwoCreate() throws Exception {
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		ToolTrace.flush();
+		createData(ctx, "one");
+		ctx.save(null, true);
+		runBuilder(null);
 		
-//			TODO encode tests below with the database. 
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		runBuilder(
+				"SC extract /P/x.ctx\n" +
+				"SC run /P/x.csc\n" +
+				"SC extract /P/y.ctx\n" +
+				"SC run /P/y.csc"
+		);
+	}
+
+	/**
+	 * Ensures dependency is followed if target of dependency is created before source 
+	 */
+	public void testTwoOneCreate() throws Exception {
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		runBuilder(null);
+
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		
+		runBuilder(
+				"SC extract /P/x.ctx\n" +
+				"SC run /P/x.csc\n" +
+				"SC extract /P/y.ctx\n" +
+				"SC run /P/y.csc"
+		);
+	}
+	
+	/**
+	 * Ensures dependency is followed transitively
+	 */
+	public void testOneTwoThreeCreateChange() throws Exception {
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		runBuilder(null);
+		
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		
+		IRodinFile ctz = createRodinFile("P/z.ctx");
+		createDependency(ctz, "y");
+		createData(ctz, "three");
+		ctz.save(null, true);
+	
+		runBuilder(
+				"SC extract /P/x.ctx\n" +
+				"SC run /P/x.csc\n" +
+				"SC extract /P/y.ctx\n" +
+				"SC run /P/y.csc\n" +
+				"SC extract /P/z.ctx\n" +
+				"SC run /P/z.csc"
+		);
+	}
+	
+//			TODO enco/**
 //			
 //			IRodinElement[] tops = obj.getChildren();
 //			assertEquals("Checked context should contain one element.")
@@ -107,7 +181,7 @@ public class BuilderTest extends AbstractBuilderTest {
 //			assertEquals("CONTEXT three REFINES one LOCAL three GLOBAL three one", contents);
 //		}
 //		if (DEBUG)
-//			System.out.println("Change file two.ctx");
+//			System.out.println("Change file two./**
 //		{
 //			String twoContents =
 //				"CONTEXT two " +
