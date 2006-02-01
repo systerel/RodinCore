@@ -82,7 +82,8 @@ public class CarrierSetMasterDetailsBlock
 	 * Saving the information on the master detail block. 
 	 */
 	public void doSave(boolean onSave) {
-		// TODO Commit the information on the action detail pages
+		if (detailsPart != null) 
+			((EventBDetailsSection) this.detailsPart.getCurrentPage()).doSave(onSave);
 	}
 
 }

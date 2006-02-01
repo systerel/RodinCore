@@ -81,7 +81,7 @@ public class NameInputRow
 						for (i = 0; i < children.length; i++) {
 							if (children[i].getElementName().equals(name)) {
 								page.setInput((IInternalElement) children[i]);
-								break;
+								System.out.println("New element " + children[i].getElementName() + " with content " + ((IInternalElement) children[i]).getContents());								break;
 							}
 						}
 						if (i == children.length) {
@@ -91,7 +91,7 @@ public class NameInputRow
 						if (masterPart instanceof EventBTablePartWithButtons) {
 							System.out.println("Master refresh");
 							((EventBTablePartWithButtons) masterPart).commit();
-							//((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
+//							((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
 						}
 						else if (masterPart instanceof EventBTreePartWithButtons) {
 							System.out.println("Master refresh");
@@ -121,5 +121,9 @@ public class NameInputRow
 	 */
 	protected IEventBInputText createEventBInputText(Composite parent, FormToolkit toolkit, int style) {
 		return new EventBText(parent, toolkit, style);
+	}
+	
+	protected void update() {
+		setText();
 	}
 }

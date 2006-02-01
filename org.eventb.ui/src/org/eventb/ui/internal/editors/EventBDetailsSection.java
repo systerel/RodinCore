@@ -128,4 +128,9 @@ public abstract class EventBDetailsSection
 		this.input = input;
 	}
 
+	protected void update() {
+		for (int i = 0; i < rows.size(); i++) {
+			((EventBInputRow) rows.get(i)).update();
+		}
+	}
 }

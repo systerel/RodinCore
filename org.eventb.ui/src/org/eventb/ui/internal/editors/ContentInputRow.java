@@ -114,4 +114,7 @@ public class ContentInputRow
 		return new EventBMath(parent, toolkit, style);
 	}
 
+	protected void update() {
+		setText();
+	}
 }

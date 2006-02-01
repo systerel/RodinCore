@@ -216,12 +216,16 @@ public class EventBEditor
 		try {
 			// TODO Commit the information in the UI to the database
 			// clear the dirty state on all the pages
+			System.out.println("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
-						fpage.doSave(monitor);
+						if (fpage.isDirty()) {
+							System.out.println("Saving " + fpage.toString());
+							fpage.doSave(monitor);
+						}
 					}
 				}
 			}

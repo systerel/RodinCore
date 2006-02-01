@@ -79,9 +79,8 @@ public class InvariantMasterDetailsBlock
 	 * Saving the information on the master detail block. 
 	 */
 	public void doSave(boolean onSave) {
-		// TODO Commit the information on the action detail pages
-		System.out.println("Saving " + this.toString());
-		if (detailsPart != null) this.detailsPart.commit(onSave);
+		if (detailsPart != null) 
+			((EventBDetailsSection) this.detailsPart.getCurrentPage()).doSave(onSave);
 	}
 
 }

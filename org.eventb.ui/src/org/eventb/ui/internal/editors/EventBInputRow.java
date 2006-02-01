@@ -110,5 +110,7 @@ public abstract class EventBInputRow
 	 * Commiting the changes.
 	 */
 	public abstract void commit();
+	
+	protected abstract void update();
 
 }

@@ -371,6 +371,7 @@ public abstract class EventBTablePartWithButtons
 	 */
 	public void commit() {
 		this.getViewer().setInput(rodinFile);
+		this.getViewer().refresh();
 		updateButtons();
 		this.markDirty();
 		((EventBFormPage) block.getPage()).notifyChangeListeners();

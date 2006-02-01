@@ -223,7 +223,6 @@ public class ProjectExplorerContentProvider
 	 * Return the list of children for a particular parent.
 	 */
 	public Object [] getChildren(Object parent) {
-		System.out.println("Get children for " + parent);
 		if (parent instanceof IMachine) {
 			IMachine mch = (IMachine) parent;
 			if (elementsMap.containsKey(mch)) {
