@@ -19,6 +19,7 @@ public class BuilderTest extends AbstractBuilderTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
+		ToolTrace.flush();
 	}
 	
 	protected void tearDown() throws Exception {
@@ -69,7 +70,7 @@ public class BuilderTest extends AbstractBuilderTest {
 	 */
 	public void testOneTwoCreate() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
-		ToolTrace.flush();
+//		ToolTrace.flush();
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(null);
@@ -101,9 +102,9 @@ public class BuilderTest extends AbstractBuilderTest {
 		ctx.save(null, true);
 		
 		runBuilder(
+				"SC extract /P/y.ctx\n" +
 				"SC extract /P/x.ctx\n" +
 				"SC run /P/x.csc\n" +
-				"SC extract /P/y.ctx\n" +
 				"SC run /P/y.csc"
 		);
 	}
@@ -132,6 +133,33 @@ public class BuilderTest extends AbstractBuilderTest {
 				"SC run /P/x.csc\n" +
 				"SC extract /P/y.ctx\n" +
 				"SC run /P/y.csc\n" +
+				"SC extract /P/z.ctx\n" +
+				"SC run /P/z.csc"
+		);
+	}
+	
+	/**
+	 * Ensures cycles are ignored
+	 */
+	public void testOneTwoThreeCreateCycle() throws Exception {
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createDependency(ctx, "y");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		runBuilder(null);
+		
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		
+		IRodinFile ctz = createRodinFile("P/z.ctx");
+		createData(ctz, "three");
+		ctz.save(null, true);
+	
+		runBuilder(
+				"SC extract /P/x.ctx\n" +
+				"SC extract /P/y.ctx\n" +
 				"SC extract /P/z.ctx\n" +
 				"SC run /P/z.csc"
 		);

@@ -1,11 +1,16 @@
 package org.rodinp.core.tests.builder;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -30,13 +35,15 @@ public class SCTool implements IExtractor, IAutomaticTool {
 			file.delete(true, monitor);
 	}
 	
-	private void copyDataElements(IContext ctx, ISCContext target) throws RodinDBException {
+	private void copyDataElements(IRodinFile ctx, ISCContext target) throws RodinDBException {
+		System.out.println("Copying " + ctx.getElementName() + " -> " + target.getElementName() + " ...");
 		IRodinElement[] datas = ctx.getChildrenOfType(IData.ELEMENT_TYPE);
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
 			IData copy = (IData) target.createInternalElement(IData.ELEMENT_TYPE, null, null, null);
 			copy.setContents(data.getContents());
 		}
+		System.out.println("Copying " + ctx.getElementName() + " -> " + target.getElementName() + " done.");
 	}
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
@@ -45,16 +52,24 @@ public class SCTool implements IExtractor, IAutomaticTool {
 		IContext ctx = (IContext) RodinCore.create(file);
 		
 		ISCContext sctx = ctx.getCheckedVersion();
-		IPath scPath = sctx.getPath();
+		IPath scPath = sctx.getResource().getFullPath();
 		if (! graph.containsNode(scPath)) {
 			graph.addNode(scPath, SC_ID);
-			graph.addToolDependency(ctx.getPath(), scPath, SC_ID, true);
+			graph.addToolDependency(ctx.getResource().getFullPath(), scPath, SC_ID, true);
 		}
 		
-		graph.removeDependencies(scPath, SC_XID);
+		HashSet<IPath> oldSources = new HashSet<IPath>(Arrays.asList(graph.getDependencies(scPath, SC_XID)));
+		HashSet<IPath> newSources = new HashSet<IPath>(oldSources.size() * 4 / 3 + 1);
+//		graph.removeDependencies(scPath, SC_XID);
 		for (IContext usedContext: ctx.getUsedContexts()) {
-			graph.addUserDependency(ctx.getPath(), usedContext.getPath(), scPath, SC_XID, false);
+			IPath source = usedContext.getCheckedVersion().getResource().getFullPath();
+			oldSources.remove(source);
+			newSources.add(source);
 		}
+		if(!oldSources.isEmpty())
+			graph.removeDependencies(scPath, SC_XID);
+		for (IPath path : newSources)
+			graph.addUserDependency(ctx.getResource().getFullPath(), path, scPath, SC_XID, false);;
 	}
 	
 	public boolean run(IFile file, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
@@ -67,12 +82,12 @@ public class SCTool implements IExtractor, IAutomaticTool {
 		if (target.exists()) {
 			target.delete(true, null);
 		}
-		target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		target = (ISCContext) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);
 		for (IContext usedContext: ctx.getUsedContexts()) {
-			copyDataElements(usedContext, target);
+			copyDataElements(usedContext.getCheckedVersion(), target);
 		}
 		
 		target.save(null, true);
