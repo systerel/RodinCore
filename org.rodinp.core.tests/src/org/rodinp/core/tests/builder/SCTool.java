@@ -1,7 +1,6 @@
 package org.rodinp.core.tests.builder;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -20,6 +19,8 @@ import org.rodinp.core.builder.IInterrupt;
 
 public class SCTool implements IExtractor, IAutomaticTool {
 	
+	private static boolean DEBUG = false;
+	
 	// TODO see meaning of SC_XID.
 	
 	// Id of this tool
@@ -36,14 +37,18 @@ public class SCTool implements IExtractor, IAutomaticTool {
 	}
 	
 	private void copyDataElements(IRodinFile ctx, ISCContext target) throws RodinDBException {
-		System.out.println("Copying " + ctx.getElementName() + " -> " + target.getElementName() + " ...");
+		if (DEBUG)
+			System.out.println("Copying " + ctx.getElementName() +
+					" -> " + target.getElementName() + " ...");
 		IRodinElement[] datas = ctx.getChildrenOfType(IData.ELEMENT_TYPE);
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
 			IData copy = (IData) target.createInternalElement(IData.ELEMENT_TYPE, null, null, null);
 			copy.setContents(data.getContents());
 		}
-		System.out.println("Copying " + ctx.getElementName() + " -> " + target.getElementName() + " done.");
+		if (DEBUG)
+			System.out.println("Copying " + ctx.getElementName() +
+					" -> " + target.getElementName() + " done.");
 	}
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
