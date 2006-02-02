@@ -509,6 +509,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		createNewFormulas(scMachine, machineCache.getNewTheorems());
 		
 		createEvents();
+		
+		scMachine.save(monitor, true);
 	}
 	
 	String getCorrespondingElementType(String type) {

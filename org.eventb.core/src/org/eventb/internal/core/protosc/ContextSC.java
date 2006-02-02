@@ -294,7 +294,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		createFormulas(scContext, contextCache.getNewAxioms());
 		createFormulas(scContext, contextCache.getNewTheorems());
 		
-//		scContext.save(null, true);
+		scContext.save(monitor, true);
 	}
 	
 	private void createFormulas(IInternalParent parent, Collection<? extends IInternalElement> elements) throws RodinDBException {
