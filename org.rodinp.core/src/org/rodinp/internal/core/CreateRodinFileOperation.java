@@ -123,8 +123,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 	}
 
 	protected RodinFile getRodinFile() {
-		return ((RodinProject) getParentElement())
-				.getRodinFile(name);
+		return ((RodinProject) getParentElement()).getRodinFile(name);
 	}
 
 	@Override
