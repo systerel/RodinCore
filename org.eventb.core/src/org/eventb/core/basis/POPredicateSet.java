@@ -52,6 +52,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	}
 	
 	public IPOPredicateSet getPredicateSet() throws RodinDBException {
+		if (getContents().equals("")) return null;
 		IPOPredicateSet sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
 	
 		return sup;
