@@ -261,12 +261,38 @@ public class ProjectExplorerContentProvider
 			}
 		}
 							
+		if (parent instanceof IRodinProject) {
+			// TODO Using better way to merge 2 arrays
+			IRodinProject prj = (IRodinProject) parent;
+			try {
+				IRodinElement [] machines = prj.getChildrenOfType(IMachine.ELEMENT_TYPE);
+				IRodinElement [] contexts = prj.getChildrenOfType(IContext.ELEMENT_TYPE);
+				
+				IRodinElement [] results = new IRodinElement[machines.length + contexts.length];
+				
+				System.arraycopy(machines, 0, results, 0, machines.length);
+				System.arraycopy(contexts, 0, results, machines.length, contexts.length);
+
+//				for (int i = 0; i < machines.length; i++) {
+//					results[i] = machines[i];
+//				}
+//				for (int i = machines.length; i < machines.length+contexts.length; i++) {
+//					results[i] = contexts[i - machines.length];
+//				}
+				return results;
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		try {
 			if (parent instanceof IParent) {
 				return ((IParent) parent).getChildren();
 			}
 		}
 		catch (RodinDBException e) {
+			// TODO Handle Exception
 			e.printStackTrace();
 		}
 
