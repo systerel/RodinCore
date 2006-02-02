@@ -262,12 +262,15 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 */
 	protected void createFile(IContainer folder, String name, InputStream contents, boolean forceFlag) throws RodinDBException {
 		IFile file= folder.getFile(new Path(name));
+		final int updateFlags =
+			forceFlag ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY;
 		try {
-			file.create(
-				contents, 
-				forceFlag ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
-				getSubProgressMonitor(1));
+			if (file.exists()) {
+				file.setContents(contents, updateFlags, getSubProgressMonitor(1));
+			} else {
+				file.create(contents, updateFlags, getSubProgressMonitor(1));
 				this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE); 
+			}
 		} catch (CoreException e) {
 			throw new RodinDBException(e);
 		}

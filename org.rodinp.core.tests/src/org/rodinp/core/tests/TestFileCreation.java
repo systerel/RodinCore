@@ -124,6 +124,29 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
+	// Test creation of a Rodin file through the Rodin API, when the file exists already
+	public void testCreateExistingRodinFile() throws CoreException, RodinDBException{
+		assertTrue(rodinProject.exists());
+		
+		// Check project is empty
+		assertEquals("Empty project", 0, rodinProject.getChildren().length);
+		
+		// Create one Rodin file handle
+		IRodinFile rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		assertTrue(rodinFile.exists());
+		
+		// Create the same Rodin file again
+		IRodinFile rodinFile2 = rodinProject.createRodinFile("toto.test", true, null);
+		assertTrue(rodinFile2.exists());
+		assertEquals(rodinFile, rodinFile2);
+		
+		// Then delete it
+		rodinFile.getResource().delete(true, null);
+		assertFalse(rodinFile.exists());
+		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
+	}
+
 	// Test creation of a non-Rodin file
 	public void testCreateNonRodinFile() throws CoreException, RodinDBException{
 		assertTrue(rodinProject.exists());
