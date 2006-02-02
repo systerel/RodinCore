@@ -59,15 +59,15 @@ public class SCParser {
 					return true;
 				} else {
 					// TODO: proper error messages
-					problemList.addProblem(element, "Type error.", SCProblem.SEVERITY_ERROR);
+					problemList.addProblem(element, "Type error: " + typeCheckResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 				}
 			} else {
 				// TODO: proper error messages
-				problemList.addProblem(element, "Legibility error.", SCProblem.SEVERITY_ERROR);
+				problemList.addProblem(element, "Legibility error: " + legibilityResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 			}
 		} else {
 			// TODO: proper error messages
-			problemList.addProblem(element, "Syntax error.", SCProblem.SEVERITY_ERROR);
+			problemList.addProblem(element, "Syntax error: " + parseLexResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 		}
 		return false;
 	}
@@ -91,15 +91,15 @@ public class SCParser {
 					return true;
 				} else {
 					// TODO: proper error messages
-					problemList.addProblem(element, "Type error.", SCProblem.SEVERITY_ERROR);
+					problemList.addProblem(element, "Type error: " + typeCheckResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 				}
 			} else {
 				// TODO: proper error messages
-				problemList.addProblem(element, "Legibility error.", SCProblem.SEVERITY_ERROR);
+				problemList.addProblem(element, "Legibility error: " + legibilityResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 			}
 		} else {
 			// TODO: proper error messages
-			problemList.addProblem(element, "Syntax error.", SCProblem.SEVERITY_ERROR);
+			problemList.addProblem(element, "Syntax error: " + parseLexResult.getProblems().get(0).toString(), SCProblem.SEVERITY_ERROR);
 		}
 		return false;
 	}
