@@ -157,7 +157,14 @@ public class Node implements Serializable {
 	protected int getInCount() {
 		return totalCount;
 	}
+	
+	protected boolean isDerived() {
+		return producerId != null && !producerId.equals("");
+	}
 
+	protected boolean isNotDerived() {
+		return producerId == null || producerId.equals("");
+	}
 
 	protected void setProducerId(String tool) {
 		this.producerId = tool;
@@ -167,9 +174,21 @@ public class Node implements Serializable {
 		return producerId;
 	}
 	
+	// after removal of a node node from the graph
+	// the successors of the node must be recreated;
+	// this requires also recreating the origin of the
+	// outgoing edges of the node! 
 	protected void markSuccessorsDated() {
 		for(Node suc : succNodes) {
 			suc.setDated(true);
+			suc.markOriginDated(this);
+		}
+	}
+	
+	private void markOriginDated(Node node) {
+		for(Link link : pred) {
+			if(link.source == node && link.origin != null)
+				link.origin.setDated(true);
 		}
 	}
 	
@@ -219,7 +238,10 @@ public class Node implements Serializable {
 	}
 	
 	protected String printNode() {
-		String res = name  + (isDated() ? "[D]" : "[N]") + " :";
+		String res = name  + "[";
+		res += isDated() ? "D" : "N";
+		res += isPhantom() ? "-P" : "-N";
+		res += "] :";
 		for(Node node : succNodes) {
 			res = res + " " + node.name;
 		}
@@ -270,6 +292,14 @@ public class Node implements Serializable {
 					System.out.println(getClass().getName() + ": File not found: " + link.origin.getName()); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	protected boolean dependsOnPhantom() {
+		for(Link link : pred) {
+			if(link.source.isPhantom())
+				return true;
+		}
+		return false;
 	}
 	
 	/**

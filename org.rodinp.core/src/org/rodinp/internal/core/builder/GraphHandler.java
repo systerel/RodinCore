@@ -47,6 +47,7 @@ public class GraphHandler implements IGraph {
 			graph.incN();
 		} else if(node.isPhantom()) {
 			node.setProducerId(producerId);
+			node.setDated(true);
 			node.setPhantom(false);
 		} else
 			node.setProducerId(producerId);
@@ -72,7 +73,7 @@ public class GraphHandler implements IGraph {
 		
 		if( notCurrentEqualsSource || nodeIsSuccessor || nodeIsRoot) {
 			node.markSuccessorsDated();
-			graph.removeOneNode(node);
+			graph.tryRemoveNode(node);
 			graph.decN();
 			
 			// this could be optimized by checking if node.count < node.totalCount
@@ -125,12 +126,14 @@ public class GraphHandler implements IGraph {
 		if(sourceNode == null) {
 			sourceNode = new Node();
 			sourceNode.setPath(source);
+			sourceNode.setDated(false);
 			sourceNode.setPhantom(true);
 			graph.addNodeToGraph(sourceNode);
 		}
 		if(targetNode == null) {
 			targetNode = new Node();
 			targetNode.setPath(target);
+			targetNode.setDated(false);
 			targetNode.setPhantom(true);
 			graph.addNodeToGraph(targetNode);
 		}

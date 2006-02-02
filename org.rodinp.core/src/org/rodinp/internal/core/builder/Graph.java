@@ -100,7 +100,7 @@ public class Graph implements Serializable {
 	}
 		
 	private void runTool(Node node, IInterrupt interrupt, IProgressMonitor monitor) {
-		if(node.isPhantom())
+		if(node.isPhantom() || node.dependsOnPhantom())
 			return;
 		String toolName = node.getProducerId();
 		IFile file = node.getFile();
@@ -193,13 +193,26 @@ public class Graph implements Serializable {
 	 * This is an optimized version for node removal during sorting without cache invalidation
 	 * @param node The node to be removed
 	 */
-	protected void removeOneNode(Node node) {
-		removeNode(node);
-		if(node.done)
-			nodePreList.remove(node);
-		else
-			nodePostList.remove(node);
-		nodeCache.remove(node.getPath());
+	protected void tryRemoveNode(Node node) {
+		if (node.succSize() > 0) {
+			node.setDated(false);
+			node.setPhantom(true);
+		} else {
+			removeNode(node);
+			if (node.done)
+				nodePreList.remove(node);
+			else
+				nodePostList.remove(node);
+			nodeCache.remove(node.getPath());
+		}
+	}
+	
+	public void removePhantoms() {
+		Collection<Node> values = new ArrayList<Node>(nodes.values());
+		for(Node node : values) {
+			if(node.isPhantom() && node.succSize() == 0)
+				removeNode(node);
+		}
 	}
 	
 	public void addNodeToGraph(Node node) {
@@ -216,7 +229,7 @@ public class Graph implements Serializable {
 			if(!n.done) {
 				removeNode(n);
 				try {
-					clean(n, interrupt, monitor);
+					cleanNode(n, interrupt, monitor);
 				} catch(CoreException e) {
 					if(RodinBuilder.DEBUG)
 						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
@@ -226,10 +239,9 @@ public class Graph implements Serializable {
 		initCaches();
 	}
 	
-	private void clean(Node node, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
-		String toolName = node.getProducerId();
+	private void cleanNode(Node node, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
 		node.setDated(true);
-		if(toolName == null || toolName.equals("")) //$NON-NLS-1$
+		if(node.isNotDerived())
 			return;
 		IAutomaticTool tool = getManager().getTool(node.getProducerId());
 		tool.clean(node.getFile(), interrupt, monitor);
@@ -240,18 +252,21 @@ public class Graph implements Serializable {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node node : values) {
 			try {
-				clean(node, interrupt, monitor);
+				cleanNode(node, interrupt, monitor);
+				if(node.isDerived()) //$NON-NLS-1$
+					tryRemoveNode(node);
+				
 			} catch(CoreException e) {
 				if (vStats == null)
 					vStats= new ArrayList<IStatus>();
 				vStats.add(e.getStatus());
 			}
 		}
-		for(Node node : values) {
-			String toolName = node.getProducerId();
-			if(toolName != null && !toolName.equals("")) //$NON-NLS-1$
-				removeNode(node);
-		}
+//		for(Node node : values) {
+//			String toolName = node.getProducerId();
+//			if(toolName != null && !toolName.equals("")) //$NON-NLS-1$
+//				removeNode(node);
+//		}
 		initCaches();
 		if (vStats != null) {
 			IStatus[] stats= new IStatus[vStats.size()];
@@ -318,8 +333,9 @@ public class Graph implements Serializable {
 					System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
 				continue;
 			}
-			commit();
+			commit(interrupt, monitor);
 		}
+		removePhantoms();
 	}
 	
 	private void topSortNodes(LinkedList<Node> sorted, boolean run, boolean toolLinks, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
@@ -383,7 +399,7 @@ public class Graph implements Serializable {
 		}
 	}
 	
-	private void commit() throws CoreException {
+	private void commit(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
 		// the purpose of this method is analyze the cycles more closely
 		// in order to avoid faulty error messages. In particular, when
 		// an error message is shown to the user, the user should be responsible
@@ -431,7 +447,7 @@ public class Graph implements Serializable {
 		// if spurious is empty everything is ok from the point of view of the tools:
 		// it's the user's fault!
 		LinkedList<Node> spurious = new LinkedList<Node>();
-		topSortNodes(spurious, false, false, null, null);
+		topSortNodes(spurious, false, false, interrupt, monitor);
 		
 		// print to error console all spurious errors
 		if(spurious.size() > 0)
