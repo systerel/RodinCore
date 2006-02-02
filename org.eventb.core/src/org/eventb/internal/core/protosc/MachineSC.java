@@ -108,10 +108,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
-//		file.delete(true, monitor); // dangerous ?
-		
 		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
-//		newSCMachine.open(monitor);
+		newSCMachine.getRodinProject().createRodinFile(newSCMachine.getElementName(), true, null);
 		
 		// TODO: the explicit file extension should be replaced by a request to the content type manager
 		IFile machineFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("bum"));
@@ -172,7 +170,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		commitTheorems();
 		commitEvents();
 		
-//		createCheckedMachine();
+		createCheckedMachine();
 		
 		issueProblems(machine);
 	}
@@ -272,7 +270,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	private void commitLocalVariables(IEvent event, HashMap<String, IVariable> committedVariables) throws RodinDBException {
 		List<IMachineRule> rules = ruleBase.getLocalVariableRules();
-		String name = event.getElementName();
+//		String name = event.getElementName();
 		for(IVariable variable : machineCache.getVariables(event)) {
 			boolean verified = true;
 			for(IMachineRule rule : rules) {

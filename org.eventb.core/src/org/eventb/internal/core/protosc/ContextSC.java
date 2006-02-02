@@ -90,11 +90,9 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			System.out.println(getClass().getName() + " running.");
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		
-//		file.delete(true, monitor); // dangerous ?
-		
+				
 		ISCContext newSCContext = (ISCContext) RodinCore.create(file);
-//		newSCContext.open(monitor);
+		newSCContext.getRodinProject().createRodinFile(newSCContext.getElementName(), true, null);
 		
 		// TODO: the explicit file extension should be replaced by a request to the content type manager
 		IFile contextFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("buc"));
@@ -147,7 +145,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		retractUntypedConstants();
 		commitTheorems();
 		
-//		createCheckedContext();
+		createCheckedContext();
 		
 		issueProblems(context);
 	}
@@ -296,6 +294,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		createFormulas(scContext, contextCache.getNewAxioms());
 		createFormulas(scContext, contextCache.getNewTheorems());
 		
+//		scContext.save(null, true);
 	}
 	
 	private void createFormulas(IInternalParent parent, Collection<? extends IInternalElement> elements) throws RodinDBException {

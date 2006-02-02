@@ -34,7 +34,7 @@ import org.rodinp.core.IUnnamedInternalElement;
  */
 public class CommonSC implements ISCProblemList {
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	protected LinkedList<SCProblem> problems;
 	
