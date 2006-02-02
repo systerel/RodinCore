@@ -66,6 +66,8 @@ public class CommonSC implements ISCProblemList {
 		String result = elementType.substring(elementType.lastIndexOf('.')+1);
 		if(element instanceof IUnnamedInternalElement)
 			result = result + " in " + printElement(element.getParent());
+		else if(!(element.getParent() instanceof IRodinFile))
+			result = result + " " + ((IInternalElement) element).getElementName() + " in " + printElement(element.getParent());
 		else if(element instanceof IInternalElement)
 			result = result + " " + ((IInternalElement) element).getElementName(); 
 		return result;
