@@ -10,6 +10,16 @@ package org.rodinp.core.builder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * @author Stefan Hallerstede
+ * 
+ * This interface is used by the extractors registers with the builder
+ * to manipulate the dependency graph of all Rodin resources of a Rodin
+ * project.
+ * 
+ * @see org.rodinp.core.builder.IExtractor
+ *
+ */
 public interface IGraph {
 
 	/**

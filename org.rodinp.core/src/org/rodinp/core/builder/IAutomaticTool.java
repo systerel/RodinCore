@@ -12,10 +12,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
- * A tool must register an extractor <code>IExtractor</code> and a producer <code>IProducer</code>.
- * A producer is the actual tool to be run, whereas the extractor specifies when it is to be run.
+ * A tool must register an extractor <code>IExtractor</code> and a tool <code>IAutomaticTool</code>.
+ * An automatic tool is the actual tool to be run, whereas the extractor specifies when it is to be run.
  * A tool must react to cancellation requests from a progress monitor and to interrupt requests.
  * The builder may or may not accept a completed operation in either case, but it should be assumed
  * that the entire work of the tool will be discarded.
@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <li> "run": the tool produces some target file "file" </li>
  * <li> "clean": the tool deletes some target file "file" </li>
  * </ul>
+ * 
+ * @see org.rodinp.core.builder.IExtractor
  */
 public interface IAutomaticTool {
 	

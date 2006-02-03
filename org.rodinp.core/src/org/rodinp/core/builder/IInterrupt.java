@@ -7,6 +7,17 @@
  *******************************************************************************/
 package org.rodinp.core.builder;
 
+/**
+ * @author Stefan Hallerstede
+ * 
+ * Interface used with tools to signal
+ * an interrupt request. <code>isInterrupted()</code>
+ * should be polled regularly. If its value is true
+ * the tool will be re-run in any case.
+ * 
+ * @see org.rodinp.core.builder.IAutomaticTool
+ *
+ */
 public interface IInterrupt {
 
 	boolean isInterrupted();

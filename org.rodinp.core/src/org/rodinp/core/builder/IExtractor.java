@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.CoreException;
 
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
- * A tool must register an extractor <code>IExtractor</code> and a producer <code>IProducer</code>.
+ * A tool must register an extractor <code>IExtractor</code> and a tool <code>IAutomaticTool</code>.
  * The extractor links the file to be produced ("the target") to its sources, i.e. the files on which it depends.
  * An extractor can work in two ways. A link from a source to the target is called a dependency.
  * <ul>
@@ -25,10 +25,12 @@ import org.eclipse.core.runtime.CoreException;
  * </ul>
  * Dependencies are distinguished by whether they have been in some way be provided by the user
  * or they are required by some installed tool (i.e. once the tool is installed the user cannot
- * control presence or absence of these dependencies. The interface <code> IGraph </code> 
+ * control presence or absence of these dependencies. The interface <code>IGraph</code> 
  * enforces this distinction. At runtime it is important to achieve a better error analysis
  * in case there are cycles in the dependency graph. The main aim is to avoid bogus error 
  * messages to the user in situations where the user cannot correct a cyclicity problem.
+ * 
+ * @see org.rodinp.core.builder.IAutomaticTool
  */
 public interface IExtractor {
 	
