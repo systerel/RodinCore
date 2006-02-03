@@ -11,7 +11,12 @@ package org.eventb.core;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for Event-B statically checked (SC) machines.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface ISCMachine extends IMachine {

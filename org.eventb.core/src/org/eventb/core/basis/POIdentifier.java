@@ -13,12 +13,18 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
- * @author halstefa
- * 
- * A type expression is a pair (NAME, EXPR).
+ * Implementation of Event-B PO typed identifier as an extension of the Rodin database.
  * <p>
- * It defines a type with name NAME and described by expression EXPR.
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
  * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>IPOIdentifier</code>.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public class POIdentifier extends InternalElement implements IPOIdentifier {

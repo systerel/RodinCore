@@ -9,12 +9,22 @@ package org.eventb.core.basis;
 
 import org.eventb.core.IPOPredicate;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Implementation of Event-B PO predicate as an extension of the Rodin database.
+ * <p>
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
+ * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>IPOPredicate</code>.
+ * </p>
  *
- * A predicate has a name associated as its attribute 
- * and the "predicate value" in the contents. 
+ * @author Stefan Hallerstede
+ *
  */
 public class POPredicate extends POAnyPredicate implements IPOPredicate {
 
@@ -24,6 +34,10 @@ public class POPredicate extends POAnyPredicate implements IPOPredicate {
 	
 	public String getName() {
 		return null;
+	}
+
+	public String getPredicate() throws RodinDBException {
+		return getContents();
 	}
 
 }

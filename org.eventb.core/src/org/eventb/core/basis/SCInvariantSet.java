@@ -17,7 +17,18 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
- * @author halstefa
+ * Implementation of Event-B SC invariant set as an extension of the Rodin database.
+ * <p>
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
+ * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>ISCInvariantSet</code>.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public class SCInvariantSet extends InternalElement implements ISCInvariantSet {

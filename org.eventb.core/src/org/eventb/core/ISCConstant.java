@@ -8,12 +8,24 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.RodinDBException;
+
 /**
- * @author halstefa
+ * Common protocol for constants in Event-B statically checked (SC) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * <p>
+ * Statically constants have a name <code>getName()</code>
+ * and a type <code>getType()</code>.
+ * </p>
+ * @author Stefan Hallerstede
  *
  */
 public interface ISCConstant extends IConstant {
 	
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scConstant"; //$NON-NLS-1$
+	public String getName();
+	public String getType() throws RodinDBException;
 
 }

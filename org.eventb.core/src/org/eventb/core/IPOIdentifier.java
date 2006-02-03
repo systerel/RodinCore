@@ -12,7 +12,17 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for typed identifiers in Event-B Proof Obligation (PO) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * <p>
+ * A type expression is a pair (NAME, EXPR).
+ * It defines a type with name NAME <code>getName</code> and 
+ * described by expression EXPR <code>getType()</code>.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface IPOIdentifier extends IInternalElement {

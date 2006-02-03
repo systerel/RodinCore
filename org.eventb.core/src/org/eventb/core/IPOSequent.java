@@ -12,7 +12,23 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for proof obligations in Event-B Proof Obligation (PO) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * <p>
+ * A sequent is a tuple (NAME, TYPE_ENV, HYP, GOAL, HINTS)
+ * <ul>
+ * <li>The name (NAME) identifies uniquely a sequent (resp. proof obligation) in a PO file.</li>
+ * <li>The type environment (TYPE_ENV) specifies type of identifiers local to the sequent.
+ * (The type environment is contained in the sequent in form of POTypeExpressions.)</li>
+ * <li>There is one hypothesis (HYP) in the sequent. It is of type POHypothesis.</li>
+ * <li>There is one goal (GOAL) in the sequent. It is a POPredicate or a POModifiedPredicate.</li>
+ * <li>Hints (HINTS) are associated with a sequent in form of attributes.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface IPOSequent extends IInternalElement {

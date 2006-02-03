@@ -11,10 +11,16 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  * 
- * Abstract class to represent POPredicates and POPredicateForms uniformly
+ * Abstract class to represent @link org.eventb.core.basis.POPredicate 
+ * and @link org.eventb.core.basis.POModifiedPredicate uniformly
  *
+ * <p>
+ * This class is not intended to be implemented by clients.
+ * Please, extend the classes @link org.eventb.core.IPOPredicate
+ * and @link org.eventb.core.IPOModifiedPredicate.
+ * </p>
  */
 public abstract class POAnyPredicate extends UnnamedInternalElement {
 

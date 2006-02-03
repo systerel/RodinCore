@@ -11,7 +11,12 @@ import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for sees relationships in Event-B machines.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface ISees extends IUnnamedInternalElement {

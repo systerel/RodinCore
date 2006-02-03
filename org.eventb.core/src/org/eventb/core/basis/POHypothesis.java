@@ -20,14 +20,19 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
- * @author halstefa
- * 
- * A Hypothesis is a pair (GOBAL_HYP, LOCAL_HYP)
+ * Implementation of Event-B PO hypothesis as an extension of the Rodin database.
  * <p>
- * The contents of the hypothesis is a reference to a predicate set (GLOBAL_HYP).
- * The children of the hypothesis are the local hypotheses (LOCAL_HYP).
- * The children are of either of type POPredicate or POModifiedPredicate.
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
  * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>IPOHypothesis</code>.
+ * </p>
+ *
+ * @author Stefan Hallerstede
+ * 
  */
 public class POHypothesis extends UnnamedInternalElement implements IPOHypothesis {
 

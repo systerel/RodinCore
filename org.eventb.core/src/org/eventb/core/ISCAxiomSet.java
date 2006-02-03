@@ -12,12 +12,18 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
- *
+ * Common protocol for axiom sets in Event-B statically checked (SC) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * <p>
  * An axiom set contains axioms of abstractions of a context, or
  * of seen contexts (and their abstractions). Element names of axioms
  * are not unique in an axiom set. The origin of an axiom can be determined
  * by a corresponding attribute.
+ * </p>
+ * @author Stefan Hallerstede
+ *
  */
 public interface ISCAxiomSet extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiomSet"; //$NON-NLS-1$

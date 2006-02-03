@@ -14,13 +14,18 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
- * @author halstefa
+ * Implementation of Event-B PO modified predicate as an extension of the Rodin database.
+ * <p>
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
+ * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>IPOModifiedPredicate</code>.
+ * </p>
  *
- * A predicate form is a predicate to be substituted.
- * It is described by a pair (SUBST, PRED).
- * It consists of a substitution SUBST and
- * a predicate or predicate form PRED.
- * SUBST is stored in the contents and PRED is the only child.
+ * @author Stefan Hallerstede
  *
  */
 public class POModifiedPredicate extends UnnamedInternalElement implements IPOModifiedPredicate {

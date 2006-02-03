@@ -12,7 +12,16 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for predicate sets in Event-B Proof Obligation (PO) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * <p>
+ * A predicate set consists of predicates <code>getPredicates()</code> and perhaps a predicate set 
+ * <code>getPredicateSet</code> whose name is stored in the contents field.
+ * If the contents equals the empty string there is no contained predicate set.
+ * </p>
+ * @author Stefan Hallerstede
  *
  */
 public interface IPOPredicateSet extends IInternalElement {

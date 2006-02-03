@@ -11,9 +11,16 @@ package org.eventb.core;
 import org.rodinp.core.IUnnamedInternalElement;
 
 /**
+ * Common protocol for predicates in Event-B PO files.
+ * This interface unifies access to @link org.eventb.core.IPOPredicate 
+ * and @link org.eventb.core.IPOModifiedPredicate.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
  * @author halstefa
  *
  */
 public interface IPOAnyPredicate extends IUnnamedInternalElement {
-	// This interface unifies access to IPOPredicate and IPOModifiedPredicate
+	// marker interface
 }

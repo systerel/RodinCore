@@ -17,12 +17,18 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
- * @author halstefa
- * 
- * A predicate set consists of predicates and perhaps a predicate set 
- * whose name is stored in the contents field.
- * Note, that predicates can be identified by their NAME attributes.
- * if the contents equals the empty string there is no contained predicate set.
+ * Implementation of Event-B PO predicate set as an extension of the Rodin database.
+ * <p>
+ * This class is intended to be implemented by clients that want to extend this
+ * internal element type.
+ * </p>
+ * <p>
+ * This class should not be used in any other way than subclassing it
+ * in a database extension. In particular, clients should not use it,
+ * but rather use its associated interface <code>IPOPredicateSet</code>.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public class POPredicateSet extends InternalElement implements IPOPredicateSet {

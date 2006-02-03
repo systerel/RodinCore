@@ -12,7 +12,12 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for Event-B Proof Obligation (PO) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface IPOFile extends IRodinFile {

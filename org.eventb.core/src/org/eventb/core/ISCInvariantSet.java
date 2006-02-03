@@ -12,7 +12,12 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author halstefa
+ * Common protocol for invariant sets in Event-B statically checked (SC) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * @author Stefan Hallerstede
  *
  */
 public interface ISCInvariantSet extends IInternalElement {
