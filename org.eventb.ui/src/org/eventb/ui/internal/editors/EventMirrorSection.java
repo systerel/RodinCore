@@ -11,6 +11,8 @@
 
 package org.eventb.ui.internal.editors;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -163,6 +165,25 @@ public class EventMirrorSection
 				}				
 			}
 		});
+	}
+	
+	
+	@Override
+	protected void expansionStateChanging(boolean expanding) {
+		if (expanding) {
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd.heightHint = 200;
+			gd.minimumHeight = 150;
+			gd.widthHint = 200;
+			this.getSection().setLayoutData(gd);
+		}
+		else {
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+			gd.heightHint = 0;
+			gd.widthHint = 200;
+			this.getSection().setLayoutData(gd);
+		}
+		super.expansionStateChanging(expanding);
 	}
 	
 }

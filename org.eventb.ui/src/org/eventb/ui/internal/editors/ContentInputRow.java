@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.ui.editors.EventBMath;
 import org.eventb.ui.editors.IEventBInputText;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IUnnamedInternalElement;

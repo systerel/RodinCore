@@ -71,9 +71,9 @@ public class AxiomsPage
 		// Axiom mirror section
 		AxiomMirrorSection axiomMirrorSection = new AxiomMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(axiomMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
-		gd.minimumHeight = 200;
+		gd.minimumHeight = 150;
 		gd.widthHint = 200;
 		axiomMirrorSection.getSection().setLayoutData(gd);
 		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
@@ -82,9 +82,9 @@ public class AxiomsPage
 		// Theorem mirror section
 		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(theoremMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
-		gd.minimumHeight = 200;
+		gd.minimumHeight = 150;
 		gd.widthHint = 200;
 		theoremMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
@@ -93,8 +93,10 @@ public class AxiomsPage
 		// Carrier Set mirror section
 		CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(carrierSetMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
+		gd.minimumHeight = 50;
+		gd.widthHint = 200;
 		carrierSetMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(CarrierSetsPage.PAGE_ID);
 		page.addChangedListener(carrierSetMirrorSection);
@@ -102,8 +104,10 @@ public class AxiomsPage
 		// Constant mirror section
 		ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(constantMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
+		gd.minimumHeight = 50;
+		gd.widthHint = 200;
 		constantMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(ConstantsPage.PAGE_ID);
 		page.addChangedListener(constantMirrorSection);

@@ -65,20 +65,20 @@ public class TheoremsPage
 		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput();
 	
 		if (rodinFile instanceof IContext) {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		    
 			Composite composite = managedForm.getToolkit().createComposite(body);
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			composite.setLayoutData(gd);
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
+			layout.makeColumnsEqualWidth = true;
 			composite.setLayout(layout);
 
 			// Axiom mirror section.
 			AxiomMirrorSection axiomMirrorSection = new AxiomMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(axiomMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 200;
-			gd.minimumHeight = 200;
+			gd.minimumHeight = 150;
 			gd.widthHint = 200;
 			axiomMirrorSection.getSection().setLayoutData(gd);
 			EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
@@ -87,9 +87,9 @@ public class TheoremsPage
 			// Theorem mirror section.
 			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(theoremMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 200;
-			gd.minimumHeight = 200;
+			gd.minimumHeight = 150;
 			gd.widthHint = 200;
 			theoremMirrorSection.getSection().setLayoutData(gd);
 			page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
@@ -98,8 +98,10 @@ public class TheoremsPage
 			// Carrier set mirror section.
 			CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(carrierSetMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 100;
+			gd.minimumHeight = 50;
+			gd.widthHint = 200;
 			carrierSetMirrorSection.getSection().setLayoutData(gd);
 			page = (EventBFormPage) this.getEditor().findPage(CarrierSetsPage.PAGE_ID);
 			page.addChangedListener(carrierSetMirrorSection);
@@ -107,8 +109,10 @@ public class TheoremsPage
 			// Constant set mirror section.
 			ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
 			managedForm.addPart(constantMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_BEGINNING);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 100;
+			gd.minimumHeight = 50;
+			gd.widthHint = 200;
 			constantMirrorSection.getSection().setLayoutData(gd);
 			page = (EventBFormPage) this.getEditor().findPage(ConstantsPage.PAGE_ID);
 			page.addChangedListener(constantMirrorSection);
@@ -120,29 +124,30 @@ public class TheoremsPage
 			composite.setLayoutData(gd);
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
+			layout.makeColumnsEqualWidth = true;
 			composite.setLayout(layout);
 			
 			// Invariant mirror section.
 			InvariantMirrorSection invariantMirrorSection = new InvariantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 			managedForm.addPart(invariantMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 200;
-			gd.minimumHeight = 200;
+			gd.minimumHeight = 150;
 			gd.widthHint = 200;
 			invariantMirrorSection.getSection().setLayoutData(gd);
 			EventBFormPage page = (EventBFormPage) this.getEditor().findPage(InvariantsPage.PAGE_ID);
 			page.addChangedListener(invariantMirrorSection);
 
-			// Invariant mirror section.
-			EventMirrorSection eventMirrorSection = new EventMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-			managedForm.addPart(eventMirrorSection);
-			gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+			// Theorem mirror section.
+			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
+			managedForm.addPart(theoremMirrorSection);
+			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 200;
-			gd.minimumHeight = 200;
+			gd.minimumHeight = 150;
 			gd.widthHint = 200;
-			eventMirrorSection.getSection().setLayoutData(gd);
-			page = (EventBFormPage) this.getEditor().findPage(EventsPage.PAGE_ID);
-			page.addChangedListener(eventMirrorSection);
+			theoremMirrorSection.getSection().setLayoutData(gd);
+			page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
+			page.addChangedListener(theoremMirrorSection);
 		}	
 	}
 	

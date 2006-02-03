@@ -72,9 +72,9 @@ public class InvariantsPage
 		// Invariant mirror section.
 		InvariantMirrorSection invariantMirrorSection = new InvariantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(invariantMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
-		gd.minimumHeight = 200;
+		gd.minimumHeight = 150;
 		gd.widthHint = 200;
 		invariantMirrorSection.getSection().setLayoutData(gd);
 		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(InvariantsPage.PAGE_ID);
@@ -83,11 +83,12 @@ public class InvariantsPage
 		// Event mirror section.
 		EventMirrorSection eventMirrorSection = new EventMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
 		managedForm.addPart(eventMirrorSection);
-		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
-		gd.minimumHeight = 200;
+		gd.minimumHeight = 150;
 		gd.widthHint = 200;
 		eventMirrorSection.getSection().setLayoutData(gd);
+		
 		page = (EventBFormPage) this.getEditor().findPage(EventsPage.PAGE_ID);
 		page.addChangedListener(eventMirrorSection);
 	}
