@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.ui.EventBImageDescriptor;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.ProverUI;
 import org.eventb.ui.wizards.NewConstructWizard;
