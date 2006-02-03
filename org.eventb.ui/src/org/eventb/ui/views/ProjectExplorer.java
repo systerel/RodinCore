@@ -45,6 +45,8 @@ import org.eventb.ui.editors.EventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -124,6 +126,12 @@ public class ProjectExplorer
 			if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
 				return Utils.getFileNameWithoutExtension(name);
+			}
+			try {
+				if (obj instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) obj).getContents();
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
 			}
 			if (obj instanceof IRodinElement) return ((IRodinElement) obj).getElementName();
 			return obj.toString();
