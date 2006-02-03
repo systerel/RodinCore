@@ -29,7 +29,28 @@ import org.rodinp.internal.core.util.Util;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
+ * Class <code>Graph</code> keeps the dependency graph of a Rodin project.
+ * It implements methods for adding and removing nodes, <code>addNodeToGraph()</code> and
+ * <code>removeNodeFromGraph</code>.
+ * <p>
+ * Removing a node from the graph is not straightforward because it has two semantics
+ * depending on what kind of node is to removed.
+ * <ul>
+ * <li>If the node represents a derived resource, i.e. created by a tool, it can not
+ * simply be removed and unlinked from the graph because this could invalidate the graph.
+ * Instead, such nodes are turned into phantoms, if other nodes denpend on them. There
+ * is a separate step <code>removePhantoms</code> that will eventually remove all phantom nodes.
+ * </li>
+ * <li>
+ * If a not is not derived, then it can only be deleted on request of the user.
+ * So it is removed permanently from the graph including all nodes derived from it.
+ * Whether the resources corresponding to the files are deleted depends on the
+ * implementation of the <code>clean()</code> method provided for that resource
+ * (@see org.rodinp.core.builder.IAutomaticTool).
+ * </li>
+ * </ul>
+ * </p>
  */
 public class Graph implements Serializable {
 	
@@ -184,7 +205,7 @@ public class Graph implements Serializable {
 		}
 	}
 	
-	protected void removeNode(Node node) {
+	private void removeNode(Node node) {
 		node.unlink();
 		nodes.remove(node.getName());
 	}
@@ -315,6 +336,20 @@ public class Graph implements Serializable {
 		instable = false;
 	}
 
+	/**
+	 * This method implements the incremental build for Rodin projects.
+	 * The building process terminates when all tools (@see IAutomaticTool) have run
+	 * and the the graph is stable. As dependencies are added, changed, or removed during the build,
+	 * it can happen that the build would have been started with wrong dependencies, hence,
+	 * the topological order would be invalid for the Rodin project. In this case
+	 * the build is restarted, recreating all derived resources that may have been invalidated.
+	 * @param interrupt
+	 * 		The interrupt request
+	 * @param monitor
+	 * 		The progress monitor to use
+	 * @throws CoreException
+	 * 		If any problem occurred during build.
+	 */
 	public void buildGraph(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
 		if(RodinBuilder.DEBUG)
 			System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$

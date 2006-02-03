@@ -115,7 +115,7 @@ public class BuildState {
 		oos.writeObject(graph);
 
 		if (RodinBuilder.DEBUG)
-			System.out.println("Successfully writen builder state for " + projectName); //$NON-NLS-1$
+			System.out.println("Successfully written builder state for " + projectName); //$NON-NLS-1$
 	}
 	
 }
