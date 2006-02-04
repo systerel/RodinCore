@@ -4,12 +4,14 @@
 	</description>
 	<!-- set global properties for this build -->
 	<property name="src" location="src" />
+	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
+
 	<property name="test" location="test" />
 	<property name="tools" location="tools" />
 	<property name="javadoc" location="javadoc" />
 	<property name="coco-home" location="${tools}/Coco-R" />
 	<property name="jflex-home" location="${tools}/jflex" />
-	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
+	<property name="tom-home" location="${tools}/jtom-2.1" />
 	
 	<property name="lexerSrcDir" location="${src}/org/eventb/internal/core/parser" />
 	<eclipse.convertPath fileSystemPath="${lexerSrcDir}" property="lexerSrcPath"/>
@@ -76,9 +78,22 @@
 	<target name="tom" depends="init,tom-test"
 		description="launch tom"
 		unless="tom.notRequired" >
-		<exec executable="${tools}/jtom-2.1/bin/tom">
-			<arg line="-o ${unifierSrcDir}/TypeUnifier.java -p ${unifierSrcDir}/TypeUnifier.t" />
-		</exec>
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+			<arg value="-I" />
+			<arg value="${tom-home}/share/jtom" />
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="-o" />
+			<arg value="${unifierSrcDir}/TypeUnifier.java" />
+			<arg value="-p" />
+			<arg value="${unifierSrcDir}/TypeUnifier.t" />
+		</java>
 		<eclipse.refreshLocal resource="${unifierSrcPath}" depth="one"/>
 	</target>
 
