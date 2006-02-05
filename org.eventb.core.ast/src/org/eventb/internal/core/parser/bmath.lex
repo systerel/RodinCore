@@ -61,11 +61,14 @@ FullStop = "." | "\u2024"
 "]"                   { return symbol(Parser._RBRACKET); }
 "{"                   { return symbol(Parser._LBRACE); }
 "}"                   { return symbol(Parser._RBRACE); }
+";"                   { return symbol(Parser._FCOMP); }
+","                   { return symbol(Parser._COMMA); }
+"+"                   { return symbol(Parser._PLUS); }
 "\u005e"              { return symbol(Parser._EXPN); }
 "\u00ac"              { return symbol(Parser._NOT); }
 "\u00d7"              { return symbol(Parser._CPROD); }
+"\u00f7"			  { return symbol(Parser._DIV); }
 "\u03bb"              { return symbol(Parser._LAMBDA); }
-{FullStop} {FullStop} |
 "\u2025"              { return symbol(Parser._UPTO); }
 "\u2115"              { return symbol(Parser._NATURAL); }
 "\u2115" "1"          { return symbol(Parser._NATURAL1); }
@@ -85,26 +88,25 @@ FullStop = "." | "\u2024"
 "\u2205"              { return symbol(Parser._EMPTYSET); }
 "\u2208"              { return symbol(Parser._IN); }
 "\u2209"              { return symbol(Parser._NOTIN); }
-"\\"                  |
+"\u2212"              { return symbol(Parser._MINUS); }
 "\u2216"              { return symbol(Parser._SETMINUS); }
-"*"                   |
 "\u2217"              { return symbol(Parser._MUL); }
 "\u2218"              { return symbol(Parser._BCOMP); }
+"\u2223"              { return symbol(Parser._MID); }
 "\u2225"              { return symbol(Parser._PPROD); }
 "\u2227"              { return symbol(Parser._LAND); }
 "\u2228"              { return symbol(Parser._LOR); }
 "\u2229"              { return symbol(Parser._BINTER); }
 "\u222a"              { return symbol(Parser._BUNION); }
+"\u223c"              { return symbol(Parser._CONVERSE); }
 "\u2254"			  { return symbol(Parser._BECEQ); }
 ":\u2208"			  { return symbol(Parser._BECMO); }
-":|"				  { return symbol(Parser._BECST); }
+":\u2223"			  { return symbol(Parser._BECST); }
 "="                   { return symbol(Parser._EQUAL); }
 "\u2260"              { return symbol(Parser._NOTEQUAL); }
 "<"                   { return symbol(Parser._LT); }
-"<="                  |
 "\u2264"              { return symbol(Parser._LE); }
 ">"                   { return symbol(Parser._GT); }
-">="                  |
 "\u2265"              { return symbol(Parser._GE); }
 "\u2282"              { return symbol(Parser._SUBSET); }
 "\u2284"              { return symbol(Parser._NOTSUBSET); }
@@ -115,8 +117,7 @@ FullStop = "." | "\u2024"
 "\u22a5"              { return symbol(Parser._BFALSE); }
 "\u22c2"              { return symbol(Parser._QINTER); }
 "\u22c3"              { return symbol(Parser._QUNION); }
-"\u00b7"			  |
-"\u22c5"              { return symbol(Parser._QDOT); }
+"\u00b7"			  { return symbol(Parser._QDOT); }
 "\u25b7"              { return symbol(Parser._RANRES); }
 "\u25c1"              { return symbol(Parser._DOMRES); }
 "\u2900"              { return symbol(Parser._PSUR); }
@@ -128,36 +129,34 @@ FullStop = "." | "\u2024"
 "\ue101"              { return symbol(Parser._SREL); }
 "\ue102"              { return symbol(Parser._STREL); }
 "\ue103"              { return symbol(Parser._OVR); }
-";"                   { return symbol(Parser._FCOMP); }
-","                   { return symbol(Parser._COMMA); }
-"+"                   { return symbol(Parser._PLUS); }
-"\u2212"              { return symbol(Parser._MINUS); }
-"\u00f7"			  { return symbol(Parser._DIV); }
-"|"                   |
-"\u2223"              { return symbol(Parser._MID); }
-"~"                   { return symbol(Parser._CONVERSE); }
 "BOOL"                { return symbol(Parser._BOOL); }
-"TRUE"                { return symbol(Parser._TRUE); }
 "FALSE"               { return symbol(Parser._FALSE); }
-"pred"                { return symbol(Parser._KPRED); }
-"succ"                { return symbol(Parser._KSUCC); }
-"mod"                 { return symbol(Parser._MOD); }
+"TRUE"                { return symbol(Parser._TRUE); }
 "bool"                { return symbol(Parser._KBOOL); }
 "card"                { return symbol(Parser._KCARD); }
-"union"               { return symbol(Parser._KUNION); }
-"inter"               { return symbol(Parser._KINTER); }
 "dom"                 { return symbol(Parser._KDOM); }
-"ran"                 { return symbol(Parser._KRAN); }
-"id"                  { return symbol(Parser._KID); }
 "finite"              { return symbol(Parser._KFINITE); }
+"id"                  { return symbol(Parser._KID); }
+"inter"               { return symbol(Parser._KINTER); }
+"max"                 { return symbol(Parser._KMAX); }
+"min"                 { return symbol(Parser._KMIN); }
+"mod"                 { return symbol(Parser._MOD); }
+"pred"                { return symbol(Parser._KPRED); }
 "prj1"                { return symbol(Parser._KPRJ1); }
 "prj2"                { return symbol(Parser._KPRJ2); }
-"min"                 { return symbol(Parser._KMIN); }
-"max"                 { return symbol(Parser._KMAX); }
+"ran"                 { return symbol(Parser._KRAN); }
+"succ"                { return symbol(Parser._KSUCC); }
+"union"               { return symbol(Parser._KUNION); }
 {FullStop}            { return symbol(Parser._DOT); }
 {Identifier}{Prime}?  { return symbol(Parser._IDENT); }
 {IntegerLiteral}      { return symbol(Parser._INTLIT); }
 {WhiteSpace}+         { /* ignore */ }
 <<EOF>>               { return symbol(Parser._EOF); }
-.                     { result.addProblem(new ASTProblem(new SourceLocation(yychar, yychar), ProblemKind.LexerError, ProblemSeverities.Warning, yytext())); 
-}
+.                     { result.addProblem(
+							new ASTProblem(
+								new SourceLocation(yychar, yychar), 
+								ProblemKind.LexerError, 
+								ProblemSeverities.Warning, 
+								yytext()
+						));
+					  }

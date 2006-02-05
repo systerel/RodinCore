@@ -45,7 +45,7 @@ public class UnaryExpression extends Expression {
 		"id",     // KID
 		"min",    // KMIN
 		"max",    // KMAX
-		"~",      // CONVERSE
+		"\u223c", // CONVERSE
 		"\u2212"  // UNMINUS
 	};
 	// For testing purposes

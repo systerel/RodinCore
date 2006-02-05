@@ -42,24 +42,24 @@ public class TestDeBruijn extends TestCase {
 
 	TestItem[] testItems = new TestItem[]{
 			new TestItem(
-					"finite(\u03bb x \u21a6 (y \u21a6 s) \u22c5 \u22a5 \u2223 z)",
-					"finite({ x, y, s \u22c5 \u22a5 \u2223 (x \u21a6 (y \u21a6 s)) \u21a6 z})"
+					"finite(\u03bb x \u21a6 (y \u21a6 s) \u00b7 \u22a5 \u2223 z)",
+					"finite({ x, y, s \u00b7 \u22a5 \u2223 (x \u21a6 (y \u21a6 s)) \u21a6 z})"
 			),
 			new TestItem(
-					"finite(\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223 1)",
-					"finite({x, y, s\u22c5\u22a5\u2223(x\u21a6(y\u21a6s))\u21a6 1})",
+					"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223 1)",
+					"finite({x, y, s\u00b7\u22a5\u2223(x\u21a6(y\u21a6s))\u21a6 1})",
 					"finite({(x\u21a6(y\u21a6s))\u21a6 1\u2223\u22a5})"
 			),
 			new TestItem(
-					"finite(\u22c3x,y\u22c5\u22a5\u2223x+y)",
+					"finite(\u22c3x,y\u00b7\u22a5\u2223x+y)",
 					"finite(\u22c3x+y\u2223\u22a5)"
 			),
 			new TestItem(
-					"finite(\u22c2x,y\u22c5\u22a5\u2223x+y)",
+					"finite(\u22c2x,y\u00b7\u22a5\u2223x+y)",
 					"finite(\u22c2x+y\u2223\u22a5)"
 			),
 			new TestItem(
-					"finite({x,y\u22c5\u22a5\u2223x+y})",
+					"finite({x,y\u00b7\u22a5\u2223x+y})",
 					"finite({x+y\u2223\u22a5})"
 			),
 	};

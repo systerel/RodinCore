@@ -59,7 +59,7 @@ public class QuantifiedExpression extends Expression {
 		 */
 		Implicit,
 		/**
-		 * Formula is in its explicit for (i.e. { L \u22c5 P | E } where L
+		 * Formula is in its explicit for (i.e. { L \u00b7 P | E } where L
 		 * is a list of identifier, E is an expression and P is a predicate.)
 		 */
 		Explicit
@@ -300,7 +300,7 @@ public class QuantifiedExpression extends Expression {
 		StringBuffer str = new StringBuffer();
 		str.append("\u03bb");
 		str.append(leftExprString);
-		str.append("\u22c5");
+		str.append("\u00b7");
 		str.append(getPredString(parenthesized, boundNames));
 		str.append(" \u2223 ");
 		str.append(rightExprString);
@@ -333,7 +333,7 @@ public class QuantifiedExpression extends Expression {
 			str.append(tags[getTag()-firstTag]);
 		}
 		str.append(getBoundIdentifiersString(localNames));
-		str.append("\u22c5");
+		str.append("\u00b7");
 		str.append(getPredString(parenthesized, boundNames));
 		str.append(" \u2223 ");
 		str.append(getExprString(parenthesized, boundNames));

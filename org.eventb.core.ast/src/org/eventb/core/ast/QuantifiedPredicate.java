@@ -115,7 +115,7 @@ public class QuantifiedPredicate extends Predicate {
 		// put parentheses when parent is : Formula.NOT
 		StringBuffer str = new StringBuffer();
 		str.append(tags[getTag()-firstTag]+getBoundIdentifiersString(localNames));
-		str.append("\u22c5"+pred.toString(false, getTag(), newBoundNames));
+		str.append("\u00b7"+pred.toString(false, getTag(), newBoundNames));
 		if (parenthesesMap.get(parentTag)) {
 			return "("+str.toString()+")";
 		}		
@@ -134,7 +134,7 @@ public class QuantifiedPredicate extends Predicate {
 		// creating output string
 		StringBuffer str = new StringBuffer();
 		str.append(tags[getTag()-firstTag]+getBoundIdentifiersString(localNames));
-		str.append("\u22c5"+"("+pred.toStringFullyParenthesized(newBoundNames)+")");
+		str.append("\u00b7"+"("+pred.toStringFullyParenthesized(newBoundNames)+")");
 		return str.toString();
 	}
 

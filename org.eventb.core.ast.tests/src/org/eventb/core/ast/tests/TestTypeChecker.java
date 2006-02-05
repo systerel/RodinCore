@@ -91,7 +91,7 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment()
 			),
 			
-			new TestItem("M = {A | A \u2209 A}",
+			new TestItem("M = {A \u2223 A \u2209 A}",
 					mTypeEnvironment(),
 					null
 			),
@@ -136,7 +136,7 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x"), mList(INTEGER))
 			),
-			new TestItem("x<=x",
+			new TestItem("x≤x",
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x"), mList(INTEGER))
 			),
@@ -144,7 +144,7 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(mList("x"), mList(BOOL)),
 					null
 			),
-			new TestItem("x>=x",
+			new TestItem("x≥x",
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x"), mList(INTEGER))
 			),
@@ -216,32 +216,32 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment()
 			),
 			// Predicate + IdentList + Quantifier
-			new TestItem("\u2200x\u22c5\u22a5",
+			new TestItem("\u2200x\u00b7\u22a5",
 					mTypeEnvironment(),
 					null
 			),
 			// Bound variable "x" has a different type from free variable "x"
-			new TestItem("\u2200 x \u22c5 x \u2208 \u2124",
+			new TestItem("\u2200 x \u00b7 x \u2208 \u2124",
 					mTypeEnvironment(mList("x"), mList(BOOL)),
 					mTypeEnvironment()
 			),
-			new TestItem("\u2203 x \u22c5 x \u2208 \u2124",
+			new TestItem("\u2203 x \u00b7 x \u2208 \u2124",
 					mTypeEnvironment(mList("x"), mList(BOOL)),
 					mTypeEnvironment()
 			),
-			new TestItem("\u2200 x,y,z \u22c5 \u22a5",
+			new TestItem("\u2200 x,y,z \u00b7 \u22a5",
 					mTypeEnvironment(mList("x", "y", "z"), mList(BOOL, BOOL, BOOL)),
 					null
 			),
-			new TestItem("\u2200 x,y \u22c5 x ∈ y ∧ y ⊆ ℤ",
+			new TestItem("\u2200 x,y \u00b7 x ∈ y ∧ y ⊆ ℤ",
 					mTypeEnvironment(mList("x"), mList(BOOL)),  // Not used.
 					mTypeEnvironment()
 			),
-			new TestItem("\u2203 x,y,z \u22c5 x ∈ y ∧ x ∈ z ∧ z ⊆ S",
+			new TestItem("\u2203 x,y,z \u00b7 x ∈ y ∧ x ∈ z ∧ z ⊆ S",
 					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
 					mTypeEnvironment()
 			),
-			new TestItem("\u2200 x,y \u22c5 \u2200 s,t \u22c5 x ∈ s ∧ y ∈ t ∧ s ∩ t ⊆ S",
+			new TestItem("\u2200 x,y \u00b7 \u2200 s,t \u00b7 x ∈ s ∧ y ∈ t ∧ s ∩ t ⊆ S",
 					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
 					mTypeEnvironment()
 			),
@@ -319,19 +319,19 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_S,ty_S))))
 			),
-			new TestItem("{x,y\u22c5\u22a5\u2223z}=a",
+			new TestItem("{x,y\u00b7\u22a5\u2223z}=a",
 					mTypeEnvironment(),
 					null
 			),
-			new TestItem("{x,y\u22c5\u22a5\u2223z}=a",
+			new TestItem("{x,y\u00b7\u22a5\u2223z}=a",
 					mTypeEnvironment(mList("z"), mList(INTEGER)),
 					null
 			),
-			new TestItem("{x \u22c5 x ∈ z \u2223 z}=a",
+			new TestItem("{x \u00b7 x ∈ z \u2223 z}=a",
 					mTypeEnvironment(mList("a"), mList(POW(POW(BOOL)))),
 					mTypeEnvironment(mList("z"), mList(POW(BOOL)))
 			),
-			new TestItem("{x \u22c5 \u22a5 \u2223 x}=a",
+			new TestItem("{x \u00b7 \u22a5 \u2223 x}=a",
 					mTypeEnvironment(mList("a"), mList(POW(INTEGER))),
 					mTypeEnvironment()
 			),
@@ -392,7 +392,7 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(mList("x"), mList(INTEGER))
 			),
 			// Primary
-			new TestItem("x~=y",
+			new TestItem("x\u223c=y",
 					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(BOOL,INTEGER))))
 			),
@@ -432,14 +432,14 @@ public class TestTypeChecker extends TestCase {
 			),
 			
 			// Term
-			new TestItem("x*x=a",
+			new TestItem("x\u2217x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",    "x"),
 							mList(INTEGER, INTEGER)
 					)
 			),			
-			new TestItem("x*x*x=a",
+			new TestItem("x\u2217x\u2217x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a", 	   "x"	),
@@ -532,7 +532,7 @@ public class TestTypeChecker extends TestCase {
 					)
 			),
 			// IntervalExpr
-			new TestItem("x..y=a",
+			new TestItem("x\u2025y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("a",         "x",    "y"),
@@ -599,7 +599,7 @@ public class TestTypeChecker extends TestCase {
 							mList(POW(ty_T), POW(ty_T), POW(ty_T))
 					)
 			),
-			new TestItem("x\\y=a",
+			new TestItem("x\u2216y=a",
 					mTypeEnvironment(
 							mList("x"),
 							mList(POW(ty_T))
@@ -991,47 +991,47 @@ public class TestTypeChecker extends TestCase {
 			),
 //			// QuantifiedExpr & IdentPattern
 //			// UnBound
-//			new TestItem("finite(\u03bb x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u03bb x\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6y\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u03bb x\u21a6y\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z)",
 //			
 //			
 //			// Bound
-//			new TestItem("finite(\u03bb x\u22c5\u22a5\u2223x)",
+//			new TestItem("finite(\u03bb x\u00b7\u22a5\u2223x)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6y\u22c5\u22a5\u2223y)",
+//			new TestItem("finite(\u03bb x\u21a6y\u00b7\u22a5\u2223y)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u22c5\u22a5\u2223s)",
+//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223s)",
 //			
-//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223s)",
+//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223s)",
 //			
 //			
 			// UnBound
-//			new TestItem("finite(\u22c3x\u22c5\u22a5\u2223z)"
+//			new TestItem("finite(\u22c3x\u00b7\u22a5\u2223z)"
 //			),
 //			
-//			new TestItem("finite(\u22c3y,x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u22c3y,x\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u22c3s,y,x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u22c3s,y,x\u00b7\u22a5\u2223z)",
 //			
 //			
 //			// Bound
-			new TestItem("(\u22c3 x \u22c5 \u22a5 \u2223 x) = a",
+			new TestItem("(\u22c3 x \u00b7 \u22a5 \u2223 x) = a",
 					mTypeEnvironment(mList("a"), mList(POW(INTEGER))),
 					mTypeEnvironment()
 			),
 //			
-//			new TestItem("finite(\u22c3y,x\u22c5\u22a5\u2223y \u25b7 x)",
+//			new TestItem("finite(\u22c3y,x\u00b7\u22a5\u2223y \u25b7 x)",
 //			mTypeEnvironment(new FreeIdentifier[]{formulaFactory.makeFreeIdentifier("x",Formula.FREE_IDENT)}, mList(formulaFactory.makeUnaryExpression(formulaFactory.makeAtomicExpression(Formula.INTEGER),Formula.POW))),
 //			true,
 //			mTypeEnvironment(new FreeIdentifier[]{formulaFactory.makeFreeIdentifier("x",Formula.FREE_IDENT)}, mList(formulaFactory.makeUnaryExpression(formulaFactory.makeAtomicExpression(Formula.INTEGER),Formula.POW)))
 //			),
 //			
-//			new TestItem("finite(\u22c3s,y,x\u22c5\u22a5\u2223s)",
+//			new TestItem("finite(\u22c3s,y,x\u00b7\u22a5\u2223s)",
 //			
 //			
 //			// UnBound
@@ -1041,19 +1041,19 @@ public class TestTypeChecker extends TestCase {
 //			
 //			
 //			// UnBound
-//			new TestItem("finite(\u22c2x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u22c2x\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u22c2y,x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u22c2y,x\u00b7\u22a5\u2223z)",
 //			
-//			new TestItem("finite(\u22c2s,y,x\u22c5\u22a5\u2223z)",
+//			new TestItem("finite(\u22c2s,y,x\u00b7\u22a5\u2223z)",
 //			
 //			
 //			// Bound
-//			new TestItem("finite(\u22c2x\u22c5\u22a5\u2223x)",
+//			new TestItem("finite(\u22c2x\u00b7\u22a5\u2223x)",
 //			
-//			new TestItem("finite(\u22c2y,x\u22c5\u22a5\u2223y)",
+//			new TestItem("finite(\u22c2y,x\u00b7\u22a5\u2223y)",
 //			
-//			new TestItem("finite(\u22c2s,y,x\u22c5\u22a5\u2223s)",
+//			new TestItem("finite(\u22c2s,y,x\u00b7\u22a5\u2223s)",
 //			
 //			
 //			// UnBound
@@ -1063,7 +1063,7 @@ public class TestTypeChecker extends TestCase {
 //			
 			
 			// Special formulas
-			new TestItem("∀ s ⋅ id ( N ) ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
+			new TestItem("∀ s \u00b7 id ( N ) ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
 					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
 					mTypeEnvironment(
 							mList("r",                  "c"),
@@ -1071,7 +1071,7 @@ public class TestTypeChecker extends TestCase {
 					)
 			),
 			
-			new TestItem("(λ x ↦ y ↦ z ⋅ x < y ∧ z ∈ ℤ∣ H ) ( f ( 1 ) ) ∈ ℙ ( ℤ )",
+			new TestItem("(λ x ↦ y ↦ z \u00b7 x < y ∧ z ∈ ℤ∣ H ) ( f ( 1 ) ) ∈ ℙ ( ℤ )",
 					mTypeEnvironment(),
 					mTypeEnvironment(
 							mList("H",         "f"),
@@ -1081,14 +1081,14 @@ public class TestTypeChecker extends TestCase {
 			new TestItem(
 					" ultraf = { " +
 					" f ∣ f ∈ filter ∧ " +
-					" (∀ g ⋅ g ∈ filter ∧ f ⊆ g ⇒ f = g) " +
+					" (∀ g \u00b7 g ∈ filter ∧ f ⊆ g ⇒ f = g) " +
 					" } " +
 					" ∧ filter = { " +
 					" h ∣ h ∈ ℙ ( ℙ ( S ) ) ∧ " +
 					" S ∈ h ∧" +
 					" ∅ ∉ h ∧" +
-					" ( ∀ a, b ⋅ a ∈ h ∧ a ⊆ b ⇒ b ∈ h ) ∧ " +
-					" ( ∀ c, d ⋅ c ∈ h ∧ d ∈ h ⇒ c ∩ d ∈ h )" +
+					" ( ∀ a, b \u00b7 a ∈ h ∧ a ⊆ b ⇒ b ∈ h ) ∧ " +
+					" ( ∀ c, d \u00b7 c ∈ h ∧ d ∈ h ⇒ c ∩ d ∈ h )" +
 					" } ",
 					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
 					mTypeEnvironment(
@@ -1101,12 +1101,12 @@ public class TestTypeChecker extends TestCase {
 					" h ∣ h ∈ ℙ ( ℙ ( S ) ) ∧ " +
 					" S ∈ h ∧" +
 					" ∅ ∉ h ∧" +
-					" ( ∀ a, b ⋅ a ∈ h ∧ a ⊆ b ⇒ b ∈ h ) ∧ " +
-					" ( ∀ c, d ⋅ c ∈ h ∧ d ∈ h ⇒ c ∩ d ∈ h )" +
+					" ( ∀ a, b \u00b7 a ∈ h ∧ a ⊆ b ⇒ b ∈ h ) ∧ " +
+					" ( ∀ c, d \u00b7 c ∈ h ∧ d ∈ h ⇒ c ∩ d ∈ h )" +
 					" } ∧ " +				
 					" ultraf = { " +
 					" f ∣ f ∈ filter ∧ " +
-					" (∀ g ⋅ g ∈ filter ∧ f ⊆ g ⇒ f = g) " +
+					" (∀ g \u00b7 g ∈ filter ∧ f ⊆ g ⇒ f = g) " +
 					" } ",
 					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
 					mTypeEnvironment(
@@ -1126,7 +1126,7 @@ public class TestTypeChecker extends TestCase {
 					" id(N) ∩ g = ∅ ∧ " +
 					" dom(g) = N ∧ " +
 					" h ∈ N ↔ ( N ⤀ N ) ∧ " +
-					" (∀n,f⋅" +
+					" (∀n,f\u00b7" +
 					"    n ∈ N ∧ " +
 					"    f ∈ N ⤀ N" +
 					"    ⇒" +
@@ -1134,7 +1134,7 @@ public class TestTypeChecker extends TestCase {
 					"     ⇔" + 
 					"     (f ∈ N ∖ {n} ↠ N ∧ " +
 					"      f ⊆ g ∧ " +
-					"      (∀ S ⋅ n ∈ S ∧ f~[S] ⊆ S ⇒ N ⊆ S)" +
+					"      (∀ S \u00b7 n ∈ S ∧ f~[S] ⊆ S ⇒ N ⊆ S)" +
 					"     )" +
 					"    )" +
 					" )",
@@ -1154,9 +1154,9 @@ public class TestTypeChecker extends TestCase {
 					" com ∩ id(L) = ∅ ∧ " +
 					" exit ∈ L ∖ {outside} ↠ L ∧ " +
 					" exit ⊆ com ∧ " +
-					" ( ∀ s ⋅ s ⊆ exit~[s] ⇒ s = ∅ ) ∧ " +
+					" ( ∀ s \u00b7 s ⊆ exit~[s] ⇒ s = ∅ ) ∧ " +
 					" aut ⩥ {outside} ⊆ (aut ; exit~) ∧ " +
-					" ( ∃ l ⋅ l ∈ L ∖ {outside} ∧ outside ↦ l ∈ com ∧ L×{l} ⊆ aut )",
+					" ( ∃ l \u00b7 l ∈ L ∖ {outside} ∧ outside ↦ l ∈ com ∧ L×{l} ⊆ aut )",
 					mTypeEnvironment(mList("L"), mList(POW(ty_L))),
 					mTypeEnvironment(
 							mList(
@@ -1176,10 +1176,10 @@ public class TestTypeChecker extends TestCase {
 			
 			new TestItem(
 					" f ∈ ℙ(S) ↠ ℙ(S) ∧ " +
-					" (∀ a, b ⋅ a ⊆ b ⇒ f(a) ⊆ f(b)) ∧ " +
-					" fix = inter({s | f(s) ⊆ s}) ∧ " +
-					" (∀ s ⋅ f(s) ⊆ s ⇒ fix ⊆ s) ∧ " +
-					" (∀ v ⋅ (∀ w ⋅ f(w) ⊆ w ⇒ v ⊆ w) ⇒ v ⊆ fix) ∧ " +
+					" (∀ a, b \u00b7 a ⊆ b ⇒ f(a) ⊆ f(b)) ∧ " +
+					" fix = inter({s \u2223 f(s) ⊆ s}) ∧ " +
+					" (∀ s \u00b7 f(s) ⊆ s ⇒ fix ⊆ s) ∧ " +
+					" (∀ v \u00b7 (∀ w \u00b7 f(w) ⊆ w ⇒ v ⊆ w) ⇒ v ⊆ fix) ∧ " +
 					" f(fix) = fix ",
 					mTypeEnvironment(
 							mList("S"),	
@@ -1192,8 +1192,8 @@ public class TestTypeChecker extends TestCase {
 			),
 			new TestItem(
 					"  x ∈ S " +
-					"∧ (∀x⋅x ∈ T) " +
-					"∧ (∀x⋅x ∈ U) ",
+					"∧ (∀x\u00b7x ∈ T) " +
+					"∧ (∀x\u00b7x ∈ U) ",
 					mTypeEnvironment(
 							mList("S",      "T",      "U"),	
 							mList(POW(ty_S), POW(ty_T), POW(ty_U))
@@ -1205,7 +1205,7 @@ public class TestTypeChecker extends TestCase {
 			),
 			new TestItem(
 					"  x ∈ S " +
-					"∧ (∀x⋅x ∈ T ∧ (∀x⋅x ∈ U)) ",
+					"∧ (∀x\u00b7x ∈ T ∧ (∀x\u00b7x ∈ U)) ",
 					mTypeEnvironment(
 							mList("S",      "T",      "U"),	
 							mList(POW(ty_S), POW(ty_T), POW(ty_U))
@@ -1306,12 +1306,12 @@ public class TestTypeChecker extends TestCase {
 					null
 			),
 			new TestItem(
-					"x :| x' < 0",
+					"x :\u2223 x' < 0",
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x"), mList(INTEGER))
 			),
 			new TestItem(
-					"x,y :| x' < 0 ∧ y' = bool(x' = 5)",
+					"x,y :\u2223 x' < 0 ∧ y' = bool(x' = 5)",
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x", "y"), mList(INTEGER, BOOL))
 			),
@@ -1323,7 +1323,7 @@ public class TestTypeChecker extends TestCase {
 	public void testTypeChecker () {
 		for (TestItem item: testItems) {
 			IParseResult parseResult = ff.parsePredicate(item.formula);
-			assertTrue(parseResult.isSuccess());
+			assertTrue("Couldn't parse " + item.formula, parseResult.isSuccess());
 			
 			Predicate formula = parseResult.getParsedPredicate();
 			ITypeCheckResult result = formula.typeCheck(item.initialEnv);

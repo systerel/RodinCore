@@ -52,7 +52,7 @@ public class TestConflictResolver extends TestCase {
 				ff.makeSimplePredicate(Formula.KFINITE,ff.makeSetExtension(mList(id_x, id_x, id_x),null),null)
 			),
 			new TestItem(
-				"{x,y\u22c5\u22a5\u2223z}=a",
+				"{x,y\u00b7\u22a5\u2223z}=a",
 				ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET, mList(b_x, b_y), ff.makeLiteralPredicate(Formula.BFALSE,null),id_z,null, QuantifiedExpression.Form.Explicit),ff.makeFreeIdentifier("a",null),null)
 			),
 			new TestItem(
@@ -60,7 +60,7 @@ public class TestConflictResolver extends TestCase {
 				ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET, mList(b_x), ff.makeLiteralPredicate(Formula.BFALSE,null),ff.makeBoundIdentifier(0,null),null,QuantifiedExpression.Form.Implicit),ff.makeFreeIdentifier("a",null),null)
 			),
 			new TestItem(
-				"{{x|\u22a5}\\x2|\u22a5}=a",
+				"{{x\u2223\u22a5}\u2216x2\u2223\u22a5}=a",
 				ff.makeRelationalPredicate(
 					Formula.EQUAL,
 					ff.makeQuantifiedExpression(
@@ -78,11 +78,11 @@ public class TestConflictResolver extends TestCase {
 					ff.makeFreeIdentifier("a",null),null)
 			),
 			new TestItem(
-				"finite(\u22c3 x, y \u22c5\u22a5\u2223z)",
+				"finite(\u22c3 x, y \u00b7\u22a5\u2223z)",
 				ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.QUNION, mList(b_x, b_y), ff.makeLiteralPredicate(Formula.BFALSE,null),id_z,null,QuantifiedExpression.Form.Explicit),null)
 			),
 			new TestItem(
-				"finite(\u22c2 x, y \u22c5\u22a5\u2223z)",
+				"finite(\u22c2 x, y \u00b7\u22a5\u2223z)",
 				ff.makeSimplePredicate(Formula.KFINITE,ff.makeQuantifiedExpression(Formula.QINTER, mList(b_x, b_y), ff.makeLiteralPredicate(Formula.BFALSE,null),id_z,null,QuantifiedExpression.Form.Explicit),null)
 			),
 			new TestItem(

@@ -168,13 +168,13 @@ public class TestParser extends TestCase {
 					"x<x", 
 					mRelationalPredicate(Formula.LT, id_x, id_x)
 			), new PredTestPair(
-					"x<=x", 
+					"x≤x", 
 					mRelationalPredicate(Formula.LE, id_x, id_x) 
 			), new PredTestPair(
 					"x>x", 
 					mRelationalPredicate(Formula.GT, id_x, id_x) 
 			), new PredTestPair(
-					"x>=x", 
+					"x≥x", 
 					mRelationalPredicate(Formula.GE, id_x, id_x) 
 			), new PredTestPair(
 					"x\u2208S", 
@@ -236,34 +236,34 @@ public class TestParser extends TestCase {
 			
 			// Quantifier + IdentList + Predicate
 			new PredTestPair(
-					"\u2200x\u22c5\u22a5", 
+					"\u2200x\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x), bfalse)
 			), new PredTestPair(
-					"\u2203x\u22c5\u22a5", 
+					"\u2203x\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x), bfalse)
 			), new PredTestPair(
-					"\u2200x, y, z\u22c5\u22a5", 
+					"\u2200x, y, z\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y, bd_z), bfalse)
 			), new PredTestPair(
-					"\u2203x, y, z\u22c5\u22a5", 
+					"\u2203x, y, z\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x, bd_y, bd_z), bfalse)
 			), new PredTestPair(
-					"\u2200x, y\u22c5\u2200s, t\u22c5\u22a5", 
+					"\u2200x, y\u00b7\u2200s, t\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), bfalse)
 					)
 			), new PredTestPair(
-					"\u2203x, y\u22c5\u2203s, t\u22c5\u22a5", 
+					"\u2203x, y\u00b7\u2203s, t\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.EXISTS, mList(bd_s, bd_t), bfalse)
 					)
 			), new PredTestPair(
-					"\u2200x, y\u22c5\u2203s, t\u22c5\u22a5", 
+					"\u2200x, y\u00b7\u2203s, t\u00b7\u22a5", 
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.EXISTS, mList(bd_s, bd_t), bfalse)
 					)
 			), new PredTestPair(
-					"\u2200 x,y \u22c5\u2200 s,t \u22c5 x\u2208s \u2227 y\u2208t",
+					"\u2200 x,y \u00b7\u2200 s,t \u00b7 x\u2208s \u2227 y\u2208t",
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t),
 									mAssociativePredicate(Formula.LAND,
@@ -276,7 +276,7 @@ public class TestParser extends TestCase {
 			
 			// Special cases
 			new PredTestPair(
-					" filter =  { f ∣ ( ∀ a ⋅ ⊤ ) } ∧  a = b ", 
+					"filter =  { f ∣ ( ∀ a · ⊤ ) } ∧  a = b", 
 					mAssociativePredicate(Formula.LAND, 
 							mRelationalPredicate(
 									Formula.EQUAL, 
@@ -297,7 +297,7 @@ public class TestParser extends TestCase {
 					
 			// with ident bound twice
 			new PredTestPair(
-					"∀x⋅x ∈ S ∧ (∀x⋅x ∈ T)",
+					"∀x·x ∈ S ∧ (∀x·x ∈ T)",
 					mQuantifiedPredicate(Formula.FORALL,
 							mList(bd_x),
 							mAssociativePredicate(Formula.LAND,
@@ -312,7 +312,7 @@ public class TestParser extends TestCase {
 			
 			// with two idents bound twice
 			new PredTestPair(
-					"∀x,y⋅x ∈ S ∧ y ∈ T ∧ (∀y,x⋅x ∈ T ∧ y ∈ S)",
+					"∀x,y\u00b7x ∈ S ∧ y ∈ T ∧ (∀y,x\u00b7x ∈ T ∧ y ∈ S)",
 					mQuantifiedPredicate(Formula.FORALL,
 							mList(bd_x, bd_y),
 							mAssociativePredicate(Formula.LAND,
@@ -331,7 +331,7 @@ public class TestParser extends TestCase {
 			
 			// with two idents bound twice
 			new PredTestPair(
-					"∀x,y,z⋅ finite(x ∪ y ∪ z ∪ {y | y ⊆ x ∪ z})",
+					"∀x,y,z \u00b7 finite(x ∪ y ∪ z ∪ {y \u2223 y ⊆ x ∪ z})",
 					mQuantifiedPredicate(Formula.FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -396,22 +396,22 @@ public class TestParser extends TestCase {
 					"(x)", 
 					id_x 
 			), new ExprTestPair(
-					"{x, y\u22c5\u22a5\u2223z}", 
+					"{x, y\u00b7\u22a5\u2223z}", 
 					mQuantifiedExpression(Formula.CSET, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					) 
 			), new ExprTestPair(
-					"{x\u22c5\u22a5\u2223z}", 
+					"{x\u00b7\u22a5\u2223z}", 
 					mQuantifiedExpression(Formula.CSET, Explicit, 
 							mList(bd_x), bfalse, id_z
 					) 
 			), new ExprTestPair(
-					"{x, y\u22c5\u22a5\u2223y}", 
+					"{x, y\u00b7\u22a5\u2223y}", 
 					mQuantifiedExpression(Formula.CSET, Explicit, 
 							mList(bd_x, bd_y), bfalse, b0
 					) 
 			), new ExprTestPair(
-					"{x\u22c5\u22a5\u2223x}", 
+					"{x\u00b7\u22a5\u2223x}", 
 					mQuantifiedExpression(Formula.CSET, Implicit, 
 							mList(bd_x), bfalse, b0
 					) 
@@ -465,10 +465,10 @@ public class TestParser extends TestCase {
 			
 			// Primary
 			new ExprTestPair(
-					"x~", 
+					"x\u223c", 
 					mUnaryExpression(Formula.CONVERSE, id_x)
 			), new ExprTestPair(
-					"x~~", 
+					"x\u223c\u223c", 
 					mUnaryExpression(Formula.CONVERSE, 
 							mUnaryExpression(Formula.CONVERSE, id_x)
 					)
@@ -515,10 +515,10 @@ public class TestParser extends TestCase {
 			
 			// Term
 			new ExprTestPair(
-					"x*y", 
+					"x\u2217y", 
 					mAssociativeExpression(Formula.MUL, id_x, id_y)
 			), new ExprTestPair(
-					"x*y*z", 
+					"x\u2217y\u2217z", 
 					mAssociativeExpression(Formula.MUL, id_x, id_y, id_z)
 			), new ExprTestPair(
 					"x\u00f7y", 
@@ -597,7 +597,7 @@ public class TestParser extends TestCase {
 			
 			// IntervalExpr
 			new ExprTestPair(
-					"x..y", 
+					"x\u2025y", 
 					mBinaryExpression(Formula.UPTO, id_x, id_y)
 			), 
 			
@@ -624,7 +624,7 @@ public class TestParser extends TestCase {
 					"x\u2229y\u2229z", 
 					mAssociativeExpression(Formula.BINTER, id_x, id_y, id_z) 
 			), new ExprTestPair(
-					"x\\y", 
+					"x\u2216y", 
 					mBinaryExpression(Formula.SETMINUS, id_x, id_y) 
 			), new ExprTestPair(
 					"x;y\u2a65z", 
@@ -639,7 +639,7 @@ public class TestParser extends TestCase {
 							id_z
 					) 
 			), new ExprTestPair(
-					"x\u2229y\\z", 
+					"x\u2229y\u2216z", 
 					mBinaryExpression(Formula.SETMINUS, 
 							mAssociativeExpression(Formula.BINTER, id_x, id_y), 
 							id_z
@@ -789,13 +789,13 @@ public class TestParser extends TestCase {
 			// QuantifiedExpr & IdentPattern
 			// UnBound
 			new ExprTestPair(
-					"\u03bb x\u22c5\u22a5\u2223z", 
+					"\u03bb x\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.CSET, Lambda,  
 							mList(bd_x), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, b0, id_z)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6y\u22c5\u22a5\u2223z", 
+					"\u03bb x\u21a6y\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -804,7 +804,7 @@ public class TestParser extends TestCase {
 							)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6y\u21a6s\u22c5\u22a5\u2223z", 
+					"\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), 
 							bfalse, 
@@ -816,7 +816,7 @@ public class TestParser extends TestCase {
 							)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223z", 
+					"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), 
 							bfalse, 
@@ -831,13 +831,13 @@ public class TestParser extends TestCase {
 			
 			// Bound
 			new ExprTestPair(
-					"\u03bb x\u22c5\u22a5\u2223x", 
+					"\u03bb x\u00b7\u22a5\u2223x", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, b0, b0)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6y\u22c5\u22a5\u2223y", 
+					"\u03bb x\u21a6y\u00b7\u22a5\u2223y", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -846,7 +846,7 @@ public class TestParser extends TestCase {
 							)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6y\u21a6s\u22c5\u22a5\u2223s", 
+					"\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223s", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -858,7 +858,7 @@ public class TestParser extends TestCase {
 							)
 					)
 			), new ExprTestPair(
-					"\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223s", 
+					"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223s", 
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -871,17 +871,17 @@ public class TestParser extends TestCase {
 			
 			// UnBound
 			new ExprTestPair(
-					"\u22c3x\u22c5\u22a5\u2223z", 
+					"\u22c3x\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x), bfalse, id_z
 					)
 			), new ExprTestPair(
-					"\u22c3 x, y \u22c5\u22a5\u2223z", 
+					"\u22c3 x, y \u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					)
 			), new ExprTestPair(
-					"\u22c3 x, y, s \u22c5\u22a5\u2223z", 
+					"\u22c3 x, y, s \u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, id_z
 					)
@@ -889,17 +889,17 @@ public class TestParser extends TestCase {
 			
 			// Bound
 			new ExprTestPair(
-					"\u22c3x\u22c5\u22a5\u2223x", 
+					"\u22c3x\u00b7\u22a5\u2223x", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c3 x, y \u22c5\u22a5\u2223y", 
+					"\u22c3 x, y \u00b7\u22a5\u2223y", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c3 x, y, s \u22c5\u22a5\u2223s", 
+					"\u22c3 x, y, s \u00b7\u22a5\u2223s", 
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, b0
 					)
@@ -921,17 +921,17 @@ public class TestParser extends TestCase {
 			
 			// UnBound
 			new ExprTestPair(
-					"\u22c2x\u22c5\u22a5\u2223z", 
+					"\u22c2x\u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x), bfalse, id_z
 					)
 			), new ExprTestPair(
-					"\u22c2 x, y \u22c5\u22a5\u2223z", 
+					"\u22c2 x, y \u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					)
 			), new ExprTestPair(
-					"\u22c2 x, y, s \u22c5\u22a5\u2223z", 
+					"\u22c2 x, y, s \u00b7\u22a5\u2223z", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, id_z
 					)
@@ -939,17 +939,17 @@ public class TestParser extends TestCase {
 			
 			// Bound
 			new ExprTestPair(
-					"\u22c2 x \u22c5\u22a5\u2223x", 
+					"\u22c2 x \u00b7\u22a5\u2223x", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c2 x, y \u22c5\u22a5\u2223y", 
+					"\u22c2 x, y \u00b7\u22a5\u2223y", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y), bfalse, b0
 					)
 			), new ExprTestPair(
-					"\u22c2 x, y, s \u22c5\u22a5\u2223s", 
+					"\u22c2 x, y, s \u00b7\u22a5\u2223s", 
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, b0
 					)
@@ -993,19 +993,19 @@ public class TestParser extends TestCase {
 					"x :∈ S",
 					mBecomesMemberOf(id_x, id_S)
 			), new AssignmentTestPair(
-					"x :| x' = x",
+					"x :\u2223 x' = x",
 					mBecomesSuchThat(mList(id_x), mList(bd_xp),
 							mRelationalPredicate(Formula.EQUAL, b0, id_x)
 					)
 			), new AssignmentTestPair(
-					"x,y :| x' = y ∧ y' = x",
+					"x,y :\u2223 x' = y ∧ y' = x",
 					mBecomesSuchThat(mList(id_x, id_y), mList(bd_xp, bd_yp),
 							mAssociativePredicate(Formula.LAND,
 									mRelationalPredicate(Formula.EQUAL, b1, id_y),
 									mRelationalPredicate(Formula.EQUAL, b0, id_x)
 							))
 			), new AssignmentTestPair(
-					"x,y,z :| x' = y ∧ y' = z ∧ z' = x",
+					"x,y,z :\u2223 x' = y ∧ y' = z ∧ z' = x",
 					mBecomesSuchThat(mList(id_x, id_y, id_z), mList(bd_xp, bd_yp, bd_zp),
 							mAssociativePredicate(Formula.LAND,
 									mRelationalPredicate(Formula.EQUAL, b2, id_y),

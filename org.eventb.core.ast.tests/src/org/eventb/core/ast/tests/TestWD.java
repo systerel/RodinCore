@@ -41,7 +41,7 @@ public class TestWD extends TestCase {
 		return ff.makeProductType(left, right);
 	}
 	
-	private ITypeEnvironment defaultTEnv = mTypeEnvironment(
+	ITypeEnvironment defaultTEnv = mTypeEnvironment(
 			mList(
 					"x",
 					"y",
@@ -70,16 +70,16 @@ public class TestWD extends TestCase {
 		String input;
 		String expected;
 		ITypeEnvironment env;
-		TestPredicate(String in, String exp, ITypeEnvironment te) {
+		TestPredicate(String in, String exp) {
 			input = in;
 			expected = exp;
-			env = te;
+			env = defaultTEnv;
 		}
 		
 		@Override
 		public void test() {
 			IParseResult resIn = ff.parsePredicate(input);
-			assertTrue(resIn.isSuccess());
+			assertTrue("Couldn't parse " + input, resIn.isSuccess());
 			Predicate inP = resIn.getParsedPredicate();
 			ITypeCheckResult result = inP.typeCheck(env);
 			assertTrue(input, result.isSuccess());
@@ -94,8 +94,8 @@ public class TestWD extends TestCase {
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
 			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			ITypeCheckResult newResult = exP.typeCheck(newEnv);
-			assertTrue(newResult.isSuccess());
+			exP.typeCheck(newEnv);
+			assertTrue("Couldn't typeCheck " + exP, exP.isTypeChecked());
 			
 			assertEquals(input, exP, inWD);
 		}
@@ -105,10 +105,10 @@ public class TestWD extends TestCase {
 		String input;
 		String expected;
 		ITypeEnvironment env;
-		TestAssignment(String in, String exp, ITypeEnvironment te) {
+		private TestAssignment(String in, String exp) {
 			input = in;
 			expected = exp;
-			env = te;
+			env = defaultTEnv;
 		}
 		
 		@Override
@@ -137,31 +137,82 @@ public class TestWD extends TestCase {
 	}
 	
 	private TestFormula[] formulas = new TestFormula[] {
-			new TestPredicate("x≠y∧y=1", "⊤", defaultTEnv),
-			new TestPredicate("x+y+x+1=0⇒y<x", "⊤", defaultTEnv),
-			new TestPredicate("x+1=0∨x<y", "⊤", defaultTEnv),
-			new TestPredicate("(∃x·0<x⇒(∀y·y+x=0))", "⊤", defaultTEnv),
-			new TestPredicate("(B×Y)(x)∈Y", "x∈dom(B × Y)∧(B × Y)~;({x}◁(B × Y))⊆id(ran(B × Y))", defaultTEnv),
-			new TestPredicate("x=f(f(y))", "((y∈dom(f)∧f~;({y}◁f)⊆id(ran(f)))∧f(y)∈dom(f))∧f~;({f(y)}◁f)⊆id(ran(f))", defaultTEnv),
-			new TestPredicate("(x÷y=y)⇔(y mod x=0)", "y≠0∧x≠0", defaultTEnv),
-			new TestPredicate("∀z·x^z>y", "∀z⋅0≤x∧0≤z", defaultTEnv),
-			new TestPredicate("card(A)>x", "finite(A)", defaultTEnv),
-			new TestPredicate("inter({A,B})⊆A∩B", "{A,B}≠∅", defaultTEnv),
-			new TestPredicate("(λm↦n·m>n|y)(1↦x)=y", "1 ↦ x∈dom(λm ↦ n⋅m>n ∣ y)∧(λm ↦ n⋅m>n ∣ y)~;({1 ↦ x}◁(λm ↦ n⋅m>n ∣ y))⊆id(ran(λm ↦ n⋅m>n ∣ y))", defaultTEnv),
-			// TODO put back tests for WD
-			//new TestPredicate("{m,n·m=f(n)|m↦n}[A]⊂B", "∀n⋅n∈dom(f)∧f~;({n}◁f)⊆id(ran(f))", env),
-			//new TestPredicate("{f(n)↦m|x=n∧y+x=m}=A×B", "∀f,n,m⋅x=n∧y+x=m⇒n∈dom(f)∧f~;({n}◁f)⊆id(ran(f))", env),
-			new TestPredicate("{1,2,x,x+y,4,6}=B", "⊤", defaultTEnv),
-			new TestPredicate("(⋂m,n·m∈A∧n∈B|{m÷n})=B", "(∀m,n⋅(m∈A∧n∈B)⇒n≠0)∧(∃m,n⋅(m∈A∧n∈B))", defaultTEnv),
-			new TestPredicate("(⋂{m+n}|m+n∈A)=B", "∃m,n⋅m+n∈A", defaultTEnv),
-			new TestPredicate("bool(⊤)=bool(⊥)", "⊤", defaultTEnv),
-			new TestPredicate("x+y+(x mod y)*x+1=0⇒y<x", "y≠0", defaultTEnv),
-			new TestAssignment("x≔y", "⊤", defaultTEnv),
-			new TestAssignment("x :| x'>x", "⊤", defaultTEnv),
-			new TestAssignment("x :∈ {x,y}", "⊤", defaultTEnv),
-			new TestAssignment("x :∈ {x÷y,y}", "y≠0", defaultTEnv),
-			new TestAssignment("f(x)≔f(x)", "x∈dom(f)∧f~;({x} ◁ f)⊆id(ran(f))", defaultTEnv),
-			new TestAssignment("x:|x'=min(A∪{x'})", "∀x'⋅A∪{x'}≠∅", defaultTEnv)
+			new TestPredicate(
+					"x≠y ∧ y=1",
+					"⊤"
+			), new TestPredicate(
+					"x+y+x+1=0 ⇒ y<x",
+					"⊤"
+			), new TestPredicate(
+					"x+1=0 ∨ x<y",
+					"⊤"
+			), new TestPredicate(
+					"(∃x \u00b7 0<x ⇒ (∀y \u00b7 y+x=0))",
+					"⊤"
+			), new TestPredicate(
+					"(B×Y)(x) ∈ Y",
+					"x∈dom(B × Y) ∧ (B × Y)\u223c;({x}◁(B × Y)) ⊆ id(ran(B × Y))"
+			), new TestPredicate(
+					"x=f(f(y))",
+					"((y∈dom(f) ∧ f\u223c;({y}◁f)⊆id(ran(f)))" +
+					"∧ f(y)∈dom(f)) ∧ f\u223c;({f(y)}◁f)⊆id(ran(f))"
+			), new TestPredicate(
+					"(x÷y=y) ⇔ (y mod x=0)",
+					"y≠0 ∧ x≠0"
+			), new TestPredicate(
+					"∀z \u00b7 x^z>y",
+					"∀z \u00b7 0≤x ∧ 0≤z"
+			), new TestPredicate(
+					"card(A)>x",
+					"finite(A)"
+			), new TestPredicate(
+					"inter({A,B}) ⊆ A∩B",
+					"{A,B}≠∅"
+			), new TestPredicate(
+					"(λ m↦n \u00b7 m>n \u2223 y)(1↦x) = y",
+					"1 ↦ x∈dom(λm ↦ n\u00b7m>n ∣ y) " +
+					"∧ (λm ↦ n\u00b7m>n ∣ y)\u223c;({1 ↦ x}◁(λm ↦ n\u00b7m>n ∣ y))⊆id(ran(λm ↦ n\u00b7m>n ∣ y))"
+// TODO put back these tests					
+//			), new TestPredicate(
+//					"{m,n \u00b7 m=f(n) \u2223 m↦n}[A] ⊂ B",
+//					"∀n \u00b7 n∈dom(f) ∧ f\u223c;({n}◁f) ⊆ id(ran(f))"
+//			), new TestPredicate(
+//					"{f(n)↦m \u2223 x=n ∧ y+x=m} = A×B",
+//					"∀f,n,m \u00b7 x=n ∧ y+x=m ⇒ n∈dom(f) ∧ f\u223c;({n}◁f)⊆id(ran(f))"
+			), new TestPredicate(
+					"{1, 2, x, x+y, 4, 6} = B",
+					"⊤"
+			), new TestPredicate(
+					"(⋂ m,n \u00b7 m∈A ∧ n∈B \u2223 {m÷n}) = B",
+					"(∀m,n \u00b7 (m∈A ∧ n∈B) ⇒ n≠0) ∧ (∃m,n \u00b7 (m∈A ∧ n∈B))"
+			), new TestPredicate(
+					"(⋂{m+n} \u2223 m+n∈A)=B",
+					"∃m,n\u00b7m+n∈A"
+			), new TestPredicate(
+					"bool(⊤)=bool(⊥)",
+					"⊤"
+			), new TestPredicate(
+					"x+y+(x mod y)\u2217x+1=0 ⇒ y<x",
+					"y≠0"
+			), new TestAssignment(
+					"x≔y",
+					"⊤"
+			), new TestAssignment(
+					"x :\u2223 x'>x",
+					"⊤"
+			), new TestAssignment(
+					"x :∈ {x,y}",
+					"⊤"
+			), new TestAssignment(
+					"x :∈ {x÷y, y}",
+					"y≠0"
+			), new TestAssignment(
+					"f(x)≔f(x)",
+					"x∈dom(f)∧f\u223c;({x} ◁ f)⊆id(ran(f))"
+			), new TestAssignment(
+					"x :\u2223 x'=min(A∪{x'})",
+					"∀x' \u00b7 A∪{x'}≠∅"
+			)
 	};
 	
 	public void testWD() {

@@ -40,7 +40,7 @@ public class TestLexer extends TestCase {
                 { "\u00ac" 			   			 },	// _NOT
                 { "\u00d7" 			   			 },	// _CPROD
                 { "\u03bb" 			   			 },	// _LAMBDA
-                { "..", "\u2024\u2024", "\u2025" },	// _UPTO
+                { "\u2025"						 },	// _UPTO
                 { "\u2115"  		   			 },	// _NATURAL
                 { "\u21151" 		   			 },	// _NATURAL1
                 { "\u2119"  		   			 },	// _POW
@@ -59,8 +59,8 @@ public class TestLexer extends TestCase {
                 { "\u2205" 			   			 },	// _EMPTYSET
                 { "\u2208" 			   			 },	// _IN
                 { "\u2209" 			   			 },	// _NOTIN
-                { "\\", "\u2216"	   			 },	// _SETMINUS
-                { "*", "\u2217"		   			 },	// _MUL
+                { "\u2216"			   			 },	// _SETMINUS
+                { "\u2217"			   			 },	// _MUL
                 { "\u2218" 			   			 },	// _BCOMP
                 { "\u2225" 			   			 },	// _PPROD
                 { "\u2227" 			   			 },	// _LAND
@@ -69,13 +69,13 @@ public class TestLexer extends TestCase {
                 { "\u222a" 			   			 },	// _BUNION
                 { "\u2254"			  			 }, // _BEQ
                 { ":\u2208"			             }, //_BMO
-                { ":|"				             }, // _BST
+                { ":\u2223"			             }, // _BST
                 { "="      			   			 },	// _EQUAL
                 { "\u2260" 			   			 },	// _NOTEQUAL
                 { "<"      			   			 },	// _LT
-                { "<=", "\u2264"	   			 },	// _LE
+                { "\u2264"	 		  			 },	// _LE
                 { ">"                  			 },	// _GT
-                { ">=", "\u2265" 	   			 },	// _GE
+                { "\u2265" 	   					 },	// _GE
                 { "\u2282" 			   			 },	// _SUBSET
                 { "\u2284" 			   			 },	// _NOTSUBSET
                 { "\u2286" 			   			 },	// _SUBSETEQ
@@ -85,7 +85,7 @@ public class TestLexer extends TestCase {
                 { "\u22a5" 			   			 },	// _BFALSE
                 { "\u22c2" 			   			 },	// _QINTER
                 { "\u22c3" 			   			 },	// _QUNION
-                { "\u22c5" 			   			 },	// _QDOT
+                { "\u00b7" 			   			 },	// _QDOT
                 { "\u25b7" 			   			 },	// _RANRES
                 { "\u25c1" 			   			 },	// _DOMRES
                 { "\u2900" 			   			 },	// _PSUR
@@ -102,8 +102,8 @@ public class TestLexer extends TestCase {
                 { "+" 	   			   			 },	// _PLUS
                 { "\u2212"   			   		 },	// _MINUS
                 { "\u00f7" 	   			   		 },	// _DIV
-                { "|", "\u2223"		   			 },	// _MID
-                { "~"	   			   			 },	// _CONVERSE
+                { "\u2223"			   			 },	// _MID
+                { "\u223c"			   			 },	// _CONVERSE
                 { "BOOL"   			   			 },	// _BOOL
                 { "TRUE"   			   			 },	// _TRUE
                 { "FALSE"  			   			 },	// _FALSE

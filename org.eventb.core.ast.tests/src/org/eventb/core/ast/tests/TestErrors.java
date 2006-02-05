@@ -30,17 +30,17 @@ public class TestErrors extends TestCase {
 			new ASTProblem(new SourceLocation(0,0), ProblemKind.LexerError, ProblemSeverities.Warning, "\ueeee"),
 			"\u22a5\ueeee",
 			new ASTProblem(new SourceLocation(1,1), ProblemKind.LexerError, ProblemSeverities.Warning, "\ueeee"),
-			"finite(\u03bb x\u21a6(\ueeeey\u21a6s)\u22c5\u22a5\u2223z)",
+			"finite(\u03bb x\u21a6(\ueeeey\u21a6s)\u00b7\u22a5\u2223z)",
 			new ASTProblem(new SourceLocation(12,12), ProblemKind.LexerError, ProblemSeverities.Warning, "\ueeee"),
 			
 	};
 	
 	private Object parseTestPairs[] = new Object[]{
-			"finite(\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223z",
+			"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
 			new ASTProblem(new SourceLocation(20,20), ProblemKind.SyntaxError, ProblemSeverities.Error, "RPAR expected"),
-			"\u03bb x\u21a6(y\u21a6s)\u22c5\u22a5\u2223z",
+			"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
 			new ASTProblem(new SourceLocation(0,1), ProblemKind.SyntaxError, ProblemSeverities.Error, "invalid SimpleExpr"),
-			"finite(\u03bb x\u21a6y\u21a6s)\u22c5\u22a5\u2223z)",
+			"finite(\u03bb x\u21a6y\u21a6s)\u00b7\u22a5\u2223z)",
 			new ASTProblem(new SourceLocation(14,15), ProblemKind.SyntaxError, ProblemSeverities.Error, "QDOT expected"),
 			
 	};

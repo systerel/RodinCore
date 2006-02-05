@@ -495,7 +495,7 @@ public class TestFreeIdents extends TestCase {
 	}
 	
 	private void isWellFormedSpecialCases() {
-		//"{x,y\u22c5\u2200s,t,u\u22c5\u22a5\u2223u}=a"
+		//"{x,y\u00b7\u2200s,t,u\u00b7\u22a5\u2223u}=a"
 		
 		final FreeIdentifier id_a = ff.makeFreeIdentifier("a", null);
 		

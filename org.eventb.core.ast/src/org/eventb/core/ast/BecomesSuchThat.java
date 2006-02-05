@@ -140,7 +140,7 @@ public class BecomesSuchThat extends Assignment {
 		final String[] boundNamesBelow = catenateBoundIdentLists(boundNames, primedIdents);
 		return tabs
 			+ this.getClass().getSimpleName()
-			+ " [:|]\n"
+			+ " [:\u2223]\n"
 		    + getSyntaxTreeLHS(boundNames, childTabs)
 		    + getSyntaxTreeQuantifiers(boundNamesBelow, childTabs, primedIdents)
 		    + condition.getSyntaxTree(boundNames, childTabs);
@@ -214,7 +214,7 @@ public class BecomesSuchThat extends Assignment {
 
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" :| ");
+		result.append(" :\u2223 ");
 		
 		final String[] localNames = getLocalNames();
 		final String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
@@ -227,7 +227,7 @@ public class BecomesSuchThat extends Assignment {
 	protected String toStringFullyParenthesized(String[] boundNames) {
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" :| (");
+		result.append(" :\u2223 (");
 
 		final String[] localNames = getLocalNames();
 		final String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);

@@ -736,7 +736,7 @@ public abstract class Formula<T extends Formula<T>> {
 
 	/**
 	 * <code>CSET</code> represents a comprehension set (either { E | P } or {
-	 * L \u22c5 P | E } or \u03bb M \u22c5 P | E)
+	 * L \u00b7 P | E } or \u03bb M \u00b7 P | E)
 	 * 
 	 * @see QuantifiedExpression
 	 */

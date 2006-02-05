@@ -65,7 +65,7 @@ public class TestBA extends TestCase {
 		
 		public void doTest() throws Exception {
 			IParseResult resIn = ff.parseAssignment(input);
-			assertTrue(resIn.isSuccess());
+			assertTrue("Couldn't parse " + input, resIn.isSuccess());
 			Assignment inA = resIn.getParsedAssignment();
 			ITypeCheckResult result = inA.typeCheck(tenv);
 			assertTrue(input, result.isSuccess());
@@ -90,7 +90,7 @@ public class TestBA extends TestCase {
 	private TestItem[] testItems = new TestItem[] {
 			new TestItem("x≔x+y", "x'=x+y", defaultTEnv),
 			new TestItem("x:∈A", "x'∈A", defaultTEnv),
-			new TestItem("x:|x'∈A", "x'∈A", defaultTEnv)
+			new TestItem("x:\u2223 x'∈A", "x'∈A", defaultTEnv)
 	};
 	
 	public void testBA() throws Exception {

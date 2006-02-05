@@ -90,7 +90,7 @@ public class TestFIS extends TestCase {
 	private TestItem[] testItems = new TestItem[] {
 			new TestItem("x≔x+y", "⊤", defaultTEnv),
 			new TestItem("x:∈A", "A≠∅", defaultTEnv),
-			new TestItem("x:|x'∈A", "∃x'·x'∈A", defaultTEnv)
+			new TestItem("x:\u2223 x'∈A", "∃x'·x'∈A", defaultTEnv)
 	};
 	
 	public void testFIS() throws Exception {

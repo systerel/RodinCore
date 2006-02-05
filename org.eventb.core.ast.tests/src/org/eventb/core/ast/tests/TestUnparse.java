@@ -434,7 +434,7 @@ public class TestUnparse extends TestCase {
 	
 	private PredTestPair[] specialPredTestPairs = new PredTestPair[] {
 			new PredTestPair(
-					"∀x⋅∀y⋅∀z⋅finite(x∪y∪z∪t)",
+					"∀x\u00b7∀y\u00b7∀z\u00b7finite(x∪y∪z∪t)",
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 					mQuantifiedPredicate(FORALL, mList(bd_y),
 					mQuantifiedPredicate(FORALL, mList(bd_z),
@@ -443,7 +443,7 @@ public class TestUnparse extends TestCase {
 							)
 					)))
 			), new PredTestPair(
-					"∀x⋅∀x0⋅finite(x∪x0)",
+					"∀x\u00b7∀x0\u00b7finite(x∪x0)",
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 							mSimplePredicate(
@@ -451,7 +451,7 @@ public class TestUnparse extends TestCase {
 							)
 					))
 			), new PredTestPair(
-					"∀x⋅∀x0⋅∀x1⋅finite(x∪x0∪x1)",
+					"∀x\u00b7∀x0\u00b7∀x1\u00b7finite(x∪x0∪x1)",
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 					mQuantifiedPredicate(FORALL, mList(bd_x),
@@ -460,7 +460,7 @@ public class TestUnparse extends TestCase {
 							)
 					)))
 			), new PredTestPair(
-					"∀x⋅∀y⋅∀y0⋅finite(x∪y∪y0)",
+					"∀x\u00b7∀y\u00b7∀y0\u00b7finite(x∪y∪y0)",
 					mQuantifiedPredicate(FORALL, mList(bd_x),
 					mQuantifiedPredicate(FORALL, mList(bd_y),
 					mQuantifiedPredicate(FORALL, mList(bd_y),
@@ -469,7 +469,7 @@ public class TestUnparse extends TestCase {
 							)
 					)))
 			), new PredTestPair(
-					"∀prj0⋅∀prj3⋅finite(prj∪prj0∪prj3)",
+					"∀prj0\u00b7∀prj3\u00b7finite(prj∪prj0∪prj3)",
 					mQuantifiedPredicate(FORALL, mList(mBoundIdentDecl("prj")),
 					mQuantifiedPredicate(FORALL, mList(mBoundIdentDecl("prj")),
 							mSimplePredicate(
@@ -496,19 +496,19 @@ public class TestUnparse extends TestCase {
 					"x :∈ S",
 					mBecomesMemberOf(id_x, id_S)
 			), new AssignTestPair(
-					"x :| x'=x",
+					"x :\u2223 x'=x",
 					mBecomesSuchThat(mList(id_x), mList(bd_xp),
 							mRelationalPredicate(Formula.EQUAL, b0, id_x)
 					)
 			), new AssignTestPair(
-					"x,y :| x'=y∧y'=x",
+					"x,y :\u2223 x'=y∧y'=x",
 					mBecomesSuchThat(mList(id_x, id_y), mList(bd_xp, bd_yp),
 							mAssociativePredicate(Formula.LAND,
 									mRelationalPredicate(Formula.EQUAL, b1, id_y),
 									mRelationalPredicate(Formula.EQUAL, b0, id_x)
 							))
 			), new AssignTestPair(
-					"x,y,z :| x'=y∧y'=z∧z'=x",
+					"x,y,z :\u2223 x'=y∧y'=z∧z'=x",
 					mBecomesSuchThat(mList(id_x, id_y, id_z), mList(bd_xp, bd_yp, bd_zp),
 							mAssociativePredicate(Formula.LAND,
 									mRelationalPredicate(Formula.EQUAL, b2, id_y),
