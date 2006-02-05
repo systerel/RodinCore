@@ -53,7 +53,7 @@ public enum ProblemKind {
 	/**
 	 * Argument 0 is the contents of the token, argument 1 is the location
 	 */
-	LexerError ("Lexer error at %2$d, token not recognized: %1$s"),
+	LexerError ("Lexer error at %2$d, character '%1$s' has been ignored."),
 	
 	/**
 	 * No arguments.
