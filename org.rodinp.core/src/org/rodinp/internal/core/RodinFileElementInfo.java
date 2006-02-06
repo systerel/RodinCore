@@ -33,7 +33,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class RodinFileElementInfo extends OpenableElementInfo {
 
@@ -42,6 +44,22 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 				IRodinDBStatusConstants.MALFORMED_FILE_ERROR, 
 				rodinElement);
 		return new RodinDBException(status);
+	}
+	
+	private static class XMLErrorHandler implements ErrorHandler {
+
+		public void warning(SAXParseException exception) throws SAXException {
+			// ignore warnings
+		}
+
+		public void error(SAXParseException exception) throws SAXException {
+			throw exception;
+		}
+
+		public void fatalError(SAXParseException exception) throws SAXException {
+			throw exception;
+		}
+		
 	}
 	
 	// True iff the file has been changed since it was last parsed.
@@ -154,6 +172,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	public synchronized boolean parseFile(IProgressMonitor pm, RodinFile rodinFile) throws RodinDBException {
 		RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		DocumentBuilder builder = manager.getDocumentBuilder();
+		builder.setErrorHandler(new XMLErrorHandler());
 		try {
 			Document document = builder.parse(rodinFile.getResource().getContents());
 			Element root = document.getDocumentElement();
