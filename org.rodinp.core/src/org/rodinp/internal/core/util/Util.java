@@ -62,7 +62,7 @@ public class Util {
 		int firstCP = string.codePointAt(0);
 		int lastCP = string.codePointBefore(length);
 		
-		if (! Character.isSpaceChar(firstCP) && ! Character.isSpaceChar(lastCP)) {
+		if (! Character.isWhitespace(firstCP) && ! Character.isWhitespace(lastCP)) {
 			// Nothing to do.
 			return string;
 		}
