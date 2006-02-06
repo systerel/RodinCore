@@ -24,11 +24,11 @@ public class EventBKeyboardTextTranslator
 
 	private static final String [] textCombo =
 		{"NAT1", "NAT", "POW1", "POW", "INTER", "INT", "UNION", "or",
-		"not", "true", "false", "\u2115\u0031", "\u2119\u0031", "\u2124ER", "circ"};
+		"not", "true", "false", "\u2124ER", "circ"};
 	
 	private static final String [] textComboTranslation =
-		{"\u2115\u2081", "\u2115", "\u2119\u2081", "\u2119", "\u22c2", "\u2124", "\u22c3", "\u2228",
-		"\u00ac", "\u22a4", "\u22a5", "\u2115\u2081", "\u2119\u2081", "\u22c2", "\u2218"};
+		{"\u2115\u0031", "\u2115", "\u2119\u0031", "\u2119", "\u22c2", "\u2124", "\u22c3", "\u2228",
+		"\u00ac", "\u22a4", "\u22a5", "\u22c2", "\u2218"};
 	
 	/**
      * Testing if a character is a text character 
