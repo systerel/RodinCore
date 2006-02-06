@@ -35,17 +35,6 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public abstract class Formula<T extends Formula<T>> {
 
-	/**
-	 * <code>STARTTAG</code> represents the tag of a node parent, when the
-	 * node is the root node of a formula.
-	 */
-	protected final static int STARTTAG = 0;
-
-	/**
-	 * <code>TYPEVARIABLE</code> represents a type variable.
-	 */
-	public final static int TYPEVARIABLE = -2;
-
 	// The tag for this AST node.
 	private final int tag;
 
@@ -55,6 +44,12 @@ public abstract class Formula<T extends Formula<T>> {
 	// Hash code for this formula
 	private final int hashCode;
 	
+	/**
+	 * <code>STARTTAG</code> represents the tag of a node parent, when the
+	 * node is the root node of a formula.
+	 */
+	protected final static int STARTTAG = 0;
+
 	/**
 	 * <code>FREE_IDENT</code> represents a free occurence of an identifer.
 	 * Can only be a FreeIdentifier AST node.
