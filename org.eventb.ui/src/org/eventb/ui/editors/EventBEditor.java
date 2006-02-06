@@ -162,6 +162,14 @@ public class EventBEditor
 	public void dispose() {
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
+		
+		try { // Close the associated RodinFile
+			this.getRodinInput().close();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		
 		super.dispose();
 	}	
 			
