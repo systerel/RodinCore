@@ -10,6 +10,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.xml.sax.SAXParseException;
 
 public class TestFileCreation extends AbstractRodinDBTests {
 
@@ -68,6 +69,39 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
+	// Test creation of a Rodin file through the IResource API, with unnecessary
+	// whitespace in the XML contents
+	public void testCreateRodinFile2() throws Exception {
+		assertTrue(rodinProject.exists());
+		
+		// Check project is empty
+		assertEquals("Empty project", 0, rodinProject.getChildren().length);
+		assertFalse(rodinProject.hasChildren());
+		
+		// Create one Rodin file handle
+		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
+		assertFalse(rodinFile.exists());
+		
+		// Actually create the file
+		IFile file = (IFile) rodinFile.getResource();
+		
+		String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+ "<org.rodinp.core.tests.test>\n"
+			+ "  \t\n\r  "
+			+ "</org.rodinp.core.tests.test>\n";
+		file.create(new ByteArrayInputStream(contents.getBytes("UTF-8")), true, null);
+		assertTrue(rodinFile.exists());
+
+		// Check the file is empty
+		assertFalse(rodinFile.hasChildren());
+		
+		// Then delete it
+		rodinFile.getResource().delete(true, null);
+		assertFalse(rodinFile.exists());
+		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
+	}
+
 	// Test creation of an empty Rodin file through the IResource API
 	public void testCreateEmptyRodinFile() throws Exception {
 		assertTrue(rodinProject.exists());
@@ -88,7 +122,6 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		file.create(new ByteArrayInputStream(new byte[0]), true, null);
 		// As the file is not an XML file, there is no Rodin file for it.
 		assertFalse(rodinFile.exists());
-		// TODO fix error message on the console for this test.
 		
 		// Then delete the file
 		file.delete(true, null);
@@ -98,7 +131,7 @@ public class TestFileCreation extends AbstractRodinDBTests {
 	}
 
 	// Test creation of a Rodin file through the Rodin API
-	public void testCreateRodinFile2() throws CoreException, RodinDBException{
+	public void testCreateRodinFile3() throws CoreException, RodinDBException{
 		assertTrue(rodinProject.exists());
 		
 		// Check project is empty
@@ -204,6 +237,33 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		assertFalse(folder.exists());
 		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
+	}
+
+	// Test creation of a malformed Rodin file through the IResource API
+	public void testCreateMalformedRodinFile() throws Exception {
+		// Create one Rodin file handle
+		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
+		assertFalse(rodinFile.exists());
+		
+		// Actually create the file
+		IFile file = rodinFile.getResource();
+		String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			+ "<org.rodinp.core.tests.test>\n"
+			+ "  <  "
+			+ "</org.rodinp.core.tests.test>\n";
+		file.create(new ByteArrayInputStream(contents.getBytes("UTF-8")), true, null);
+		// As the file is not a valid XML file, there is no Rodin file for it.
+		assertFalse(rodinFile.exists());
+		
+		// Check that the XML error is reported
+		try {
+			rodinFile.getChildren();	
+		} catch (RodinDBException e) {
+			assertTrue(e.getException() instanceof SAXParseException);
+		}
+		
+		// Then delete the file
+		file.delete(true, null);
 	}
 
 }
