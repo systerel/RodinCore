@@ -85,7 +85,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		insert("T");
 		insert("1");
 		insert(" ");
-		String expect = "\u2115\u2081 ";
+		String expect = "\u2115\u0031 ";
 		String actual = formula.getText();
 		assertEquals("NAT1 ", expect, actual);
 	}
@@ -108,7 +108,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		insert("W");
 		insert("1");
 		insert(" ");
-		String expect = "\u2119\u2081 ";
+		String expect = "\u2119\u0031 ";
 		String actual = formula.getText();
 		assertEquals("POW1 ", expect, actual);
 	}
@@ -650,8 +650,18 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		formula.setText("");
 		insert(":");
 		insert("|");
-		String expect = ":|";
+		String expect = ":\u2223";
 		String actual = formula.getText();
 		assertEquals(":| ", expect, actual);
 	}
+
+
+	public void testMid() {
+		formula.setText("");
+		insert("|");
+		String expect = "\u2223";
+		String actual = formula.getText();
+		assertEquals("| ", expect, actual);
+	}
+
 }

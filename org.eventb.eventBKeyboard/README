@@ -27,6 +27,8 @@ Change Log:
 
 - Version 2.5.1: Fixing a bug for "or".
 
+- Version 2.5.2: Changing "|" to "\u2223".
+
 --------
 
 Once installed (see INSTALL), you can run Eclipse and choose to
@@ -119,18 +121,18 @@ circ             ?             Backward composition
 %                λ             Lambda 
 INTER            ?             N-ary intersection    
 UNION            ?             N-ary union    
-|                |             Such that
+|                ∣             	Such that
 
-..               ‥             Upto operation                        
-+                +             Plus sign
--                −             Minus sign    
+..               ‥                    Upto operation                        
++                +          Plus sign
+-                −          Minus sign    
 *                ?             Asterisk operator    
 /                ÷             Division sign    
 ^                ^             Exponentiation sign
 
 :=               ?             Becomes equal
 ::               :∈            Becomes an element of
-:|               :|            Becomes such that
+:|               :∣            Becomes such that
 
 
 --------------------------------------------------------------------------
