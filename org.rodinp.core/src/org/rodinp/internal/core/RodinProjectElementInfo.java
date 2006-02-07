@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.rodinp.core.basis.RodinElement;
 
 /** 
@@ -83,10 +84,9 @@ import org.rodinp.core.basis.RodinElement;
 				switch (res.getType()) {
 				case IResource.FILE:
 					final IFile file = (IFile) res;
-					IContentDescription description = file.getContentDescription();
-					if (description.getContentType().isKindOf(
-							RodinDBManager.rodinContentType)) {
-						newChildren[resourcesCounter++] = RodinDBManager.createRodinFileFrom(file, project);
+					if (isRodinFile(file)) {
+						newChildren[resourcesCounter++] =
+							RodinDBManager.createRodinFileFrom(file, project);
 					}
 					break;
 				}
@@ -102,6 +102,22 @@ import org.rodinp.core.basis.RodinElement;
 		}
 		setChildren(newChildren);
 	}
+	
+	private boolean isRodinFile(IFile file) {
+		try {
+			final IContentDescription description = file
+					.getContentDescription();
+			if (description == null)
+				return false;
+			final IContentType type = description.getContentType();
+			if (type == null)
+				return false;
+			return type.isKindOf(RodinDBManager.rodinContentType);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	
 	
 	/**
 	 * Returns an array of non-Rodin resources contained in the receiver.
