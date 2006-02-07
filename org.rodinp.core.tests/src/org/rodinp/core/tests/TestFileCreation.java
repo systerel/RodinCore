@@ -1,6 +1,7 @@
 package org.rodinp.core.tests;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -264,6 +265,27 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		
 		// Then delete the file
 		file.delete(true, null);
+	}
+
+	/**
+	 * Ensures that a file which content type is unknown to Eclipse is
+	 * considered as a non-Rodin resource (bug fix).
+	 */
+	public void testCreateFileOfUnknownType() throws CoreException, RodinDBException, UnsupportedEncodingException{
+		// Create one non-Rodin file with unknown content-type
+		IFile file = rodinProject.getProject().getFile("toto.xyzt");
+		String contents = "Some arbitrary contents.";
+		file.create(new ByteArrayInputStream(contents.getBytes("UTF-8")), false, null);
+
+		// Checks the content-type is unknown
+		assertNull(file.getContentDescription());
+
+		// Check project contains the file as a non-Rodin resource
+		assertEquals("Project with one non-Rodin file", 0, rodinProject.getChildren().length);
+		assertFalse(rodinProject.hasChildren());
+		// 2 because of the ".project" file
+		assertEquals("Project with one non-Rodin file", 2, rodinProject.getNonRodinResources().length);
+		assertEquals("Project with one non-Rodin file", 0, rodinProject.getRodinFiles().length);
 	}
 
 }
