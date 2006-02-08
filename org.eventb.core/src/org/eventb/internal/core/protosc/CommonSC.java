@@ -64,12 +64,13 @@ public class CommonSC implements ISCProblemList {
 	private String printElement(IRodinElement element) {
 		String elementType = element.getElementType();
 		String result = elementType.substring(elementType.lastIndexOf('.')+1);
+		IRodinElement parent = element.getParent();
 		if(element instanceof IUnnamedInternalElement)
-			result = result + " in " + printElement(element.getParent());
-		else if(!(element.getParent() instanceof IRodinFile))
-			result = result + " " + ((IInternalElement) element).getElementName() + " in " + printElement(element.getParent());
-		else if(element instanceof IInternalElement)
-			result = result + " " + ((IInternalElement) element).getElementName(); 
+			result = result + " in " + printElement(parent);
+		else if(parent instanceof IInternalElement)
+			result = result + " " + ((IInternalElement) element).getElementName() + " in " + printElement(parent);
+		else
+			result = result + " " + element.getElementName(); 
 		return result;
 	}
 	
@@ -116,7 +117,7 @@ public class CommonSC implements ISCProblemList {
 		}
 	}
 
-	public void addProblem(IInternalElement element, String message, int severity) {
+	public void addProblem(IRodinElement element, String message, int severity) {
 		addProblem(new SCProblem(element, message, severity));
 	}
 

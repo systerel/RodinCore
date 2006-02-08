@@ -31,7 +31,6 @@ import org.eventb.core.ISCTheoremSet;
 import org.eventb.core.ITheorem;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.protosc.SCCore;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinCore;

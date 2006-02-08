@@ -45,7 +45,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.protosc.SCCore;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinCore;
@@ -159,7 +158,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if(seesPaths.length == 0 || !seesPaths[0].equals(seen)) {
 			graph.removeDependencies(target, SCCore.MACHINE_SEES_REL_ID);
 			if(seen != null)
-				graph.addToolDependency(seen, target, SCCore.MACHINE_SEES_REL_ID, true);
+				graph.addUserDependency(file.getFullPath(), seen, target, SCCore.MACHINE_SEES_REL_ID, true);
 		}
 	}
 
@@ -266,6 +265,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 				commitActions(event, committedActions);
 			}
 		}
+		if(!machineCache.getNewEvents().keySet().contains("INITIALISATION"))
+			addProblem(machine, "Machine does not have an initialisation.", SCProblem.SEVERITY_ERROR);
 	}
 	
 	private void commitLocalVariables(IEvent event, HashMap<String, IVariable> committedVariables) throws RodinDBException {
@@ -308,7 +309,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 					break;
 			}
 			if(verified) {
-				SCParser parser = parseAndVerifyPredicate(guard, machineCache.getLocalTypeEnvironment().get(name));
+				SCParser parser = parseAndVerifyPredicate(guard, machineCache.getTypeEnvironment());
 				if(parser != null) {
 					committedGuards.add(guard);
 					machineCache.getLocalTypeEnvironment().put(name, parser.getTypeEnvironment());
@@ -343,7 +344,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 				}
 			}
 		}
-		if(!vars.isEmpty()) {
+		if(!isOrdinary && !vars.isEmpty()) {
 			addProblem(event, "Not all variables are initialised. Missing: " + vars.toString(), SCProblem.SEVERITY_ERROR);
 		}
 	}

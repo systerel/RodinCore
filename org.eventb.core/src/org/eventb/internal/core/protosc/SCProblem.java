@@ -9,7 +9,7 @@ package org.eventb.internal.core.protosc;
 
 import org.eclipse.core.resources.IMarker;
 import org.eventb.core.ast.SourceLocation;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author halstefa
@@ -21,7 +21,7 @@ public class SCProblem {
 	public final static int SEVERITY_WARNING = IMarker.SEVERITY_WARNING;
 	public final static int SEVERITY_INFO = IMarker.SEVERITY_INFO;
 	
-	private final IInternalElement element;
+	private final IRodinElement element;
 	private final String message;
 	private final int severity;
 	
@@ -31,7 +31,7 @@ public class SCProblem {
 	/**
 	 * 
 	 */
-	public SCProblem(IInternalElement element, String message, int severity) {
+	public SCProblem(IRodinElement element, String message, int severity) {
 		this.element = element;
 		this.message = message;
 		this.severity = severity;
@@ -40,7 +40,7 @@ public class SCProblem {
 	/**
 	 * @return Returns the element.
 	 */
-	public IInternalElement getElement() {
+	public IRodinElement getElement() {
 		return element;
 	}
 
