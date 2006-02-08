@@ -54,7 +54,6 @@ public interface IGraph {
 
 	/**
 	 * Adds a dependency controlled by a tool to the graph.
-	 * 
 	 * @param source
 	 *            The source of the dependency.
 	 * @param target

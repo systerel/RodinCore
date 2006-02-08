@@ -176,6 +176,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	}
 
 	private void cleanGraph(IProgressMonitor monitor) throws CoreException {
+		if (state == null)
+			state = BuildState.getBuildState(getProject(), monitor);
 		state.graph.cleanGraph(makeInterrupt(), monitor);
 	}
 	

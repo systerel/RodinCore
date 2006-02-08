@@ -73,11 +73,11 @@ public class Graph implements Serializable {
 	
 	transient private int N;
 	
-	public void incN() {
+	protected void incN() {
 		N++;
 	}
 	
-	public void decN() {
+	protected void decN() {
 		N--;
 	}
 	
@@ -158,10 +158,10 @@ public class Graph implements Serializable {
 		} catch (OperationCanceledException e) {
 			throw e;
 		} catch (CoreException e) {
-			Util.log(e, "while running producer" + file.getName()); //$NON-NLS-1$
+			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
 			return;
 		} catch (RuntimeException e) {
-			Util.log(e, "while running producer" + file.getName()); //$NON-NLS-1$
+			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
 			return;
 		}
 		
@@ -228,7 +228,7 @@ public class Graph implements Serializable {
 		}
 	}
 	
-	public void removePhantoms() {
+	private void removePhantoms() {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node node : values) {
 			if(node.isPhantom() && node.succSize() == 0)
@@ -442,7 +442,7 @@ public class Graph implements Serializable {
 		// dependency.
 		
 		if(RodinBuilder.DEBUG)
-			System.out.print(getClass().getName() + ": Committing:"); //$NON-NLS-1$
+			System.out.print(getClass().getName() + ": Checking:"); //$NON-NLS-1$
 		
 		// first we modify the graph to find out more about the cause of the cycle
 		for(Node node : nodePreList) {
