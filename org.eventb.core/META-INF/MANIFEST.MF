@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
- org.eventb.core.protopog,
- org.eventb.core.protosc
+ org.eventb.internal.core.protopog;x-friends:="org.eventb.core.testscpog",
+ org.eventb.internal.core.protosc;x-friends:="org.eventb.core.testscpog"

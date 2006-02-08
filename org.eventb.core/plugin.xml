@@ -198,8 +198,8 @@
             name="%contextSCTool">
          <extractor
                class="org.eventb.internal.core.protosc.ContextSC"
-               id="machineSC"
-               name="%contextExtractor">
+               id="contextSC"
+               name="%contextSCExtractor">
             <inputType id="org.eventb.core.context"/>
          </extractor>
       </tool>
@@ -210,8 +210,30 @@
          <extractor
                class="org.eventb.internal.core.protosc.MachineSC"
                id="machineSC"
-               name="%machineExtractor">
+               name="%machineSCExtractor">
             <inputType id="org.eventb.core.machine"/>
+         </extractor>
+      </tool>
+      <tool
+            class="org.eventb.internal.core.protopog.ContextPOG"
+            id="contextPOG"
+            name="%contextPOG">
+         <extractor
+               class="org.eventb.internal.core.protopog.ContextPOG"
+               id="contextPOG"
+               name="%contextPOGExtractor">
+            <inputType id="org.eventb.core.scContext"/>
+         </extractor>
+      </tool>
+      <tool
+            class="org.eventb.internal.core.protopog.MachinePOG"
+            id="machinePOG"
+            name="%machinePOG">
+         <extractor
+               class="org.eventb.internal.core.protopog.MachinePOG"
+               id="machinePOG"
+               name="%machinePOGExtractor">
+            <inputType id="org.eventb.core.scMachine"/>
          </extractor>
       </tool>
    </extension>
