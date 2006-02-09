@@ -89,6 +89,10 @@ public class EventBImage {
 		registerImage(registry, IMG_DELETE, "delete.gif");
 		registerImage(registry, IMG_NEW_PROJECT, "new-project.gif");
 		registerImage(registry, IMG_NEW_CONSTRUCT, "new-construct.gif");
+		
+		registerImage(registry, IMG_UNDISCHARGED, "undischarged.gif");
+		registerImage(registry, IMG_APPLIED, "applied.gif");
+		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 	}
 
 	/*
