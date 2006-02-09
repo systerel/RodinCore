@@ -68,7 +68,7 @@
             class="org.eventb.internal.ui.eventbeditor.EventBEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBEditorContributor"
             extensions="bum, buc"
-            icon="icons/sample.gif"
+            icon="icons/new-construct.gif"
             id="org.eventb.ui.editors.EventBEditor"
             name="Event-B Editor"/>
       <editor
