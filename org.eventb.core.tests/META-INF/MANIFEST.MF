@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test Event-B Core Plug-in
+Bundle-SymbolicName: org.eventb.core.tests
+Bundle-Version: 1.0.0
+Bundle-Vendor: Rodin
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ org.eventb.core,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true
