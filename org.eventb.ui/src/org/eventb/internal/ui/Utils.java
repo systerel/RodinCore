@@ -56,20 +56,6 @@ public class Utils {
 		if (dotLoc != -1) return fileName.substring(0, dotLoc);
 		else return fileName;
 	}
-
-
-	/**
-	 * Getting the extension of a file name.
-	 * <p>
-	 * @param fileName the full file name (with the extension)
-	 * <p>
-	 * @return the extension or null
-	 */
-	public static String getExtension(String fileName) {
-		int dotLoc = fileName.lastIndexOf('.');
-		if (dotLoc != -1) return fileName.substring(dotLoc + 1);
-		else return null;
-	}
 	
 
 	/**
