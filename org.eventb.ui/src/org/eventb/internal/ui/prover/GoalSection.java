@@ -11,17 +11,33 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.usersupport.UserSupport;
 
 public class GoalSection
 	extends SectionPart
@@ -31,6 +47,64 @@ public class GoalSection
 	
     private FormPage page;
     private Text text;
+    private FormText formText;
+    private ScrolledForm scrolledForm;
+    
+    private class GoalTacticHyperlinkAdapter extends HyperlinkAdapter {
+
+		@Override
+		public void linkActivated(HyperlinkEvent e) {
+			if (e.getHref().equals("∧")) {
+				apply(Tactics.conjI);
+				return;
+			}
+			if (e.getHref().equals("⇒")) {
+				apply(Tactics.impI);
+				return;
+			}
+			
+			if (e.getHref().equals("hp")) {
+				apply(Tactics.hyp);
+				return;
+			}
+			
+			if (e.getHref().equals("∀")) {
+				apply(Tactics.allI);
+				return;
+			}
+
+			if (e.getHref().equals("⊤")) {
+				apply(Tactics.trivial);
+				return;
+			}
+		}
+    	
+    }
+    
+    
+    private void apply(Tactic t) {
+    	ProverUI editor = (ProverUI) page.getEditor();
+		if (editor != null) {
+			TreeViewer viewer = editor.getContentOutline().getViewer();
+		
+			ISelection selection = viewer.getSelection();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
+
+			if (obj instanceof ProofTree) {
+				ProofTree proofTree = (ProofTree) obj;
+				if (!proofTree.isClosed()) {
+					t.apply(proofTree);
+					editor.getContentOutline().refresh(proofTree);
+					// Expand the node
+					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
+					//viewer.setExpandedState(proofTree, true);
+
+					// Select the "next" pending "subgoal"
+					editor.getContentOutline().selectNextPendingSubgoal(proofTree);
+				}
+			}
+		}
+    }
     
     // Contructor
 	public GoalSection(FormPage page, Composite parent, int style) {
@@ -43,20 +117,29 @@ public class GoalSection
 	public void createClient(Section section, FormToolkit toolkit) {
         section.setText(SECTION_TITLE);
         section.setDescription(SECTION_DESCRIPTION);
-        ScrolledForm scrolledForm = toolkit.createScrolledForm(section);
+        scrolledForm = toolkit.createScrolledForm(section);
         
 		Composite comp = scrolledForm.getBody();
         GridLayout layout = new GridLayout();
-        layout.numColumns  = 1;
+        layout.numColumns  = 2;
         layout.verticalSpacing = 5;
 		comp.setLayout(layout);
 		section.setClient(scrolledForm);
         toolkit.paintBordersFor(scrolledForm);
 		
-        //toolkit.paintBordersFor(comp);
+        formText = toolkit.createFormText(comp, true);
+		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
+		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
+		formText.setHyperlinkSettings(hyperlinkSettings);
+		formText.addHyperlinkListener(new GoalTacticHyperlinkAdapter());
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+        gd.widthHint = 100;
+        formText.setLayoutData(gd);
+        toolkit.paintBordersFor(formText);
+        
         text = toolkit.createText(comp, "No selection");
         text.setEditable(false);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
         text.setLayoutData(gd);
 
 	}
@@ -81,13 +164,45 @@ public class GoalSection
 
 	public void setGoal(ProofTree pt) {
 		if (!pt.rootIsOpen()) {
-//			disableButtons();
+			clearFormText();
 			text.setText(":-)");
 		}
 		else {
 			text.setText(pt.getRootSeq().goal().toString());
-//			enableButtons(pt.getRootSeq());
+			setFormText(pt.getRootSeq());
 		}
 		return;
 	}
+
+	private void clearFormText() {
+		formText.setText("<form></form>", true, false);
+		scrolledForm.reflow(false);
+		return;
+	}
+
+	private void setFormText(IProverSequent ps) {
+		String formString = "<form><li style=\"text\" value=\"\">";
+		List<Tactic> tactics = UserSupport.getApplicable(ps);
+		
+		for (Iterator<Tactic> it = tactics.iterator(); it.hasNext();) {
+			Tactic t = it.next();
+			formString = formString + "<a href=\"" + markedUpTactic(t) + "\">" + markedUpTactic(t) +"</a> ";
+		}
+		
+		formString = formString + "</li></form>";
+		formText.setText(formString, true, false);
+		scrolledForm.reflow(false);
+		
+		return;
+	}
+	
+	private String markedUpTactic(Tactic t) {
+		if (t.equals(Tactics.conjI)) return "∧";
+		if (t.equals(Tactics.impI)) return "⇒";
+		if (t.equals(Tactics.hyp)) return "hp";
+		if (t.equals(Tactics.allI)) return "∀";
+		if (t.equals(Tactics.trivial)) return "⊤";
+		return "notac";
+	}
+	
 }
