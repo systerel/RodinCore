@@ -32,7 +32,7 @@ public class EventsPage
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "events"; //$NON-NLS-1$
+	public static final String PAGE_ID = "Events"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Events";
 	public static final String PAGE_TAB_TITLE = "Events";
 		

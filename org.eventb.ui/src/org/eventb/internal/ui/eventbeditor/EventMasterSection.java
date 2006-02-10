@@ -51,7 +51,8 @@ import org.rodinp.core.RodinDBException;
 public class EventMasterSection 
 	extends EventBTreePartWithButtons
 {
-
+	// TODO Add INITIALISATION
+	
 	// The indexes for different buttons.
 	private static final int ADD_INDEX = 0;
 	private static final int DELETE_INDEX = 1;

@@ -86,7 +86,7 @@ public class CarrierSetMasterSection
 	 * Handle the adding (new Carrier Set) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new carrier Set", "set" + counter, null);
+		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new Carrier Set", "set" + counter, null);
 		dialog.open();
 		String name = dialog.getValue();
 		if (name != null)
@@ -102,7 +102,7 @@ public class CarrierSetMasterSection
 			catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-//		dialog.close();
+		dialog.close();
 	}
 	
 

@@ -34,7 +34,7 @@ public class ConstantMirrorSection
 
 	// Title and description of the section.
     private static final String title = "Contants";
-    private static final String description = "List of constants of the construct";
+    private static final String description = "List of constants of the component";
     
 
     /**

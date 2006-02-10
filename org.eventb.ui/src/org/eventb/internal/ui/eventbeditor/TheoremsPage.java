@@ -34,7 +34,7 @@ public class TheoremsPage
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "theorems"; //$NON-NLS-1$
+	public static final String PAGE_ID = "Theorems"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Theorems";
 	public static final String PAGE_TAB_TITLE = "Theorems";
 	

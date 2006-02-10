@@ -32,7 +32,7 @@ public class VariablesPage
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "variables"; //$NON-NLS-1$
+	public static final String PAGE_ID = "Variables"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Variables";
 	public static final String PAGE_TAB_TITLE = "Variables";
 	

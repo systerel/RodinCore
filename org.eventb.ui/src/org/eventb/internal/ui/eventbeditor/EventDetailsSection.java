@@ -32,7 +32,7 @@ public class EventDetailsSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Modifying Events";
-	private static final String SECTION_DESCRIPTION = "Add, delete or change events of the component";	
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected event of the component";	
 	   
 	// The row for editing name.
     private NameInputRow name;
@@ -65,7 +65,7 @@ public class EventDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        name = new NameInputRow(this, toolkit, comp, "name*", "Name of the set");
+        name = new NameInputRow(this, toolkit, comp, "name*", "Name of the event");
 		addRow(name);
                      
         GridData gd = new GridData(GridData.FILL_BOTH);

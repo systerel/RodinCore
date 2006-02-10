@@ -30,8 +30,8 @@ public class AxiomDetailsSection
 {
 
 	// Title and description of the section
-	private static final String SECTION_TITLE = "Modifying Axioms";
-	private static final String SECTION_DESCRIPTION = "Editing the detail of the selected axiom";	
+	private static final String SECTION_TITLE = "Modifying Axiom";
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected axiom";	
 
 	// The row for editting subsitution
 	private EventBInputRow predicate;
@@ -64,11 +64,11 @@ public class AxiomDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the variable");
+        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the axiom");
         addRow(name);
         
         String string = "predicate*";
-        String tip = "Predicate associated with the invariant";
+        String tip = "Predicate associated with the axiom";
         predicate = new ContentInputRow(this, toolkit, comp, string, tip);
         addRow(predicate);        
         

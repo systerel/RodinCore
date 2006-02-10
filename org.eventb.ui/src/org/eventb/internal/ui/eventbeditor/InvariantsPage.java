@@ -32,7 +32,7 @@ public class InvariantsPage
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "invariants"; //$NON-NLS-1$
+	public static final String PAGE_ID = "Invariants"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Invariants";
 	public static final String PAGE_TAB_TITLE = "Invariants";
 	

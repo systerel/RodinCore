@@ -65,7 +65,7 @@ public class CarrierSetDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        name = new NameInputRow(this, toolkit, comp, "name*", "Name of the set");
+        name = new NameInputRow(this, toolkit, comp, "name*", "Name of the carrier set");
 		addRow(name);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);

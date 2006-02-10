@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class DependenciesPage extends FormPage {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
+	public static final String PAGE_ID = "Dependencies"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Dependencies";
 	public static final String PAGE_TAB_TITLE = "Dependencies";
 	

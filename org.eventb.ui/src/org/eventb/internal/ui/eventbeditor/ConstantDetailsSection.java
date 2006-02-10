@@ -32,7 +32,7 @@ public class ConstantDetailsSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Modifying Constants";
-	private static final String SECTION_DESCRIPTION = "Edit the selected constant of the component";	
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected constant";	
 
 	// The row for editing name.
 	private EventBInputRow name;

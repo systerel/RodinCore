@@ -35,7 +35,7 @@ public class AxiomMirrorSection
     
 	// Title and description of the section.
 	private static final String title = "Axioms";
-    private static final String description = "List of axioms of the construct";
+    private static final String description = "List of axioms of the component";
     
     
     /**

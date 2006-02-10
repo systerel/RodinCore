@@ -32,7 +32,7 @@ public class InvariantDetailsSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Modifying Invariants";
-	private static final String SECTION_DESCRIPTION = "Add, delete or change invariants of the component";	
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected invariant";	
 	
 	// The row for editing predicate.
     private EventBInputRow predicate;
@@ -65,7 +65,7 @@ public class InvariantDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the variable");
+        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the invariant");
         addRow(name);
         
         String string = "predicate*";

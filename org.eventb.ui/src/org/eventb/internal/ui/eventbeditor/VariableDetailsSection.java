@@ -32,7 +32,7 @@ public class VariableDetailsSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Modifying Variables";
-	private static final String SECTION_DESCRIPTION = "Add, delete or change variables of the component";	
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected variable";	
 	
 	// The row for editing name.
 	EventBInputRow name; 

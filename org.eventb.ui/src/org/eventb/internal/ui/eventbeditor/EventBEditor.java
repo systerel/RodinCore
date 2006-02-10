@@ -74,77 +74,54 @@ public class EventBEditor
 	 */
 	public EventBEditor() {
 		super();
-//		IEditorInput input = getEditorInput();
-
 	}
 
-	
-	
-	
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		// TODO Do not use the extension bum and buc
 		super.init(site, input);
-		String fileName = input.getName();
 		
+		IRodinFile rodinFile = this.getRodinInput();
 		
-		String ext = Utils.getExtension(fileName);
-		this.setPartName(Utils.getFileNameWithoutExtension(fileName));
+		this.setPartName(Utils.getFileNameWithoutExtension(rodinFile.getElementName()));
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		if (ext.equalsIgnoreCase("bum"))
+		if (rodinFile instanceof IMachine)
 			this.setTitleImage(registry.get(EventBImage.IMG_MACHINE));
-		if (ext.equalsIgnoreCase("buc"))
+		if (rodinFile instanceof IContext)
 			this.setTitleImage(registry.get(EventBImage.IMG_CONTEXT));
 	}
-
-
 
 
 	/**
 	 * Creates the pages of the multi-page editor.
 	 */
 	protected void addPages() {
-		IEditorInput input = getEditorInput();
-		String fileName = input.getName();
+		IRodinFile rodinFile = this.getRodinInput();
 		
-		String ext = Utils.getExtension(fileName);
-
-		if (ext != null) {
-			try {
-				// Getting the page contructors from the extensions depends
-				// on the extension type
-				Constructor [] constructors = new Constructor[0];
-				if (ext.equalsIgnoreCase("bum")) {
-					constructors = ExtensionLoader.getMachinePages();
-				}
-				else if (ext.equalsIgnoreCase("buc")) {
-					constructors = ExtensionLoader.getContextPages();
-				}
+		Constructor [] constructors = new Constructor[0];
+		
+		if (rodinFile instanceof IMachine) {
+			constructors = ExtensionLoader.getMachinePages();
+		}
+		if (rodinFile instanceof IContext) {
+			constructors = ExtensionLoader.getContextPages();
+		}
 				
-				// Create the pages
-				for (int i = 0; i < constructors.length; i++) {
-					Object [] objects = {this};
-					addPage((IFormPage) constructors[i].newInstance(objects));
-				}
-//				this.setPartName(Utils.getFileNameWithoutExtension(fileName));
-//				ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-//				if (ext.equalsIgnoreCase("bum"))
-//					this.setTitleImage(registry.get(EventBUIPlugin.IMG_MACHINE));
-//				if (ext.equalsIgnoreCase("buc"))
-//					this.setTitleImage(registry.get(EventBUIPlugin.IMG_CONTEXT));
-			
-				
+		try {
+			// Create the pages
+			for (int i = 0; i < constructors.length; i++) {
+				Object [] objects = {this};
+				addPage((IFormPage) constructors[i].newInstance(objects));
 			}
-			catch (PartInitException e) {
-				// TODO Handle exception
-				MessageDialog.openError(null,
-						"Event-B Editor",
-						"Error creating pages for Event-B Editor");
-			}
-			catch (Exception e) {
-				// TODO Handle exception
-				e.printStackTrace();
-			}
+		}
+		catch (PartInitException e) {
+			// TODO Handle exception
+			MessageDialog.openError(null,
+					"Event-B Editor",
+					"Error creating pages for Event-B Editor");
+		}
+		catch (Exception e) {
+			// TODO Handle exception
+			e.printStackTrace();
 		}
 	}
 

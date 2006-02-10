@@ -32,7 +32,7 @@ public class TheoremDetailsSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Modifying Theorems";
-	private static final String SECTION_DESCRIPTION = "Editing the detail of the selected theorem";	
+	private static final String SECTION_DESCRIPTION = "Editing the details of the selected theorem";	
 	
 	// The row for editing predicate.
 	private EventBInputRow predicate;

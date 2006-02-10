@@ -53,7 +53,7 @@ public class SeeSection
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Required Contexts";
-	private static final String SECTION_DESCRIPTION = "Select the context the model sees";	
+	private static final String SECTION_DESCRIPTION = "Select the context that the model sees";	
 	
     // The Dependencies page contains this section. 
 	private DependenciesPage page;
@@ -183,7 +183,7 @@ public class SeeSection
 			}
 		}
 		catch (RodinDBException e) {
-			// TODO
+			// TODO Refesh?
 			
 			e.printStackTrace();
 			InputDialog dialog = new InputDialog(null, "Resource out of sync", "Refresh? (Y/N)", "Y", null);

@@ -31,8 +31,8 @@ public class GuardDetailsSection
 {
 
 	// Title and description of the section.
-	private static final String SECTION_TITLE = "Modifying Invariants";
-	private static final String SECTION_DESCRIPTION = "Add, delete or change invariants of the component";	
+	private static final String SECTION_TITLE = "Modifying Guards";
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected guard";	
 	
 	// The row for editing predicate.
     private EventBInputRow predicate;
@@ -65,11 +65,11 @@ public class GuardDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the variable");
+        EventBInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the guard");
         addRow(name);
         
         String string = "predicate*";
-        String tip = "Predicate associated with the invariant";
+        String tip = "Predicate associated with the guard";
         predicate = new ContentInputRow(this, toolkit, comp, string, tip);
         addRow(predicate);
         

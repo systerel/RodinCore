@@ -31,8 +31,8 @@ public class ActionDetailsSection
 {
 
 	// Title and description of the section.
-	private static final String SECTION_TITLE = "Modifying Invariants";
-	private static final String SECTION_DESCRIPTION = "Add, delete or change invariants of the component";	
+	private static final String SECTION_TITLE = "Modifying Action";
+	private static final String SECTION_DESCRIPTION = "Modifying the details of the selected action";	
 	
 	// The row for editing subsitution.
 	private ContentInputRow substitution;
@@ -65,9 +65,6 @@ public class ActionDetailsSection
 		toolkit.paintBordersFor(comp);
         section.setClient(comp);
         
-        //NameInputRow name = new NameInputRow(this, toolkit, comp, "name*", "Name of the action");
-		//addRow(name);
-
 		substitution = new ContentInputRow(this, toolkit, comp, "substitution*", "Substitution associated with the action");
 		addRow(substitution);
         
