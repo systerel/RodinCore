@@ -16,13 +16,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 
 public class ProofTreeUIActionGroup 
 	extends ActionGroup 
 {
-	private ProofTreeUI proofTreeUI;
+	private ProofTreeUIPage proofTreeUI;
 	
 	protected Action prevPOAction;
 	protected Action nextPOAction;
@@ -38,7 +39,7 @@ public class ProofTreeUIActionGroup
 	
 	protected DrillDownAdapter drillDownAdapter;
 
-	public ProofTreeUIActionGroup(ProofTreeUI proofTreeUI) {
+	public ProofTreeUIActionGroup(ProofTreeUIPage proofTreeUI) {
 		this.proofTreeUI = proofTreeUI;
 		drillDownAdapter = new DrillDownAdapter(proofTreeUI.getViewer());
 
@@ -60,7 +61,9 @@ public class ProofTreeUIActionGroup
 
 		nextPOAction = new Action() {
 			public void run() {
-				ProofTreeUIActionGroup.this.proofTreeUI.getEditor().nextPO();
+				IProverSequent ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().nextPO();
+				ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+				ProofTreeUIActionGroup.this.proofTreeUI.selectNextPendingSubgoal();
 			}
 		};
 		nextPOAction.setText("Next PO");
@@ -69,7 +72,9 @@ public class ProofTreeUIActionGroup
 
 		prevPOAction = new Action() {
 			public void run() {
-				ProofTreeUIActionGroup.this.proofTreeUI.getEditor().prevPO();
+				IProverSequent ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().prevPO();
+				ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+				ProofTreeUIActionGroup.this.proofTreeUI.selectNextPendingSubgoal();
 			}
 		};
 		prevPOAction.setText("Previous PO");
@@ -269,16 +274,6 @@ public class ProofTreeUIActionGroup
 		trivialAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-	}
-	
-	private void autoApply(ProofTree pt) {
-		// Auto apply (recursively) those rule which has been filtered out
-		Object [] rules = proofTreeUI.getFilters();
-		
-		for (int i = 0; i < rules.length; i++) {
-			
-		}
-		
 	}
 	
 	/* 

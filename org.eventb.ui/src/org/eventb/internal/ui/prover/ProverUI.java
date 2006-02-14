@@ -12,27 +12,13 @@
 package org.eventb.internal.ui.prover;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.SimpleProverSequent;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.us.UserSupport;
 
 /**
  * An example showing how to create a multi-page editor.
@@ -43,7 +29,9 @@ import org.eventb.internal.ui.EventBUIPlugin;
  * <li>page 2 shows the words in page 0 in sorted order
  * </ul>
  */
-public class ProverUI extends FormEditor {
+public class ProverUI
+	extends FormEditor 
+{
 
 	/**
 	 * The plug-in identifier of the Prover UI (value
@@ -52,7 +40,13 @@ public class ProverUI extends FormEditor {
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID + ".editors.ProverUI";
 
 	/** The outline page */
-	private ProofTreeUI fOutlinePage;
+	private ProofTreeUIPage fProofTreeUI;
+	
+	private ObligationListPage fObligationListPage;
+	
+	private ProofControlPage fProofControlPage;
+	
+	private ProofInformationPage fProofInformationPage;
 	
 	//private IRodinFile rodinFile = null;
 	
@@ -60,107 +54,30 @@ public class ProverUI extends FormEditor {
 	
 	//private Object selection = null;
 	
-	private String [] obligations = {
-			"1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2",
-			"1=1 ;; 2=2 |- 1=1 ∧(3=3 ⇒ 2=2 ∧3=3 ∧(∀x·x=1))",
-			"x=1 ∨x=2 |- x < 3 ",
-			"1=1 |-  ∃x·x=1"
-		};
-
-	private List<String> remaining;
-	
-	private int counter;
-	
-	private IProverSequent genSeq(String s){
-		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
-		String goalStr = s.split("[|]-")[1];
-		
-		FormulaFactory ff = Lib.ff;
-			//ProofManager.formulaFactory();
-		
-		// Parsing
-		Predicate[] hyps = new Predicate[hypsStr.length];
-		Predicate goal = ff.parsePredicate(goalStr).getParsedPredicate();
-		for (int i=0;i<hypsStr.length;i++){
-			hyps[i] = ff.parsePredicate(hypsStr[i]).getParsedPredicate();
-		}
-		
-		// Type check
-		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
-		for (int i=0;i<hyps.length;i++){
-			ITypeCheckResult tcResult =  hyps[i].typeCheck(typeEnvironment);
-			assert tcResult.isSuccess();
-			typeEnvironment.addAll(tcResult.getInferredEnvironment());
-			// boolean typed = (hyps[i].isCorrectlyTyped(typeEnvironment,ff)).isCorrectlyTyped();
-			// assert typed;
-		}
-		{
-			ITypeCheckResult tcResult =  goal.typeCheck(typeEnvironment);
-			assert tcResult.isSuccess();
-			typeEnvironment.addAll(tcResult.getInferredEnvironment());
-			
-			// boolean typed = (goal.isCorrectlyTyped(typeEnvironment,ff)).isCorrectlyTyped();
-			// assert typed;
-		}
-		
-		// constructing sequent
-		Set<Hypothesis> Hyps = Hypothesis.Hypotheses(hyps);
-			// new HashSet<Predicate>(Arrays.asList(hyps));
-		
-		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
-		IProverSequent Seq = new SimpleProverSequent(typeEnvironment,Hyps,goal);
-//		System.out.println("The Sequence " + Seq.toString());
-		return Seq.selectHypotheses(Hyps);
-		//return null;
-	}
+	private UserSupport userSupport;
 	
 	/**
 	 * Default constructor.
 	 */
 	public ProverUI() {
 		super();
-		counter = 0;
-		remaining = new ArrayList<String>();
-		for (int i = 0; i < obligations.length; i++) {
-			remaining.add(obligations[i]);
-		}
+		this.userSupport = new UserSupport();
 	}
 
+	public UserSupport getUserSupport() {return userSupport;}
+	
 	/**
 	 * Creates the pages of the multi-page editor.
 	 */
 	protected void addPages() {
-		IEditorInput input = getEditorInput();
-		
-		String fileName = input.getName();
-		
-		int dotLoc = fileName.lastIndexOf('.');
-		if (dotLoc != -1) {
-			String ext = fileName.substring(dotLoc + 1);
-			
-			try {
-				if (ext.equalsIgnoreCase("bum")) {
-					addPage(new ProofsPage(this));
-//					addPage(new VariablesPage(this));
-//					addPage(new InvariantsPage(this));
-//					addPage(new TheoremsPage(this));
-//					addPage(new InitialisationPage(this));
-//					addPage(new EventsPage(this));
-				}
-				else if (ext.equalsIgnoreCase("buc")) {
-//					addPage(new CarrierSetsPage(this));
-//					addPage(new ConstantsPage(this));
-//					addPage(new AxiomsPage(this));
-//					addPage(new TheoremsPage(this));
-				}
-			}
-			catch (PartInitException e) {
-				MessageDialog.openError(null,
-						"Event-B Editor",
-						"Error creating pages for Event-B Editor");
-				//TODO Handle exception
-			}
-			this.setPartName(input.getName());
+		try {
+			addPage(new ProofsPage(this));
+		}
+		catch (PartInitException e) {
+			MessageDialog.openError(null,
+					"Prover UI Editor",
+					"Error creating pages for Prover UI Editor");
+			//TODO Handle exception
 		}
 	}
 
@@ -170,8 +87,8 @@ public class ProverUI extends FormEditor {
 	 * disposal actions required by the event-B editor.
 	 */
 	public void dispose() {
-//		if (fOutlinePage != null)
-//			fOutlinePage.setInput(null);
+		if (fProofTreeUI != null)
+			fProofTreeUI.setInput(null);
 		super.dispose();
 	}	
 			
@@ -185,17 +102,42 @@ public class ProverUI extends FormEditor {
 	 * @return an adapter for the required type or <code>null</code>
 	 */ 
 	public Object getAdapter(Class required) {
-		if (IContentOutlinePage.class.equals(required)) {
-			if (fOutlinePage == null) {
-				fOutlinePage= new ProofTreeUI(this);
+		if (IProofTreeUIPage.class.equals(required)) {
+			if (fProofTreeUI == null) {
+				fProofTreeUI = new ProofTreeUIPage(this);
 				if (getEditorInput() != null)
-					fOutlinePage.setInput(getCurrentPO());
+					fProofTreeUI.setInput(userSupport.getCurrentPO());
 			}
-			return fOutlinePage;
+			return fProofTreeUI;
 		}
-		
+		if (IObligationListPage.class.equals(required)) {
+			if (fObligationListPage == null) {
+				fObligationListPage = new ObligationListPage(this);
+				//if (getEditorInput() != null)
+					// fRemainingGoalsPage.setInput(userSupport.getCurrentPO());
+			}
+			return fObligationListPage;
+		}
+		if (IProofControlPage.class.equals(required)) {
+			if (fProofControlPage == null) {
+				fProofControlPage = new ProofControlPage(this);
+				//if (getEditorInput() != null)
+					// fRemainingGoalsPage.setInput(userSupport.getCurrentPO());
+			}
+			return fProofControlPage;
+		}
+
+		if (IProofInformationPage.class.equals(required)) {
+			if (fProofInformationPage == null) {
+				fProofInformationPage = new ProofInformationPage(this);
+				//if (getEditorInput() != null)
+					// fRemainingGoalsPage.setInput(userSupport.getCurrentPO());
+			}
+			return fProofInformationPage;
+		}
 		return super.getAdapter(required);
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IEditorPart.
 	 */
@@ -203,25 +145,6 @@ public class ProverUI extends FormEditor {
 		return true;
 	}
 
-	private IProverSequent getCurrentPO() {
-		return genSeq(obligations[counter]);
-	}
-	
-	public void nextPO() {
-		counter = (counter + 1) % obligations.length;
-		fOutlinePage.setInput(getCurrentPO());
-		fOutlinePage.selectNextPendingSubgoal();
-		return;
-	}
-	
-	public void prevPO() {
-		counter--;
-		if (counter < 0) counter = counter + obligations.length;
-		counter = counter % obligations.length;
-		fOutlinePage.setInput(getCurrentPO());
-		fOutlinePage.selectNextPendingSubgoal();
-		return;
-	}
 	/**
 	 * Saves the multi-page editor's document as another file.
 	 * Also updates the text for page 0's tab, and updates this multi-page editor's input
@@ -274,35 +197,16 @@ public class ProverUI extends FormEditor {
 	 * Getting the outline page associated with this editor
 	 * @return the outline page
 	 */
-	//public ProofTreeUI getContentOutlinePage() {return fOutlinePage;}
+	protected ProofTreeUIPage getContentOutline() {return fProofTreeUI;}
 	
 	public void setSelection(Object obj) {
 		
-//		if (!obj.equals(selection)) {
-//			selection = obj;
-			this.setActivePage(ProofsPage.PAGE_ID);
+		this.setActivePage(ProofsPage.PAGE_ID);
 		
-			// select the element within the page
-			ProofsPage page = (ProofsPage) this.getActivePageInstance();
-			page.setSelection(obj);
-//		}
+		// select the element within the page
+		ProofsPage page = (ProofsPage) this.getActivePageInstance();
+		page.setSelection(obj);
 		return;
 	}
 	
-	protected ProofTreeUI getContentOutline() {return fOutlinePage;}
-
-	protected List<String> getRemainingObligations() {
-		return remaining;
-	}
-	
-	public void setFocus() {
-		System.out.println("Focus: Need to update corresponding views");
-		IWorkbenchPage wp = EventBUIPlugin.getActivePage();
-		if (wp != null) {
-			ProofControl pc = (ProofControl) wp.findView(ProofControl.VIEW_ID);
-			if (pc != null) {
-				pc.setInput(this.getContentOutline().getSelection());
-			}
-		}
-	}
 }

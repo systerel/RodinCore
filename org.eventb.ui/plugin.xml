@@ -8,10 +8,10 @@
             name="Event-B"/>
             <view
             category="org.eventb.ui"
-            class="org.eventb.internal.ui.prover.RemainingGoals"
+            class="org.eventb.internal.ui.prover.ObligationList"
             icon="icons/sample.gif"
-            id="org.eventb.ui.views.RemainingGoals"
-            name="Remaining Goals"/>
+            id="org.eventb.ui.views.ObligationList"
+            name="Obligation List"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.prover.ProofControl"
@@ -30,6 +30,12 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProjectExplorer"
             name="Project Explorer"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.prover.ProofTreeUI"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.ProofTreeUI"
+            name="Proof Tree UI"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -42,7 +48,7 @@
       </perspectiveExtension>
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
          <view
-               id="org.eventb.ui.views.RemainingGoals"
+               id="org.eventb.ui.views.ObligationList"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList"/>
@@ -57,6 +63,13 @@
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
          <view
                id="org.eventb.ui.views.ProjectExplorer"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList"/>
+      </perspectiveExtension>
+      <perspectiveExtension targetID="org.eventb.ui.perspectiveExtension1">
+         <view
+               id="org.eventb.ui.views.ProofTreeUI"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList"/>

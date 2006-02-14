@@ -50,7 +50,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 //	private static final String SEPARATOR= ",";  //$NON-NLS-1$
 	
-	private ProofTreeUI proofTreeUI;
+	private ProofTreeUIPage proofTreeUI;
 //	private String fViewId;
 //	private boolean fEnablePatterns;
 //	private String[] fPatterns;
@@ -72,7 +72,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	 */
 	public ProofTreeUIFiltersDialog(
 			Shell shell,
-			ProofTreeUI proofTreeUI
+			ProofTreeUIPage proofTreeUI
 	) {
 		super(shell);
 		

@@ -25,7 +25,7 @@ public class ObligationList
 				ISelectionChangedListener 
 {
 
-	private String defaultText = "Remaining goals is not available";
+	private String defaultText = "Obligation List is not available";
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
@@ -44,7 +44,7 @@ public class ObligationList
 	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-//		 Try to get an outline page.
+//		 Try to get an obligation list page.
         Object obj = part.getAdapter(IObligationListPage.class);
         if (obj instanceof IObligationListPage) {
             IObligationListPage page = (IObligationListPage) obj;
@@ -74,7 +74,8 @@ public class ObligationList
 	protected IWorkbenchPart getBootstrapPart() {		
 		IWorkbenchPage page = getSite().getPage();
         if (page != null)
-            return page.getActiveEditor();
+            if (page.getActiveEditor() instanceof ProverUI)
+            	return page.getActiveEditor();
 
 		return null;
 	}

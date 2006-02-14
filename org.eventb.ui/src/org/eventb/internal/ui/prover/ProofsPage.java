@@ -11,14 +11,13 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -26,8 +25,15 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.us.IHypothesisChangeEvent;
+import org.eventb.us.IHypothesisChangedListener;
+import org.eventb.us.IHypothesisDelta;
+import org.eventb.us.UserSupport;
 
-public class ProofsPage extends FormPage {
+public class ProofsPage
+	extends FormPage 
+	implements IHypothesisChangedListener
+{
 	
 	public static final String PAGE_ID = "Proof State"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Proof State";
@@ -37,8 +43,9 @@ public class ProofsPage extends FormPage {
 	private SelectedHypothesesSection selected;
 	private IProverSequent ps;
 	
-	public ProofsPage(FormEditor editor) {
+	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
+		editor.getUserSupport().addHypothesisChangedListener(this);
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
@@ -97,12 +104,25 @@ public class ProofsPage extends FormPage {
 			ProofTree pt = (ProofTree) obj;
 			goal.setGoal(pt);
 			
-			ps = pt.getRootSeq();
-			Set<Hypothesis> sh = ps.selectedHypotheses();
-			selected.setHypotheses(sh);
+			//ps = pt.getRootSeq();
+			//Set<Hypothesis> sh = ps.selectedHypotheses();
+			//selected.setHypotheses(sh);
 		}
 		return;
 	}
 	
 	protected IProverSequent getProverSequent() {return ps;}
+
+	public void hypothesisChanged(IHypothesisChangeEvent e) {
+		// TODO Checking the delta for hypothesis changes
+		IHypothesisDelta delta = e.getDelta();
+		
+		Collection<Hypothesis> addedToSelected = delta.getHypotheses(UserSupport.SELECTED, IHypothesisDelta.ADDED);
+		
+		Collection<Hypothesis> removedFromSelected = delta.getHypotheses(UserSupport.SELECTED, IHypothesisDelta.REMOVED);
+		
+		selected.update(addedToSelected, removedFromSelected);
+	}
+
+
 }

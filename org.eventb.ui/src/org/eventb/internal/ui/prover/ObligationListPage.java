@@ -86,11 +86,14 @@ public class ObligationListPage
 		}
 		public Object[] getElements(Object parent) {
 			if (parent instanceof ProverUI) {
-				if (parent != null)
-					return ((ProverUI) parent).getUserSupport().getRemainingObligations().toArray();
-				else return new String[] { "Open 122", "Open 13"};
+				if (parent != null) {
+					if (((ProverUI) parent).getEditorInput().getName().endsWith("bum"))
+						return ((ProverUI) parent).getUserSupport().getRemainingObligations().toArray();
+				}
+					
+				else return new String[] { "Open 1", "Open 2"};
 			}
-			return new String[] { "Open 122", "Open 13"};
+			return new String[] { "Open 2", "Open 3"};
 		}
 	}
 	
@@ -234,7 +237,7 @@ public class ObligationListPage
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),
-			"Remaining Goals",
+			"Obligation List",
 			message);
 	}
 
@@ -259,7 +262,6 @@ public class ObligationListPage
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
 		selectionChangedListeners.add(listener);
 	}
 
