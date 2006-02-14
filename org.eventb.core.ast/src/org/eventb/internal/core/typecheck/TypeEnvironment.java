@@ -1,7 +1,9 @@
 package org.eventb.internal.core.typecheck;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -19,6 +21,40 @@ import org.eventb.core.ast.Type;
  * @author François Terrier
  */
 public class TypeEnvironment implements Cloneable, ITypeEnvironment {
+	
+	static class InternalIterator implements IIterator {
+		
+		Iterator<Map.Entry<String, Type>> iterator;
+		
+		Map.Entry<String, Type> current;
+
+		public InternalIterator(Iterator<Map.Entry<String, Type>> iterator) {
+			this.iterator = iterator;
+			this.current = null;
+		}
+		
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		public void advance() throws NoSuchElementException {
+			current = iterator.next();
+		}
+
+		public String getName() throws NoSuchElementException {
+			if (current == null) {
+				throw new NoSuchElementException();
+			}
+			return current.getKey();
+		}
+
+		public Type getType() throws NoSuchElementException {
+			if (current == null) {
+				throw new NoSuchElementException();
+			}
+			return current.getValue();
+		}
+	}
 
 	public final FormulaFactory ff;
 	
@@ -119,7 +155,14 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeEnvironment#getIdentifiers()
+	 * @see org.eventb.core.ast.ITypeEnvironment#getIterator()
+	 */
+	public IIterator getIterator() {
+		return new InternalIterator(map.entrySet().iterator());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ast.ITypeEnvironment#getNames()
 	 */
 	public Set<String> getNames(){
 		return map.keySet();

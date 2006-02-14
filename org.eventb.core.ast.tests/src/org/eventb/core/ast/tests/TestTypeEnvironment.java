@@ -1,6 +1,7 @@
 package org.eventb.core.ast.tests;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -163,6 +164,60 @@ public class TestTypeEnvironment extends TestCase {
 		
 		te2.addName("x", INT);
 		assertTrue(te1.equals(te2));
+	}
+	
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.getIterator()'
+	 */
+	public void testGetIterator() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+
+		ITypeEnvironment.IIterator iter = te.getIterator();
+		assertNoCurrentElement(iter);
+		assertExhausted(iter);
+		
+		te.addGivenSet("S");
+		iter = te.getIterator();
+		assertNoCurrentElement(iter);
+		assertTrue(iter.hasNext());
+		iter.advance();
+		assertEquals("S", iter.getName());
+		assertEquals(POW(t_S), iter.getType());
+		assertExhausted(iter);
+		
+		te.addName("x", INT);
+		iter = te.getIterator();
+		assertNoCurrentElement(iter);
+		assertTrue(iter.hasNext());
+		iter.advance();
+		assertTrue(iter.hasNext());
+		iter.advance();
+		assertExhausted(iter);
+	}
+
+	private void assertExhausted(ITypeEnvironment.IIterator iter) {
+		assertFalse(iter.hasNext());
+		try {
+			iter.advance();
+			assertTrue("advance() should have raised an exception", false);
+		} catch (NoSuchElementException e) {
+			// Test passed.
+		}
+	}
+
+	private void assertNoCurrentElement(ITypeEnvironment.IIterator iter) {
+		try {
+			iter.getName();
+			assertTrue("getName() should have raised an exception", false);
+		} catch (NoSuchElementException e) {
+			// Test passed.
+		}
+		try {
+			iter.getType();
+			assertTrue("getType() should have raised an exception", false);
+		} catch (NoSuchElementException e) {
+			// Test passed.
+		}
 	}
 
 	/*

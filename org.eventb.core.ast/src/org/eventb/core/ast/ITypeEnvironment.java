@@ -1,5 +1,6 @@
 package org.eventb.core.ast;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -23,10 +24,66 @@ import java.util.Set;
 public interface ITypeEnvironment {
 
 	/**
+	 * Protocol for iterating over a type environment.
+	 * <p>
+	 * Typical use for this iterator looks like:
+	 * <pre>
+	 *    Iterator iterator = typeEnvironment.getIterator();
+	 *    while (iterator.hasNext()) {
+	 *        iterator.advance();
+	 *        String name = iterator.getName();
+	 *        Type type = iterator.getType();
+	 *        ...
+	 *    }
+	 * </pre>
+	 * </p>
+	 */
+	static interface IIterator {
+
+		/**
+		 * Tells whether the iterator has reached the last mapping of the iterated
+		 * type environment.
+		 * 
+		 * @return <code>true</code> if there is another mapping to iterate over
+		 */
+		boolean hasNext();
+
+		/**
+		 * Advance to the next mapping in the iterated type environment.
+		 * 
+		 * @throws NoSuchElementException
+		 *             if the iterator has been exhausted
+		 */
+		void advance() throws NoSuchElementException;
+
+		/**
+		 * Returns the name of the current mapping (that is its left-hand side).
+		 * The method {@link #advance()} must have been called at least once
+		 * since the creation of the iterator, before calling this method.
+		 * 
+		 * @return the name of the current mapping
+		 * @throws NoSuchElementException
+		 *             if <code>advance</code> hasn't been called before
+		 */
+		String getName() throws NoSuchElementException;
+
+		/**
+		 * Returns the type of the current mapping (that is its right-hand side).
+		 * The method {@link #advance()} must have been called at least once
+		 * since the creation of the iterator, before calling this method.
+		 * 
+		 * @return the type of the current mapping
+		 * @throws NoSuchElementException
+		 *             if <code>advance</code> hasn't been called before
+		 */
+		Type getType() throws NoSuchElementException;
+	}
+
+	/**
 	 * Adds all mappings of the given type environment to this environment.
 	 * <p>
-	 * All names that are common to this type environment and the given one
-	 * must be associated with the same type in both type environments.
+	 * All names that are common to this type environment and the given one must
+	 * be associated with the same type in both type environments.
 	 * </p>
 	 * 
 	 * @param other
@@ -96,6 +153,13 @@ public interface ITypeEnvironment {
 	 *         this type environment
 	 */
 	boolean containsAll(ITypeEnvironment typenv);
+
+	/**
+	 * Returns an iterator for traversing this type environment.
+	 * 
+	 * @return an iterator on this type environment.
+	 */
+	IIterator getIterator();
 
 	/**
 	 * Returns the set of all names mapped in this type environment.
