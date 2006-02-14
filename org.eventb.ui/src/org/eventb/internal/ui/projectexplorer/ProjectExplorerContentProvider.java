@@ -136,6 +136,11 @@ public class ProjectExplorerContentProvider
 				toRefresh.add(element.getParent());
 				return;
 			}
+			
+			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
+				toRefresh.add(element);
+				return;
+			}
 		}
 
 	}
@@ -203,7 +208,9 @@ public class ProjectExplorerContentProvider
 	/**
 	 * The tree is dispose
 	 */
-	public void dispose() {System.out.println("******* DISPOSE ********");}
+	public void dispose() {
+		System.out.println("******* DISPOSE ********");
+	}
 	
 	
 	/**
@@ -241,7 +248,6 @@ public class ProjectExplorerContentProvider
 				list.add(new TreeNode("Variables", mch, IVariable.ELEMENT_TYPE));
 				list.add(new TreeNode("Invariants", mch, IInvariant.ELEMENT_TYPE));
 				list.add(new TreeNode("Theorems", mch, ITheorem.ELEMENT_TYPE));
-				// list.add(new TreeNode("Initialisation", mch, IAction.ELEMENT_TYPE));
 				list.add(new TreeNode("Events", mch, IEvent.ELEMENT_TYPE));
 				elementsMap.put(mch, list.toArray());
 
