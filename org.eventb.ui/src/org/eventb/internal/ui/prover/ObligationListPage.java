@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageSite;
@@ -85,15 +86,7 @@ public class ObligationListPage
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			if (parent instanceof ProverUI) {
-				if (parent != null) {
-					if (((ProverUI) parent).getEditorInput().getName().endsWith("bum"))
-						return ((ProverUI) parent).getUserSupport().getRemainingObligations().toArray();
-				}
-					
-				else return new String[] { "Open 1", "Open 2"};
-			}
-			return new String[] { "Open 2", "Open 3"};
+			return editor.getUserSupport().getRemainingObligations().toArray();
 		}
 	}
 	
@@ -144,8 +137,7 @@ public class ObligationListPage
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
-//		ProverUI editor = getActiveProverUI();
-		viewer.setInput(editor);  // TODO Set to the current input of the editor
+		//viewer.setInput(editor);  // TODO Set to the current input of the editor
 		
 		makeActions();
 //		hookContextMenu();
@@ -153,6 +145,10 @@ public class ObligationListPage
 //		contributeToActionBars();
 	}
 
+	public void setInput(Object input) {
+		viewer.setInput(input);
+	}
+	
 //	private ProverUI getActiveProverUI() {
 //		IWorkbenchPage wp = EventBUIPlugin.getActivePage();
 //		if (wp == null) return null;

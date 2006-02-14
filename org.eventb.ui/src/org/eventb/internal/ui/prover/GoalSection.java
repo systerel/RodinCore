@@ -14,14 +14,22 @@ package org.eventb.internal.ui.prover;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
@@ -36,8 +44,9 @@ import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.usersupport.UserSupport;
+import org.eventb.us.UserSupport;
 
 public class GoalSection
 	extends SectionPart
@@ -182,7 +191,7 @@ public class GoalSection
 
 	private void setFormText(IProverSequent ps) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<Tactic> tactics = UserSupport.getApplicable(ps);
+		List<Tactic> tactics = UserSupport.getApplicableToGoal(ps);
 		
 		for (Iterator<Tactic> it = tactics.iterator(); it.hasNext();) {
 			Tactic t = it.next();
@@ -204,5 +213,6 @@ public class GoalSection
 		if (t.equals(Tactics.trivial)) return "⊤";
 		return "notac";
 	}
+	
 	
 }

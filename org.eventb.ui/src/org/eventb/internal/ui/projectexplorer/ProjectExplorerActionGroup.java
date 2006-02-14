@@ -42,7 +42,6 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.wizards.NewConstructWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
-import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -174,7 +173,13 @@ public class ProjectExplorerActionGroup
 		
 		proveAction = new Action() {
 			public void run() {
-				linkToProverUI(null);
+				ISelection selection = explorer.getTreeViewer().getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) selection;
+					if (ssel.size() == 1) {
+						linkToProverUI(ssel.getFirstElement());
+					}
+				}
 			}
 		};
 		proveAction.setText("Prove");
@@ -194,12 +199,13 @@ public class ProjectExplorerActionGroup
 		// TODO To be removed
 		
 		String editorId = ProverUI.EDITOR_ID;
-		IRodinFile construct;
+		if (!(obj instanceof IRodinFile)) return;
+		IRodinFile construct = (IRodinFile) obj;
 //		
 		// open the dummy IRodinFile file
-		IRodinDB db = EventBUIPlugin.getRodinDatabase();
-		IRodinProject prj = db.getRodinProject("Marriage");
-		construct = prj.getRodinFile("m0.bum");
+//		IRodinDB db = EventBUIPlugin.getRodinDatabase();
+//		IRodinProject prj = db.getRodinProject("Marriage");
+//		construct = prj.getRodinFile("m0.bum");
 //		
 //		//if (!(obj instanceof IRodinProject)) {
 //			//construct = (IRodinFile) TreeNode.getOpenable(obj); 

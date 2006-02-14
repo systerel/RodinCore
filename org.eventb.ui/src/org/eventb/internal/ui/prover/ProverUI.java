@@ -48,12 +48,6 @@ public class ProverUI
 	
 	private ProofInformationPage fProofInformationPage;
 	
-	//private IRodinFile rodinFile = null;
-	
-	//private ProofTree root;
-	
-	//private Object selection = null;
-	
 	private UserSupport userSupport;
 	
 	/**
@@ -113,8 +107,8 @@ public class ProverUI
 		if (IObligationListPage.class.equals(required)) {
 			if (fObligationListPage == null) {
 				fObligationListPage = new ObligationListPage(this);
-				//if (getEditorInput() != null)
-					// fRemainingGoalsPage.setInput(userSupport.getCurrentPO());
+				if (getEditorInput() != null)
+					fObligationListPage.setInput(getEditorInput());
 			}
 			return fObligationListPage;
 		}

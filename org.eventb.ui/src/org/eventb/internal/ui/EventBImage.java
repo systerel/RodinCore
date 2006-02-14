@@ -35,6 +35,9 @@ public class EventBImage {
 	public static final String IMG_DISCHARGED = "Discharged";
 	public static final String IMG_UNDISCHARGED = "Undischarged";
 	public static final String IMG_APPLIED = "Applied";
+	
+	// Just for fun :-)
+	public static final String IMG_PENGUIN = "Penguine";
 
 	/**
 	 * Image IDs for buttons, menu, etc.
@@ -93,6 +96,8 @@ public class EventBImage {
 		registerImage(registry, IMG_UNDISCHARGED, "undischarged.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
+		
+		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
 	}
 
 	/*

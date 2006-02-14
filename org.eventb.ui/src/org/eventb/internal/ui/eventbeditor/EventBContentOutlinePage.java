@@ -287,7 +287,7 @@ public class EventBContentOutlinePage
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		// TODO Process the delta increamentally, see ProjectExplorerContentProvider
+		// TODO Process the delta increamentally, see ObligationExplorerContentProvider
 		//System.out.println("Update the Explorer " + event.toString());
 		IRodinElementDelta [] elements = event.getDelta().getAffectedChildren();
 		for (int i = 0; i < elements.length; i++) {

@@ -78,7 +78,7 @@ public abstract class EventBTreePartWithButtons
 		
 		createTreeViewer(managedForm, toolkit, client);
 		
-		String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
+		String [] buttonLabels = {"Add", "Delete", "Up", "Down", "Add INIT"};
 		createButtons(toolkit, client, buttonLabels);
 	}
 	

@@ -58,6 +58,7 @@ public class EventMasterSection
 	private static final int DELETE_INDEX = 1;
 	private static final int UP_INDEX = 2;
 	private static final int DOWN_INDEX = 3;
+	private static final int ADD_INIT_INDEX = 4;
 
 	// The counter used to create automatic name for new elements.
 	private int counter;
@@ -226,23 +227,31 @@ public class EventMasterSection
 	 * Handle add (new element) action.
 	 */
 	private void handleAdd() {
-//		InputDialog dialog = new InputDialog(null, "Event Name", "Name of the new event", "event" + counter, null);
-//		dialog.open();
-//		String name = dialog.getValue();
-//		if (name != null) {
-			try {
-				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + counter, null, null);
-				counter++;
-				commit();
-				getViewer().setSelection(new StructuredSelection(event));
-			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-//		}
-//		dialog.close();
+		try {
+			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + counter, null, null);
+			counter++;
+			commit();
+			getViewer().setSelection(new StructuredSelection(event));
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 	}
 	
+	/*
+	 * Handle add (new element) action.
+	 */
+	private void handleAddInit() {
+		try {
+			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
+			counter++;
+			commit();
+			getViewer().setSelection(new StructuredSelection(event));
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/*
 	 * Handle delete action.
@@ -301,6 +310,7 @@ public class EventMasterSection
 		setButtonEnabled(DELETE_INDEX, hasSelection);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
+		setButtonEnabled(ADD_INIT_INDEX, true);
 	}
 	
 
@@ -322,6 +332,9 @@ public class EventMasterSection
 				break;
 			case DOWN_INDEX:
 				handleDown();
+				break;
+			case ADD_INIT_INDEX:
+				handleAddInit();
 				break;
 		}
 	}

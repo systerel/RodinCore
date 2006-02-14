@@ -34,7 +34,7 @@ public class EventBUIPlugin
 
 	/**
 	 * The plug-in identifier of the Event-B UI (value
-	 * <code>"org.eventb.internal.ui"</code>).
+	 * <code>"org.eventb.ui"</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eventb.ui";
 

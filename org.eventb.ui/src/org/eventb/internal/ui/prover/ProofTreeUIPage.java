@@ -56,6 +56,7 @@ import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.rodinp.core.IRodinElement;
 
 
@@ -413,6 +414,11 @@ public class ProofTreeUIPage
 				viewer.setSelection(new StructuredSelection(root));
 				Dialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
 				dialog.open();
+				ObligationExplorer explorer = (ObligationExplorer) EventBUIPlugin.getActivePage().findView(ObligationExplorer.VIEW_ID);
+				if (explorer != null) {
+					explorer.proved(invisibleRoot);
+					explorer.refresh();
+				}
 			}
 		}
 	}
