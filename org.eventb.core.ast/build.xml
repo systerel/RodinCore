@@ -136,13 +136,24 @@
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	
-	<target name="javadoc" description="generate the javadoc">
-		<javadoc private="false" protected="false" public="true"
-			source="1.5" destdir="${javadoc}" package="false">
-				<fileset dir="${src}" defaultexcludes="yes">
-			      <include name="org/eventb/core/ast/**"/>
-				  <exclude name="org/eventb/core/about.html"/>
-			    </fileset>
-		</javadoc>
+	<target name="javadoc" description="Generates the javadoc of the published API">
+		<javadoc 
+			access="public" 
+			author="true" 
+			classpath="." 
+			destdir="javadoc" 
+			doctitle="The event-B AST library" 
+			nodeprecated="false" 
+			nodeprecatedlist="false" 
+			noindex="false" 
+			nonavbar="false" 
+			notree="false" 
+			packagenames="org.eventb.core.ast" 
+			source="1.5" 
+			sourcepath="src" 
+			splitindex="true" 
+			use="true" 
+			version="true"/>
 	</target>
+
 </project>
