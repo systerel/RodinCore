@@ -373,7 +373,7 @@ public abstract class Formula<T extends Formula<T>> {
 	public final static int FUNIMAGE = FIRST_BINARY_EXPRESSION + 25;
 
 	/**
-	 * <code>RELIMAGE</code> represents function []
+	 * <code>RELIMAGE</code> represents relational image []
 	 * 
 	 * @see BinaryExpression
 	 */
