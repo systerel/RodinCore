@@ -42,8 +42,6 @@ public class ProverUI
 	/** The outline page */
 	private ProofTreeUIPage fProofTreeUI;
 	
-	private ObligationListPage fObligationListPage;
-	
 	private ProofControlPage fProofControlPage;
 	
 	private ProofInformationPage fProofInformationPage;
@@ -103,14 +101,6 @@ public class ProverUI
 					fProofTreeUI.setInput(userSupport.getCurrentPO());
 			}
 			return fProofTreeUI;
-		}
-		if (IObligationListPage.class.equals(required)) {
-			if (fObligationListPage == null) {
-				fObligationListPage = new ObligationListPage(this);
-				if (getEditorInput() != null)
-					fObligationListPage.setInput(getEditorInput());
-			}
-			return fObligationListPage;
 		}
 		if (IProofControlPage.class.equals(required)) {
 			if (fProofControlPage == null) {
