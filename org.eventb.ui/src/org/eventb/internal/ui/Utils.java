@@ -34,6 +34,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -178,9 +179,9 @@ public class Utils {
 	 */
 	public static class ElementLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			if (obj instanceof ISees) {
+			if (obj instanceof ISees || obj instanceof IAction) {
 				try {
-					return  ((ISees) obj).getContents();
+					return  ((IUnnamedInternalElement) obj).getContents();
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
