@@ -42,6 +42,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
 import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -299,6 +300,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	}
 	
 	private void commitGuards(IEvent event, ArrayList<IGuard> committedGuards) throws RodinDBException {
+		ITypeEnvironment typeEnvironment = machineCache.getTypeEnvironment().clone();
 		List<IMachineRule> rules = ruleBase.getGuardRules();
 		String name = event.getElementName();
 		for(IGuard guard : machineCache.getGuards(event)) {
@@ -309,14 +311,18 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 					break;
 			}
 			if(verified) {
-				SCParser parser = parseAndVerifyPredicate(guard, machineCache.getTypeEnvironment());
+				SCParser parser = parseAndVerifyPredicate(guard, typeEnvironment);
 				if(parser != null) {
 					committedGuards.add(guard);
-					machineCache.getLocalTypeEnvironment().put(name, parser.getTypeEnvironment());
 					guardPredicateMap.put(name + "-" + guard.getElementName(), parser.getPredicate());
 				}
 			}
 		}
+		ITypeEnvironment localEnvironment = FormulaFactory.getDefault().makeTypeEnvironment();
+		for(String vName : typeEnvironment.getNames())
+			if(!machineCache.getTypeEnvironment().contains(vName))
+				localEnvironment.addName(vName, typeEnvironment.getType(vName));
+		machineCache.getLocalTypeEnvironment().put(name, localEnvironment);
 	}
 	
 	private void commitActions(IEvent event, ArrayList<IAction> committedActions) throws RodinDBException {

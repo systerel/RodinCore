@@ -58,7 +58,6 @@ public class SCParser {
 				typeCheckResult = assignment.typeCheck(typeEnvironment);
 				
 				if(typeCheckResult.isSuccess()) {
-					typeEnvironment.addAll(typeCheckResult.getInferredEnvironment());
 					return true;
 				} else {
 					// TODO: proper error messages
