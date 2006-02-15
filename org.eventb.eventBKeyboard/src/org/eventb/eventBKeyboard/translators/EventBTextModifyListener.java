@@ -12,6 +12,8 @@
 package org.eventb.eventBKeyboard.translators;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 public class EventBTextModifyListener implements ModifyListener {
 	
 	private static final String translatorId = "org.eventb.eventBKeyboard.translators";
-	private IEventBKeyboardTranslator [] translators;
+	private Collection<IEventBKeyboardTranslator> translators;
     
     /**
      * Main method for the listener. This is call when the text in the widget has been changed.
@@ -42,8 +44,9 @@ public class EventBTextModifyListener implements ModifyListener {
 		
 		getTranslators();
 
-		for (int i = 0; i < translators.length; i++) {
-			translators[i].translate(widget);
+		for (Iterator<IEventBKeyboardTranslator> it = translators.iterator(); it.hasNext();) {
+			IEventBKeyboardTranslator translator = it.next();
+			translator.translate(widget);
 		}
     }
     
@@ -53,18 +56,18 @@ public class EventBTextModifyListener implements ModifyListener {
     private void getTranslators() {
     	if (translators != null) return;
     	else {
+    		translators = new ArrayList<IEventBKeyboardTranslator>();
     		IExtensionRegistry registry = Platform.getExtensionRegistry();
     		IExtensionPoint extensionPoint = registry.getExtensionPoint(translatorId); 
     		IExtension [] extensions = extensionPoint.getExtensions();
     		
-    		ArrayList list = new ArrayList();
     		for (int i = 0; i < extensions.length; i++) {
     			IConfigurationElement [] elements = extensions[i].getConfigurationElements();
     			for (int j = 0; j < elements.length; j++) {
     				try {
     					Object translator = elements[j].createExecutableExtension("class");
     					if (translator instanceof IEventBKeyboardTranslator) {
-    						list.add(translator);
+    						translators.add((IEventBKeyboardTranslator) translator);
     					}
     				}
     				catch (CoreException e) {
@@ -72,8 +75,6 @@ public class EventBTextModifyListener implements ModifyListener {
     				}
     			}
     		}
-    		
-    		translators = (IEventBKeyboardTranslator []) list.toArray(new IEventBKeyboardTranslator[list.size()]);
     	}
     }
     
