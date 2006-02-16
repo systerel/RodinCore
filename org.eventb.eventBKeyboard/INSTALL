@@ -1,6 +1,7 @@
 + Install the plug-in:
-  unzip org.eventb.eventBKeyboard.zip -d $eclipse
+  mv org.eventb.eventBKeyboard_?.?.?.jar -d $eclipse/plugins
      where $eclipse the directory of your installed Eclipse
+           ?.?.? is the version of the EventBKeyboard
      
 + Install Brave Sans Mono font:
   The Text Area uses Brave Sans Mono font which is include in the ./fonts directory
@@ -9,7 +10,9 @@
 
   - System-wide (need root access)
 	mkdir /usr/share/fonts/ttf
-	cp $eclipse/plugins/org.eventb.eventBKeyboard_2.0.0/fonts/*.ttf /usr/share/fonts/ttf/
+	cd /tmp
+	jar xf org.eventb.eventBKeyboard_2.5.2.jar fonts/bravesansmono_roman.ttf
+	mv fonts/bravesansmono_roman.ttf /usr/share/fonts/ttf/
 	cd /usr/share/fonts/ttf
 	ttmkfdir > fonts.scale
 	mkfontdir
@@ -24,7 +27,9 @@
   
   - User-specific (Make sure that your home directory can be read by others :-) )
     mkdir ~/.fonts
-    cp $eclipse/plugins/org.eventb.eventBKeyboard_1.0.0/fonts/*.ttf ~/.fonts
+    cd /tmp
+    jar xf org.eventb.eventBKeyboard_2.5.2.jar fonts/bravesansmono_roman.ttf
+	mv fonts/bravesansmono_roman.ttf ~/.fonts
     cd ~/.fonts
     mkfontdir
     mkfontscale
