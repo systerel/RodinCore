@@ -14,6 +14,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eventb.internal.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -24,6 +25,12 @@ public class ProofInformation
 	implements	ISelectionProvider,
 				ISelectionChangedListener 
 {
+
+	/**
+	 * The plug-in identifier of the Proof Information (value
+	 * <code>"org.eventb.ui.views.ProofInformation"</code>).
+	 */
+	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID +".views.ProofInformation";
 
 	private String defaultText = "Proof Information is not available";
 	

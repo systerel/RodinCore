@@ -14,6 +14,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eventb.internal.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -25,7 +26,13 @@ public class ProofControl
 				ISelectionChangedListener 
 {
 
-	private String defaultText = "Proof Control is not available for the current active editor";
+	/**
+	 * The plug-in identifier of the Proof Control (value
+	 * <code>"org.eventb.ui.views.ProofControl"</code>).
+	 */
+	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID +".views.ProofControl";
+
+	private String defaultText = "Proof Control is not available";
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)

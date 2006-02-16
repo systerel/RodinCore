@@ -25,11 +25,11 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.us.UserSupport;
 
 /**
  * @author htson

@@ -15,8 +15,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 
@@ -52,7 +52,6 @@ public class ProofTreeUIActionGroup
 				
 				ProofTreeUIActionGroup.this.proofTreeUI.refresh();
 				ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
-				//ProofTreeUIActionGroup.this.proofTreeUI.getEditor().nextPO();
 			}
 		};
 		filterAction.setText("Filter");
@@ -61,9 +60,14 @@ public class ProofTreeUIActionGroup
 
 		nextPOAction = new Action() {
 			public void run() {
-				IProverSequent ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().nextPO();
-				ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
-				ProofTreeUIActionGroup.this.proofTreeUI.selectNextPendingSubgoal();
+				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().nextPO();
+				if (ps != null) {
+					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
+					ProofTree pt = ps.getNextPendingSubgoal();
+					if (pt != null) 
+						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
+				}
 			}
 		};
 		nextPOAction.setText("Next PO");
@@ -72,9 +76,14 @@ public class ProofTreeUIActionGroup
 
 		prevPOAction = new Action() {
 			public void run() {
-				IProverSequent ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().prevPO();
-				ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
-				ProofTreeUIActionGroup.this.proofTreeUI.selectNextPendingSubgoal();
+				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().prevPO();
+				if (ps != null) {
+					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
+					ProofTree pt = ps.getNextPendingSubgoal();
+					if (pt != null) 
+						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
+				}
 			}
 		};
 		prevPOAction.setText("Previous PO");
@@ -176,8 +185,11 @@ public class ProofTreeUIActionGroup
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 						//viewer.setExpandedState(proofTree, true);
 
+						ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().getCurrentPO();
 						// Select the next pending "subgoal"
-						ProofTreeUIActionGroup.this.proofTreeUI.selectNextPendingSubgoal(proofTree);
+						ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+						if (pt != null) 
+							ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
 					}
 				}
 			}

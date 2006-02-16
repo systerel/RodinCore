@@ -22,13 +22,11 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.pm.IHypothesisChangeEvent;
+import org.eventb.core.pm.IHypothesisChangedListener;
+import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.us.IHypothesisChangeEvent;
-import org.eventb.us.IHypothesisChangedListener;
-import org.eventb.us.IHypothesisDelta;
-import org.eventb.us.UserSupport;
 
 public class ProofsPage
 	extends FormPage 
@@ -98,31 +96,18 @@ public class ProofsPage
 		gd.widthHint = 200;
 		search.getSection().setLayoutData(gd);
 	}
-	
-	public void setSelection(Object obj) {
-		if (obj instanceof ProofTree) {
-			ProofTree pt = (ProofTree) obj;
-			goal.setGoal(pt);
-			
-			//ps = pt.getRootSeq();
-			//Set<Hypothesis> sh = ps.selectedHypotheses();
-			//selected.setHypotheses(sh);
-		}
-		return;
-	}
+
 	
 	protected IProverSequent getProverSequent() {return ps;}
 
 	public void hypothesisChanged(IHypothesisChangeEvent e) {
-		// TODO Checking the delta for hypothesis changes
 		IHypothesisDelta delta = e.getDelta();
 		
-		Collection<Hypothesis> addedToSelected = delta.getHypotheses(UserSupport.SELECTED, IHypothesisDelta.ADDED);
+		Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
 		
-		Collection<Hypothesis> removedFromSelected = delta.getHypotheses(UserSupport.SELECTED, IHypothesisDelta.REMOVED);
+		Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
 		
 		selected.update(addedToSelected, removedFromSelected);
 	}
-
 
 }

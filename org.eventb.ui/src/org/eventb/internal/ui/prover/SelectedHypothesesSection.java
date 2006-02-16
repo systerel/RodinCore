@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +32,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
@@ -93,7 +95,10 @@ public class SelectedHypothesesSection
 					//viewer.setExpandedState(proofTree, true);
 
 					// Select the "next" pending "subgoal"
-					editor.getContentOutline().selectNextPendingSubgoal(proofTree);
+					ProofState ps = editor.getUserSupport().getCurrentPO();
+					ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+					if (pt != null) 
+						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 				}
 			}
 		}

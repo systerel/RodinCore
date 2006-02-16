@@ -59,8 +59,8 @@ public class ObligationExplorer
 {
 
 	/**
-	 * The plug-in identifier of the Project Explorer (value
-	 * <code>"org.eventb.internal.ui.views.ProjectExplorer"</code>).
+	 * The plug-in identifier of the Obligation Explorer (value
+	 * <code>"org.eventb.ui.views.ObligationExplorer"</code>).
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID +".views.ObligationExplorer";
 	

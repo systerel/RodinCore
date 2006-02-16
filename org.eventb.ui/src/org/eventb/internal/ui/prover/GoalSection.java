@@ -15,21 +15,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
@@ -40,16 +34,20 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.pm.IGoalChangeEvent;
+import org.eventb.core.pm.IGoalChangedListener;
+import org.eventb.core.pm.IGoalDelta;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.us.UserSupport;
 
 public class GoalSection
 	extends SectionPart
+	implements IGoalChangedListener
 {
 	private static final String SECTION_TITLE = "Goal";
 	private static final String SECTION_DESCRIPTION = "The current goal";	
@@ -109,7 +107,14 @@ public class GoalSection
 					//viewer.setExpandedState(proofTree, true);
 
 					// Select the "next" pending "subgoal"
-					editor.getContentOutline().selectNextPendingSubgoal(proofTree);
+					ProofState ps = editor.getUserSupport().getCurrentPO();
+					ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+					if (pt != null) 
+						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+					else {
+						Dialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
+						dialog.open();
+					}
 				}
 			}
 		}
@@ -121,6 +126,7 @@ public class GoalSection
 		this.page = page;
 		FormToolkit toolkit = page.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
+		((ProverUI) page.getEditor()).getUserSupport().addGoalChangedListener(this);
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
@@ -172,9 +178,14 @@ public class GoalSection
 	}
 
 	public void setGoal(ProofTree pt) {
+		if (pt == null) {
+			clearFormText();
+			text.setText("No goal");
+			return;
+		}
 		if (!pt.rootIsOpen()) {
 			clearFormText();
-			text.setText(":-)");
+			text.setText(pt.getRootSeq().goal().toString());
 		}
 		else {
 			text.setText(pt.getRootSeq().goal().toString());
@@ -212,6 +223,14 @@ public class GoalSection
 		if (t.equals(Tactics.allI)) return "∀";
 		if (t.equals(Tactics.trivial)) return "⊤";
 		return "notac";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
+	 */
+	public void goalChanged(IGoalChangeEvent e) {
+		IGoalDelta delta = e.getDelta();
+		setGoal(delta.getProofTree());
 	}
 	
 	

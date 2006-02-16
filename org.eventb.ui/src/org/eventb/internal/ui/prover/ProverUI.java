@@ -17,8 +17,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.us.UserSupport;
 
 /**
  * An example showing how to create a multi-page editor.
@@ -183,14 +183,14 @@ public class ProverUI
 	 */
 	protected ProofTreeUIPage getContentOutline() {return fProofTreeUI;}
 	
-	public void setSelection(Object obj) {
-		
-		this.setActivePage(ProofsPage.PAGE_ID);
-		
-		// select the element within the page
-		ProofsPage page = (ProofsPage) this.getActivePageInstance();
-		page.setSelection(obj);
-		return;
-	}
+//	public void setSelection(Object obj) {
+//		
+//		this.setActivePage(ProofsPage.PAGE_ID);
+//		
+//		// select the element within the page
+//		ProofsPage page = (ProofsPage) this.getActivePageInstance();
+//		page.setSelection(obj);
+//		return;
+//	}
 	
 }

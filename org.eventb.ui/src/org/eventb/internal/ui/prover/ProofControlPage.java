@@ -26,19 +26,14 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,8 +47,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -96,37 +91,6 @@ public class ProofControlPage
 	private Button dc;
 	private Button nm;	
 	
-	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-		}
-		public Object[] getElements(Object parent) {
-			if (parent instanceof ProverUI) {
-				if (parent != null) {
-					if (((ProverUI) parent).getEditorInput().getName().endsWith("bum"))
-						return ((ProverUI) parent).getUserSupport().getRemainingObligations().toArray();
-				}
-					
-				else return new String[] { "Open 1", "Open 2"};
-			}
-			return new String[] { "Open 2", "Open 3"};
-		}
-	}
-	
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			return getText(obj);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			return getImage(obj);
-		}
-		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().
-					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
-
 	/*
 	 * The content provider class is responsible for
 	 * providing objects to the view. It can wrap
@@ -188,18 +152,29 @@ public class ProofControlPage
 			
 			if (label.equals("ne")) {
 				if (editor != null) {
-					IProverSequent ps = editor.getUserSupport().nextPO();
-					editor.getContentOutline().setInput(ps);
-					editor.getContentOutline().selectNextPendingSubgoal();
+					ProofState ps = editor.getUserSupport().nextPO();
+					if (ps != null) {
+						editor.getContentOutline().setInput(ps);
+						editor.getContentOutline().getViewer().expandAll();
+						ProofTree pt = ps.getNextPendingSubgoal();
+						if (pt != null) 
+							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+
+					}
 				}
 				return;
 			}
 			
 			if (label.equals("pv")) {
 				if (editor != null) {
-					IProverSequent ps = editor.getUserSupport().prevPO();
-					editor.getContentOutline().setInput(ps);
-					editor.getContentOutline().selectNextPendingSubgoal();
+					ProofState ps = editor.getUserSupport().prevPO();
+					if (ps != null) {
+						editor.getContentOutline().setInput(ps);
+						editor.getContentOutline().getViewer().expandAll();
+						ProofTree pt = ps.getNextPendingSubgoal();
+						if (pt != null) 
+							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+					}
 				}
 				return;
 			}
@@ -218,7 +193,10 @@ public class ProofControlPage
 							Tactic t = Tactics.doCase(textInput.getText());
 							System.out.println(t.apply(proofTree));
 							viewer.refresh(proofTree);
-							editor.getContentOutline().selectNextPendingSubgoal(proofTree);
+							ProofState ps = editor.getUserSupport().getCurrentPO();
+							ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+							if (pt != null) 
+								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 						}
 					}
 				}
@@ -241,7 +219,10 @@ public class ProofControlPage
 							
 							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 							//viewer.setExpandedState(proofTree, true);
-							editor.getContentOutline().selectNextPendingSubgoal(proofTree);
+							ProofState ps = editor.getUserSupport().getCurrentPO();
+							ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+							if (pt != null) 
+								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 						}
 					}
 				}

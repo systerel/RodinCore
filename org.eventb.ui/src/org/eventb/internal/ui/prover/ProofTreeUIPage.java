@@ -11,17 +11,12 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -30,34 +25,25 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.rodinp.core.IRodinElement;
 
 
 /**
@@ -86,124 +72,22 @@ public class ProofTreeUIPage
 	private ListenerList selectionChangedListeners = new ListenerList();
 
 	private TreeViewer viewer;
-		
-	// The invisible root of the tree (should be the current editting file).
-	private IProverSequent invisibleRoot = null;
+	// The invisible root of the tree.
+	private ProofState invisibleRoot = null;
 	private ProofTree root = null;
+	// TODO Change to Rule class?
+	private Object [] filters = {"hyp", "allI"}; // Default filters 
+		
 	
+	// The current editting element.
+	private Object fInput;
+	
+	// The current associated editor.
+	private ProverUI editor;
+	
+
 	// Group of action that is used.
 	private ProofTreeUIActionGroup groupActionSet;
-	
-	// TODO Change to Rule class?
-//	private Collection<String> skipRules;
-	private Object [] filters = {"hyp", "allI"}; // Default filters 
-	
-	/**
-	 * @author htson
-	 * <p>
-	 * This is the content provider class for the tree display in 
-	 * the outline page.
-	 */
-	class ViewContentProvider
-		implements ITreeContentProvider
-	{
-		
-		// When the input is change, reset the invisible root to null.
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-			if (oldInput != null) System.out.println("oldInput " + oldInput + " class " + oldInput.getClass());
-			if (newInput != null) System.out.println("newInput " + newInput + " class " + newInput.getClass());
-			if (newInput instanceof IProverSequent) {
-				invisibleRoot = null;
-				root = null;
-			}
-			return;
-		}
-		
-		
-		// When the tree is dispose, do nothing.
-		public void dispose() {
-		}
-		
-		
-		// Getting the list of elements, setting the invisible root if neccesary.
-		public Object[] getElements(Object parent) {
-			if (parent instanceof IProverSequent) {
-				if (invisibleRoot == null) {
-					invisibleRoot = (IProverSequent) parent;
-					return getChildren(invisibleRoot);
-				}
-			}
-			return getChildren(parent);
-		}
-		
-		
-		// Getting the parent of the an element.
-		public Object getParent(Object child) {
-			if (child instanceof IRodinElement) {
-				return ((IRodinElement) child).getParent();
-			}
-			return null;
-		}
-		
-		
-		// Getting the list of children.
-		public Object [] getChildren(Object parent) {
-			if (parent.equals(invisibleRoot)) {
-				if (root == null) {
-					root = new ProofTree(invisibleRoot);
-				}
-				Object [] result = {root};
-				return result;
-			}
-			if (parent instanceof ProofTree) {
-				ProofTree pt = (ProofTree) parent;
-				if (pt.rootHasChildren()) return getChildrenOfList(pt.getChildren());
-				else return pt.getChildren();
-			}
-			
-			return new Object[0];
-		}
-		
-		
-		
-		public Object [] getChildrenOfList(ProofTree [] parents) {
-			// TODO Should do it more efficiently using different data structure
-//			System.out.println("*****");
-			ArrayList<Object> children = new ArrayList<Object>();
-
-			for (int i = 0; i < parents.length; i++) {
-				ProofTree pt = parents[i];
-				if (!pt.rootIsOpen()) {
-					int j;
-					for (j = 0; j < filters.length; j++) {
-						if (filters[j].equals(pt.getRootRule().name())) {
-							Object [] list = getChildrenOfList(pt.getChildren()); 
-							for (int k = 0; k < list.length; k++) children.add(list[k]);
-							break;
-						}
-					}
-					if (j == filters.length) children.add(pt);
-				}
-				else children.add(pt);
-			}
-//			System.out.println("***** " + children +" ******");
-			return children.toArray();
-		}
-		
-		// Check if the element has children.
-		public boolean hasChildren(Object parent) {
-//			System.out.println("Has children " + parent);
-			if (parent.equals(invisibleRoot)) return true;
-//			System.out.println("Has children again " + parent);
-			
-			if (parent instanceof ProofTree) {
-				return ((ProofTree) parent).rootHasChildren();
-			}
-			
-//			System.out.println("No children");
-			return false;
-		}
-	}
 	
 	class ViewLabelProvider extends LabelProvider {
 
@@ -237,29 +121,18 @@ public class ProofTreeUIPage
 		}
 	}
 	
-	
-	// The current editting element.
-	private Object fInput;
-	
-	// The current associated editor.
-	private ProverUI fEditor;
-	
 	/**
 	 * Creates a content outline page using the given editor.
 	 * Register as a change listener for the Rodin Database.
 	 * <p> 
 	 * @param editor the editor
 	 */
-	public ProofTreeUIPage(ProverUI fEditor) {
+	public ProofTreeUIPage(ProverUI editor) {
 		super();
-		this.fEditor= fEditor;
-//		skipRules = new HashSet<String>();
-		//skipRules.add("hyp");
-		//RodinCore.addElementChangedListener(this);
-		this.addSelectionChangedListener(fEditor.getUserSupport());
+		this.editor= editor;
 	}
 	
-    /*
+	/*
      *  (non-Javadoc)
      * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
      */
@@ -267,18 +140,16 @@ public class ProofTreeUIPage
         super.init(pageSite);
         pageSite.setSelectionProvider(this);
     }
-    
+        
     
     public void createControl(Composite parent) {
-		System.out.println("Creat Proof Tree UI");
     	viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new ViewContentProvider());
+		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
-		
-		if (fInput != null)
-			viewer.setInput(fInput);
-		viewer.setSelection(new StructuredSelection(root));
+
+		if (fInput != null) viewer.setInput(fInput);
+		if (root != null) viewer.setSelection(new StructuredSelection(root));
 
 		makeActions();
 		hookContextMenu();
@@ -375,61 +246,20 @@ public class ProofTreeUIPage
 			}
 		});
 	}
-//	private void showMessage(String message) {
-//		MessageDialog.openInformation(
-//			viewer.getControl().getShell(),
-//			"Proof Tree",
-//			message);
-//	}
-//
 	
 	protected void refresh(ProofTree pt) {
 		// TODO Refresh the parent of this proof tree	
-//		if (!pt.rootIsOpen() && pt.isClosed()) {
-			Object [] expands = viewer.getExpandedElements();
-			viewer.refresh(root, true);
-			viewer.setExpandedElements(expands);
-//		}
-//		else viewer.refresh(pt);
+		Object [] expands = viewer.getExpandedElements();
+		viewer.refresh(true);
+		viewer.setExpandedElements(expands);
 		return;
 	}
 	
 	protected void refresh() {
-		viewer.refresh(root);
+		viewer.refresh(true);
 		return;
 	}
 	
-	protected void selectNextPendingSubgoal(ProofTree pt) {
-		// TODO What is the next pending subgoal?
-		List<ProofTree> subGoals = pt.pendingSubgoals();
-		if (subGoals.size() != 0) {
-			viewer.setSelection(new StructuredSelection(subGoals.get(0)));
-		}
-		else {
-			subGoals = root.pendingSubgoals();
-			if (subGoals != null && subGoals.size() != 0) {
-				viewer.setSelection(new StructuredSelection(subGoals.get(0)));
-			}
-			else {
-				viewer.setSelection(new StructuredSelection(root));
-				Dialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
-				dialog.open();
-				ObligationExplorer explorer = (ObligationExplorer) EventBUIPlugin.getActivePage().findView(ObligationExplorer.VIEW_ID);
-				if (explorer != null) {
-					explorer.proved(invisibleRoot);
-					explorer.refresh();
-				}
-			}
-		}
-	}
-
-	protected void selectNextPendingSubgoal() {
-		List<ProofTree> subGoals = root.pendingSubgoals();
-		if (subGoals.size() != 0) {
-			viewer.setSelection(new StructuredSelection(subGoals.get(0)));
-		}
-	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -437,7 +267,7 @@ public class ProofTreeUIPage
 		viewer.getControl().setFocus();
 	}
 
-	protected ProverUI getEditor() {return fEditor;}
+	public ProverUI getEditor() {return editor;}
 	
 	protected TreeViewer getViewer() {return viewer;}
 	
@@ -450,60 +280,6 @@ public class ProofTreeUIPage
 	 * @author htson
 	 * An extension of Dialog for choosing seen context. 
 	 */
-	private class PenguinDanceDialog extends Dialog {
-	    
-		public PenguinDanceDialog(Shell parentShell) {
-			super(parentShell);
-		}
-
-		/*
-	     * (non-Javadoc)
-	     * 
-	     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	     */
-	    protected void createButtonsForButtonBar(Composite parent) {
-	        // create OK and Cancel buttons by default
-	        Button ok = createButton(parent, IDialogConstants.OK_ID,
-	                IDialogConstants.OK_LABEL, true);
-	        ok.setFocus();
-	    }
-
-	    /*
-	     * (non-Javadoc)
-	     * 
-	     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	     */
-	    protected void configureShell(Shell shell) {
-	        super.configureShell(shell);
-	    }
-	    
-	    /*
-	     * (non-Javadoc) Method declared on Dialog.
-	     */
-	    protected Control createDialogArea(Composite parent) {
-	        // create composite
-	        Composite composite = (Composite) super.createDialogArea(parent);
-//	        composite.setLayoutData(gd);
-			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-			Image image = registry.get(EventBImage.IMG_PENGUIN);
-	        
-	        Browser browser = new Browser(composite, Window.getDefaultOrientation());
-	        
-	        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-	        gd.widthHint = image.getBounds().width + 20;
-	        gd.heightHint = image.getBounds().height + 20;
-
-	        browser.setText("<html><body><img align=\"center\" src=\"/home/htson/work/workspace/org.eventb.ui/icons/penguins-dancing.gif\" alt=\"Penguin tumbler\"></body></html>");
-	        browser.setLayoutData(gd);	        
-	        
-	        applyDialogFont(composite);
-	        return composite;
-	    }
-
-	    
-	}
-
-
 	/**
      * Fires a selection changed event.
      *
@@ -569,18 +345,33 @@ public class ProofTreeUIPage
 
 	/**
 	 * Method declared on ContentOutlinePage.
-	 * This is called when there is a selection change in the tree. This responses 
+	 * This is called when there is a selection change in the tree. This responses
 	 * by selecting the first element of the selection in the editor.
 	 * <p>
 	 * @param event the selection event
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
+		ISelection sel = event.getSelection();
 
-		ISelection selection = event.getSelection();
-		
-		if (!(selection.isEmpty())) {
-			Object ssel = ((IStructuredSelection) selection).getFirstElement();
-			fEditor.setSelection(ssel);
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			if (!ssel.isEmpty()) {
+				Object obj = ssel.getFirstElement();
+				if (obj instanceof ProofTree) {
+					editor.getUserSupport().selectNode((ProofTree) obj);
+				}
+			}
+			else {
+				editor.getUserSupport().selectNode(null);
+			}
 		}
 	}
+
+	public void setInvisibleRoot(ProofState ps) {this.invisibleRoot = ps;}
+	
+	public ProofState getInvisibleRoot() {return invisibleRoot;}
+	
+	public void setRoot(ProofTree pt) {this.root = pt;}
+	
+	public ProofTree getRoot() {return root;}
 }
