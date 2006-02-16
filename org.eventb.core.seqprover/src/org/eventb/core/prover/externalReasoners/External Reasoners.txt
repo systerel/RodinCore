@@ -1,0 +1,27 @@
+
+Prover Plugins
+==============
+
+
+To be implemented for the prototype:
+
+With user input & WD :
+Cut
+exI
+allF
+
+With hypotheses selection:
+disjE
+contradict/falsifyhypotheses
+modusPonens/reverseMP
+eh,he (only for on side freevars)
+conjE
+
+Automatic:
+trivial
+
+Others:
+
+remove membership
+remove negation
+remove disjunction
