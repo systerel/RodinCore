@@ -63,8 +63,8 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public InternalElement(String name, IRodinElement parent) {
 		super(parent);
 		this.name = name;
-		// Name must not be empty
-		if (name == null || name.length() == 0)
+		// Name must not be null
+		if (name == null)
 			throw new IllegalArgumentException();
 	}
 
@@ -113,6 +113,15 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	/* (non-Javadoc)
+	 * @see IInternalParent
+	 */
+	public InternalElement getInternalElement(String type, String childName, int childOccurrenceCount) {
+		InternalElement result = getInternalElement(type, childName);
+		result.occurrenceCount = childOccurrenceCount;
+		return result;
+	}
+
+	/* (non-Javadoc)
 	 * @see IElementManipulation
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
@@ -134,11 +143,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		case REM_COUNT:
 			return getHandleUpdatingCountFromMemento(memento);
 		case REM_INTERNAL:
-			if (!memento.hasMoreTokens())
-				return this;
-			String childName = memento.nextToken();
-			RodinElement child = getChild(childName);
-			return child.getHandleFromMemento(memento);
+			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
 		return this;
 	}
@@ -147,16 +152,20 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 * Update the occurence count of the receiver and creates a Rodin element handle from the given memento.
 	 */
 	public IRodinElement getHandleUpdatingCountFromMemento(MementoTokenizer memento) {
-		if (!memento.hasMoreTokens()) return this;
+		if (! memento.hasMoreTokens()) return this;
 		this.occurrenceCount = Integer.parseInt(memento.nextToken());
-		if (!memento.hasMoreTokens()) return this;
+		if (! memento.hasMoreTokens()) return this;
 		String token = memento.nextToken();
 		return getHandleFromMemento(token, memento);
 	}
 
 	@Override
-	protected void getHandleMemento(StringBuffer buff) {
-		super.getHandleMemento(buff);
+	protected void getHandleMemento(StringBuilder buff) {
+		getParent().getHandleMemento(buff);
+		buff.append(REM_INTERNAL);
+		escapeMementoName(buff, getElementType());
+		buff.append(REM_TYPE_SEP);
+		escapeMementoName(buff, getElementName());
 		if (this.occurrenceCount > 1) {
 			buff.append(REM_COUNT);
 			buff.append(this.occurrenceCount);
@@ -241,26 +250,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	@Override
 	public boolean hasChildren() throws RodinDBException {
 		return getChildren().length > 0;
-	}
-
-	
-	/**
-	 * Returns the child with the given name or <code>null</code> is there is no such child.
-	 * @param childName
-	 *   the name of the child.  Must not be <code>null</code>
-	 * @return the child with the given name
-	 */
-	protected InternalElement getChild(String childName) {
-		try {
-			RodinElement[] children = this.getChildren();
-			for (RodinElement child: children) {
-				if (childName.equals(child.getElementName()))
-					return (InternalElement) child;
-			}
-		} catch (RodinDBException e) {
-			// ignore
-		}
-		return null;
 	}
 
 	@Override

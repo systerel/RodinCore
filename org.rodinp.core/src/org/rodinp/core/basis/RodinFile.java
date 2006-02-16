@@ -133,7 +133,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case REM_INTERNAL:
-			// TODO Return the Rodin internal element.
+			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
 		return null;
 	}
@@ -149,6 +149,15 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	public InternalElement getInternalElement(String type, String name) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
 		return manager.createInternalElementHandle(type, name, this);
+	}
+
+	/* (non-Javadoc)
+	 * @see IInternalParent
+	 */
+	public InternalElement getInternalElement(String type, String name, int occurrenceCount) {
+		InternalElement result = getInternalElement(type, name);
+		result.occurrenceCount = occurrenceCount;
+		return result;
 	}
 
 	/* (non-Javadoc)

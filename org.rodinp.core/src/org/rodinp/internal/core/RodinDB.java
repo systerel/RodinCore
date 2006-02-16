@@ -186,11 +186,8 @@ public class RodinDB extends Openable implements IRodinDB {
 		return null;
 	}
 
-	/**
-	 * @see RodinElement#getHandleMemento(StringBuffer)
-	 */
 	@Override
-	protected void getHandleMemento(StringBuffer buff) {
+	protected void getHandleMemento(StringBuilder buff) {
 		// The database is implicit in the memento.
 	}
 

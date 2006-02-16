@@ -47,7 +47,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *                creating an underlying resource
 	 *                <li> The given type is unknown
 	 *                </ul>
-	 * @return a new internal element in this element with the specified type and name
+	 * @return a new internal element in this element with the specified type
+	 *         and name
 	 */
 	IInternalElement createInternalElement(String type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
@@ -55,8 +56,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 
 	/**
 	 * Returns a handle to a child internal element with the given type and
-	 * name. This is a handle-only method. The child element may or may not
-	 * be present.
+	 * name. This is a handle-only method. The child element may or may not be
+	 * present.
 	 * 
 	 * @param childType
 	 *            type of the child element
@@ -66,5 +67,25 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *         <code>null</code> if the given element type is unknown.
 	 */
 	IInternalElement getInternalElement(String childType, String childName);
+
+	/**
+	 * Returns a handle to a child internal element with the given type, name,
+	 * and position in its parent. The name is empty if it is an unnamed
+	 * element. Numbering starts at 1 (thus the first occurrence is occurrence
+	 * 1, not occurrence 0). This is a handle-only method. The child element may
+	 * or may not be present.
+	 * 
+	 * @param childType
+	 *            type of the child element
+	 * @param childName
+	 *            name of the child element
+	 * @param occurrenceCount
+	 *            position in the parent (in case of duplicate elements with
+	 *            same type and same name)
+	 * @return the child internal element with the given type, name and position
+	 *         or <code>null</code> if the given element type is unknown.
+	 */
+	IInternalElement getInternalElement(String childType, String childName,
+			int occurrenceCount);
 
 }

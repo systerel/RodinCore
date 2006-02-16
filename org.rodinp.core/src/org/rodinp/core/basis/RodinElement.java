@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
@@ -27,6 +28,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -56,7 +58,7 @@ public abstract class RodinElement extends PlatformObject implements
 	public static final char REM_COUNT = '!';
 
 	// Character used to make a name from an element type
-	public static final char REM_TYPE_PREFIX = '#';
+	public static final char REM_TYPE_SEP = '#';
 	
 	/**
 	 * This element's parent, or <code>null</code> if this element does not
@@ -68,6 +70,27 @@ public abstract class RodinElement extends PlatformObject implements
 
 	static final RodinElementInfo NO_INFO = new RodinElementInfo();
 
+	/*
+	 * Internal code shared by implementers of IInternalParent for computing the
+	 * handle to a child from a memento.
+	 */
+	protected static final IRodinElement getInternalHandleFromMemento(MementoTokenizer memento, IInternalParent parent) {
+		if (! memento.hasMoreTokens()) return parent;
+		String childType = memento.nextToken();
+		if (! memento.hasMoreTokens()) return parent;
+		if (memento.nextToken().charAt(0) != REM_TYPE_SEP) return parent;
+		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		RodinElement child;
+		if (manager.isNamedInternalElementType(childType)) {
+			if (! memento.hasMoreTokens()) return parent;
+			String childName = memento.nextToken();
+			child = (RodinElement) parent.getInternalElement(childType, childName);
+		} else {
+			child = (RodinElement) parent.getInternalElement(childType, "");
+		}
+		return child.getHandleFromMemento(memento);
+	}
+	
 	/**
 	 * Constructs a handle for a Rodin element with the given parent element.
 	 * 
@@ -121,7 +144,7 @@ public abstract class RodinElement extends PlatformObject implements
 				&& this.parent.equals(other.parent);
 	}
 
-	protected void escapeMementoName(StringBuffer buffer, String mementoName) {
+	protected void escapeMementoName(StringBuilder buffer, String mementoName) {
 		for (int i = 0, length = mementoName.length(); i < length; i++) {
 			char character = mementoName.charAt(i);
 			switch (character) {
@@ -129,6 +152,7 @@ public abstract class RodinElement extends PlatformObject implements
 				case REM_EXTERNAL:
 				case REM_INTERNAL:
 				case REM_COUNT:
+				case REM_TYPE_SEP:
 					buffer.append(REM_ESCAPE);
 			}
 			buffer.append(character);
@@ -277,7 +301,7 @@ public abstract class RodinElement extends PlatformObject implements
 		return getHandleFromMemento(token, memento);
 	}
 
-	/**
+	/*
 	 * @see IRodinElement
 	 */
 	public String getHandleIdentifier() {
@@ -288,12 +312,12 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @see RodinElement#getHandleMemento()
 	 */
 	protected String getHandleMemento() {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		getHandleMemento(buff);
 		return buff.toString();
 	}
 
-	protected void getHandleMemento(StringBuffer buff) {
+	protected void getHandleMemento(StringBuilder buff) {
 		getParent().getHandleMemento(buff);
 		buff.append(getHandleMementoDelimiter());
 		escapeMementoName(buff, getElementName());

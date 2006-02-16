@@ -182,6 +182,18 @@ public class ElementTypeManager {
 	}
 	
 	/**
+	 * Tells whether the given Rodin element type is a named internal element type.
+	 * 
+	 * @param elementType
+	 *   the element type to test
+	 * @return <code>true</code> iff it is a named internal element type
+	 */
+	public boolean isNamedInternalElementType(String elementType) {
+		InternalElementTypeDescription desc = getInternalElementTypeDescription(elementType);
+		return desc != null && desc.isNamed(); 
+	}
+	
+	/**
 	 * Returns the full description of the given internal element type.
 	 * 
 	 * @param elementType

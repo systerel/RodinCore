@@ -9,7 +9,6 @@ package org.rodinp.core.basis;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IUnnamedInternalElement;
-import org.rodinp.core.RodinCore;
 
 /**
  * This abstract class is intended to be implemented by clients that contribute
@@ -28,21 +27,13 @@ public class UnnamedInternalElement extends InternalElement implements IUnnamedI
 	private String type;
 
 	public UnnamedInternalElement(String type, IRodinElement parent) {
-		super(RodinCore.getRodinCore().intern(REM_TYPE_PREFIX + type),
-				parent);
+		super("", parent);
 		this.type = type;
 	}
 
 	@Override
 	public final String getElementType() {
 		return type;
-	}
-
-	@Override
-	protected void getHandleMemento(StringBuffer buff) {
-		getParent().getHandleMemento(buff);
-		buff.append(getHandleMementoDelimiter());
-		buff.append(getElementName());
 	}
 
 }
