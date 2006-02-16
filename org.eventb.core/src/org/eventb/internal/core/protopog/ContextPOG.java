@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -26,6 +27,9 @@ import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ITheorem;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
@@ -133,6 +137,9 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 	}
 	
 	private void createHypSets() throws CoreException {
+		
+		FormulaFactory factory = FormulaFactory.getDefault();
+		
 		IInternalElement element = poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, contextCache.getOldHypSetName(), null, monitor);
 		for(IAxiom axiom : contextCache.getOldAxioms()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
@@ -141,6 +148,15 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		for(ITheorem theorem : contextCache.getOldTheorems()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(theorem.getContents(), monitor);
+		}
+		for(ISCCarrierSet carrierSet : contextCache.getSCCarrierSets()) {
+			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			Predicate pp = factory.makeRelationalPredicate(
+					Formula.NOTEQUAL, 
+					factory.makeFreeIdentifier(carrierSet.getName(), null), 
+					factory.makeAtomicExpression(Formula.EMPTYSET, null), 
+					null);
+			predicate.setContents(pp.toString(), monitor);
 		}
 		IAxiom[] axioms = contextCache.getNewAxioms();
 		for(int i=0; i<axioms.length-1; i++) {

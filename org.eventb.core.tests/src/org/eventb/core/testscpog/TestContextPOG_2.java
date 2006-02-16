@@ -57,13 +57,49 @@ public class TestContextPOG_2 extends TestCase {
 		rodinProject.getProject().delete(true, true, null);
 	}
 	
-	private String getWDString(String formula) {
+	private Predicate getPredicate(String formula) {
 		IParseResult result = factory.parsePredicate(formula);
 		assert result.isSuccess();
 		Predicate predicate = result.getParsedPredicate();
+		return predicate;
+	}
+	private String getWDString(String formula) {
+		Predicate predicate = getPredicate(formula);
 		ITypeCheckResult tcResult = predicate.typeCheck(factory.makeTypeEnvironment());
 		assert tcResult.isSuccess();
 		return predicate.getWDPredicate(factory).toString();
+	}
+
+	/**
+	 * Test method for creation of non-empty carrier set hypotheses
+	 */
+	public void testCarrierSet1() throws Exception {
+		IRodinFile rodinFile = rodinProject.createRodinFile("cset1.bcc", true, null);
+		TestUtil.addSCCarrierSets(rodinFile, TestUtil.makeList("S"), TestUtil.makeList("ℙ(S)"));
+		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList("S ∈ ℙ(S)"), null);
+		rodinFile.save(null, true);
+		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("cset1.bpo", true, null);
+
+		poFile.open(null);
+		
+		POGCore.runContextPOG((SCContext) rodinFile, poFile);
+		
+		poFile.save(null, true);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("There is only one po", sequents.length == 1);
+		
+		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
+		
+		IPOPredicate[] predicates = sequents[0].getHypothesis().getGlobalHypothesis().getPredicates();
+		
+		assertTrue("global hypothesis size is 1", predicates.length == 1);
+		
+		String expected = getPredicate("S≠∅").toString();
+		
+		assertEquals("carrier set not empty", expected, predicates[0].getContents());
+		
 	}
 
 	/**
