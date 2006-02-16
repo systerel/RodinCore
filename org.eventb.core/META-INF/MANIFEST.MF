@@ -8,9 +8,11 @@ Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;visibility:=reexport,
- org.eventb.core.ast;visibility:=reexport
+ org.eventb.core.ast;visibility:=reexport,
+ org.eventb.core.seqprover;visibility:=reexport
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
+ org.eventb.core.pm,
  org.eventb.internal.core.protopog;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.protosc;x-friends:="org.eventb.core.tests"
