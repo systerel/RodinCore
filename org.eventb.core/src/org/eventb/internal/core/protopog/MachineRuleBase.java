@@ -48,8 +48,10 @@ public class MachineRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									invariant.getElementName() +  "/WD",
 									cache.getHypSetName(invariant.getElementName()),
-									new ProofObligation.PForm(wdPredicate)
+									new ProofObligation.PForm(wdPredicate),
+									"Well-definedness of Invariant"
 							);
+							wdObligation.sources.put("invariant", invariant.getHandleIdentifier());
 							poList.add(wdObligation);
 						}
 					}
@@ -67,16 +69,20 @@ public class MachineRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									theorem.getElementName() + "/WD",
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(wdPredicate)
+									new ProofObligation.PForm(wdPredicate),
+									"Well-definedness of Theorem"
 							);
+							wdObligation.sources.put("theorem", theorem.getHandleIdentifier());
 							poList.add(wdObligation);
 						}
 						if(!predicate.equals(cache.BTRUE)) {
 							ProofObligation obligation = new ProofObligation(
 									theorem.getElementName(),
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(predicate)
+									new ProofObligation.PForm(predicate),
+									"Truth of Theorem"
 							);
+							obligation.sources.put("theorem", theorem.getHandleIdentifier());
 							poList.add(obligation);
 						}
 					}
@@ -84,20 +90,20 @@ public class MachineRuleBase {
 				}
 				
 			},
-			new IPOGMachineRule() {
-				//	 MDL_INI_WD and MDL_INI_FIS and MDL_INI_INV
-				public List<ProofObligation> get(SCMachineCache cache) throws RodinDBException {
-					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewTheorems().length * 2);
-					
-					return poList;
-				}
-			},
+//			new IPOGMachineRule() {
+//				//	 MDL_INI_WD and MDL_INI_FIS and MDL_INI_INV
+//				public List<ProofObligation> get(SCMachineCache cache) throws RodinDBException {
+//					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewTheorems().length * 2);
+//					
+//					return poList;
+//				}
+//			},
 			new IPOGMachineRule() {
 				//	MDL_GRD_WD and MDL_EVT_WD and MDL_EVT_FIS and MDL_EVT_INV
 				//	MDL_INI_WD and MDL_INI_FIS and MDL_INI_INV
 				public List<ProofObligation> get(SCMachineCache cache) throws RodinDBException {
 					Predicate btrue = cache.getFactory().makeLiteralPredicate(Formula.BTRUE, null);
-					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewTheorems().length * 2 + 1);
+					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getEvents().length * 2 + 1);
 					
 					// disjuncts of deadlock-freeness predicate
 					ArrayList<Predicate> dlkPredicate = new ArrayList<Predicate>(cache.getEvents().length);
@@ -116,16 +122,21 @@ public class MachineRuleBase {
 						for(IGuard guard : guards) { // guards is the empty list for the initialisation
 							Predicate predicate = cache.getPredicate(guard.getContents(), fullTypeEnvironment);
 							Predicate wdPredicate = predicate.getWDPredicate(cache.getFactory());
-							if(!wdPredicate.equals(btrue))
+							if(!wdPredicate.equals(btrue)) {
+								HashMap<String, String> sources = new HashMap<String, String>(2);
+								sources.put("guard", guard.getHandleIdentifier());
 								poList.add(new ProofObligation(
 										evtName + "/" + guard.getElementName() + "/WD",
 										typeEnvironment,
 										globalHypsetName,
 										new ArrayList<ProofObligation.Form>(precGuards),
 										new ProofObligation.PForm(wdPredicate),
-										new HashMap<String, String>(0)
+										"Well-definedness of Guard",
+										new HashMap<String, String>(0),
+										sources
 										)
 								);
+							}
 							precGuards.add(new ProofObligation.PForm(predicate));
 						}
 						
@@ -183,6 +194,8 @@ public class MachineRuleBase {
 							}
 							Predicate wdPredicate = assignment.getWDPredicate(cache.getFactory());
 							if(!wdPredicate.equals(btrue)) {
+								HashMap<String, String> sources = new HashMap<String, String>(2);
+								sources.put("assignment", action.getHandleIdentifier());
 								poList.add(
 										new ProofObligation(
 												evtName + "/" + varList + "/WD",
@@ -190,12 +203,16 @@ public class MachineRuleBase {
 												globalHypsetName,
 												new ArrayList<ProofObligation.Form>(precGuards),
 												new ProofObligation.PForm(wdPredicate),
-												new HashMap<String, String>(0)
+												"Well-definedness of Action",
+												new HashMap<String, String>(0),
+												sources
 										)
 								);
 							}
 							Predicate fisPredicate = assignment.getFISPredicate(cache.getFactory());
 							if(!fisPredicate.equals(btrue)) {
+								HashMap<String, String> sources = new HashMap<String, String>(2);
+								sources.put("assignment", action.getHandleIdentifier());
 								poList.add(
 										new ProofObligation(
 												evtName + "/" + varList + "/FIS",
@@ -203,7 +220,9 @@ public class MachineRuleBase {
 												globalHypsetName,
 												new ArrayList<ProofObligation.Form>(precGuards),
 												new ProofObligation.PForm(fisPredicate),
-												new HashMap<String, String>(0)
+												"Feasibility of Action",
+												new HashMap<String, String>(0),
+												sources
 										)
 								);
 							}
@@ -247,6 +266,9 @@ public class MachineRuleBase {
 								for(int i=post.size()-1; i>=0; i--) {
 									goal = new SForm(post.get(i), goal);
 								}
+								HashMap<String, String> sources = new HashMap<String, String>(2);
+								sources.put("invariant", invariant.getHandleIdentifier());
+								sources.put("event", event.getHandleIdentifier());
 								poList.add(
 										new ProofObligation(
 												evtName + "/" + invariant.getElementName() + "/INV",
@@ -254,7 +276,9 @@ public class MachineRuleBase {
 												globalHypsetName,
 												prec,
 												goal,
-												new HashMap<String, String>(0)
+												"Invariant " + ((evtName.equals("INITIALISATION")) ? " establishment" : " preservation"),
+												new HashMap<String, String>(0),
+												sources
 										)
 								);
 							}
@@ -276,6 +300,8 @@ public class MachineRuleBase {
 										cache.getNewHypsetName(),
 										new ArrayList<ProofObligation.Form>(0),
 										new ProofObligation.PForm(DLK),
+										"Deadlock freeness",
+										new HashMap<String, String>(0),
 										new HashMap<String, String>(0)
 								)
 						);

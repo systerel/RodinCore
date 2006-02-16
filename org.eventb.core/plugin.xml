@@ -189,6 +189,21 @@
             id="witness"
             name="%eventBWitness"
             named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PODescription"
+            id="poDescription"
+            name="%eventBpoDescription"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POSource"
+            id="poSource"
+            name="%eventBpoSource"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.POHint"
+            id="poHint"
+            name="%eventBpoHint"
+            named="true"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">

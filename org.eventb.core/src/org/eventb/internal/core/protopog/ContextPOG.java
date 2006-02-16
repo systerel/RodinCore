@@ -38,7 +38,7 @@ import org.rodinp.core.builder.IGraph;
 import org.rodinp.core.builder.IInterrupt;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public class ContextPOG implements IAutomaticTool, IExtractor {

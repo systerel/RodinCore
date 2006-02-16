@@ -21,10 +21,10 @@ import org.rodinp.core.RodinDBException;
  * <ul>
  * <li>The name (NAME) identifies uniquely a sequent (resp. proof obligation) in a PO file.</li>
  * <li>The type environment (TYPE_ENV) specifies type of identifiers local to the sequent.
- * (The type environment is contained in the sequent in form of POTypeExpressions.)</li>
+ * (The type environment is contained in the sequent in form of POIdentifiers.)</li>
  * <li>There is one hypothesis (HYP) in the sequent. It is of type POHypothesis.</li>
  * <li>There is one goal (GOAL) in the sequent. It is a POPredicate or a POModifiedPredicate.</li>
- * <li>Hints (HINTS) are associated with a sequent in form of attributes.</li>
+ * <li>There is one PODescription associated with the sequent.</li>
  * </ul>
  * </p>
  *
@@ -38,5 +38,5 @@ public interface IPOSequent extends IInternalElement {
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	public IPOHypothesis getHypothesis() throws RodinDBException;
 	public IPOAnyPredicate getGoal() throws RodinDBException;
-	public String getHint(String hintName) throws RodinDBException;
+	public IPODescription getDescription() throws RodinDBException;
 }
