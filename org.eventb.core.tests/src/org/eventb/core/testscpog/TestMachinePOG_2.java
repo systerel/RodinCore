@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.testscpog;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -636,7 +638,7 @@ public class TestMachinePOG_2 extends TestCase {
 	
 		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
 		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
-		TestUtil.addIdentifiers(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
+		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
 		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
 				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
 		rodinFile.save(null, true);
@@ -728,7 +730,7 @@ public class TestMachinePOG_2 extends TestCase {
 		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList(theorem1), "CONTEXT");
 		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
 		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T2"), TestUtil.makeList(theorem2), null);
-		TestUtil.addIdentifiers(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
+		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
 		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
 				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
 		rodinFile.save(null, true);
@@ -792,7 +794,7 @@ public class TestMachinePOG_2 extends TestCase {
 		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList(theorem1), "CONTEXT");
 		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
 		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T2"), TestUtil.makeList(theorem2), null);
-		TestUtil.addIdentifiers(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
+		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
 		TestUtil.addSCEvent(rodinFile, "INITIALISATION", TestUtil.makeList(), 
 				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
 		rodinFile.save(null, true);
@@ -849,6 +851,51 @@ public class TestMachinePOG_2 extends TestCase {
 		assertEquals("i3 goal ok s", assignment5, ((IPOModifiedPredicate) sequents[i3].getGoal()).getSubstitution());
 		assertEquals("i3 goal ok p", invariant3, ((IPOModifiedPredicate) sequents[i3].getGoal()).getPredicate().getContents());
 		
+	}
+
+	/**
+	 * Test method for action without guard (well-definedness, feasility, invariant)
+	 */
+	public void testVariables1() throws Exception {
+		
+		String invariant1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
+		String invariant2 = factory.parsePredicate("y∈BOOL").getParsedPredicate().toString();
+		String invariant3 = factory.parsePredicate("z∈{0}×{0}").getParsedPredicate().toString();
+	
+		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
+		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
+		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "BOOL", "ℤ×ℤ"));
+		rodinFile.save(null, true);
+		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
+		
+		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
+		
+		poFile.save(null, true);
+		
+		IPOIdentifier[] identifiers = poFile.getIdentifiers();
+		
+		assertTrue("6 identifiers", identifiers.length == 6);
+		
+		HashMap<Character, String> types = new HashMap<Character, String>(5);
+		
+		
+		HashSet<String> expected = new HashSet<String>(11);
+		expected.add("x");
+		expected.add("y");
+		expected.add("z");
+		expected.add("x'");
+		expected.add("y'");
+		expected.add("z'");
+		for(IPOIdentifier identifier : identifiers) {
+			Character cc = identifier.getName().charAt(0);
+			String type = types.get(cc);
+			if(type == null)
+				types.put(cc, identifier.getType());
+			else
+				assertEquals("same type: " + cc, type, identifier.getType());
+			expected.remove(identifier.getElementName());
+		}
+		assertTrue("0 identifiers", expected.size() == 0);
 	}
 
 }

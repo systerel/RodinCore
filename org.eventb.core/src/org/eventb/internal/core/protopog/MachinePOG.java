@@ -190,6 +190,8 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		for(ISCVariable identifier : machineCache.getSCVariables()) {
 			IPOIdentifier newIdentifier = (IPOIdentifier) poFile.createInternalElement(IPOIdentifier.ELEMENT_TYPE, identifier.getElementName(), null, monitor);
 			newIdentifier.setContents(identifier.getContents(), monitor);
+			IPOIdentifier primedIdentifier = (IPOIdentifier) poFile.createInternalElement(IPOIdentifier.ELEMENT_TYPE, identifier.getElementName() + "'", null, monitor);
+			primedIdentifier.setContents(identifier.getContents(), monitor);
 		}
 	}
 	
