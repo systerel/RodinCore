@@ -10,11 +10,11 @@ import org.eventb.core.prover.sequent.IProverSequent;
 
 public class ProofState {
 	// TODO Add PO handle to replace IProverSequent
-	IProverSequent ps;
-	ProofTree root;
-	ProofTree current;
-	Collection<Hypothesis> cached;
-	Collection<Hypothesis> search;
+	private IProverSequent ps;
+	private ProofTree root;
+	private ProofTree current;
+	private Collection<Hypothesis> cached;
+	private Collection<Hypothesis> search;
 	
 	public ProofState(IProverSequent ps) {
 		this.ps = ps;
@@ -54,4 +54,5 @@ public class ProofState {
 		else return null;
 	}
 
+	public void addAllToCached(Collection<Hypothesis> hyps) {cached.addAll(hyps);}
 }
