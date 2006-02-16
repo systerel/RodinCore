@@ -43,6 +43,7 @@ public class NewProjectWizard
 	extends Wizard 
 	implements INewWizard 
 {
+	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID + ".wizards.NewProjectWizard";
 	
 	// The wizard page.
 	private NewProjectWizardPage page;
