@@ -38,44 +38,6 @@
             name="Proof Tree UI"/>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-            <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofControl"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ObligationExplorer"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofInformation"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProjectExplorer"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-      <perspectiveExtension targetID="org.eventb.ui.resourcePerspective">
-         <view
-               id="org.eventb.ui.views.ProofTreeUI"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"/>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.editors">
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBEditor"
@@ -126,6 +88,17 @@
       <page class="org.eventb.internal.ui.eventbeditor.ConstantsPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.AxiomsPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.TheoremsPage"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eventb.internal.ui.ModellingPerspective"
+            id="org.eventb.ui.perspective.ModellingPerspective"
+            name="Event-B Modelling perspective"/>
+      <perspective
+            class="org.eventb.internal.ui.ProvingPerspective"
+            id="org.eventb.ui.perspective.ProvingPerspective"
+            name="Event-B Proving Perspective"/>
    </extension>
 
 </plugin>
