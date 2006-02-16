@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eventb.core.IAction;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
@@ -49,7 +50,7 @@ public class TestMachinePOG_2 extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("testsc");
+		IProject project = workspace.getRoot().getProject("P");
 		project.create(null);
 		project.open(null);
 		IProjectDescription description = project.getDescription();
@@ -142,6 +143,8 @@ public class TestMachinePOG_2 extends TestCase {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("I1/WD"));
 		
+		assertEquals("WD formula source", "I1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		
 		assertTrue("goal is a predicate", sequents[0].getGoal() instanceof IPOPredicate);
@@ -193,6 +196,8 @@ public class TestMachinePOG_2 extends TestCase {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("I2/WD"));
 
+		assertEquals("WD formula source", "I2", RodinCore.create(poFile.getSequents()[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		IPOPredicateSet predicateSet = poFile.getSequents()[0].getHypothesis().getGlobalHypothesis();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
@@ -230,6 +235,9 @@ public class TestMachinePOG_2 extends TestCase {
 		
 		int thm_sequent = (sequents[0].getName().equals("T1")) ? 0 : 1;
 		
+		assertEquals("formula source", "T1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "T1", RodinCore.create(sequents[1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("name ok", sequents[thm_sequent].getName().equals("T1"));
 		assertTrue("name ok", sequents[1-thm_sequent].getName().equals("T1/WD"));
 		
@@ -292,6 +300,9 @@ public class TestMachinePOG_2 extends TestCase {
 		int t2 = getIndexForName("T2", sequents);
 		int t2wd = getIndexForName("T2/WD", sequents);
 		
+		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "T2", RodinCore.create(sequents[t2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("names ok", t1 != -1 && t2 != -1 && t2wd != -1);
 		
 		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
@@ -427,6 +438,8 @@ public class TestMachinePOG_2 extends TestCase {
 		int g1 = getIndexForName("E1/G1/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
+		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("names ok", g1 != -1 && dlk != -1);
 		
 		assertEquals("wd predicate ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
@@ -464,6 +477,9 @@ public class TestMachinePOG_2 extends TestCase {
 		int g2 = getIndexForName("E1/G2/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
+		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "G2", RodinCore.create(sequents[g2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("names ok", g1 != -1 && g2 != -1 && dlk != -1);
 		
 		assertEquals("wd predicate 1 ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
@@ -579,6 +595,10 @@ public class TestMachinePOG_2 extends TestCase {
 		int g2 = getIndexForName("E1/G2/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
+		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "G2", RodinCore.create(sequents[g2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("names ok", t1 != -1 && g1 != -1 && g2 != -1 && dlk != -1);
 		
 		assertEquals("wd predicate 1 ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
@@ -639,6 +659,23 @@ public class TestMachinePOG_2 extends TestCase {
 		int i2 = getIndexForName("E1/I2/INV", sequents);
 		int i3 = getIndexForName("E1/I3/INV", sequents);
 		
+		int ie1 = getIndexForName("event", sequents[i1].getDescription().getSources());
+		int ie2 = getIndexForName("event", sequents[i2].getDescription().getSources());
+		int ie3 = getIndexForName("event", sequents[i3].getDescription().getSources());
+		
+		assertEquals("formula source", "E1", RodinCore.create(sequents[i1].getDescription().getSources()[ie1].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "E1", RodinCore.create(sequents[i2].getDescription().getSources()[ie2].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "E1", RodinCore.create(sequents[i3].getDescription().getSources()[ie3].getSourceHandleIdentifier()).getElementName());
+
+		assertEquals("formula source", "I1", RodinCore.create(sequents[i1].getDescription().getSources()[1-ie1].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "I2", RodinCore.create(sequents[i2].getDescription().getSources()[1-ie2].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "I3", RodinCore.create(sequents[i3].getDescription().getSources()[1-ie3].getSourceHandleIdentifier()).getElementName());
+		
+		assertEquals("formula source", assignment1, ((IAction) RodinCore.create(sequents[a1wd].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
+		assertEquals("formula source", assignment2, ((IAction) RodinCore.create(sequents[a2wd].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
+		assertEquals("formula source", assignment2, ((IAction) RodinCore.create(sequents[a2fis].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
+		assertEquals("formula source", assignment3, ((IAction) RodinCore.create(sequents[a3fis].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
+
 		assertTrue("names ok", a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
 		
 		assertEquals("wd predicate 1 ok", getWDStringForAssignment(assignment1, env), sequents[a1wd].getGoal().getContents());

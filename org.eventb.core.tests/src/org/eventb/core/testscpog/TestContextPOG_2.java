@@ -42,7 +42,7 @@ public class TestContextPOG_2 extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("testsc");
+		IProject project = workspace.getRoot().getProject("P");
 		project.create(null);
 		project.open(null);
 		IProjectDescription description = project.getDescription();
@@ -106,7 +106,7 @@ public class TestContextPOG_2 extends TestCase {
 	 * Test method for creation of WD-po of one axiom
 	 */
 	public void testAxiom1() throws Exception {
-		String axiom = "(∀x·x≠0⇒1÷x≤1)";
+		String axiom = getPredicate("(∀x·x≠0⇒1÷x≤1)").toString();
 		IRodinFile rodinFile = rodinProject.createRodinFile("axiom1.bcc", true, null);
 		TestUtil.addAxioms(rodinFile, 
 				TestUtil.makeList("A1"), 
@@ -132,6 +132,8 @@ public class TestContextPOG_2 extends TestCase {
 		assertTrue("goal is a predicate", sequents[0].getGoal() instanceof IPOPredicate);
 		
 		assertEquals("WD formula", expected, sequents[0].getGoal().getContents());
+		
+		assertEquals("WD formula source", "A1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
 		
 	}
 
@@ -218,6 +220,9 @@ public class TestContextPOG_2 extends TestCase {
 		assertTrue("name ok", sequents[thm_sequent].getName().equals("T1"));
 		assertTrue("name ok", sequents[1-thm_sequent].getName().equals("T1/WD"));
 		
+		assertEquals("formula source", "T1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "T1", RodinCore.create(sequents[1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[1].getHypothesis().getContents()).getPredicates().length == 0);
 		
@@ -284,6 +289,9 @@ public class TestContextPOG_2 extends TestCase {
 		int t2 = getIndexForName("T2", sequents);
 		int t2wd = getIndexForName("T2/WD", sequents);
 		
+		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "T2", RodinCore.create(sequents[t2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+
 		assertTrue("names ok", t1 != -1 && t2 != -1 && t2wd != -1);
 		
 		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
