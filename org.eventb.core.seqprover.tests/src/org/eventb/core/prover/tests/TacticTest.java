@@ -101,7 +101,23 @@ public class TacticTest extends TestCase {
 		System.out.println(pt);
 		Tactics.mngHyp(HypothesesManagement.ActionType.SHOW,h).apply(pt.getChildren()[0]);
 		System.out.println(pt);
-
+	}
+	
+	public void testLegacyProvers(){
+		ProofTree pt ;
+		
+		pt = new ProofTree(TestLib.genSeq("A ∈ℙ(ℤ) ;; B ∈ℙ(ℤ) ;; x∈A|- x∈A ∪B"));
+		System.out.println(Tactics.legacyProvers().apply(pt));
+		System.out.println(pt);
+		
+		pt = new ProofTree(TestLib.genSeq("x=1 |- x ∈ℕ "));
+		System.out.println(Tactics.legacyProvers().apply(pt));
+		System.out.println(pt);
+		
+		pt = new ProofTree(TestLib.genSeq(" x ∈{1} |- x=1 "));
+		System.out.println(Tactics.legacyProvers().apply(pt));
+		System.out.println(pt);
+		
 	}
 	
 }

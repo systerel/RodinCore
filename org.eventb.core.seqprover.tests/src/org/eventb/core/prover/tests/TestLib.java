@@ -24,7 +24,7 @@ public class TestLib {
 	
 	public static final Predicate chkProofFormat_getNewGoalPred(IProverSequent goalSeq,IExternalReasoner plugin, IExtReasonerInput I){
 		IExtReasonerOutput O = plugin.apply(goalSeq,I);
-		Assert.assertTrue (O.toString(),O instanceof SuccessfullExtReasonerOutput);
+		Assert.assertTrue (O.toString()+goalSeq.toString(),O instanceof SuccessfullExtReasonerOutput);
 		SuccessfullExtReasonerOutput sO = (SuccessfullExtReasonerOutput) O;
 		Predicate proofGoal = sO.proof().ofSequent().goal();
 		Assert.assertTrue (goalSeq.hypotheses().containsAll(sO.proof().ofSequent().hypotheses()));
