@@ -1,13 +1,16 @@
 package org.eventb.core.prover.externalReasoners;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
 import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.UnSuccessfulExtReasonerOutput;
+import org.eventb.core.prover.externalReasoners.classicB.ClassicB;
 import org.eventb.core.prover.proofs.TrustedProof;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -22,14 +25,19 @@ public class LegacyProvers implements IExternalReasoner{
 	}
 
 	private static boolean runLegacyProvers(IProverSequent S){
-		Set<String> strHyps = new HashSet<String>(S.visibleHypotheses().size());
-		@SuppressWarnings("unused") String strGoal = S.goal().toString();
+		Set<Predicate> hyps = new HashSet<Predicate>(S.visibleHypotheses().size());
+//		@SuppressWarnings("unused") String strGoal = S.goal().toString();
 		for (Hypothesis hyp: S.visibleHypotheses()){
-			strHyps.add(hyp.getPredicate().toString());
+			hyps.add(hyp.getPredicate());
 		}
-// TODO : 	Add code to call legasy provers here using strHyps and strGoal 
-//			and return true of false depending on output
-		return false;
+		StringBuffer sequent = ClassicB.translateSequent(S.typeEnvironment(), hyps, S.goal());
+		try {
+			return ClassicB.proveWithML(sequent);
+		} catch (IOException e) {
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
 	}
 	
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {	
