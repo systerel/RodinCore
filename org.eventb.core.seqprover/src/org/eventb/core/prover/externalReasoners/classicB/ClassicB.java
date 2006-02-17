@@ -82,6 +82,22 @@ public class ClassicB {
 		return result == null && i == 0;
 	}
 	
+	public static boolean proveWithPP(StringBuffer input) throws IOException, InterruptedException {
+		PrintStream stream = new PrintStream(iName);
+		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oName);
+		stream.print(input);
+		stream.print(" )");
+		stream.println();
+		String callString = ProverShell.getDefault().getCommandForPK() + iName;
+		Process process = Runtime.getRuntime().exec(callString);
+		int i = process.waitFor();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(oName)));
+		CharBuffer buffer = CharBuffer.allocate(32);
+		buffer.put(15, 'U');
+		@SuppressWarnings("unused") int n = reader.read(buffer);
+		return buffer.get(15) == 'P' && i == 0;
+	}
+	
 //	public static boolean callPK(StringBuffer input) throws IOException, InterruptedException {
 //		File ifile = File.createTempFile("eventbin", null);
 //		File ofile = File.createTempFile("eventbou", null);

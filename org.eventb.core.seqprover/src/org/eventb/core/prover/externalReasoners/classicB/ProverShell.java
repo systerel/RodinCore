@@ -20,11 +20,24 @@ public class ProverShell {
 	}
 	
 	public String getCommandForPK() {
-		return "/home/halstefa/bin/pk -s /home/halstefa/bin/PP_ST ";
+		// Path for fmehta
+		// return "/home/fmehta/Tools/pk/pk -s /home/fmehta/Tools/pk/PP_ST ";
+		
+		return "/home/fmehta/Tools/pk/pk -s /home/fmehta/Tools/pk/PP_ST ";
 	}
 
 	public String getCommandForML() {
-		return "/home/halstefa/bin/B4free-V2.0/krt -b /home/halstefa/bin/B4free-V2.0/ML.kin ";
+		// Path for fmehta
+		// return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
+		
+		return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
+	}
+
+	public String getCommandForPP() {
+		// Path for fmehta
+		// return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
+		
+		return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/PP.kin ";
 	}
 
 }

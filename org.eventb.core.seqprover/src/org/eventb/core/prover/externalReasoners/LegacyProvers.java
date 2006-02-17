@@ -32,7 +32,10 @@ public class LegacyProvers implements IExternalReasoner{
 		}
 		StringBuffer sequent = ClassicB.translateSequent(S.typeEnvironment(), hyps, S.goal());
 		try {
-			return ClassicB.proveWithML(sequent);
+			if(ClassicB.proveWithML(sequent))
+				return true;
+			else
+				return ClassicB.proveWithPP(sequent);
 		} catch (IOException e) {
 			return false;
 		} catch (InterruptedException e) {
