@@ -19,6 +19,7 @@ conjE
 
 Automatic:
 trivial
+legacyProvers
 
 Others:
 
