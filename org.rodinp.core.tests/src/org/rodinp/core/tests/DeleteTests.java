@@ -112,7 +112,7 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[-]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -140,7 +140,7 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[-]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -166,8 +166,8 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[*]: {CHILDREN}\n" +
-					"			bar[-]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" +
+					"			bar[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -197,8 +197,8 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[*]: {CHILDREN}\n" +
-					"			bar[-]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" +
+					"			bar[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -251,7 +251,7 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[-]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -286,13 +286,13 @@ public class DeleteTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		1[-]: {}\n" + 
-					"		2[*]: {CHILDREN}\n" + 
-					"			21[-]: {}\n" + 
+					"		1[org.rodinp.core.tests.namedElement][-]: {}\n" + 
+					"		2[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" + 
+					"			21[org.rodinp.core.tests.namedElement][-]: {}\n" + 
 					"	Y.test[*]: {CHILDREN}\n" + 
-					"		1[*]: {CHILDREN}\n" + 
-					"			11[-]: {}\n" + 
-					"		2[-]: {}" 
+					"		1[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" + 
+					"			11[org.rodinp.core.tests.namedElement][-]: {}\n" + 
+					"		2[org.rodinp.core.tests.namedElement][-]: {}" 
 			);
 		} finally {
 			stopDeltas();

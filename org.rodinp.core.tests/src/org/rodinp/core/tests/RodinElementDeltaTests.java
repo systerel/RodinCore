@@ -392,8 +392,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" + 
 					"	A.test[*]: {CHILDREN}\n" + 
-					"		foo[+]: {}\n" + 
-					"		bar[+]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][+]: {}\n" + 
+					"		bar[org.rodinp.core.tests.namedElement][+]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -444,7 +444,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	 * Test that deltas are generated when a file is added
 	 * and removed from a project via core API.
 	 */
-	public void testCompilationUnitRemoveAndAdd() throws CoreException {
+	public void testRodinFileRemoveAndAdd() throws CoreException {
 		try {
 			createRodinProject("P");
 			IFile file = createRodinFile("/P/X.test").getResource();
@@ -709,7 +709,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		}
 	}
 
-	public void testModifyContentsAndSave() throws CoreException {
+	public void testModifyContents() throws CoreException {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
@@ -721,7 +721,49 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
+			);
+		} finally {
+			stopDeltas();
+			deleteProject("P");
+		}
+	}
+
+	public void testModifyContentsAndSave() throws CoreException {
+		try {
+			createRodinProject("P");
+			IRodinFile rodinFile = createRodinFile("P/A.test");
+			NamedElement ne = createNamedElement(rodinFile, "foo", null);
+			
+			startDeltas();
+			ne.setContents("bar");
+			rodinFile.save(null, false);
+			assertDeltas(
+					"Unexpected delta", 
+					"P[*]: {CHILDREN}\n" +
+					"	A.test[*]: {CHILDREN}\n" +
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
+			);
+		} finally {
+			stopDeltas();
+			deleteProject("P");
+		}
+	}
+
+	public void testModifyContentsNoSave() throws CoreException {
+		try {
+			createRodinProject("P");
+			IRodinFile rodinFile = createRodinFile("P/A.test");
+			NamedElement ne = createNamedElement(rodinFile, "foo", null);
+			
+			startDeltas();
+			ne.setContents("bar");
+			rodinFile.close();
+			assertDeltas(
+					"Unexpected delta", 
+					"P[*]: {CHILDREN}\n" +
+					"	A.test[*]: {CHILDREN}\n" +
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
 			);
 		} finally {
 			stopDeltas();

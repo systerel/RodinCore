@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -85,7 +86,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return createFolder(new Path(path));
 	}
 	
-	protected NamedElement createNamedElement(IRodinFile parent, String name,
+	protected NamedElement createNamedElement(IInternalParent parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
 		return (NamedElement) parent.createInternalElement(
@@ -95,12 +96,12 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 				null);
 	}
 	
-	protected NamedElement createNamedElement(IInternalElement parent, String name,
+	protected UnnamedElement createUnnamedElement(IInternalParent parent,
 			IInternalElement nextSibling) throws RodinDBException {
 		
-		return (NamedElement) parent.createInternalElement(
-				NamedElement.ELEMENT_TYPE,
-				name,
+		return (UnnamedElement) parent.createInternalElement(
+				UnnamedElement.ELEMENT_TYPE,
+				"",
 				nextSibling,
 				null);
 	}
@@ -125,12 +126,12 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	 * of the tree.
 	 */
 	protected String expandAll(IRodinElement element) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		this.expandAll(element, 0, buffer);
 		return buffer.toString();
 	}
 	
-	private void expandAll(IRodinElement element, int tab, StringBuffer buffer) throws CoreException {
+	private void expandAll(IRodinElement element, int tab, StringBuilder buffer) throws CoreException {
 		IRodinElement[] children = null;
 		// force opening of element by getting its children
 		if (element instanceof IParent) {
