@@ -36,19 +36,6 @@ import org.rodinp.internal.core.util.MementoTokenizer;
 /**
  * Handle for a Rodin Project.
  *
- * <p>A Rodin Project internally maintains a devpath that corresponds
- * to the project's classpath. The classpath may include source folders
- * from the current project; jars in the current project, other projects,
- * and the local file system; and binary folders (output location) of other
- * projects. The Rodin Model presents source elements corresponding to output
- * .class files in other projects, and thus uses the devpath rather than
- * the classpath (which is really a compilation path). The devpath mimics
- * the classpath, except has source folder entries in place of output
- * locations in external projects.
- *
- * <p>Each RodinProject has a NameLookup facility that locates elements
- * on by name, based on the devpath.
- *
  * @see IRodinProject
  */
 public class RodinProject 
