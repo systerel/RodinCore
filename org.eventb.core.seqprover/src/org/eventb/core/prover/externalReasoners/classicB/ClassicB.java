@@ -69,12 +69,16 @@ public class ClassicB {
 		return result;
 	}
 	
-	public static boolean callPK(StringBuffer input) throws IOException, InterruptedException {
+	private static void printPP(StringBuffer input) throws IOException {
 		PrintStream stream = new PrintStream(iName);
 		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oName);
 		stream.print(input);
 		stream.print(" )");
 		stream.println();
+	}
+	
+	public static boolean callPKforPP(StringBuffer input) throws IOException, InterruptedException {
+		printPP(input);
 		String callString = ProverShell.getDefault().getCommandForPK() + iName;
 		Process process = Runtime.getRuntime().exec(callString);
 		int i = process.waitFor();
@@ -83,19 +87,15 @@ public class ClassicB {
 	}
 	
 	public static boolean proveWithPP(StringBuffer input) throws IOException, InterruptedException {
-		PrintStream stream = new PrintStream(iName);
-		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oName);
-		stream.print(input);
-		stream.print(" )");
-		stream.println();
-		String callString = ProverShell.getDefault().getCommandForPK() + iName;
+		printPP(input);
+		String callString = ProverShell.getDefault().getCommandForPP() + iName;
 		Process process = Runtime.getRuntime().exec(callString);
 		int i = process.waitFor();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(oName)));
 		CharBuffer buffer = CharBuffer.allocate(32);
-		buffer.put(15, 'U');
+		buffer.put(0, 'E');
 		@SuppressWarnings("unused") int n = reader.read(buffer);
-		return buffer.get(15) == 'P' && i == 0;
+		return buffer.get(0) == 'S' && i == 0;
 	}
 	
 //	public static boolean callPK(StringBuffer input) throws IOException, InterruptedException {
@@ -113,7 +113,7 @@ public class ClassicB {
 //		return result == null;
 //	}
 	
-	public static boolean callPKforML(StringBuffer input)  throws IOException, InterruptedException {
+	private static void printML(StringBuffer input) throws IOException {
 		PrintStream stream = new PrintStream(iName);
 		stream.print("THEORY Lemma;Unproved IS ");
 		stream.print(input);
@@ -121,6 +121,10 @@ public class ClassicB {
 		stream.print(oName);
 		stream.print("\" WHEN Options IS ? & ? & ? & OK & \"\" & MaxNumberOfUniversalHypothesisInstantiation & KO END");
 		stream.println();
+	}
+	
+	public static boolean callPKforML(StringBuffer input)  throws IOException, InterruptedException {
+		printML(input);
 		String callString = ProverShell.getDefault().getCommandForPK() + iName;
 		Process process = Runtime.getRuntime().exec(callString);
 		int i = process.waitFor();
@@ -129,13 +133,7 @@ public class ClassicB {
 	}
 	
 	public static boolean proveWithML(StringBuffer input)  throws IOException, InterruptedException {
-		PrintStream stream = new PrintStream(iName);
-		stream.print("THEORY Lemma;Unproved IS ");
-		stream.print(input);
-		stream.print("WHEN Force IS (0;1;2;3) WHEN FileOut IS \"");
-		stream.print(oName);
-		stream.print("\" WHEN Options IS ? & ? & ? & OK & \"\" & MaxNumberOfUniversalHypothesisInstantiation & KO END");
-		stream.println();
+		printML(input);
 		String callString = ProverShell.getDefault().getCommandForML() + iName;
 		Process process = Runtime.getRuntime().exec(callString);
 		int i = process.waitFor();
