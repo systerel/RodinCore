@@ -112,7 +112,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		// Copy children
 		RodinElement[] sourceChildren = sourceInfo.getChildren();
 		int length = sourceChildren.length;
-		IInternalElement[] destChildren = new IInternalElement[length];
+		RodinElement[] destChildren = new RodinElement[length];
 		for (int i = 0; i < length; ++ i) {
 			InternalElement sourceChild = (InternalElement) sourceChildren[i];
 			InternalElement destChild = getChildSimilarTo(dest, sourceChild);
@@ -125,6 +125,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 				Util.log(e, "when cloning an internal element sub-tree");
 			}
 		}
+		destInfo.setChildren(destChildren);
 	}
 
 	// Returns a new handle for a child of <code>dest</code> with the same name
