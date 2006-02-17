@@ -144,7 +144,11 @@ public class TestOldProver extends TestCase {
 			new TestML(mHypothesis("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
 			new TestML(mHypothesis("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
 			new TestML(mHypothesis("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
-			new TestML(mHypothesis("y∈0‥x"), mPredicate("x∈ℤ"), true)
+			new TestML(mHypothesis("y∈0‥x"), mPredicate("x∈ℤ"), true),
+			
+			// some tests for PP
+			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
+			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("y∈A∩B"), false)
 	};
 	
 	class TestPK extends TestItem {
@@ -157,7 +161,7 @@ public class TestOldProver extends TestCase {
 		@Override
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(defaultTEnv, hypothesis, goal);
-			boolean result = ClassicB.callPK(buffer);
+			boolean result = ClassicB.callPKforPP(buffer);
 			assertTrue("true", result);
 			result = ClassicB.callPKforML(buffer);
 			assertTrue("true", result);
@@ -186,7 +190,30 @@ public class TestOldProver extends TestCase {
 		}
 		
 	}
-  public void testPK() throws Exception {
+	
+	class TestPP extends TestItem {
+		
+		public boolean isTrue;
+		
+		public TestPP(Set<Predicate> hypothesis, Predicate goal, boolean isTrue) {
+			this.hypothesis = hypothesis;
+			this.goal = goal;
+			this.isTrue = isTrue;
+		}
+		
+		@Override
+		public void test() throws Exception {
+			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypothesis, goal);
+			boolean result = ClassicB.proveWithPP(buffer);
+			if(isTrue)
+				assertTrue("true", result);
+			else
+				assertFalse("false", result);
+		}
+		
+	}
+	
+	public void testAll() throws Exception {
     	for(TestItem item : items)
     		item.test();
     }
