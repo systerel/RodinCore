@@ -7,6 +7,7 @@ import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
 import org.eventb.core.prover.externalReasoners.ExI;
+import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.Trivial;
 import org.eventb.core.prover.rules.AllI;
 import org.eventb.core.prover.rules.ConjI;
@@ -90,6 +91,10 @@ public class Tactics {
 	public static Tactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
 		return new Tactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
 		
+	}
+	
+	public static Tactic legacyProvers(){
+		return plugin(new LegacyProvers(),null);
 	}
 	
 }
