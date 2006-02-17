@@ -125,6 +125,26 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		copyPositive(neSource, neParent, null, "bar", false);
 	}
 	
+    /**
+     * Ensures that an internal element can be copied to a different file, and
+     * that all its children are copied.
+     */
+    public void testCopyIntTree() throws CoreException {
+            IRodinFile rfSource = createRodinFile("P/X.test");
+            NamedElement neParent = createNamedElement(rfSource, "parent", null);
+            NamedElement neSource = createNamedElement(neParent, "foo", null);
+            createUnnamedElement(neSource, null);
+
+            IRodinFile rfDest = createRodinFile("P/Y.test");
+            NamedElement neDest = createNamedElement(rfDest, "target", null);
+
+            copyPositive(neSource, neDest, null, null, false);
+            NamedElement neCopy = getNamedElement(neDest, "foo");
+            assertEquals("Child not copied with parent",
+                            neSource.getChildren().length,
+                            neCopy.getChildren().length);
+    }
+
 	/**
 	 * Ensures that an internal element cannot be copied to a different
 	 * file replacing an existing element if no force.
