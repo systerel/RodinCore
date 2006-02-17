@@ -11,19 +11,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eventb.core.IAction;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ISCMachine;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -31,41 +25,13 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.basis.SCMachine;
-import org.eventb.internal.core.protopog.POGCore;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
-public class TestMachinePOG_2 extends TestCase {
+public class TestMachinePOG_2 extends BuilderTest {
 
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	
 	FormulaFactory factory = FormulaFactory.getDefault();
-	
-	IRodinProject rodinProject;
-	
 	Type INTEGER = factory.parseType("ℤ").getParsedType();
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("P");
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(description, null);
-		rodinProject = RodinCore.create(project);
-		rodinProject.open(null);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		rodinProject.getProject().delete(true, true, null);
-	}
 	
 	private String getWDStringForPredicate(String formula, ITypeEnvironment environment) {
 		if(environment == null)
@@ -125,18 +91,12 @@ public class TestMachinePOG_2 extends TestCase {
 	 */
 	public void testInvariant1() throws Exception {
 		String invariant = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, 
-				TestUtil.makeList("I1"), 
-				TestUtil.makeList(invariant));
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, 
+				makeList("I1"), 
+				makeList(invariant));
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-
-		poFile.open(null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		String expected = getWDStringForPredicate(invariant, null);
 		IPOSequent[] sequents = poFile.getSequents();
@@ -145,7 +105,7 @@ public class TestMachinePOG_2 extends TestCase {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("I1/WD"));
 		
-		assertEquals("WD formula source", "I1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "I1", getSourceName(sequents[0], 0));
 
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		
@@ -160,21 +120,14 @@ public class TestMachinePOG_2 extends TestCase {
 	 */
 	public void testInvariant2() throws Exception {
 		String invariant = "(∀x·x≠0⇒x>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addAxioms(rodinFile, 
-				TestUtil.makeList("I1"), 
-				TestUtil.makeList(invariant), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addAxioms(rodinFile, 
+				makeList("I1"), 
+				makeList(invariant), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
 
-		poFile.open(null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
+		IPOFile poFile = runPOG(rodinFile);
 		assertTrue("No proof obligation", poFile.getSequents().length == 0);
-
 	}
 	
 	/**
@@ -183,24 +136,19 @@ public class TestMachinePOG_2 extends TestCase {
 	public void testInvariant3() throws Exception {
 		String invariant1 = "(∀x·x≠0⇒x>0)";
 		String invariant2 = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, 
-				TestUtil.makeList("I1", "I2"), 
-				TestUtil.makeList(invariant1, invariant2));
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, 
+				makeList("I1", "I2"), 
+				makeList(invariant1, invariant2));
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
+		IPOFile poFile = runPOG(rodinFile);
 		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
-		assertTrue("Exactly one proof obligation", poFile.getSequents().length == 1);
-		
-		assertTrue("name ok", poFile.getSequents()[0].getName().equals("I2/WD"));
+		final IPOSequent[] sequents = poFile.getSequents();
+		assertEquals("Wrong number of proof obligation", 1, sequents.length);
+		assertEquals("Wrong PO name", "I2/WD", sequents[0].getName());
+		assertEquals("Wrong WD formula source", "I2", getSourceName(sequents[0], 0));
 
-		assertEquals("WD formula source", "I2", RodinCore.create(poFile.getSequents()[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
-		IPOPredicateSet predicateSet = poFile.getSequents()[0].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet predicateSet = sequents[0].getHypothesis().getGlobalHypothesis();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
 		
@@ -217,39 +165,33 @@ public class TestMachinePOG_2 extends TestCase {
 	 */
 	public void testTheorem1() throws Exception {
 		String theorem = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1"), 
-				TestUtil.makeList(theorem), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addTheorems(rodinFile, 
+				makeList("T1"), 
+				makeList(theorem), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-
-		poFile.open(null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		String expected = getWDStringForPredicate(theorem, null);
 		IPOSequent[] sequents = poFile.getSequents();
 		
-		assertTrue("There is only one po", sequents.length == 2);
+		assertEquals("Wrong number of POs", 2, sequents.length);
 		
-		int thm_sequent = (sequents[0].getName().equals("T1")) ? 0 : 1;
+		final int t1 = getIndexForName("T1", sequents);
+		final int t1wd = getIndexForName("T1/WD", sequents);
 		
-		assertEquals("formula source", "T1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("WD formula source", "T1", RodinCore.create(sequents[1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertTrue("names ok", t1 != -1 && t1wd != -1);
+		
+		assertEquals("formula source", "T1", getSourceName(sequents[t1], 0));
+		assertEquals("WD formula source", "T1", getSourceName(sequents[t1wd], 0));
 
-		assertTrue("name ok", sequents[thm_sequent].getName().equals("T1"));
-		assertTrue("name ok", sequents[1-thm_sequent].getName().equals("T1/WD"));
-		
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[1].getHypothesis().getContents()).getPredicates().length == 0);
 		
 		assertTrue("goal is a predicate", sequents[0].getGoal() instanceof IPOPredicate);
 		assertTrue("goal is a predicate", sequents[1].getGoal() instanceof IPOPredicate);
 		
-		assertEquals("WD formula", expected, sequents[1-thm_sequent].getGoal().getContents());
+		assertEquals("WD formula", expected, sequents[t1wd].getGoal().getContents());
 		
 	}
 
@@ -258,23 +200,15 @@ public class TestMachinePOG_2 extends TestCase {
 	 */
 	public void testTheorem2() throws Exception {
 		String theorem = "(∀x·x≠0⇒x>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1"), 
-				TestUtil.makeList(theorem), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addTheorems(rodinFile, 
+				makeList("T1"), 
+				makeList(theorem), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-
-		poFile.open(null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		assertTrue("Only one proof obligation", poFile.getSequents().length == 1);
-		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
-
 	}
 
 	/**
@@ -283,16 +217,12 @@ public class TestMachinePOG_2 extends TestCase {
 	public void testTheorem3() throws Exception {
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1", "T2"), 
-				TestUtil.makeList(theorem1, theorem2), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addTheorems(rodinFile, 
+				makeList("T1", "T2"), 
+				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -302,11 +232,12 @@ public class TestMachinePOG_2 extends TestCase {
 		int t2 = getIndexForName("T2", sequents);
 		int t2wd = getIndexForName("T2/WD", sequents);
 		
-		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "T2", RodinCore.create(sequents[t2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
 		assertTrue("names ok", t1 != -1 && t2 != -1 && t2wd != -1);
 		
+		assertEquals("formula source", "T1", getSourceName(sequents[t1], 0));
+		assertEquals("formula source", "T2", getSourceName(sequents[t2], 0));
+		assertEquals("WD formula source", "T2", getSourceName(sequents[t2wd], 0));
+
 		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
@@ -325,19 +256,15 @@ public class TestMachinePOG_2 extends TestCase {
 		String invariant1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile,
-				TestUtil.makeList("I1"),
-				TestUtil.makeList(invariant1));
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1", "T2"), 
-				TestUtil.makeList(theorem1, theorem2), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile,
+				makeList("I1"),
+				makeList(invariant1));
+		addTheorems(rodinFile, 
+				makeList("T1", "T2"), 
+				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -370,21 +297,17 @@ public class TestMachinePOG_2 extends TestCase {
 		String invariant1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addAxioms(rodinFile, TestUtil.makeList("A1"), TestUtil.makeList(ctxAxiom1), "CONTEXT");
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("X1"), TestUtil.makeList(ctxTheorem1), "CONTEXT");
-		TestUtil.addInvariants(rodinFile,
-				TestUtil.makeList("I1"),
-				TestUtil.makeList(invariant1));
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1", "T2"), 
-				TestUtil.makeList(theorem1, theorem2), null);
+		ISCMachine rodinFile = createSCMachine("test");
+		addAxioms(rodinFile, makeList("A1"), makeList(ctxAxiom1), "CONTEXT");
+		addTheorems(rodinFile, makeList("X1"), makeList(ctxTheorem1), "CONTEXT");
+		addInvariants(rodinFile,
+				makeList("I1"),
+				makeList(invariant1));
+		addTheorems(rodinFile, 
+				makeList("T1", "T2"), 
+				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -424,14 +347,10 @@ public class TestMachinePOG_2 extends TestCase {
 		
 		String guard1 = factory.parsePredicate("(∀x·x=1÷x)").getParsedPredicate().toString();
 		
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), TestUtil.makeList("G1"), TestUtil.makeList(guard1), TestUtil.makeList(), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCEvent(rodinFile, "E1", makeList(), makeList("G1"), makeList(guard1), makeList(), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -440,10 +359,10 @@ public class TestMachinePOG_2 extends TestCase {
 		int g1 = getIndexForName("E1/G1/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
-		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
 		assertTrue("names ok", g1 != -1 && dlk != -1);
 		
+		assertEquals("WD formula source", "G1", getSourceName(sequents[g1], 0));
+
 		assertEquals("wd predicate ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
 		
 		assertEquals("dlk predicate ok", guard1, sequents[dlk].getGoal().getContents());
@@ -459,17 +378,13 @@ public class TestMachinePOG_2 extends TestCase {
 		String guard2 = factory.parsePredicate("(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
 		String dlk1 = factory.parsePredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
 		
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1"), TestUtil.makeList(invariant1));
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
-				TestUtil.makeList("G1", "G2"), 
-				TestUtil.makeList(guard1, guard2), TestUtil.makeList(), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList("G1", "G2"), 
+				makeList(guard1, guard2), makeList(), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -479,11 +394,11 @@ public class TestMachinePOG_2 extends TestCase {
 		int g2 = getIndexForName("E1/G2/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
-		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("WD formula source", "G2", RodinCore.create(sequents[g2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
 		assertTrue("names ok", g1 != -1 && g2 != -1 && dlk != -1);
 		
+		assertEquals("WD formula source", "G1", getSourceName(sequents[g1], 0 ));
+		assertEquals("WD formula source", "G2", getSourceName(sequents[g2], 0));
+
 		assertEquals("wd predicate 1 ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
 		
 		assertEquals("wd predicate 2 ok", getWDStringForPredicate(guard2, null), sequents[g2].getGoal().getContents());
@@ -504,16 +419,12 @@ public class TestMachinePOG_2 extends TestCase {
 		String guard2 = factory.parsePredicate("(x=1−x)").getParsedPredicate().toString();
 		String dlk1 = factory.parsePredicate("(∃x·x=1÷x∧x=1−x)").getParsedPredicate().toString();
 		
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList("x"), 
-				TestUtil.makeList("G1", "G2"), 
-				TestUtil.makeList(guard1, guard2), TestUtil.makeList(), TestUtil.makeList("ℤ"));
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCEvent(rodinFile, "E1", makeList("x"), 
+				makeList("G1", "G2"), 
+				makeList(guard1, guard2), makeList(), makeList("ℤ"));
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -539,19 +450,15 @@ public class TestMachinePOG_2 extends TestCase {
 		String dlk1 = factory.parsePredicate("(∃x·x=1∗x∧x=1−x)∨(∃x·x=1+x)").getParsedPredicate().toString();
 		String guard3 = factory.parsePredicate("(x=1+x)").getParsedPredicate().toString();
 		
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList("x"), 
-				TestUtil.makeList("G1", "G2"), 
-				TestUtil.makeList(guard1, guard2), TestUtil.makeList(), TestUtil.makeList("ℤ"));
-		TestUtil.addSCEvent(rodinFile, "E2", TestUtil.makeList("x"), 
-				TestUtil.makeList("G1"), 
-				TestUtil.makeList(guard3), TestUtil.makeList(), TestUtil.makeList("ℤ"));
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCEvent(rodinFile, "E1", makeList("x"), 
+				makeList("G1", "G2"), 
+				makeList(guard1, guard2), makeList(), makeList("ℤ"));
+		addSCEvent(rodinFile, "E2", makeList("x"), 
+				makeList("G1"), 
+				makeList(guard3), makeList(), makeList("ℤ"));
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -575,18 +482,14 @@ public class TestMachinePOG_2 extends TestCase {
 		String guard2 = factory.parsePredicate("(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
 		String dlk1 = factory.parsePredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
 		
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1"), TestUtil.makeList(invariant1));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList(theorem1), null);
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
-				TestUtil.makeList("G1", "G2"), 
-				TestUtil.makeList(guard1, guard2), TestUtil.makeList(), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
+		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), null);
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList("G1", "G2"), 
+				makeList(guard1, guard2), makeList(), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -597,12 +500,12 @@ public class TestMachinePOG_2 extends TestCase {
 		int g2 = getIndexForName("E1/G2/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
-		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("WD formula source", "G2", RodinCore.create(sequents[g2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("WD formula source", "G1", RodinCore.create(sequents[g1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
 		assertTrue("names ok", t1 != -1 && g1 != -1 && g2 != -1 && dlk != -1);
 		
+		assertEquals("formula source", "T1", getSourceName(sequents[t1], 0));
+		assertEquals("WD formula source", "G2", getSourceName(sequents[g2], 0));
+		assertEquals("WD formula source", "G1", getSourceName(sequents[g1], 0));
+
 		assertEquals("wd predicate 1 ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
 		
 		assertEquals("wd predicate 2 ok", getWDStringForPredicate(guard2, null), sequents[g2].getGoal().getContents());
@@ -636,17 +539,14 @@ public class TestMachinePOG_2 extends TestCase {
 		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
 		String assignment3 = factory.parseAssignment("z :∣ ∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
 	
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
-		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
 		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -661,25 +561,25 @@ public class TestMachinePOG_2 extends TestCase {
 		int i2 = getIndexForName("E1/I2/INV", sequents);
 		int i3 = getIndexForName("E1/I3/INV", sequents);
 		
+		assertTrue("names ok", a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
+		
 		int ie1 = getIndexForName("event", sequents[i1].getDescription().getSources());
 		int ie2 = getIndexForName("event", sequents[i2].getDescription().getSources());
 		int ie3 = getIndexForName("event", sequents[i3].getDescription().getSources());
 		
-		assertEquals("formula source", "E1", RodinCore.create(sequents[i1].getDescription().getSources()[ie1].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "E1", RodinCore.create(sequents[i2].getDescription().getSources()[ie2].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "E1", RodinCore.create(sequents[i3].getDescription().getSources()[ie3].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "E1", getSourceName(sequents[i1], ie1));
+		assertEquals("formula source", "E1", getSourceName(sequents[i2], ie2));
+		assertEquals("formula source", "E1", getSourceName(sequents[i3], ie3));
 
-		assertEquals("formula source", "I1", RodinCore.create(sequents[i1].getDescription().getSources()[1-ie1].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "I2", RodinCore.create(sequents[i2].getDescription().getSources()[1-ie2].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "I3", RodinCore.create(sequents[i3].getDescription().getSources()[1-ie3].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "I1", getSourceName(sequents[i1], 1-ie1));
+		assertEquals("formula source", "I2", getSourceName(sequents[i2], 1-ie2));
+		assertEquals("formula source", "I3", getSourceName(sequents[i3], 1-ie3));
 		
-		assertEquals("formula source", assignment1, ((IAction) RodinCore.create(sequents[a1wd].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
-		assertEquals("formula source", assignment2, ((IAction) RodinCore.create(sequents[a2wd].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
-		assertEquals("formula source", assignment2, ((IAction) RodinCore.create(sequents[a2fis].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
-		assertEquals("formula source", assignment3, ((IAction) RodinCore.create(sequents[a3fis].getDescription().getSources()[0].getSourceHandleIdentifier())).getContents());
+		assertEquals("formula source", assignment1, getSourceContents(sequents[a1wd], 0));
+		assertEquals("formula source", assignment2, getSourceContents(sequents[a2wd], 0));
+		assertEquals("formula source", assignment2, getSourceContents(sequents[a2fis], 0));
+		assertEquals("formula source", assignment3, getSourceContents(sequents[a3fis], 0));
 
-		assertTrue("names ok", a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
-		
 		assertEquals("wd predicate 1 ok", getWDStringForAssignment(assignment1, env), sequents[a1wd].getGoal().getContents());
 		assertEquals("wd predicate 2 ok", getWDStringForAssignment(assignment2, env), sequents[a2wd].getGoal().getContents());
 		assertEquals("wd predicate 3 ok", getWDStringForAssignment(assignment3, env), sequents[a3wd].getGoal().getContents());
@@ -725,20 +625,16 @@ public class TestMachinePOG_2 extends TestCase {
 		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
 		String assignment3 = factory.parseAssignment("z:∣∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
 	
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addAxioms(rodinFile, TestUtil.makeList("A1"), TestUtil.makeList(axiom1), "CONTEXT");
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList(theorem1), "CONTEXT");
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T2"), TestUtil.makeList(theorem2), null);
-		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
-		TestUtil.addSCEvent(rodinFile, "E1", TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
+		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), "CONTEXT");
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
+		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
-		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -789,20 +685,17 @@ public class TestMachinePOG_2 extends TestCase {
 		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
 		String assignment3 = factory.parseAssignment("z:∣∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
 	
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addAxioms(rodinFile, TestUtil.makeList("A1"), TestUtil.makeList(axiom1), "CONTEXT");
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList(theorem1), "CONTEXT");
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T2"), TestUtil.makeList(theorem2), null);
-		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "ℤ", "ℤ"));
-		TestUtil.addSCEvent(rodinFile, "INITIALISATION", TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(assignment1, assignment2, assignment3), TestUtil.makeList());
+		ISCMachine rodinFile = createSCMachine("test");
+		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
+		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), "CONTEXT");
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
+		addIdentifiers(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
+		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
+				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
 		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -862,15 +755,12 @@ public class TestMachinePOG_2 extends TestCase {
 		String invariant2 = factory.parsePredicate("y∈BOOL").getParsedPredicate().toString();
 		String invariant3 = factory.parsePredicate("z∈{0}×{0}").getParsedPredicate().toString();
 	
-		IRodinFile rodinFile = rodinProject.createRodinFile("test.bcm", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList(invariant1, invariant2, invariant3));
-		TestUtil.addSCVariables(rodinFile, TestUtil.makeList("x", "y", "z"), TestUtil.makeList("ℤ", "BOOL", "ℤ×ℤ"));
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "BOOL", "ℤ×ℤ"));
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("test.bpo", true, null);
 		
-		POGCore.runMachinePOG((SCMachine) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOIdentifier[] identifiers = poFile.getIdentifiers();
 		

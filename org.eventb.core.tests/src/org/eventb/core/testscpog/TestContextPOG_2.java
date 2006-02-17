@@ -7,62 +7,31 @@
  *******************************************************************************/
 package org.eventb.core.testscpog;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ISCContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.basis.SCContext;
-import org.eventb.internal.core.protopog.POGCore;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author halstefa
  *
  */
-public class TestContextPOG_2 extends TestCase {
+public class TestContextPOG_2 extends BuilderTest {
 
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	
 	FormulaFactory factory = FormulaFactory.getDefault();
-	
-	IRodinProject rodinProject;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("P");
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(description, null);
-		rodinProject = RodinCore.create(project);
-		rodinProject.open(null);
-	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		rodinProject.getProject().delete(true, true, null);
-	}
-	
 	private Predicate getPredicate(String formula) {
 		IParseResult result = factory.parsePredicate(formula);
 		assert result.isSuccess();
 		Predicate predicate = result.getParsedPredicate();
 		return predicate;
 	}
+	
 	private String getWDString(String formula) {
 		Predicate predicate = getPredicate(formula);
 		ITypeCheckResult tcResult = predicate.typeCheck(factory.makeTypeEnvironment());
@@ -74,17 +43,12 @@ public class TestContextPOG_2 extends TestCase {
 	 * Test method for creation of non-empty carrier set hypotheses
 	 */
 	public void testCarrierSet1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("cset1.bcc", true, null);
-		TestUtil.addSCCarrierSets(rodinFile, TestUtil.makeList("S"), TestUtil.makeList("ℙ(S)"));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1"), TestUtil.makeList("S ∈ ℙ(S)"), null);
+		ISCContext rodinFile = createSCContext("cset1");
+		addSCCarrierSets(rodinFile, makeList("S"), makeList("ℙ(S)"));
+		addTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("cset1.bpo", true, null);
-
-		poFile.open(null);
 		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -106,19 +70,12 @@ public class TestContextPOG_2 extends TestCase {
 	 * Test method for creation of WD-po of one axiom
 	 */
 	public void testAxiom1() throws Exception {
-		String axiom = getPredicate("(∀x·x≠0⇒1÷x≤1)").toString();
-		IRodinFile rodinFile = rodinProject.createRodinFile("axiom1.bcc", true, null);
-		TestUtil.addAxioms(rodinFile, 
-				TestUtil.makeList("A1"), 
-				TestUtil.makeList(axiom), null);
+		String axiom = "(∀x·x≠0⇒1÷x≤1)";
+		ISCContext rodinFile = createSCContext("axiom1");
+		addAxioms(rodinFile, makeList("A1"), makeList(axiom), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("axiom1.bpo", true, null);
-
-		poFile.open(null);
 		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		String expected = getWDString(axiom);
 		IPOSequent[] sequents = poFile.getSequents();
@@ -127,13 +84,13 @@ public class TestContextPOG_2 extends TestCase {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("A1/WD"));
 		
-		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
+		assertTrue("The global hypothesis is empty", 
+				poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		
 		assertTrue("goal is a predicate", sequents[0].getGoal() instanceof IPOPredicate);
 		
 		assertEquals("WD formula", expected, sequents[0].getGoal().getContents());
-		
-		assertEquals("WD formula source", "A1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("WD formula source", "A1", getSourceName(sequents[0], 0));
 		
 	}
 
@@ -142,21 +99,14 @@ public class TestContextPOG_2 extends TestCase {
 	 */
 	public void testAxiom2() throws Exception {
 		String axiom = "(∀x·x≠0⇒x>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("axiom2.bcc", true, null);
-		TestUtil.addAxioms(rodinFile, 
-				TestUtil.makeList("A1"), 
-				TestUtil.makeList(axiom), null);
+		ISCContext rodinFile = createSCContext("axiom2");
+		addAxioms(rodinFile, 
+				makeList("A1"), 
+				makeList(axiom), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("axiom2.bpo", true, null);
-
-		poFile.open(null);
 		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
-		assertTrue("No proof obligation", poFile.getSequents().length == 0);
-
+		IPOFile poFile = runPOG(rodinFile);
+		assertEquals("No proof obligation", 0, poFile.getSequents().length);
 	}
 	
 	/**
@@ -165,31 +115,22 @@ public class TestContextPOG_2 extends TestCase {
 	public void testAxiom3() throws Exception {
 		String axiom1 = "(∀x·x≠0⇒x>0)";
 		String axiom2 = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("axiom3.bcc", true, null);
-		TestUtil.addAxioms(rodinFile, 
-				TestUtil.makeList("A1", "A2"), 
-				TestUtil.makeList(axiom1, axiom2), null);
+		ISCContext rodinFile = createSCContext("axiom3");
+		addAxioms(rodinFile, 
+				makeList("A1", "A2"), 
+				makeList(axiom1, axiom2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("axiom3.bpo", true, null);
-		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
-		assertTrue("Exactly one proof obligation", poFile.getSequents().length == 1);
-		
-		assertTrue("name ok", poFile.getSequents()[0].getName().equals("A2/WD"));
+
+		IPOFile poFile = runPOG(rodinFile);
+		assertEquals("Exactly one proof obligation", 1, poFile.getSequents().length);
+		assertEquals("Wrong PO name", "A2/WD", poFile.getSequents()[0].getName());
 
 		IPOPredicateSet predicateSet = poFile.getSequents()[0].getHypothesis().getGlobalHypothesis();
-		
-		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
-		
+		assertEquals("only one predicate in global hypothesis", 1, predicateSet.getPredicates().length);
 		assertEquals("A1 in global hypothesis", axiom1, predicateSet.getPredicates()[0].getContents());
-		
+
 		IPOPredicateSet set = predicateSet.getPredicateSet();
-		
 		assertTrue("No more predicates in global hypothesis", set == null || set.getPredicates().length == 0);
-	
 	}
 	
 	/**
@@ -197,19 +138,13 @@ public class TestContextPOG_2 extends TestCase {
 	 */
 	public void testTheorem1() throws Exception {
 		String theorem = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("theorem1.bcc", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1"), 
-				TestUtil.makeList(theorem), null);
+		ISCContext rodinFile = createSCContext("theorem1");
+		addTheorems(rodinFile, 
+				makeList("T1"), 
+				makeList(theorem), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("theorem1.bpo", true, null);
 
-		poFile.open(null);
-		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
+		IPOFile poFile = runPOG(rodinFile);
 		String expected = getWDString(theorem);
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -220,8 +155,8 @@ public class TestContextPOG_2 extends TestCase {
 		assertTrue("name ok", sequents[thm_sequent].getName().equals("T1"));
 		assertTrue("name ok", sequents[1-thm_sequent].getName().equals("T1/WD"));
 		
-		assertEquals("formula source", "T1", RodinCore.create(sequents[0].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("WD formula source", "T1", RodinCore.create(sequents[1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
+		assertEquals("formula source", "T1", getSourceName(sequents[0], 0));
+		assertEquals("WD formula source", "T1", getSourceName(sequents[1], 0));
 
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[0].getHypothesis().getContents()).getPredicates().length == 0);
 		assertTrue("The global hypothesis is empty", poFile.getPredicateSet(sequents[1].getHypothesis().getContents()).getPredicates().length == 0);
@@ -238,23 +173,15 @@ public class TestContextPOG_2 extends TestCase {
 	 */
 	public void testTheorem2() throws Exception {
 		String theorem = "(∀x·x≠0⇒x>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("theorem2.bcc", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1"), 
-				TestUtil.makeList(theorem), null);
+		ISCContext rodinFile = createSCContext("theorem2");
+		addTheorems(rodinFile, 
+				makeList("T1"), 
+				makeList(theorem), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("theorem2.bpo", true, null);
-
-		poFile.open(null);
-		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		assertTrue("Only one proof obligation", poFile.getSequents().length == 1);
-		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
-
 	}
 	
 	private int getIndexForName(String name, IPOSequent[] sequents) {
@@ -270,16 +197,13 @@ public class TestContextPOG_2 extends TestCase {
 	public void testTheorem3() throws Exception {
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∀x·x≠0⇒1÷x≤1)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("theorem3.bcc", true, null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1", "T2"), 
-				TestUtil.makeList(theorem1, theorem2), null);
+		ISCContext rodinFile = createSCContext("theorem3");
+		addTheorems(rodinFile, 
+				makeList("T1", "T2"), 
+				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("theorem3.bpo", true, null);
 		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
@@ -289,9 +213,6 @@ public class TestContextPOG_2 extends TestCase {
 		int t2 = getIndexForName("T2", sequents);
 		int t2wd = getIndexForName("T2/WD", sequents);
 		
-		assertEquals("formula source", "T1", RodinCore.create(sequents[t1].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-		assertEquals("formula source", "T2", RodinCore.create(sequents[t2].getDescription().getSources()[0].getSourceHandleIdentifier()).getElementName());
-
 		assertTrue("names ok", t1 != -1 && t2 != -1 && t2wd != -1);
 		
 		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
@@ -312,28 +233,27 @@ public class TestContextPOG_2 extends TestCase {
 		String axiom1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		IRodinFile rodinFile = rodinProject.createRodinFile("theorem3.bcc", true, null);
-		TestUtil.addAxioms(rodinFile,
-				TestUtil.makeList("A1"),
-				TestUtil.makeList(axiom1), null);
-		TestUtil.addTheorems(rodinFile, 
-				TestUtil.makeList("T1", "T2"), 
-				TestUtil.makeList(theorem1, theorem2), null);
+		ISCContext rodinFile = createSCContext("theorem3");
+		addAxioms(rodinFile,
+				makeList("A1"),
+				makeList(axiom1), null);
+		addTheorems(rodinFile, 
+				makeList("T1", "T2"), 
+				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
-		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("theorem3.bpo", true, null);
-		
-		POGCore.runContextPOG((SCContext) rodinFile, poFile);
-		
-		poFile.save(null, true);
-		
+
+		IPOFile poFile = runPOG(rodinFile);
+
 		IPOSequent[] sequents = poFile.getSequents();
-		
-		assertTrue("Exactly three proof obligations", sequents.length == 2);
+		assertEquals("Wrong number of proof obligations", 2, sequents.length);
 		
 		int t1 = getIndexForName("T1", sequents);
 		int t2 = getIndexForName("T2", sequents);
 		
 		assertTrue("names ok", t1 != -1 && t2 != -1);
+
+		assertEquals("formula source", "T1", getSourceName(sequents[t1], 0));
+		assertEquals("formula source", "T2", getSourceName(sequents[t2], 0));
 		
 		IPOPredicateSet set1 = sequents[t1].getHypothesis().getGlobalHypothesis();
 		

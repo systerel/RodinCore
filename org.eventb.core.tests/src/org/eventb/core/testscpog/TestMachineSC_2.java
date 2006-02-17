@@ -10,12 +10,6 @@ package org.eventb.core.testscpog;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -32,53 +26,21 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.core.protosc.SCCore;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class TestMachineSC_2 extends TestCase {
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	
-	IRodinProject rodinProject;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("testsc");
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(description, null);
-		rodinProject = RodinCore.create(project);
-		rodinProject.open(null);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		rodinProject.getProject().delete(true, true, null);
-	}
-
+public class TestMachineSC_2 extends BuilderTest {
 
 	/**
 	 * Test method for name clashes of variables
 	 */
 	public void testVariables1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2", "V2", "V3"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2", "V2", "V3"));
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -95,18 +57,12 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for typing of variables
 	 */
 	public void testVariables2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2", "V3"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I3"), TestUtil.makeList("V1∈ℕ", "V3∈ℕ"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2", "V3"));
+		addInvariants(rodinFile, makeList("I1", "I3"), makeList("V1∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -121,8 +77,8 @@ public class TestMachineSC_2 extends TestCase {
 	
 	private ISCContext makeContext1() throws RodinDBException {
 		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
-		TestUtil.addSCCarrierSets(context, TestUtil.makeList("S1"), TestUtil.makeList("ℙ(S1)"));
-		TestUtil.addSCConstants(context, TestUtil.makeList("C1"), TestUtil.makeList("S1"));
+		addSCCarrierSets(context, makeList("S1"), makeList("ℙ(S1)"));
+		addSCConstants(context, makeList("C1"), makeList("S1"));
 		return context;
 	}
 	
@@ -131,19 +87,13 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testVariables3() throws Exception {
 		makeContext1();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("S1", "V2", "V3"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList("S1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addVariables(rodinFile, makeList("S1", "V2", "V3"));
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("S1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IVariable[] variables = scMachine.getSCVariables();
 		
@@ -161,19 +111,13 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testVariables4() throws Exception {
 		makeContext1();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("C1", "V2", "V3"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList("C1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addVariables(rodinFile, makeList("C1", "V2", "V3"));
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("C1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IVariable[] variables = scMachine.getSCVariables();
 		
@@ -191,19 +135,13 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testVariables5() throws Exception {
 		makeContext1();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2", "V3"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addVariables(rodinFile, makeList("V1", "V2", "V3"));
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IVariable[] variables = scMachine.getSCVariables();
 		
@@ -231,17 +169,11 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for non-name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariants1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I3"), TestUtil.makeList("⊤", "⊤", "⊤"));
+		IMachine rodinFile = createMachine("one");
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("⊤", "⊤", "⊤"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IInvariant[] invariants = scMachine.getInvariants();
 		
@@ -259,17 +191,11 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariants2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "I2"), TestUtil.makeList("⊤", "⊤", "⊤"));
+		IMachine rodinFile = createMachine("one");
+		addInvariants(rodinFile, makeList("I1", "I2", "I2"), makeList("⊤", "⊤", "⊤"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IInvariant[] invariants = scMachine.getInvariants();
 		
@@ -280,17 +206,11 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for non-name clashes of invariants and (machine) theorems
 	 */
 	public void testTheorems1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1", "T2", "T3"), TestUtil.makeList("⊤", "⊤", "⊤"), null);
+		IMachine rodinFile = createMachine("one");
+		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ITheorem[] theorems = scMachine.getTheorems();
 		
@@ -308,17 +228,11 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testTheorems2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1", "T2", "T2"), TestUtil.makeList("⊤", "⊤", "⊤"), null);
+		IMachine rodinFile = createMachine("one");
+		addTheorems(rodinFile, makeList("T1", "T2", "T2"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ITheorem[] theorems = scMachine.getTheorems();
 		
@@ -329,18 +243,12 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariantsAndTheorems1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "T3"), TestUtil.makeList("⊤", "⊤", "⊤"));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1", "T2", "T3"), TestUtil.makeList("⊤", "⊤", "⊤"), null);
+		IMachine rodinFile = createMachine("one");
+		addInvariants(rodinFile, makeList("I1", "I2", "T3"), makeList("⊤", "⊤", "⊤"));
+		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ITheorem[] theorems = scMachine.getTheorems();
 		
@@ -367,19 +275,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for non-name clashes of events
 	 */
 	public void testEvents1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E2", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E3", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "E3", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -397,19 +299,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of events
 	 */
 	public void testEvents2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E2", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E2", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -420,21 +316,15 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of invariants and (machine) theorems and events
 	 */
 	public void testInvariantsAndTheoremsAndEvents1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2", "T3"), TestUtil.makeList("⊤", "⊤", "⊤"));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1", "T2", "T3"), TestUtil.makeList("⊤", "⊤", "⊤"), null);
-		TestUtil.addEvent(rodinFile, "I1", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "T2", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E3", TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList(), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addInvariants(rodinFile, makeList("I1", "I2", "T3"), makeList("⊤", "⊤", "⊤"));
+		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
+		addEvent(rodinFile, "I1", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "T2", makeList(), makeList(), makeList(), makeList());
+		addEvent(rodinFile, "E3", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ITheorem[] theorems = scMachine.getTheorems();
 		
@@ -453,19 +343,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for non-name clashes of local variables
 	 */
 	public void testLocalVariables1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2", "L3", "L4"), 
-				TestUtil.makeList("G1"), TestUtil.makeList("L1∈ℕ∧L2∈ℕ∧L3∈ℕ∧L4∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2", "L3", "L4"), 
+				makeList("G1"), makeList("L1∈ℕ∧L2∈ℕ∧L3∈ℕ∧L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -488,19 +372,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of local variables
 	 */
 	public void testLocalVariables2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2", "L3", "L3"), 
-				TestUtil.makeList("G1"), TestUtil.makeList("L1∈ℕ∧L2∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2", "L3", "L3"), 
+				makeList("G1"), makeList("L1∈ℕ∧L2∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -521,21 +399,15 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of local variables and variables
 	 */
 	public void testLocalVariables3() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "V2", "L3"), 
-				TestUtil.makeList("G1", "G2", "G3"), TestUtil.makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "V2", "L3"), 
+				makeList("G1", "G2", "G3"), makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -567,22 +439,16 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testLocalVariables4() throws Exception {
 		makeContext1();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "V2", "L3", "S1", "C1"), 
-				TestUtil.makeList("G1", "G2", "G3", "G4", "G5"), TestUtil.makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ", "S1∈ℕ", "C1∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "V2", "L3", "S1", "C1"), 
+				makeList("G1", "G2", "G3", "G4", "G5"), makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ", "S1∈ℕ", "C1∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCCarrierSet[] carrierSets = scMachine.getSCCarrierSets();
 		
@@ -594,7 +460,7 @@ public class TestMachineSC_2 extends TestCase {
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
-		assertTrue("2 variables", variables.length == 2);
+		assertEquals("2 variables", 2, variables.length);
 		
 		Set<String> set = new HashSet<String>(5);
 		set.add(variables[0].getElementName());
@@ -604,11 +470,11 @@ public class TestMachineSC_2 extends TestCase {
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
-		assertTrue("1 event", events.length == 1);
+		assertEquals("1 event", 1, events.length);
 		
 		ISCVariable[] localVariables = events[0].getSCVariables();
 		
-		assertTrue("2 local variables", localVariables.length == 2);
+		assertEquals("2 local variables", 2, localVariables.length);
 		
 		set.clear();
 		set.add(localVariables[0].getElementName());
@@ -621,19 +487,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for non-name clashes of guards
 	 */
 	public void testGuards1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2", "L3", "L4"), 
-				TestUtil.makeList("G1", "G2", "G3", "G4"), TestUtil.makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2", "L3", "L4"), 
+				makeList("G1", "G2", "G3", "G4"), makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -657,19 +517,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for name clashes of guards
 	 */
 	public void testGuards2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2", "L3", "L4"), 
-				TestUtil.makeList("G1", "G2", "G2", "G4"), TestUtil.makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2", "L3", "L4"), 
+				makeList("G1", "G2", "G2", "G4"), makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -689,8 +543,8 @@ public class TestMachineSC_2 extends TestCase {
 	
 	private ISCContext makeContext2() throws RodinDBException {
 		ISCContext context = makeContext1();
-		TestUtil.addAxioms(context, TestUtil.makeList("A1", "A2"), TestUtil.makeList("∀x·x>0", "⊤"), null);
-		TestUtil.addTheorems(context, TestUtil.makeList("T1", "T2"), TestUtil.makeList("", ""), null);
+		addAxioms(context, makeList("A1", "A2"), makeList("∀x·x>0", "⊤"), null);
+		addTheorems(context, makeList("T1", "T2"), makeList("", ""), null);
 		return context;
 	}
 	
@@ -707,19 +561,13 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testContextAxiomsAndTheorems1() throws Exception {
 		makeContext2();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("⊤", "⊤"));
-		TestUtil.addTheorems(rodinFile, TestUtil.makeList("T1", "T2"), TestUtil.makeList("⊤", "⊤"), null);
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("⊤", "⊤"));
+		addTheorems(rodinFile, makeList("T1", "T2"), makeList("⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		Set<String> set;
 		
@@ -752,19 +600,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for typing of variables
 	 */
 	public void testTyping1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2=ℕ+1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2=ℕ+1"));
 		
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 	
 		assertTrue("one invariant", scMachine.getInvariants().length == 1 && scMachine.getInvariants()[0].getElementName().equals("I1"));
 		assertTrue("one variable", scMachine.getSCVariables().length == 1 && scMachine.getSCVariables()[0].getElementName().equals("V1"));
@@ -774,20 +616,14 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for typing of local variables
 	 */
 	public void testTyping2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2"), 
-				TestUtil.makeList("G1", "G2"), TestUtil.makeList("L1∈ℕ", "L2=ℕ+1"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2"), 
+				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=ℕ+1"), makeList());
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -801,23 +637,17 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for typing of local variables across events
 	 */
 	public void testTyping3() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2"), 
-				TestUtil.makeList("G1", "G2"), TestUtil.makeList("L1∈ℕ", "L2=1"), TestUtil.makeList());
-		TestUtil.addEvent(rodinFile, "E2", 
-				TestUtil.makeList("L1", "L2"), 
-				TestUtil.makeList("G1", "G2"), TestUtil.makeList("L1∈BOOL", "L2=L1+1"), TestUtil.makeList());
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2"), 
+				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=1"), makeList());
+		addEvent(rodinFile, "E2", 
+				makeList("L1", "L2"), 
+				makeList("G1", "G2"), makeList("L1∈BOOL", "L2=L1+1"), makeList());
 
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -837,13 +667,13 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), 
-				TestUtil.makeList("V1≔V2", "V1:∈ℕ", "V1:∣V1'=V1+1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "E1", 
+				makeList(), 
+				makeList(), makeList(), 
+				makeList("V1≔V2", "V1:∈ℕ", "V1:∣V1'=V1+1"));
 		
 		String a0 = FormulaFactory.getDefault().parseAssignment("V1≔V2").getParsedAssignment().toString();
 		String a1 = FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
@@ -851,13 +681,7 @@ public class TestMachineSC_2 extends TestCase {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -876,25 +700,19 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), 
-				TestUtil.makeList("V3≔V2", "V1:∈ℕ", "V1:∣V1'=V4+1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "E1", 
+				makeList(), 
+				makeList(), makeList(), 
+				makeList("V3≔V2", "V1:∈ℕ", "V1:∣V1'=V4+1"));
 	
 		String a1 = FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -912,26 +730,20 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions3() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "E1", 
-				TestUtil.makeList("L1", "L2"), 
-				TestUtil.makeList("G1", "G2"), TestUtil.makeList("L1∈ℕ", "L2=ℕ+1"), 
-				TestUtil.makeList("L1≔V2", "V1:∈ℕ", "V1:∣V1'=L1+1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "E1", 
+				makeList("L1", "L2"), 
+				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=ℕ+1"), 
+				makeList("L1≔V2", "V1:∈ℕ", "V1:∣V1'=L1+1"));
 	
 		String a1 = FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
 		String a2 = FormulaFactory.getDefault().parseAssignment("V1:∣V1'=L1+1").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -949,26 +761,20 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for faulty initialisation
 	 */
 	public void testInitialisation1() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "INITIALISATION", 
-				TestUtil.makeList("L1", "L2"), 
-				TestUtil.makeList("G1", "G2"), TestUtil.makeList("L1∈ℕ", "L2=1"), 
-				TestUtil.makeList("V1≔1", "V1:∣V1'=1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "INITIALISATION", 
+				makeList("L1", "L2"), 
+				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=1"), 
+				makeList("V1≔1", "V1:∣V1'=1"));
 	
 		/*String a1 =*/ FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
 		/*String a2 =*/ FormulaFactory.getDefault().parseAssignment("V1:∣V1'=L1+1").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -980,26 +786,20 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for correct initialisation with faulty action
 	 */
 	public void testInitialisation2() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "INITIALISATION", 
-				TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), 
-				TestUtil.makeList("V2≔V1", "V1:∣V1'=1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "INITIALISATION", 
+				makeList(), 
+				makeList(), makeList(), 
+				makeList("V2≔V1", "V1:∣V1'=1"));
 	
 		/*String a1 =*/ FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
 		/*String a2 =*/ FormulaFactory.getDefault().parseAssignment("V1:∣V1'=L1+1").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -1011,23 +811,17 @@ public class TestMachineSC_2 extends TestCase {
 	 * Test method for correct initialisation action
 	 */
 	public void testInitialisation3() throws Exception {
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "INITIALISATION", 
-				TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), 
-				TestUtil.makeList("V2≔1", "V1:∣V1'=1"));
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "INITIALISATION", 
+				makeList(), 
+				makeList(), makeList(), 
+				makeList("V2≔1", "V1:∣V1'=1"));
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		IEvent[] events = scMachine.getEvents();
 		
@@ -1039,7 +833,7 @@ public class TestMachineSC_2 extends TestCase {
 	
 	private ISCContext makeContext3() throws RodinDBException {
 		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
-		TestUtil.addSCConstants(context, TestUtil.makeList("C1", "C2"), TestUtil.makeList("ℤ", "ℙ(ℤ)"));
+		addSCConstants(context, makeList("C1", "C2"), makeList("ℤ", "ℙ(ℤ)"));
 //		TestUtil.addIdentifiers(context, TestUtil.makeList("C1", "C2"), TestUtil.makeList("ℤ", "ℙ(ℤ)"));
 		return context;
 	}
@@ -1050,24 +844,18 @@ public class TestMachineSC_2 extends TestCase {
 	 */
 	public void testInitialisation4() throws Exception {
 		makeContext3();
-		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
-		TestUtil.addSees(rodinFile, "ctx");
-		TestUtil.addVariables(rodinFile, TestUtil.makeList("V1", "V2"));
-		TestUtil.addInvariants(rodinFile, TestUtil.makeList("I1", "I2"), TestUtil.makeList("V1∈ℕ", "V2∈ℕ"));
-		TestUtil.addEvent(rodinFile, "INITIALISATION", 
-				TestUtil.makeList(), 
-				TestUtil.makeList(), TestUtil.makeList(), 
-				TestUtil.makeList("V2≔C1", "V1:∈C2"));
+		IMachine rodinFile = createMachine("one");
+		addSees(rodinFile, "ctx");
+		addVariables(rodinFile, makeList("V1", "V2"));
+		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(rodinFile, "INITIALISATION", 
+				makeList(), 
+				makeList(), makeList(), 
+				makeList("V2≔C1", "V1:∈C2"));
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = (ISCMachine) rodinProject.createRodinFile("one.bcm", true, null);
-		
-		scMachine.open(null);
-		
-		SCCore.runMachineSC((IMachine) rodinFile, scMachine);
-		
-		scMachine.save(null, true);
+		ISCMachine scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
