@@ -3,6 +3,7 @@ package org.eventb.core.prover.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 public final class ProofTree {
@@ -53,21 +54,13 @@ public final class ProofTree {
 			{
 				// System.out.println(this.children[i].root);
 				// System.out.println(anticidents[i]);
-				assert (identical (this.children[i].root,anticidents[i]));
+				assert (Lib.identical (this.children[i].root,anticidents[i]));
 				this.children[i].classInvariantAssertions();
 			}
 		}
 	}
 	
-	private static boolean identical(IProverSequent S1,IProverSequent S2){
-		if (! S1.goal().equals(S2.goal())) return false;
-		if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
-		if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
-		if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
-		if (! S1.hypotheses().equals(S2.hypotheses())) return false;
-		if (! S1.typeEnvironment().equals(S2.typeEnvironment())) return false;
-		return true;
-	}
+
 	
 	
 	/* (non-Javadoc)

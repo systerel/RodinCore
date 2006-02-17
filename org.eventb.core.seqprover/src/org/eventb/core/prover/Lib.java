@@ -297,6 +297,16 @@ public final class Lib {
 		return new SimpleProverSequent(typeEnvironment,hyps,goal);
 	}
 	
+	public static boolean identical(IProverSequent S1,IProverSequent S2){
+		if (! S1.goal().equals(S2.goal())) return false;
+		if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
+		if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
+		if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
+		if (! S1.hypotheses().equals(S2.hypotheses())) return false;
+		if (! S1.typeEnvironment().equals(S2.typeEnvironment())) return false;
+		return true;
+	}
+	
 	public static Action deselect(Set<Hypothesis> toDeselect){
 		return new Action(ActionType.DESELECT,toDeselect);
 	}
