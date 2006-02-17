@@ -306,7 +306,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @private Debugging purposes
 	 */
 	@Override
-	protected void toStringInfo(int tab, StringBuffer buffer, RodinElementInfo info) {
+	protected void toStringInfo(int tab, StringBuilder buffer, RodinElementInfo info) {
 		buffer.append(this.tabString(tab));
 		buffer.append("Rodin database"); //$NON-NLS-1$
 		if (info == null) {

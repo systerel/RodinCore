@@ -550,7 +550,7 @@ public abstract class RodinElement extends PlatformObject implements
 	}
 
 	protected String tabString(int tab) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = tab; i > 0; i--)
 			buffer.append("  "); //$NON-NLS-1$
 		return buffer.toString();
@@ -560,7 +560,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Debugging purposes
 	 */
 	public String toDebugString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		this.toStringInfo(0, buffer, NO_INFO);
 		return buffer.toString();
 	}
@@ -570,7 +570,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		toString(0, buffer);
 		return buffer.toString();
 	}
@@ -578,7 +578,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	protected void toString(int tab, StringBuffer buffer) {
+	protected void toString(int tab, StringBuilder buffer) {
 		Object info = this.toStringInfo(tab, buffer);
 		if (tab == 0) {
 			this.toStringAncestors(buffer);
@@ -590,7 +590,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Debugging purposes
 	 */
 	public String toStringWithAncestors() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		this.toStringInfo(0, buffer, NO_INFO);
 		this.toStringAncestors(buffer);
 		return buffer.toString();
@@ -599,7 +599,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	protected void toStringAncestors(StringBuffer buffer) {
+	protected void toStringAncestors(StringBuilder buffer) {
 		RodinElement parentElement = this.getParent();
 		if (parentElement != null && parentElement.getParent() != null) {
 			buffer.append(" [in "); //$NON-NLS-1$
@@ -612,7 +612,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	protected void toStringChildren(int tab, StringBuffer buffer, Object info) {
+	protected void toStringChildren(int tab, StringBuilder buffer, Object info) {
 		if (info == null || !(info instanceof RodinElementInfo))
 			return;
 		IRodinElement[] children = ((RodinElementInfo) info).getChildren();
@@ -625,7 +625,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	public Object toStringInfo(int tab, StringBuffer buffer) {
+	public Object toStringInfo(int tab, StringBuilder buffer) {
 		RodinElementInfo info = RodinDBManager.getRodinDBManager().peekAtInfo(this);
 		this.toStringInfo(tab, buffer, info);
 		return info;
@@ -635,7 +635,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Debugging purposes
 	 * 
 	 */
-	protected void toStringInfo(int tab, StringBuffer buffer, RodinElementInfo info) {
+	protected void toStringInfo(int tab, StringBuilder buffer, RodinElementInfo info) {
 		buffer.append(this.tabString(tab));
 		toStringName(buffer);
 		if (info == null) {
@@ -646,7 +646,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	protected void toStringName(StringBuffer buffer) {
+	protected void toStringName(StringBuilder buffer) {
 		buffer.append(getElementName());
 	}
 }
