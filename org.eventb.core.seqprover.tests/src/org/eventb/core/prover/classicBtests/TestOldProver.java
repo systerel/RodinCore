@@ -162,9 +162,9 @@ public class TestOldProver extends TestCase {
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(defaultTEnv, hypothesis, goal);
 			boolean result = ClassicB.callPKforPP(buffer);
-			assertTrue("true", result);
+			assertTrue("PK failed for PP.", result);
 			result = ClassicB.callPKforML(buffer);
-			assertTrue("true", result);
+			assertTrue("PK failed for ML", result);
 		}
 		
 	}
@@ -213,7 +213,7 @@ public class TestOldProver extends TestCase {
 		
 	}
 	
-	public void testAll() throws Exception {
+	public void testLegacyProvers() throws Exception {
     	for(TestItem item : items)
     		item.test();
     }
