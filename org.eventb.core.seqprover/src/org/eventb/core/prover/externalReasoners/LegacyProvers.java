@@ -21,7 +21,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class LegacyProvers implements IExternalReasoner{
 	
 	public String name(){
-		return "lagacy provers";
+		return "legacy provers";
 	}
 
 	private static boolean runLegacyProvers(IProverSequent S){
