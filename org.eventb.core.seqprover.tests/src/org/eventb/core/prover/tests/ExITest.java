@@ -47,17 +47,17 @@ public class ExITest extends TestCase {
 		String[] witnesses1 = {"a"};
 		I = new Input(witnesses1);
 		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(Ex1seq,exI,I);
-		assertTrue(newGoalPredicate.equals(goal1inst));
+		assertEquals("wrong instanciation", goal1inst, newGoalPredicate);
 
 		String[] witnesses2_1 = {"a",null};
 		I = new Input(witnesses2_1);
 		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(Ex2seq,exI,I);
-		assertTrue(newGoalPredicate.equals(goal2_1inst));
+		assertEquals("wrong instanciation", goal2_1inst, newGoalPredicate);
 		
 		String[] witnesses2 = {"a","1"};
 		I = new Input(witnesses2);
 		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(Ex2seq,exI,I);
-		assertTrue(newGoalPredicate.equals(goal2inst));
+		assertEquals("wrong instanciation", goal2inst, newGoalPredicate);
 
 	}
 
