@@ -12,43 +12,48 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.nio.CharBuffer;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 
 /**
  * @author halstefa
  *
  */
-public class ClassicB {
+public abstract class ClassicB {
+	
+	private static final String ML_SUCCESS = "THEORY Etat IS Proved(0) END\n";
+	private static final String PP_SUCCESS = "SUCCES";
 	
 	private static String iName;
 	private static String oName;
 	
-	@SuppressWarnings("unused")
-	private static ClassicB b = new ClassicB();
-	
-	private ClassicB() {
-		try {
-			iName = File.createTempFile("eventbin", null).getCanonicalPath();
-			oName = File.createTempFile("eventbou", null).getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
+	private static void makeTempFileNames() throws IOException {
+		if (iName != null) {
+			// already done
+			return;
 		}
+		iName = File.createTempFile("eventbin", null).getCanonicalPath();
+		oName = File.createTempFile("eventbou", null).getCanonicalPath();
 	}
 	
-	public static StringBuffer translateSequent(ITypeEnvironment typeEnvironment, Set<Predicate> hypothesis, Predicate goal) {
+	public static StringBuffer translateSequent(
+			ITypeEnvironment typeEnvironment, Set<Predicate> hypothesis,
+			Predicate goal) {
+		
 		StringBuffer result = new StringBuffer();
 		SyntaxVisitor visitor = new SyntaxVisitor();
 		FormulaFactory factory = FormulaFactory.getDefault();
 		if (typeEnvironment != null) {
 			for (String name : typeEnvironment.getNames()) {
-				typeEnvironment.getType(name).toExpression(factory).accept(visitor);
+				final Type type = typeEnvironment.getType(name);
+				type.toExpression(factory).accept(visitor);
 				result.append(name + " : " + visitor.getString() + " & ");
 				visitor.clear();
 			}
@@ -77,71 +82,99 @@ public class ClassicB {
 		stream.println();
 	}
 	
-	public static boolean callPKforPP(StringBuffer input) throws IOException, InterruptedException {
+	public static boolean callPKforPP(StringBuffer input)
+	throws IOException, InterruptedException {
+		
+		if (! ProverShell.areToolsPresent())
+			return false;
+		makeTempFileNames();
 		printPP(input);
-		String callString = ProverShell.getDefault().getCommandForPK() + iName;
-		Process process = Runtime.getRuntime().exec(callString);
-		int i = process.waitFor();
-		String result = new BufferedReader(new InputStreamReader(process.getErrorStream())).readLine();
-		return result == null && i == 0;
+		return runPK(ProverShell.getPPParserCommand(iName));
 	}
 	
-	public static boolean proveWithPP(StringBuffer input) throws IOException, InterruptedException {
+	public static boolean proveWithPP(StringBuffer input)
+	throws IOException, InterruptedException {
+		
+		if (! ProverShell.areToolsPresent())
+			return false;
+		makeTempFileNames();
 		printPP(input);
-		String callString = ProverShell.getDefault().getCommandForPP() + iName;
-		Process process = Runtime.getRuntime().exec(callString);
-		int i = process.waitFor();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(oName)));
-		CharBuffer buffer = CharBuffer.allocate(32);
-		buffer.put(0, 'E');
-		@SuppressWarnings("unused") int n = reader.read(buffer);
-		return buffer.get(0) == 'S' && i == 0;
+		final String[] cmdArray = ProverShell.getPPCommand(iName);
+		final Process process = Runtime.getRuntime().exec(cmdArray);
+		process.waitFor();
+		// showOutput();
+		return checkResult(PP_SUCCESS);
 	}
-	
-//	public static boolean callPK(StringBuffer input) throws IOException, InterruptedException {
-//		File ifile = File.createTempFile("eventbin", null);
-//		File ofile = File.createTempFile("eventbou", null);
-//		PrintStream stream = new PrintStream(ifile);
-//		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", ofile.getCanonicalPath());
-//		stream.print(input);
-//		stream.print(" )");
-//		stream.println();
-//		String callString = "/home/halstefa/bin/pk -s /home/halstefa/bin/PP_ST " + ifile.getCanonicalPath();
-//		Process process = Runtime.getRuntime().exec(callString);
-//		int i = process.waitFor();
-//		String result = new BufferedReader(new InputStreamReader(process.getErrorStream())).readLine();
-//		return result == null;
-//	}
 	
 	private static void printML(StringBuffer input) throws IOException {
 		PrintStream stream = new PrintStream(iName);
-		stream.print("THEORY Lemma;Unproved IS ");
-		stream.print(input);
+		stream.println("THEORY Lemma;Unproved IS");
+		stream.println(input);
 		stream.print("WHEN Force IS (0;1;2;3) WHEN FileOut IS \"");
 		stream.print(oName);
-		stream.print("\" WHEN Options IS ? & ? & ? & OK & \"\" & MaxNumberOfUniversalHypothesisInstantiation & KO END");
-		stream.println();
+		stream.println("\"");
+		stream.println("WHEN Options IS ? & ? & ? & OK & \"\" & dummy & KO");
+		stream.println("END");
+		stream.close();
 	}
 	
-	public static boolean callPKforML(StringBuffer input)  throws IOException, InterruptedException {
+	public static boolean callPKforML(StringBuffer input)
+	throws IOException, InterruptedException {
+		
+		if (! ProverShell.areToolsPresent())
+			return false;
+		makeTempFileNames();
 		printML(input);
-		String callString = ProverShell.getDefault().getCommandForPK() + iName;
-		Process process = Runtime.getRuntime().exec(callString);
-		int i = process.waitFor();
-		String result = new BufferedReader(new InputStreamReader(process.getErrorStream())).readLine();
-		return result == null && i == 0;
+		return runPK(ProverShell.getMLParserCommand(iName));
+	}
+
+	private static boolean runPK(final String[] cmdArray)
+	throws IOException, InterruptedException {
+		
+		final Process process = Runtime.getRuntime().exec(cmdArray);
+		final int status = process.waitFor();
+		final InputStream error = process.getErrorStream();
+		final InputStreamReader errorReader = new InputStreamReader(error);
+		final String result = new BufferedReader(errorReader).readLine();
+		return result == null && status == 0;
 	}
 	
-	public static boolean proveWithML(StringBuffer input)  throws IOException, InterruptedException {
+	public static boolean proveWithML(StringBuffer input)
+	throws IOException, InterruptedException {
+		
+		if (! ProverShell.areToolsPresent())
+			return false;
+
+		makeTempFileNames();
 		printML(input);
-		String callString = ProverShell.getDefault().getCommandForML() + iName;
-		Process process = Runtime.getRuntime().exec(callString);
-		int i = process.waitFor();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(oName)));
-		CharBuffer buffer = CharBuffer.allocate(32);
-		buffer.put(15, 'U');
-		@SuppressWarnings("unused") int n = reader.read(buffer);
-		return buffer.get(15) == 'P' && i == 0;
+		String[] cmdArray = ProverShell.getMLCommand(iName);
+		Process process = Runtime.getRuntime().exec(cmdArray);
+		process.waitFor();
+		// showOutput();
+		return checkResult(ML_SUCCESS);
+	}
+	
+	private static boolean checkResult(String expected) throws IOException {
+		final int length = expected.length();
+		final InputStream is = new FileInputStream(oName);
+		final InputStreamReader isr = new InputStreamReader(is);
+		final char[] cbuf = new char[length];
+		final int count = isr.read(cbuf);
+		if (count < length)
+			return false;
+		final String actual = new String(cbuf, 0, count);
+		return expected.equals(actual);
+	}
+	
+	// For debugging purpose
+	@SuppressWarnings("unused")
+	private static void showOutput() throws IOException {
+		InputStream is = new FileInputStream(oName);
+		InputStreamReader isr = new InputStreamReader(is);
+		char[] cbuf = new char[1024];
+		int count = isr.read(cbuf);
+		System.out.println("Read '" + new String(cbuf, 0 , count) + "'");
+		
 	}
 	
 }

@@ -7,37 +7,150 @@
  *******************************************************************************/
 package org.eventb.core.prover.externalReasoners.classicB;
 
-public class ProverShell {
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+
+public abstract class ProverShell {
 	
-	private static ProverShell shell = new ProverShell();
+	private static final String BUNDLE_NAME = "org.eventb.core.seqprover";
 	
-	public static ProverShell getDefault() {
-		return shell;
+	private static Bundle bundle;
+	
+	private static boolean toolsPresent;
+	private static boolean cached;
+	private static String krtPath;
+	private static String pkPath;
+	private static String MLKinPath;
+	private static String PPKinPath;
+	private static String MLSTPath;
+	private static String PPSTPath;
+	
+	private static Bundle getBundle() {
+		if (bundle == null) {
+			bundle = Platform.getBundle(BUNDLE_NAME);
+		}
+		return bundle;
 	}
 	
-	private ProverShell() {
-		// nothing to do
+	/*
+	 * Returns a resolved local path for a file distributed as part of this
+	 * plugin or a fragment of it.
+	 */
+	private static String getLocalPath(IPath relativePath) {
+		URL url = Platform.find(getBundle(), relativePath);
+		if (url == null) {
+			// Not found.
+			return null;
+		}
+		try {
+			url = Platform.asLocalURL(url);
+		} catch (IOException e1) {
+			return null;
+		}
+		return url.getFile();
 	}
 	
-	public String getCommandForPK() {
-		// Path for fmehta
-		// return "/home/fmehta/Tools/pk/pk -s /home/fmehta/Tools/pk/PP_ST ";
-		
-		return "/home/fmehta/Tools/pk/pk -s /home/fmehta/Tools/pk/PP_ST ";
+	/*
+	 * Returns a resolved local path for an OS-dependent tool distributed as part
+	 * of this plugin or a fragment of it.
+	 */
+	private static String getToolPath(String fileName) {
+		IPath relativePath = new Path(
+				"os/" + 
+				Platform.getOS() + "/" +
+				Platform.getOSArch() + "/" +
+				fileName
+		);
+		return getLocalPath(relativePath);
+	}
+	
+	/*
+	 * Returns a resolved local path for a symbol table distributed as part of
+	 * this plugin or a fragment of it.
+	 */
+	private static String getSymPath(String fileName) {
+		IPath relativePath = new Path(
+				"sym/" + 
+				fileName
+		);
+		return getLocalPath(relativePath);
+	}
+	
+	private static void computeCache() {
+		if (cached) return;
+		krtPath = getToolPath("krt");
+		pkPath = getToolPath("pk");
+		MLKinPath = getToolPath("ML.kin");
+		PPKinPath = getToolPath("PP.kin");
+		MLSTPath = getSymPath("ML_ST");
+		PPSTPath = getSymPath("PP_ST");
+		toolsPresent =
+			krtPath != null &&
+			pkPath != null &&
+			MLKinPath != null &&
+			PPKinPath != null &&
+			MLSTPath != null &&
+			PPSTPath != null;
+	}
+	
+	public static String[] getMLParserCommand(String input) {
+		computeCache();
+		if (! toolsPresent) return null;
+		return new String[] { 
+			pkPath,
+			"-3",
+			"-s",
+			MLSTPath,
+			input
+		};
 	}
 
-	public String getCommandForML() {
-		// Path for fmehta
-		// return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
-		
-		return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
+	public static String[] getPPParserCommand(String input) {
+		computeCache();
+		if (! toolsPresent) return null;
+		return new String[] { 
+			pkPath,
+			"-3",
+			"-s",
+			PPSTPath,
+			input
+		};
 	}
 
-	public String getCommandForPP() {
-		// Path for fmehta
-		// return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/ML.kin ";
-		
-		return "/home/fmehta/Tools/B4free-V2.0/krt -b /home/fmehta/Tools/B4free-V2.0/PP.kin ";
+	public static String[] getMLCommand(String input) {
+		computeCache();
+		if (! toolsPresent) return null;
+		return new String[] { 
+			krtPath,
+			"-p",
+			"rmcomm",
+			"-b",
+			MLKinPath,
+			input
+		};
 	}
 
+	public static String[] getPPCommand(String input) {
+		computeCache();
+		if (! toolsPresent) return null;
+		return new String[] { 
+			krtPath,
+			"-p",
+			"rmcomm",
+			"-b",
+			PPKinPath,
+			input
+		};
+	}
+
+	public static boolean areToolsPresent() {
+		computeCache();
+		return toolsPresent;
+	}
+	
 }
