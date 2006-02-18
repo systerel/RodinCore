@@ -18,7 +18,7 @@ public class ProofState {
 	
 	public ProofState(IProverSequent ps) {
 		this.ps = ps;
-		this.root = new ProofTree(ps);
+		this.root = new ProofTree(null, ps);
 		current = null;
 		cached = new HashSet<Hypothesis>();
 		search = new HashSet<Hypothesis>();

@@ -8,11 +8,13 @@ import org.eventb.core.prover.sequent.IProverSequent;
 
 public final class ProofTree {
 	
+	private final ProofTree parent;
 	private final IProverSequent root;
 	private Rule rule;
 	private ProofTree[] children;
 
-	public ProofTree(IProverSequent S){
+	public ProofTree(ProofTree parent, IProverSequent S){
+		this.parent = parent;
 		this.root = S;
 		this.rule = null;
 		this.children = null;
@@ -36,7 +38,7 @@ public final class ProofTree {
 		this.rule = rule;
 		this.children = new ProofTree[anticidents.length];
 		for (int i=0;i<anticidents.length;i++)
-			this.children[i] = new ProofTree(anticidents[i]);
+			this.children[i] = new ProofTree(this, anticidents[i]);
 		this.classInvariantAssertions();
 		return true;
 	}
@@ -82,6 +84,16 @@ public final class ProofTree {
 	 */
 	public final ProofTree[] getChildren(){
 		return this.children;
+	}
+	
+	/**
+	 * Returns the parent of this proof tree node, or <code>null</code> if
+	 * this node is top-level.
+	 * 
+	 * @return the parent of this node or <code>null</code>
+	 */
+	public final ProofTree getParent() {
+		return this.parent;
 	}
 	
 	// A tree node can either (exclusive):
