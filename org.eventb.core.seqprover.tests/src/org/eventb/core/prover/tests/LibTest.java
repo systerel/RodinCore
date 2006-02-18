@@ -2,15 +2,7 @@ package org.eventb.core.prover.tests;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.externalReasoners.ImpE;
-import org.eventb.core.prover.externalReasoners.ImpE.Input;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.SimpleProverSequent;
 
 public class LibTest extends TestCase {
 	

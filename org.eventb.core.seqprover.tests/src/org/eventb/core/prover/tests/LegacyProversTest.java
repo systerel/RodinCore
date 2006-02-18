@@ -2,16 +2,13 @@ package org.eventb.core.prover.tests;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerOutput;
 import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.UnSuccessfulExtReasonerOutput;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
-import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.SimpleProverSequent;
 
 public class LegacyProversTest extends TestCase {
 	IExternalReasoner legacyProvers = new LegacyProvers();
