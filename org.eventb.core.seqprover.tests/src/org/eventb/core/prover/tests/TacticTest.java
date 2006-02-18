@@ -118,6 +118,10 @@ public class TacticTest extends TestCase {
 		System.out.println(Tactics.legacyProvers().apply(pt));
 		System.out.println(pt);
 		
+		pt = new ProofTree(null, TestLib.genSeq(" 0 ≤ a ∧ 1 < b |- a mod b < b "));
+		System.out.println(Tactics.legacyProvers().apply(pt));
+		System.out.println(pt);
+		
 	}
 	
 }
