@@ -40,7 +40,6 @@ import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
@@ -98,7 +97,7 @@ public class GoalSection
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-			if (obj instanceof ProofTreeNode) {
+			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				if (!proofTree.isDischarged()) {
 					t.apply(proofTree);

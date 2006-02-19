@@ -15,7 +15,6 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 
@@ -95,7 +94,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isOpen()) {
 						Tactics.prune.apply(proofTree);
@@ -116,7 +115,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.norm().apply(proofTree);
@@ -145,7 +144,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.conjI.apply(proofTree);
@@ -175,7 +174,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.hyp.apply(proofTree);
@@ -204,7 +203,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.allI.apply(proofTree);
@@ -233,7 +232,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.impI.apply(proofTree);
@@ -262,7 +261,7 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
 						Tactics.trivial.apply(proofTree);

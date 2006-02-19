@@ -42,7 +42,6 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 
@@ -93,7 +92,7 @@ public class ProofTreeUIPage
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-			if (obj instanceof ProofTreeNode) {
+			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				
 				if (!proofTree.isOpen()) {
@@ -109,7 +108,7 @@ public class ProofTreeUIPage
 		public Image getImage(Object obj) {
 			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		
-			if (obj instanceof ProofTreeNode) {
+			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode pt = (IProofTreeNode) obj;
 				if (pt.isOpen()) return registry.get(EventBImage.IMG_UNDISCHARGED);
 				if (!pt.isDischarged()) return registry.get(EventBImage.IMG_APPLIED);
@@ -358,7 +357,7 @@ public class ProofTreeUIPage
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
 				Object obj = ssel.getFirstElement();
-				if (obj instanceof ProofTreeNode) {
+				if (obj instanceof IProofTreeNode) {
 					editor.getUserSupport().selectNode((IProofTreeNode) obj);
 				}
 			}

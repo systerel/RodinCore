@@ -47,7 +47,6 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -111,7 +110,7 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-					if (obj instanceof ProofTreeNode) {
+					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (!proofTree.isDischarged()) {
 							Tactics.trivial.apply(proofTree);
@@ -137,7 +136,7 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTreeNode) {
+					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (!proofTree.isOpen()) {
 							Tactics.prune.apply(proofTree);
@@ -186,7 +185,7 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTreeNode) {
+					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (proofTree.isOpen()) {
 							Tactic t = Tactics.doCase(textInput.getText());
@@ -210,7 +209,7 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTreeNode) {
+					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (proofTree.isOpen()) {
 							Tactics.norm().apply(proofTree);

@@ -34,7 +34,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactic;
@@ -86,7 +85,7 @@ public class SelectedHypothesesSection
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-			if (obj instanceof ProofTreeNode) {
+			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				if (!proofTree.isDischarged()) {
 					t.apply(proofTree);

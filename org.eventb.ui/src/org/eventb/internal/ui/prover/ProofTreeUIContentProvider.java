@@ -8,7 +8,6 @@ import org.eventb.core.pm.IProofTreeChangeEvent;
 import org.eventb.core.pm.IProofTreeChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ProofTreeNode;
 import org.rodinp.core.IRodinElement;
 
 public class ProofTreeUIContentProvider
@@ -66,7 +65,7 @@ public class ProofTreeUIContentProvider
 			Object [] result = {root};
 			return result;
 		}
-		if (parentElement instanceof ProofTreeNode) {
+		if (parentElement instanceof IProofTreeNode) {
 			IProofTreeNode pt = (IProofTreeNode) parentElement;
 			// TODO enquire effect of new contract for pt.getChildren()
 			if (pt.hasChildren()) return getChildrenOfList(pt.getChildren());
@@ -92,7 +91,7 @@ public class ProofTreeUIContentProvider
 	public boolean hasChildren(Object element) {
 		if (element.equals(page.getInvisibleRoot())) return true;
 		
-		if (element instanceof ProofTreeNode) {
+		if (element instanceof IProofTreeNode) {
 			return ((IProofTreeNode) element).hasChildren();
 		}
 		
