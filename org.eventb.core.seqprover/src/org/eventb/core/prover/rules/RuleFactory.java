@@ -5,10 +5,10 @@ import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 
 public class RuleFactory {
 
-	Rule conjI;
-	Rule impI;
-	Rule allI;
-	Rule hyp;
+	IProofRule conjI;
+	IProofRule impI;
+	IProofRule allI;
+	IProofRule hyp;
 	
 	public RuleFactory(){
 		this.conjI = new ConjI();
@@ -17,27 +17,27 @@ public class RuleFactory {
 		this.hyp = new Hyp();
 	}
 	
-	public Rule conjI(){
+	public IProofRule conjI(){
 		return conjI;
 	}
 	
-	public Rule impI(){
+	public IProofRule impI(){
 		return impI;
 	}
 	
-	public Rule allI(){
+	public IProofRule allI(){
 		return allI;
 	}
 	
-	public Rule hyp(){
+	public IProofRule hyp(){
 		return hyp;
 	}
 	
-	public Rule pLb(SuccessfullExtReasonerOutput pluginOutput){
+	public IProofRule pLb(SuccessfullExtReasonerOutput pluginOutput){
 		return new PLb(pluginOutput);
 	}
 	
-	public Rule mngHyp(Action action){
+	public IProofRule mngHyp(Action action){
 		return new MngHyp(action);
 	}
 }

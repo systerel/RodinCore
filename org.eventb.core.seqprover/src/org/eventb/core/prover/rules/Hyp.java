@@ -3,10 +3,10 @@ package org.eventb.core.prover.rules;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public final class Hyp implements Rule {
+public final class Hyp extends ProofRule {
 
-	public String name(){
-		return "hyp";
+	public Hyp() {
+		super("hyp");
 	}
 	
 	public boolean isApplicable(IProverSequent S) {

@@ -7,15 +7,12 @@ import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.ISequent;
 
-public class PLb implements Rule {
+public class PLb extends ProofRule {
 
 	private SuccessfullExtReasonerOutput pluginOutput;
 	
-	public String name(){
-		return "["+pluginOutput.generatedBy().name()+"]";
-	}
-	
 	public PLb(SuccessfullExtReasonerOutput pluginOutput){
+		super("["+pluginOutput.generatedBy().name()+"]");
 		this.pluginOutput = pluginOutput;
 	}
 			

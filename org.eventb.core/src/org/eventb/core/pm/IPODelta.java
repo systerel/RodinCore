@@ -1,7 +1,7 @@
 package org.eventb.core.pm;
 
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
 
 public interface IPODelta {
-	public ProofTree getProofTree();
+	public IProofTreeNode getProofTree();
 }

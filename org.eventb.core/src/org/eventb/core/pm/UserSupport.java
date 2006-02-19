@@ -6,12 +6,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.rules.AllI;
 import org.eventb.core.prover.rules.ConjI;
 import org.eventb.core.prover.rules.Hyp;
 import org.eventb.core.prover.rules.ImpI;
-import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.rules.Rule;
+import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
@@ -178,7 +178,7 @@ public class UserSupport
 	public static List<Tactic> getApplicableToGoal(IProverSequent ps) {
 		List<Tactic> result = new ArrayList<Tactic>();
 		
-		Rule rule;
+		IProofRule rule;
 		rule = new ConjI();
 		if (rule.isApplicable(ps)) result.add(Tactics.conjI);
 		
@@ -203,15 +203,15 @@ public class UserSupport
 	}
 
 
-	public IHypothesisDelta calculateHypDelta(ProofTree newNode) {
+	public IHypothesisDelta calculateHypDelta(IProofTreeNode newNode) {
 		Collection<Hypothesis> newSelectedHypotheses;
 		if (newNode == null) newSelectedHypotheses = new HashSet<Hypothesis>(); 
-		else newSelectedHypotheses = newNode.getRootSeq().selectedHypotheses();
+		else newSelectedHypotheses = newNode.getSequent().selectedHypotheses();
 		Collection<Hypothesis> added = new HashSet<Hypothesis>();
 		Collection<Hypothesis> removed = new HashSet<Hypothesis>();
 		
 		if (proofState != null && proofState.getCurrentNode() != null) {
-			Collection<Hypothesis> currentSelectedHypotheses = proofState.getCurrentNode().getRootSeq().selectedHypotheses(); 
+			Collection<Hypothesis> currentSelectedHypotheses = proofState.getCurrentNode().getSequent().selectedHypotheses(); 
 			for (Iterator<Hypothesis> it = currentSelectedHypotheses.iterator(); it.hasNext();) {
 				Hypothesis hp = it.next();
 				if (!newSelectedHypotheses.contains(hp)) removed.add(hp); 
@@ -230,7 +230,7 @@ public class UserSupport
 	}
 	
 	
-	public void selectNode(ProofTree pt) {
+	public void selectNode(IProofTreeNode pt) {
 		IHypothesisDelta delta = calculateHypDelta(pt);
 		IHypothesisChangeEvent e = new HypothesisChangeEvent(delta);
 		notifyHypothesisChangedListener(e);

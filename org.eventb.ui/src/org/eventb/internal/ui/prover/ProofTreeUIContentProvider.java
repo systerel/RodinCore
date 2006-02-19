@@ -7,7 +7,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.pm.IProofTreeChangeEvent;
 import org.eventb.core.pm.IProofTreeChangedListener;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.rodinp.core.IRodinElement;
 
 public class ProofTreeUIContentProvider
@@ -56,7 +57,7 @@ public class ProofTreeUIContentProvider
 	 */
 	public Object[] getChildren(Object parentElement) {
 		ProofState invisibleRoot = page.getInvisibleRoot();
-		ProofTree root = page.getRoot();
+		IProofTreeNode root = page.getRoot();
 		if (parentElement.equals(invisibleRoot)) {
 			if (root == null) {
 				root = invisibleRoot.getProofTree();
@@ -65,9 +66,10 @@ public class ProofTreeUIContentProvider
 			Object [] result = {root};
 			return result;
 		}
-		if (parentElement instanceof ProofTree) {
-			ProofTree pt = (ProofTree) parentElement;
-			if (pt.rootHasChildren()) return getChildrenOfList(pt.getChildren());
+		if (parentElement instanceof ProofTreeNode) {
+			IProofTreeNode pt = (IProofTreeNode) parentElement;
+			// TODO enquire effect of new contract for pt.getChildren()
+			if (pt.hasChildren()) return getChildrenOfList(pt.getChildren());
 			else return new Object[0];
 		}
 		
@@ -90,8 +92,8 @@ public class ProofTreeUIContentProvider
 	public boolean hasChildren(Object element) {
 		if (element.equals(page.getInvisibleRoot())) return true;
 		
-		if (element instanceof ProofTree) {
-			return ((ProofTree) element).rootHasChildren();
+		if (element instanceof ProofTreeNode) {
+			return ((IProofTreeNode) element).hasChildren();
 		}
 		
 		return false;
@@ -108,16 +110,17 @@ public class ProofTreeUIContentProvider
 		return getChildren(inputElement);
 	}
 	
-	private Object [] getChildrenOfList(ProofTree [] parents) {
+	private Object [] getChildrenOfList(IProofTreeNode [] parents) {
 		// TODO Should do it more efficiently using different data structure
 		ArrayList<Object> children = new ArrayList<Object>();
 		Object [] filters = page.getFilters();
 		for (int i = 0; i < parents.length; i++) {
-			ProofTree pt = parents[i];
-			if (!pt.rootIsOpen()) {
+			IProofTreeNode pt = parents[i];
+			if (!pt.isOpen()) {
 				int j;
 				for (j = 0; j < filters.length; j++) {
-					if (filters[j].equals(pt.getRootRule().name())) {
+					if (filters[j].equals(pt.getRule().getName())) {
+						// TODO enquire effect of new contract for pt.getChildren()
 						Object [] list = getChildrenOfList(pt.getChildren()); 
 						for (int k = 0; k < list.length; k++) children.add(list[k]);
 						break;

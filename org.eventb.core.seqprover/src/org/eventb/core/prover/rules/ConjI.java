@@ -1,13 +1,14 @@
 package org.eventb.core.prover.rules;
+
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public final class ConjI implements Rule {
+public final class ConjI extends ProofRule {
 
-	public String name(){
-		return "conjI";
+	public ConjI() {
+		super("conjI");
 	}
 	
 	public boolean isApplicable(IProverSequent S) {

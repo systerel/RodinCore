@@ -5,10 +5,10 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class ImpI implements Rule {
+public class ImpI extends ProofRule {
 
-	public String name(){
-		return "ded";
+	public ImpI() {
+		super("ded");
 	}
 	
 	public boolean isApplicable(IProverSequent S) {

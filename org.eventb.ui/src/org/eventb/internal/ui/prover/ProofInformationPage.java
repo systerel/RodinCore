@@ -83,7 +83,7 @@ public class ProofInformationPage
 		
 		scrolledForm = toolkit.createScrolledForm(parent);
 		Composite body = scrolledForm.getBody();
-		scrolledForm.setText(editor.getUserSupport().getCurrentPO().getProofTree().getRootSeq().goal().toString());
+		scrolledForm.setText(editor.getUserSupport().getCurrentPO().getProofTree().getSequent().goal().toString());
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 3;
@@ -114,7 +114,7 @@ public class ProofInformationPage
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
-		scrolledForm.setText(e.getDelta().getProofTree().getRootSeq().goal().toString());
+		scrolledForm.setText(e.getDelta().getProofTree().getSequent().goal().toString());
 		scrolledForm.reflow(true);
 	}
 	

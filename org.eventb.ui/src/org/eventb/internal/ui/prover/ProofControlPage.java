@@ -11,8 +11,6 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -48,7 +46,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -112,9 +111,9 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-					if (obj instanceof ProofTree) {
-						ProofTree proofTree = (ProofTree) obj;
-						if (!proofTree.isClosed()) {
+					if (obj instanceof ProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (!proofTree.isDischarged()) {
 							Tactics.trivial.apply(proofTree);
 							editor.getContentOutline().refresh(proofTree);
 							// Expand the node
@@ -122,9 +121,9 @@ public class ProofControlPage
 							//viewer.setExpandedState(proofTree, true);
 							
 							// Select the first pending "subgoal"
-							List<ProofTree> subGoals = proofTree.pendingSubgoals();
-							if (subGoals.size() != 0) {
-								viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+							IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+							if (subGoal != null) {
+								viewer.setSelection(new StructuredSelection(subGoal));
 							}
 						}
 					}
@@ -138,9 +137,9 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTree) {
-						ProofTree proofTree = (ProofTree) obj;
-						if (!proofTree.rootIsOpen()) {
+					if (obj instanceof ProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (!proofTree.isOpen()) {
 							Tactics.prune.apply(proofTree);
 							viewer.refresh(proofTree);
 							viewer.setSelection(new StructuredSelection(proofTree));
@@ -156,7 +155,7 @@ public class ProofControlPage
 					if (ps != null) {
 						editor.getContentOutline().setInput(ps);
 						editor.getContentOutline().getViewer().expandAll();
-						ProofTree pt = ps.getNextPendingSubgoal();
+						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
 							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 
@@ -171,7 +170,7 @@ public class ProofControlPage
 					if (ps != null) {
 						editor.getContentOutline().setInput(ps);
 						editor.getContentOutline().getViewer().expandAll();
-						ProofTree pt = ps.getNextPendingSubgoal();
+						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
 							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 					}
@@ -187,14 +186,14 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTree) {
-						ProofTree proofTree = (ProofTree) obj;
-						if (proofTree.rootIsOpen()) {
+					if (obj instanceof ProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (proofTree.isOpen()) {
 							Tactic t = Tactics.doCase(textInput.getText());
 							System.out.println(t.apply(proofTree));
 							viewer.refresh(proofTree);
 							ProofState ps = editor.getUserSupport().getCurrentPO();
-							ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
 								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 						}
@@ -211,16 +210,16 @@ public class ProofControlPage
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
-					if (obj instanceof ProofTree) {
-						ProofTree proofTree = (ProofTree) obj;
-						if (proofTree.rootIsOpen()) {
+					if (obj instanceof ProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (proofTree.isOpen()) {
 							Tactics.norm().apply(proofTree);
 							editor.getContentOutline().refresh(proofTree);
 							
 							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 							//viewer.setExpandedState(proofTree, true);
 							ProofState ps = editor.getUserSupport().getCurrentPO();
-							ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
 								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 						}

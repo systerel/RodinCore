@@ -41,7 +41,8 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 
@@ -74,7 +75,7 @@ public class ProofTreeUIPage
 	private TreeViewer viewer;
 	// The invisible root of the tree.
 	private ProofState invisibleRoot = null;
-	private ProofTree root = null;
+	private IProofTreeNode root = null;
 	// TODO Change to Rule class?
 	private Object [] filters = {"hyp", "allI"}; // Default filters 
 		
@@ -92,14 +93,14 @@ public class ProofTreeUIPage
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-			if (obj instanceof ProofTree) {
-				ProofTree proofTree = (ProofTree) obj;
+			if (obj instanceof ProofTreeNode) {
+				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				
-				if (!proofTree.rootIsOpen()) {
-					return proofTree.getRootRule().name() +" : " + proofTree.getRootSeq().goal();
+				if (!proofTree.isOpen()) {
+					return proofTree.getRule().getName() +" : " + proofTree.getSequent().goal();
 				}
 				else {
-					return proofTree.getRootSeq().goal().toString();
+					return proofTree.getSequent().goal().toString();
 				}
 			}
 			return obj.toString();
@@ -108,10 +109,10 @@ public class ProofTreeUIPage
 		public Image getImage(Object obj) {
 			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		
-			if (obj instanceof ProofTree) {
-				ProofTree pt = (ProofTree) obj;
-				if (pt.rootIsOpen()) return registry.get(EventBImage.IMG_UNDISCHARGED);
-				if (!pt.isClosed()) return registry.get(EventBImage.IMG_APPLIED);
+			if (obj instanceof ProofTreeNode) {
+				IProofTreeNode pt = (IProofTreeNode) obj;
+				if (pt.isOpen()) return registry.get(EventBImage.IMG_UNDISCHARGED);
+				if (!pt.isDischarged()) return registry.get(EventBImage.IMG_APPLIED);
 				else return registry.get(EventBImage.IMG_DISCHARGED);
 			}
 
@@ -247,7 +248,7 @@ public class ProofTreeUIPage
 		});
 	}
 	
-	protected void refresh(ProofTree pt) {
+	protected void refresh(IProofTreeNode pt) {
 		// TODO Refresh the parent of this proof tree	
 		Object [] expands = viewer.getExpandedElements();
 		viewer.refresh(true);
@@ -357,8 +358,8 @@ public class ProofTreeUIPage
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
 				Object obj = ssel.getFirstElement();
-				if (obj instanceof ProofTree) {
-					editor.getUserSupport().selectNode((ProofTree) obj);
+				if (obj instanceof ProofTreeNode) {
+					editor.getUserSupport().selectNode((IProofTreeNode) obj);
 				}
 			}
 			else {
@@ -371,7 +372,7 @@ public class ProofTreeUIPage
 	
 	public ProofState getInvisibleRoot() {return invisibleRoot;}
 	
-	public void setRoot(ProofTree pt) {this.root = pt;}
+	public void setRoot(IProofTreeNode pt) {this.root = pt;}
 	
-	public ProofTree getRoot() {return root;}
+	public IProofTreeNode getRoot() {return root;}
 }

@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExternalReasoner;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.HypothesesManagement;
@@ -16,13 +18,13 @@ import org.eventb.core.prover.tactics.Tactics;
 
 public class TacticTest extends TestCase {
 	
-	public void testNorm(){	
-		ProofTree pt = new ProofTree(null, TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2"));
+	public void testNorm() {
+		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2")).getRoot();
 		System.out.println(pt);
 		Tactics.norm().apply(pt);
 		System.out.println(pt);
 		
-		pt = new ProofTree(null, TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧(3=3 ⇒ 2=2 ∧3=3 ∧(∀x·x=1))"));
+		pt = SequentProver.makeProofTree(TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧(3=3 ⇒ 2=2 ∧3=3 ∧(∀x·x=1))")).getRoot();
 		System.out.println(pt);
 		Tactics.norm().apply(pt);
 		System.out.println(pt);
@@ -65,7 +67,7 @@ public class TacticTest extends TestCase {
 //	}
 	
 	public void testExI(){
-		ProofTree pt = new ProofTree(null, TestLib.genSeq("1=1 |-  ∃x·x=1"));
+		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("1=1 |-  ∃x·x=1")).getRoot();
 		System.out.println(pt);
 		IExternalReasoner plugin = new ExI();
 		String[] witnesses = {"1"};
@@ -76,21 +78,21 @@ public class TacticTest extends TestCase {
 	}
 
 	public void testDoCase(){
-		ProofTree pt = new ProofTree(null, TestLib.genSeq("x=1 ∨x=2 |- x < 3 "));
+		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("x=1 ∨x=2 |- x < 3 ")).getRoot();
 		System.out.println(Tactics.doCase("x = 21").apply(pt));
 		System.out.println(pt);
 	}
 	
 	public void testDoCaseError(){
-		ProofTree pt = new ProofTree(null, TestLib.genSeq("x=1 ∨x=2 |- x < 3 "));
+		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("x=1 ∨x=2 |- x < 3 ")).getRoot();
 		System.out.println(Tactics.doCase("y = 21").apply(pt));
 		System.out.println(pt);
 	}
 	
 	public void testMngHyp(){	
-		ProofTree pt = new ProofTree(null, TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2"));
+		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2")).getRoot();
 		System.out.println(pt);
-		Set<Hypothesis> h = Hypothesis.textSearch(pt.getRootSeq().hypotheses(),"1=1");
+		Set<Hypothesis> h = Hypothesis.textSearch(pt.getSequent().hypotheses(),"1=1");
 		System.out.println(h);
 		Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT,h).apply(pt);
 		System.out.println(pt);
@@ -104,21 +106,21 @@ public class TacticTest extends TestCase {
 	}
 	
 	public void testLegacyProvers(){
-		ProofTree pt ;
+		IProofTreeNode pt ;
 		
-		pt = new ProofTree(null, TestLib.genSeq("A ∈ℙ(ℤ) ;; B ∈ℙ(ℤ) ;; x∈A|- x∈A ∪B"));
+		pt = SequentProver.makeProofTree(TestLib.genSeq("A ∈ℙ(ℤ) ;; B ∈ℙ(ℤ) ;; x∈A|- x∈A ∪B")).getRoot();
 		System.out.println(Tactics.legacyProvers().apply(pt));
 		System.out.println(pt);
 		
-		pt = new ProofTree(null, TestLib.genSeq("x=1 |- x ∈ℕ "));
+		pt = SequentProver.makeProofTree(TestLib.genSeq("x=1 |- x ∈ℕ ")).getRoot();
 		System.out.println(Tactics.legacyProvers().apply(pt));
 		System.out.println(pt);
 		
-		pt = new ProofTree(null, TestLib.genSeq(" x ∈{1} |- x=1 "));
+		pt = SequentProver.makeProofTree(TestLib.genSeq(" x ∈{1} |- x=1 ")).getRoot();
 		System.out.println(Tactics.legacyProvers().apply(pt));
 		System.out.println(pt);
 		
-		pt = new ProofTree(null, TestLib.genSeq(" 0 ≤ a ∧ 1 < b |- a mod b < b "));
+		pt = SequentProver.makeProofTree(TestLib.genSeq(" 0 ≤ a ∧ 1 < b |- a mod b < b ")).getRoot();
 		System.out.println(Tactics.legacyProvers().apply(pt));
 		System.out.println(pt);
 		

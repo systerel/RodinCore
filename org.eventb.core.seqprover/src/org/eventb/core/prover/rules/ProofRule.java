@@ -1,0 +1,43 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
+package org.eventb.core.prover.rules;
+
+import org.eventb.core.prover.sequent.IProverSequent;
+
+
+/**
+ * Implementation of a proof rule.
+ * 
+ * @author Laurent Voisin
+ */
+public abstract class ProofRule implements IProofRule {
+
+	private final String name;
+	
+	public ProofRule(String name) {
+		this.name = name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.rules.IProofRule#getName()
+	 */
+	public final String getName() {
+		return name;
+	}
+
+	/**
+	 * Applies this rule to the given proof sequent.
+	 * 
+	 * @param sequent
+	 *            proof sequent to apply the rule to
+	 * @return array of proof sequents produced by this rule.
+	 */
+	public abstract IProverSequent[] apply(IProverSequent sequent);
+	
+}

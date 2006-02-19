@@ -39,7 +39,8 @@ import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
@@ -97,9 +98,9 @@ public class GoalSection
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-			if (obj instanceof ProofTree) {
-				ProofTree proofTree = (ProofTree) obj;
-				if (!proofTree.isClosed()) {
+			if (obj instanceof ProofTreeNode) {
+				IProofTreeNode proofTree = (IProofTreeNode) obj;
+				if (!proofTree.isDischarged()) {
 					t.apply(proofTree);
 					editor.getContentOutline().refresh(proofTree);
 					// Expand the node
@@ -108,7 +109,7 @@ public class GoalSection
 
 					// Select the "next" pending "subgoal"
 					ProofState ps = editor.getUserSupport().getCurrentPO();
-					ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null) 
 						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 					else {
@@ -177,19 +178,19 @@ public class GoalSection
 		super.expansionStateChanging(expanding);
 	}
 
-	public void setGoal(ProofTree pt) {
+	public void setGoal(IProofTreeNode pt) {
 		if (pt == null) {
 			clearFormText();
 			text.setText("No goal");
 			return;
 		}
-		if (!pt.rootIsOpen()) {
+		if (!pt.isOpen()) {
 			clearFormText();
-			text.setText(pt.getRootSeq().goal().toString());
+			text.setText(pt.getSequent().goal().toString());
 		}
 		else {
-			text.setText(pt.getRootSeq().goal().toString());
-			setFormText(pt.getRootSeq());
+			text.setText(pt.getSequent().goal().toString());
+			setFormText(pt.getSequent());
 		}
 		return;
 	}

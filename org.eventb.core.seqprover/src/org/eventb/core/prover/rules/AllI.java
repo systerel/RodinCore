@@ -9,10 +9,10 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public final class AllI implements Rule {
+public final class AllI extends ProofRule {
 
-	public String name(){
-		return "allI";
+	public AllI() {
+		super("allI");
 	}
 	
 	public boolean isApplicable(IProverSequent S) {

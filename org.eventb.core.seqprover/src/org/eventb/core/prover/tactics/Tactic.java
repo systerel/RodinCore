@@ -1,25 +1,23 @@
 package org.eventb.core.prover.tactics;
 
-import java.util.List;
-
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
 import org.eventb.core.prover.IExternalReasoner;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.rules.PLb;
-import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.rules.Rule;
+import org.eventb.core.prover.rules.ProofRule;
 
 public interface Tactic {
 	
-	public abstract Object apply(ProofTree pt);
+	public abstract Object apply(IProofTreeNode pt);
 	
 	public static class prune implements Tactic {
 	
 		public prune(){}
 		
-		public Object apply(ProofTree pt){
-			if (pt.rootIsOpen()) return "Root is already open";
+		public Object apply(IProofTreeNode pt){
+			if (pt.isOpen()) return "Root is already open";
 			pt.pruneChildren();
 			return null;
 		}
@@ -27,17 +25,17 @@ public interface Tactic {
 	
 	public static class RuleTac implements Tactic {
 		
-		private final Rule rule;
+		private final ProofRule rule;
 		
-		public RuleTac(Rule rule)
+		public RuleTac(ProofRule rule)
 		{
 			this.rule = rule;
 		}
 		
-		public Object apply(ProofTree pt){
-			if (!pt.rootIsOpen()) return "Root already has children";
+		public Object apply(IProofTreeNode pt){
+			if (!pt.isOpen()) return "Root already has children";
 			if (pt.applyRule(this.rule)) return null;
-			else return "Rule "+this.rule.name()+" is not applicable";
+			else return "Rule "+this.rule.getName()+" is not applicable";
 			
 		}
 	}
@@ -53,12 +51,12 @@ public interface Tactic {
 			this.pluginInput = pluginInput;
 		}
 		
-		public Object apply(ProofTree pt){
-			if (!pt.rootIsOpen()) return "Root already has children";
-			IExtReasonerOutput po = this.plugin.apply(pt.getRootSeq(),pluginInput);
+		public Object apply(IProofTreeNode pt){
+			if (!pt.isOpen()) return "Root already has children";
+			IExtReasonerOutput po = this.plugin.apply(pt.getSequent(),pluginInput);
 			if (po == null) return "! Plugin returned null !";
 			if (!(po instanceof SuccessfullExtReasonerOutput)) return po;
-			Rule plb = new PLb((SuccessfullExtReasonerOutput) po);
+			ProofRule plb = new PLb((SuccessfullExtReasonerOutput) po);
 			Tactic temp = new RuleTac(plb);
 			return temp.apply(pt);
 		}
@@ -72,10 +70,10 @@ public interface Tactic {
 			this.t = t;
 		}
 		
-		public Object apply(ProofTree pt) {
+		public Object apply(IProofTreeNode pt) {
 			String applicable = "onAllPending unapplicable";
-			List<ProofTree> subgoals = pt.pendingSubgoals();
-			for(ProofTree subgoal : subgoals){
+			IProofTreeNode[] subgoals = pt.getOpenDescendants();
+			for(IProofTreeNode subgoal : subgoals){
 				if (t.apply(subgoal) == null) applicable = null;
 			}
 			return applicable;
@@ -92,11 +90,11 @@ public interface Tactic {
 			this.subgoalNo = subgoalNo;
 		}
 		
-		public Object apply(ProofTree pt) {
-			List<ProofTree> subgoals = pt.pendingSubgoals();
-			if (this.subgoalNo < 0 || this.subgoalNo >= subgoals.size()) 
+		public Object apply(IProofTreeNode pt) {
+			IProofTreeNode[] subgoals = pt.getOpenDescendants();
+			if (this.subgoalNo < 0 || this.subgoalNo >= subgoals.length) 
 				return "Subgoal "+this.subgoalNo+" non-existent";
-			ProofTree subgoal = subgoals.get(this.subgoalNo);
+			IProofTreeNode subgoal = subgoals[this.subgoalNo];
 			if (subgoal == null) return "Subgoal "+this.subgoalNo+" is null!";
 			return this.t.apply(subgoal);
 		}
@@ -112,7 +110,7 @@ public interface Tactic {
 			this.tactics = tactics;
 		}
 		
-		public Object apply(ProofTree pt) {
+		public Object apply(IProofTreeNode pt) {
 			boolean applicable = false;
 			Object lastFailure = "compose unapplicable: no tactics";
 			for (Tactic tactic : tactics){
@@ -133,7 +131,7 @@ public interface Tactic {
 			this.tactics = tactics;
 		}
 		
-		public Object apply(ProofTree pt) {
+		public Object apply(IProofTreeNode pt) {
 			for (Tactic tactic : tactics){
 				Object tacticApp = tactic.apply(pt);
 				if (tacticApp != null) return tacticApp; 
@@ -152,7 +150,7 @@ public interface Tactic {
 			this.t = t;
 		}
 		
-		public Object apply(ProofTree pt) {
+		public Object apply(IProofTreeNode pt) {
 			boolean applicable = false;
 			Object tacticApp = t.apply(pt);
 			while(tacticApp == null){

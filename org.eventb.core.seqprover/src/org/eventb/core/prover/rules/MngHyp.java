@@ -3,15 +3,12 @@ package org.eventb.core.prover.rules;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 
-public class MngHyp implements Rule {
+public class MngHyp extends ProofRule {
 
 	private Action action;
 	
-	public String name(){
-		return "["+action.toString()+"]";
-	}
-	
 	public MngHyp(Action action){
+		super("["+action.toString()+"]");
 		this.action = action;
 	}
 	

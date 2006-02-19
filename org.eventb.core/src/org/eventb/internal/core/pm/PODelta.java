@@ -1,16 +1,16 @@
 package org.eventb.internal.core.pm;
 
 import org.eventb.core.pm.IPODelta;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
 
 public class PODelta implements IPODelta {
-	ProofTree pt;
+	IProofTreeNode pt;
 	
-	public PODelta(ProofTree pt) {
+	public PODelta(IProofTreeNode pt) {
 		this.pt = pt;
 	}
 	
-	public ProofTree getProofTree() {
+	public IProofTreeNode getProofTree() {
 		return pt;
 	}
 

@@ -1,7 +1,5 @@
 package org.eventb.internal.ui.prover;
 
-import java.util.List;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -16,7 +14,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 
@@ -64,7 +63,7 @@ public class ProofTreeUIActionGroup
 				if (ps != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
-					ProofTree pt = ps.getNextPendingSubgoal();
+					IProofTreeNode pt = ps.getNextPendingSubgoal();
 					if (pt != null) 
 						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
 				}
@@ -80,7 +79,7 @@ public class ProofTreeUIActionGroup
 				if (ps != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
-					ProofTree pt = ps.getNextPendingSubgoal();
+					IProofTreeNode pt = ps.getNextPendingSubgoal();
 					if (pt != null) 
 						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
 				}
@@ -96,9 +95,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.rootIsOpen()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isOpen()) {
 						Tactics.prune.apply(proofTree);
 						viewer.refresh(proofTree);
 						viewer.setSelection(new StructuredSelection(proofTree));
@@ -117,9 +116,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.norm().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -127,9 +126,9 @@ public class ProofTreeUIActionGroup
 						//viewer.setExpandedState(proofTree, true);
 						
 						// Select the first pending "subgoal"
-						List<ProofTree> subGoals = proofTree.pendingSubgoals();
-						if (subGoals.size() != 0) {
-							viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+						IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+						if (subGoal != null) {
+							viewer.setSelection(new StructuredSelection(subGoal));
 						}
 					}
 				}
@@ -146,9 +145,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.conjI.apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -156,9 +155,9 @@ public class ProofTreeUIActionGroup
 						//viewer.setExpandedState(proofTree, true);
 						
 						// Select the first pending "subgoal"
-						List<ProofTree> subGoals = proofTree.pendingSubgoals();
-						if (subGoals.size() != 0) {
-							viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+						IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+						if (subGoal != null) {
+							viewer.setSelection(new StructuredSelection(subGoal));
 						}
 					}
 				}
@@ -176,9 +175,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.hyp.apply(proofTree);
 						ProofTreeUIActionGroup.this.proofTreeUI.refresh(proofTree);
 						// Expand the node
@@ -187,7 +186,7 @@ public class ProofTreeUIActionGroup
 
 						ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().getCurrentPO();
 						// Select the next pending "subgoal"
-						ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+						IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 						if (pt != null) 
 							ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
 					}
@@ -205,9 +204,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.allI.apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -215,9 +214,9 @@ public class ProofTreeUIActionGroup
 						//viewer.setExpandedState(proofTree, true);
 						
 						// Select the first pending "subgoal"
-						List<ProofTree> subGoals = proofTree.pendingSubgoals();
-						if (subGoals.size() != 0) {
-							viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+						IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+						if (subGoal != null) {
+							viewer.setSelection(new StructuredSelection(subGoal));
 						}
 					}
 				}
@@ -234,9 +233,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.impI.apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -244,9 +243,9 @@ public class ProofTreeUIActionGroup
 						//viewer.setExpandedState(proofTree, true);
 						
 						// Select the first pending "subgoal"
-						List<ProofTree> subGoals = proofTree.pendingSubgoals();
-						if (subGoals.size() != 0) {
-							viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+						IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+						if (subGoal != null) {
+							viewer.setSelection(new StructuredSelection(subGoal));
 						}
 					}
 				}
@@ -263,9 +262,9 @@ public class ProofTreeUIActionGroup
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-				if (obj instanceof ProofTree) {
-					ProofTree proofTree = (ProofTree) obj;
-					if (!proofTree.isClosed()) {
+				if (obj instanceof ProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					if (!proofTree.isDischarged()) {
 						Tactics.trivial.apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -273,9 +272,9 @@ public class ProofTreeUIActionGroup
 						//viewer.setExpandedState(proofTree, true);
 						
 						// Select the first pending "subgoal"
-						List<ProofTree> subGoals = proofTree.pendingSubgoals();
-						if (subGoals.size() != 0) {
-							viewer.setSelection(new StructuredSelection(subGoals.get(0)));
+						IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
+						if (subGoal != null) {
+							viewer.setSelection(new StructuredSelection(subGoal));
 						}
 					}
 				}
@@ -298,10 +297,10 @@ public class ProofTreeUIActionGroup
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
-				ProofTree pt = (ProofTree) ssel.getFirstElement();
+				IProofTreeNode pt = (IProofTreeNode) ssel.getFirstElement();
 
 				// TODO Prechecking for displaying here
-				if (!pt.rootIsOpen()) {
+				if (!pt.isOpen()) {
 					menu.add(pruneAction);
 				}
 				else {

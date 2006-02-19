@@ -14,7 +14,7 @@ import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.externalReasoners.Cut;
-import org.eventb.core.prover.rules.Rule;
+import org.eventb.core.prover.rules.ProofRule;
 import org.eventb.core.prover.rules.RuleFactory;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -36,7 +36,7 @@ public class TestRules extends TestCase {
 	}
 	
 	public void testHyp(){
-		Rule Hyp = rf.hyp();
+		ProofRule Hyp = (ProofRule) rf.hyp();
 		assertTrue(Hyp.isApplicable(seq.hypSeq));
 		assertFalse(Hyp.isApplicable(seq.hypSeqFail));
 		
@@ -48,7 +48,7 @@ public class TestRules extends TestCase {
 	}
 	
 	public void testConjI(){
-		Rule conjI = rf.conjI();
+		ProofRule conjI = (ProofRule) rf.conjI();
 		assertFalse(conjI.isApplicable(seq.hypSeq));
 		assertFalse(conjI.isApplicable(seq.hypSeqFail));
 		assertTrue(conjI.isApplicable(seq.conjSeq2));
@@ -85,7 +85,7 @@ public class TestRules extends TestCase {
 	}
 	
 	public void testImpI(){
-		Rule impI = rf.impI();
+		ProofRule impI = (ProofRule) rf.impI();
 		assertFalse(impI.isApplicable(seq.hypSeq));
 		assertFalse(impI.isApplicable(seq.hypSeqFail));
 		assertFalse(impI.isApplicable(seq.conjSeq2));
@@ -116,7 +116,7 @@ public class TestRules extends TestCase {
 	}
 	
 	public void testAllI(){
-		Rule allI = rf.allI();
+		ProofRule allI = (ProofRule) rf.allI();
 		assertFalse(allI.isApplicable(seq.hypSeq));
 		assertTrue(allI.isApplicable(seq.hypSeqFail));
 		assertFalse(allI.isApplicable(seq.conjSeq2));
@@ -160,7 +160,7 @@ public class TestRules extends TestCase {
 		IExtReasonerOutput O = cut.apply(seq.hypSeqFail,I);
 		assertTrue(O instanceof SuccessfullExtReasonerOutput);
 		SuccessfullExtReasonerOutput sO = (SuccessfullExtReasonerOutput) O;
-		Rule PLbCut = rf.pLb(sO);
+		ProofRule PLbCut = (ProofRule) rf.pLb(sO);
 //		System.out.println(PLbCut.isApplicable(seq.hypSeqFail));
 //		System.out.println(sO.proof());
 //		System.out.println(seq.hypSeqFail);
@@ -174,14 +174,16 @@ public class TestRules extends TestCase {
 		assertTrue(seq.hypSeqFail.typeEnvironment().equals(anticidents[0].typeEnvironment()));
 		assertTrue(seq.hypSeqFail.hypotheses().equals(anticidents[0].hypotheses()));
 		
-		assertTrue(rf.conjI().isApplicable(anticidents[0]));
-		anticidents = rf.conjI().apply(anticidents[0]);
+		final ProofRule conjI = (ProofRule) rf.conjI();
+		assertTrue(conjI.isApplicable(anticidents[0]));
+		anticidents = conjI.apply(anticidents[0]);
 		assertTrue(anticidents.length == 3);
 		assertTrue(anticidents[0].goal().equals(lemma));
 		assertTrue(anticidents[1].goal().equals(lemmaWD));
 		
-		assertTrue(rf.impI().isApplicable(anticidents[2]));
-		anticidents = rf.impI().apply(anticidents[2]);
+		final ProofRule impI = (ProofRule) rf.impI();
+		assertTrue(impI.isApplicable(anticidents[2]));
+		anticidents = impI.apply(anticidents[2]);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeqFail.goal().equals(anticidents[0].goal()));
 		assertTrue(Hypothesis.containsPredicate(anticidents[0].selectedHypotheses(),lemma));
@@ -195,7 +197,7 @@ public class TestRules extends TestCase {
 		
 		IProverSequent[] anticidents;
 		
-		Rule selectAll = rf.mngHyp(new Action(ActionType.SELECT,hyps));
+		ProofRule selectAll = (ProofRule) rf.mngHyp(new Action(ActionType.SELECT,hyps));
 		anticidents = selectAll.apply(seq.hypSeq);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeq.typeEnvironment().equals(anticidents[0].typeEnvironment()));
@@ -203,7 +205,7 @@ public class TestRules extends TestCase {
 		assertTrue(seq.hypSeq.goal().equals(anticidents[0].goal()));
 		assertTrue(seq.hypSeq.hypotheses().equals(anticidents[0].selectedHypotheses()));
 		
-		Rule deselectH1 = rf.mngHyp(new Action(ActionType.DESELECT,H[1]));
+		ProofRule deselectH1 = (ProofRule) rf.mngHyp(new Action(ActionType.DESELECT,H[1]));
 		anticidents = deselectH1.apply(selectAll.apply(seq.hypSeq)[0]);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeq.typeEnvironment().equals(anticidents[0].typeEnvironment()));
@@ -212,7 +214,7 @@ public class TestRules extends TestCase {
 		assertFalse(anticidents[0].selectedHypotheses().contains(H[1]));
 		assertTrue(anticidents[0].visibleHypotheses().contains(H[1]));
 		
-		Rule hideAll = rf.mngHyp(new Action(ActionType.HIDE,hyps));
+		ProofRule hideAll = (ProofRule) rf.mngHyp(new Action(ActionType.HIDE,hyps));
 		anticidents = hideAll.apply(seq.hypSeq);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeq.typeEnvironment().equals(anticidents[0].typeEnvironment()));
@@ -221,7 +223,7 @@ public class TestRules extends TestCase {
 		assertTrue(seq.hypSeq.hypotheses().equals(anticidents[0].hiddenHypotheses()));
 		assertTrue(anticidents[0].visibleHypotheses().isEmpty());
 		
-		Rule showAll = rf.mngHyp(new Action(ActionType.SHOW,hyps));
+		ProofRule showAll = (ProofRule) rf.mngHyp(new Action(ActionType.SHOW,hyps));
 		anticidents = showAll.apply(hideAll.apply(seq.hypSeq)[0]);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeq.typeEnvironment().equals(anticidents[0].typeEnvironment()));

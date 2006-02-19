@@ -33,7 +33,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactic;
@@ -85,9 +86,9 @@ public class SelectedHypothesesSection
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 
-			if (obj instanceof ProofTree) {
-				ProofTree proofTree = (ProofTree) obj;
-				if (!proofTree.isClosed()) {
+			if (obj instanceof ProofTreeNode) {
+				IProofTreeNode proofTree = (IProofTreeNode) obj;
+				if (!proofTree.isDischarged()) {
 					t.apply(proofTree);
 					editor.getContentOutline().refresh(proofTree);
 					// Expand the node
@@ -96,7 +97,7 @@ public class SelectedHypothesesSection
 
 					// Select the "next" pending "subgoal"
 					ProofState ps = editor.getUserSupport().getCurrentPO();
-					ProofTree pt = ps.getNextPendingSubgoal(proofTree);
+					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null) 
 						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
 				}
