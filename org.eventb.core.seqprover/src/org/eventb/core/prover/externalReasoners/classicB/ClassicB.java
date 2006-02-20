@@ -80,6 +80,21 @@ public abstract class ClassicB {
 		stream.print(input);
 		stream.print(" )");
 		stream.println();
+		stream.close();
+	}
+	
+	// Fills the output file with some random characters that can not be
+	// considered as a success.
+	private static void printDefaultOutput() throws IOException {
+		PrintStream stream = new PrintStream(oName);
+		stream.println("FAILED");
+		stream.close();
+	}
+
+	// Removes temporary files
+	private static void cleanup() {
+		new File(iName).delete();
+		new File(oName).delete();
 	}
 	
 	public static boolean callPKforPP(StringBuffer input)
@@ -87,9 +102,13 @@ public abstract class ClassicB {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
-		makeTempFileNames();
-		printPP(input);
-		return runPK(ProverShell.getPPParserCommand(iName));
+		try {
+			makeTempFileNames();
+			printPP(input);
+			return runPK(ProverShell.getPPParserCommand(iName));
+		} finally {
+			cleanup();
+		}
 	}
 	
 	public static boolean proveWithPP(StringBuffer input)
@@ -97,13 +116,18 @@ public abstract class ClassicB {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
-		makeTempFileNames();
-		printPP(input);
-		final String[] cmdArray = ProverShell.getPPCommand(iName);
-		final Process process = Runtime.getRuntime().exec(cmdArray);
-		process.waitFor();
-		// showOutput();
-		return checkResult(PP_SUCCESS);
+		try {
+			makeTempFileNames();
+			printPP(input);
+			printDefaultOutput();
+			final String[] cmdArray = ProverShell.getPPCommand(iName);
+			final Process process = Runtime.getRuntime().exec(cmdArray);
+			process.waitFor();
+			// showOutput();
+			return checkResult(PP_SUCCESS);
+		} finally {
+			cleanup();
+		}
 	}
 	
 	private static void printML(StringBuffer input) throws IOException {
@@ -123,9 +147,13 @@ public abstract class ClassicB {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
-		makeTempFileNames();
-		printML(input);
-		return runPK(ProverShell.getMLParserCommand(iName));
+		try {
+			makeTempFileNames();
+			printML(input);
+			return runPK(ProverShell.getMLParserCommand(iName));
+		} finally {
+			cleanup();
+		}
 	}
 
 	private static boolean runPK(final String[] cmdArray)
@@ -145,13 +173,18 @@ public abstract class ClassicB {
 		if (! ProverShell.areToolsPresent())
 			return false;
 
-		makeTempFileNames();
-		printML(input);
-		String[] cmdArray = ProverShell.getMLCommand(iName);
-		Process process = Runtime.getRuntime().exec(cmdArray);
-		process.waitFor();
-		// showOutput();
-		return checkResult(ML_SUCCESS);
+		try {
+			makeTempFileNames();
+			printML(input);
+			printDefaultOutput();
+			String[] cmdArray = ProverShell.getMLCommand(iName);
+			Process process = Runtime.getRuntime().exec(cmdArray);
+			process.waitFor();
+			// showOutput();
+			return checkResult(ML_SUCCESS);
+		} finally {
+			cleanup();
+		}
 	}
 	
 	private static boolean checkResult(String expected) throws IOException {
