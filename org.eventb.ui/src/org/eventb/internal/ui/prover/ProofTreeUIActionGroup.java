@@ -58,7 +58,7 @@ public class ProofTreeUIActionGroup
 
 		nextPOAction = new Action() {
 			public void run() {
-				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().nextPO();
+				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().nextPO();
 				if (ps != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
@@ -74,7 +74,7 @@ public class ProofTreeUIActionGroup
 
 		prevPOAction = new Action() {
 			public void run() {
-				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().prevPO();
+				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().prevPO();
 				if (ps != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
@@ -183,7 +183,7 @@ public class ProofTreeUIActionGroup
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 						//viewer.setExpandedState(proofTree, true);
 
-						ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().getCurrentPO();
+						ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().getCurrentPO();
 						// Select the next pending "subgoal"
 						IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 						if (pt != null) 

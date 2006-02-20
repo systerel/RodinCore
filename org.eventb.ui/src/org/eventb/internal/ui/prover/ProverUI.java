@@ -96,7 +96,7 @@ public class ProverUI
 	public Object getAdapter(Class required) {
 		if (IProofTreeUIPage.class.equals(required)) {
 			if (fProofTreeUI == null) {
-				fProofTreeUI = new ProofTreeUIPage(this);
+				fProofTreeUI = new ProofTreeUIPage(userSupport);
 				if (getEditorInput() != null)
 					fProofTreeUI.setInput(userSupport.getCurrentPO().getProofTree());
 			}

@@ -40,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
@@ -84,9 +85,10 @@ public class ProofTreeUIPage
 	private Object fInput;
 	
 	// The current associated editor.
-	private ProverUI editor;
+//	private ProverUI editor;
 	
-
+	private UserSupport userSupport;
+	
 	// Group of action that is used.
 	private ProofTreeUIActionGroup groupActionSet;
 	
@@ -128,9 +130,9 @@ public class ProofTreeUIPage
 	 * <p> 
 	 * @param editor the editor
 	 */
-	public ProofTreeUIPage(ProverUI editor) {
+	public ProofTreeUIPage(UserSupport userSupport) {
 		super();
-		this.editor= editor;
+		this.userSupport = userSupport;
 	}
 	
 	/*
@@ -268,7 +270,7 @@ public class ProofTreeUIPage
 		viewer.getControl().setFocus();
 	}
 
-	public ProverUI getEditor() {return editor;}
+//	public ProverUI getEditor() {return editor;}
 	
 	protected TreeViewer getViewer() {return viewer;}
 	
@@ -359,7 +361,7 @@ public class ProofTreeUIPage
 			if (!ssel.isEmpty()) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
-					editor.getUserSupport().selectNode((IProofTreeNode) obj);
+					userSupport.selectNode((IProofTreeNode) obj);
 				}
 			}
 			else { // Do nothing when there is no selection
@@ -376,4 +378,7 @@ public class ProofTreeUIPage
 	public void setRoot(IProofTreeNode pt) {this.root = pt;}
 	
 	public IProofTreeNode getRoot() {return root;}
+	
+	public UserSupport getUserSupport() {return userSupport;}
+	
 }
