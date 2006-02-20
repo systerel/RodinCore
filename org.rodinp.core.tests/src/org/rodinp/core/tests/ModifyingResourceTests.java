@@ -106,6 +106,16 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 				null);
 	}
 	
+	protected UnnamedElement2 createUnnamedElement2(IInternalParent parent,
+			IInternalElement nextSibling) throws RodinDBException {
+		
+		return (UnnamedElement2) parent.createInternalElement(
+				UnnamedElement2.ELEMENT_TYPE,
+				"",
+				nextSibling,
+				null);
+	}
+	
 	protected void deleteFile(String filePath) throws CoreException {
 		deleteResource(this.getFile(filePath));
 	}

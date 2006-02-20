@@ -10,12 +10,12 @@ package org.rodinp.core.tests;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.UnnamedInternalElement;
 
-public class UnnamedElement extends UnnamedInternalElement {
+public class UnnamedElement2 extends UnnamedInternalElement {
 	
-	public static final String ELEMENT_TYPE =
-		"org.rodinp.core.tests.unnamedElement";
+	public static final String ELEMENT_TYPE = 
+		"org.rodinp.core.tests.unnamedElement2";
 
-	public UnnamedElement(IRodinElement parent) {
+	public UnnamedElement2(IRodinElement parent) {
 		super(ELEMENT_TYPE, parent);
 	}
 

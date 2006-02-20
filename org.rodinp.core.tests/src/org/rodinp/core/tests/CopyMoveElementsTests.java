@@ -563,6 +563,22 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
+	 * Ensures that an unnamed internal element can be copied to a different
+	 * file, when the destination contains an unnamed element of a different
+	 * type.
+	 */
+	public void testCopyUnnamed() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		UnnamedElement neSource = createUnnamedElement(rfSource, null);
+		
+		IRodinFile rfDest = createRodinFile("P/Y.test");
+		createUnnamedElement2(rfDest, null);
+		
+		copyPositive(neSource, rfDest, null, null, false);
+		assertEquals("node not copied", 2, rfDest.getChildren().length);
+	}
+
+	/**
 	 * Ensures that an internal element can be moved to a different file.
 	 */
 	public void testMoveInt() throws CoreException {

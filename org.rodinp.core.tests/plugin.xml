@@ -64,6 +64,11 @@
             name="org.rodinp.core.tests.unnamedElement"
             named="false"/>
       <internalElementType
+            class="org.rodinp.core.tests.UnnamedElement2"
+            id="unnamedElement2"
+            name="org.rodinp.core.tests.unnamedElement2"
+            named="false"/>
+      <internalElementType
             class="org.rodinp.core.tests.builder.basis.Dependency"
             id="dependency"
             name="Dependency to another file"
