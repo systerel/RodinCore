@@ -55,16 +55,14 @@ public class SCContextCache extends Cache<ISCContext> {
 		typeEnvironment.addAll(getTypeEnvironment(file.getSCConstants(), monitor));
 	}
 	
-	@SuppressWarnings("unused")
-	private IProgressMonitor monitor;
+//	private IProgressMonitor monitor;
 	
 	private HashMap<String, String> predicateSetMap;
 	
 	// prefixes and names for predicate sets
 	private final static String hypsetPrefix = "hypset-";
 	private final static String oldHypsetName = "old-hypset";
-	@SuppressWarnings("unused")
-	private final static String newHypsetName = "new-hypset";
+//	private final static String newHypsetName = "new-hypset";
 //	private final static String axiomPrefix = "axioms";
 //	private final static String theoremPrefix = "theorems";
 //	private final static String allAxioms = "allAxioms";

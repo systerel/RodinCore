@@ -775,8 +775,8 @@ public class SyntaxVisitor extends DefaultVisitor {
 
 	private void pushQexpr(String op, BoundIdentDecl[] quantifiedIdentifiers) {
 		String[] localNames = quantStack.pop();
-		@SuppressWarnings("unused") String[] boundNames = boundStack.pop();
-		@SuppressWarnings("unused") Set<String> usedNames = usedStack.pop();
+		boundStack.pop();
+		usedStack.pop();
 		String rr = syntaxStack.pop();
 		String ll = syntaxStack.pop();
 		String types = getTypes(localNames, quantifiedIdentifiers);
@@ -817,7 +817,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 	@Override
 	public boolean exitCSET(QuantifiedExpression expr) {
 		String[] localNames = quantStack.pop();
-		@SuppressWarnings("unused") String[] boundNames = boundStack.pop();
+		boundStack.pop();
 		Set<String> usedNames = usedStack.pop();
 		BoundIdentDecl[] newIdent = new BoundIdentDecl[] {
 				FormulaFactory.getDefault().makeBoundIdentDecl("yy", null)
@@ -851,8 +851,8 @@ public class SyntaxVisitor extends DefaultVisitor {
 	
 	private void pushQpred(char op, BoundIdentDecl[] quantifiedIdentifiers) {
 		String[] localNames = quantStack.pop();
-		@SuppressWarnings("unused") String[] boundNames = boundStack.pop();
-		@SuppressWarnings("unused") Set<String> usedNames = usedStack.pop();
+		boundStack.pop();
+		usedStack.pop();
 		String pred = syntaxStack.pop();
 		String types = getTypes(localNames, quantifiedIdentifiers);
 		if(pred.charAt(0) != '(')

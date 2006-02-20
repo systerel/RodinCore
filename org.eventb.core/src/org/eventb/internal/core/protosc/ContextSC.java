@@ -47,10 +47,9 @@ import org.rodinp.core.builder.IInterrupt;
 public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	@SuppressWarnings("unused")
-	private IInterrupt interrupt;
+//	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
-	@SuppressWarnings("unused")
 	private IContext context;
 	private ISCContext scContext;
 	
@@ -69,7 +68,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") ISCContext scContext, 
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
-		this.interrupt = interrupt;
+//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.context = context;
 		this.scContext = scContext;

@@ -37,8 +37,7 @@ import org.rodinp.core.builder.IInterrupt;
 
 public class MachinePOG implements IAutomaticTool, IExtractor {
 	
-	@SuppressWarnings("unused")
-	private IInterrupt interrupt;
+//	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
 	private ISCMachine scMachine;
@@ -55,7 +54,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IPOFile poFile, 
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
-		this.interrupt = interrupt;
+//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.scMachine = scMachine;
 		this.poFile = poFile;

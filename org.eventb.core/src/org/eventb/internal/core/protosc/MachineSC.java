@@ -61,11 +61,9 @@ import org.rodinp.core.builder.IInterrupt;
  */
 public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 
-	@SuppressWarnings("unused")
-	private IInterrupt interrupt;
+//	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
-	@SuppressWarnings("unused")
 	private IMachine machine;
 	private ISCMachine scMachine;
 	
@@ -82,7 +80,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") ISCMachine scMachine, 
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
-		this.interrupt = interrupt;
+//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.machine = machine;
 		this.scMachine = scMachine;

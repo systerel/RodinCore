@@ -65,8 +65,7 @@ public class SCMachineCache extends Cache<ISCMachine> {
 		typeEnvironment.addAll(getTypeEnvironment(file.getSCVariables(), monitor));
 	}
 	
-	@SuppressWarnings("unused")
-	private IProgressMonitor monitor;
+//	private IProgressMonitor monitor;
 	
 	private HashMap<String, String> predicateSetMap;
 	
