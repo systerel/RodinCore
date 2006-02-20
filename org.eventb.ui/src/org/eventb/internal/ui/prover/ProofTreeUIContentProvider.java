@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.pm.IProofTreeChangeEvent;
-import org.eventb.core.pm.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeChangedListener;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
-import org.rodinp.core.IRodinElement;
 
 public class ProofTreeUIContentProvider
 	implements	ITreeContentProvider,
@@ -34,21 +33,14 @@ public class ProofTreeUIContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (oldInput != null)
-			page.getEditor().getUserSupport().removeProofTreeChangedListener(this);
-		if (newInput != null)
-			page.getEditor().getUserSupport().addProofTreeChangedListener(this);
-
+		if (oldInput != null && oldInput instanceof IProofTree) {
+			((IProofTree) oldInput).removeChangedListener(this);
+		}
+		if (newInput != null && newInput instanceof IProofTree) {
+			((IProofTree) newInput).addChangedListener(this);
+		}
 		page.setInvisibleRoot(null);
 		page.setRoot(null);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IProofTreeChangedListener#proofTreeChanged(org.eventb.core.pm.IProofTreeChangeEvent)
-	 */
-	public void proofTreeChanged(IProofTreeChangeEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("Tree changed");
 	}
 
 	/* (non-Javadoc)
@@ -79,8 +71,8 @@ public class ProofTreeUIContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof IRodinElement) {
-			return ((IRodinElement) element).getParent();
+		if (element instanceof IProofTreeNode) {
+			return ((IProofTreeNode) element).getParent();
 		}
 		return null;
 	}
@@ -89,13 +81,7 @@ public class ProofTreeUIContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element.equals(page.getInvisibleRoot())) return true;
-		
-		if (element instanceof IProofTreeNode) {
-			return ((IProofTreeNode) element).hasChildren();
-		}
-		
-		return false;
+		return (getChildren(element).length != 0);
 	}
 
 	/* (non-Javadoc)
@@ -130,6 +116,15 @@ public class ProofTreeUIContentProvider
 			else children.add(pt);
 		}
 		return children.toArray();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeChangedListener#proofTreeChanged(org.eventb.core.prover.IProofTreeDelta)
+	 */
+	public void proofTreeChanged(IProofTreeDelta delta) {
+		// TODO Auto-generated method stub
+		System.out.println("Proof Tree Changed");
 	}
 	
 }

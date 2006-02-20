@@ -362,8 +362,8 @@ public class ProofTreeUIPage
 					editor.getUserSupport().selectNode((IProofTreeNode) obj);
 				}
 			}
-			else {
-				editor.getUserSupport().selectNode(null);
+			else { // Do nothing when there is no selection
+//				editor.getUserSupport().selectNode(null);
 			}
 		}
 		
