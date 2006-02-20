@@ -3,15 +3,15 @@ package org.eventb.internal.core.pm;
 import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.prover.IProofTreeNode;
 
-public class ProofTreeDelta implements IGoalDelta {
-	IProofTreeNode pt;
+public class GoalDelta implements IGoalDelta {
+	IProofTreeNode node;
 	
-	public ProofTreeDelta(IProofTreeNode pt) {
-		this.pt = pt;
+	public GoalDelta(IProofTreeNode node) {
+		this.node = node;
 	}
 	
 	public IProofTreeNode getProofTree() {
-		return pt;
+		return node;
 	}
 
 }

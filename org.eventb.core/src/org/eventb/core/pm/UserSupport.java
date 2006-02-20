@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.rules.AllI;
@@ -20,12 +21,12 @@ import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.Tactic;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.core.pm.GoalChangeEvent;
+import org.eventb.internal.core.pm.GoalDelta;
 import org.eventb.internal.core.pm.HypothesisChangeEvent;
 import org.eventb.internal.core.pm.HypothesisDelta;
 import org.eventb.internal.core.pm.POChangeEvent;
 import org.eventb.internal.core.pm.PODelta;
-import org.eventb.internal.core.pm.ProofTreeChangeEvent;
-import org.eventb.internal.core.pm.ProofTreeDelta;
 
 public class UserSupport
 {
@@ -74,8 +75,8 @@ public class UserSupport
 				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 				notifyHypothesisChangedListener(hypEvent);
 				
-				IGoalDelta goalDelta = new ProofTreeDelta(ps.getCurrentNode());
-				IGoalChangeEvent goalEvent = new ProofTreeChangeEvent(goalDelta);
+				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
+				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
 				notifyGoalChangedListener(goalEvent);
 				
 				IPODelta poDelta = new PODelta(ps.getProofTree());
@@ -100,8 +101,8 @@ public class UserSupport
 				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 				notifyHypothesisChangedListener(hypEvent);
 				
-				IGoalDelta goalDelta = new ProofTreeDelta(ps.getCurrentNode());
-				IGoalChangeEvent goalEvent = new ProofTreeChangeEvent(goalDelta);
+				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
+				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
 				notifyGoalChangedListener(goalEvent);
 				
 				IPODelta poDelta = new PODelta(ps.getProofTree());
@@ -172,14 +173,6 @@ public class UserSupport
 		proofTreeChangedListeners.remove(listener);
 	}
 	
-	private void notifyProofTreeChangedListener(IProofTreeChangeEvent e) {
-		for (Iterator<IProofTreeChangedListener> i = proofTreeChangedListeners.iterator(); i.hasNext();) {
-			IProofTreeChangedListener listener = i.next();
-			listener.proofTreeChanged(e);
-		}
-		return;
-	}
-
 	public static List<Tactic> getApplicableToGoal(IProverSequent ps) {
 		List<Tactic> result = new ArrayList<Tactic>();
 		
@@ -327,7 +320,7 @@ public class UserSupport
 		notifyHypothesisChangedListener(e);
 				
 		if (pt == null || (!pt.equals(proofState.getCurrentNode()))) {
-			notifyGoalChangedListener(new ProofTreeChangeEvent(new ProofTreeDelta(pt)));
+			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
 		}
 				
 		proofState.setCurrentNode(pt);
@@ -352,7 +345,7 @@ public class UserSupport
 
 	public void prune(IProofTreeNode pt) {
 		Tactics.prune.apply(pt);
-		notifyGoalChangedListener(new ProofTreeChangeEvent(new ProofTreeDelta(pt)));
+		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
 		// Generate Delta
 	}
 

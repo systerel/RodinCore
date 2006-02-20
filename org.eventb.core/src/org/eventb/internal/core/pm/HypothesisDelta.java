@@ -16,9 +16,17 @@ public class HypothesisDelta implements IHypothesisDelta {
 	
 	public HypothesisDelta(
 			Collection<Hypothesis> addedToSelected,
-			Collection<Hypothesis> removedFromSelected) {
+			Collection<Hypothesis> removedFromSelected,
+			Collection<Hypothesis> addedToCached,
+			Collection<Hypothesis> removedFromCached,
+			Collection<Hypothesis> addedToSearched,
+			Collection<Hypothesis> removedFromSearched) {
 		this.addedToSelected = addedToSelected;
 		this.removedFromSelected = removedFromSelected;
+		this.addedToCached = addedToCached;
+		this.removedFromCached = removedFromCached;
+		this.addedToSearched = addedToSearched;
+		this.removedFromSearched = removedFromSearched;
 		return;
 	}
 	
@@ -36,7 +44,6 @@ public class HypothesisDelta implements IHypothesisDelta {
 			if (type == ADDED) return addedToSearched;
 			if (type == REMOVED) return removedFromSearched;
 			break;
-		
 		}
 		return new ArrayList<Hypothesis>();
 	}
