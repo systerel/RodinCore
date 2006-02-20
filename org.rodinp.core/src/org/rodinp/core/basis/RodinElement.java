@@ -141,6 +141,7 @@ public abstract class RodinElement extends PlatformObject implements
 		
 		RodinElement other = (RodinElement) o;
 		return getElementName().equals(other.getElementName())
+				&& getElementType().equals(other.getElementType())
 				&& this.parent.equals(other.parent);
 	}
 
