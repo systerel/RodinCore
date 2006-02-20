@@ -12,26 +12,28 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private static final IProofTreeNode[] NO_NODE = new IProofTreeNode[0];
 	
 	private ProofTreeNode[] children;
-	private final IProofTreeNode parent;
-	private final IProverSequent root;
+	private ProofTreeNode parent;
+	private final IProverSequent sequent;
 	private final ProofTree tree;
 	private ProofRule rule;
 
 	// Creates a root node of a proof tree
-	public ProofTreeNode(ProofTree tree, IProverSequent sequent){
+	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
+		assert tree != null;
 		this.tree = tree;
 		this.parent = null;
-		this.root = sequent;
+		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
 		this.checkClassInvariant();
 	}
 	
-	public ProofTreeNode(ProofTreeNode parent, IProverSequent sequent){
+	// Creates an internal node of a proof tree
+	private ProofTreeNode(ProofTreeNode parent, IProverSequent sequent) {
 		assert parent != null;
-		this.tree = parent.tree;
+		this.tree = null;
 		this.parent = parent;
-		this.root = sequent;
+		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
 		this.checkClassInvariant();
@@ -39,7 +41,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	
 	// Append the open descendant of this node to the given list.
 	public void appendOpenDescendants(List<IProofTreeNode> list) {
-		if (isOpen()){
+		if (isOpen()) {
 			list.add(this);
 		}
 		else {
@@ -52,11 +54,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#applyRule(ProofRule)
 	 */
-	public boolean applyRule(ProofRule rule){
+	public boolean applyRule(ProofRule rule) {
 		// force resetting to avoid losing child proofs
 		assert (this.children == null);
-		if (! rule.isApplicable(this.root)) return false;
-		IProverSequent[] anticidents = rule.apply(this.root);
+		if (! rule.isApplicable(this.sequent)) return false;
+		IProverSequent[] anticidents = rule.apply(this.sequent);
 		assert (anticidents != null);
 		this.rule = rule;
 		this.children = new ProofTreeNode[anticidents.length];
@@ -66,20 +68,20 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return true;
 	}
 	
-	private void checkClassInvariant(){
-		assert (this.root != null);
+	private void checkClassInvariant() {
+		assert (this.sequent != null);
 		assert ((this.rule == null) & (this.children == null)) |
 				((this.rule != null) & (this.children != null));
-		if (this.rule != null){
-			assert rule.isApplicable(this.root);
-			IProverSequent[] anticidents = rule.apply(this.root);
+		if (this.rule != null) {
+			assert rule.isApplicable(this.sequent);
+			IProverSequent[] anticidents = rule.apply(this.sequent);
 			assert (anticidents != null);
 			assert (this.children.length == anticidents.length);
 			for (int i=0;i<anticidents.length;i++)
 			{
 				// System.out.println(this.children[i].root);
 				// System.out.println(anticidents[i]);
-				assert (Lib.identical (this.children[i].root,anticidents[i]));
+				assert (Lib.identical (this.children[i].sequent,anticidents[i]));
 				this.children[i].checkClassInvariant();
 			}
 		}
@@ -88,7 +90,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getChildren()
 	 */
-	public IProofTreeNode[] getChildren(){
+	public IProofTreeNode[] getChildren() {
 		if (children == null)
 			return NO_NODE;
 		final int length = children.length;
@@ -134,18 +136,30 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return this.parent;
 	}
 	
+	/*
+	 * Returns the proof tree to which this node belongs, or null if it was
+	 * pruned.
+	 */
+	public ProofTree getProofTree() {
+		ProofTreeNode node = this;
+		while (node.parent != null) {
+			node = node.parent;
+		}
+		return node.tree;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getRule()
 	 */
-	public IProofRule getRule(){
+	public IProofRule getRule() {
 		return this.rule;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getSequent()
 	 */
-	public IProverSequent getSequent(){
-		return this.root;
+	public IProverSequent getSequent() {
+		return this.sequent;
 	}
 
 	/* (non-Javadoc)
@@ -173,8 +187,12 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#pruneChildren()
 	 */
-	public void pruneChildren(){
+	public void pruneChildren() {
 		this.rule = null;
+		// Detach all children from this proof tree.
+		for (ProofTreeNode child: this.children) {
+			child.parent = null;
+		}
 		this.children = null;
 		this.checkClassInvariant();
 	}
@@ -187,7 +205,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return buf.toString();
 	}
 	
-	private String rootToString(){
+	private String rootToString() {
 		String ruleStr;
 		if (this.rule == null) { ruleStr = "-"; }
 		else { ruleStr = this.rule.getName(); };
@@ -195,7 +213,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder str = new StringBuilder();
 		toStringHelper(0,false,str);
 		str.append("\n");
