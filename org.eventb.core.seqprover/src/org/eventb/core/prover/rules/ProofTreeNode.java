@@ -16,6 +16,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private final IProverSequent sequent;
 	private final ProofTree tree;
 	private ProofRule rule;
+	
+	// Cache of discharged status
+	private boolean discharged;
 
 	// Creates a root node of a proof tree
 	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
@@ -25,6 +28,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
+		this.discharged = false;
 		this.checkClassInvariant();
 	}
 	
@@ -36,11 +40,12 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
+		this.discharged = false;
 		this.checkClassInvariant();
 	}
 	
 	// Append the open descendant of this node to the given list.
-	public void appendOpenDescendants(List<IProofTreeNode> list) {
+	private void appendOpenDescendants(List<IProofTreeNode> list) {
 		if (isOpen()) {
 			list.add(this);
 		}
@@ -61,9 +66,13 @@ public final class ProofTreeNode implements IProofTreeNode {
 		IProverSequent[] anticidents = rule.apply(this.sequent);
 		assert (anticidents != null);
 		this.rule = rule;
-		this.children = new ProofTreeNode[anticidents.length];
-		for (int i=0;i<anticidents.length;i++)
+		final int length = anticidents.length;
+		this.children = new ProofTreeNode[length];
+		for (int i = 0; i < length; i++) {
 			this.children[i] = new ProofTreeNode(this, anticidents[i]);
+		}
+		if (length == 0)
+			this.setDischarged();
 		this.checkClassInvariant();
 		return true;
 	}
@@ -85,6 +94,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 				this.children[i].checkClassInvariant();
 			}
 		}
+		assert this.discharged == (getFirstOpenDescendant() == null);
 	}
 	
 	/* (non-Javadoc)
@@ -116,10 +126,12 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * @see org.eventb.core.prover.IProofTreeNode#getOpenDescendants()
 	 */
 	public IProofTreeNode[] getOpenDescendants() {
-		// TODO add fast return if isDischarged is true after caching it
+		if (isDischarged())
+			return NO_NODE;
 		if (isOpen())
 			return new IProofTreeNode[] { this };
 		
+		// Pending node
 		List<IProofTreeNode> list = new ArrayList<IProofTreeNode>();
 		appendOpenDescendants(list);
 		final int length = list.size();
@@ -172,8 +184,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * @see org.eventb.core.prover.IProofTreeNode#isDischarged()
 	 */
 	public final boolean isDischarged() {
-		// TODO cache "discharged" information
-		return getFirstOpenDescendant() == null;
+		return discharged;
 	}
 
 	/* (non-Javadoc)
@@ -193,9 +204,20 @@ public final class ProofTreeNode implements IProofTreeNode {
 			child.parent = null;
 		}
 		this.children = null;
+		this.reopen();
 		this.checkClassInvariant();
 	}
 	
+	// Reopen this node, setting the status of all ancestors to non-discharged
+	private void reopen() {
+		ProofTreeNode node = this;
+		while (node != null && node.discharged) {
+			node.discharged = false;
+			// TODO fire delta here.
+			node = node.parent;
+		}
+	}
+
 	private String repeat(String src, int repeat) {
 		StringBuilder buf=new StringBuilder();
 		for (int i=0;i<repeat;i++) {
@@ -245,5 +267,16 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 		return;
 	}	
-	
+
+	// This node has just been discharged. Update its status, as well as its
+	// ancestors'.
+	private void setDischarged() {
+		this.discharged = true;
+		ProofTreeNode node = this.parent;
+		while (node != null && node.getFirstOpenDescendant() == null) {
+			node.discharged = true;
+			node = node.parent;
+		}
+	}
+
 }
