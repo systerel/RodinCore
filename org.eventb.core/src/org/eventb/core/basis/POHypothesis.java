@@ -15,6 +15,7 @@ import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPRFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
@@ -47,7 +48,15 @@ public class POHypothesis extends UnnamedInternalElement implements IPOHypothesi
 	}
 
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException {
-		IPOPredicateSet gobalHypothesis = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+		
+		IPOPredicateSet gobalHypothesis = null;
+		
+		if (getOpenable() instanceof IPOFile) {
+			gobalHypothesis = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+		}
+		if (getOpenable() instanceof IPRFile) {
+			gobalHypothesis = ((IPRFile) getOpenable()).getPredicateSet(getContents());
+		}
 		
 		assert gobalHypothesis != null;
 		
