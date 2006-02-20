@@ -6,61 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package org.eventb.core.prover.classicBtests;
-import java.math.BigInteger;
-
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.BooleanType;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.prover.externalReasoners.classicB.SyntaxVisitor;
 
 public class TestOldSyntax extends TestCase {
 	
-	private static FormulaFactory factory = FormulaFactory.getDefault();
-	
-	public static String[] mList(String... names) {
-		return names;
-	}
-
-	public static Type[] mList(Type... types) {
-		return types;
-	}
-
-	private static IntegerType INTEGER = factory.makeIntegerType();
-	private static BooleanType BOOL = factory.makeBooleanType();
-
-	private static Type POW(Type base) {
-		return factory.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return factory.makeProductType(left, right);
-	}
-	
-	public static ITypeEnvironment mTypeEnvironment(String[] names, Type[] types) {
-		assert names.length == types.length;
-		ITypeEnvironment result = factory.makeTypeEnvironment();
-		for (int i = 0; i < names.length; i++) {
-			result.addName(names[i], types[i]);
-		}
-		return result;
-	}
-
-	private ITypeEnvironment defaultTEnv = mTypeEnvironment(
-			mList(
+	private ITypeEnvironment defaultTEnv = SyntaxUtil.mTypeEnvironment(
+			SyntaxUtil.mList(
 					"x",
 					"y",
 					"z",
@@ -70,15 +28,15 @@ public class TestOldSyntax extends TestCase {
 					"g",
 					"h"
 			),
-			mList(
-					INTEGER,
-					INTEGER,
-					INTEGER,
-					POW(INTEGER),
-					POW(INTEGER),
-					POW(CPROD(INTEGER,INTEGER)),
-					POW(CPROD(INTEGER,INTEGER)),
-					POW(CPROD(INTEGER,INTEGER))
+			SyntaxUtil.mList(
+					SyntaxUtil.INTEGER,
+					SyntaxUtil.INTEGER,
+					SyntaxUtil.INTEGER,
+					SyntaxUtil.POW(SyntaxUtil.INTEGER),
+					SyntaxUtil.POW(SyntaxUtil.INTEGER),
+					SyntaxUtil.POW(SyntaxUtil.CPROD(SyntaxUtil.INTEGER,SyntaxUtil.INTEGER)),
+					SyntaxUtil.POW(SyntaxUtil.CPROD(SyntaxUtil.INTEGER,SyntaxUtil.INTEGER)),
+					SyntaxUtil.POW(SyntaxUtil.CPROD(SyntaxUtil.INTEGER,SyntaxUtil.INTEGER))
 			)
 	);
 	
@@ -94,7 +52,7 @@ public class TestOldSyntax extends TestCase {
 			this.result = result;
 		}
 		public void test() {
-			IParseResult presult = factory.parseExpression(input);
+			IParseResult presult = SyntaxUtil.factory.parseExpression(input);
 			assertTrue(input + " parsed", presult.isSuccess());
 			ITypeCheckResult tresult = presult.getParsedExpression().typeCheck(defaultTEnv);
 			assertTrue(input + " type checked", tresult.isSuccess());
@@ -112,7 +70,7 @@ public class TestOldSyntax extends TestCase {
 			this.result = result;
 		}
 		public void test() {
-			IParseResult presult = factory.parsePredicate(input);
+			IParseResult presult = SyntaxUtil.factory.parsePredicate(input);
 			assertTrue(input + " parsed", presult.isSuccess());
 			ITypeCheckResult tresult = presult.getParsedPredicate().typeCheck(defaultTEnv);
 			assertTrue(input + " type checked", tresult.isSuccess());
@@ -128,7 +86,7 @@ public class TestOldSyntax extends TestCase {
 			this.input = input;
 		}
 		public void test() {
-			IParseResult presult = factory.parsePredicate(input);
+			IParseResult presult = SyntaxUtil.factory.parsePredicate(input);
 			assertTrue(input + " parsed", presult.isSuccess());
 			ITypeCheckResult tresult = presult.getParsedPredicate().typeCheck(defaultTEnv);
 			assertTrue(input + " type checked", tresult.isSuccess());
@@ -142,90 +100,6 @@ public class TestOldSyntax extends TestCase {
 			assertTrue("should fail", false);
 		}
 	}
-
-	private static FreeIdentifier[] mi(FreeIdentifier...freeIdentifiers) {
-		return freeIdentifiers;
-	}
-	
-	private static Integer[] mj(Integer...integers) {
-		return integers;
-	}
-	
-	private static Expression[] me(Expression...expressions) {
-		return expressions;
-	}
-	
-	private static Predicate[] mp(Predicate...predicates) {
-		return predicates;
-	}
-	
-	private static Predicate eq(Expression l, Expression r) {
-		return factory.makeRelationalPredicate(Formula.EQUAL, l, r, null);
-	}
-	
-	private static Predicate lt(Expression l, Expression r) {
-		return factory.makeRelationalPredicate(Formula.LT, l, r, null);
-	}
-	
-	private static QuantifiedPredicate forall(BoundIdentDecl[] bd, Predicate pr) {
-		return factory.makeQuantifiedPredicate(Formula.FORALL, bd, pr, null);
-	}
-	
-	private static QuantifiedPredicate exists(BoundIdentDecl[] bd, Predicate pr) {
-		return factory.makeQuantifiedPredicate(Formula.EXISTS, bd, pr, null);
-	}
-	
-	private static BoundIdentDecl[] BD(String...strings) {
-		BoundIdentDecl[] bd = new BoundIdentDecl[strings.length];
-		for(int i=0; i<strings.length; i++)
-			bd[i] = factory.makeBoundIdentDecl(strings[i], null);
-		return bd;
-	}
-	
-	private static BoundIdentifier bd(int i) {
-		return factory.makeBoundIdentifier(i, null);
-	}
-	
-	private static Expression apply(Expression l, Expression r) {
-		return factory.makeBinaryExpression(Formula.FUNIMAGE, l, r, null);
-	}
-	
-	private static Expression num(int i) {
-		return factory.makeIntegerLiteral(BigInteger.valueOf(i), null);
-	}
-	
-	private static Expression plus(Expression...expressions) {
-		return factory.makeAssociativeExpression(Formula.PLUS, expressions, null);
-	}
-	
-	private static Expression minus(Expression l, Expression r) {
-		return factory.makeBinaryExpression(Formula.MINUS, l, r, null);
-	}
-	
-	private static Predicate in(Expression l, Expression r) {
-		return factory.makeRelationalPredicate(Formula.IN, l, r, null);
-	}
-	
-	private static Expression fun(BoundIdentDecl[] d, Predicate p, Expression e) {
-		return factory.makeQuantifiedExpression(Formula.CSET, d, p, e, null, QuantifiedExpression.Form.Lambda);
-	}
-	
-	private static Expression set(BoundIdentDecl[] d, Predicate p, Expression e) {
-		return factory.makeQuantifiedExpression(Formula.CSET, d, p, e, null, QuantifiedExpression.Form.Explicit);
-	}
-	
-	private static Predicate limp(Predicate l, Predicate r) {
-		return factory.makeBinaryPredicate(Formula.LIMP, l, r, null);
-	}
-	
-	private static Expression maplet(Expression l, Expression r) {
-		return factory.makeBinaryExpression(Formula.MAPSTO, l, r,null);
-	}
-	
-	private static FreeIdentifier id_x = factory.makeFreeIdentifier("x", null);
-	private static FreeIdentifier id_y = factory.makeFreeIdentifier("y", null);
-	private static FreeIdentifier id_A = factory.makeFreeIdentifier("A", null);
-	private static FreeIdentifier id_f = factory.makeFreeIdentifier("f", null);
 
 	class TestSPP extends TestItem {
 		public final Predicate input;
@@ -335,11 +209,11 @@ public class TestOldSyntax extends TestCase {
 			new TestOKE("(⋂ x,y· x∈ℕ ∧ y∈ℕ ∣ {x,y})", "INTER (x,y).((x : INTEGER & y : INTEGER) & ((x : NATURAL) & (y : NATURAL)) | {x,y})"),
 			new TestOKE("inter({A,B})", "inter({A,B})"),
 			new TestOKE("union({A,B})", "union({A,B})"),
-			new TestSPP(forall(BD("m", "n"), exists(BD("n"), eq(plus(bd(0),bd(1)),bd(2)))), 
+			new TestSPP(SyntaxUtil.forall(SyntaxUtil.BD("m", "n"), SyntaxUtil.exists(SyntaxUtil.BD("n"), SyntaxUtil.eq(SyntaxUtil.plus(SyntaxUtil.bd(0),SyntaxUtil.bd(1)),SyntaxUtil.bd(2)))), 
 					"! (m,n).((m : INTEGER & n : INTEGER) => (# n0.((n0 : INTEGER) & ((n0 + n) = m))))"),
 //			new TestSPE(set(BD("m", "x"),exists(BD("m"),lt(bd(0),bd(2))),plus(bd(0),bd(1),id_x)), 
 //					"{yy | (yy : INTEGER) &  # (m,x0).((m : INTEGER & x0 : INTEGER) & # m0.((m0 : INTEGER) & (m0 < m)) & (yy = (x0 + m + x)))}"),
-			new TestSPE(set(BD("m", "x"),exists(BD("m"),lt(bd(0),bd(2))),plus(bd(0),bd(1),id_x)), 
+			new TestSPE(SyntaxUtil.set(SyntaxUtil.BD("m", "x"),SyntaxUtil.exists(SyntaxUtil.BD("m"),SyntaxUtil.lt(SyntaxUtil.bd(0),SyntaxUtil.bd(2))),SyntaxUtil.plus(SyntaxUtil.bd(0),SyntaxUtil.bd(1),SyntaxUtil.id_x)), 
 					"SET(yy).((yy : INTEGER) &  # (m,x0).((m : INTEGER & x0 : INTEGER) & # m0.((m0 : INTEGER) & (m0 < m)) & (yy = (x0 + m + x))))")
 	};
 	
