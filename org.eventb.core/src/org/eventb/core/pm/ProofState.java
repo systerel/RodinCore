@@ -12,17 +12,13 @@ public class ProofState {
 	private IProofTree pt;
 	private IProofTreeNode current;
 	private Collection<Hypothesis> cached;
-	private Collection<Hypothesis> displayCached;
 	private Collection<Hypothesis> searched;
-	private Collection<Hypothesis> displaySearched;
 	
 	public ProofState(IProofTree pt) {
 		this.pt = pt;
 		current = null;
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
-		displayCached = new HashSet<Hypothesis>();
-		displaySearched = new HashSet<Hypothesis>();
 	}
 	
 	public boolean isDischarged() {
@@ -52,21 +48,10 @@ public class ProofState {
 
 	public Collection<Hypothesis> getCached() {return cached;}
 
-	public Collection<Hypothesis> getDisplayCached() {return displayCached;}
-
-	public void setDisplayCached(Collection<Hypothesis> newDisplayCached) {
-		displayCached = newDisplayCached;
-	}
-	
 	public void addAllToSearched(Collection<Hypothesis> hyps) {searched.addAll(hyps);}
 
 	public void removeAllFromSeached(Collection<Hypothesis> hyps) {searched.removeAll(hyps);}
 
 	public Collection<Hypothesis> getSearched() {return searched;}
 
-	public Collection<Hypothesis> getDisplaySearched() {return displaySearched;}
-
-	public void setDisplaySearched(Collection<Hypothesis> newDisplaySearched) {
-		displayCached = newDisplaySearched;
-	}
 }
