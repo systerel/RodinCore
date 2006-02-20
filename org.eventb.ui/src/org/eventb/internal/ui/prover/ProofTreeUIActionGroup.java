@@ -60,7 +60,7 @@ public class ProofTreeUIActionGroup
 			public void run() {
 				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().nextPO();
 				if (ps != null) {
-					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
 					IProofTreeNode pt = ps.getNextPendingSubgoal();
 					if (pt != null) 
@@ -76,7 +76,7 @@ public class ProofTreeUIActionGroup
 			public void run() {
 				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getEditor().getUserSupport().prevPO();
 				if (ps != null) {
-					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps);
+					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
 					IProofTreeNode pt = ps.getNextPendingSubgoal();
 					if (pt != null) 

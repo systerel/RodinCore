@@ -11,91 +11,94 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.pm.IHypothesisDelta;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 
 public class CacheHypothesesSection
-	extends SectionPart
+	extends HypothesesSection
 {
-	private static final String SECTION_TITLE = "Cache Hypotheses";
-	private static final String SECTION_DESCRIPTION = "List of hypotheses in the cache";	
-	
-	//Leaf [] contexts;
-	
-    private FormPage page;
+	private static final String SECTION_TITLE = "Cached Hypotheses";
+	private static final String SECTION_DESCRIPTION = "The set of cached hypotheses";	
+    
+	private class CachedHyperlinkAdapter extends HyperlinkAdapter {
 
-    private class IContextButtonListener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent e) {
-			Button obj = (Button) (e.getSource());
-			if (obj.getSelection()) {
+		@Override
+		public void linkActivated(HyperlinkEvent e) {
+			if (e.getLabel().equals("sl")) {
+				Set<Hypothesis> selected = new HashSet<Hypothesis>();
+				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
+					HypothesisRow hr = it.next();
+					if (hr.isSelected()) {
+						selected.add(hr.getHypothesis());
+					}
+				}
+				if (selected.isEmpty()) return;
+				
+				ProverUI editor = (ProverUI) page.getEditor();
+				editor.getUserSupport().manageHypotheses(ActionType.SELECT, selected);
+				
+				TreeViewer viewer = editor.getContentOutline().getViewer();
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof IProofTreeNode) {
+					IProofTreeNode proofTree = (IProofTreeNode) obj;
+					editor.getContentOutline().refresh(proofTree);
+					// Expand the node
+					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
+					ProofState ps = editor.getUserSupport().getCurrentPO();
+					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
+					if (pt != null)
+						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+				}
 			}
-		}
-	}
-
-    // Contructor
-	public CacheHypothesesSection(FormPage page, Composite parent, int style) {
-		super(parent, page.getManagedForm().getToolkit(), style);
-		this.page = page;
-		FormToolkit toolkit = page.getManagedForm().getToolkit();
-		createClient(getSection(), toolkit);
-	}
-
-	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText(SECTION_TITLE);
-        section.setDescription(SECTION_DESCRIPTION);
-        ScrolledForm scrolledForm = toolkit.createScrolledForm(section);
-        
-		Composite comp = scrolledForm.getBody();
-        GridLayout layout = new GridLayout();
-        layout.numColumns  = 6;
-        layout.verticalSpacing = 5;
-		comp.setLayout(layout);
-		section.setClient(scrolledForm);
-        toolkit.paintBordersFor(scrolledForm);
+			
+			else if (e.getLabel().equals("ds")) {
+				Set<Hypothesis> deselected = new HashSet<Hypothesis>();
+				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
+					HypothesisRow hr = it.next();
+					if (hr.isSelected()) {
+						deselected.add(hr.getHypothesis());
+					}
+					if (deselected.isEmpty()) return;
+					ProverUI editor = (ProverUI) page.getEditor();
+					editor.getUserSupport().removeHypotheses(IHypothesisDelta.CACHED, deselected);
+				}
+			}
 		
-		for (int i = 0; i < 5; i++) {
-			GridData gd;
-			toolkit.createButton(comp, "", SWT.CHECK);
-			Button b1 = toolkit.createButton(comp, "sl", SWT.PUSH);
-			gd = new GridData();
-			gd.widthHint = 25;
-			b1.setLayoutData(gd);
-			b1 = toolkit.createButton(comp, "eh", SWT.PUSH);
-			b1.setLayoutData(gd);
-			b1 = toolkit.createButton(comp, "he", SWT.PUSH);
-			b1.setLayoutData(gd);
-			
-			Text textInput = toolkit.createText(comp, "", SWT.SINGLE);
-			gd = new GridData();
-			gd.widthHint = 20;
-			textInput.setLayoutData(gd);
-			
-			Text hyp = toolkit.createText(comp, "x ∈ S", SWT.READ_ONLY);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			hyp.setLayoutData(gd);
 		}
+    	
+    }
 
-	}
-	
-	//private FormPage getPage() {return page;}
+	// Contructor
+	public CacheHypothesesSection(ProofsPage page, Composite parent, int style) {
+		super(page, parent, style, SECTION_TITLE, SECTION_DESCRIPTION);
+	}	
+
 	@Override
 	protected void expansionStateChanging(boolean expanding) {
-		// TODO Estimate the heightHint by the number of hypothesis, etc.
 		if (expanding) {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 150;
-			gd.minimumHeight = 100;
+			gd.minimumHeight = 75;
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);
 		}
@@ -105,6 +108,21 @@ public class CacheHypothesesSection
 			this.getSection().setLayoutData(gd);
 		}
 		super.expansionStateChanging(expanding);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.prover.HypothesesSection#createTopFormText()
+	 */
+	@Override
+	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
+        GridData gd;
+		FormText formText = toolkit.createFormText(comp, true);
+		gd = new GridData();
+		gd.widthHint = 50;
+		gd.horizontalAlignment = SWT.CENTER;
+		formText.setLayoutData(gd);
+		formText.addHyperlinkListener(new CachedHyperlinkAdapter());
+		formText.setText("<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>", true, false);		
 	}
 
 }

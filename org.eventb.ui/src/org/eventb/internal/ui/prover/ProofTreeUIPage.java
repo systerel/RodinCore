@@ -40,7 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
-import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -73,7 +73,8 @@ public class ProofTreeUIPage
 
 	private TreeViewer viewer;
 	// The invisible root of the tree.
-	private ProofState invisibleRoot = null;
+	
+	private IProofTree invisibleRoot = null;
 	private IProofTreeNode root = null;
 	// TODO Change to Rule class?
 	private Object [] filters = {"hyp", "allI"}; // Default filters 
@@ -365,11 +366,12 @@ public class ProofTreeUIPage
 				editor.getUserSupport().selectNode(null);
 			}
 		}
+		
 	}
 
-	public void setInvisibleRoot(ProofState ps) {this.invisibleRoot = ps;}
+	public void setInvisibleRoot(IProofTree pt) {this.invisibleRoot = pt;}
 	
-	public ProofState getInvisibleRoot() {return invisibleRoot;}
+	public IProofTree getInvisibleRoot() {return invisibleRoot;}
 	
 	public void setRoot(IProofTreeNode pt) {this.root = pt;}
 	

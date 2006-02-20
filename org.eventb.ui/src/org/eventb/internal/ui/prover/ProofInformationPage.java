@@ -11,7 +11,6 @@
 
 package org.eventb.internal.ui.prover;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.pm.IProofTreeChangeEvent;
 import org.eventb.core.pm.IProofTreeChangedListener;
-import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.rodinp.core.IRodinElement;
 
@@ -55,11 +55,11 @@ public class ProofTreeUIContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		ProofState invisibleRoot = page.getInvisibleRoot();
+		IProofTree invisibleRoot = page.getInvisibleRoot();
 		IProofTreeNode root = page.getRoot();
 		if (parentElement.equals(invisibleRoot)) {
 			if (root == null) {
-				root = invisibleRoot.getProofTree();
+				root = invisibleRoot.getRoot();
 				page.setRoot(root);
 			}
 			Object [] result = {root};
@@ -102,8 +102,8 @@ public class ProofTreeUIContentProvider
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof ProofState) {
-			if (page.getInvisibleRoot() == null) page.setInvisibleRoot((ProofState) inputElement);
+		if (inputElement instanceof IProofTree) {
+			if (page.getInvisibleRoot() == null) page.setInvisibleRoot((IProofTree) inputElement);
 			return getChildren(page.getInvisibleRoot());
 		}
 		return getChildren(inputElement);

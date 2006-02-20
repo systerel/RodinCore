@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
@@ -38,9 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.IPageSite;
@@ -152,7 +149,7 @@ public class ProofControlPage
 				if (editor != null) {
 					ProofState ps = editor.getUserSupport().nextPO();
 					if (ps != null) {
-						editor.getContentOutline().setInput(ps);
+						editor.getContentOutline().setInput(ps.getProofTree());
 						editor.getContentOutline().getViewer().expandAll();
 						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
@@ -167,7 +164,7 @@ public class ProofControlPage
 				if (editor != null) {
 					ProofState ps = editor.getUserSupport().prevPO();
 					if (ps != null) {
-						editor.getContentOutline().setInput(ps);
+						editor.getContentOutline().setInput(ps.getProofTree());
 						editor.getContentOutline().getViewer().expandAll();
 						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
@@ -317,17 +314,17 @@ public class ProofControlPage
 		//getSite().registerContextMenu(menuMgr, viewer);
 	}
 
-	private void contributeToActionBars() {
+//	private void contributeToActionBars() {
 		//IActionBars bars = getViewSite().getActionBars();
 		//fillLocalPullDown(bars.getMenuManager());
 		//fillLocalToolBar(bars.getToolBarManager());
-	}
+//	}
 
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
-	}
+//	private void fillLocalPullDown(IMenuManager manager) {
+//		manager.add(action1);
+//		manager.add(new Separator());
+//		manager.add(action2);
+//	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(action1);
@@ -336,53 +333,54 @@ public class ProofControlPage
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-	}
+//	private void fillLocalToolBar(IToolBarManager manager) {
+//		manager.add(action1);
+//		manager.add(action2);
+//	}
 
-	private void makeActions() {
-		action1 = new Action() {
-			public void run() {
-				showMessage("Action 1 executed");
-			}
-		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection)selection).getFirstElement();
-//				showMessage("Double-click detected on "+obj.toString());
-			}
-		};
-	}
+//	private void makeActions() {
+//		action1 = new Action() {
+//			public void run() {
+//				showMessage("Action 1 executed");
+//			}
+//		};
+//		action1.setText("Action 1");
+//		action1.setToolTipText("Action 1 tooltip");
+//		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+//			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+//		
+//		action2 = new Action() {
+//			public void run() {
+//				showMessage("Action 2 executed");
+//			}
+//		};
+//		action2.setText("Action 2");
+//		action2.setToolTipText("Action 2 tooltip");
+//		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+//		doubleClickAction = new Action() {
+//			public void run() {
+////				ISelection selection = viewer.getSelection();
+////				Object obj = ((IStructuredSelection)selection).getFirstElement();
+////				showMessage("Double-click detected on "+obj.toString());
+//			}
+//		};
+//	}
 
-	private void hookDoubleClickAction() {
+//	private void hookDoubleClickAction() {
 //		viewer.addDoubleClickListener(new IDoubleClickListener() {
 //			public void doubleClick(DoubleClickEvent event) {
 //				doubleClickAction.run();
 //			}
 //		});
-	}
-	private void showMessage(String message) {
+//	}
+	
+//	private void showMessage(String message) {
 //		MessageDialog.openInformation(
 //			viewer.getControl().getShell(),
 //			"Proof Control",
 //			message);
-	}
+//	}
 
 	/**
 	 * Passing the focus request to the viewer's control.

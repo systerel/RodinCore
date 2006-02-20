@@ -26,7 +26,6 @@ import org.eventb.core.pm.IHypothesisChangeEvent;
 import org.eventb.core.pm.IHypothesisChangedListener;
 import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
 
 public class ProofsPage
 	extends FormPage 
@@ -38,8 +37,9 @@ public class ProofsPage
 	public static final String PAGE_TAB_TITLE = "Proof State";
 	
 	private GoalSection goal;
-	private SelectedHypothesesSection selected;
-	private IProverSequent ps;
+	private HypothesesSection selected;
+	private HypothesesSection cache;
+	private HypothesesSection search;
 	
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
@@ -61,10 +61,10 @@ public class ProofsPage
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		body.setLayoutData(gd);
 		
-		SearchHypothesesSection search = new SearchHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.COMPACT);
+		search = new SearchHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.COMPACT);
 		managedForm.addPart(search);
 		
-		CacheHypothesesSection cache = new CacheHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		cache = new CacheHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
 		managedForm.addPart(cache);
 
 		selected = new SelectedHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
@@ -97,17 +97,26 @@ public class ProofsPage
 		search.getSection().setLayoutData(gd);
 	}
 
-	
-	protected IProverSequent getProverSequent() {return ps;}
-
 	public void hypothesisChanged(IHypothesisChangeEvent e) {
 		IHypothesisDelta delta = e.getDelta();
 		
 		Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
-		
 		Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
-		
+//		System.out.println("Update selected");
 		selected.update(addedToSelected, removedFromSelected);
+//		System.out.println("***************");
+		
+		Collection<Hypothesis> addedToCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.ADDED);
+		Collection<Hypothesis> removedFromCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.REMOVED);
+//		System.out.println("Update cached");
+		cache.update(addedToCached, removedFromCached);
+//		System.out.println("*************");
+		
+		Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
+		Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
+//		System.out.println("Update cached");
+		search.update(addedToSearched, removedFromSearched);
+//		System.out.println("*************");	
 	}
 
 }

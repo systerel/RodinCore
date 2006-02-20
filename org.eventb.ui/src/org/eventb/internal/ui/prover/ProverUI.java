@@ -98,7 +98,7 @@ public class ProverUI
 			if (fProofTreeUI == null) {
 				fProofTreeUI = new ProofTreeUIPage(this);
 				if (getEditorInput() != null)
-					fProofTreeUI.setInput(userSupport.getCurrentPO());
+					fProofTreeUI.setInput(userSupport.getCurrentPO().getProofTree());
 			}
 			return fProofTreeUI;
 		}
