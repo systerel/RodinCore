@@ -32,6 +32,8 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
+import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.Tactics;
 
 public class SearchHypothesesSection
 	extends HypothesesSection
@@ -54,20 +56,22 @@ public class SearchHypothesesSection
 				if (selected.isEmpty()) return;
 				
 				ProverUI editor = (ProverUI) page.getEditor();
-				editor.getUserSupport().manageHypotheses(ActionType.SELECT, selected);
+				Tactic t = Tactics.mngHyp(ActionType.SELECT, selected);
+				editor.getUserSupport().applyTacticToHypotheses(t, selected);
 				
-				TreeViewer viewer = editor.getContentOutline().getViewer();
+				
+				TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					editor.getContentOutline().refresh(proofTree);
+					editor.getProofTreeUI().refresh(proofTree);
 					// Expand the node
 					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 					ProofState ps = editor.getUserSupport().getCurrentPO();
 					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null)
-						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+						editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 				}
 			}
 			

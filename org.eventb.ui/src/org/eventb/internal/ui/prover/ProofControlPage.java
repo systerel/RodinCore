@@ -103,7 +103,7 @@ public class ProofControlPage
 			
 			if (label.equals("⊤")) {
 				if (editor != null) {
-					TreeViewer viewer = editor.getContentOutline().getViewer();
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 
@@ -111,7 +111,7 @@ public class ProofControlPage
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (!proofTree.isDischarged()) {
 							Tactics.trivial.apply(proofTree);
-							editor.getContentOutline().refresh(proofTree);
+							editor.getProofTreeUI().refresh(proofTree);
 							// Expand the node
 							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 							//viewer.setExpandedState(proofTree, true);
@@ -129,7 +129,7 @@ public class ProofControlPage
 
 			if (label.equals("pn")) {
 				if (editor != null) {
-					TreeViewer viewer = editor.getContentOutline().getViewer();
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
@@ -149,11 +149,11 @@ public class ProofControlPage
 				if (editor != null) {
 					ProofState ps = editor.getUserSupport().nextPO();
 					if (ps != null) {
-						editor.getContentOutline().setInput(ps.getProofTree());
-						editor.getContentOutline().getViewer().expandAll();
+						editor.getProofTreeUI().setInput(ps.getProofTree());
+						editor.getProofTreeUI().getViewer().expandAll();
 						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
-							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 
 					}
 				}
@@ -164,21 +164,21 @@ public class ProofControlPage
 				if (editor != null) {
 					ProofState ps = editor.getUserSupport().prevPO();
 					if (ps != null) {
-						editor.getContentOutline().setInput(ps.getProofTree());
-						editor.getContentOutline().getViewer().expandAll();
+						editor.getProofTreeUI().setInput(ps.getProofTree());
+						editor.getProofTreeUI().getViewer().expandAll();
 						IProofTreeNode pt = ps.getNextPendingSubgoal();
 						if (pt != null) 
-							editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 					}
 				}
 				return;
 			}
 			
 			if (label.equals("dc")) {
-				System.out.println("Do CASE " + textInput.getText());
+//				System.out.println("Do CASE " + textInput.getText());
 				
 				if (editor != null) {
-					TreeViewer viewer = editor.getContentOutline().getViewer();
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
@@ -191,7 +191,7 @@ public class ProofControlPage
 							ProofState ps = editor.getUserSupport().getCurrentPO();
 							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
-								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 						}
 					}
 				}
@@ -202,7 +202,7 @@ public class ProofControlPage
 				System.out.println("Do Normalisation " + textInput.getText());
 				
 				if (editor != null) {
-					TreeViewer viewer = editor.getContentOutline().getViewer();
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
 					Object obj = ((IStructuredSelection) selection).getFirstElement();
 					
@@ -210,14 +210,14 @@ public class ProofControlPage
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (proofTree.isOpen()) {
 							Tactics.norm().apply(proofTree);
-							editor.getContentOutline().refresh(proofTree);
+							editor.getProofTreeUI().refresh(proofTree);
 							
 							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 							//viewer.setExpandedState(proofTree, true);
 							ProofState ps = editor.getUserSupport().getCurrentPO();
 							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
-								editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 						}
 					}
 				}

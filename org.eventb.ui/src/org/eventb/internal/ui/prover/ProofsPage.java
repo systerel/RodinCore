@@ -114,7 +114,7 @@ public class ProofsPage
 		
 		Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
 		Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
-//		System.out.println("Update cached");
+//		System.out.println("Update searched");
 		search.update(addedToSearched, removedFromSearched);
 //		System.out.println("*************");	
 	}

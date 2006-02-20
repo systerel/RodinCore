@@ -29,7 +29,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.Tactic;
@@ -56,17 +55,19 @@ public class SelectedHypothesesSection
 			if (deselected.isEmpty()) return;
 			
 	    	ProverUI editor = (ProverUI) page.getEditor();
-	    	editor.getUserSupport().manageHypotheses(ActionType.DESELECT, deselected);
-			TreeViewer viewer = editor.getContentOutline().getViewer();
+	    	Tactic t = Tactics.mngHyp(ActionType.DESELECT, deselected);
+			editor.getUserSupport().applyTacticToHypotheses(t, deselected);
+			
+			TreeViewer viewer = editor.getProofTreeUI().getViewer();
 			
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				if (!proofTree.isDischarged()) {
-					Tactic t = Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT, deselected);
-					t.apply(proofTree);
-					editor.getContentOutline().refresh(proofTree);
+//					Tactic t = Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT, deselected);
+//					t.apply(proofTree);
+					editor.getProofTreeUI().refresh(proofTree);
 					// Expand the node
 					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 					//viewer.setExpandedState(proofTree, true);
@@ -75,7 +76,7 @@ public class SelectedHypothesesSection
 					ProofState ps = editor.getUserSupport().getCurrentPO();
 					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null) 
-						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+						editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 				}
 			}
 		}

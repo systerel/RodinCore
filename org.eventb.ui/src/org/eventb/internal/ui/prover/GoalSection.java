@@ -58,7 +58,6 @@ public class GoalSection
     private ScrolledForm scrolledForm;
     
     private class GoalTacticHyperlinkAdapter extends HyperlinkAdapter {
-
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			if (e.getHref().equals("∧")) {
@@ -92,7 +91,7 @@ public class GoalSection
     private void apply(Tactic t) {
     	ProverUI editor = (ProverUI) page.getEditor();
 		if (editor != null) {
-			TreeViewer viewer = editor.getContentOutline().getViewer();
+			TreeViewer viewer = editor.getProofTreeUI().getViewer();
 		
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -101,7 +100,7 @@ public class GoalSection
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				if (!proofTree.isDischarged()) {
 					t.apply(proofTree);
-					editor.getContentOutline().refresh(proofTree);
+					editor.getProofTreeUI().refresh(proofTree);
 					// Expand the node
 					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
 					//viewer.setExpandedState(proofTree, true);
@@ -110,7 +109,7 @@ public class GoalSection
 					ProofState ps = editor.getUserSupport().getCurrentPO();
 					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null) 
-						editor.getContentOutline().getViewer().setSelection(new StructuredSelection(pt));
+						editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
 					else {
 						Dialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
 						dialog.open();
@@ -159,7 +158,6 @@ public class GoalSection
 
 	}
 
-	
 	@Override
 	protected void expansionStateChanging(boolean expanding) {
 		if (expanding) {
@@ -180,12 +178,12 @@ public class GoalSection
 	public void setGoal(IProofTreeNode pt) {
 		if (pt == null) {
 			clearFormText();
-			text.setText("No goal");
+			text.setText("No selected goal");
 			return;
 		}
 		if (!pt.isOpen()) {
 			clearFormText();
-			text.setText(pt.getSequent().goal().toString());
+			text.setText("DISCHARGED");
 		}
 		else {
 			text.setText(pt.getSequent().goal().toString());
@@ -232,6 +230,5 @@ public class GoalSection
 		IGoalDelta delta = e.getDelta();
 		setGoal(delta.getProofTree());
 	}
-	
-	
+
 }

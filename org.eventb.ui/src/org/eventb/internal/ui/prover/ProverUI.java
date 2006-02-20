@@ -181,7 +181,7 @@ public class ProverUI
 	 * Getting the outline page associated with this editor
 	 * @return the outline page
 	 */
-	protected ProofTreeUIPage getContentOutline() {return fProofTreeUI;}
+	protected ProofTreeUIPage getProofTreeUI() {return fProofTreeUI;}
 	
 //	public void setSelection(Object obj) {
 //		
