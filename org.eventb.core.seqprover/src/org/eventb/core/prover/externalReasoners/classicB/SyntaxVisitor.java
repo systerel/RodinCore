@@ -138,9 +138,9 @@ public class SyntaxVisitor extends DefaultVisitor {
 	private void pushFunApp() {
 		String rr = syntaxStack.pop();
 		String ll = syntaxStack.pop();
-		if (ll.charAt(0) == '(')
-			syntaxStack.push(ll + rr);
-		else
+//		if (rr.charAt(0) == '(')
+//			syntaxStack.push(ll + rr);
+//		else
 			syntaxStack.push(ll + "(" + rr + ")");
 	}
 

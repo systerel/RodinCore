@@ -28,7 +28,7 @@ import org.eventb.core.ast.Type;
  */
 public abstract class ClassicB {
 	
-	private static final String ML_SUCCESS = "THEORY Etat IS Proved(0) END\n";
+	private static final String ML_SUCCESS = "THEORY Etat IS Proved(0) END";
 	private static final String PP_SUCCESS = "SUCCES";
 	
 	private static String iName;
@@ -51,14 +51,19 @@ public abstract class ClassicB {
 		SyntaxVisitor visitor = new SyntaxVisitor();
 		FormulaFactory factory = FormulaFactory.getDefault();
 		if (typeEnvironment != null) {
+			boolean first = true;
 			for (String name : typeEnvironment.getNames()) {
 				final Type type = typeEnvironment.getType(name);
 				type.toExpression(factory).accept(visitor);
-				result.append(name + " : " + visitor.getString() + " & ");
+				if(first)
+					first = false;
+				else
+					result.append(" & ");
+				result.append(name + " : " + visitor.getString());
 				visitor.clear();
 			}
 		}
-		boolean first = true;
+		boolean first = (typeEnvironment == null || typeEnvironment.isEmpty());
 		for(Predicate predicate : hypothesis) {
 			predicate.accept(visitor);
 			if(first)
@@ -130,7 +135,7 @@ public abstract class ClassicB {
 		}
 	}
 	
-	private static void printML(StringBuffer input) throws IOException {
+	private static void printML(String input) throws IOException {
 		PrintStream stream = new PrintStream(iName);
 		stream.println("THEORY Lemma;Unproved IS");
 		stream.println(input);
@@ -149,7 +154,7 @@ public abstract class ClassicB {
 			return false;
 		try {
 			makeTempFileNames();
-			printML(input);
+			printML(patchSequentForML(input.toString()));
 			return runPK(ProverShell.getMLParserCommand(iName));
 		} finally {
 			cleanup();
@@ -167,6 +172,13 @@ public abstract class ClassicB {
 		return result == null && status == 0;
 	}
 	
+	// TODO this translation is unsafe -- it should use matching based on regular expressions
+	private static String patchSequentForML(String sequent) {
+		String moinsE = sequent.replace("_moinsE", "-");
+		String multE = moinsE.replace("_multE", "*");
+		return multE;
+	}
+	
 	public static boolean proveWithML(StringBuffer input)
 	throws IOException, InterruptedException {
 		
@@ -175,7 +187,7 @@ public abstract class ClassicB {
 
 		try {
 			makeTempFileNames();
-			printML(input);
+			printML(patchSequentForML(input.toString()));
 			printDefaultOutput();
 			String[] cmdArray = ProverShell.getMLCommand(iName);
 			Process process = Runtime.getRuntime().exec(cmdArray);
