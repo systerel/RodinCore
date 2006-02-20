@@ -36,8 +36,8 @@ import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 public class SearchHypothesesSection
 	extends HypothesesSection
 {
-	private static final String SECTION_TITLE = "Cached Hypotheses";
-	private static final String SECTION_DESCRIPTION = "The set of cached hypotheses";	
+	private static final String SECTION_TITLE = "Searched Hypotheses";
+	private static final String SECTION_DESCRIPTION = "The set of searched hypotheses";	
     
 	private class CachedHyperlinkAdapter extends HyperlinkAdapter {
 
