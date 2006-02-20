@@ -136,9 +136,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return this.parent;
 	}
 	
-	/*
-	 * Returns the proof tree to which this node belongs, or null if it was
-	 * pruned.
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#getProofTree()
 	 */
 	public ProofTree getProofTree() {
 		ProofTreeNode node = this;

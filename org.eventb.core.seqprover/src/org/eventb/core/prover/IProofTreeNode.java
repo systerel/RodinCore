@@ -2,6 +2,7 @@ package org.eventb.core.prover;
 
 import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.rules.ProofRule;
+import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -95,6 +96,18 @@ public interface IProofTreeNode {
 	 * @return the parent of this node or <code>null</code>
 	 */
 	IProofTreeNode getParent();
+
+	/**
+	 * Returns the proof tree to which this node belongs.
+	 * <p>
+	 * Note that a node that has been pruned out of the proof tree doesn't
+	 * belong anymore to it. Hence, this method will return <code>null</code>
+	 * if this node is not connected anymore to a proof tree.
+	 * </p>
+	 * 
+	 * @return the proof tree of this node or <code>null</code>
+	 */
+	ProofTree getProofTree();
 
 	/**
 	 * Returns the rule applied to this node.
