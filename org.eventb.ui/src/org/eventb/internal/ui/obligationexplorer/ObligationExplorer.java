@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -38,14 +39,16 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.IVariable;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.Utils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -122,19 +125,21 @@ public class ObligationExplorer
 	 */
 	private class ViewLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
+			if (obj instanceof IRodinProject) return ((IRodinProject) obj).getElementName();
 			if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
 				return Utils.getFileNameWithoutExtension(name);
 			}
-			if (obj instanceof IProverSequent) return ((IProverSequent) obj).goal().toString();
-			if (obj instanceof IRodinElement) return ((IRodinElement) obj).getElementName();
+			try {
+				if (obj instanceof IPRSequent) return ((IPRSequent) obj).getGoal().toString();
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
+			}
 			return obj.toString();
 		}
 		
 		public Image getImage(Object obj) {
-			if (obj instanceof IProverSequent) {
-				return ObligationContentExample.getImage(obj);
-			}
 			return Utils.getImage(obj);
 		}
 	}
@@ -260,9 +265,14 @@ public class ObligationExplorer
 	 */
 	public void linkToEditor(Object obj) {
 		String editorId = ProverUI.EDITOR_ID;
-		IRodinFile construct;
-		if (!(obj instanceof IRodinFile)) return; // Should get the corresponding file
-		construct = (IRodinFile) obj;
+		
+		IPRFile construct = null;
+		if (obj instanceof IRodinProject) return; 
+		if (obj instanceof IPRFile) construct = (IPRFile) obj; 
+		else if (obj instanceof IRodinElement) 
+			construct = (IPRFile) ((IRodinElement) obj).getParent();
+		Assert.isTrue(construct != null, "construct must be initialised by now");
+		System.out.println("Link to " + construct.getElementName());
 		try {
 			IEditorInput fileInput = new FileEditorInput(construct.getResource());
 			EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
@@ -272,11 +282,6 @@ public class ObligationExplorer
 			// TODO EventBImage.logException(e);
 		}
 		return;
-	}
-
-	public void proved(IProverSequent ps) {
-		System.out.println("Discharged " + ps);
-		ObligationContentExample.addToDischarged(ps);
 	}
 
 	public void refresh() {

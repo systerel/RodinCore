@@ -15,22 +15,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IPRFile;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -197,6 +195,7 @@ public class ObligationExplorerContentProvider
 	 * The tree is dispose
 	 */
 	public void dispose() {
+		RodinCore.removeElementChangedListener(this);
 		System.out.println("******* DISPOSE ********");
 	}
 	
@@ -213,8 +212,6 @@ public class ObligationExplorerContentProvider
 	 * Return the parent for an element.
 	 */
 	public Object getParent(Object child) {
-		// TODO need to get the right parent for internal elements
-		
 		if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
 		return null;
 	}
@@ -227,15 +224,7 @@ public class ObligationExplorerContentProvider
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				// TODO Need to get children of Type PR files instead
-				IRodinElement [] machines = prj.getChildrenOfType(IMachine.ELEMENT_TYPE);
-				IRodinElement [] contexts = prj.getChildrenOfType(IContext.ELEMENT_TYPE);
-				
-				IRodinElement [] results = new IRodinElement[machines.length + contexts.length];
-				System.arraycopy(machines, 0, results, 0, machines.length);
-				System.arraycopy(contexts, 0, results, machines.length, contexts.length);
-
-				return results;
+				return prj.getChildrenOfType(IPRFile.ELEMENT_TYPE);
 			}
 			catch (RodinDBException e) {
 				e.printStackTrace();
@@ -244,15 +233,13 @@ public class ObligationExplorerContentProvider
 			}
 		}
 		
-		
-		// TODO Delete
-		if (parent instanceof IRodinFile) {
-			return ObligationContentExample.getObligations(parent);
-		}
-		
 		try {
-			if (parent instanceof IParent) {
-				return ((IParent) parent).getChildren();
+			if (parent instanceof IPRFile) {
+				IPRFile prFile = (IPRFile) parent;
+				return prFile.getSequents();
+			}
+			if (parent instanceof IRodinDB) {
+				return ((IRodinDB) parent).getChildren();
 			}
 		}
 		catch (RodinDBException e) {
@@ -272,14 +259,7 @@ public class ObligationExplorerContentProvider
 	 * Check if the object has any children.
 	 */
 	public boolean hasChildren(Object parent) {
-		if (parent instanceof IRodinFile) return true;
-		try {
-			if (parent instanceof IParent)	return ((IParent) parent).hasChildren();
-		}
-		catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return getChildren(parent).length != 0;
 	}
 
 }
