@@ -378,7 +378,6 @@ public class ProofTreeUIPage
 			if (!ssel.isEmpty()) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
-					System.out.println("Here");
 					userSupport.selectNode((IProofTreeNode) obj);
 				}
 			}

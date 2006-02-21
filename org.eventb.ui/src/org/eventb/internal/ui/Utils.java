@@ -12,6 +12,9 @@
 
 package org.eventb.internal.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -29,6 +32,13 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.prover.rules.AllI;
+import org.eventb.core.prover.rules.ConjI;
+import org.eventb.core.prover.rules.Hyp;
+import org.eventb.core.prover.rules.IProofRule;
+import org.eventb.core.prover.rules.ImpI;
+import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
@@ -44,6 +54,16 @@ import org.rodinp.core.RodinDBException;
  * development
  */
 public class Utils {
+	
+	public static final String CONJI_SYMBOL = "∧";
+	
+	public static final String IMPI_SYMBOL = "⇒";
+	
+	public static final String HYP_SYMBOL = "hp";
+	
+	public static final String ALLI_SYMBOL = "∀";
+	
+	public static final String TRIVIAL_SYMBOL = "⊤";
 	
 	/**
 	 * Getting the file name without the extension.
@@ -196,4 +216,34 @@ public class Utils {
 			return Utils.getImage(obj);
 		}
 	}
+
+
+	public static List<String> getApplicableToGoal(IProverSequent ps) {
+		List<String> names = new ArrayList<String>();
+		
+		IProofRule rule;
+		rule = new ConjI();
+		if (rule.isApplicable(ps)) names.add(CONJI_SYMBOL);
+		
+		rule = new ImpI();
+		if (rule.isApplicable(ps)) names.add(IMPI_SYMBOL);
+		
+		rule = new Hyp();
+		if (rule.isApplicable(ps)) names.add(HYP_SYMBOL);
+		
+		rule = new AllI();
+		if (rule.isApplicable(ps)) names.add("ALLI_SYMBOL");
+		
+		return names;
+	}
+
+	
+	public static List<String> getApplicableToHypothesis(Hypothesis hyp) {
+		List<String> result = new ArrayList<String>();
+		result.add("∧");
+		result.add("⇒");
+		result.add("hp");
+		return result;
+	}
+
 }

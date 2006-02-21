@@ -38,12 +38,12 @@ import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.pm.ProofState;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.Utils;
 
 public class GoalSection
 	extends SectionPart
@@ -60,26 +60,26 @@ public class GoalSection
     private class GoalITacticHyperlinkAdapter extends HyperlinkAdapter {
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
-			if (e.getHref().equals("∧")) {
+			if (e.getHref().equals(Utils.CONJI_SYMBOL)) {
 				apply(Tactics.conjI());
 				return;
 			}
-			if (e.getHref().equals("⇒")) {
+			if (e.getHref().equals(Utils.IMPI_SYMBOL)) {
 				apply(Tactics.impI());
 				return;
 			}
 			
-			if (e.getHref().equals("hp")) {
+			if (e.getHref().equals(Utils.HYP_SYMBOL)) {
 				apply(Tactics.hyp());
 				return;
 			}
 			
-			if (e.getHref().equals("∀")) {
+			if (e.getHref().equals(Utils.ALLI_SYMBOL)) {
 				apply(Tactics.allI());
 				return;
 			}
 
-			if (e.getHref().equals("⊤")) {
+			if (e.getHref().equals(Utils.TRIVIAL_SYMBOL)) {
 				apply(Tactics.trivial());
 				return;
 			}
@@ -200,11 +200,11 @@ public class GoalSection
 
 	private void setFormText(IProverSequent ps) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<ITactic> tactics = UserSupport.getApplicableToGoal(ps);
+		List<String> tactics = Utils.getApplicableToGoal(ps);
 		
-		for (Iterator<ITactic> it = tactics.iterator(); it.hasNext();) {
-			ITactic t = it.next();
-			formString = formString + "<a href=\"" + markedUpITactic(t) + "\">" + markedUpITactic(t) +"</a> ";
+		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
+			String t = it.next();
+			formString = formString + "<a href=\"" + t + "\">" + t +"</a> ";
 		}
 		
 		formString = formString + "</li></form>";
@@ -214,15 +214,6 @@ public class GoalSection
 		return;
 	}
 	
-	private String markedUpITactic(ITactic t) {
-		if (t.equals(Tactics.conjI())) return "∧";
-		if (t.equals(Tactics.impI())) return "⇒";
-		if (t.equals(Tactics.hyp())) return "hp";
-		if (t.equals(Tactics.allI())) return "∀";
-		if (t.equals(Tactics.trivial())) return "⊤";
-		return "notac";
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
 	 */

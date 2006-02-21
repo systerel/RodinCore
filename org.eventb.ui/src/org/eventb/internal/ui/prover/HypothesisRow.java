@@ -25,11 +25,9 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.ITactic;
-import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.Utils;
 
 /**
  * @author htson
@@ -104,10 +102,10 @@ public class HypothesisRow
 	private void createHyperlinks(FormText formText) {
 		String formString = "<form><li style=\"text\" value=\"\">";
 
-		List<ITactic> tactics = UserSupport.getApplicableToHypothesis(hyp);
-		for (Iterator<ITactic> it = tactics.iterator(); it.hasNext();) {
-			ITactic t = it.next();
-			formString = formString + "<a href=\"" + markedUpITactic(t) + "\">" + markedUpITactic(t) +"</a> ";
+		List<String> tactics = Utils.getApplicableToHypothesis(hyp);
+		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
+			String t = it.next();
+			formString = formString + "<a href=\"" + t + "\">" + t +"</a> ";
 		}
 		
 		formString = formString + "</li></form>";
@@ -117,16 +115,6 @@ public class HypothesisRow
 
 		return;
 	}
-	
-	private String markedUpITactic(ITactic t) {
-		if (t.equals(Tactics.conjI())) return "∧";
-		if (t.equals(Tactics.impI())) return "⇒";
-		if (t.equals(Tactics.hyp())) return "hp";
-		if (t.equals(Tactics.allI())) return "∀";
-		if (t.equals(Tactics.trivial())) return "⊤";
-		return "notac";
-	}
-	
 	
 	public void dispose() {
 		checkBox.dispose();
