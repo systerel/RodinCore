@@ -1,19 +1,9 @@
 package org.eventb.core.prover.tests;
 
 
-import java.util.Set;
-
-import static junit.framework.Assert.*;
 import junit.framework.TestCase;
 
-import org.eventb.core.prover.IExtReasonerInput;
-import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.externalReasoners.ExI;
-import org.eventb.core.prover.sequent.HypothesesManagement;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 
 public class TacticsTest extends TestCase {
