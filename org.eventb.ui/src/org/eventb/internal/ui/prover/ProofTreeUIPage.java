@@ -361,6 +361,7 @@ public class ProofTreeUIPage
 			if (!ssel.isEmpty()) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
+					System.out.println("Here");
 					userSupport.selectNode((IProofTreeNode) obj);
 				}
 			}
@@ -380,5 +381,7 @@ public class ProofTreeUIPage
 	public IProofTreeNode getRoot() {return root;}
 	
 	public UserSupport getUserSupport() {return userSupport;}
+	
+	public void selectRoot() {this.setSelection(new StructuredSelection(root));}
 	
 }

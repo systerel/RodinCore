@@ -183,7 +183,7 @@ public class GoalSection
 		}
 		if (!pt.isOpen()) {
 			clearFormText();
-			text.setText("DISCHARGED");
+			text.setText("Tactic(s) applied");
 		}
 		else {
 			text.setText(pt.getSequent().goal().toString());
@@ -228,7 +228,7 @@ public class GoalSection
 	 */
 	public void goalChanged(IGoalChangeEvent e) {
 		IGoalDelta delta = e.getDelta();
-		setGoal(delta.getProofTree());
+		setGoal(delta.getProofTreeNode());
 	}
 
 }

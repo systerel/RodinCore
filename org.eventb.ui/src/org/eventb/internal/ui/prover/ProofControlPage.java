@@ -11,23 +11,22 @@
 
 package org.eventb.internal.ui.prover;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -36,12 +35,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.IGoalChangeEvent;
+import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactic;
@@ -70,21 +74,23 @@ import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 public class ProofControlPage 
 	extends Page 
 	implements	IProofControlPage,
-				ISelectionChangedListener
+				IGoalChangedListener
 {
-	//public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID + ".views.ProofControl";
-	private ListenerList selectionChangedListeners = new ListenerList();
-	
-//	private TableViewer viewer;
-	private Action action1;
+
+	private Action switchLayout;
 	private Action action2;
-	private Action doubleClickAction;
 	private Text textInput;
 	private ScrolledForm scrolledForm;
+	private Composite buttonContainer;
+	private boolean isHorizontal;
 	private ProverUI editor;
 	private Button pn;
 	private Button dc;
-	private Button nm;	
+	private Button nm;
+	private Button pp;
+	private Button ah;
+	private Button ct;
+	private boolean isOpened;
 	
 	/*
 	 * The content provider class is responsible for
@@ -101,32 +107,6 @@ public class ProofControlPage
 			Button button = (Button) e.getSource();
 			String label = button.getText();
 			
-			if (label.equals("⊤")) {
-				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (!proofTree.isDischarged()) {
-							Tactics.trivial.apply(proofTree);
-							editor.getProofTreeUI().refresh(proofTree);
-							// Expand the node
-							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
-							//viewer.setExpandedState(proofTree, true);
-							
-							// Select the first pending "subgoal"
-							IProofTreeNode subGoal = proofTree.getFirstOpenDescendant();
-							if (subGoal != null) {
-								viewer.setSelection(new StructuredSelection(subGoal));
-							}
-						}
-					}
-				}
-				return;
-			}
-
 			if (label.equals("pn")) {
 				if (editor != null) {
 					TreeViewer viewer = editor.getProofTreeUI().getViewer();
@@ -174,9 +154,7 @@ public class ProofControlPage
 				return;
 			}
 			
-			if (label.equals("dc")) {
-//				System.out.println("Do CASE " + textInput.getText());
-				
+			if (label.equals("dc")) {			
 				if (editor != null) {
 					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
@@ -192,15 +170,15 @@ public class ProofControlPage
 							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
 								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+							else
+								editor.getProofTreeUI().selectRoot();
 						}
 					}
 				}
 				return;
 			}
 			
-			if (label.equals("nm")) {
-				System.out.println("Do Normalisation " + textInput.getText());
-				
+			if (label.equals("nm")) {				
 				if (editor != null) {
 					TreeViewer viewer = editor.getProofTreeUI().getViewer();
 					ISelection selection = viewer.getSelection();
@@ -218,9 +196,26 @@ public class ProofControlPage
 							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 							if (pt != null) 
 								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+							else
+								editor.getProofTreeUI().selectRoot();
 						}
 					}
 				}
+				return;
+			}
+			
+			if (label.equals("pp")) {
+				System.out.println("TODO: Implements Legacy provers");
+				return;
+			}
+			
+			if (label.equals("ah")) {
+				System.out.println("TODO: Implements add hypothesis");
+				return;
+			}
+			
+			if (label.equals("ct")) {
+				System.out.println("TODO: Implements contradiction");
 				return;
 			}
 		}
@@ -232,21 +227,13 @@ public class ProofControlPage
 	 */
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
+		editor.getUserSupport().addGoalChangedListener(this);
 	}
-
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-     */
-    public void init(IPageSite pageSite) {
-        super.init(pageSite);
-        pageSite.setSelectionProvider(this);
-    }
     
 	@Override
 	public void dispose() {
 		// Deregister with the main plugin
-		//ProverUIPlugin.getDefault().setProofControlView(null);
+		editor.getUserSupport().removeGoalChangedListener(this);
 		super.dispose();
 	}
 	
@@ -257,26 +244,31 @@ public class ProofControlPage
 	public void createControl(Composite parent) {	
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		
+		isHorizontal = true;
+		
 		scrolledForm = toolkit.createScrolledForm(parent);
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 3;
+		gl.numColumns = 2;
 		body.setLayout(gl);
 		
 		// Array of buttons
-		Composite buttonContainer = toolkit.createComposite(body);
+		buttonContainer = toolkit.createComposite(body);
 		gl = new GridLayout();
 		gl.numColumns = 6;
 		gl.makeColumnsEqualWidth = true;
 		buttonContainer.setLayout(gl);
 		buttonContainer.setLayoutData(new GridData());
 				
+		pp = createButton(buttonContainer, "pp");
+		nm = createButton(buttonContainer, "nm");
+		ah = createButton(buttonContainer, "ah");
+		dc = createButton(buttonContainer, "dc");
+		ct = createButton(buttonContainer, "ct");
+		pn = createButton(buttonContainer, "pn");
 		createButton(buttonContainer, "pv");
 		createButton(buttonContainer, "ne");
-		pn = createButton(buttonContainer, "pn");
-		dc = createButton(buttonContainer, "dc");
-		nm = createButton(buttonContainer, "nm");
 		
 		// A text field
 		textInput = toolkit.createText(body, "", SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -288,8 +280,22 @@ public class ProofControlPage
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		textInput.setFont(font);
 		textInput.addModifyListener(new EventBTextModifyListener());
+		textInput.addModifyListener(new ModifyListener() {
+			 public void modifyText(ModifyEvent e) {
+				 updateButtons();
+			 }
+		});
+		
+		IProofTreeNode node = editor.getUserSupport().getCurrentPO().getCurrentNode();
+		isOpened = (node != null && node.isOpen()) ? true : false;
+		updateButtons();
+
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
+		
+		makeActions();
+		hookContextMenu();
+		contributeToActionBars();
 	}
 
 	
@@ -309,179 +315,92 @@ public class ProofControlPage
 				ProofControlPage.this.fillContextMenu(manager);
 			}
 		});
-//		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		Menu menu = menuMgr.createContextMenu(this.getControl());
+		this.getControl().setMenu(menu);
+//		this.getSite().registerContextMenu(menuMgr, this);
 //		viewer.getControl().setMenu(menu);
 		//getSite().registerContextMenu(menuMgr, viewer);
 	}
 
-//	private void contributeToActionBars() {
-		//IActionBars bars = getViewSite().getActionBars();
-		//fillLocalPullDown(bars.getMenuManager());
-		//fillLocalToolBar(bars.getToolBarManager());
-//	}
+	private void contributeToActionBars() {
+		IActionBars bars = getSite().getActionBars();
+		fillLocalPullDown(bars.getMenuManager());
+		fillLocalToolBar(bars.getToolBarManager());
+	}
 
-//	private void fillLocalPullDown(IMenuManager manager) {
-//		manager.add(action1);
-//		manager.add(new Separator());
-//		manager.add(action2);
-//	}
+	private void fillLocalPullDown(IMenuManager manager) {
+		manager.add(switchLayout);
+		manager.add(new Separator());
+		manager.add(action2);
+	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
+		manager.add(switchLayout);
 		manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-//	private void fillLocalToolBar(IToolBarManager manager) {
-//		manager.add(action1);
-//		manager.add(action2);
-//	}
+	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(switchLayout);
+		manager.add(action2);
+	}
 
-//	private void makeActions() {
-//		action1 = new Action() {
-//			public void run() {
-//				showMessage("Action 1 executed");
-//			}
-//		};
-//		action1.setText("Action 1");
-//		action1.setToolTipText("Action 1 tooltip");
-//		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-//			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-//		
-//		action2 = new Action() {
-//			public void run() {
-//				showMessage("Action 2 executed");
-//			}
-//		};
-//		action2.setText("Action 2");
-//		action2.setToolTipText("Action 2 tooltip");
-//		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-//		doubleClickAction = new Action() {
-//			public void run() {
-////				ISelection selection = viewer.getSelection();
-////				Object obj = ((IStructuredSelection)selection).getFirstElement();
-////				showMessage("Double-click detected on "+obj.toString());
-//			}
-//		};
-//	}
+	private void makeActions() {
+		switchLayout = new Action() {
+			public void run() {
+				isHorizontal = isHorizontal ? false : true;
+				if (isHorizontal) {
+					GridLayout gl = new GridLayout();
+					gl.numColumns = 2;
+					scrolledForm.getBody().setLayout(gl);
+					gl = new GridLayout();
+					gl.numColumns = 6;
+					gl.makeColumnsEqualWidth = true;
+					buttonContainer.setLayout(gl);
+				}
+				else {
+					GridLayout gl = new GridLayout();
+					gl.numColumns = 1;
+					scrolledForm.getBody().setLayout(gl);
+					gl = new GridLayout();
+					gl.numColumns = 8;  // TODO Should be the number of buttons
+					gl.makeColumnsEqualWidth = true;
+					buttonContainer.setLayout(gl);					
+				}
+				scrolledForm.reflow(true);
+			}
+		};
+		switchLayout.setText("Switch Layout");
+		switchLayout.setToolTipText("Switch between horizontal and vertical layout of the buttons");
+		switchLayout.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		action2 = new Action() {
+			public void run() {
+				showMessage("Action 2 executed");
+			}
+		};
+		action2.setText("Action 2");
+		action2.setToolTipText("Action 2 tooltip");
+		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	}
 
-//	private void hookDoubleClickAction() {
-//		viewer.addDoubleClickListener(new IDoubleClickListener() {
-//			public void doubleClick(DoubleClickEvent event) {
-//				doubleClickAction.run();
-//			}
-//		});
-//	}
-	
-//	private void showMessage(String message) {
-//		MessageDialog.openInformation(
-//			viewer.getControl().getShell(),
-//			"Proof Control",
-//			message);
-//	}
+	private void showMessage(String message) {
+		MessageDialog.openInformation(
+			this.getControl().getShell(),
+			"Proof Control",
+			message);
+	}
 
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-//		viewer.getControl().setFocus();
+		textInput.setFocus();
 	}
 	
-	public void setInput(ISelection sel) {
-		// TODO Update the buttons
-//		if (sel instanceof IStructuredSelection) {
-//			IStructuredSelection ssel = (IStructuredSelection) sel;
-//			if (ssel.size() == 1) {
-//				ProofTree pt = (ProofTree) ssel.getFirstElement();
-//				if (!pt.rootIsOpen()) {
-//					pn.setEnabled(true);
-//					impI.setEnabled(false);
-//					conjI.setEnabled(false);
-//					hp.setEnabled(false);
-//					allI.setEnabled(false);
-//					disableButtons();
-//					goal.setText(":-)");
-//				}
-//				else {
-//					pn.setEnabled(false);
-//					pn.setVisible(false);
-//					impI.setEnabled(true);
-//					conjI.setEnabled(true);
-//					hp.setEnabled(true);
-//					allI.setEnabled(true);
-//					goal.setText(pt.getRootSeq().goal().toString());
-//					enableButtons(pt.getRootSeq());
-//				}
-//			}
-//			else {
-//				pn.setEnabled(true);
-//				goal.setText("None/Multiple selection");
-//			}
-//		}
-//		else {
-			// TODO Error message???
-//		}
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		// TODO Auto-generated method stub
-		selectionChangedListeners.add(listener);
-	}
-
-	/**
-     * Fires a selection changed event.
-     *
-     * @param selection the new selection
-     */
-    protected void fireSelectionChanged(ISelection selection) {
-        // create an event
-        final SelectionChangedEvent event = new SelectionChangedEvent(this,
-                selection);
-
-        // fire the event
-        Object[] listeners = selectionChangedListeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
-                public void run() {
-                    l.selectionChanged(event);
-                }
-            });
-        }
-    }
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-//        if (viewer == null)
-//            return StructuredSelection.EMPTY;
-//        return viewer.getSelection();
-		return null;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionChangedListeners.remove(listener);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
-	public void setSelection(ISelection selection) {
-//        if (viewer != null)
-//            viewer.setSelection(selection);
-	}
-
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.Page#getControl()
 	 */
@@ -490,16 +409,38 @@ public class ProofControlPage
         if (scrolledForm == null)
             return null;
         return scrolledForm;
-//		return null;
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
+	 */
+	public void goalChanged(IGoalChangeEvent e) {
+		IProofTreeNode node = e.getDelta().getProofTreeNode();
+		if (node != null && node.isOpen()) isOpened = true;
+		else isOpened = false;
+		updateButtons();
+	}
+	
+	private void updateButtons() {
+		if (isOpened) {
+			pn.setEnabled(false);
+			nm.setEnabled(true);
+			pp.setEnabled(true);
+			ct.setEnabled(true);
+			if (textInput.getText().equals("")) dc.setEnabled(false);
+			else dc.setEnabled(true);
+			if (textInput.getText().equals("")) ah.setEnabled(false);
+			else ah.setEnabled(true);
+		}
+		else {
+			pn.setEnabled(true);
+			nm.setEnabled(false);
+			pp.setEnabled(false);
+			dc.setEnabled(false);
+			ct.setEnabled(false);
+			ah.setEnabled(false);
+		}
+		return;
+	}
 
 }
