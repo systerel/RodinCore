@@ -58,7 +58,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 			}
 		}		
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#applyRule(ProofRule)
 	 */
@@ -82,6 +82,16 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return true;
 	}
 	
+	private boolean areAllChildrenDischarged() {
+		if (children == null)
+			return false;
+		for (ProofTreeNode child: children) {
+			if (! child.discharged)
+				return false;
+		}
+		return true;
+	}
+	
 	private void checkClassInvariant() {
 		assert (this.sequent != null);
 		assert ((this.rule == null) & (this.children == null)) |
@@ -99,7 +109,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 				this.children[i].checkClassInvariant();
 			}
 		}
-		assert this.discharged == (getFirstOpenDescendant() == null);
+		assert this.discharged == (getOpenDescendants().length == 0);
 	}
 	
 	// Report children change to delta processor.
@@ -132,9 +142,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 	
 	public IProofTreeNode getFirstOpenDescendant() {
+		if (isDischarged())
+			return null;
 		if (isOpen())
 			return this;
-		else for (ProofTreeNode child : children) {
+		for (ProofTreeNode child : children) {
 			IProofTreeNode result = child.getFirstOpenDescendant();
 			if (result != null)
 				return result;
@@ -203,7 +215,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#isDischarged()
 	 */
-	public final boolean isDischarged() {
+	public boolean isDischarged() {
 		return discharged;
 	}
 
@@ -239,14 +251,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 
-	private String repeat(String src, int repeat) {
-		StringBuilder buf=new StringBuilder();
-		for (int i=0;i<repeat;i++) {
-			buf.append(src);
-		}
-		return buf.toString();
-	}
-	
 	private String rootToString() {
 		String ruleStr;
 		if (this.rule == null) { ruleStr = "-"; }
@@ -265,7 +269,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.discharged = true;
 		statusChanged();
 		ProofTreeNode node = this.parent;
-		while (node != null && node.getFirstOpenDescendant() == null) {
+		while (node != null && node.areAllChildrenDischarged()) {
 			node.discharged = true;
 			node.statusChanged();
 			node = node.parent;
@@ -283,22 +287,22 @@ public final class ProofTreeNode implements IProofTreeNode {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		toStringHelper(0,false,str);
+		toStringHelper("", false, str);
 		str.append("\n");
-		if (this.isDischarged()) str.append("No pending subgoals!\n");
-		else {
+		if (this.isDischarged()) {
+			str.append("No pending subgoals!\n");
+		} else {
 			str.append(this.getOpenDescendants().length);
 			str.append(" pending subgoals\n");
 		}
 		return str.toString();
 	}
 
-	private void toStringHelper(int depth, boolean justBranched,
+	private void toStringHelper(String indent, boolean justBranched,
 			StringBuilder str) {
 		
-		String indent = repeat(" ", depth);
-		// String indent1 = repeat(" ",depth+1);
-		str.append(indent + this.rootToString());
+		str.append(indent);
+		str.append(this.rootToString());
 		if (this.isOpen()) {
 			str.append(" =>");
 			return;
@@ -307,10 +311,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 			str.append(" <>");
 			return;
 		}
-		int offset = justBranched | this.children.length > 1 ? 4 : 1;
+		final String childIndent = 
+			indent + (justBranched || this.children.length > 1 ? "    " : " ");
 		for (ProofTreeNode child : this.children) {
 			str.append("\n");
-			child.toStringHelper(depth + offset, this.children.length > 1, str);
+			child.toStringHelper(childIndent, this.children.length > 1, str);
 		}
 		return;
 	}
