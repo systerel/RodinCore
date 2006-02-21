@@ -1,7 +1,7 @@
 package org.eventb.core.prover.tests;
 
 import java.util.Set;
-
+import junit.framework.Assert;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -53,7 +53,7 @@ public class CommonProverSequents {
 		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
 		for (int i=0;i<predicates.length;i++){
 			ITypeCheckResult tcResult =  predicates[i].typeCheck(typeEnvironment);
-			assert tcResult.isSuccess();
+			Assert.assertTrue(tcResult.isSuccess());
 			typeEnvironment.addAll(tcResult.getInferredEnvironment());
 			
 			// boolean typed = (predicates[i].isCorrectlyTyped(typeEnvironment,ff)).isCorrectlyTyped();
@@ -66,7 +66,7 @@ public class CommonProverSequents {
 		impSeqRight = Lib.impRight(P7);
 		quantSeqFree = Lib.parsePredicate("y=8");
 		quantSeqFree.typeCheck(ff.makeTypeEnvironment());
-		assert quantSeqFree.isTypeChecked();
+		Assert.assertTrue(quantSeqFree.isTypeChecked());
 		
 		Set<Hypothesis> Hyps = Hypothesis.Hypotheses(P1,P2,P3,P4);
 		hypSeq = new SimpleProverSequent(typeEnvironment,Hyps,P1);
