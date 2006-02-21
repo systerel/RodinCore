@@ -33,6 +33,12 @@
             id="poFile"
             name="%eventBpoFile"
             priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="bpr"
+            id="prFile"
+            name="%eventBprFile"
+            priority="normal"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -61,6 +67,11 @@
             content-type-id="org.eventb.core.poFile"
             id="org.eventb.core.fileElementType1"
             name="%eventBpoFile"/>
+      <fileElementType
+            class="org.eventb.core.basis.PRFile"
+            content-type-id="org.eventb.core.prFile"
+            id="prFile"
+            name="%eventBprFile"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -190,6 +201,16 @@
             name="%eventBWitness"
             named="true"/>
       <internalElementType
+            class="org.eventb.core.basis.PRSequent"
+            id="prSequent"
+            name="%eventBprSequent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRStatus"
+            id="prStatus"
+            name="%eventBprStatus"
+            named="false"/>
+      <internalElementType
             class="org.eventb.core.basis.PODescription"
             id="poDescription"
             name="%eventBpoDescription"
@@ -249,6 +270,17 @@
                id="machinePOG"
                name="%machinePOGExtractor">
             <inputType id="org.eventb.core.scMachine"/>
+         </extractor>
+      </tool>
+      <tool
+            class="org.eventb.internal.core.pom.AutoPOM"
+            id="autoPOM"
+            name="%autoPOM">
+         <extractor
+               class="org.eventb.internal.core.pom.AutoPOM"
+               id="autoPOM"
+               name="%autoPOMExtractor">
+            <inputType id="org.eventb.core.poFile"/>
          </extractor>
       </tool>
    </extension>

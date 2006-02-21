@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
+ org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
  org.eventb.core.pm,
  org.eventb.internal.core.protopog;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.protosc;x-friends:="org.eventb.core.tests"
