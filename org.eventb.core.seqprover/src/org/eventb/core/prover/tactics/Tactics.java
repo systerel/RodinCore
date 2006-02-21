@@ -9,6 +9,7 @@ import static org.eventb.core.prover.tactics.BasicTactics.repeat;
 
 import java.util.Set;
 
+import org.eventb.core.prover.externalReasoners.Contr;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
 import org.eventb.core.prover.externalReasoners.ExI;
@@ -32,7 +33,11 @@ public class Tactics {
 	}
 	
 	public static ITactic lemma(String strLemma){
-		return pluginTac(new Cut(),new Cut.Input(strLemma));
+		return composeStrict(
+				pluginTac(new Cut(),new Cut.Input(strLemma)),
+				onPending(0,conjI()),
+				onPending(2,impI())
+				);
 	}
 	
 	public static ITactic norm(){
@@ -47,7 +52,16 @@ public class Tactics {
 				pluginTac(new Cut(),new Cut.Input(lemma)),
 				onPending(0,conjI()),
 				onPending(2,pluginTac(new DisjE(),null)),
-				norm());
+				onPending(2,norm())
+		);
+	}
+	
+	public static ITactic contradictGoal(){
+		
+		return composeStrict(
+				pluginTac(new Contr(),new Contr.Input()),
+				onPending(0,impI())
+		);
 	}
 	
 
