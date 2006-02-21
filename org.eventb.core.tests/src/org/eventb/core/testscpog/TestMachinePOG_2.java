@@ -523,6 +523,37 @@ public class TestMachinePOG_2 extends BuilderTest {
 	}
 
 	/**
+	 * Test method for guard deadlock freeness
+	 */
+	public void testGuard6() throws Exception {
+		
+		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
+		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ)").getParsedPredicate().toString();
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCVariables(rodinFile, makeList("n"), makeList("ℤ"));
+		addInvariants(rodinFile, makeList("I1"), makeList("n∈ℕ"));
+		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
+				makeList(), 
+				makeList(), makeList("n≔0"), makeList());
+		addSCEvent(rodinFile, "E1", makeList("x"), 
+				makeList("G1"), 
+				makeList(guard1), makeList("n≔x"), makeList("ℤ"));
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("number of proof obligations", sequents.length == 3);
+		
+		int dlk = getIndexForName("DLK", sequents);
+		
+		assertTrue("names ok", dlk != -1);
+
+		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
+	}
+
+	/**
 	 * Test method for action without guard (well-definedness, feasility, invariant)
 	 */
 	public void testAction1() throws Exception {
