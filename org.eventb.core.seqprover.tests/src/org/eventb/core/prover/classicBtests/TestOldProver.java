@@ -148,7 +148,11 @@ public class TestOldProver extends TestCase {
 			
 			// some tests for PP
 			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
-			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("y∈A∩B"), false)
+			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("y∈A∩B"), false),
+			
+			// some provable sequents
+			new TestPP(mHypothesis("x∈ℕ"), mPredicate("x∈ℕ"), true),
+			new TestML(mHypothesis("x∈ℕ"), mPredicate("x∈ℕ"), true)
 	};
 	
 	class TestPK extends TestItem {
@@ -183,10 +187,7 @@ public class TestOldProver extends TestCase {
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypothesis, goal);
 			boolean result = ClassicB.proveWithML(buffer);
-			if(isTrue)
-				assertTrue("true", result);
-			else
-				assertFalse("false", result);
+			assertEquals("Unexpected result", isTrue, result);
 		}
 		
 	}
@@ -205,10 +206,7 @@ public class TestOldProver extends TestCase {
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypothesis, goal);
 			boolean result = ClassicB.proveWithPP(buffer);
-			if(isTrue)
-				assertTrue("true", result);
-			else
-				assertFalse("false", result);
+			assertEquals("Unexpected result", isTrue, result);
 		}
 		
 	}
