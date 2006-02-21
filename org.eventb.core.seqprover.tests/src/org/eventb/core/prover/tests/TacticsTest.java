@@ -13,10 +13,10 @@ import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 
-public class TacticTest extends TestCase {
+public class TacticsTest extends TestCase {
 	
 	public void testNorm() {
 		IProofTreeNode pt = SequentProver.makeProofTree(TestLib.genSeq("1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2")).getRoot();
@@ -72,7 +72,7 @@ public class TacticTest extends TestCase {
 		IExternalReasoner plugin = new ExI();
 		String[] witnesses = {"1"};
 		IExtReasonerInput pluginInput = new ExI.Input(witnesses);
-		(new Tactic.plugin(plugin,pluginInput)).apply(pt);
+		(new ITactic.plugin(plugin,pluginInput)).apply(pt);
 		Tactics.norm().apply(pt);
 		System.out.println(pt);
 	}
@@ -97,7 +97,7 @@ public class TacticTest extends TestCase {
 		Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT,h).apply(pt);
 		System.out.println(pt);
 		
-		Tactics.prune.apply(pt);
+		Tactics.prune().apply(pt);
 		System.out.println(pt);
 		Tactics.mngHyp(HypothesesManagement.ActionType.HIDE,h).apply(pt);
 		System.out.println(pt);

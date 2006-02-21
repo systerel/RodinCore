@@ -14,12 +14,15 @@ public class LegacyProversTest extends TestCase {
 	IExternalReasoner legacyProvers = new LegacyProvers();
 
 	IProverSequent[] success = {
+			TestLib.genSeq("x∈ℕ|- x∈ℕ"),
 			TestLib.genSeq("1=1 |- 1=1"),
 			TestLib.genSeq("1=1 |- 2=2"),
 			TestLib.genSeq("x∈ℕ|- x∈ℤ"),
 			// TestLib.genSeq("x∈ℤ;; x>0 |- x≠0 "),
 			TestLib.genSeq("(∀n·n∈ℕ ⇒ n∈A) |- (∃n·n∈ℕ ∧ n∈A) "),
 			TestLib.genSeq("A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; x∈A ;; x∈B |- x∈A∩B"),
+			// The next sequent is provable by PP, but not ML
+			TestLib.genSeq("0 ≤ a ∧ 1 < b |- a mod b < b"),
 			TestLib.genSeq("x∈ℕ;; x=z ;; y=z |- x=z")};
 	IProverSequent[] failure = {
 			TestLib.genSeq("1=1 |- 2=1"),
