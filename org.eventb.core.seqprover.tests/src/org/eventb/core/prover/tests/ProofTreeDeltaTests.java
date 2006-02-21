@@ -11,6 +11,7 @@ package org.eventb.core.prover.tests;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.SequentProver;
+import org.eventb.core.prover.rules.ProofRule;
 import org.eventb.core.prover.rules.RuleFactory;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -34,6 +35,19 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		startDeltas(tree);
 		applyRule(root, rf.impI());
 		assertDeltas("⊤⇒⊤ [CHILDREN]");
+	}
+
+	/**
+	 * Ensures that trying to apply a rule that fails doesn't produce any delta.
+	 */
+	public void testApplyFailed() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode root = tree.getRoot();
+
+		startDeltas(tree);
+		root.applyRule((ProofRule) rf.conjI());
+		assertDeltas("");
 	}
 
 	/**
