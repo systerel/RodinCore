@@ -17,84 +17,158 @@ import org.eventb.core.prover.rules.MngHyp;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
+import static org.eventb.core.prover.tactics.BasicTactics.*;
 
 public class Tactics {
 	
-	public static final Tactic conjI = new Tactic.RuleTac(new ConjI());
-
-	public static final Tactic hyp = new Tactic.RuleTac(new Hyp());
-
-	public static final Tactic allI = new Tactic.RuleTac(new AllI());
-
-	public static final Tactic impI = new Tactic.RuleTac(new ImpI());
-
-	public static final Tactic trivial = new Tactic.plugin(new Trivial(), null);
-
-	public static final Tactic prune = new Tactic.prune();
-
-	private static final IExternalReasoner cut = new Cut();
-	private static final IExternalReasoner disjE = new DisjE();
-	private static final IExternalReasoner exI = new ExI();
+	// Globally applicable tactics
 	
-	public static Tactic onAllPending(Tactic t){
-		return new Tactic.onAllPending(t);
+	public static ITactic legacyProvers(){
+		return pluginTac(new LegacyProvers(),null);
 	}
 	
-	public static Tactic onPending(int subgoalNo,Tactic t){
-		return new Tactic.onPending(subgoalNo,t);
+	public static ITactic lemma(String strLemma){
+		return pluginTac(new Cut(),new Cut.Input(strLemma));
 	}
 	
-	public static Tactic repeat(Tactic t){
-		return new Tactic.repeat(t);
-	}
-
-	public static Tactic compose(Tactic ... tactics){
-		return new Tactic.compose(tactics);
-	}
-	
-	public static Tactic composeStrict(Tactic ... tactics){
-		return new Tactic.composeStrict(tactics);
-	}
-	
-	public static Tactic norm(){
-		Tactic Ti = repeat(compose(conjI,impI,allI));
-		Tactic T = repeat(compose(hyp,trivial,Ti));
+	public static ITactic norm(){
+		ITactic Ti = repeat(compose(conjI(),allI(),impI()));
+		ITactic T = repeat(compose(hyp(),trivial(),Ti));
 		return repeat(onAllPending(T));
 	}
 	
-	public static Tactic auto(){
-		return norm();
-	}
-	
-	public static Tactic plugin(IExternalReasoner plugin,IExtReasonerInput pluginInput){
-		return new Tactic.plugin(plugin,pluginInput);
-	}
-	
-//	public static Tactic conjE_auto(){
-//		Tactic Tp = repeat(onAllPending((new Tactic.conjE_auto())));
-//		return compose(Tp,norm());
-//	}
-	
-	public static Tactic doCase(String kase){	
+	public static ITactic doCase(String kase){	
 		String lemma = "("+ kase +") ∨¬("+ kase +")";
 		return composeStrict(
-				plugin(cut,new Cut.Input(lemma)),
-				onPending(0,conjI),
-				onPending(2,plugin(disjE,null)),
+				pluginTac(new Cut(),new Cut.Input(lemma)),
+				onPending(0,conjI()),
+				onPending(2,pluginTac(new DisjE(),null)),
 				norm());
 	}
 	
-	public static Tactic provideWitness(String... witnesses){
-		return plugin(exI,new ExI.Input(witnesses));
+
+	// Tactics applicable on the goal
+	
+	public static ITactic impI() {
+		return new ITactic.RuleTac(new ImpI());
 	}
 	
-	public static Tactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
-		return new Tactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
-		
+	public static ITactic conjI() {
+		return new ITactic.RuleTac(new ConjI());
 	}
 	
-	public static Tactic legacyProvers(){
-		return plugin(new LegacyProvers(),null);
+	public static ITactic allI() {
+		return new ITactic.RuleTac(new AllI());
 	}
+	
+	public static ITactic provideWitness(String... witnesses){
+		return pluginTac(new ExI(),new ExI.Input(witnesses));
+	}
+	
+	// Tactics applicable on a hypothesis
+	
+	// Misc tactics
+	
+	public static ITactic hyp() {
+		return new ITactic.RuleTac(new Hyp());
+	}
+	
+	public static ITactic trivial() {
+		return new ITactic.plugin(new Trivial(), null);
+	}
+	
+	public static ITactic prune() {
+		return BasicTactics.prune();
+	}
+	
+	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
+	return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
+	
+	}
+	
+	
+	
+	
+	
+	
+//	
+//	
+//	
+//	public static final ITactic conjI = new ITactic.RuleTac(new ConjI());
+//
+//	public static final ITactic hyp = new ITactic.RuleTac(new Hyp());
+//
+//	public static final ITactic allI = new ITactic.RuleTac(new AllI());
+//
+//	public static final ITactic impI = new ITactic.RuleTac(new ImpI());
+//
+//	public static final ITactic trivial = new ITactic.plugin(new Trivial(), null);
+//
+//	public static final ITactic prune = new ITactic.prune();
+//
+//	private static final IExternalReasoner cut = new Cut();
+//	private static final IExternalReasoner disjE = new DisjE();
+//	private static final IExternalReasoner exI = new ExI();
+//	
+//	public static ITactic onAllPending(ITactic t){
+//		return new ITactic.onAllPending(t);
+//	}
+//	
+//	public static ITactic onPending(int subgoalNo,ITactic t){
+//		return new ITactic.onPending(subgoalNo,t);
+//	}
+//	
+//	public static ITactic repeat(ITactic t){
+//		return new ITactic.repeat(t);
+//	}
+//
+//	public static ITactic compose(ITactic ... tactics){
+//		return new ITactic.compose(tactics);
+//	}
+//	
+//	public static ITactic composeStrict(ITactic ... tactics){
+//		return new ITactic.composeStrict(tactics);
+//	}
+//	
+//	public static ITactic norm(){
+//		ITactic Ti = repeat(compose(conjI,impI,allI));
+//		ITactic T = repeat(compose(hyp,trivial,Ti));
+//		return repeat(onAllPending(T));
+//	}
+//	
+//	public static ITactic auto(){
+//		return norm();
+//	}
+//	
+//	public static ITactic plugin(IExternalReasoner plugin,IExtReasonerInput pluginInput){
+//		return new ITactic.plugin(plugin,pluginInput);
+//	}
+//	
+////	public static Tactic conjE_auto(){
+////		Tactic Tp = repeat(onAllPending((new Tactic.conjE_auto())));
+////		return compose(Tp,norm());
+////	}
+//	
+//	public static ITactic doCase(String kase){	
+//		String lemma = "("+ kase +") ∨¬("+ kase +")";
+//		return composeStrict(
+//				plugin(cut,new Cut.Input(lemma)),
+//				onPending(0,conjI),
+//				onPending(2,plugin(disjE,null)),
+//				norm());
+//	}
+//	
+//	public static ITactic provideWitness(String... witnesses){
+//		return plugin(exI,new ExI.Input(witnesses));
+//	}
+//	
+//	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
+//		return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
+//		
+//	}
+//	
+//	public static ITactic legacyProvers(){
+//		return plugin(new LegacyProvers(),null);
+//	}	
 	
 }

@@ -8,11 +8,11 @@ import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.rules.PLb;
 import org.eventb.core.prover.rules.ProofRule;
 
-public interface Tactic {
+public interface ITactic {
 	
 	public abstract Object apply(IProofTreeNode pt);
 	
-	public static class prune implements Tactic {
+	public static class prune implements ITactic {
 	
 		public prune(){}
 		
@@ -23,7 +23,7 @@ public interface Tactic {
 		}
 	}
 	
-	public static class RuleTac implements Tactic {
+	public static class RuleTac implements ITactic {
 		
 		private final ProofRule rule;
 		
@@ -40,7 +40,7 @@ public interface Tactic {
 		}
 	}
 	
-	public static class plugin implements Tactic {
+	public static class plugin implements ITactic {
 		
 		private final IExternalReasoner plugin;
 		private final IExtReasonerInput pluginInput;
@@ -57,16 +57,16 @@ public interface Tactic {
 			if (po == null) return "! Plugin returned null !";
 			if (!(po instanceof SuccessfullExtReasonerOutput)) return po;
 			ProofRule plb = new PLb((SuccessfullExtReasonerOutput) po);
-			Tactic temp = new RuleTac(plb);
+			ITactic temp = new RuleTac(plb);
 			return temp.apply(pt);
 		}
 	}
 		
-	public static class onAllPending implements Tactic {
+	public static class onAllPending implements ITactic {
 		
-		private Tactic t;
+		private ITactic t;
 		
-		public onAllPending(Tactic t){
+		public onAllPending(ITactic t){
 			this.t = t;
 		}
 		
@@ -80,12 +80,13 @@ public interface Tactic {
 		}
 	}
 	
-	public static class onPending implements Tactic {
+	
+	public static class onPending implements ITactic {
 		
-		private Tactic t;
+		private ITactic t;
 		private int subgoalNo;
 		
-		public onPending(int subgoalNo,Tactic t){
+		public onPending(int subgoalNo,ITactic t){
 			this.t = t;
 			this.subgoalNo = subgoalNo;
 		}
@@ -102,18 +103,18 @@ public interface Tactic {
 		
 	}
 		
-	public static class compose implements Tactic {
+	public static class compose implements ITactic {
 
-		private Tactic[] tactics;
+		private ITactic[] tactics;
 		
-		public compose(Tactic ... tactics){
+		public compose(ITactic ... tactics){
 			this.tactics = tactics;
 		}
 		
 		public Object apply(IProofTreeNode pt) {
 			boolean applicable = false;
 			Object lastFailure = "compose unapplicable: no tactics";
-			for (Tactic tactic : tactics){
+			for (ITactic tactic : tactics){
 				Object tacticApp = tactic.apply(pt);
 				if (tacticApp == null) applicable = true; 
 				else lastFailure = tacticApp;
@@ -123,16 +124,16 @@ public interface Tactic {
 
 	}
 	
-	public static class composeStrict implements Tactic {
+	public static class composeStrict implements ITactic {
 
-		private Tactic[] tactics;
+		private ITactic[] tactics;
 		
-		public composeStrict(Tactic ... tactics){
+		public composeStrict(ITactic ... tactics){
 			this.tactics = tactics;
 		}
 		
 		public Object apply(IProofTreeNode pt) {
-			for (Tactic tactic : tactics){
+			for (ITactic tactic : tactics){
 				Object tacticApp = tactic.apply(pt);
 				if (tacticApp != null) return tacticApp; 
 			}
@@ -142,11 +143,11 @@ public interface Tactic {
 	}
 
 
-	public class repeat implements Tactic {
+	public class repeat implements ITactic {
 
-		Tactic t;
+		ITactic t;
 		
-		public repeat(Tactic t){
+		public repeat(ITactic t){
 			this.t = t;
 		}
 		
