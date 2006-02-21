@@ -69,7 +69,7 @@ public interface IProofTree {
 	 *            the listener to register
 	 * @see IProofTreeChangedListener
 	 */
-	void addChangedListener(IProofTreeChangedListener listener);
+	void addChangeListener(IProofTreeChangedListener listener);
 
 	/**
 	 * Removes the given listener for changes to this proof tree. Has no effect
@@ -83,6 +83,6 @@ public interface IProofTree {
 	 *            the listener to unregister
 	 * @see IProofTreeChangedListener
 	 */
-	void removeChangedListener(IProofTreeChangedListener listener);
+	void removeChangeListener(IProofTreeChangedListener listener);
 
 }

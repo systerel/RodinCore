@@ -12,13 +12,16 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private static final IProofTreeNode[] NO_NODE = new IProofTreeNode[0];
 	
 	private ProofTreeNode[] children;
-	private ProofTreeNode parent;
-	private final IProverSequent sequent;
-	private final ProofTree tree;
-	private ProofRule rule;
-	
 	// Cache of discharged status
 	private boolean discharged;
+	private ProofTreeNode parent;
+	private ProofRule rule;
+	private final IProverSequent sequent;
+	
+	// Tree to which this node belongs. This field is only set for a root node,
+	// so that it's easy to remove a whole subtree from the tree. Always use
+	// #getProofTree() to access this information.
+	private final ProofTree tree;
 
 	// Creates a root node of a proof tree
 	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
@@ -67,13 +70,15 @@ public final class ProofTreeNode implements IProofTreeNode {
 		assert (anticidents != null);
 		this.rule = rule;
 		final int length = anticidents.length;
-		this.children = new ProofTreeNode[length];
+		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
-			this.children[i] = new ProofTreeNode(this, anticidents[i]);
+			newChildren[i] = new ProofTreeNode(this, anticidents[i]);
 		}
+		setChildren(newChildren);
 		if (length == 0)
 			this.setDischarged();
 		this.checkClassInvariant();
+		fireDeltas();
 		return true;
 	}
 	
@@ -97,6 +102,21 @@ public final class ProofTreeNode implements IProofTreeNode {
 		assert this.discharged == (getFirstOpenDescendant() == null);
 	}
 	
+	// Report children change to delta processor.
+	private void childrenChanged() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.childrenChanged(this);
+		}
+	}
+	
+	private void fireDeltas() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.fireDeltas();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getChildren()
 	 */
@@ -203,9 +223,10 @@ public final class ProofTreeNode implements IProofTreeNode {
 		for (ProofTreeNode child: this.children) {
 			child.parent = null;
 		}
-		this.children = null;
-		this.reopen();
-		this.checkClassInvariant();
+		setChildren(null);
+		reopen();
+		checkClassInvariant();
+		fireDeltas();
 	}
 	
 	// Reopen this node, setting the status of all ancestors to non-discharged
@@ -213,7 +234,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ProofTreeNode node = this;
 		while (node != null && node.discharged) {
 			node.discharged = false;
-			// TODO fire delta here.
+			node.statusChanged();
 			node = node.parent;
 		}
 	}
@@ -231,6 +252,32 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule == null) { ruleStr = "-"; }
 		else { ruleStr = this.rule.getName(); };
 		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
+	}
+
+	private void setChildren(ProofTreeNode[] newChildren) {
+		this.children = newChildren;
+		childrenChanged();
+	}
+
+	// This node has just been discharged. Update its status, as well as its
+	// ancestors'.
+	private void setDischarged() {
+		this.discharged = true;
+		statusChanged();
+		ProofTreeNode node = this.parent;
+		while (node != null && node.getFirstOpenDescendant() == null) {
+			node.discharged = true;
+			node.statusChanged();
+			node = node.parent;
+		}
+	}	
+
+	// Report status change to delta processor.
+	private void statusChanged() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.statusChanged(this);
+		}
 	}
 
 	@Override
@@ -266,17 +313,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 			child.toStringHelper(depth + offset, this.children.length > 1, str);
 		}
 		return;
-	}	
-
-	// This node has just been discharged. Update its status, as well as its
-	// ancestors'.
-	private void setDischarged() {
-		this.discharged = true;
-		ProofTreeNode node = this.parent;
-		while (node != null && node.getFirstOpenDescendant() == null) {
-			node.discharged = true;
-			node = node.parent;
-		}
 	}
-
+	
 }

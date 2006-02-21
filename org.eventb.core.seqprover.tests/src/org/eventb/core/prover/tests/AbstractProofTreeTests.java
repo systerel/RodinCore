@@ -8,6 +8,7 @@
 
 package org.eventb.core.prover.tests;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -18,6 +19,8 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeChangedListener;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.rules.ProofRule;
@@ -30,44 +33,96 @@ import org.eventb.core.prover.sequent.SimpleProverSequent;
  * 
  * @author Laurent Voisin
  */
-public abstract class AbstractProofTreeTests extends TestCase {
+public abstract class AbstractProofTreeTests extends TestCase implements
+		IProofTreeChangedListener {
+
+	ArrayList<IProofTreeDelta> deltas = null;
 
 	FormulaFactory ff = FormulaFactory.getDefault();
 
 	/**
-	 * Returns a new prover sequent with no hypothesis and the given goal.
+	 * Applies the given rule to the given node, expecting success.
 	 * 
-	 * @param goal
-	 *            goal of the sequent
-	 * @return a new sequent with the given goal
+	 * @param node
+	 *            a proof tree node
+	 * @param rule
+	 *            the rule to apply
 	 */
-	public IProverSequent makeSimpleSequent(String goal) {
-		IParseResult parseResult = ff.parsePredicate(goal);
-		Predicate goalPredicate = parseResult.getParsedPredicate();
-		assertNotNull("Can't parse predicate: " + goal, goalPredicate);
-		ITypeEnvironment te = ff.makeTypeEnvironment();
-		ITypeCheckResult tr = goalPredicate.typeCheck(te);
-		assertTrue("Can't typecheck predicate" + goalPredicate,
-				goalPredicate.isTypeChecked());
-		return new SimpleProverSequent(
-				tr.getInferredEnvironment(),
-				new HashSet<Hypothesis>(),
-				goalPredicate);
+	public void applyRule(IProofTreeNode node, IProofRule rule) {
+		boolean applied = node.applyRule((ProofRule) rule);
+		assertTrue(applied);
+		assertSame(node.getRule(), rule);
+		assertFalse(node.isOpen());
 	}
-	
+
+	/**
+	 * Checks that the first given node is an ancestor of the second one.
+	 * 
+	 * @param expectedAncestor
+	 *            the expected ancestor
+	 * @param node
+	 *            the node to test
+	 */
+	public void assertAncestor(IProofTreeNode ancestor, IProofTreeNode node) {
+		IProofTreeNode parent = node.getParent();
+		while (parent != null) {
+			if (parent == ancestor)
+				return;
+			node = parent;
+			parent = parent.getParent();
+		}
+		fail("can't find expected ancestor among ancestors");
+	}
+
+	/**
+	 * Checks that the specified delta has been produced since the last call to
+	 * startDeltas() or flushDeltas(), whichever happened last.
+	 * 
+	 * @param expected
+	 *            the expected delta
+	 */
+	public void assertDeltas(String expected) {
+		StringBuilder builder = new StringBuilder();
+		boolean sep = false;
+		for (IProofTreeDelta delta : deltas) {
+			if (sep)
+				builder.append('\n');
+			builder.append(delta);
+			sep = true;
+		}
+		String actual = builder.toString();
+		if (!expected.equals(actual)) {
+			System.out.println(Util.displayString(actual));
+			fail("Unexpected delta:\n" + actual);
+		}
+	}
+
+	/**
+	 * Checks that the given array is empty.
+	 * 
+	 * @param array
+	 *            the array to test for emptyness
+	 */
 	public final void assertEmpty(Object[] array) {
 		assertEquals("array is empty", 0, array.length);
 	}
-	
-	public final void assertNotEmpty(Object[] array) {
-		assertFalse("array is not empty", array.length == 0);
+
+	/**
+	 * Checks that the given node is discharged, using all available methods.
+	 * 
+	 * @param node
+	 *            the node to test
+	 */
+	public void assertNodeDischarged(IProofTreeNode node) {
+		// node.getChildren() is irrelevent
+		assertNull(node.getFirstOpenDescendant());
+		assertEmpty(node.getOpenDescendants());
+		assertNotNull(node.getRule());
+		// node.hasChildren() is irrelevent
+		assertTrue(node.isDischarged());
+		assertFalse(node.isOpen());
 	}
-	
-	public final void assertSingleton(Object expected, Object[] array) {
-		assertEquals("array is not a singleton", 1, array.length);
-		assertSame("wrong element", expected, array[0]);
-	}
-	
+
 	/**
 	 * Checks that the given node is open, using all available methods.
 	 * 
@@ -102,19 +157,26 @@ public abstract class AbstractProofTreeTests extends TestCase {
 	}
 
 	/**
-	 * Checks that the given node is discharged, using all available methods.
+	 * Checks that the given array is not empty.
 	 * 
-	 * @param node
-	 *            the node to test
+	 * @param array
+	 *            the array to test for emptyness
 	 */
-	public void assertNodeDischarged(IProofTreeNode node) {
-		// node.getChildren() is irrelevent
-		assertNull(node.getFirstOpenDescendant());
-		assertEmpty(node.getOpenDescendants());
-		assertNotNull(node.getRule());
-		// node.hasChildren() is irrelevent
-		assertTrue(node.isDischarged());
-		assertFalse(node.isOpen());
+	public final void assertNotEmpty(Object[] array) {
+		assertFalse("array is not empty", array.length == 0);
+	}
+
+	/**
+	 * Checks that the given array contains one and only one expected element.
+	 * 
+	 * @param expectedElement
+	 *            the expected element of the given array
+	 * @param array
+	 *            the array to test for emptyness
+	 */
+	public final void assertSingleton(Object expectedElement, Object[] array) {
+		assertEquals("array is not a singleton", 1, array.length);
+		assertSame("wrong element", expectedElement, array[0]);
 	}
 
 	/**
@@ -136,25 +198,6 @@ public abstract class AbstractProofTreeTests extends TestCase {
 			assertNodeOpen(openDescendant);
 			assertAncestor(node, openDescendant);
 		}
-	}
-
-	/**
-	 * Checks that the first given node is an ancestor of the second one.
-	 * 
-	 * @param expectedAncestor
-	 *            the expected ancestor
-	 * @param node
-	 *            the node to test
-	 */
-	public void assertAncestor(IProofTreeNode ancestor, IProofTreeNode node) {
-		IProofTreeNode parent = node.getParent();
-		while (parent != null) {
-			if (parent == ancestor)
-				return;
-			node = parent;
-			parent = parent.getParent();
-		}
-		fail("can't find expected ancestor among ancestors");
 	}
 
 	/**
@@ -185,18 +228,62 @@ public abstract class AbstractProofTreeTests extends TestCase {
 	}
 
 	/**
-	 * Applies the given rule to the given node, expecting success.
-	 * 
-	 * @param node
-	 *            a proof tree node
-	 * @param rule
-	 *            the rule to apply
+	 * Flushes the delta recorded. After this call, there is no delta pending,
+	 * waiting for asserting them.
 	 */
-	public void applyRule(IProofTreeNode node, IProofRule rule) {
-		boolean applied = node.applyRule((ProofRule) rule);
-		assertTrue(applied);
-		assertSame(node.getRule(), rule);
-		assertFalse(node.isOpen());
+	public void flushDeltas() {
+		deltas = new ArrayList<IProofTreeDelta>();
 	}
-	
+
+	/**
+	 * Returns a new prover sequent with no hypothesis and the given goal.
+	 * 
+	 * @param goal
+	 *            goal of the sequent
+	 * @return a new sequent with the given goal
+	 */
+	public IProverSequent makeSimpleSequent(String goal) {
+		IParseResult parseResult = ff.parsePredicate(goal);
+		Predicate goalPredicate = parseResult.getParsedPredicate();
+		assertNotNull("Can't parse predicate: " + goal, goalPredicate);
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeCheckResult tr = goalPredicate.typeCheck(te);
+		assertTrue("Can't typecheck predicate" + goalPredicate, goalPredicate
+				.isTypeChecked());
+		return new SimpleProverSequent(tr.getInferredEnvironment(),
+				new HashSet<Hypothesis>(), goalPredicate);
+	}
+
+	/**
+	 * Records a new delta notified by a proof tree.
+	 * 
+	 * Not to be called by test cases.
+	 */
+	public void proofTreeChanged(IProofTreeDelta delta) {
+		assertTrue(deltas != null);
+		deltas.add(delta);
+	}
+
+	/**
+	 * Starts recording delta for the given proof tree.
+	 * 
+	 * @param tree
+	 *            the proof tree for which deltas should get recorded
+	 */
+	public void startDeltas(IProofTree tree) {
+		deltas = new ArrayList<IProofTreeDelta>();
+		tree.addChangeListener(this);
+	}
+
+	/**
+	 * Stops recording delta for the given proof tree.
+	 * 
+	 * @param tree
+	 *            the proof tree for which deltas should not be recorded
+	 */
+	public void stopDeltas(IProofTree tree) {
+		tree.removeChangeListener(this);
+		deltas = new ArrayList<IProofTreeDelta>();
+	}
+
 }

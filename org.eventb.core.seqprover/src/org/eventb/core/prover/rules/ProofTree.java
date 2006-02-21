@@ -8,24 +8,23 @@
 
 package org.eventb.core.prover.rules;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
- * Implementation of a proof tree.
+ * Implementation of a proof tree, with observer design pattern.
  * 
  * @author Laurent Voisin
  */
 public final class ProofTree implements IProofTree {
 
-	ProofTreeNode root;
-
-	List<IProofTreeChangedListener> listeners;
+	// Delta processor for this tree
+	final DeltaProcessor deltaProcessor;
+	
+	// Root node
+	final ProofTreeNode root;
 
 	/**
 	 * Creates a new proof tree for the given sequent.
@@ -35,7 +34,15 @@ public final class ProofTree implements IProofTree {
 	 */
 	public ProofTree(IProverSequent sequent) {
 		root = new ProofTreeNode(this, sequent);
-		listeners = new ArrayList<IProofTreeChangedListener>();
+		deltaProcessor = new DeltaProcessor(this);
+	}
+
+	public void addChangeListener(IProofTreeChangedListener listener) {
+		deltaProcessor.addChangeListener(listener);
+	}
+
+	public IProofTreeNode getRoot() {
+		return root;
 	}
 
 	public IProverSequent getSequent() {
@@ -46,19 +53,8 @@ public final class ProofTree implements IProofTree {
 		return getRoot().isDischarged();
 	}
 
-	public IProofTreeNode getRoot() {
-		return root;
-	}
-
-	public void addChangedListener(IProofTreeChangedListener listener) {
-		if (listeners.contains(listener)) {
-			return;
-		}
-		listeners.add(listener);
-	}
-
-	public void removeChangedListener(IProofTreeChangedListener listener) {
-		listeners.remove(listener);
+	public void removeChangeListener(IProofTreeChangedListener listener) {
+		deltaProcessor.removeChangeListener(listener);
 	}
 
 }
