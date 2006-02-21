@@ -10,7 +10,7 @@ public class GoalDelta implements IGoalDelta {
 		this.node = node;
 	}
 	
-	public IProofTreeNode getProofTree() {
+	public IProofTreeNode getProofTreeNode() {
 		return node;
 	}
 

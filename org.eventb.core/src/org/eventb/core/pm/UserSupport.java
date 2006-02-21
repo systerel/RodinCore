@@ -18,8 +18,7 @@ import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.rules.ImpI;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pm.GoalChangeEvent;
 import org.eventb.internal.core.pm.GoalDelta;
@@ -90,8 +89,8 @@ public class UserSupport
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
 				// Calculate delta
-				System.out.println("Old PO " + proofState);
-				System.out.println("New PO " + ps.getProofTree());
+//				System.out.println("Old PO " + proofState);
+//				System.out.println("New PO " + ps.getProofTree());
 				
 				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
 				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
@@ -195,30 +194,30 @@ public class UserSupport
 		proofTreeChangedListeners.remove(listener);
 	}
 	
-	public static List<Tactic> getApplicableToGoal(IProverSequent ps) {
-		List<Tactic> result = new ArrayList<Tactic>();
+	public static List<ITactic> getApplicableToGoal(IProverSequent ps) {
+		List<ITactic> result = new ArrayList<ITactic>();
 		
 		IProofRule rule;
 		rule = new ConjI();
-		if (rule.isApplicable(ps)) result.add(Tactics.conjI);
+		if (rule.isApplicable(ps)) result.add(Tactics.conjI());
 		
 		rule = new ImpI();
-		if (rule.isApplicable(ps)) result.add(Tactics.impI);
+		if (rule.isApplicable(ps)) result.add(Tactics.impI());
 		
 		rule = new Hyp();
-		if (rule.isApplicable(ps)) result.add(Tactics.hyp);
+		if (rule.isApplicable(ps)) result.add(Tactics.hyp());
 		
 		rule = new AllI();
-		if (rule.isApplicable(ps)) result.add(Tactics.allI);
+		if (rule.isApplicable(ps)) result.add(Tactics.allI());
 		
 		return result;
 	}
 
-	public static List<Tactic> getApplicableToHypothesis(Hypothesis hyp) {
-		List<Tactic> result = new ArrayList<Tactic>();
-		result.add(Tactics.conjI);
-		result.add(Tactics.impI);
-		result.add(Tactics.hyp);
+	public static List<ITactic> getApplicableToHypothesis(Hypothesis hyp) {
+		List<ITactic> result = new ArrayList<ITactic>();
+		result.add(Tactics.conjI());
+		result.add(Tactics.impI());
+		result.add(Tactics.hyp());
 		return result;
 	}
 
@@ -339,10 +338,10 @@ public class UserSupport
 		IHypothesisChangeEvent e = new HypothesisChangeEvent(delta);
 		notifyHypothesisChangedListener(e);
 				
-		if (pt == null || (!pt.equals(proofState.getCurrentNode()))) {
+		if (pt != null) {
 			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
 		}
-				
+		
 		proofState.setCurrentNode(pt);
 		return;
 	}
@@ -364,19 +363,17 @@ public class UserSupport
 	}
 
 	public void prune(IProofTreeNode pt) {
-		Tactics.prune.apply(pt);
+		Tactics.prune().apply(pt);
 		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
 		// Generate Delta
 	}
 
-//	public void deselectHypothesis(Set<Hypothesis> hyps) {
-//		Tactic t = Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT, hyps);
-//		t.apply(proofState.getCurrentNode());
-//		proofState.addAllToCached(hyps);
+//	public void manageHypotheses(ActionType action, Set<Hypothesis> hyps) {
+//		ITactic t = Tactics.mngHyp(action, hyps);
+//		applyITacticToHypotheses(t, hyps);
 //	}
-//	
-	public void manageHypotheses(ActionType action, Set<Hypothesis> hyps) {
-		Tactic t = Tactics.mngHyp(action, hyps);
+	
+	public void applyITacticToHypotheses(ITactic t, Set<Hypothesis> hyps) {
 		t.apply(proofState.getCurrentNode());
 		proofState.addAllToCached(hyps);
 	}
