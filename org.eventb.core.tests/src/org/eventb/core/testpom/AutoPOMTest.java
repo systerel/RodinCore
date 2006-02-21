@@ -2,6 +2,8 @@ package org.eventb.core.testpom;
 
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -12,15 +14,10 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRStatus.Status;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.PRUtil;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
-
-import junit.framework.TestCase;
 
 public class AutoPOMTest extends TestCase {
 
