@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPRFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -59,7 +60,10 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	
 	public IPOPredicateSet getPredicateSet() throws RodinDBException {
 		if (getContents().equals("")) return null;
-		IPOPredicateSet sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+		IPOPredicateSet sup = null;
+			if (getOpenable() instanceof IPOFile)
+			sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+			else sup = ((IPRFile) getOpenable()).getPredicateSet(getContents());
 	
 		return sup;
 	}
