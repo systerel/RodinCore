@@ -49,7 +49,7 @@
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
             contributorClass="org.eventb.internal.ui.prover.ProverUIContributor"
-            extensions="pob"
+            extensions="bpr"
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.ProverUI"
             name="Prover User Interface"/>
