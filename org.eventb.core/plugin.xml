@@ -65,7 +65,7 @@
       <fileElementType
             class="org.eventb.core.basis.POFile"
             content-type-id="org.eventb.core.poFile"
-            id="org.eventb.core.fileElementType1"
+            id="poFile"
             name="%eventBpoFile"/>
       <fileElementType
             class="org.eventb.core.basis.PRFile"
