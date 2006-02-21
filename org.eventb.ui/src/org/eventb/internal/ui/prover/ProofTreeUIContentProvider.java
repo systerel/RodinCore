@@ -34,10 +34,10 @@ public class ProofTreeUIContentProvider
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (oldInput != null && oldInput instanceof IProofTree) {
-			((IProofTree) oldInput).removeChangedListener(this);
+			((IProofTree) oldInput).removeChangeListener(this);
 		}
 		if (newInput != null && newInput instanceof IProofTree) {
-			((IProofTree) newInput).addChangedListener(this);
+			((IProofTree) newInput).addChangeListener(this);
 		}
 		page.setInvisibleRoot(null);
 		page.setRoot(null);
