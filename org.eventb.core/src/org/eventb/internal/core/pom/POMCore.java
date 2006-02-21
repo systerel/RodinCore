@@ -12,8 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ISCMachine;
 
 /**
  * @author halstefa
