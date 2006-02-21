@@ -31,7 +31,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 
 public class SelectedHypothesesSection
@@ -55,8 +55,8 @@ public class SelectedHypothesesSection
 			if (deselected.isEmpty()) return;
 			
 	    	ProverUI editor = (ProverUI) page.getEditor();
-	    	Tactic t = Tactics.mngHyp(ActionType.DESELECT, deselected);
-			editor.getUserSupport().applyTacticToHypotheses(t, deselected);
+	    	ITactic t = Tactics.mngHyp(ActionType.DESELECT, deselected);
+			editor.getUserSupport().applyITacticToHypotheses(t, deselected);
 			
 			TreeViewer viewer = editor.getProofTreeUI().getViewer();
 			
@@ -65,7 +65,7 @@ public class SelectedHypothesesSection
 			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
 				if (!proofTree.isDischarged()) {
-//					Tactic t = Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT, deselected);
+//					ITactic t = Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT, deselected);
 //					t.apply(proofTree);
 					editor.getProofTreeUI().refresh(proofTree);
 					// Expand the node

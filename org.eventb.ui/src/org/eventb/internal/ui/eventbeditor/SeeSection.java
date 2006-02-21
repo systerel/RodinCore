@@ -188,7 +188,7 @@ public class SeeSection
 			e.printStackTrace();
 			InputDialog dialog = new InputDialog(null, "Resource out of sync", "Refresh? (Y/N)", "Y", null);
 			dialog.open();
-			String ok = dialog.getValue();
+			dialog.getValue();
 			EventBEditorContributor.sampleAction.refreshAll();
 		}
 

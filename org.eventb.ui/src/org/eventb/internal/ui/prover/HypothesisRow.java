@@ -27,7 +27,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
 
@@ -47,7 +47,7 @@ public class HypothesisRow
 	
 	private Hypothesis hyp;
 	
-	private class HypothesisTacticHyperlinkAdapter extends HyperlinkAdapter {
+	private class HypothesisITacticHyperlinkAdapter extends HyperlinkAdapter {
 
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
@@ -88,7 +88,7 @@ public class HypothesisRow
 		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
 		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		formText.setHyperlinkSettings(hyperlinkSettings);
-		formText.addHyperlinkListener(new HypothesisTacticHyperlinkAdapter());
+		formText.addHyperlinkListener(new HypothesisITacticHyperlinkAdapter());
         gd = new GridData(SWT.FILL, SWT.FILL, false, false);
         gd.widthHint = 100;
         formText.setLayoutData(gd);
@@ -104,10 +104,10 @@ public class HypothesisRow
 	private void createHyperlinks(FormText formText) {
 		String formString = "<form><li style=\"text\" value=\"\">";
 
-		List<Tactic> tactics = UserSupport.getApplicableToHypothesis(hyp);
-		for (Iterator<Tactic> it = tactics.iterator(); it.hasNext();) {
-			Tactic t = it.next();
-			formString = formString + "<a href=\"" + markedUpTactic(t) + "\">" + markedUpTactic(t) +"</a> ";
+		List<ITactic> tactics = UserSupport.getApplicableToHypothesis(hyp);
+		for (Iterator<ITactic> it = tactics.iterator(); it.hasNext();) {
+			ITactic t = it.next();
+			formString = formString + "<a href=\"" + markedUpITactic(t) + "\">" + markedUpITactic(t) +"</a> ";
 		}
 		
 		formString = formString + "</li></form>";
@@ -118,12 +118,12 @@ public class HypothesisRow
 		return;
 	}
 	
-	private String markedUpTactic(Tactic t) {
-		if (t.equals(Tactics.conjI)) return "∧";
-		if (t.equals(Tactics.impI)) return "⇒";
-		if (t.equals(Tactics.hyp)) return "hp";
-		if (t.equals(Tactics.allI)) return "∀";
-		if (t.equals(Tactics.trivial)) return "⊤";
+	private String markedUpITactic(ITactic t) {
+		if (t.equals(Tactics.conjI())) return "∧";
+		if (t.equals(Tactics.impI())) return "⇒";
+		if (t.equals(Tactics.hyp())) return "hp";
+		if (t.equals(Tactics.allI())) return "∀";
+		if (t.equals(Tactics.trivial())) return "⊤";
 		return "notac";
 	}
 	

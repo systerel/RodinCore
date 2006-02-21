@@ -48,7 +48,7 @@ import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
@@ -116,7 +116,7 @@ public class ProofControlPage
 					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (!proofTree.isOpen()) {
-							Tactics.prune.apply(proofTree);
+							Tactics.prune().apply(proofTree);
 							viewer.refresh(proofTree);
 							viewer.setSelection(new StructuredSelection(proofTree));
 						}
@@ -163,7 +163,7 @@ public class ProofControlPage
 					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode proofTree = (IProofTreeNode) obj;
 						if (proofTree.isOpen()) {
-							Tactic t = Tactics.doCase(textInput.getText());
+							ITactic t = Tactics.doCase(textInput.getText());
 							System.out.println(t.apply(proofTree));
 							viewer.refresh(proofTree);
 							ProofState ps = editor.getUserSupport().getCurrentPO();

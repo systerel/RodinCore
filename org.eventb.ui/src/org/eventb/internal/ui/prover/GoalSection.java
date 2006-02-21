@@ -41,7 +41,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
 
@@ -57,30 +57,30 @@ public class GoalSection
     private FormText formText;
     private ScrolledForm scrolledForm;
     
-    private class GoalTacticHyperlinkAdapter extends HyperlinkAdapter {
+    private class GoalITacticHyperlinkAdapter extends HyperlinkAdapter {
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			if (e.getHref().equals("∧")) {
-				apply(Tactics.conjI);
+				apply(Tactics.conjI());
 				return;
 			}
 			if (e.getHref().equals("⇒")) {
-				apply(Tactics.impI);
+				apply(Tactics.impI());
 				return;
 			}
 			
 			if (e.getHref().equals("hp")) {
-				apply(Tactics.hyp);
+				apply(Tactics.hyp());
 				return;
 			}
 			
 			if (e.getHref().equals("∀")) {
-				apply(Tactics.allI);
+				apply(Tactics.allI());
 				return;
 			}
 
 			if (e.getHref().equals("⊤")) {
-				apply(Tactics.trivial);
+				apply(Tactics.trivial());
 				return;
 			}
 		}
@@ -88,7 +88,7 @@ public class GoalSection
     }
     
     
-    private void apply(Tactic t) {
+    private void apply(ITactic t) {
     	ProverUI editor = (ProverUI) page.getEditor();
 		if (editor != null) {
 			TreeViewer viewer = editor.getProofTreeUI().getViewer();
@@ -145,7 +145,7 @@ public class GoalSection
 		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
 		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		formText.setHyperlinkSettings(hyperlinkSettings);
-		formText.addHyperlinkListener(new GoalTacticHyperlinkAdapter());
+		formText.addHyperlinkListener(new GoalITacticHyperlinkAdapter());
         GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
         gd.widthHint = 100;
         formText.setLayoutData(gd);
@@ -183,7 +183,7 @@ public class GoalSection
 		}
 		if (!pt.isOpen()) {
 			clearFormText();
-			text.setText("Tactic(s) applied");
+			text.setText("ITactic(s) applied");
 		}
 		else {
 			text.setText(pt.getSequent().goal().toString());
@@ -200,11 +200,11 @@ public class GoalSection
 
 	private void setFormText(IProverSequent ps) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<Tactic> tactics = UserSupport.getApplicableToGoal(ps);
+		List<ITactic> tactics = UserSupport.getApplicableToGoal(ps);
 		
-		for (Iterator<Tactic> it = tactics.iterator(); it.hasNext();) {
-			Tactic t = it.next();
-			formString = formString + "<a href=\"" + markedUpTactic(t) + "\">" + markedUpTactic(t) +"</a> ";
+		for (Iterator<ITactic> it = tactics.iterator(); it.hasNext();) {
+			ITactic t = it.next();
+			formString = formString + "<a href=\"" + markedUpITactic(t) + "\">" + markedUpITactic(t) +"</a> ";
 		}
 		
 		formString = formString + "</li></form>";
@@ -214,12 +214,12 @@ public class GoalSection
 		return;
 	}
 	
-	private String markedUpTactic(Tactic t) {
-		if (t.equals(Tactics.conjI)) return "∧";
-		if (t.equals(Tactics.impI)) return "⇒";
-		if (t.equals(Tactics.hyp)) return "hp";
-		if (t.equals(Tactics.allI)) return "∀";
-		if (t.equals(Tactics.trivial)) return "⊤";
+	private String markedUpITactic(ITactic t) {
+		if (t.equals(Tactics.conjI())) return "∧";
+		if (t.equals(Tactics.impI())) return "⇒";
+		if (t.equals(Tactics.hyp())) return "hp";
+		if (t.equals(Tactics.allI())) return "∀";
+		if (t.equals(Tactics.trivial())) return "⊤";
 		return "notac";
 	}
 

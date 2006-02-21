@@ -32,7 +32,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
-import org.eventb.core.prover.tactics.Tactic;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 
 public class CacheHypothesesSection
@@ -56,8 +56,8 @@ public class CacheHypothesesSection
 				if (selected.isEmpty()) return;
 				
 				ProverUI editor = (ProverUI) page.getEditor();
-				Tactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				editor.getUserSupport().applyTacticToHypotheses(t, selected);
+				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
+				editor.getUserSupport().applyITacticToHypotheses(t, selected);
 				
 				// TODO, this should be done as the consequences of IProofTreeDelta
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();

@@ -97,7 +97,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isOpen()) {
-						Tactics.prune.apply(proofTree);
+						Tactics.prune().apply(proofTree);
 						viewer.refresh(proofTree);
 						viewer.setSelection(new StructuredSelection(proofTree));
 					}
@@ -147,7 +147,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
-						Tactics.conjI.apply(proofTree);
+						Tactics.conjI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
@@ -177,7 +177,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
-						Tactics.hyp.apply(proofTree);
+						Tactics.hyp().apply(proofTree);
 						ProofTreeUIActionGroup.this.proofTreeUI.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
@@ -206,7 +206,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
-						Tactics.allI.apply(proofTree);
+						Tactics.allI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
@@ -235,7 +235,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
-						Tactics.impI.apply(proofTree);
+						Tactics.impI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
@@ -264,7 +264,7 @@ public class ProofTreeUIActionGroup
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isDischarged()) {
-						Tactics.trivial.apply(proofTree);
+						Tactics.trivial().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
@@ -320,4 +320,6 @@ public class ProofTreeUIActionGroup
 	}
 
 
+	
+	
 }

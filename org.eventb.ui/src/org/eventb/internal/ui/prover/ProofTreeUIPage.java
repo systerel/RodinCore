@@ -78,7 +78,7 @@ public class ProofTreeUIPage
 	private IProofTree invisibleRoot = null;
 	private IProofTreeNode root = null;
 	// TODO Change to Rule class?
-	private Object [] filters = {"hyp", "allI"}; // Default filters 
+	private Object [] filters = {"allI"}; // Default filters 
 		
 	
 	// The current editting element.
@@ -150,7 +150,23 @@ public class ProofTreeUIPage
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
-
+		// TODO Implement using ViewerFilter????
+//		viewer.addFilter(new ViewerFilter() {
+//
+//			/* (non-Javadoc)
+//			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+//			 */
+//			@Override
+//			public boolean select(Viewer viewer, Object parentElement, Object element) {
+//				System.out.println("Filter");
+//				if (element instanceof IProofTreeNode) {
+//					if (((IProofTreeNode) element).isOpen()) return true;
+//					if (((IProofTreeNode) element).getRule().getName().equals("hyp")) return false;
+//				}
+//				return true;
+//			}
+//			
+//		});
 		if (fInput != null) viewer.setInput(fInput);
 		if (root != null) viewer.setSelection(new StructuredSelection(root));
 
@@ -211,13 +227,14 @@ public class ProofTreeUIPage
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-//		manager.addMenuListener(new IMenuListener() {
-//			public void menuAboutToShow(IMenuManager manager) {
-//				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
-//				groupActionSet.fillContextMenu(manager);
-//				groupActionSet.setContext(null);
-//			}
-//		});
+		System.out.println("Fill Local Pull Down");
+		manager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
+				groupActionSet.fillContextMenu(manager);
+				groupActionSet.setContext(null);
+			}
+		});
 //		manager.add(groupActionSet.pruneAction);
 //		manager.add(groupActionSet.conjIAction);
 //		manager.add(groupActionSet.hypAction);
