@@ -4,5 +4,5 @@ import org.eventb.core.prover.IProofTreeNode;
 
 public interface IGoalDelta {
 	
-	public IProofTreeNode getProofTree();
+	public IProofTreeNode getProofTreeNode();
 }
