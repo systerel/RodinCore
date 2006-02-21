@@ -12,8 +12,12 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
 import org.eventb.core.prover.IExternalReasoner;
+import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
+import org.eventb.core.prover.rules.ProofTree;
+import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.SimpleProverSequent;
@@ -80,6 +84,10 @@ public class TestLib {
 		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
 		IProverSequent Seq = new SimpleProverSequent(typeEnvironment,Hyps,goal);
 		return Seq.selectHypotheses(Hyps);
+	}
+	
+	public static IProofTreeNode genProofTreeNode(String str){
+		return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
 }
