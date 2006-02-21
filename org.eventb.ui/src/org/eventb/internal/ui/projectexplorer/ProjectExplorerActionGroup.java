@@ -39,6 +39,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.Utils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.wizards.NewConstructWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
@@ -201,38 +202,23 @@ public class ProjectExplorerActionGroup
 		String editorId = ProverUI.EDITOR_ID;
 		if (!(obj instanceof IRodinFile)) return;
 		IRodinFile construct = (IRodinFile) obj;
-//		
-		// open the dummy IRodinFile file
-//		IRodinDB db = EventBUIPlugin.getRodinDatabase();
-//		IRodinProject prj = db.getRodinProject("Marriage");
-//		construct = prj.getRodinFile("m0.bum");
-//		
-//		//if (!(obj instanceof IRodinProject)) {
-//			//construct = (IRodinFile) TreeNode.getOpenable(obj); 
-//			// System.out.println("Top construct: " + construct.toString());
-//			
+		
+		IRodinProject prj = construct.getRodinProject();
+		
+		IRodinFile prFile = prj.getRodinFile(Utils.getFileNameWithoutExtension(construct.getElementName()) + ".bpr");		if (prFile != null) {
 			try {
-				// Getting the reference to the editor that opens the construct
-//				IEditorReference editorReference = isOpen(construct);
-				//ProverUI editor;
-////			
-////				if (editorReference != null) {
-////					editor = (EventBEditor) editorReference.getEditor(true);
-////					EventBImage.getActivePage().activate(editor);
-////				}
-////				else {
-				
-				IEditorInput fileInput = new FileEditorInput(construct.getResource());
+				System.out.println("Resource " + prFile.getResource());
+				IEditorInput fileInput = new FileEditorInput(prFile.getResource());
 				EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-//				}
-//				//if (obj instanceof Leaf) editor.getContentOutlinePage().setTreeSelection(new StructuredSelection(obj));
-//				//editor.setSelection(obj);
 			} catch (PartInitException e) {
 				MessageDialog.openError(null, null, "Error open the editor");
 				e.printStackTrace();
 				// TODO EventBImage.logException(e);
 			}
-//		}
+		}
+		else {
+			MessageDialog.openError(null, null, "No .bpr files");
+		}
 		return;
 	}
 	
