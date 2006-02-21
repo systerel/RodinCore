@@ -1,9 +1,14 @@
 package org.eventb.core.prover.tactics;
 
+import static org.eventb.core.prover.tactics.BasicTactics.compose;
+import static org.eventb.core.prover.tactics.BasicTactics.composeStrict;
+import static org.eventb.core.prover.tactics.BasicTactics.onAllPending;
+import static org.eventb.core.prover.tactics.BasicTactics.onPending;
+import static org.eventb.core.prover.tactics.BasicTactics.pluginTac;
+import static org.eventb.core.prover.tactics.BasicTactics.repeat;
+
 import java.util.Set;
 
-import org.eventb.core.prover.IExtReasonerInput;
-import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
 import org.eventb.core.prover.externalReasoners.ExI;
@@ -17,7 +22,6 @@ import org.eventb.core.prover.rules.MngHyp;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
-import static org.eventb.core.prover.tactics.BasicTactics.*;
 
 public class Tactics {
 	
