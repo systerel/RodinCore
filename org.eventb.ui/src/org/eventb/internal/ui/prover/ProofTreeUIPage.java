@@ -40,6 +40,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.pm.IPOChangeEvent;
+import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
@@ -68,7 +71,8 @@ import org.eventb.internal.ui.EventBUIPlugin;
 public class ProofTreeUIPage
 	extends Page 
 	implements	IProofTreeUIPage,
-				ISelectionChangedListener
+				ISelectionChangedListener,
+				IPOChangedListener
 {
 	private ListenerList selectionChangedListeners = new ListenerList();
 
@@ -80,6 +84,7 @@ public class ProofTreeUIPage
 	// TODO Change to Rule class?
 	private Object [] filters = {"allI"}; // Default filters 
 		
+	private boolean byUserSupport;
 	
 	// The current editting element.
 	private Object fInput;
@@ -133,6 +138,8 @@ public class ProofTreeUIPage
 	public ProofTreeUIPage(UserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
+		byUserSupport = false;
+		userSupport.addPOChangedListener(this);
 	}
 	
 	/*
@@ -146,7 +153,7 @@ public class ProofTreeUIPage
         
     
     public void createControl(Composite parent) {
-    	viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+    	viewer = new TreeViewer(parent, SWT.SINGLE| SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
@@ -376,6 +383,12 @@ public class ProofTreeUIPage
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
+				System.out.println("Selection Changed " + byUserSupport);
+				if (byUserSupport) {
+					byUserSupport = false;
+					return;
+				}
+				
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					userSupport.selectNode((IProofTreeNode) obj);
@@ -399,5 +412,16 @@ public class ProofTreeUIPage
 	public UserSupport getUserSupport() {return userSupport;}
 	
 	public void selectRoot() {this.setSelection(new StructuredSelection(root));}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
+	 */
+	public void poChanged(IPOChangeEvent e) {
+		System.out.println("PO Change");
+		byUserSupport = true;
+		ProofState ps = e.getDelta().getProofState();
+		this.setInput(ps.getProofTree());
+		if (ps.getCurrentNode() != null) this.getViewer().setSelection(new StructuredSelection(ps.getCurrentNode()));
+	}
 	
 }

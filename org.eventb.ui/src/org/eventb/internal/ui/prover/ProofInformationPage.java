@@ -113,7 +113,7 @@ public class ProofInformationPage
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
-		scrolledForm.setText(e.getDelta().getProofTree().getSequent().goal().toString());
+		scrolledForm.setText(e.getDelta().getProofState().getProofTree().getSequent().goal().toString());
 		scrolledForm.reflow(true);
 	}
 	

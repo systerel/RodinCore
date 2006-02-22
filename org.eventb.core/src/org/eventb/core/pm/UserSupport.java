@@ -34,7 +34,6 @@ public class UserSupport
 
 	private List<ProofState> proofStates;
 	private int counter;
-	
 	private ProofState proofState;
 
 	public UserSupport() {
@@ -48,18 +47,15 @@ public class UserSupport
 	}
 
 	public void setInput(IPRFile prFile) throws RodinDBException {
-		System.out.println("Set Input for UserSupport");
 		try {
 			for (int i = 0; i < prFile.getSequents().length; i++) {
 				IPRSequent prSequent = prFile.getSequents()[i];
 				proofStates.add(new ProofState(prSequent));
-				System.out.println("New ProofState");
 			}
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		
 		counter = -1;
 		nextUndischargedPO();		
 	}
@@ -69,23 +65,7 @@ public class UserSupport
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
 			if (ps.getPRSequent().equals(prSequent)) {
-				if (ps.getCurrentNode() == null) ps.setCurrentNode(ps.getNextPendingSubgoal());
-				
-				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
-				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
-				notifyHypothesisChangedListener(hypEvent);
-				
-				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
-				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
-				notifyGoalChangedListener(goalEvent);
-				
-				IPODelta poDelta = new PODelta(ps.getProofTree());
-				IPOChangeEvent poEvent = new POChangeEvent(poDelta);
-				notifyPOChangedListener(poEvent);
-				
-				counter = index;
-				proofState = ps;
-				System.out.println("Select " + counter);
+				setProofState(ps, index);
 				return;
 			}
 		}
@@ -103,58 +83,52 @@ public class UserSupport
 		displayCached = newDisplaySearched;
 	}
 	
-	private void nextUndischargedPO() {
-		System.out.println("Next Undischarged PO");
+	public void nextUndischargedPO() {
+//		System.out.println("Next Undischarged PO");
 		for (int i = 1; i <= proofStates.size(); i++) {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
-			System.out.println("Checking proof State" + index);
 			if (!ps.isDischarged()) {
-				System.out.println("Delta here");
-				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
-				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
-				notifyHypothesisChangedListener(hypEvent);
-				
-				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
-				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
-				notifyGoalChangedListener(goalEvent);
-				
-				IPODelta poDelta = new PODelta(ps.getProofTree());
-				IPOChangeEvent poEvent = new POChangeEvent(poDelta);
-				notifyPOChangedListener(poEvent);
-				
-				counter = index;
-				proofState = ps;
+				setProofState(ps, index);
 				return;
 			}
 		}
 		proofState = null;
 	}
 	
-	private void prevUndischargedPO() {
+	public void prevUndischargedPO() {
 		for (int i = 1; i < proofStates.size(); i++) {
 			int index = (counter + proofStates.size() - i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
-				// Calculate delta
-				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
-				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
-				notifyHypothesisChangedListener(hypEvent);
-				
-				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
-				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
-				notifyGoalChangedListener(goalEvent);
-				
-				IPODelta poDelta = new PODelta(ps.getProofTree());
-				IPOChangeEvent poEvent = new POChangeEvent(poDelta);
-				notifyPOChangedListener(poEvent);
-				
-				counter = index;
-				proofState = ps;
+				setProofState(ps, index);
 				return;
 			}
 		}
 		proofState = null;
+	}
+	
+	private void setProofState(ProofState ps, int index) {
+		// Calculate delta
+		if (ps.getCurrentNode() == null) ps.setCurrentNode(ps.getNextPendingSubgoal());
+		
+		IProofTreeNode currentNode = ps.getCurrentNode();
+		IHypothesisDelta hypDelta = calculateHypDelta(ps, currentNode);
+		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+		notifyHypothesisChangedListener(hypEvent);
+		
+		IGoalDelta goalDelta = new GoalDelta(currentNode);
+		IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
+		notifyGoalChangedListener(goalEvent);
+		
+		IPODelta poDelta = new PODelta(ps);
+		IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+		notifyPOChangedListener(poEvent);
+		
+		counter = index;
+		proofState = ps;
+		
+		return;
 	}
 	
 	public void addHypothesisChangedListener(IHypothesisChangedListener listener) {
@@ -343,15 +317,15 @@ public class UserSupport
 		return null;
 	}
 	
-	public ProofState nextPO() {
-		nextUndischargedPO();
-		return(getCurrentPO());
-	}
+//	public ProofState nextPO() {
+//		nextUndischargedPO();
+//		return(getCurrentPO());
+//	}
 	
-	public ProofState prevPO() {
-		prevUndischargedPO();
-		return(getCurrentPO());
-	}
+//	public ProofState prevPO() {
+//		prevUndischargedPO();
+//		return(getCurrentPO());
+//	}
 
 	public void prune(IProofTreeNode pt) {
 		Tactics.prune().apply(pt);

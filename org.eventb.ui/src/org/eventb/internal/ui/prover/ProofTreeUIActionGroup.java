@@ -58,14 +58,14 @@ public class ProofTreeUIActionGroup
 
 		nextPOAction = new Action() {
 			public void run() {
-				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().nextPO();
-				if (ps != null) {
-					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
-					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
-					IProofTreeNode pt = ps.getNextPendingSubgoal();
-					if (pt != null) 
-						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
-				}
+				ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().nextUndischargedPO();
+//				if (ps != null) {
+//					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
+//					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
+//					IProofTreeNode pt = ps.getNextPendingSubgoal();
+//					if (pt != null) 
+//						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
+//				}
 			}
 		};
 		nextPOAction.setText("Next PO");
@@ -74,14 +74,14 @@ public class ProofTreeUIActionGroup
 
 		prevPOAction = new Action() {
 			public void run() {
-				ProofState ps = ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().prevPO();
-				if (ps != null) {
-					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
-					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
-					IProofTreeNode pt = ps.getNextPendingSubgoal();
-					if (pt != null) 
-						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
-				}
+				ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().prevUndischargedPO();
+//				if (ps != null) {
+//					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
+//					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
+//					IProofTreeNode pt = ps.getNextPendingSubgoal();
+//					if (pt != null) 
+//						ProofTreeUIActionGroup.this.proofTreeUI.getViewer().setSelection(new StructuredSelection(pt));
+//				}
 			}
 		};
 		prevPOAction.setText("Previous PO");

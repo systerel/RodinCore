@@ -267,7 +267,7 @@ public class ObligationExplorer
 		else if (obj instanceof IRodinElement) 
 			construct = (IPRFile) ((IRodinElement) obj).getParent();
 		Assert.isTrue(construct != null, "construct must be initialised by now");
-		System.out.println("Link to " + construct.getElementName());
+//		System.out.println("Link to " + construct.getElementName());
 		try {
 			IEditorInput fileInput = new FileEditorInput(construct.getResource());
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);

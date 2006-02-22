@@ -127,29 +127,29 @@ public class ProofControlPage
 			
 			if (label.equals("ne")) {
 				if (editor != null) {
-					ProofState ps = editor.getUserSupport().nextPO();
-					if (ps != null) {
-						editor.getProofTreeUI().setInput(ps.getProofTree());
-						editor.getProofTreeUI().getViewer().expandAll();
-						IProofTreeNode pt = ps.getNextPendingSubgoal();
-						if (pt != null) 
-							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-
-					}
+					editor.getUserSupport().nextUndischargedPO();
+//					if (ps != null) {
+//						editor.getProofTreeUI().setInput(ps.getProofTree());
+//						editor.getProofTreeUI().getViewer().expandAll();
+//						IProofTreeNode pt = ps.getNextPendingSubgoal();
+//						if (pt != null) 
+//							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+//
+//					}
 				}
 				return;
 			}
 			
 			if (label.equals("pv")) {
 				if (editor != null) {
-					ProofState ps = editor.getUserSupport().prevPO();
-					if (ps != null) {
-						editor.getProofTreeUI().setInput(ps.getProofTree());
-						editor.getProofTreeUI().getViewer().expandAll();
-						IProofTreeNode pt = ps.getNextPendingSubgoal();
-						if (pt != null) 
-							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-					}
+					editor.getUserSupport().prevUndischargedPO();
+//					if (ps != null) {
+//						editor.getProofTreeUI().setInput(ps.getProofTree());
+//						editor.getProofTreeUI().getViewer().expandAll();
+//						IProofTreeNode pt = ps.getNextPendingSubgoal();
+//						if (pt != null) 
+//							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+//					}
 				}
 				return;
 			}

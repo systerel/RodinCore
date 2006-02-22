@@ -11,7 +11,6 @@
 
 package org.eventb.internal.ui.prover;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,15 +26,6 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-/**
- * An example showing how to create a multi-page editor.
- * This example has 3 pages:
- * <ul>
- * <li>page 0 contains a nested text editor.
- * <li>page 1 allows you to change the font used in page 2
- * <li>page 2 shows the words in page 0 in sorted order
- * </ul>
- */
 public class ProverUI
 	extends FormEditor 
 {
@@ -66,18 +56,6 @@ public class ProverUI
 		super();
 		this.userSupport = new UserSupport();
 	}
-
-//	private IPRFile getPRFileInput() {
-//		if (prFile == null) {
-//			FileEditorInput editorInput = (FileEditorInput) this.getEditorInput();
-//			
-//			IFile inputFile = editorInput.getFile();
-//			
-//			prFile = (IPRFile) RodinCore.create(inputFile);
-//		}
-//		return prFile;
-//
-//	}
 	
 	
 	/* (non-Javadoc)
