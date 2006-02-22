@@ -151,8 +151,7 @@ public abstract class ClassicB {
 			printPP(input);
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getPPCommand(iName);
-			final Process process = Runtime.getRuntime().exec(cmdArray);
-			return callProver(process, delay, PP_SUCCESS);
+			return callProver(cmdArray, delay, PP_SUCCESS);
 		} finally {
 			cleanup();
 		}
@@ -195,7 +194,6 @@ public abstract class ClassicB {
 		return result == null && status == 0;
 	}
 	
-	// TODO this translation is unsafe -- it should use matching based on regular expressions
 	private static String patchSequentForML(String sequent) {
 		String moinsE = sequent.replace("_moinsE", "-");
 		String multE = moinsE.replace("_multE", "*");
@@ -207,13 +205,16 @@ public abstract class ClassicB {
 		return proveWithML(input, DEFAULT_DELAY);
 	}
 	
-	private static boolean callProver(Process process, long delay, String successMsg) 
+	private static boolean callProver(String[] cmdArray, long delay, String successMsg) 
 	throws IOException {
+		
+		Process process = null;
 		try {
 			Timer timer = new Timer();
 			if (delay >0) {
-			timer.schedule(new ThreadWatcher(Thread.currentThread()), delay);
+				timer.schedule(new ThreadWatcher(Thread.currentThread()), delay);
 			}
+			process = Runtime.getRuntime().exec(cmdArray);
 			process.waitFor();
 			timer.cancel();
 			// showOutput();
@@ -239,8 +240,7 @@ public abstract class ClassicB {
 			printML(patchSequentForML(input.toString()));
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getMLCommand(iName);
-			final Process process = Runtime.getRuntime().exec(cmdArray);
-			return callProver(process, delay, ML_SUCCESS);
+			return callProver(cmdArray, delay, ML_SUCCESS);
 		} finally {
 			cleanup();
 		}
