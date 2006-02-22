@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -42,13 +43,17 @@ import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IPRStatus;
 import org.eventb.core.IVariable;
+import org.eventb.core.IPRStatus.Status;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.Utils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -136,6 +141,18 @@ public class ObligationExplorer
 		}
 		
 		public Image getImage(Object obj) {
+			if (obj instanceof IPRSequent) {
+				ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+				IPRSequent ps = (IPRSequent) obj;
+				try {
+					IPRStatus status = ps.getStatus();
+					if (status.getContents().equals("PENDING")) return registry.get(EventBImage.IMG_PENDING);
+					else if (status.getContents().equals("DISCHARGED")) return registry.get(EventBImage.IMG_DISCHARGED);
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+			}
 			return Utils.getImage(obj);
 		}
 	}
