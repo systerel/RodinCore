@@ -79,6 +79,7 @@ public class TestMachineSC_2 extends BuilderTest {
 		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
 		addSCCarrierSets(context, makeList("S1"), makeList("ℙ(S1)"));
 		addSCConstants(context, makeList("C1"), makeList("S1"));
+		context.save(null, true);
 		return context;
 	}
 	
@@ -544,7 +545,8 @@ public class TestMachineSC_2 extends BuilderTest {
 	private ISCContext makeContext2() throws RodinDBException {
 		ISCContext context = makeContext1();
 		addAxioms(context, makeList("A1", "A2"), makeList("∀x·x>0", "⊤"), null);
-		addTheorems(context, makeList("T1", "T2"), makeList("", ""), null);
+		addTheorems(context, makeList("T1", "T2"), makeList("⊤", "⊤"), null);
+		context.save(null, true);
 		return context;
 	}
 	
@@ -577,7 +579,7 @@ public class TestMachineSC_2 extends BuilderTest {
 		
 		set = setof(scMachine.getTheorems());
 		
-		assertTrue("2 guards", set.size() == 2 & set.contains("T1") && set.contains("T2"));
+		assertTrue("2 theorems", set.size() == 2 & set.contains("T1") && set.contains("T2"));
 		
 		ISCAxiomSet[] axiomSets = scMachine.getAxiomSets();
 		
@@ -835,6 +837,7 @@ public class TestMachineSC_2 extends BuilderTest {
 		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
 		addSCConstants(context, makeList("C1", "C2"), makeList("ℤ", "ℙ(ℤ)"));
 //		TestUtil.addIdentifiers(context, TestUtil.makeList("C1", "C2"), TestUtil.makeList("ℤ", "ℙ(ℤ)"));
+		context.save(null, true);
 		return context;
 	}
 	
