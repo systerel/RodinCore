@@ -216,11 +216,9 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			if(verified) {
 				SCParser parser = parseAndVerifyPredicate(theorem);
 				if (parser != null) {
-					
-					System.out.println("Adding theorem "
-							+ theorem.getElementName() + ", contents: '"
-							+ parser.getPredicate() + "'.");
-					
+//					System.out.println("Adding theorem "
+//							+ theorem.getElementName() + ", contents: '"
+//							+ parser.getPredicate() + "'.");
 					contextCache.getNewTheorems().add(theorem);
 					theoremPredicateMap.put(theorem.getElementName(), parser.getPredicate());
 				}
