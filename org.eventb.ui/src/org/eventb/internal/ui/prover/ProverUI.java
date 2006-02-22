@@ -12,13 +12,20 @@
 package org.eventb.internal.ui.prover;
 
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * An example showing how to create a multi-page editor.
@@ -48,6 +55,10 @@ public class ProverUI
 	
 	private UserSupport userSupport;
 	
+	
+	// The associated rodin file handle
+	private IPRFile prFile = null;
+	
 	/**
 	 * Default constructor.
 	 */
@@ -56,6 +67,42 @@ public class ProverUI
 		this.userSupport = new UserSupport();
 	}
 
+//	private IPRFile getPRFileInput() {
+//		if (prFile == null) {
+//			FileEditorInput editorInput = (FileEditorInput) this.getEditorInput();
+//			
+//			IFile inputFile = editorInput.getFile();
+//			
+//			prFile = (IPRFile) RodinCore.create(inputFile);
+//		}
+//		return prFile;
+//
+//	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
+	 */
+	@Override
+	protected void setInput(IEditorInput input) {
+		System.out.println("Set Input for Prover UI");
+		if (input instanceof IFileEditorInput) {
+			IFile inputFile = ((IFileEditorInput) input).getFile();
+			prFile = (IPRFile) RodinCore.create(inputFile);
+			try {
+				userSupport.setInput(prFile);
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+		}
+		super.setInput(input);
+	}
+
+	public void setCurrentPO(IPRSequent prSequent) {
+		userSupport.setCurrentPO(prSequent);
+	}
+	
 	public UserSupport getUserSupport() {return userSupport;}
 	
 	/**
@@ -97,8 +144,9 @@ public class ProverUI
 		if (IProofTreeUIPage.class.equals(required)) {
 			if (fProofTreeUI == null) {
 				fProofTreeUI = new ProofTreeUIPage(userSupport);
-				if (getEditorInput() != null)
+				if (userSupport.getCurrentPO() != null) {
 					fProofTreeUI.setInput(userSupport.getCurrentPO().getProofTree());
+				}
 			}
 			return fProofTreeUI;
 		}

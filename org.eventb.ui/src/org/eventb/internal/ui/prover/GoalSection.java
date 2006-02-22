@@ -183,7 +183,7 @@ public class GoalSection
 		}
 		if (!pt.isOpen()) {
 			clearFormText();
-			text.setText("ITactic(s) applied");
+			text.setText("Tactic(s) applied");
 		}
 		else {
 			text.setText(pt.getSequent().goal().toString());

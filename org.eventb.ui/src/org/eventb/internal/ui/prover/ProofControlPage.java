@@ -205,12 +205,52 @@ public class ProofControlPage
 			}
 			
 			if (label.equals("pp")) {
-				System.out.println("TODO: Implements Legacy provers");
+				if (editor != null) {
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection) selection).getFirstElement();
+					
+					if (obj instanceof IProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (proofTree.isOpen()) {
+							Tactics.legacyProvers().apply(proofTree);
+							editor.getProofTreeUI().refresh(proofTree);
+							
+							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
+							//viewer.setExpandedState(proofTree, true);
+							ProofState ps = editor.getUserSupport().getCurrentPO();
+							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
+							if (pt != null) 
+								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+							else
+								editor.getProofTreeUI().selectRoot();
+						}
+					}
+				}
 				return;
 			}
 			
 			if (label.equals("ah")) {
-				System.out.println("TODO: Implements add hypothesis");
+				if (editor != null) {
+					TreeViewer viewer = editor.getProofTreeUI().getViewer();
+					ISelection selection = viewer.getSelection();
+					Object obj = ((IStructuredSelection) selection).getFirstElement();
+					
+					if (obj instanceof IProofTreeNode) {
+						IProofTreeNode proofTree = (IProofTreeNode) obj;
+						if (proofTree.isOpen()) {
+							ITactic t = Tactics.lemma(textInput.getText());
+							System.out.println(t.apply(proofTree));
+							viewer.refresh(proofTree);
+							ProofState ps = editor.getUserSupport().getCurrentPO();
+							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
+							if (pt != null) 
+								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+							else
+								editor.getProofTreeUI().selectRoot();
+						}
+					}
+				}
 				return;
 			}
 			
@@ -286,8 +326,12 @@ public class ProofControlPage
 			 }
 		});
 		
-		IProofTreeNode node = editor.getUserSupport().getCurrentPO().getCurrentNode();
-		isOpened = (node != null && node.isOpen()) ? true : false;
+		ProofState proofState = editor.getUserSupport().getCurrentPO();
+		if (proofState != null) {
+			IProofTreeNode node = proofState.getCurrentNode();
+			isOpened = (node != null && node.isOpen()) ? true : false;
+		}
+		else isOpened = false;
 		updateButtons();
 
 		toolkit.paintBordersFor(body);

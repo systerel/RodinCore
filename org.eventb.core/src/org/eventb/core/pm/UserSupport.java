@@ -7,17 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.prover.IProofTree;
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.rules.AllI;
-import org.eventb.core.prover.rules.ConjI;
-import org.eventb.core.prover.rules.Hyp;
-import org.eventb.core.prover.rules.IProofRule;
-import org.eventb.core.prover.rules.ImpI;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pm.GoalChangeEvent;
@@ -26,6 +20,7 @@ import org.eventb.internal.core.pm.HypothesisChangeEvent;
 import org.eventb.internal.core.pm.HypothesisDelta;
 import org.eventb.internal.core.pm.POChangeEvent;
 import org.eventb.internal.core.pm.PODelta;
+import org.rodinp.core.RodinDBException;
 
 public class UserSupport
 {
@@ -37,38 +32,63 @@ public class UserSupport
 	private Collection<Hypothesis> displayCached;
 	private Collection<Hypothesis> displaySearched;
 
-	
 	private List<ProofState> proofStates;
 	private int counter;
 	
 	private ProofState proofState;
-	
-	private static String [] names = {
-		"1=1 ;; 2=2 |- 1=1 ∧2=2 ∧2=2",
-		"1=1 ;; 2=2 |- 1=1 ∧(3=3 ⇒ 2=2 ∧3=3 ∧(∀x·x=1 ⇒ x = 1))",
-		"x=1 ∨x=2 |- x < 3 ",
-		"1=1 |-  ∃x·x=1"
-	};
 
 	public UserSupport() {
-		proofStates = new ArrayList<ProofState>();
-		for (int i = 0; i < names.length; i++) {
-			IProofTree tree = SequentProver.makeProofTree(Utils.genSeq(names[i]));
-			proofStates.add(new ProofState(tree));
-		}
-				
 		hypChangedListeners = new HashSet<IHypothesisChangedListener>();
 		goalChangedListeners = new HashSet<IGoalChangedListener>();
 		poChangedListeners = new HashSet<IPOChangedListener>();
 		proofTreeChangedListeners = new HashSet<IProofTreeChangedListener>();
-		
 		displayCached = new HashSet<Hypothesis>();
 		displaySearched = new HashSet<Hypothesis>();
+		proofStates = new ArrayList<ProofState>();
+	}
 
-		counter = -1;
-
-		nextUndischargedPO();
+	public void setInput(IPRFile prFile) throws RodinDBException {
+		System.out.println("Set Input for UserSupport");
+		try {
+			for (int i = 0; i < prFile.getSequents().length; i++) {
+				IPRSequent prSequent = prFile.getSequents()[i];
+				proofStates.add(new ProofState(prSequent));
+				System.out.println("New ProofState");
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 		
+		counter = -1;
+		nextUndischargedPO();		
+	}
+	
+	public void setCurrentPO(IPRSequent prSequent) {
+		for (int i = 1; i <= proofStates.size(); i++) {
+			int index = (counter + i) % proofStates.size();
+			ProofState ps = proofStates.get(index);
+			if (ps.getPRSequent().equals(prSequent)) {
+				if (ps.getCurrentNode() == null) ps.setCurrentNode(ps.getNextPendingSubgoal());
+				
+				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
+				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+				notifyHypothesisChangedListener(hypEvent);
+				
+				IGoalDelta goalDelta = new GoalDelta(ps.getCurrentNode());
+				IGoalChangeEvent goalEvent = new GoalChangeEvent(goalDelta);
+				notifyGoalChangedListener(goalEvent);
+				
+				IPODelta poDelta = new PODelta(ps.getProofTree());
+				IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+				notifyPOChangedListener(poEvent);
+				
+				counter = index;
+				proofState = ps;
+				System.out.println("Select " + counter);
+				return;
+			}
+		}
 	}
 	
 	public Collection<Hypothesis> getDisplayCached() {return displayCached;}
@@ -84,14 +104,13 @@ public class UserSupport
 	}
 	
 	private void nextUndischargedPO() {
-		for (int i = 1; i < proofStates.size(); i++) {
+		System.out.println("Next Undischarged PO");
+		for (int i = 1; i <= proofStates.size(); i++) {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
+			System.out.println("Checking proof State" + index);
 			if (!ps.isDischarged()) {
-				// Calculate delta
-//				System.out.println("Old PO " + proofState);
-//				System.out.println("New PO " + ps.getProofTree());
-				
+				System.out.println("Delta here");
 				IHypothesisDelta hypDelta = calculateHypDelta(ps, ps.getCurrentNode());
 				IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 				notifyHypothesisChangedListener(hypEvent);
@@ -193,34 +212,6 @@ public class UserSupport
 	public void removeProofTreeChangedListener(IProofTreeChangedListener listener) {
 		proofTreeChangedListeners.remove(listener);
 	}
-	
-	public static List<ITactic> getApplicableToGoal(IProverSequent ps) {
-		List<ITactic> result = new ArrayList<ITactic>();
-		
-		IProofRule rule;
-		rule = new ConjI();
-		if (rule.isApplicable(ps)) result.add(Tactics.conjI());
-		
-		rule = new ImpI();
-		if (rule.isApplicable(ps)) result.add(Tactics.impI());
-		
-		rule = new Hyp();
-		if (rule.isApplicable(ps)) result.add(Tactics.hyp());
-		
-		rule = new AllI();
-		if (rule.isApplicable(ps)) result.add(Tactics.allI());
-		
-		return result;
-	}
-
-	public static List<ITactic> getApplicableToHypothesis(Hypothesis hyp) {
-		List<ITactic> result = new ArrayList<ITactic>();
-		result.add(Tactics.conjI());
-		result.add(Tactics.impI());
-		result.add(Tactics.hyp());
-		return result;
-	}
-
 
 	public IHypothesisDelta calculateHypDelta(ProofState newProofState, IProofTreeNode newNode) {
 		Collection<Hypothesis> newSelectedHypotheses;
@@ -342,7 +333,7 @@ public class UserSupport
 			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
 		}
 		
-		proofState.setCurrentNode(pt);
+		if (proofState != null) proofState.setCurrentNode(pt);
 		return;
 	}
 

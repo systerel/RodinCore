@@ -3,19 +3,23 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.rodinp.core.RodinDBException;
 
 public class ProofState {
 	// TODO Add PO handle to replace IProverSequent
+	private IPRSequent ps;
 	private IProofTree pt;
 	private IProofTreeNode current;
 	private Collection<Hypothesis> cached;
 	private Collection<Hypothesis> searched;
 	
-	public ProofState(IProofTree pt) {
-		this.pt = pt;
+	public ProofState(IPRSequent ps) throws RodinDBException {
+		this.ps = ps;
+		pt = ps.makeProofTree();
 		current = null;
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
@@ -24,6 +28,8 @@ public class ProofState {
 	public boolean isDischarged() {
 		return pt.isDischarged();
 	}
+	
+	public IPRSequent getPRSequent() {return ps;}
 	
 	public IProofTree getProofTree() {return pt;}
 	

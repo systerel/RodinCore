@@ -48,7 +48,6 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -130,12 +129,8 @@ public class ObligationExplorer
 				String name = ((IRodinFile) obj).getElementName();
 				return Utils.getFileNameWithoutExtension(name);
 			}
-			try {
-				if (obj instanceof IPRSequent) return ((IPRSequent) obj).getGoal().toString();
-			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
+			if (obj instanceof IPRSequent) return ((IPRSequent) obj).getName();
+			
 			return obj.toString();
 		}
 		
@@ -275,7 +270,8 @@ public class ObligationExplorer
 		System.out.println("Link to " + construct.getElementName());
 		try {
 			IEditorInput fileInput = new FileEditorInput(construct.getResource());
-			EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
+			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
+			if (!(obj instanceof IPRFile)) editor.setCurrentPO((IPRSequent) obj);
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");
 			e.printStackTrace();
