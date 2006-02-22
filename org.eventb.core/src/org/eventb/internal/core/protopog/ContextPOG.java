@@ -84,7 +84,7 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
 		IRodinProject project = newPOFile.getRodinProject();
-		ISCContext contextIn = newPOFile.getCheckedContext();
+		ISCContext contextIn = newPOFile.getSCContext();
 		
 		if (! contextIn.exists())
 			ContextSC.makeError("Source SC context does not exist.");

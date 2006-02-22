@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContext;
+import org.eventb.core.IMachine;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicateSet;
@@ -64,6 +66,20 @@ public class PRFile extends RodinFile implements IPRFile {
 		PRSequent[] sequents = new PRSequent[list.size()];
 		list.toArray(sequents);
 		return sequents;
+	}
+
+	public IContext getContext() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getContextFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IContext) project.getRodinFile(scName);
+	}
+
+	public IMachine getMachine() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getMachineFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IMachine) project.getRodinFile(scName);
 	}
 
 	public IPOFile getPOFile() {

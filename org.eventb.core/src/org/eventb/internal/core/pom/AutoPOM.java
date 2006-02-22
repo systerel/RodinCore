@@ -95,7 +95,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		init(poIn, newPRFile, interrupt, monitor);
 		writePRFile();
-		runAutoProver();
+		// TODO runAutoProver();
 		return true;
 	}
 

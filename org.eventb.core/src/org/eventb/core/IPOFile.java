@@ -33,7 +33,7 @@ public interface IPOFile extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of the corresponding context
 	 */
-	public ISCContext getCheckedContext();
+	public ISCContext getSCContext();
 
 	/**
 	 * Returns a handle to the checked version of the machine for which this
@@ -44,7 +44,7 @@ public interface IPOFile extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of the corresponding machine
 	 */
-	public ISCMachine getCheckedMachine();
+	public ISCMachine getSCMachine();
 
 	/**
 	 * Returns a handle to the file containing proofs for this component.

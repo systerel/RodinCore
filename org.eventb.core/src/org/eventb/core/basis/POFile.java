@@ -75,14 +75,14 @@ public class POFile extends RodinFile implements IPOFile {
 		return sequents;
 	}
 
-	public ISCContext getCheckedContext() {
+	public ISCContext getSCContext() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (ISCContext) project.getRodinFile(scName);
 	}
 
-	public ISCMachine getCheckedMachine() {
+	public ISCMachine getSCMachine() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();

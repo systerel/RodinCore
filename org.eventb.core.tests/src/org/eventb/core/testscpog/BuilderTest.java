@@ -284,12 +284,12 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected ISCContext runSC(IContext context) throws CoreException {
 		runBuilder();
-		return context.getCheckedContext();
+		return context.getSCContext();
 	}
 	
 	protected ISCMachine runSC(IMachine machine) throws CoreException {
 		runBuilder();
-		return machine.getCheckedMachine();
+		return machine.getSCMachine();
 	}
 	
 	protected void setUp() throws Exception {

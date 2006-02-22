@@ -31,7 +31,7 @@ public interface ISCMachine extends IMachine {
 	 * 
 	 * @return a handle to the unchecked version of this machine
 	 */
-	public IMachine getUncheckedVersion();
+	public IMachine getMachine();
 
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
 	ISCConstant[] getSCConstants() throws RodinDBException;

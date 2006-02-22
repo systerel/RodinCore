@@ -27,6 +27,28 @@ public interface IPRFile extends IRodinFile {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
 	
 	/**
+	 * Returns a handle to the unchecked version of the context for which this
+	 * proof file has been generated.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the unchecked version of the corresponding context
+	 */
+	public IContext getContext();
+
+	/**
+	 * Returns a handle to the unchecked version of the machine for which this
+	 * proof file has been generated.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the unchecked version of the corresponding machine
+	 */
+	public IMachine getMachine();
+
+	/**
 	 * Returns a handle to the file containing proof obligations for this
 	 * component.
 	 * <p>

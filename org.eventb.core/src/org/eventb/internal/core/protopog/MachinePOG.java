@@ -78,7 +78,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
 		IRodinProject project = newPOFile.getRodinProject();
-		ISCMachine machineIn = newPOFile.getCheckedMachine();
+		ISCMachine machineIn = newPOFile.getSCMachine();
 
 		if (! machineIn.exists())
 			MachineSC.makeError("Source SC context does not exist.");

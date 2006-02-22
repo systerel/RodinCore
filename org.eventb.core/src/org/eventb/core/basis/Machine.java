@@ -107,7 +107,7 @@ public class Machine extends RodinFile implements IMachine {
 		return result;
 	}
 	
-	public ISCMachine getCheckedMachine() {
+	public ISCMachine getSCMachine() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();

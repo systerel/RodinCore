@@ -47,7 +47,7 @@ public interface ISCContext extends IContext {
 	 * 
 	 * @return a handle to the unchecked version of this context
 	 */
-	public IContext getUncheckedVersion();
+	public IContext getContext();
 
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
 	ISCConstant[] getSCConstants() throws RodinDBException;

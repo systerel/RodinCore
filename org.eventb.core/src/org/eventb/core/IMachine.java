@@ -31,7 +31,7 @@ public interface IMachine extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of this machine
 	 */
-	ISCMachine getCheckedMachine();
+	ISCMachine getSCMachine();
 
 	/**
 	 * Returns a handle to the file containing proof obligations for this

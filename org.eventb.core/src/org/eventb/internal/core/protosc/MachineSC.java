@@ -105,7 +105,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		
 		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
 		IRodinProject project = newSCMachine.getRodinProject();
-		IMachine machineIn = newSCMachine.getUncheckedVersion();
+		IMachine machineIn = newSCMachine.getMachine();
 		
 		if (! machineIn.exists())
 			MachineSC.makeError("Source machine does not exist.");
@@ -130,7 +130,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	public void extract(IFile file, IGraph graph) throws CoreException {
 //		 the prototype does not have refinements
 		IMachine machineIn = (IMachine) RodinCore.create(file);
-		ISCMachine target = machineIn.getCheckedMachine();
+		ISCMachine target = machineIn.getSCMachine();
 		ISCContext seen = null;
 		ISCContext[] sees = machineIn.getSeenContexts();
 		if (sees.length == 1) {

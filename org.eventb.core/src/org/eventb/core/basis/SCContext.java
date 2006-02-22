@@ -92,7 +92,7 @@ public class SCContext extends Context implements ISCContext {
 		return identifiers; 
 	}
 
-	public IContext getUncheckedVersion() {
+	public IContext getContext() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String uName = EventBPlugin.getContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();

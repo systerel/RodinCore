@@ -142,7 +142,7 @@ public class SCMachine extends Machine implements ISCMachine {
 		return theoremSet.getTheorems();
 	}
 
-	public IMachine getUncheckedVersion() {
+	public IMachine getMachine() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String uName = EventBPlugin.getMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();

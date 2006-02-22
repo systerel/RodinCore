@@ -81,7 +81,7 @@ public class Context extends RodinFile implements IContext {
 		return theorems;
 	}
 
-	public ISCContext getCheckedContext() {
+	public ISCContext getSCContext() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();

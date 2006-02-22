@@ -87,7 +87,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			System.out.println(getClass().getName() + " running.");
 		
 		ISCContext newSCContext = (ISCContext) RodinCore.create(file);
-		IContext contextIn = newSCContext.getUncheckedVersion();
+		IContext contextIn = newSCContext.getContext();
 
 		if (! contextIn.exists())
 			ContextSC.makeError("Source context does not exist.");
@@ -113,7 +113,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		// the prototype does not have refinements
 
 		IContext contextIn = (IContext) RodinCore.create(file);
-		ISCContext target = contextIn.getCheckedContext();
+		ISCContext target = contextIn.getSCContext();
 		
 		IPath inPath = contextIn.getPath();
 		IPath targetPath = target.getPath();

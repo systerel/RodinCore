@@ -31,7 +31,7 @@ public interface IContext extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of this context
 	 */
-	public ISCContext getCheckedContext();
+	public ISCContext getSCContext();
 
 	/**
 	 * Returns a handle to the file containing proof obligations for this
