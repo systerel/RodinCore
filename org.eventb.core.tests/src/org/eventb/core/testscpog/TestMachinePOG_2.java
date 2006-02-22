@@ -531,25 +531,21 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ)").getParsedPredicate().toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
-		addSCVariables(rodinFile, makeList("n"), makeList("ℤ"));
-		addInvariants(rodinFile, makeList("I1"), makeList("n∈ℕ"));
-		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
-				makeList(), 
-				makeList(), makeList("n≔0"), makeList());
-		addSCEvent(rodinFile, "E1", makeList("x"), 
-				makeList("G1"), 
-				makeList(guard1), makeList("n≔x"), makeList("ℤ"));
+		addSCEvent(rodinFile, "E",
+				makeList("x"), 
+				makeList("G"), 
+				makeList(guard1),
+				makeList(),
+				makeList("ℤ"));
 		rodinFile.save(null, true);
 		IPOFile poFile = runPOG(rodinFile);
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
-		assertTrue("number of proof obligations", sequents.length == 3);
+		assertTrue("number of proof obligations", sequents.length == 1);
 		
 		int dlk = getIndexForName("DLK", sequents);
-		
 		assertTrue("names ok", dlk != -1);
-
 		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
 	}
 
