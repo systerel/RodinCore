@@ -57,7 +57,7 @@ public class EventBImage {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eventb.ui", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(EventBUIPlugin.PLUGIN_ID, path);
 	}
 
 	/**

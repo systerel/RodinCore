@@ -1,5 +1,11 @@
 package org.eventb.internal.ui.prover;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -14,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.osgi.framework.Bundle;
 
 public class PenguinDanceDialog  extends Dialog {
     
@@ -54,11 +61,30 @@ public class PenguinDanceDialog  extends Dialog {
         
         Browser browser = new Browser(composite, Window.getDefaultOrientation());
         
+        // if the bundle is not ready then there is no image
+        Bundle bundle = Platform.getBundle(EventBUIPlugin.PLUGIN_ID);
+        if ((bundle == null) && (bundle.getState() & (Bundle.RESOLVED | Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) != 0)
+            return composite;
+
+        // look for the image (this will check both the plugin and fragment folders
+        URL fullPathString = Platform.find(bundle, new Path("icons/penguins-dancing.gif"));
+        if (fullPathString == null) {
+            try {
+                fullPathString = new URL("icons/penguins-dancing.gif");
+            } catch (MalformedURLException e) {
+                return composite;
+            }
+        }
+
+        try {
+        	browser.setText("<html><body><img align=\"center\" src=\"" + Platform.asLocalURL(fullPathString).getFile() + "\" alt=\"Penguin tumbler\"></body></html>");
+        }
+        catch (IOException e) {
+        	e.printStackTrace();
+        }
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint = image.getBounds().width + 20;
         gd.heightHint = image.getBounds().height + 20;
-
-        browser.setText("<html><body><img align=\"center\" src=\"/home/htson/work/workspace/org.eventb.ui/icons/penguins-dancing.gif\" alt=\"Penguin tumbler\"></body></html>");
         browser.setLayoutData(gd);	        
         
         applyDialogFont(composite);
