@@ -284,10 +284,10 @@ public class Node implements Serializable {
 	protected void addOriginToCycle() {
 		for(Link link : pred) {
 			if(link.source.count > 0) {
-				file = link.origin.getFile();
+				IFile originFile = link.origin.getFile();
 				link.origin.dated = true;
-				if(file != null)
-					TempMarkerHelper.addMarker(file, IMarker.SEVERITY_ERROR, "Resource in dependency cycle"); //$NON-NLS-1$
+				if(originFile != null)
+					TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency cycle"); //$NON-NLS-1$
 				else if(RodinBuilder.DEBUG)
 					System.out.println(getClass().getName() + ": File not found: " + link.origin.getName()); //$NON-NLS-1$
 			}
@@ -300,6 +300,17 @@ public class Node implements Serializable {
 				return true;
 		}
 		return false;
+	}
+	
+	protected void printPhantomProblem() {
+		for(Link link : pred) {
+			if(link.source.isPhantom())
+				if(link.source.producerId == null || link.source.producerId.equals("")) {
+					IFile originFile = link.origin.getFile();
+					if(originFile != null)
+						TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency does not exist: " + link.source.getName()); //$NON-NLS-1$
+				}
+		}
 	}
 	
 	/**

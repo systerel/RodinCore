@@ -121,8 +121,12 @@ public class Graph implements Serializable {
 	}
 		
 	private void runTool(Node node, IInterrupt interrupt, IProgressMonitor monitor) {
-		if(node.isPhantom() || node.dependsOnPhantom())
+		if(node.isPhantom())
 			return;
+		if(node.dependsOnPhantom()) {
+			node.printPhantomProblem();
+			return;
+		}
 		String toolName = node.getProducerId();
 		IFile file = node.getFile();
 		if (file == null) {// resource is not a file
