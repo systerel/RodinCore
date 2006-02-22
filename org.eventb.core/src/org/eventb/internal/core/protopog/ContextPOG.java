@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +29,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -83,27 +82,16 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
-		newPOFile.getRodinProject().createRodinFile(newPOFile.getElementName(), true, null);
+		IRodinProject project = newPOFile.getRodinProject();
+		ISCContext contextIn = newPOFile.getCheckedContext();
 		
-		// TODO: the explicit file extension should be replaced by a request to the content type manager
-		IFile contextFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("bcc"));
-		
-		ISCContext contextIn = (ISCContext) RodinCore.create(contextFile);
-		if(!contextIn.exists())
+		if (! contextIn.exists())
 			ContextSC.makeError("Source SC context does not exist.");
-		contextIn.open(monitor);
 		
-		
+		project.createRodinFile(newPOFile.getElementName(), true, null);
 		init(contextIn, newPOFile, interrupt, monitor);
-		
 		run();
-		
-		contextIn.close();
-		newPOFile.close();
-		
 		return true;
 	}
 
@@ -114,15 +102,20 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 	}
 
 	public void extract(IFile file, IGraph graph) throws CoreException {
-		// TODO Auto-generated method stub
-		IPath target = file.getFullPath().removeFileExtension().addFileExtension("bpo");
-		graph.addNode(target, POGCore.CONTEXT_POG_TOOL_ID);
-		IPath[] paths = graph.getDependencies(target, POGCore.CONTEXT_POG_TOOL_ID);
-		if(paths.length == 1 && paths[0].equals(target))
+		
+		ISCContext in = (ISCContext) RodinCore.create(file);
+		IPOFile target = in.getPOFile();
+		
+		IPath inPath = in.getPath();
+		IPath targetPath = target.getPath();
+		
+		graph.addNode(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
+		IPath[] paths = graph.getDependencies(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
+		if (paths.length == 1 && paths[0].equals(targetPath))
 			return;
 		else {
-			graph.removeDependencies(target, POGCore.CONTEXT_POG_TOOL_ID);
-			graph.addToolDependency(file.getFullPath(), target, POGCore.CONTEXT_POG_TOOL_ID, true);
+			graph.removeDependencies(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
+			graph.addToolDependency(inPath, targetPath, POGCore.CONTEXT_POG_TOOL_ID, true);
 		}
 	}
 

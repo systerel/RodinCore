@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,12 +27,12 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISCAxiomSet;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
+import org.eventb.core.ISCContext;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInvariantSet;
 import org.eventb.core.ISCMachine;
 import org.eventb.core.ISCTheoremSet;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
@@ -48,6 +46,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -104,27 +103,16 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if(DEBUG)
 			System.out.println(getClass().getName() + " running.");
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		
 		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
-		newSCMachine.getRodinProject().createRodinFile(newSCMachine.getElementName(), true, null);
+		IRodinProject project = newSCMachine.getRodinProject();
+		IMachine machineIn = newSCMachine.getUncheckedVersion();
 		
-		// TODO: the explicit file extension should be replaced by a request to the content type manager
-		IFile machineFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("bum"));
-		
-		IMachine machineIn = (IMachine) RodinCore.create(machineFile);
-		if(!machineIn.exists())
+		if (! machineIn.exists())
 			MachineSC.makeError("Source machine does not exist.");
-		machineIn.open(monitor);
 		
-		
+		project.createRodinFile(newSCMachine.getElementName(), true, null);
 		init(machineIn, newSCMachine, interrupt, monitor);
-		
 		runSC();
-		
-		machineIn.close();
-		newSCMachine.close();
-		
 		return true;
 	}
 
@@ -141,23 +129,29 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
 //		 the prototype does not have refinements
-		IPath source = file.getFullPath();
-		IPath seen = null;
-		ISees[] sees = ((IMachine) RodinCore.create(file)).getSees();
-		if(sees.length == 1)
-			seen = source.removeLastSegments(1).append(sees[0].getSeenContext()).addFileExtension("bcc");
-		IPath target = file.getFullPath().removeFileExtension().addFileExtension("bcm");
-		graph.addNode(target, SCCore.MACHINE_SC_TOOL_ID);
-		IPath[] toolPaths = graph.getDependencies(target, SCCore.MACHINE_SC_TOOL_ID);
-		if(toolPaths.length == 0 || !toolPaths[0].equals(target)) {
-			graph.removeDependencies(target, SCCore.CONTEXT_SC_TOOL_ID);
-			graph.addToolDependency(file.getFullPath(), target, SCCore.CONTEXT_SC_TOOL_ID, true);
+		IMachine machineIn = (IMachine) RodinCore.create(file);
+		ISCMachine target = machineIn.getCheckedMachine();
+		ISCContext seen = null;
+		ISCContext[] sees = machineIn.getSeenContexts();
+		if (sees.length == 1) {
+			seen = sees[0];
 		}
-		IPath[] seesPaths = graph.getDependencies(target, SCCore.MACHINE_SEES_REL_ID);
-		if(seesPaths.length == 0 || !seesPaths[0].equals(seen)) {
-			graph.removeDependencies(target, SCCore.MACHINE_SEES_REL_ID);
-			if(seen != null)
-				graph.addUserDependency(file.getFullPath(), seen, target, SCCore.MACHINE_SEES_REL_ID, true);
+
+		IPath inPath = machineIn.getPath();
+		IPath targetPath = target.getPath();
+		IPath seenPath = seen != null ? seen.getPath() : null;
+		
+		graph.addNode(targetPath, SCCore.MACHINE_SC_TOOL_ID);
+		IPath[] toolPaths = graph.getDependencies(targetPath, SCCore.MACHINE_SC_TOOL_ID);
+		if (toolPaths.length != 1 || ! toolPaths[0].equals(targetPath)) {
+			graph.removeDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
+			graph.addToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
+		}
+		IPath[] seesPaths = graph.getDependencies(targetPath, SCCore.MACHINE_SEES_REL_ID);
+		if (seesPaths.length != 1 || ! seesPaths[0].equals(seenPath)) {
+			graph.removeDependencies(targetPath, SCCore.MACHINE_SEES_REL_ID);
+			if (seen != null)
+				graph.addUserDependency(inPath, seenPath, targetPath, SCCore.MACHINE_SEES_REL_ID, true);
 		}
 	}
 

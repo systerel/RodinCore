@@ -14,8 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,6 +31,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -87,27 +86,16 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if(DEBUG)
 			System.out.println(getClass().getName() + " running.");
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				
 		ISCContext newSCContext = (ISCContext) RodinCore.create(file);
-		newSCContext.getRodinProject().createRodinFile(newSCContext.getElementName(), true, null);
-		
-		// TODO: the explicit file extension should be replaced by a request to the content type manager
-		IFile contextFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("buc"));
-		
-		IContext contextIn = (IContext) RodinCore.create(contextFile);
-		if(!contextIn.exists())
+		IContext contextIn = newSCContext.getUncheckedVersion();
+
+		if (! contextIn.exists())
 			ContextSC.makeError("Source context does not exist.");
-		contextIn.open(monitor);
 		
-		
+		IRodinProject project = (IRodinProject) newSCContext.getParent();
+		project.createRodinFile(newSCContext.getElementName(), true, null);
 		init(contextIn, newSCContext, interrupt, monitor);
-		
 		runSC();
-		
-		contextIn.close();
-		newSCContext.close();
-		
 		return true;
 	}
 
@@ -123,16 +111,19 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
 		// the prototype does not have refinements
-		IPath target = file.getFullPath().removeFileExtension().addFileExtension("bcc");
-		graph.addNode(target, SCCore.CONTEXT_SC_TOOL_ID);
-		IPath[] paths = graph.getDependencies(target, SCCore.CONTEXT_SC_TOOL_ID);
-		if(paths.length == 1 && paths[0].equals(target))
-			return;
-		else {
-			graph.removeDependencies(target, SCCore.CONTEXT_SC_TOOL_ID);
-			graph.addToolDependency(file.getFullPath(), target, SCCore.CONTEXT_SC_TOOL_ID, true);
-		}
+
+		IContext contextIn = (IContext) RodinCore.create(file);
+		ISCContext target = contextIn.getCheckedContext();
 		
+		IPath inPath = contextIn.getPath();
+		IPath targetPath = target.getPath();
+		
+		graph.addNode(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
+		IPath[] paths = graph.getDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
+		if (paths.length != 1 || ! paths[0].equals(targetPath)) {
+			graph.removeDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
+			graph.addToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
+		}
 	}
 
 	public void runSC() throws CoreException {
@@ -224,7 +215,12 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			}
 			if(verified) {
 				SCParser parser = parseAndVerifyPredicate(theorem);
-				if(parser != null) {
+				if (parser != null) {
+					
+					System.out.println("Adding theorem "
+							+ theorem.getElementName() + ", contents: '"
+							+ parser.getPredicate() + "'.");
+					
 					contextCache.getNewTheorems().add(theorem);
 					theoremPredicateMap.put(theorem.getElementName(), parser.getPredicate());
 				}

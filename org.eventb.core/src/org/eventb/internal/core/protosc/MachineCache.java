@@ -21,12 +21,10 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
-import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -157,18 +155,11 @@ public class MachineCache extends Cache<IMachine> {
 		oldAxioms = new ArrayList<IAxiom>();
 		oldTheorems = new ArrayList<ITheorem>();
 		
-		IRodinProject rodinProject = file.getRodinProject();
-		
-		ISees[] sees = file.getSees();
-		
-		if(sees.length == 0)
+		ISCContext[] sees = file.getSeenContexts();
+		if (sees.length == 0)
 			return;
-		
-		String contextName = sees[0].getSeenContext();
-		
-		ISCContext context = (ISCContext) rodinProject.getRodinFile(contextName + ".bcc");
-		
-		if(!context.exists())
+		ISCContext context = sees[0];
+		if (! context.exists())
 			return;
 		
 		getOldTypeEnvironment(context);
