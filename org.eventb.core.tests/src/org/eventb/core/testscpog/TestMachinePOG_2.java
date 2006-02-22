@@ -550,6 +550,40 @@ public class TestMachinePOG_2 extends BuilderTest {
 	}
 
 	/**
+	 * Test method for independence of type environments of local variables
+	 */
+	public void testLocalVariables1() throws Exception {
+		
+		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
+		String guard2 = factory.parsePredicate("x∈BOOL").getParsedPredicate().toString();
+		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").getParsedPredicate().toString();	
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCEvent(rodinFile, "E",
+				makeList("x"), 
+				makeList("G"), 
+				makeList(guard1),
+				makeList(),
+				makeList("ℤ"));
+		addSCEvent(rodinFile, "F",
+				makeList("x"), 
+				makeList("G"), 
+				makeList(guard2),
+				makeList(),
+				makeList("BOOL"));
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("number of proof obligations", sequents.length == 1);
+		
+		int dlk = getIndexForName("DLK", sequents);
+		assertTrue("names ok", dlk != -1);
+		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
+	}
+
+	/**
 	 * Test method for action without guard (well-definedness, feasility, invariant)
 	 */
 	public void testAction1() throws Exception {
