@@ -7,6 +7,7 @@
  *******************************************************************************/
 
 package org.eventb.core.prover.externalReasoners.classicB;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Stack;
 
@@ -56,8 +57,14 @@ public class SyntaxVisitor extends DefaultVisitor {
 	private Stack<String[]> quantStack;
 	private Stack<Set<String>> usedStack;
 	
+	// Map from event-B identifiers to classical B identifiers.
+	private final HashMap<String, String> identRenamings;
+	
+	private int nextIdentNo;
+	
 	public SyntaxVisitor() {
 		clear();
+		identRenamings = new HashMap<String, String>();
 	}
 	
 	public void clear() {
@@ -69,6 +76,15 @@ public class SyntaxVisitor extends DefaultVisitor {
 		boundStack.push(new String[0]);
 	}
 	
+	public String getRenamedIdentName(String name) {
+		String result = identRenamings.get(name);
+		if (result == null) {
+			result = "x" + (nextIdentNo ++);
+			identRenamings.put(name, result);
+		}
+		return result;
+	}
+	
 	public String getString() {
 		if(syntaxStack.size() > 1)
 			throw new RuntimeException("invalid syntax stack");
@@ -76,14 +92,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 	}
 	
 	private void pushName(String name) {
-		int last = name.length()-1;
-		boolean primed = name.charAt(last) == '\'';
-		String nn = (primed) ? name.substring(0,last-1) : name;
-		if(nn.matches("^[A-Za-z0-9_]+$"))
-			syntaxStack.push(primed ? nn + "$1" : nn);
-		else {
-			throw new SyntaxError("Identifier is not ASCII: " + name);
-		}
+		syntaxStack.push(getRenamedIdentName(name));
 	}
 	
 	@Override
@@ -739,12 +748,12 @@ public class SyntaxVisitor extends DefaultVisitor {
 	}
 	
 	private String declList(String[] names) {
-		if(names.length == 1)
-			return names[0];
+		if (names.length == 1)
+			return getRenamedIdentName(names[0]);
 		else {
-			String result = "(" + names[0];
+			String result = "(" + getRenamedIdentName(names[0]);
 			for(int i=1; i<names.length; i++)
-				result += "," + names[i];
+				result += "," + getRenamedIdentName(names[i]);
 			return result + ")";
 		}
 	}
@@ -753,7 +762,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 		FormulaFactory factory = FormulaFactory.getDefault();
 		SyntaxVisitor visitor = new SyntaxVisitor();
 		type.toExpression(factory).accept(visitor);
-		return "(" + name + " : " + visitor.getString() + ")";
+		return "(" + getRenamedIdentName(name) + " : " + visitor.getString() + ")";
 	}
 
 	private String getTypes(String[] names, BoundIdentDecl[] decl) {
@@ -767,7 +776,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 				first = false;
 			else
 				result += " & ";
-			result += names[i] + " : " + visitor.getString();
+			result += getRenamedIdentName(names[i]) + " : " + visitor.getString();
 			visitor.clear();
 		}
 		return result + ")";
@@ -830,9 +839,10 @@ public class SyntaxVisitor extends DefaultVisitor {
 //		String result = 
 //			"{" + newName[0] + " | " + newType + " &  # " + declList(localNames) + 
 //			".(" + types + " & " + prd + " & (" + newName[0] + " = " + exp + "))}";
-		String result = 
-		"SET(" + newName[0] + ").(" + newType + " &  # " + declList(localNames) + 
-		".(" + types + " & " + prd + " & (" + newName[0] + " = " + exp + ")))";
+		String result = "SET(" + getRenamedIdentName(newName[0]) + ").("
+				+ newType + " &  # " + declList(localNames) + ".(" + types
+				+ " & " + prd + " & (" + getRenamedIdentName(newName[0])
+				+ " = " + exp + ")))";
 		syntaxStack.push(result);
 		return true;
 	}

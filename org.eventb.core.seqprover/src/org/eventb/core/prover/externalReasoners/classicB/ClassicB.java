@@ -74,18 +74,20 @@ public abstract class ClassicB {
 			for (String name : typeEnvironment.getNames()) {
 				final Type type = typeEnvironment.getType(name);
 				type.toExpression(factory).accept(visitor);
-				if(first)
+				if (first)
 					first = false;
 				else
 					result.append(" & ");
-				result.append(name + " : " + visitor.getString());
+				result.append(visitor.getRenamedIdentName(name));
+				result.append(" : ");
+				result.append(visitor.getString());
 				visitor.clear();
 			}
 		}
 		boolean first = (typeEnvironment == null || typeEnvironment.isEmpty());
-		for(Predicate predicate : hypothesis) {
+		for (Predicate predicate : hypothesis) {
 			predicate.accept(visitor);
-			if(first)
+			if (first)
 				first = false;
 			else
 				result.append(" & ");
@@ -150,9 +152,7 @@ public abstract class ClassicB {
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getPPCommand(iName);
 			final Process process = Runtime.getRuntime().exec(cmdArray);
-			
 			return callProver(process, delay, PP_SUCCESS);
-
 		} finally {
 			cleanup();
 		}
@@ -240,9 +240,7 @@ public abstract class ClassicB {
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getMLCommand(iName);
 			final Process process = Runtime.getRuntime().exec(cmdArray);
-			
 			return callProver(process, delay, ML_SUCCESS);
-
 		} finally {
 			cleanup();
 		}
