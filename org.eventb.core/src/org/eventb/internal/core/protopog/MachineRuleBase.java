@@ -112,7 +112,7 @@ public class MachineRuleBase {
 						String evtName = event.getElementName();
 						IGuard[] guards = event.getGuards();
 						ITypeEnvironment typeEnvironment = cache.getTypeEnvironment(event.getSCVariables(), null);
-						ITypeEnvironment fullTypeEnvironment = cache.getGlobalTypeEnvironment();
+						ITypeEnvironment fullTypeEnvironment = cache.getGlobalTypeEnvironment().clone();
 						fullTypeEnvironment.addAll(typeEnvironment);
 						
 						String globalHypsetName = (evtName.equals("INITIALISATION")) ? cache.getOldHypSetName() : cache.getNewHypsetName();
