@@ -7,18 +7,12 @@
  *******************************************************************************/
 package org.eventb.core.testscpog;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class TestAutomatic extends BuilderTest {;
-	
-	protected void runBuilder() throws CoreException {
-		rodinProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-	}
 	
 	private IContext createContextOne() throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("one.buc", true, null);
