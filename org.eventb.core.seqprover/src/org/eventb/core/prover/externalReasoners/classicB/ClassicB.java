@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -31,8 +33,25 @@ public abstract class ClassicB {
 	private static final String ML_SUCCESS = "THEORY Etat IS Proved(0) END";
 	private static final String PP_SUCCESS = "SUCCES";
 	
+	public static final long DEFAULT_DELAY = 5000;
+	
 	private static String iName;
 	private static String oName;
+	
+	private static class ThreadWatcher extends TimerTask {
+		
+		private final Thread thread;
+		
+		public ThreadWatcher(Thread thread) {
+			this.thread = thread;
+		}
+		
+		@Override
+		public void run() {
+			thread.interrupt();
+		}
+		
+	}
 	
 	private static void makeTempFileNames() throws IOException {
 		if (iName != null) {
@@ -83,8 +102,7 @@ public abstract class ClassicB {
 		PrintStream stream = new PrintStream(iName);
 		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oName);
 		stream.print(input);
-		stream.print(" )");
-		stream.println();
+		stream.println(" )");
 		stream.close();
 	}
 	
@@ -117,7 +135,12 @@ public abstract class ClassicB {
 	}
 	
 	public static boolean proveWithPP(StringBuffer input)
-	throws IOException, InterruptedException {
+	throws IOException {
+		return proveWithPP(input, DEFAULT_DELAY);
+	}
+	
+	public static boolean proveWithPP(StringBuffer input, long delay)
+	throws IOException {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
@@ -127,9 +150,9 @@ public abstract class ClassicB {
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getPPCommand(iName);
 			final Process process = Runtime.getRuntime().exec(cmdArray);
-			process.waitFor();
-			// showOutput();
-			return checkResult(PP_SUCCESS);
+			
+			return callProver(process, delay, PP_SUCCESS);
+
 		} finally {
 			cleanup();
 		}
@@ -181,6 +204,32 @@ public abstract class ClassicB {
 	
 	public static boolean proveWithML(StringBuffer input)
 	throws IOException, InterruptedException {
+		return proveWithML(input, DEFAULT_DELAY);
+	}
+	
+	private static boolean callProver(Process process, long delay, String successMsg) 
+	throws IOException {
+		try {
+			Timer timer = new Timer();
+			if (delay >0) {
+			timer.schedule(new ThreadWatcher(Thread.currentThread()), delay);
+			}
+			process.waitFor();
+			timer.cancel();
+			// showOutput();
+			return checkResult(successMsg);
+		} catch (InterruptedException e) {
+			return checkResult(successMsg);
+		} finally {
+			// clear interrupted status			
+			Thread.currentThread().isInterrupted();
+			if (process != null)
+				process.destroy();
+		}
+	}
+	
+	public static boolean proveWithML(StringBuffer input, long delay)
+	throws IOException {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
@@ -189,11 +238,11 @@ public abstract class ClassicB {
 			makeTempFileNames();
 			printML(patchSequentForML(input.toString()));
 			printDefaultOutput();
-			String[] cmdArray = ProverShell.getMLCommand(iName);
-			Process process = Runtime.getRuntime().exec(cmdArray);
-			process.waitFor();
-			// showOutput();
-			return checkResult(ML_SUCCESS);
+			final String[] cmdArray = ProverShell.getMLCommand(iName);
+			final Process process = Runtime.getRuntime().exec(cmdArray);
+			
+			return callProver(process, delay, ML_SUCCESS);
+
 		} finally {
 			cleanup();
 		}
