@@ -65,19 +65,6 @@ public class Utils {
 	
 	public static final String TRIVIAL_SYMBOL = "⊤";
 	
-	/**
-	 * Getting the file name without the extension.
-	 * <p>
-	 * @param fileName the full file name (with the extension)
-	 * <p>
-	 * @return the name without the extension
-	 */
-//	public static String getFileNameWithoutExtension(String fileName) {
-//		int dotLoc = fileName.lastIndexOf('.');
-//		if (dotLoc != -1) return fileName.substring(0, dotLoc);
-//		else return fileName;
-//	}
-	
 
 	/**
 	 * Getting the image corresponding to an object.
