@@ -14,8 +14,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -43,8 +45,6 @@ import org.eventb.core.basis.POIdentifier;
 import org.eventb.core.basis.SCCarrierSet;
 import org.eventb.core.basis.SCConstant;
 import org.eventb.core.basis.SCVariable;
-import org.eventb.internal.core.protopog.POGCore;
-import org.eventb.internal.core.protosc.SCCore;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -151,9 +151,6 @@ public abstract class BuilderTest extends TestCase {
 			ISCVariable variable = (ISCVariable) event.createInternalElement(ISCVariable.ELEMENT_TYPE, vars[i], null, null);
 			variable.setContents(types[i]);
 		}
-		for(int i=0; i<vars.length; i++) {
-			event.createInternalElement(IVariable.ELEMENT_TYPE, vars[i], null, null);
-		}
 		for(int i=0; i<guards.length; i++) {
 			IGuard guard = (IGuard) event.createInternalElement(IGuard.ELEMENT_TYPE, guardNames[i], null, null);
 			guard.setContents(guards[i]);
@@ -231,23 +228,28 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected IContext createContext(String bareName) throws RodinDBException {
-		return (IContext) rodinProject.createRodinFile(bareName + ".buc", true, null);
+		final String fileName = EventBPlugin.getContextFileName(bareName);
+		return (IContext) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected IMachine createMachine(String bareName) throws RodinDBException {
-		return (IMachine) rodinProject.createRodinFile(bareName + ".bum", true, null);
+		final String fileName = EventBPlugin.getMachineFileName(bareName);
+		return (IMachine) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected IPOFile createPOFile(String bareName) throws RodinDBException {
-		return (IPOFile) rodinProject.createRodinFile(bareName + ".bpo", true, null);
+		final String fileName = EventBPlugin.getPOFileName(bareName);
+		return (IPOFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected ISCContext createSCContext(String bareName) throws RodinDBException {
-		return (ISCContext) rodinProject.createRodinFile(bareName + ".bcc", true, null);
+		final String fileName = EventBPlugin.getSCContextFileName(bareName);
+		return (ISCContext) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected ISCMachine createSCMachine(String bareName) throws RodinDBException {
-		return (ISCMachine) rodinProject.createRodinFile(bareName + ".bcm", true, null);
+		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
+		return (ISCMachine) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected String getSourceContents(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
@@ -266,36 +268,28 @@ public abstract class BuilderTest extends TestCase {
 		return element.getElementName();
 	}
 	
+	protected void runBuilder() throws CoreException {
+		rodinProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+	}
+	
 	protected IPOFile runPOG(ISCContext context) throws CoreException {
-		final String bareName = context.getPath().removeFileExtension().lastSegment();
-		IPOFile poFile = createPOFile(bareName);
-		POGCore.runContextPOG(context, poFile);
-		poFile.save(null, true);
-		return poFile;
+		runBuilder();
+		return context.getPOFile();
 	}
 
 	protected IPOFile runPOG(ISCMachine machine) throws CoreException {
-		final String bareName = machine.getPath().removeFileExtension().lastSegment();
-		IPOFile poFile = createPOFile(bareName);
-		POGCore.runMachinePOG(machine, poFile);
-		poFile.save(null, true);
-		return poFile;
+		runBuilder();
+		return machine.getPOFile();
 	}
 	
 	protected ISCContext runSC(IContext context) throws CoreException {
-		final String bareName = context.getPath().removeFileExtension().lastSegment();
-		ISCContext scContext = createSCContext(bareName);
-		SCCore.runContextSC(context, scContext);
-		scContext.save(null, true);
-		return scContext;
+		runBuilder();
+		return context.getCheckedContext();
 	}
 	
 	protected ISCMachine runSC(IMachine machine) throws CoreException {
-		final String bareName = machine.getPath().removeFileExtension().lastSegment();
-		ISCMachine scMachine = createSCMachine(bareName);
-		SCCore.runMachineSC(machine, scMachine);
-		scMachine.save(null, true);
-		return scMachine;
+		runBuilder();
+		return machine.getCheckedMachine();
 	}
 	
 	protected void setUp() throws Exception {
