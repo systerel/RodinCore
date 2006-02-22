@@ -7,12 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.protosc;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ISCMachine;
 
 /**
  * @author halstefa
@@ -26,30 +21,30 @@ public class SCCore {
 	
 	public static final String MACHINE_SEES_REL_ID = EventBPlugin.PLUGIN_ID + ".machineSEES"; //$NON-NLS-1$
 
-	/**
-	 * This method is for testing purposes and can change without notice.
-	 * @param context
-	 * @param scContext
-	 * @throws CoreException
-	 */
-	public static void runContextSC(IContext context, ISCContext scContext) throws CoreException {
-		ContextSC staticChecker = new ContextSC();
-		staticChecker.init(context, scContext, null, null);
-		staticChecker.runSC();
-
-	}
-	
-	/**
-	 * This method is for testing purposes and can change without notice.
-	 * @param machine
-	 * @param scMachine
-	 * @throws CoreException
-	 */
-	public static void runMachineSC(IMachine machine, ISCMachine scMachine) throws CoreException {
-		MachineSC staticChecker = new MachineSC();
-		staticChecker.init(machine, scMachine, null, null);
-		staticChecker.runSC();
-
-	}
+//	/**
+//	 * This method is for testing purposes and can change without notice.
+//	 * @param context
+//	 * @param scContext
+//	 * @throws CoreException
+//	 */
+//	public static void runContextSC(IContext context, ISCContext scContext) throws CoreException {
+//		ContextSC staticChecker = new ContextSC();
+//		staticChecker.init(context, scContext, null, null);
+//		staticChecker.runSC();
+//
+//	}
+//	
+//	/**
+//	 * This method is for testing purposes and can change without notice.
+//	 * @param machine
+//	 * @param scMachine
+//	 * @throws CoreException
+//	 */
+//	public static void runMachineSC(IMachine machine, ISCMachine scMachine) throws CoreException {
+//		MachineSC staticChecker = new MachineSC();
+//		staticChecker.init(machine, scMachine, null, null);
+//		staticChecker.runSC();
+//
+//	}
 
 }
