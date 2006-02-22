@@ -18,8 +18,8 @@ import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -151,11 +151,11 @@ public class MachineRuleBase {
 								conjGuard = cache.getFactory().makeAssociativePredicate(Formula.LAND, gdPredicates, null);
 							else
 								conjGuard = gdPredicates[0];
-							IVariable[] variables = event.getVariables();
+							ISCVariable[] variables = event.getSCVariables();
 							if (variables.length > 0) {
 								ArrayList<BoundIdentDecl> identifiers = new ArrayList<BoundIdentDecl>(variables.length);
 								ArrayList<FreeIdentifier> fIdentifiers = new ArrayList<FreeIdentifier>(variables.length);
-								for (IVariable variable : variables) {
+								for (ISCVariable variable : variables) {
 									identifiers.add(cache.getFactory().makeBoundIdentDecl(variable.getElementName(), null));
 									FreeIdentifier fId = cache.getFactory().makeFreeIdentifier(variable.getElementName(), null);
 									ITypeCheckResult res = fId.typeCheck(fullTypeEnvironment);
