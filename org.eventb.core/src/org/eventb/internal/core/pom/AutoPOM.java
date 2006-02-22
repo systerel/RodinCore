@@ -11,8 +11,6 @@ package org.eventb.internal.core.pom;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +26,7 @@ import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
@@ -71,6 +70,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		AutoProver autoProver = new AutoProver();
 		for (String name : prSeqs.keySet()){
 			if (prStatus.get(name) == Status.PENDING) {
+//				System.out.println("Running autoProver on "
+//						+ prFile.getElementName()
+//						+ ", PO: "
+//						+ name
+//				);
 				IProofTree pt = SequentProver.makeProofTree(prSeqs.get(name));
 				autoProver.run(pt);
 				if (pt.isDischarged()) PRUtil.updateStatus(prFile,name,Status.DISCHARGED);
@@ -82,26 +86,17 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-						
 		IPRFile newPRFile = (IPRFile) RodinCore.create(file);
-		newPRFile.getRodinProject().createRodinFile(newPRFile.getElementName(), true, null);
+		IPOFile poIn = newPRFile.getPOFile();
 		
-		// TODO: the explicit file extension should be replaced by a request to the content type manager
-		@SuppressWarnings("hiding") 
-		IFile poFile = workspace.getRoot().getFile(file.getFullPath().removeFileExtension().addFileExtension("bpo"));
-		
-		IPOFile poIn = (IPOFile) RodinCore.create(poFile);
-		if(!poIn.exists())
-			// TODO : maybe this is not correct.
+		if (! poIn.exists()) {
 			ContextSC.makeError("Source PO file does not exist.");
+		}
 		
 		init(poIn, newPRFile, interrupt, monitor);
-		
 		writePRFile();
 		runAutoProver();
 		return true;
-		
 	}
 
 	public void clean(IFile file, 
@@ -111,39 +106,47 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 
 	public void extract(IFile file, IGraph graph) throws CoreException {
-		// TODO Auto-generated method stub
-		IPath target = file.getFullPath().removeFileExtension().addFileExtension("bpr");
-		graph.addNode(target, POMCore.AUTO_POM_TOOL_ID);
-		IPath[] paths = graph.getDependencies(target, POMCore.AUTO_POM_TOOL_ID);
-		if(paths.length == 1 && paths[0].equals(target))
+		
+		IPOFile in = (IPOFile) RodinCore.create(file);
+		IPRFile target = in.getPRFile();
+		
+		IPath inPath = in.getPath();
+		IPath targetPath = target.getPath();
+		
+		graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
+		IPath[] paths = graph.getDependencies(targetPath, POMCore.AUTO_POM_TOOL_ID);
+		if(paths.length == 1 && paths[0].equals(targetPath))
 			return;
 		else {
-			graph.removeDependencies(target, POMCore.AUTO_POM_TOOL_ID);
-			graph.addToolDependency(file.getFullPath(), target, POMCore.AUTO_POM_TOOL_ID, true);
+			graph.removeDependencies(targetPath, POMCore.AUTO_POM_TOOL_ID);
+			graph.addToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
 		}
 	}
 
 	private void createFreshPRFile() throws CoreException {
-		// TODO : Erase previous contents of the prFile.
+		IRodinProject project = prFile.getRodinProject();
+		project.createRodinFile(prFile.getElementName(), true, null);
 		copyGlobalInfo();
 		copySequents();
-		
 		prFile.save(monitor, true);
 	}
 	
 	private void copySequents() throws RodinDBException{
-		IRodinElement[] poSequents = poFile.getChildrenOfType(IPOSequent.ELEMENT_TYPE);
+		IPOSequent[] poSequents = poFile.getSequents();
 		
-		for (IRodinElement poSeq : poSequents)
+		for (IPOSequent poSeq : poSequents)
 		{
 			IPRSequent prSeq = 
-				(IPRSequent) prFile.createInternalElement(IPRSequent.ELEMENT_TYPE,((IPOSequent)poSeq).getName(),null,monitor);
-			IRodinElement[] children = ((IPOSequent)poSeq).getChildren();
+				(IPRSequent) prFile.createInternalElement(
+						IPRSequent.ELEMENT_TYPE, poSeq.getName(), null, monitor);
+			IRodinElement[] children = poSeq.getChildren();
 		
 			for (IRodinElement child : children){
 				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
 			}
-			IPRStatus status = (IPRStatus) prSeq.createInternalElement(IPRStatus.ELEMENT_TYPE, "", null, monitor);
+			IPRStatus status =
+				(IPRStatus) prSeq.createInternalElement(
+						IPRStatus.ELEMENT_TYPE, "", null, monitor);
 			status.setContents("PENDING");
 		}
 		
