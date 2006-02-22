@@ -57,7 +57,7 @@ public class CommonSC implements ISCProblemList {
 	
 	public static void makeError(String message) throws CoreException {
 		throw new CoreException (
-				new Status(IStatus.ERROR, EventBPlugin.getPlugin().getBundle().getSymbolicName(), Platform.PLUGIN_ERROR, message, null)
+				new Status(IStatus.ERROR, EventBPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR, message, null)
 				);
 	}
 	
