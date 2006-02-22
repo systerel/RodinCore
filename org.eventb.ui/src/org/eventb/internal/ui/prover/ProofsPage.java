@@ -25,11 +25,14 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.IHypothesisChangeEvent;
 import org.eventb.core.pm.IHypothesisChangedListener;
 import org.eventb.core.pm.IHypothesisDelta;
+import org.eventb.core.pm.IProofStatusChangedListener;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.internal.ui.EventBUIPlugin;
 
 public class ProofsPage
 	extends FormPage 
-	implements IHypothesisChangedListener
+	implements	IHypothesisChangedListener,
+				IProofStatusChangedListener
 {
 	
 	public static final String PAGE_ID = "Proof State"; //$NON-NLS-1$
@@ -44,6 +47,7 @@ public class ProofsPage
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
 		editor.getUserSupport().addHypothesisChangedListener(this);
+		editor.getUserSupport().addProofStatusChangedListener(this);
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
@@ -119,4 +123,16 @@ public class ProofsPage
 //		System.out.println("*************");	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofStatusChangedListener#proofStatusChanged()
+	 */
+	public void proofStatusChanged(boolean complete) {
+		System.out.println("Status changed " + complete);
+		goal.markDirty();
+		if (complete) {
+			PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
+			dialog.open();
+		}
+	}
+	
 }

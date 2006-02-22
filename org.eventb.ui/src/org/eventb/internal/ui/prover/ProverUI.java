@@ -78,6 +78,14 @@ public class ProverUI
 		super.setInput(input);
 	}
 
+	private IPRFile getPRFileInput() {
+		if (prFile == null) {
+			IFile inputFile = ((IFileEditorInput) this.getEditorInput()).getFile();
+			prFile = (IPRFile) RodinCore.create(inputFile);
+		}
+		return prFile;
+	}
+	
 	public void setCurrentPO(IPRSequent prSequent) {
 		userSupport.setCurrentPO(prSequent);
 	}
@@ -163,12 +171,6 @@ public class ProverUI
 	 */
 	public void doSaveAs() {
 		MessageDialog.openInformation(null, null, "Saving");
-		//EventBFormPage editor = (EventBFormPage) this.getEditor(0);
-		//editor.doSaveAs();
-		//IEditorPart editor = getEditor(0);
-		//editor.doSaveAs();
-		//setPageText(0, editor.getTitle());
-		//setInput(editor.getEditorInput());
 	}
 	
 	/**
@@ -192,13 +194,15 @@ public class ProverUI
 				}
 			}
 
-			// Save the file from the database to disk
-			//IRodinFile inputFile = this.getRodinInput();
-			//inputFile.save(monitor, true);
-		//}
-		//catch (RodinDBException e) {
-//			e.printStackTrace();
-		//}
+		// Save the file from the database to disk
+		try {
+			System.out.println("Save to disk");
+			IPRFile prFile = this.getPRFileInput();
+			prFile.save(monitor, true);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}

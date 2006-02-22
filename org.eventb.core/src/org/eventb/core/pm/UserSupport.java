@@ -9,11 +9,9 @@ import java.util.Set;
 
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.ITactic;
-import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pm.GoalChangeEvent;
 import org.eventb.internal.core.pm.GoalDelta;
 import org.eventb.internal.core.pm.HypothesisChangeEvent;
@@ -27,8 +25,8 @@ public class UserSupport
 	Collection<IHypothesisChangedListener> hypChangedListeners;
 	Collection<IGoalChangedListener> goalChangedListeners;
 	Collection<IPOChangedListener> poChangedListeners;
-	Collection<IProofTreeChangedListener> proofTreeChangedListeners;
-
+	Collection<IProofStatusChangedListener> proofStatusChangedListeners;
+	
 	private Collection<Hypothesis> displayCached;
 	private Collection<Hypothesis> displaySearched;
 
@@ -40,7 +38,7 @@ public class UserSupport
 		hypChangedListeners = new HashSet<IHypothesisChangedListener>();
 		goalChangedListeners = new HashSet<IGoalChangedListener>();
 		poChangedListeners = new HashSet<IPOChangedListener>();
-		proofTreeChangedListeners = new HashSet<IProofTreeChangedListener>();
+		proofStatusChangedListeners = new HashSet<IProofStatusChangedListener>();
 		displayCached = new HashSet<Hypothesis>();
 		displaySearched = new HashSet<Hypothesis>();
 		proofStates = new ArrayList<ProofState>();
@@ -84,7 +82,6 @@ public class UserSupport
 	}
 	
 	public void nextUndischargedPO() {
-//		System.out.println("Next Undischarged PO");
 		for (int i = 1; i <= proofStates.size(); i++) {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
@@ -179,15 +176,23 @@ public class UserSupport
 		return;
 	}
 
-	public void addProofTreeChangedListener(IProofTreeChangedListener listener) {
-		proofTreeChangedListeners.add(listener);
+	public void addProofStatusChangedListener(IProofStatusChangedListener listener) {
+		proofStatusChangedListeners.add(listener);
 	}
 	
-	public void removeProofTreeChangedListener(IProofTreeChangedListener listener) {
-		proofTreeChangedListeners.remove(listener);
+	public void removeProofStatusChangedListener(IProofStatusChangedListener listener) {
+		proofStatusChangedListeners.remove(listener);
 	}
 
-	public IHypothesisDelta calculateHypDelta(ProofState newProofState, IProofTreeNode newNode) {
+	private void notifyProofStatusChangedListener(boolean complete) {
+		for (Iterator<IProofStatusChangedListener> i = proofStatusChangedListeners.iterator(); i.hasNext();) {
+			IProofStatusChangedListener listener = i.next();
+			listener.proofStatusChanged(complete);
+		}
+		return;
+	}
+	
+	private IHypothesisDelta calculateHypDelta(ProofState newProofState, IProofTreeNode newNode) {
 		Collection<Hypothesis> newSelectedHypotheses;
 		if (newNode == null) newSelectedHypotheses = new HashSet<Hypothesis>(); 
 		else newSelectedHypotheses = newNode.getSequent().selectedHypotheses();
@@ -298,6 +303,10 @@ public class UserSupport
 		return pt.getSequent().selectedHypotheses().contains(hyp);
 	}
 	
+	/**
+	 * This is the response of the UserSupport for selecting a node in the current
+	 * Proof Tree.
+	 */ 
 	public void selectNode(IProofTreeNode pt) {
 		IHypothesisDelta delta = calculateHypDelta(proofState, pt);
 		IHypothesisChangeEvent e = new HypothesisChangeEvent(delta);
@@ -311,36 +320,22 @@ public class UserSupport
 		return;
 	}
 
+	/**
+	 * This method return the current Obligation (Proof State).
+	 * This should be called at the initialisation of a listener of the
+	 * UserSupport.
+	 * After that the listeners will update their states by listen to the
+	 * changes from the UserSupport
+	 * @return the current ProofState (can be null).
+	 */
 	public ProofState getCurrentPO() {
-		if (proofState != null)
-			return proofState;
-		return null;
-	}
-	
-//	public ProofState nextPO() {
-//		nextUndischargedPO();
-//		return(getCurrentPO());
-//	}
-	
-//	public ProofState prevPO() {
-//		prevUndischargedPO();
-//		return(getCurrentPO());
-//	}
-
-	public void prune(IProofTreeNode pt) {
-		Tactics.prune().apply(pt);
-		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(pt)));
-		// Generate Delta
+		return proofState;
 	}
 
-//	public void manageHypotheses(ActionType action, Set<Hypothesis> hyps) {
-//		ITactic t = Tactics.mngHyp(action, hyps);
-//		applyITacticToHypotheses(t, hyps);
-//	}
-	
-	public void applyITacticToHypotheses(ITactic t, Set<Hypothesis> hyps) {
+	public void applyTacticToHypotheses(ITactic t, Set<Hypothesis> hyps) {
 		t.apply(proofState.getCurrentNode());
 		proofState.addAllToCached(hyps);
+		notifyProofStatusChangedListener(false);
 	}
 	
 	public void removeHypotheses(int origin, Collection<Hypothesis> hyps) {
@@ -373,5 +368,24 @@ public class UserSupport
 		}
 			
 	}
-	
+
+	public void applyTactic(ITactic t) throws RodinDBException {
+		IProofTreeNode currentNode = proofState.getCurrentNode();
+		t.apply(currentNode);
+		proofState.updateStatus();
+		
+		notifyProofStatusChangedListener(proofState.isDischarged());
+		
+		IProofTreeNode newNode = proofState.getNextPendingSubgoal(currentNode);
+		IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
+		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+		notifyHypothesisChangedListener(hypEvent);
+		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(currentNode)));
+		proofState.setCurrentNode(newNode);
+		
+		IPODelta poDelta = new PODelta(proofState);
+		IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+		notifyPOChangedListener(poEvent);
+	}
+
 }

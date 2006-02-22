@@ -67,4 +67,8 @@ public class ProofState {
 
 	public Collection<Hypothesis> getSearched() {return searched;}
 
+	public void updateStatus() throws RodinDBException {
+		ps.updateStatus(pt);
+	}
+
 }

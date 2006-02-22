@@ -14,12 +14,6 @@ package org.eventb.internal.ui.prover;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,13 +31,12 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.IGoalDelta;
-import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.Utils;
+import org.rodinp.core.RodinDBException;
 
 public class GoalSection
 	extends SectionPart
@@ -60,63 +53,36 @@ public class GoalSection
     private class GoalITacticHyperlinkAdapter extends HyperlinkAdapter {
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
-			if (e.getHref().equals(Utils.CONJI_SYMBOL)) {
-				apply(Tactics.conjI());
-				return;
+			try {
+				if (e.getHref().equals(Utils.CONJI_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.conjI());
+					return;
+				}
+				if (e.getHref().equals(Utils.IMPI_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.impI());
+					return;
+				}
+				
+				if (e.getHref().equals(Utils.HYP_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.hyp());
+					return;
+				}
+				
+				if (e.getHref().equals(Utils.ALLI_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.allI());
+					return;
+				}
+	
+				if (e.getHref().equals(Utils.TRIVIAL_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.trivial());
+					return;
+				}
 			}
-			if (e.getHref().equals(Utils.IMPI_SYMBOL)) {
-				apply(Tactics.impI());
-				return;
-			}
-			
-			if (e.getHref().equals(Utils.HYP_SYMBOL)) {
-				apply(Tactics.hyp());
-				return;
-			}
-			
-			if (e.getHref().equals(Utils.ALLI_SYMBOL)) {
-				apply(Tactics.allI());
-				return;
-			}
-
-			if (e.getHref().equals(Utils.TRIVIAL_SYMBOL)) {
-				apply(Tactics.trivial());
-				return;
+			catch (RodinDBException exception) {
+				exception.printStackTrace();
 			}
 		}
     	
-    }
-    
-    
-    private void apply(ITactic t) {
-    	ProverUI editor = (ProverUI) page.getEditor();
-		if (editor != null) {
-			TreeViewer viewer = editor.getProofTreeUI().getViewer();
-		
-			ISelection selection = viewer.getSelection();
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-
-			if (obj instanceof IProofTreeNode) {
-				IProofTreeNode proofTree = (IProofTreeNode) obj;
-				if (!proofTree.isDischarged()) {
-					t.apply(proofTree);
-					editor.getProofTreeUI().refresh(proofTree);
-					// Expand the node
-					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
-					//viewer.setExpandedState(proofTree, true);
-
-					// Select the "next" pending "subgoal"
-					ProofState ps = editor.getUserSupport().getCurrentPO();
-					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-					if (pt != null) 
-						editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-					else {
-						Dialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
-						dialog.open();
-					}
-				}
-			}
-		}
     }
     
     // Contructor

@@ -52,6 +52,7 @@ import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
+import org.rodinp.core.RodinDBException;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -109,18 +110,24 @@ public class ProofControlPage
 			
 			if (label.equals("pn")) {
 				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (!proofTree.isOpen()) {
-							Tactics.prune().apply(proofTree);
-							viewer.refresh(proofTree);
-							viewer.setSelection(new StructuredSelection(proofTree));
-						}
+					try {
+						editor.getUserSupport().applyTactic(Tactics.prune());
 					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
+					}
+//					TreeViewer viewer = editor.getProofTreeUI().getViewer();
+//					ISelection selection = viewer.getSelection();
+//					Object obj = ((IStructuredSelection) selection).getFirstElement();
+//					
+//					if (obj instanceof IProofTreeNode) {
+//						IProofTreeNode proofTree = (IProofTreeNode) obj;
+//						if (!proofTree.isOpen()) {
+//							Tactics.prune().apply(proofTree);
+//							viewer.refresh(proofTree);
+//							viewer.setSelection(new StructuredSelection(proofTree));
+//						}
+//					}
 				}
 				return;
 			}
@@ -128,14 +135,6 @@ public class ProofControlPage
 			if (label.equals("ne")) {
 				if (editor != null) {
 					editor.getUserSupport().nextUndischargedPO();
-//					if (ps != null) {
-//						editor.getProofTreeUI().setInput(ps.getProofTree());
-//						editor.getProofTreeUI().getViewer().expandAll();
-//						IProofTreeNode pt = ps.getNextPendingSubgoal();
-//						if (pt != null) 
-//							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-//
-//					}
 				}
 				return;
 			}
@@ -143,13 +142,6 @@ public class ProofControlPage
 			if (label.equals("pv")) {
 				if (editor != null) {
 					editor.getUserSupport().prevUndischargedPO();
-//					if (ps != null) {
-//						editor.getProofTreeUI().setInput(ps.getProofTree());
-//						editor.getProofTreeUI().getViewer().expandAll();
-//						IProofTreeNode pt = ps.getNextPendingSubgoal();
-//						if (pt != null) 
-//							editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-//					}
 				}
 				return;
 			}
