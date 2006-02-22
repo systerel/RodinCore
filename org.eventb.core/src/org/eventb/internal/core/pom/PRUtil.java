@@ -102,7 +102,7 @@ public class PRUtil {
 				prSeq.getStatus().setContents(status.toString());
 			}
 		}
-		
+		prFile.save(null, false);
 	}
 	
 	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
