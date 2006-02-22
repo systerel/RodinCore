@@ -9,6 +9,10 @@ import static org.eventb.core.prover.tactics.BasicTactics.repeat;
 
 import java.util.Set;
 
+import org.eventb.core.ast.Predicate;
+
+import org.eventb.core.prover.Lib;
+import org.eventb.core.prover.externalReasoners.AllF;
 import org.eventb.core.prover.externalReasoners.Contr;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
@@ -57,7 +61,6 @@ public class Tactics {
 	}
 	
 	public static ITactic contradictGoal(){
-		
 		return composeStrict(
 				pluginTac(new Contr(),new Contr.Input()),
 				onPending(0,impI())
@@ -71,19 +74,51 @@ public class Tactics {
 		return new ITactic.RuleTac(new ImpI());
 	}
 	
+	public static boolean impI_applicable(Predicate goal){
+		return Lib.isImp(goal);
+	}
+	
 	public static ITactic conjI() {
 		return new ITactic.RuleTac(new ConjI());
+	}
+	
+	public static boolean conjI_applicable(Predicate goal){
+		return Lib.isConj(goal);
 	}
 	
 	public static ITactic allI() {
 		return new ITactic.RuleTac(new AllI());
 	}
 	
-	public static ITactic provideWitness(String... witnesses){
-		return pluginTac(new ExI(),new ExI.Input(witnesses));
+	public static boolean allI_applicable(Predicate goal){
+		return Lib.isUnivQuant(goal);
 	}
 	
+	public static ITactic exI(String... witnesses){
+		return composeStrict(
+				pluginTac(new ExI(),new ExI.Input(witnesses)),
+						onPending(0,conjI())
+				);
+	}
+	
+	public static boolean exI_applicable(Predicate goal){
+		return Lib.isExQuant(goal);
+	}
+	
+	
 	// Tactics applicable on a hypothesis
+	
+	public static ITactic allF(Hypothesis univHyp, String... instantiations){
+		return composeStrict(
+				pluginTac(new AllF(),new AllF.Input(instantiations,univHyp)),
+				onPending(0,conjI()),
+				onPending(1,impI())
+		);
+	}
+	
+	public static boolean allF_applicable(Hypothesis hyp){
+		return Lib.isUnivQuant(hyp.getPredicate());
+	}
 	
 	// Misc tactics
 	
