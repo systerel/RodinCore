@@ -383,8 +383,7 @@ public class ProofTreeUIPage
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
-				System.out.println("Selection Changed " + byUserSupport);
-				if (byUserSupport) {
+				if (byUserSupport) {  // Do nothing if the selection is from UserSupport
 					byUserSupport = false;
 					return;
 				}
@@ -417,7 +416,6 @@ public class ProofTreeUIPage
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
-		System.out.println("PO Change");
 		byUserSupport = true;
 		ProofState ps = e.getDelta().getProofState();
 		this.setInput(ps.getProofTree());
