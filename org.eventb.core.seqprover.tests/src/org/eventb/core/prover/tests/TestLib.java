@@ -88,4 +88,10 @@ public class TestLib {
 		return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
+	public static Hypothesis genHyp(String s){
+		Predicate hypPred = Lib.parsePredicate(s);
+		Lib.typeCheck(hypPred);
+		return new Hypothesis(hypPred);
+	}
+	
 }

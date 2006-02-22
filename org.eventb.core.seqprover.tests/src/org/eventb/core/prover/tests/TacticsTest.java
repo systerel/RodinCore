@@ -10,6 +10,8 @@ public class TacticsTest extends TestCase {
 	IProofTreeNode pt;
 	IProofTreeNode[] desc;
 	
+	// Globally applicable tactics
+	
 	public void testLegacyProvers(){	
 		pt = TestLib.genProofTreeNode("A ∈ℙ(ℤ) ;; B ∈ℙ(ℤ) ;; x∈A|- x∈A ∪B");
 		assertNull(Tactics.legacyProvers().apply(pt));
@@ -65,9 +67,76 @@ public class TacticsTest extends TestCase {
 		pt = TestLib.genProofTreeNode( " ⊤|- ⊤" );
 		assertNull(Tactics.contradictGoal().apply(pt));
 		desc = pt.getOpenDescendants();
-		System.out.println(pt);
 		assertEquals(desc.length,1);
 	}
 
+	// Tactics applicable on the goal
+	
+	public void testImpI(){
+		pt = TestLib.genProofTreeNode( " ⊤|- ⊥⇒ ⊤");
+		assertNull(Tactics.impI().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ⊤⇒ (⊥⇒ ⊤)");
+		assertNull(Tactics.impI().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
+	
+	public void testConjI(){
+		pt = TestLib.genProofTreeNode( " ⊤|- 1=1∧2=2∧3=3");
+		assertNull(Tactics.conjI().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,3);
+	}
+	
+	public void testAllI(){
+		pt = TestLib.genProofTreeNode( " ⊤|- ∀x· x∈ℤ⇒ x=x ");
+		assertNull(Tactics.allI().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
+	
+	public void testExI(){
+		pt = TestLib.genProofTreeNode( " ⊤|- ∃x·x∈ℤ");
+		assertNull(Tactics.exI("0").apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ∃x,y·x∈ℤ∧y∈ℕ");
+		assertNull(Tactics.exI("0",null).apply(pt));
+		desc = pt.getOpenDescendants();
+		// System.out.println(pt);
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ∃x,y·x∈ℤ∧y∈ℕ");
+		assertNull(Tactics.exI(null,"0").apply(pt));
+		desc = pt.getOpenDescendants();
+		// System.out.println(pt);
+		assertEquals(desc.length,2);
+	}
+	
+	// Tactics applicable on a hypothesis
+	
+	public void testAllF(){
+		pt = TestLib.genProofTreeNode( " ∀x·x∈ℤ ⇒ x=x |- 1=1");
+		assertNull(Tactics.allF(TestLib.genHyp("∀x·x∈ℤ ⇒ x=x"),"0").apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y |- 1=1");
+		assertNull(Tactics.allF(TestLib.genHyp(" ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y "),"0",null).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y |- 1=1");
+		assertNull(Tactics.allF(TestLib.genHyp(" ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y "),null,"0").apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+	}
+	
 	// TODO complete
 }
