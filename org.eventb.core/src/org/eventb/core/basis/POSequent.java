@@ -43,7 +43,6 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 */
 	public POSequent(String name, IRodinElement parent) {
 		super(name, parent);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
