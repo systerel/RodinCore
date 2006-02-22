@@ -10,8 +10,10 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IMachine;
 import org.eventb.core.ISCAxiomSet;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -22,6 +24,7 @@ import org.eventb.core.ISCTheoremSet;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -137,6 +140,13 @@ public class SCMachine extends Machine implements ISCMachine {
 		
 		ISCTheoremSet theoremSet = (ISCTheoremSet) theoremSetList.get(0);
 		return theoremSet.getTheorems();
+	}
+
+	public IMachine getUncheckedVersion() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String uName = EventBPlugin.getMachineFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IMachine) project.getRodinFile(uName);
 	}
 
 }

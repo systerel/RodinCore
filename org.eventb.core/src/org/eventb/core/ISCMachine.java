@@ -20,7 +20,18 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface ISCMachine extends IMachine {
+
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachine"; //$NON-NLS-1$
+
+	/**
+	 * Returns a handle to the unchecked version of this machine.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the unchecked version of this machine
+	 */
+	public IMachine getUncheckedVersion();
 
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
 	ISCConstant[] getSCConstants() throws RodinDBException;

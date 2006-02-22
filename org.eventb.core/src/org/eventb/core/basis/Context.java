@@ -11,12 +11,17 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContext;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPRFile;
+import org.eventb.core.ISCContext;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 
@@ -74,6 +79,27 @@ public class Context extends RodinFile implements IContext {
 		Theorem[] theorems = new Theorem[list.size()];
 		list.toArray(theorems);
 		return theorems;
+	}
+
+	public ISCContext getCheckedContext() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getSCContextFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (ISCContext) project.getRodinFile(scName);
+	}
+
+	public IPOFile getPOFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String poName = EventBPlugin.getPOFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPOFile) project.getRodinFile(poName);
+	}
+
+	public IPRFile getPRFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String prName = EventBPlugin.getPRFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPRFile) project.getRodinFile(prName);
 	}
 
 }

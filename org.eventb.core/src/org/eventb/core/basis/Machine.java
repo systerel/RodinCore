@@ -11,13 +11,19 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPRFile;
+import org.eventb.core.ISCContext;
+import org.eventb.core.ISCMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 
@@ -86,4 +92,40 @@ public class Machine extends RodinFile implements IMachine {
 		list.toArray(sees);
 		return sees; 
 	}
+
+	public ISCContext[] getSeenContexts() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(ISees.ELEMENT_TYPE);
+		final int length = list.size();
+		ISCContext[] result = new ISCContext[length]; 
+		int index = 0;
+		for (IRodinElement element: list) {
+			final String bareName = ((ISees) element).getSeenContext();
+			final String scName = EventBPlugin.getSCContextFileName(bareName);
+			final IRodinProject project = (IRodinProject) getParent();
+			result[index ++] = (ISCContext) project.getRodinFile(scName);
+		}
+		return result;
+	}
+	
+	public ISCMachine getCheckedMachine() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getSCMachineFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (ISCMachine) project.getRodinFile(scName);
+	}
+
+	public IPOFile getPOFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String poName = EventBPlugin.getPOFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPOFile) project.getRodinFile(poName);
+	}
+
+	public IPRFile getPRFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String prName = EventBPlugin.getPRFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPRFile) project.getRodinFile(prName);
+	}
+
 }

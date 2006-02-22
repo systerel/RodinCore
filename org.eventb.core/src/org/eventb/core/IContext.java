@@ -19,7 +19,40 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 public interface IContext extends IRodinFile {
+
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".context"; //$NON-NLS-1$
+
+	/**
+	 * Returns a handle to the checked version of this context, that is the file
+	 * produced when statically checking this context.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the checked version of this context
+	 */
+	public ISCContext getCheckedContext();
+
+	/**
+	 * Returns a handle to the file containing proof obligations for this
+	 * context.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the PO file of this context
+	 */
+	public IPOFile getPOFile();
+
+	/**
+	 * Returns a handle to the file containing proofs for this context.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the proof file of this context
+	 */
+	public IPRFile getPRFile();
 
 	public ICarrierSet[] getCarrierSets() throws RodinDBException;
 	public IConstant[] getConstants() throws RodinDBException;

@@ -36,8 +36,19 @@ import org.rodinp.core.RodinDBException;
  * 
  */
 public interface ISCContext extends IContext {
+
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext"; //$NON-NLS-1$
 	
+	/**
+	 * Returns a handle to the unchecked version of this context.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the unchecked version of this context
+	 */
+	public IContext getUncheckedVersion();
+
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
 	ISCConstant[] getSCConstants() throws RodinDBException;
 	IAxiom[] getOldAxioms() throws RodinDBException;

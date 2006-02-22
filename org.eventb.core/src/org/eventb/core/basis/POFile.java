@@ -10,11 +10,16 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPRFile;
+import org.eventb.core.ISCContext;
+import org.eventb.core.ISCMachine;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
@@ -68,6 +73,27 @@ public class POFile extends RodinFile implements IPOFile {
 		POSequent[] sequents = new POSequent[list.size()];
 		list.toArray(sequents);
 		return sequents;
+	}
+
+	public ISCContext getCheckedContext() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getSCContextFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (ISCContext) project.getRodinFile(scName);
+	}
+
+	public ISCMachine getCheckedMachine() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String scName = EventBPlugin.getSCMachineFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (ISCMachine) project.getRodinFile(scName);
+	}
+
+	public IPRFile getPRFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String prName = EventBPlugin.getPRFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPRFile) project.getRodinFile(prName);
 	}
 
 }

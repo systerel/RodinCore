@@ -23,8 +23,20 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRFile extends IRodinFile {
+
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
 	
+	/**
+	 * Returns a handle to the file containing proof obligations for this
+	 * component.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the PO file of this component
+	 */
+	public IPOFile getPOFile();
+
 	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	public IPRSequent[] getSequents() throws RodinDBException;

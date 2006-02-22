@@ -21,8 +21,41 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOFile extends IRodinFile {
+
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poFile"; //$NON-NLS-1$
 	
+	/**
+	 * Returns a handle to the checked version of the context for which this
+	 * proof obligation file has been generated.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the checked version of the corresponding context
+	 */
+	public ISCContext getCheckedContext();
+
+	/**
+	 * Returns a handle to the checked version of the machine for which this
+	 * proof obligation file has been generated.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the checked version of the corresponding machine
+	 */
+	public ISCMachine getCheckedMachine();
+
+	/**
+	 * Returns a handle to the file containing proofs for this component.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the proof file of this component
+	 */
+	public IPRFile getPRFile();
+
 	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	public IPOSequent[] getSequents() throws RodinDBException;
