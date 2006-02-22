@@ -7,8 +7,7 @@ Bundle-Activator: org.eventb.eventBKeyboard.EventBKeyboardPlugin
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.junit
+ org.eclipse.core.runtime
 Eclipse-AutoStart: true
 Export-Package: org.eventb.eventBKeyboard,
  org.eventb.eventBKeyboard.internal.views;x-friends:="org.eventb.eventBKeyboard.tests",
