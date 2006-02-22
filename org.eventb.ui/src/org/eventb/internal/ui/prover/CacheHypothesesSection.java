@@ -57,7 +57,7 @@ public class CacheHypothesesSection
 				
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				editor.getUserSupport().applyITacticToHypotheses(t, selected);
+				editor.getUserSupport().applyTacticToHypotheses(t, selected);
 				
 				// TODO, this should be done as the consequences of IProofTreeDelta
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();

@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -39,7 +40,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
-import org.eventb.internal.ui.Utils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -82,7 +82,7 @@ public class EventBEditor
 		
 		IRodinFile rodinFile = this.getRodinInput();
 		
-		this.setPartName(Utils.getFileNameWithoutExtension(rodinFile.getElementName()));
+		this.setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		if (rodinFile instanceof IMachine)
 			this.setTitleImage(registry.get(EventBImage.IMG_MACHINE));

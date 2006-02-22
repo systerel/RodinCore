@@ -56,7 +56,7 @@ public class SelectedHypothesesSection
 			
 	    	ProverUI editor = (ProverUI) page.getEditor();
 	    	ITactic t = Tactics.mngHyp(ActionType.DESELECT, deselected);
-			editor.getUserSupport().applyITacticToHypotheses(t, deselected);
+			editor.getUserSupport().applyTacticToHypotheses(t, deselected);
 			
 			TreeViewer viewer = editor.getProofTreeUI().getViewer();
 			

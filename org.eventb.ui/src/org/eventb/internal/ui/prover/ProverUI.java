@@ -19,6 +19,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.pm.UserSupport;
@@ -63,7 +64,6 @@ public class ProverUI
 	 */
 	@Override
 	protected void setInput(IEditorInput input) {
-		System.out.println("Set Input for Prover UI");
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPRFile) RodinCore.create(inputFile);
@@ -73,6 +73,7 @@ public class ProverUI
 			catch (RodinDBException e) {
 				e.printStackTrace();
 			}
+			this.setPartName(EventBPlugin.getComponentName(prFile.getElementName()));
 		}
 		super.setInput(input);
 	}

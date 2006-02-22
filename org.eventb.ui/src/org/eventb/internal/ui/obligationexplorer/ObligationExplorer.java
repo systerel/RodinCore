@@ -37,6 +37,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IPRFile;
@@ -127,7 +128,7 @@ public class ObligationExplorer
 			if (obj instanceof IRodinProject) return ((IRodinProject) obj).getElementName();
 			if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
-				return Utils.getFileNameWithoutExtension(name);
+				return EventBPlugin.getComponentName(name);
 			}
 			if (obj instanceof IPRSequent) return ((IPRSequent) obj).getName();
 			

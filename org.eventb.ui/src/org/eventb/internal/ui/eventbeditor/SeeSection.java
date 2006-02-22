@@ -33,9 +33,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContext;
 import org.eventb.core.ISees;
-import org.eventb.internal.ui.Utils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -329,7 +329,7 @@ public class SeeSection
 	        	IRodinElement [] contexts = ((IParent) rodinFile.getParent()).getChildrenOfType(IContext.ELEMENT_TYPE);
 		        for (int i = 0; i < contexts.length; i++) {
 			        Button button = new Button(composite, SWT.RADIO);
-			        button.setText(Utils.getFileNameWithoutExtension(contexts[i].getElementName()));
+			        button.setText(EventBPlugin.getComponentName(contexts[i].getElementName()));
 			        button.addSelectionListener(new ButtonSelectionListener(button.getText()));
 			        if (seen != null) {
 			        	try {

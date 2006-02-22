@@ -72,11 +72,11 @@ public class Utils {
 	 * <p>
 	 * @return the name without the extension
 	 */
-	public static String getFileNameWithoutExtension(String fileName) {
-		int dotLoc = fileName.lastIndexOf('.');
-		if (dotLoc != -1) return fileName.substring(0, dotLoc);
-		else return fileName;
-	}
+//	public static String getFileNameWithoutExtension(String fileName) {
+//		int dotLoc = fileName.lastIndexOf('.');
+//		if (dotLoc != -1) return fileName.substring(0, dotLoc);
+//		else return fileName;
+//	}
 	
 
 	/**
@@ -232,7 +232,7 @@ public class Utils {
 		if (rule.isApplicable(ps)) names.add(HYP_SYMBOL);
 		
 		rule = new AllI();
-		if (rule.isApplicable(ps)) names.add("ALLI_SYMBOL");
+		if (rule.isApplicable(ps)) names.add(ALLI_SYMBOL);
 		
 		return names;
 	}

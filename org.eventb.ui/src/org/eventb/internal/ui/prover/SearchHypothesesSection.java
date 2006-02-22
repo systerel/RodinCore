@@ -57,7 +57,7 @@ public class SearchHypothesesSection
 				
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				editor.getUserSupport().applyITacticToHypotheses(t, selected);
+				editor.getUserSupport().applyTacticToHypotheses(t, selected);
 				
 				
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();

@@ -36,10 +36,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.Utils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.wizards.NewConstructWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
@@ -204,8 +204,9 @@ public class ProjectExplorerActionGroup
 		IRodinFile construct = (IRodinFile) obj;
 		
 		IRodinProject prj = construct.getRodinProject();
-		
-		IRodinFile prFile = prj.getRodinFile(Utils.getFileNameWithoutExtension(construct.getElementName()) + ".bpr");		if (prFile != null) {
+		String bareName = EventBPlugin.getComponentName(construct.getElementName());
+		IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
+		if (prFile != null) {
 			try {
 				System.out.println("Resource " + prFile.getResource());
 				IEditorInput fileInput = new FileEditorInput(prFile.getResource());
