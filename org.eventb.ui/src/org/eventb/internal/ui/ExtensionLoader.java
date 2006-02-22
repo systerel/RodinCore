@@ -98,7 +98,7 @@ public class ExtensionLoader {
 				Bundle bundle = Platform.getBundle(elements[j].getNamespace());
 				try {
 					Class clazz = bundle.loadClass(elements[j].getAttribute("class"));
-					Class classObject = clazz.asSubclass(subClass);
+					Class classObject = getSubclass(clazz, subClass);
 					Constructor constructor = classObject.getConstructor(classes);
 					list.add(constructor);
 				} catch (Exception e) {
@@ -109,5 +109,12 @@ public class ExtensionLoader {
 		}
 
 		return (Constructor []) list.toArray(new Constructor[list.size()]);
+	}
+
+
+	// Code extracted to suppress spurious warning about unsafe type cast.
+	@SuppressWarnings("unchecked")
+	private static Class getSubclass(Class clazz, Class subClass) {
+		return clazz.asSubclass(subClass);
 	}
 }
