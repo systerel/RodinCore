@@ -377,6 +377,8 @@ public class UserSupport
 		notifyProofStatusChangedListener(proofState.isDischarged());
 		
 		IProofTreeNode newNode = proofState.getNextPendingSubgoal(currentNode);
+		if (newNode == null) newNode = currentNode;
+		
 		IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
 		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 		notifyHypothesisChangedListener(hypEvent);

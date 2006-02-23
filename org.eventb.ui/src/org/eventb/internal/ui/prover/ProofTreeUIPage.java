@@ -118,7 +118,7 @@ public class ProofTreeUIPage
 		
 			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode pt = (IProofTreeNode) obj;
-				if (pt.isOpen()) return registry.get(EventBImage.IMG_UNDISCHARGED);
+				if (pt.isOpen()) return registry.get(EventBImage.IMG_PENDING);
 				if (!pt.isDischarged()) return registry.get(EventBImage.IMG_APPLIED);
 				else return registry.get(EventBImage.IMG_DISCHARGED);
 			}
@@ -234,14 +234,14 @@ public class ProofTreeUIPage
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		System.out.println("Fill Local Pull Down");
-		manager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
-				groupActionSet.fillContextMenu(manager);
-				groupActionSet.setContext(null);
-			}
-		});
+//		System.out.println("Fill Local Pull Down");
+//		manager.addMenuListener(new IMenuListener() {
+//			public void menuAboutToShow(IMenuManager manager) {
+//				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
+//				groupActionSet.fillContextMenu(manager);
+//				groupActionSet.setContext(null);
+//			}
+//		});
 //		manager.add(groupActionSet.pruneAction);
 //		manager.add(groupActionSet.conjIAction);
 //		manager.add(groupActionSet.hypAction);

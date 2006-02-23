@@ -33,7 +33,7 @@ public class EventBImage {
 	public static final String IMG_CONSTANTS = "Constants";
 	public static final String IMG_AXIOMS = "Axioms";
 	public static final String IMG_DISCHARGED = "Discharged";
-	public static final String IMG_UNDISCHARGED = "Undischarged";
+	public static final String IMG_PENDING = "Pending";
 	public static final String IMG_APPLIED = "Applied";
 	
 	// Just for fun :-)
@@ -93,7 +93,7 @@ public class EventBImage {
 		registerImage(registry, IMG_NEW_PROJECT, "new-project.gif");
 		registerImage(registry, IMG_NEW_CONSTRUCT, "new-construct.gif");
 		
-		registerImage(registry, IMG_UNDISCHARGED, "undischarged.gif");
+		registerImage(registry, IMG_PENDING, "pending.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 		

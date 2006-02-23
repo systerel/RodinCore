@@ -34,13 +34,10 @@ public class ProofState {
 	public IProofTree getProofTree() {return pt;}
 	
 	public IProofTreeNode getCurrentNode() {
-//		System.out.println("PR Sequent " + ps.toString());
-//		System.out.println("Get Current Node " + current); 
 		return current;
 	}
 	
 	public void setCurrentNode(IProofTreeNode newNode) {
-		System.out.println("Set Current Node " + newNode); 
 		current = newNode;
 	}
 	

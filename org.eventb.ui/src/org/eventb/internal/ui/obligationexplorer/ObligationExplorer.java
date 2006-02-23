@@ -45,7 +45,6 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRStatus;
 import org.eventb.core.IVariable;
-import org.eventb.core.IPRStatus.Status;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.Utils;
@@ -141,8 +140,8 @@ public class ObligationExplorer
 		}
 		
 		public Image getImage(Object obj) {
+			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 			if (obj instanceof IPRSequent) {
-				ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 				IPRSequent ps = (IPRSequent) obj;
 				try {
 					IPRStatus status = ps.getStatus();
@@ -152,6 +151,11 @@ public class ObligationExplorer
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
+			}
+			if (obj instanceof IPRFile) {
+				IPRFile prFile = (IPRFile) obj;
+				if (prFile.getMachine().exists()) return registry.get(EventBImage.IMG_MACHINE);
+				else if (prFile.getContext().exists()) return registry.get(EventBImage.IMG_CONTEXT);
 			}
 			return Utils.getImage(obj);
 		}

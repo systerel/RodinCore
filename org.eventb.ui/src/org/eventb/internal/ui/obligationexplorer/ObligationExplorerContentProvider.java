@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPRStatus;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -83,7 +84,7 @@ public class ObligationExplorerContentProvider
 	 */
 	private void processDelta(IRodinElementDelta delta) {
 		int kind= delta.getKind();
-		IRodinElement element= delta.getElement();
+		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
 			IRodinElement parent; 
 			if (element instanceof IRodinProject) {
@@ -125,7 +126,10 @@ public class ObligationExplorerContentProvider
 			}
 			
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				toRefresh.add(element);
+				if (element instanceof IPRStatus) {
+					toRefresh.add(element.getParent());
+				}
+				else toRefresh.add(element);
 				return;
 			}
 		}
@@ -140,14 +144,17 @@ public class ObligationExplorerContentProvider
 	 * @param updateLabels <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
+		System.out.println("Post refresh");
 		postRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl= viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object [] objects = viewer.getExpandedElements();
-					for (Iterator iter= toRefresh.iterator(); iter.hasNext();) {
-						viewer.refresh(iter.next(), updateLabels);
+					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+						Object obj = iter.next();
+						System.out.println("Refresh " + obj);
+						viewer.refresh(obj, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
 				}
