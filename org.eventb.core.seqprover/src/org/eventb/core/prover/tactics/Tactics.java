@@ -13,10 +13,13 @@ import org.eventb.core.ast.Predicate;
 
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.externalReasoners.AllF;
+import org.eventb.core.prover.externalReasoners.ConjD;
 import org.eventb.core.prover.externalReasoners.Contr;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
+import org.eventb.core.prover.externalReasoners.Eq;
 import org.eventb.core.prover.externalReasoners.ExI;
+import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.Trivial;
 import org.eventb.core.prover.rules.AllI;
@@ -124,6 +127,63 @@ public class Tactics {
 	
 	public static boolean allF_applicable(Hypothesis hyp){
 		return Lib.isUnivQuant(hyp.getPredicate());
+	}
+	
+	public static ITactic conjD(Hypothesis conjHyp){
+		return composeStrict(
+				pluginTac(new ConjD(),new ConjD.Input(conjHyp)),
+				onPending(0,impI())
+		);
+	}
+	
+	public static boolean conjD_applicable(Hypothesis hyp){
+		return Lib.isConj(hyp.getPredicate());
+	}
+	
+	public static ITactic impD(Hypothesis impHyp, boolean useContrapositive){
+		return composeStrict(
+				pluginTac(new ImpD(),new ImpD.Input(impHyp,useContrapositive)),
+				onPending(0,conjI()),
+				onPending(1,impI())
+		);
+	}
+	
+	public static boolean impD_applicable(Hypothesis hyp){
+		return Lib.isImp(hyp.getPredicate());
+	}
+	
+	public static ITactic disjE(Hypothesis disjHyp){
+		return composeStrict(
+				pluginTac(new DisjE(),new DisjE.Input(disjHyp)),
+				onPending(0,conjI()),
+				onAllPending(impI())
+		);
+	}
+	
+	public static boolean disjE_applicable(Hypothesis hyp){
+		return Lib.isDisj(hyp.getPredicate());
+	}
+	
+	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
+		return composeStrict(
+				pluginTac(new Eq(),new Eq.Input(eqHyp,useReflexive)),
+				onPending(0,impI())
+		);
+	}
+	
+	public static boolean eqE_applicable(Hypothesis hyp){
+		return Lib.isEq(hyp.getPredicate());
+	}
+	
+	
+	
+    // Tactics applicable on every hypothesis
+	
+	public static ITactic falsifyHyp(Hypothesis hyp){
+		return composeStrict(
+				pluginTac(new Contr(),new Contr.Input(hyp)),
+				onPending(0,impI())
+		);
 	}
 	
 	// Misc tactics
