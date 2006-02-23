@@ -45,6 +45,7 @@ import org.eventb.core.basis.POIdentifier;
 import org.eventb.core.basis.SCCarrierSet;
 import org.eventb.core.basis.SCConstant;
 import org.eventb.core.basis.SCVariable;
+import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -310,6 +311,9 @@ public abstract class BuilderTest extends TestCase {
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
 		rodinProject = RodinCore.create(project);
+		
+		// Turn off automatic provers
+		AutoProver.disable();
 	}
 	
 	protected void tearDown() throws Exception {
