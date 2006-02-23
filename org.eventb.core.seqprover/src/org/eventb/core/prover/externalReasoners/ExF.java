@@ -16,55 +16,54 @@ import org.eventb.core.prover.sequent.ISequent;
 import org.eventb.core.prover.sequent.SimpleSequent;
 
 
-public class DisjE implements IExternalReasoner{
+public class ExF implements IExternalReasoner{
 	
 	public String name(){
-		return "doCase";
+		return "ExF";
 	}
 	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
-
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
-		Hypothesis disjHyp;
-		Predicate disjHypPred;
+		Hypothesis exHyp;
+		Predicate exHypPred;
 		
-		if (I == null || (I instanceof Input &&  ((Input)I).disjHyp == null )){
-			// Extract disjubction from goal.
-			disjHyp = null;
-			if (! (Lib.isImp(S.goal()) && Lib.isDisj(Lib.impLeft(S.goal()))))
+		if (I == null || (I instanceof Input &&  ((Input)I).exHyp == null )){
+			// Extract existential from goal.
+			exHyp = null;
+			if (! (Lib.isImp(S.goal()) && Lib.isExQuant(Lib.impLeft(S.goal()))))
 				return new UnSuccessfulExtReasonerOutput(this,I,"Empty input and goal not in proper form:"+S.goal());
-			disjHypPred = Lib.impLeft(S.goal());
+			exHypPred = Lib.impLeft(S.goal());
 		}
 		else
 		{
 			// Try to use PluginInput
 			if (! (I instanceof Input)) throw (new AssertionError(this));
 			Input aI = (Input) I;
-			disjHyp = aI.disjHyp;
-			disjHypPred = disjHyp.getPredicate();
-			if (! S.hypotheses().contains(disjHyp))
-				return new UnSuccessfulExtReasonerOutput(this,I,"Nonexistent hypothesis:"+disjHyp);
-			if (! Lib.isDisj(disjHypPred))
-				return new UnSuccessfulExtReasonerOutput(this,I,"Hypothesis is not a disjunction:"+disjHyp);
+			exHyp = aI.exHyp;
+			exHypPred = exHyp.getPredicate();
+			if (! S.hypotheses().contains(exHyp))
+				return new UnSuccessfulExtReasonerOutput(this,I,"Nonexistent hypothesis:"+exHyp);
+			if (! Lib.isExQuant(exHypPred))
+				return new UnSuccessfulExtReasonerOutput(this,I,"Hypothesis is not existentially quantified:"+exHyp);
 		}
 		
-		Predicate[] disjuncts = Lib.disjuncts(disjHypPred);
-		Predicate[] cases = new Predicate[disjuncts.length];
+		
 		ITypeEnvironment te = S.typeEnvironment();
-		for (int i=0;i<disjuncts.length;i++){
-			cases[i] = Lib.makeImp(te,disjuncts[i],S.goal());
-		}
-		Predicate newGoal = Lib.makeConj(te,cases);
+		
+		// Predicate newGoal = Lib.makeConj(te,cases);
+		Predicate newGoal = Lib.makeUnivQuant(te,Lib.getBoundIdents(exHypPred),
+				Lib.makeUncheckedImp(Lib.getBoundPredicate(exHypPred),S.goal()));
+		
 		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
-		ISequent outputSequent = (disjHyp == null) ? 
+		ISequent outputSequent = (exHyp == null) ? 
 				new SimpleSequent(S.typeEnvironment(),seqGoal) :
-				new SimpleSequent(S.typeEnvironment(),disjHyp,seqGoal);
+				new SimpleSequent(S.typeEnvironment(),exHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
-		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(disjHyp));
+		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(exHyp));
 	}
 	
+	
+	
+		
 //	public PluginInput defaultInput(){
 //		return null;
 //	}
@@ -72,15 +71,11 @@ public class DisjE implements IExternalReasoner{
 	
 	public static class Input implements IExtReasonerInput{
 
-		public final Hypothesis disjHyp;
+		public final Hypothesis exHyp;
 		
-		public Input(){
-			this.disjHyp = null;
-		}
-		
-		public Input(Hypothesis disjHyp){
-			assert Lib.isDisj(disjHyp.getPredicate());
-			this.disjHyp = disjHyp;
+		public Input(Hypothesis exHyp){
+			assert Lib.isExQuant(exHyp.getPredicate());
+			this.exHyp = exHyp;
 		}
 				
 	}
