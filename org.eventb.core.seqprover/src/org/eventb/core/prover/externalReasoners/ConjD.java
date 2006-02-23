@@ -16,7 +16,7 @@ import org.eventb.core.prover.sequent.ISequent;
 import org.eventb.core.prover.sequent.SimpleSequent;
 
 
-public class ConjE implements IExternalReasoner{
+public class ConjD implements IExternalReasoner{
 	
 	public String name(){
 		return "conjE";

@@ -99,6 +99,8 @@ public class ExI implements IExternalReasoner{
 		public Input(String[] witnesses){
 			this.witnesses = witnesses;
 		}
+		
+		
 //		public exI_Input(String... witnessesArr){
 //			Map<Integer,String> = new Map<Integer,String>();
 //			for (i=0;i<witnessesArr.length;i++){
