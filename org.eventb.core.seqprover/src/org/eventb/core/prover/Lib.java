@@ -107,12 +107,23 @@ public final class Lib {
 		return ((RelationalPredicate)P).getRight();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	// TODO : Remove this function after type synthesis is implemented.
+	private static void typeCheckAfterConstruction(Formula f,ITypeEnvironment te){
+		ITypeCheckResult tcr = f.typeCheck(te);
+		assert tcr.isSuccess();
+		assert tcr.getInferredEnvironment().isEmpty();
+		assert f.isTypeChecked();
+	}
+	
+	
 	public static Predicate makeGoal(ITypeEnvironment te,Set<Predicate> Hyps,Predicate goal){
 		Predicate result = goal;
 		for (Predicate hyp : Hyps){
 			result = makeImp(te,hyp,result);
 		}
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -121,13 +132,13 @@ public final class Lib {
 		for (Predicate hyp : Hyps){
 			result = makeImp(te,hyp,result);
 		}
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
 	public static Predicate makeNeg(ITypeEnvironment te,Predicate P){
 		Predicate result = ff.makeUnaryPredicate(Formula.NOT,P,null);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -136,7 +147,7 @@ public final class Lib {
 		if (conjuncts.length == 0) return True;
 		if (conjuncts.length == 1) return conjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LAND,conjuncts,null);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -150,7 +161,7 @@ public final class Lib {
 	public static Predicate makeImp(ITypeEnvironment te,Predicate left, Predicate right)
 	{
 		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -170,7 +181,7 @@ public final class Lib {
 		for (int i=imps.length-2; i==0 ;i--){
 			result = ff.makeBinaryPredicate(Formula.LIMP,imps[i],result,null);
 		}
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -178,7 +189,7 @@ public final class Lib {
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		Predicate result = qP.instantiate(instantiations,ff);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -200,14 +211,14 @@ public final class Lib {
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,boundIdents,boundPred,null);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 		
 	}
 	
 	public static Predicate WD(ITypeEnvironment te,Formula f){
 		Predicate result = f.getWDPredicate(ff);
-		assert (typeCheck(result,te)!=null);
+		typeCheckAfterConstruction(result,te);
 		return result;
 	}
 	
@@ -275,23 +286,6 @@ public final class Lib {
 		return false;
 	}
 	
-//	public static boolean typeCheck(Formula f) {
-//		ITypeCheckResult tcr = f.typeCheck(ff.makeTypeEnvironment());
-//		return tcr.isSuccess();
-//	}
-//	
-//	public static boolean typeCheck(Formula[] formulae) {
-//		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
-//		for (Formula f:formulae)
-//		{
-//			ITypeCheckResult tcr = f.typeCheck(typeEnvironment);
-//			if (! tcr.isSuccess()) return false;
-//			if (! tcr.getInferredEnvironment().isEmpty()) 
-//				typeEnvironment.addAll(tcr.getInferredEnvironment());
-//		}
-//		return true;
-//	}
-	
 	public static ITypeEnvironment typeCheck(Formula f) {
 		ITypeCheckResult tcr = f.typeCheck(ff.makeTypeEnvironment());
 		if (! tcr.isSuccess()) return null;
@@ -356,62 +350,3 @@ public final class Lib {
 	}
 	
 }
-
-// //****************** OLD VERSIONS OF CONSTRUCTORS WITHOUT TYPECHECK **************************
-//
-//public static Predicate makeGoal(Set<Predicate> Hyps,Predicate goal,ITypeEnvironment typEnv){
-//	Predicate result = goal;
-//	for (Predicate hyp : Hyps){
-//		result = makeImp(hyp,result);
-//	}
-//	assert (typeCheck(result,typEnv)!=null);
-//	return result;
-//}
-//
-//public static Predicate makeGoal(Predicate[] Hyps,Predicate goal){
-//	Predicate result = goal;
-//	for (Predicate hyp : Hyps){
-//		result = makeImp(hyp,result);
-//	}
-//	return result;
-//}
-//
-//public static Predicate makeNeg(Predicate P){
-//	return ff.makeUnaryPredicate(Formula.NOT,P,null);
-//}
-//
-//public static Predicate makeConj(Predicate...conjuncts)
-//{
-//	if (conjuncts.length == 0) return True;
-//	if (conjuncts.length == 1) return conjuncts[0];
-//	return ff.makeAssociativePredicate(Formula.LAND,conjuncts,null);
-//}
-//
-//public static Predicate makeConj(Collection<Predicate> conjuncts)
-//{
-//	Predicate[] conjunctsArray = new Predicate[conjuncts.size()];
-//	conjuncts.toArray(conjunctsArray);
-//	return makeConj(conjunctsArray);
-//}
-//
-//public static Predicate makeImp(Predicate left, Predicate right)
-//{
-//	return ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
-//}
-//
-//public static Predicate makeImp(Predicate...imps)
-//{
-//	if (imps.length == 0) return True;
-//	if (imps.length == 1) return imps[0];
-//	Predicate result = imps[imps.length - 1];
-//	for (int i=imps.length-2; i==0 ;i--){
-//		result = ff.makeBinaryPredicate(Formula.LIMP,imps[i],result,null);
-//	}
-//	return result;
-//}
-//
-//
-//public static Predicate instantiateBoundIdents(Predicate P,Expression[] instantiations){
-//	if (! (P instanceof QuantifiedPredicate)) return null;
-//	QuantifiedPredicate qP = (QuantifiedPredicate) P;
-//	return qP.instantiate(instantiations,ff);
