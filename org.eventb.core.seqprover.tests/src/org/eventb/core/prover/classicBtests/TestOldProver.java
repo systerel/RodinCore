@@ -6,9 +6,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package org.eventb.core.prover.classicBtests;
-import java.util.HashSet;
-import java.util.Set;
-
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.BooleanType;
@@ -22,6 +19,9 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.prover.externalReasoners.classicB.ClassicB;
 
 public class TestOldProver extends TestCase {
+	
+	// Default time out: 30 seconds
+	private static long timeOut = 30000;
 	
 	private static FormulaFactory factory = FormulaFactory.getDefault();
 	
@@ -106,65 +106,65 @@ public class TestOldProver extends TestCase {
 		return predicate;
 	}
 	
-	static public Set<Predicate> mHypothesis(String...strings) {
-		HashSet<Predicate> predicates = new HashSet<Predicate>(strings.length * 4 / 3 + 1);
-		for(String string : strings) {
-			Predicate predicate = mPredicate(string);
-			predicates.add(predicate);
+	static public Predicate[] mHypotheses(String... strings) {
+		final int length = strings.length;
+		Predicate[] predicates = new Predicate[length];
+		for (int i = 0; i < strings.length; i++) {
+			predicates[i] = mPredicate(strings[i]);
 		}
 		return predicates;
 	}
 	
 	abstract class TestItem {
-		public Set<Predicate> hypothesis;
+		public Predicate[] hypotheses;
 		public Predicate goal;
 		public abstract void test() throws Exception;
 	};
 	
 	TestItem[] items = new TestItem[] {
-			new TestPK(mHypothesis("x=y", "y=z"), mPredicate("x=z")),
-			new TestPK(mHypothesis("(∀x·x∈ℕ)", "y=z"), mPredicate("(∃C·C=A ∧ y<z)")),
-			new TestPK(mHypothesis("(∀v,w·v=x∧w=f(x)+(λx·x=w∣x∗y)(x))", "A⊆B ∧ B=g[A]", "x∈A∩B"), 
+			new TestPK(mHypotheses("x=y", "y=z"), mPredicate("x=z")),
+			new TestPK(mHypotheses("(∀x·x∈ℕ)", "y=z"), mPredicate("(∃C·C=A ∧ y<z)")),
+			new TestPK(mHypotheses("(∀v,w·v=x∧w=f(x)+(λx·x=w∣x∗y)(x))", "A⊆B ∧ B=g[A]", "x∈A∩B"), 
 					mPredicate("(∀a,b,c·a+(b−c)=x)")),
 					
 			// a lemma on equality
-			new TestML(mHypothesis("x=y", "y=z"), mPredicate("x=z"), true),
+			new TestML(mHypotheses("x=y", "y=z"), mPredicate("x=z"), true),
 			
 			// this is not true!
-			new TestML(mHypothesis("x=y", "y=z"), mPredicate("x∈A"), false),
+			new TestML(mHypotheses("x=y", "y=z"), mPredicate("x∈A"), false),
 			
 			// a simpe lemma with bound variables
-			new TestML(mHypothesis("(∀n·n∈ℕ ⇒ n∈A)"), mPredicate("(∃n·n∈ℕ ∧ n∈A)"), true),
+			new TestML(mHypotheses("(∀n·n∈ℕ ⇒ n∈A)"), mPredicate("(∃n·n∈ℕ ∧ n∈A)"), true),
 			
 			// test added type information
-			new TestML(mHypothesis("(∀n·n∈A)"), mPredicate("(∃n·n∈A)"), true),
-			new TestML(mHypothesis(), mPredicate("(∀m,n·m∈A∧n∈U⇒m∈ℤ∧n∈BOOL)"), true),
+			new TestML(mHypotheses("(∀n·n∈A)"), mPredicate("(∃n·n∈A)"), true),
+			new TestML(mHypotheses(), mPredicate("(∀m,n·m∈A∧n∈U⇒m∈ℤ∧n∈BOOL)"), true),
 			
 			// test free identifier type information
-			new TestML(mHypothesis("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
-			new TestML(mHypothesis("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
-			new TestML(mHypothesis("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
-			new TestML(mHypothesis("y∈0‥x"), mPredicate("x∈ℤ"), true),
+			new TestML(mHypotheses("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
+			new TestML(mHypotheses("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
+			new TestML(mHypotheses("x∈{y+z}"), mPredicate("y∈{x−z}"), true),
+			new TestML(mHypotheses("y∈0‥x"), mPredicate("x∈ℤ"), true),
 			
 			// some tests for PP
-			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
-			new TestPP(mHypothesis("x∈A", "x∈B"), mPredicate("y∈A∩B"), false),
+			new TestPP(mHypotheses("x∈A", "x∈B"), mPredicate("x∈A∩B"), true),
+			new TestPP(mHypotheses("x∈A", "x∈B"), mPredicate("y∈A∩B"), false),
 			
 			// some provable sequents
-			new TestPP(mHypothesis("x∈ℕ"), mPredicate("x∈ℕ"), true),
-			new TestML(mHypothesis("x∈ℕ"), mPredicate("x∈ℕ"), true)
+			new TestPP(mHypotheses("x∈ℕ"), mPredicate("x∈ℕ"), true),
+			new TestML(mHypotheses("x∈ℕ"), mPredicate("x∈ℕ"), true)
 	};
 	
 	class TestPK extends TestItem {
 		
-		public TestPK(Set<Predicate> hypothesis, Predicate goal) {
-			this.hypothesis = hypothesis;
+		public TestPK(Predicate[] hypotheses, Predicate goal) {
+			this.hypotheses = hypotheses;
 			this.goal = goal;
 		}
 		
 		@Override
 		public void test() throws Exception {
-			StringBuffer buffer = ClassicB.translateSequent(defaultTEnv, hypothesis, goal);
+			StringBuffer buffer = ClassicB.translateSequent(defaultTEnv, hypotheses, goal);
 			boolean result = ClassicB.callPKforPP(buffer);
 			assertTrue("PK failed for PP.", result);
 			result = ClassicB.callPKforML(buffer);
@@ -177,16 +177,16 @@ public class TestOldProver extends TestCase {
 		
 		public boolean isTrue;
 		
-		public TestML(Set<Predicate> hypothesis, Predicate goal, boolean isTrue) {
-			this.hypothesis = hypothesis;
+		public TestML(Predicate[] hypotheses, Predicate goal, boolean isTrue) {
+			this.hypotheses = hypotheses;
 			this.goal = goal;
 			this.isTrue = isTrue;
 		}
 		
 		@Override
 		public void test() throws Exception {
-			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypothesis, goal);
-			boolean result = ClassicB.proveWithML(buffer);
+			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypotheses, goal);
+			boolean result = ClassicB.proveWithML(buffer, timeOut);
 			assertEquals("Unexpected result", isTrue, result);
 		}
 		
@@ -196,16 +196,16 @@ public class TestOldProver extends TestCase {
 		
 		public boolean isTrue;
 		
-		public TestPP(Set<Predicate> hypothesis, Predicate goal, boolean isTrue) {
-			this.hypothesis = hypothesis;
+		public TestPP(Predicate[] hypotheses, Predicate goal, boolean isTrue) {
+			this.hypotheses = hypotheses;
 			this.goal = goal;
 			this.isTrue = isTrue;
 		}
 		
 		@Override
 		public void test() throws Exception {
-			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypothesis, goal);
-			boolean result = ClassicB.proveWithPP(buffer);
+			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypotheses, goal);
+			boolean result = ClassicB.proveWithPP(buffer, timeOut);
 			assertEquals("Unexpected result", isTrue, result);
 		}
 		
