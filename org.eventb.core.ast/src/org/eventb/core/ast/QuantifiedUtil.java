@@ -21,29 +21,35 @@ import java.util.regex.Pattern;
 public abstract class QuantifiedUtil {
 
 	private static class StructuredName {
-		String prefix;
-		int suffix;
+		private final String prefix;
+		private int suffix;
+		private final String quotes;
 		
-		static Pattern suffixExtractor = Pattern.compile("^(.*)(\\d+)$", Pattern.DOTALL);		
+		static Pattern suffixExtractor = 
+			Pattern.compile("^([\\D&&[^']]*)(\\d*)('*)$", Pattern.DOTALL);		
 		
 		StructuredName(String name) {
 			Matcher matcher = suffixExtractor.matcher(name);
-			if (matcher.matches()) {
-				prefix = matcher.group(1);
-				suffix = Integer.valueOf(matcher.group(2));
-			}
-			else {
-				prefix = name;
+			assert matcher.matches();
+			prefix = matcher.group(1);
+			final String digits = matcher.group(2);
+			if (digits.length() != 0)
+				suffix = Integer.valueOf(digits);
+			else
 				suffix = -1;
-			}
+			quotes = matcher.group(3);
+		}
+		
+		public void increment() {
+			++ suffix;
 		}
 		
 		@Override 
 		public String toString() {
 			if (suffix < 0) {
-				return prefix;
+				return prefix + quotes;
 			}
-			return prefix + suffix;
+			return prefix + suffix + quotes;
 		}
 	}
 
@@ -140,7 +146,7 @@ public abstract class QuantifiedUtil {
 		QuantifiedUtil.StructuredName sname = new QuantifiedUtil.StructuredName(name);
 		String newName;
 		do {
-			++ sname.suffix;
+			sname.increment();
 			newName = sname.toString();
 		} while (usedNames.contains(newName) || !factory.isValidIdentifierName(newName));
 		
