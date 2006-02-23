@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
@@ -246,8 +247,14 @@ public class GoalSection
 	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
 	 */
 	public void goalChanged(IGoalChangeEvent e) {
-		IGoalDelta delta = e.getDelta();
-		setGoal(delta.getProofTreeNode());
+		final IGoalDelta delta = e.getDelta();
+		
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				setGoal(delta.getProofTreeNode());
+			}
+		});
 	}
 
 }

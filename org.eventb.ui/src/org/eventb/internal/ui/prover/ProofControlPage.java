@@ -11,6 +11,9 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -18,6 +21,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
@@ -44,10 +50,12 @@ import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.IStatusChangedListener;
 import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -134,7 +142,36 @@ public class ProofControlPage
 				}
 			
 				if (label.equals("pp")) {
-					editor.getUserSupport().applyTactic(Tactics.legacyProvers());
+					final UserSupport userSupport = editor.getUserSupport();
+					IRunnableWithProgress op = new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException {
+							try {
+								userSupport.applyTactic(Tactics.legacyProvers());
+							} catch (RodinDBException e) {
+								e.printStackTrace();
+								throw new InvocationTargetException(e);
+							} finally {
+								monitor.done();
+							}
+						}
+					};
+					
+					System.out.println("Here");
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
+					
+					try {
+						System.out.println("Here 1");
+						dialog.run(true, true, op);
+						System.out.println("Here 2");
+					} catch (InterruptedException exception) {
+						return;
+					} catch (InvocationTargetException exception) {
+						Throwable realException = exception.getTargetException();
+						realException.printStackTrace();
+						MessageDialog.openError(ProofControlPage.this.scrolledForm.getShell(), "Error here", realException.getMessage());
+						return;
+					}
+					
 					return;
 				}
 			
@@ -377,7 +414,12 @@ public class ProofControlPage
 		IProofTreeNode node = e.getDelta().getProofTreeNode();
 		if (node != null && node.isOpen()) isOpened = true;
 		else isOpened = false;
-		updateButtons();
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				updateButtons();
+			}
+		});
 	}
 	
 	private void updateButtons() {
@@ -408,11 +450,18 @@ public class ProofControlPage
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IStatusChangedListener#statusChanged(java.lang.Object)
 	 */
-	public void statusChanged(Object information) {
-		if (information != null) setFormTextInformation(information.toString());
-		else setFormTextInformation("");
-		scrolledForm.reflow(true);
-		this.setFocus();
+	public void statusChanged(final Object information) {
+		final ProofControlPage page = this;
+
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				if (information != null) setFormTextInformation(information.toString());
+				else setFormTextInformation("");
+				scrolledForm.reflow(true);
+				page.setFocus();
+			}
+		});
 	}
 
 }

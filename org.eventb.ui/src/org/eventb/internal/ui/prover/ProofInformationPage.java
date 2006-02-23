@@ -16,11 +16,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.IEvent;
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.internal.ui.EventBUIPlugin;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -47,6 +55,7 @@ public class ProofInformationPage
 {
 	private ScrolledForm scrolledForm;
 	private ProverUI editor;
+	private FormText formText;
 	
 	/*
 	 * The content provider class is responsible for
@@ -81,23 +90,56 @@ public class ProofInformationPage
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		
 		scrolledForm = toolkit.createScrolledForm(parent);
+		scrolledForm.setText(editor.getUserSupport().getCurrentPO().getPRSequent().getName());
+
 		Composite body = scrolledForm.getBody();
-		scrolledForm.setText(editor.getUserSupport().getCurrentPO().getProofTree().getSequent().goal().toString());
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 3;
 		body.setLayout(gl);
 
+		formText = toolkit.createFormText(body, true);
+		setFormText(editor.getUserSupport().getCurrentPO().getPRSequent());
+		
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
 	}
 
+	private void setFormText(IPRSequent prSequent) {
+		IPRFile prFile = (IPRFile) prSequent.getOpenable();
+		IRodinFile rodinFile = null;
+		if (prFile.getMachine().exists()) rodinFile = prFile.getMachine();
+		else if (prFile.getContext().exists()) rodinFile = prFile.getContext();
+		System.out.println("File " + rodinFile.getElementName());
+		
+		String formString = "<form>";
+
+		String prName = prSequent.getName();
+		System.out.println("PR Name " + prName);
+		int beginIndex = prName.indexOf("/");
+		
+		if (beginIndex != -1) {
+			String name = prName.substring(0, beginIndex);
+			System.out.println("Element name " + name);
+			IRodinElement element = rodinFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
+			System.out.println("Element found " + element.toString());
+			if (element != null) {
+				
+			}
+		}
+			
+			
+		
+		formString = formString + "</form>";
+		formText.setText(formString, true, false);
+		scrolledForm.reflow(true);
+	}
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
 		scrolledForm.setFocus();
 	}
+	
 	
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.Page#getControl()
@@ -113,8 +155,15 @@ public class ProofInformationPage
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
-		scrolledForm.setText(e.getDelta().getProofState().getProofTree().getSequent().goal().toString());
-		scrolledForm.reflow(true);
+		final IPRSequent prSequent = e.getDelta().getProofState().getPRSequent();
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				scrolledForm.setText(prSequent.getName());
+				scrolledForm.reflow(true);
+				setFormText(prSequent);
+			}
+		});
 	}
 	
 }

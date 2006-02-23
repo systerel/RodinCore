@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
@@ -417,9 +418,15 @@ public class ProofTreeUIPage
 	 */
 	public void poChanged(IPOChangeEvent e) {
 		byUserSupport = true;
-		ProofState ps = e.getDelta().getProofState();
-		this.setInput(ps.getProofTree());
-		if (ps.getCurrentNode() != null) this.getViewer().setSelection(new StructuredSelection(ps.getCurrentNode()));
+		final ProofState ps = e.getDelta().getProofState();
+		final ProofTreeUIPage page = this;
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				page.setInput(ps.getProofTree());
+				if (ps.getCurrentNode() != null) page.getViewer().setSelection(new StructuredSelection(ps.getCurrentNode()));
+			}
+		});
 	}
 	
 }

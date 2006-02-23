@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -126,13 +127,16 @@ public class ProofsPage
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofStatusChangedListener#proofStatusChanged()
 	 */
-	public void proofStatusChanged(boolean complete) {
-		System.out.println("Status changed " + complete);
+	public void proofStatusChanged(final boolean complete) {
 		goal.markDirty();
-		if (complete) {
-			PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
-			dialog.open();
-		}
+		final PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
+		
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				if (complete) dialog.open();
+			}
+		});
 	}
 	
 }

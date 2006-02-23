@@ -18,11 +18,13 @@ import java.util.Iterator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.internal.ui.EventBUIPlugin;
 
 public abstract class HypothesesSection
 	extends SectionPart
@@ -95,8 +97,14 @@ public abstract class HypothesesSection
 			}
 		}
 
-		scrolledForm.reflow(true); // Important for refresh
-		this.refresh();
-
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		final SectionPart part = this;
+		display.syncExec (new Runnable () {
+			public void run () {
+				scrolledForm.reflow(true); // Important for refresh
+				part.refresh();
+			}
+		});
+		
 	}
 }
