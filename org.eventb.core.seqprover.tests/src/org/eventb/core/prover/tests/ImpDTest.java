@@ -6,17 +6,17 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.externalReasoners.ImpE;
-import org.eventb.core.prover.externalReasoners.ImpE.Input;
+import org.eventb.core.prover.externalReasoners.ImpD;
+import org.eventb.core.prover.externalReasoners.ImpD.Input;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.SimpleProverSequent;
 
-public class ImpETest extends TestCase {
+public class ImpDTest extends TestCase {
 //	FormulaFactory ff = new FormulaFactory();
-	IExternalReasoner impE = new ImpE();
+	IExternalReasoner impD = new ImpD();
 
-	IProverSequent impEseq;
+	IProverSequent impDseq;
 	Predicate goal,newgoal,newgoalContrap;
 	Predicate impHypPred;
 	Hypothesis impHyp;
@@ -30,20 +30,20 @@ public class ImpETest extends TestCase {
 		ITypeEnvironment typeEnvironment = Lib.typeCheck(impHypPred,goal,newgoal,newgoalContrap);
 		assertNotNull(typeEnvironment);	
 		impHyp = new Hypothesis(impHypPred);
-		impEseq = new SimpleProverSequent(typeEnvironment,Hypothesis.Hypotheses(impHyp),goal);
+		impDseq = new SimpleProverSequent(typeEnvironment,Hypothesis.Hypotheses(impHyp),goal);
 	}
 	
 	public void testApply() {	
 		Input I;
 		Predicate newGoalPredicate;
 		I = new Input(impHyp);
-		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(impEseq,impE,I);
+		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(impDseq,impD,I);
 		
 		assertTrue(newGoalPredicate.equals(newgoal));
 		//System.out.println(newGoalPredicate);
 		
 		I = new Input(impHyp,true);
-		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(impEseq,impE,I);
+		newGoalPredicate = TestLib.chkProofFormat_getNewGoalPred(impDseq,impD,I);
 		
 		assertTrue(newGoalPredicate.equals(newgoalContrap));
 		//System.out.println(newGoalPredicate);

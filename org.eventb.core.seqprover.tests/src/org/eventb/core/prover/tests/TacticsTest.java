@@ -163,6 +163,61 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,2);
 	}
 	
+	public void testConjD(){
+		pt = TestLib.genProofTreeNode( " 1=1 ∧2=2 ∧3=3 ;; 4=4 |-  ⊤");
+		assertNull(Tactics.conjD(TestLib.genHyp("1=1 ∧2=2 ∧3=3")).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	
+	}
+	
+	public void testImpD(){
+		pt = TestLib.genProofTreeNode( " 1=1 ⇒ 2=2 |-  ⊤");
+		assertNull(Tactics.impD(TestLib.genHyp("1=1 ⇒ 2=2"),false).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " 1=1 ⇒ 2=2 |-  ⊤");
+		assertNull(Tactics.impD(TestLib.genHyp("1=1 ⇒ 2=2"),true).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+	}
+	
+	public void testDisjE(){
+		pt = TestLib.genProofTreeNode( " 1=1 ∨2=2 ∨3=3 |-  ⊤");
+		assertNull(Tactics.disjE(TestLib.genHyp("1=1 ∨2=2 ∨3=3")).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,3);
+	}
+	
+	public void testEqE(){
+		pt = TestLib.genProofTreeNode( "x=y+1 ;; y=x−1 ;; y>0 |-  x=x ∧y=y");
+		assertNull(Tactics.eqE(TestLib.genHyp("x=y+1"),false).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( "y+1=x;; y=x−1 ;; y>0 |-  x=x ∧y=y");
+		assertNull(Tactics.eqE(TestLib.genHyp("y+1=x"),true).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
+	
+	// Tactics applicable on every hypothesis
+	
+	public void testFalsifyHyp(){
+		pt = TestLib.genProofTreeNode( " 1=1 |- 2=2");
+		assertNull(Tactics.falsifyHyp(TestLib.genHyp("1=1")).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
+	
 	// Misc tactics
 	
 	public void testHyp(){
