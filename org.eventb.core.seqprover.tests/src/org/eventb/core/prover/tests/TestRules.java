@@ -140,9 +140,9 @@ public class TestRules extends TestCase {
 		assertTrue(seq.quantSeqFree.equals(anticidents[0].goal()));
 		assertTrue(seq.quantSeq.hypotheses().equals(anticidents[0].hypotheses()));
 		
-		System.out.println(seq.quantSeq.typeEnvironment());
-		System.out.println(anticidents[0].typeEnvironment());
-		System.out.println(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
+//		System.out.println(seq.quantSeq.typeEnvironment());
+//		System.out.println(anticidents[0].typeEnvironment());
+//		System.out.println(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
 		assertFalse(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
 		assertTrue(anticidents[0].typeEnvironment().containsAll(seq.quantSeq.typeEnvironment()));
 		
