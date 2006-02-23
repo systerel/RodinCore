@@ -189,21 +189,26 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 					System.out.println(getClass().getName() + ": Node not in dependency graph " + resource.getName()); //$NON-NLS-1$
 				node = createNode(resource);
 			}
-			if(node != null)
+			if(node != null) {
+				// TODO management of markers should be connected to extraction
+				deleteMarkers((IFile) resource);
 				// TODO implement editable and non-editable resource options in builder graph.
 				// some resources, e.g., files maintained by the prover are derived and editable;
 				// other resources may be editable or non-editable, e.g., Event-B models that may
 				// have been entered directly by the user, or created by a tool such as u2b;
 				// in the first case it is editable, in the second it isn't.
+				// TODO the distinction based on changed is not really necessary because only the
+				// extractors are run on the first element of a non-tool node of the graph.
+				// So by default we could always implement for the case "changed = true".
 				if (changed)
 					try {
 						state.graph.extractNode(node, makeInterrupt(), monitor);
 					} catch (CoreException e) {
 						Util.log(e, "during extraction after change");
 					}
-				else
+			    else
 					node.setDated(true);
-			else if(DEBUG)
+			} else if(DEBUG)
 				System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
 		}
 	}
