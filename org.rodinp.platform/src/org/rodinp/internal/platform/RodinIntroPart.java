@@ -56,7 +56,7 @@ public class RodinIntroPart extends IntroPart {
 		label.setText("Copyright (c) 2005, 2006 ETH Zurich and others");
 		label = new Label(container, SWT.CENTER);
 		label.setFont(JFaceResources.getHeaderFont());
-		label.setText("This research is being carried out as part of the EU funded research project: IST 511599 RODIN.");
+		label.setText("This prototype has been developed with the support of the EU.");
 		label = new Label(container, SWT.CENTER);
 		label.setSize(0, 10);
 		container.layout();
