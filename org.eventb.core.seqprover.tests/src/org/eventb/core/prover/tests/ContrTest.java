@@ -50,30 +50,4 @@ public class ContrTest extends TestCase {
 		
 	}
 	
-//	private final Predicate chkProofFormat_getNewGoalPred(IProverSequent goalSeq, PluginInput I){
-//		PluginOutput O = contr.apply(goalSeq,I);
-//		assertTrue (O instanceof SuccessfulPluginOutput);
-//		SuccessfulPluginOutput sO = (SuccessfulPluginOutput) O;
-//		Predicate proofGoal = sO.proof().ofSequent().goal();
-//		// TODO : reimplement this check!
-//		// assertTrue (goalSeq.hypotheses().containsAll(sO.proof().ofSequent().hypotheses()));
-//		assertTrue (goalSeq.typeEnvironment().containsAll(sO.proof().ofSequent().typeEnvironment()));
-//		//System.out.println(sO.proof());
-//		if (isImp(proofGoal)){
-//			assertTrue (((BinaryPredicate)proofGoal).getRight().equals(goalSeq.goal()));
-//			return ((BinaryPredicate)proofGoal).getLeft();
-//		}
-//		else
-//		{
-//			assertTrue (proofGoal.equals(goalSeq.goal()));
-//			return ff.makeLiteralPredicate(Formula.BTRUE,null);
-//		}
-//		
-//	}
-//	
-//	private static boolean isImp(Predicate P){
-//		if (P instanceof BinaryPredicate & P.getTag() == Formula.LIMP) 
-//			return true;
-//		return false;
-//	}
 }
