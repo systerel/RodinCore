@@ -382,7 +382,7 @@ public class UserSupport
 		IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
 		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 		notifyHypothesisChangedListener(hypEvent);
-		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(currentNode)));
+		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
 		proofState.setCurrentNode(newNode);
 		
 		IPODelta poDelta = new PODelta(proofState);
