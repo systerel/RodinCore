@@ -11,6 +11,7 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,11 +29,16 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -46,9 +52,12 @@ public class GoalSection
 	private static final String SECTION_DESCRIPTION = "The current goal";	
 	
     private FormPage page;
-    private Text text;
+//    private Text text = null;
     private FormText formText;
+    private FormToolkit toolkit;
     private ScrolledForm scrolledForm;
+    private Composite composite;
+    private List<Text> textBoxes;
     
     private class GoalITacticHyperlinkAdapter extends HyperlinkAdapter {
 		@Override
@@ -62,19 +71,20 @@ public class GoalSection
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.impI());
 					return;
 				}
-				
-				if (e.getHref().equals(UIUtils.HYP_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.hyp());
-					return;
-				}
-				
+					
 				if (e.getHref().equals(UIUtils.ALLI_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.allI());
 					return;
 				}
 	
-				if (e.getHref().equals(UIUtils.TRIVIAL_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.trivial());
+				if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
+					String [] inputs = new String[textBoxes.size()];
+					int i = 0;
+					for (Text text : textBoxes) {
+						inputs[i++] = text.getText();
+						System.out.println("Input " + text.getText());
+					}
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.exI(inputs));
 					return;
 				}
 			}
@@ -95,6 +105,7 @@ public class GoalSection
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		this.toolkit = toolkit;
         section.setText(SECTION_TITLE);
         section.setDescription(SECTION_DESCRIPTION);
         scrolledForm = toolkit.createScrolledForm(section);
@@ -116,12 +127,6 @@ public class GoalSection
         gd.widthHint = 100;
         formText.setLayoutData(gd);
         toolkit.paintBordersFor(formText);
-        
-        text = toolkit.createText(comp, "No selection");
-        text.setEditable(false);
-        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-        text.setLayoutData(gd);
-
 	}
 
 	@Override
@@ -141,32 +146,90 @@ public class GoalSection
 		super.expansionStateChanging(expanding);
 	}
 
+	private void createSimpleText(String text) {
+		composite.setLayout(new GridLayout());
+	    Text textWidget = toolkit.createText(composite, "No current goal");
+	    textWidget.setEditable(false);
+	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+	    textWidget.setLayoutData(gd);
+		textWidget.setText(text);
+	}
+	
 	public void setGoal(IProofTreeNode pt) {
-		if (pt == null) {
+		if (composite != null) composite.dispose();
+        composite = toolkit.createComposite(scrolledForm.getBody());
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+        composite.setLayoutData(gd);
+
+        if (pt == null) {
 			clearFormText();
-			text.setText("No selected goal");
-			return;
+			createSimpleText("No current goal");
+			scrolledForm.reflow(true);		
 		}
-		if (!pt.isOpen()) {
+        else if (!pt.isOpen()) {
 			clearFormText();
-			text.setText("Tactic(s) applied");
+			createSimpleText("Tactic applied");
+			scrolledForm.reflow(true);
 		}
 		else {
-			text.setText(pt.getSequent().goal().toString());
-			setFormText(pt.getSequent());
+			Predicate goal = pt.getSequent().goal();
+			setFormText(goal);
+			
+			if (Lib.isExQuant(goal)) {
+				String goalString = goal.toString();
+				IParseResult parseResult = Lib.ff.parsePredicate(goalString);
+				assert parseResult.isSuccess();
+				QuantifiedPredicate qpred = 
+					(QuantifiedPredicate) parseResult.getParsedPredicate();
+				
+				BoundIdentDecl []  idents = qpred.getBoundIdentifiers();
+
+				GridLayout gl = new GridLayout();
+				gl.numColumns = idents.length * 2 + 2;
+				composite.setLayout(gl);
+
+				toolkit.createLabel(composite, "∃ ");
+				
+				int i = 0;
+		        textBoxes = new ArrayList<Text>();
+				for (BoundIdentDecl ident : idents) {
+					SourceLocation loc = ident.getSourceLocation();
+					String image = goalString.substring(loc.getStart(), loc.getEnd());
+					if (i++ != 0) toolkit.createLabel(composite, ", " + image);
+					else toolkit.createLabel(composite, image);
+					Text box = toolkit.createText(composite, "");
+					gd = new GridData();
+					gd.widthHint = 15;
+					box.setLayoutData(gd);
+					toolkit.paintBordersFor(composite);
+					textBoxes.add(box);
+				}
+		        
+				FormText formText = toolkit.createFormText(composite, false);
+		        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		        formText.setLayoutData(gd);
+				SourceLocation loc = qpred.getPredicate().getSourceLocation();
+				String image = goalString.substring(loc.getStart(), loc.getEnd());
+				formText.setText("<form><p>" + " · " + image + "</p></form>", true, false);
+				scrolledForm.reflow(true);
+			}
+			else {
+				createSimpleText(goal.toString());
+			}
 		}
+		scrolledForm.reflow(true);
 		return;
 	}
 
 	private void clearFormText() {
 		formText.setText("<form></form>", true, false);
-		scrolledForm.reflow(false);
+		scrolledForm.reflow(true);
 		return;
 	}
 
-	private void setFormText(IProverSequent ps) {
+	private void setFormText(Predicate goal) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<String> tactics = UIUtils.getApplicableToGoal(ps);
+		List<String> tactics = UIUtils.getApplicableToGoal(goal);
 		
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
@@ -175,7 +238,7 @@ public class GoalSection
 		
 		formString = formString + "</li></form>";
 		formText.setText(formString, true, false);
-		scrolledForm.reflow(false);
+		scrolledForm.reflow(true);
 		
 		return;
 	}

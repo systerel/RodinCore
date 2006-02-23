@@ -22,6 +22,9 @@ import org.rodinp.core.RodinDBException;
 
 public class UserSupport
 {
+	
+	// TODO UserSupport needs to listen to the Database
+	
 	Collection<IHypothesisChangedListener> hypChangedListeners;
 	Collection<IGoalChangedListener> goalChangedListeners;
 	Collection<IPOChangedListener> poChangedListeners;

@@ -32,13 +32,9 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.core.prover.rules.AllI;
-import org.eventb.core.prover.rules.ConjI;
-import org.eventb.core.prover.rules.Hyp;
-import org.eventb.core.prover.rules.IProofRule;
-import org.eventb.core.prover.rules.ImpI;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
@@ -56,15 +52,11 @@ import org.rodinp.core.RodinDBException;
 public class UIUtils {
 	
 	public static final String CONJI_SYMBOL = "∧";
-	
 	public static final String IMPI_SYMBOL = "⇒";
-	
-	public static final String HYP_SYMBOL = "hp";
-	
 	public static final String ALLI_SYMBOL = "∀";
+	public static final String EXI_SYMBOL = "∃";
 	
-	public static final String TRIVIAL_SYMBOL = "⊤";
-	
+	public static final String ALLF_SYMBOL = "∀";
 
 	/**
 	 * Getting the image corresponding to an object.
@@ -205,32 +197,26 @@ public class UIUtils {
 	}
 
 
-	public static List<String> getApplicableToGoal(IProverSequent ps) {
+	public static List<String> getApplicableToGoal(Predicate goal) {
 		List<String> names = new ArrayList<String>();
 		
-		IProofRule rule;
-		rule = new ConjI();
-		if (rule.isApplicable(ps)) names.add(CONJI_SYMBOL);
+		if (Tactics.impI_applicable(goal)) names.add(IMPI_SYMBOL);
+		if (Tactics.conjI_applicable(goal)) names.add(CONJI_SYMBOL);
+		if (Tactics.allI_applicable(goal)) names.add(ALLI_SYMBOL);
+		if (Tactics.exI_applicable(goal)) names.add(EXI_SYMBOL);
 		
-		rule = new ImpI();
-		if (rule.isApplicable(ps)) names.add(IMPI_SYMBOL);
-		
-		rule = new Hyp();
-		if (rule.isApplicable(ps)) names.add(HYP_SYMBOL);
-		
-		rule = new AllI();
-		if (rule.isApplicable(ps)) names.add(ALLI_SYMBOL);
-		
+		// Extra tactics applicable to goal should be added here.
 		return names;
 	}
 
 	
 	public static List<String> getApplicableToHypothesis(Hypothesis hyp) {
-		List<String> result = new ArrayList<String>();
-		result.add("∧");
-		result.add("⇒");
-		result.add("hp");
-		return result;
+		List<String> names = new ArrayList<String>();
+		
+		if (Tactics.allF_applicable(hyp)) names.add(ALLF_SYMBOL);
+		
+		// Extra tactics applicable to hypothesis should be added here.
+		return names;
 	}
 
 }
