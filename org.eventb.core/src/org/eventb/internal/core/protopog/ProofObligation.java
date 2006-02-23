@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPODescription;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOHypothesis;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOSequent;
@@ -24,6 +25,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
@@ -87,10 +89,14 @@ public class ProofObligation {
 	public final HashMap<String, String> sources;
 	
 	public void put(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
-		IPOSequent sequent = (IPOSequent) file.createInternalElement(IPOSequent.ELEMENT_TYPE, name, null, monitor);
-		IPOHypothesis hypothesis = (IPOHypothesis) sequent.createInternalElement(IPOHypothesis.ELEMENT_TYPE, null, null, monitor);
+		IPOSequent sequent = (IPOSequent) file.createInternalElement(
+				IPOSequent.ELEMENT_TYPE, name, null, monitor);
+		putTypeEnvironment(sequent, monitor);
+		IPOHypothesis hypothesis = 
+			(IPOHypothesis) sequent.createInternalElement(
+					IPOHypothesis.ELEMENT_TYPE, null, null, monitor);
 		hypothesis.setContents(globalHypothesis, monitor);
-		for(Form form : localHypothesis) {
+		for (Form form : localHypothesis) {
 			form.put(hypothesis, monitor);
 		}
 		goal.put(sequent, monitor);
@@ -104,6 +110,21 @@ public class ProofObligation {
 		// TODO: output hints
 	}
 	
+	private void putTypeEnvironment(IPOSequent sequent, IProgressMonitor monitor)
+			throws RodinDBException {
+		
+		ITypeEnvironment.IIterator iter = typeEnvironment.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			final String identName = iter.getName();
+			final Type identType = iter.getType();
+			final IPOIdentifier ident = (IPOIdentifier) sequent
+					.createInternalElement(IPOIdentifier.ELEMENT_TYPE, identName,
+							null, monitor);
+			ident.setContents(identType.toString());
+		}
+	}
+
 	@Override
 	public String toString() {
 		String result = name + "\n" + typeEnvironment.toString() + "\n" + globalHypothesis + "\n";
