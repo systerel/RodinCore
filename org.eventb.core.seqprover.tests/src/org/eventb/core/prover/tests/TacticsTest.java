@@ -1,9 +1,13 @@
 package org.eventb.core.prover.tests;
 
 
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.Tactics;
 
 public class TacticsTest extends TestCase {
@@ -68,6 +72,27 @@ public class TacticsTest extends TestCase {
 		assertNull(Tactics.contradictGoal().apply(pt));
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void testSearchHyps(){
+		Object result;
+		Set<Hypothesis> searchedHyps;
+		
+		pt = TestLib.genProofTreeNode( " ⊤;; 1=1 ;; 2=2 ;; 1=2 |- ⊤" );
+		result = Tactics.searchHyps("1").apply(pt);
+		assertNotNull(result);
+		assertTrue(result instanceof Set);
+		searchedHyps = (Set<Hypothesis>) result;
+		assertEquals(searchedHyps.size(),2);
+		
+		pt = TestLib.genProofTreeNode( " ⊤;; 1=1 ;; 2=2 ;; 1=2 |- ⊤" );
+		result = Tactics.searchHyps("=").apply(pt);
+		assertNotNull(result);
+		assertTrue(result instanceof Set);
+		searchedHyps = (Set<Hypothesis>) result;
+		assertEquals(searchedHyps.size(),3);
+		
 	}
 
 	// Tactics applicable on the goal
@@ -138,5 +163,18 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,2);
 	}
 	
-	// TODO complete
+	// Misc tactics
+	
+	public void testHyp(){
+		pt = TestLib.genProofTreeNode( " ⊤|- ⊤");
+		assertNull(Tactics.hyp().apply(pt));
+		assertTrue(pt.isDischarged());
+	}
+	
+	public void testMngHyp(){
+		pt = TestLib.genProofTreeNode( " ⊤;; ⊥|- ⊤");
+		assertNull(Tactics.mngHyp(ActionType.DESELECT,TestLib.genHyps("⊤")).apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
 }

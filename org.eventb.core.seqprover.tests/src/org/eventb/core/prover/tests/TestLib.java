@@ -1,5 +1,6 @@
 package org.eventb.core.prover.tests;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -92,6 +93,13 @@ public class TestLib {
 		Predicate hypPred = Lib.parsePredicate(s);
 		Lib.typeCheck(hypPred);
 		return new Hypothesis(hypPred);
+	}
+	
+	public static Set<Hypothesis> genHyps(String... strs){
+		Set<Hypothesis> hyps = new HashSet<Hypothesis>(strs.length);
+		for (String s : strs) 
+			hyps.add(genHyp(s));
+		return hyps;
 	}
 	
 }
