@@ -24,7 +24,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class Eq implements IExternalReasoner{
 	
 	public String name(){
-		return "ApplyEquality";
+		return "apply equality";
 	}
 	
 //	public boolean isApplicable(ProverSequent S,PluginInput I) {

@@ -19,7 +19,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class ExI implements IExternalReasoner{
 	
 	public String name(){
-		return "provideWitness";
+		return "provide witness";
 	}
 	
 	public boolean isApplicable(IProverSequent S,IExtReasonerInput I) {

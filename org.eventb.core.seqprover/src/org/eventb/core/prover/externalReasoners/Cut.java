@@ -18,7 +18,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class Cut implements IExternalReasoner{
 	
 	public String name(){
-		return "lemma";
+		return "add hypothesis";
 	}
 	
 //	public boolean isApplicable(ProverSequent S,PluginInput I) {

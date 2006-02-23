@@ -19,7 +19,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class ExF implements IExternalReasoner{
 	
 	public String name(){
-		return "ExF";
+		return "remove existential";
 	}
 	
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {

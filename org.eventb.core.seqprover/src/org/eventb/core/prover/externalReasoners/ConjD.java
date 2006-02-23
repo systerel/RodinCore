@@ -19,7 +19,7 @@ import org.eventb.core.prover.sequent.SimpleSequent;
 public class ConjD implements IExternalReasoner{
 	
 	public String name(){
-		return "conjE";
+		return "remove conjunction";
 	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
