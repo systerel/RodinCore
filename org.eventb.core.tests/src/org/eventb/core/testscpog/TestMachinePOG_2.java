@@ -428,14 +428,24 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		IPOSequent[] sequents = poFile.getSequents();
 		
-		assertTrue("Exactly two proof obligations", sequents.length == 2);
+		assertEquals("Exactly two proof obligations", 2, sequents.length);
 		
 		int g1 = getIndexForName("E1/G1/WD", sequents);
 		int dlk = getIndexForName("DLK", sequents);
 		
 		assertTrue("names ok", g1 != -1 && dlk != -1);
 		
-		assertEquals("wd predicate 1 ok", getWDStringForPredicate(guard1, null), sequents[g1].getGoal().getContents());
+		assertEquals("wd predicate 1 ok", 
+				getWDStringForPredicate(guard1, null), 
+				sequents[g1].getGoal().getContents());
+		// Check local type environment
+		final IPOIdentifier[] identifiers = sequents[g1].getIdentifiers();
+		assertEquals("wd local type environment ok", 
+				1, 
+				identifiers.length);
+		assertEquals("wd local type environment ok", 
+				"x", 
+				identifiers[0].getElementName());
 		
 		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
 	}
@@ -527,8 +537,34 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard6() throws Exception {
 		
+		String guard1 = factory.parsePredicate("x∈ℕ ∧ y∈ℕ").getParsedPredicate().toString();
+		String dlk1 = factory.parsePredicate("(∃x,y·x∈ℕ ∧ y∈ℕ)").getParsedPredicate().toString();
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCEvent(rodinFile, "E",
+				makeList("x", "y"), 
+				makeList("G"), 
+				makeList(guard1),
+				makeList(),
+				makeList("ℤ", "ℤ"));
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		assertTrue("number of proof obligations", sequents.length == 1);
+		int dlk = getIndexForName("DLK", sequents);
+		assertTrue("names ok", dlk != -1);
+		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
+	}
+
+	/**
+	 * Test method for independence of type environments of local variables
+	 */
+	public void testLocalVariables1() throws Exception {
+		
 		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ)").getParsedPredicate().toString();
+		String guard2 = factory.parsePredicate("x∈BOOL").getParsedPredicate().toString();
+		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").getParsedPredicate().toString();	
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
@@ -537,6 +573,12 @@ public class TestMachinePOG_2 extends BuilderTest {
 				makeList(guard1),
 				makeList(),
 				makeList("ℤ"));
+		addSCEvent(rodinFile, "F",
+				makeList("x"), 
+				makeList("G"), 
+				makeList(guard2),
+				makeList(),
+				makeList("BOOL"));
 		rodinFile.save(null, true);
 		IPOFile poFile = runPOG(rodinFile);
 		
@@ -550,9 +592,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 	}
 
 	/**
-	 * Test method for independence of type environments of local variables
+	 * Test method for order of local variables in DLK existentials.
 	 */
-	public void testLocalVariables1() throws Exception {
+	public void testLocalVariables2() throws Exception {
 		
 		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
 		String guard2 = factory.parsePredicate("x∈BOOL").getParsedPredicate().toString();
@@ -751,7 +793,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), "CONTEXT");
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
 		addTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
-		addIdentifiers(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
+		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
 		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
 				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
 		rodinFile.save(null, true);
