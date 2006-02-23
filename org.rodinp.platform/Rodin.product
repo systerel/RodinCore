@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.1"?>
+
+<product name="%productName" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" useFeatures="true">
+
+   <aboutInfo>
+      <image path="/org.rodinp.platform/icons/about.gif"/>
+      <text>
+         %aboutText
+      </text>
+   </aboutInfo>
+
+   <configIni use="default"/>
+
+   <launcherArgs>
+      <vmArgs>-ea</vmArgs>
+   </launcherArgs>
+
+   <windowImages small="/org.rodinp.platform/icons/rodin16.gif" large="/org.rodinp.platform/icons/rodin32.gif"/>
+
+
+   <launcher name="rodin">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.platform" version="3.1.2"/>
+      <feature id="org.eclipse.rcp" version="3.1.2"/>
+      <feature id="org.eventb.ide" version="0.0.0"/>
+      <feature id="org.rodinp.platform" version="0.0.0"/>
+   </features>
+
+</product>
