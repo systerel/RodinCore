@@ -18,6 +18,7 @@ import org.eventb.core.prover.externalReasoners.Contr;
 import org.eventb.core.prover.externalReasoners.Cut;
 import org.eventb.core.prover.externalReasoners.DisjE;
 import org.eventb.core.prover.externalReasoners.Eq;
+import org.eventb.core.prover.externalReasoners.ExF;
 import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
@@ -175,6 +176,17 @@ public class Tactics {
 		return Lib.isEq(hyp.getPredicate());
 	}
 	
+	public static ITactic exF(Hypothesis exHyp){
+		return composeStrict(
+				pluginTac(new ExF(),new ExF.Input(exHyp)),
+				onPending(0,allI()),
+				onPending(0,impI())
+		);
+	}
+	
+	public static boolean exF_applicable(Hypothesis hyp){
+		return Lib.isExQuant(hyp.getPredicate());
+	}
 	
 	
     // Tactics applicable on every hypothesis
