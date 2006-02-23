@@ -16,7 +16,7 @@ import org.eventb.core.prover.sequent.ISequent;
 import org.eventb.core.prover.sequent.SimpleSequent;
 
 
-public class ImpE implements IExternalReasoner{
+public class ImpD implements IExternalReasoner{
 	
 	public String name(){
 		return "useImplication";
