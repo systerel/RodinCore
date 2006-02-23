@@ -1,28 +1,18 @@
 
-Prover Plugins
-==============
+External Reasoners
+==================
 
 
-To be implemented for the prototype:
+Currently Implimented
 
-With user input & WD :
-Cut
-exI
-allF
-
-With hypotheses selection:
-disjE
-contradict/falsifyhypotheses
-modusPonens/reverseMP
-eh,he (only for on side freevars)
-conjE
-
-Automatic:
-trivial
-legacyProvers
-
-Others:
-
-remove membership
-remove negation
-remove disjunction
+AllF : Instantiating a universally quantified hypothesis
+ConjD : Removing conjunction in the hypothesis
+Contr : Starting a proof by contradiction
+Cut : Inserting a Lemma
+DisjE : Starting a case distinction using a disjunctive hypothesis
+Eq : Using an equality to replace all uccurances of a free variable
+ExF : Removing an existential from the hypothesis, making its variables free
+ExI : Providing witnesses for an existential goal
+ImpD : Removing an implicative hypothesis
+LegacyProvers : Old B provers PP/ML
+Trivial : Discharges a sequent with true goal or false hypothesis.
