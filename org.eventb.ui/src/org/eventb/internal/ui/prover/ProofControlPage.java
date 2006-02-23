@@ -19,11 +19,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -48,7 +43,6 @@ import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
@@ -116,18 +110,6 @@ public class ProofControlPage
 					catch (RodinDBException exception) {
 						exception.printStackTrace();
 					}
-//					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-//					ISelection selection = viewer.getSelection();
-//					Object obj = ((IStructuredSelection) selection).getFirstElement();
-//					
-//					if (obj instanceof IProofTreeNode) {
-//						IProofTreeNode proofTree = (IProofTreeNode) obj;
-//						if (!proofTree.isOpen()) {
-//							Tactics.prune().apply(proofTree);
-//							viewer.refresh(proofTree);
-//							viewer.setSelection(new StructuredSelection(proofTree));
-//						}
-//					}
 				}
 				return;
 			}
@@ -148,23 +130,11 @@ public class ProofControlPage
 			
 			if (label.equals("dc")) {			
 				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (proofTree.isOpen()) {
-							ITactic t = Tactics.doCase(textInput.getText());
-							System.out.println(t.apply(proofTree));
-							viewer.refresh(proofTree);
-							ProofState ps = editor.getUserSupport().getCurrentPO();
-							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-							if (pt != null) 
-								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-							else
-								editor.getProofTreeUI().selectRoot();
-						}
+					try {
+						editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getText()));
+					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
 					}
 				}
 				return;
@@ -172,25 +142,11 @@ public class ProofControlPage
 			
 			if (label.equals("nm")) {				
 				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (proofTree.isOpen()) {
-							Tactics.norm().apply(proofTree);
-							editor.getProofTreeUI().refresh(proofTree);
-							
-							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
-							//viewer.setExpandedState(proofTree, true);
-							ProofState ps = editor.getUserSupport().getCurrentPO();
-							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-							if (pt != null) 
-								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-							else
-								editor.getProofTreeUI().selectRoot();
-						}
+					try {
+						editor.getUserSupport().applyTactic(Tactics.norm());
+					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
 					}
 				}
 				return;
@@ -198,25 +154,11 @@ public class ProofControlPage
 			
 			if (label.equals("pp")) {
 				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (proofTree.isOpen()) {
-							Tactics.legacyProvers().apply(proofTree);
-							editor.getProofTreeUI().refresh(proofTree);
-							
-							viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
-							//viewer.setExpandedState(proofTree, true);
-							ProofState ps = editor.getUserSupport().getCurrentPO();
-							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-							if (pt != null) 
-								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-							else
-								editor.getProofTreeUI().selectRoot();
-						}
+					try {
+						editor.getUserSupport().applyTactic(Tactics.legacyProvers());
+					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
 					}
 				}
 				return;
@@ -224,30 +166,25 @@ public class ProofControlPage
 			
 			if (label.equals("ah")) {
 				if (editor != null) {
-					TreeViewer viewer = editor.getProofTreeUI().getViewer();
-					ISelection selection = viewer.getSelection();
-					Object obj = ((IStructuredSelection) selection).getFirstElement();
-					
-					if (obj instanceof IProofTreeNode) {
-						IProofTreeNode proofTree = (IProofTreeNode) obj;
-						if (proofTree.isOpen()) {
-							ITactic t = Tactics.lemma(textInput.getText());
-							System.out.println(t.apply(proofTree));
-							viewer.refresh(proofTree);
-							ProofState ps = editor.getUserSupport().getCurrentPO();
-							IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-							if (pt != null) 
-								editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
-							else
-								editor.getProofTreeUI().selectRoot();
-						}
+					try {
+						editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getText()));
+					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
 					}
 				}
 				return;
 			}
 			
 			if (label.equals("ct")) {
-				System.out.println("TODO: Implements contradiction");
+				if (editor != null) {
+					try {
+						editor.getUserSupport().applyTactic(Tactics.contradictGoal());
+					}
+					catch (RodinDBException exception) {
+						exception.printStackTrace();
+					}
+				}
 				return;
 			}
 		}

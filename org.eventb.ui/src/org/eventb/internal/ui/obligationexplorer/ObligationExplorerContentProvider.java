@@ -144,7 +144,7 @@ public class ObligationExplorerContentProvider
 	 * @param updateLabels <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
-		System.out.println("Post refresh");
+//		System.out.println("Post refresh");
 		postRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
@@ -153,7 +153,7 @@ public class ObligationExplorerContentProvider
 					Object [] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
-						System.out.println("Refresh " + obj);
+//						System.out.println("Refresh " + obj);
 						viewer.refresh(obj, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
