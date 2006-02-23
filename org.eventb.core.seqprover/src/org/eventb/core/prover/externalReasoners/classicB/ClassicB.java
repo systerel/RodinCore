@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,7 +62,7 @@ public abstract class ClassicB {
 	}
 	
 	public static StringBuffer translateSequent(
-			ITypeEnvironment typeEnvironment, Set<Predicate> hypothesis,
+			ITypeEnvironment typeEnvironment, Predicate[] hypotheses,
 			Predicate goal) {
 		
 		StringBuffer result = new StringBuffer();
@@ -85,7 +84,7 @@ public abstract class ClassicB {
 			}
 		}
 		boolean first = (typeEnvironment == null || typeEnvironment.isEmpty());
-		for (Predicate predicate : hypothesis) {
+		for (Predicate predicate : hypotheses) {
 			predicate.accept(visitor);
 			if (first)
 				first = false;
@@ -134,11 +133,6 @@ public abstract class ClassicB {
 		} finally {
 			cleanup();
 		}
-	}
-	
-	public static boolean proveWithPP(StringBuffer input)
-	throws IOException {
-		return proveWithPP(input, DEFAULT_DELAY);
 	}
 	
 	public static boolean proveWithPP(StringBuffer input, long delay)
@@ -198,11 +192,6 @@ public abstract class ClassicB {
 		String moinsE = sequent.replace("_moinsE", "-");
 		String multE = moinsE.replace("_multE", "*");
 		return multE;
-	}
-	
-	public static boolean proveWithML(StringBuffer input)
-	throws IOException, InterruptedException {
-		return proveWithML(input, DEFAULT_DELAY);
 	}
 	
 	private static boolean callProver(String[] cmdArray, long delay, String successMsg) 
