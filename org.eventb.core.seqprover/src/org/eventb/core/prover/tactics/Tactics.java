@@ -67,6 +67,12 @@ public class Tactics {
 		);
 	}
 	
+	public static ITactic searchHyps(String str){
+		return BasicTactics.searchTac(str);
+	}
+	
+	
+	
 
 	// Tactics applicable on the goal
 	
