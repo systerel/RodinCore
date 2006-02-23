@@ -26,10 +26,9 @@ public class TestMachinePOG_1 extends BuilderTest {
 		ISCMachine rodinFile = createSCMachine("one");
 		addOldAxioms(rodinFile, "AXIOMS");
 		addOldTheorems(rodinFile, "THEOREMS");
-		addIdentifiers(rodinFile,
+		addSCVariables(rodinFile,
 				makeList("V1", "V2"),
 				makeList("ℤ", "ℤ"));
-		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, 
 				makeList("I1", "I2", "I3"), 
 				makeList("V1∈ℤ", "V2∈ℤ", "V1+V2=0"));
