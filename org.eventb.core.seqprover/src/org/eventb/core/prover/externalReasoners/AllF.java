@@ -44,7 +44,7 @@ public class AllF implements IExternalReasoner{
 		// Fill the instantiations map using plugin input.
 		Expression instantiation;
 		for (int i=0;i<boundIdentDecls.length;i++){
-			if (aI.instantiations[i] == null) instantiations[i] = null;
+			if (aI.instantiations[i] == null || aI.instantiations[i].length() == 0) instantiations[i] = null;
 			else
 			{
 				instantiation = Lib.parseExpression(aI.instantiations[i]);

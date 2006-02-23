@@ -58,7 +58,10 @@ public class ExI implements IExternalReasoner{
 		// Fill the witnesses array using plugin input.		
 		Expression witness;
 		for (int i=0;i<boundIdentDecls.length;i++){
-			if (i >= eI.witnesses.length || eI.witnesses[i] == null) witnesses[i] = null;
+			if (i >= eI.witnesses.length || 
+					eI.witnesses[i] == null || 
+					eI.witnesses[i].length() == 0) 
+				witnesses[i] = null;
 			else
 			{
 				witness = Lib.parseExpression(eI.witnesses[i]);
