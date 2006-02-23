@@ -21,7 +21,7 @@ public class HypothesesManagement {
 	
 	
 	public static class Action {
-
+		
 		private final ActionType type;
 		private final Set<Hypothesis> hyps;
 		
@@ -45,7 +45,6 @@ public class HypothesesManagement {
 			case SHOW: return S.showHypotheses(this.hyps);
 			default: throw new AssertionError(this);
 			}
-			
 		}
 
 		public Set<Hypothesis> getHyps() {
@@ -55,6 +54,11 @@ public class HypothesesManagement {
 		public ActionType getType() {
 			return type;
 		}
+		
+		public String toString(){
+			return type.toString();
+		}
+		
 	}
 	
 	public static IProverSequent perform(List<Action> actions,IProverSequent S){
