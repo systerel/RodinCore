@@ -36,8 +36,14 @@ public class Tactics {
 	
 	// Globally applicable tactics
 	
-	public static ITactic legacyProvers(){
-		return pluginTac(new LegacyProvers(),null);
+	public static ITactic legacyProvers() {
+		final LegacyProvers.Input input = new LegacyProvers.Input();
+		return pluginTac(new LegacyProvers(), input);
+	}
+	
+	public static ITactic legacyProvers(long timeOutDelay) {
+		final LegacyProvers.Input input = new LegacyProvers.Input(timeOutDelay);
+		return pluginTac(new LegacyProvers(), input);
 	}
 	
 	public static ITactic lemma(String strLemma){
