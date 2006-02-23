@@ -89,6 +89,7 @@ public class ProofControlPage
 	private Button pp;
 	private Button ah;
 	private Button ct;
+	private Button se;
 	private boolean isOpened;
 	
 	/*
@@ -106,90 +107,56 @@ public class ProofControlPage
 			Button button = (Button) e.getSource();
 			String label = button.getText();
 			
-			if (label.equals("pn")) {
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.prune());
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+			try {
+				if (label.equals("pn")) {
+					editor.getUserSupport().applyTactic(Tactics.prune());
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("ne")) {
-				if (editor != null) {
+				if (label.equals("ne")) {
 					editor.getUserSupport().nextUndischargedPO();
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("pv")) {
-				if (editor != null) {
+				if (label.equals("pv")) {
 					editor.getUserSupport().prevUndischargedPO();
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("dc")) {			
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getText()));
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+				if (label.equals("dc")) {			
+					editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getText()));
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("nm")) {				
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.norm());
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+				if (label.equals("nm")) {				
+					editor.getUserSupport().applyTactic(Tactics.norm());
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("pp")) {
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.legacyProvers());
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+				if (label.equals("pp")) {
+					editor.getUserSupport().applyTactic(Tactics.legacyProvers());
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("ah")) {
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getText()));
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+				if (label.equals("ah")) {
+					editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getText()));
+					return;
 				}
-				return;
-			}
 			
-			if (label.equals("ct")) {
-				if (editor != null) {
-					try {
-						editor.getUserSupport().applyTactic(Tactics.contradictGoal());
-					}
-					catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
+				if (label.equals("ct")) {
+					editor.getUserSupport().applyTactic(Tactics.contradictGoal());
+					return;
 				}
-				return;
+
+				if (label.equals("se")) {
+					System.out.println("Search for " + textInput.getText());
+					editor.getUserSupport().searchHyps(textInput.getText());
+//					editor.getUserSupport().applyTactic(Tactics.searchHyps(textInput.getText()));
+					return;
+				}
+			}
+			catch (RodinDBException exception) {
+				exception.printStackTrace();
 			}
 		}
 	}
@@ -241,7 +208,9 @@ public class ProofControlPage
 		ah = createButton(buttonContainer, "ah");
 		dc = createButton(buttonContainer, "dc");
 		ct = createButton(buttonContainer, "ct");
+		
 		pn = createButton(buttonContainer, "pn");
+		se = createButton(buttonContainer, "se");
 		createButton(buttonContainer, "pv");
 		createButton(buttonContainer, "ne");
 		
@@ -421,6 +390,8 @@ public class ProofControlPage
 			else dc.setEnabled(true);
 			if (textInput.getText().equals("")) ah.setEnabled(false);
 			else ah.setEnabled(true);
+			if (textInput.getText().equals("")) se.setEnabled(false);
+			else se.setEnabled(true);
 		}
 		else {
 			pn.setEnabled(true);
@@ -429,6 +400,7 @@ public class ProofControlPage
 			dc.setEnabled(false);
 			ct.setEnabled(false);
 			ah.setEnabled(false);
+			se.setEnabled(false);
 		}
 		return;
 	}

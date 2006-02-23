@@ -277,32 +277,35 @@ public class UserSupport
 			Collection<Hypothesis> newDisplaySearched = new HashSet<Hypothesis>();
 			for (Iterator<Hypothesis> it = newProofState.getSearched().iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-//				System.out.print("In cache: " + hyp);
+				System.out.print("In searched: " + hyp);
 				if (displaySearched.contains(hyp)) {   
-//					System.out.print(", currently display");
+					System.out.print(", currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
-//						System.out.println(", valid");
+						System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 					}
 					else {                                  // cached, display, (invalid or selected)
-//						System.out.println(", invalid");
+						System.out.println(", invalid");
 						removedFromSearched.add(hyp);
 					}
 					displaySearched.remove(hyp);
 				}
 				else {
-//					System.out.print(", not currently display");
+					System.out.print(", not currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
-//						System.out.println(", valid");
+						System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 						addedToSearched.add(hyp);
+					}
+					else {
+						System.out.println(", invalid");
 					}
 				}
 			}
 			
 			for (Iterator<Hypothesis> it = displaySearched.iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-//				System.out.println("Currently display but not in cached: " + hyp);
+				System.out.println("Currently display but not in searched: " + hyp);
 				removedFromSearched.add(hyp);                        // display, invalid or selected, not(cached)
 			}
 			displaySearched = newDisplaySearched;
@@ -312,10 +315,12 @@ public class UserSupport
 	}
 	
 	private boolean isValid(Hypothesis hyp, IProofTreeNode pt) {
+		System.out.println("Is Valid? " + pt != null && pt.getSequent().hypotheses().contains(hyp));
 		return (pt != null && pt.getSequent().hypotheses().contains(hyp));
 	}
 	
 	private boolean isSelected(Hypothesis hyp, IProofTreeNode pt) {
+		System.out.println("Is Selected? " + pt.getSequent().selectedHypotheses().contains(hyp));
 		return pt.getSequent().selectedHypotheses().contains(hyp);
 	}
 	
@@ -382,7 +387,7 @@ public class UserSupport
 			delta = new HypothesisDelta(null, null, null, null, null, removedFromSearched);
 			e = new HypothesisChangeEvent(delta);
 			notifyHypothesisChangedListener(e);
-			proofState.removeAllFromCached(hyps);
+			proofState.removeAllFromSearched(hyps);
 			break;
 		}
 		notifyStatusChangedListener("Hypotheses removed");
@@ -402,6 +407,7 @@ public class UserSupport
 			IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
 			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
 			notifyHypothesisChangedListener(hypEvent);
+			
 			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
 			proofState.setCurrentNode(newNode);
 			
@@ -415,4 +421,13 @@ public class UserSupport
 		}
 	}
 
+	public void searchHyps(String token) {
+		Set<Hypothesis> hyps = Hypothesis.textSearch(proofState.getCurrentNode().getSequent().hypotheses(), token);
+		
+		proofState.setSearched(hyps);
+		IHypothesisDelta hypDelta = calculateHypDelta(proofState, proofState.getCurrentNode());
+		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+		notifyHypothesisChangedListener(hypEvent);
+	}
+	
 }

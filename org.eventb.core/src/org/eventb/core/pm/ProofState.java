@@ -58,12 +58,14 @@ public class ProofState {
 
 	public Collection<Hypothesis> getCached() {return cached;}
 
-	public void addAllToSearched(Collection<Hypothesis> hyps) {searched.addAll(hyps);}
-
-	public void removeAllFromSeached(Collection<Hypothesis> hyps) {searched.removeAll(hyps);}
+//	public void addAllToSearched(Collection<Hypothesis> hyps) {searched.addAll(hyps);}
+	
+	public void removeAllFromSearched(Collection<Hypothesis> hyps) {searched.removeAll(hyps);}
 
 	public Collection<Hypothesis> getSearched() {return searched;}
 
+	public void setSearched(Collection<Hypothesis> searched) {this.searched = searched;}
+	
 	public void updateStatus() throws RodinDBException {
 		ps.updateStatus(pt);
 	}
