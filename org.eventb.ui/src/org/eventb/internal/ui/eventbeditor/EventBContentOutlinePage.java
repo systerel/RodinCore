@@ -31,7 +31,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.Utils.ElementLabelProvider;
+import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;

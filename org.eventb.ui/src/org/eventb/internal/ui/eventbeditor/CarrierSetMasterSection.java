@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContext;
-import org.eventb.internal.ui.Utils.ElementLabelProvider;
+import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 

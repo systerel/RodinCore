@@ -41,7 +41,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.Utils;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -139,7 +139,7 @@ public class ProjectExplorer
 		}
 		
 		public Image getImage(Object obj) {
-			return Utils.getImage(obj);
+			return UIUtils.getImage(obj);
 		}
 	}
 	
@@ -267,7 +267,7 @@ public class ProjectExplorer
 		IRodinFile construct;
 		
 		if (!(obj instanceof IRodinProject)) {
-			construct = (IRodinFile) Utils.getOpenable(obj); 
+			construct = (IRodinFile) UIUtils.getOpenable(obj); 
 			try {
 				IEditorInput fileInput = new FileEditorInput(construct.getResource());
 				EventBEditor editor = (EventBEditor) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);

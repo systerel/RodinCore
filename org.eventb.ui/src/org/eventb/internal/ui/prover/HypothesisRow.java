@@ -27,7 +27,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.Utils;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -102,7 +102,7 @@ public class HypothesisRow
 	private void createHyperlinks(FormText formText) {
 		String formString = "<form><li style=\"text\" value=\"\">";
 
-		List<String> tactics = Utils.getApplicableToHypothesis(hyp);
+		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
 			formString = formString + "<a href=\"" + t + "\">" + t +"</a> ";

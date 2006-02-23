@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.Utils.ElementLabelProvider;
+import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 

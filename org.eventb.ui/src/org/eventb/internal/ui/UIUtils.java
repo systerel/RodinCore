@@ -53,7 +53,7 @@ import org.rodinp.core.RodinDBException;
  * This is a class which store utility static method that can be used in the
  * development
  */
-public class Utils {
+public class UIUtils {
 	
 	public static final String CONJI_SYMBOL = "∧";
 	
@@ -200,7 +200,7 @@ public class Utils {
 		}
 
 		public Image getImage(Object obj) {
-			return Utils.getImage(obj);
+			return UIUtils.getImage(obj);
 		}
 	}
 

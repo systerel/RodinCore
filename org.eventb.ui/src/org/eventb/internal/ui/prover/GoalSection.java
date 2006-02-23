@@ -35,7 +35,7 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.Utils;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class GoalSection
@@ -54,26 +54,26 @@ public class GoalSection
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			try {
-				if (e.getHref().equals(Utils.CONJI_SYMBOL)) {
+				if (e.getHref().equals(UIUtils.CONJI_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.conjI());
 					return;
 				}
-				if (e.getHref().equals(Utils.IMPI_SYMBOL)) {
+				if (e.getHref().equals(UIUtils.IMPI_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.impI());
 					return;
 				}
 				
-				if (e.getHref().equals(Utils.HYP_SYMBOL)) {
+				if (e.getHref().equals(UIUtils.HYP_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.hyp());
 					return;
 				}
 				
-				if (e.getHref().equals(Utils.ALLI_SYMBOL)) {
+				if (e.getHref().equals(UIUtils.ALLI_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.allI());
 					return;
 				}
 	
-				if (e.getHref().equals(Utils.TRIVIAL_SYMBOL)) {
+				if (e.getHref().equals(UIUtils.TRIVIAL_SYMBOL)) {
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.trivial());
 					return;
 				}
@@ -166,7 +166,7 @@ public class GoalSection
 
 	private void setFormText(IProverSequent ps) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<String> tactics = Utils.getApplicableToGoal(ps);
+		List<String> tactics = UIUtils.getApplicableToGoal(ps);
 		
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
