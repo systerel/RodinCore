@@ -11,7 +11,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRStatus.Status;
+import org.eventb.core.IPRStatus.Overview;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.pom.AutoPOM;
@@ -106,12 +106,12 @@ public class AutoPOMTest extends TestCase {
 			assertTrue(Lib.identical(poPOs.get(name),poPOs.get(name)));
 		}
 		
-		Map<String, Status> prStatus = PRUtil.readStatus(prFile);
+		Map<String, Overview> prStatus = PRUtil.readStatus(prFile);
 		assertEquals(prPOs.keySet(), prStatus.keySet());
-		assertFalse(prStatus.values().contains(Status.DISCHARGED));
+		assertFalse(prStatus.values().contains(Overview.DISCHARGED));
 		autoPOM.runAutoProver();
 		prStatus = PRUtil.readStatus(prFile);
-		assertTrue(prStatus.values().contains(Status.DISCHARGED));
+		assertTrue(prStatus.values().contains(Overview.DISCHARGED));
 	}
 
 
