@@ -195,12 +195,11 @@ public class Graph implements Serializable {
 			extractor[j].extract(node.getFile(), handler);
 	}
 
-//	private void extract(Node node, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
-//		node.markSuccessorsDated();
-//		IFile file = node.getFile();
-//		extract(file, new GraphHandler(this, node), progress, monitor);
-//	}
-//
+	public void extractNode(Node node, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
+		node.markSuccessorsDated();
+		extract(node, new GraphHandler(this, node), progress, monitor);
+	}
+
 	public void activate(String name) {
 		// make the node called name preferred
 		Node a = nodes.get(name);

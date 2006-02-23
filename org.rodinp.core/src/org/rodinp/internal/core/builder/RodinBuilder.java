@@ -59,7 +59,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// handle added resource
 				
 				if(createNode(resource) != null)
-					markNodeDated(resource);
+					markNodeDated(resource, false, null);
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
@@ -70,7 +70,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				markNodeDated(resource);
+				markNodeDated(resource, true, new NullProgressMonitor());
 				break;
 			}
 			//return true to continue visiting children.
@@ -104,7 +104,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	class RodinBuilderResourceVisitor implements IResourceVisitor {
 		
 		public boolean visit(IResource resource) {
-			markNodeDated(resource);
+			markNodeDated(resource, false, null);
 			//return true to continue visiting children.
 			return true;
 		}
@@ -181,7 +181,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		state.graph.cleanGraph(makeInterrupt(), monitor);
 	}
 	
-	void markNodeDated(IResource resource) {
+	void markNodeDated(IResource resource, boolean changed, IProgressMonitor monitor) {
 		if (resource instanceof IFile) {
 			Node node = state.graph.getNode(resource.getFullPath());
 			if(node == null) {
@@ -190,8 +190,19 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				node = createNode(resource);
 			}
 			if(node != null)
-				node.setDated(true);
-			// graph.extract(node);
+				// TODO implement editable and non-editable resource options in builder graph.
+				// some resources, e.g., files maintained by the prover are derived and editable;
+				// other resources may be editable or non-editable, e.g., Event-B models that may
+				// have been entered directly by the user, or created by a tool such as u2b;
+				// in the first case it is editable, in the second it isn't.
+				if (changed)
+					try {
+						state.graph.extractNode(node, makeInterrupt(), monitor);
+					} catch (CoreException e) {
+						Util.log(e, "during extraction after change");
+					}
+				else
+					node.setDated(true);
 			else if(DEBUG)
 				System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
 		}
