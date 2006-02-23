@@ -154,6 +154,14 @@ public final class Lib {
 		return result;
 	}
 	
+	// Temporary solution to avoid fail typechecks for unbound idents
+	// used in external reasoner ExF where is is later typechecked
+	public static Predicate makeUncheckedImp(Predicate left, Predicate right)
+	{
+		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
+		return result;
+	}
+	
 	public static Predicate makeImp(ITypeEnvironment te,Predicate...imps)
 	{
 		if (imps.length == 0) return True;
@@ -166,7 +174,6 @@ public final class Lib {
 		return result;
 	}
 	
-
 	public static Predicate instantiateBoundIdents(ITypeEnvironment te,Predicate P,Expression[] instantiations){
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
@@ -179,6 +186,23 @@ public final class Lib {
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		return qP.getBoundIdentifiers();
+	}
+	
+	// Note returned predicate will have bound variables.
+	// Always use in conjunction with makeUnivQuant() or makeExQuant()
+	public static Predicate getBoundPredicate(Predicate P){
+		if (! (P instanceof QuantifiedPredicate)) return null;
+		QuantifiedPredicate qP = (QuantifiedPredicate) P;
+		return qP.getPredicate();
+	}
+	
+	public static Predicate makeUnivQuant(ITypeEnvironment te,
+			BoundIdentDecl[] boundIdents,
+			Predicate boundPred){
+		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,boundIdents,boundPred,null);
+		assert (typeCheck(result,te)!=null);
+		return result;
+		
 	}
 	
 	public static Predicate WD(ITypeEnvironment te,Formula f){
