@@ -11,7 +11,7 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.SimpleProverSequent;
 
-public class Utils {
+public class UserSupportUtils {
 	
 	public static IProverSequent genSeq(String s){
 		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
