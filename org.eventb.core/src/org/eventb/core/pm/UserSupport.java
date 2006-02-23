@@ -29,6 +29,7 @@ public class UserSupport
 	Collection<IGoalChangedListener> goalChangedListeners;
 	Collection<IPOChangedListener> poChangedListeners;
 	Collection<IProofStatusChangedListener> proofStatusChangedListeners;
+	Collection<IStatusChangedListener> statusChangedListeners;
 	
 	private Collection<Hypothesis> displayCached;
 	private Collection<Hypothesis> displaySearched;
@@ -42,6 +43,8 @@ public class UserSupport
 		goalChangedListeners = new HashSet<IGoalChangedListener>();
 		poChangedListeners = new HashSet<IPOChangedListener>();
 		proofStatusChangedListeners = new HashSet<IProofStatusChangedListener>();
+		statusChangedListeners = new HashSet<IStatusChangedListener>();
+		
 		displayCached = new HashSet<Hypothesis>();
 		displaySearched = new HashSet<Hypothesis>();
 		proofStates = new ArrayList<ProofState>();
@@ -59,6 +62,7 @@ public class UserSupport
 		}
 		counter = -1;
 		nextUndischargedPO();		
+		notifyStatusChangedListener(null);
 	}
 	
 	public void setCurrentPO(IPRSequent prSequent) {
@@ -67,21 +71,10 @@ public class UserSupport
 			ProofState ps = proofStates.get(index);
 			if (ps.getPRSequent().equals(prSequent)) {
 				setProofState(ps, index);
+				notifyStatusChangedListener(null);
 				return;
 			}
 		}
-	}
-	
-	public Collection<Hypothesis> getDisplayCached() {return displayCached;}
-
-	public void setDisplayCached(Collection<Hypothesis> newDisplayCached) {
-		displayCached = newDisplayCached;
-	}
-	
-	public Collection<Hypothesis> getDisplaySearched() {return displaySearched;}
-
-	public void setDisplaySearched(Collection<Hypothesis> newDisplaySearched) {
-		displayCached = newDisplaySearched;
 	}
 	
 	public void nextUndischargedPO() {
@@ -90,10 +83,12 @@ public class UserSupport
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
 				setProofState(ps, index);
+				notifyStatusChangedListener(null);
 				return;
 			}
 		}
 		proofState = null;
+		notifyStatusChangedListener("No undischarged PO found");
 	}
 	
 	public void prevUndischargedPO() {
@@ -102,10 +97,12 @@ public class UserSupport
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
 				setProofState(ps, index);
+				notifyStatusChangedListener(null);
 				return;
 			}
 		}
 		proofState = null;
+		notifyStatusChangedListener("No undischarged PO found");
 	}
 	
 	private void setProofState(ProofState ps, int index) {
@@ -191,6 +188,22 @@ public class UserSupport
 		for (Iterator<IProofStatusChangedListener> i = proofStatusChangedListeners.iterator(); i.hasNext();) {
 			IProofStatusChangedListener listener = i.next();
 			listener.proofStatusChanged(complete);
+		}
+		return;
+	}
+	
+	public void addStatusChangedListener(IStatusChangedListener listener) {
+		statusChangedListeners.add(listener);
+	}
+	
+	public void removeStatusChangedListener(IStatusChangedListener listener) {
+		statusChangedListeners.remove(listener);
+	}
+
+	private void notifyStatusChangedListener(Object information) {
+		for (Iterator<IStatusChangedListener> i = statusChangedListeners.iterator(); i.hasNext();) {
+			IStatusChangedListener listener = i.next();
+			listener.statusChanged(information);
 		}
 		return;
 	}
@@ -320,6 +333,7 @@ public class UserSupport
 		}
 		
 		if (proofState != null) proofState.setCurrentNode(pt);
+//		notifyStatusChangedListener("");
 		return;
 	}
 
@@ -339,6 +353,7 @@ public class UserSupport
 		t.apply(proofState.getCurrentNode());
 		proofState.addAllToCached(hyps);
 		notifyProofStatusChangedListener(false);
+		notifyStatusChangedListener("");
 	}
 	
 	public void removeHypotheses(int origin, Collection<Hypothesis> hyps) {
@@ -368,29 +383,36 @@ public class UserSupport
 			e = new HypothesisChangeEvent(delta);
 			notifyHypothesisChangedListener(e);
 			proofState.removeAllFromCached(hyps);
+			break;
 		}
-			
+		notifyStatusChangedListener("Hypotheses removed");
 	}
 
 	public void applyTactic(ITactic t) throws RodinDBException {
 		IProofTreeNode currentNode = proofState.getCurrentNode();
-		t.apply(currentNode);
-		proofState.updateStatus();
-		
-		notifyProofStatusChangedListener(proofState.isDischarged());
-		
-		IProofTreeNode newNode = proofState.getNextPendingSubgoal(currentNode);
-		if (newNode == null) newNode = currentNode;
-		
-		IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
-		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
-		notifyHypothesisChangedListener(hypEvent);
-		notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
-		proofState.setCurrentNode(newNode);
-		
-		IPODelta poDelta = new PODelta(proofState);
-		IPOChangeEvent poEvent = new POChangeEvent(poDelta);
-		notifyPOChangedListener(poEvent);
+		Object information = t.apply(currentNode);
+		if (information == null) {
+			proofState.updateStatus();
+			
+			notifyProofStatusChangedListener(proofState.isDischarged());
+			
+			IProofTreeNode newNode = proofState.getNextPendingSubgoal(currentNode);
+			if (newNode == null) newNode = currentNode;
+			
+			IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
+			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+			notifyHypothesisChangedListener(hypEvent);
+			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
+			proofState.setCurrentNode(newNode);
+			
+			IPODelta poDelta = new PODelta(proofState);
+			IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+			notifyPOChangedListener(poEvent);
+			notifyStatusChangedListener("Tactic applied successfully");
+		}
+		else {
+			notifyStatusChangedListener(information);
+		}
 	}
 
 }

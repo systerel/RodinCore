@@ -82,7 +82,6 @@ public class GoalSection
 					int i = 0;
 					for (Text text : textBoxes) {
 						inputs[i++] = text.getText();
-						System.out.println("Input " + text.getText());
 					}
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.exI(inputs));
 					return;

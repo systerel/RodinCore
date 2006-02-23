@@ -78,7 +78,7 @@ public abstract class HypothesesSection
 			for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 				HypothesisRow hr = it.next();
 				if (removed.contains(hr.getHypothesis())) {
-					System.out.println("Removed " + hr.getHypothesis());
+//					System.out.println("Removed " + hr.getHypothesis());
 					deletedRows.add(hr);
 					hr.dispose();
 				}
@@ -89,7 +89,7 @@ public abstract class HypothesesSection
 		if (added != null) {
 			for (Iterator<Hypothesis> it = added.iterator(); it.hasNext();) {
 				Hypothesis hp = it.next();
-				System.out.println("Added " + hp);
+//				System.out.println("Added " + hp);
 				HypothesisRow row = new HypothesisRow(this.getManagedForm().getToolkit(), comp, hp);
 				rows.add(row);
 			}

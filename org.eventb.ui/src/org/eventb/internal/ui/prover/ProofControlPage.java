@@ -36,11 +36,13 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.pm.IGoalChangeEvent;
 import org.eventb.core.pm.IGoalChangedListener;
+import org.eventb.core.pm.IStatusChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
@@ -69,12 +71,14 @@ import org.rodinp.core.RodinDBException;
 public class ProofControlPage 
 	extends Page 
 	implements	IProofControlPage,
-				IGoalChangedListener
+				IGoalChangedListener,
+				IStatusChangedListener
 {
 
 	private Action switchLayout;
 	private Action action2;
 	private Text textInput;
+	private FormText formTextInformation;
 	private ScrolledForm scrolledForm;
 	private Composite buttonContainer;
 	private boolean isHorizontal;
@@ -197,12 +201,14 @@ public class ProofControlPage
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
 		editor.getUserSupport().addGoalChangedListener(this);
+		editor.getUserSupport().addStatusChangedListener(this);
 	}
     
 	@Override
 	public void dispose() {
 		// Deregister with the main plugin
 		editor.getUserSupport().removeGoalChangedListener(this);
+		editor.getUserSupport().removeStatusChangedListener(this);
 		super.dispose();
 	}
 	
@@ -263,6 +269,14 @@ public class ProofControlPage
 		else isOpened = false;
 		updateButtons();
 
+		formTextInformation = toolkit.createFormText(body, true);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.minimumHeight = 20;
+		gd.heightHint = 20;
+        formTextInformation.setLayoutData(gd);
+        setFormTextInformation("");
+        
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
 		
@@ -271,6 +285,9 @@ public class ProofControlPage
 		contributeToActionBars();
 	}
 
+	private void setFormTextInformation(String information) {
+		formTextInformation.setText(information, false, false);
+	}
 	
 	private Button createButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.PUSH);
@@ -371,7 +388,7 @@ public class ProofControlPage
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		textInput.setFocus();
+		buttonContainer.setFocus();
 	}
 	
     /* (non-Javadoc)
@@ -414,6 +431,16 @@ public class ProofControlPage
 			ah.setEnabled(false);
 		}
 		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IStatusChangedListener#statusChanged(java.lang.Object)
+	 */
+	public void statusChanged(Object information) {
+		if (information != null) setFormTextInformation(information.toString());
+		else setFormTextInformation("");
+		scrolledForm.reflow(true);
+		this.setFocus();
 	}
 
 }
