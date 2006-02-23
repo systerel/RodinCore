@@ -52,6 +52,7 @@ import org.eventb.core.pm.IStatusChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
@@ -142,11 +143,11 @@ public class ProofControlPage
 				}
 			
 				if (label.equals("pp")) {
-					final UserSupport userSupport = editor.getUserSupport();
+					
 					IRunnableWithProgress op = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException {
 							try {
-								userSupport.applyTactic(Tactics.legacyProvers());
+								apply(Tactics.legacyProvers(), monitor);
 							} catch (RodinDBException e) {
 								e.printStackTrace();
 								throw new InvocationTargetException(e);
@@ -164,6 +165,7 @@ public class ProofControlPage
 						dialog.run(true, true, op);
 						System.out.println("Here 2");
 					} catch (InterruptedException exception) {
+						System.out.println("Interrupt ");
 						return;
 					} catch (InvocationTargetException exception) {
 						Throwable realException = exception.getTargetException();
@@ -198,6 +200,20 @@ public class ProofControlPage
 		}
 	}
 	   
+	
+	private void apply(ITactic t, IProgressMonitor monitor) throws RodinDBException {
+		UserSupport userSupport = editor.getUserSupport();
+		monitor.beginTask("Applying " + t.toString(), 2);
+		userSupport.applyTactic(t);
+		monitor.worked(1);
+		if (monitor.isCanceled()) {
+			System.out.println("Cancel ");
+		}
+		else {
+			System.out.println("Job finished");
+			monitor.done();
+		}
+	}
 	
 	/**
 	 * The constructor.
