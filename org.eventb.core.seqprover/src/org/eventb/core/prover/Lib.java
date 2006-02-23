@@ -181,13 +181,6 @@ public final class Lib {
 		return qP.getBoundIdentifiers();
 	}
 	
-	// Note : only used for the user interface 
-	public static Predicate getBoundPredicate(Predicate P){
-		if (! (P instanceof QuantifiedPredicate)) return null;
-		QuantifiedPredicate qP = (QuantifiedPredicate) P;
-		return qP.getPredicate();
-	}
-	
 	public static Predicate WD(ITypeEnvironment te,Formula f){
 		Predicate result = f.getWDPredicate(ff);
 		assert (typeCheck(result,te)!=null);
