@@ -29,7 +29,8 @@ public class UnSuccessfulExtReasonerOutput implements IExtReasonerOutput{
 	
 	@Override
 	public String toString(){
-		return generatedBy.name()+"["+generatedUsing+"]:"+error;
+		// return generatedBy.name()+"["+generatedUsing+"]:"+error;
+		return generatedBy.name()+":"+error;
 	}
 	
 	
