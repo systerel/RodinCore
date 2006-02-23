@@ -13,8 +13,8 @@ import org.rodinp.core.RodinDBException;
 public interface IPRStatus extends IUnnamedInternalElement {
 		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prStatus"; //$NON-NLS-1$
 
-		public enum Status {PENDING, DISCHARGED};
+		public enum Overview {PENDING, DISCHARGED};
 		
-		public Status getStatus() throws RodinDBException;	
+		public Overview getOverview() throws RodinDBException;	
 		// public String getType() throws RodinDBException;
 }

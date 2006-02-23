@@ -21,7 +21,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus.Status;
+import org.eventb.core.IPRStatus.Overview;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -95,7 +95,7 @@ public class PRUtil {
 	
 	
 	
-	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
+	public static void updateStatus(IPRFile prFile, String poName, Overview status) throws RodinDBException{
 		IPRSequent[] prSeqs = prFile.getSequents();
 		for (IPRSequent prSeq : prSeqs){
 			if (prSeq.getName().equals(poName)){
@@ -105,12 +105,12 @@ public class PRUtil {
 		prFile.save(null, false);
 	}
 	
-	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
-		Map<String, Status> result 
-		= new HashMap<String, Status>(prFile.getSequents().length);
+	public static Map<String, Overview> readStatus(IPRFile prFile) throws RodinDBException {
+		Map<String, Overview> result 
+		= new HashMap<String, Overview>(prFile.getSequents().length);
 		
 		for (IPRSequent prSeq:prFile.getSequents()){
-			result.put(prSeq.getName(),prSeq.getStatus().getStatus());
+			result.put(prSeq.getName(),prSeq.getStatus().getOverview());
 		}
 		return result;
 	}

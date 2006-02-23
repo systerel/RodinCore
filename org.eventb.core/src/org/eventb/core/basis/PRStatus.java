@@ -22,9 +22,9 @@ public class PRStatus extends UnnamedInternalElement implements IPRStatus {
 		super(ELEMENT_TYPE, parent);
 	}
 
-	public Status getStatus() throws RodinDBException {
-		if (getContents().compareToIgnoreCase("PENDING") == 0) return Status.PENDING;
-		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Status.DISCHARGED;
+	public Overview getOverview() throws RodinDBException {
+		if (getContents().compareToIgnoreCase("PENDING") == 0) return Overview.PENDING;
+		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Overview.DISCHARGED;
 		return null;
 	}
 
