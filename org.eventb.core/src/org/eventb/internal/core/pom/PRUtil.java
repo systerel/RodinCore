@@ -82,11 +82,10 @@ public class PRUtil {
 		if (Lib.identical(oldPt.getSequent(),pt.getSequent())) {
 			if (pt.isDischarged()){
 				prSeq.getStatus().setContents("DISCHARGED");
-			} else
-			{
+			} else {
 				prSeq.getStatus().setContents("PENDING");
 			}
-			return ;
+			return;
 		}
 		// TODO maybe throw a core exception here
 		else return;
