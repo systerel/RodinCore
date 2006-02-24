@@ -479,8 +479,7 @@ public class ProofControlPage
 			else dc.setEnabled(true);
 			if (textInput.getText().equals("")) ah.setEnabled(false);
 			else ah.setEnabled(true);
-			if (textInput.getText().equals("")) se.setEnabled(false);
-			else se.setEnabled(true);
+			se.setEnabled(true);
 		}
 		else {
 			pn.setEnabled(true);
