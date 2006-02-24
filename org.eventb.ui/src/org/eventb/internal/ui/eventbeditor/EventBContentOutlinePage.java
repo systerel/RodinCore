@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -31,6 +32,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -314,7 +316,15 @@ public class EventBContentOutlinePage
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
 				//viewer.refresh();
 			}
-			update();
+			Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+			display.asyncExec(new Runnable() {
+				/* (non-Javadoc)
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					update();
+				}
+			});
 			//System.out.println("********** Finish changing **********");
 		}
 	}
