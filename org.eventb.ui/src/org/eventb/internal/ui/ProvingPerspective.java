@@ -45,7 +45,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
         // Place the project explorer to left of editor area.
         IFolderLayout left =
                 layout.createFolder("left", IPageLayout.LEFT, 0.20f, editorArea);
-        left.addView(ProofInformation.VIEW_ID);
+        left.addView(ObligationExplorer.VIEW_ID);
         
         // Place the outline to right of editor area.
         IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.7f, editorArea);
@@ -56,7 +56,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
         bottom.addView(ProofControl.VIEW_ID);
 
         IFolderLayout bottomLeft =
-            layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.50f, "left");
-        bottomLeft.addView(ObligationExplorer.VIEW_ID);
+            layout.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.60f, "left");
+        bottomLeft.addView(ProofInformation.VIEW_ID);
 	}
 }
