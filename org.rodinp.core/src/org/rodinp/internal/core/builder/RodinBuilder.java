@@ -112,7 +112,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	protected static void deleteMarkers(IFile file) {
 		try {
-			file.deleteMarkers(IRodinDBMarker.RODIN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			if(file.exists())
+				file.deleteMarkers(IRodinDBMarker.RODIN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			Util.log(e, "when deleting markers");
 		}
