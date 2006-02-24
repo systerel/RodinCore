@@ -84,6 +84,7 @@ public class ProofControlPage
 				IStatusChangedListener
 {
 
+	boolean share;
 	private Action switchLayout;
 	private Action action2;
 	private Text textInput;
@@ -145,7 +146,7 @@ public class ProofControlPage
 				if (label.equals("pp")) {
 					
 					IRunnableWithProgress op = new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
 								apply(Tactics.legacyProvers(), monitor);
 							} catch (RodinDBException e) {
@@ -201,18 +202,48 @@ public class ProofControlPage
 	}
 	   
 	
-	private void apply(ITactic t, IProgressMonitor monitor) throws RodinDBException {
-		UserSupport userSupport = editor.getUserSupport();
-		monitor.beginTask("Applying " + t.toString(), 2);
-		userSupport.applyTactic(t);
-		monitor.worked(1);
-		if (monitor.isCanceled()) {
-			System.out.println("Cancel ");
+	private void apply(final ITactic t, IProgressMonitor monitor) throws RodinDBException, InterruptedException {
+		final UserSupport userSupport = editor.getUserSupport();
+		monitor.beginTask("Applying " + "automated prover", 1);
+		Runnable op = new Runnable() {
+
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					userSupport.applyTactic(t);
+					share = false;
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		};
+		Thread thread = new Thread(op);
+		share = true;
+		thread.start();
+		while (share) {
+			if (monitor.isCanceled()) {
+				System.out.println("Cancel");
+				thread.interrupt();
+				throw new InterruptedException("Apply tactic cancelled by user");
+			}
 		}
-		else {
-			System.out.println("Job finished");
-			monitor.done();
-		}
+		System.out.println("Job finished");
+		monitor.done();
+
+//		monitor.worked(1);
+//		if (monitor.isCanceled()) {
+//			System.out.println("Cancel");
+//			throw new InterruptedException("Apply tactic cancelled by user");
+//		}
+//		else {
+//			System.out.println("Job finished");
+//			monitor.done();
+//		}
 	}
 	
 	/**

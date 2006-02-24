@@ -34,6 +34,7 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
+import org.rodinp.core.RodinDBException;
 
 public class SearchHypothesesSection
 	extends HypothesesSection
@@ -57,7 +58,12 @@ public class SearchHypothesesSection
 				
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				editor.getUserSupport().applyTacticToHypotheses(t, selected);
+				try {
+					editor.getUserSupport().applyTacticToHypotheses(t, selected);
+				}
+				catch (RodinDBException exception) {
+					exception.printStackTrace();
+				}
 				
 				
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();

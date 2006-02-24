@@ -280,7 +280,7 @@ public class UserSupport
 				System.out.print("In searched: " + hyp);
 				if (displaySearched.contains(hyp)) {   
 					System.out.print(", currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
+					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, display, valid & not selected
 						System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 					}
@@ -292,7 +292,7 @@ public class UserSupport
 				}
 				else {
 					System.out.print(", not currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
+					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, not(display), valid & not selected
 						System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 						addedToSearched.add(hyp);
@@ -322,6 +322,11 @@ public class UserSupport
 	private boolean isSelected(Hypothesis hyp, IProofTreeNode pt) {
 		System.out.println("Is Selected? " + pt.getSequent().selectedHypotheses().contains(hyp));
 		return pt.getSequent().selectedHypotheses().contains(hyp);
+	}
+	
+	private boolean isCached(Hypothesis hyp) {
+		System.out.println("Is Cached? " + proofState.getCached().contains(hyp));
+		return proofState.getCached().contains(hyp);
 	}
 	
 	/**
@@ -354,11 +359,9 @@ public class UserSupport
 		return proofState;
 	}
 
-	public void applyTacticToHypotheses(ITactic t, Set<Hypothesis> hyps) {
-		t.apply(proofState.getCurrentNode());
+	public void applyTacticToHypotheses(ITactic t, Set<Hypothesis> hyps) throws RodinDBException {
 		proofState.addAllToCached(hyps);
-		notifyProofStatusChangedListener(false);
-		notifyStatusChangedListener("");
+		applyTactic(t);
 	}
 	
 	public void removeHypotheses(int origin, Collection<Hypothesis> hyps) {

@@ -92,7 +92,7 @@ public abstract class HypothesesSection
 			for (Iterator<Hypothesis> it = added.iterator(); it.hasNext();) {
 				Hypothesis hp = it.next();
 //				System.out.println("Added " + hp);
-				HypothesisRow row = new HypothesisRow(this.getManagedForm().getToolkit(), comp, hp);
+				HypothesisRow row = new HypothesisRow(this.getManagedForm().getToolkit(), comp, hp, ((ProverUI) page.getEditor()).getUserSupport());
 				rows.add(row);
 			}
 		}

@@ -57,7 +57,15 @@ public class UIUtils {
 	public static final String EXI_SYMBOL = "∃";
 	
 	public static final String ALLF_SYMBOL = "∀";
-
+	public static final String CONJD_SYMBOL = "∧";
+	public static final String IMPD1_SYMBOL = "⇒";
+	public static final String IMPD2_SYMBOL = "ip1";
+	public static final String DISJE_SYMBOL = "⋁";
+	public static final String EXF_SYMBOL = "∃";
+	public static final String EQE1_SYMBOL = "eh";
+	public static final String EQE2_SYMBOL = "he";
+	public static final String FALSIFY_SYMBOL = "⊥";
+	
 	/**
 	 * Getting the image corresponding to an object.
 	 * <p>
@@ -213,7 +221,19 @@ public class UIUtils {
 	public static List<String> getApplicableToHypothesis(Hypothesis hyp) {
 		List<String> names = new ArrayList<String>();
 		
+		names.add(FALSIFY_SYMBOL);
 		if (Tactics.allF_applicable(hyp)) names.add(ALLF_SYMBOL);
+		if (Tactics.conjD_applicable(hyp)) names.add(CONJD_SYMBOL);
+		if (Tactics.impD_applicable(hyp)) {
+			names.add(IMPD1_SYMBOL);
+			names.add(IMPD2_SYMBOL);
+		}
+		if (Tactics.exF_applicable(hyp)) names.add(EXF_SYMBOL);
+		if (Tactics.disjE_applicable(hyp)) names.add(DISJE_SYMBOL);
+		if (Tactics.eqE_applicable(hyp)) {
+			names.add(EQE1_SYMBOL);
+			names.add(EQE2_SYMBOL);
+		}
 		
 		// Extra tactics applicable to hypothesis should be added here.
 		return names;
