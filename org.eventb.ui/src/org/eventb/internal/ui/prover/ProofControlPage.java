@@ -52,7 +52,6 @@ import org.eventb.core.pm.IStatusChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
@@ -133,7 +132,7 @@ public class ProofControlPage
 					return;
 				}
 			
-				if (label.equals("dc")) {			
+				if (label.equals("dc")) {
 					editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getText()));
 					return;
 				}
@@ -144,16 +143,15 @@ public class ProofControlPage
 				}
 			
 				if (label.equals("pp")) {
-					
+					final UserSupport userSupport = editor.getUserSupport();
 					IRunnableWithProgress op = new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException {
 							try {
-								apply(Tactics.legacyProvers(), monitor);
+								userSupport.applyTactic(Tactics.legacyProvers(monitor));
+//								apply(Tactics.legacyProvers(), monitor);
 							} catch (RodinDBException e) {
 								e.printStackTrace();
 								throw new InvocationTargetException(e);
-							} finally {
-								monitor.done();
 							}
 						}
 					};
@@ -200,52 +198,7 @@ public class ProofControlPage
 			}
 		}
 	}
-	   
-	
-	private void apply(final ITactic t, IProgressMonitor monitor) throws RodinDBException, InterruptedException {
-		final UserSupport userSupport = editor.getUserSupport();
-		monitor.beginTask("Applying " + "automated prover", 1);
-		Runnable op = new Runnable() {
-
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					userSupport.applyTactic(t);
-					share = false;
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		};
-		Thread thread = new Thread(op);
-		share = true;
-		thread.start();
-		while (share) {
-			if (monitor.isCanceled()) {
-				System.out.println("Cancel");
-				thread.interrupt();
-				throw new InterruptedException("Apply tactic cancelled by user");
-			}
-		}
-		System.out.println("Job finished");
-		monitor.done();
-
-//		monitor.worked(1);
-//		if (monitor.isCanceled()) {
-//			System.out.println("Cancel");
-//			throw new InterruptedException("Apply tactic cancelled by user");
-//		}
-//		else {
-//			System.out.println("Job finished");
-//			monitor.done();
-//		}
-	}
-	
+	   	
 	/**
 	 * The constructor.
 	 */
