@@ -105,22 +105,35 @@ public class ProofsPage
 	public void hypothesisChanged(IHypothesisChangeEvent e) {
 		IHypothesisDelta delta = e.getDelta();
 		
-		Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
-		Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
+		final Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
+		final Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
 //		System.out.println("Update selected");
-		selected.update(addedToSelected, removedFromSelected);
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				selected.update(addedToSelected, removedFromSelected);
+			}
+		});
 //		System.out.println("***************");
 		
-		Collection<Hypothesis> addedToCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.ADDED);
-		Collection<Hypothesis> removedFromCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.REMOVED);
+		final Collection<Hypothesis> addedToCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.ADDED);
+		final Collection<Hypothesis> removedFromCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.REMOVED);
 //		System.out.println("Update cached");
-		cache.update(addedToCached, removedFromCached);
+		display.syncExec (new Runnable () {
+			public void run () {
+				cache.update(addedToCached, removedFromCached);
+			}
+		});
 //		System.out.println("*************");
 		
-		Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
-		Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
+		final Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
+		final Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
 //		System.out.println("Update searched");
-		search.update(addedToSearched, removedFromSearched);
+		display.syncExec (new Runnable () {
+			public void run () {
+				search.update(addedToSearched, removedFromSearched);
+			}
+		});
 //		System.out.println("*************");	
 	}
 
