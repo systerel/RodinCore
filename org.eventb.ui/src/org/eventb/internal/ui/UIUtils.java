@@ -15,11 +15,16 @@ package org.eventb.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -29,6 +34,8 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -36,6 +43,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
@@ -246,4 +254,30 @@ public class UIUtils {
 		output = output.replaceAll(">", "&gt;");
 		return output;
 	}
+
+	/*
+	 * Link the current object to an Prover UI editor.
+	 */
+	public static void linkToProverUI(Object obj) {
+		String editorId = ProverUI.EDITOR_ID;
+		
+		IPRFile construct = null;
+		if (obj instanceof IRodinProject) return; 
+		if (obj instanceof IPRFile) construct = (IPRFile) obj; 
+		else if (obj instanceof IRodinElement) 
+			construct = (IPRFile) ((IRodinElement) obj).getParent();
+		Assert.isTrue(construct != null, "construct must be initialised by now");
+//		System.out.println("Link to " + construct.getElementName());
+		try {
+			IEditorInput fileInput = new FileEditorInput(construct.getResource());
+			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
+			if (!(obj instanceof IPRFile)) editor.setCurrentPO((IPRSequent) obj);
+		} catch (PartInitException e) {
+			MessageDialog.openError(null, null, "Error open the editor");
+			e.printStackTrace();
+			// TODO EventBImage.logException(e);
+		}
+		return;
+	}
+
 }

@@ -17,9 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,10 +31,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
@@ -48,8 +43,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.ProverUI;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -250,7 +243,7 @@ public class ObligationExplorer
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 			
 				if (!(obj instanceof IRodinProject)) {
-					linkToEditor(obj);
+					UIUtils.linkToProverUI(obj);
 				}
 			}
 		};
@@ -276,32 +269,6 @@ public class ObligationExplorer
 		viewer.getControl().setFocus();
 	}	
 	
-	
-	/*
-	 * Link the current object to an Event-B editor.
-	 */
-	public void linkToEditor(Object obj) {
-		String editorId = ProverUI.EDITOR_ID;
-		
-		IPRFile construct = null;
-		if (obj instanceof IRodinProject) return; 
-		if (obj instanceof IPRFile) construct = (IPRFile) obj; 
-		else if (obj instanceof IRodinElement) 
-			construct = (IPRFile) ((IRodinElement) obj).getParent();
-		Assert.isTrue(construct != null, "construct must be initialised by now");
-//		System.out.println("Link to " + construct.getElementName());
-		try {
-			IEditorInput fileInput = new FileEditorInput(construct.getResource());
-			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-			if (!(obj instanceof IPRFile)) editor.setCurrentPO((IPRSequent) obj);
-		} catch (PartInitException e) {
-			MessageDialog.openError(null, null, "Error open the editor");
-			e.printStackTrace();
-			// TODO EventBImage.logException(e);
-		}
-		return;
-	}
-
 	public void refresh() {
 		System.out.println("********** REFRESH *********");
 		viewer.refresh();

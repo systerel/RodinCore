@@ -19,12 +19,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISharedImages;
@@ -35,12 +33,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.wizards.NewConstructWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
@@ -178,7 +175,13 @@ public class ProjectExplorerActionGroup
 				if (selection instanceof IStructuredSelection) {
 					IStructuredSelection ssel = (IStructuredSelection) selection;
 					if (ssel.size() == 1) {
-						linkToProverUI(ssel.getFirstElement());
+						Object obj = ssel.getFirstElement();
+						if (!(obj instanceof IRodinFile)) return;
+						IRodinFile construct = (IRodinFile) obj;
+						IRodinProject prj = construct.getRodinProject();
+						String bareName = EventBPlugin.getComponentName(construct.getElementName());
+						IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
+						UIUtils.linkToProverUI(prFile);
 					}
 				}
 			}
@@ -188,39 +191,6 @@ public class ProjectExplorerActionGroup
 		proveAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
-	}
-
-	
-	/*
-	 * Link to the prover UI.
-	 * <p>
-	 * @param obj The selected object 
-	 */
-	private void linkToProverUI(Object obj) {
-		// TODO To be removed
-		
-		String editorId = ProverUI.EDITOR_ID;
-		if (!(obj instanceof IRodinFile)) return;
-		IRodinFile construct = (IRodinFile) obj;
-		
-		IRodinProject prj = construct.getRodinProject();
-		String bareName = EventBPlugin.getComponentName(construct.getElementName());
-		IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
-		if (prFile != null) {
-			try {
-				System.out.println("Resource " + prFile.getResource());
-				IEditorInput fileInput = new FileEditorInput(prFile.getResource());
-				EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-			} catch (PartInitException e) {
-				MessageDialog.openError(null, null, "Error open the editor");
-				e.printStackTrace();
-				// TODO EventBImage.logException(e);
-			}
-		}
-		else {
-			MessageDialog.openError(null, null, "No .bpr files");
-		}
-		return;
 	}
 	
 	
