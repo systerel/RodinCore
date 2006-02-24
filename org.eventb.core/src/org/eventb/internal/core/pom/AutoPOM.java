@@ -8,8 +8,6 @@
 
 package org.eventb.internal.core.pom;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -19,10 +17,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRStatus;
-import org.eventb.core.IPRStatus.Overview;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -64,24 +58,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		createFreshPRFile();
 	}
 	
-	public void runAutoProver() throws CoreException {
-		Map<String, IProverSequent> prSeqs = PRUtil.readPOs(prFile);
-		Map<String, Overview> prStatus = PRUtil.readStatus(prFile);
-		AutoProver autoProver = new AutoProver();
-		for (String name : prSeqs.keySet()){
-			if (prStatus.get(name) == Overview.PENDING) {
-//				System.out.println("Running autoProver on "
-//						+ prFile.getElementName()
-//						+ ", PO: "
-//						+ name
-//				);
-				IProofTree pt = SequentProver.makeProofTree(prSeqs.get(name));
-				autoProver.run(pt);
-				if (pt.isDischarged()) PRUtil.updateStatus(prFile,name,Overview.DISCHARGED);
-			}
-		}
-	}
-	
 	public boolean run(IFile file, 
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
@@ -95,7 +71,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		init(poIn, newPRFile, interrupt, monitor);
 		writePRFile();
-		runAutoProver();
+		new AutoProver().run(newPRFile);
 		return true;
 	}
 
