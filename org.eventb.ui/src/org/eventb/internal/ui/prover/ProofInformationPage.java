@@ -21,14 +21,27 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
+import org.eventb.core.IPODescription;
+import org.eventb.core.IPOSource;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
 import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IPOChangedListener;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -111,25 +124,98 @@ public class ProofInformationPage
 		else if (prFile.getContext().exists()) rodinFile = prFile.getContext();
 		System.out.println("File " + rodinFile.getElementName());
 		
-		String formString = "<form>";
+		try {
+			String formString = "<form>";
 
-		String prName = prSequent.getName();
-		System.out.println("PR Name " + prName);
-		int beginIndex = prName.indexOf("/");
-		
-		if (beginIndex != -1) {
-			String name = prName.substring(0, beginIndex);
-			System.out.println("Element name " + name);
-			IRodinElement element = rodinFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
-			System.out.println("Element found " + element.toString());
-			if (element != null) {
+			IPODescription desc = prSequent.getDescription();
+			IPOSource [] sources = desc.getSources();
+			for (IPOSource source : sources) {
+				String role = source.getSourceRole();
+				System.out.println("Role " + role);
+				formString = formString + "<li style=\"bullet\">" + role + "</li>";
+
+				String id = source.getSourceHandleIdentifier();
+				System.out.println("ID " + id);
+				// TODO Dirty fix to get the uncheck element
+				id = id.replaceFirst("bcm", "bum");
+				id = id.replaceFirst("bcc", "buc");
+				id = id.replaceFirst("scEvent", "event");
+				System.out.println("ID unchecked model " + id);
+				IRodinElement element = RodinCore.create(id);
+				if (element instanceof ITheorem) {
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+					formString = formString + "</li>";
+				}
+				if (element instanceof IAxiom) {
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+					formString = formString + "</li>";
+				}
+				else if (element instanceof IInvariant) {
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+					formString = formString + "</li>";
+				}
+				else if (element instanceof IEvent) {
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ":</li>";
+					IRodinElement [] lvars = ((IParent) element).getChildrenOfType(IVariable.ELEMENT_TYPE);
+					IRodinElement [] guards = ((IParent) element).getChildrenOfType(IGuard.ELEMENT_TYPE);
+					IRodinElement [] actions = ((IParent) element).getChildrenOfType(IAction.ELEMENT_TYPE);
+					
+					if (lvars.length != 0) {
+						formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+						formString = formString + "<b>ANY</b> ";
+						for (int j = 0; j < lvars.length; j++) {
+							if (j == 0)	{
+								formString = formString + UIUtils.makeHyperlink(lvars[j].getElementName());
+							}
+							else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getElementName());
+						}			
+						formString = formString + " <b>WHERE</b>";
+						formString = formString + "</li>";
+					}
+					else {
+						if (guards.length !=0) {
+							formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+							formString = formString + "<b>WHEN</b></li>";
+						}
+						else {
+							formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+							formString = formString + "<b>BEGIN</b></li>";
+						}
+					
+					}
+
+					for (int j = 0; j < guards.length; j++) {
+						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
+						formString = formString + UIUtils.makeHyperlink(guards[j].getElementName()) + ": "
+							+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
+						formString = formString + "</li>";
+					}
+					
+					if (guards.length != 0) {
+						formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+						formString = formString + "<b>THEN</b></li>";
+					}
 				
+					for (int j = 0; j < actions.length; j++) {
+						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
+						formString = formString + UIUtils.makeHyperlink(((IInternalElement) actions[j]).getContents());
+						formString = formString + "</li>";
+					}
+					formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+					formString = formString + "<b>END</b></li>";
+				}
 			}
+			formString = formString + "</form>";
+			formText.setText(formString, true, false);
+			scrolledForm.reflow(true);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 			
-		formString = formString + "</form>";
-		formText.setText(formString, true, false);
-		scrolledForm.reflow(true);
 	}
 	/**
 	 * Passing the focus request to the viewer's control.
