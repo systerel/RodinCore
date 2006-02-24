@@ -39,13 +39,8 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class PRSequent extends InternalElement implements IPRSequent {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public PRSequent(String name, IRodinElement parent) {
 		super(name, parent);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -104,6 +99,12 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	
 	public void updateStatus(IProofTree pt) throws RodinDBException {
 		PRUtil.updateStatus(this,pt);
+	}
+
+	public boolean isDischarged() throws RodinDBException {
+		IPRStatus status = getStatus();
+		String contents = status.getContents();
+		return contents.equals("DISCHARGED");
 	}
 	
 	
