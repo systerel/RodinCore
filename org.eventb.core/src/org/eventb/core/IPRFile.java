@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPRFile extends IRodinFile {
 
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
 	
 	/**
 	 * Returns a handle to the unchecked version of the context for which this
@@ -35,7 +35,7 @@ public interface IPRFile extends IRodinFile {
 	 * 
 	 * @return a handle to the unchecked version of the corresponding context
 	 */
-	public IContext getContext();
+	IContext getContext();
 
 	/**
 	 * Returns a handle to the unchecked version of the machine for which this
@@ -46,7 +46,7 @@ public interface IPRFile extends IRodinFile {
 	 * 
 	 * @return a handle to the unchecked version of the corresponding machine
 	 */
-	public IMachine getMachine();
+	IMachine getMachine();
 
 	/**
 	 * Returns a handle to the file containing proof obligations for this
@@ -57,10 +57,11 @@ public interface IPRFile extends IRodinFile {
 	 * 
 	 * @return a handle to the PO file of this component
 	 */
-	public IPOFile getPOFile();
+	IPOFile getPOFile();
 
-	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	public IPRSequent[] getSequents() throws RodinDBException;
+	
+	IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
+	IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	IPRSequent[] getSequents() throws RodinDBException;
 	
 }
