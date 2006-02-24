@@ -79,20 +79,20 @@ public class PRUtil {
 	
 	public static void updateStatus(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
 		IProofTree oldPt = makeProofTree(prSeq);
-		if (Lib.identical(oldPt.getSequent(),pt.getSequent())) {
-			if (pt.isDischarged()){
-				prSeq.getStatus().setContents("DISCHARGED");
-			} else {
-				prSeq.getStatus().setContents("PENDING");
-			}
+		if (! Lib.identical(oldPt.getSequent(), pt.getSequent())) {
+			// The sequent changed in the file
+			// TODO maybe throw a core exception here
 			return;
 		}
-		// TODO maybe throw a core exception here
-		else return;
+			
+		if (pt.isDischarged()){
+			prSeq.getStatus().setContents(Overview.DISCHARGED.toString());
+		} else {
+			prSeq.getStatus().setContents(Overview.PENDING.toString());
+		}
+		IPRFile prFile = (IPRFile) prSeq.getParent();
+		prFile.save(null, false);
 	}
-	
-	
-	
 	
 	public static void updateStatus(IPRFile prFile, String poName, Overview status) throws RodinDBException{
 		IPRSequent[] prSeqs = prFile.getSequents();
