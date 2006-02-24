@@ -18,7 +18,6 @@
 
    <windowImages small="/org.rodinp.platform/icons/rodin16.gif" large="/org.rodinp.platform/icons/rodin32.gif"/>
 
-
    <launcher name="rodin">
       <solaris/>
       <win useIco="false">
@@ -30,8 +29,6 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.platform" version="3.1.2"/>
-      <feature id="org.eclipse.rcp" version="3.1.2"/>
       <feature id="org.eventb.ide" version="0.0.0"/>
       <feature id="org.rodinp.platform" version="0.0.0"/>
    </features>
