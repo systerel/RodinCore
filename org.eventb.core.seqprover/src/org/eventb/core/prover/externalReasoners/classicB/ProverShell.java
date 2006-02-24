@@ -13,6 +13,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.internal.core.prover.Util;
 import org.osgi.framework.Bundle;
 
 public abstract class ProverShell {
@@ -66,7 +67,26 @@ public abstract class ProverShell {
 				Platform.getOSArch() + "/" +
 				fileName
 		);
-		return getLocalPath(relativePath);
+		String pathString = getLocalPath(relativePath);
+		makeExecutable(pathString);
+		return pathString;
+	}
+
+	/**
+	 * Makes the given file executable.
+	 * 
+	 * @param pathString
+	 *     path to the file as a String.
+	 */
+	private static void makeExecutable(String pathString) {
+		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			try {
+				Process process = Runtime.getRuntime().exec("chmod +x " + pathString);
+				process.waitFor();
+			} catch (Exception e) {
+				Util.log(e, "when changing file permission");
+			}
+		}
 	}
 	
 	/*
