@@ -42,11 +42,13 @@ import org.eventb.core.IVariable;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -280,7 +282,29 @@ public class UIUtils {
 		return;
 	}
 
-	
+	/*
+	 * Link the current object to an Event-B editor.
+	 */
+	public static void linkToEventBEditor(Object obj) {
+		String editorId = EventBEditor.EDITOR_ID;
+		IRodinFile construct;
+		
+		if (!(obj instanceof IRodinProject)) {
+			construct = (IRodinFile) UIUtils.getOpenable(obj); 
+			try {
+				IEditorInput fileInput = new FileEditorInput(construct.getResource());
+				EventBEditor editor = (EventBEditor) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
+				editor.setSelection(obj);
+			} catch (PartInitException e) {
+				MessageDialog.openError(null, null, "Error open the Event-B Editor");
+				e.printStackTrace();
+				// TODO EventBUIPlugin.logException(e);
+			}
+		}
+		return;
+	}
+
+
 	/**
 	 * Utitlity method to create a text and link with the same label
 	 * <p>

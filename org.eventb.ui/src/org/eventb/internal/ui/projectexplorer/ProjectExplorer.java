@@ -17,7 +17,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,10 +30,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
@@ -42,7 +38,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -232,7 +227,7 @@ public class ProjectExplorer
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 			
 				if (!(obj instanceof IRodinProject)) {
-					linkToEditor(obj);
+					UIUtils.linkToEventBEditor(obj);
 				}
 			}
 		};
@@ -258,27 +253,4 @@ public class ProjectExplorer
 		viewer.getControl().setFocus();
 	}	
 	
-	
-	/*
-	 * Link the current object to an Event-B editor.
-	 */
-	public void linkToEditor(Object obj) {
-		String editorId = EventBEditor.EDITOR_ID;
-		IRodinFile construct;
-		
-		if (!(obj instanceof IRodinProject)) {
-			construct = (IRodinFile) UIUtils.getOpenable(obj); 
-			try {
-				IEditorInput fileInput = new FileEditorInput(construct.getResource());
-				EventBEditor editor = (EventBEditor) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-				editor.setSelection(obj);
-			} catch (PartInitException e) {
-				MessageDialog.openError(null, null, "Error open the Event-B Editor");
-				e.printStackTrace();
-				// TODO EventBUIPlugin.logException(e);
-			}
-		}
-		return;
-	}
-
 }
