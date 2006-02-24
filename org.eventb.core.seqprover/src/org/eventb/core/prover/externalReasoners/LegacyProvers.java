@@ -3,6 +3,7 @@ package org.eventb.core.prover.externalReasoners;
 import java.io.IOException;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
@@ -28,7 +29,8 @@ public class LegacyProvers implements IExternalReasoner {
 			ITypeEnvironment typeEnvironment,
 			Set<Hypothesis> hypotheses,
 			Predicate goal,
-			long timeOutDelay) {
+			long timeOutDelay,
+			IProgressMonitor monitor) {
 		
 		final int length = hypotheses.size();
 		final Predicate[] hyps = new Predicate[length];
@@ -39,10 +41,10 @@ public class LegacyProvers implements IExternalReasoner {
 		StringBuffer sequent = 
 			ClassicB.translateSequent(typeEnvironment, hyps, goal);
 		try {
-			if (ClassicB.proveWithML(sequent, timeOutDelay))
+			if (ClassicB.proveWithML(sequent, timeOutDelay, monitor))
 				return true;
 			else
-				return ClassicB.proveWithPP(sequent, timeOutDelay);
+				return ClassicB.proveWithPP(sequent, timeOutDelay, monitor);
 		} catch (IOException e) {
 			return false;
 		}
@@ -63,9 +65,10 @@ public class LegacyProvers implements IExternalReasoner {
 					"Invalid time out delay"
 			);
 		}
+		final IProgressMonitor monitor = myInput.monitor;
 		
 		final boolean success =
-			runLegacyProvers(typeEnvironment, hypotheses, goal, timeOutDelay);
+			runLegacyProvers(typeEnvironment, hypotheses, goal, timeOutDelay, monitor);
 		if (success) {
 			ISequent outputSequent = 
 				new SimpleSequent(typeEnvironment, hypotheses, goal);
@@ -89,14 +92,29 @@ public class LegacyProvers implements IExternalReasoner {
 	public static class Input implements IExtReasonerInput{
 		
 		public final long timeOutDelay;
+		public final IProgressMonitor monitor;
+		
+		private static final long DEFAULT_DELAY = 30 * 1000;
 		
 		public Input() {
 			// Defaults to 30 seconds 
-			this.timeOutDelay = 30 * 1000;
+			this.timeOutDelay = DEFAULT_DELAY;
+			this.monitor = null;
 		}
 
 		public Input(long timeOutDelay) {
 			this.timeOutDelay  = timeOutDelay;
+			this.monitor = null;
+		}
+		
+		public Input(IProgressMonitor monitor) {
+			this.timeOutDelay  = DEFAULT_DELAY;
+			this.monitor = monitor;
+		}
+
+		public Input(long timeOutDelay, IProgressMonitor monitor) {
+			this.timeOutDelay  = timeOutDelay;
+			this.monitor = monitor;
 		}
 	}
 

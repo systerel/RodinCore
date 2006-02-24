@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -34,20 +35,40 @@ public abstract class ClassicB {
 	
 	public static final long DEFAULT_DELAY = 5000;
 	
+	public static final long DEFAULT_PERIOD = 317;
+	
 	private static String iName;
 	private static String oName;
 	
-	private static class ThreadWatcher extends TimerTask {
+	private static class ProverTimeout extends TimerTask {
 		
 		private final Thread thread;
 		
-		public ThreadWatcher(Thread thread) {
+		public ProverTimeout(Thread thread) {
 			this.thread = thread;
 		}
 		
 		@Override
 		public void run() {
 			thread.interrupt();
+		}
+		
+	}
+	
+	private static class ProverCheckCancelled extends TimerTask {
+		
+		private final Thread thread;
+		private final IProgressMonitor monitor;
+		
+		public ProverCheckCancelled(Thread thread, IProgressMonitor monitor) {
+			this.thread = thread;
+			this.monitor = monitor;
+		}
+		
+		@Override
+		public void run() {
+			if(monitor.isCanceled())
+				thread.interrupt();
 		}
 		
 	}
@@ -137,6 +158,11 @@ public abstract class ClassicB {
 	
 	public static boolean proveWithPP(StringBuffer input, long delay)
 	throws IOException {
+		return proveWithPP(input, delay, null);
+	}
+
+	public static boolean proveWithPP(StringBuffer input, long delay, IProgressMonitor monitor)
+	throws IOException {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
@@ -145,7 +171,7 @@ public abstract class ClassicB {
 			printPP(input);
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getPPCommand(iName);
-			return callProver(cmdArray, delay, PP_SUCCESS);
+			return callProver(cmdArray, delay, PP_SUCCESS, monitor);
 		} finally {
 			cleanup();
 		}
@@ -194,14 +220,22 @@ public abstract class ClassicB {
 		return multE;
 	}
 	
-	private static boolean callProver(String[] cmdArray, long delay, String successMsg) 
+	public static boolean proveWithML(StringBuffer input)
+	throws IOException, InterruptedException {
+		return proveWithML(input, DEFAULT_DELAY);
+	}
+	
+	private static boolean callProver(String[] cmdArray, long delay, String successMsg, IProgressMonitor monitor) 
 	throws IOException {
 		
 		Process process = null;
 		try {
 			Timer timer = new Timer();
 			if (delay >0) {
-				timer.schedule(new ThreadWatcher(Thread.currentThread()), delay);
+				timer.schedule(new ProverTimeout(Thread.currentThread()), delay);
+			}
+			if (monitor != null) {
+				timer.schedule(new ProverCheckCancelled(	Thread.currentThread(), monitor), DEFAULT_PERIOD, DEFAULT_PERIOD);
 			}
 			process = Runtime.getRuntime().exec(cmdArray);
 			process.waitFor();
@@ -220,6 +254,11 @@ public abstract class ClassicB {
 	
 	public static boolean proveWithML(StringBuffer input, long delay)
 	throws IOException {
+		return proveWithML(input, delay, null);
+	}
+
+	public static boolean proveWithML(StringBuffer input, long delay, IProgressMonitor monitor)
+	throws IOException {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
@@ -229,7 +268,7 @@ public abstract class ClassicB {
 			printML(patchSequentForML(input.toString()));
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getMLCommand(iName);
-			return callProver(cmdArray, delay, ML_SUCCESS);
+			return callProver(cmdArray, delay, ML_SUCCESS, monitor);
 		} finally {
 			cleanup();
 		}

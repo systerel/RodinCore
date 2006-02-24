@@ -9,6 +9,7 @@ import static org.eventb.core.prover.tactics.BasicTactics.repeat;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 
 import org.eventb.core.prover.Lib;
@@ -43,6 +44,16 @@ public class Tactics {
 	
 	public static ITactic legacyProvers(long timeOutDelay) {
 		final LegacyProvers.Input input = new LegacyProvers.Input(timeOutDelay);
+		return pluginTac(new LegacyProvers(), input);
+	}
+	
+	public static ITactic legacyProvers(IProgressMonitor monitor) {
+		final LegacyProvers.Input input = new LegacyProvers.Input(monitor);
+		return pluginTac(new LegacyProvers(), input);
+	}
+	
+	public static ITactic legacyProvers(long timeOutDelay, IProgressMonitor monitor) {
+		final LegacyProvers.Input input = new LegacyProvers.Input(timeOutDelay, monitor);
 		return pluginTac(new LegacyProvers(), input);
 	}
 	
