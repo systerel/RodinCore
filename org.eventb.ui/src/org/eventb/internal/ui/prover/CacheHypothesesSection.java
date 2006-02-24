@@ -107,7 +107,7 @@ public class CacheHypothesesSection
 	protected void expansionStateChanging(boolean expanding) {
 		if (expanding) {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 150;
+			gd.heightHint = 100;
 			gd.minimumHeight = 75;
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);

@@ -69,37 +69,38 @@ public class ProofsPage
 		search = new SearchHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.COMPACT);
 		managedForm.addPart(search);
 		
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		gd.heightHint = 0;
+		gd.widthHint = 200;
+		search.getSection().setLayoutData(gd);
+
 		cache = new CacheHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
 		managedForm.addPart(cache);
 
-		selected = new SelectedHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
-		managedForm.addPart(selected);
-
-		goal = new GoalSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
-		managedForm.addPart(goal);
-
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 60;
-		gd.minimumHeight = 40;
-		gd.widthHint = 200;
-		goal.getSection().setLayoutData(gd);
-		
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 100;
-		gd.widthHint = 200;
-		selected.getSection().setLayoutData(gd);
-		
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 150;
+		gd.heightHint = 100;
 		gd.minimumHeight = 100;
 		gd.widthHint = 200;
 		cache.getSection().setLayoutData(gd);
 		
+		selected = new SelectedHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		managedForm.addPart(selected);
+
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 0;
+		gd.heightHint = 150;
+		gd.minimumHeight = 100;
 		gd.widthHint = 200;
-		search.getSection().setLayoutData(gd);
+		selected.getSection().setLayoutData(gd);
+		
+		goal = new GoalSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		managedForm.addPart(goal);
+
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 75;
+		gd.minimumHeight = 50;
+		gd.widthHint = 200;
+		goal.getSection().setLayoutData(gd);
+		
 	}
 
 	public void hypothesisChanged(IHypothesisChangeEvent e) {

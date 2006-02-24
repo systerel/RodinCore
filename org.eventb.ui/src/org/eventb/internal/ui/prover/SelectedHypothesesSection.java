@@ -97,7 +97,7 @@ public class SelectedHypothesesSection
 	protected void expansionStateChanging(boolean expanding) {
 		if (expanding) {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 200;
+			gd.heightHint = 150;
 			gd.minimumHeight = 100;
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);

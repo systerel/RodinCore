@@ -133,8 +133,8 @@ public class GoalSection
 	protected void expansionStateChanging(boolean expanding) {
 		if (expanding) {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 60;
-			gd.minimumHeight = 40;
+			gd.heightHint = 75;
+			gd.minimumHeight = 50;
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);
 		}

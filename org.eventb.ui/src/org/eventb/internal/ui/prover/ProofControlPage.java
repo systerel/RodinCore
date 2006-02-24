@@ -398,7 +398,7 @@ public class ProofControlPage
 					gl.numColumns = 2;
 					scrolledForm.getBody().setLayout(gl);
 					gl = new GridLayout();
-					gl.numColumns = 6;
+					gl.numColumns = 7;  // Total number of buttons?
 					gl.makeColumnsEqualWidth = true;
 					buttonContainer.setLayout(gl);
 				}
