@@ -23,19 +23,22 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRSequent extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
 	
-	public String getName();
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
+	
+	String getName();
+	
+	boolean isDischarged() throws RodinDBException;
 
-	public IProofTree makeProofTree() throws RodinDBException;
-	public IPRStatus getStatus() throws RodinDBException;
-	public void updateStatus(IProofTree pt) throws RodinDBException;
+	IProofTree makeProofTree() throws RodinDBException;
+	IPRStatus getStatus() throws RodinDBException;
+	void updateStatus(IProofTree pt) throws RodinDBException;
 	
 
 	// Duplicates from IPOSequent. Typically used only internally.
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	public IPOHypothesis getHypothesis() throws RodinDBException;
-	public IPOAnyPredicate getGoal() throws RodinDBException;
-	public String getHint(String hintName) throws RodinDBException;
+	IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	IPOHypothesis getHypothesis() throws RodinDBException;
+	IPOAnyPredicate getGoal() throws RodinDBException;
+	String getHint(String hintName) throws RodinDBException;
 
 }
