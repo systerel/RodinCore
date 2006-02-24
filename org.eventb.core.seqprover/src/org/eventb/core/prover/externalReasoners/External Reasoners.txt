@@ -15,4 +15,9 @@ ExF : Removing an existential from the hypothesis, making its variables free
 ExI : Providing witnesses for an existential goal
 ImpD : Removing an implicative hypothesis
 LegacyProvers : Old B provers PP/ML
-Trivial : Discharges a sequent with true goal or false hypothesis.
+Trivial : Discharges a sequent with true goal or false hypothesis
+
+
+Next to be implimented:
+DisjI : Removing a disjunction in the goal
+Neg : Removing negations in the goal or a hypotheis
