@@ -68,7 +68,7 @@ public class TheoremMirrorSection
 				theorems = ((IContext) rodinFile).getTheorems();
 			
 			for (int i = 0; i < theorems.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(theorems[i].getElementName()) + ": ";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(theorems[i].getElementName()) + ": ";
 				formString = formString + "</li>";
 				formString = formString + "<li style=\"text\" value=\"\">";
 				formString = formString + UIUtils.XMLWrapUp(((IInternalElement) theorems[i]).getContents()); 

@@ -19,6 +19,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContext;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -59,7 +60,7 @@ public class CarrierSetMirrorSection
 		try {
 			ICarrierSet [] carrierSets = ((IContext) rodinFile).getCarrierSets();
 			for (int i = 0; i < carrierSets.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(carrierSets[i].getElementName()) + ":</li>";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(carrierSets[i].getElementName()) + ":</li>";
 			}
 		}
 		catch (RodinDBException e) {

@@ -62,7 +62,7 @@ public class AxiomMirrorSection
 		try {
 			axioms = ((IContext) rodinFile).getAxioms();
 			for (int i = 0; i < axioms.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(axioms[i].getElementName()) + ": ";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(axioms[i].getElementName()) + ": ";
 				formString = formString + "</li>";
 				formString = formString + "<li style=\"text\" value=\"\">";
 				formString = formString + UIUtils.XMLWrapUp(((IInternalElement) axioms[i]).getContents()); 

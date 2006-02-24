@@ -18,6 +18,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IContext;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -59,7 +60,7 @@ public class ConstantMirrorSection
 		try {
 			IRodinElement [] constants = ((IContext) rodinFile).getConstants();
 			for (int i = 0; i < constants.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(constants[i].getElementName()) + ":</li>";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(constants[i].getElementName()) + ":</li>";
 			}
 		}
 		catch (RodinDBException e) {

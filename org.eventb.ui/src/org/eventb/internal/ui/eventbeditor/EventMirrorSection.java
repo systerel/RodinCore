@@ -66,7 +66,7 @@ public class EventMirrorSection
 		try {
 			IEvent [] events = ((IMachine) rodinFile).getEvents();
 			for (int i = 0; i < events.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(events[i].getElementName()) + ":</li>";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(events[i].getElementName()) + ":</li>";
 				IRodinElement [] lvars = events[i].getChildrenOfType(IVariable.ELEMENT_TYPE);
 				IRodinElement [] guards = events[i].getChildrenOfType(IGuard.ELEMENT_TYPE);
 				IRodinElement [] actions = events[i].getChildrenOfType(IAction.ELEMENT_TYPE);
@@ -76,9 +76,9 @@ public class EventMirrorSection
 					formString = formString + "<b>ANY</b> ";
 					for (int j = 0; j < lvars.length; j++) {
 						if (j == 0)	{
-							formString = formString + makeHyperlink(lvars[j].getElementName());
+							formString = formString + UIUtils.makeHyperlink(lvars[j].getElementName());
 						}
-						else formString = formString + ", " + makeHyperlink(lvars[j].getElementName());
+						else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getElementName());
 					}			
 					formString = formString + " <b>WHERE</b>";
 					formString = formString + "</li>";
@@ -97,7 +97,7 @@ public class EventMirrorSection
 
 				for (int j = 0; j < guards.length; j++) {
 					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + makeHyperlink(guards[j].getElementName()) + ": "
+					formString = formString + UIUtils.makeHyperlink(guards[j].getElementName()) + ": "
 						+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
 					formString = formString + "</li>";
 				}
@@ -109,7 +109,7 @@ public class EventMirrorSection
 			
 				for (int j = 0; j < actions.length; j++) {
 					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + makeHyperlink(((IInternalElement) actions[j]).getContents());
+					formString = formString + UIUtils.makeHyperlink(((IInternalElement) actions[j]).getContents());
 					formString = formString + "</li>";
 				}
 				formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";

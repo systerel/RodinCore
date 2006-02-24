@@ -61,7 +61,7 @@ public class InvariantMirrorSection
 		try {
 			IRodinElement [] invariants = ((IMachine) rodinFile).getInvariants();
 			for (int i = 0; i < invariants.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + makeHyperlink(invariants[i].getElementName()) + ": ";
+				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(invariants[i].getElementName()) + ": ";
 				formString = formString + "</li>";
 				formString = formString + "<li style=\"text\" value=\"\">";
 				formString = formString + UIUtils.XMLWrapUp(((IInternalElement) invariants[i]).getContents()); 
