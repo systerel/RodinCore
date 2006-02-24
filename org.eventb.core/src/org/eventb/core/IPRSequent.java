@@ -33,7 +33,7 @@ public interface IPRSequent extends IInternalElement {
 	IProofTree makeProofTree() throws RodinDBException;
 	IPRStatus getStatus() throws RodinDBException;
 	void updateStatus(IProofTree pt) throws RodinDBException;
-	
+	IPODescription getDescription() throws RodinDBException;
 
 	// Duplicates from IPOSequent. Typically used only internally.
 	IPOIdentifier[] getIdentifiers() throws RodinDBException;
