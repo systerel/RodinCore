@@ -83,11 +83,6 @@ public class PRSequent extends InternalElement implements IPRSequent {
 		return goal;
 	}
 	
-	public String getHint(String hintName) throws RodinDBException {
-		// TODO implement hints as attributes
-		return null;
-	}
-	
 	public IPODescription getDescription() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPODescription.ELEMENT_TYPE);
 		assert list.size() == 1;

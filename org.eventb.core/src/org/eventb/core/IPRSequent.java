@@ -39,6 +39,5 @@ public interface IPRSequent extends IInternalElement {
 	IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	IPOHypothesis getHypothesis() throws RodinDBException;
 	IPOAnyPredicate getGoal() throws RodinDBException;
-	String getHint(String hintName) throws RodinDBException;
 
 }
