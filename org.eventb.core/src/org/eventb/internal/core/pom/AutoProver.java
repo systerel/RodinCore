@@ -1,20 +1,52 @@
 package org.eventb.internal.core.pom;
 
+import org.eventb.core.IPRFile;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.tactics.Tactics;
+import org.rodinp.core.RodinDBException;
 
 public class AutoProver {
+	
+	private static boolean enabled = true;
 	
 	// Default delay for automatic proofs: 2 seconds
 	private static long timeOutDelay = 2 * 1000;
 	
-	private static boolean enabled = true;
+	public static void disable() {
+		enabled = false;
+	}
 	
+	public static void enable() {
+		enabled = true;
+	}
+
+	public static boolean isEnabled() {
+		return enabled;
+	}
+
+	public static void setTimeOutDelay(long value) {
+		timeOutDelay = value;
+	}
+
 	public AutoProver() {
 		// Nothing to do.
 	}
 	
-	public void run(IProofTree pt) {
+	public void run(IPRFile prFile) throws RodinDBException {
+		final IPRSequent[] pos = prFile.getSequents();
+		for (IPRSequent po : pos) {
+			if (! po.isDischarged()) {
+				IProofTree tree = po.makeProofTree();
+				run(tree);
+				if (tree.isDischarged()) {
+					po.updateStatus(tree);
+				}
+			}
+		}
+	}
+	
+	private void run(IProofTree pt) {
 		if (! enabled)
 			return;
 		
@@ -24,23 +56,8 @@ public class AutoProver {
 			return;
 		
 		// Then, try with the legacy provers.
+		pt.getRoot().pruneChildren();
 		Tactics.legacyProvers(timeOutDelay).apply(pt.getRoot());
-	}
-
-	public static void setTimeOutDelay(long value) {
-		timeOutDelay = value;
-	}
-
-	public static void enable() {
-		enabled = true;
-	}
-	
-	public static void disable() {
-		enabled = false;
-	}
-	
-	public static boolean isEnabled() {
-		return enabled;
 	}
 	
 }
