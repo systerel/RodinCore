@@ -230,6 +230,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * @see org.eventb.core.prover.IProofTreeNode#pruneChildren()
 	 */
 	public void pruneChildren() {
+		if (isOpen())
+			return;
 		this.rule = null;
 		// Detach all children from this proof tree.
 		for (ProofTreeNode child: this.children) {
