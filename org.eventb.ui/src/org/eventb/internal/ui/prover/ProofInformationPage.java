@@ -127,8 +127,6 @@ public class ProofInformationPage
 			}
 		}
 			
-			
-		
 		formString = formString + "</form>";
 		formText.setText(formString, true, false);
 		scrolledForm.reflow(true);

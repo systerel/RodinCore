@@ -19,6 +19,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -70,7 +71,7 @@ public class TheoremMirrorSection
 				formString = formString + "<li style=\"bullet\">" + makeHyperlink(theorems[i].getElementName()) + ": ";
 				formString = formString + "</li>";
 				formString = formString + "<li style=\"text\" value=\"\">";
-				formString = formString + ((IInternalElement) theorems[i]).getContents(); 
+				formString = formString + UIUtils.XMLWrapUp(((IInternalElement) theorems[i]).getContents()); 
 				formString = formString + "</li>";
 			}
 		}

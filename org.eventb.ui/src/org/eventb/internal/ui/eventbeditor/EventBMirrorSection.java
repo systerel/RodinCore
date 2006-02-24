@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -112,7 +113,7 @@ public abstract class EventBMirrorSection
 	 * @return XML formatted string represents the link
 	 */
 	protected String makeHyperlink(String link) {
-		return "<a href=\"" + link + "\">" + link + "</a>";
+		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" + UIUtils.XMLWrapUp(link) + "</a>";
 	}
 	
 	

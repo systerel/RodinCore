@@ -55,7 +55,6 @@ public class HypothesisRow
 	private Composite buttonComposite;
 	private Composite hypothesisComposite;
 	private List<Text> textBoxes;
-	private Text hypothesisText;
 	private UserSupport userSupport;
 	private Hypothesis hyp;
 	
@@ -198,10 +197,10 @@ public class HypothesisRow
 	        form.setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
-			form.setText("<form><p>" + " · " + image + "</p></form>", true, false);
+			form.setText(UIUtils.XMLWrapUp("<form><p>" + image + "</p></form>"), true, false);
         }
         else {
-        	hypothesisText = toolkit.createText(hypothesisComposite, hyp.toString(), SWT.READ_ONLY);
+        	Text hypothesisText = toolkit.createText(hypothesisComposite, hyp.toString(), SWT.READ_ONLY);
         	gd = new GridData(GridData.FILL_HORIZONTAL);
         	hypothesisText.setLayoutData(gd);
         }
@@ -214,7 +213,7 @@ public class HypothesisRow
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
 			System.out.println("Create tactic for " + t);
-			formString = formString + "<a href=\"" + t + "\">" + t +"</a> ";
+			formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t) + "\">" + UIUtils.XMLWrapUp(t) +"</a> ";
 		}
 		
 		formString = formString + "</li></form>";
@@ -229,7 +228,6 @@ public class HypothesisRow
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();
-		hypothesisText.dispose();
 	}
 	
 	protected boolean isSelected() {return checkBox.getSelection();}

@@ -22,6 +22,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -96,7 +97,8 @@ public class EventMirrorSection
 
 				for (int j = 0; j < guards.length; j++) {
 					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + makeHyperlink(guards[j].getElementName()) + ": " + ((IInternalElement) guards[j]).getContents();
+					formString = formString + makeHyperlink(guards[j].getElementName()) + ": "
+						+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
 					formString = formString + "</li>";
 				}
 				

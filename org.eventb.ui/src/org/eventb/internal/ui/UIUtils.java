@@ -239,4 +239,11 @@ public class UIUtils {
 		return names;
 	}
 
+	public static String XMLWrapUp(String input) {
+		String output = input;
+		output = output.replaceAll("&", "&amp;");
+		output = output.replaceAll("<", "&lt;");
+		output = output.replaceAll(">", "&gt;");
+		return output;
+	}
 }

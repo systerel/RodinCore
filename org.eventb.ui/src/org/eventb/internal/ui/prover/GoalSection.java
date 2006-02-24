@@ -210,7 +210,7 @@ public class GoalSection
 		        formText.setLayoutData(gd);
 				SourceLocation loc = qpred.getPredicate().getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
-				formText.setText("<form><p>" + " · " + image + "</p></form>", true, false);
+				formText.setText(" · " + image, false, false);
 				scrolledForm.reflow(true);
 			}
 			else {
