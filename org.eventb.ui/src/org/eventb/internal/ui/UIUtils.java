@@ -314,4 +314,14 @@ public class UIUtils {
 	public static String makeHyperlink(String link) {
 		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" + UIUtils.XMLWrapUp(link) + "</a>";
 	}
+
+	/**
+	 * Utitlity method to create a text and link with the same label
+	 * <p>
+	 * @param link a String
+	 * @return XML formatted string represents the link
+	 */
+	public static String makeHyperlink(String link, String text) {
+		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" + UIUtils.XMLWrapUp(text) + "</a>";
+	}
 }

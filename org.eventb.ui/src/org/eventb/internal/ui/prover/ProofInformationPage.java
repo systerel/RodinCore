@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -28,7 +30,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPODescription;
 import org.eventb.core.IPOSource;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -39,7 +40,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -117,13 +117,7 @@ public class ProofInformationPage
 		scrolledForm.reflow(true);
 	}
 
-	private void setFormText(IPRSequent prSequent) {
-		IPRFile prFile = (IPRFile) prSequent.getOpenable();
-		IRodinFile rodinFile = null;
-		if (prFile.getMachine().exists()) rodinFile = prFile.getMachine();
-		else if (prFile.getContext().exists()) rodinFile = prFile.getContext();
-		System.out.println("File " + rodinFile.getElementName());
-		
+	private void setFormText(IPRSequent prSequent) {		
 		try {
 			String formString = "<form>";
 
@@ -135,30 +129,31 @@ public class ProofInformationPage
 				formString = formString + "<li style=\"bullet\">" + role + "</li>";
 
 				String id = source.getSourceHandleIdentifier();
-				System.out.println("ID " + id);
-				// TODO Dirty fix to get the uncheck element
+
+				// TODO Dirty fix to get the uncheck element handle identifier
 				id = id.replaceFirst("bcm", "bum");
 				id = id.replaceFirst("bcc", "buc");
 				id = id.replaceFirst("scEvent", "event");
 				System.out.println("ID unchecked model " + id);
+				
 				IRodinElement element = RodinCore.create(id);
 				if (element instanceof ITheorem) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
 					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
 					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
 					formString = formString + "</li>";
 				}
 				else if (element instanceof IInvariant) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ": ";
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
 					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
 					formString = formString + "</li>";
 				}
 				else if (element instanceof IEvent) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(element.getElementName()) + ":</li>";
+					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ":</li>";
 					IRodinElement [] lvars = ((IParent) element).getChildrenOfType(IVariable.ELEMENT_TYPE);
 					IRodinElement [] guards = ((IParent) element).getChildrenOfType(IGuard.ELEMENT_TYPE);
 					IRodinElement [] actions = ((IParent) element).getChildrenOfType(IAction.ELEMENT_TYPE);
@@ -168,9 +163,9 @@ public class ProofInformationPage
 						formString = formString + "<b>ANY</b> ";
 						for (int j = 0; j < lvars.length; j++) {
 							if (j == 0)	{
-								formString = formString + UIUtils.makeHyperlink(lvars[j].getElementName());
+								formString = formString + UIUtils.makeHyperlink(lvars[j].getHandleIdentifier(), lvars[j].getElementName());
 							}
-							else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getElementName());
+							else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getHandleIdentifier(), lvars[j].getElementName());
 						}			
 						formString = formString + " <b>WHERE</b>";
 						formString = formString + "</li>";
@@ -189,7 +184,7 @@ public class ProofInformationPage
 
 					for (int j = 0; j < guards.length; j++) {
 						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString + UIUtils.makeHyperlink(guards[j].getElementName()) + ": "
+						formString = formString + UIUtils.makeHyperlink(guards[j].getHandleIdentifier(), guards[j].getElementName()) + ": "
 							+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
 						formString = formString + "</li>";
 					}
@@ -201,7 +196,7 @@ public class ProofInformationPage
 				
 					for (int j = 0; j < actions.length; j++) {
 						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString + UIUtils.makeHyperlink(((IInternalElement) actions[j]).getContents());
+						formString = formString + UIUtils.makeHyperlink(actions[j].getHandleIdentifier(), ((IInternalElement) actions[j]).getContents());
 						formString = formString + "</li>";
 					}
 					formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
@@ -210,6 +205,20 @@ public class ProofInformationPage
 			}
 			formString = formString + "</form>";
 			formText.setText(formString, true, false);
+			
+			formText.addHyperlinkListener(new HyperlinkAdapter() {
+
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
+				 */
+				@Override
+				public void linkActivated(HyperlinkEvent e) {
+					String id = (String) e.getHref();
+					IRodinElement element = RodinCore.create(id);
+					UIUtils.linkToEventBEditor(element);
+				}
+
+			});
 			scrolledForm.reflow(true);
 		}
 		catch (RodinDBException e) {
