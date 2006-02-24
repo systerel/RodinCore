@@ -142,14 +142,14 @@ public class ProofsPage
 	 */
 	public void proofStatusChanged(final boolean complete) {
 		goal.markDirty();
-		final PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
-		
-		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
-		display.syncExec (new Runnable () {
-			public void run () {
-				if (complete) dialog.open();
-			}
-		});
+//		final PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
+//		
+//		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+//		display.syncExec (new Runnable () {
+//			public void run () {
+//				if (complete) dialog.open();
+//			}
+//		});
 	}
 	
 }
