@@ -1,45 +1,21 @@
 package org.eventb.core.testpom;
 
-import java.util.Map;
-
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRStatus.Overview;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.internal.core.pom.AutoPOM;
-import org.eventb.internal.core.pom.PRUtil;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
+import org.eventb.core.IPRSequent;
+import org.eventb.core.IPRStatus;
+import org.eventb.core.testscpog.BuilderTest;
+import org.eventb.internal.core.pom.AutoProver;
+import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
-public class AutoPOMTest extends TestCase {
+public class AutoPOMTest extends BuilderTest {
 
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	IRodinProject rodinProject;
-	IPOFile poFile;
-	IPRFile prFile;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		RodinCore.create(workspace.getRoot()).open(null);  // TODO temporary kludge
-		IProject project = workspace.getRoot().getProject("PROJ");
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(description, null);
-		rodinProject = RodinCore.create(project);
-		rodinProject.open(null);
-		
-		poFile = (IPOFile) rodinProject.createRodinFile("x.bpo", true, null);
-		poFile.open(null);
+	private IPOFile createPOFile() throws RodinDBException {
+		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("x.bpo", true, null);
 		POUtil.addTypes(poFile, POUtil.mp("x"), POUtil.mp("ℤ"));
 		POUtil.addPredicateSet(poFile, "hyp0", POUtil.mp("1=1","2=2","x∈ℕ"), null);
 		POUtil.addSequent(poFile, "PO1", 
@@ -84,41 +60,91 @@ public class AutoPOMTest extends TestCase {
 						POUtil.mp("y∈ℕ"), 
 						POUtil.mp()), 
 				POUtil.mp("x' ≔y","1=1 ∧2=2 ∧x ∈ℕ∧x' ∈ℕ"));
+		POUtil.addSequent(poFile, "PO7", 
+				"hyp0", 
+				POUtil.mp("y"), POUtil.mp("ℤ"), 
+				POUtil.mh(
+						POUtil.mp(),
+						POUtil.mp()), 
+				POUtil.mp("y∈ℕ"));
 		poFile.save(null, true);
-		
-		prFile = (IPRFile) rodinProject.createRodinFile("x.bpr", true, null);
-		prFile.open(null);
-		prFile.save(null, true);
+		return poFile;
 	}
 
 	/*
 	 * Test method for 'org.eventb.internal.core.pom.AutoPOM.AutoPOM(IPOFile, IInterrupt, IProgressMonitor)'
 	 */
 	public final void testAutoPOM() throws CoreException {
-		AutoPOM autoPOM = new AutoPOM();
-		autoPOM.init(poFile,prFile,null,null);
-		autoPOM.writePRFile();
-		Map<String, IProverSequent> poPOs = POUtil.readPOs(poFile);
-		Map<String, IProverSequent> prPOs = PRUtil.readPOs(prFile);
 		
-		assertEquals(poPOs.keySet(), prPOs.keySet());
-		for (String name : poPOs.keySet()){
-			assertTrue(Lib.identical(poPOs.get(name),poPOs.get(name)));
+		IPOFile poFile = createPOFile();
+		IPRFile prFile = poFile.getPRFile();
+
+		AutoProver.enable();
+		runBuilder();
+		
+		// Checks that POs in PR files are the same as POs in PO file.
+		checkSameContents(poFile, prFile);
+		
+		// Checks that all POs are discharged except the last one.
+		IPRSequent[] prs = prFile.getSequents();
+		for (int i = 0; i < prs.length - 1; i++) {
+			IPRSequent prSequent = prs[i];
+			assertDischarged(prSequent);
 		}
-		
-		Map<String, Overview> prStatus = PRUtil.readStatus(prFile);
-		assertEquals(prPOs.keySet(), prStatus.keySet());
-		assertFalse(prStatus.values().contains(Overview.DISCHARGED));
-		autoPOM.runAutoProver();
-		prStatus = PRUtil.readStatus(prFile);
-		assertTrue(prStatus.values().contains(Overview.DISCHARGED));
+		assertNotDischarged(prs[prs.length-1]);
 	}
 
+	private void checkSameContents(
+			IInternalParent poElement,
+			IInternalParent prElement) throws RodinDBException {
+		
+		if (poElement instanceof IPOFile) {
+			// No comparison to do
+		} else if (poElement instanceof IPOSequent) {
+			assertEquals("PO names differ",
+					poElement.getElementName(), prElement.getElementName());
+		} else {
+			assertEquals("element names differ",
+					poElement.getElementName(), prElement.getElementName());
+			assertEquals("element names differ",
+					poElement.getElementType(), prElement.getElementType());
+		}
+		
+		final IRodinElement[] poChildren = poElement.getChildren();
+		final IRodinElement[] prChildren = prElement.getChildren();
+		if (poElement instanceof IPOSequent) {
+			int poIdx = 0;
+			int prIdx = 0;
+			while (poIdx < poChildren.length && prIdx < prChildren.length) {
+				final IInternalParent poChild = (IInternalParent) poChildren[poIdx];
+				final IInternalParent prChild = (IInternalParent) prChildren[prIdx];
+				if (prChild instanceof IPRStatus) {
+					++ prIdx;
+				} else {
+					checkSameContents(poChild, prChild);
+					++ poIdx;
+					++ prIdx;
+				}
+			}
+			assertEquals("Not all PO elements were copied",
+					poChildren.length, poIdx);
+			assertEquals("Too many PR elements",
+					prChildren.length, prIdx);
+		}
+	}
 
-	
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		rodinProject.getProject().delete(true, true, null);
+	private void assertDischarged(IPRSequent prSequent) throws RodinDBException {
+		IPRStatus status = prSequent.getStatus();
+		assertEquals("PO " + prSequent.getName() + " should be discharged",
+				IPRStatus.Overview.DISCHARGED,
+				status.getOverview());
+	}
+
+	private void assertNotDischarged(IPRSequent prSequent) throws RodinDBException {
+		IPRStatus status = prSequent.getStatus();
+		assertEquals("PO " + prSequent.getName() + " should not be discharged",
+				IPRStatus.Overview.PENDING,
+				status.getOverview());
 	}
 
 }
