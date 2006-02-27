@@ -53,7 +53,8 @@ public abstract class ProverShell {
 		} catch (IOException e1) {
 			return null;
 		}
-		return url.getFile();
+		IPath path = new Path(url.getFile());
+		return path.toOSString();
 	}
 	
 	/*
@@ -68,6 +69,18 @@ public abstract class ProverShell {
 				fileName
 		);
 		String pathString = getLocalPath(relativePath);
+		return pathString;
+	}
+
+	/*
+	 * Returns a resolved local path for an OS-dependent tool distributed as part
+	 * of this plugin or a fragment of it.
+	 */
+	private static String getExecutablePath(String fileName) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			fileName = fileName + ".exe";
+		}
+		String pathString = getToolPath(fileName);
 		makeExecutable(pathString);
 		return pathString;
 	}
@@ -103,8 +116,8 @@ public abstract class ProverShell {
 	
 	private static void computeCache() {
 		if (cached) return;
-		krtPath = getToolPath("krt");
-		pkPath = getToolPath("pk");
+		krtPath = getExecutablePath("krt");
+		pkPath = getExecutablePath("pk");
 		MLKinPath = getToolPath("ML.kin");
 		PPKinPath = getToolPath("PP.kin");
 		MLSTPath = getSymPath("ML_ST");
@@ -126,7 +139,7 @@ public abstract class ProverShell {
 			"-3",
 			"-s",
 			MLSTPath,
-			input
+			input,
 		};
 	}
 
@@ -138,7 +151,7 @@ public abstract class ProverShell {
 			"-3",
 			"-s",
 			PPSTPath,
-			input
+			input,
 		};
 	}
 
@@ -147,11 +160,13 @@ public abstract class ProverShell {
 		if (! toolsPresent) return null;
 		return new String[] { 
 			krtPath,
+			"-a",
+			"m1500000",
 			"-p",
 			"rmcomm",
 			"-b",
 			MLKinPath,
-			input
+			input,
 		};
 	}
 
@@ -164,7 +179,7 @@ public abstract class ProverShell {
 			"rmcomm",
 			"-b",
 			PPKinPath,
-			input
+			input,
 		};
 	}
 
