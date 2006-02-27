@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -63,7 +64,7 @@ public class NameInputRow
 			try {
 				IInternalElement input = page.getInput();
 				if (input.exists()) {
-					System.out.println("Commit name: " + input + " to be " + name);
+					if (UIUtils.debug) System.out.println("Commit name: " + input + " to be " + name);
 					if (!(input.getElementName().equals(name))) {
 						SectionPart masterPart = page.getBlock().getMasterPart();
 						boolean expand = false;
@@ -80,20 +81,20 @@ public class NameInputRow
 						for (i = 0; i < children.length; i++) {
 							if (children[i].getElementName().equals(name)) {
 								page.setInput((IInternalElement) children[i]);
-								System.out.println("New element " + children[i].getElementName() + " with content " + ((IInternalElement) children[i]).getContents());								break;
+								if (UIUtils.debug) System.out.println("New element " + children[i].getElementName() + " with content " + ((IInternalElement) children[i]).getContents());								break;
 							}
 						}
 						if (i == children.length) {
-							System.out.println("WARNING: CANNOT FIND THE NEW ELEMENT");
+							if (UIUtils.debug) System.out.println("WARNING: CANNOT FIND THE NEW ELEMENT");
 						}
-						//	System.out.println("After " + input.getContents());
+						//	if (UIUtils.debug) System.out.println("After " + input.getContents());
 						if (masterPart instanceof EventBTablePartWithButtons) {
-							System.out.println("Master refresh");
+							if (UIUtils.debug) System.out.println("Master refresh");
 							((EventBTablePartWithButtons) masterPart).commit();
 //							((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
 						}
 						else if (masterPart instanceof EventBTreePartWithButtons) {
-							System.out.println("Master refresh");
+							if (UIUtils.debug) System.out.println("Master refresh");
 							TreeViewer viewer = ((EventBTreePartWithButtons) masterPart).getViewer();
 							Control control = viewer.getControl();
 							control.setRedraw(false);

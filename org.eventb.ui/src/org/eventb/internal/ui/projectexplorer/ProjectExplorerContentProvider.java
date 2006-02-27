@@ -33,6 +33,7 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -176,7 +177,7 @@ public class ProjectExplorerContentProvider
 					r.run();
 				} finally {
 					//removePendingChange();
-					//System.out.println("Runned");
+					//if (UIUtils.debug) System.out.println("Runned");
 				}
 			}
 		};
@@ -196,7 +197,7 @@ public class ProjectExplorerContentProvider
 	 * Register/De-register to the Rodin Core when the input is change 
 	 */
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		//System.out.println("Input change, redisplay the tree");
+		//if (UIUtils.debug) System.out.println("Input change, redisplay the tree");
 		if (oldInput == null && newInput != null)
 			RodinCore.addElementChangedListener(this);
 		else if (oldInput != null && newInput == null)
@@ -209,7 +210,7 @@ public class ProjectExplorerContentProvider
 	 * The tree is dispose
 	 */
 	public void dispose() {
-		System.out.println("******* DISPOSE ********");
+		if (UIUtils.debug) System.out.println("******* DISPOSE ********");
 	}
 	
 	
@@ -240,7 +241,7 @@ public class ProjectExplorerContentProvider
 		if (parent instanceof IMachine) {
 			IMachine mch = (IMachine) parent;
 			if (elementsMap.containsKey(mch)) {
-				//System.out.println("Already explored");
+				//if (UIUtils.debug) System.out.println("Already explored");
 				return (Object []) elementsMap.get(mch);
 			}
 			else {
@@ -259,7 +260,7 @@ public class ProjectExplorerContentProvider
 			IContext ctx = (IContext) parent;
 			
 			if (elementsMap.containsKey(ctx)) {
-				// System.out.println("Already explored");
+				// if (UIUtils.debug) System.out.println("Already explored");
 				return (Object []) elementsMap.get(ctx);
 			}
 			else {

@@ -69,7 +69,7 @@ public class EventBKeyboardTextTranslator
 		
 			String subString = text.substring(beginIndex, endIndex);
 		
-			//System.out.println("Substring: |" + subString + "|");
+			//if (EventBKeyboardPlugin.debug) System.out.println("Substring: |" + subString + "|");
 		
 			int index = subString.indexOf(test);
 		
@@ -78,7 +78,7 @@ public class EventBKeyboardTextTranslator
 					if (!isTextCharacter(subString.charAt(index+test.length()))) {
 						if (index != 0) {
 							if (!isTextCharacter(subString.charAt(index-1))) {
-								//System.out.println("Found: " + test + " at " + (beginIndex+index));
+								//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
 								widget.setSelection(beginIndex + index, beginIndex+index+test.length());
 								widget.insert(textComboTranslation[i]);
 								isTranslated = true;
@@ -86,7 +86,7 @@ public class EventBKeyboardTextTranslator
 						}
 						else {
 							if (beginIndex == 0) {
-								//System.out.println("Found: " + test + " at " + (beginIndex+index));
+								//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
 								widget.setSelection(beginIndex + index, beginIndex+index+test.length());
 								widget.insert(textComboTranslation[i]);
 								isTranslated = true;

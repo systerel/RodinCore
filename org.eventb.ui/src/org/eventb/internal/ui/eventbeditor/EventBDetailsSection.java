@@ -21,6 +21,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -95,7 +96,7 @@ public abstract class EventBDetailsSection
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
-		System.out.println("COMMIT");
+		if (UIUtils.debug) System.out.println("COMMIT");
 		super.commit(onSave);
 		for (int i = 0; i < rows.size(); i++)
 			((EventBInputRow) rows.get(i)).commit();

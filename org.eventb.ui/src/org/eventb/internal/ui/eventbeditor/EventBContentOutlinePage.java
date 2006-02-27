@@ -290,27 +290,27 @@ public class EventBContentOutlinePage
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Process the delta increamentally, see ObligationExplorerContentProvider
-		//System.out.println("Update the Explorer " + event.toString());
+		//if (UIUtils.debug) System.out.println("Update the Explorer " + event.toString());
 		IRodinElementDelta [] elements = event.getDelta().getAffectedChildren();
 		for (int i = 0; i < elements.length; i++) {
-			//System.out.println(elements[i].toString() + " which is " + elements[i].getKind() + " contains " + elements[i].getElement());
+			//if (UIUtils.debug) System.out.println(elements[i].toString() + " which is " + elements[i].getKind() + " contains " + elements[i].getElement());
 			if ((elements[i].getKind() & IRodinElementDelta.ADDED) != 0) {
-				//System.out.println("Refresh add " + elements[i].getElement());
+				//if (UIUtils.debug) System.out.println("Refresh add " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
 				//viewer.refresh();
-				//System.out.println("******* Finish Updating *****");
+				//if (UIUtils.debug) System.out.println("******* Finish Updating *****");
 			}
 			else if ((elements[i].getKind() & IRodinElementDelta.REMOVED) != 0) {
-				//System.out.println("Refresh delete " + elements[i].getElement());
+				//if (UIUtils.debug) System.out.println("Refresh delete " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
 				//viewer.refresh();
 			}
 			else if ((elements[i].getKind() & IRodinElementDelta.CHANGED) != 0) {
-				//System.out.println("Refresh change " + elements[i].getElement());
+				//if (UIUtils.debug) System.out.println("Refresh change " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
@@ -325,7 +325,7 @@ public class EventBContentOutlinePage
 					update();
 				}
 			});
-			//System.out.println("********** Finish changing **********");
+			//if (UIUtils.debug) System.out.println("********** Finish changing **********");
 		}
 	}
 }

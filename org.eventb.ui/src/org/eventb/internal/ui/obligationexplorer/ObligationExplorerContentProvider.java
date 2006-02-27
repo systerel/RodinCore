@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRStatus;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -144,7 +145,7 @@ public class ObligationExplorerContentProvider
 	 * @param updateLabels <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
-//		System.out.println("Post refresh");
+//		if (UIUtils.debug) System.out.println("Post refresh");
 		postRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
@@ -153,7 +154,7 @@ public class ObligationExplorerContentProvider
 					Object [] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
-//						System.out.println("Refresh " + obj);
+//						if (UIUtils.debug) System.out.println("Refresh " + obj);
 						viewer.refresh(obj, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
@@ -170,7 +171,7 @@ public class ObligationExplorerContentProvider
 					r.run();
 				} finally {
 					//removePendingChange();
-					//System.out.println("Runned");
+					//if (UIUtils.debug) System.out.println("Runned");
 				}
 			}
 		};
@@ -203,7 +204,7 @@ public class ObligationExplorerContentProvider
 	 */
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
-		System.out.println("******* DISPOSE ********");
+		if (UIUtils.debug) System.out.println("******* DISPOSE ********");
 	}
 	
 	

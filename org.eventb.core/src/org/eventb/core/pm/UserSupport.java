@@ -240,33 +240,33 @@ public class UserSupport
 			Collection<Hypothesis> newDisplayCached = new HashSet<Hypothesis>();
 			for (Iterator<Hypothesis> it = newProofState.getCached().iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-//				System.out.print("In cache: " + hyp);
+//				if (UserSupportUtils.debug) System.out.print("In cache: " + hyp);
 				if (displayCached.contains(hyp)) {   
-//					System.out.print(", currently display");
+//					if (UserSupportUtils.debug) System.out.print(", currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
-//						System.out.println(", valid");
+//						if (UserSupportUtils.debug) System.out.println(", valid");
 						newDisplayCached.add(hyp);
 					}
 					else {                                  // cached, display, (invalid or selected)
-//						System.out.println(", invalid");
+//						if (UserSupportUtils.debug) System.out.println(", invalid");
 						removedFromCached.add(hyp);
 					}
 					displayCached.remove(hyp);
 				}
 				else {
-//					System.out.print(", not currently display");
+//					if (UserSupportUtils.debug) System.out.print(", not currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
-//						System.out.println(", valid");
+//						if (UserSupportUtils.debug) System.out.println(", valid");
 						newDisplayCached.add(hyp);
 						addedToCached.add(hyp);
 					}
-//					else System.out.println();
+//					else if (UserSupportUtils.debug) System.out.println();
 				}
 			}
 			
 			for (Iterator<Hypothesis> it = displayCached.iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-//				System.out.println("Currently display but not in cached: " + hyp);
+//				if (UserSupportUtils.debug) System.out.println("Currently display but not in cached: " + hyp);
 				removedFromCached.add(hyp);                        // display, invalid or selected, not(cached)
 			}
 			
@@ -279,35 +279,35 @@ public class UserSupport
 			Collection<Hypothesis> newDisplaySearched = new HashSet<Hypothesis>();
 			for (Iterator<Hypothesis> it = newProofState.getSearched().iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-				System.out.print("In searched: " + hyp);
+				if (UserSupportUtils.debug) System.out.print("In searched: " + hyp);
 				if (displaySearched.contains(hyp)) {   
-					System.out.print(", currently display");
+					if (UserSupportUtils.debug) System.out.print(", currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, display, valid & not selected
-						System.out.println(", valid");
+						if (UserSupportUtils.debug) System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 					}
 					else {                                  // cached, display, (invalid or selected)
-						System.out.println(", invalid");
+						if (UserSupportUtils.debug) System.out.println(", invalid");
 						removedFromSearched.add(hyp);
 					}
 					displaySearched.remove(hyp);
 				}
 				else {
-					System.out.print(", not currently display");
+					if (UserSupportUtils.debug) System.out.print(", not currently display");
 					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, not(display), valid & not selected
-						System.out.println(", valid");
+						if (UserSupportUtils.debug) System.out.println(", valid");
 						newDisplaySearched.add(hyp);
 						addedToSearched.add(hyp);
 					}
 					else {
-						System.out.println(", invalid");
+						if (UserSupportUtils.debug) System.out.println(", invalid");
 					}
 				}
 			}
 			
 			for (Iterator<Hypothesis> it = displaySearched.iterator(); it.hasNext();) {
 				Hypothesis hyp = it.next();
-				System.out.println("Currently display but not in searched: " + hyp);
+				if (UserSupportUtils.debug) System.out.println("Currently display but not in searched: " + hyp);
 				removedFromSearched.add(hyp);                        // display, invalid or selected, not(cached)
 			}
 			displaySearched = newDisplaySearched;
@@ -317,17 +317,17 @@ public class UserSupport
 	}
 	
 	private boolean isValid(Hypothesis hyp, IProofTreeNode pt) {
-		System.out.println("Is Valid? " + pt != null && pt.getSequent().hypotheses().contains(hyp));
+		if (UserSupportUtils.debug) System.out.println("Is Valid? " + pt != null && pt.getSequent().hypotheses().contains(hyp));
 		return (pt != null && pt.getSequent().hypotheses().contains(hyp));
 	}
 	
 	private boolean isSelected(Hypothesis hyp, IProofTreeNode pt) {
-		System.out.println("Is Selected? " + pt.getSequent().selectedHypotheses().contains(hyp));
+		if (UserSupportUtils.debug) System.out.println("Is Selected? " + pt.getSequent().selectedHypotheses().contains(hyp));
 		return pt.getSequent().selectedHypotheses().contains(hyp);
 	}
 	
 	private boolean isCached(Hypothesis hyp) {
-		System.out.println("Is Cached? " + proofState.getCached().contains(hyp));
+		if (UserSupportUtils.debug) System.out.println("Is Cached? " + proofState.getCached().contains(hyp));
 		return proofState.getCached().contains(hyp);
 	}
 	

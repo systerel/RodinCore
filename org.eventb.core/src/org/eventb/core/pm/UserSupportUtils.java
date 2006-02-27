@@ -13,6 +13,8 @@ import org.eventb.core.prover.sequent.SimpleProverSequent;
 
 public class UserSupportUtils {
 	
+	public static final boolean debug = false;
+	
 	public static IProverSequent genSeq(String s){
 		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
 		String goalStr = s.split("[|]-")[1];

@@ -262,7 +262,7 @@ public class EventMasterSection
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IInternalElement) {
 				try {
-					System.out.println("DELETE " + objects[i].toString());
+					if (UIUtils.debug) System.out.println("DELETE " + objects[i].toString());
 					((IInternalElement) objects[i]).delete(true, null);
 					commit();
 				}
@@ -279,7 +279,7 @@ public class EventMasterSection
 	 * Handle up action.
 	 */
 	private void handleUp() {
-		System.out.println("Up: To be implemented");
+		if (UIUtils.debug) System.out.println("Up: To be implemented");
 		return;
 	}
 	
@@ -288,7 +288,7 @@ public class EventMasterSection
 	 * Handle down action. 
 	 */
 	private void handleDown() {
-		System.out.println("Down: To be implemented");
+		if (UIUtils.debug) System.out.println("Down: To be implemented");
 		return;
 	}
 	

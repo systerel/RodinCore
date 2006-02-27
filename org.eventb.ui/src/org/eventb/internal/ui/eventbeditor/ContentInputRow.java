@@ -67,7 +67,7 @@ public class ContentInputRow
 			try {
 				IInternalElement input = page.getInput();
 				if (input instanceof IUnnamedInternalElement) {
-//					System.out.println("Commit content: " + input + " to be " + textInput.getText());
+//					if (UIUtils.debug) System.out.println("Commit content: " + input + " to be " + textInput.getText());
 					input.setContents(textInput.getText());
 					
 					SectionPart masterPart = page.getBlock().getMasterPart();
@@ -92,7 +92,7 @@ public class ContentInputRow
 					}
 				}
 				else if (input instanceof IInternalElement) {
-//					System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
+//					if (UIUtils.debug) System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
 					input.setContents(textInput.getText());
 					((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
 				}

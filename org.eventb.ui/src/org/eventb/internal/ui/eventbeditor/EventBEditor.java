@@ -40,6 +40,7 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -194,14 +195,14 @@ public class EventBEditor
 		try {
 			// TODO Commit the information in the UI to the database
 			// clear the dirty state on all the pages
-			System.out.println("Save");
+			if (UIUtils.debug) System.out.println("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
 						if (fpage.isDirty()) {
-							System.out.println("Saving " + fpage.toString());
+							if (UIUtils.debug) System.out.println("Saving " + fpage.toString());
 							fpage.doSave(monitor);
 						}
 					}
@@ -334,7 +335,7 @@ public class EventBEditor
 		}
 		
 		else {
-			System.out.println("Unknown element type");
+			if (UIUtils.debug) System.out.println("Unknown element type");
 			return;
 		}
 		

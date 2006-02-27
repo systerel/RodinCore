@@ -270,7 +270,7 @@ public class ObligationExplorer
 	}	
 	
 	public void refresh() {
-		System.out.println("********** REFRESH *********");
+		if (UIUtils.debug) System.out.println("********** REFRESH *********");
 		viewer.refresh();
 	}
 }

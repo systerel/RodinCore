@@ -55,7 +55,7 @@ public class EventBKeyboardMathTranslator
 	 */
 	public void translate(Text widget) {
 		boolean isTranslated = false;
-		//System.out.println("Position Before: " + currentPos);
+		//if (EventBKeyboardPlugin.debug) System.out.println("Position Before: " + currentPos);
 		String text = widget.getText();
 		int currentPos = widget.getCaretPosition();
 		
@@ -66,28 +66,28 @@ public class EventBKeyboardMathTranslator
 	
 			String subString = text.substring(beginIndex, endIndex);
 	
-			//	System.out.println("Testing for " + test);
-			//	System.out.println("Substring: |" + subString + "|");
+			//	if (EventBKeyboardPlugin.debug) System.out.println("Testing for " + test);
+			//	if (EventBKeyboardPlugin.debug) System.out.println("Substring: |" + subString + "|");
 	
 			int index = subString.indexOf(test);
 	
 			if (index != -1) {
 				if (test.equals(":")) {   // Special for ':'
 					if (endIndex == text.length()) {
-						//System.out.println("Found: " + test + " at " + (beginIndex+index));
+						//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
 						widget.setSelection(beginIndex + index, beginIndex+index+test.length());
 						widget.insert(mathComboTranslation[i]);
 						isTranslated = true;
 					}
 					else if ((text.charAt(endIndex+1) != '|') || (text.charAt(endIndex+1) != '\u2208')) {
-						//System.out.println("Found: " + test + " at " + (beginIndex+index));
+						//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
 						widget.setSelection(beginIndex + index, beginIndex+index+test.length());
 						widget.insert(mathComboTranslation[i]);
 						isTranslated = true;
 					}
 				}
 				else {
-					//System.out.println("Found: " + test + " at " + (beginIndex+index));
+					//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
 					widget.setSelection(beginIndex + index, beginIndex+index+test.length());
 					widget.insert(mathComboTranslation[i]);
 					isTranslated = true;
@@ -98,12 +98,12 @@ public class EventBKeyboardMathTranslator
 				if (currentPos <= beginIndex+index) {widget.setSelection(currentPos);}
 	
 				else if (beginIndex+index + test.length() < currentPos) widget.setSelection(beginIndex+index+mathComboTranslation[i].length()+1);
-				//	System.out.println("Position After: " + widget.getCaretPosition());
+				//	if (EventBKeyboardPlugin.debug) System.out.println("Position After: " + widget.getCaretPosition());
 				return;
 			}
 	
 		}
-		//System.out.println("Position After: " + widget.getCaretPosition());
+		//if (EventBKeyboardPlugin.debug) System.out.println("Position After: " + widget.getCaretPosition());
 		return;
 	}
 
