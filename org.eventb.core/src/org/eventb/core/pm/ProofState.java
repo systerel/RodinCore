@@ -25,8 +25,8 @@ public class ProofState {
 		searched = new HashSet<Hypothesis>();
 	}
 	
-	public boolean isDischarged() {
-		return pt.isDischarged();
+	public boolean isDischarged() throws RodinDBException {
+		return ps.isDischarged();
 	}
 	
 	public IPRSequent getPRSequent() {return ps;}

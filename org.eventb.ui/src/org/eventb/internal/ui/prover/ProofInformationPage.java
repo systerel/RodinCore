@@ -35,6 +35,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.ProofState;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
@@ -103,7 +104,10 @@ public class ProofInformationPage
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		
 		scrolledForm = toolkit.createScrolledForm(parent);
-		scrolledForm.setText(editor.getUserSupport().getCurrentPO().getPRSequent().getName());
+		
+		ProofState ps = editor.getUserSupport().getCurrentPO();
+		if (ps != null)
+			scrolledForm.setText(ps.getPRSequent().getName());
 
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -111,7 +115,7 @@ public class ProofInformationPage
 		body.setLayout(gl);
 
 		formText = toolkit.createFormText(body, true);
-		setFormText(editor.getUserSupport().getCurrentPO().getPRSequent());
+		if (ps != null) setFormText(ps.getPRSequent());
 		
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);

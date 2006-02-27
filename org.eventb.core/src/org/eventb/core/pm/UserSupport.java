@@ -79,7 +79,7 @@ public class UserSupport
 		}
 	}
 	
-	public void nextUndischargedPO() {
+	public void nextUndischargedPO() throws RodinDBException {
 		for (int i = 1; i <= proofStates.size(); i++) {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
@@ -93,7 +93,7 @@ public class UserSupport
 		notifyStatusChangedListener("No undischarged PO found");
 	}
 	
-	public void prevUndischargedPO() {
+	public void prevUndischargedPO() throws RodinDBException {
 		for (int i = 1; i < proofStates.size(); i++) {
 			int index = (counter + proofStates.size() - i) % proofStates.size();
 			ProofState ps = proofStates.get(index);

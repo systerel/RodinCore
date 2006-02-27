@@ -17,6 +17,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
+import org.rodinp.core.RodinDBException;
 
 public class ProofTreeUIActionGroup 
 	extends ActionGroup 
@@ -58,7 +59,12 @@ public class ProofTreeUIActionGroup
 
 		nextPOAction = new Action() {
 			public void run() {
-				ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().nextUndischargedPO();
+				try {
+					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().nextUndischargedPO();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
 //				if (ps != null) {
 //					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 //					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
@@ -74,7 +80,12 @@ public class ProofTreeUIActionGroup
 
 		prevPOAction = new Action() {
 			public void run() {
-				ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().prevUndischargedPO();
+				try {
+					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport().prevUndischargedPO();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
 //				if (ps != null) {
 //					ProofTreeUIActionGroup.this.proofTreeUI.setInput(ps.getProofTree());
 //					ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
