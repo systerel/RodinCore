@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.IPOAnyPredicate;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOModifiedPredicate;
@@ -768,6 +769,52 @@ public class TestMachinePOG_2 extends BuilderTest {
 	
 	}
 
+	/**
+	 * Test method for action with multiple assignment
+	 */
+	public void testAction3() throws Exception {
+		
+		ITypeEnvironment env = factory.makeTypeEnvironment();
+		env.addName("x", INTEGER);
+		env.addName("y", INTEGER);
+
+		String inv1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
+		String inv2 = factory.parsePredicate("y∈ℕ").getParsedPredicate().toString();
+		String inv3 = factory.parsePredicate("x≤y").getParsedPredicate().toString();
+		String asn1 = factory.parseAssignment("x,y≔0,0").getParsedAssignment().toString();
+
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCVariables(rodinFile, makeList("x", "y"), makeList("ℤ", "ℤ"));
+		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(inv1, inv2, inv3));
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList(), makeList(), makeList(asn1), makeList());
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		int cnt = 0;
+
+		for(IPOSequent sequent : sequents) {
+			if(sequent.getName().equals("E1/I1/INV")) {
+				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
+				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				++cnt;
+			}
+			if(sequent.getName().equals("E1/I2/INV")) {
+				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
+				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				++cnt;
+			}
+			if(sequent.getName().equals("E1/I3/INV")) {
+				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
+				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				++cnt;
+			}
+		}
+		assertEquals("some sequents not found", 3, cnt);
+	}
+		
 	/**
 	 * Test method for action without guard (well-definedness, feasility, invariant)
 	 */
