@@ -8,6 +8,7 @@
 package org.eventb.core.prover.classicBtests;
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.Platform;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -165,6 +166,10 @@ public class TestOldProver extends TestCase {
 		@Override
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(defaultTEnv, hypotheses, goal);
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				// Don't run PK on Windows.
+				return;
+			}
 			boolean result = ClassicB.callPKforPP(buffer);
 			assertTrue("PK failed for PP.", result);
 			result = ClassicB.callPKforML(buffer);
