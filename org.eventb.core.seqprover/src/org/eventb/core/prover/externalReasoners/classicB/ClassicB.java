@@ -235,7 +235,7 @@ public abstract class ClassicB {
 				timer.schedule(new ProverTimeout(Thread.currentThread()), delay);
 			}
 			if (monitor != null) {
-				timer.schedule(new ProverCheckCancelled(	Thread.currentThread(), monitor), DEFAULT_PERIOD, DEFAULT_PERIOD);
+				timer.schedule(new ProverCheckCancelled(Thread.currentThread(), monitor), DEFAULT_PERIOD, DEFAULT_PERIOD);
 			}
 			process = Runtime.getRuntime().exec(cmdArray);
 			process.waitFor();
