@@ -245,8 +245,12 @@ public class MachineRuleBase {
 								ArrayList<ProofObligation.Form> prec = new ArrayList<ProofObligation.Form>(precGuards);
 								ArrayList<BecomesEqualTo> post = new ArrayList<BecomesEqualTo>(postBA.size() + numAssignedVars);
 								for(BecomesEqualTo bet : postBA) {
-									if(freeNames.contains(bet.getAssignedIdentifiers()[0].getName()))
-										post.add(bet);
+									FreeIdentifier[] left = bet.getAssignedIdentifiers();
+									for(int i=0; i<left.length; i++)
+										if(freeNames.contains(bet.getAssignedIdentifiers()[i].getName())) {
+											post.add(bet);
+											break;
+										}
 								}
 								for(Assignment ass : precBA) {
 									FreeIdentifier[] left = ass.getAssignedIdentifiers();
