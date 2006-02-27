@@ -56,6 +56,7 @@ import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -156,15 +157,15 @@ public class ProofControlPage
 						}
 					};
 					
-					System.out.println("Here");
+					if (UIUtils.debug) System.out.println("Here");
 					ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
 					
 					try {
-						System.out.println("Here 1");
+						if (UIUtils.debug) System.out.println("Here 1");
 						dialog.run(true, true, op);
-						System.out.println("Here 2");
+						if (UIUtils.debug) System.out.println("Here 2");
 					} catch (InterruptedException exception) {
-						System.out.println("Interrupt ");
+						if (UIUtils.debug) System.out.println("Interrupt ");
 						return;
 					} catch (InvocationTargetException exception) {
 						Throwable realException = exception.getTargetException();
@@ -187,7 +188,7 @@ public class ProofControlPage
 				}
 
 				if (label.equals("se")) {
-					System.out.println("Search for " + textInput.getText());
+					if (UIUtils.debug) System.out.println("Search for " + textInput.getText());
 					editor.getUserSupport().searchHyps(textInput.getText());
 //					editor.getUserSupport().applyTactic(Tactics.searchHyps(textInput.getText()));
 					return;
