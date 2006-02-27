@@ -108,34 +108,34 @@ public class ProofsPage
 		
 		final Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
 		final Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
-//		System.out.println("Update selected");
+//		if (UIUtils.debug) System.out.println("Update selected");
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
 				selected.update(addedToSelected, removedFromSelected);
 			}
 		});
-//		System.out.println("***************");
+//		if (UIUtils.debug) System.out.println("***************");
 		
 		final Collection<Hypothesis> addedToCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.ADDED);
 		final Collection<Hypothesis> removedFromCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.REMOVED);
-//		System.out.println("Update cached");
+//		if (UIUtils.debug) System.out.println("Update cached");
 		display.syncExec (new Runnable () {
 			public void run () {
 				cache.update(addedToCached, removedFromCached);
 			}
 		});
-//		System.out.println("*************");
+//		if (UIUtils.debug) System.out.println("*************");
 		
 		final Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
 		final Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
-//		System.out.println("Update searched");
+//		if (UIUtils.debug) System.out.println("Update searched");
 		display.syncExec (new Runnable () {
 			public void run () {
 				search.update(addedToSearched, removedFromSearched);
 			}
 		});
-//		System.out.println("*************");	
+//		if (UIUtils.debug) System.out.println("*************");	
 	}
 
 	/* (non-Javadoc)

@@ -166,7 +166,7 @@ public class ProofTreeUIPage
 //			 */
 //			@Override
 //			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				System.out.println("Filter");
+//				if (UIUtils.debug) System.out.println("Filter");
 //				if (element instanceof IProofTreeNode) {
 //					if (((IProofTreeNode) element).isOpen()) return true;
 //					if (((IProofTreeNode) element).getRule().getName().equals("hyp")) return false;
@@ -235,7 +235,7 @@ public class ProofTreeUIPage
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-//		System.out.println("Fill Local Pull Down");
+//		if (UIUtils.debug) System.out.println("Fill Local Pull Down");
 //		manager.addMenuListener(new IMenuListener() {
 //			public void menuAboutToShow(IMenuManager manager) {
 //				groupActionSet.setContext(new ActionContext(viewer.getSelection()));

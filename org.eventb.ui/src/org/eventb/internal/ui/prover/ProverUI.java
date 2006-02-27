@@ -24,6 +24,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -183,20 +184,20 @@ public class ProverUI
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
-					//System.out.println("Trying to save page " + i + " : " + page);
+					//if (UIUtils.debug) System.out.println("Trying to save page " + i + " : " + page);
 					if (page instanceof IFormPage) {
-						//System.out.println("Saving");
+						//if (UIUtils.debug) System.out.println("Saving");
 						IFormPage fpage = (IFormPage) page;
 						
 						fpage.doSave(monitor);
-						//System.out.println("Dirty? " + i + " " + fpage.isDirty());
+						//if (UIUtils.debug) System.out.println("Dirty? " + i + " " + fpage.isDirty());
 					}
 				}
 			}
 
 		// Save the file from the database to disk
 		try {
-			System.out.println("Save to disk");
+			if (UIUtils.debug) System.out.println("Save to disk");
 			IPRFile prFile = this.getPRFileInput();
 			prFile.save(monitor, true);
 		}

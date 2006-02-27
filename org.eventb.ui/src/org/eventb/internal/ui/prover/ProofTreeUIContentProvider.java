@@ -8,6 +8,7 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.internal.ui.UIUtils;
 
 public class ProofTreeUIContentProvider
 	implements	ITreeContentProvider,
@@ -124,7 +125,7 @@ public class ProofTreeUIContentProvider
 	 */
 	public void proofTreeChanged(IProofTreeDelta delta) {
 		// TODO Auto-generated method stub
-		System.out.println("Proof Tree Changed");
+		if (UIUtils.debug) System.out.println("Proof Tree Changed");
 	}
 	
 }

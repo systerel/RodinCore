@@ -212,7 +212,7 @@ public class HypothesisRow
 		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
-			System.out.println("Create tactic for " + t);
+			if (UIUtils.debug) System.out.println("Create tactic for " + t);
 			formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t) + "\">" + UIUtils.XMLWrapUp(t) +"</a> ";
 		}
 		
