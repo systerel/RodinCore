@@ -82,8 +82,8 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Refactoring doesn't work with some project names [refactoring])
 	 */
 	public void testProjectMemento2() {
-		IRodinProject project = getRodinProject("P \\|!#");
-		assertMemento("/P \\\\\\|\\!\\#", project);
+		IRodinProject project = getRodinProject("P |!#");
+		assertMemento("/P \\|\\!\\#", project);
 	}
 
 	/**
