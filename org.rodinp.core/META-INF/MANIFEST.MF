@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rodin Platform
 Bundle-SymbolicName: org.rodinp.core; singleton:=true
-Bundle-Version: 0.0.0
+Bundle-Version: 0.5.0
 Bundle-Activator: org.rodinp.core.RodinCore
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin

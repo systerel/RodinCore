@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.ide"
       label="org.eventb.ide"
-      version="0.0.0"
+      version="0.5.0"
       provider-name="ETH Zürich">
 
    <description>
