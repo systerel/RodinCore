@@ -72,26 +72,9 @@ public class EventBKeyboardMathTranslator
 			int index = subString.indexOf(test);
 	
 			if (index != -1) {
-				if (test.equals(":")) {   // Special for ':'
-					if (endIndex == text.length()) {
-						//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
-						widget.setSelection(beginIndex + index, beginIndex+index+test.length());
-						widget.insert(mathComboTranslation[i]);
-						isTranslated = true;
-					}
-					else if ((text.charAt(endIndex+1) != '|') || (text.charAt(endIndex+1) != '\u2208')) {
-						//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
-						widget.setSelection(beginIndex + index, beginIndex+index+test.length());
-						widget.insert(mathComboTranslation[i]);
-						isTranslated = true;
-					}
-				}
-				else {
-					//if (EventBKeyboardPlugin.debug) System.out.println("Found: " + test + " at " + (beginIndex+index));
-					widget.setSelection(beginIndex + index, beginIndex+index+test.length());
-					widget.insert(mathComboTranslation[i]);
-					isTranslated = true;
-				}
+				widget.setSelection(beginIndex + index, beginIndex+index+test.length());
+				widget.insert(mathComboTranslation[i]);
+				isTranslated = true;
 			}
 
 			if (isTranslated) {
