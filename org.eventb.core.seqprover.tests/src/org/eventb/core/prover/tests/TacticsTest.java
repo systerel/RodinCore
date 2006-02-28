@@ -194,7 +194,7 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,3);
 	}
 	
-	public void testEqE(){
+	public void testExF(){
 		pt = TestLib.genProofTreeNode( "∃x·x∈ℕ|- ⊤");
 		assertNull(Tactics.exF(TestLib.genHyp("∃x·x∈ℕ")).apply(pt));
 		// System.out.println(pt);
@@ -206,9 +206,15 @@ public class TacticsTest extends TestCase {
 		// System.out.println(pt);
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( "x∈ℕ ;; ∃x·x∈ℕ|- ⊤");
+		assertNull(Tactics.exF(TestLib.genHyp("∃x·x∈ℕ")).apply(pt));
+		System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
 	}
 	
-	public void testExF(){
+	public void testEqE(){
 		pt = TestLib.genProofTreeNode( "x=y+1 ;; y=x−1 ;; y>0 |-  x=x ∧y=y");
 		assertNull(Tactics.eqE(TestLib.genHyp("x=y+1"),false).apply(pt));
 		// System.out.println(pt);
