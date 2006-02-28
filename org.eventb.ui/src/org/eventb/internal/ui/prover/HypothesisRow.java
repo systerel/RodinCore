@@ -175,7 +175,7 @@ public class HypothesisRow
 			gl.numColumns = idents.length * 2 + 2;
 			hypothesisComposite.setLayout(gl);
 
-			toolkit.createLabel(hypothesisComposite, "∀ ");
+			toolkit.createLabel(hypothesisComposite, "\u2200 ");
 			
 			int i = 0;
 	        textBoxes = new ArrayList<Text>();

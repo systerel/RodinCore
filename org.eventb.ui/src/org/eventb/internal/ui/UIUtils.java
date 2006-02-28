@@ -63,20 +63,20 @@ public class UIUtils {
 	
 	public static final boolean debug = false;
 	
-	public static final String CONJI_SYMBOL = "∧";
-	public static final String IMPI_SYMBOL = "⇒";
-	public static final String ALLI_SYMBOL = "∀";
-	public static final String EXI_SYMBOL = "∃";
+	public static final String CONJI_SYMBOL = "\u2227";
+	public static final String IMPI_SYMBOL = "\u21d2";
+	public static final String ALLI_SYMBOL = "\u2200";
+	public static final String EXI_SYMBOL = "\u2203";
 	
-	public static final String ALLF_SYMBOL = "∀";
-	public static final String CONJD_SYMBOL = "∧";
-	public static final String IMPD1_SYMBOL = "⇒";
+	public static final String ALLF_SYMBOL = "\u2200";
+	public static final String CONJD_SYMBOL = "\u2227";
+	public static final String IMPD1_SYMBOL = "\u21d2";
 	public static final String IMPD2_SYMBOL = "ip1";
-	public static final String DISJE_SYMBOL = "⋁";
-	public static final String EXF_SYMBOL = "∃";
+	public static final String DISJE_SYMBOL = "\u22c1";
+	public static final String EXF_SYMBOL = "\u2203";
 	public static final String EQE1_SYMBOL = "eh";
 	public static final String EQE2_SYMBOL = "he";
-	public static final String FALSIFY_SYMBOL = "⊥";
+	public static final String FALSIFY_SYMBOL = "\u22a5";
 	
 	/**
 	 * Getting the image corresponding to an object.

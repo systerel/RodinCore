@@ -188,7 +188,7 @@ public class GoalSection
 				gl.numColumns = idents.length * 2 + 2;
 				composite.setLayout(gl);
 
-				toolkit.createLabel(composite, "∃ ");
+				toolkit.createLabel(composite, "\u2203 ");
 				
 				int i = 0;
 		        textBoxes = new ArrayList<Text>();
@@ -210,7 +210,7 @@ public class GoalSection
 		        formText.setLayoutData(gd);
 				SourceLocation loc = qpred.getPredicate().getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
-				formText.setText(" · " + image, false, false);
+				formText.setText(" \u00b7 " + image, false, false);
 				scrolledForm.reflow(true);
 			}
 			else {
