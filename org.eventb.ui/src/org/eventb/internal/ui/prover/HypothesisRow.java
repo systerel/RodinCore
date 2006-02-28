@@ -182,6 +182,7 @@ public class HypothesisRow
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
+				if (UIUtils.debug) System.out.println("Ident: " + image);
 				if (i++ != 0) toolkit.createLabel(hypothesisComposite, ", " + image);
 				else toolkit.createLabel(hypothesisComposite, image);
 				Text box = toolkit.createText(hypothesisComposite, "");
@@ -197,7 +198,8 @@ public class HypothesisRow
 	        form.setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
-			form.setText(UIUtils.XMLWrapUp("<form><p>" + image + "</p></form>"), true, false);
+			if (UIUtils.debug) System.out.println("Pred: " + image);
+			form.setText("<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>", true, false);
         }
         else {
         	Text hypothesisText = toolkit.createText(hypothesisComposite, hyp.toString(), SWT.READ_ONLY);
