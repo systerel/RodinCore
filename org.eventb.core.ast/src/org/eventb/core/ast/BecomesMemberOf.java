@@ -136,7 +136,7 @@ public class BecomesMemberOf extends Assignment {
 
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" :∈ ");
+		result.append(" :\u2208 ");
 		result.append(setExpr.toString(false, STARTTAG, boundNames));
 		return result.toString();
 	}
@@ -145,7 +145,7 @@ public class BecomesMemberOf extends Assignment {
 	protected String toStringFullyParenthesized(String[] boundNames) {
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" :∈ (");
+		result.append(" :\u2208 (");
 		result.append(setExpr.toStringFullyParenthesized(boundNames));
 		result.append(')');
 		return result.toString();

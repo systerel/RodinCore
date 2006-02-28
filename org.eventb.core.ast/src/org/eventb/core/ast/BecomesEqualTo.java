@@ -189,7 +189,7 @@ public class BecomesEqualTo extends Assignment {
 		
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" ≔ ");
+		result.append(" \u2254 ");
 		boolean comma = false;
 		for (Expression value: values) {
 			if (comma) result.append(", ");
@@ -203,7 +203,7 @@ public class BecomesEqualTo extends Assignment {
 	protected String toStringFullyParenthesized(String[] boundNames) {
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
-		result.append(" ≔ ");
+		result.append(" \u2254 ");
 		boolean comma = false;
 		for (Expression value: values) {
 			if (comma) result.append(", ");
