@@ -18,6 +18,7 @@
 
    <windowImages small="/org.rodinp.platform/icons/rodin16.gif" large="/org.rodinp.platform/icons/rodin32.gif"/>
 
+
    <launcher name="rodin">
       <solaris/>
       <win useIco="false">
@@ -29,6 +30,7 @@
    </plugins>
 
    <features>
+      <feature id="com.b4free.rodin" version="0.5.0"/>
       <feature id="org.eventb.ide" version="0.5.0"/>
       <feature id="org.rodinp.platform" version="0.5.0"/>
    </features>
