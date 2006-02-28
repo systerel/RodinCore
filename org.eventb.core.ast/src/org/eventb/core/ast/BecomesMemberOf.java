@@ -73,7 +73,7 @@ public class BecomesMemberOf extends Assignment {
 		final StringBuilder result = new StringBuilder();
 		result.append(tabs);
 		result.append(this.getClass().getSimpleName());
-		result.append(" [:∈]\n");
+		result.append(" [:\u2208]\n");
 		for (FreeIdentifier ident: assignedIdents) {
 			result.append(ident.getSyntaxTree(boundNames, childTabs));
 		}

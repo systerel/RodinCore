@@ -60,7 +60,7 @@ public class Cut implements IExternalReasoner{
 			this.lemma = lemma;
 		}
 //		public Input(){
-//			this.lemma = "⊤";
+//			this.lemma = "\u22a4";
 //		}
 		
 		@Override

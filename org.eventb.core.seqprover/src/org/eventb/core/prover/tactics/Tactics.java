@@ -72,7 +72,7 @@ public class Tactics {
 	}
 	
 	public static ITactic doCase(String kase){	
-		String lemma = "("+ kase +") ∨¬("+ kase +")";
+		String lemma = "("+ kase +") \u2228\u00ac("+ kase +")";
 		return composeStrict(
 				pluginTac(new Cut(),new Cut.Input(lemma)),
 				onPending(0,conjI()),
@@ -298,7 +298,7 @@ public class Tactics {
 ////	}
 //	
 //	public static ITactic doCase(String kase){	
-//		String lemma = "("+ kase +") ∨¬("+ kase +")";
+//		String lemma = "("+ kase +") \u2228\u00ac("+ kase +")";
 //		return composeStrict(
 //				plugin(cut,new Cut.Input(lemma)),
 //				onPending(0,conjI),
