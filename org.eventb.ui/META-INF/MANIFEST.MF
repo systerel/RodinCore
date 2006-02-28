@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B UI Plug-in
 Bundle-SymbolicName: org.eventb.ui; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 0.5.0
 Bundle-Activator: org.eventb.internal.ui.EventBUIPlugin
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
