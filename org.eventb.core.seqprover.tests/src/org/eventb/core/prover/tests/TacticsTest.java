@@ -209,7 +209,7 @@ public class TacticsTest extends TestCase {
 		
 		pt = TestLib.genProofTreeNode( "x∈ℕ ;; ∃x·x∈ℕ|- ⊤");
 		assertNull(Tactics.exF(TestLib.genHyp("∃x·x∈ℕ")).apply(pt));
-		System.out.println(pt);
+		// System.out.println(pt);
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
 	}
