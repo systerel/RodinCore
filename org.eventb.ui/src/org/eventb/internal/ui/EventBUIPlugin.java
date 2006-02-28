@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -41,12 +43,12 @@ public class EventBUIPlugin
 	/**
 	 * Default values for creating RODIN Elements 
 	 */
-	public static final String PRD_DEFAULT = "⊤";
+	public static final String PRD_DEFAULT = FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null).toString();
 	public static final String INV_DEFAULT = PRD_DEFAULT;
 	public static final String AXM_DEFAULT = PRD_DEFAULT;
 	public static final String THM_DEFAULT = PRD_DEFAULT;
 	public static final String GRD_DEFAULT = PRD_DEFAULT;
-	public static final String SUB_DEFAULT = "skip";
+	public static final String SUB_DEFAULT = "";
 	
 	// The shared instance.
 	private static EventBUIPlugin plugin;
