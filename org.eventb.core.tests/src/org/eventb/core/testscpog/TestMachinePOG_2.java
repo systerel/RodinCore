@@ -936,5 +936,32 @@ public class TestMachinePOG_2 extends BuilderTest {
 		}
 		assertTrue("0 identifiers", expected.size() == 0);
 	}
+	/**
+	 * Test method for creation of non-empty carrier set hypotheses
+	 */
+	public void testCarrierSet1() throws Exception {
+		ISCMachine rodinFile = createSCMachine("cset1");
+		addSCCarrierSets(rodinFile, makeList("S"), makeList("ℙ(S)"));
+		addTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
+		rodinFile.save(null, true);
+		
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("number of pos", sequents.length == 1);
+		
+		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
+		
+		IPOPredicate[] predicates = sequents[0].getHypothesis().getGlobalHypothesis().getPredicates();
+		
+		assertTrue("global hypothesis size is 1", predicates.length == 1);
+		
+		String expected = factory.parsePredicate("S≠∅").getParsedPredicate().toString();
+		
+		assertEquals("carrier set not empty", expected, predicates[0].getContents());
+		
+	}
+
 
 }

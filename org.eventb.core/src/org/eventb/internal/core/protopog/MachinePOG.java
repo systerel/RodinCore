@@ -25,6 +25,9 @@ import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCMachine;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.protosc.MachineSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
@@ -122,6 +125,9 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 	}
 	
 	private void createHypSets() throws CoreException {
+		
+		FormulaFactory factory = FormulaFactory.getDefault();
+		
 		IInternalElement element = poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getOldHypSetName(), null, monitor);
 		for(IAxiom axiom : machineCache.getOldAxioms()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
@@ -130,6 +136,15 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		for(ITheorem theorem : machineCache.getOldTheorems()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(theorem.getContents(), monitor);
+		}
+		for(ISCCarrierSet carrierSet : machineCache.getSCCarrierSets()) {
+			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			Predicate pp = factory.makeRelationalPredicate(
+					Formula.NOTEQUAL, 
+					factory.makeFreeIdentifier(carrierSet.getName(), null), 
+					factory.makeAtomicExpression(Formula.EMPTYSET, null), 
+					null);
+			predicate.setContents(pp.toString(), monitor);
 		}
 		// TODO: this is actually wrong! there must be a separate hyp set for context hypotheses
 		// The problem doesn't show in the preliminary tool because we don not have refinement! 
