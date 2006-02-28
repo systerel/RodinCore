@@ -133,18 +133,24 @@ public class TestRules extends TestCase {
 		assertNotNull(allI.apply(seq.quantSeq));
 		assertNotNull(allI.apply(seq.quantSeqClash));
 		
+//		System.out.println(seq.quantSeqClash);
+//		System.out.println(allI.apply(seq.quantSeqClash)[0]);
+		
 		IProverSequent[] anticidents;
 		
 		anticidents = allI.apply(seq.quantSeq);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.quantSeqFree.equals(anticidents[0].goal()));
 		assertTrue(seq.quantSeq.hypotheses().equals(anticidents[0].hypotheses()));
-		
-//		System.out.println(seq.quantSeq.typeEnvironment());
-//		System.out.println(anticidents[0].typeEnvironment());
-//		System.out.println(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
 		assertFalse(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
 		assertTrue(anticidents[0].typeEnvironment().containsAll(seq.quantSeq.typeEnvironment()));
+		
+		anticidents = allI.apply(seq.quantSeqClash);
+		assertTrue(anticidents.length == 1);
+		assertTrue(seq.quantSeq.hypotheses().equals(anticidents[0].hypotheses()));
+		assertFalse(seq.quantSeq.typeEnvironment().containsAll(anticidents[0].typeEnvironment()));
+		assertTrue(anticidents[0].typeEnvironment().containsAll(seq.quantSeq.typeEnvironment()));
+
 		
 	}
 		
