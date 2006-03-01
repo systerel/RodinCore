@@ -23,7 +23,9 @@ import org.eventb.core.prover.externalReasoners.ExF;
 import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
+import org.eventb.core.prover.externalReasoners.RewriteGoal;
 import org.eventb.core.prover.externalReasoners.Trivial;
+import org.eventb.core.prover.externalReasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.rules.AllI;
 import org.eventb.core.prover.rules.ConjI;
 import org.eventb.core.prover.rules.Hyp;
@@ -130,6 +132,14 @@ public class Tactics {
 	
 	public static boolean exI_applicable(Predicate goal){
 		return Lib.isExQuant(goal);
+	}
+	
+	public static ITactic removeNegGoal(){
+		return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new RemoveNegation()));
+	}
+	
+	public static boolean removeNegGoal_applicable(Predicate goal){
+		return (new RemoveNegation()).isApplicable(goal);
 	}
 	
 	
