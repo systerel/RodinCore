@@ -142,6 +142,34 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,2);
 	}
 	
+	public void testRemoveNegGoal(){
+		pt = TestLib.genProofTreeNode( " ⊤|- ¬⊤");
+		assertNull(Tactics.removeNegGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ¬(1=1∧2=2∧3=3) ");
+		assertNull(Tactics.removeNegGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ¬(1=1 ∨2=2 ∨3=3) ");
+		assertNull(Tactics.removeNegGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ¬(∀x·x∈ℕ⇒ x+1∈ℕ)");
+		assertNull(Tactics.removeNegGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ¬(∃x·x∈ℕ∧x=2)");
+		assertNull(Tactics.removeNegGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+
+	}
+	
 	// Tactics applicable on a hypothesis
 	
 	public void testAllF(){
