@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -220,6 +221,8 @@ public class ProofInformationPage
 					String id = (String) e.getHref();
 					IRodinElement element = RodinCore.create(id);
 					UIUtils.linkToEventBEditor(element);
+					UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
+					UIUtils.activateView(IPageLayout.ID_OUTLINE);
 				}
 
 			});

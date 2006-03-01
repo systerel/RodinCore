@@ -43,6 +43,8 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.ProofControl;
+import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -244,6 +246,8 @@ public class ObligationExplorer
 			
 				if (!(obj instanceof IRodinProject)) {
 					UIUtils.linkToProverUI(obj);
+					UIUtils.activateView(ProofControl.VIEW_ID);
+					UIUtils.activateView(ProofTreeUI.VIEW_ID);
 				}
 			}
 		};

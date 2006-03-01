@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -325,5 +326,14 @@ public class UIUtils {
 	 */
 	public static String makeHyperlink(String link, String text) {
 		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" + UIUtils.XMLWrapUp(text) + "</a>";
+	}
+
+
+	public static void activateView(String View_ID) {
+		IViewPart aView = EventBUIPlugin.getActivePage().findView(View_ID);
+		if (aView != null){
+			EventBUIPlugin.getActivePage().activate(aView);
+		}
+		return;
 	}
 }
