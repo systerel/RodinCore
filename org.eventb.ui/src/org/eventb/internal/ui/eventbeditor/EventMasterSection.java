@@ -52,11 +52,16 @@ public class EventMasterSection
 	extends EventBTreePartWithButtons
 {
 	// The indexes for different buttons.
-	private static final int ADD_INDEX = 0;
-	private static final int DELETE_INDEX = 1;
-	private static final int UP_INDEX = 2;
-	private static final int DOWN_INDEX = 3;
-	private static final int ADD_INIT_INDEX = 4;
+	private static final int ADD_EVT_INDEX = 0;
+	private static final int ADD_VAR_INDEX = 1;
+	private static final int ADD_GRD_INDEX = 2;
+	private static final int ADD_ACT_INDEX = 3;
+	private static final int UP_INDEX = 4;
+	private static final int DOWN_INDEX = 5;
+	private static final int ADD_INIT_INDEX = 6;
+
+	private static final String [] buttonLabels =
+		{"Add Event", "Add VAR", "Add Guard", "Add Action", "Up", "Down", "Add INIT"};
 
 	// The counter used to create automatic name for new elements.
 	private int counter;
@@ -179,7 +184,7 @@ public class EventMasterSection
 	 */
 	public EventMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
-		super(managedForm, parent, toolkit, style, block);
+		super(managedForm, parent, toolkit, style, block, buttonLabels);
 		try {
 			counter = ((IMachine) rodinFile).getEvents().length; // Set the counter;
 		}
@@ -224,7 +229,7 @@ public class EventMasterSection
 	/*
 	 * Handle add (new element) action.
 	 */
-	private void handleAdd() {
+	private void handleAddEvent() {
 		try {
 			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + counter, null, null);
 			counter++;
@@ -251,30 +256,7 @@ public class EventMasterSection
 		}
 	}
 	
-	/*
-	 * Handle delete action.
-	 */
-	private void handleDelete() {
-		this.markDirty();
-		IStructuredSelection ssel = (IStructuredSelection) this.getViewer().getSelection();
-		//TODO Batch the deleted job
-		Object [] objects = ssel.toArray();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IInternalElement) {
-				try {
-					if (UIUtils.debug) System.out.println("DELETE " + objects[i].toString());
-					((IInternalElement) objects[i]).delete(true, null);
-					commit();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return;
-	}
-		
-	
+
 	/*
 	 * Handle up action.
 	 */
@@ -302,13 +284,30 @@ public class EventMasterSection
 		
 		boolean hasOneSelection = selections.length == 1;
 		
-		boolean hasSelection = selections.length > 0;
+		boolean anEventSelected = hasOneSelection && (selections[0] instanceof IEvent);
 		
-		setButtonEnabled(ADD_INDEX, true);
-		setButtonEnabled(DELETE_INDEX, hasSelection);
+		boolean notInitSelected = anEventSelected && !((IEvent) selections[0]).getElementName().equals("INITIALISATION");
+		
+		boolean hasInitialisation = false;
+		try {
+			for (IRodinElement event : rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE)) {
+				if (event.getElementName().equals("INITIALISATION")) {
+					hasInitialisation = true;
+					break;
+				}
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		
+		setButtonEnabled(ADD_EVT_INDEX, true);
+		setButtonEnabled(ADD_VAR_INDEX, anEventSelected && notInitSelected);
+		setButtonEnabled(ADD_GRD_INDEX, anEventSelected && notInitSelected);
+		setButtonEnabled(ADD_ACT_INDEX, anEventSelected);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
-		setButtonEnabled(ADD_INIT_INDEX, true);
+		setButtonEnabled(ADD_INIT_INDEX, !hasInitialisation);
 	}
 	
 
@@ -319,11 +318,17 @@ public class EventMasterSection
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_INDEX:
-				handleAdd();
+			case ADD_EVT_INDEX:
+				handleAddEvent();
 				break;
-			case DELETE_INDEX:
-				handleDelete();
+			case ADD_VAR_INDEX:
+				EventMasterSectionActionGroup.newLocalVariable.run();
+				break;
+			case ADD_GRD_INDEX:
+				EventMasterSectionActionGroup.newGuard.run();
+				break;
+			case ADD_ACT_INDEX:
+				EventMasterSectionActionGroup.newAction.run();
 				break;
 			case UP_INDEX:
 				handleUp();

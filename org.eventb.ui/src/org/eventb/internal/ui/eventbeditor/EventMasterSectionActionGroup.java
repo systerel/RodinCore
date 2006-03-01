@@ -13,7 +13,6 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,6 +28,7 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -49,9 +49,10 @@ public class EventMasterSectionActionGroup
 	private TreeViewer viewer;
 	
 	// Some actions
-	private static Action newLocalVariable;
-	private static Action newGuard;
-	private static Action newAction;
+	protected static Action newLocalVariable;
+	protected static Action newGuard;
+	protected static Action newAction;
+	protected static Action delete;
 	
 	// The counter used to create automatic name for new elements.
 	private int counter;
@@ -91,7 +92,7 @@ public class EventMasterSectionActionGroup
 						});
 			}
 		};
-		newLocalVariable.setText("&Variable");
+		newLocalVariable.setText("New &Variable");
 		newLocalVariable.setToolTipText("Create a new (local) variable");
 		newLocalVariable.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));
 
@@ -121,7 +122,7 @@ public class EventMasterSectionActionGroup
 						});
 			}
 		};
-		newGuard.setText("&Guard");
+		newGuard.setText("New &Guard");
 		newGuard.setToolTipText("Create a new guard");
 		newGuard.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));
 
@@ -150,9 +151,39 @@ public class EventMasterSectionActionGroup
 						});
 			}
 		};
-		newAction.setText("&Action");
+		newAction.setText("New &Action");
 		newAction.setToolTipText("Create a new action");
-		newAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));	
+		newAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));
+		
+		delete = new Action() {
+			public void run() {
+				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
+						new Runnable() {
+							public void run() {
+								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+								//TODO Batch the deleted job
+								Object [] objects = ssel.toArray();
+								for (int i = 0; i < objects.length; i++) {
+									if (objects[i] instanceof IInternalElement) {
+										try {
+											if (UIUtils.debug) System.out.println("DELETE " + objects[i].toString());
+											((IInternalElement) objects[i]).delete(true, null);
+											viewer.refresh();
+										}
+										catch (RodinDBException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+								section.markDirty();
+								return;
+							}
+						});
+			}
+		};
+		delete.setText("&Delete");
+		delete.setToolTipText("Delete selected element");
+		delete.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_DELETE));
 	}
 
 
@@ -164,19 +195,23 @@ public class EventMasterSectionActionGroup
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
+			menu.add(delete);
 			IStructuredSelection ssel = (IStructuredSelection) sel; 
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IEvent) {
-					MenuManager newMenu = new MenuManager("&New");
-					newMenu.add(newLocalVariable);
-					newMenu.add(newGuard);
-					newMenu.add(newAction);
-					menu.add(newMenu);
+					menu.add(newLocalVariable);
+					menu.add(newGuard);
+					menu.add(newAction);
+//					MenuManager newMenu = new MenuManager("&New");
+//					newMenu.add(newLocalVariable);
+//					newMenu.add(newGuard);
+//					newMenu.add(newAction);
+//					menu.add(newMenu);
 				}
 			}
 //			menu.add(deleteAction);
-			menu.add(new Separator());
+//			menu.add(new Separator());
 //			drillDownAdapter.addNavigationActions(menu);
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
