@@ -62,7 +62,7 @@ public abstract class EventBTreePartWithButtons
 	 * @param block The master-detail block contains this part
 	 */
 	public EventBTreePartWithButtons(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
-			int style, EventBMasterDetailsBlock block) {
+			int style, EventBMasterDetailsBlock block, String [] buttonLabels) {
 		super(parent, toolkit, style);
 		this.block = block;
 		
@@ -78,7 +78,6 @@ public abstract class EventBTreePartWithButtons
 		
 		createTreeViewer(managedForm, toolkit, client);
 		
-		String [] buttonLabels = {"Add", "Delete", "Up", "Down", "Add INIT"};
 		createButtons(toolkit, client, buttonLabels);
 	}
 	
