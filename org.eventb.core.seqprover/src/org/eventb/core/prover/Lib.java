@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -20,10 +21,12 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.SimpleProverSequent;
@@ -41,32 +44,61 @@ public final class Lib {
 		return Collections.singleton(h);
 	}
 	
+	public static boolean isTrue(Predicate P){
+		if (P instanceof LiteralPredicate && P.getTag() == Formula.BTRUE) 
+			return true;
+		return false;
+	}
+	
+	public static boolean isFalse(Predicate P){
+		if (P instanceof LiteralPredicate && P.getTag() == Formula.BFALSE) 
+			return true;
+		return false;
+	}
+	
+	public static boolean isEmptySet(Expression e){
+		if (e instanceof AtomicExpression && e.getTag() == Formula.EMPTYSET) 
+			return true;
+		return false;
+	}
+	
 	public static boolean isUnivQuant(Predicate P){
-		if (P instanceof QuantifiedPredicate & P.getTag() == Formula.FORALL) 
+		if (P instanceof QuantifiedPredicate && P.getTag() == Formula.FORALL) 
 			return true;
 		return false;
 	}
 	
 	public static boolean isDisj(Predicate P){
-		if (P instanceof AssociativePredicate & P.getTag() == Formula.LOR) 
+		if (P instanceof AssociativePredicate && P.getTag() == Formula.LOR) 
 			return true;
 		return false;
 	}
 	
+	public static boolean isNeg(Predicate P){
+		if (P instanceof UnaryPredicate && P.getTag() == Formula.NOT) 
+			return true;
+		return false;
+	}
+	
+	public static Predicate negPred(Predicate P){
+		if (! isNeg(P)) return null;
+		return ((UnaryPredicate)P).getChild();
+	}
+	
 	public static boolean isConj(Predicate P){
-		if (P instanceof AssociativePredicate & P.getTag() == Formula.LAND) 
+		if (P instanceof AssociativePredicate && P.getTag() == Formula.LAND) 
 			return true;
 		return false;
 	}
 	
 	public static boolean isExQuant(Predicate P){
-		if (P instanceof QuantifiedPredicate & P.getTag() == Formula.EXISTS) 
+		if (P instanceof QuantifiedPredicate && P.getTag() == Formula.EXISTS) 
 			return true;
 		return false;
 	}
 	
 	public static boolean isImp(Predicate P){
-		if (P instanceof BinaryPredicate & P.getTag() == Formula.LIMP) 
+		if (P instanceof BinaryPredicate && P.getTag() == Formula.LIMP) 
 			return true;
 		return false;
 	}
@@ -92,7 +124,7 @@ public final class Lib {
 	}
 	
 	public static boolean isEq(Predicate P){
-		if (P instanceof RelationalPredicate & P.getTag() == Formula.EQUAL) 
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.EQUAL) 
 			return true;
 		return false;
 	}
@@ -105,6 +137,49 @@ public final class Lib {
 	public static Expression eqRight(Predicate P){
 		if (! isEq(P)) return null;
 		return ((RelationalPredicate)P).getRight();
+	}
+	
+	public static boolean isNotEq(Predicate P){
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTEQUAL) 
+			return true;
+		return false;
+	}
+	
+	public static boolean isInclusion(Predicate P){
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.IN) 
+			return true;
+		return false;
+	}
+	
+	public static boolean isNotInclusion(Predicate P){
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTIN) 
+			return true;
+		return false;
+	}
+	
+	public static Expression getElement(Predicate P){
+		if (!(P instanceof RelationalPredicate && 
+				(P.getTag() == Formula.NOTIN || P.getTag() == Formula.IN)))
+		return null;
+		return ((RelationalPredicate)P).getLeft();
+	}
+	
+	public static Expression getSet(Predicate P){
+		if (!(P instanceof RelationalPredicate && 
+				(P.getTag() == Formula.NOTIN || P.getTag() == Formula.IN)))
+		return null;
+		return ((RelationalPredicate)P).getRight();
+	}
+	
+	
+	public static Expression notEqRight(Predicate P){
+		if (! isNotEq(P)) return null;
+		return ((RelationalPredicate)P).getRight();
+	}
+	
+	public static Expression notEqLeft(Predicate P){
+		if (! isNotEq(P)) return null;
+		return ((RelationalPredicate)P).getLeft();
 	}
 	
 	
@@ -142,11 +217,27 @@ public final class Lib {
 		return result;
 	}
 	
+	public static Predicate[] makeNeg(ITypeEnvironment te,Predicate[] Ps){
+		Predicate[] result = new Predicate[Ps.length];
+		for (int i=0;i < Ps.length;i++)
+			result[i] = makeNeg(te,Ps[i]);
+		return result;
+	}
+	
 	public static Predicate makeConj(ITypeEnvironment te,Predicate...conjuncts)
 	{
 		if (conjuncts.length == 0) return True;
 		if (conjuncts.length == 1) return conjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LAND,conjuncts,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+	}
+	
+	public static Predicate makeDisj(ITypeEnvironment te,Predicate...disjuncts)
+	{
+		if (disjuncts.length == 0) return False;
+		if (disjuncts.length == 1) return disjuncts[0];
+		Predicate result = ff.makeAssociativePredicate(Formula.LOR,disjuncts,null);
 		typeCheckAfterConstruction(result,te);
 		return result;
 	}
@@ -165,11 +256,47 @@ public final class Lib {
 		return result;
 	}
 	
+	public static Predicate makeEq(ITypeEnvironment te,Expression left, Expression right)
+	{
+		Predicate result = ff.makeRelationalPredicate(Formula.EQUAL,left,right,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+	}
+	
+	public static Predicate makeNotEq(ITypeEnvironment te,Expression left, Expression right)
+	{
+		Predicate result = ff.makeRelationalPredicate(Formula.NOTEQUAL,left,right,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+	}
+	
+	public static Predicate makeInclusion(ITypeEnvironment te,Expression element, Expression set)
+	{
+		Predicate result = ff.makeRelationalPredicate(Formula.IN,element,set,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+	}
+	
+	public static Predicate makeNotInclusion(ITypeEnvironment te,Expression element, Expression set)
+	{
+		Predicate result = ff.makeRelationalPredicate(Formula.NOTIN,element,set,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+	}
+	
+	
 	// Temporary solution to avoid fail typechecks for unbound idents
 	// used in external reasoner ExF where is is later typechecked
 	public static Predicate makeUncheckedImp(Predicate left, Predicate right)
 	{
 		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
+		return result;
+	}
+	
+	// Temporary solution to avoid fail typechecks for unbound idents
+	public static Predicate makeUncheckedNeg(Predicate p)
+	{
+		Predicate result = ff.makeUnaryPredicate(Formula.NOT,p,null);
 		return result;
 	}
 	
@@ -211,6 +338,15 @@ public final class Lib {
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,boundIdents,boundPred,null);
+		typeCheckAfterConstruction(result,te);
+		return result;
+		
+	}
+	
+	public static Predicate makeExQuant(ITypeEnvironment te,
+			BoundIdentDecl[] boundIdents,
+			Predicate boundPred){
+		Predicate result = ff.makeQuantifiedPredicate(Formula.EXISTS,boundIdents,boundPred,null);
 		typeCheckAfterConstruction(result,te);
 		return result;
 		
