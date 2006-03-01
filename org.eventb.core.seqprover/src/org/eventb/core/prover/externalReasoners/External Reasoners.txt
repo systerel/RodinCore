@@ -16,7 +16,7 @@ ExI : Providing witnesses for an existential goal
 ImpD : Removing an implicative hypothesis
 LegacyProvers : Old B provers PP/ML
 Trivial : Discharges a sequent with true goal or false hypothesis
-
+RewriteGoal : Rewrites a goal using a rewriter
 
 Next to be implimented:
 DisjI : Removing a disjunction in the goal
