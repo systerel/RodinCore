@@ -21,8 +21,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -58,6 +60,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class ObligationExplorer
 	extends ViewPart
+	implements ISelectionChangedListener
 {
 
 	/**
@@ -167,6 +170,7 @@ public class ObligationExplorer
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new ProjectsSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
+		viewer.addSelectionChangedListener(this);
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -244,7 +248,7 @@ public class ObligationExplorer
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 			
-				if (!(obj instanceof IRodinProject)) {
+				if (obj instanceof IPRSequent) {
 					UIUtils.linkToProverUI(obj);
 					UIUtils.activateView(ProofControl.VIEW_ID);
 					UIUtils.activateView(ProofTreeUI.VIEW_ID);
@@ -277,4 +281,13 @@ public class ObligationExplorer
 		if (UIUtils.debug) System.out.println("********** REFRESH *********");
 		viewer.refresh();
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		doubleClickAction.run();
+	}	
+	
 }
