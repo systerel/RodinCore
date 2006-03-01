@@ -68,6 +68,7 @@ public class UIUtils {
 	public static final String IMPI_SYMBOL = "\u21d2";
 	public static final String ALLI_SYMBOL = "\u2200";
 	public static final String EXI_SYMBOL = "\u2203";
+	public static final String NEG_SYMBOL = "\u00ac";
 	
 	public static final String ALLF_SYMBOL = "\u2200";
 	public static final String CONJD_SYMBOL = "\u2227";
@@ -225,7 +226,7 @@ public class UIUtils {
 		if (Tactics.conjI_applicable(goal)) names.add(CONJI_SYMBOL);
 		if (Tactics.allI_applicable(goal)) names.add(ALLI_SYMBOL);
 		if (Tactics.exI_applicable(goal)) names.add(EXI_SYMBOL);
-		
+		if (Tactics.removeNegGoal_applicable(goal)) names.add(NEG_SYMBOL);
 		// Extra tactics applicable to goal should be added here.
 		return names;
 	}

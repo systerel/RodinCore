@@ -53,7 +53,6 @@ public class GoalSection
 	private static final String SECTION_DESCRIPTION = "The current goal";	
 	
     private FormPage page;
-//    private Text text = null;
     private FormText formText;
     private FormToolkit toolkit;
     private ScrolledForm scrolledForm;
@@ -85,6 +84,11 @@ public class GoalSection
 						inputs[i++] = text.getText();
 					}
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.exI(inputs));
+					return;
+				}
+
+				if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.removeNegGoal());
 					return;
 				}
 			}
