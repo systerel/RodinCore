@@ -113,4 +113,32 @@ public abstract class Expression extends Formula<Expression> {
 		throw new InvalidExpressionException();
 	}
 	
+	/**
+	 * Statically type-checks this expression, whose expected type is known.
+	 * <p>
+	 * Returns the {@link TypeCheckResult} containing all the informations about
+	 * the type-check run.
+	 * </p>
+	 * 
+	 * @param environment
+	 *            an initial type environment
+	 * @param expectedType
+	 *            expected type of this expression
+	 * @return the result of the type checker
+	 */
+	public final ITypeCheckResult typeCheck(
+			ITypeEnvironment environment,
+			Type expectedType) {
+		
+		TypeCheckResult result = new TypeCheckResult(environment);
+		boolean wasTypeChecked = isTypeChecked();
+		typeCheck(result, NO_BOUND_IDENT_DECL);
+		result.unify(getType(), expectedType, getSourceLocation());
+		result.solveTypeVariables();
+		if (! wasTypeChecked) {
+			solveType(result.getUnifier());
+		}
+		return result;
+	}
+
 }

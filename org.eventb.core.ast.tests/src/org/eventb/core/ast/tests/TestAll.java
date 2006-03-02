@@ -39,6 +39,7 @@ public class TestAll {
 		suite.addTestSuite(TestFIS.class);
 		suite.addTestSuite(TestTypeEnvironment.class);
 		suite.addTestSuite(TestCollectNamesAbove.class);
+		suite.addTestSuite(TestExprTypeChecker.class);
 		// suite.addTestSuite(TestTypedConstructor.class);
 		//$JUnit-END$
 		return suite;

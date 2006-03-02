@@ -757,6 +757,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see QuantifiedPredicate
 	 */
 	public final static int EXISTS = FIRST_QUANTIFIED_PREDICATE + 1;
+	
+	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
+		new BoundIdentDecl[0];
+	
 
 	// Internal constructor for derived classes (with location).
 	protected Formula(int tag, SourceLocation location, int hashCode) {
@@ -1128,7 +1132,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final IResult isLegible(Collection<FreeIdentifier> context) {
 		LegibilityResult result = new LegibilityResult(context);
-		isLegible(result, new BoundIdentDecl[0]);
+		isLegible(result, NO_BOUND_IDENT_DECL);
 		return result;
 	}
 	
@@ -1159,7 +1163,7 @@ public abstract class Formula<T extends Formula<T>> {
 		
 		TypeCheckResult result = new TypeCheckResult(environment);
 		boolean wasTypeChecked = isTypeChecked();
-		typeCheck(result, new BoundIdentDecl[0]);
+		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
 		if (!wasTypeChecked) {
 			solveType(result.getUnifier());
