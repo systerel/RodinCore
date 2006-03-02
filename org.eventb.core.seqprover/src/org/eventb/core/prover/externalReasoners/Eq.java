@@ -93,15 +93,15 @@ public class Eq implements IExternalReasoner{
 		
 		public Input(Hypothesis eqHyp){
 			assert Lib.isEq(eqHyp.getPredicate());
-			assert (Lib.eqLeft(eqHyp.getPredicate()) instanceof FreeIdentifier);
+			// assert (Lib.eqLeft(eqHyp.getPredicate()) instanceof FreeIdentifier);
 			this.eqHyp = eqHyp;
 			this.useReflexive = false;
 		}
 		
 		public Input(Hypothesis eqHyp,boolean useReflexive){
 			assert Lib.isEq(eqHyp.getPredicate());
-			assert useReflexive ? (Lib.eqRight(eqHyp.getPredicate()) instanceof FreeIdentifier)
-					: (Lib.eqLeft(eqHyp.getPredicate()) instanceof FreeIdentifier);
+			// assert useReflexive ? (Lib.eqRight(eqHyp.getPredicate()) instanceof FreeIdentifier)
+			//		: (Lib.eqLeft(eqHyp.getPredicate()) instanceof FreeIdentifier);
 			this.eqHyp = eqHyp;
 			this.useReflexive = useReflexive;
 		}

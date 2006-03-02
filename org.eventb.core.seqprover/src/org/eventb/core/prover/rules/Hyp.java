@@ -7,7 +7,7 @@ import org.eventb.core.prover.sequent.IProverSequent;
 public final class Hyp extends ProofRule {
 
 	public Hyp() {
-		super("assume");
+		super("assm");
 	}
 	
 	public boolean isApplicable(IProverSequent S) {

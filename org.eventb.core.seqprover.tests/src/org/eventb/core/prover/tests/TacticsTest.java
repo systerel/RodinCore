@@ -245,6 +245,20 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,1);
 	}
 	
+	public void testRemoveNegHyp(){
+		pt = TestLib.genProofTreeNode( " ¬⊥|- ⊥");
+		assertNull(Tactics.removeNegHyp(TestLib.genHyp("¬⊥")).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+		
+		pt = TestLib.genProofTreeNode( " ¬(1=1 ∨ 2=2 ∨ 3=3)|- ⊤");
+		assertNull(Tactics.removeNegHyp(TestLib.genHyp("¬(1=1 ∨ 2=2 ∨ 3=3)")).apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
+	}
+	
 	// Tactics applicable on every hypothesis
 	
 	public void testFalsifyHyp(){

@@ -7,6 +7,7 @@ import static org.eventb.core.prover.tactics.BasicTactics.onPending;
 import static org.eventb.core.prover.tactics.BasicTactics.pluginTac;
 import static org.eventb.core.prover.tactics.BasicTactics.repeat;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +24,7 @@ import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.RewriteGoal;
+import org.eventb.core.prover.externalReasoners.RewriteHyp;
 import org.eventb.core.prover.externalReasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.externalReasoners.rewriter.TrivialRewrites;
 import org.eventb.core.prover.rules.AllI;
@@ -208,6 +210,17 @@ public class Tactics {
 		return Lib.isExQuant(hyp.getPredicate());
 	}
 	
+	public static ITactic removeNegHyp(Hypothesis hyp){
+		return composeStrict(
+				pluginTac(new RewriteHyp(),new RewriteHyp.Input(hyp,new RemoveNegation())),
+				onPending(0,mngHyp(ActionType.DESELECT,hyp)),
+				onPending(0,impI())
+		);
+	}
+	
+	public static boolean removeNegHyp_applicable(Hypothesis hyp){
+		return (new RemoveNegation()).isApplicable(hyp.getPredicate());
+	}
 	
     // Tactics applicable on every hypothesis
 	
@@ -241,8 +254,12 @@ public class Tactics {
 	}
 	
 	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
-	return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
+		return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
+	}
 	
+
+	public static ITactic mngHyp(ActionType type,Hypothesis hypothesis){
+		return mngHyp(type,Collections.singleton(hypothesis));
 	}
 	
 	public static ITactic postProcess() {
