@@ -34,25 +34,6 @@ public class ExI implements IExternalReasoner{
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(S.goal());
 		Input eI = (Input) I;
-//		Map<Integer,Expression> witnesses = new HashMap <Integer,Expression>();
-//		// Fill the witnesses map using plugin input.		
-//		Expression witness;
-//		for (int i=0;i<boundIdentDecls.length;i++){
-//			if (eI.witnesses.containsKey(Integer.valueOf(i)))
-//			{
-//				
-//				witness = lib.parseExpression(eI.witnesses.get(Integer.valueOf(i)));
-//				if (witness == null) 
-//					return new UnSuccessfulPluginOutput(this,I,
-//							"Parse error for expression "+eI.witnesses.get(Integer.valueOf(i)));
-//				if (! lib.isWellTyped(witness,S.typeEnvironment())) 
-//					return new UnSuccessfulPluginOutput(this,I,
-//							"Type check failed for expression "+eI.witnesses.get(Integer.valueOf(i)));;
-//							if (! boundIdentDecls[i].getType().equals(witness.getType())) 
-//								return new UnSuccessfulPluginOutput(this,I,"types do not match for bounded identifier "+i);
-//							witnesses.put(Integer.valueOf(i),witness);
-//			}
-//		}
 		
 		Expression[] witnesses = new Expression[boundIdentDecls.length];
 		// Fill the witnesses array using plugin input.		
@@ -68,12 +49,15 @@ public class ExI implements IExternalReasoner{
 				if (witness == null) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
 							"Parse error for expression "+eI.witnesses[i]);
-				if (! Lib.isWellTyped(witness,S.typeEnvironment())) 
+				if (! Lib.isWellTypedInstantiation(witness,boundIdentDecls[i].getType(),S.typeEnvironment())) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
-							"Type check failed for expression "+eI.witnesses[i]);
-							if (! boundIdentDecls[i].getType().equals(witness.getType())) 
-								return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
-							witnesses[i] = witness;
+							"Type check failed : "+eI.witnesses[i]+" expected type "+ boundIdentDecls[i].getType());
+//				if (! Lib.isWellTyped(witness,S.typeEnvironment())) 
+//					return new UnSuccessfulExtReasonerOutput(this,I,
+//							"Type check failed for expression "+eI.witnesses[i]);
+//				if (! boundIdentDecls[i].getType().equals(witness.getType())) 
+//					return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
+				witnesses[i] = witness;
 			}
 		}
 		

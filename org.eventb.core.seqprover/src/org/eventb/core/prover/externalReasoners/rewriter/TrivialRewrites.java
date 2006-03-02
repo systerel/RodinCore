@@ -18,6 +18,8 @@ public class TrivialRewrites implements Rewriter{
 		
 		if (isInclusion(p) && isEmptySet(getSet(p)))
 			return true;
+		if (isNotInclusion(p) && isEmptySet(getSet(p)))
+			return true;
 		
 		return false;
 	}
@@ -27,13 +29,15 @@ public class TrivialRewrites implements Rewriter{
 			return  negPred(negPred(p));
 		
 		if (isEq(p) && eqLeft(p).equals(eqRight(p)))
-			return True;
-		
+			return True;	
 		if (isNotEq(p) && notEqLeft(p).equals(notEqRight(p)))
 			return False;
 		
 		if (isInclusion(p) && isEmptySet(getSet(p)))
 			return False;
+		
+		if (isNotInclusion(p) && isEmptySet(getSet(p)))
+			return True;
 		
 		return null;
 	}

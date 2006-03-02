@@ -51,11 +51,16 @@ public class AllF implements IExternalReasoner{
 				if (instantiation == null) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
 							"Parse error for expression "+aI.instantiations[i]);
-				if (! Lib.isWellTyped(instantiation,S.typeEnvironment())) 
+				
+				if (! Lib.isWellTypedInstantiation(instantiation,boundIdentDecls[i].getType(),S.typeEnvironment())) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
-							"Type check failed for expression "+aI.instantiations[i]);
-				if (! boundIdentDecls[i].getType().equals(instantiation.getType())) 
-					return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
+							"Type check failed : "+aI.instantiations[i]+" expected type "+ boundIdentDecls[i].getType());
+				
+//				if (! Lib.isWellTyped(instantiation,S.typeEnvironment())) 
+//					return new UnSuccessfulExtReasonerOutput(this,I,
+//							"Type check failed for expression "+aI.instantiations[i]);
+//				if (! boundIdentDecls[i].getType().equals(instantiation.getType())) 
+//					return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
 				instantiations[i] = instantiation;
 			}
 		}

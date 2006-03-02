@@ -47,7 +47,7 @@ public class TacticsTest extends TestCase {
 		pt = TestLib.genProofTreeNode(" ⊤|- 1=1 ⇒ ⊤");
 		assertNull(Tactics.lemma("⊥").apply(pt));
 		desc = pt.getOpenDescendants();
-		System.out.println(pt);
+		// System.out.println(pt);
 		assertEquals(desc.length,3);
 	}
 	
@@ -124,11 +124,11 @@ public class TacticsTest extends TestCase {
 		assertEquals(desc.length,2);
 		
 		pt = TestLib.genProofTreeNode( " ⊤|- ∃x· x ⊆ℕ");
-		// assertNull(Tactics.exI(null,"{1,2}").apply(pt));
-		System.out.println(Tactics.exI("∅").apply(pt));
-		// desc = pt.getOpenDescendants();
-		System.out.println(pt);
-		// assertEquals(desc.length,2);
+		assertNull(Tactics.exI("∅").apply(pt));
+		// System.out.println(Tactics.exI("∅").apply(pt));
+		desc = pt.getOpenDescendants();
+		// System.out.println(pt);
+		assertEquals(desc.length,2);
 	}
 	
 	public void testRemoveNegGoal(){
@@ -175,6 +175,12 @@ public class TacticsTest extends TestCase {
 		
 		pt = TestLib.genProofTreeNode( " ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y |- 1=1");
 		assertNull(Tactics.allF(TestLib.genHyp(" ∀x,y·x∈ℤ∧y∈ℕ ⇒ x=x∧y=y "),null,"0").apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ∀x· x ⊆ℕ ⇒ x=x |- 1=1");
+		assertNull(Tactics.allF(TestLib.genHyp("∀x· x ⊆ℕ ⇒ x=x "),"∅").apply(pt));
 		// System.out.println(pt);
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,2);

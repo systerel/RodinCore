@@ -422,6 +422,15 @@ public final class Lib {
 		return false;
 	}
 	
+	public static boolean isWellTypedInstantiation(Expression e, Type expT,ITypeEnvironment te) {
+		ITypeCheckResult tcr = e.typeCheck(te,expT);
+		// new free variables introduced
+		if (tcr.isSuccess()) {
+			return tcr.getInferredEnvironment().isEmpty();
+		}
+		return false;
+	}
+	
 	public static ITypeEnvironment typeCheck(Formula f) {
 		ITypeCheckResult tcr = f.typeCheck(ff.makeTypeEnvironment());
 		if (! tcr.isSuccess()) return null;
