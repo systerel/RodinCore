@@ -11,9 +11,10 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.dialogs.InputDialog;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -22,7 +23,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContext;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -86,23 +86,23 @@ public class ConstantMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new Constant", "cst" + (counter + 1), null);
+		ElementInputDialog dialog = new ElementInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Constants", "Name of the new constant", "cst" + (counter + 1));
 		dialog.open();
-		String name = dialog.getValue();
-		if (name != null) 
-			try {
-				IInternalElement constant = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
+		Collection<String> names = dialog.getNames();
+		try {
+			for (Iterator<String> it = names.iterator(); it.hasNext();) {
+				String name = it.next();
+				rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
 				counter++;
-				this.getViewer().setInput(rodinFile);
-				this.getViewer().setSelection(new StructuredSelection(constant));
-				this.markDirty();
-				((EventBFormPage) block.getPage()).notifyChangeListeners();
-				updateButtons();
 			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-		dialog.close();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		this.getViewer().setInput(rodinFile);
+		this.markDirty();
+		((EventBFormPage) block.getPage()).notifyChangeListeners();
+		updateButtons();
 	}
 	
 

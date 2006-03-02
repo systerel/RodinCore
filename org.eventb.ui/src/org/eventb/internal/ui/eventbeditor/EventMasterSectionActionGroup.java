@@ -11,6 +11,9 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -75,18 +78,24 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
-									try {
-										IInternalElement variable = event.createInternalElement(IVariable.ELEMENT_TYPE, "var" + (++counter), null, null);
-										viewer.refresh(event, true);
-										viewer.setSelection(new StructuredSelection(variable));
-										section.markDirty();
-										((EventBFormPage) section.block.getPage()).notifyChangeListeners();
-									}
-									catch (RodinDBException e) {
-										e.printStackTrace();
+
+								ElementInputDialog dialog = new ElementInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
+								dialog.open();
+								Collection<String> names = dialog.getNames();
+								try {
+									for (Iterator<String> it = names.iterator(); it.hasNext();) {
+										String name = it.next();
+										event.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+										counter++;
 									}
 								}
-								
+								catch (RodinDBException e) {
+									e.printStackTrace();
+								}
+								viewer.refresh(event, true);
+								section.markDirty();
+								((EventBFormPage) section.block.getPage()).notifyChangeListeners();
+								}								
 							}
 						});
 			}
@@ -174,6 +183,7 @@ public class EventMasterSectionActionGroup
 										}
 									}
 								}
+								((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								section.markDirty();
 								return;
 							}

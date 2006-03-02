@@ -11,9 +11,10 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.dialogs.InputDialog;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -22,7 +23,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContext;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -86,23 +86,23 @@ public class CarrierSetMasterSection
 	 * Handle the adding (new Carrier Set) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new Carrier Set", "set" + (counter + 1), null);
+		ElementInputDialog dialog = new ElementInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
 		dialog.open();
-		String name = dialog.getValue();
-		if (name != null)
-			try {
-				IInternalElement carrierSet = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
+		Collection<String> names = dialog.getNames();
+		try {
+			for (Iterator<String> it = names.iterator(); it.hasNext();) {
+				String name = it.next();
+				rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
 				counter++;
-				this.getViewer().setInput(rodinFile);
-				this.getViewer().setSelection(new StructuredSelection(carrierSet));
-				this.markDirty();
-				((EventBFormPage) block.getPage()).notifyChangeListeners();
-				updateButtons();
 			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-		dialog.close();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		this.getViewer().setInput(rodinFile);
+		this.markDirty();
+		((EventBFormPage) block.getPage()).notifyChangeListeners();
+		updateButtons();
 	}
 	
 
