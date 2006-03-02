@@ -241,7 +241,7 @@ public class MachineRuleBase {
 									idInt = true;
 								}
 							}
-							if(idInt) {
+							if(idInt || evtName.equals("INITIALISATION")) {
 								ArrayList<ProofObligation.Form> prec = new ArrayList<ProofObligation.Form>(precGuards);
 								ArrayList<BecomesEqualTo> post = new ArrayList<BecomesEqualTo>(postBA.size() + numAssignedVars);
 								for(BecomesEqualTo bet : postBA) {
