@@ -7,7 +7,6 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.rules.PLb;
 import org.eventb.core.prover.rules.ProofRule;
-import org.eventb.core.prover.sequent.Hypothesis;
 
 public class BasicTactics {
 	
@@ -43,10 +42,6 @@ public class BasicTactics {
 		return new RuleTac(rule);
 	}
 	
-	public static ITactic searchTac(String str){
-		return new SearchTac(str);
-	}
-	
 	
 	private static class Prune implements ITactic {
 	
@@ -56,20 +51,6 @@ public class BasicTactics {
 			if (pt.isOpen()) return "Root is already open";
 			pt.pruneChildren();
 			return null;
-		}
-	}
-	
-	private static class SearchTac implements ITactic {
-		
-		private final String str;
-		
-		public SearchTac(String str)
-		{
-			this.str = str;
-		}
-		
-		public Object apply(IProofTreeNode pt){
-			return Hypothesis.textSearch(pt.getSequent().hypotheses(),str);
 		}
 	}
 	

@@ -1,12 +1,9 @@
 package org.eventb.core.prover.tests;
 
 
-import java.util.Set;
-
 import junit.framework.TestCase;
 
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.Tactics;
 
@@ -46,6 +43,12 @@ public class TacticsTest extends TestCase {
 		//System.out.println(pt);
 		assertEquals(desc.length,1);
 		assertEquals(desc[0],pt);
+		
+		pt = TestLib.genProofTreeNode(" ⊤|- 1=1 ⇒ ⊤");
+		assertNull(Tactics.lemma("⊥").apply(pt));
+		desc = pt.getOpenDescendants();
+		System.out.println(pt);
+		assertEquals(desc.length,3);
 	}
 	
 	
@@ -72,27 +75,6 @@ public class TacticsTest extends TestCase {
 		assertNull(Tactics.contradictGoal().apply(pt));
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void testSearchHyps(){
-		Object result;
-		Set<Hypothesis> searchedHyps;
-		
-		pt = TestLib.genProofTreeNode( " ⊤;; 1=1 ;; 2=2 ;; 1=2 |- ⊤" );
-		result = Tactics.searchHyps("1").apply(pt);
-		assertNotNull(result);
-		assertTrue(result instanceof Set);
-		searchedHyps = (Set<Hypothesis>) result;
-		assertEquals(searchedHyps.size(),2);
-		
-		pt = TestLib.genProofTreeNode( " ⊤;; 1=1 ;; 2=2 ;; 1=2 |- ⊤" );
-		result = Tactics.searchHyps("=").apply(pt);
-		assertNotNull(result);
-		assertTrue(result instanceof Set);
-		searchedHyps = (Set<Hypothesis>) result;
-		assertEquals(searchedHyps.size(),3);
-		
 	}
 
 	// Tactics applicable on the goal
@@ -140,6 +122,13 @@ public class TacticsTest extends TestCase {
 		desc = pt.getOpenDescendants();
 		// System.out.println(pt);
 		assertEquals(desc.length,2);
+		
+		pt = TestLib.genProofTreeNode( " ⊤|- ∃x· x ⊆ℕ");
+		// assertNull(Tactics.exI(null,"{1,2}").apply(pt));
+		System.out.println(Tactics.exI("∅").apply(pt));
+		// desc = pt.getOpenDescendants();
+		System.out.println(pt);
+		// assertEquals(desc.length,2);
 	}
 	
 	public void testRemoveNegGoal(){

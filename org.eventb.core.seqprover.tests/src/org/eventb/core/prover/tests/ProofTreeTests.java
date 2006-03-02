@@ -116,7 +116,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 * Checks consistency after applying a rule that fails.
 	 */
 	public void testApplyRuleFailure() {
-		IProverSequent sequent = makeSimpleSequent("⊤");
+		IProverSequent sequent = makeSimpleSequent("⊥");
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 

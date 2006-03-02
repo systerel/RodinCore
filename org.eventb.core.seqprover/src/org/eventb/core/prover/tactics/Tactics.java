@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
-
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.externalReasoners.AllF;
 import org.eventb.core.prover.externalReasoners.ConjD;
@@ -24,8 +23,8 @@ import org.eventb.core.prover.externalReasoners.ExI;
 import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.RewriteGoal;
-import org.eventb.core.prover.externalReasoners.Trivial;
 import org.eventb.core.prover.externalReasoners.rewriter.RemoveNegation;
+import org.eventb.core.prover.externalReasoners.rewriter.TrivialRewrites;
 import org.eventb.core.prover.rules.AllI;
 import org.eventb.core.prover.rules.ConjI;
 import org.eventb.core.prover.rules.Hyp;
@@ -69,7 +68,7 @@ public class Tactics {
 	
 	public static ITactic norm(){
 		ITactic Ti = repeat(compose(conjI(),allI(),impI()));
-		ITactic T = repeat(compose(hyp(),trivial(),Ti));
+		ITactic T = repeat(compose(trivialGoalRewrite(),hyp(),Ti));
 		return repeat(onAllPending(T));
 	}
 	
@@ -89,12 +88,6 @@ public class Tactics {
 				onPending(0,impI())
 		);
 	}
-	
-	public static ITactic searchHyps(String str){
-		return BasicTactics.searchTac(str);
-	}
-	
-	
 	
 
 	// Tactics applicable on the goal
@@ -232,7 +225,15 @@ public class Tactics {
 	}
 	
 	public static ITactic trivial() {
-		return new ITactic.plugin(new Trivial(), null);
+		return compose(
+				trivialGoalRewrite(),
+				hyp()
+		);
+	}
+	
+	public static ITactic trivialGoalRewrite() {
+	return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites()));
+
 	}
 	
 	public static ITactic prune() {
@@ -242,6 +243,11 @@ public class Tactics {
 	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
 	return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
 	
+	}
+	
+	public static ITactic postProcess() {
+		return onAllPending(hyp());
+		
 	}
 	
 	
