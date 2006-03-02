@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
@@ -88,10 +87,10 @@ public class CacheHypothesesSection
 					if (hr.isSelected()) {
 						deselected.add(hr.getHypothesis());
 					}
-					if (deselected.isEmpty()) return;
-					ProverUI editor = (ProverUI) page.getEditor();
-					editor.getUserSupport().removeHypotheses(IHypothesisDelta.CACHED, deselected);
 				}
+				if (deselected.isEmpty()) return;
+				ProverUI editor = (ProverUI) page.getEditor();
+				editor.getUserSupport().removeCachedHypotheses(deselected);
 			}
 		
 		}
