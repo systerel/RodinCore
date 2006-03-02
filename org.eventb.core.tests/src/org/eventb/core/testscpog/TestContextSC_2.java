@@ -13,6 +13,33 @@ import org.eventb.core.ISCContext;
 public class TestContextSC_2 extends BuilderTest {
 
 	/**
+	 * Test method for non-empty names of carrier sets
+	 */
+	public void testCarrierSet1() throws Exception {
+		IContext rodinFile = createContext("one");
+		addCarrierSets(rodinFile, makeList(""));
+		rodinFile.save(null, true);
+		
+		ISCContext scContext = runSC(rodinFile);
+		
+		assertTrue("no carrier set", scContext.getCarrierSets().length == 0);
+	}
+
+	/**
+	 * Test method for non-empty names of constants
+	 */
+	public void testConstant1() throws Exception {
+		IContext rodinFile = createContext("one");
+		addConstants(rodinFile, makeList(""));
+		addAxioms(rodinFile, makeList("A1"), makeList("⊤"), null);
+		rodinFile.save(null, true);
+		
+		ISCContext scContext = runSC(rodinFile);
+		
+		assertTrue("no carrier set", scContext.getConstants().length == 0);
+	}
+
+	/**
 	 * Test method for name clashes of carrier sets and constants
 	 */
 	public void testCarrierSetandConstant1() throws Exception {

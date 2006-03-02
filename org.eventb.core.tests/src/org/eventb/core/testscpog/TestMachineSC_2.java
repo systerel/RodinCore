@@ -167,6 +167,22 @@ public class TestMachineSC_2 extends BuilderTest {
 	}
 	
 	/**
+	 * Test method for non-name names of variables
+	 */
+	public void testVariables6() throws Exception {
+		IMachine rodinFile = createMachine("one");
+		addVariables(rodinFile, makeList(""));
+		addInvariants(rodinFile, makeList("I1"), makeList("⊤"));
+		rodinFile.save(null, true);
+		
+		ISCMachine scMachine = runSC(rodinFile);
+		
+		ISCVariable[] variables = scMachine.getSCVariables();
+		
+		assertTrue("variables", variables.length == 0);
+	}
+	
+	/**
 	 * Test method for non-name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariants1() throws Exception {
@@ -482,6 +498,28 @@ public class TestMachineSC_2 extends BuilderTest {
 		set.add(localVariables[1].getElementName());
 		
 		assertTrue("names correspond", set.contains("L1") && set.contains("L3"));
+	}
+	
+	/**
+	 * Test method for non-empty names of local variables
+	 */
+	public void testLocalVariables5() throws Exception {
+		IMachine rodinFile = createMachine("one");
+		addEvent(rodinFile, "E1", 
+				makeList(""), 
+				makeList("G1"), makeList("⊤"), makeList());
+		rodinFile.save(null, true);
+		
+		ISCMachine scMachine = runSC(rodinFile);
+		
+		ISCEvent[] events = scMachine.getSCEvents();
+		
+		assertTrue("1 event", events.length == 1);
+		
+		ISCVariable[] localVariables = events[0].getSCVariables();
+		
+		assertTrue("local variables", localVariables.length == 0);
+		
 	}
 	
 	/**
