@@ -119,11 +119,12 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 * Test method for non-creation of WD-po of one invariant
 	 */
 	public void testInvariant2() throws Exception {
-		String invariant = "(∀x·x≠0⇒x>0)";
+		String invariant = "∅⊆ℤ";
 		ISCMachine rodinFile = createSCMachine("test");
 		addAxioms(rodinFile, 
 				makeList("I1"), 
 				makeList(invariant), null);
+		
 		rodinFile.save(null, true);
 
 		IPOFile poFile = runPOG(rodinFile);
@@ -160,6 +161,29 @@ public class TestMachinePOG_2 extends BuilderTest {
 	
 	}
 	
+	/**
+	 * Test method for creation of invariant preservation PO for machine without variables and an invariant
+	 */
+	public void testInvariant4() throws Exception {
+		String invariant = factory.parsePredicate("∅⊆ℤ").getParsedPredicate().toString();;
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, 
+				makeList("I1"), 
+				makeList(invariant));
+		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
+				makeList(), makeList(), makeList(), makeList());
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList(), makeList(), makeList(), makeList());
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("number of POs", sequents.length == 1);
+		
+		assertEquals("formula", invariant, sequents[0].getGoal().getContents());
+	}
+
 	/**
 	 * Test method for creation of po and WD-po of one theorem
 	 */
