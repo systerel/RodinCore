@@ -88,7 +88,7 @@ public class InvariantMasterSection
 	 */
 	protected void handleAdd() {
 		try {
-			IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, "inv" + counter++, null, null);
+			IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, "inv" + (++counter), null, null);
 			invariant.setContents(EventBUIPlugin.INV_DEFAULT);
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(invariant));

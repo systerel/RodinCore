@@ -61,7 +61,7 @@ public class EventMasterSection
 	private static final int ADD_INIT_INDEX = 6;
 
 	private static final String [] buttonLabels =
-		{"Add Event", "Add VAR", "Add Guard", "Add Action", "Up", "Down", "Add INIT"};
+		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down", "Add Init."};
 
 	// The counter used to create automatic name for new elements.
 	private int counter;
@@ -231,8 +231,7 @@ public class EventMasterSection
 	 */
 	private void handleAddEvent() {
 		try {
-			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + counter, null, null);
-			counter++;
+			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + (++counter), null, null);
 			commit();
 			getViewer().setSelection(new StructuredSelection(event));
 		}

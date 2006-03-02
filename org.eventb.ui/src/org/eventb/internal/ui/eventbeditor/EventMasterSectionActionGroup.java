@@ -76,8 +76,7 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 									try {
-										IInternalElement variable = event.createInternalElement(IVariable.ELEMENT_TYPE, "var" + counter, null, null);
-										counter++;
+										IInternalElement variable = event.createInternalElement(IVariable.ELEMENT_TYPE, "var" + (++counter), null, null);
 										viewer.refresh(event, true);
 										viewer.setSelection(new StructuredSelection(variable));
 										section.markDirty();
@@ -105,7 +104,7 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 									try {
-										IInternalElement guard = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd" + counter++, null, null);
+										IInternalElement guard = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd" + (++counter), null, null);
 										guard.setContents(EventBUIPlugin.GRD_DEFAULT);
 										viewer.refresh(event, true);
 										viewer.setSelection(new StructuredSelection(guard));

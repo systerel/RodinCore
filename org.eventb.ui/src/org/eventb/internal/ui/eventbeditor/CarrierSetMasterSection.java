@@ -86,7 +86,7 @@ public class CarrierSetMasterSection
 	 * Handle the adding (new Carrier Set) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new Carrier Set", "set" + counter, null);
+		InputDialog dialog = new InputDialog(null, "Carrier Set Name", "Name of the new Carrier Set", "set" + (counter + 1), null);
 		dialog.open();
 		String name = dialog.getValue();
 		if (name != null)

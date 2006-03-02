@@ -105,7 +105,7 @@ public class TheoremMasterSection
 	 */
 	protected void handleAdd() {
 		try {
-			IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm" + counter++, null, null);
+			IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm" + (++counter), null, null);
 			theorem.setContents(EventBUIPlugin.THM_DEFAULT);
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(theorem));

@@ -86,7 +86,7 @@ public class VariableMasterSection
 	 * Handle the adding (new Variable) action.
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Variable Name", "Name of the new variable", "var" + counter, null);
+		InputDialog dialog = new InputDialog(null, "Variable Name", "Name of the new variable", "var" + (counter + 1), null);
 		dialog.open();
 		String name = dialog.getValue();
 		if (name != null) {

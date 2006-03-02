@@ -86,7 +86,7 @@ public class ConstantMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new Constant", "cst" + counter, null);
+		InputDialog dialog = new InputDialog(null, "Constant Name", "Name of the new Constant", "cst" + (counter + 1), null);
 		dialog.open();
 		String name = dialog.getValue();
 		if (name != null) 
