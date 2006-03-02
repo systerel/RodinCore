@@ -143,6 +143,20 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
+	public boolean isATypeExpression() {
+		Type myType = getType();
+		if (myType instanceof PowerSetType) {
+			PowerSetType powerSetType = (PowerSetType) myType;
+			Type baseType = powerSetType.getBaseType();
+			if (baseType instanceof GivenType) {
+				GivenType givenType = (GivenType) baseType;
+				return givenType.getName().equals(name);
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		return factory.makeGivenType(getName());
 	}

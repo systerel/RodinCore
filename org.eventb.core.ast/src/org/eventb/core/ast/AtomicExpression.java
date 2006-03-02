@@ -158,6 +158,12 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
+	public boolean isATypeExpression() {
+		int tag = getTag();
+		return tag == INTEGER || tag == BOOL;
+	}
+
+	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		switch (getTag()) {
 		case INTEGER:

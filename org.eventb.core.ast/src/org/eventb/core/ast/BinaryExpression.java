@@ -645,6 +645,14 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
+	public boolean isATypeExpression() {
+		int tag = getTag();
+		return (tag == CPROD || tag == REL)
+				&& left.isATypeExpression()
+				&& right.isATypeExpression();
+	}
+
+	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		Type leftAsType = left.toType(factory);
 		Type rightAsType = right.toType(factory);

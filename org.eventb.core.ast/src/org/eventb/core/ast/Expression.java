@@ -97,7 +97,18 @@ public abstract class Expression extends Formula<Expression> {
 	}
 
 	/**
-	 * Returns the type corresponding to this expression.
+	 * Returns whether this expression denotes a type.
+	 * 
+	 * @return <code>true</code> iff this expression denotes a type.
+	 */
+	public boolean isATypeExpression() {
+		// default case, involved subclasses will override this.
+		return false;
+	}
+	
+	
+	/**
+	 * Returns the type corresponding to this type-checked expression.
 	 * <p>
 	 * The returned type is <em>not</em> the type of this expression.
 	 * </p>
@@ -108,6 +119,7 @@ public abstract class Expression extends Formula<Expression> {
 	 * @throws InvalidExpressionException
 	 *             when this expression doesn't denote a type
 	 * @see Type#toExpression(FormulaFactory)
+	 * @see #isATypeExpression()
 	 */
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		throw new InvalidExpressionException();

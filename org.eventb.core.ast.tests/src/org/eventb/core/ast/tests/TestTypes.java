@@ -16,6 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
 
@@ -114,8 +115,13 @@ public class TestTypes extends TestCase {
 	 */
 	public void testTypeFactory() {
 		for (TestItem item : items) {
-			assertEquals(item.expr, item.type.toExpression(ff));
+			final Expression expr = item.type.toExpression(ff);
+			assertEquals(item.expr, expr);
 			assertEquals(item.image, item.type.toString());
+			// TODO put back test of type equality below
+			// when type synthesis is implemented.
+			// final Type expectedExprType = ff.makePowerSetType(item.type);
+			// assertEquals(expectedExprType, expr.getType());
 		}
 	}
 	
@@ -137,6 +143,7 @@ public class TestTypes extends TestCase {
 		for (TestItem item : items) {
 			IParseResult result = ff.parseType(item.image);
 			assertTrue(result.isSuccess());
+			assertNull(result.getParsedExpression());
 			assertEquals(item.type, result.getParsedType());
 		}
 		
@@ -150,9 +157,58 @@ public class TestTypes extends TestCase {
 			assertNull(result.getParsedExpression());
 			assertNull(result.getParsedType());
 		}
-		
 	}
 	
-	// TODO add test of type equality with expression derived from it.
+	public void testIsATypeExpression() {
+		ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		typenv.addGivenSet("S");
+		typenv.addGivenSet("T");
+		typenv.addName("x", tf.makePowerSetType(ty_S));
+		typenv.addName("y", tf.makePowerSetType(ty_T));
+		
+		String[] valid = new String[] {
+				"S",
+				"ℤ",
+				"BOOL",
+				"ℙ(S)",
+				"S × T",
+				"ℙ(S × T)",
+				"S ↔ T",
+		};
+
+		for (String image: valid) {
+			Expression expr = parseAndTypeCheck(image, typenv);
+			assertTrue("Expression " + expr + " denotes a type", 
+					expr.isATypeExpression());
+		}
+		
+		// test wrong type formulas
+		String[] illFormed = new String[] {
+				"ℕ",
+				"ℙ(ℕ)",
+				"ℙ1(ℤ)",
+				"S ⇸ T",
+				"x",
+				"x ↦ y",
+				"ℙ(x)",
+				"x × T",
+				"S × y",
+		};
+		for (String image: illFormed) {
+			Expression expr = parseAndTypeCheck(image, typenv);
+			assertFalse("Expression " + expr + " doesn't denote a type", 
+					expr.isATypeExpression());
+		}
+	}
+
+	private Expression parseAndTypeCheck(String image, ITypeEnvironment typenv) {
+		IParseResult parseResult = ff.parseExpression(image);
+		assertTrue("Can't parse " + image, parseResult.isSuccess());
+		Expression expr = parseResult.getParsedExpression();
+		expr.typeCheck(typenv);
+		assertTrue("Expression " + expr + " didn't typecheck",
+				expr.isTypeChecked());
+		return expr;
+	}
 	
 }

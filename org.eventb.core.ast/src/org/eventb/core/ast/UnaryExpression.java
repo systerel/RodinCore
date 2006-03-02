@@ -403,6 +403,11 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
+	public boolean isATypeExpression() {
+		return getTag() == POW && child.isATypeExpression();
+	}
+
+	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		if (getTag() != POW)
 			throw new InvalidExpressionException();

@@ -52,6 +52,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 					ProblemKind.InvalidTypeExpression, 
 					ProblemSeverities.Error));
 		}
+		expression = null;
 	}
 
 	/*
