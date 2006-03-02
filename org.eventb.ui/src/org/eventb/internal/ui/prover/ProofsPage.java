@@ -42,15 +42,22 @@ public class ProofsPage
 	public static final String PAGE_TITLE = "Proof State";
 	public static final String PAGE_TAB_TITLE = "Proof State";
 	
-	private GoalSection goal;
-	private HypothesesSection selected;
-	private HypothesesSection cache;
-	private HypothesesSection search;
+	private GoalSection goalSection;
+	private HypothesesSection selectedSection;
+	private HypothesesSection cachedSection;
+	private HypothesesSection searchedSection;
+	
+	private Collection<Hypothesis> selected;
+	private Collection<Hypothesis> cached;
+	private Collection<Hypothesis> searched;
 	
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
 		editor.getUserSupport().addHypothesisChangedListener(this);
 		editor.getUserSupport().addProofStatusChangedListener(this);
+		selected = new HashSet<Hypothesis>();
+		cached = new HashSet<Hypothesis>();
+		searched = new HashSet<Hypothesis>();
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
@@ -68,40 +75,40 @@ public class ProofsPage
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		body.setLayoutData(gd);
 		
-		search = new SearchHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.COMPACT);
-		managedForm.addPart(search);
+		searchedSection = new SearchHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.COMPACT);
+		managedForm.addPart(searchedSection);
 		
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 //		gd.heightHint = 0;
 		gd.widthHint = 200;
-		search.getSection().setLayoutData(gd);
+		searchedSection.getSection().setLayoutData(gd);
 
-		cache = new CacheHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
-		managedForm.addPart(cache);
+		cachedSection = new CacheHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		managedForm.addPart(cachedSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
 		gd.minimumHeight = 100;
 		gd.widthHint = 200;
-		cache.getSection().setLayoutData(gd);
+		cachedSection.getSection().setLayoutData(gd);
 		
-		selected = new SelectedHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
-		managedForm.addPart(selected);
+		selectedSection = new SelectedHypothesesSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		managedForm.addPart(selectedSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 150;
 		gd.minimumHeight = 100;
 		gd.widthHint = 200;
-		selected.getSection().setLayoutData(gd);
+		selectedSection.getSection().setLayoutData(gd);
 		
-		goal = new GoalSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
-		managedForm.addPart(goal);
+		goalSection = new GoalSection(this, body, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | Section.EXPANDED);
+		managedForm.addPart(goalSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 75;
 		gd.minimumHeight = 50;
 		gd.widthHint = 200;
-		goal.getSection().setLayoutData(gd);
+		goalSection.getSection().setLayoutData(gd);
 		
 	}
 
@@ -117,34 +124,53 @@ public class ProofsPage
 
 		for (Iterator<IHypothesisDelta> it = delta.iterator(); it.hasNext();) {
 			IHypothesisDelta d = it.next();
+			Hypothesis hyp = d.getHypothesis();
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SELECTED) != 0) {
-				addedToSelected.add(d.getHypothesis());
+				addedToSelected.add(hyp);
+				if (cached.contains(hyp)) removedFromCached.add(hyp);
+				else if (searched.contains(hyp)) removedFromSearched.add(hyp);
+				selected.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SELECTED) != 0) {
-				removedFromSelected.add(d.getHypothesis());
+				removedFromSelected.add(hyp);
+				if (cached.contains(hyp)) addedToCached.add(hyp);
+				else if (searched.contains(hyp)) addedToSearched.add(hyp);
+				selected.remove(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_CACHED) != 0) {
-				addedToCached.add(d.getHypothesis());
+				if (!selected.contains(hyp)) {
+					addedToCached.add(hyp);
+					if (searched.contains(hyp)) removedFromSearched.add(hyp);
+				}
+				cached.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_CACHED) != 0) {
-				removedFromCached.add(d.getHypothesis());
+				if (!selected.contains(hyp)) {
+					removedFromCached.add(hyp);
+					if (searched.contains(hyp)) addedToSearched.add(hyp);
+				}
+				cached.remove(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SEARCHED) != 0) {
-				addedToSearched.add(d.getHypothesis());
+				if (!selected.contains(hyp) && !cached.contains(hyp)) 
+					addedToSearched.add(hyp);
+				searched.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SEARCHED) != 0) {
-				removedFromSearched.add(d.getHypothesis());
+				if (!selected.contains(hyp) && !cached.contains(hyp)) 
+					removedFromSearched.add(d.getHypothesis());
+				searched.remove(hyp);
 			}
 
 		}
 		
-		//		if (UIUtils.debug) System.out.println("Update selected");
+		//		if (UIUtils.debug) System.out.println("Update selectedSection");
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
-				selected.update(addedToSelected, removedFromSelected);
-				cache.update(addedToCached, removedFromCached);
-				search.update(addedToSearched, removedFromSearched);
+				selectedSection.update(addedToSelected, removedFromSelected);
+				cachedSection.update(addedToCached, removedFromCached);
+				searchedSection.update(addedToSearched, removedFromSearched);
 			}
 		});
 //		if (UIUtils.debug) System.out.println("***************");
@@ -160,15 +186,14 @@ public class ProofsPage
 	 * @see org.eventb.core.pm.IProofStatusChangedListener#proofStatusChanged()
 	 */
 	public void proofStatusChanged(final boolean complete) {
-		goal.markDirty();
 //		final PenguinDanceDialog dialog = new PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
 //		
-//		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
-//		display.syncExec (new Runnable () {
-//			public void run () {
-//				if (complete) dialog.open();
-//			}
-//		});
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				goalSection.markDirty();
+			}
+		});
 	}
 	
 }

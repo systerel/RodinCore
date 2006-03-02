@@ -84,9 +84,7 @@ public class CacheHypothesesSection
 				Set<Hypothesis> deselected = new HashSet<Hypothesis>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();
-					if (hr.isSelected()) {
-						deselected.add(hr.getHypothesis());
-					}
+					if (hr.isSelected()) deselected.add(hr.getHypothesis());
 				}
 				if (deselected.isEmpty()) return;
 				ProverUI editor = (ProverUI) page.getEditor();

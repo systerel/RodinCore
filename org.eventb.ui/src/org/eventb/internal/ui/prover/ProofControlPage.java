@@ -190,7 +190,6 @@ public class ProofControlPage
 				if (label.equals("se")) {
 					if (UIUtils.debug) System.out.println("Search for " + textInput.getText());
 					editor.getUserSupport().searchHyps(textInput.getText());
-//					editor.getUserSupport().applyTactic(Tactics.searchHyps(textInput.getText()));
 					return;
 				}
 			}
