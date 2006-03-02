@@ -25,6 +25,15 @@ public class MachineRuleBase {
 	IMachineRule[] variableRules = new IMachineRule[] {
 			new IMachineRule() {
 				public boolean verify(IInternalElement element, MachineCache cache, ISCProblemList problemList) throws RodinDBException {
+					if(cache.getVariableIdentMap().get(element.getElementName()) == null) {
+						problemList.addProblem(element, "Invalid identifier name.", SCProblem.SEVERITY_ERROR);
+						return false;
+					}
+					return true;
+				}
+			},
+			new IMachineRule() {
+				public boolean verify(IInternalElement element, MachineCache cache, ISCProblemList problemList) throws RodinDBException {
 					if(cache.getVariableConflictSet().contains(element.getElementName())) {
 						problemList.addProblem(element, "Multiple declaration of variable.", SCProblem.SEVERITY_ERROR);
 						return false;
@@ -181,6 +190,15 @@ public class MachineRuleBase {
 	};
 	
 	IMachineRule[] localVariableRules = new IMachineRule[] {
+			new IMachineRule() {
+				public boolean verify(IInternalElement element, MachineCache cache, ISCProblemList problemList) throws RodinDBException {
+					if(cache.getLocalVariableIdentMap((IEvent) element.getParent()).get(element.getElementName()) == null) {
+						problemList.addProblem(element, "Invalid identifier name.", SCProblem.SEVERITY_ERROR);
+						return false;
+					}
+					return true;
+				}
+			},
 			new IMachineRule() {
 				public boolean verify(IInternalElement element, MachineCache cache, ISCProblemList problemList) throws RodinDBException {
 					if(cache.getLocalVariableConflictSet((IEvent) element.getParent()).contains(element.getElementName())) {

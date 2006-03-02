@@ -111,7 +111,7 @@ public class MachineCache extends Cache<IMachine> {
 			localVariableIdentMap.put(name, lvIdentMap);
 			parseNames(getVariables(event), lvIdentMap, lvConflictSet, problemList);
 			
-			newLocalVariables.put(name, new HashMap<String, IVariable>());
+//			newLocalVariables.put(name, new HashMap<String, IVariable>());
 			
 			ArrayList<IGuard> nGuards = new ArrayList<IGuard>(getGuards(event).length);
 			newGuards.put(name, nGuards);

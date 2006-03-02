@@ -24,6 +24,15 @@ public class ContextRuleBase {
 	private final IContextRule[] carrierSetRules = new IContextRule[] {
 			new IContextRule() {
 				public boolean verify(IInternalElement element, ContextCache cache, ISCProblemList problemList) {
+					if(cache.getCarrierSetIdentMap().get(element.getElementName()) == null) {
+						problemList.addProblem(element, "Invalid identifier name.", SCProblem.SEVERITY_ERROR);
+						return false;
+					}
+					return true;
+				}
+			},
+			new IContextRule() {
+				public boolean verify(IInternalElement element, ContextCache cache, ISCProblemList problemList) {
 					if(cache.getCarrierSetConflictSet().contains(element.getElementName())) {
 						problemList.addProblem(element, "Multiple declaration of carrier set.", SCProblem.SEVERITY_ERROR);
 						return false;
@@ -83,6 +92,15 @@ public class ContextRuleBase {
 	};
 	
 	private final IContextRule[] constantRules = new IContextRule[] {
+			new IContextRule() {
+				public boolean verify(IInternalElement element, ContextCache cache, ISCProblemList problemList) {
+					if(cache.getConstantIdentMap().get(element.getElementName()) == null) {
+						problemList.addProblem(element, "Invalid identifier name.", SCProblem.SEVERITY_ERROR);
+						return false;
+					}
+					return true;
+				}
+			},
 			new IContextRule() {
 				public boolean verify(IInternalElement element, ContextCache cache, ISCProblemList problemList) {
 					if(cache.getConstantConflictSet().contains(element.getElementName())) {
