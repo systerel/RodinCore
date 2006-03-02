@@ -12,6 +12,8 @@
 package org.eventb.internal.ui.prover;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -104,37 +106,53 @@ public class ProofsPage
 	}
 
 	public void hypothesisChanged(IHypothesisChangeEvent e) {
-		IHypothesisDelta delta = e.getDelta();
+		Collection<IHypothesisDelta> delta = e.getDelta();
 		
-		final Collection<Hypothesis> addedToSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.ADDED);
-		final Collection<Hypothesis> removedFromSelected = delta.getHypotheses(IHypothesisDelta.SELECTED, IHypothesisDelta.REMOVED);
-//		if (UIUtils.debug) System.out.println("Update selected");
+		final Collection<Hypothesis> addedToSelected = new HashSet<Hypothesis>();
+		final Collection<Hypothesis> removedFromSelected = new HashSet<Hypothesis>();
+		final Collection<Hypothesis> addedToCached = new HashSet<Hypothesis>();
+		final Collection<Hypothesis> removedFromCached = new HashSet<Hypothesis>();
+		final Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
+		final Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
+
+		for (Iterator<IHypothesisDelta> it = delta.iterator(); it.hasNext();) {
+			IHypothesisDelta d = it.next();
+			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SELECTED) != 0) {
+				addedToSelected.add(d.getHypothesis());
+			}
+			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SELECTED) != 0) {
+				removedFromSelected.add(d.getHypothesis());
+			}
+			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_CACHED) != 0) {
+				addedToCached.add(d.getHypothesis());
+			}
+			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_CACHED) != 0) {
+				removedFromCached.add(d.getHypothesis());
+			}
+			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SEARCHED) != 0) {
+				addedToSearched.add(d.getHypothesis());
+			}
+			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SEARCHED) != 0) {
+				removedFromSearched.add(d.getHypothesis());
+			}
+
+		}
+		
+		//		if (UIUtils.debug) System.out.println("Update selected");
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
 				selected.update(addedToSelected, removedFromSelected);
+				cache.update(addedToCached, removedFromCached);
+				search.update(addedToSearched, removedFromSearched);
 			}
 		});
 //		if (UIUtils.debug) System.out.println("***************");
 		
-		final Collection<Hypothesis> addedToCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.ADDED);
-		final Collection<Hypothesis> removedFromCached = delta.getHypotheses(IHypothesisDelta.CACHED, IHypothesisDelta.REMOVED);
 //		if (UIUtils.debug) System.out.println("Update cached");
-		display.syncExec (new Runnable () {
-			public void run () {
-				cache.update(addedToCached, removedFromCached);
-			}
-		});
 //		if (UIUtils.debug) System.out.println("*************");
 		
-		final Collection<Hypothesis> addedToSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.ADDED);
-		final Collection<Hypothesis> removedFromSearched = delta.getHypotheses(IHypothesisDelta.SEARCHED, IHypothesisDelta.REMOVED);
 //		if (UIUtils.debug) System.out.println("Update searched");
-		display.syncExec (new Runnable () {
-			public void run () {
-				search.update(addedToSearched, removedFromSearched);
-			}
-		});
 //		if (UIUtils.debug) System.out.println("*************");	
 	}
 

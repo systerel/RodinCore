@@ -1,5 +1,7 @@
 package org.eventb.core.pm;
 
+import java.util.Collection;
+
 public interface IHypothesisChangeEvent {
-	public IHypothesisDelta getDelta();
+	public Collection<IHypothesisDelta> getDelta();
 }

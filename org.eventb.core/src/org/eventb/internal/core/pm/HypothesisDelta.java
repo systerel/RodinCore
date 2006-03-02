@@ -1,51 +1,81 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * 
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.internal.core.pm;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.prover.sequent.Hypothesis;
 
+/**
+ * @see IHypothesisDelta
+ */
 public class HypothesisDelta implements IHypothesisDelta {
-	private Collection<Hypothesis> addedToSelected;
-	private Collection<Hypothesis> removedFromSelected;
-	private Collection<Hypothesis> addedToCached;
-	private Collection<Hypothesis> removedFromCached;
-	private Collection<Hypothesis> addedToSearched;
-	private Collection<Hypothesis> removedFromSearched;
+	Hypothesis hypothesis;
+	private int flags;
 	
-	public HypothesisDelta(
-			Collection<Hypothesis> addedToSelected,
-			Collection<Hypothesis> removedFromSelected,
-			Collection<Hypothesis> addedToCached,
-			Collection<Hypothesis> removedFromCached,
-			Collection<Hypothesis> addedToSearched,
-			Collection<Hypothesis> removedFromSearched) {
-		this.addedToSelected = addedToSelected;
-		this.removedFromSelected = removedFromSelected;
-		this.addedToCached = addedToCached;
-		this.removedFromCached = removedFromCached;
-		this.addedToSearched = addedToSearched;
-		this.removedFromSearched = removedFromSearched;
+	
+	public HypothesisDelta(Hypothesis hypothesis) {
+		this.hypothesis = hypothesis;
+		flags = 0;
 		return;
 	}
 	
-	public Collection<Hypothesis> getHypotheses(int place, int type) {
-		switch (place){
-		case SELECTED:
-			if (type == ADDED) return addedToSelected;
-			if (type == REMOVED) return removedFromSelected;
-			break;
-		case CACHED:
-			if (type == ADDED) return addedToCached;
-			if (type == REMOVED) return removedFromCached;
-			break;
-		case SEARCHED:
-			if (type == ADDED) return addedToSearched;
-			if (type == REMOVED) return removedFromSearched;
-			break;
-		}
-		return new ArrayList<Hypothesis>();
+
+	/**
+	 * Specify that the hypothesis has been added to the set of selected hypotheses.
+	 */
+	public void setAddedToSelected() {flags |= F_ADDED_TO_SELECTED;}
+	
+	
+	/**
+	 * Specify that the hypothesis has been removed from the set of selected hypotheses.
+	 */
+	public void setRemovedFromSelected() {flags |= F_REMOVED_FROM_SELECTED;}
+	
+	
+	/**
+	 * Specify that the hypothesis has been added to the set of (valid) cached hypotheses.
+	 */
+	public void setAddedToCached() {flags |= F_ADDED_TO_CACHED;}
+	
+	
+	/**
+	 * Specify that the hypothesis has been removed from the set of (valid) cached hypotheses.
+	 */
+	public void setRemovedFromCached() {flags |= F_REMOVED_FROM_CACHED;}
+
+	
+	/**
+	 * Specify that the hypothesis has been added to the set of searched hypotheses.
+	 */
+	public void setAddedToSearched() {flags |= F_ADDED_TO_SEARCHED;}
+	
+	
+	/**
+	 * Specify that the hypothesis has been removed from the set of searched hypotheses.
+	 */
+	public void setRemovedFromSearched() {flags |= F_REMOVED_FROM_SEARCHED;}
+
+	
+	/**
+	 * @see org.eventb.core.pm.IHypothesisDelta#getFlags()
+	 */
+	public int getFlags() {
+		return flags;
+	}
+
+	
+	/**
+	 * @see org.eventb.core.pm.IHypothesisDelta#getHypothesis()
+	 */
+	public Hypothesis getHypothesis() {
+		return hypothesis;
 	}
 
 }

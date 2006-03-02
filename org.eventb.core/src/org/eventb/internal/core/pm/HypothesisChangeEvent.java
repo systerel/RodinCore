@@ -1,5 +1,6 @@
 package org.eventb.internal.core.pm;
 
+import java.util.Collection;
 import java.util.EventObject;
 
 import org.eventb.core.pm.IHypothesisChangeEvent;
@@ -9,14 +10,21 @@ public class HypothesisChangeEvent
 	extends EventObject
 	implements IHypothesisChangeEvent
 {
-	private static final long serialVersionUID = 494648861081632955L;
 
-	public HypothesisChangeEvent(IHypothesisDelta delta) {
-		super(delta);
+	/**
+	 * Generated serialVersionUID 
+	 */
+	private static final long serialVersionUID = -4704109244992760885L;
+
+	private Collection<IHypothesisDelta> hypotheses;
+
+	public HypothesisChangeEvent(Object source, Collection<IHypothesisDelta> hypotheses) {
+		super(source);
+		this.hypotheses = hypotheses;
 	}
 
-	public IHypothesisDelta getDelta() {
-		return (IHypothesisDelta) this.source;
+	public Collection<IHypothesisDelta> getDelta() {
+		return hypotheses;
 	}
 
 }

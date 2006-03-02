@@ -33,8 +33,8 @@ public class UserSupport
 	Collection<IProofStatusChangedListener> proofStatusChangedListeners;
 	Collection<IStatusChangedListener> statusChangedListeners;
 	
-	private Collection<Hypothesis> displayCached;
-	private Collection<Hypothesis> displaySearched;
+//	private Collection<Hypothesis> displayCached;
+//	private Collection<Hypothesis> displaySearched;
 
 	private List<ProofState> proofStates;
 	private int counter;
@@ -47,8 +47,8 @@ public class UserSupport
 		proofStatusChangedListeners = new HashSet<IProofStatusChangedListener>();
 		statusChangedListeners = new HashSet<IStatusChangedListener>();
 		
-		displayCached = new HashSet<Hypothesis>();
-		displaySearched = new HashSet<Hypothesis>();
+//		displayCached = new HashSet<Hypothesis>();
+//		displaySearched = new HashSet<Hypothesis>();
 		proofStates = new ArrayList<ProofState>();
 	}
 
@@ -112,8 +112,8 @@ public class UserSupport
 		if (ps.getCurrentNode() == null) ps.setCurrentNode(ps.getNextPendingSubgoal());
 		
 		IProofTreeNode currentNode = ps.getCurrentNode();
-		IHypothesisDelta hypDelta = calculateHypDelta(ps, currentNode);
-		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+		Collection<IHypothesisDelta> hypDelta = calculateHypDelta(ps, currentNode);
+		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, hypDelta);
 		notifyHypothesisChangedListener(hypEvent);
 		
 		IGoalDelta goalDelta = new GoalDelta(currentNode);
@@ -210,110 +210,181 @@ public class UserSupport
 		return;
 	}
 	
-	private IHypothesisDelta calculateHypDelta(ProofState newProofState, IProofTreeNode newNode) {
+	private Collection<IHypothesisDelta> calculateHypDelta(ProofState newProofState, IProofTreeNode newNode) {
+		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
+		
 		Collection<Hypothesis> newSelectedHypotheses;
 		if (newNode == null) newSelectedHypotheses = new HashSet<Hypothesis>(); 
 		else newSelectedHypotheses = newNode.getSequent().selectedHypotheses();
 
-		Collection<Hypothesis> addedToSelected = new HashSet<Hypothesis>();
-		Collection<Hypothesis> removedFromSelected = new HashSet<Hypothesis>();
-		
 		if (proofState != null && proofState.getCurrentNode() != null) {
 			Collection<Hypothesis> currentSelectedHypotheses = proofState.getCurrentNode().getSequent().selectedHypotheses(); 
 			for (Iterator<Hypothesis> it = currentSelectedHypotheses.iterator(); it.hasNext();) {
 				Hypothesis hp = it.next();
-				if (!newSelectedHypotheses.contains(hp)) removedFromSelected.add(hp); 
+				if (!newSelectedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setRemovedFromSelected();
+					delta.add(d);
+				}
 			}
 		
 			for (Iterator<Hypothesis> it = newSelectedHypotheses.iterator(); it.hasNext();) {
 				Hypothesis hp = it.next();
-				if (!currentSelectedHypotheses.contains(hp)) addedToSelected.add(hp);
+				if (!currentSelectedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setAddedToSelected();
+					delta.add(d);
+				}
 			}
 		}
 		else {
-			addedToSelected = newSelectedHypotheses;
+			for (Iterator<Hypothesis> it = newSelectedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				HypothesisDelta d = new HypothesisDelta(hp);
+				d.setAddedToSelected();
+				delta.add(d);
+			}
 		}
 		
-		Collection<Hypothesis> addedToCached = new HashSet<Hypothesis>();
-		Collection<Hypothesis> removedFromCached = new HashSet<Hypothesis>();
+		Collection<Hypothesis> newCachedHypotheses;
+		if (newProofState == null) newCachedHypotheses = new HashSet<Hypothesis>(); 
+		else newCachedHypotheses = newProofState.getCached();
+
 		if (proofState != null) {
-			Collection<Hypothesis> newDisplayCached = new HashSet<Hypothesis>();
-			for (Iterator<Hypothesis> it = newProofState.getCached().iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
+			Collection<Hypothesis> currentCachedHypotheses = proofState.getCached(); 
+			for (Iterator<Hypothesis> it = currentCachedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (!isValid(hp, newNode) || !newCachedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setRemovedFromCached();
+					delta.add(d);
+				}
+			}
+		
+			for (Iterator<Hypothesis> it = newCachedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (isValid(hp, newNode) && !currentCachedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setAddedToCached();
+					delta.add(d);
+				}
+			}
+		}
+		else {
+			for (Iterator<Hypothesis> it = newCachedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (isValid(hp, newNode)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setAddedToCached();
+					delta.add(d);
+				}
+			}
+		}
+
+		Collection<Hypothesis> newSearchedHypotheses;
+		if (newProofState == null) newSearchedHypotheses = new HashSet<Hypothesis>(); 
+		else newSearchedHypotheses = newProofState.getSearched();
+
+		if (proofState != null) {
+			Collection<Hypothesis> currentSearchedHypotheses = proofState.getSearched(); 
+			for (Iterator<Hypothesis> it = currentSearchedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (!isValid(hp, newNode) || !newSearchedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setRemovedFromSearched();
+					delta.add(d);
+				}
+			}
+		
+			for (Iterator<Hypothesis> it = newSearchedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (isValid(hp, newNode) && !currentSearchedHypotheses.contains(hp)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setAddedToSearched();
+					delta.add(d);
+				}
+			}
+		}
+		else {
+			for (Iterator<Hypothesis> it = newSearchedHypotheses.iterator(); it.hasNext();) {
+				Hypothesis hp = it.next();
+				if (isValid(hp, newNode)) {
+					HypothesisDelta d = new HypothesisDelta(hp);
+					d.setAddedToSearched();
+					delta.add(d);
+				}
+			}
+		}
+		
+		//		if (proofState != null) {
+//			for (Iterator<Hypothesis> it = newProofState.getCached().iterator(); it.hasNext();) {
+//				Hypothesis hyp = it.next();
 //				if (UserSupportUtils.debug) System.out.print("In cache: " + hyp);
-				if (displayCached.contains(hyp)) {   
-//					if (UserSupportUtils.debug) System.out.print(", currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
-//						if (UserSupportUtils.debug) System.out.println(", valid");
-						newDisplayCached.add(hyp);
-					}
-					else {                                  // cached, display, (invalid or selected)
-//						if (UserSupportUtils.debug) System.out.println(", invalid");
-						removedFromCached.add(hyp);
-					}
-					displayCached.remove(hyp);
-				}
-				else {
-//					if (UserSupportUtils.debug) System.out.print(", not currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
-//						if (UserSupportUtils.debug) System.out.println(", valid");
-						newDisplayCached.add(hyp);
-						addedToCached.add(hyp);
-					}
+//				if (displayCached.contains(hyp)) {
+////					if (UserSupportUtils.debug) System.out.print(", currently display");
+//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
+////						if (UserSupportUtils.debug) System.out.println(", valid");
+//						newDisplayCached.add(hyp);
+//					}
+//					else {                                  // cached, display, (invalid or selected)
+////						if (UserSupportUtils.debug) System.out.println(", invalid");
+//						removedFromCached.add(hyp);
+//					}
+//					displayCached.remove(hyp);
+//				}
+//				else {
+////					if (UserSupportUtils.debug) System.out.print(", not currently display");
+//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
+////						if (UserSupportUtils.debug) System.out.println(", valid");
+//						newDisplayCached.add(hyp);
+//						addedToCached.add(hyp);
+//					}
 //					else if (UserSupportUtils.debug) System.out.println();
-				}
-			}
-			
-			for (Iterator<Hypothesis> it = displayCached.iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
-//				if (UserSupportUtils.debug) System.out.println("Currently display but not in cached: " + hyp);
-				removedFromCached.add(hyp);                        // display, invalid or selected, not(cached)
-			}
-			
-			displayCached = newDisplayCached;
-		}
+//				}
+//			}
+//		}
 		
-		Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
-		Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
-		if (proofState != null) {
-			Collection<Hypothesis> newDisplaySearched = new HashSet<Hypothesis>();
-			for (Iterator<Hypothesis> it = newProofState.getSearched().iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
-				if (UserSupportUtils.debug) System.out.print("In searched: " + hyp);
-				if (displaySearched.contains(hyp)) {   
-					if (UserSupportUtils.debug) System.out.print(", currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, display, valid & not selected
-						if (UserSupportUtils.debug) System.out.println(", valid");
-						newDisplaySearched.add(hyp);
-					}
-					else {                                  // cached, display, (invalid or selected)
-						if (UserSupportUtils.debug) System.out.println(", invalid");
-						removedFromSearched.add(hyp);
-					}
-					displaySearched.remove(hyp);
-				}
-				else {
-					if (UserSupportUtils.debug) System.out.print(", not currently display");
-					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, not(display), valid & not selected
-						if (UserSupportUtils.debug) System.out.println(", valid");
-						newDisplaySearched.add(hyp);
-						addedToSearched.add(hyp);
-					}
-					else {
-						if (UserSupportUtils.debug) System.out.println(", invalid");
-					}
-				}
-			}
-			
-			for (Iterator<Hypothesis> it = displaySearched.iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
-				if (UserSupportUtils.debug) System.out.println("Currently display but not in searched: " + hyp);
-				removedFromSearched.add(hyp);                        // display, invalid or selected, not(cached)
-			}
-			displaySearched = newDisplaySearched;
-		}
+//		Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
+//		Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
+//		if (proofState != null) {
+//			Collection<Hypothesis> newDisplaySearched = new HashSet<Hypothesis>();
+//			for (Iterator<Hypothesis> it = newProofState.getSearched().iterator(); it.hasNext();) {
+//				Hypothesis hyp = it.next();
+//				if (UserSupportUtils.debug) System.out.print("In searched: " + hyp);
+//				if (displaySearched.contains(hyp)) {   
+//					if (UserSupportUtils.debug) System.out.print(", currently display");
+//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, display, valid & not selected
+//						if (UserSupportUtils.debug) System.out.println(", valid");
+//						newDisplaySearched.add(hyp);
+//					}
+//					else {                                  // cached, display, (invalid or selected)
+//						if (UserSupportUtils.debug) System.out.println(", invalid");
+//						removedFromSearched.add(hyp);
+//					}
+//					displaySearched.remove(hyp);
+//				}
+//				else {
+//					if (UserSupportUtils.debug) System.out.print(", not currently display");
+//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, not(display), valid & not selected
+//						if (UserSupportUtils.debug) System.out.println(", valid");
+//						newDisplaySearched.add(hyp);
+//						addedToSearched.add(hyp);
+//					}
+//					else {
+//						if (UserSupportUtils.debug) System.out.println(", invalid");
+//					}
+//				}
+//			}
+//			
+//			for (Iterator<Hypothesis> it = displaySearched.iterator(); it.hasNext();) {
+//				Hypothesis hyp = it.next();
+//				if (UserSupportUtils.debug) System.out.println("Currently display but not in searched: " + hyp);
+//				removedFromSearched.add(hyp);                        // display, invalid or selected, not(cached)
+//			}
+//			displaySearched = newDisplaySearched;
+//		}
 		
-		return new HypothesisDelta(addedToSelected, removedFromSelected, addedToCached, removedFromCached, addedToSearched, removedFromSearched);
+		return delta;
 	}
 	
 	private boolean isValid(Hypothesis hyp, IProofTreeNode pt) {
@@ -321,23 +392,14 @@ public class UserSupport
 		return (pt != null && pt.getSequent().hypotheses().contains(hyp));
 	}
 	
-	private boolean isSelected(Hypothesis hyp, IProofTreeNode pt) {
-		if (UserSupportUtils.debug) System.out.println("Is Selected? " + pt.getSequent().selectedHypotheses().contains(hyp));
-		return pt.getSequent().selectedHypotheses().contains(hyp);
-	}
-	
-	private boolean isCached(Hypothesis hyp) {
-		if (UserSupportUtils.debug) System.out.println("Is Cached? " + proofState.getCached().contains(hyp));
-		return proofState.getCached().contains(hyp);
-	}
 	
 	/**
 	 * This is the response of the UserSupport for selecting a node in the current
 	 * Proof Tree.
 	 */ 
 	public void selectNode(IProofTreeNode pt) {
-		IHypothesisDelta delta = calculateHypDelta(proofState, pt);
-		IHypothesisChangeEvent e = new HypothesisChangeEvent(delta);
+		Collection<IHypothesisDelta> delta = calculateHypDelta(proofState, pt);
+		IHypothesisChangeEvent e = new HypothesisChangeEvent(this, delta);
 		notifyHypothesisChangedListener(e);
 				
 		if (pt != null) {
@@ -362,41 +424,48 @@ public class UserSupport
 	}
 
 	public void applyTacticToHypotheses(ITactic t, Set<Hypothesis> hyps) throws RodinDBException {
+		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
+		for (Hypothesis hyp : hyps) {
+			if (!proofState.getCached().contains(hyp)) {
+				HypothesisDelta d = new HypothesisDelta(hyp);
+				d.setAddedToCached();
+				delta.add(d);
+				IHypothesisChangeEvent e = new HypothesisChangeEvent(this, delta);
+				notifyHypothesisChangedListener(e);
+			}
+		}
 		proofState.addAllToCached(hyps);
 		applyTactic(t);
 	}
 	
-	public void removeHypotheses(int origin, Collection<Hypothesis> hyps) {
-		IHypothesisDelta delta;
-		IHypothesisChangeEvent e;
-		switch (origin) {
-		case (IHypothesisDelta.CACHED):
-			Collection<Hypothesis> removedFromCached = new HashSet<Hypothesis>();
-			for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
-				if (displayCached.contains(hyp))
-					removedFromCached.add(hyp);
-			}
-			delta = new HypothesisDelta(null, null, null, removedFromCached, null, null);
-			e = new HypothesisChangeEvent(delta);
-			notifyHypothesisChangedListener(e);
-			proofState.removeAllFromCached(hyps);
-			break;
-		case (IHypothesisDelta.SEARCHED):
-			Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
-			for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
-				Hypothesis hyp = it.next();
-				if (displaySearched.contains(hyp))
-					removedFromSearched.add(hyp);
-			}
-			delta = new HypothesisDelta(null, null, null, null, null, removedFromSearched);
-			e = new HypothesisChangeEvent(delta);
-			notifyHypothesisChangedListener(e);
-			proofState.removeAllFromSearched(hyps);
-			break;
+	public void removeCachedHypotheses(Collection<Hypothesis> hyps) {
+		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
+		for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
+			Hypothesis hyp = it.next();
+			HypothesisDelta d = new HypothesisDelta(hyp);
+			d.setRemovedFromCached();
+			delta.add(d);
 		}
+		IHypothesisChangeEvent e = new HypothesisChangeEvent(this, delta);
+		notifyHypothesisChangedListener(e);
+		proofState.removeAllFromCached(hyps);
 		notifyStatusChangedListener("Hypotheses removed");
+		return;
 	}
+
+	public void removeSearchedHypotheses(Collection<Hypothesis> hyps) {
+		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
+		for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
+			Hypothesis hyp = it.next();
+			HypothesisDelta d = new HypothesisDelta(hyp);
+			d.setRemovedFromSearched();
+			delta.add(d);
+		}
+		IHypothesisChangeEvent e = new HypothesisChangeEvent(this, delta);
+		notifyHypothesisChangedListener(e);
+		proofState.removeAllFromSearched(hyps);
+	}
+
 
 	public void applyTactic(ITactic t) throws RodinDBException {
 		IProofTreeNode currentNode = proofState.getCurrentNode();
@@ -410,8 +479,8 @@ public class UserSupport
 			IProofTreeNode newNode = proofState.getNextPendingSubgoal(currentNode);
 			if (newNode == null) newNode = currentNode;
 			
-			IHypothesisDelta hypDelta = calculateHypDelta(proofState, newNode);
-			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+			Collection<IHypothesisDelta> hypDelta = calculateHypDelta(proofState, newNode);
+			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, hypDelta);
 			notifyHypothesisChangedListener(hypEvent);
 			
 			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
@@ -430,10 +499,31 @@ public class UserSupport
 	public void searchHyps(String token) {
 		Set<Hypothesis> hyps = Hypothesis.textSearch(proofState.getCurrentNode().getSequent().hypotheses(), token);
 		
+		Collection<Hypothesis> currentHyps = proofState.getSearched();
+		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
+		
+		for (Iterator<Hypothesis> it = currentHyps.iterator(); it.hasNext();) {
+			Hypothesis hp = it.next();
+			if (!isValid(hp, proofState.getCurrentNode()) || !hyps.contains(hp)) {
+				HypothesisDelta d = new HypothesisDelta(hp);
+				d.setRemovedFromSearched();
+				delta.add(d);
+			}
+		}
+	
+		for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
+			Hypothesis hp = it.next();
+			if (isValid(hp, proofState.getCurrentNode()) && !currentHyps.contains(hp)) {
+				HypothesisDelta d = new HypothesisDelta(hp);
+				d.setAddedToSearched();
+				delta.add(d);
+			}
+		}
+
 		proofState.setSearched(hyps);
-		IHypothesisDelta hypDelta = calculateHypDelta(proofState, proofState.getCurrentNode());
-		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(hypDelta);
+		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, delta);
 		notifyHypothesisChangedListener(hypEvent);
+
 	}
 	
 }
