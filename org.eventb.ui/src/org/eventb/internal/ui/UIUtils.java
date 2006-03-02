@@ -248,6 +248,7 @@ public class UIUtils {
 			names.add(EQE1_SYMBOL);
 			names.add(EQE2_SYMBOL);
 		}
+		if (Tactics.removeNegHyp_applicable(hyp)) names.add(NEG_SYMBOL);
 		
 		// Extra tactics applicable to hypothesis should be added here.
 		return names;

@@ -106,6 +106,10 @@ public class HypothesisRow
 					userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp), hypSet);
 					return;
 				}
+				if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
+					userSupport.applyTacticToHypotheses(Tactics.removeNegHyp(hyp), hypSet);
+					return;
+				}
 			}
 			catch (RodinDBException exception) {
 				exception.printStackTrace();
