@@ -11,7 +11,6 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.BasicTactics;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pm.GoalChangeEvent;
@@ -470,7 +469,7 @@ public class UserSupport
 	public void applyTactic(ITactic t) throws RodinDBException {
 		IProofTreeNode currentNode = proofState.getCurrentNode();
 		Object information = t.apply(currentNode);
-		BasicTactics.onAllPending(Tactics.trivial()).apply(currentNode);
+		Tactics.postProcess().apply(currentNode);
 		if (information == null) {
 			proofState.updateStatus();
 			
