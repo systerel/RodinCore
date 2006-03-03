@@ -58,10 +58,9 @@ public class EventMasterSection
 	private static final int ADD_ACT_INDEX = 3;
 	private static final int UP_INDEX = 4;
 	private static final int DOWN_INDEX = 5;
-	private static final int ADD_INIT_INDEX = 6;
 
 	private static final String [] buttonLabels =
-		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down", "Add Init."};
+		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down"};
 
 	// The counter used to create automatic name for new elements.
 	private int counter;
@@ -240,21 +239,6 @@ public class EventMasterSection
 		}
 	}
 	
-	/*
-	 * Handle add (new element) action.
-	 */
-	private void handleAddInit() {
-		try {
-			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
-			counter++;
-			commit();
-			getViewer().setSelection(new StructuredSelection(event));
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-	
 
 	/*
 	 * Handle up action.
@@ -287,26 +271,12 @@ public class EventMasterSection
 		
 		boolean notInitSelected = anEventSelected && !((IEvent) selections[0]).getElementName().equals("INITIALISATION");
 		
-		boolean hasInitialisation = false;
-		try {
-			for (IRodinElement event : rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE)) {
-				if (event.getElementName().equals("INITIALISATION")) {
-					hasInitialisation = true;
-					break;
-				}
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		
 		setButtonEnabled(ADD_EVT_INDEX, true);
 		setButtonEnabled(ADD_VAR_INDEX, anEventSelected && notInitSelected);
 		setButtonEnabled(ADD_GRD_INDEX, anEventSelected && notInitSelected);
 		setButtonEnabled(ADD_ACT_INDEX, anEventSelected);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
-		setButtonEnabled(ADD_INIT_INDEX, !hasInitialisation);
 	}
 	
 
@@ -334,9 +304,6 @@ public class EventMasterSection
 				break;
 			case DOWN_INDEX:
 				handleDown();
-				break;
-			case ADD_INIT_INDEX:
-				handleAddInit();
 				break;
 		}
 	}

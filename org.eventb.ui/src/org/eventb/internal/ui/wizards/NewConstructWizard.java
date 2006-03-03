@@ -33,6 +33,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eventb.core.IEvent;
+import org.eventb.core.IMachine;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.rodinp.core.IRodinDB;
@@ -89,7 +91,8 @@ public class NewConstructWizard
 	 */
 	public boolean performFinish() {
 		final String projectName = page.getContainerName();
-		final String fileName = page.getConstructName() + "." + page.getType(); 
+		final String fileName = page.getConstructName() + "." + page.getType();
+		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
@@ -124,7 +127,7 @@ public class NewConstructWizard
 		String fileName,
 		IProgressMonitor monitor)
 		throws CoreException {
-		// create a sample file
+		
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(projectName));
@@ -135,10 +138,15 @@ public class NewConstructWizard
 		IRodinDB db = EventBUIPlugin.getRodinDatabase();
 		// Creating a project handle
 		IRodinProject rodinProject = db.getRodinProject(projectName); 
-		
+
 		final IRodinFile rodinFile = rodinProject.createRodinFile(fileName, false, null);
+		if (rodinFile instanceof IMachine) {
+			rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
+		}
 		
 		monitor.worked(1);
+		
+		
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
