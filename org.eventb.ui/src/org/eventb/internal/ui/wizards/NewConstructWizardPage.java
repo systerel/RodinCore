@@ -31,6 +31,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContext;
+import org.eventb.core.IMachine;
+import org.eventb.internal.ui.EventBUIPlugin;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -267,6 +273,22 @@ public class NewConstructWizardPage
 			updateStatus("Construct name must be valid");
 			return;
 		}
+		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase().getRodinProject(getContainerName());
+		try {
+			IRodinElement [] elements = rodinProject.getChildren();
+			for (IRodinElement elem : elements) {
+				if (elem instanceof IMachine || elem instanceof IContext) {
+					if (EventBPlugin.getComponentName(((IRodinFile) elem).getElementName()).equals(constructName)) {
+						updateStatus("Construct name already exists");
+						return;
+					}
+				}
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		
 		updateStatus(null);
 	}
 
