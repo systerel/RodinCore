@@ -9,7 +9,7 @@
  *     ETH RODIN Group
  *******************************************************************************/
 
-package org.eventb.eventBKeyboard.translators;
+package org.eventb.eventBKeyboard;
 
 import java.util.ArrayList;
 import java.util.Collection;

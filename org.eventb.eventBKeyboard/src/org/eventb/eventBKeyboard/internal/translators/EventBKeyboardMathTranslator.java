@@ -12,7 +12,7 @@
 package org.eventb.eventBKeyboard.internal.translators;
 
 import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.translators.IEventBKeyboardTranslator;
+import org.eventb.eventBKeyboard.IEventBKeyboardTranslator;
 
 /**
  * @author htson

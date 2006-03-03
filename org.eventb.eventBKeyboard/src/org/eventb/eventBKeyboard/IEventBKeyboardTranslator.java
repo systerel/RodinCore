@@ -9,7 +9,7 @@
  *     ETH RODIN Group
  *******************************************************************************/
 
-package org.eventb.eventBKeyboard.translators;
+package org.eventb.eventBKeyboard;
 
 import org.eclipse.swt.widgets.Text;
 

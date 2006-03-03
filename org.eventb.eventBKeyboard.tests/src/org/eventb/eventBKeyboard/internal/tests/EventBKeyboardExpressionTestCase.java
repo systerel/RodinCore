@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.eventBKeyboard.EventBKeyboardPlugin;
+import org.eventb.eventBKeyboard.EventBTextModifyListener;
 import org.eventb.eventBKeyboard.internal.views.EventBKeyboardView;
-import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 
 /**
  * @author htson

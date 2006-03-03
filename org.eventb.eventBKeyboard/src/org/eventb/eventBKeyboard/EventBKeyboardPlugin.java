@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
  */
 public class EventBKeyboardPlugin extends AbstractUIPlugin {
 
-	public static final boolean debug = false;
+	public static final boolean debug = true;
 	
 	public static final String EventBKeyboardView_ID = "org.eventb.eventBKeyboard.internal.views.EventBKeyboardView";
 	

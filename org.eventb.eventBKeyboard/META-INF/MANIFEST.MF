@@ -11,5 +11,4 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-AutoStart: true
 Export-Package: org.eventb.eventBKeyboard,
  org.eventb.eventBKeyboard.internal.views;x-friends:="org.eventb.eventBKeyboard.tests",
- org.eventb.eventBKeyboard.preferences,
- org.eventb.eventBKeyboard.translators
+ org.eventb.eventBKeyboard.preferences

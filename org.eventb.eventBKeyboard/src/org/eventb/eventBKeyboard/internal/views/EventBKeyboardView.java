@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
+import org.eventb.eventBKeyboard.EventBTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 
 /**
  * @author htson

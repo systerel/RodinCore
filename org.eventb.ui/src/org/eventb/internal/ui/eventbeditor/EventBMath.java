@@ -15,8 +15,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.EventBTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 
 /**
  * @author htson
