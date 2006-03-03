@@ -211,12 +211,12 @@ public class GoalSection
 					textBoxes.add(mathBox);
 				}
 		        
-				FormText formText = toolkit.createFormText(composite, false);
+				IEventBFormText formText = new EventBFormText(toolkit.createFormText(composite, false));
 		        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		        formText.setLayoutData(gd);
+		        formText.getFormText().setLayoutData(gd);
 				SourceLocation loc = qpred.getPredicate().getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
-				formText.setText(" \u00b7 " + image, false, false);
+				formText.getFormText().setText(" \u00b7 " + image, false, false);
 				scrolledForm.reflow(true);
 			}
 			else {
