@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;

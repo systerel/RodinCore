@@ -41,9 +41,9 @@ import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBMath;
 import org.rodinp.core.RodinDBException;
 
 public class GoalSection

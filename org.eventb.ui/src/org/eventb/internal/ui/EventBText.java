@@ -9,42 +9,38 @@
  *     ETH RODIN Group
  *******************************************************************************/
 
-package org.eventb.internal.ui.eventbeditor;
+package org.eventb.internal.ui;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.EventBTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
- * <p>
- * This is the class that hold a Text using to display and get expressions which are
- * in the mathematical language of Event-B.
+ * This is the class that hold a Text that used Event-B Text Font.
  */
-public class EventBMath
+public class EventBText 
 	implements IEventBInputText
 {
-
 	// The actual Text.
-	private Text text;
+	Text text;
 	
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param parent the Composite parent of this
 	 * @param toolkit the FormToolkit used to creat the Text
 	 * @param style the style used to create the Text
 	 */
-	public EventBMath(Text text) {
+	public EventBText(Text text) {
 		this.text = text;
+		// TODO Create a new font for Event-B Text
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		text.setFont(font);
-		text.addModifyListener(new EventBTextModifyListener());
-			
+
 		JFaceResources.getFontRegistry().addListener(this);
 	}
 
@@ -64,7 +60,7 @@ public class EventBMath
 	 * Setting the focus to the contained Text.
 	 */
 	public void setFocus() {text.setFocus(); text.selectAll();}
-
+	
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBInputText#getTextWidget()
@@ -72,6 +68,5 @@ public class EventBMath
 	public Text getTextWidget() {
 		return text;
 	}
-	
 	
 }
