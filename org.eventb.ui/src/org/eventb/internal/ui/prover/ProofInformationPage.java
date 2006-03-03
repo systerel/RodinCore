@@ -259,9 +259,11 @@ public class ProofInformationPage
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
-				scrolledForm.setText(prSequent.getName());
-				scrolledForm.reflow(true);
-				setFormText(prSequent);
+				if (prSequent.exists()) {
+					scrolledForm.setText(prSequent.getName());
+					scrolledForm.reflow(true);
+					setFormText(prSequent);
+				}
 			}
 		});
 	}

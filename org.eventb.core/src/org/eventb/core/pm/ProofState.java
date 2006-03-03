@@ -25,6 +25,13 @@ public class ProofState {
 		searched = new HashSet<Hypothesis>();
 	}
 	
+	public void createProofTree() throws RodinDBException {
+		pt = ps.makeProofTree();
+		current = null;
+		cached = new HashSet<Hypothesis>();
+		searched = new HashSet<Hypothesis>();
+	}
+	
 	public boolean isDischarged() throws RodinDBException {
 		return ps.isDischarged();
 	}

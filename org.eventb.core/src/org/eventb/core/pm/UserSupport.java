@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.IContext;
+import org.eventb.core.IMachine;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeNode;
@@ -19,9 +21,17 @@ import org.eventb.internal.core.pm.HypothesisChangeEvent;
 import org.eventb.internal.core.pm.HypothesisDelta;
 import org.eventb.internal.core.pm.POChangeEvent;
 import org.eventb.internal.core.pm.PODelta;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class UserSupport
+	implements IElementChangedListener
 {
 	
 	// TODO UserSupport needs to listen to the Database
@@ -32,13 +42,11 @@ public class UserSupport
 	Collection<IProofStatusChangedListener> proofStatusChangedListeners;
 	Collection<IStatusChangedListener> statusChangedListeners;
 	
-//	private Collection<Hypothesis> displayCached;
-//	private Collection<Hypothesis> displaySearched;
-
 	private List<ProofState> proofStates;
 	private int counter;
 	private ProofState proofState;
-
+	private IPRFile prFile;
+	
 	public UserSupport() {
 		hypChangedListeners = new HashSet<IHypothesisChangedListener>();
 		goalChangedListeners = new HashSet<IGoalChangedListener>();
@@ -46,12 +54,14 @@ public class UserSupport
 		proofStatusChangedListeners = new HashSet<IProofStatusChangedListener>();
 		statusChangedListeners = new HashSet<IStatusChangedListener>();
 		
-//		displayCached = new HashSet<Hypothesis>();
-//		displaySearched = new HashSet<Hypothesis>();
 		proofStates = new ArrayList<ProofState>();
+		RodinCore.addElementChangedListener(this);
 	}
 
+	
 	public void setInput(IPRFile prFile) throws RodinDBException {
+		this.prFile = prFile;
+		proofStates = new ArrayList<ProofState>();
 		try {
 			for (int i = 0; i < prFile.getSequents().length; i++) {
 				IPRSequent prSequent = prFile.getSequents()[i];
@@ -62,7 +72,7 @@ public class UserSupport
 			e.printStackTrace();
 		}
 		counter = -1;
-		nextUndischargedPO();		
+		nextUndischargedPO();
 		notifyStatusChangedListener(null);
 	}
 	
@@ -314,80 +324,12 @@ public class UserSupport
 				}
 			}
 		}
-		
-		//		if (proofState != null) {
-//			for (Iterator<Hypothesis> it = newProofState.getCached().iterator(); it.hasNext();) {
-//				Hypothesis hyp = it.next();
-//				if (UserSupportUtils.debug) System.out.print("In cache: " + hyp);
-//				if (displayCached.contains(hyp)) {
-////					if (UserSupportUtils.debug) System.out.print(", currently display");
-//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, display, valid & not selected
-////						if (UserSupportUtils.debug) System.out.println(", valid");
-//						newDisplayCached.add(hyp);
-//					}
-//					else {                                  // cached, display, (invalid or selected)
-////						if (UserSupportUtils.debug) System.out.println(", invalid");
-//						removedFromCached.add(hyp);
-//					}
-//					displayCached.remove(hyp);
-//				}
-//				else {
-////					if (UserSupportUtils.debug) System.out.print(", not currently display");
-//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode)) { // cached, not(display), valid & not selected
-////						if (UserSupportUtils.debug) System.out.println(", valid");
-//						newDisplayCached.add(hyp);
-//						addedToCached.add(hyp);
-//					}
-//					else if (UserSupportUtils.debug) System.out.println();
-//				}
-//			}
-//		}
-		
-//		Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
-//		Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
-//		if (proofState != null) {
-//			Collection<Hypothesis> newDisplaySearched = new HashSet<Hypothesis>();
-//			for (Iterator<Hypothesis> it = newProofState.getSearched().iterator(); it.hasNext();) {
-//				Hypothesis hyp = it.next();
-//				if (UserSupportUtils.debug) System.out.print("In searched: " + hyp);
-//				if (displaySearched.contains(hyp)) {   
-//					if (UserSupportUtils.debug) System.out.print(", currently display");
-//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, display, valid & not selected
-//						if (UserSupportUtils.debug) System.out.println(", valid");
-//						newDisplaySearched.add(hyp);
-//					}
-//					else {                                  // cached, display, (invalid or selected)
-//						if (UserSupportUtils.debug) System.out.println(", invalid");
-//						removedFromSearched.add(hyp);
-//					}
-//					displaySearched.remove(hyp);
-//				}
-//				else {
-//					if (UserSupportUtils.debug) System.out.print(", not currently display");
-//					if (isValid(hyp, newNode) && !isSelected(hyp, newNode) && !isCached(hyp)) { // cached, not(display), valid & not selected
-//						if (UserSupportUtils.debug) System.out.println(", valid");
-//						newDisplaySearched.add(hyp);
-//						addedToSearched.add(hyp);
-//					}
-//					else {
-//						if (UserSupportUtils.debug) System.out.println(", invalid");
-//					}
-//				}
-//			}
-//			
-//			for (Iterator<Hypothesis> it = displaySearched.iterator(); it.hasNext();) {
-//				Hypothesis hyp = it.next();
-//				if (UserSupportUtils.debug) System.out.println("Currently display but not in searched: " + hyp);
-//				removedFromSearched.add(hyp);                        // display, invalid or selected, not(cached)
-//			}
-//			displaySearched = newDisplaySearched;
-//		}
-		
+				
 		return delta;
 	}
 	
 	private boolean isValid(Hypothesis hyp, IProofTreeNode pt) {
-		if (UserSupportUtils.debug) System.out.println("Is Valid? " + pt != null && pt.getSequent().hypotheses().contains(hyp));
+		UserSupportUtils.debug("Is Valid? " + (pt != null && pt.getSequent().hypotheses().contains(hyp)));
 		return (pt != null && pt.getSequent().hypotheses().contains(hyp));
 	}
 	
@@ -523,6 +465,60 @@ public class UserSupport
 		IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, delta);
 		notifyHypothesisChangedListener(hypEvent);
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		UserSupportUtils.debug("Element changed");
+		try {
+			processDelta(event.getDelta());
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void processDelta(IRodinElementDelta delta) throws RodinDBException {
+		int kind = delta.getKind();
+		IRodinElement element = delta.getElement();
+//		UserSupportUtils.debug("Process Delta " + element);
+		if (element instanceof IRodinProject) {
+//			UserSupportUtils.debug("Project changed " + kind + " for " + element);
+			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+				processDelta(d);
+			}
+		}
+		else if (element instanceof IPRFile) {
+			UserSupportUtils.debug("PRFile changed " + kind + " for " + ((IPRFile) element).getElementName());
+			if (prFile.equals(element)) {
+				setInput((IPRFile) element);
+//				for (IRodinElementDelta d : delta.getAffectedChildren()) {
+//					processDelta(d);
+//				}
+			}
+		}
+		else if (element instanceof IPRSequent) {
+			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
+			for (ProofState ps : proofStates) {
+				if (ps.getPRSequent().equals(element)) {
+					UserSupportUtils.debug("Update " + ((IPRSequent) element).getElementName());
+					ps.createProofTree();
+				}
+			}
+		}
+		else if (element instanceof IMachine) {
+			return;
+		}
+		else if (element instanceof IContext) {
+			return;
+		}
+		else if (element instanceof IParent) {
+			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+				processDelta(d);
+			}
+		}
 	}
 	
 }
