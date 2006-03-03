@@ -15,6 +15,17 @@ public final class Hyp extends ProofRule {
 		// TODO merge these two tests efficiently.
 		if (Hypothesis.containsPredicate(S.hypotheses(),S.goal())) return true;
 		if (Hypothesis.containsPredicate(S.hypotheses(),Lib.False)) return true;
+//		if (Lib.isNotEq(S.goal())) {
+//			if (Lib.isEmptySet(Lib.eqRight(S.goal())) &&
+//					Lib.eqLeft(S.goal()).isATypeExpression())
+//				return true;
+//			if (Lib.isEmptySet(Lib.eqLeft(S.goal())) &&
+//					Lib.eqRight(S.goal()).isATypeExpression())
+//				return true;
+//		}
+//		if (Lib.isInclusion(S.goal())){
+//			
+//		}
 		return false;
 	}
 

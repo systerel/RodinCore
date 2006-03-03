@@ -102,4 +102,10 @@ public class TestLib {
 		return hyps;
 	}
 	
+	public static Predicate genPredicate(String str){
+		Predicate result = Lib.parsePredicate(str);
+		Lib.typeCheck(result);
+		return result;
+	}
+	
 }

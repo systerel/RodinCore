@@ -157,6 +157,7 @@ public final class Lib {
 		return false;
 	}
 	
+	
 	public static Expression getElement(Predicate P){
 		if (!(P instanceof RelationalPredicate && 
 				(P.getTag() == Formula.NOTIN || P.getTag() == Formula.IN)))
@@ -171,6 +172,27 @@ public final class Lib {
 		return ((RelationalPredicate)P).getRight();
 	}
 	
+	public static boolean isSubset(Predicate P){
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.SUBSET) 
+			return true;
+		return false;
+	}
+	
+	public static boolean isNotSubset(Predicate P){
+		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTSUBSET) 
+			return true;
+		return false;
+	}
+	
+	public static Expression subset(Predicate P){
+		if ((! isSubset(P)) || (! isNotSubset(P))) return null;
+		return ((RelationalPredicate)P).getLeft();
+	}
+	
+	public static Expression superset(Predicate P){
+		if ((! isSubset(P)) || (! isNotSubset(P))) return null;
+		return ((RelationalPredicate)P).getRight();
+	}
 	
 	public static Expression notEqRight(Predicate P){
 		if (! isNotEq(P)) return null;
@@ -384,6 +406,12 @@ public final class Lib {
 		IParseResult plr = ff.parseType(str);
 		if (plr.isSuccess()) return plr.getParsedType();
 		else return null;
+	}
+	
+	public static Expression typeToExpression(ITypeEnvironment te, Type type){
+		Expression result = type.toExpression(ff);
+		typeCheckAfterConstruction(result,te);
+		return result;
 	}
 	
 	public static Assignment parseAssignment(String str){

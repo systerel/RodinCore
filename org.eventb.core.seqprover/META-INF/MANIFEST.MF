@@ -12,6 +12,7 @@ Eclipse-AutoStart: true
 Export-Package: org.eventb.core.prover,
  org.eventb.core.prover.externalReasoners;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.core.prover.externalReasoners.classicB;x-friends:="org.eventb.core.seqprover.tests",
+ org.eventb.core.prover.externalReasoners.rewriter;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.core.prover.proofs;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.core.prover.rules,
  org.eventb.core.prover.sequent,

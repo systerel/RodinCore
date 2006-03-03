@@ -27,6 +27,7 @@ import org.eventb.core.prover.externalReasoners.RewriteGoal;
 import org.eventb.core.prover.externalReasoners.RewriteHyp;
 import org.eventb.core.prover.externalReasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.externalReasoners.rewriter.TrivialRewrites;
+import org.eventb.core.prover.externalReasoners.rewriter.TypeExpRewrites;
 import org.eventb.core.prover.rules.AllI;
 import org.eventb.core.prover.rules.ConjI;
 import org.eventb.core.prover.rules.Hyp;
@@ -245,8 +246,11 @@ public class Tactics {
 	}
 	
 	public static ITactic trivialGoalRewrite() {
-	return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites()));
-
+		return compose(
+				pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites())),
+				pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TypeExpRewrites()))
+		);
+		
 	}
 	
 	public static ITactic prune() {
@@ -266,90 +270,5 @@ public class Tactics {
 		return onAllPending(hyp());
 		
 	}
-	
-	
-	
-	
-	
-	
-//	
-//	
-//	
-//	public static final ITactic conjI = new ITactic.RuleTac(new ConjI());
-//
-//	public static final ITactic hyp = new ITactic.RuleTac(new Hyp());
-//
-//	public static final ITactic allI = new ITactic.RuleTac(new AllI());
-//
-//	public static final ITactic impI = new ITactic.RuleTac(new ImpI());
-//
-//	public static final ITactic trivial = new ITactic.plugin(new Trivial(), null);
-//
-//	public static final ITactic prune = new ITactic.prune();
-//
-//	private static final IExternalReasoner cut = new Cut();
-//	private static final IExternalReasoner disjE = new DisjE();
-//	private static final IExternalReasoner exI = new ExI();
-//	
-//	public static ITactic onAllPending(ITactic t){
-//		return new ITactic.onAllPending(t);
-//	}
-//	
-//	public static ITactic onPending(int subgoalNo,ITactic t){
-//		return new ITactic.onPending(subgoalNo,t);
-//	}
-//	
-//	public static ITactic repeat(ITactic t){
-//		return new ITactic.repeat(t);
-//	}
-//
-//	public static ITactic compose(ITactic ... tactics){
-//		return new ITactic.compose(tactics);
-//	}
-//	
-//	public static ITactic composeStrict(ITactic ... tactics){
-//		return new ITactic.composeStrict(tactics);
-//	}
-//	
-//	public static ITactic norm(){
-//		ITactic Ti = repeat(compose(conjI,impI,allI));
-//		ITactic T = repeat(compose(hyp,trivial,Ti));
-//		return repeat(onAllPending(T));
-//	}
-//	
-//	public static ITactic auto(){
-//		return norm();
-//	}
-//	
-//	public static ITactic plugin(IExternalReasoner plugin,IExtReasonerInput pluginInput){
-//		return new ITactic.plugin(plugin,pluginInput);
-//	}
-//	
-////	public static Tactic conjE_auto(){
-////		Tactic Tp = repeat(onAllPending((new Tactic.conjE_auto())));
-////		return compose(Tp,norm());
-////	}
-//	
-//	public static ITactic doCase(String kase){	
-//		String lemma = "("+ kase +") \u2228\u00ac("+ kase +")";
-//		return composeStrict(
-//				plugin(cut,new Cut.Input(lemma)),
-//				onPending(0,conjI),
-//				onPending(2,plugin(disjE,null)),
-//				norm());
-//	}
-//	
-//	public static ITactic provideWitness(String... witnesses){
-//		return plugin(exI,new ExI.Input(witnesses));
-//	}
-//	
-//	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
-//		return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
-//		
-//	}
-//	
-//	public static ITactic legacyProvers(){
-//		return plugin(new LegacyProvers(),null);
-//	}	
 	
 }
