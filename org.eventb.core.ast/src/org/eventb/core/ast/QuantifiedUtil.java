@@ -26,11 +26,12 @@ public abstract class QuantifiedUtil {
 		private final String quotes;
 		
 		static Pattern suffixExtractor = 
-			Pattern.compile("^([\\D&&[^']]*)(\\d*)('*)$", Pattern.DOTALL);		
+			Pattern.compile("^(.*[^\\d'])(\\d*)('*)$", Pattern.DOTALL);		
 		
 		StructuredName(String name) {
 			Matcher matcher = suffixExtractor.matcher(name);
-			assert matcher.matches();
+			boolean result = matcher.matches();
+			assert result;
 			prefix = matcher.group(1);
 			final String digits = matcher.group(2);
 			if (digits.length() != 0)
