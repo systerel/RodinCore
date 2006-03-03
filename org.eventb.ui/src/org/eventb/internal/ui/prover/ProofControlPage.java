@@ -39,7 +39,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
@@ -50,8 +49,10 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -84,7 +85,7 @@ public class ProofControlPage
 	private Action switchLayout;
 	private Action action2;
 	private EventBMath textInput;
-	private FormText formTextInformation;
+	private IEventBFormText formTextInformation;
 	private ScrolledForm scrolledForm;
 	private Composite buttonContainer;
 	private boolean isHorizontal;
@@ -268,12 +269,12 @@ public class ProofControlPage
 		else isOpened = false;
 		updateButtons();
 
-		formTextInformation = toolkit.createFormText(body, true);
+		formTextInformation = new EventBFormText(toolkit.createFormText(body, true));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.minimumHeight = 20;
 		gd.heightHint = 20;
-        formTextInformation.setLayoutData(gd);
+        formTextInformation.getFormText().setLayoutData(gd);
         setFormTextInformation("");
         
 		toolkit.paintBordersFor(body);
@@ -285,7 +286,7 @@ public class ProofControlPage
 	}
 
 	private void setFormTextInformation(String information) {
-		formTextInformation.setText(information, false, false);
+		formTextInformation.getFormText().setText(information, false, false);
 	}
 	
 	private Button createButton(Composite parent, String label) {

@@ -86,9 +86,9 @@ public abstract class EventBMirrorSection
 	public void createClient(Section section, FormToolkit toolkit) {
 		form = toolkit.createScrolledForm(section);
 		form.getBody().setLayout(new GridLayout());
-		toolkit.paintBordersFor(form);
 		section.setClient(form);
-		formText = new EventBFormText(form.getBody(), toolkit);
+		formText = new EventBFormText(toolkit.createFormText(form.getBody(), true));
+		toolkit.paintBordersFor(form.getBody());
 	}
 		
 	
@@ -111,10 +111,10 @@ public abstract class EventBMirrorSection
 	 * Refresh the form
 	 */
 	public void refresh() {
-		formText.setText(getFormString());
-		if (listener != null) formText.removeHyperlinkListener(listener);
+		formText.getFormText().setText(getFormString(), true, false);
+		if (listener != null) formText.getFormText().removeHyperlinkListener(listener);
 		listener = createHyperlinkListener();
-		formText.addHyperlinkListener(listener);
+		formText.getFormText().addHyperlinkListener(listener);
 		form.reflow(true);  // refresh the form and recompute the boundary
 		super.refresh();
 	}

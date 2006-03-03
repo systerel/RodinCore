@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -41,8 +40,10 @@ import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -54,7 +55,7 @@ public class GoalSection
 	private static final String SECTION_DESCRIPTION = "The current goal";	
 	
     private FormPage page;
-    private FormText formText;
+    private IEventBFormText formText;
     private FormToolkit toolkit;
     private ScrolledForm scrolledForm;
     private Composite composite;
@@ -123,15 +124,16 @@ public class GoalSection
 		section.setClient(scrolledForm);
         toolkit.paintBordersFor(scrolledForm);
 		
-        formText = toolkit.createFormText(comp, true);
+        formText = new EventBFormText(toolkit.createFormText(comp, true));
 		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
 		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
-		formText.setHyperlinkSettings(hyperlinkSettings);
-		formText.addHyperlinkListener(new GoalITacticHyperlinkAdapter());
+		FormText ft = formText.getFormText();
+		ft.setHyperlinkSettings(hyperlinkSettings);
+		ft.addHyperlinkListener(new GoalITacticHyperlinkAdapter());
         GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
         gd.widthHint = 100;
-        formText.setLayoutData(gd);
-        toolkit.paintBordersFor(formText);
+        ft.setLayoutData(gd);
+        toolkit.paintBordersFor(comp);
 	}
 
 	@Override
@@ -153,11 +155,10 @@ public class GoalSection
 
 	private void createSimpleText(String text) {
 		composite.setLayout(new GridLayout());
-	    Text textWidget = toolkit.createText(composite, "No current goal");
-	    textWidget.setEditable(false);
+	    IEventBFormText textWidget = new EventBFormText(toolkit.createFormText(composite, true));
 	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-	    textWidget.setLayoutData(gd);
-		textWidget.setText(text);
+	    textWidget.getFormText().setText(text, true, false);
+	    textWidget.getFormText().setLayoutData(gd);
 	}
 	
 	public void setGoal(IProofTreeNode pt) {
@@ -168,12 +169,12 @@ public class GoalSection
 
         if (pt == null) {
 			clearFormText();
-			createSimpleText("No current goal");
+			createSimpleText("<form><p>No current goal</p></form>");
 			scrolledForm.reflow(true);		
 		}
         else if (!pt.isOpen()) {
 			clearFormText();
-			createSimpleText("Tactic applied");
+			createSimpleText("<form><p>Tactic applied</p></form>");
 			scrolledForm.reflow(true);
 		}
 		else {
@@ -219,7 +220,7 @@ public class GoalSection
 				scrolledForm.reflow(true);
 			}
 			else {
-				createSimpleText(goal.toString());
+				createSimpleText("<form><p>" + UIUtils.XMLWrapUp(goal.toString()) + "</p></form>");
 			}
 		}
 		scrolledForm.reflow(true);
@@ -227,7 +228,7 @@ public class GoalSection
 	}
 
 	private void clearFormText() {
-		formText.setText("<form></form>", true, false);
+		formText.getFormText().setText("<form></form>", true, false);
 		scrolledForm.reflow(true);
 		return;
 	}
@@ -242,7 +243,7 @@ public class GoalSection
 		}
 		
 		formString = formString + "</li></form>";
-		formText.setText(formString, true, false);
+		formText.getFormText().setText(formString, true, false);
 		scrolledForm.reflow(true);
 		
 		return;

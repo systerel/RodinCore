@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
@@ -37,7 +36,9 @@ import org.eventb.core.IVariable;
 import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IPOChangedListener;
 import org.eventb.core.pm.ProofState;
+import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -70,7 +71,7 @@ public class ProofInformationPage
 {
 	private ScrolledForm scrolledForm;
 	private ProverUI editor;
-	private FormText formText;
+	private IEventBFormText formText;
 	
 	/*
 	 * The content provider class is responsible for
@@ -115,7 +116,7 @@ public class ProofInformationPage
 		GridLayout gl = new GridLayout();
 		body.setLayout(gl);
 
-		formText = toolkit.createFormText(body, true);
+		formText = new EventBFormText(toolkit.createFormText(body, true));
 		if (ps != null) setFormText(ps.getPRSequent());
 		
 		toolkit.paintBordersFor(body);
@@ -209,9 +210,9 @@ public class ProofInformationPage
 				}
 			}
 			formString = formString + "</form>";
-			formText.setText(formString, true, false);
+			formText.getFormText().setText(formString, true, false);
 			
-			formText.addHyperlinkListener(new HyperlinkAdapter() {
+			formText.getFormText().addHyperlinkListener(new HyperlinkAdapter() {
 
 				/* (non-Javadoc)
 				 * @see org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)

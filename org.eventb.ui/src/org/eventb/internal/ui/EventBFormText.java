@@ -14,10 +14,7 @@ package org.eventb.internal.ui;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
@@ -39,10 +36,9 @@ public class EventBFormText
 	 * @param parent the composite parent of the FormText
 	 * @param toolkit the FormToolkit used to create the FormText
 	 */
-	public EventBFormText(Composite parent, FormToolkit toolkit) {
-		formText = toolkit.createFormText(parent, true);
+	public EventBFormText(FormText formText) {
+		this.formText = formText;
 		
-		toolkit.paintBordersFor(formText);
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		formText.setFont(font);
 
@@ -61,28 +57,7 @@ public class EventBFormText
 		}
 	}
 
-	
-	/**
-	 * Setting the content of the Form Text.
-	 * <p>
-	 * @param str Any string
-	 */
-	public void setText(String str) {formText.setText(str, true, false);}
 
-	
-	/**
-	 * Adding a hyperlink listener to the Form Text.
-	 * <p>
-	 * @param listener Any HyperlinkAdapter
-	 */
-	public void addHyperlinkListener(HyperlinkAdapter listener) {formText.addHyperlinkListener(listener);}
-
-	
-	/**
-	 * Removing a hyperlink listener from the FormText.
-	 * <p>
-	 * @param listener Any HyperlinkAdapter
-	 */
-	public void removeHyperlinkListener(HyperlinkAdapter listener) {formText.removeHyperlinkListener(listener);}
+	public FormText getFormText() {return formText;}
 
 }

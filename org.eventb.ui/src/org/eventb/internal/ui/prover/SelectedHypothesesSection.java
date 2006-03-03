@@ -33,6 +33,8 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.IEventBFormText;
 import org.rodinp.core.RodinDBException;
 
 public class SelectedHypothesesSection
@@ -116,13 +118,14 @@ public class SelectedHypothesesSection
 	@Override
 	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
         GridData gd;
-		FormText formText = toolkit.createFormText(comp, true);
+		IEventBFormText formText = new EventBFormText(toolkit.createFormText(comp, true));
 		gd = new GridData();
 		gd.widthHint = 50;
 		gd.horizontalAlignment = SWT.CENTER;
-		formText.setLayoutData(gd);
-		formText.addHyperlinkListener(new SelectedHyperlinkAdapter());
-		formText.setText("<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"ds\">ds</a></li></form>", true, false);		
+		FormText ft = formText.getFormText();
+		ft.setLayoutData(gd);
+		ft.addHyperlinkListener(new SelectedHyperlinkAdapter());
+		ft.setText("<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"ds\">ds</a></li></form>", true, false);		
 	}
 
 	

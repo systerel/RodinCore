@@ -12,8 +12,7 @@
 package org.eventb.internal.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.widgets.FormText;
 
 /**
  * @author htson
@@ -22,31 +21,5 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 public interface IEventBFormText
 	extends IPropertyChangeListener
 {
-	
-	/**
-	 *  This call back is used when the font is change in the Preferences.
-	 */
-	public void propertyChange(PropertyChangeEvent event);
-
-
-	/**
-	 * Setting the content of the Form Text.
-	 * @param str Any string
-	 */
-	public void setText(String str);
-
-
-	/**
-	 * Adding a hyperlink listener to the Form Text.
-	 * @param listener Any HyperlinkAdapter
-	 */
-	public void addHyperlinkListener(HyperlinkAdapter listener);
-
-	
-	/**
-	 * Removing a hyperlink listener from the FormText.
-	 * @param listener Any HyperlinkAdapter
-	 */
-	public void removeHyperlinkListener(HyperlinkAdapter listener);
-
+	public FormText getFormText();
 }

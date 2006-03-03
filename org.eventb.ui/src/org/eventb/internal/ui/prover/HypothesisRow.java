@@ -37,7 +37,9 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -143,20 +145,21 @@ public class HypothesisRow
 
 		// TODO Extra buttons will be added here to buttonComposite depends on 
 		// the type of hypothesis
-		FormText formText = toolkit.createFormText(buttonComposite, true);
+		IEventBFormText formText = new EventBFormText(toolkit.createFormText(buttonComposite, true));
 		gd = new GridData();
 		gd.widthHint = 25;
 		gd.horizontalAlignment = SWT.CENTER;
-		formText.setLayoutData(gd);
+		FormText ft = formText.getFormText();
+		ft.setLayoutData(gd);
 		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
 		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
-		formText.setHyperlinkSettings(hyperlinkSettings);
-		formText.addHyperlinkListener(new HypothesisITacticHyperlinkAdapter());
+		ft.setHyperlinkSettings(hyperlinkSettings);
+		ft.addHyperlinkListener(new HypothesisITacticHyperlinkAdapter());
         gd = new GridData(SWT.FILL, SWT.FILL, false, false);
         gd.widthHint = 100;
-        formText.setLayoutData(gd);
-        toolkit.paintBordersFor(formText);
-        createHyperlinks(formText);
+        ft.setLayoutData(gd);
+        toolkit.paintBordersFor(buttonComposite);
+        createHyperlinks(ft);
         
         if (hypothesisComposite == null) {
         	hypothesisComposite = toolkit.createComposite(parent);
@@ -197,13 +200,13 @@ public class HypothesisRow
 				textBoxes.add(box);
 			}
 	        
-			FormText form = toolkit.createFormText(hypothesisComposite, false);
+			IEventBFormText form = new EventBFormText(toolkit.createFormText(hypothesisComposite, false));
 	        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-	        form.setLayoutData(gd);
+	        form.getFormText().setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
 			if (UIUtils.debug) System.out.println("Pred: " + image);
-			form.setText("<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>", true, false);
+			form.getFormText().setText("<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>", true, false);
         }
         else {
         	Text hypothesisText = toolkit.createText(hypothesisComposite, hyp.toString(), SWT.READ_ONLY);
