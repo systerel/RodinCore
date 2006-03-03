@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.IInternalElement;
@@ -49,7 +50,7 @@ public class ContentInputRow
 	 */
 	protected void setText() {
 		try {
-			textInput.setText(page.getInput().getContents());
+			textInput.getTextWidget().setText(page.getInput().getContents());
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle
@@ -66,9 +67,10 @@ public class ContentInputRow
 		if (dirty) {
 			try {
 				IInternalElement input = page.getInput();
+				if (!input.exists()) return;
 				if (input instanceof IUnnamedInternalElement) {
 //					if (UIUtils.debug) System.out.println("Commit content: " + input + " to be " + textInput.getText());
-					input.setContents(textInput.getText());
+					input.setContents(textInput.getTextWidget().getText());
 					
 					SectionPart masterPart = page.getBlock().getMasterPart();
 					boolean expand = false;
@@ -93,7 +95,7 @@ public class ContentInputRow
 				}
 				else if (input instanceof IInternalElement) {
 //					if (UIUtils.debug) System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
-					input.setContents(textInput.getText());
+					input.setContents(textInput.getTextWidget().getText());
 					((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
 				}
 			}
@@ -109,8 +111,9 @@ public class ContentInputRow
 	/**
 	 * Creating the input text field part. 
 	 */
-	protected IEventBInputText createEventBInputText(Composite parent, FormToolkit toolkit, int style) {
-		return new EventBMath(parent, toolkit, style);
+	protected IEventBInputText createInputText(Composite parent, FormToolkit toolkit, int style) {
+		Text text = toolkit.createText(parent, "", style);
+		return new EventBMath(text);
 	}
 
 	protected void update() {

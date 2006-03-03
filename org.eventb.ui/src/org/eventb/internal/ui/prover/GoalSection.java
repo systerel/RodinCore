@@ -43,6 +43,7 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBMath;
 import org.rodinp.core.RodinDBException;
 
 public class GoalSection
@@ -57,7 +58,7 @@ public class GoalSection
     private FormToolkit toolkit;
     private ScrolledForm scrolledForm;
     private Composite composite;
-    private List<Text> textBoxes;
+    private List<EventBMath> textBoxes;
     
     private class GoalITacticHyperlinkAdapter extends HyperlinkAdapter {
 		@Override
@@ -80,8 +81,8 @@ public class GoalSection
 				if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
 					String [] inputs = new String[textBoxes.size()];
 					int i = 0;
-					for (Text text : textBoxes) {
-						inputs[i++] = text.getText();
+					for (EventBMath text : textBoxes) {
+						inputs[i++] = text.getTextWidget().getText();
 					}
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.exI(inputs));
 					return;
@@ -195,18 +196,18 @@ public class GoalSection
 				toolkit.createLabel(composite, "\u2203 ");
 				
 				int i = 0;
-		        textBoxes = new ArrayList<Text>();
+		        textBoxes = new ArrayList<EventBMath>();
 				for (BoundIdentDecl ident : idents) {
 					SourceLocation loc = ident.getSourceLocation();
 					String image = goalString.substring(loc.getStart(), loc.getEnd());
 					if (i++ != 0) toolkit.createLabel(composite, ", " + image);
 					else toolkit.createLabel(composite, image);
-					Text box = toolkit.createText(composite, "");
+					EventBMath mathBox = new EventBMath(toolkit.createText(composite, ""));
 					gd = new GridData();
-					gd.widthHint = 15;
-					box.setLayoutData(gd);
+					gd.widthHint = 25;
+					mathBox.getTextWidget().setLayoutData(gd);
 					toolkit.paintBordersFor(composite);
-					textBoxes.add(box);
+					textBoxes.add(mathBox);
 				}
 		        
 				FormText formText = toolkit.createFormText(composite, false);

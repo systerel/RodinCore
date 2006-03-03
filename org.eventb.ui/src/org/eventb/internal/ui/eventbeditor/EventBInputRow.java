@@ -57,7 +57,7 @@ public abstract class EventBInputRow
 		aLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		aLabel.setToolTipText(tip);
 		
-		textInput = createEventBInputText(parent, toolkit, style);
+		textInput = createInputText(parent, toolkit, style);
 		GridData gD; 
 		if ((style & SWT.MULTI) != 0) {
 			gD = new GridData(GridData.FILL_BOTH);
@@ -67,10 +67,10 @@ public abstract class EventBInputRow
 		else {
 			gD = new GridData(GridData.FILL_HORIZONTAL);
 		}
-		textInput.setLayoutData(gD);
+		textInput.getTextWidget().setLayoutData(gD);
 		setText();
         
-		textInput.addModifyListener(this);
+		textInput.getTextWidget().addModifyListener(this);
 	}
 	
 	
@@ -81,7 +81,7 @@ public abstract class EventBInputRow
 	 * @param style The style to create the Text area
 	 * @return A new Event-B Input Text area
 	 */
-	protected abstract IEventBInputText createEventBInputText(Composite parent, FormToolkit toolkit, int style);
+	protected abstract IEventBInputText createInputText(Composite parent, FormToolkit toolkit, int style);
 	
 	
 	/**

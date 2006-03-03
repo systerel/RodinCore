@@ -23,13 +23,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -53,10 +50,9 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.eventBKeyboard.translators.EventBTextModifyListener;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBMath;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -87,7 +83,7 @@ public class ProofControlPage
 	boolean share;
 	private Action switchLayout;
 	private Action action2;
-	private Text textInput;
+	private EventBMath textInput;
 	private FormText formTextInformation;
 	private ScrolledForm scrolledForm;
 	private Composite buttonContainer;
@@ -134,7 +130,7 @@ public class ProofControlPage
 				}
 			
 				if (label.equals("dc")) {
-					editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getText()));
+					editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getTextWidget().getText()));
 					return;
 				}
 			
@@ -178,7 +174,7 @@ public class ProofControlPage
 				}
 			
 				if (label.equals("ah")) {
-					editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getText()));
+					editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getTextWidget().getText()));
 					return;
 				}
 			
@@ -188,8 +184,8 @@ public class ProofControlPage
 				}
 
 				if (label.equals("se")) {
-					if (UIUtils.debug) System.out.println("Search for " + textInput.getText());
-					editor.getUserSupport().searchHyps(textInput.getText());
+					if (UIUtils.debug) System.out.println("Search for " + textInput.getTextWidget().getText());
+					editor.getUserSupport().searchHyps(textInput.getTextWidget().getText());
 					return;
 				}
 			}
@@ -252,16 +248,13 @@ public class ProofControlPage
 		createButton(buttonContainer, "ne");
 		
 		// A text field
-		textInput = toolkit.createText(body, "", SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL));
 		
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 50;
 		gd.widthHint = 200;
-		textInput.setLayoutData(gd);
-		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		textInput.setFont(font);
-		textInput.addModifyListener(new EventBTextModifyListener());
-		textInput.addModifyListener(new ModifyListener() {
+		textInput.getTextWidget().setLayoutData(gd);
+		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			 public void modifyText(ModifyEvent e) {
 				 updateButtons();
 			 }
@@ -428,9 +421,9 @@ public class ProofControlPage
 			nm.setEnabled(true);
 			pp.setEnabled(true);
 			ct.setEnabled(true);
-			if (textInput.getText().equals("")) dc.setEnabled(false);
+			if (textInput.getTextWidget().getText().equals("")) dc.setEnabled(false);
 			else dc.setEnabled(true);
-			if (textInput.getText().equals("")) ah.setEnabled(false);
+			if (textInput.getTextWidget().getText().equals("")) ah.setEnabled(false);
 			else ah.setEnabled(true);
 			se.setEnabled(true);
 		}

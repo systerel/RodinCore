@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.UIUtils;
@@ -51,7 +52,7 @@ public class NameInputRow
 	 * Set the text for the text field part of the row.
 	 */
 	protected void setText() {
-		textInput.setText(page.getInput().getElementName());
+		textInput.getTextWidget().setText(page.getInput().getElementName());
 	}
 
 
@@ -60,7 +61,7 @@ public class NameInputRow
 	 */
 	public void commit() {
 		if (dirty) {
-			String name = textInput.getText();
+			String name = textInput.getTextWidget().getText();
 			try {
 				IInternalElement input = page.getInput();
 				if (input.exists()) {
@@ -119,8 +120,9 @@ public class NameInputRow
 	/**
 	 * Creating the input text field part. 
 	 */
-	protected IEventBInputText createEventBInputText(Composite parent, FormToolkit toolkit, int style) {
-		return new EventBText(parent, toolkit, style);
+	protected IEventBInputText createInputText(Composite parent, FormToolkit toolkit, int style) {
+		Text text = toolkit.createText(parent, "", style);
+		return new EventBText(text);
 	}
 	
 	protected void update() {

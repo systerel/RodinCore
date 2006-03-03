@@ -13,9 +13,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @author htson
@@ -34,14 +32,7 @@ public interface IEventBInputText
 	/**
 	 * @return the content of the Text inside.
 	 */
-	public String getText();
-	
-	
-	/**
-	 * Setting the layout of the Text.
-	 * @param gd Any grid data
-	 */
-	public void setLayoutData(GridData gd);
+	public Text getTextWidget();
 	
 	
 	/**
@@ -50,25 +41,4 @@ public interface IEventBInputText
 	 */
 	public void setFocus();
 	
-	
-	/**
-	 * Setting the content of the Text.
-	 * @param str Any string
-	 */
-	public void setText(String string);
-	
-	
-	/**
-	 * Adding a listener for when the focus is changed.
-	 * @param listener a FocusListener
-	 */
-	public void addFocusListener(FocusListener listener);
-	
-	
-	/**
-	 * Adding a listener for any modification of the Text.
-	 * @param listener a ModifyListener
-	 */
-	public void addModifyListener(ModifyListener listener);
-
 }

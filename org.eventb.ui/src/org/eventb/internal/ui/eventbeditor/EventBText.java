@@ -13,13 +13,8 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
@@ -40,9 +35,8 @@ public class EventBText
 	 * @param toolkit the FormToolkit used to creat the Text
 	 * @param style the style used to create the Text
 	 */
-	public EventBText(Composite parent, FormToolkit toolkit, int style) {
-		text = toolkit.createText(parent, "", style);
-
+	public EventBText(Text text) {
+		this.text = text;
 		// TODO Create a new font for Event-B Text
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		text.setFont(font);
@@ -60,28 +54,6 @@ public class EventBText
 			text.setFont(font);
 		}
 	}
-
-	
-	/**
-	 * @return the content of the Text inside.
-	 */
-	public String getText() {return text.getText();}
-	
-	
-	/**
-	 * Setting the layout of the Text.
-	 * <p>
-	 * @param gd Any grid data
-	 */
-	public void setLayoutData(GridData gd) {text.setLayoutData(gd);}
-	
-	
-	/**
-	 * Setting the content of the Text.
-	 * <p>
-	 * @param str Any string
-	 */
-	public void setText(String str) {text.setText(str);}
 	
 	
 	/**
@@ -89,20 +61,12 @@ public class EventBText
 	 */
 	public void setFocus() {text.setFocus(); text.selectAll();}
 	
-	
-	/**
-	 * Adding a listener for when the focus is changed.
-	 * <p>
-	 * @param listener a FocusListener
-	 */
-	public void addFocusListener(FocusListener listener) {text.addFocusListener(listener);}
-		
-	
-	/**
-	 * Adding a listener for any modification of the Text.
-	 * <p>
-	 * @param listener a ModifyListener
-	 */
-	public void addModifyListener(ModifyListener listener) {text.addModifyListener(listener);}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBInputText#getTextWidget()
+	 */
+	public Text getTextWidget() {
+		return text;
+	}
+	
 }
