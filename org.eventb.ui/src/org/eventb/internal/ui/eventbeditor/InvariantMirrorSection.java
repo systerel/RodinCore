@@ -109,13 +109,13 @@ public class InvariantMirrorSection
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 200;
 			gd.minimumHeight = 150;
-			gd.widthHint = 200;
+			gd.widthHint = 150;
 			this.getSection().setLayoutData(gd);
 		}
 		else {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 0;
-			gd.widthHint = 200;
+			gd.widthHint = 150;
 			this.getSection().setLayoutData(gd);
 		}
 		super.expansionStateChanging(expanding);

@@ -73,7 +73,7 @@ public class AxiomsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		axiomMirrorSection.getSection().setLayoutData(gd);
 		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
 		page.addChangedListener(axiomMirrorSection);
@@ -84,7 +84,7 @@ public class AxiomsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		theoremMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
 		page.addChangedListener(theoremMirrorSection);
@@ -95,7 +95,7 @@ public class AxiomsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
 		gd.minimumHeight = 50;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		carrierSetMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(CarrierSetsPage.PAGE_ID);
 		page.addChangedListener(carrierSetMirrorSection);
@@ -106,7 +106,7 @@ public class AxiomsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
 		gd.minimumHeight = 50;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		constantMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(ConstantsPage.PAGE_ID);
 		page.addChangedListener(constantMirrorSection);

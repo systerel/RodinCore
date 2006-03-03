@@ -73,7 +73,7 @@ public class ConstantsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		axiomMirrorSection.getSection().setLayoutData(gd);
 		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
 		page.addChangedListener(axiomMirrorSection);
@@ -84,7 +84,7 @@ public class ConstantsPage
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
-		gd.widthHint = 200;
+		gd.widthHint = 150;
 		theoremMirrorSection.getSection().setLayoutData(gd);
 		page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
 		page.addChangedListener(theoremMirrorSection);

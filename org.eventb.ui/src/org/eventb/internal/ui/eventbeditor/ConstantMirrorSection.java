@@ -103,13 +103,13 @@ public class ConstantMirrorSection
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 100;
 			gd.minimumHeight = 50;
-			gd.widthHint = 200;
+			gd.widthHint = 150;
 			this.getSection().setLayoutData(gd);
 		}
 		else {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			gd.heightHint = 0;
-			gd.widthHint = 200;
+			gd.widthHint = 150;
 			this.getSection().setLayoutData(gd);
 		}
 		super.expansionStateChanging(expanding);

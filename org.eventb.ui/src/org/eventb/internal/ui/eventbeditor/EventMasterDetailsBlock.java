@@ -47,6 +47,15 @@ public class EventMasterDetailsBlock
 		super(page, TITLE, DESCRIPTION);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.MasterDetailsBlock#createContent(org.eclipse.ui.forms.IManagedForm)
+	 */
+	@Override
+	public void createContent(IManagedForm managedForm) {
+		super.createContent(managedForm);
+		int [] weights = {40, 70};
+		this.sashForm.setWeights(weights);
+	}
 
 	/**
 	 * Method to create the master section.
