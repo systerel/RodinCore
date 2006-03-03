@@ -485,28 +485,28 @@ public class UserSupport
 		IRodinElement element = delta.getElement();
 //		UserSupportUtils.debug("Process Delta " + element);
 		if (element instanceof IRodinProject) {
-//			UserSupportUtils.debug("Project changed " + kind + " for " + element);
-			for (IRodinElementDelta d : delta.getAffectedChildren()) {
-				processDelta(d);
-			}
+			UserSupportUtils.debug("Project changed " + kind + " for " + element);
+//			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+//				processDelta(d);
+//			}
 		}
 		else if (element instanceof IPRFile) {
 			UserSupportUtils.debug("PRFile changed " + kind + " for " + ((IPRFile) element).getElementName());
 			if (prFile.equals(element)) {
-				setInput((IPRFile) element);
-//				for (IRodinElementDelta d : delta.getAffectedChildren()) {
-//					processDelta(d);
-//				}
+//				setInput((IPRFile) element);
+				for (IRodinElementDelta d : delta.getAffectedChildren()) {
+					processDelta(d);
+				}
 			}
 		}
 		else if (element instanceof IPRSequent) {
 			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
-			for (ProofState ps : proofStates) {
-				if (ps.getPRSequent().equals(element)) {
-					UserSupportUtils.debug("Update " + ((IPRSequent) element).getElementName());
-					ps.createProofTree();
-				}
-			}
+//			for (ProofState ps : proofStates) {
+//				if (ps.getPRSequent().equals(element)) {
+//					UserSupportUtils.debug("Update " + ((IPRSequent) element).getElementName());
+//					ps.createProofTree();
+//				}
+//			}
 		}
 		else if (element instanceof IMachine) {
 			return;
