@@ -40,6 +40,7 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -223,7 +224,7 @@ public class ProofInformationPage
 					IRodinElement element = RodinCore.create(id);
 					UIUtils.linkToEventBEditor(element);
 					UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
-					UIUtils.activateView(IPageLayout.ID_OUTLINE);
+					UIUtils.activateView(ProjectExplorer.VIEW_ID);
 				}
 
 			});
