@@ -20,9 +20,7 @@ import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import junit.framework.TestCase;
@@ -37,7 +35,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedUtil;
 
 
 /**
@@ -331,22 +328,6 @@ public class TestBoundIdentRenaming extends TestCase {
 			String result = testItem.formula.toStringFullyParenthesized();
 			checkresult(testItem, result);
 		}
-	}
-	
-	/**
-	 * Ensures that renaming a primed identifier doesn't go into an infinite
-	 * loop.
-	 */
-	public final void testRenamePrimedIdent() {
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("x'", null);
-		Set<String> usedNames = new HashSet<String>();
-		usedNames.add("x");
-		String[] result = QuantifiedUtil.resolveIdents(mList(decl), usedNames);
-		assertEquals("x'", result[0]);
-
-		usedNames.add("x'");
-		result = QuantifiedUtil.resolveIdents(mList(decl), usedNames);
-		assertEquals("x0'", result[0]);
 	}
 	
 }
