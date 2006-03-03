@@ -9,7 +9,7 @@
  *     ETH RODIN Group
  *******************************************************************************/
 
-package org.eventb.internal.ui.eventbeditor;
+package org.eventb.internal.ui;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -19,7 +19,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.IEventBFormText;
 
 /**
  * @author htson
