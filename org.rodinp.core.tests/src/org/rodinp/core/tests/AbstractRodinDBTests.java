@@ -55,11 +55,6 @@ import org.rodinp.core.tests.util.Util;
 
 public abstract class AbstractRodinDBTests extends TestCase {
 
-	/**
-	 * The java.io.File path to the directory that contains the external jars.
-	 */
-	protected static String EXTERNAL_JAR_DIR_PATH;
-
 	// infos for invalid results
 	protected int tabs = 2;
 	protected boolean displayName = false;
