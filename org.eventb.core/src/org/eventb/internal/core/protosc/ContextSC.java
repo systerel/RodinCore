@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -92,8 +93,6 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if (! contextIn.exists())
 			ContextSC.makeError("Source context does not exist.");
 		
-		IRodinProject project = (IRodinProject) newSCContext.getParent();
-		project.createRodinFile(newSCContext.getElementName(), true, null);
 		init(contextIn, newSCContext, interrupt, monitor);
 		runSC();
 		return true;
@@ -134,7 +133,13 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		retractUntypedConstants();
 		commitTheorems();
 		
-		createCheckedContext();
+		// Create the resulting statically checked file atomically.
+		RodinCore.run(
+				new IWorkspaceRunnable() {
+					public void run(IProgressMonitor saveMonitor) throws RodinDBException {
+						createCheckedContext();
+					}
+				}, monitor);
 		
 		issueProblems(context);
 	}
@@ -270,8 +275,11 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		return null;
 	}
 	
-	private void createCheckedContext() throws RodinDBException {
+	void createCheckedContext() throws RodinDBException {
 		
+		IRodinProject project = (IRodinProject) scContext.getParent();
+		project.createRodinFile(scContext.getElementName(), true, null);
+
 		createDeclarations(contextCache.getOldCarrierSets().values(), contextCache.getCarrierSetIdentMap());
 		createDeclarations(contextCache.getNewCarrierSets().values(), contextCache.getCarrierSetIdentMap());
 		createDeclarations(contextCache.getOldConstants().values(), contextCache.getConstantIdentMap());

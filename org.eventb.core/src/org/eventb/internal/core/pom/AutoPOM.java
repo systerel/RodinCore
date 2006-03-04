@@ -9,6 +9,7 @@
 package org.eventb.internal.core.pom;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,11 +54,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		this.prFile = prFile;
 	}
 	
-	// just for testing. 
-	public void writePRFile() throws CoreException {
-		createFreshPRFile();
-	}
-	
 	public boolean run(IFile file, 
 			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
@@ -70,7 +66,15 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 		
 		init(poIn, newPRFile, interrupt, monitor);
-		writePRFile();
+
+		// Create the resulting PR file atomically.
+		RodinCore.run(
+				new IWorkspaceRunnable() {
+					public void run(IProgressMonitor saveMonitor) throws CoreException {
+						createFreshPRFile();
+					}
+				}, monitor);
+		
 		new AutoProver().run(newPRFile);
 		return true;
 	}
@@ -99,7 +103,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private void createFreshPRFile() throws CoreException {
+	void createFreshPRFile() throws CoreException {
 		IRodinProject project = prFile.getRodinProject();
 		project.createRodinFile(prFile.getElementName(), true, null);
 		copyGlobalInfo();

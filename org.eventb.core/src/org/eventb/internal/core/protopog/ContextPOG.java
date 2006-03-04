@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -75,7 +76,13 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 			poList.addAll(rule.get(contextCache));
 		}
 		
-		createPOFile();
+		// Create the resulting PO file atomically.
+		RodinCore.run(
+				new IWorkspaceRunnable() {
+					public void run(IProgressMonitor saveMonitor) throws CoreException {
+						createPOFile();
+					}
+				}, monitor);
 	}
 	
 	public boolean run(IFile file, 
@@ -83,13 +90,11 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
-		IRodinProject project = newPOFile.getRodinProject();
 		ISCContext contextIn = newPOFile.getSCContext();
 		
 		if (! contextIn.exists())
 			ContextSC.makeError("Source SC context does not exist.");
 		
-		project.createRodinFile(newPOFile.getElementName(), true, null);
 		init(contextIn, newPOFile, interrupt, monitor);
 		run();
 		return true;
@@ -119,7 +124,10 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private void createPOFile() throws CoreException {
+	void createPOFile() throws CoreException {
+		IRodinProject project = poFile.getRodinProject();
+		project.createRodinFile(poFile.getElementName(), true, null);
+
 		createGlobalTypeEnvironment();
 		createHypSets();
 		createProofObligations();

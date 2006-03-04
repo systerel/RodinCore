@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -104,13 +105,11 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 			System.out.println(getClass().getName() + " running.");
 		
 		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
-		IRodinProject project = newSCMachine.getRodinProject();
 		IMachine machineIn = newSCMachine.getMachine();
 		
 		if (! machineIn.exists())
 			MachineSC.makeError("Source machine does not exist.");
 		
-		project.createRodinFile(newSCMachine.getElementName(), true, null);
 		init(machineIn, newSCMachine, interrupt, monitor);
 		runSC();
 		return true;
@@ -155,14 +154,20 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	public void runSC() throws RodinDBException {
+	public void runSC() throws CoreException {
 		commitVariables();
 		commitInvariants();
 		retractUntypedVariables();
 		commitTheorems();
 		commitEvents();
-		
-		createCheckedMachine();
+
+		// Create the resulting statically checked file atomically.
+		RodinCore.run(
+				new IWorkspaceRunnable() {
+					public void run(IProgressMonitor saveMonitor) throws RodinDBException {
+						createCheckedMachine();
+					}
+				}, monitor);
 		
 		issueProblems(machine);
 	}
@@ -490,10 +495,14 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		return null;
 	}
 	
-	private void createCheckedMachine() throws RodinDBException {
+	void createCheckedMachine() throws RodinDBException {
+		IRodinProject project = scMachine.getRodinProject();
+		project.createRodinFile(scMachine.getElementName(), true, null);
+
 		createDeclarations(machineCache.getOldCarrierSets().values(), null);
 		createDeclarations(machineCache.getOldConstants().values(), null);
-		createDeclarations(machineCache.getNewVariables().values(), machineCache.getVariableIdentMap());
+		createDeclarations(machineCache.getNewVariables().values(),
+				machineCache.getVariableIdentMap());
 
 		ISCInvariantSet invariantSet = (ISCInvariantSet) scMachine.createInternalElement(ISCInvariantSet.ELEMENT_TYPE, "MODEL", null, monitor);
 		createOldFormulas(invariantSet, machineCache.getOldInvariants());
