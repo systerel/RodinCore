@@ -10,7 +10,6 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.rodinp.core.RodinDBException;
 
 public class ProofState {
-	// TODO Add PO handle to replace IProverSequent
 	private IPRSequent ps;
 	private IProofTree pt;
 	private IProofTreeNode current;
@@ -20,10 +19,6 @@ public class ProofState {
 	public ProofState(IPRSequent ps) throws RodinDBException {
 		this.ps = ps;
 		pt = null;
-//		pt = ps.makeProofTree();
-//		current = null;
-//		cached = new HashSet<Hypothesis>();
-//		searched = new HashSet<Hypothesis>();
 	}
 	
 	public void createProofTree() throws RodinDBException {
@@ -69,8 +64,6 @@ public class ProofState {
 
 	public Collection<Hypothesis> getCached() {return cached;}
 
-//	public void addAllToSearched(Collection<Hypothesis> hyps) {searched.addAll(hyps);}
-	
 	public void removeAllFromSearched(Collection<Hypothesis> hyps) {searched.removeAll(hyps);}
 
 	public Collection<Hypothesis> getSearched() {return searched;}
