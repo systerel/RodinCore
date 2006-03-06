@@ -22,6 +22,10 @@ public class TacticsTest extends TestCase {
 		assertNull(Tactics.legacyProvers().apply(pt));
 		assertTrue(pt.isDischarged());
 		
+		pt = TestLib.genProofTreeNode(" |- 23 = 23 ");
+		assertNull(Tactics.legacyProvers().apply(pt));
+		assertTrue(pt.isDischarged());
+		
 		pt = TestLib.genProofTreeNode(" ⊤|- ⊥");
 		assertNotNull(Tactics.legacyProvers().apply(pt));
 		desc = pt.getOpenDescendants();

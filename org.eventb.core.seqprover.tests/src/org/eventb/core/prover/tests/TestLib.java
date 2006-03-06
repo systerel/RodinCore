@@ -47,6 +47,9 @@ public class TestLib {
 	
 	public static IProverSequent genSeq(String s){
 		String[] hypsStr = (s.split("[|]-")[0]).split(";;");
+		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
+			hypsStr = new String[0];
+		
 		String goalStr = s.split("[|]-")[1];
 		
 		// Parsing
@@ -60,6 +63,7 @@ public class TestLib {
 		
 		// Type check
 		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		
 		for (int i=0;i<hyps.length;i++){
 			ITypeCheckResult tcResult =  hyps[i].typeCheck(typeEnvironment);
 			Assert.assertTrue(tcResult.isSuccess());
