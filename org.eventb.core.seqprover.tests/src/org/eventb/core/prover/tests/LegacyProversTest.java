@@ -43,6 +43,7 @@ public class LegacyProversTest extends TestCase {
 	};
 
 	IProverSequent[] success = {
+			TestLib.genSeq("|- 0 = 0"),
 			TestLib.genSeq("x∈ℕ|- x∈ℕ"),
 			TestLib.genSeq("1=1 |- 1=1"),
 			TestLib.genSeq("1=1 |- 2=2"),
