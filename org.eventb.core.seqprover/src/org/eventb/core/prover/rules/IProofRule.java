@@ -1,6 +1,5 @@
 package org.eventb.core.prover.rules;
 
-import org.eventb.core.prover.sequent.IProverSequent;
 
 public interface IProofRule {
 
@@ -19,6 +18,7 @@ public interface IProofRule {
 	 * @return <code>true</code> iff this rule is appliable to the given
 	 *         sequent.
 	 */
-	boolean isApplicable(IProverSequent sequent);
+	// Removed isApplicable() since there is no special reason to keep it.
+	// boolean isApplicable(IProverSequent sequent);
 
 }

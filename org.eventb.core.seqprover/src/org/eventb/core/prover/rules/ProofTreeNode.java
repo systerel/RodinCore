@@ -65,8 +65,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public boolean applyRule(ProofRule rule) {
 		// force resetting to avoid losing child proofs
 		assert (this.children == null);
-		if (! rule.isApplicable(this.sequent)) return false;
+		// if (! rule.isApplicable(this.sequent)) return false;
 		IProverSequent[] anticidents = rule.apply(this.sequent);
+		if (anticidents == null) return false;
 		assert (anticidents != null);
 		this.rule = rule;
 		final int length = anticidents.length;
@@ -97,7 +98,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		assert ((this.rule == null) & (this.children == null)) |
 				((this.rule != null) & (this.children != null));
 		if (this.rule != null) {
-			assert rule.isApplicable(this.sequent);
+			// assert rule.isApplicable(this.sequent);
 			IProverSequent[] anticidents = rule.apply(this.sequent);
 			assert (anticidents != null);
 			assert (this.children.length == anticidents.length);

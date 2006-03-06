@@ -37,8 +37,8 @@ public class TestRules extends TestCase {
 	
 	public void testHyp(){
 		ProofRule Hyp = (ProofRule) rf.hyp();
-		assertTrue(Hyp.isApplicable(seq.hypSeq));
-		assertFalse(Hyp.isApplicable(seq.hypSeqFail));
+//		assertTrue(Hyp.isApplicable(seq.hypSeq));
+//		assertFalse(Hyp.isApplicable(seq.hypSeqFail));
 		
 		IProverSequent[] anticidents = Hyp.apply(seq.hypSeq);
 		assertNotNull(anticidents);
@@ -49,13 +49,13 @@ public class TestRules extends TestCase {
 	
 	public void testConjI(){
 		ProofRule conjI = (ProofRule) rf.conjI();
-		assertFalse(conjI.isApplicable(seq.hypSeq));
-		assertFalse(conjI.isApplicable(seq.hypSeqFail));
-		assertTrue(conjI.isApplicable(seq.conjSeq2));
-		assertTrue(conjI.isApplicable(seq.conjSeq3));
-		assertFalse(conjI.isApplicable(seq.impSeq));
-		assertFalse(conjI.isApplicable(seq.quantSeq));
-		assertFalse(conjI.isApplicable(seq.quantSeqClash));
+//		assertFalse(conjI.isApplicable(seq.hypSeq));
+//		assertFalse(conjI.isApplicable(seq.hypSeqFail));
+//		assertTrue(conjI.isApplicable(seq.conjSeq2));
+//		assertTrue(conjI.isApplicable(seq.conjSeq3));
+//		assertFalse(conjI.isApplicable(seq.impSeq));
+//		assertFalse(conjI.isApplicable(seq.quantSeq));
+//		assertFalse(conjI.isApplicable(seq.quantSeqClash));
 		
 		assertNull(conjI.apply(seq.hypSeq));
 		assertNull(conjI.apply(seq.hypSeqFail));
@@ -86,13 +86,13 @@ public class TestRules extends TestCase {
 	
 	public void testImpI(){
 		ProofRule impI = (ProofRule) rf.impI();
-		assertFalse(impI.isApplicable(seq.hypSeq));
-		assertFalse(impI.isApplicable(seq.hypSeqFail));
-		assertFalse(impI.isApplicable(seq.conjSeq2));
-		assertFalse(impI.isApplicable(seq.conjSeq3));
-		assertTrue(impI.isApplicable(seq.impSeq));
-		assertFalse(impI.isApplicable(seq.quantSeq));
-		assertFalse(impI.isApplicable(seq.quantSeqClash));
+//		assertFalse(impI.isApplicable(seq.hypSeq));
+//		assertFalse(impI.isApplicable(seq.hypSeqFail));
+//		assertFalse(impI.isApplicable(seq.conjSeq2));
+//		assertFalse(impI.isApplicable(seq.conjSeq3));
+//		assertTrue(impI.isApplicable(seq.impSeq));
+//		assertFalse(impI.isApplicable(seq.quantSeq));
+//		assertFalse(impI.isApplicable(seq.quantSeqClash));
 		
 		assertNull(impI.apply(seq.hypSeq));
 		assertNull(impI.apply(seq.hypSeqFail));
@@ -117,13 +117,13 @@ public class TestRules extends TestCase {
 	
 	public void testAllI(){
 		ProofRule allI = (ProofRule) rf.allI();
-		assertFalse(allI.isApplicable(seq.hypSeq));
-		assertTrue(allI.isApplicable(seq.hypSeqFail));
-		assertFalse(allI.isApplicable(seq.conjSeq2));
-		assertFalse(allI.isApplicable(seq.conjSeq3));
-		assertFalse(allI.isApplicable(seq.impSeq));
-		assertTrue(allI.isApplicable(seq.quantSeq));
-		assertTrue(allI.isApplicable(seq.quantSeqClash));
+//		assertFalse(allI.isApplicable(seq.hypSeq));
+//		assertTrue(allI.isApplicable(seq.hypSeqFail));
+//		assertFalse(allI.isApplicable(seq.conjSeq2));
+//		assertFalse(allI.isApplicable(seq.conjSeq3));
+//		assertFalse(allI.isApplicable(seq.impSeq));
+//		assertTrue(allI.isApplicable(seq.quantSeq));
+//		assertTrue(allI.isApplicable(seq.quantSeqClash));
 		
 		assertNull(allI.apply(seq.hypSeq));
 		assertNotNull(allI.apply(seq.hypSeqFail));
@@ -170,8 +170,8 @@ public class TestRules extends TestCase {
 //		System.out.println(PLbCut.isApplicable(seq.hypSeqFail));
 //		System.out.println(sO.proof());
 //		System.out.println(seq.hypSeqFail);
-		assertTrue(PLbCut.isApplicable(seq.hypSeqFail));
-		
+//		assertTrue(PLbCut.isApplicable(seq.hypSeqFail));
+//		
 		IProverSequent[] anticidents;
 		
 		anticidents = PLbCut.apply(seq.hypSeqFail);
@@ -181,14 +181,14 @@ public class TestRules extends TestCase {
 		assertTrue(seq.hypSeqFail.hypotheses().equals(anticidents[0].hypotheses()));
 		
 		final ProofRule conjI = (ProofRule) rf.conjI();
-		assertTrue(conjI.isApplicable(anticidents[0]));
+//		assertTrue(conjI.isApplicable(anticidents[0]));
 		anticidents = conjI.apply(anticidents[0]);
 		assertTrue(anticidents.length == 3);
 		assertTrue(anticidents[0].goal().equals(lemma));
 		assertTrue(anticidents[1].goal().equals(lemmaWD));
 		
 		final ProofRule impI = (ProofRule) rf.impI();
-		assertTrue(impI.isApplicable(anticidents[2]));
+//		assertTrue(impI.isApplicable(anticidents[2]));
 		anticidents = impI.apply(anticidents[2]);
 		assertTrue(anticidents.length == 1);
 		assertTrue(seq.hypSeqFail.goal().equals(anticidents[0].goal()));
