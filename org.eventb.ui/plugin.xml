@@ -94,11 +94,11 @@
       <perspective
             class="org.eventb.internal.ui.ModellingPerspective"
             id="org.eventb.ui.perspective.ModellingPerspective"
-            name="Event-B Modelling"/>
+            name="Modelling"/>
       <perspective
             class="org.eventb.internal.ui.ProvingPerspective"
             id="org.eventb.ui.perspective.ProvingPerspective"
-            name="Event-B Proving"/>
+            name="Proving"/>
    </extension>
 
 </plugin>
