@@ -27,7 +27,7 @@ public class ProofState {
 	}
 	
 	public void createProofTree() throws RodinDBException {
-		if (pt == null) {
+		if (pt == null || pt.isDischarged()) {
 			pt = ps.makeProofTree();
 			current = null;
 			cached = new HashSet<Hypothesis>();
