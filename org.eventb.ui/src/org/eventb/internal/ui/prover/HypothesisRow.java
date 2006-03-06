@@ -189,7 +189,7 @@ public class HypothesisRow
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
-				if (UIUtils.debug) System.out.println("Ident: " + image);
+				UIUtils.debug("Ident: " + image);
 				if (i++ != 0) toolkit.createLabel(hypothesisComposite, ", " + image);
 				else toolkit.createLabel(hypothesisComposite, image);
 				Text box = toolkit.createText(hypothesisComposite, "");
@@ -205,7 +205,7 @@ public class HypothesisRow
 	        form.getFormText().setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
-			if (UIUtils.debug) System.out.println("Pred: " + image);
+			UIUtils.debug("Pred: " + image);
 			form.getFormText().setText("<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>", true, false);
         }
         else {
@@ -221,7 +221,7 @@ public class HypothesisRow
 		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
-			if (UIUtils.debug) System.out.println("Create tactic for " + t);
+			UIUtils.debug("Create tactic for " + t);
 			formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t) + "\">" + UIUtils.XMLWrapUp(t) +"</a> ";
 		}
 		

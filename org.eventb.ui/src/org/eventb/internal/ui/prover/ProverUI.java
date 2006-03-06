@@ -184,20 +184,20 @@ public class ProverUI
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
-					//if (UIUtils.debug) System.out.println("Trying to save page " + i + " : " + page);
+					//if (UIUtils.DEBUG) System.out.println("Trying to save page " + i + " : " + page);
 					if (page instanceof IFormPage) {
-						//if (UIUtils.debug) System.out.println("Saving");
+						//if (UIUtils.DEBUG) System.out.println("Saving");
 						IFormPage fpage = (IFormPage) page;
 						
 						fpage.doSave(monitor);
-						//if (UIUtils.debug) System.out.println("Dirty? " + i + " " + fpage.isDirty());
+						//if (UIUtils.DEBUG) System.out.println("Dirty? " + i + " " + fpage.isDirty());
 					}
 				}
 			}
 
 		// Save the file from the database to disk
 		try {
-			if (UIUtils.debug) System.out.println("Save to disk");
+			UIUtils.debug("Save to disk");
 			IPRFile prFile = this.getPRFileInput();
 			prFile.save(monitor, true);
 		}

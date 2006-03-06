@@ -164,7 +164,7 @@ public class ProofsPage
 
 		}
 		
-		//		if (UIUtils.debug) System.out.println("Update selectedSection");
+		//		if (UIUtils.DEBUG) System.out.println("Update selectedSection");
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
@@ -173,13 +173,13 @@ public class ProofsPage
 				searchedSection.update(addedToSearched, removedFromSearched);
 			}
 		});
-//		if (UIUtils.debug) System.out.println("***************");
+//		if (UIUtils.DEBUG) System.out.println("***************");
 		
-//		if (UIUtils.debug) System.out.println("Update cached");
-//		if (UIUtils.debug) System.out.println("*************");
+//		if (UIUtils.DEBUG) System.out.println("Update cached");
+//		if (UIUtils.DEBUG) System.out.println("*************");
 		
-//		if (UIUtils.debug) System.out.println("Update searched");
-//		if (UIUtils.debug) System.out.println("*************");	
+//		if (UIUtils.DEBUG) System.out.println("Update searched");
+//		if (UIUtils.DEBUG) System.out.println("*************");	
 	}
 
 	/* (non-Javadoc)

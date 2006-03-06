@@ -192,7 +192,7 @@ public class EventMasterSectionActionGroup
 								for (int i = 0; i < objects.length; i++) {
 									if (objects[i] instanceof IInternalElement) {
 										try {
-											if (UIUtils.debug) System.out.println("DELETE " + objects[i].toString());
+											UIUtils.debug("DELETE " + objects[i].toString());
 											((IInternalElement) objects[i]).delete(true, null);
 											viewer.refresh();
 										}

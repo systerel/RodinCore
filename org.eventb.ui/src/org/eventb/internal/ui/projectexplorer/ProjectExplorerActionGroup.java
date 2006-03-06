@@ -123,7 +123,7 @@ public class ProjectExplorerActionGroup
 					Object [] slist = ssel.toArray();
 				
 					for (int i = 0; i < slist.length; i++) {
-						if (UIUtils.debug) System.out.println(slist[i].toString() + " : " + slist[i].getClass().toString());
+						UIUtils.debug(slist[i].toString() + " : " + slist[i].getClass().toString());
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];
 							IProject project = rodinProject.getProject();

@@ -290,27 +290,27 @@ public class EventBContentOutlinePage
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Process the delta increamentally, see ObligationExplorerContentProvider
-		//if (UIUtils.debug) System.out.println("Update the Explorer " + event.toString());
+		//if (UIUtils.DEBUG) System.out.println("Update the Explorer " + event.toString());
 		IRodinElementDelta [] elements = event.getDelta().getAffectedChildren();
 		for (int i = 0; i < elements.length; i++) {
-			//if (UIUtils.debug) System.out.println(elements[i].toString() + " which is " + elements[i].getKind() + " contains " + elements[i].getElement());
+			//if (UIUtils.DEBUG) System.out.println(elements[i].toString() + " which is " + elements[i].getKind() + " contains " + elements[i].getElement());
 			if ((elements[i].getKind() & IRodinElementDelta.ADDED) != 0) {
-				//if (UIUtils.debug) System.out.println("Refresh add " + elements[i].getElement());
+				//if (UIUtils.DEBUG) System.out.println("Refresh add " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
 				//viewer.refresh();
-				//if (UIUtils.debug) System.out.println("******* Finish Updating *****");
+				//if (UIUtils.DEBUG) System.out.println("******* Finish Updating *****");
 			}
 			else if ((elements[i].getKind() & IRodinElementDelta.REMOVED) != 0) {
-				//if (UIUtils.debug) System.out.println("Refresh delete " + elements[i].getElement());
+				//if (UIUtils.DEBUG) System.out.println("Refresh delete " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
 				//viewer.refresh();
 			}
 			else if ((elements[i].getKind() & IRodinElementDelta.CHANGED) != 0) {
-				//if (UIUtils.debug) System.out.println("Refresh change " + elements[i].getElement());
+				//if (UIUtils.DEBUG) System.out.println("Refresh change " + elements[i].getElement());
 				//refresh(elements[i].getElement().getParent());
 				//viewer.refresh(false);
 				//viewer.setInput(EventBUIPlugin.getRodinDatabase());
@@ -325,7 +325,7 @@ public class EventBContentOutlinePage
 					update();
 				}
 			});
-			//if (UIUtils.debug) System.out.println("********** Finish changing **********");
+			//if (UIUtils.DEBUG) System.out.println("********** Finish changing **********");
 		}
 	}
 }

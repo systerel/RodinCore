@@ -132,7 +132,7 @@ public class ProofInformationPage
 			IPOSource [] sources = desc.getSources();
 			for (IPOSource source : sources) {
 				String role = source.getSourceRole();
-				if (UIUtils.debug) System.out.println("Role " + role);
+				UIUtils.debug("Role " + role);
 				formString = formString + "<li style=\"bullet\">" + role + "</li>";
 
 				String id = source.getSourceHandleIdentifier();
@@ -141,7 +141,7 @@ public class ProofInformationPage
 				id = id.replaceFirst("bcm", "bum");
 				id = id.replaceFirst("bcc", "buc");
 				id = id.replaceFirst("scEvent", "event");
-				if (UIUtils.debug) System.out.println("ID unchecked model " + id);
+				UIUtils.debug("ID unchecked model " + id);
 				
 				IRodinElement element = RodinCore.create(id);
 				if (element instanceof ITheorem) {

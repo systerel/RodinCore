@@ -96,7 +96,7 @@ public abstract class EventBDetailsSection
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
-		if (UIUtils.debug) System.out.println("COMMIT");
+		UIUtils.debug("COMMIT");
 		super.commit(onSave);
 		for (int i = 0; i < rows.size(); i++)
 			((EventBInputRow) rows.get(i)).commit();

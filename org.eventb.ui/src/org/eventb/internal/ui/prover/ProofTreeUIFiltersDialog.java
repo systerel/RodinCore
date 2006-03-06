@@ -262,7 +262,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			ArrayList<String> result= new ArrayList<String>();
 			for (int i= 0; i < fBuiltInFilters.length; ++i) {
 				if (fCheckBoxList.getChecked(fBuiltInFilters[i])) {
-//					if (UIUtils.debug) System.out.println("Filter " + fBuiltInFilters[i]);
+//					if (UIUtils.DEBUG) System.out.println("Filter " + fBuiltInFilters[i]);
 					result.add(fBuiltInFilters[i]);
 				}
 			}

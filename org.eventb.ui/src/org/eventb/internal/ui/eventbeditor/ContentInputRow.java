@@ -71,7 +71,7 @@ public class ContentInputRow
 				IInternalElement input = page.getInput();
 				if (!input.exists()) return;
 				if (input instanceof IUnnamedInternalElement) {
-//					if (UIUtils.debug) System.out.println("Commit content: " + input + " to be " + textInput.getText());
+//					if (UIUtils.DEBUG) System.out.println("Commit content: " + input + " to be " + textInput.getText());
 					input.setContents(textInput.getTextWidget().getText());
 					
 					SectionPart masterPart = page.getBlock().getMasterPart();
@@ -96,7 +96,7 @@ public class ContentInputRow
 					}
 				}
 				else if (input instanceof IInternalElement) {
-//					if (UIUtils.debug) System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
+//					if (UIUtils.DEBUG) System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
 					input.setContents(textInput.getTextWidget().getText());
 					((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
 				}

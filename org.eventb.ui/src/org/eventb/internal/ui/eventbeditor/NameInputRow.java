@@ -67,7 +67,7 @@ public class NameInputRow
 			try {
 				IInternalElement input = page.getInput();
 				if (input.exists()) {
-					if (UIUtils.debug) System.out.println("Commit name: " + input + " to be " + name);
+					UIUtils.debug("Commit name: " + input + " to be " + name);
 					if (!(input.getElementName().equals(name))) {
 						SectionPart masterPart = page.getBlock().getMasterPart();
 						boolean expand = false;
@@ -84,20 +84,20 @@ public class NameInputRow
 						for (i = 0; i < children.length; i++) {
 							if (children[i].getElementName().equals(name)) {
 								page.setInput((IInternalElement) children[i]);
-								if (UIUtils.debug) System.out.println("New element " + children[i].getElementName() + " with content " + ((IInternalElement) children[i]).getContents());								break;
+								UIUtils.debug("New element " + children[i].getElementName() + " with content " + ((IInternalElement) children[i]).getContents());								break;
 							}
 						}
 						if (i == children.length) {
-							if (UIUtils.debug) System.out.println("WARNING: CANNOT FIND THE NEW ELEMENT");
+							UIUtils.debug("WARNING: CANNOT FIND THE NEW ELEMENT");
 						}
-						//	if (UIUtils.debug) System.out.println("After " + input.getContents());
+						//	if (UIUtils.DEBUG) System.out.println("After " + input.getContents());
 						if (masterPart instanceof EventBTablePartWithButtons) {
-							if (UIUtils.debug) System.out.println("Master refresh");
+							UIUtils.debug("Master refresh");
 							((EventBTablePartWithButtons) masterPart).commit();
 //							((EventBTablePartWithButtons) masterPart).getViewer().setSelection(new StructuredSelection(input));
 						}
 						else if (masterPart instanceof EventBTreePartWithButtons) {
-							if (UIUtils.debug) System.out.println("Master refresh");
+							UIUtils.debug("Master refresh");
 							TreeViewer viewer = ((EventBTreePartWithButtons) masterPart).getViewer();
 							Control control = viewer.getControl();
 							control.setRedraw(false);

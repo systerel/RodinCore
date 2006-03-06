@@ -154,15 +154,11 @@ public class ProofControlPage
 						}
 					};
 					
-					if (UIUtils.debug) System.out.println("Here");
 					ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
 					
 					try {
-						if (UIUtils.debug) System.out.println("Here 1");
 						dialog.run(true, true, op);
-						if (UIUtils.debug) System.out.println("Here 2");
 					} catch (InterruptedException exception) {
-						if (UIUtils.debug) System.out.println("Interrupt ");
 						return;
 					} catch (InvocationTargetException exception) {
 						Throwable realException = exception.getTargetException();
@@ -185,7 +181,6 @@ public class ProofControlPage
 				}
 
 				if (label.equals("se")) {
-					if (UIUtils.debug) System.out.println("Search for " + textInput.getTextWidget().getText());
 					editor.getUserSupport().searchHyps(textInput.getTextWidget().getText());
 					return;
 				}

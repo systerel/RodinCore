@@ -62,7 +62,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class UIUtils {
 	
-	public static final boolean debug = false;
+	public static final boolean DEBUG = false;
 	
 	public static final String CONJI_SYMBOL = "\u2227";
 	public static final String IMPI_SYMBOL = "\u21d2";
@@ -79,6 +79,11 @@ public class UIUtils {
 	public static final String EQE1_SYMBOL = "eh";
 	public static final String EQE2_SYMBOL = "he";
 	public static final String FALSIFY_SYMBOL = "\u22a5";
+	
+	public static void debug(String message) {
+		if (DEBUG) System.out.println(message);
+	}
+	
 	
 	/**
 	 * Getting the image corresponding to an object.
@@ -274,7 +279,7 @@ public class UIUtils {
 		else if (obj instanceof IRodinElement) 
 			construct = (IPRFile) ((IRodinElement) obj).getParent();
 		Assert.isTrue(construct != null, "construct must be initialised by now");
-//		if (UIUtils.debug) System.out.println("Link to " + construct.getElementName());
+//		if (UIUtils.DEBUG) System.out.println("Link to " + construct.getElementName());
 		try {
 			IEditorInput fileInput = new FileEditorInput(construct.getResource());
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);

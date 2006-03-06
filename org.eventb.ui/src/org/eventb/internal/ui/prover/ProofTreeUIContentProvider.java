@@ -125,7 +125,7 @@ public class ProofTreeUIContentProvider
 	 */
 	public void proofTreeChanged(IProofTreeDelta delta) {
 		// TODO Auto-generated method stub
-		if (UIUtils.debug) System.out.println("Proof Tree Changed");
+		UIUtils.debug("Proof Tree Changed");
 	}
 	
 }

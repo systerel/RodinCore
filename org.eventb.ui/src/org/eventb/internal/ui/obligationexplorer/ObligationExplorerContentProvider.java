@@ -145,7 +145,7 @@ public class ObligationExplorerContentProvider
 	 * @param updateLabels <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
-//		if (UIUtils.debug) System.out.println("Post refresh");
+//		if (UIUtils.DEBUG) System.out.println("Post refresh");
 		postRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
@@ -154,7 +154,7 @@ public class ObligationExplorerContentProvider
 					Object [] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
-//						if (UIUtils.debug) System.out.println("Refresh " + obj);
+//						if (UIUtils.DEBUG) System.out.println("Refresh " + obj);
 						viewer.refresh(obj, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
@@ -171,7 +171,7 @@ public class ObligationExplorerContentProvider
 					r.run();
 				} finally {
 					//removePendingChange();
-					//if (UIUtils.debug) System.out.println("Runned");
+					//if (UIUtils.DEBUG) System.out.println("Runned");
 				}
 			}
 		};
@@ -204,7 +204,7 @@ public class ObligationExplorerContentProvider
 	 */
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
-		if (UIUtils.debug) System.out.println("******* DISPOSE ********");
+		UIUtils.debug("******* DISPOSE ********");
 	}
 	
 	

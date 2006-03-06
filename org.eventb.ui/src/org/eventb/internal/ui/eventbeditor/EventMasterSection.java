@@ -244,7 +244,7 @@ public class EventMasterSection
 	 * Handle up action.
 	 */
 	private void handleUp() {
-		if (UIUtils.debug) System.out.println("Up: To be implemented");
+		UIUtils.debug("Up: To be implemented");
 		return;
 	}
 	
@@ -253,7 +253,7 @@ public class EventMasterSection
 	 * Handle down action. 
 	 */
 	private void handleDown() {
-		if (UIUtils.debug) System.out.println("Down: To be implemented");
+		UIUtils.debug("Down: To be implemented");
 		return;
 	}
 	

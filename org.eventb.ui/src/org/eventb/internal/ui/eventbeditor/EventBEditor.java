@@ -195,14 +195,14 @@ public class EventBEditor
 		try {
 			// TODO Commit the information in the UI to the database
 			// clear the dirty state on all the pages
-			if (UIUtils.debug) System.out.println("Save");
+			UIUtils.debug("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
 						if (fpage.isDirty()) {
-							if (UIUtils.debug) System.out.println("Saving " + fpage.toString());
+							UIUtils.debug("Saving " + fpage.toString());
 							fpage.doSave(monitor);
 						}
 					}
@@ -335,7 +335,7 @@ public class EventBEditor
 		}
 		
 		else {
-			if (UIUtils.debug) System.out.println("Unknown element type");
+			UIUtils.debug("Unknown element type");
 			return;
 		}
 		

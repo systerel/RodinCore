@@ -278,7 +278,7 @@ public class ObligationExplorer
 	}	
 	
 	public void refresh() {
-		if (UIUtils.debug) System.out.println("********** REFRESH *********");
+		UIUtils.debug("********** REFRESH *********");
 		viewer.refresh();
 	}
 
