@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
@@ -16,15 +16,15 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  * @author Farhad Mehta
  *
  */
-public class PRStatus extends UnnamedInternalElement implements IPRStatus {
+public class Proof extends UnnamedInternalElement implements IPROOF {
 
-	public PRStatus(IRodinElement parent) {
+	public Proof(IRodinElement parent) {
 		super(ELEMENT_TYPE, parent);
 	}
 
-	public Overview getOverview() throws RodinDBException {
-		if (getContents().compareToIgnoreCase("PENDING") == 0) return Overview.PENDING;
-		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Overview.DISCHARGED;
+	public Status getStatus() throws RodinDBException {
+		if (getContents().compareToIgnoreCase("PENDING") == 0) return Status.PENDING;
+		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Status.DISCHARGED;
 		return null;
 	}
 

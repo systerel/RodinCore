@@ -40,7 +40,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -142,7 +142,7 @@ public class ObligationExplorer
 			if (obj instanceof IPRSequent) {
 				IPRSequent ps = (IPRSequent) obj;
 				try {
-					IPRStatus status = ps.getStatus();
+					IPROOF status = ps.getProof();
 					if (status.getContents().equals("PENDING")) return registry.get(EventBImage.IMG_PENDING);
 					else if (status.getContents().equals("DISCHARGED")) return registry.get(EventBImage.IMG_DISCHARGED);
 				}

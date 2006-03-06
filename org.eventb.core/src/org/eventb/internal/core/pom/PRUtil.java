@@ -21,7 +21,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus.Overview;
+import org.eventb.core.IPROOF.Status;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -86,30 +86,30 @@ public class PRUtil {
 		}
 			
 		if (pt.isDischarged()){
-			prSeq.getStatus().setContents(Overview.DISCHARGED.toString());
+			prSeq.getProof().setContents(Status.DISCHARGED.toString());
 		} else {
-			prSeq.getStatus().setContents(Overview.PENDING.toString());
+			prSeq.getProof().setContents(Status.PENDING.toString());
 		}
 		IPRFile prFile = (IPRFile) prSeq.getParent();
 		prFile.save(null, false);
 	}
 	
-	public static void updateStatus(IPRFile prFile, String poName, Overview status) throws RodinDBException{
+	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
 		IPRSequent[] prSeqs = prFile.getSequents();
 		for (IPRSequent prSeq : prSeqs){
 			if (prSeq.getName().equals(poName)){
-				prSeq.getStatus().setContents(status.toString());
+				prSeq.getProof().setContents(status.toString());
 			}
 		}
 		prFile.save(null, false);
 	}
 	
-	public static Map<String, Overview> readStatus(IPRFile prFile) throws RodinDBException {
-		Map<String, Overview> result 
-		= new HashMap<String, Overview>(prFile.getSequents().length);
+	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
+		Map<String, Status> result 
+		= new HashMap<String, Status>(prFile.getSequents().length);
 		
 		for (IPRSequent prSeq:prFile.getSequents()){
-			result.put(prSeq.getName(),prSeq.getStatus().getOverview());
+			result.put(prSeq.getName(),prSeq.getProof().getStatus());
 		}
 		return result;
 	}

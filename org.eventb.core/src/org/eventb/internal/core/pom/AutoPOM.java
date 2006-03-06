@@ -17,7 +17,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -124,10 +124,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			for (IRodinElement child : children){
 				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
 			}
-			IPRStatus status =
-				(IPRStatus) prSeq.createInternalElement(
-						IPRStatus.ELEMENT_TYPE, "", null, monitor);
-			status.setContents("PENDING");
+			IPROOF proof =
+				(IPROOF) prSeq.createInternalElement(
+						IPROOF.ELEMENT_TYPE, "", null, monitor);
+			proof.setContents("PENDING");
 		}
 		
 	}

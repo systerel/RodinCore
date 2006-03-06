@@ -206,9 +206,9 @@
             name="%eventBprSequent"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.PRStatus"
-            id="prStatus"
-            name="%eventBprStatus"
+            class="org.eventb.core.basis.Proof"
+            id="proof"
+            name="%eventBproof"
             named="false"/>
       <internalElementType
             class="org.eventb.core.basis.PODescription"

@@ -16,7 +16,7 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
@@ -91,10 +91,10 @@ public class PRSequent extends InternalElement implements IPRSequent {
 		return desc;
 	}
 
-	public IPRStatus getStatus() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(PRStatus.ELEMENT_TYPE);
+	public IPROOF getProof() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(Proof.ELEMENT_TYPE);
 		assert list.size() == 1;
-		return (IPRStatus) list.get(0);
+		return (IPROOF) list.get(0);
 	}
 
 	public IProofTree makeProofTree() throws RodinDBException {
@@ -106,7 +106,7 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	}
 
 	public boolean isDischarged() throws RodinDBException {
-		IPRStatus status = getStatus();
+		IPROOF status = getProof();
 		String contents = status.getContents();
 		return contents.equals("DISCHARGED");
 	}

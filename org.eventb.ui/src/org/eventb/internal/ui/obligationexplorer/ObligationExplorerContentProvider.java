@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
@@ -127,7 +127,7 @@ public class ObligationExplorerContentProvider
 			}
 			
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				if (element instanceof IPRStatus) {
+				if (element instanceof IPROOF) {
 					toRefresh.add(element.getParent());
 				}
 				else toRefresh.add(element);

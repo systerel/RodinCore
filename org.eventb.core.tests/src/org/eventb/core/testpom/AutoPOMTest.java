@@ -5,7 +5,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRStatus;
+import org.eventb.core.IPROOF;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IInternalParent;
@@ -118,7 +118,7 @@ public class AutoPOMTest extends BuilderTest {
 			while (poIdx < poChildren.length && prIdx < prChildren.length) {
 				final IInternalParent poChild = (IInternalParent) poChildren[poIdx];
 				final IInternalParent prChild = (IInternalParent) prChildren[prIdx];
-				if (prChild instanceof IPRStatus) {
+				if (prChild instanceof IPROOF) {
 					++ prIdx;
 				} else {
 					checkSameContents(poChild, prChild);
@@ -134,17 +134,17 @@ public class AutoPOMTest extends BuilderTest {
 	}
 
 	private void assertDischarged(IPRSequent prSequent) throws RodinDBException {
-		IPRStatus status = prSequent.getStatus();
+		IPROOF status = prSequent.getProof();
 		assertEquals("PO " + prSequent.getName() + " should be discharged",
-				IPRStatus.Overview.DISCHARGED,
-				status.getOverview());
+				IPROOF.Status.DISCHARGED,
+				status.getStatus());
 	}
 
 	private void assertNotDischarged(IPRSequent prSequent) throws RodinDBException {
-		IPRStatus status = prSequent.getStatus();
+		IPROOF status = prSequent.getProof();
 		assertEquals("PO " + prSequent.getName() + " should not be discharged",
-				IPRStatus.Overview.PENDING,
-				status.getOverview());
+				IPROOF.Status.PENDING,
+				status.getStatus());
 	}
 
 }
