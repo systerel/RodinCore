@@ -86,9 +86,9 @@ public class CarrierSetMasterSection
 	 * Handle the adding (new Carrier Set) action
 	 */
 	protected void handleAdd() {
-		ElementInputDialog dialog = new ElementInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
+		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
 		dialog.open();
-		Collection<String> names = dialog.getNames();
+		Collection<String> names = dialog.getAttributes();
 		try {
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();

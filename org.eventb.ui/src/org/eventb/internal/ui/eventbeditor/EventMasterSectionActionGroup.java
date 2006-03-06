@@ -19,7 +19,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -79,9 +78,9 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 
-								ElementInputDialog dialog = new ElementInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
+								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
 								dialog.open();
-								Collection<String> names = dialog.getNames();
+								Collection<String> names = dialog.getAttributes();
 								try {
 									for (Iterator<String> it = names.iterator(); it.hasNext();) {
 										String name = it.next();
@@ -93,6 +92,7 @@ public class EventMasterSectionActionGroup
 									e.printStackTrace();
 								}
 								viewer.refresh(event, true);
+								viewer.setExpandedState(event, true);
 								section.markDirty();
 								((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}								
@@ -112,18 +112,26 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
+									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
+									dialog.open();
+									String [] names = dialog.getNewNames();
+									String [] contents = dialog.getNewContents();
 									try {
-										IInternalElement guard = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd" + (++counter), null, null);
-										guard.setContents(EventBUIPlugin.GRD_DEFAULT);
-										viewer.refresh(event, true);
-										viewer.setSelection(new StructuredSelection(guard));
-										section.markDirty();
-										((EventBFormPage) section.block.getPage()).notifyChangeListeners();
-
+										for (int i = 0; i < names.length; i++) {
+											String name = names[i];
+											String content = contents[i];
+											IInternalElement guard = event.createInternalElement(IGuard.ELEMENT_TYPE, name, null, null);
+											guard.setContents(content);
+											counter++;
+										}
 									}
 									catch (RodinDBException e) {
 										e.printStackTrace();
 									}
+									viewer.refresh(event, true);
+									viewer.setExpandedState(event, true);
+									section.markDirty();
+									((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}
 								
 							}
@@ -142,19 +150,29 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
+									ElementAtributeInputDialog dialog = 
+										new ElementAtributeInputDialog(section.getSection().getShell(), 
+												section.getManagedForm().getToolkit(),
+												"New Action",
+												"Substitute of the new action",
+												EventBUIPlugin.SUB_DEFAULT);
+									dialog.open();
+									Collection<String> subs = dialog.getAttributes();
 									try {
-										IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
-										action.setContents(EventBUIPlugin.SUB_DEFAULT);
-										viewer.refresh(event, true);
-										viewer.setSelection(new StructuredSelection(action));
-										section.markDirty();
-										((EventBFormPage) section.block.getPage()).notifyChangeListeners();
+										for (Iterator<String> it = subs.iterator(); it.hasNext();) {
+											String sub = it.next();
+											IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+											action.setContents(sub);
+										}
 									}
 									catch (RodinDBException e) {
 										e.printStackTrace();
 									}
+									viewer.refresh(event, true);
+									viewer.setExpandedState(event, true);
+									section.markDirty();
+									((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}
-								
 							}
 						});
 			}

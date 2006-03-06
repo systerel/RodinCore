@@ -86,9 +86,9 @@ public class VariableMasterSection
 	 * Handle the adding (new Variable) action.
 	 */
 	protected void handleAdd() {
-		ElementInputDialog dialog = new ElementInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Variables", "Name of the new variable", "var" + (counter + 1));
+		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Variables", "Name of the new variable", "var" + (counter + 1));
 		dialog.open();
-		Collection<String> names = dialog.getNames();
+		Collection<String> names = dialog.getAttributes();
 		try {
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();

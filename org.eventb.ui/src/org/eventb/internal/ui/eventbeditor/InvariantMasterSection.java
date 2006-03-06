@@ -12,7 +12,6 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -20,7 +19,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -87,18 +85,27 @@ public class InvariantMasterSection
 	 * Handle the adding (new Invariant) action
 	 */
 	protected void handleAdd() {
+		ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Invariants", "Name and predicate of the new invariant", "inv", counter + 1);
+		dialog.open();
+		String [] names = dialog.getNewNames();
+		String [] contents = dialog.getNewContents();
 		try {
-			IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, "inv" + (++counter), null, null);
-			invariant.setContents(EventBUIPlugin.INV_DEFAULT);
-			this.getViewer().setInput(rodinFile);
-			this.getViewer().setSelection(new StructuredSelection(invariant));
-			this.markDirty();
-			((EventBFormPage) block.getPage()).notifyChangeListeners();
-			updateButtons();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, name, null, null);
+				invariant.setContents(content);
+				counter++;
+			}
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}
+		this.getViewer().setInput(rodinFile);
+		this.markDirty();
+		((EventBFormPage) block.getPage()).notifyChangeListeners();
+		updateButtons();
+
 	}
 	
 

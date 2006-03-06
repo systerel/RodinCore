@@ -4,7 +4,6 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -18,24 +17,31 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBMath;
 
-public class ElementInputDialog extends Dialog {
+public class ElementNameContentInputDialog extends Dialog {
 	private String defaultName;
 	private Collection<String> names;
-	private Collection<Text> texts;
+	private Collection<String> contents;
+	private Collection<Text> nameTexts;
+	private Collection<Text> contentTexts;
 	private ScrolledForm scrolledForm;
 	private String title;
 	private String message;
 	private FormToolkit toolkit;
+	private int counter;
 	
-	public ElementInputDialog(Shell parentShell, FormToolkit toolkit, String title, String message, String defaultName) {
+	public ElementNameContentInputDialog(Shell parentShell, FormToolkit toolkit, String title, String message, String defaultName, int counter) {
 		super(parentShell);
 		this.toolkit = toolkit;
 		this.title = title;
 		this.message = message;
 		this.defaultName = defaultName;
-		texts = new ArrayList<Text>();
+		this.counter = counter;
 		names = new ArrayList<String>();
+		nameTexts = new ArrayList<Text>();
+		contents = new ArrayList<String>();
+		contentTexts = new ArrayList<Text>();
 	}
 
 	
@@ -75,14 +81,14 @@ public class ElementInputDialog extends Dialog {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
-		gd.widthHint = 300;
+		gd.widthHint = 500;
 		composite.setLayoutData(gd);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		body.setLayout(layout);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
@@ -90,26 +96,44 @@ public class ElementInputDialog extends Dialog {
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 		
-		Text text = toolkit.createText(body, defaultName);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.widthHint = 100;
-		text.setLayoutData(gd);
-		texts.add(text);
+		Text text = toolkit.createText(body, defaultName + (counter++));
+		GridData gd1 = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd1.widthHint = 50;
+		text.setLayoutData(gd1);
+		nameTexts.add(text);
+		
+		EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
+		GridData gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd2.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd2);
+		contentTexts.add(textMath.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 		
-		text = text = toolkit.createText(body, "");
-		text.setLayoutData(gd);
-		texts.add(text);
+		text = text = toolkit.createText(body, defaultName + (counter++));
+		text.setLayoutData(gd1);
+		nameTexts.add(text);
+		
+		textMath = new EventBMath(toolkit.createText(body, ""));
+		gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd2.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd2);
+		contentTexts.add(textMath.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
 		label.setLayoutData(new GridData());
 		
-		text = text = toolkit.createText(body, "");
-		text.setLayoutData(gd);
-		texts.add(text);
+		text = text = toolkit.createText(body, defaultName + (counter++));
+		text.setLayoutData(gd1);
+		nameTexts.add(text);
+		
+		textMath = new EventBMath(toolkit.createText(body, ""));
+		gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd2.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd2);
+		contentTexts.add(textMath.getTextWidget());
 		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
@@ -123,32 +147,46 @@ public class ElementInputDialog extends Dialog {
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			names = new HashSet<String>();
+			contents = new HashSet<String>();
         }
 		else if (buttonId == IDialogConstants.YES_ID) {
 			Label label = toolkit.createLabel(scrolledForm.getBody(), message);
 			label.setLayoutData(new GridData());
 			
-			Text text = new Text(scrolledForm.getBody(), SWT.SINGLE);
+			Text text = toolkit.createText(scrolledForm.getBody(), defaultName + (counter++));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			text.setLayoutData(gd);
-			texts.add(text);
+			nameTexts.add(text);
 			
-			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+			text = toolkit.createText(scrolledForm.getBody(), "");
+			text.setLayoutData(gd);
+			contentTexts.add(text);
+			
 			toolkit.paintBordersFor(scrolledForm.getBody());
 			scrolledForm.reflow(true);
 		}
 		else if (buttonId == IDialogConstants.OK_ID) {
 			names = new ArrayList<String>();
-			for (Iterator<Text> it = texts.iterator(); it.hasNext();) {
-				Text text = it.next();
-				if (!text.getText().equals("")) names.add(text.getText());
+			contents = new ArrayList<String>();
+			Object [] namesList = nameTexts.toArray();
+			Object [] contentsList = contentTexts.toArray();
+			for (int i = 0; i < namesList.length; i++) {
+				Text contentText = (Text) contentsList[i];
+				if (!contentText.getText().equals("")) {
+					Text nameText = (Text) namesList[i];
+					names.add(nameText.getText());
+					contents.add(contentText.getText());
+				}
 			}
 		}
 		super.buttonPressed(buttonId);
 	}
 	
-	public Collection<String> getNames() {
-		return names;
+	public String [] getNewNames() {
+		return (String []) names.toArray(new String[names.size()]);
 	}
 	
+	public String [] getNewContents() {
+		return (String []) contents.toArray(new String[contents.size()]);
+	}
 }
