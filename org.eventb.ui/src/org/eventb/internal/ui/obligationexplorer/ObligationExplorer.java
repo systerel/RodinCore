@@ -39,8 +39,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPROOF;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -249,9 +249,27 @@ public class ObligationExplorer
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 			
 				if (obj instanceof IPRSequent) {
-					UIUtils.linkToProverUI(obj);
-					UIUtils.activateView(ProofControl.VIEW_ID);
-					UIUtils.activateView(ProofTreeUI.VIEW_ID);
+					IPRSequent ps = (IPRSequent) obj;
+					try {
+						if (!ps.isDischarged()) {				
+							UIUtils.linkToProverUI(ps);
+							UIUtils.activateView(ProofControl.VIEW_ID);
+							UIUtils.activateView(ProofTreeUI.VIEW_ID);
+						}
+						else {
+							YesNoDialog dialog = new YesNoDialog(viewer.getControl().getShell(), "Re-prove the obligation", "The obligation has been proved. Do you want to re-prove?");
+							dialog.open();
+							boolean answer = dialog.getAnswer();
+							if (answer) {
+								UIUtils.linkToProverUI(ps);
+								UIUtils.activateView(ProofControl.VIEW_ID);
+								UIUtils.activateView(ProofTreeUI.VIEW_ID);
+							}
+						}
+					}
+					catch (RodinDBException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		};

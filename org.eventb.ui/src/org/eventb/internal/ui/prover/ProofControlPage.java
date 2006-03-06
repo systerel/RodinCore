@@ -53,7 +53,6 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**

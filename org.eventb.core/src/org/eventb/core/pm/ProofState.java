@@ -19,17 +19,21 @@ public class ProofState {
 	
 	public ProofState(IPRSequent ps) throws RodinDBException {
 		this.ps = ps;
-		pt = ps.makeProofTree();
-		current = null;
-		cached = new HashSet<Hypothesis>();
-		searched = new HashSet<Hypothesis>();
+		pt = null;
+//		pt = ps.makeProofTree();
+//		current = null;
+//		cached = new HashSet<Hypothesis>();
+//		searched = new HashSet<Hypothesis>();
 	}
 	
 	public void createProofTree() throws RodinDBException {
-		pt = ps.makeProofTree();
-		current = null;
-		cached = new HashSet<Hypothesis>();
-		searched = new HashSet<Hypothesis>();
+		if (pt == null) {
+			pt = ps.makeProofTree();
+			current = null;
+			cached = new HashSet<Hypothesis>();
+			searched = new HashSet<Hypothesis>();
+			ps.updateStatus(pt);
+		}
 	}
 	
 	public boolean isDischarged() throws RodinDBException {

@@ -88,7 +88,12 @@ public class ProverUI
 	}
 	
 	public void setCurrentPO(IPRSequent prSequent) {
-		userSupport.setCurrentPO(prSequent);
+		try {
+			userSupport.setCurrentPO(prSequent);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public UserSupport getUserSupport() {return userSupport;}

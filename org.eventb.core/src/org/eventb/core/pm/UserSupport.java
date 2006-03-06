@@ -76,7 +76,7 @@ public class UserSupport
 		notifyStatusChangedListener(null);
 	}
 	
-	public void setCurrentPO(IPRSequent prSequent) {
+	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
 		for (int i = 1; i <= proofStates.size(); i++) {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
@@ -116,8 +116,10 @@ public class UserSupport
 		notifyStatusChangedListener("No undischarged PO found");
 	}
 	
-	private void setProofState(ProofState ps, int index) {
+	private void setProofState(ProofState ps, int index) throws RodinDBException {
 		// Calculate delta
+		ps.createProofTree();
+		
 		if (ps.getCurrentNode() == null) ps.setCurrentNode(ps.getNextPendingSubgoal());
 		
 		IProofTreeNode currentNode = ps.getCurrentNode();
@@ -136,86 +138,6 @@ public class UserSupport
 		counter = index;
 		proofState = ps;
 		
-		return;
-	}
-	
-	public void addHypothesisChangedListener(IHypothesisChangedListener listener) {
-		hypChangedListeners.add(listener);
-	}
-	
-	public void removeHypothesisChangedListener(IHypothesisChangedListener listener) {
-		hypChangedListeners.remove(listener);
-	}
-	
-	private void notifyHypothesisChangedListener(IHypothesisChangeEvent e) {
-		for (Iterator<IHypothesisChangedListener> i = hypChangedListeners.iterator(); i.hasNext();) {
-			IHypothesisChangedListener listener = i.next();
-			listener.hypothesisChanged(e);
-		}
-		return;
-	}
-	
-	public void addGoalChangedListener(IGoalChangedListener listener) {
-		goalChangedListeners.add(listener);
-	}
-	
-	public void removeGoalChangedListener(IGoalChangedListener listener) {
-		goalChangedListeners.remove(listener);
-	}
-	
-	private void notifyGoalChangedListener(IGoalChangeEvent e) {
-		for (Iterator<IGoalChangedListener> i = goalChangedListeners.iterator(); i.hasNext();) {
-			IGoalChangedListener listener = i.next();
-			listener.goalChanged(e);
-		}
-		return;
-	}
-
-	public void addPOChangedListener(IPOChangedListener listener) {
-		poChangedListeners.add(listener);
-	}
-	
-	public void removePOChangedListener(IPOChangedListener listener) {
-		poChangedListeners.remove(listener);
-	}
-	
-	private void notifyPOChangedListener(IPOChangeEvent e) {
-		for (Iterator<IPOChangedListener> i = poChangedListeners.iterator(); i.hasNext();) {
-			IPOChangedListener listener = i.next();
-			listener.poChanged(e);
-		}
-		return;
-	}
-
-	public void addProofStatusChangedListener(IProofStatusChangedListener listener) {
-		proofStatusChangedListeners.add(listener);
-	}
-	
-	public void removeProofStatusChangedListener(IProofStatusChangedListener listener) {
-		proofStatusChangedListeners.remove(listener);
-	}
-
-	private void notifyProofStatusChangedListener(boolean complete) {
-		for (Iterator<IProofStatusChangedListener> i = proofStatusChangedListeners.iterator(); i.hasNext();) {
-			IProofStatusChangedListener listener = i.next();
-			listener.proofStatusChanged(complete);
-		}
-		return;
-	}
-	
-	public void addStatusChangedListener(IStatusChangedListener listener) {
-		statusChangedListeners.add(listener);
-	}
-	
-	public void removeStatusChangedListener(IStatusChangedListener listener) {
-		statusChangedListeners.remove(listener);
-	}
-
-	private void notifyStatusChangedListener(Object information) {
-		for (Iterator<IStatusChangedListener> i = statusChangedListeners.iterator(); i.hasNext();) {
-			IStatusChangedListener listener = i.next();
-			listener.statusChanged(information);
-		}
 		return;
 	}
 	
@@ -471,7 +393,7 @@ public class UserSupport
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		UserSupportUtils.debug("Element changed");
+//		UserSupportUtils.debug("Element changed");
 		try {
 			processDelta(event.getDelta());
 		}
@@ -485,13 +407,13 @@ public class UserSupport
 		IRodinElement element = delta.getElement();
 //		UserSupportUtils.debug("Process Delta " + element);
 		if (element instanceof IRodinProject) {
-			UserSupportUtils.debug("Project changed " + kind + " for " + element);
-//			for (IRodinElementDelta d : delta.getAffectedChildren()) {
-//				processDelta(d);
-//			}
+//			UserSupportUtils.debug("Project changed " + kind + " for " + ((IRodinProject) element).getElementName());
+			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+				processDelta(d);
+			}
 		}
 		else if (element instanceof IPRFile) {
-			UserSupportUtils.debug("PRFile changed " + kind + " for " + ((IPRFile) element).getElementName());
+//			UserSupportUtils.debug("PRFile changed " + kind + " for " + ((IPRFile) element).getElementName());
 			if (prFile.equals(element)) {
 //				setInput((IPRFile) element);
 				for (IRodinElementDelta d : delta.getAffectedChildren()) {
@@ -500,13 +422,24 @@ public class UserSupport
 			}
 		}
 		else if (element instanceof IPRSequent) {
-			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
-//			for (ProofState ps : proofStates) {
-//				if (ps.getPRSequent().equals(element)) {
-//					UserSupportUtils.debug("Update " + ((IPRSequent) element).getElementName());
-//					ps.createProofTree();
-//				}
-//			}
+//			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
+			Collection<ProofState> remove = new HashSet<ProofState>();
+			for (ProofState ps : proofStates) {
+				if (ps.getPRSequent().equals(element)) {
+					if (kind == IRodinElementDelta.ADDED) {
+						UserSupportUtils.debug("Updated " + ((IPRSequent) element).getElementName());
+//						ps.createProofTree();
+					}
+					else if (kind == IRodinElementDelta.REMOVED) {
+						UserSupportUtils.debug("Removed " + ((IPRSequent) element).getElementName());
+//						remove.add(ps);
+					}
+					else { // CHANGED
+						UserSupportUtils.debug("Changed " + ((IPRSequent) element).getElementName());
+					}
+				}
+			}
+			proofStates.removeAll(remove);
 		}
 		else if (element instanceof IMachine) {
 			return;
@@ -519,6 +452,87 @@ public class UserSupport
 				processDelta(d);
 			}
 		}
+	}
+	
+
+	public void addHypothesisChangedListener(IHypothesisChangedListener listener) {
+		hypChangedListeners.add(listener);
+	}
+	
+	public void removeHypothesisChangedListener(IHypothesisChangedListener listener) {
+		hypChangedListeners.remove(listener);
+	}
+	
+	private void notifyHypothesisChangedListener(IHypothesisChangeEvent e) {
+		for (Iterator<IHypothesisChangedListener> i = hypChangedListeners.iterator(); i.hasNext();) {
+			IHypothesisChangedListener listener = i.next();
+			listener.hypothesisChanged(e);
+		}
+		return;
+	}
+	
+	public void addGoalChangedListener(IGoalChangedListener listener) {
+		goalChangedListeners.add(listener);
+	}
+	
+	public void removeGoalChangedListener(IGoalChangedListener listener) {
+		goalChangedListeners.remove(listener);
+	}
+	
+	private void notifyGoalChangedListener(IGoalChangeEvent e) {
+		for (Iterator<IGoalChangedListener> i = goalChangedListeners.iterator(); i.hasNext();) {
+			IGoalChangedListener listener = i.next();
+			listener.goalChanged(e);
+		}
+		return;
+	}
+
+	public void addPOChangedListener(IPOChangedListener listener) {
+		poChangedListeners.add(listener);
+	}
+	
+	public void removePOChangedListener(IPOChangedListener listener) {
+		poChangedListeners.remove(listener);
+	}
+	
+	private void notifyPOChangedListener(IPOChangeEvent e) {
+		for (Iterator<IPOChangedListener> i = poChangedListeners.iterator(); i.hasNext();) {
+			IPOChangedListener listener = i.next();
+			listener.poChanged(e);
+		}
+		return;
+	}
+
+	public void addProofStatusChangedListener(IProofStatusChangedListener listener) {
+		proofStatusChangedListeners.add(listener);
+	}
+	
+	public void removeProofStatusChangedListener(IProofStatusChangedListener listener) {
+		proofStatusChangedListeners.remove(listener);
+	}
+
+	private void notifyProofStatusChangedListener(boolean complete) {
+		for (Iterator<IProofStatusChangedListener> i = proofStatusChangedListeners.iterator(); i.hasNext();) {
+			IProofStatusChangedListener listener = i.next();
+			listener.proofStatusChanged(complete);
+		}
+		return;
+	}
+	
+	public void addStatusChangedListener(IStatusChangedListener listener) {
+		statusChangedListeners.add(listener);
+	}
+	
+	public void removeStatusChangedListener(IStatusChangedListener listener) {
+		statusChangedListeners.remove(listener);
+	}
+
+	private void notifyStatusChangedListener(Object information) {
+		for (Iterator<IStatusChangedListener> i = statusChangedListeners.iterator(); i.hasNext();) {
+			IStatusChangedListener listener = i.next();
+			listener.statusChanged(information);
+		}
+		return;
 	}
 	
 }
