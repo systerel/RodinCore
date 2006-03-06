@@ -114,7 +114,8 @@ public abstract class ClassicB {
 			result.append(visitor.getString());
 			visitor.clear();
 		}
-		result.append(" => ");
+		if (result.length() != 0)
+			result.append(" => ");
 		goal.accept(visitor);
 		result.append(visitor.getString());
 		return result;
