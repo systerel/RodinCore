@@ -18,6 +18,8 @@ import org.eventb.internal.ui.prover.ProofTreeUI;
  */
 public class ProvingPerspective implements IPerspectiveFactory {
 
+	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID + ".perspective.Proving";
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */

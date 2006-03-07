@@ -93,11 +93,11 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.eventb.internal.ui.ModellingPerspective"
-            id="org.eventb.ui.perspective.ModellingPerspective"
+            id="org.eventb.ui.perspective.Modelling"
             name="Modelling"/>
       <perspective
             class="org.eventb.internal.ui.ProvingPerspective"
-            id="org.eventb.ui.perspective.ProvingPerspective"
+            id="org.eventb.ui.perspective.Proving"
             name="Proving"/>
    </extension>
 

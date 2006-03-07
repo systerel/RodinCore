@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -37,7 +38,12 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
+import org.eventb.internal.ui.prover.ProofControl;
+import org.eventb.internal.ui.prover.ProofInformation;
+import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.eventb.internal.ui.wizards.NewConstructWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
@@ -182,6 +188,17 @@ public class ProjectExplorerActionGroup
 						String bareName = EventBPlugin.getComponentName(construct.getElementName());
 						IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
 						UIUtils.linkToProverUI(prFile);
+						try {
+							EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench()
+								.showPerspective(ProvingPerspective.PERSPECTIVE_ID, EventBUIPlugin.getActiveWorkbenchWindow());
+						}
+						catch (WorkbenchException e) {
+							e.printStackTrace();
+						}
+						UIUtils.activateView(ProofTreeUI.VIEW_ID);
+						UIUtils.activateView(ProofControl.VIEW_ID);
+						UIUtils.activateView(ProofInformation.VIEW_ID);
+						UIUtils.activateView(ObligationExplorer.VIEW_ID);
 					}
 				}
 			}

@@ -16,6 +16,8 @@ import org.eventb.internal.ui.wizards.NewProjectWizard;
  */
 public class ModellingPerspective implements IPerspectiveFactory {
 
+	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID + ".perspective.Modelling";
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
 	 */
