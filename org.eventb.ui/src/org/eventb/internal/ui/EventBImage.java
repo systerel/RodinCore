@@ -44,7 +44,7 @@ public class EventBImage {
 	 */
 	public static final String IMG_DELETE = "Delete";
 	public static final String IMG_NEW_PROJECT = "New Project";
-	public static final String IMG_NEW_CONSTRUCT = "New Construct";
+	public static final String IMG_NEW_COMPONENT = "New Component";
 	
 	public static final String IMG_PREVPO_PATH = "icons/prev.gif";
 	public static final String IMG_NEXTPO_PATH = "icons/next.gif";
@@ -91,7 +91,7 @@ public class EventBImage {
 		registerImage(registry, IMG_AXIOMS, "axioms.gif");
 		registerImage(registry, IMG_DELETE, "delete.gif");
 		registerImage(registry, IMG_NEW_PROJECT, "new-project.gif");
-		registerImage(registry, IMG_NEW_CONSTRUCT, "new-construct.gif");
+		registerImage(registry, IMG_NEW_COMPONENT, "new-component.gif");
 		
 		registerImage(registry, IMG_PENDING, "pending.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");

@@ -36,7 +36,7 @@ public class InvariantMirrorSection
 
 	// Title and description of the section.
 	private static final String title = "Invariants";
-    private static final String description = "List of invariants of the construct";
+    private static final String description = "List of invariants of the component";
     
 
     /**

@@ -7,7 +7,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.internal.ui.wizards.NewConstructWizard;
+import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 
 /**
@@ -29,7 +29,7 @@ public class ModellingPerspective implements IPerspectiveFactory {
 	public void defineActions(IPageLayout layout) {
         // Add "new wizards".
         layout.addNewWizardShortcut(NewProjectWizard.WIZARD_ID);
-        layout.addNewWizardShortcut(NewConstructWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(NewComponentWizard.WIZARD_ID);
 
         // Add "show views".
         layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);

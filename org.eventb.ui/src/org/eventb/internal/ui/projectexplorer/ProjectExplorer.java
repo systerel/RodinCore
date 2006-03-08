@@ -61,7 +61,7 @@ public class ProjectExplorer
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID +".views.ProjectExplorer";
 	
-	// The tree viewer to display the structure of projects, constructs, etc.
+	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
 	// Action when double clicking. 
@@ -193,7 +193,7 @@ public class ProjectExplorer
 	private void fillLocalPullDown(IMenuManager manager) {
 		MenuManager newMenu = new MenuManager("&New");
 		newMenu.add(ProjectExplorerActionGroup.newProjectAction);
-		newMenu.add(ProjectExplorerActionGroup.newConstructAction);
+		newMenu.add(ProjectExplorerActionGroup.newComponentAction);
 		manager.add(newMenu);
 		manager.add(new Separator());
 		manager.add(ProjectExplorerActionGroup.deleteAction);
@@ -207,7 +207,7 @@ public class ProjectExplorer
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(ProjectExplorerActionGroup.newProjectAction);
-		manager.add(ProjectExplorerActionGroup.newConstructAction);
+		manager.add(ProjectExplorerActionGroup.newComponentAction);
 		manager.add(ProjectExplorerActionGroup.deleteAction);
 		manager.add(new Separator());
 		ProjectExplorerActionGroup.drillDownAdapter.addNavigationActions(manager);

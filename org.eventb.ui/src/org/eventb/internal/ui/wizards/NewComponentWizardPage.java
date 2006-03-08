@@ -41,17 +41,17 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * The "New" wizard page allows setting the container for the new construct as well
- * as the construct name. The page will only accept construct name without the extension
+ * The "New" wizard page allows setting the container for the new component as well
+ * as the component name. The page will only accept component name without the extension
  */
 
-public class NewConstructWizardPage 
+public class NewComponentWizardPage 
 	extends WizardPage 
 {
 
 	// Some text areas.
 	private Text containerText;
-	private Text constructText;
+	private Text componentText;
 
 	// Some buttons.
 	private Button machineButton;
@@ -62,14 +62,14 @@ public class NewConstructWizardPage
 
 	
 	/**
-	 * Constructor for NewConstructWizardPage.
+	 * Constructor for NewComponentWizardPage.
 	 * <p> 
 	 * @param selection The selection when the wizard is launched
 	 */
-	public NewConstructWizardPage(ISelection selection) {
+	public NewComponentWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Event-B Construct");
-		setDescription("This wizard creates a new Event-B construct (machine, context, etc.) that can be opened by a multi-page editor.");
+		setTitle("New Event-B Component");
+		setDescription("This wizard creates a new Event-B component (machine, context, etc.) that can be opened by a multi-page editor.");
 		this.selection = selection;
 	}
 
@@ -105,12 +105,12 @@ public class NewConstructWizardPage
 			}
 		});
 		label = new Label(container, SWT.NULL);
-		label.setText("&Construct name:");
+		label.setText("&Component name:");
 
-		constructText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		componentText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		constructText.setLayoutData(gd);
-		constructText.addModifyListener(new ModifyListener() {
+		componentText.setLayoutData(gd);
+		componentText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
@@ -120,7 +120,7 @@ public class NewConstructWizardPage
 		
 		// composite_tab << parent
         Composite composite_tab = createComposite(container, 1);
-        createLabel(composite_tab, "Please choose the type of the new construct"); //$NON-NLS-1$
+        createLabel(composite_tab, "Please choose the type of the new component"); //$NON-NLS-1$
         GridData data = new GridData();
         data.verticalAlignment = GridData.FILL;
         data.horizontalAlignment = GridData.FILL;
@@ -197,7 +197,7 @@ public class NewConstructWizardPage
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */
 	private void initialize() {
-		constructText.setText("NewConstruct");
+		componentText.setText("NewComponent");
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
@@ -233,7 +233,7 @@ public class NewConstructWizardPage
 	private void handleBrowse() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new construct container");
+				"Select new component container");
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
@@ -249,7 +249,7 @@ public class NewConstructWizardPage
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
-		String constructName = getConstructName();
+		String componentName = getComponentName();
 
 		if (getContainerName().length() == 0) {
 			updateStatus("Project must be specified");
@@ -265,12 +265,12 @@ public class NewConstructWizardPage
 			updateStatus("Project must be writable");
 			return;
 		}
-		if (constructName.length() == 0) {
-			updateStatus("Construct name must be specified");
+		if (componentName.length() == 0) {
+			updateStatus("Component name must be specified");
 			return;
 		}
-		if (constructName.replace('\\', '/').indexOf('/', 1) > 0) {
-			updateStatus("Construct name must be valid");
+		if (componentName.replace('\\', '/').indexOf('/', 1) > 0) {
+			updateStatus("Component name must be valid");
 			return;
 		}
 		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase().getRodinProject(getContainerName());
@@ -278,8 +278,8 @@ public class NewConstructWizardPage
 			IRodinElement [] elements = rodinProject.getChildren();
 			for (IRodinElement elem : elements) {
 				if (elem instanceof IMachine || elem instanceof IContext) {
-					if (EventBPlugin.getComponentName(((IRodinFile) elem).getElementName()).equals(constructName)) {
-						updateStatus("Construct name already exists");
+					if (EventBPlugin.getComponentName(((IRodinFile) elem).getElementName()).equals(componentName)) {
+						updateStatus("Component name already exists");
 						return;
 					}
 				}
@@ -315,19 +315,19 @@ public class NewConstructWizardPage
 
 	
 	/**
-	 * Get the name of the new construct.
+	 * Get the name of the new component.
 	 * <p>
-	 * @return The name of the new construct (without extension)
+	 * @return The name of the new component (without extension)
 	 */
-	public String getConstructName() {
-		return constructText.getText();
+	public String getComponentName() {
+		return componentText.getText();
 	}
 	
 	
 	/**
-	 * Get the type of the new construct ("bum" / "buc").
+	 * Get the type of the new component ("bum" / "buc").
 	 * <p>
-	 * @return The extension for the new construct
+	 * @return The extension for the new component
 	 */
 	public String getType() {
 		if (machineButton.getSelection()) return "bum";

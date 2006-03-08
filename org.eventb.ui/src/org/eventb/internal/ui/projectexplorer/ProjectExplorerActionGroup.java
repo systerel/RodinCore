@@ -44,7 +44,7 @@ import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.prover.ProofControl;
 import org.eventb.internal.ui.prover.ProofInformation;
 import org.eventb.internal.ui.prover.ProofTreeUI;
-import org.eventb.internal.ui.wizards.NewConstructWizard;
+import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -67,7 +67,7 @@ public class ProjectExplorerActionGroup
 	// Some actions and the drill down adapter
 	public static DrillDownAdapter drillDownAdapter;
 	public static Action newProjectAction;
-	public static Action newConstructAction;
+	public static Action newComponentAction;
 	public static Action deleteAction;
 	public static Action proveAction;
 	public static RefreshAction refreshAction;
@@ -101,13 +101,13 @@ public class ProjectExplorerActionGroup
 		newProjectAction.setToolTipText("Create new project");
 		newProjectAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));
 
-		newConstructAction = new Action() {
+		newComponentAction = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(explorer.getTreeViewer().getTree().getDisplay(),
 					new Runnable() {
 						public void run() {
 							IStructuredSelection sel = (IStructuredSelection) explorer.getTreeViewer().getSelection();
-							NewConstructWizard wizard = new NewConstructWizard();
+							NewComponentWizard wizard = new NewComponentWizard();
 							wizard.init(EventBUIPlugin.getDefault().getWorkbench(), sel);
 							WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
 							dialog.create();
@@ -117,9 +117,9 @@ public class ProjectExplorerActionGroup
 					});
 			}
 		};
-		newConstructAction.setText("&Construct");
-		newConstructAction.setToolTipText("Create new construct");
-		newConstructAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_CONSTRUCT));
+		newComponentAction.setText("&Component");
+		newComponentAction.setToolTipText("Create new component");
+		newComponentAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_COMPONENT));
 	
 		deleteAction = new Action() {
 			public void run() {
@@ -183,9 +183,9 @@ public class ProjectExplorerActionGroup
 					if (ssel.size() == 1) {
 						Object obj = ssel.getFirstElement();
 						if (!(obj instanceof IRodinFile)) return;
-						IRodinFile construct = (IRodinFile) obj;
-						IRodinProject prj = construct.getRodinProject();
-						String bareName = EventBPlugin.getComponentName(construct.getElementName());
+						IRodinFile component = (IRodinFile) obj;
+						IRodinProject prj = component.getRodinProject();
+						String bareName = EventBPlugin.getComponentName(component.getElementName());
 						IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
 						UIUtils.linkToProverUI(prFile);
 						try {
@@ -246,7 +246,7 @@ public class ProjectExplorerActionGroup
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IRodinProject) {
-					newMenu.add(newConstructAction);
+					newMenu.add(newComponentAction);
 				}
 			}
 			menu.add(newMenu);

@@ -35,7 +35,7 @@ public class CarrierSetMirrorSection
 	
 	// Title and description of the section.
 	private static final String title = "Carrier Sets";
-    private static final String description = "List of carrier sets of the construct";
+    private static final String description = "List of carrier sets of the component";
     
 
     /**

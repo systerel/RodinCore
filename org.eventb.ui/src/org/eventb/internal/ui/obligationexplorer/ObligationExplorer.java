@@ -69,7 +69,7 @@ public class ObligationExplorer
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID +".views.ObligationExplorer";
 	
-	// The tree viewer to display the structure of projects, constructs, etc.
+	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
 	// Action when double clicking. 
@@ -214,8 +214,6 @@ public class ObligationExplorer
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
 		MenuManager newMenu = new MenuManager("&New");
-//		newMenu.add(ObligationExplorerActionGroup.newProjectAction);
-//		newMenu.add(ObligationExplorerActionGroup.newConstructAction);
 		manager.add(newMenu);
 		manager.add(new Separator());
 		manager.add(ObligationExplorerActionGroup.refreshAction);
@@ -228,9 +226,6 @@ public class ObligationExplorer
 	 * @param manager A Menu manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-//		manager.add(ObligationExplorerActionGroup.newProjectAction);
-//		manager.add(ObligationExplorerActionGroup.newConstructAction);
-//		manager.add(ObligationExplorerActionGroup.deleteAction);
 		manager.add(new Separator());
 		ObligationExplorerActionGroup.drillDownAdapter.addNavigationActions(manager);
 	}

@@ -37,7 +37,7 @@ public class TheoremMirrorSection
 
 	// Title and description of the section.
 	private static final String title = "Theorems";
-    private static final String description = "List of theorems of the construct";
+    private static final String description = "List of theorems of the component";
 
     
     /**

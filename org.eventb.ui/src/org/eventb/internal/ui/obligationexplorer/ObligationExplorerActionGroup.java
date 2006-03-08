@@ -37,10 +37,6 @@ public class ObligationExplorerActionGroup
 	
 	// Some actions and the drill down adapter
 	public static DrillDownAdapter drillDownAdapter;
-//	public static Action newProjectAction;
-//	public static Action newConstructAction;
-//	public static Action deleteAction;
-//	public static Action proveAction;
 	public static RefreshAction refreshAction;
 	
 	/**
@@ -73,7 +69,6 @@ public class ObligationExplorerActionGroup
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IRodinProject) {
-//					newMenu.add(newConstructAction);
 				}
 			}
 			menu.add(newMenu);

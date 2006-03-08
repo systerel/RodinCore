@@ -273,15 +273,14 @@ public class UIUtils {
 	public static void linkToProverUI(Object obj) {
 		String editorId = ProverUI.EDITOR_ID;
 		
-		IPRFile construct = null;
+		IPRFile component = null;
 		if (obj instanceof IRodinProject) return; 
-		if (obj instanceof IPRFile) construct = (IPRFile) obj; 
+		if (obj instanceof IPRFile) component = (IPRFile) obj; 
 		else if (obj instanceof IRodinElement) 
-			construct = (IPRFile) ((IRodinElement) obj).getParent();
-		Assert.isTrue(construct != null, "construct must be initialised by now");
-//		if (UIUtils.DEBUG) System.out.println("Link to " + construct.getElementName());
+			component = (IPRFile) ((IRodinElement) obj).getParent();
+		Assert.isTrue(component != null, "component must be initialised by now");
 		try {
-			IEditorInput fileInput = new FileEditorInput(construct.getResource());
+			IEditorInput fileInput = new FileEditorInput(component.getResource());
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
 			if (!(obj instanceof IPRFile)) editor.setCurrentPO((IPRSequent) obj);
 		} catch (PartInitException e) {
@@ -297,12 +296,12 @@ public class UIUtils {
 	 */
 	public static void linkToEventBEditor(Object obj) {
 		String editorId = EventBEditor.EDITOR_ID;
-		IRodinFile construct;
+		IRodinFile component;
 		
 		if (!(obj instanceof IRodinProject)) {
-			construct = (IRodinFile) UIUtils.getOpenable(obj); 
+			component = (IRodinFile) UIUtils.getOpenable(obj); 
 			try {
-				IEditorInput fileInput = new FileEditorInput(construct.getResource());
+				IEditorInput fileInput = new FileEditorInput(component.getResource());
 				EventBEditor editor = (EventBEditor) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
 				editor.setSelection(obj);
 			} catch (PartInitException e) {

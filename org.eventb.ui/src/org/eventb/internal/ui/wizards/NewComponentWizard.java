@@ -44,32 +44,32 @@ import org.rodinp.core.IRodinProject;
 /**
  * @author htson
  * <p>
- * This is the new wizard for creating new Event-B construct (machine, context, etc.)
+ * This is the new wizard for creating new Event-B components (machine, context, etc.)
  * resource in the provided project. If the project resource
  * (a folder or a project) is selected in the workspace 
  * when the wizard is opened, it will accept it as the target
  * project. The wizard creates one file with the extension
  * "bum" / "buc" (for machine/context respectively).
  * An instance of the Event-B Editor will be opened for editting
- * the new construct.
+ * the new component.
  */
-public class NewConstructWizard 
+public class NewComponentWizard 
 	extends Wizard 
 	implements INewWizard 
 {
-	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID + ".wizards.NewConstructWizard";
+	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID + ".wizards.NewComponent";
 	
 	// The wizard page.
-	private NewConstructWizardPage page;
+	private NewComponentWizardPage page;
 	
 	// The selection when the wizard is launched.
 	private ISelection selection;
 
 
 	/**
-	 * Constructor for NewConstructWizard.
+	 * Constructor for NewComponentWizard.
 	 */
-	public NewConstructWizard() {
+	public NewComponentWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -79,7 +79,7 @@ public class NewConstructWizard
 	 * Adding the page to the wizard.
 	 */
 	public void addPages() {
-		page = new NewConstructWizardPage(selection);
+		page = new NewComponentWizardPage(selection);
 		addPage(page);
 	}
 
@@ -91,7 +91,7 @@ public class NewConstructWizard
 	 */
 	public boolean performFinish() {
 		final String projectName = page.getContainerName();
-		final String fileName = page.getConstructName() + "." + page.getType();
+		final String fileName = page.getComponentName() + "." + page.getType();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {

@@ -63,14 +63,14 @@
             category="org.eventb.ui.wizards"
             class="org.eventb.internal.ui.wizards.NewProjectWizard"
             icon="icons/sample.gif"
-            id="org.eventb.ui.wizards.NewProjectWizard"
-            name="Event-B Project"/>
+            id="org.eventb.ui.wizards.NewProject"
+            name="New Event-B Project"/>
       <wizard
             category="org.eventb.ui.wizards"
-            class="org.eventb.internal.ui.wizards.NewConstructWizard"
+            class="org.eventb.internal.ui.wizards.NewComponentWizard"
             icon="icons/sample.gif"
-            id="org.eventb.ui.wizards.NewConstructWizard"
-            name="Event-B Construct"/>
+            id="org.eventb.ui.wizards.NewComponent"
+            name="New Event-B Component"/>
    </extension>
    <extension-point id="machinePages" name="Event-B Machine Form Page" schema="schema/machinePages.exsd"/>
    <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>

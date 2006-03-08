@@ -40,7 +40,7 @@ public class EventMirrorSection
 
 	// Title and description of the section.
 	private static final String title = "Events";
-    private static final String description = "List of events of the construct";
+    private static final String description = "List of events of the component";
     
 
     /**

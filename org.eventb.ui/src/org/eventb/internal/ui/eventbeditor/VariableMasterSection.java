@@ -87,6 +87,7 @@ public class VariableMasterSection
 	 */
 	protected void handleAdd() {
 		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Variables", "Name of the new variable", "var" + (counter + 1));
+		
 		dialog.open();
 		Collection<String> names = dialog.getAttributes();
 		try {

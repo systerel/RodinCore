@@ -14,18 +14,28 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableFontProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
@@ -35,6 +45,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
+import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -129,11 +140,23 @@ public class EventMasterSection
 	 * @author htson
 	 * This class provides the label for different elements in the tree.
 	 */
-	class MasterLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof IAction) {
+	class MasterLabelProvider 
+		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			return UIUtils.getImage(element);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof IAction) {
 				try {
-					return ((IAction) obj).getContents();
+					return ((IAction) element).getContents();
 				}
 				catch (RodinDBException e) {
 					// TODO Handle Exception
@@ -141,12 +164,88 @@ public class EventMasterSection
 					return "";
 				}
 			}
-			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
-			return obj.toString();
+			if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+			return element.toString();
 		}
-		public Image getImage(Object obj) {
-			return UIUtils.getImage(obj);
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		 */
+		public Color getBackground(Object element, int columnIndex) {
+			 Display display = Display.getCurrent();
+             return display.getSystemColor(SWT.COLOR_WHITE);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+		 */
+		public Color getForeground(Object element, int columnIndex) {
+			Display display = Display.getCurrent();
+            return display.getSystemColor(SWT.COLOR_BLACK);
+       }
+
+//		public String getText(Object obj) {
+//			if (obj instanceof IAction) {
+//				try {
+//					return ((IAction) obj).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					// TODO Handle Exception
+//					e.printStackTrace();
+//					return "";
+//				}
+//			}
+//			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
+//			return obj.toString();
+//		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		 */
+		public Font getFont(Object element, int columnIndex) {
+			UIUtils.debug("Get fonts");
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		}
+		
+		
+//		public Image getImage(Object obj) {
+//			return UIUtils.getImage(obj);
+//		}
+	
+	
+	
 	}
 	
 	
@@ -314,10 +413,17 @@ public class EventMasterSection
 	 */
 	protected void setViewerInput() {
 		TreeViewer viewer = this.getViewer();
-		viewer.setContentProvider(new MasterContentProvider());
+		Tree tree = viewer.getTree();
+		tree.setHeaderVisible(true);
+		TreeColumn column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("Testing");
+		column.setResizable(true);
+		column.setWidth(150);
 		viewer.setLabelProvider(new MasterLabelProvider());
+		viewer.setContentProvider(new MasterContentProvider());
 		rodinFile = ((EventBEditor) this.getBlock().getPage().getEditor()).getRodinInput();
 		viewer.setInput(rodinFile);
+		viewer.refresh();
 	}
 
 

@@ -31,7 +31,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 	public void defineActions(IPageLayout layout) {
         // Add "new wizards".
 //        layout.addNewWizardShortcut(NewProjectWizard.WIZARD_ID);
-//        layout.addNewWizardShortcut(NewConstructWizard.WIZARD_ID);
+//        layout.addNewWizardShortcut(NewComponentWizard.WIZARD_ID);
 
         // Add "show views".
         layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);

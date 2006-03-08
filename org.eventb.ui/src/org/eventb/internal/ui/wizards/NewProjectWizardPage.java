@@ -44,7 +44,7 @@ public class NewProjectWizardPage
 	 */
 	public NewProjectWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Event-B Project");
+		setTitle("New Event-B Project");
 		setDescription("This wizard creates a new (empty) Event-B Project in the current Workspace");
 	}
 
