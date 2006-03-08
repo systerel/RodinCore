@@ -298,7 +298,8 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	public AssociativePredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+	public AssociativePredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
 		Predicate[] newChildren = new Predicate[children.length]; 
 		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
 		if (equal)

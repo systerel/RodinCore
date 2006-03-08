@@ -181,7 +181,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	public BoundIdentDecl applySubstitution(Substitution subst, FormulaFactory ff) {
+	public BoundIdentDecl applySubstitution(Substitution subst) {
 		// this method should never be called
 		assert false;
 		return this;

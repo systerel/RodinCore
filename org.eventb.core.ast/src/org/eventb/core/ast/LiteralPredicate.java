@@ -116,7 +116,7 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	public LiteralPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+	public LiteralPredicate applySubstitution(Substitution subst) {
 		return this;
 	}
 

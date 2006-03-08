@@ -148,8 +148,9 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	public UnaryPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
-		Predicate newChild = child.applySubstitution(subst, ff);
+	public UnaryPredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Predicate newChild = child.applySubstitution(subst);
 		if (newChild == child)
 			return this;
 		return ff.makeUnaryPredicate(getTag(), newChild, getSourceLocation());

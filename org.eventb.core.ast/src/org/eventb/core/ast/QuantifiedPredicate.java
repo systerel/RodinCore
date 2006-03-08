@@ -346,7 +346,7 @@ public class QuantifiedPredicate extends Predicate {
 	public Predicate instantiate(Expression[] replacements, FormulaFactory formulaFactory) {
 		BoundIdentSubstitution subst = 
 			new BoundIdentSubstitution(quantifiedIdentifiers, replacements, formulaFactory);
-		Predicate newPred = pred.applySubstitution(subst, formulaFactory);
+		Predicate newPred = pred.applySubstitution(subst);
 		List<BoundIdentDecl> newBoundIdentDecls = subst.getNewDeclarations();
 		if (newBoundIdentDecls.isEmpty())
 			return newPred;
@@ -354,10 +354,11 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	public QuantifiedPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
+	public QuantifiedPredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 		subst.enter(nbOfBoundIdentDecls);
-		Predicate newPred = pred.applySubstitution(subst, ff);
+		Predicate newPred = pred.applySubstitution(subst);
 		subst.exit(nbOfBoundIdentDecls);
 		if (newPred == pred)
 			return this;

@@ -146,7 +146,7 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	public Expression applySubstitution(Substitution subst, FormulaFactory ff) {
+	public Expression applySubstitution(Substitution subst) {
 		return subst.getReplacement(this);
 	}
 

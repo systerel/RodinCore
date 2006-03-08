@@ -203,7 +203,7 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	public AtomicExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+	public AtomicExpression applySubstitution(Substitution subst) {
 		return this;
 	}
 

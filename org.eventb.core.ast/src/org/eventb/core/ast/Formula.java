@@ -1319,7 +1319,7 @@ public abstract class Formula<T extends Formula<T>> {
 		}
 		
 		Substitution subst = new BindingSubstitution(identsToBind, factory);
-		return applySubstitution(subst, factory);
+		return applySubstitution(subst);
 	}
 
 	// Needed by the restricted genericity of Java 5
@@ -1392,11 +1392,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * </p>
 	 * @param subst
 	 *            the substitution to apply
-	 * @param ff
-	 *            factory to use for building the result
 	 * @return this formula with the given substitution applied to it
 	 */
-	public abstract T applySubstitution(Substitution subst, FormulaFactory ff);
+	public abstract T applySubstitution(Substitution subst);
 	
 	/**
 	 * Substitutes all occurrences of some free identifiers by their
@@ -1416,7 +1414,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
 		SimpleSubstitution subst = new SimpleSubstitution(map, ff);
-		return applySubstitution(subst, ff);
+		return applySubstitution(subst);
 	}
 	
 	/**

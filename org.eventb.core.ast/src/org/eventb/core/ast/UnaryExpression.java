@@ -517,8 +517,9 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	public UnaryExpression applySubstitution(Substitution subst, FormulaFactory ff) {
-		Expression newChild = child.applySubstitution(subst, ff);
+	public UnaryExpression applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Expression newChild = child.applySubstitution(subst);
 		if (newChild == child)
 			return this;
 		return ff.makeUnaryExpression(getTag(), newChild, getSourceLocation());

@@ -142,8 +142,9 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	public BoolExpression applySubstitution(Substitution subst, FormulaFactory ff) {
-		Predicate newChild = child.applySubstitution(subst, ff);
+	public BoolExpression applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Predicate newChild = child.applySubstitution(subst);
 		if (newChild == child)
 			return this;
 		return ff.makeBoolExpression(newChild, getSourceLocation());

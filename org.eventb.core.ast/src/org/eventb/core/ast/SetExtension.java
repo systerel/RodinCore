@@ -255,7 +255,8 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	public SetExtension applySubstitution(Substitution subst, FormulaFactory ff) {
+	public SetExtension applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
 		Expression[] newMembers = new Expression[members.length];
 		boolean equal = getSubstitutedList(members, subst, newMembers, ff);
 		if (equal)

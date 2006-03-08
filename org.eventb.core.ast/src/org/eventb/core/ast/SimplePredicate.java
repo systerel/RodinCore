@@ -147,8 +147,9 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	public SimplePredicate applySubstitution(Substitution subst, FormulaFactory ff) {
-		Expression newChild = child.applySubstitution(subst, ff);
+	public SimplePredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Expression newChild = child.applySubstitution(subst);
 		if (newChild == child)
 			return this;
 		return ff.makeSimplePredicate(getTag(), newChild, getSourceLocation());

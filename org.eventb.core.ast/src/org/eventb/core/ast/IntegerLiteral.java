@@ -123,7 +123,7 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	public IntegerLiteral applySubstitution(Substitution subst, FormulaFactory ff) {
+	public IntegerLiteral applySubstitution(Substitution subst) {
 		return this;
 	}
 

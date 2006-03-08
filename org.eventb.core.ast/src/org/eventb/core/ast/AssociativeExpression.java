@@ -510,7 +510,8 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	public AssociativeExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+	public AssociativeExpression applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
 		Expression[] newChildren = new Expression[children.length]; 
 		boolean equal = getSubstitutedList(children, subst, newChildren, ff);
 		if (equal) {

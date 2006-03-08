@@ -37,7 +37,7 @@ import org.eventb.internal.core.ast.Substitution;
 		assert list.length == newList.length;
 		boolean equal = true;
 		for (int i = 0; i < list.length; i++) {
-			newList[i] = list[i].applySubstitution(subst, ff);
+			newList[i] = list[i].applySubstitution(subst);
 			if (newList[i] != list[i])
 				equal = false;
 		}

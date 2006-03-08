@@ -239,9 +239,10 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	public BinaryPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
-		Predicate newLeft = left.applySubstitution(subst, ff);
-		Predicate newRight = right.applySubstitution(subst, ff);
+	public BinaryPredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Predicate newLeft = left.applySubstitution(subst);
+		Predicate newRight = right.applySubstitution(subst);
 		if(newLeft == left && newRight == right)
 			return this;
 		return ff.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());

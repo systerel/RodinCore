@@ -776,9 +776,10 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public BinaryExpression applySubstitution(Substitution subst, FormulaFactory ff) {
-		Expression newLeft = left.applySubstitution(subst, ff);
-		Expression newRight = right.applySubstitution(subst, ff);
+	public BinaryExpression applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Expression newLeft = left.applySubstitution(subst);
+		Expression newRight = right.applySubstitution(subst);
 		if(newLeft == left && newRight == right)
 			return this;
 		return ff.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());

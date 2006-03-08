@@ -628,11 +628,12 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	public QuantifiedExpression applySubstitution(Substitution subst, FormulaFactory ff) {
+	public QuantifiedExpression applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 		subst.enter(nbOfBoundIdentDecls);
-		Predicate newPred = pred.applySubstitution(subst, ff);
-		Expression newExpr = expr.applySubstitution(subst, ff);
+		Predicate newPred = pred.applySubstitution(subst);
+		Expression newExpr = expr.applySubstitution(subst);
 		subst.exit(nbOfBoundIdentDecls);
 		if (newPred == pred && newExpr == expr)
 			return this;

@@ -299,9 +299,10 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	public RelationalPredicate applySubstitution(Substitution subst, FormulaFactory ff) {
-		Expression newLeft = left.applySubstitution(subst, ff);
-		Expression newRight = right.applySubstitution(subst, ff);
+	public RelationalPredicate applySubstitution(Substitution subst) {
+		final FormulaFactory ff = subst.getFactory();
+		Expression newLeft = left.applySubstitution(subst);
+		Expression newRight = right.applySubstitution(subst);
 		if(newLeft == left && newRight == right)
 			return this;
 		return ff.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());

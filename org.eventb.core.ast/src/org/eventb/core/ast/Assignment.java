@@ -148,7 +148,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	public final Assignment applySubstitution(Substitution subst, FormulaFactory ff) {
+	public final Assignment applySubstitution(Substitution subst) {
 		// Should never happen
 		assert false;
 		return null;
