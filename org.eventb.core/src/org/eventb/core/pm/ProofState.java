@@ -23,12 +23,16 @@ public class ProofState {
 	
 	public void createProofTree() throws RodinDBException {
 		if (pt == null || pt.isDischarged()) {
-			pt = ps.makeProofTree();
-			current = null;
-			cached = new HashSet<Hypothesis>();
-			searched = new HashSet<Hypothesis>();
-			ps.updateStatus(pt);
+			initProofTree();
 		}
+	}
+	
+	public void initProofTree() throws RodinDBException {
+		pt = ps.makeProofTree();
+		current = null;
+		cached = new HashSet<Hypothesis>();
+		searched = new HashSet<Hypothesis>();
+		ps.updateStatus(pt);
 	}
 	
 	public boolean isDischarged() throws RodinDBException {
