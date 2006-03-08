@@ -124,7 +124,7 @@ public abstract class QuantifiedUtil {
 		// Currently, there is no way to pass a formula factory to this method,
 		// as it might be called from the classical toString() method.  So, we use
 		// the default factory provided with the AST library.  But, that prevents
-		// clients from adding new reverved identifier names!
+		// clients from adding new reserved identifier names!
 		// TODO how to add new reserved identifier names
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
