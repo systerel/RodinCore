@@ -72,6 +72,10 @@ public class FastFactory {
 		return ff.makeAtomicExpression(tag, null);
 	}
 
+	public static AtomicExpression mEmptySet(Type type) {
+		return ff.makeEmptySet(type, null);
+	}
+
 	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident, Expression value) {
 		return ff.makeBecomesEqualTo(ident, value, null);
 	}
