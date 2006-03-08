@@ -64,6 +64,10 @@ public class TestTypeChecker extends TestCase {
 		return ff.makeProductType(left, right);
 	}
 	
+	private static Type REL(Type left, Type right) {
+		return POW(CPROD(left, right));
+	}
+	
 	private TestItem[] testItems = new TestItem[] {
 			new TestItem(
 					"x\u2208\u2124\u22271\u2264x",
@@ -386,6 +390,14 @@ public class TestTypeChecker extends TestCase {
 			new TestItem("x=FALSE",
 					mTypeEnvironment(),
 					mTypeEnvironment(mList("x"), mList(BOOL))
+			),
+			new TestItem("x=pred",
+					mTypeEnvironment(),
+					mTypeEnvironment(mList("x"), mList(REL(INTEGER, INTEGER)))
+			),
+			new TestItem("x=succ",
+					mTypeEnvironment(),
+					mTypeEnvironment(mList("x"), mList(REL(INTEGER, INTEGER)))
 			),
 			new TestItem("x=2",
 					mTypeEnvironment(),

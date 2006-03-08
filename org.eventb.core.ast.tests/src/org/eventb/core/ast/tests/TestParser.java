@@ -459,6 +459,12 @@ public class TestParser extends TestCase {
 					"FALSE", 
 					mAtomicExpression(Formula.FALSE) 
 			), new ExprTestPair(
+					"pred", 
+					mAtomicExpression(Formula.KPRED) 
+			), new ExprTestPair(
+					"succ", 
+					mAtomicExpression(Formula.KSUCC) 
+			), new ExprTestPair(
 					"2", 
 					mIntegerLiteral(2) 
 			),
