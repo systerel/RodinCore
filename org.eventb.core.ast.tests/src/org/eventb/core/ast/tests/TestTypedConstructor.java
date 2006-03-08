@@ -254,7 +254,11 @@ public class TestTypedConstructor extends TestCase {
 		doTest(mAtomicExpression(Formula.TRUE), BOOL);
 		doTest(mAtomicExpression(Formula.FALSE), BOOL);
 		
-		// No test for Formula.EMPTYSET, type is not synthesizable
+		doTest(mAtomicExpression(Formula.KPRED), REL(INT, INT));
+		doTest(mAtomicExpression(Formula.KSUCC), REL(INT, INT));
+		
+		doTest(mEmptySet(POW(BOOL)), POW(BOOL));
+		doTest(mEmptySet(POW(INT)), POW(INT));
 
 		//-----------------
 		//  Integer Literal
