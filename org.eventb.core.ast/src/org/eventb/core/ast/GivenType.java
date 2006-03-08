@@ -29,7 +29,10 @@ public class GivenType extends Type {
 
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		return factory.makeFreeIdentifier(name, null);
+		return factory.makeFreeIdentifier(
+				name, 
+				null, 
+				factory.makePowerSetType(this));
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -69,15 +70,169 @@ public class BinaryExpression extends Expression {
 	public static final int TAGS_LENGTH = tags.length;
 
 	protected BinaryExpression(Expression left, Expression right, int tag,
-			SourceLocation location) {
-		super (tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
+			SourceLocation location, FormulaFactory factory) {
+		super (tag, location, 
+				combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
 		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert left != null;
 		assert right != null;
+		
+		synthesizeType(factory);
 	}
+	
+	private void synthesizeType(FormulaFactory ff) {
+		IdentListMerger freeIdentMerger = 
+			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = 
+			IdentListMerger.makeMerger(left.boundIdents, right.boundIdents);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+
+		Type leftType = left.getType();
+		Type rightType = right.getType();
+		
+		// Fast exit if children are not typed
+		// (the most common case where type synthesis can't be done)
+		if (leftType == null || rightType == null) {
+			return;
+		}
+		
+		final Type resultType;
+		Type alpha, beta, gamma, delta;
+		switch (getTag()) {
+		case Formula.FUNIMAGE:
+			alpha = leftType.getSource();
+			if (alpha != null && alpha.equals(rightType)) {
+				resultType = leftType.getTarget();
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.RELIMAGE:
+			alpha = leftType.getSource();
+			beta = leftType.getTarget();
+			if (alpha != null && alpha.equals(rightType.getBaseType())) {
+					resultType = ff.makePowerSetType(beta);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.MAPSTO:
+			resultType = ff.makeProductType(leftType, rightType);
+			break;
+		case Formula.REL:
+		case Formula.TREL:
+		case Formula.SREL:
+		case Formula.STREL:
+		case Formula.PFUN:
+		case Formula.TFUN:
+		case Formula.PINJ:
+		case Formula.TINJ:
+		case Formula.PSUR:
+		case Formula.TSUR:
+		case Formula.TBIJ:
+			alpha = leftType.getBaseType();
+			beta = rightType.getBaseType();
+			if (alpha != null && beta != null) {
+				resultType = ff.makePowerSetType(
+						ff.makeRelationalType(alpha, beta)
+				);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.SETMINUS:
+			alpha = leftType.getBaseType();
+			if (alpha != null && leftType.equals(rightType)) {
+				resultType = leftType;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.CPROD:
+			alpha = leftType.getBaseType();
+			beta = rightType.getBaseType();
+			if (alpha != null && beta != null) {
+				resultType =ff.makeRelationalType(alpha, beta);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.DPROD:
+			alpha = leftType.getSource();
+			beta = leftType.getTarget();
+			gamma = rightType.getTarget();
+			if (alpha != null && beta != null && gamma != null
+					&& alpha.equals(rightType.getSource())) {
+				resultType = ff.makeRelationalType(alpha, ff.makeProductType(beta, gamma));
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.PPROD:
+			alpha = leftType.getSource();
+			beta = rightType.getSource();
+			gamma = leftType.getTarget();
+			delta = rightType.getTarget();
+			if (alpha != null && beta != null && gamma != null && delta != null) {
+				resultType = ff.makeRelationalType(
+						ff.makeProductType(alpha, beta),
+						ff.makeProductType(gamma, delta));
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.DOMRES:
+		case Formula.DOMSUB:
+			alpha = leftType.getBaseType();
+			if (alpha != null && alpha.equals(rightType.getSource())) {
+				resultType = rightType;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.RANRES:
+		case Formula.RANSUB:
+			beta = rightType.getBaseType();
+			if (beta != null && beta.equals(leftType.getTarget())) {
+				resultType = leftType;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.UPTO:
+			if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
+				resultType = ff.makePowerSetType(leftType);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.MINUS:
+		case Formula.DIV:
+		case Formula.MOD:
+		case Formula.EXPN:
+			if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
+				resultType = leftType;
+			} else {
+				resultType = null;
+			}
+			break;
+		default:
+			assert false;
+			resultType = null;
+		}
+		setType(resultType, null);
+	}
+	
 	
 	// indicates when the toString method should put parentheses
 	private static final BitSet[] leftNoParenthesesMap = new BitSet[tags.length];
@@ -465,9 +620,9 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		left.collectFreeIdentifiers(freeIdents);
-		right.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		left.collectFreeIdentifiers(freeIdentSet);
+		right.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override
@@ -560,7 +715,6 @@ public class BinaryExpression extends Expression {
 		Predicate leftConjunct = left.getWDPredicateRaw(formulaFactory);
 		Predicate rightConjunct = right.getWDPredicateRaw(formulaFactory);
 		Expression zero =  formulaFactory.makeIntegerLiteral(BigInteger.ZERO, null);
-		zero.setType(right.getType(), null);
 		Predicate extraConjunct = formulaFactory.makeRelationalPredicate(NOTEQUAL, right, zero, null);
 		return 
 		getWDSimplifyC(formulaFactory,
@@ -568,50 +722,36 @@ public class BinaryExpression extends Expression {
 				extraConjunct);
 	}
 
-	private Predicate getWDPredicateEXPN(FormulaFactory formulaFactory) {
-		Predicate leftConjunct = left.getWDPredicateRaw(formulaFactory);
-		Predicate rightConjunct = right.getWDPredicateRaw(formulaFactory);
-		Expression leftZero = formulaFactory.makeIntegerLiteral(BigInteger.ZERO, null);
-		leftZero.setType(left.getType(), null);
-		Predicate leftNotZero = formulaFactory.makeRelationalPredicate(LE, leftZero, left, null);
-		Expression rightZero = formulaFactory.makeIntegerLiteral(BigInteger.ZERO, null);
-		rightZero.setType(right.getType(), null);
-		Predicate rightNotZero = formulaFactory.makeRelationalPredicate(LE, rightZero, right, null);
+	private Predicate getWDPredicateEXPN(FormulaFactory ff) {
+		Predicate leftConjunct = left.getWDPredicateRaw(ff);
+		Predicate rightConjunct = right.getWDPredicateRaw(ff);
+		Expression zero = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+		Predicate leftNotZero = ff.makeRelationalPredicate(LE, zero, left, null);
+		Predicate rightNotZero = ff.makeRelationalPredicate(LE, zero, right, null);
 		return
-		getWDSimplifyC(formulaFactory,
-				getWDSimplifyC(formulaFactory,
-						getWDSimplifyC(formulaFactory, leftConjunct, rightConjunct),
+		getWDSimplifyC(ff,
+				getWDSimplifyC(ff,
+						getWDSimplifyC(ff, leftConjunct, rightConjunct),
 						leftNotZero),
 						rightNotZero);
 	}
 
-	private Predicate getWDPredicateFUNIMAGE(FormulaFactory formulaFactory) {
-		Predicate leftConjunct = left.getWDPredicateRaw(formulaFactory);
-		Predicate rightConjunct = right.getWDPredicateRaw(formulaFactory);
-		Expression leftDom = formulaFactory.makeUnaryExpression(KDOM, left, null);
-		Type domElem = ((ProductType) ((PowerSetType) left.getType()).getBaseType()).getLeft();
-		Type ranElem = ((ProductType) ((PowerSetType) left.getType()).getBaseType()).getRight();
-		leftDom.setType(formulaFactory.makePowerSetType(domElem), null);
-		Predicate leftInRightDom = formulaFactory.makeRelationalPredicate(IN, right, leftDom, null);
-		Expression[] setext = new Expression[1];
-		setext[0] = right;
-		Expression setexpExpr = formulaFactory.makeSetExtension(setext, null);
-		setexpExpr.setType(formulaFactory.makePowerSetType(right.getType()), null);
-		Expression comp0 = formulaFactory.makeUnaryExpression(CONVERSE, left, null);
-		comp0.setType(formulaFactory.makeRelationalType(ranElem, domElem), null);
-		Expression comp1 = formulaFactory.makeBinaryExpression(DOMRES, setexpExpr, left, null);
-		comp1.setType(left.getType(), null);
-		Expression comp = formulaFactory.makeAssociativeExpression(FCOMP, new Expression[]{comp0, comp1}, null);
-		comp.setType(left.getType(), null);
-		Expression ran = formulaFactory.makeUnaryExpression(KRAN, left, null);
-		ran.setType(formulaFactory.makePowerSetType(ranElem), null);
-		Expression id = formulaFactory.makeUnaryExpression(KID, ran, null);
-		id.setType(formulaFactory.makeRelationalType(ranElem, ranElem), null);
-		Predicate rightFct = formulaFactory.makeRelationalPredicate(SUBSETEQ, comp, id, null);
+	private Predicate getWDPredicateFUNIMAGE(FormulaFactory ff) {
+		Predicate leftConjunct = left.getWDPredicateRaw(ff);
+		Predicate rightConjunct = right.getWDPredicateRaw(ff);
+		Expression leftDom = ff.makeUnaryExpression(KDOM, left, null);
+		Predicate leftInRightDom = ff.makeRelationalPredicate(IN, right, leftDom, null);
+		Expression singleton = ff.makeSetExtension(right, null);
+		Expression comp0 = ff.makeUnaryExpression(CONVERSE, left, null);
+		Expression comp1 = ff.makeBinaryExpression(DOMRES, singleton, left, null);
+		Expression comp = ff.makeAssociativeExpression(FCOMP, new Expression[]{comp0, comp1}, null);
+		Expression ran = ff.makeUnaryExpression(KRAN, left, null);
+		Expression id = ff.makeUnaryExpression(KID, ran, null);
+		Predicate rightFct = ff.makeRelationalPredicate(SUBSETEQ, comp, id, null);
 		return 
-		getWDSimplifyC(formulaFactory,
-				getWDSimplifyC(formulaFactory,
-						getWDSimplifyC(formulaFactory, leftConjunct, rightConjunct),
+		getWDSimplifyC(ff,
+				getWDSimplifyC(ff,
+						getWDSimplifyC(ff, leftConjunct, rightConjunct),
 						leftInRightDom),
 						rightFct);
 	}

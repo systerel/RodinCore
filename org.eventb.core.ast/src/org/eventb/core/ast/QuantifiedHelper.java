@@ -55,4 +55,72 @@ abstract class QuantifiedHelper {
 		return str.toString();
 	}
 
+	/**
+	 * Returns the array of bound identifiers which are bound outside of a
+	 * quantified formula.
+	 * 
+	 * @param boundIdentsBelow
+	 *            array of bound identifiers occurring in the quantified
+	 *            formula.
+	 * @param boundIdentDecls
+	 *            declaration of bound identifiers at the quantified formula
+	 * @return an array of identifiers which are used in the formula, but bound
+	 *         outside of it
+	 */
+	protected static BoundIdentifier[] getBoundIdentsAbove(
+			BoundIdentifier[] boundIdentsBelow, BoundIdentDecl[] boundIdentDecls) {
+		
+		final int nbBoundBelow = boundIdentsBelow.length;
+		final int nbBound = boundIdentDecls.length;
+		for (int i = 0; i < nbBoundBelow; i++) {
+			final int index = boundIdentsBelow[i].getBoundIndex(); 
+			if (nbBound <= index) {
+				// We're on the first identifier bound outside
+				final int length = nbBoundBelow - i;
+				final BoundIdentifier[] result = new BoundIdentifier[length];
+				System.arraycopy(boundIdentsBelow, i, result, 0, length);
+				return result;
+			}
+		}
+		return Formula.NO_BOUND_IDENTS;
+	}
+	
+	/**
+	 * Checks that the given bound identifier declarations are typed and that
+	 * their type are compatible with occurrences of the (bound) identifier.
+	 * 
+	 * @param boundIdentsBelow
+	 *            array of bound identifiers occurring in the quantified formula
+	 * @param boundIdentDecls
+	 *            declaration of bound identifiers at the quantified formula
+	 * @return <code>true</code> iff typecheck succeeds
+	 */
+	protected static boolean checkBoundIdentTypes(
+			BoundIdentifier[] boundIdentsBelow, BoundIdentDecl[] boundIdentDecls) {
+		
+		final int nbBound = boundIdentDecls.length;
+		
+		// First check that all declarations are typed.
+		for (BoundIdentDecl decl: boundIdentDecls) {
+			if (! decl.isTypeChecked()) {
+				return false;
+			}
+		}
+		
+		// Then, check that occurrences are typed, and with the same type as decl
+		for (BoundIdentifier ident: boundIdentsBelow) {
+			final int index = ident.getBoundIndex();
+			if (nbBound <= index) {
+				// We're on an identifier bound outside
+				break;
+			}
+			final Type declType = ident.getDeclaration(boundIdentDecls).getType();
+			if (! declType.equals(ident.getType())) {
+				// incompatible with references.
+				return false;
+			}
+		}
+		return true;
+	}
+		
 }

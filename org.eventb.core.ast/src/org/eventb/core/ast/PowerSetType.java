@@ -52,6 +52,7 @@ public class PowerSetType extends Type {
 	 * 
 	 * @return Returns the base type of this type
 	 */
+	@Override
 	public Type getBaseType() {
 		return base;
 	}

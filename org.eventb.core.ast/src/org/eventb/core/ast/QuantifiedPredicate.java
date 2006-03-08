@@ -5,6 +5,8 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
+import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
@@ -50,24 +52,28 @@ public class QuantifiedPredicate extends Predicate {
 
 	protected QuantifiedPredicate(Predicate pred, BoundIdentDecl[] boundIdentifiers, int tag,
 			SourceLocation location) {
-		super(tag, location, combineHashCodes(boundIdentifiers.length, pred.hashCode()));
+		super(tag, location,
+				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
 
 		this.quantifiedIdentifiers = new BoundIdentDecl[boundIdentifiers.length];
 		System.arraycopy(boundIdentifiers, 0, this.quantifiedIdentifiers, 0, boundIdentifiers.length);
 		this.pred = pred;
 		
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	protected QuantifiedPredicate(Predicate pred, List<BoundIdentDecl> boundIdentifiers, int tag,
 			SourceLocation location) {
-		super(tag, location, combineHashCodes(boundIdentifiers.size(), pred.hashCode()));
+		super(tag, location,
+				combineHashCodes(boundIdentifiers.size(), pred.hashCode()));
 		
 		BoundIdentDecl[] model = new BoundIdentDecl[boundIdentifiers.size()];
 		this.quantifiedIdentifiers = boundIdentifiers.toArray(model);
 		this.pred = pred;
 		
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	private void checkPreconditions() {
@@ -77,6 +83,21 @@ public class QuantifiedPredicate extends Predicate {
 		assert pred != null;
 	}
 
+	private void synthesizeType() {
+		this.freeIdents = pred.freeIdents;
+
+		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
+		this.boundIdents = 
+			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers);
+
+		// Check types of identifiers bound here.
+		if (! checkBoundIdentTypes(boundIdentsBelow, quantifiedIdentifiers)) {
+			return;
+		}
+
+		finalizeTypeCheck(pred.isTypeChecked());
+	}
+	
 	// indicates when the toString method should put parentheses
 	private final static BitSet parenthesesMap = new BitSet();
 	static {
@@ -211,8 +232,8 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		pred.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		pred.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	/**

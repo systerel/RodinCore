@@ -4,6 +4,7 @@ import static org.eventb.core.ast.tests.FastFactory.*;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -45,37 +46,6 @@ public class TestTypedConstructor extends TestCase {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	private FreeIdentifier mTypedIdent(String name, Type type) {
-		FreeIdentifier ident = mFreeIdentifier(name);
-		env.addName(name, type);
-		ITypeCheckResult result = ident.typeCheck(env);
-		assertTrue("Ident typechecked failed", result.isSuccess());
-		return ident;
-	}
-	
-	private BoundIdentDecl mTypedBoundIdentDecl(String name, Expression typeExpr) {
-		BoundIdentDecl ident = mBoundIdentDecl(name);
-		
-		// Run the type-checker to decorate the identifier with its type.
-		Predicate pred = mQuantifiedPredicate(Formula.EXISTS, mList(ident),
-				mRelationalPredicate(Formula.IN, mBoundIdentifier(0), typeExpr));
-		ITypeCheckResult result = pred.typeCheck(env);
-		assertTrue("Bound Ident typechecked failed", result.isSuccess());
-		
-		return ident;
-	}
-	
-	private void typeCheckForBoundIdent(BoundIdentDecl[] decls, Expression maplet) {
-		Predicate typingPred = mQuantifiedPredicate(decls, 
-				mRelationalPredicate(Formula.IN,
-						maplet,
-						mAtomicExpression(Formula.EMPTYSET)
-				)
-		);
-		ITypeCheckResult tcResult = typingPred.typeCheck(env);
-		assertTrue("Bound ident type-check failed", tcResult.isSuccess());
-	}
-	
 	ITypeEnvironment env;
 
 	/* (non-Javadoc)
@@ -95,41 +65,36 @@ public class TestTypedConstructor extends TestCase {
 	 */
 	public void testExpressionTypeSynthesis () {
 		
-		FreeIdentifier fST = mTypedIdent("fST", REL(ty_S, ty_T));
-		FreeIdentifier fSU = mTypedIdent("fSU", REL(ty_S, ty_U));
-		FreeIdentifier fTU = mTypedIdent("fTU", REL(ty_T, ty_U));
-		FreeIdentifier fUV = mTypedIdent("fUV", REL(ty_U, ty_V));
-		FreeIdentifier gST = mTypedIdent("gST", REL(ty_S, ty_T));
-		FreeIdentifier hST = mTypedIdent("hST", REL(ty_S, ty_T));
-		FreeIdentifier SS = mTypedIdent("SS", POW(POW(ty_S)));
-		FreeIdentifier id_x = mTypedIdent("x", INT);
-		FreeIdentifier id_y = mTypedIdent("y", INT);
-		FreeIdentifier id_z = mTypedIdent("z", INT);
-		FreeIdentifier id_s = mTypedIdent("s", ty_S);
-		FreeIdentifier id_t = mTypedIdent("t", ty_T);
-		FreeIdentifier id_v = mTypedIdent("v", ty_V);
-		FreeIdentifier id_A = mTypedIdent("A", POW(ty_S));
-		FreeIdentifier id_B = mTypedIdent("B", POW(ty_S));
-		FreeIdentifier id_C = mTypedIdent("C", POW(ty_S));
-		FreeIdentifier id_S = mTypedIdent("S", POW(ty_S));
-		FreeIdentifier id_T = mTypedIdent("T", POW(ty_T));
-		FreeIdentifier id_U = mTypedIdent("U", POW(ty_U));
+		FreeIdentifier fST = mFreeIdentifier("fST", REL(ty_S, ty_T));
+		FreeIdentifier fSU = mFreeIdentifier("fSU", REL(ty_S, ty_U));
+		FreeIdentifier fTU = mFreeIdentifier("fTU", REL(ty_T, ty_U));
+		FreeIdentifier fUV = mFreeIdentifier("fUV", REL(ty_U, ty_V));
+		FreeIdentifier gST = mFreeIdentifier("gST", REL(ty_S, ty_T));
+		FreeIdentifier hST = mFreeIdentifier("hST", REL(ty_S, ty_T));
+		FreeIdentifier SS = mFreeIdentifier("SS", POW(POW(ty_S)));
+		FreeIdentifier id_x = mFreeIdentifier("x", INT);
+		FreeIdentifier id_y = mFreeIdentifier("y", INT);
+		FreeIdentifier id_z = mFreeIdentifier("z", INT);
+		FreeIdentifier id_s = mFreeIdentifier("s", ty_S);
+		FreeIdentifier id_t = mFreeIdentifier("t", ty_T);
+		FreeIdentifier id_v = mFreeIdentifier("v", ty_V);
+		FreeIdentifier id_A = mFreeIdentifier("A", POW(ty_S));
+		FreeIdentifier id_B = mFreeIdentifier("B", POW(ty_S));
+		FreeIdentifier id_C = mFreeIdentifier("C", POW(ty_S));
+		FreeIdentifier id_S = mFreeIdentifier("S", POW(ty_S));
+		FreeIdentifier id_T = mFreeIdentifier("T", POW(ty_T));
 
-		BoundIdentDecl bd_x = mTypedBoundIdentDecl("x", id_S);
-		BoundIdentDecl bd_y = mTypedBoundIdentDecl("y", id_T);
-		BoundIdentDecl bd_z = mTypedBoundIdentDecl("z", id_U);
+		BoundIdentDecl bd_x = mBoundIdentDecl("x", ty_S);
+		BoundIdentDecl bd_y = mBoundIdentDecl("y", ty_T);
+		BoundIdentDecl bd_z = mBoundIdentDecl("z", ty_U);
 		
-		BoundIdentifier b0S = mBoundIdentifier(0);
-		BoundIdentifier b0T = mBoundIdentifier(0);
-		BoundIdentifier b0U = mBoundIdentifier(0);
-		BoundIdentifier b1S = mBoundIdentifier(1);
-		BoundIdentifier b1T = mBoundIdentifier(1);
-		BoundIdentifier b2S = mBoundIdentifier(2);
+		BoundIdentifier b0S = mBoundIdentifier(0, ty_S);
+		BoundIdentifier b0T = mBoundIdentifier(0, ty_T);
+		BoundIdentifier b0U = mBoundIdentifier(0, ty_U);
+		BoundIdentifier b1S = mBoundIdentifier(1, ty_S);
+		BoundIdentifier b1T = mBoundIdentifier(1, ty_T);
+		BoundIdentifier b2S = mBoundIdentifier(2, ty_S);
 
-		typeCheckForBoundIdent(mList(bd_x), b0S);
-		typeCheckForBoundIdent(mList(bd_x, bd_y), mMaplet(b1S, b0T));
-		typeCheckForBoundIdent(mList(bd_x, bd_y, bd_z), mMaplet(mMaplet(b2S, b1T), b0U));
-		
 		//--------------------
 		//  Binary expressions
 		//--------------------
@@ -268,9 +233,9 @@ public class TestTypedConstructor extends TestCase {
 		//---------------
 		//  Set extension
 		//---------------
-		doTest(mSetExtension(id_s), ty_S);
-		doTest(mSetExtension(id_x, id_y), INT);
-		doTest(mSetExtension(id_x, id_y, id_z), INT);
+		doTest(mSetExtension(id_s), POW(ty_S));
+		doTest(mSetExtension(id_x, id_y), POW(INT));
+		doTest(mSetExtension(id_x, id_y, id_z), POW(INT));
 
 		//-------------
 		//  Identifiers
@@ -316,30 +281,23 @@ public class TestTypedConstructor extends TestCase {
 		LiteralPredicate btrue = mLiteralPredicate(Formula.BTRUE);
 		LiteralPredicate bfalse = mLiteralPredicate(Formula.BFALSE);
 		
-		FreeIdentifier id_x = mTypedIdent("x", INT);
-		FreeIdentifier id_y = mTypedIdent("y", INT);
-		FreeIdentifier id_s = mTypedIdent("s", ty_S);
-		FreeIdentifier id_A = mTypedIdent("A", POW(ty_S));
-		FreeIdentifier id_B = mTypedIdent("B", POW(ty_S));
-		FreeIdentifier id_S = mTypedIdent("S", POW(ty_S));
-		FreeIdentifier id_T = mTypedIdent("T", POW(ty_T));
-		FreeIdentifier id_U = mTypedIdent("U", POW(ty_U));
+		FreeIdentifier id_x = mFreeIdentifier("x", INT);
+		FreeIdentifier id_y = mFreeIdentifier("y", INT);
+		FreeIdentifier id_s = mFreeIdentifier("s", ty_S);
+		FreeIdentifier id_A = mFreeIdentifier("A", POW(ty_S));
+		FreeIdentifier id_B = mFreeIdentifier("B", POW(ty_S));
 
-		BoundIdentDecl bd_x = mTypedBoundIdentDecl("x", id_S);
-		BoundIdentDecl bd_y = mTypedBoundIdentDecl("y", id_T);
-		BoundIdentDecl bd_z = mTypedBoundIdentDecl("z", id_U);
+		BoundIdentDecl bd_x = mBoundIdentDecl("x", ty_S);
+		BoundIdentDecl bd_y = mBoundIdentDecl("y", ty_T);
+		BoundIdentDecl bd_z = mBoundIdentDecl("z", ty_U);
 		
-		BoundIdentifier b0S = mBoundIdentifier(0);
-		BoundIdentifier b0T = mBoundIdentifier(0);
-		BoundIdentifier b0U = mBoundIdentifier(0);
-		BoundIdentifier b1S = mBoundIdentifier(1);
-		BoundIdentifier b1T = mBoundIdentifier(1);
-		BoundIdentifier b2S = mBoundIdentifier(2);
+		BoundIdentifier b0S = mBoundIdentifier(0, ty_S);
+		BoundIdentifier b0T = mBoundIdentifier(0, ty_T);
+		BoundIdentifier b0U = mBoundIdentifier(0, ty_U);
+		BoundIdentifier b1S = mBoundIdentifier(1, ty_S);
+		BoundIdentifier b1T = mBoundIdentifier(1, ty_T);
+		BoundIdentifier b2S = mBoundIdentifier(2, ty_S);
 
-		typeCheckForBoundIdent(mList(bd_x), b0S);
-		typeCheckForBoundIdent(mList(bd_x, bd_y), mMaplet(b1S, b0T));
-		typeCheckForBoundIdent(mList(bd_x, bd_y, bd_z), mMaplet(mMaplet(b2S, b1T), b0U));
-		
 		//--------------------
 		//  Binary predicates
 		//--------------------
@@ -397,8 +355,8 @@ public class TestTypedConstructor extends TestCase {
 		doTest(mRelationalPredicate(Formula.GT, id_x, id_y));
 		doTest(mRelationalPredicate(Formula.GE, id_x, id_y));
 
-		doTest(mRelationalPredicate(Formula.IN, id_x, id_A));
-		doTest(mRelationalPredicate(Formula.NOTIN, id_x, id_A));
+		doTest(mRelationalPredicate(Formula.IN, id_s, id_A));
+		doTest(mRelationalPredicate(Formula.NOTIN, id_s, id_A));
 
 		doTest(mRelationalPredicate(Formula.SUBSET, id_A, id_B));
 		doTest(mRelationalPredicate(Formula.NOTSUBSET, id_A, id_B));
@@ -410,6 +368,60 @@ public class TestTypedConstructor extends TestCase {
 		assertTrue("Result is not typed", pred.isTypeChecked());
 		ITypeCheckResult result = pred.typeCheck(env);
 		assertTrue("Predicate didn't typecheck", result.isSuccess());
+	}
+
+	/**
+	 * Main test routine for assignments.
+	 * 
+	 * Tests have been entered in the same order as the type-checker
+	 * specification in the Rodin Deliverable D7 "Event-B Language".
+	 */
+	public void testAssignmentTypeSynthesis () {
+		
+		FreeIdentifier id_x = mFreeIdentifier("x", ty_S);
+		FreeIdentifier id_y = mFreeIdentifier("y", ty_T);
+		FreeIdentifier id_z = mFreeIdentifier("z", ty_U);
+		FreeIdentifier id_s = mFreeIdentifier("s", ty_S);
+		FreeIdentifier id_t = mFreeIdentifier("t", ty_T);
+		FreeIdentifier id_u = mFreeIdentifier("u", ty_U);
+		FreeIdentifier id_A = mFreeIdentifier("A", POW(ty_S));
+
+		BoundIdentDecl bd_x = mBoundIdentDecl("x'", ty_S);
+		BoundIdentDecl bd_y = mBoundIdentDecl("y'", ty_T);
+		BoundIdentDecl bd_z = mBoundIdentDecl("z'", ty_U);
+		
+		BoundIdentifier b0S = mBoundIdentifier(0, ty_S);
+		BoundIdentifier b0T = mBoundIdentifier(0, ty_T);
+		BoundIdentifier b0U = mBoundIdentifier(0, ty_U);
+		BoundIdentifier b1S = mBoundIdentifier(1, ty_S);
+		BoundIdentifier b1T = mBoundIdentifier(1, ty_T);
+		BoundIdentifier b2S = mBoundIdentifier(2, ty_S);
+
+		doTest(mBecomesEqualTo(id_x, id_s));
+		doTest(mBecomesEqualTo(mList(id_x, id_y), mList(id_s, id_t)));
+		doTest(mBecomesEqualTo(mList(id_x, id_y, id_z), mList(id_s, id_t, id_u)));
+		
+		doTest(mBecomesMemberOf(id_x, id_A));
+		
+		doTest(mBecomesSuchThat(mList(id_x), mList(bd_x), 
+				mRelationalPredicate(Formula.EQUAL, b0S, id_s)
+		));
+		doTest(mBecomesSuchThat(mList(id_x, id_y), mList(bd_x, bd_y),
+				mRelationalPredicate(Formula.EQUAL,
+						mMaplet(b1S,  b0T),
+						mMaplet(id_s, id_t))
+		));
+		doTest(mBecomesSuchThat(mList(id_x, id_y, id_z), mList(bd_x, bd_y, bd_z),
+				mRelationalPredicate(Formula.EQUAL,
+						mMaplet(b2S,  mMaplet(b1T,  b0U)),
+						mMaplet(id_s, mMaplet(id_t, id_u)))
+		));
+	}
+
+	private void doTest(Assignment assign) {
+		assertTrue("Result is not typed", assign.isTypeChecked());
+		ITypeCheckResult result = assign.typeCheck(env);
+		assertTrue("Assignment didn't typecheck", result.isSuccess());
 	}
 
 	// TODO ajouter fonction de test sur un peu tout ce qui échoue systématiquement

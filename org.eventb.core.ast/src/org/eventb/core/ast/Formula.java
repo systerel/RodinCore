@@ -3,6 +3,7 @@
  */
 package org.eventb.core.ast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
@@ -43,6 +45,16 @@ public abstract class Formula<T extends Formula<T>> {
 
 	// Hash code for this formula
 	private final int hashCode;
+	
+	// Sorted array of free identifiers occurring in this formula.
+	// This is a quasi-final field, it must only be set in a constructor (but
+	// not necessarily the Formula constructor).
+	protected FreeIdentifier[] freeIdents;
+	
+	// Sorted array of bound identifiers occurring in this formula.
+	// This is a quasi-final field, it must only be set in a constructor (but
+	// not necessarily the Formula constructor).
+	protected BoundIdentifier[] boundIdents;
 	
 	/**
 	 * <code>STARTTAG</code> represents the tag of a node parent, when the
@@ -761,6 +773,11 @@ public abstract class Formula<T extends Formula<T>> {
 	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
 		new BoundIdentDecl[0];
 	
+	protected final static FreeIdentifier[] NO_FREE_IDENTS =
+		new FreeIdentifier[0];
+
+	protected final static BoundIdentifier[] NO_BOUND_IDENTS =
+		new BoundIdentifier[0];
 
 	// Internal constructor for derived classes (with location).
 	protected Formula(int tag, SourceLocation location, int hashCode) {
@@ -825,6 +842,55 @@ public abstract class Formula<T extends Formula<T>> {
 			result = combineHashCodes(result, formula.hashCode);
 		}
 		return result;
+	}
+	
+	/**
+	 * Merges the list of free identifiers of the given formulas.
+	 * 
+	 * @param formulas
+	 *            formulas whose free identifiers need to be merged
+	 * @return a sorted merged array of identifiers or <code>null</code> if an
+	 *         error occurred
+	 */
+	protected static <S extends Formula> IdentListMerger mergeFreeIdentifiers(
+			S... formulas) {
+		
+		ArrayList<FreeIdentifier[]> lists = 
+			new ArrayList<FreeIdentifier[]>(formulas.length);
+		for (Formula formula : formulas) {
+			final FreeIdentifier[] freeIdents = formula.freeIdents;
+			if (freeIdents.length != 0)
+				lists.add(freeIdents);
+		}
+		// Ensure the list is not empty.
+		if (lists.size() == 0) {
+			lists.add(NO_FREE_IDENTS);
+		}
+		return IdentListMerger.makeMerger(lists);
+	}
+
+	/**
+	 * Merges the list of bound identifiers of the given formulas.
+	 * 
+	 * @param formulas
+	 *            formulas whose bound identifiers need to be merged
+	 * @return a merger for arrays of identifiers
+	 */
+	protected static <S extends Formula> IdentListMerger mergeBoundIdentifiers(
+			S[] formulas) {
+		
+		ArrayList<BoundIdentifier[]> lists = 
+			new ArrayList<BoundIdentifier[]>(formulas.length);
+		for (Formula formula : formulas) {
+			final BoundIdentifier[] boundIdents = formula.boundIdents;
+			if (boundIdents.length != 0)
+				lists.add(boundIdents);
+		}
+		// Ensure the list is not empty.
+		if (lists.size() == 0) {
+			lists.add(NO_BOUND_IDENTS);
+		}
+		return IdentListMerger.makeMerger(lists);
 	}
 
 	/**
@@ -1008,10 +1074,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return an array of all first free occurrences of identifiers.
 	 */
 	public final FreeIdentifier[] getFreeIdentifiers() {
-		LinkedHashSet<FreeIdentifier> freeIdents = new LinkedHashSet<FreeIdentifier>();
-		collectFreeIdentifiers(freeIdents);
-		FreeIdentifier[] model = new FreeIdentifier[freeIdents.size()];
-		return freeIdents.toArray(model);
+		LinkedHashSet<FreeIdentifier> freeIdentSet = new LinkedHashSet<FreeIdentifier>();
+		collectFreeIdentifiers(freeIdentSet);
+		FreeIdentifier[] model = new FreeIdentifier[freeIdentSet.size()];
+		return freeIdentSet.toArray(model);
 	}
 
 	/**
@@ -1022,11 +1088,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>freeIdents</code>.
 	 * </p>
 	 * 
-	 * @param freeIdents
+	 * @param freeIdentSet
 	 *            freeIdentifiers collected so far
 	 */
 	protected abstract void collectFreeIdentifiers(
-			LinkedHashSet<FreeIdentifier> freeIdents);
+			LinkedHashSet<FreeIdentifier> freeIdentSet);
 
 	/**
 	 * Internal method.
@@ -1430,9 +1496,6 @@ public abstract class Formula<T extends Formula<T>> {
 		assert isTypeChecked();
 		return getWDPredicateRaw(formulaFactory).flatten(formulaFactory);
 	}
-	
-	// TODO getWDPredicate adds type information that is unchecked, need for type-verifier! (or other solution)
-	
 	
 	/**
 	 * Computes the "raw" unflattended WD predicate.

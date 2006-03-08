@@ -30,13 +30,16 @@ public class TestTypes extends TestCase {
 	private FormulaFactory ff = FormulaFactory.getDefault();
 	private FormulaFactory tf = FormulaFactory.getDefault();
 	
-	private FreeIdentifier id_S = ff.makeFreeIdentifier("S", null);
-	private FreeIdentifier id_T = ff.makeFreeIdentifier("T", null);
-	private FreeIdentifier id_U = ff.makeFreeIdentifier("U", null);
-
 	private GivenType ty_S = tf.makeGivenType("S");
 	private GivenType ty_T = tf.makeGivenType("T");
 	private GivenType ty_U = tf.makeGivenType("U");
+
+	private FreeIdentifier id_S = ff.makeFreeIdentifier("S", null, 
+			tf.makePowerSetType(ty_S));
+	private FreeIdentifier id_T = ff.makeFreeIdentifier("T", null, 
+			tf.makePowerSetType(ty_T));
+	private FreeIdentifier id_U = ff.makeFreeIdentifier("U", null, 
+			tf.makePowerSetType(ty_U));
 
 	private static class TestItem {
 		Type type;
@@ -60,11 +63,6 @@ public class TestTypes extends TestCase {
 					tf.makeIntegerType(),
 					ff.makeAtomicExpression(Formula.INTEGER, null),
 					"ℤ"
-			),
-			new TestItem(
-					tf.makeGivenType("S"),
-					id_S,
-					"S"
 			),
 			new TestItem(
 					ty_S,
@@ -118,10 +116,8 @@ public class TestTypes extends TestCase {
 			final Expression expr = item.type.toExpression(ff);
 			assertEquals(item.expr, expr);
 			assertEquals(item.image, item.type.toString());
-			// TODO put back test of type equality below
-			// when type synthesis is implemented.
-			// final Type expectedExprType = ff.makePowerSetType(item.type);
-			// assertEquals(expectedExprType, expr.getType());
+			final Type expectedExprType = ff.makePowerSetType(item.type);
+			assertEquals(expectedExprType, expr.getType());
 		}
 	}
 	

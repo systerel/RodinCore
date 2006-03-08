@@ -5,7 +5,9 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentifiersString;
+import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -83,22 +86,35 @@ public class QuantifiedExpression extends Expression {
 	 * @param location the location in the formula {@link org.eventb.core.ast.SourceLocation}
 	 * @param form form of the quantified expression
 	 */
-	protected QuantifiedExpression(Expression expr, Predicate pred, BoundIdentDecl[] boundIdentifiers, int tag,
-			SourceLocation location, Form form) {
-		super(tag, location, combineHashCodes(boundIdentifiers.length, pred.hashCode(), expr.hashCode()));
+	protected QuantifiedExpression(Expression expr, Predicate pred,
+			BoundIdentDecl[] boundIdentifiers, int tag,
+			SourceLocation location, Form form, FormulaFactory factory) {
+		
+		super(tag, location, combineHashCodes(
+				boundIdentifiers.length, 
+				pred.hashCode(), 
+				expr.hashCode())
+		);
 		
 		this.quantifiedIdentifiers = new BoundIdentDecl[boundIdentifiers.length];
 		System.arraycopy(boundIdentifiers, 0, this.quantifiedIdentifiers, 0, boundIdentifiers.length);
 		this.expr = expr;
 		this.pred = pred;
 		this.form = form;
-	
+
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 	
-	protected QuantifiedExpression(Expression expr, Predicate pred, List<BoundIdentDecl> boundIdentifiers, int tag,
-			SourceLocation location, Form form) {
-		super(tag, location, combineHashCodes(boundIdentifiers.size(), pred.hashCode(), expr.hashCode()));
+	protected QuantifiedExpression(Expression expr, Predicate pred,
+			List<BoundIdentDecl> boundIdentifiers, int tag,
+			SourceLocation location, Form form, FormulaFactory factory) {
+
+		super(tag, location, combineHashCodes(
+				boundIdentifiers.size(), 
+				pred.hashCode(),
+				expr.hashCode())
+		);
 
 		BoundIdentDecl[] model = new BoundIdentDecl[boundIdentifiers.size()];
 		this.quantifiedIdentifiers = boundIdentifiers.toArray(model);
@@ -107,6 +123,7 @@ public class QuantifiedExpression extends Expression {
 		this.form = form;
 
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 	
 	// Common initialization.
@@ -121,6 +138,57 @@ public class QuantifiedExpression extends Expression {
 			assert getTag() == Formula.CSET;
 			assert expr.getTag() == Formula.MAPSTO;
 		}
+	}
+	
+	private void synthesizeType(FormulaFactory ff) {
+		final IdentListMerger freeIdentMerger = 
+			IdentListMerger.makeMerger(pred.freeIdents, expr.freeIdents);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		final IdentListMerger boundIdentMerger = 
+			IdentListMerger.makeMerger(pred.boundIdents, expr.boundIdents);
+		final BoundIdentifier[] boundIdentsBelow = 
+			boundIdentMerger.getBoundMergedArray(); 
+		this.boundIdents = 
+			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers);
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		// Check types of identifiers bound here.
+		if (! checkBoundIdentTypes(boundIdentsBelow, quantifiedIdentifiers)) {
+			return;
+		}
+		
+		final Type exprType = expr.getType();
+		
+		// Fast exit if children are not typed
+		// (the most common case where type synthesis can't be done)
+		if (! pred.isTypeChecked() || exprType == null) {
+			return;
+		}
+		
+		final Type resultType;
+		switch (getTag()) {
+		case Formula.QUNION:
+		case Formula.QINTER:
+			final Type alpha = exprType.getBaseType();
+			if (alpha != null) {
+				resultType = exprType;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.CSET:
+			resultType = ff.makePowerSetType(exprType);
+			break;
+		default:
+			assert false;
+			resultType = null;
+		}
+		setType(resultType, null);
 	}
 	
 	// indicates when the toString method should put parentheses
@@ -450,18 +518,18 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Take care to go from left to right
 		switch (form) {
 		case Lambda:
 		case Explicit:
-			pred.collectFreeIdentifiers(freeIdents);
-			expr.collectFreeIdentifiers(freeIdents);
+			pred.collectFreeIdentifiers(freeIdentSet);
+			expr.collectFreeIdentifiers(freeIdentSet);
 			break;
 
 		case Implicit:
-			expr.collectFreeIdentifiers(freeIdents);
-			pred.collectFreeIdentifiers(freeIdents);
+			expr.collectFreeIdentifiers(freeIdentSet);
+			pred.collectFreeIdentifiers(freeIdentSet);
 			break;
 
 		default:

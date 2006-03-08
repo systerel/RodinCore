@@ -4,8 +4,8 @@
  */
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
+import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -47,17 +48,24 @@ public class AssociativePredicate extends Predicate {
 	
 	protected AssociativePredicate(Predicate[] children, int tag,
 			SourceLocation location) {
+		
 		super(tag, location, combineHashCodes(children));
 		this.children = new Predicate[children.length];
 		System.arraycopy(children, 0, this.children, 0, children.length);
+		
 		checkPreconditions();
+		synthesizeType();
 	}
 
-	protected AssociativePredicate(List<Predicate> children, int tag, SourceLocation location) {
+	protected AssociativePredicate(List<Predicate> children, int tag,
+			SourceLocation location) {
+		
 		super(tag, location, combineHashCodes(children));
 		Predicate[] model = new Predicate[children.size()];
 		this.children = children.toArray(model);
+
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	// Common initialization.
@@ -67,6 +75,25 @@ public class AssociativePredicate extends Predicate {
 		assert children.length >= 2;
 	}
 	
+	private void synthesizeType() {
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(children);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		for (Predicate child: children) {
+			if (! child.isTypeChecked()) {
+				return;
+			}
+		}
+		finalizeTypeCheck(true);
+	}
 	
 	// indicates when the toString method should put parentheses
 	private static final BitSet[] parenthesesMap = new BitSet[tags.length];
@@ -180,9 +207,9 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (Predicate child: children) {
-			child.collectFreeIdentifiers(freeIdents);
+			child.collectFreeIdentifiers(freeIdentSet);
 		}
 	}
 

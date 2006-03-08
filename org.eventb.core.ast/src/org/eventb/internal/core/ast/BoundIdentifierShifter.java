@@ -47,7 +47,10 @@ public class BoundIdentifierShifter extends Substitution {
 			// Internally bound, no change
 			return ident;
 		}
-		return ff.makeBoundIdentifier(index + offset, ident.getSourceLocation());
+		return ff.makeBoundIdentifier(
+				index + offset, 
+				ident.getSourceLocation(),
+				ident.getType());
 	}
 
 }

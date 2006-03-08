@@ -4,14 +4,15 @@
  */
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
+import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -31,27 +32,33 @@ public class SetExtension extends Expression {
 	// children
 	private final Expression[] members;
 	
-	protected SetExtension(Expression expression, SourceLocation location) {
+	protected SetExtension(Expression expression, SourceLocation location,
+			FormulaFactory factory) {
 		super(SETEXT, location, expression.hashCode());
 		this.members = new Expression[] {expression};
 
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 
-	protected SetExtension(Expression[] expressions, SourceLocation location) {
+	protected SetExtension(Expression[] expressions, SourceLocation location,
+			FormulaFactory factory) {
 		super(SETEXT, location, combineHashCodes(expressions));
 		this.members = new Expression[expressions.length];
 		System.arraycopy(expressions, 0, this.members, 0, expressions.length);
 
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 
-	protected SetExtension(List<? extends Expression> expressions, SourceLocation location) {
+	protected SetExtension(List<? extends Expression> expressions,
+			SourceLocation location, FormulaFactory factory) {
 		super(SETEXT, location, combineHashCodes(expressions));
 		Expression[] temp = new Expression[expressions.size()];
 		this.members = expressions.toArray(temp);
 
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 
 	// Common initialization.
@@ -60,6 +67,36 @@ public class SetExtension extends Expression {
 		assert members != null;
 	}
 	
+	private void synthesizeType(FormulaFactory ff) {
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(members);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		
+		final int length = members.length;
+		if (length == 0) {
+			// Empty set, no way to synthesize its type.
+			return;
+		}
+		final Type memberType = members[0].getType();
+		if (memberType == null) {
+			return;
+		}
+		for (int i = 1; i < length; i++) {
+			if (! memberType.equals(members[i].getType())) {
+				return;
+			}
+		}
+		setType(ff.makePowerSetType(memberType), null);
+	}
+
 	/**
 	 * Returns the members of this set.
 	 * 
@@ -166,9 +203,9 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (Expression child: members) {
-			child.collectFreeIdentifiers(freeIdents);
+			child.collectFreeIdentifiers(freeIdentSet);
 		}
 	}
 

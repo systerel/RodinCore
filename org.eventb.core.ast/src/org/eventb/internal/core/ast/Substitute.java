@@ -71,8 +71,10 @@ public abstract class Substitute {
 
 		@Override
 		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
-			return ff.makeBoundIdentifier(index + nbOfInternallyBound, original
-					.getSourceLocation());
+			return ff.makeBoundIdentifier(
+					index + nbOfInternallyBound,
+					original.getSourceLocation(),
+					original.getType());
 		}
 
 		@Override

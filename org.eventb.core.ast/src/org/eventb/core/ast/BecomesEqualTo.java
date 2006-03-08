@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -31,6 +32,7 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, location, value.hashCode(), assignedIdent);
 		this.values = new Expression[] {value};
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	public BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
@@ -39,6 +41,7 @@ public class BecomesEqualTo extends Assignment {
 		this.values = new Expression[values.length];
 		System.arraycopy(values, 0, this.values, 0, values.length);
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	public BecomesEqualTo(List<FreeIdentifier> assignedIdents, List<Expression> values,
@@ -46,11 +49,39 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.toArray(new Expression[values.size()]);
 		checkPreconditions();
+		synthesizeType();
 	}
 
-
 	private void checkPreconditions() {
+		assert assignedIdents.length != 0;
 		assert assignedIdents.length == values.length;
+	}
+	
+	private void synthesizeType() {
+		final int length = assignedIdents.length;
+		final Expression[] children = new Expression[length * 2];
+		System.arraycopy(assignedIdents, 0, children, 0, length);
+		System.arraycopy(values, 0, children, length, length);
+		
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(children);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+
+		// Check equality of types
+		for (int i = 0; i < length; i++) {
+			final Type type = assignedIdents[i].getType();
+			if (type == null || ! type.equals(values[i].getType())) {
+				return;
+			}
+		}
+		finalizeTypeCheck(true, null);
 	}
 	
 	/**
@@ -80,12 +111,12 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.collectFreeIdentifiers(freeIdents);
+			ident.collectFreeIdentifiers(freeIdentSet);
 		}
 		for (Expression value: values) {
-			value.collectFreeIdentifiers(freeIdents);
+			value.collectFreeIdentifiers(freeIdentSet);
 		}
 	}
 
@@ -230,26 +261,31 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
-		Predicate[] predicates = new Predicate[assignedIdents.length];
-		for(int i=0; i<assignedIdents.length; i++) {
-			FreeIdentifier primedIdentifier = formulaFactory.makePrimedFreeIdentifier(assignedIdents[i]);
-			predicates[i] = formulaFactory.makeRelationalPredicate(EQUAL, primedIdentifier, values[i], null);
+	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
+		final SourceLocation loc = getSourceLocation();
+		final int length = assignedIdents.length;
+		final Predicate[] predicates = new Predicate[length];
+		for (int i=0; i<length; i++) {
+			predicates[i] = 
+				ff.makeRelationalPredicate(EQUAL, 
+						ff.makePrimedFreeIdentifier(assignedIdents[i]),
+						values[i], 
+						loc);
 		}
-		if(predicates.length > 1)
-			return formulaFactory.makeAssociativePredicate(LAND, predicates, getSourceLocation());
+		if (predicates.length > 1)
+			return ff.makeAssociativePredicate(LAND, predicates, loc);
 		else
 			return predicates[0];
 	}
 
 	@Override
 	public FreeIdentifier[] getUsedIdentifiers() {
-		LinkedHashSet<FreeIdentifier> freeIdents = new LinkedHashSet<FreeIdentifier>();
+		LinkedHashSet<FreeIdentifier> freeIdentSet = new LinkedHashSet<FreeIdentifier>();
 		for (Expression expr: values) {
-			expr.collectFreeIdentifiers(freeIdents);
+			expr.collectFreeIdentifiers(freeIdentSet);
 		}
-		FreeIdentifier[] model = new FreeIdentifier[freeIdents.size()];
-		return freeIdents.toArray(model);
+		FreeIdentifier[] model = new FreeIdentifier[freeIdentSet.size()];
+		return freeIdentSet.toArray(model);
 	}
 
 }

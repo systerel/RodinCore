@@ -28,11 +28,16 @@ public class IntegerLiteral extends Expression {
 	// This literal value.  Can never be null.
 	private final BigInteger literal;
 	
-	protected IntegerLiteral(BigInteger literal, int tag, SourceLocation location) {
+	protected IntegerLiteral(BigInteger literal, int tag, SourceLocation location,
+			FormulaFactory ff) {
 		super(tag, location, literal.hashCode());
-		this.literal = literal;
 		assert tag == Formula.INTLIT;
 		assert literal != null;
+		this.literal = literal;
+		
+		this.freeIdents = NO_FREE_IDENTS;
+		this.boundIdents = NO_BOUND_IDENTS;
+		setType(ff.makeIntegerType(), null);
 	}
 
 	/**
@@ -88,7 +93,7 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Nothing to do
 	}
 

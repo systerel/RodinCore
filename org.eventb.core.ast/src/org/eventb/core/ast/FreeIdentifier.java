@@ -27,12 +27,17 @@ public class FreeIdentifier extends Identifier {
 	
 	private final String name;
 	
-	protected FreeIdentifier(String name, int tag, SourceLocation location) {
+	protected FreeIdentifier(String name, int tag, SourceLocation location,
+			Type type) {
 		super(tag, location, name.hashCode());
-		this.name = name;
 		assert tag == Formula.FREE_IDENT;
 		assert name != null;
 		assert name.length() != 0;
+
+		this.name = name;
+		this.freeIdents = new FreeIdentifier[] {this};
+		this.boundIdents = NO_BOUND_IDENTS;
+		this.setType(type, null);
 	}
 	
 	/**
@@ -103,8 +108,8 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		freeIdents.add(this);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		freeIdentSet.add(this);
 	}
 
 	@Override
@@ -119,7 +124,10 @@ public class FreeIdentifier extends Identifier {
 			// Not in the binding, so should remain free, so no change.
 			return this;
 		}
-		return factory.makeBoundIdentifier(index + offset, getSourceLocation());
+		return factory.makeBoundIdentifier(
+				index + offset, 
+				getSourceLocation(),
+				getType());
 	}
 	
 	@Override

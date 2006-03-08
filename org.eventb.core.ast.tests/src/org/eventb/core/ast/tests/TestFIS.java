@@ -74,14 +74,15 @@ public class TestFIS extends TestCase {
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inFIS = inA.getFISPredicate(ff);
-			ITypeCheckResult intResult = inFIS.typeCheck(newEnv);
-			assertTrue(input + "\n" + inFIS.toString() + "\n" + inFIS.getSyntaxTree() + "\n", intResult.isSuccess());
+			assertTrue(input + "\n" + inFIS.toString() + "\n"
+					+ inFIS.getSyntaxTree() + "\n",
+					inA.isTypeChecked());
 			
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
 			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			ITypeCheckResult newResult = exP.typeCheck(newEnv);
-			assertTrue(newResult.isSuccess());
+			exP.typeCheck(newEnv);
+			assertTrue(exP.isTypeChecked());
 			
 			assertEquals(input, exP, inFIS);
 		}

@@ -41,7 +41,6 @@ public abstract class Type {
 
 	// Disabled default constructor
 	protected Type(boolean solved) {
-		super();
 		this.solved = solved;
 	}
 
@@ -80,6 +79,75 @@ public abstract class Type {
 		StringBuilder buffer = new StringBuilder();
 		buildString(buffer);
 		return buffer.toString();
+	}
+
+	/**
+	 * Returns the source type of this type, if any.
+	 * <p>
+	 * If this type looks like <code>ℙ(alpha × beta)</code>, this method will
+	 * return <code>alpha</code>, otherwise <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the source type of this type, or <code>null</code>
+	 */
+	protected Type getSource() {
+		if (this instanceof PowerSetType) {
+			Type baseType = ((PowerSetType) this).getBaseType();
+			if (baseType instanceof ProductType) {
+				return ((ProductType) baseType).getLeft();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the target type of this type, if any.
+	 * <p>
+	 * If this type looks like <code>ℙ(alpha × beta)</code>, this method will
+	 * return <code>beta</code>, otherwise <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the target type of this type, or <code>null</code>
+	 */
+	protected Type getTarget() {
+		if (this instanceof PowerSetType) {
+			Type baseType = ((PowerSetType) this).getBaseType();
+			if (baseType instanceof ProductType) {
+				return ((ProductType) baseType).getRight();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns whether this type is a relational type.
+	 * <p>
+	 * This type is relational if it looks like <code>ℙ(alpha × beta)</code>.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this type is a relational type.
+	 */
+	protected boolean isRelational() {
+		if (this instanceof PowerSetType) {
+			Type baseType = ((PowerSetType) this).getBaseType();
+			if (baseType instanceof ProductType) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the base type of this type, if any.
+	 * <p>
+	 * If this type looks like <code>ℙ(alpha)</code>, this method will
+	 * return <code>alpha</code>, otherwise <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the base type of this type, or <code>null</code>.
+	 */
+	public Type getBaseType() {
+		return null;
 	}
 
 }

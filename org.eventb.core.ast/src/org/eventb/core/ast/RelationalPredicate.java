@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -51,14 +52,81 @@ public class RelationalPredicate extends Predicate {
 
 	protected RelationalPredicate(Expression left, Expression right,
 			int tag, SourceLocation location) {
+		
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
+		this.left = left;
+		this.right = right;
+
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert left != null;
 		assert right != null;
-		this.left = left;
-		this.right = right;
+		
+		synthesizeType();
 	}
 	
+	private void synthesizeType() {
+		IdentListMerger freeIdentMerger = 
+			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = 
+			IdentListMerger.makeMerger(left.boundIdents, right.boundIdents);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+
+		Type leftType = left.getType();
+		Type rightType = right.getType();
+		
+		// Fast exit if children are not typed
+		// (the most common case where type synthesis can't be done)
+		if (leftType == null || rightType == null) {
+			return;
+		}
+		
+		final Type alpha;
+		switch(getTag()) {
+		case Formula.EQUAL:
+		case Formula.NOTEQUAL:
+			if (! leftType.equals(rightType)) {
+				return;
+			}
+			break;
+		case Formula.LT:
+		case Formula.LE:
+		case Formula.GT:
+		case Formula.GE:
+			if (! (leftType instanceof IntegerType) ||
+					! (rightType instanceof IntegerType)) {
+				return;
+			}
+			break;
+		case Formula.IN:
+		case Formula.NOTIN:
+			alpha = rightType.getBaseType();
+			if (alpha == null || ! alpha.equals(leftType)) {
+				return;
+			}
+			break;
+		case Formula.SUBSET:
+		case Formula.NOTSUBSET:
+		case Formula.SUBSETEQ:
+		case Formula.NOTSUBSETEQ:
+			alpha = leftType.getBaseType();
+			if (alpha == null || ! alpha.equals(rightType.getBaseType())) {
+				return;
+			}
+			break;
+		default:
+			assert false;
+			return;
+		}
+		finalizeTypeCheck(true);
+	}
+
 	/**
 	 * Returns the expression on the left-hand side of this node.
 	 * 
@@ -147,6 +215,8 @@ public class RelationalPredicate extends Predicate {
 			result.unify(left.getType(), type, loc);
 			result.unify(right.getType(), type, loc);
 			break;
+		default:
+			assert false;
 		}
 	}
 	
@@ -157,9 +227,9 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		left.collectFreeIdentifiers(freeIdents);
-		right.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		left.collectFreeIdentifiers(freeIdentSet);
+		right.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override

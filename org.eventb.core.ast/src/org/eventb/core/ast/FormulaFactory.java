@@ -56,7 +56,7 @@ public class FormulaFactory {
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Expression[] children, SourceLocation location) {
-		return new AssociativeExpression(children, tag, location);
+		return new AssociativeExpression(children, tag, location, this);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class FormulaFactory {
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, List<Expression> children, SourceLocation location) {
-		return new AssociativeExpression(children, tag, location);
+		return new AssociativeExpression(children, tag, location, this);
 	}
 	
 	/**
@@ -129,12 +129,26 @@ public class FormulaFactory {
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
 			SourceLocation location) {
-		return new AtomicExpression(tag, location);
+		return new AtomicExpression(tag, location, null, this);
+	}
+
+	/**
+	 * Returns a new empty set expression.
+	 * @param type
+	 *            the type of the empty set (must be a power set)
+	 * @param location
+	 *            the location of the empty set
+	 * 
+	 * @return a new empty set expression
+	 */
+	public AtomicExpression makeEmptySet(Type type, SourceLocation location) {
+		return new AtomicExpression(Formula.EMPTYSET, location, type, this);
 	}
 
 	/**
 	 * Returns a new "becomes equal to" assignment.
 	 * <p>
+	 * 
 	 * @param ident
 	 *            identifier which is assigned to (left-hand side)
 	 * @param value
@@ -279,7 +293,7 @@ public class FormulaFactory {
 	 */
 	public BinaryExpression makeBinaryExpression(int tag,
 			Expression left, Expression right, SourceLocation location) {
-		return new BinaryExpression(left, right, tag, location);
+		return new BinaryExpression(left, right, tag, location, this);
 	}
 
 	/**
@@ -314,7 +328,7 @@ public class FormulaFactory {
 	 * @return a new bool expression
 	 */
 	public BoolExpression makeBoolExpression(Predicate child, SourceLocation location) {
-		return new BoolExpression(child, Formula.KBOOL, location);
+		return new BoolExpression(child, Formula.KBOOL, location, this);
 	}
 
 	/**
@@ -348,6 +362,25 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Creates a new node representing a declaration of a bound identifier.
+	 * 
+	 * @param name
+	 *            the name of the identifier. Must not be null or an empty string.
+	 * @param location
+	 *            the source location of this identifer declaration
+	 * @param type
+	 *            the type of this identifier. Can be <code>null</code>.
+	 * @return a bound identifier declaration
+	 * 
+	 * @see #makeFreeIdentifier(String, SourceLocation)
+	 * @see #makeBoundIdentifier(int, SourceLocation)
+	 */
+	public BoundIdentDecl makeBoundIdentDecl(String name,
+			SourceLocation location, Type type) {
+		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location, type);
+	}
+
+	/**
 	 * Returns a new bound occurrence of an identifier.
 	 * 
 	 * @param index
@@ -361,7 +394,26 @@ public class FormulaFactory {
 	 */
 	public BoundIdentifier makeBoundIdentifier(int index,
 			SourceLocation location) {
-		return new BoundIdentifier(index, Formula.BOUND_IDENT, location);
+		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, null);
+	}
+
+	/**
+	 * Returns a new bound occurrence of an identifier.
+	 * 
+	 * @param index
+	 *            the index in the De Bruijn notation. Must be non-negative.
+	 * @param location
+	 *            the source location of this identifier occurence
+	 * @param type
+	 *            the type of this identifier. Can be <code>null</code>.
+	 * @return a bound identifier occurrence
+	 * 
+	 * @see #makeBoundIdentDecl(String, SourceLocation)
+	 * @see #makeFreeIdentifier(String, SourceLocation)
+	 */
+	public BoundIdentifier makeBoundIdentifier(int index,
+			SourceLocation location, Type type) {
+		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, type);
 	}
 
 	/**
@@ -378,7 +430,26 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location) {
-		return new FreeIdentifier(name, Formula.FREE_IDENT, location);
+		return new FreeIdentifier(name, Formula.FREE_IDENT, location, null);
+	}
+	
+	/**
+	 * Creates a new node representing a free occurence of an identifier.
+	 * 
+	 * @param name
+	 *            the name of the identifier. Must not be null or an empty string.
+	 * @param location
+	 *            the source location of this identifer occurence
+	 * @param type
+	 *            the type of this identifier. Can be <code>null</code>.
+	 * @return a free identifier
+	 * 
+	 * @see #makeBoundIdentDecl(String, SourceLocation)
+	 * @see #makeBoundIdentifier(int, SourceLocation)
+	 */
+	public FreeIdentifier makeFreeIdentifier(String name,
+			SourceLocation location, Type type) {
+		return new FreeIdentifier(name, Formula.FREE_IDENT, location, type);
 	}
 	
 	/**
@@ -393,8 +464,10 @@ public class FormulaFactory {
 		String name = identifier.getName();
 		assert name.charAt(name.length()-1) != '\'';
 		
-		FreeIdentifier primedIdentifier = makeFreeIdentifier(name + "'", identifier.getSourceLocation());
-		primedIdentifier.setType(identifier.getType(), null);
+		FreeIdentifier primedIdentifier = makeFreeIdentifier(
+				name + "'",
+				identifier.getSourceLocation(),
+				identifier.getType());
 		
 		return primedIdentifier;
 	}
@@ -410,7 +483,7 @@ public class FormulaFactory {
 	 */
 	public IntegerLiteral makeIntegerLiteral(BigInteger literal,
 			SourceLocation location) {
-		return new IntegerLiteral(literal, Formula.INTLIT, location);
+		return new IntegerLiteral(literal, Formula.INTLIT, location, this);
 	}
 
 	/**
@@ -453,7 +526,7 @@ public class FormulaFactory {
 			BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr,
 			SourceLocation location, QuantifiedExpression.Form form) {
 		return new QuantifiedExpression(expr, pred, boundIdentifiers, tag,
-				location, form);
+				location, form, this);
 	}
 
 	/**
@@ -479,7 +552,7 @@ public class FormulaFactory {
 			List<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
 			SourceLocation location, QuantifiedExpression.Form form) {
 		return new QuantifiedExpression(expr, pred, boundIdentifiers, tag,
-				location, form);
+				location, form, this);
 	}
 
 	/**
@@ -553,7 +626,7 @@ public class FormulaFactory {
 	 * @return a new set extension
 	 */
 	public SetExtension makeSetExtension(Expression expression, SourceLocation location) {
-		return new SetExtension(expression, location);
+		return new SetExtension(expression, location, this);
 	}
 
 	/**
@@ -568,7 +641,7 @@ public class FormulaFactory {
 	 * @return a new set extension
 	 */
 	public SetExtension makeSetExtension(Expression[] expressions, SourceLocation location) {
-		return new SetExtension(expressions, location);
+		return new SetExtension(expressions, location, this);
 	}
 
 	/**
@@ -584,7 +657,7 @@ public class FormulaFactory {
 	 * @return a new set extension
 	 */
 	public SetExtension makeSetExtension(List<Expression> expressions, SourceLocation location) {
-		return new SetExtension(expressions, location);
+		return new SetExtension(expressions, location, this);
 	}
 
 	/**
@@ -630,7 +703,7 @@ public class FormulaFactory {
 	 */
 	public UnaryExpression makeUnaryExpression(int tag, Expression child,
 			SourceLocation location) {
-		return new UnaryExpression(child, tag, location);
+		return new UnaryExpression(child, tag, location, this);
 	}
 
 	/**

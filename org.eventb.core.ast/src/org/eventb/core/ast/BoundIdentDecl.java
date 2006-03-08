@@ -37,11 +37,15 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	
 	protected BoundIdentDecl(String name, int tag, SourceLocation location, Type type) {
 		super(tag, location, name.hashCode());
-		this.name = name;
-		this.type = type;
 		assert tag == Formula.BOUND_IDENT_DECL;
 		assert name != null;
 		assert name.length() != 0;
+
+		this.freeIdents = NO_FREE_IDENTS;
+		this.boundIdents = NO_BOUND_IDENTS;
+
+		this.name = name;
+		this.type = type;
 	}
 	
 	/**
@@ -142,7 +146,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Nothing to do.
 	}
 

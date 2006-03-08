@@ -105,8 +105,10 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected final boolean finalizeTypeCheck(boolean childrenOK, TypeUnifier unifier) {
 		assert typeChecked == false || typeChecked == childrenOK;
 		typeChecked = childrenOK;
-		for (FreeIdentifier ident: assignedIdents) {
-			typeChecked &= ident.solveType(unifier);
+		if (unifier != null) {
+			for (FreeIdentifier ident: assignedIdents) {
+				typeChecked &= ident.solveType(unifier);
+			}
 		}
 		return typeChecked;
 	}

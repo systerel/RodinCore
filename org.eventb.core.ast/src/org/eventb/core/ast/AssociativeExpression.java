@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -54,18 +55,23 @@ public class AssociativeExpression extends Expression {
 	private final Expression[] children;
 	
 	protected AssociativeExpression(Expression[] children, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory factory) {
+
 		super(tag, location, combineHashCodes(children));
 		this.children = new Expression[children.length];
 		System.arraycopy(children, 0, this.children, 0, children.length);
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 
-	protected AssociativeExpression(List<? extends Expression> children, int tag, SourceLocation location) {
+	protected AssociativeExpression(List<? extends Expression> children,
+			int tag, SourceLocation location, FormulaFactory factory) {
+
 		super(tag, location, combineHashCodes(children));
 		Expression[] model = new Expression[children.size()];
 		this.children = children.toArray(model);
 		checkPreconditions();
+		synthesizeType(factory);
 	}
 
 	private void checkPreconditions() {
@@ -74,6 +80,100 @@ public class AssociativeExpression extends Expression {
 		assert children.length >= 2;
 	}
 
+	private void synthesizeType(FormulaFactory ff) {
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(children);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		// Fast exit if first child is not typed
+		// (the most common case where type synthesis can't be done)
+		if (! children[0].isTypeChecked()) {
+			return;
+		}
+		
+		Type resultType;
+		Type partType, sourceType, targetType;
+		final int last = children.length - 1;
+		switch (getTag()) {
+		case Formula.BUNION:
+		case Formula.BINTER:
+			resultType = children[0].getType();
+			if (! (resultType instanceof PowerSetType)) {
+				return;
+			}
+			for (int i = 1; i <= last; i++) {
+				if (! resultType.equals(children[i].getType())) {
+					return;
+				}
+			}
+			break;
+		case Formula.BCOMP:
+			partType = children[0].getType().getSource();
+			if (partType == null) {
+				return;
+			}
+			for (int i = 1; i <= last; i++) {
+				final Type childType = children[i].getType();
+				if (! partType.equals(childType.getTarget())) {
+					return;
+				}
+				partType = childType.getSource();
+			}
+			sourceType = children[last].getType().getSource();
+			targetType = children[0].getType().getTarget();
+			resultType = ff.makeRelationalType(sourceType, targetType);
+			break;
+		case Formula.FCOMP:
+			partType = children[0].getType().getTarget();
+			if (partType == null) {
+				return;
+			}
+			for (int i = 1; i <= last; i++) {
+				final Type childType = children[i].getType();
+				if (! partType.equals(childType.getSource())) {
+					return;
+				}
+				partType = childType.getTarget();
+			}
+			sourceType = children[0].getType().getSource();
+			targetType = children[last].getType().getTarget();
+			resultType = ff.makeRelationalType(sourceType, targetType);
+			break;
+		case Formula.OVR:
+			resultType = children[0].getType();
+			if (! resultType.isRelational()) {
+				return;
+			}
+			for (int i = 1; i <= last; i++) {
+				if (! resultType.equals(children[i].getType())) {
+					return;
+				}
+			}
+			break;
+		case Formula.PLUS:
+		case Formula.MUL:
+			resultType = children[0].getType();
+			for (Expression child: children) {
+				final Type childType = child.getType();
+				if (! (childType instanceof IntegerType)) {
+					return;
+				}
+			}
+			break;
+		default:
+			assert false;
+			resultType = null;
+		}
+		setType(resultType, null);
+	}
+	
 	// indicates when the toString method should put parentheses
 	private final static BitSet[] leftNoParenthesesMap = new BitSet[tags.length];
 	private final static BitSet[] rightNoParenthesesMap = new BitSet[tags.length];
@@ -342,9 +442,9 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (Expression child: children) {
-			child.collectFreeIdentifiers(freeIdents);
+			child.collectFreeIdentifiers(freeIdentSet);
 		}
 	}
 

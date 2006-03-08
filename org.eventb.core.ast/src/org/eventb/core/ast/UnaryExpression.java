@@ -89,12 +89,135 @@ public class UnaryExpression extends Expression {
 		false // UNMINUS
 	};
 	                             
-	protected UnaryExpression(Expression child, int tag, SourceLocation location) {
+	protected UnaryExpression(Expression child, int tag, SourceLocation location,
+			FormulaFactory factory) {
+		
 		super(tag, location, child.hashCode());
 		this.child = child;
 
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert child != null;
+		
+		synthesizeType(factory);
+	}
+
+	private void synthesizeType(FormulaFactory ff) {
+		this.freeIdents = child.freeIdents;
+		this.boundIdents = child.boundIdents;
+
+		Type childType = child.getType();
+		
+		// Fast exit if children are not typed
+		// (the most common case where type synthesis can't be done)
+		if (childType == null) {
+			return;
+		}
+		
+		final Type resultType;
+		final Type alpha, beta;
+		switch (getTag()) {
+		case Formula.UNMINUS:
+			if (childType instanceof IntegerType) {
+				resultType = ff.makeIntegerType();
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.CONVERSE:
+			alpha = childType.getSource();
+			beta = childType.getTarget();
+			if (alpha != null) {
+				resultType = ff.makeRelationalType(beta, alpha);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KCARD:
+			alpha = childType.getBaseType();
+			if (alpha != null) {
+				resultType = ff.makeIntegerType();
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.POW:
+		case Formula.POW1:
+			alpha = childType.getBaseType();
+			if (alpha != null) {
+				resultType = ff.makePowerSetType(childType);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KUNION:
+		case Formula.KINTER:
+			final Type baseType = childType.getBaseType();
+			if (baseType != null && baseType.getBaseType() != null) {
+				resultType = baseType;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KDOM:
+			alpha = childType.getSource();
+			if (alpha != null) {
+				resultType = ff.makePowerSetType(alpha);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KRAN:
+			beta = childType.getTarget();
+			if (beta != null) {
+				resultType = ff.makePowerSetType(beta);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KPRJ1:
+			alpha = childType.getSource();
+			beta = childType.getTarget();
+			if (alpha != null) {
+				resultType = ff.makeRelationalType(
+						ff.makeProductType(alpha, beta),
+						alpha);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KPRJ2:
+			alpha = childType.getSource();
+			beta = childType.getTarget();
+			if (alpha != null) {
+				resultType = ff.makeRelationalType(
+						ff.makeProductType(alpha, beta),
+						beta);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KID:
+			alpha = childType.getBaseType();
+			if (alpha != null) {
+				resultType = ff.makeRelationalType(alpha, alpha);
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KMIN:
+		case Formula.KMAX:
+			alpha = childType.getBaseType();
+			if (alpha instanceof IntegerType) {
+				resultType = alpha;
+			} else {
+				resultType = null;
+			}
+			break;
+		default:
+			assert false;
+			resultType = null;
+		}
+		setType(resultType, null);
 	}
 
 	// for the operands that do not always need to be parenthesized,
@@ -300,8 +423,8 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		child.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		child.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override
@@ -370,8 +493,7 @@ public class UnaryExpression extends Expression {
 
 	private Predicate getWDPredicateKINTER(FormulaFactory formulaFactory) {
 		Predicate conj0 = child.getWDPredicateRaw(formulaFactory);
-		Expression emptyset = formulaFactory.makeAtomicExpression(EMPTYSET, null);
-		emptyset.setType(child.getType(), null);
+		Expression emptyset = formulaFactory.makeEmptySet(child.getType(), null);
 		Predicate conj1 = formulaFactory.makeRelationalPredicate(NOTEQUAL, child, emptyset, null);
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}

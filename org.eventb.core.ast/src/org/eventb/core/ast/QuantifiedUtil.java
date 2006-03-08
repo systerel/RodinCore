@@ -170,8 +170,10 @@ public abstract class QuantifiedUtil {
 			assert boundHere[i].getType() != null;
 			
 			String name = solve(boundHere[i].getName(), environment.getNames(), factory);
-			result[i] = factory.makeFreeIdentifier(name, boundHere[i].getSourceLocation());
-			result[i].setType(boundHere[i].getType(), null);
+			result[i] = factory.makeFreeIdentifier(
+					name, 
+					boundHere[i].getSourceLocation(),
+					boundHere[i].getType());
 			environment.addName(name, result[i].getType());
 		}
 		

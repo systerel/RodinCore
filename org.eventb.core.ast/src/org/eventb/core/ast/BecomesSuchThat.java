@@ -8,6 +8,7 @@
 
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -58,6 +60,7 @@ public class BecomesSuchThat extends Assignment {
 		this.condition = condition;
 		this.primedIdents = new BoundIdentDecl[] {primedIdent};
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	protected BecomesSuchThat(FreeIdentifier[] assignedIdents,
@@ -69,6 +72,7 @@ public class BecomesSuchThat extends Assignment {
 		this.primedIdents = new BoundIdentDecl[primedIdents.length];
 		System.arraycopy(primedIdents, 0, this.primedIdents, 0, primedIdents.length);
 		checkPreconditions();
+		synthesizeType();
 	}
 
 	protected BecomesSuchThat(List<FreeIdentifier> assignedIdents,
@@ -79,12 +83,47 @@ public class BecomesSuchThat extends Assignment {
 		this.condition = condition;
 		this.primedIdents = primedIdents.toArray(new BoundIdentDecl[primedIdents.size()]);
 		checkPreconditions();
+		synthesizeType();
 	}
 	
 	private void checkPreconditions() {
 		assert this.primedIdents.length == assignedIdents.length;
 	}
 	
+	private void synthesizeType() {
+		final int length = assignedIdents.length;
+		final Formula[] children = new Formula[length + 1];
+		System.arraycopy(assignedIdents, 0, children, 0, length);
+		children[length] = condition;
+		
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(children);
+		final BoundIdentifier[] boundIdentsBelow = 
+			boundIdentMerger.getBoundMergedArray(); 
+		this.boundIdents = 
+			getBoundIdentsAbove(boundIdentsBelow, primedIdents);
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		if (! condition.isTypeChecked()) {
+			return;
+		}
+
+		// Check equality of types
+		for (int i = 0; i < length; i++) {
+			final Type type = assignedIdents[i].getType();
+			if (type == null || ! type.equals(primedIdents[i].getType())) {
+				return;
+			}
+		}
+		finalizeTypeCheck(true, null);
+	}
+
 	/**
 	 * Returns the declaration of the primed identifiers created for each
 	 * assigned identifier.
@@ -118,11 +157,11 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.collectFreeIdentifiers(freeIdents);
+			ident.collectFreeIdentifiers(freeIdentSet);
 		}
-		condition.collectFreeIdentifiers(freeIdents);
+		condition.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override
@@ -257,20 +296,22 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {		
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if(condition.equals(btrue))
-			return btrue;
+	protected Predicate getFISPredicateRaw(FormulaFactory ff) {		
+		if (condition.getTag() == BTRUE)
+			return condition;
 		else
-			return formulaFactory.makeQuantifiedPredicate(EXISTS, primedIdents, condition, getSourceLocation()); 
+			return ff.makeQuantifiedPredicate(EXISTS, 
+					primedIdents, condition, getSourceLocation()); 
 	}
 
 	@Override
-	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
-		ITypeEnvironment typeEnvironment = formulaFactory.makeTypeEnvironment();
-		FreeIdentifier[] freeIdents = formulaFactory.makeFreshIdentifiers(primedIdents, typeEnvironment);
-		Substitution subst = new BoundIdentSubstitution(primedIdents, freeIdents, formulaFactory);
-		return condition.applySubstitution(subst, formulaFactory);
+	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
+		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		FreeIdentifier[] freshIdents = 
+			ff.makeFreshIdentifiers(primedIdents, typeEnvironment);
+		Substitution subst = 
+			new BoundIdentSubstitution(primedIdents, freshIdents, ff);
+		return condition.applySubstitution(subst, ff);
 	}
 
 	@Override

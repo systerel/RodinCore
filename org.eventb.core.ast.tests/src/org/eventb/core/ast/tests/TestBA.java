@@ -74,14 +74,15 @@ public class TestBA extends TestCase {
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inBA = inA.getBAPredicate(ff);
-			ITypeCheckResult intResult = inBA.typeCheck(newEnv);
-			assertTrue(input + "\n" + inBA.toString() + "\n" + inBA.getSyntaxTree() + "\n", intResult.isSuccess());
+			assertTrue(input + "\n" + inBA.toString() + "\n"
+					+ inBA.getSyntaxTree() + "\n",
+					inA.isTypeChecked());
 			
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
 			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			ITypeCheckResult newResult = exP.typeCheck(newEnv);
-			assertTrue(newResult.isSuccess());
+			exP.typeCheck(newEnv);
+			assertTrue(exP.isTypeChecked());
 			
 			assertEquals(input, exP, inBA);
 		}

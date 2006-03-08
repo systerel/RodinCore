@@ -39,6 +39,10 @@ public class UnaryPredicate extends Predicate {
 		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert child != null;
+		
+		this.freeIdents = child.freeIdents;
+		this.boundIdents = child.boundIdents;
+		finalizeTypeCheck(child.isTypeChecked());
 	}
 	
 	/**
@@ -98,8 +102,8 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		child.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		child.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override

@@ -41,11 +41,53 @@ public class AtomicExpression extends Expression {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 
-	protected AtomicExpression(int tag, SourceLocation location) {
+	protected AtomicExpression(int tag, SourceLocation location, Type type,
+			FormulaFactory factory) {
 		super(tag, location, 0);
 		assert tag >= firstTag && tag < firstTag+tags.length;
+
+		synthesizeType(factory, type);
 	}
 
+	private void synthesizeType(FormulaFactory ff, Type typeGiven) {
+		this.freeIdents = NO_FREE_IDENTS;
+		this.boundIdents = NO_BOUND_IDENTS;
+
+		final Type resultType;
+		switch (getTag()) {
+		case Formula.INTEGER:
+		case Formula.NATURAL:
+		case Formula.NATURAL1:
+			resultType = ff.makePowerSetType(ff.makeIntegerType());
+			break;
+		case Formula.BOOL:
+			resultType = ff.makePowerSetType(ff.makeBooleanType());
+			break;
+		case Formula.TRUE:
+		case Formula.FALSE:
+			resultType = ff.makeBooleanType();
+			break;
+		case Formula.EMPTYSET:
+			if (typeGiven instanceof PowerSetType) {
+				resultType = typeGiven;
+			} else {
+				resultType = null;
+			}
+			break;
+		case Formula.KPRED:
+		case Formula.KSUCC:
+			resultType = ff.makeRelationalType(
+					ff.makeIntegerType(),
+					ff.makeIntegerType()
+			);
+			break;
+		default:
+			assert false;
+			resultType = null;
+		}
+		setType(resultType, null);
+	}
+	
 	@Override
 	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
 		return tags[getTag()-firstTag];
@@ -77,9 +119,10 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		Type resultType;
-		
+	protected void typeCheck(TypeCheckResult result,
+			BoundIdentDecl[] quantifiedIdentifiers) {
+
+		final Type resultType;
 		switch (getTag()) {
 		case Formula.INTEGER:
 		case Formula.NATURAL:
@@ -96,6 +139,13 @@ public class AtomicExpression extends Expression {
 		case Formula.EMPTYSET:
 			TypeVariable alpha = result.newFreshVariable(getSourceLocation());
 			resultType = result.makePowerSetType(alpha);
+			break;
+		case Formula.KPRED:
+		case Formula.KSUCC:
+			resultType = result.makeRelationalType(
+					result.makeIntegerType(),
+					result.makeIntegerType()
+			);
 			break;
 		default:
 			assert false;
@@ -117,7 +167,7 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Nothing to do
 	}
 

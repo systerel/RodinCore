@@ -39,7 +39,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
@@ -567,8 +566,8 @@ public class TestFreeIdents extends TestCase {
 						mRelationalPredicate(Formula.IN, b1, BOOL),
 						mRelationalPredicate(Formula.IN, b0, S))
 		);
-		ITypeCheckResult tcResult = pred.typeCheck(tenv);
-		assertTrue("Initial type-check failed", tcResult.isSuccess());
+		pred.typeCheck(tenv);
+		assertTrue("Initial type-check failed", pred.isTypeChecked());
 		
 		// Create one fresh identifier 
 		FreeIdentifier[] idents = ff.makeFreshIdentifiers(mList(bd_x1), tenv);

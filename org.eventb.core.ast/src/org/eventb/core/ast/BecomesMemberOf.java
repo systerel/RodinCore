@@ -11,6 +11,7 @@ package org.eventb.core.ast;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -25,9 +26,29 @@ public class BecomesMemberOf extends Assignment {
 
 	private final Expression setExpr;
 	
-	public BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr, SourceLocation location) {
+	public BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
+			SourceLocation location) {
 		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(), assignedIdent);
 		this.setExpr = setExpr;
+
+		IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
+					assignedIdent.freeIdents, setExpr.freeIdents);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = IdentListMerger.makeMerger(
+					assignedIdent.boundIdents, setExpr.boundIdents);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+
+		// Check equality of types
+		final Type type = assignedIdent.getType();
+		if (type != null && type.equals(setExpr.getType().getBaseType())) {
+			finalizeTypeCheck(true, null);
+		}
 	}
 
 	/**
@@ -49,11 +70,11 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.collectFreeIdentifiers(freeIdents);
+			ident.collectFreeIdentifiers(freeIdentSet);
 		}
-		setExpr.collectFreeIdentifiers(freeIdents);
+		setExpr.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override
@@ -161,15 +182,18 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {
-		Expression emptySet = formulaFactory.makeAtomicExpression(EMPTYSET, getSourceLocation());
-		return formulaFactory.makeRelationalPredicate(NOTEQUAL, setExpr, emptySet, getSourceLocation());
+	protected Predicate getFISPredicateRaw(FormulaFactory ff) {
+		final SourceLocation loc = getSourceLocation();
+		final Expression emptySet = ff.makeEmptySet(setExpr.getType(), null);
+		return ff.makeRelationalPredicate(NOTEQUAL, setExpr, emptySet, loc);
 	}
 
 	@Override
-	protected Predicate getBAPredicateRaw(FormulaFactory formulaFactory) {
-		FreeIdentifier primedIdentifier = formulaFactory.makePrimedFreeIdentifier(assignedIdents[0]);
-		return formulaFactory.makeRelationalPredicate(IN, primedIdentifier, setExpr, getSourceLocation());
+	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
+		final SourceLocation loc = getSourceLocation();
+		final FreeIdentifier primedIdentifier = 
+			ff.makePrimedFreeIdentifier(assignedIdents[0]);
+		return ff.makeRelationalPredicate(IN, primedIdentifier, setExpr, loc);
 	}
 
 	@Override

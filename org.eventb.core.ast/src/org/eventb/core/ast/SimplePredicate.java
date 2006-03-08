@@ -36,9 +36,13 @@ public class SimplePredicate extends Predicate {
 	
 	protected SimplePredicate(Expression child, int tag, SourceLocation location) {
 		super(tag, location, child.hashCode());
+		this.child = child;
+		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		
-		this.child = child;
+		this.freeIdents = child.freeIdents;
+		this.boundIdents = child.boundIdents;
+		finalizeTypeCheck(child.isTypeChecked());
 	}
 	
 	/**
@@ -97,8 +101,8 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		child.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		child.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override

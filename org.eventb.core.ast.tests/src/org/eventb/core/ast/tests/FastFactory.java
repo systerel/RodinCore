@@ -125,12 +125,24 @@ public class FastFactory {
 		return ff.makeBoundIdentDecl(name, null);
 	}
 
+	public static BoundIdentDecl mBoundIdentDecl(String name, Type type) {
+		return ff.makeBoundIdentDecl(name, null, type);
+	}
+
 	public static BoundIdentifier mBoundIdentifier(int index) {
 		return ff.makeBoundIdentifier(index, null);
 	}
 
+	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
+		return ff.makeBoundIdentifier(index, null, type);
+	}
+
 	public static FreeIdentifier mFreeIdentifier(String name) {
 		return ff.makeFreeIdentifier(name, null);
+	}
+
+	public static FreeIdentifier mFreeIdentifier(String name, Type type) {
+		return ff.makeFreeIdentifier(name, null, type);
 	}
 
 	public static IntegerLiteral mIntegerLiteral() {

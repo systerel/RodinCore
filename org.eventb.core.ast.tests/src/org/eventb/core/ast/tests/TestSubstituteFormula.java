@@ -4,6 +4,7 @@ import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -52,21 +53,11 @@ public class TestSubstituteFormula extends TestCase {
 	/* Abstract class for tests */
 	private static abstract class TestItem {
 		abstract void doTest();
-		// TODO remove this method when synthesis typeCheck is implemented
-		protected void typeCheck(Predicate pred) {
-			// Close the predicate with additional bound identifiers so that it can typecheck.
-			Predicate closed = forall(BD("a", "b", "c", "d", "e"), pred);
-			assertTrue(closed.isWellFormed());
-			closed.typeCheck(tenv);
-			assertTrue("Can't typecheck " + pred.toString(), pred.isTypeChecked());
+
+		protected void typeCheck(Formula form) {
+			TestSubstituteFormula.typeCheck(form, tenv);
 		}
-		protected void typeCheck(Expression expr) {
-			// Close the predicate with additional bound identifiers so that it can typecheck.
-			Predicate closed = forall(BD("a", "b", "c", "d", "e"), in(expr, INTEGER));
-			assertTrue(closed.isWellFormed());
-			closed.typeCheck(tenv);
-			assertTrue("Can't typecheck " + expr.toString(), expr.isTypeChecked());
-		}
+		
 	}
 	
 	static class STestItem extends TestItem {
@@ -82,24 +73,17 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			formula.typeCheck(tenv);
-			assertTrue(formula.toString(), formula.isTypeChecked());
+			typeCheck(formula);
 			
-			for(Expression expression : sbs.values()) {
-				expression.typeCheck(tenv);
-				assertTrue(expression.toString(), expression.isTypeChecked());
+			for (Expression expression: sbs.values()) {
+				typeCheck(expression);
 			}
-			
+
 			// Type-check the expected result before comparing it
-			expected.typeCheck(tenv);
-			assertTrue(formula.toString(), expected.isTypeChecked());
+			typeCheck(expected);
 
 			Predicate result = formula.substituteFreeIdents(sbs, ff);
-			
-			// TODO remove type-check below when type synthesizer is implemented
-			typeCheck(result);
 			assertTrue(formula.toString(), result.isTypeChecked());
-			
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
 		}
 		
@@ -124,32 +108,31 @@ public class TestSubstituteFormula extends TestCase {
 		
 		@Override
 		public void doTest() {
-			formula.typeCheck(tenv);
-			assertTrue(formula.toString(), formula.isTypeChecked());
+			typeCheck(formula);
 			
-			for(Predicate predicate : sbs) {
-				predicate.typeCheck(tenv);
-				assertTrue(predicate.toString(), predicate.isTypeChecked());
+			for (Predicate predicate : sbs) {
+				typeCheck(predicate);
 			}
 
 			// Type-check the expected result before comparing it
-			expected.typeCheck(tenv);
-			assertTrue(formula.toString(), expected.isTypeChecked());
+			typeCheck(expected);
 
 			Map<FreeIdentifier, Expression> sbsMap = makeSBS(sbs);
 			Predicate iresult = formula.getPredicate().substituteFreeIdents(sbsMap, ff);
-			Predicate result = ff.makeQuantifiedPredicate(formula.getTag(), formula.getBoundIdentifiers(), iresult, null);
+			assertTrue(formula.toString(), iresult.isTypeChecked());
 
-			// TODO remove type-check below when type synthesizer is implemented
-			result.typeCheck(tenv);
+			Predicate result = ff.makeQuantifiedPredicate(formula.getTag(),
+					formula.getBoundIdentifiers(), iresult, null);
+
 			assertTrue(formula.toString(), result.isTypeChecked());
-			
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
 		}
-		
+
 		private Map<FreeIdentifier, Expression> makeSBS(Predicate[] predicates) {
-			HashMap<FreeIdentifier, Expression> map = new HashMap<FreeIdentifier, Expression>(predicates.length + predicates.length/4 + 1);
-			for(Predicate pp : predicates) {
+			final int length = predicates.length;
+			HashMap<FreeIdentifier, Expression> map = 
+				new HashMap<FreeIdentifier, Expression>(length * 4 / 3);
+			for (Predicate pp : predicates) {
 				map.put(fst(pp), snd(pp));
 			}
 			return map;
@@ -184,14 +167,18 @@ public class TestSubstituteFormula extends TestCase {
 		return ff.makeProductType(left, right);
 	}
 	
+	private static Type REL(Type left, Type right) {
+		return POW(CPROD(left, right));
+	}
+	
 	static AtomicExpression INTEGER = ff.makeAtomicExpression(Formula.INTEGER, null);
 	
-	private static FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
-	private static FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
-	private static FreeIdentifier id_A = ff.makeFreeIdentifier("A", null);
-	private static FreeIdentifier id_f = ff.makeFreeIdentifier("f", null);
-	private static FreeIdentifier id_a = ff.makeFreeIdentifier("a", null);
-	private static FreeIdentifier id_b = ff.makeFreeIdentifier("b", null);
+	private static FreeIdentifier id_x = mFreeIdentifier("x", tINTEGER);
+	private static FreeIdentifier id_y = mFreeIdentifier("y", tINTEGER);
+	private static FreeIdentifier id_A = mFreeIdentifier("A", null);
+	private static FreeIdentifier id_f = mFreeIdentifier("f", REL(tINTEGER,tINTEGER));
+	private static FreeIdentifier id_a = mFreeIdentifier("a", tINTEGER);
+	private static FreeIdentifier id_b = mFreeIdentifier("b", tINTEGER);
 
 	public static final ITypeEnvironment tenv = mTypeEnvironment(
 			mList(
@@ -207,7 +194,7 @@ public class TestSubstituteFormula extends TestCase {
 					tINTEGER,
 					POW(tINTEGER),
 					POW(tINTEGER),
-					POW(CPROD(tINTEGER,tINTEGER)),
+					REL(tINTEGER,tINTEGER),
 					POW(tBOOL)
 			)
 	);
@@ -247,8 +234,19 @@ public class TestSubstituteFormula extends TestCase {
 		return bd;
 	}
 	
+	static BoundIdentDecl[] BDI(String... names) {
+		BoundIdentDecl[] bd = new BoundIdentDecl[names.length];
+		for(int i=0; i<names.length; i++)
+			bd[i] = ff.makeBoundIdentDecl(names[i], null, tINTEGER);
+		return bd;
+	}
+	
 	static BoundIdentifier bd(int i) {
 		return ff.makeBoundIdentifier(i, null);
+	}
+	
+	static BoundIdentifier bdi(int i) {
+		return ff.makeBoundIdentifier(i, null, tINTEGER);
 	}
 	
 	private static Expression apply(Expression l, Expression r) {
@@ -334,39 +332,43 @@ public class TestSubstituteFormula extends TestCase {
 			},
 			new PredicateBuilder() {
 				public Predicate build(Predicate child) {
-					return forall(BD("w"), limp(in(bd(0), INTEGER), child));
+					return forall(BDI("w"), limp(in(bdi(0), INTEGER), child));
 				}
 			},
 			new PredicateBuilder() {
 				public Predicate build(Predicate child) {
-					return exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), child));
+					return exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), child));
 				}
 			},
 			new PredicateBuilder() {
 				public Predicate build(Predicate child) {
-					return exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), child));
+					return exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), child));
 				}
 			},
 	};
 	
 	Predicate[] spr = new Predicate[] {
 			in(plus(id_y, apply(id_f, id_y)), INTEGER),
-			forall(BD("w"), limp(in(bd(0), INTEGER), eq(plus(id_x, num(1)), bd(0)))),
-			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
-					forall(BD("h","k"), limp(eq(plus(bd(1),apply(id_f, num(5)),minus(num(9), id_y),bd(0)),minus(bd(3),bd(2))), lt(apply(id_f, num(5)),bd(3))))
+			forall(BDI("w"), limp(in(bdi(0), INTEGER), eq(plus(id_x, num(1)), bdi(0)))),
+			exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), 
+					forall(BDI("h","k"), limp(
+							eq(plus(bdi(1),apply(id_f, num(5)),minus(num(9), id_y),bdi(0)),minus(bdi(3),bdi(2))),
+							lt(apply(id_f, num(5)),bdi(3))))
 			)),
-			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
-					forall(BD("h","k"), limp(eq(plus(bd(1),apply(id_f, bd(4)),plus(bd(3),num(1)),bd(0)),minus(bd(3),bd(2))), lt(apply(id_f, bd(4)),bd(3))))
+			exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), 
+					forall(BDI("h","k"), limp(
+							eq(plus(bdi(1),apply(id_f, bdi(4)),plus(bdi(3),num(1)),bdi(0)),minus(bdi(3),bdi(2))),
+							lt(apply(id_f, bdi(4)),bdi(3))))
 			)),
-			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
-					forall(BD("h","k"), limp(eq(plus(bd(1),apply(id_f, bd(4)),plus(bd(3),num(1)),bd(0)),minus(bd(3),bd(2))), exists(BD("z"),lt(plus(bd(0),apply(id_f, bd(5))),bd(4)))))
+			exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), 
+					forall(BDI("h","k"), limp(eq(plus(bdi(1),apply(id_f, bdi(4)),plus(bdi(3),num(1)),bdi(0)),minus(bdi(3),bdi(2))), exists(BDI("z"),lt(plus(bdi(0),apply(id_f, bdi(5))),bdi(4)))))
 			)),
-			exists(BD("e", "f"), limp(eq(plus(bd(1),bd(0)),num(1)), 
-					forall(BD("i","k"), limp(
-							eq(plus(apply(id_f, bd(4)), bd(1), plus(bd(3),num(1)), bd(0)), minus(bd(3),bd(2))),
-							exists(BD("z"), lt(plus(bd(0), bd(2)), bd(4)))))
+			exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), 
+					forall(BDI("i","k"), limp(
+							eq(plus(apply(id_f, bdi(4)), bdi(1), plus(bdi(3),num(1)), bdi(0)), minus(bdi(3),bdi(2))),
+							exists(BDI("z"), lt(plus(bdi(0), bdi(2)), bdi(4)))))
 			)),
-			forall(BD("x"), eq(bd(0), plus(id_a, num(1)))),
+			forall(BDI("x"), eq(bdi(0), plus(id_a, num(1)))),
 			eq(id_a, plus(id_b, num(1))),
 	};
 	
@@ -375,8 +377,8 @@ public class TestSubstituteFormula extends TestCase {
 			plus(id_x, num(1)),
 			apply(id_f, num(5)),
 			minus(num(9), id_y),
-			apply(id_f, bd(2)),
-			plus(bd(1),num(1)),
+			apply(id_f, bdi(2)),
+			plus(bdi(1),num(1)),
 	};
 	
 	static class UTestItem extends TestItem {
@@ -406,27 +408,13 @@ public class TestSubstituteFormula extends TestCase {
 		@Override
 		public void doTest() {
 			Predicate predicate = builder.build(subpred);
-			predicate.typeCheck(tenv);
-			assertTrue(predicate.toString(), predicate.isTypeChecked());
+			typeCheck(predicate);
 			
-			for(Expression expr : map) {
-				if (expr != null) {
-					typeCheck(expr);
-					assertTrue(expr.toString(), expr.isTypeChecked());
-				}
-			}
-			
-			// Type-check the expected result before comparing it
-			typeCheck(expected);
-			assertTrue(predicate.toString(), expected.isTypeChecked());
+			assertTrue(expected.isTypeChecked());
 
 			Predicate result = subpred.instantiate(map, ff);
 			result = builder.build(result);
-
-			// TODO remove type-check below when type synthesizer is implemented
-			typeCheck(result);
 			assertTrue(predicate.toString(), result.isTypeChecked());
-			
 			assertEquals(predicate + "\n" + mapImage + "\n", expected, result);
 		}
 		
@@ -451,7 +439,7 @@ public class TestSubstituteFormula extends TestCase {
 			new UTestItem(spa[3], tra[3], mList(null, sea[4], sea[5], null), spr[4]),
 			new BTestItem(pra[2], mp(pxx[0],pxx[1]), prb[4]),
 			new UTestItem(spa[3], tra[3], mList(sea[4], null, sea[5], null), spr[5]),
-			// Tqo examples from Javadoc of QuantifiedPredicate.instantiate()
+			// Two examples from Javadoc of QuantifiedPredicate.instantiate()
 			new UTestItem(spa[0], tra[4], mList(null, id_a), spr[6]),
 			new UTestItem(spa[0], tra[4], mList(id_a, id_b), spr[7]),
 	};
@@ -469,8 +457,7 @@ public class TestSubstituteFormula extends TestCase {
 							mBinaryExpression(DIV, bd(1), id_a))
 			);
 		ITypeEnvironment te = mTypeEnvironment();
-		pred.typeCheck(te);
-		assertTrue(pred.isTypeChecked());
+		typeCheck(pred, te);
 		
         Expression[] witnesses = mList(id_a, null);
         
@@ -479,17 +466,14 @@ public class TestSubstituteFormula extends TestCase {
 					mRelationalPredicate(EQUAL, bd(0),
 							mBinaryExpression(DIV, id_a, id_a))
 			);
-		expected.typeCheck(te);
-		assertTrue(expected.isTypeChecked());
+		typeCheck(expected, te);
         
         Predicate result = pred.instantiate(witnesses, ff);
-		// TODO remove this code when synthesis typeCheck is implemented
-        result.typeCheck(te);
 		assertTrue(result.isTypeChecked());
         assertEquals(pred.toString(), expected, result);
 	}
 
-	private void typeCheck(Formula formula, ITypeEnvironment te) {
+	protected static void typeCheck(Formula formula, ITypeEnvironment te) {
 		formula.typeCheck(te);
 		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
 	}
@@ -509,8 +493,8 @@ public class TestSubstituteFormula extends TestCase {
 		Expression expExpr = plus(num(0), id_y);
 		typeCheck(expExpr, te);
 		Expression actual = expr.applyAssignment(assignment, ff);
-		// TODO remove typecheck below
-		typeCheck(actual, te);
+		assertTrue("Formula " + actual + " should be typechecked.",
+				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
 		
 		// Second example
@@ -519,8 +503,8 @@ public class TestSubstituteFormula extends TestCase {
 		expExpr = plus(plus(id_x, num(1)), id_y);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
-		// TODO remove typecheck below
-		typeCheck(actual, te);
+		assertTrue("Formula " + actual + " should be typechecked.",
+				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
 		
 		// Third example
@@ -529,8 +513,8 @@ public class TestSubstituteFormula extends TestCase {
 		expExpr = plus(id_y, id_x);
 		typeCheck(expExpr, te);
 		actual = expr.applyAssignment(assignment, ff);
-		// TODO remove typecheck below
-		typeCheck(actual, te);
+		assertTrue("Formula " + actual + " should be typechecked.",
+				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
 		
 		// Example with a predicate and a bound variable capture
@@ -541,8 +525,8 @@ public class TestSubstituteFormula extends TestCase {
 		Predicate expPred = forall(BD("z"), eq(bd(0), id_y));
 		typeCheck(expPred, te);
 		Predicate actualPred = pred.applyAssignment(assignment, ff);
-		// TODO remove typecheck below
-		typeCheck(actualPred, te);
+		assertTrue("Formula " + actualPred + " should be typechecked.",
+				actualPred.isTypeChecked());
 		assertEquals(expPred, actualPred);
 	}
 	

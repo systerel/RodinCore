@@ -26,10 +26,17 @@ public class BoolExpression extends Expression {
 	// child
 	private final Predicate child;
 	
-	protected BoolExpression(Predicate child, int tag, SourceLocation location) {
+	protected BoolExpression(Predicate child, int tag, SourceLocation location,
+			FormulaFactory ff) {
+		
 		super(tag, location, child.hashCode());
 		assert tag == KBOOL;
 		this.child = child;
+		this.freeIdents = child.freeIdents;
+		this.boundIdents = child.boundIdents;
+		if (child.isTypeChecked()) {
+			setType(ff.makeBooleanType(), null);
+		}
 	}
 
 	/**
@@ -89,8 +96,8 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		child.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		child.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override

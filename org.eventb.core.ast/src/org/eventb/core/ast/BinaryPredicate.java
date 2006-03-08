@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -48,8 +49,27 @@ public class BinaryPredicate extends Predicate {
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert left != null;
 		assert right != null;
+
+		synthesizeType();
 	}
 	
+	private void synthesizeType() {
+		IdentListMerger freeIdentMerger = 
+			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+		IdentListMerger boundIdentMerger = 
+			IdentListMerger.makeMerger(left.boundIdents, right.boundIdents);
+		this.boundIdents = boundIdentMerger.getBoundMergedArray();
+
+		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
+		finalizeTypeCheck(left.isTypeChecked() && right.isTypeChecked());
+	}
+
 	// indicates when toString should put itself inside parentheses
 	private static final BitSet[] parenthesesMap = new BitSet[tags.length];
 	
@@ -153,9 +173,9 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
-		left.collectFreeIdentifiers(freeIdents);
-		right.collectFreeIdentifiers(freeIdents);
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
+		left.collectFreeIdentifiers(freeIdentSet);
+		right.collectFreeIdentifiers(freeIdentSet);
 	}
 
 	@Override

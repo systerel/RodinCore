@@ -33,10 +33,12 @@ public class LiteralPredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 	
 	protected LiteralPredicate(int tag, SourceLocation location) {
-			super(tag, location, 0);
-			assert tag >= firstTag && tag < firstTag+tags.length;
-			// Always type-checked.
-			finalizeTypeCheck(true);
+		super(tag, location, 0);
+		assert tag >= firstTag && tag < firstTag+tags.length;
+		
+		this.freeIdents = NO_FREE_IDENTS;
+		this.boundIdents = NO_BOUND_IDENTS;
+		finalizeTypeCheck(true);
 	}
 
 	@Override
@@ -80,7 +82,7 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Nothing to do
 	}
 

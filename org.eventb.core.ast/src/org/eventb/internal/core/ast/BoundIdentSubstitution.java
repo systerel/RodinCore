@@ -105,7 +105,10 @@ public class BoundIdentSubstitution extends Substitution {
 			return substitutes[rootIndex].getSubstitute(ident, nbOfInternallyBound);
 		// Externally bound identifier
 		final int newIndex = index - substitutes.length + newDecls.size();
-		return ff.makeBoundIdentifier(newIndex, ident.getSourceLocation());
+		return ff.makeBoundIdentifier(
+				newIndex, 
+				ident.getSourceLocation(),
+				ident.getType());
 	}
 
 	public List<BoundIdentDecl> getNewDeclarations() {

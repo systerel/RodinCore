@@ -17,7 +17,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * Represents a bound identifier inside an event-B formula.
  * <p>
  * A bound identifier is encoded using the De Bruijn notation. The corresponding
- * quantifier (which is a {@link FreeIdentifier}) is retrieved using the index
+ * quantifier (which is a {@link BoundIdentDecl}) is retrieved using the index
  * of the bound identifier. Index 0 represents the nearest quantifier up in the
  * formula.
  * </p>
@@ -29,14 +29,21 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 public class BoundIdentifier extends Identifier {
 	
 	// index of this bound identifier
-	// helps find its corresponding free variable in the formula
+	// helps find its corresponding declaration in the formula
 	private final int boundIndex;
 
-	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location) {
+	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location,
+			Type type) {
+
 		super(tag, location, boundIndex);
-		this.boundIndex = boundIndex;
 		assert tag == Formula.BOUND_IDENT;
 		assert 0 <= boundIndex;
+		
+		this.boundIndex = boundIndex;
+		
+		this.freeIdents = NO_FREE_IDENTS;
+		this.boundIdents = new BoundIdentifier[] {this};
+		this.setType(type, null);
 	}
 
 	/**
@@ -46,6 +53,17 @@ public class BoundIdentifier extends Identifier {
 	 */
 	public int getBoundIndex() {
 		return boundIndex;
+	}
+
+	/**
+	 * Returns the declaration of this identifier.
+	 * 
+	 * @param boundIdentDecls
+	 *            declarations of bound identifier above this node
+	 * @return the declaration of this bound identifier
+	 */
+	public BoundIdentDecl getDeclaration(BoundIdentDecl[] boundIdentDecls) {
+		return boundIdentDecls[boundIdentDecls.length - boundIndex - 1];
 	}
 
 	private static String resolveIndex(int index, String[] boundIdents) {
@@ -99,7 +117,7 @@ public class BoundIdentifier extends Identifier {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		final BoundIdentDecl decl = quantifiedIdentifiers[quantifiedIdentifiers.length - boundIndex - 1];
+		final BoundIdentDecl decl = getDeclaration(quantifiedIdentifiers);
 		assert decl != null : "Bound variable without a declaration";
 		setType(decl.getType(), result);
 	}
@@ -110,7 +128,7 @@ public class BoundIdentifier extends Identifier {
 	}
 
 	@Override
-	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdents) {
+	protected void collectFreeIdentifiers(LinkedHashSet<FreeIdentifier> freeIdentSet) {
 		// Nothing to do
 	}
 
@@ -130,7 +148,10 @@ public class BoundIdentifier extends Identifier {
 			//  Tightly bound so not changed
 			return this;
 		}
-		return factory.makeBoundIdentifier(boundIndex + binding.size(), getSourceLocation());
+		return factory.makeBoundIdentifier(
+				boundIndex + binding.size(), 
+				getSourceLocation(),
+				getType());
 	}
 
 	@Override

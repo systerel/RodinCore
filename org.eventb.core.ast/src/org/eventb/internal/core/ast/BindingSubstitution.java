@@ -51,7 +51,10 @@ public class BindingSubstitution extends SimpleSubstitution {
 		final int index = ident.getBoundIndex();
 		if (index < nbOfInternallyBound)
 			return ident;
-		return ff.makeBoundIdentifier(index + offset, ident.getSourceLocation());
+		return ff.makeBoundIdentifier(
+				index + offset, 
+				ident.getSourceLocation(),
+				ident.getType());
 	}
 	
 }

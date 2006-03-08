@@ -82,14 +82,13 @@ public class TestWD extends TestCase {
 			assertTrue("Couldn't parse " + input, resIn.isSuccess());
 			Predicate inP = resIn.getParsedPredicate();
 			ITypeCheckResult result = inP.typeCheck(env);
-			assertTrue(input, result.isSuccess());
+			assertTrue("Couldn't typecheck " + input, inP.isTypeChecked());
 			
 			ITypeEnvironment newEnv = env.clone();
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inWD = inP.getWDPredicate(ff);
-			ITypeCheckResult intResult = inWD.typeCheck(newEnv);
-			assertTrue(input + "\n" + inWD.toString() + "\n" + inWD.getSyntaxTree() + "\n", intResult.isSuccess());
+			assertTrue(input + "\n" + inWD.toString() + "\n" + inWD.getSyntaxTree() + "\n", inWD.isTypeChecked());
 			
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
