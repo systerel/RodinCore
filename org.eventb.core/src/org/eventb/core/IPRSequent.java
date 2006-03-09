@@ -38,6 +38,6 @@ public interface IPRSequent extends IInternalElement {
 	// Duplicates from IPOSequent. Typically used only internally.
 	IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	IPOHypothesis getHypothesis() throws RodinDBException;
-	IPOAnyPredicate getGoal() throws RodinDBException;
+	IPOPredicate getGoal() throws RodinDBException;
 
 }

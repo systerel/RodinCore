@@ -34,7 +34,7 @@ public class ContextRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									axiom.getElementName() +  "/WD",
 									cache.getHypSetName(axiom.getElementName()),
-									new ProofObligation.PForm(wdPredicate),
+									wdPredicate,
 									"Well-definedness of Axiom"
 							);
 							wdObligation.sources.put("axiom", axiom.getHandleIdentifier());
@@ -55,7 +55,7 @@ public class ContextRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									theorem.getElementName() + "/WD",
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(wdPredicate),
+									wdPredicate,
 									"Well-definedness of Theorem"
 							);
 							wdObligation.sources.put("theorem", theorem.getHandleIdentifier());
@@ -65,7 +65,7 @@ public class ContextRuleBase {
 							ProofObligation obligation = new ProofObligation(
 									theorem.getElementName(),
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(predicate),
+									predicate,
 									"Truth of Theorem"
 							);
 							obligation.sources.put("theorem", theorem.getHandleIdentifier());

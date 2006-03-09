@@ -28,7 +28,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.core.protopog.ProofObligation.SForm;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -48,7 +47,7 @@ public class MachineRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									invariant.getElementName() +  "/WD",
 									cache.getHypSetName(invariant.getElementName()),
-									new ProofObligation.PForm(wdPredicate),
+									wdPredicate,
 									"Well-definedness of Invariant"
 							);
 							wdObligation.sources.put("invariant", invariant.getHandleIdentifier());
@@ -69,7 +68,7 @@ public class MachineRuleBase {
 							ProofObligation wdObligation = new ProofObligation(
 									theorem.getElementName() + "/WD",
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(wdPredicate),
+									wdPredicate,
 									"Well-definedness of Theorem"
 							);
 							wdObligation.sources.put("theorem", theorem.getHandleIdentifier());
@@ -79,7 +78,7 @@ public class MachineRuleBase {
 							ProofObligation obligation = new ProofObligation(
 									theorem.getElementName(),
 									cache.getHypSetName(theorem.getElementName()),
-									new ProofObligation.PForm(predicate),
+									predicate,
 									"Truth of Theorem"
 							);
 							obligation.sources.put("theorem", theorem.getHandleIdentifier());
@@ -111,14 +110,14 @@ public class MachineRuleBase {
 					for(ISCEvent event : cache.getEvents()) {
 						String evtName = event.getElementName();
 						IGuard[] guards = event.getGuards();
-						ITypeEnvironment typeEnvironment = cache.getTypeEnvironment(event.getSCVariables(), null);
+						ITypeEnvironment typeEnvironment = cache.getTypeEnvironment(event.getSCVariables(), true, null);
 						ITypeEnvironment fullTypeEnvironment = cache.getGlobalTypeEnvironment().clone();
 						fullTypeEnvironment.addAll(typeEnvironment);
 						
 						String globalHypsetName = (evtName.equals("INITIALISATION")) ? cache.getOldHypSetName() : cache.getNewHypsetName();
 						
 						// MDL_GRD_WD
-						ArrayList<ProofObligation.Form> precGuards = new ArrayList<ProofObligation.Form>(guards.length);
+						ArrayList<Predicate> precGuards = new ArrayList<Predicate>(guards.length);
 						for(IGuard guard : guards) { // guards is the empty list for the initialisation
 							Predicate predicate = cache.getPredicate(guard.getContents(), fullTypeEnvironment);
 							Predicate wdPredicate = predicate.getWDPredicate(cache.getFactory());
@@ -129,22 +128,22 @@ public class MachineRuleBase {
 										evtName + "/" + guard.getElementName() + "/WD",
 										typeEnvironment,
 										globalHypsetName,
-										new ArrayList<ProofObligation.Form>(precGuards),
-										new ProofObligation.PForm(wdPredicate),
+										new ArrayList<Predicate>(precGuards),
+										wdPredicate,
 										"Well-definedness of Guard",
 										new HashMap<String, String>(0),
 										sources
 										)
 								);
 							}
-							precGuards.add(new ProofObligation.PForm(predicate));
+							precGuards.add(predicate);
 						}
 						
 						// create existentially quantified guards (for use in MDL_DLK)
 						if (precGuards.size() > 0) { // this is false for the initialisation
 							Predicate[] gdPredicates = new Predicate[precGuards.size()];
 							for (int i = 0; i < gdPredicates.length; i++) {
-								gdPredicates[i] = ((ProofObligation.PForm) precGuards.get(i)).predicate;
+								gdPredicates[i] = precGuards.get(i);
 							}
 							Predicate conjGuard;
 							if(gdPredicates.length>1)
@@ -201,8 +200,8 @@ public class MachineRuleBase {
 												evtName + "/" + varList + "/WD",
 												typeEnvironment,
 												globalHypsetName,
-												new ArrayList<ProofObligation.Form>(precGuards),
-												new ProofObligation.PForm(wdPredicate),
+												new ArrayList<Predicate>(precGuards),
+												wdPredicate,
 												"Well-definedness of Action",
 												new HashMap<String, String>(0),
 												sources
@@ -218,8 +217,8 @@ public class MachineRuleBase {
 												evtName + "/" + varList + "/FIS",
 												typeEnvironment,
 												globalHypsetName,
-												new ArrayList<ProofObligation.Form>(precGuards),
-												new ProofObligation.PForm(fisPredicate),
+												new ArrayList<Predicate>(precGuards),
+												fisPredicate,
 												"Feasibility of Action",
 												new HashMap<String, String>(0),
 												sources
@@ -242,7 +241,7 @@ public class MachineRuleBase {
 								}
 							}
 							if(idInt || evtName.equals("INITIALISATION")) {
-								ArrayList<ProofObligation.Form> prec = new ArrayList<ProofObligation.Form>(precGuards);
+								ArrayList<Predicate> prec = new ArrayList<Predicate>(precGuards);
 								ArrayList<BecomesEqualTo> post = new ArrayList<BecomesEqualTo>(postBA.size() + numAssignedVars);
 								for(BecomesEqualTo bet : postBA) {
 									FreeIdentifier[] left = bet.getAssignedIdentifiers();
@@ -262,13 +261,14 @@ public class MachineRuleBase {
 										right[i] = cache.getFactory().makeFreeIdentifier(left[i].getName() + "'", null);
 									}
 									if(rename) {
-										prec.add(new ProofObligation.PForm(ass.getBAPredicate(cache.getFactory())));
-										post.add(cache.getFactory().makeBecomesEqualTo(left, right, null));
+										prec.add(ass.getBAPredicate(cache.getFactory()));
+										BecomesEqualTo subst = cache.getFactory().makeBecomesEqualTo(left, right, null);
+										subst.typeCheck(fullTypeEnvironment);
+										post.add(subst);
 									}
 								}
-								ProofObligation.Form goal = new ProofObligation.PForm(predicate);
 								for(int i=post.size()-1; i>=0; i--) {
-									goal = new SForm(post.get(i), goal);
+									predicate = predicate.applyAssignment(post.get(i), cache.getFactory());
 								}
 								HashMap<String, String> sources = new HashMap<String, String>(2);
 								sources.put("invariant", invariant.getHandleIdentifier());
@@ -279,7 +279,7 @@ public class MachineRuleBase {
 												typeEnvironment,
 												globalHypsetName,
 												prec,
-												goal,
+												predicate,
 												"Invariant " + ((evtName.equals("INITIALISATION")) ? " establishment" : " preservation"),
 												new HashMap<String, String>(0),
 												sources
@@ -302,8 +302,8 @@ public class MachineRuleBase {
 										"DLK", 
 										cache.getFactory().makeTypeEnvironment(), 
 										cache.getNewHypsetName(),
-										new ArrayList<ProofObligation.Form>(0),
-										new ProofObligation.PForm(DLK),
+										new ArrayList<Predicate>(0),
+										DLK,
 										"Deadlock freeness",
 										new HashMap<String, String>(0),
 										new HashMap<String, String>(0)

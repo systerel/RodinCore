@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IPOPredicate extends IPOAnyPredicate {
+public interface IPOPredicate extends IUnnamedInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicate"; //$NON-NLS-1$
 	
 	public String getName();

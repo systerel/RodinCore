@@ -37,6 +37,6 @@ public interface IPOSequent extends IInternalElement {
 	public String getName();
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	public IPOHypothesis getHypothesis() throws RodinDBException;
-	public IPOAnyPredicate getGoal() throws RodinDBException;
+	public IPOPredicate getGoal() throws RodinDBException;
 	public IPODescription getDescription() throws RodinDBException;
 }

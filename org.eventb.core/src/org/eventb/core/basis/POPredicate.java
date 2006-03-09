@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import org.eventb.core.IPOPredicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
  * Implementation of Event-B PO predicate as an extension of the Rodin database.
@@ -26,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class POPredicate extends POAnyPredicate implements IPOPredicate {
+public class POPredicate extends UnnamedInternalElement implements IPOPredicate {
 
 	public POPredicate(IRodinElement parent) {
 		super(ELEMENT_TYPE, parent);

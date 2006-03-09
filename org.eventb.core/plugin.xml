@@ -171,11 +171,6 @@
             name="%eventBpoPredicate"
             named="false"/>
       <internalElementType
-            class="org.eventb.core.basis.POModifiedPredicate"
-            id="poModifiedPredicate"
-            name="%eventBpoModifiedPredicate"
-            named="false"/>
-      <internalElementType
             class="org.eventb.core.basis.POSequent"
             id="poSequent"
             name="%eventBpoSequent"

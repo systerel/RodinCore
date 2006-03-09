@@ -13,17 +13,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.IPOAnyPredicate;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPROOF.Status;
-import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -130,8 +126,8 @@ public class PRUtil {
 	
 	private static Set<Hypothesis> readLocalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOAnyPredicate poAnyPred:poHyp.getLocalHypothesis()){
-			result.add(new Hypothesis(readPredicate(poAnyPred,typeEnv)));
+		for (IPOPredicate poPred : poHyp.getLocalHypothesis()){
+			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
 		}
 		return result;
 	}
@@ -148,35 +144,13 @@ public class PRUtil {
 	}
 
 
-	private static Predicate readPredicate(IPOAnyPredicate poAnyPred, ITypeEnvironment typeEnv) throws RodinDBException {
-		if (poAnyPred instanceof IPOPredicate) {
-			IPOPredicate poPred = (IPOPredicate) poAnyPred;
+	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
 			Predicate pred =  Lib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
 			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
 			assert wellTyped;
 			return pred;
-		}
-		if (poAnyPred instanceof IPOModifiedPredicate) {
-			IPOModifiedPredicate poModPred = (IPOModifiedPredicate) poAnyPred;
-			Predicate pred = readPredicate(poModPred.getPredicate(),typeEnv);
-			assert pred != null;
-			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
-			assert wellTyped;
-			Assignment assignment = Lib.parseAssignment(poModPred.getSubstitution());
-			assert assignment != null;
-			wellTyped = Lib.isWellTyped(assignment,typeEnv);
-			assert wellTyped;
-			if (! (assignment instanceof BecomesEqualTo)) throw new AssertionError("PO file ill formed");
-			Predicate substPred = Lib.applyDeterministicAssignment((BecomesEqualTo)assignment,pred);
-			wellTyped = Lib.isWellTyped(substPred,typeEnv);
-			assert wellTyped;
-			// System.out.println("modifiedPred : " + substPred);
-			return substPred;
-		}
-		
-		throw new AssertionError("Illegal type of predicate.");
 	}
 
 

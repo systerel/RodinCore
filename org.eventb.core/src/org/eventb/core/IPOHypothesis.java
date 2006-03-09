@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
  * <ul>
  * <li>The contents of the hypothesis is a reference to a predicate set (GLOBAL_HYP).</li>
  * <li>The children of the hypothesis are the local hypotheses (LOCAL_HYP).</li>
- * <li>The children are of either of type POPredicate or POModifiedPredicate.</li>
+ * <li>The children are of type POPredicate.</li>
  * </ul>
  *
  * @author Stefan Hallerstede
@@ -31,5 +31,5 @@ public interface IPOHypothesis extends IUnnamedInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poHypothesis"; //$NON-NLS-1$
 	
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException;
-	public IPOAnyPredicate[] getLocalHypothesis() throws RodinDBException;
+	public IPOPredicate[] getLocalHypothesis() throws RodinDBException;
 }

@@ -62,7 +62,7 @@ public class SCMachineCache extends Cache<ISCMachine> {
 		
 		typeEnvironment = getTypeEnvironment(file.getSCCarrierSets(), monitor);
 		typeEnvironment.addAll(getTypeEnvironment(file.getSCConstants(), monitor));
-		typeEnvironment.addAll(getTypeEnvironment(file.getSCVariables(), monitor));
+		typeEnvironment.addAll(getTypeEnvironment(file.getSCVariables(), false, monitor));
 	}
 	
 //	private IProgressMonitor monitor;

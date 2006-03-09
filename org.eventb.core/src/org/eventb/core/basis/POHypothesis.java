@@ -9,10 +9,8 @@ package org.eventb.core.basis;
 
 import java.util.List;
 
-import org.eventb.core.IPOAnyPredicate;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOHypothesis;
-import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
@@ -63,19 +61,10 @@ public class POHypothesis extends UnnamedInternalElement implements IPOHypothesi
 		return gobalHypothesis;
 	}
 	
-	public IPOAnyPredicate[] getLocalHypothesis() throws RodinDBException {
+	public IPOPredicate[] getLocalHypothesis() throws RodinDBException {
 		List<IRodinElement> predicates = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
-		List<IRodinElement> modifiedPredicates = getFilteredChildrenList(IPOModifiedPredicate.ELEMENT_TYPE);
-		IPOAnyPredicate[] localHypothesis = new IPOAnyPredicate[predicates.size() + modifiedPredicates.size()];
-		int i = 0;
-		for(IRodinElement predicate : predicates) {
-			localHypothesis[i] = (IPOPredicate) predicate;
-			i++;
-		}
-		for(IRodinElement predicate : modifiedPredicates) {
-			localHypothesis[i] = (IPOModifiedPredicate) predicate;
-			i++;
-		}
+		IPOPredicate[] localHypothesis = new IPOPredicate[predicates.size()];
+		predicates.toArray(localHypothesis);
 		return localHypothesis;
 	}
 

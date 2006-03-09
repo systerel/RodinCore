@@ -17,11 +17,9 @@ import org.eventb.core.IPODescription;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -35,58 +33,19 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofObligation {
 
-	public abstract static class Form { 
-		// abstract base class
-		
-		public abstract void put(IInternalParent element, IProgressMonitor monitor) throws RodinDBException;
-	}
-
-	
-	public static class PForm extends Form {
-		public final Predicate predicate;
-		public PForm(Predicate predicate) {
-			this.predicate = predicate;
-		}
-		@Override
-		public void put(IInternalParent element, IProgressMonitor monitor) throws RodinDBException {
-			IPOPredicate poPredicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
-			poPredicate.setContents(this.predicate.toString(), monitor);
-		}
-		
-		@Override
-		public String toString() {
-			return predicate.toString();
-		}
-	}
-	
-	public static class SForm extends Form {
-		public final BecomesEqualTo substitution;
-		public final Form form;
-		public SForm(BecomesEqualTo substitution, Form form) {
-			this.substitution = substitution;
-			this.form = form;
-		}
-		@Override
-		public void put(IInternalParent element, IProgressMonitor monitor) throws RodinDBException {
-			IPOModifiedPredicate predicateForm = (IPOModifiedPredicate) element.createInternalElement(IPOModifiedPredicate.ELEMENT_TYPE, null, null, monitor);
-			predicateForm.setContents(this.substitution.toString());
-			form.put(predicateForm, monitor);
-		}
-		
-		@Override
-		public String toString() {
-			return "[" + substitution.toString() + "] " + form.toString();
-		}
-	}
-
 	public final String name;
 	public final ITypeEnvironment typeEnvironment;
 	public final String globalHypothesis;
-	public final ArrayList<Form> localHypothesis;
-	public final Form goal;
+	public final ArrayList<Predicate> localHypothesis;
+	public final Predicate goal;
 	public final String desc;
 	public final HashMap<String, String> hints;
 	public final HashMap<String, String> sources;
+	
+	private void putPredicate(IInternalParent element, Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicate poPredicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+		poPredicate.setContents(predicate.toString(), monitor);
+	}
 	
 	public void put(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
 		IPOSequent sequent = (IPOSequent) file.createInternalElement(
@@ -96,10 +55,10 @@ public class ProofObligation {
 			(IPOHypothesis) sequent.createInternalElement(
 					IPOHypothesis.ELEMENT_TYPE, null, null, monitor);
 		hypothesis.setContents(globalHypothesis, monitor);
-		for (Form form : localHypothesis) {
-			form.put(hypothesis, monitor);
+		for (Predicate predicate : localHypothesis) {
+			putPredicate(hypothesis, predicate, monitor);
 		}
-		goal.put(sequent, monitor);
+		putPredicate(sequent, goal, monitor);
 		IPODescription description = (IPODescription) sequent.createInternalElement(IPODescription.ELEMENT_TYPE, desc, null, monitor);
 		for(Entry<String, String> entry : sources.entrySet()) {
 			String role = entry.getKey();
@@ -128,8 +87,8 @@ public class ProofObligation {
 	@Override
 	public String toString() {
 		String result = name + "\n" + typeEnvironment.toString() + "\n" + globalHypothesis + "\n";
-		for(Form form : localHypothesis) {
-			result += form.toString() + "\n";
+		for(Predicate predicate : localHypothesis) {
+			result += predicate.toString() + "\n";
 		}
 		result += "=>\n" + goal.toString() + "\n";
 		result += hints.toString();
@@ -140,8 +99,8 @@ public class ProofObligation {
 			String name, 
 			ITypeEnvironment typeEnvironment, 
 			String globalHypothesis, 
-			ArrayList<Form> localHypothesis, 
-			Form goal, 
+			ArrayList<Predicate> localHypothesis, 
+			Predicate goal, 
 			String desc,
 			HashMap<String, String> hints,
 			HashMap<String, String> sources) {
@@ -158,12 +117,12 @@ public class ProofObligation {
 	public ProofObligation(
 			String name, 
 			String globalHypothesis, 
-			Form goal,
+			Predicate goal,
 			String desc) {
 		this.name = name;
 		this.typeEnvironment = FormulaFactory.getDefault().makeTypeEnvironment();
 		this.globalHypothesis = globalHypothesis;
-		this.localHypothesis = new ArrayList<Form>();
+		this.localHypothesis = new ArrayList<Predicate>();
 		this.goal = goal;
 		this.desc = desc;
 		this.hints = new HashMap<String, String>(5);
