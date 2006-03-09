@@ -76,7 +76,7 @@ public class UserSupport
 		proofStates = new ArrayList<ProofState>();
 		try {
 			for (int i = 0; i < prFile.getSequents().length; i++) {
-				IPRSequent prSequent = prFile.getSequents()[i];
+				IPRSequent prSequent = (IPRSequent) prFile.getSequents()[i];
 				proofStates.add(new ProofState(prSequent));
 			}
 		}

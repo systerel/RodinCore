@@ -10,7 +10,6 @@ package org.eventb.core;
 
 
 import org.eventb.core.prover.IProofTree;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,22 +21,14 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRSequent extends IInternalElement {
+public interface IPRSequent extends IPOSequent {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
-	
-	String getName();
 	
 	boolean isDischarged() throws RodinDBException;
 
 	IProofTree makeProofTree() throws RodinDBException;
 	IProof getProof() throws RodinDBException;
 	void updateStatus(IProofTree pt) throws RodinDBException;
-	IPODescription getDescription() throws RodinDBException;
-
-	// Duplicates from IPOSequent. Typically used only internally.
-	IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	IPOHypothesis getHypothesis() throws RodinDBException;
-	IPOPredicate getGoal() throws RodinDBException;
 
 }

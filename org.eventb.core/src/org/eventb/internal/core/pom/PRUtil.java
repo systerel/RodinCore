@@ -45,7 +45,7 @@ public class PRUtil {
 		
 		Map<String, IProverSequent> result 
 		= new HashMap<String, IProverSequent>(prFile.getSequents().length);
-		for (IPRSequent prSeq:prFile.getSequents()){
+		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
 			String name = prSeq.getName();
 			ITypeEnvironment typeEnv = globalTypeEnv.clone();
 			addIdents(prSeq.getIdentifiers(),typeEnv);
@@ -91,7 +91,7 @@ public class PRUtil {
 	}
 	
 	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
-		IPRSequent[] prSeqs = prFile.getSequents();
+		IPRSequent[] prSeqs = (IPRSequent[]) prFile.getSequents();
 		for (IPRSequent prSeq : prSeqs){
 			if (prSeq.getName().equals(poName)){
 				prSeq.getProof().setContents(status.toString());
@@ -104,7 +104,7 @@ public class PRUtil {
 		Map<String, Status> result 
 		= new HashMap<String, Status>(prFile.getSequents().length);
 		
-		for (IPRSequent prSeq:prFile.getSequents()){
+		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
 			result.put(prSeq.getName(),prSeq.getProof().getStatus());
 		}
 		return result;

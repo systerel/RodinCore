@@ -8,8 +8,6 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 
 /**
@@ -22,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRFile extends IRodinFile {
+public interface IPRFile extends IPOFile {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
 	
@@ -58,10 +56,5 @@ public interface IPRFile extends IRodinFile {
 	 * @return a handle to the PO file of this component
 	 */
 	IPOFile getPOFile();
-
-	
-	IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
-	IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	IPRSequent[] getSequents() throws RodinDBException;
 	
 }

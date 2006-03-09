@@ -9,17 +9,12 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
-import org.eventb.core.IPODescription;
-import org.eventb.core.IPOHypothesis;
-import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOPredicate;
-import org.eventb.core.IProof;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IProof;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PR proof obligation as an extension of the Rodin database.
@@ -36,7 +31,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  *
  */
-public class PRSequent extends InternalElement implements IPRSequent {
+public class PRSequent extends POSequent implements IPRSequent {
 
 	public PRSequent(String name, IRodinElement parent) {
 		super(name, parent);
@@ -47,46 +42,9 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	 */
 	@Override
 	public String getElementType() {
-		return ELEMENT_TYPE;
+		return IPRSequent.ELEMENT_TYPE;
 	}
 	
-	public String getName() {
-		return getElementName();
-	}
-	
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOIdentifier.ELEMENT_TYPE);
-		IPOIdentifier[] identifiers = new IPOIdentifier[list.size()];
-		list.toArray(identifiers);
-		return identifiers;
-	}
-	
-	public IPOHypothesis getHypothesis() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOHypothesis.ELEMENT_TYPE);
-			
-		assert list.size() == 1;
-			
-		IPOHypothesis hypothesis = (IPOHypothesis) list.get(0);
-		return hypothesis;
-	}
-	
-	public IPOPredicate getGoal() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
-			
-		assert list.size() == 1;
-			
-		IPOPredicate goal = (IPOPredicate) list.get(0);
-		return goal;
-	}
-	
-	public IPODescription getDescription() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPODescription.ELEMENT_TYPE);
-		assert list.size() == 1;
-			
-		IPODescription desc = (IPODescription) list.get(0);
-		return desc;
-	}
-
 	public IProof getProof() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(Proof.ELEMENT_TYPE);
 		assert list.size() == 1;

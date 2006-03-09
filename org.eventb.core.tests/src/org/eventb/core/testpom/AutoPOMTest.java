@@ -72,7 +72,7 @@ public class AutoPOMTest extends BuilderTest {
 		checkSameContents(poFile, prFile);
 		
 		// Checks that all POs are discharged except the last one.
-		IPRSequent[] prs = prFile.getSequents();
+		IPRSequent[] prs = (IPRSequent[]) prFile.getSequents();
 		for (int i = 0; i < prs.length - 1; i++) {
 			IPRSequent prSequent = prs[i];
 			assertDischarged(prSequent);

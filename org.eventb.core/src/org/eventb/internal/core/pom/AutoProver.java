@@ -34,7 +34,7 @@ public class AutoProver {
 	}
 	
 	public void run(IPRFile prFile) throws RodinDBException {
-		final IPRSequent[] pos = prFile.getSequents();
+		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
 		for (IPRSequent po : pos) {
 			if (! po.isDischarged()) {
 				IProofTree tree = po.makeProofTree();
