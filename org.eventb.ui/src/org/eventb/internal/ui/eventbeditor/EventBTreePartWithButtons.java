@@ -250,7 +250,6 @@ public abstract class EventBTreePartWithButtons
 		Object [] objects = viewer.getExpandedElements();
 		viewer.setInput(rodinFile);
 		viewer.setExpandedElements(objects);
-		((EventBFormPage) block.getPage()).notifyChangeListeners();
 	}
 	
 

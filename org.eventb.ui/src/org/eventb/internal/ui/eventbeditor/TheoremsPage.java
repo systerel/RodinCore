@@ -80,8 +80,6 @@ public class TheoremsPage
 			gd.minimumHeight = 150;
 			gd.widthHint = 150;
 			axiomMirrorSection.getSection().setLayoutData(gd);
-			EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
-			page.addChangedListener(axiomMirrorSection);
 			
 			// Theorem mirror section.
 			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
@@ -91,8 +89,6 @@ public class TheoremsPage
 			gd.minimumHeight = 150;
 			gd.widthHint = 150;
 			theoremMirrorSection.getSection().setLayoutData(gd);
-			page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
-			page.addChangedListener(theoremMirrorSection);
 
 			// Carrier set mirror section.
 			CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
@@ -102,8 +98,6 @@ public class TheoremsPage
 			gd.minimumHeight = 50;
 			gd.widthHint = 150;
 			carrierSetMirrorSection.getSection().setLayoutData(gd);
-			page = (EventBFormPage) this.getEditor().findPage(CarrierSetsPage.PAGE_ID);
-			page.addChangedListener(carrierSetMirrorSection);
 			
 			// Constant set mirror section.
 			ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
@@ -113,8 +107,6 @@ public class TheoremsPage
 			gd.minimumHeight = 50;
 			gd.widthHint = 150;
 			constantMirrorSection.getSection().setLayoutData(gd);
-			page = (EventBFormPage) this.getEditor().findPage(ConstantsPage.PAGE_ID);
-			page.addChangedListener(constantMirrorSection);
 			
 		}
 		else if (rodinFile instanceof IMachine) {
@@ -134,8 +126,6 @@ public class TheoremsPage
 			gd.minimumHeight = 150;
 			gd.widthHint = 150;
 			invariantMirrorSection.getSection().setLayoutData(gd);
-			EventBFormPage page = (EventBFormPage) this.getEditor().findPage(InvariantsPage.PAGE_ID);
-			page.addChangedListener(invariantMirrorSection);
 
 			// Theorem mirror section.
 			TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR | Section.EXPANDED, rodinFile);
@@ -145,8 +135,6 @@ public class TheoremsPage
 			gd.minimumHeight = 150;
 			gd.widthHint = 150;
 			theoremMirrorSection.getSection().setLayoutData(gd);
-			page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
-			page.addChangedListener(theoremMirrorSection);
 		}	
 	}
 	

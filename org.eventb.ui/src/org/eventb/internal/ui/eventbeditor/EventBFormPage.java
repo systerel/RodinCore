@@ -11,12 +11,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
@@ -41,11 +35,6 @@ public abstract class EventBFormPage
 	// The master detail block within the page
 	EventBMasterDetailsBlock block;
 	
-	// The set of change listeners of the page
-	// TODO Should be removed when the editor listens to the change in the Rodin database
-	private List<ChangeListener> changeListeners;
-
-	
 	/**
 	 * Contructor.
 	 * <p>
@@ -58,30 +47,8 @@ public abstract class EventBFormPage
 		super(editor, pageID, pageTabTitle);  //$NON-NLS-1$
 		this.pageTitle = pageTitle;
 		block = createMasterDetailsBlock();
-		changeListeners = new ArrayList<ChangeListener>();
 	}
 	
-	
-	/**
-	 * Register a change listener.
-	 * <p>
-	 * @param listener A change listener
-	 */
-	public void addChangedListener(ChangeListener listener) {
-		changeListeners.add(listener);
-	}
-
-	
-	/**
-	 * Notify all the change listeners.
-	 */
-	public void notifyChangeListeners() {
-		for (int i = 0; i < changeListeners.size(); i++) {
-			((ChangeListener) changeListeners.get(i)).stateChanged(new ChangeEvent(this));
-		}
-	}
-
-
 	/**
 	 * Creating the content for the page
 	 */

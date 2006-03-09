@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IMachine;
@@ -126,41 +125,17 @@ public class VariableMasterSection
 			return;
 		}
 		if (element instanceof IVariable) {
-//			UIUtils.debug("Refresh Variable");
-			postRunnable(new Runnable() {
+			UIUtils.postRunnable(new Runnable() {
 				public void run() {
 					getViewer().setInput(rodinFile);
 					markDirty();
 					updateButtons();
 				}
-			});
+			}, this.getSection().getClient());
 		}
 		else {
 			return;
 		}
 	}
 
-	
-	private void postRunnable(final Runnable r) {
-		Control ctrl= this.getSection().getClient();
-		final Runnable trackedRunnable= new Runnable() {
-			public void run() {
-				try {
-					r.run();
-				} finally {
-					//removePendingChange();
-					//if (UIUtils.DEBUG) System.out.println("Runned");
-				}
-			}
-		};
-		if (ctrl != null && !ctrl.isDisposed()) {
-			try {
-				ctrl.getDisplay().asyncExec(trackedRunnable); 
-			} catch (RuntimeException e) {
-				throw e;
-			} catch (Error e) {
-				throw e; 
-			}
-		}
-	}
 }

@@ -75,8 +75,6 @@ public class ConstantsPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		axiomMirrorSection.getSection().setLayoutData(gd);
-		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(AxiomsPage.PAGE_ID);
-		page.addChangedListener(axiomMirrorSection);
 		
 		// Theorem mirror section
 		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
@@ -86,8 +84,6 @@ public class ConstantsPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		theoremMirrorSection.getSection().setLayoutData(gd);
-		page = (EventBFormPage) this.getEditor().findPage(TheoremsPage.PAGE_ID);
-		page.addChangedListener(theoremMirrorSection);
 	}	
 	    
 }

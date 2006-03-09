@@ -22,6 +22,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
@@ -48,6 +49,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.eventbeditor.ElementAtributeInputDialog;
+import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -349,6 +351,28 @@ public class UIUtils {
 	}
 
 
+	public static void postRunnable(final Runnable r, Control ctrl) {
+		final Runnable trackedRunnable= new Runnable() {
+			public void run() {
+				try {
+					r.run();
+				} finally {
+					//removePendingChange();
+					//if (UIUtils.DEBUG) System.out.println("Runned");
+				}
+			}
+		};
+		if (ctrl != null && !ctrl.isDisposed()) {
+			try {
+				ctrl.getDisplay().asyncExec(trackedRunnable); 
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Error e) {
+				throw e; 
+			}
+		}
+	}
+
 	public static void newVariables(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
@@ -367,7 +391,22 @@ public class UIUtils {
 	}
 
 	public static void newInvariants(IRodinFile rodinFile) {
-		
+		try {
+			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Invariants", "Name and predicate of the new invariant", "inv", counter + 1);
+			dialog.open();
+			String [] names = dialog.getNewNames();
+			String [] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, name, null, null);
+				invariant.setContents(content);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}	
 	}
 
 }

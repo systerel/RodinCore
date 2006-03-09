@@ -98,7 +98,6 @@ public class ContentInputRow
 				else if (input instanceof IInternalElement) {
 //					if (UIUtils.DEBUG) System.out.println("Commit content: " + page.getInput() + " to be " + textInput.getText());
 					input.setContents(textInput.getTextWidget().getText());
-					((EventBFormPage) page.getBlock().getPage()).notifyChangeListeners();
 				}
 			}
 			catch (RodinDBException e) {

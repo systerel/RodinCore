@@ -76,8 +76,6 @@ public class EventsPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		invariantMirrorSection.getSection().setLayoutData(gd);
-		EventBFormPage page = (EventBFormPage) this.getEditor().findPage(InvariantsPage.PAGE_ID);
-		page.addChangedListener(invariantMirrorSection);
 
 		// Event mirror section.
 		EventMirrorSection eventMirrorSection = new EventMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
@@ -87,8 +85,6 @@ public class EventsPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		eventMirrorSection.getSection().setLayoutData(gd);
-		page = (EventBFormPage) this.getEditor().findPage(EventsPage.PAGE_ID);
-		page.addChangedListener(eventMirrorSection);
 
 	}
 

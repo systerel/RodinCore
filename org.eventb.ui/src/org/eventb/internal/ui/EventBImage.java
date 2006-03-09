@@ -53,6 +53,7 @@ public class EventBImage {
 	public static final String IMG_NEXTPO_PATH = "icons/next.gif";
 	
 	public static final String IMG_NEW_VARIABLES_PATH = "icons/new-variables.gif";
+	public static final String IMG_NEW_INVARIANTS_PATH = "icons/new-invariants.gif";
 	
 	/**
 	 * Returns an image descriptor for the image file at the given

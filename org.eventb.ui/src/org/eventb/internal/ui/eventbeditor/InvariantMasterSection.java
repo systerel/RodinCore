@@ -19,8 +19,13 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -30,7 +35,8 @@ import org.rodinp.core.RodinDBException;
  * for displaying invariants (used as master section in Master-Detail block).
  */
 public class InvariantMasterSection
-	extends EventBTablePartWithButtons 
+	extends EventBTablePartWithButtons
+	implements IElementChangedListener
 {
 
 	/**
@@ -77,7 +83,7 @@ public class InvariantMasterSection
 			// TODO Exception handle
 			e.printStackTrace();
 		}
-
+		((EventBEditor) this.getBlock().getPage().getEditor()).addElementChangedListener(this);
 	}
 
 
@@ -85,27 +91,7 @@ public class InvariantMasterSection
 	 * Handle the adding (new Invariant) action
 	 */
 	protected void handleAdd() {
-		ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Invariants", "Name and predicate of the new invariant", "inv", counter + 1);
-		dialog.open();
-		String [] names = dialog.getNewNames();
-		String [] contents = dialog.getNewContents();
-		try {
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				String content = contents[i];
-				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, name, null, null);
-				invariant.setContents(content);
-				counter++;
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		this.getViewer().setInput(rodinFile);
-		this.markDirty();
-		((EventBFormPage) block.getPage()).notifyChangeListeners();
-		updateButtons();
-
+		UIUtils.newInvariants(rodinFile);
 	}
 	
 
@@ -121,4 +107,38 @@ public class InvariantMasterSection
 		viewer.setInput(rodinFile);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof IInvariant) {
+			UIUtils.postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			}, this.getSection().getClient());
+		}
+		else {
+			return;
+		}
+	}
+
+	
 }

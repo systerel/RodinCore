@@ -11,9 +11,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
@@ -25,6 +22,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -35,7 +34,7 @@ import org.rodinp.core.IRodinFile;
  */
 public abstract class EventBMirrorSection
 	extends SectionPart
-	implements ChangeListener
+	implements IElementChangedListener
 {
 
 	// The XML Form Text.
@@ -74,6 +73,7 @@ public abstract class EventBMirrorSection
         section.setDescription(description);
         listener = null;
 		createClient(section, toolkit);
+		((EventBEditor) page.getEditor()).addElementChangedListener(this);
 	}
 
     
@@ -126,11 +126,12 @@ public abstract class EventBMirrorSection
 	 */
 	protected FormPage getPage() {return page;}
 
-
-	/**
-	 * A method responses for changes.
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	// TODO Remove when the editor listens to Rodin DB changes. 
-	public void stateChanged(ChangeEvent event) {this.refresh();}
+	public void elementChanged(ElementChangedEvent event) {
+		// TODO Move to sub-classes
+		this.refresh();
+	}
 
 }

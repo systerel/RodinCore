@@ -94,7 +94,6 @@ public class EventMasterSectionActionGroup
 								viewer.refresh(event, true);
 								viewer.setExpandedState(event, true);
 								section.markDirty();
-								((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}								
 							}
 						});
@@ -131,7 +130,6 @@ public class EventMasterSectionActionGroup
 									viewer.refresh(event, true);
 									viewer.setExpandedState(event, true);
 									section.markDirty();
-									((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}
 								
 							}
@@ -171,7 +169,6 @@ public class EventMasterSectionActionGroup
 									viewer.refresh(event, true);
 									viewer.setExpandedState(event, true);
 									section.markDirty();
-									((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								}
 							}
 						});
@@ -201,7 +198,6 @@ public class EventMasterSectionActionGroup
 										}
 									}
 								}
-								((EventBFormPage) section.block.getPage()).notifyChangeListeners();
 								section.markDirty();
 								return;
 							}

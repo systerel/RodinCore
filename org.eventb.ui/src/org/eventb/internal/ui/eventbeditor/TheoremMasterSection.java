@@ -110,7 +110,6 @@ public class TheoremMasterSection
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(theorem));
 			this.markDirty();
-			((EventBFormPage) block.getPage()).notifyChangeListeners();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();

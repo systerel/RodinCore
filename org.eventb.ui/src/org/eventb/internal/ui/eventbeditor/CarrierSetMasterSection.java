@@ -101,7 +101,6 @@ public class CarrierSetMasterSection
 		}
 		this.getViewer().setInput(rodinFile);
 		this.markDirty();
-		((EventBFormPage) block.getPage()).notifyChangeListeners();
 		updateButtons();
 	}
 	

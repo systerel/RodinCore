@@ -92,7 +92,6 @@ public class AxiomMasterSection
 			axiom.setContents(EventBUIPlugin.AXM_DEFAULT);
 			this.getViewer().setInput(rodinFile);
 			this.getViewer().setSelection(new StructuredSelection(axiom));
-			((EventBFormPage) block.getPage()).notifyChangeListeners();
 			this.markDirty();
 			updateButtons();
 		}

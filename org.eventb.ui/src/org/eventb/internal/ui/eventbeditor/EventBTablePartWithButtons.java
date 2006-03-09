@@ -258,7 +258,7 @@ public abstract class EventBTablePartWithButtons
 				try {
 					counter--;
 					((IInternalElement) objects[i]).delete(true, null);
-					commit();
+//					commit();
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
@@ -279,7 +279,6 @@ public abstract class EventBTablePartWithButtons
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
 		try {
 			swap(current, previous);
-			commit();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -299,7 +298,6 @@ public abstract class EventBTablePartWithButtons
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
 		try {
 			swap(next, current);
-			commit();
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle
@@ -374,7 +372,6 @@ public abstract class EventBTablePartWithButtons
 		this.getViewer().refresh();
 		updateButtons();
 		this.markDirty();
-		((EventBFormPage) block.getPage()).notifyChangeListeners();
 	}
 	
 
