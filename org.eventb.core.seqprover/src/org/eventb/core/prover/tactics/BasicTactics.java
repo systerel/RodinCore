@@ -3,8 +3,11 @@ package org.eventb.core.prover.tactics;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
 import org.eventb.core.prover.IExternalReasoner;
+import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.SuccessfullExtReasonerOutput;
+import org.eventb.core.prover.rules.Collapse;
 import org.eventb.core.prover.rules.PLb;
 import org.eventb.core.prover.rules.ProofRule;
 
@@ -42,6 +45,31 @@ public class BasicTactics {
 		return new RuleTac(rule);
 	}
 	
+	public static ITactic encapsulate(String name, ITactic tactic){
+		return new Encapsulate(name,tactic);
+	}
+	
+	private static class Encapsulate implements ITactic {
+		
+		private final ITactic tactic;
+		private final String name;
+		
+		public Encapsulate(String name,ITactic tactic)
+		{
+			this.tactic = tactic;
+			this.name = name;
+		}
+		
+		public Object apply(IProofTreeNode ptn){
+			if (!ptn.isOpen()) return "Root already has children";
+			IProofTree proofTree = SequentProver.makeProofTree(ptn.getSequent());
+			Object tacticOutput = this.tactic.apply(proofTree.getRoot());
+			if (tacticOutput != null) return tacticOutput;
+			if (ptn.applyRule(new Collapse(proofTree,name))) return null;
+			else return "Something seriously wrong";
+			
+		}
+	}
 	
 	private static class Prune implements ITactic {
 	
@@ -193,6 +221,7 @@ public class BasicTactics {
 		}
 
 	}
+	
 	
 //	public static class conjE_auto implements Tactic{
 //		

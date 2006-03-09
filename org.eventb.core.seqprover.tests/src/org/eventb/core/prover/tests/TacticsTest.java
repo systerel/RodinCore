@@ -38,7 +38,7 @@ public class TacticsTest extends TestCase {
 		pt = TestLib.genProofTreeNode(" ⊤|- ⊤");
 		assertNull(Tactics.lemma("⊥").apply(pt));
 		desc = pt.getOpenDescendants();
-		// System.out.println(pt);
+		System.out.println(pt);
 		assertEquals(desc.length,3);
 		
 		pt = TestLib.genProofTreeNode(" ⊤|- ⊤");
@@ -70,6 +70,7 @@ public class TacticsTest extends TestCase {
 	public void testDoCase(){
 		pt = TestLib.genProofTreeNode( "x=1 ∨x=2 |- x < 3 ");
 		assertNull(Tactics.doCase("x = 21").apply(pt));
+		System.out.println(pt);
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,4);
 	}

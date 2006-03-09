@@ -6,6 +6,7 @@ import static org.eventb.core.prover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.prover.tactics.BasicTactics.onPending;
 import static org.eventb.core.prover.tactics.BasicTactics.pluginTac;
 import static org.eventb.core.prover.tactics.BasicTactics.repeat;
+import static org.eventb.core.prover.tactics.BasicTactics.encapsulate;
 
 import java.util.Collections;
 import java.util.Set;
@@ -62,11 +63,13 @@ public class Tactics {
 	}
 	
 	public static ITactic lemma(String strLemma){
-		return composeStrict(
-				pluginTac(new Cut(),new Cut.Input(strLemma)),
-				onPending(0,conjI()),
-				onPending(2,impI())
-				);
+		return 
+		encapsulate("add hyp "+strLemma,
+				composeStrict(
+						pluginTac(new Cut(),new Cut.Input(strLemma)),
+						onPending(0,conjI()),
+						onPending(2,impI())
+				));
 	}
 	
 	public static ITactic norm(){
@@ -77,19 +80,23 @@ public class Tactics {
 	
 	public static ITactic doCase(String kase){	
 		String lemma = "("+ kase +") \u2228\u00ac("+ kase +")";
-		return composeStrict(
-				pluginTac(new Cut(),new Cut.Input(lemma)),
-				onPending(0,conjI()),
-				onPending(2,pluginTac(new DisjE(),null)),
-				onPending(2,norm())
-		);
+		return 
+		encapsulate("do case "+ kase ,
+				composeStrict(
+						pluginTac(new Cut(),new Cut.Input(lemma)),
+						onPending(0,conjI()),
+						onPending(2,pluginTac(new DisjE(),null)),
+						onPending(2,norm())
+				));
 	}
 	
 	public static ITactic contradictGoal(){
-		return composeStrict(
+		return 
+		encapsulate("contradict goal",
+		composeStrict(
 				pluginTac(new Contr(),new Contr.Input()),
 				onPending(0,impI())
-		);
+		));
 	}
 	
 
@@ -120,10 +127,12 @@ public class Tactics {
 	}
 	
 	public static ITactic exI(String... witnesses){
-		return composeStrict(
+		return 
+		encapsulate("provide witnesses",
+		composeStrict(
 				pluginTac(new ExI(),new ExI.Input(witnesses)),
 						onPending(0,conjI())
-				);
+				));
 	}
 	
 	public static boolean exI_applicable(Predicate goal){
@@ -142,11 +151,13 @@ public class Tactics {
 	// Tactics applicable on a hypothesis
 	
 	public static ITactic allF(Hypothesis univHyp, String... instantiations){
-		return composeStrict(
+		return 
+		encapsulate("instantiate ∀hyp "+ univHyp.toString(),
+		composeStrict(
 				pluginTac(new AllF(),new AllF.Input(instantiations,univHyp)),
 				onPending(0,conjI()),
 				onPending(1,impI())
-		);
+		));
 	}
 	
 	public static boolean allF_applicable(Hypothesis hyp){
@@ -154,10 +165,12 @@ public class Tactics {
 	}
 	
 	public static ITactic conjD(Hypothesis conjHyp){
-		return composeStrict(
+		return 
+		encapsulate("remove ∧hyp "+conjHyp.toString(),
+		composeStrict(
 				pluginTac(new ConjD(),new ConjD.Input(conjHyp)),
 				onPending(0,impI())
-		);
+		));
 	}
 	
 	public static boolean conjD_applicable(Hypothesis hyp){
@@ -165,11 +178,13 @@ public class Tactics {
 	}
 	
 	public static ITactic impD(Hypothesis impHyp, boolean useContrapositive){
-		return composeStrict(
+		return 
+		encapsulate("use ⇒ hyp "+impHyp.toString(),
+		composeStrict(
 				pluginTac(new ImpD(),new ImpD.Input(impHyp,useContrapositive)),
 				onPending(0,conjI()),
 				onPending(1,impI())
-		);
+		));
 	}
 	
 	public static boolean impD_applicable(Hypothesis hyp){
@@ -177,11 +192,13 @@ public class Tactics {
 	}
 	
 	public static ITactic disjE(Hypothesis disjHyp){
-		return composeStrict(
-				pluginTac(new DisjE(),new DisjE.Input(disjHyp)),
-				onPending(0,conjI()),
-				onAllPending(impI())
-		);
+		return 
+		encapsulate("remove ∨hyp "+disjHyp.toString(),
+				composeStrict(
+						pluginTac(new DisjE(),new DisjE.Input(disjHyp)),
+						onPending(0,conjI()),
+						onAllPending(impI())
+				));
 	}
 	
 	public static boolean disjE_applicable(Hypothesis hyp){
@@ -189,10 +206,12 @@ public class Tactics {
 	}
 	
 	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
-		return composeStrict(
+		return 
+		encapsulate("use = hyp "+ eqHyp.toString(),
+		composeStrict(
 				pluginTac(new Eq(),new Eq.Input(eqHyp,useReflexive)),
 				onPending(0,impI())
-		);
+		));
 	}
 	
 	public static boolean eqE_applicable(Hypothesis hyp){
@@ -200,11 +219,13 @@ public class Tactics {
 	}
 	
 	public static ITactic exF(Hypothesis exHyp){
-		return composeStrict(
+		return 
+		encapsulate("remove ∃hyp "+exHyp.toString(),
+		composeStrict(
 				pluginTac(new ExF(),new ExF.Input(exHyp)),
 				onPending(0,allI()),
 				onPending(0,impI())
-		);
+		));
 	}
 	
 	public static boolean exF_applicable(Hypothesis hyp){
@@ -212,11 +233,13 @@ public class Tactics {
 	}
 	
 	public static ITactic removeNegHyp(Hypothesis hyp){
-		return composeStrict(
-				pluginTac(new RewriteHyp(),new RewriteHyp.Input(hyp,new RemoveNegation())),
-				onPending(0,mngHyp(ActionType.DESELECT,hyp)),
-				onPending(0,impI())
-		);
+		return 
+		encapsulate("remove ¬ hyp "+hyp.toString(),
+				composeStrict(
+						pluginTac(new RewriteHyp(),new RewriteHyp.Input(hyp,new RemoveNegation())),
+						onPending(0,mngHyp(ActionType.DESELECT,hyp)),
+						onPending(0,impI())
+				));
 	}
 	
 	public static boolean removeNegHyp_applicable(Hypothesis hyp){
@@ -226,10 +249,12 @@ public class Tactics {
     // Tactics applicable on every hypothesis
 	
 	public static ITactic falsifyHyp(Hypothesis hyp){
-		return composeStrict(
-				pluginTac(new Contr(),new Contr.Input(hyp)),
-				onPending(0,impI())
-		);
+		return 
+		encapsulate("falsify hyp: "+hyp.toString(),
+				composeStrict(
+						pluginTac(new Contr(),new Contr.Input(hyp)),
+						onPending(0,impI())
+				));
 	}
 	
 	// Misc tactics
