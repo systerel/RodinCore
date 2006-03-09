@@ -41,6 +41,11 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.basis.POIdentifier;
 import org.eventb.core.basis.SCCarrierSet;
 import org.eventb.core.basis.SCConstant;
@@ -60,6 +65,8 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 public abstract class BuilderTest extends TestCase {
+	
+	protected FormulaFactory factory = FormulaFactory.getDefault();
 
 	public static void addAxioms(IRodinFile rodinFile, String[] names, String[] axioms, String bag) throws RodinDBException {
 		IInternalParent element = rodinFile;
@@ -293,6 +300,25 @@ public abstract class BuilderTest extends TestCase {
 		return machine.getSCMachine();
 	}
 	
+	protected Predicate predicateFromString(String predicate) {
+		Predicate pp = factory.parsePredicate(predicate).getParsedPredicate();
+		return pp;
+	}
+	
+	protected Assignment assignmentFromString(String assignment) {
+		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
+		return aa;
+	}
+	
+	protected Predicate rewriteGoal(ITypeEnvironment typeEnv, String predicate, String substitution) {
+		Predicate goal1 = predicateFromString(predicate);
+		goal1.typeCheck(typeEnv);
+		Assignment goalass1 = assignmentFromString(substitution);
+		goalass1.typeCheck(typeEnv);
+		goal1 = goal1.applyAssignment((BecomesEqualTo) goalass1, factory);
+		return goal1;
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		

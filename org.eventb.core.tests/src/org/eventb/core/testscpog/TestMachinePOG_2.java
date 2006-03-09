@@ -13,13 +13,11 @@ import java.util.Set;
 
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ISCMachine;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -30,7 +28,6 @@ import org.rodinp.core.IRodinElement;
 
 public class TestMachinePOG_2 extends BuilderTest {
 
-	FormulaFactory factory = FormulaFactory.getDefault();
 	Type INTEGER = factory.parseType("ℤ").getParsedType();
 	
 	private String getWDStringForPredicate(String formula, ITypeEnvironment environment) {
@@ -165,7 +162,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 * Test method for creation of invariant preservation PO for machine without variables and an invariant
 	 */
 	public void testInvariant4() throws Exception {
-		String invariant = factory.parsePredicate("∅⊆ℤ").getParsedPredicate().toString();;
+		String invariant = predicateFromString("∅⊆ℤ").toString();;
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, 
 				makeList("I1"), 
@@ -369,7 +366,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard1() throws Exception {
 		
-		String guard1 = factory.parsePredicate("(∀x·x=1÷x)").getParsedPredicate().toString();
+		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList(), makeList("G1"), makeList(guard1), makeList(), makeList());
@@ -397,10 +394,10 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard2() throws Exception {
 		
-		String invariant1 = factory.parsePredicate("(∀z·z+z>z)").getParsedPredicate().toString();
-		String guard1 = factory.parsePredicate("(∀x·x=1÷x)").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
+		String invariant1 = predicateFromString("(∀z·z+z>z)").toString();
+		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
+		String guard2 = predicateFromString("(∀x·x=(1÷x)−x)").toString();
+		String dlk1 = predicateFromString("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
@@ -439,9 +436,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard3() throws Exception {
 		
-		String guard1 = factory.parsePredicate("(x=1÷x)").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("(x=1−x)").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x·x=1÷x∧x=1−x)").getParsedPredicate().toString();
+		String guard1 = predicateFromString("(x=1÷x)").toString();
+		String guard2 = predicateFromString("(x=1−x)").toString();
+		String dlk1 = predicateFromString("(∃x·x=1÷x∧x=1−x)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList("x"), 
@@ -479,10 +476,10 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard4() throws Exception {
 		
-		String guard1 = factory.parsePredicate("(x=1∗x)").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("(x=1−x)").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x·x=1∗x∧x=1−x)∨(∃x·x=1+x)").getParsedPredicate().toString();
-		String guard3 = factory.parsePredicate("(x=1+x)").getParsedPredicate().toString();
+		String guard1 = predicateFromString("(x=1∗x)").toString();
+		String guard2 = predicateFromString("(x=1−x)").toString();
+		String dlk1 = predicateFromString("(∃x·x=1∗x∧x=1−x)∨(∃x·x=1+x)").toString();
+		String guard3 = predicateFromString("(x=1+x)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList("x"), 
@@ -510,11 +507,11 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard5() throws Exception {
 		
-		String invariant1 = factory.parsePredicate("(∀z·z+z>z)").getParsedPredicate().toString();
-		String theorem1 = factory.parsePredicate("(∃p·∀q·q=p∧p>1)").getParsedPredicate().toString();
-		String guard1 = factory.parsePredicate("(∀x·x=1÷x)").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").getParsedPredicate().toString();
+		String invariant1 = predicateFromString("(∀z·z+z>z)").toString();
+		String theorem1 = predicateFromString("(∃p·∀q·q=p∧p>1)").toString();
+		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
+		String guard2 = predicateFromString("(∀x·x=(1÷x)−x)").toString();
+		String dlk1 = predicateFromString("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
@@ -561,8 +558,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard6() throws Exception {
 		
-		String guard1 = factory.parsePredicate("x∈ℕ ∧ y∈ℕ").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x,y·x∈ℕ ∧ y∈ℕ)").getParsedPredicate().toString();
+		String guard1 = predicateFromString("x∈ℕ ∧ y∈ℕ").toString();
+		String dlk1 = predicateFromString("(∃x,y·x∈ℕ ∧ y∈ℕ)").toString();
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
@@ -586,9 +583,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testLocalVariables1() throws Exception {
 		
-		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("x∈BOOL").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").getParsedPredicate().toString();	
+		String guard1 = predicateFromString("x∈ℕ").toString();
+		String guard2 = predicateFromString("x∈BOOL").toString();
+		String dlk1 = predicateFromString("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").toString();	
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
@@ -620,9 +617,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testLocalVariables2() throws Exception {
 		
-		String guard1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String guard2 = factory.parsePredicate("x∈BOOL").getParsedPredicate().toString();
-		String dlk1 = factory.parsePredicate("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").getParsedPredicate().toString();	
+		String guard1 = predicateFromString("x∈ℕ").toString();
+		String guard2 = predicateFromString("x∈BOOL").toString();
+		String dlk1 = predicateFromString("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").toString();	
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
@@ -659,12 +656,12 @@ public class TestMachinePOG_2 extends BuilderTest {
 		env.addName("y", INTEGER);
 		env.addName("z", INTEGER);
 		
-		String invariant1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String invariant2 = factory.parsePredicate("y∈ℕ").getParsedPredicate().toString();
-		String invariant3 = factory.parsePredicate("z∈ℕ").getParsedPredicate().toString();
-		String assignment1 = factory.parseAssignment("x≔y mod z").getParsedAssignment().toString();
-		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
-		String assignment3 = factory.parseAssignment("z :∣ ∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
+		String invariant1 = predicateFromString("x∈ℕ").toString();
+		String invariant2 = predicateFromString("y∈ℕ").toString();
+		String invariant3 = predicateFromString("z∈ℕ").toString();
+		String assignment1 = assignmentFromString("x≔y mod z").toString();
+		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
+		String assignment3 = assignmentFromString("z :∣ ∃p·p<z'∧p÷z=1").toString();
 	
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
@@ -714,21 +711,19 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("fis predicate 2 ok", getFISStringForAssignment(assignment2, env), sequents[a2fis].getGoal().getContents());
 		assertEquals("fis predicate 3 ok", getFISStringForAssignment(assignment3, env), sequents[a3fis].getGoal().getContents());
 	
-		
-		assertEquals("i1 goal ok s", assignment1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getSubstitution());
-		assertEquals("i1 goal ok p", invariant1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getPredicate().getContents());
+		Predicate goal1 = rewriteGoal(env, invariant1, assignment1);
+		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
 		
 		assertEquals("i2 hypothesis", getBAStringForAssignment(assignment2, env), 
 				sequents[i2].getHypothesis().getLocalHypothesis()[0].getContents());
-		String assignment4 = factory.parseAssignment("y≔y'").getParsedAssignment().toString();
-		assertEquals("i2 goal ok s", assignment4, ((IPOModifiedPredicate) sequents[i2].getGoal()).getSubstitution());
-		assertEquals("i2 goal ok p", invariant2, ((IPOModifiedPredicate) sequents[i2].getGoal()).getPredicate().getContents());
+		
+		Predicate goal2 = rewriteGoal(env, invariant2, "y≔y'");
+		assertEquals("i2 goal ok p", goal2.toString(), ((IPOPredicate) sequents[i2].getGoal()).getContents());
 		
 		assertEquals("i3 hypothesis", getBAStringForAssignment(assignment3, env), 
 				sequents[i3].getHypothesis().getLocalHypothesis()[0].getContents());
-		String assignment5 = factory.parseAssignment("z≔z'").getParsedAssignment().toString();
-		assertEquals("i3 goal ok s", assignment5, ((IPOModifiedPredicate) sequents[i3].getGoal()).getSubstitution());
-		assertEquals("i3 goal ok p", invariant3, ((IPOModifiedPredicate) sequents[i3].getGoal()).getPredicate().getContents());
+		Predicate goal3 = rewriteGoal(env, invariant3, "z≔z'");
+		assertEquals("i3 goal ok p", goal3.toString(), ((IPOPredicate) sequents[i3].getGoal()).getContents());
 		
 	}
 
@@ -742,15 +737,15 @@ public class TestMachinePOG_2 extends BuilderTest {
 		env.addName("y", INTEGER);
 		env.addName("z", INTEGER);
 		
-		String axiom1 = factory.parsePredicate("(∀p·p∈ℤ ⇒ p∈ℕ)").getParsedPredicate().toString();
-		String theorem1 = factory.parsePredicate("(∃w·w∈ℕ∧w=w)").getParsedPredicate().toString();
-		String invariant1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String invariant2 = factory.parsePredicate("y∈ℕ").getParsedPredicate().toString();
-		String invariant3 = factory.parsePredicate("z∈ℕ").getParsedPredicate().toString();
-		String theorem2 = factory.parsePredicate("(∀b·b>z)").getParsedPredicate().toString();
-		String assignment1 = factory.parseAssignment("x≔y mod z").getParsedAssignment().toString();
-		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
-		String assignment3 = factory.parseAssignment("z:∣∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
+		String axiom1 = predicateFromString("(∀p·p∈ℤ ⇒ p∈ℕ)").toString();
+		String theorem1 = predicateFromString("(∃w·w∈ℕ∧w=w)").toString();
+		String invariant1 = predicateFromString("x∈ℕ").toString();
+		String invariant2 = predicateFromString("y∈ℕ").toString();
+		String invariant3 = predicateFromString("z∈ℕ").toString();
+		String theorem2 = predicateFromString("(∀b·b>z)").toString();
+		String assignment1 = assignmentFromString("x≔y mod z").toString();
+		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
+		String assignment3 = assignmentFromString("z:∣∃p·p<z'∧p÷z=1").toString();
 	
 		ISCMachine rodinFile = createSCMachine("test");
 		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
@@ -786,8 +781,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("fis hypothesis 2 ok", theorem2, sequents[a2fis].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
 	
 		
-		assertEquals("i1 goal ok s", assignment1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getSubstitution());
-		assertEquals("i1 goal ok p", invariant1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getPredicate().getContents());
+		Predicate goal1 = rewriteGoal(env, invariant1, assignment1);
+		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
 		assertEquals("i1 hypothesis ok", theorem2, sequents[i1].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
 	
 	}
@@ -801,10 +796,10 @@ public class TestMachinePOG_2 extends BuilderTest {
 		env.addName("x", INTEGER);
 		env.addName("y", INTEGER);
 
-		String inv1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String inv2 = factory.parsePredicate("y∈ℕ").getParsedPredicate().toString();
-		String inv3 = factory.parsePredicate("x≤y").getParsedPredicate().toString();
-		String asn1 = factory.parseAssignment("x,y≔0,0").getParsedAssignment().toString();
+		String inv1 = predicateFromString("x∈ℕ").toString();
+		String inv2 = predicateFromString("y∈ℕ").toString();
+		String inv3 = predicateFromString("x≤y").toString();
+		String asn1 = assignmentFromString("x,y≔0,0").toString();
 
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCVariables(rodinFile, makeList("x", "y"), makeList("ℤ", "ℤ"));
@@ -820,18 +815,18 @@ public class TestMachinePOG_2 extends BuilderTest {
 
 		for(IPOSequent sequent : sequents) {
 			if(sequent.getName().equals("E1/I1/INV")) {
-				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
-				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				Predicate goal1 = rewriteGoal(env, inv1, asn1);
+				assertEquals("multiple assignment", goal1.toString(), sequent.getGoal().getContents());
 				++cnt;
 			}
 			if(sequent.getName().equals("E1/I2/INV")) {
-				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
-				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				Predicate goal2 = rewriteGoal(env, inv2, asn1);
+				assertEquals("multiple assignment", goal2.toString(), sequent.getGoal().getContents());
 				++cnt;
 			}
 			if(sequent.getName().equals("E1/I3/INV")) {
-				IPOModifiedPredicate predicate = (IPOModifiedPredicate) sequent.getGoal();
-				assertEquals("multiple assignment", asn1, predicate.getSubstitution());
+				Predicate goal3 = rewriteGoal(env, inv3, asn1);
+				assertEquals("multiple assignment", goal3.toString(), sequent.getGoal().getContents());
 				++cnt;
 			}
 		}
@@ -848,15 +843,15 @@ public class TestMachinePOG_2 extends BuilderTest {
 		env.addName("y", INTEGER);
 		env.addName("z", INTEGER);
 		
-		String axiom1 = factory.parsePredicate("(∀p·p∈ℤ ⇒ p∈ℕ)").getParsedPredicate().toString();
-		String theorem1 = factory.parsePredicate("(∃w·w∈ℕ∧w=w)").getParsedPredicate().toString();
-		String invariant1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String invariant2 = factory.parsePredicate("y∈ℕ").getParsedPredicate().toString();
-		String invariant3 = factory.parsePredicate("z∈ℕ").getParsedPredicate().toString();
-		String theorem2 = factory.parsePredicate("(∀b·b>z)").getParsedPredicate().toString();
-		String assignment1 = factory.parseAssignment("x≔y mod z").getParsedAssignment().toString();
-		String assignment2 = factory.parseAssignment("y:∈{x÷z}").getParsedAssignment().toString();
-		String assignment3 = factory.parseAssignment("z:∣∃p·p<z'∧p÷z=1").getParsedAssignment().toString();
+		String axiom1 = predicateFromString("(∀p·p∈ℤ ⇒ p∈ℕ)").toString();
+		String theorem1 = predicateFromString("(∃w·w∈ℕ∧w=w)").toString();
+		String invariant1 = predicateFromString("x∈ℕ").toString();
+		String invariant2 = predicateFromString("y∈ℕ").toString();
+		String invariant3 = predicateFromString("z∈ℕ").toString();
+		String theorem2 = predicateFromString("(∀b·b>z)").toString();
+		String assignment1 = assignmentFromString("x≔y mod z").toString();
+		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
+		String assignment3 = assignmentFromString("z:∣∃p·p<z'∧p÷z=1").toString();
 	
 		ISCMachine rodinFile = createSCMachine("test");
 		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
@@ -899,23 +894,21 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertTrue("wd hypothesis 1 ok", !hyp.contains(theorem2));	
 		assertEquals("fis predicate 3 ok", getFISStringForAssignment(assignment3, env), sequents[a3fis].getGoal().getContents());
 		
-		assertEquals("i1 goal ok s", assignment1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getSubstitution());
-		assertEquals("i1 goal ok p", invariant1, ((IPOModifiedPredicate) sequents[i1].getGoal()).getPredicate().getContents());
+		Predicate goal1 = rewriteGoal(env, invariant1, assignment1);
+		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
 		hyp = contentsSetOf(sequents[i1].getHypothesis().getGlobalHypothesis().getPredicates());
 		assertTrue("wd hypothesis 1 ok", hyp.contains(theorem1));
 		assertTrue("wd hypothesis 1 ok", !hyp.contains(theorem2));	
 
 		assertEquals("i2 hypothesis", getBAStringForAssignment(assignment2, env), 
 				sequents[i2].getHypothesis().getLocalHypothesis()[0].getContents());
-		String assignment4 = factory.parseAssignment("y≔y'").getParsedAssignment().toString();
-		assertEquals("i2 goal ok s", assignment4, ((IPOModifiedPredicate) sequents[i2].getGoal()).getSubstitution());
-		assertEquals("i2 goal ok p", invariant2, ((IPOModifiedPredicate) sequents[i2].getGoal()).getPredicate().getContents());
+		Predicate goal2 = rewriteGoal(env, invariant2, "y≔y'");
+		assertEquals("i2 goal ok p", goal2.toString(), ((IPOPredicate) sequents[i2].getGoal()).getContents());
 		
 		assertEquals("i3 hypothesis", getBAStringForAssignment(assignment3, env), 
 				sequents[i3].getHypothesis().getLocalHypothesis()[0].getContents());
-		String assignment5 = factory.parseAssignment("z≔z'").getParsedAssignment().toString();
-		assertEquals("i3 goal ok s", assignment5, ((IPOModifiedPredicate) sequents[i3].getGoal()).getSubstitution());
-		assertEquals("i3 goal ok p", invariant3, ((IPOModifiedPredicate) sequents[i3].getGoal()).getPredicate().getContents());
+		Predicate goal3 = rewriteGoal(env, invariant3, "z≔z'");
+		assertEquals("i3 goal ok p", goal3.toString(), ((IPOPredicate) sequents[i3].getGoal()).getContents());
 		
 	}
 
@@ -924,9 +917,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testVariables1() throws Exception {
 		
-		String invariant1 = factory.parsePredicate("x∈ℕ").getParsedPredicate().toString();
-		String invariant2 = factory.parsePredicate("y∈BOOL").getParsedPredicate().toString();
-		String invariant3 = factory.parsePredicate("z∈{0}×{0}").getParsedPredicate().toString();
+		String invariant1 = predicateFromString("x∈ℕ").toString();
+		String invariant2 = predicateFromString("y∈BOOL").toString();
+		String invariant3 = predicateFromString("z∈{0}×{0}").toString();
 	
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));

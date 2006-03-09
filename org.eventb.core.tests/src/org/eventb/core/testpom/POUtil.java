@@ -13,16 +13,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.IPOAnyPredicate;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOModifiedPredicate;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -80,8 +76,8 @@ public class POUtil {
 	
 	private static Set<Hypothesis> readLocalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOAnyPredicate poAnyPred:poHyp.getLocalHypothesis()){
-			result.add(new Hypothesis(readPredicate(poAnyPred,typeEnv)));
+		for (IPOPredicate poPred : poHyp.getLocalHypothesis()){
+			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
 		}
 		return result;
 	}
@@ -98,37 +94,13 @@ public class POUtil {
 	}
 
 
-	private static Predicate readPredicate(IPOAnyPredicate poAnyPred, ITypeEnvironment typeEnv) throws RodinDBException {
-		if (poAnyPred instanceof IPOPredicate) {
-			IPOPredicate poPred = (IPOPredicate) poAnyPred;
+	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
 			Predicate pred =  Lib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
 			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
 			assert wellTyped;
 			return pred;
-		}
-		if (poAnyPred instanceof IPOModifiedPredicate) {
-			IPOModifiedPredicate poModPred = (IPOModifiedPredicate) poAnyPred;
-			Predicate pred = readPredicate(poModPred.getPredicate(),typeEnv);
-			// System.out.println("Pred : " + poPred.getContents() + pred);
-			// TODO : handle substitutions here!!
-			assert pred != null;
-			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
-			assert wellTyped;
-			Assignment assignment = Lib.parseAssignment(poModPred.getSubstitution());
-			assert assignment != null;
-			wellTyped = Lib.isWellTyped(assignment,typeEnv);
-			assert wellTyped;
-			if (! (assignment instanceof BecomesEqualTo)) throw new AssertionError("PO file ill formed");;
-			Predicate substPred = Lib.applyDeterministicAssignment((BecomesEqualTo)assignment,pred);
-			wellTyped = Lib.isWellTyped(substPred,typeEnv);
-			assert wellTyped;
-			// System.out.println("modifiedPred : " + substPred);
-			return substPred;
-		}
-		
-		throw new AssertionError("Illegal type of predicate.");
 	}
 
 
@@ -166,42 +138,34 @@ public class POUtil {
 			String globalHypothesis, 
 			String[] localNames,
 			String[] localTypes,
-			String[][] localHypothesis,
-			String[] goal) throws RodinDBException {
+			String[] localHypothesis,
+			String goal) throws RodinDBException {
 		IPOSequent sequent = (IPOSequent) file.createInternalElement(IPOSequent.ELEMENT_TYPE, poName, null, null);
 		addTypes(sequent, localNames, localTypes);
 		addHypothesis(sequent, globalHypothesis, localHypothesis);
-		addModifiedPredicate(sequent,goal);
+		addPredicate(sequent,goal);
 	}
 	
 	private static void addHypothesis(IPOSequent sequent, 
 			String globalHypothesis, 
-			String[][] localHypothesis) throws RodinDBException {
+			String[] localHypothesis) throws RodinDBException {
 		IPOHypothesis hypothesis = (IPOHypothesis) sequent.createInternalElement(IPOHypothesis.ELEMENT_TYPE, null, null, null);
 		hypothesis.setContents(globalHypothesis);
 		for(int i=0; i<localHypothesis.length; i++) {
-			addModifiedPredicate(hypothesis, localHypothesis[i]);
+			addPredicate(hypothesis, localHypothesis[i]);
 		}
 	}
 	
-	private static void addModifiedPredicate(IInternalParent internalParent, String[] mPredicate) throws RodinDBException {
-		if (mPredicate.length < 1) return;
-		assert(mPredicate.length >= 1);
-		IInternalParent parent = internalParent;
-		for(int i=0; i<mPredicate.length-1; i++) {
-			IInternalElement element = (IInternalElement) parent.createInternalElement(IPOModifiedPredicate.ELEMENT_TYPE, null, null, null);
-			element.setContents(mPredicate[i]);
-			parent = element;
-		}
-		IInternalElement element = parent.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, null);
-		element.setContents(mPredicate[mPredicate.length-1]);
+	private static void addPredicate(IInternalParent internalParent, String predicate) throws RodinDBException {
+		IInternalElement element = (IInternalElement) internalParent.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, null);
+		element.setContents(predicate);
 	}
 	
 	public static String[] mp(String... strings) {
 		return strings;
 	}
 	
-	public static String[][] mh(String[]... strings) {
+	public static String[] mh(String... strings) {
 		return strings;
 	}
 

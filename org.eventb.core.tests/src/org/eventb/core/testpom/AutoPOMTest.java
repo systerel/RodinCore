@@ -21,52 +21,38 @@ public class AutoPOMTest extends BuilderTest {
 		POUtil.addSequent(poFile, "PO1", 
 				"hyp0", 
 				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh(
-						POUtil.mp(), 
-						POUtil.mp()), 
-				POUtil.mp("1=1 ∧2=2 ∧x ∈ℕ"));
+				POUtil.mh(), 
+				"1=1 ∧2=2 ∧x ∈ℕ");
 		POUtil.addSequent(poFile, "PO2", 
 				"hyp0", 
 				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh(
-						POUtil.mp("y∈ℕ"), 
-						POUtil.mp()), 
-				POUtil.mp("1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ"));
+				POUtil.mh("y∈ℕ"), 
+				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO3", 
 				"hyp0", 
 				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh(
-						POUtil.mp("3=3"), 
-						POUtil.mp()), 
-				POUtil.mp("∃x·x=3"));
+				POUtil.mh("3=3"), 
+				"∃x·x=3");
 		POUtil.addSequent(poFile, "PO4", 
 				"hyp0", 
 				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh(
-						POUtil.mp("3=3"), 
-						POUtil.mp()), 
-				POUtil.mp("1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))"));
+				POUtil.mh("3=3"), 
+				"1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))");
 		POUtil.addSequent(poFile, "PO5", 
 				"hyp0", 
 				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh(
-						POUtil.mp("y∈ℕ"), 
-						POUtil.mp()), 
-				POUtil.mp("x ≔y","1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ"));
+				POUtil.mh("y∈ℕ"), 
+				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO6", 
 				"hyp0", 
 				POUtil.mp("y","x'"), POUtil.mp("ℤ","ℤ"), 
-				POUtil.mh(
-						POUtil.mp("y∈ℕ"), 
-						POUtil.mp()), 
-				POUtil.mp("x' ≔y","1=1 ∧2=2 ∧x ∈ℕ∧x' ∈ℕ"));
+				POUtil.mh("y∈ℕ"), 
+				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO7", 
 				"hyp0", 
 				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh(
-						POUtil.mp(),
-						POUtil.mp()), 
-				POUtil.mp("y∈ℕ"));
+				POUtil.mh(), 
+				"y∈ℕ");
 		poFile.save(null, true);
 		return poFile;
 	}
