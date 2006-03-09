@@ -13,6 +13,8 @@
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -20,11 +22,13 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -43,6 +47,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.eventbeditor.ElementAtributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -342,4 +347,27 @@ public class UIUtils {
 		}
 		return;
 	}
+
+
+	public static void newVariables(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Variables", "Name of the new variable", "var" + (counter + 1));
+
+			dialog.open();
+			Collection<String> names = dialog.getAttributes();
+			for (Iterator<String> it = names.iterator(); it.hasNext();) {
+				String name = it.next();
+				rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void newInvariants(IRodinFile rodinFile) {
+		
+	}
+
 }
