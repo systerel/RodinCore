@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -30,7 +31,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * An implementation of the Event-B Form Page
  * for editing the dependencies (e.g. Sees, refines clause).
  */
-public class DependenciesPage extends FormPage {
+public class DependenciesPage extends FormPage implements IEditorPart {
 	
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = "Dependencies"; //$NON-NLS-1$

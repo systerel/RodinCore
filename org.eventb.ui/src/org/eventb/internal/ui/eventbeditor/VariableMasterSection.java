@@ -11,18 +11,22 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -32,7 +36,8 @@ import org.rodinp.core.RodinDBException;
  * for displaying variables (used as master section in Master-Detail block).
  */
 public class VariableMasterSection 
-	extends EventBTablePartWithButtons 
+	extends EventBTablePartWithButtons
+	implements IElementChangedListener
 {
 	
 	/**
@@ -79,6 +84,7 @@ public class VariableMasterSection
 			// TODO Exception handle
 			e.printStackTrace();
 		}
+		((EventBEditor) this.getBlock().getPage().getEditor()).addElementChangedListener(this);
 	}
 	
 
@@ -86,26 +92,8 @@ public class VariableMasterSection
 	 * Handle the adding (new Variable) action.
 	 */
 	protected void handleAdd() {
-		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Variables", "Name of the new variable", "var" + (counter + 1));
-		
-		dialog.open();
-		Collection<String> names = dialog.getAttributes();
-		try {
-			for (Iterator<String> it = names.iterator(); it.hasNext();) {
-				String name = it.next();
-				rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
-				counter++;
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		this.getViewer().setInput(rodinFile);
-		this.markDirty();
-		((EventBFormPage) block.getPage()).notifyChangeListeners();
-		updateButtons();
+		UIUtils.newVariables(rodinFile);
 	}
-	
 	
 	/**
 	 * Setting the (tree) viewer input of this master section.
@@ -119,4 +107,60 @@ public class VariableMasterSection
 		viewer.setInput(rodinFile);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof IVariable) {
+//			UIUtils.debug("Refresh Variable");
+			postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			});
+		}
+		else {
+			return;
+		}
+	}
+
+	
+	private void postRunnable(final Runnable r) {
+		Control ctrl= this.getSection().getClient();
+		final Runnable trackedRunnable= new Runnable() {
+			public void run() {
+				try {
+					r.run();
+				} finally {
+					//removePendingChange();
+					//if (UIUtils.DEBUG) System.out.println("Runned");
+				}
+			}
+		};
+		if (ctrl != null && !ctrl.isDisposed()) {
+			try {
+				ctrl.getDisplay().asyncExec(trackedRunnable); 
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Error e) {
+				throw e; 
+			}
+		}
+	}
 }

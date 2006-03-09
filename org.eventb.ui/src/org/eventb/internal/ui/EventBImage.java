@@ -46,8 +46,13 @@ public class EventBImage {
 	public static final String IMG_NEW_PROJECT = "New Project";
 	public static final String IMG_NEW_COMPONENT = "New Component";
 	
+	/**
+	 * Paths to the icons for buttons, menus, etc.
+	 */
 	public static final String IMG_PREVPO_PATH = "icons/prev.gif";
 	public static final String IMG_NEXTPO_PATH = "icons/next.gif";
+	
+	public static final String IMG_NEW_VARIABLES_PATH = "icons/new-variables.gif";
 	
 	/**
 	 * Returns an image descriptor for the image file at the given

@@ -12,6 +12,8 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,8 +44,13 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -54,9 +61,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBEditor
 	extends FormEditor
-{
-	// TODO This editor need to listen to the changed in the RODIN database
-	
+	implements IElementChangedListener 
+{	
 	/**
 	 * The plug-in identifier of the Event-B Editor (value
 	 * <code>"org.eventb.internal.ui.editors.EventBEditor"</code>).
@@ -69,14 +75,32 @@ public class EventBEditor
 	// The associated rodin file handle
 	private IRodinFile rodinFile = null;
 	
-
+	public static Collection<IElementChangedListener> listeners;
+	
 	/**
 	 * Default constructor.
 	 */
 	public EventBEditor() {
 		super();
+		RodinCore.addElementChangedListener(this);
+		listeners = new HashSet<IElementChangedListener>();
 	}
 
+	
+	public void addElementChangedListener(IElementChangedListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeElementChangedListener(IElementChangedListener listener) {
+		listeners.remove(listener);
+	}
+	
+	public void notifyElementChangedListeners(IRodinElementDelta delta) {
+		for (IElementChangedListener listener : listeners) {
+			listener.elementChanged(new ElementChangedEvent(delta, ElementChangedEvent.POST_CHANGE));
+		}
+	}
+	
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
@@ -361,5 +385,45 @@ public class EventBEditor
 		}
 		return rodinFile;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {		
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		
+		if (element instanceof IRodinDB) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+			return;			
+		}
+		if (element instanceof IRodinProject) {
+			IRodinProject prj = (IRodinProject) element;
+			if (!rodinFile.getParent().equals(prj)) {
+				return;
+			}
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+			return;
+		}
+
+		if (element instanceof IRodinFile) {
+			if (!rodinFile.equals(element)) {
+				return;
+			}
+			notifyElementChangedListeners(delta);
+			return;
+		}
+		
+
+	}
 }
