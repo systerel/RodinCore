@@ -75,7 +75,7 @@ public class ElementChangedEvent extends EventObject {
 	 * Creates an new element changed event (based on a <code>IRodinElementDelta</code>).
 	 *
 	 * @param delta the Rodin element delta.
-	 * @param type the type of delta (ADDED, REMOVED, CHANGED) this event contains
+	 * @param type the type of this event (currently always POST_CHANGE)
 	 */
 	public ElementChangedEvent(IRodinElementDelta delta, int type) {
 		super(delta);
@@ -93,7 +93,10 @@ public class ElementChangedEvent extends EventObject {
 	
 	/**
 	 * Returns the type of event being reported.
-	 *
+	 * <p>
+	 * Currently, only <code>POST_CHANGE</code> is used.
+	 * </p>
+	 * 
 	 * @return one of the event type constants
 	 * @see #POST_CHANGE
 	 * @see #POST_RECONCILE
