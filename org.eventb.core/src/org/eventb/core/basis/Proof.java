@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eventb.core.IPROOF;
+import org.eventb.core.IProof;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.UnnamedInternalElement;
@@ -16,7 +16,7 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  * @author Farhad Mehta
  *
  */
-public class Proof extends UnnamedInternalElement implements IPROOF {
+public class Proof extends UnnamedInternalElement implements IProof {
 
 	public Proof(IRodinElement parent) {
 		super(ELEMENT_TYPE, parent);

@@ -31,7 +31,7 @@ public interface IPRSequent extends IInternalElement {
 	boolean isDischarged() throws RodinDBException;
 
 	IProofTree makeProofTree() throws RodinDBException;
-	IPROOF getProof() throws RodinDBException;
+	IProof getProof() throws RodinDBException;
 	void updateStatus(IProofTree pt) throws RodinDBException;
 	IPODescription getDescription() throws RodinDBException;
 

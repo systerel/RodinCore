@@ -13,7 +13,7 @@ import org.eventb.core.IPODescription;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
-import org.eventb.core.IPROOF;
+import org.eventb.core.IProof;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
@@ -87,10 +87,10 @@ public class PRSequent extends InternalElement implements IPRSequent {
 		return desc;
 	}
 
-	public IPROOF getProof() throws RodinDBException {
+	public IProof getProof() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(Proof.ELEMENT_TYPE);
 		assert list.size() == 1;
-		return (IPROOF) list.get(0);
+		return (IProof) list.get(0);
 	}
 
 	public IProofTree makeProofTree() throws RodinDBException {
@@ -102,7 +102,7 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	}
 
 	public boolean isDischarged() throws RodinDBException {
-		IPROOF status = getProof();
+		IProof status = getProof();
 		String contents = status.getContents();
 		return contents.equals("DISCHARGED");
 	}

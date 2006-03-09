@@ -19,7 +19,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPROOF.Status;
+import org.eventb.core.IProof.Status;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
