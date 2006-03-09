@@ -27,16 +27,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachine;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -150,12 +147,7 @@ public class NewComponentWizard
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				try {
-					String editorId = EventBEditor.EDITOR_ID;
-					IEditorInput fileInput = new FileEditorInput(rodinFile.getResource());
-					EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
-				} catch (PartInitException e) {
-				}
+				UIUtils.linkToEventBEditor(rodinFile);
 			}
 		});
 		monitor.worked(1);

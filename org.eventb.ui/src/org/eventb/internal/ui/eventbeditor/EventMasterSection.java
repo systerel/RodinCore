@@ -435,7 +435,7 @@ public class EventMasterSection
 	public void setSelection(IRodinElement element) {
 		TreeViewer viewer = this.getViewer();
 		viewer.setSelection(new StructuredSelection(element));
-		//EventBEditor editor = (EventBEditor) getBlock().getPage().getEditor();
+		//EventBMachineEditor editor = (EventBMachineEditor) getBlock().getPage().getEditor();
 		//editor.getContentOutlinePage().setRodinElementSelection(element);
 	}
 

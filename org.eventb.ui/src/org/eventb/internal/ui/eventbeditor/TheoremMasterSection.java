@@ -12,7 +12,6 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -21,9 +20,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
 import org.eventb.core.ITheorem;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -81,22 +83,6 @@ public class TheoremMasterSection
 	public TheoremMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block);
-		if (rodinFile instanceof IMachine)
-			try {
-				counter = ((IMachine) rodinFile).getTheorems().length;
-			}
-			catch (RodinDBException e) {
-				// TODO Exception handle
-				e.printStackTrace();
-			}
-		else if (rodinFile instanceof IContext)
-			try {
-				counter = ((IContext) rodinFile).getTheorems().length;
-			}
-			catch (RodinDBException e) {
-				// TODO Exception handle
-				e.printStackTrace();
-			}
 	}
 	
 	
@@ -104,16 +90,7 @@ public class TheoremMasterSection
 	 * Handle the adding (new Theorem) action.
 	 */
 	protected void handleAdd() {
-		try {
-			IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm" + (++counter), null, null);
-			theorem.setContents(EventBUIPlugin.THM_DEFAULT);
-			this.getViewer().setInput(rodinFile);
-			this.getViewer().setSelection(new StructuredSelection(theorem));
-			this.markDirty();
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		UIUtils.newTheorems(rodinFile);
 	}
 	
 
@@ -129,4 +106,37 @@ public class TheoremMasterSection
 		viewer.setInput(rodinFile);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof ITheorem) {
+			UIUtils.postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			}, this.getSection().getClient());
+		}
+		else {
+			return;
+		}
+	}
+
+	
 }

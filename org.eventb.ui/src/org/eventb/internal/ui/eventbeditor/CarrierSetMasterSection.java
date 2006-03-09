@@ -11,9 +11,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -22,7 +19,12 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContext;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -72,13 +74,6 @@ public class CarrierSetMasterSection
 	public CarrierSetMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block);
-		try {
-			counter = ((IContext) rodinFile).getConstants().length;
-		}
-		catch (RodinDBException e) {
-			// TODO Exception handle
-			e.printStackTrace();
-		}
 	}
 	
 
@@ -86,22 +81,7 @@ public class CarrierSetMasterSection
 	 * Handle the adding (new Carrier Set) action
 	 */
 	protected void handleAdd() {
-		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
-		dialog.open();
-		Collection<String> names = dialog.getAttributes();
-		try {
-			for (Iterator<String> it = names.iterator(); it.hasNext();) {
-				String name = it.next();
-				rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
-				counter++;
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		this.getViewer().setInput(rodinFile);
-		this.markDirty();
-		updateButtons();
+		UIUtils.newCarrierSets(rodinFile);
 	}
 	
 
@@ -117,4 +97,36 @@ public class CarrierSetMasterSection
 		viewer.setInput(rodinFile);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof ICarrierSet) {
+			UIUtils.postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			}, this.getSection().getClient());
+		}
+		else {
+			return;
+		}
+	}
+	
 }

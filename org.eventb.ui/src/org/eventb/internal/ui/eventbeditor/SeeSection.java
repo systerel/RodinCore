@@ -190,7 +190,7 @@ public class SeeSection
 			InputDialog dialog = new InputDialog(null, "Resource out of sync", "Refresh? (Y/N)", "Y", null);
 			dialog.open();
 			dialog.getValue();
-			EventBEditorContributor.sampleAction.refreshAll();
+			EventBMachineEditorContributor.sampleAction.refreshAll();
 		}
 
 		toolkit.paintBordersFor(comp);

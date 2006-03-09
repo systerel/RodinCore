@@ -28,6 +28,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -40,7 +41,8 @@ import org.rodinp.core.RodinDBException;
  * for displaying Rodin elements (used as master section in Master-Detail block).
  */
 public abstract class EventBTablePartWithButtons
-	extends SectionPart 
+	extends SectionPart
+	implements IElementChangedListener
 {
 
 	// The table viewer.
@@ -60,9 +62,6 @@ public abstract class EventBTablePartWithButtons
 	private static final int DELETE_INDEX = 1;
 	private static final int UP_INDEX = 2;
 	private static final int DOWN_INDEX = 3;
-	
-	// The counter used to create automatic name for new elements.
-	protected int counter = 0;
 
 	
 	/**
@@ -93,6 +92,7 @@ public abstract class EventBTablePartWithButtons
 		
 		String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
 		createButtons(toolkit, client, buttonLabels);
+		((EventBEditor) this.getBlock().getPage().getEditor()).addElementChangedListener(this);
 	}
 	
 	
@@ -256,7 +256,6 @@ public abstract class EventBTablePartWithButtons
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IInternalElement) {
 				try {
-					counter--;
 					((IInternalElement) objects[i]).delete(true, null);
 //					commit();
 				}

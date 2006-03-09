@@ -22,7 +22,6 @@ import org.eventb.core.IMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -36,7 +35,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class InvariantMasterSection
 	extends EventBTablePartWithButtons
-	implements IElementChangedListener
 {
 
 	/**
@@ -76,14 +74,6 @@ public class InvariantMasterSection
 	public InvariantMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block);
-		try {
-			counter = ((IMachine) rodinFile).getInvariants().length;
-		}
-		catch (RodinDBException e) {
-			// TODO Exception handle
-			e.printStackTrace();
-		}
-		((EventBEditor) this.getBlock().getPage().getEditor()).addElementChangedListener(this);
 	}
 
 

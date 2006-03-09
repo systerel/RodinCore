@@ -50,7 +50,9 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.eventbeditor.ElementAtributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
+import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
@@ -302,13 +304,20 @@ public class UIUtils {
 	 * Link the current object to an Event-B editor.
 	 */
 	public static void linkToEventBEditor(Object obj) {
-		String editorId = EventBEditor.EDITOR_ID;
+		
 		IRodinFile component;
 		
 		if (!(obj instanceof IRodinProject)) {
 			component = (IRodinFile) UIUtils.getOpenable(obj); 
 			try {
 				IEditorInput fileInput = new FileEditorInput(component.getResource());
+				String editorId = "";
+				if (component instanceof IMachine) {
+					 editorId = EventBMachineEditor.EDITOR_ID;
+				}
+				else if (component instanceof IContext) {
+					editorId = EventBContextEditor.EDITOR_ID;
+				}
 				EventBEditor editor = (EventBEditor) EventBUIPlugin.getActivePage().openEditor(fileInput, editorId);
 				editor.setSelection(obj);
 			} catch (PartInitException e) {
@@ -407,6 +416,43 @@ public class UIUtils {
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}	
+	}
+
+
+	public static void newTheorems(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Theorems", "Name and predicate of the new theorem", "thm", counter + 1);
+			dialog.open();
+			String [] names = dialog.getNewNames();
+			String [] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, name, null, null);
+				theorem.setContents(content);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void newCarrierSets(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
+
+			dialog.open();
+			Collection<String> names = dialog.getAttributes();
+			for (Iterator<String> it = names.iterator(); it.hasNext();) {
+				String name = it.next();
+				rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

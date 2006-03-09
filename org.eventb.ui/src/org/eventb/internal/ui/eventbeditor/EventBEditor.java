@@ -11,14 +11,12 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -39,9 +37,6 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.ElementChangedEvent;
@@ -57,18 +52,13 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  * <p>
- * Event-B specific form editor for machines, contexts, etc.
+ * Abstract Event-B specific form editor for machines, contexts.
  */
-public class EventBEditor
+public abstract class EventBEditor
 	extends FormEditor
 	implements IElementChangedListener 
 {	
-	/**
-	 * The plug-in identifier of the Event-B Editor (value
-	 * <code>"org.eventb.internal.ui.editors.EventBEditor"</code>).
-	 */
-	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID + ".editors.EventBEditor";
-	
+
 	// The outline page
 	private EventBContentOutlinePage fOutlinePage;
 	
@@ -108,49 +98,9 @@ public class EventBEditor
 		IRodinFile rodinFile = this.getRodinInput();
 		
 		this.setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		if (rodinFile instanceof IMachine)
-			this.setTitleImage(registry.get(EventBImage.IMG_MACHINE));
-		if (rodinFile instanceof IContext)
-			this.setTitleImage(registry.get(EventBImage.IMG_CONTEXT));
 	}
 
-
-	/**
-	 * Creates the pages of the multi-page editor.
-	 */
-	protected void addPages() {
-		IRodinFile rodinFile = this.getRodinInput();
-		
-		Constructor [] constructors = new Constructor[0];
-		
-		if (rodinFile instanceof IMachine) {
-			constructors = ExtensionLoader.getMachinePages();
-		}
-		if (rodinFile instanceof IContext) {
-			constructors = ExtensionLoader.getContextPages();
-		}
-				
-		try {
-			// Create the pages
-			for (int i = 0; i < constructors.length; i++) {
-				Object [] objects = {this};
-				addPage((IFormPage) constructors[i].newInstance(objects));
-			}
-		}
-		catch (PartInitException e) {
-			// TODO Handle exception
-			MessageDialog.openError(null,
-					"Event-B Editor",
-					"Error creating pages for Event-B Editor");
-		}
-		catch (Exception e) {
-			// TODO Handle exception
-			e.printStackTrace();
-		}
-	}
-
-	/** The <code>EventBEditor</code> implementation of this 
+	/** The <code>EventBMachineEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method performs any extra 
 	 * disposal actions required by the Event-B editor.
 	 */
@@ -169,7 +119,7 @@ public class EventBEditor
 	}	
 			
 	/**
-	 * The <code>EventBEditor</code> implementation of this 
+	 * The <code>EventBMachineEditor</code> implementation of this 
 	 * method performs gets the content outline page if request
 	 * is for a an outline page.
 	 * <p> 

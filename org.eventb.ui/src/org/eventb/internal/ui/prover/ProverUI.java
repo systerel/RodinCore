@@ -114,7 +114,7 @@ public class ProverUI
 	}
 
 	
-	/** The <code>EventBEditor</code> implementation of this 
+	/** The <code>EventBMachineEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method performs any extra 
 	 * disposal actions required by the event-B editor.
 	 */

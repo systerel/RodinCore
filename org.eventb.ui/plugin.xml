@@ -40,12 +40,19 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.eventb.internal.ui.eventbeditor.EventBEditor"
-            contributorClass="org.eventb.internal.ui.eventbeditor.EventBEditorContributor"
-            extensions="bum, buc"
-            icon="icons/new-construct.gif"
-            id="org.eventb.ui.editors.EventBEditor"
-            name="Event-B Editor"/>
+            class="org.eventb.internal.ui.eventbeditor.EventBMachineEditor"
+            contributorClass="org.eventb.internal.ui.eventbeditor.EventBMachineEditorContributor"
+            extensions="bum"
+            icon="icons/machine.gif"
+            id="org.eventb.ui.editors.EventBMachineEditor"
+            name="Event-B Machine Editor"/>
+      <editor
+            class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
+            contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
+            extensions="buc"
+            icon="icons/context.gif"
+            id="org.eventb.ui.editors.EventBContextEditor"
+            name="Event-B Context Editor"/>
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
             contributorClass="org.eventb.internal.ui.prover.ProverUIContributor"

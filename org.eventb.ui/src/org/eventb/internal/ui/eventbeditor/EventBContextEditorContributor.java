@@ -20,9 +20,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eventb.internal.ui.EventBImage;
@@ -36,19 +33,18 @@ import org.rodinp.core.IRodinFile;
  * Responsible for the redirection of global actions to the active editor.
  * Multi-page contributor replaces the contributors for the individual editors in the multi-page editor.
  */
-public class EventBEditorContributor
+public class EventBContextEditorContributor
 	extends MultiPageEditorActionBarContributor
 {
-	public static RefreshAction sampleAction;
 	private IEditorPart activeEditorPart;
 	
-	public static Action newVariables;
-	public static Action newInvariants;
+	public static Action newCarrierSets;
+	public static Action newTheorems;
 	
 	/**
 	 * Creates a multi-page contributor.
 	 */
-	public EventBEditorContributor() {
+	public EventBContextEditorContributor() {
 		super();
 		createActions();
 	}
@@ -105,65 +101,52 @@ public class EventBEditorContributor
 //		}
 //		else {
 			IToolBarManager manager = actionBars.getToolBarManager();
-			manager.add(sampleAction);
+			manager.add(newTheorems);
 			actionBars.updateActionBars();
 			
 //		}
 	}
 	private void createActions() {
-		sampleAction = new RefreshAction(EventBUIPlugin.getActiveWorkbenchShell());
-//		sampleAction = new Action() {
-//			public void run() {
-//				MessageDialog.openInformation(null, "EventB Plug-in", "Sample Action Executed");
-//			}
-//		};
-//		sampleAction.setText("Refresh");
-		sampleAction.setToolTipText("Refresh the component");
-		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ActionFactory.REFRESH.getId()));
-		
-		newVariables = new Action() {
+		newTheorems = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newVariables(rodinFile);
+					UIUtils.newTheorems(rodinFile);
 				}
 			}
 		};
-		newVariables.setText("New Variables");
-		newVariables.setToolTipText("Create new variables for the component");
-		newVariables.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
-			
-		newInvariants = new Action() {
+		newTheorems.setText("New Theorems");
+		newTheorems.setToolTipText("Create new theorems for the component");
+		newTheorems.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
+
+		newCarrierSets = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newInvariants(rodinFile);
+					UIUtils.newCarrierSets(rodinFile);
 				}
 			}
 		};
-		newInvariants.setText("New Invariants");
-		newInvariants.setToolTipText("Create new invariants for the component");
-		newInvariants.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_INVARIANTS_PATH));
-			
+		newCarrierSets.setText("New Carrier Sets");
+		newCarrierSets.setToolTipText("Create new carrier sets for the component");
+		newCarrierSets.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
 	}
 	
 	
 	public void contributeToMenu(IMenuManager manager) {
 		IMenuManager menu = new MenuManager("Event-B");
+		menu.add(newCarrierSets);
+		menu.add(newTheorems);
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
-		manager.add(newVariables);
-		manager.add(newInvariants);
-//		menu.add(sampleAction);
 	}
+
 	public void contributeToToolBar(IToolBarManager manager) {
 		manager.add(new Separator());
-//		manager.add(sampleAction);
-		manager.add(newVariables);
-		manager.add(newInvariants);
+		manager.add(newCarrierSets);
+		manager.add(newTheorems);
 	}
 }

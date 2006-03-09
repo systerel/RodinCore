@@ -22,7 +22,12 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContext;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -72,13 +77,6 @@ public class ConstantMasterSection
 	public ConstantMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block);
-		try {
-			counter = ((IContext) rodinFile).getConstants().length;
-		}
-		catch (RodinDBException e) {
-			// TODO Exception handle
-			e.printStackTrace();
-		}
 	}
 	
 
@@ -86,14 +84,13 @@ public class ConstantMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Constants", "Name of the new constant", "cst" + (counter + 1));
+		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Constants", "Name of the new constant", "cst" + (1));
 		dialog.open();
 		Collection<String> names = dialog.getAttributes();
 		try {
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();
 				rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
-				counter++;
 			}
 		}
 		catch (RodinDBException e) {
@@ -117,4 +114,35 @@ public class ConstantMasterSection
 		viewer.setInput(rodinFile);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof IConstant) {
+			UIUtils.postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			}, this.getSection().getClient());
+		}
+		else {
+			return;
+		}
+	}
 }

@@ -107,7 +107,7 @@ public class EventBContentOutlinePage
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
-					EventBEditorContributor.sampleAction.refreshAll();
+					EventBMachineEditorContributor.sampleAction.refreshAll();
 					MessageDialog.openError(null, "Error",
 							"Cannot get children of " + parent);
 				}

@@ -97,7 +97,7 @@ public abstract class EventBTreePartWithButtons
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(EventBTreePartWithButtons.this, event.getSelection());
-				//((EventBEditor) EventBTreePartWithButtons.this.getBlock().getPage().getEditor()).getContentOutlinePage().setTreeSelection(event.getSelection());
+				//((EventBMachineEditor) EventBTreePartWithButtons.this.getBlock().getPage().getEditor()).getContentOutlinePage().setTreeSelection(event.getSelection());
 				updateButtons();
 			}
 		});
