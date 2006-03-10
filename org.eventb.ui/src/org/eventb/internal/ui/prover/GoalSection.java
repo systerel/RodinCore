@@ -155,10 +155,9 @@ public class GoalSection
 
 	private void createSimpleText(String text) {
 		composite.setLayout(new GridLayout());
-	    IEventBFormText textWidget = new EventBFormText(toolkit.createFormText(composite, true));
-	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-	    textWidget.getFormText().setText(text, true, false);
-	    textWidget.getFormText().setLayoutData(gd);
+		EventBMath textWidget = new EventBMath(toolkit.createText(composite, text, SWT.READ_ONLY));
+	    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	    textWidget.getTextWidget().setLayoutData(gd);
 	}
 	
 	public void setGoal(IProofTreeNode pt) {
@@ -169,12 +168,12 @@ public class GoalSection
 
         if (pt == null) {
 			clearFormText();
-			createSimpleText("<form><p>No current goal</p></form>");
+			createSimpleText("No current goal");
 			scrolledForm.reflow(true);		
 		}
         else if (!pt.isOpen()) {
 			clearFormText();
-			createSimpleText("<form><p>Tactic applied</p></form>");
+			createSimpleText("Tactic applied");
 			scrolledForm.reflow(true);
 		}
 		else {
@@ -211,16 +210,15 @@ public class GoalSection
 					textBoxes.add(mathBox);
 				}
 		        
-				IEventBFormText formText = new EventBFormText(toolkit.createFormText(composite, false));
-		        gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		        formText.getFormText().setLayoutData(gd);
 				SourceLocation loc = qpred.getPredicate().getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc.getEnd());
-				formText.getFormText().setText(" \u00b7 " + image, false, false);
+				EventBMath text = new EventBMath(toolkit.createText(composite, " \u00b7 " + image, SWT.READ_ONLY));
+		        gd = new GridData(GridData.FILL_HORIZONTAL);
+		        text.getTextWidget().setLayoutData(gd);
 				scrolledForm.reflow(true);
 			}
 			else {
-				createSimpleText("<form><p>" + UIUtils.XMLWrapUp(goal.toString()) + "</p></form>");
+				createSimpleText(goal.toString());
 			}
 		}
 		scrolledForm.reflow(true);
