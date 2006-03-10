@@ -414,7 +414,7 @@ public class EventMasterSection
 	protected void setViewerInput() {
 		TreeViewer viewer = this.getViewer();
 		Tree tree = viewer.getTree();
-		tree.setHeaderVisible(true);
+		tree.setHeaderVisible(false);
 		TreeColumn column = new TreeColumn(tree, SWT.LEFT);
 		column.setText("Testing");
 		column.setResizable(true);

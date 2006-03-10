@@ -116,6 +116,7 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newCarrierSets(rodinFile);
+					editor.setActivePage(CarrierSetsPage.PAGE_ID);
 				}
 			}
 		};
@@ -131,6 +132,7 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newConstants(rodinFile);
+					editor.setActivePage(ConstantsPage.PAGE_ID);
 				}
 			}
 		};
@@ -146,7 +148,7 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newTheorems(rodinFile);
-				}
+					editor.setActivePage(TheoremsPage.PAGE_ID);				}
 			}
 		};
 		newTheorems.setText("New Theorems");
@@ -161,6 +163,7 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newAxioms(rodinFile);
+					editor.setActivePage(AxiomsPage.PAGE_ID);
 				}
 			}
 		};
