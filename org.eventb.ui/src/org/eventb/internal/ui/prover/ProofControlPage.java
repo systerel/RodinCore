@@ -95,7 +95,7 @@ public class ProofControlPage
 	private Button pp;
 	private Button ah;
 	private Button ct;
-	private Button se;
+	private Button sh;
 	private boolean isOpened;
 	
 	/*
@@ -179,7 +179,7 @@ public class ProofControlPage
 					return;
 				}
 
-				if (label.equals("se")) {
+				if (label.equals("sh")) {
 					editor.getUserSupport().searchHyps(textInput.getTextWidget().getText());
 					return;
 				}
@@ -232,15 +232,33 @@ public class ProofControlPage
 		buttonContainer.setLayoutData(new GridData());
 				
 		pp = createButton(buttonContainer, "pp");
+		pp.setToolTipText("Run the legacy prover");
+		
 		nm = createButton(buttonContainer, "nm");
+		nm.setToolTipText("Apply normalise tactic");
+		
 		ah = createButton(buttonContainer, "ah");
+		ah.setToolTipText("Add predicate to the hypothesis");
+		
 		dc = createButton(buttonContainer, "dc");
+		dc.setToolTipText("Case distinction");
+		
 		ct = createButton(buttonContainer, "ct");
+		ct.setToolTipText("Prove by contradiction");
 		
 		pn = createButton(buttonContainer, "pn");
-		se = createButton(buttonContainer, "se");
-		createButton(buttonContainer, "pv");
-		createButton(buttonContainer, "ne");
+		pn.setToolTipText("Prune the Proof Tree at the current node");
+
+		sh = createButton(buttonContainer, "sh");
+		sh.setToolTipText("Search hypotheses");
+		
+		Button pv = createButton(buttonContainer, "pv");
+		pv.setToolTipText("Previous undischarged obligation");
+		pv.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK));
+		
+		Button ne = createButton(buttonContainer, "ne");
+		ne.setToolTipText("Next undischarged obligation");
+		ne.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD));
 		
 		// A text field
 		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL));
@@ -348,7 +366,7 @@ public class ProofControlPage
 					gl.numColumns = 1;
 					scrolledForm.getBody().setLayout(gl);
 					gl = new GridLayout();
-					gl.numColumns = 8;  // TODO Should be the number of buttons
+					gl.numColumns = 9;  // TODO Should be the number of buttons
 					gl.makeColumnsEqualWidth = true;
 					buttonContainer.setLayout(gl);					
 				}
@@ -420,7 +438,7 @@ public class ProofControlPage
 			else dc.setEnabled(true);
 			if (textInput.getTextWidget().getText().equals("")) ah.setEnabled(false);
 			else ah.setEnabled(true);
-			se.setEnabled(true);
+			sh.setEnabled(true);
 		}
 		else {
 			pn.setEnabled(true);
@@ -429,7 +447,7 @@ public class ProofControlPage
 			dc.setEnabled(false);
 			ct.setEnabled(false);
 			ah.setEnabled(false);
-			se.setEnabled(false);
+			sh.setEnabled(false);
 		}
 		return;
 	}
