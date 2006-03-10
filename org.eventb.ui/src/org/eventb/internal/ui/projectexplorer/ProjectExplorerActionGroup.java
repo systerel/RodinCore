@@ -40,10 +40,6 @@ import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.prover.ProofControl;
-import org.eventb.internal.ui.prover.ProofInformation;
-import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
@@ -195,10 +191,10 @@ public class ProjectExplorerActionGroup
 						catch (WorkbenchException e) {
 							e.printStackTrace();
 						}
-						UIUtils.activateView(ProofTreeUI.VIEW_ID);
-						UIUtils.activateView(ProofControl.VIEW_ID);
-						UIUtils.activateView(ProofInformation.VIEW_ID);
-						UIUtils.activateView(ObligationExplorer.VIEW_ID);
+//						UIUtils.activateView(ProofTreeUI.VIEW_ID);
+//						UIUtils.activateView(ProofControl.VIEW_ID);
+//						UIUtils.activateView(ProofInformation.VIEW_ID);
+//						UIUtils.activateView(ObligationExplorer.VIEW_ID);
 					}
 				}
 			}
