@@ -8,6 +8,7 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
+import org.eventb.internal.core.pom.POUtil;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
