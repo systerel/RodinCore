@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -125,13 +124,13 @@ public class GoalSection
         toolkit.paintBordersFor(scrolledForm);
 		
         formText = new EventBFormText(toolkit.createFormText(comp, true));
-		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
-		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
+//		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
+//		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		FormText ft = formText.getFormText();
-		ft.setHyperlinkSettings(hyperlinkSettings);
+//		ft.setHyperlinkSettings(hyperlinkSettings);
 		ft.addHyperlinkListener(new GoalITacticHyperlinkAdapter());
         GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-        gd.widthHint = 100;
+        gd.widthHint = 145;
         ft.setLayoutData(gd);
         toolkit.paintBordersFor(comp);
 	}

@@ -143,8 +143,6 @@ public class HypothesisRow
 		buttonComposite.setLayout(new GridLayout());
 		gd = new GridData();
 
-		// TODO Extra buttons will be added here to buttonComposite depends on 
-		// the type of hypothesis
 		IEventBFormText formText = new EventBFormText(toolkit.createFormText(buttonComposite, true));
 		gd = new GridData();
 		gd.widthHint = 25;
