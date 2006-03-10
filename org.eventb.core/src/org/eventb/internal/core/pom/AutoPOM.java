@@ -31,6 +31,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -104,7 +105,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				IProverSequent newPOseq = newPO.getValue();
 				IProverSequent oldPOseq = oldPOs.get(newPOname);
 				if  ((oldPOseq != null) &&
-						(Lib.identical(newPOseq,oldPOseq)))
+						(Lib.sufficient(newPOseq,oldPOseq)))
 					newStatus.put(newPOname,oldStatus.get(newPOname));
 				else
 					newStatus.put(newPOname,Status.PENDING);	
@@ -144,8 +145,20 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 
 	void createFreshPRFile(Map<String, Status> newStatus) throws CoreException {
-		IRodinProject project = prFile.getRodinProject();
-		project.createRodinFile(prFile.getElementName(), true, null);
+
+		if (prFile.exists()) 
+		{
+			for (IRodinElement child : prFile.getChildren()){
+				((InternalElement)child).delete(true,null);
+			}
+			
+		}
+		else
+		{
+			IRodinProject project = prFile.getRodinProject();
+			project.createRodinFile(prFile.getElementName(), true, null);
+		}
+		
 		copyGlobalInfo();
 		copySequents(newStatus);
 		prFile.save(monitor, true);
@@ -176,7 +189,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		IRodinElement[] children = ((RodinElement)poFile).getChildren();
 		for (IRodinElement child : children){
-			if (!(child.getElementType().equals(IPRSequent.ELEMENT_TYPE))){
+			if (!(child.getElementType().equals(IPOSequent.ELEMENT_TYPE))){
 				((IInternalElement)child).copy(prFile,null,null,false,monitor);
 			}
 		}

@@ -498,6 +498,14 @@ public final class Lib {
 		return true;
 	}
 	
+	public static boolean sufficient(IProverSequent S1,IProverSequent S2){
+		if (! S1.goal().equals(S2.goal())) return false;
+		// TODO : take care of selected & hidden hyps eventually
+		if (! S1.hypotheses().containsAll(S2.hypotheses())) return false;
+		if (! S1.typeEnvironment().containsAll(S2.typeEnvironment())) return false;
+		return true;
+	}
+	
 	public static Action deselect(Set<Hypothesis> toDeselect){
 		return new Action(ActionType.DESELECT,toDeselect);
 	}

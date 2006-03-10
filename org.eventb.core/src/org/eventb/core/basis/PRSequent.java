@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
+import org.eventb.core.IProof.Status;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
@@ -60,9 +61,8 @@ public class PRSequent extends POSequent implements IPRSequent {
 	}
 
 	public boolean isDischarged() throws RodinDBException {
-		IProof status = getProof();
-		String contents = status.getContents();
-		return contents.equals("DISCHARGED");
+		IProof proof = getProof();
+		return (proof.getStatus() == Status.DISCHARGED);
 	}
 	
 	
