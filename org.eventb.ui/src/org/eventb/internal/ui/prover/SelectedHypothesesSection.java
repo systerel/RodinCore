@@ -121,7 +121,7 @@ public class SelectedHypothesesSection
 		IEventBFormText formText = new EventBFormText(toolkit.createFormText(comp, true));
 		gd = new GridData();
 		gd.widthHint = 50;
-		gd.horizontalAlignment = SWT.CENTER;
+		gd.horizontalAlignment = SWT.LEFT;
 		FormText ft = formText.getFormText();
 		ft.setLayoutData(gd);
 		ft.addHyperlinkListener(new SelectedHyperlinkAdapter());

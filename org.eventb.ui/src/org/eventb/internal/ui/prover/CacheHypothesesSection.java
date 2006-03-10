@@ -124,13 +124,13 @@ public class CacheHypothesesSection
 	 */
 	@Override
 	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
-//        GridData gd;
+        GridData gd;
 		IEventBFormText formText = new EventBFormText(toolkit.createFormText(comp, true));
-//		gd = new GridData();
-//		gd.widthHint = 50;
-//		gd.horizontalAlignment = SWT.CENTER;
+		gd = new GridData();
+		gd.widthHint = 50;
+		gd.horizontalAlignment = SWT.LEFT;
 		FormText ft = formText.getFormText();
-//		ft.setLayoutData(gd);
+		ft.setLayoutData(gd);
 		ft.addHyperlinkListener(new CachedHyperlinkAdapter());
 		ft.setText("<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>", true, false);		
 	}

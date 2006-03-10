@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -53,24 +54,24 @@ public abstract class HypothesesSection
 	public void createClient(Section section, FormToolkit toolkit) {
         section.setText(title);
         section.setDescription(description);
-        scrolledForm = toolkit.createScrolledForm(section);
+
+		Composite composite = toolkit.createComposite(section);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 1;
+        composite.setLayout(layout);
+        createTopFormText(toolkit, composite);
+
+        scrolledForm = toolkit.createScrolledForm(composite);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		scrolledForm.setLayoutData(gd);
         
 		comp = scrolledForm.getBody();
-        GridLayout layout = new GridLayout();
+        layout = new GridLayout();
         layout.numColumns  = 3;
         layout.verticalSpacing = 5;
 		comp.setLayout(layout);
-		section.setClient(scrolledForm);
-        toolkit.paintBordersFor(scrolledForm);
 		
-		createTopFormText(toolkit, comp);
-
-		Composite container = toolkit.createComposite(comp);
-        container.setLayout(new GridLayout());
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		container.setLayoutData(gd);
-
+		section.setClient(composite);
 	}
 	
 	protected void update(Collection<Hypothesis> added, Collection<Hypothesis> removed) {
