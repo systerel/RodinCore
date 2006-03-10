@@ -28,4 +28,18 @@ public class Proof extends UnnamedInternalElement implements IProof {
 		return null;
 	}
 
+	public void setStatus(Status status) throws RodinDBException {
+		switch (status) {
+		case PENDING:
+			setContents("PENDING");
+			break;
+		case DISCHARGED:
+			setContents("DISCHARGED");
+			break;
+		default:
+			break;
+		}
+	}
+	
+
 }
