@@ -38,8 +38,10 @@ public class EventBContextEditorContributor
 {
 	private IEditorPart activeEditorPart;
 	
-	public static Action newCarrierSets;
-	public static Action newTheorems;
+	private static Action newCarrierSets;
+	private static Action newConstants;
+	private static Action newTheorems;
+	private static Action newAxioms;
 	
 	/**
 	 * Creates a multi-page contributor.
@@ -107,6 +109,36 @@ public class EventBContextEditorContributor
 //		}
 	}
 	private void createActions() {
+		newCarrierSets = new Action() {
+			public void run() {
+				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				if (part instanceof EventBEditor) {
+					EventBEditor editor = (EventBEditor) part;
+					IRodinFile rodinFile = editor.getRodinInput();
+					UIUtils.newCarrierSets(rodinFile);
+				}
+			}
+		};
+		newCarrierSets.setText("New Carrier Sets");
+		newCarrierSets.setToolTipText("Create new carrier sets for the component");
+		newCarrierSets.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
+
+		
+		newConstants = new Action() {
+			public void run() {
+				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				if (part instanceof EventBEditor) {
+					EventBEditor editor = (EventBEditor) part;
+					IRodinFile rodinFile = editor.getRodinInput();
+					UIUtils.newConstants(rodinFile);
+				}
+			}
+		};
+		newConstants.setText("New Constants");
+		newConstants.setToolTipText("Create new cosntants for the component");
+		newConstants.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CONSTANTS_PATH));
+
+		
 		newTheorems = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
@@ -121,32 +153,37 @@ public class EventBContextEditorContributor
 		newTheorems.setToolTipText("Create new theorems for the component");
 		newTheorems.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
 
-		newCarrierSets = new Action() {
+
+		newAxioms = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newCarrierSets(rodinFile);
+					UIUtils.newAxioms(rodinFile);
 				}
 			}
 		};
-		newCarrierSets.setText("New Carrier Sets");
-		newCarrierSets.setToolTipText("Create new carrier sets for the component");
-		newCarrierSets.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
+		newAxioms.setText("New Axioms");
+		newAxioms.setToolTipText("Create new axioms for the component");
+		newAxioms.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_AXIOMS_PATH));
 	}
 	
 	
 	public void contributeToMenu(IMenuManager manager) {
 		IMenuManager menu = new MenuManager("Event-B");
 		menu.add(newCarrierSets);
+		menu.add(newConstants);
 		menu.add(newTheorems);
+		menu.add(newAxioms);
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
 	}
 
 	public void contributeToToolBar(IToolBarManager manager) {
 		manager.add(new Separator());
 		manager.add(newCarrierSets);
+		manager.add(newConstants);
 		manager.add(newTheorems);
+		manager.add(newAxioms);
 	}
 }

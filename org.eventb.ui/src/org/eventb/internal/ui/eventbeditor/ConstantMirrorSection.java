@@ -59,9 +59,12 @@ public class ConstantMirrorSection
 		String formString = "<form>";
 		try {
 			IRodinElement [] constants = ((IContext) rodinFile).getConstants();
+			formString = formString + "<li style=\"text\" value=\"\">";
 			for (int i = 0; i < constants.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(constants[i].getElementName()) + ":</li>";
+				if (i != 0) formString = formString + ", "; 
+				formString = formString + UIUtils.makeHyperlink(constants[i].getElementName());
 			}
+			formString = formString + "</li>";
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle

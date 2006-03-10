@@ -12,7 +12,6 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -20,11 +19,9 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContext;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -85,17 +82,7 @@ public class AxiomMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		try {
-			IInternalElement axiom = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm", null, null);
-			axiom.setContents(EventBUIPlugin.AXM_DEFAULT);
-			this.getViewer().setInput(rodinFile);
-			this.getViewer().setSelection(new StructuredSelection(axiom));
-			this.markDirty();
-			updateButtons();
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		UIUtils.newAxioms(rodinFile);
 	}
 	
 	

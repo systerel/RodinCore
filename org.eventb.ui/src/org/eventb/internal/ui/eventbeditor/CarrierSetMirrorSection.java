@@ -59,9 +59,12 @@ public class CarrierSetMirrorSection
 		String formString = "<form>";
 		try {
 			ICarrierSet [] carrierSets = ((IContext) rodinFile).getCarrierSets();
+			formString = formString + "<li style=\"text\" value=\"\">";
 			for (int i = 0; i < carrierSets.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(carrierSets[i].getElementName()) + ":</li>";
+				if (i != 0) formString = formString + ", "; 
+				formString = formString + UIUtils.makeHyperlink(carrierSets[i].getElementName());
 			}
+			formString = formString + "</li>";
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle

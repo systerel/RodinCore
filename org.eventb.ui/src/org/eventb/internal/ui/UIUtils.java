@@ -455,4 +455,41 @@ public class UIUtils {
 		}
 	}
 
+
+	public static void newConstants(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Constants", "Name of the new constant", "cst" + (counter + 1));
+			dialog.open();
+			Collection<String> names = dialog.getAttributes();
+				for (Iterator<String> it = names.iterator(); it.hasNext();) {
+					String name = it.next();
+					rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
+				}
+			}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public static void newAxioms(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Axioms", "Name and predicate of the new axiom", "axm", counter + 1);
+			dialog.open();
+			String [] names = dialog.getNewNames();
+			String [] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement theorem = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, name, null, null);
+				theorem.setContents(content);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

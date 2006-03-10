@@ -11,9 +11,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -84,21 +81,7 @@ public class ConstantMasterSection
 	 * Handle the adding (new Axiom) action
 	 */
 	protected void handleAdd() {
-		ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(this.getSection().getShell(), this.getManagedForm().getToolkit(), "New Constants", "Name of the new constant", "cst" + (1));
-		dialog.open();
-		Collection<String> names = dialog.getAttributes();
-		try {
-			for (Iterator<String> it = names.iterator(); it.hasNext();) {
-				String name = it.next();
-				rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		this.getViewer().setInput(rodinFile);
-		this.markDirty();
-		updateButtons();
+		UIUtils.newConstants(rodinFile);
 	}
 	
 
