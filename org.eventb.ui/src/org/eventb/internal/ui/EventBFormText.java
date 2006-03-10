@@ -14,6 +14,7 @@ package org.eventb.internal.ui;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
@@ -41,7 +42,11 @@ public class EventBFormText
 		
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		formText.setFont(font);
-
+		
+		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench().getDisplay());
+		hyperlinkSettings.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
+		formText.setHyperlinkSettings(hyperlinkSettings);
+		
 		// Register as a listener to the font registry
 		JFaceResources.getFontRegistry().addListener(this);
 	}
