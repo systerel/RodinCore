@@ -54,7 +54,8 @@ public class EventBImage {
 	
 	public static final String IMG_NEW_VARIABLES_PATH = "icons/new-variables.gif";
 	public static final String IMG_NEW_INVARIANTS_PATH = "icons/new-invariants.gif";
-	public static final String IMG_NEW_THEOREMS_PATH = "icons/new-theorems.gif";	
+	public static final String IMG_NEW_THEOREMS_PATH = "icons/new-theorems.gif";
+	public static final String IMG_NEW_EVENT_PATH = "icons/new-event.gif";
 	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/new-carriersets.gif";
 	public static final String IMG_NEW_CONSTANTS_PATH = "icons/new-constants.gif";
 	public static final String IMG_NEW_AXIOMS_PATH = "icons/new-axioms.gif";
