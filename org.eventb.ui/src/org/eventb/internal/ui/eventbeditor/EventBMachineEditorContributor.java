@@ -124,7 +124,7 @@ public class EventBMachineEditorContributor
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newVariables(rodinFile);
+					UIUtils.intelligentNewVariables(rodinFile);
 					editor.setActivePage(VariablesPage.PAGE_ID);
 				}
 			}

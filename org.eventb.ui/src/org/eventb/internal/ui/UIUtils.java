@@ -53,6 +53,7 @@ import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
+import org.eventb.internal.ui.eventbeditor.IntelligentNewVariableInputDialog;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
@@ -399,6 +400,45 @@ public class UIUtils {
 		}
 	}
 
+	public static void intelligentNewVariables(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
+			int invCounter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
+			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Variables", "var" + (counter + 1), "inv" + (invCounter + 1));
+
+			dialog.open();
+			String name = dialog.getName();
+			String invariantName = dialog.getInvariantName();
+			String init = dialog.getInit();
+			boolean newInit = true;
+			
+			if (name != null) {
+				rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+				
+				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, invariantName, null, null);
+				invariant.setContents(dialog.getInvariantPredicate());
+				
+				IRodinElement [] events = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE);
+				for (IRodinElement event : events) {
+					if (event.getElementName().equals("INITIALISATION")) {
+						newInit = false;
+						IUnnamedInternalElement action = (IUnnamedInternalElement) ((IInternalElement) event).createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
+						action.setContents(init);
+					}
+				}
+				if (newInit) {
+					IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
+					IUnnamedInternalElement action = (IUnnamedInternalElement) event.createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
+					action.setContents(init);
+				}
+			}
+			
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void newInvariants(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
