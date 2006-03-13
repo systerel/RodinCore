@@ -75,9 +75,6 @@ public class EventMasterSection
 	private static final String [] buttonLabels =
 		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down"};
 
-	// The counter used to create automatic name for new elements.
-	private int counter;
-
 	// The group of actions for the tree part.
 	private ActionGroup groupActionSet;
 	
@@ -285,13 +282,7 @@ public class EventMasterSection
 	public EventMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBMasterDetailsBlock block) {
 		super(managedForm, parent, toolkit, style, block, buttonLabels);
-		try {
-			counter = ((IMachine) rodinFile).getEvents().length; // Set the counter;
-		}
-		catch (RodinDBException e) {
-			// TODO Exception handle
-			e.printStackTrace();
-		}	
+		
 		makeActions();
 		hookContextMenu();
 		getViewer().setSorter(new ElementsSorter());
@@ -330,14 +321,7 @@ public class EventMasterSection
 	 * Handle add (new element) action.
 	 */
 	private void handleAddEvent() {
-		try {
-			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + (++counter), null, null);
-			commit();
-			getViewer().setSelection(new StructuredSelection(event));
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		UIUtils.newEvent(rodinFile);
 	}
 	
 
