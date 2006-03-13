@@ -47,9 +47,11 @@ import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -439,4 +441,36 @@ public class EventMasterSection
 		//editor.getContentOutlinePage().setRodinElementSelection(element);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
+	}
+	
+	private void processDelta(IRodinElementDelta delta) {
+		IRodinElement element= delta.getElement();
+		if (element instanceof IRodinFile) {
+			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+
+			return;
+		}
+		if (element instanceof IEvent) {
+			UIUtils.postRunnable(new Runnable() {
+				public void run() {
+					getViewer().setInput(rodinFile);
+					markDirty();
+					updateButtons();
+				}
+			}, this.getSection().getClient());
+		}
+		else {
+			return;
+		}
+	}
 }

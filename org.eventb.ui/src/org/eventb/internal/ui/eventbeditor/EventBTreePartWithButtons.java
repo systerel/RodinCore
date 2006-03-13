@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -35,7 +36,8 @@ import org.rodinp.core.IRodinFile;
  * for displaying Rodin elements (used as master section in Master-Detail block).
  */
 public abstract class EventBTreePartWithButtons
-	extends SectionPart 
+	extends SectionPart
+	implements IElementChangedListener
 {
 	// TODO Have a super class for both tree and table ???
 	// TODO Move the buttons here/or the super class
@@ -79,6 +81,7 @@ public abstract class EventBTreePartWithButtons
 		createTreeViewer(managedForm, toolkit, client);
 		
 		createButtons(toolkit, client, buttonLabels);
+		((EventBEditor) this.getBlock().getPage().getEditor()).addElementChangedListener(this);
 	}
 	
 	/*

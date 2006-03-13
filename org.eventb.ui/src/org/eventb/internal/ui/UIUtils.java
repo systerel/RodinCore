@@ -54,6 +54,7 @@ import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.eventbeditor.IntelligentNewVariableInputDialog;
+import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
@@ -428,7 +429,7 @@ public class UIUtils {
 				}
 				if (newInit) {
 					IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
-					IUnnamedInternalElement action = (IUnnamedInternalElement) event.createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
+					IUnnamedInternalElement action = (IUnnamedInternalElement) event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
 					action.setContents(init);
 				}
 			}
@@ -478,6 +479,41 @@ public class UIUtils {
 		}
 	}
 
+
+	public static void newEvent(IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE).length;
+			NewEventInputDialog dialog = new NewEventInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Events", "evt" + (counter + 1));
+			dialog.open();
+			String name = dialog.getName();
+			if (name != null) {
+				String [] varNames = dialog.getVariables();
+				String [] grdNames = dialog.getGrdNames();
+				String [] grdPredicates = dialog.getGrdPredicates();
+				String [] actions = dialog.getActions();
+				
+				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, name, null, null);
+				for (String varName : varNames) {
+					event.createInternalElement(IVariable.ELEMENT_TYPE, varName, null, null);
+				}
+				
+				for (int i = 0; i < grdNames.length; i++) {
+					IInternalElement grd = event.createInternalElement(IGuard.ELEMENT_TYPE, grdNames[i], null, null);
+					grd.setContents(grdPredicates[i]);
+				}
+				
+				for (String action : actions) {
+					IInternalElement act = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+					act.setContents(action);
+				}
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}		
+	}
+
+
 	public static void newCarrierSets(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
@@ -502,11 +538,11 @@ public class UIUtils {
 			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Constants", "Name of the new constant", "cst" + (counter + 1));
 			dialog.open();
 			Collection<String> names = dialog.getAttributes();
-				for (Iterator<String> it = names.iterator(); it.hasNext();) {
-					String name = it.next();
-					rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
-				}
+			for (Iterator<String> it = names.iterator(); it.hasNext();) {
+				String name = it.next();
+				rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
 			}
+		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}

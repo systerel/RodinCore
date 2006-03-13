@@ -45,6 +45,7 @@ public class EventBMachineEditorContributor
 	public static Action newVariables;
 	public static Action newInvariants;
 	public static Action newTheorems;
+	public static Action newEvent;
 	
 	/**
 	 * Creates a multi-page contributor.
@@ -162,6 +163,21 @@ public class EventBMachineEditorContributor
 		newTheorems.setText("New Theorems");
 		newTheorems.setToolTipText("Create new theorems for the component");
 		newTheorems.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
+		
+		newEvent = new Action() {
+			public void run() {
+				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				if (part instanceof EventBEditor) {
+					EventBEditor editor = (EventBEditor) part;
+					IRodinFile rodinFile = editor.getRodinInput();
+					UIUtils.newEvent(rodinFile);
+					editor.setActivePage(EventsPage.PAGE_ID);
+				}
+			}
+		};
+		newEvent.setText("New Events");
+		newEvent.setToolTipText("Create a new event for the component");
+		newEvent.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
 
 	}
 	
@@ -171,6 +187,7 @@ public class EventBMachineEditorContributor
 		menu.add(newVariables);
 		menu.add(newInvariants);
 		menu.add(newTheorems);
+		menu.add(newEvent);
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
 	}
 
@@ -179,5 +196,6 @@ public class EventBMachineEditorContributor
 		manager.add(newVariables);
 		manager.add(newInvariants);
 		manager.add(newTheorems);
+		manager.add(newEvent);
 	}
 }
