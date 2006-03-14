@@ -50,6 +50,7 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
@@ -251,6 +252,7 @@ public class ProofControlPage
 
 		sh = createButton(buttonContainer, "sh");
 		sh.setToolTipText("Search hypotheses");
+		sh.setImage(EventBUIPlugin.getDefault().getImageRegistry().get(EventBImage.IMG_SEARCH_BUTTON));
 		
 		Button pv = createButton(buttonContainer, "pv");
 		pv.setToolTipText("Previous undischarged obligation");
