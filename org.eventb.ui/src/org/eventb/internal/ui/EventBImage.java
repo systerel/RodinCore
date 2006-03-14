@@ -36,6 +36,8 @@ public class EventBImage {
 	public static final String IMG_PENDING = "Pending";
 	public static final String IMG_APPLIED = "Applied";
 	
+	public static final String IMG_SEARCH_BUTTON = "Search button";
+	
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
 
@@ -109,6 +111,7 @@ public class EventBImage {
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 		
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
+		registerImage(registry, IMG_SEARCH_BUTTON, "full/eview16/searchres.gif");
 	}
 
 	/*
