@@ -24,6 +24,7 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -130,8 +131,9 @@ public abstract class EventBMirrorSection
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		// TODO Move to sub-classes
-		this.refresh();
+		IRodinElementDelta delta = event.getDelta();
+		if (delta.getElement() instanceof IRodinFile & delta.getKind() != IRodinElementDelta.REMOVED)
+			this.refresh();
 	}
 
 }
