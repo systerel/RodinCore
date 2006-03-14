@@ -233,18 +233,22 @@ public class ProjectExplorerActionGroup
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
+		Object input = getContext().getInput();
 		if (sel instanceof IStructuredSelection) {
 			MenuManager newMenu = new MenuManager("&New");
 			
 			IStructuredSelection ssel = (IStructuredSelection) sel;
-			newMenu.add(newProjectAction);
-			newMenu.add(new Separator());
-			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				if (obj instanceof IRodinProject) {
+			if (input == null) {   // Can only create new Project if at the Workspace level
+				newMenu.add(newProjectAction);
+				if (ssel.size() == 1) {
 					newMenu.add(newComponentAction);
 				}
 			}
+			else {
+				newMenu.add(newComponentAction);
+			}
+			newMenu.add(new Separator());
+			
 			menu.add(newMenu);
 			menu.add(deleteAction);
 			menu.add(refreshAction);
