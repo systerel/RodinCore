@@ -14,14 +14,17 @@ package org.eventb.internal.ui.projectexplorer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -70,6 +73,7 @@ public class ProjectExplorer
 	// Group of action that is used.
 	private ProjectExplorerActionGroup groupActionSet;
 
+	private IRodinProject currentProject; 
 	
 	/**
 	 * The constructor.
@@ -153,8 +157,28 @@ public class ProjectExplorer
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+		IStatusLineManager slManager= getViewSite().getActionBars().getStatusLineManager();
+		viewer.addSelectionChangedListener(new StatusBarUpdater(slManager));
+//		setContentDescription("Hello");
+//		setTitleToolTip("How are you?");
 	}
 
+	
+	private class StatusBarUpdater implements ISelectionChangedListener {
+		private IStatusLineManager slManager;
+		
+		StatusBarUpdater(IStatusLineManager slManager) {
+			this.slManager = slManager;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			slManager.setMessage(event.getSelection().toString());
+		}
+		
+	}
 	
 	/*
 	 * Hook the actions to the context menu. 
@@ -206,11 +230,13 @@ public class ProjectExplorer
 	 * @param manager A Menu manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
+
 		manager.add(ProjectExplorerActionGroup.newProjectAction);
 		manager.add(ProjectExplorerActionGroup.newComponentAction);
 		manager.add(ProjectExplorerActionGroup.deleteAction);
 		manager.add(new Separator());
 		ProjectExplorerActionGroup.drillDownAdapter.addNavigationActions(manager);
+		
 	}
 
 	
@@ -251,6 +277,43 @@ public class ProjectExplorer
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
-	}	
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.ViewPart#setContentDescription(java.lang.String)
+	 */
+	@Override
+	public void setContentDescription(String description) {
+		// TODO Auto-generated method stub
+		super.setContentDescription(description);
+	}
+
+
+	public void setRoot(Object root) {
+		if (root instanceof IRodinProject) {
+			currentProject = (IRodinProject) root;
+		}
+		IRodinElement curr;
+		if (root instanceof IRodinElement) {
+			curr = (IRodinElement) root;
+		}
+		else if (root instanceof TreeNode) {
+			curr = (IRodinElement) ((TreeNode) root).getParent();
+		}
+		else curr = null;
+		while (!(curr instanceof IRodinProject || curr == null)) {
+			curr = curr.getParent();
+		}
+		currentProject = (IRodinProject) curr;
+		
+		if (currentProject != null) {
+			setContentDescription(currentProject.getElementName());
+		}
+		else {
+			setContentDescription("");
+		}
+	}
+
 	
 }
