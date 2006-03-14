@@ -188,7 +188,9 @@ public class ProjectExplorer
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
+				ActionContext context = new ActionContext(viewer.getSelection());
+				context.setInput(getCurrentProject());
+				groupActionSet.setContext(context);
 				groupActionSet.fillContextMenu(manager);
 				groupActionSet.setContext(null);
 			}
@@ -291,9 +293,6 @@ public class ProjectExplorer
 
 
 	public void setRoot(Object root) {
-		if (root instanceof IRodinProject) {
-			currentProject = (IRodinProject) root;
-		}
 		IRodinElement curr;
 		if (root instanceof IRodinElement) {
 			curr = (IRodinElement) root;
@@ -315,5 +314,6 @@ public class ProjectExplorer
 		}
 	}
 
+	public IRodinProject getCurrentProject() {return currentProject;}
 	
 }

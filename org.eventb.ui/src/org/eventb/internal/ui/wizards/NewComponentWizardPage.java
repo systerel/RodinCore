@@ -35,6 +35,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
+import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -201,29 +204,49 @@ public class NewComponentWizardPage
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
+		IRodinProject project;
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() > 1)
 				return;
 			Object element = ssel.getFirstElement();
-			if (element instanceof IRodinProject) {
-				try {
-					IResource obj = ((IRodinProject) element).getCorrespondingResource();
-				
-					IContainer container;
-					if (obj instanceof IContainer)
-						container = (IContainer) obj;
-					else
-						container = ((IResource) obj).getParent();
-					containerText.setText(container.getFullPath().toString());
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+			IRodinElement curr;
+			if (element instanceof IRodinElement) {
+				curr = (IRodinElement) element;
+			}
+			else if (element instanceof TreeNode) {
+				curr = (IRodinElement) ((TreeNode) element).getParent();
+			}
+			else curr = null;
+			while (!(curr instanceof IRodinProject || curr == null)) {
+				curr = curr.getParent();
+			}
+			project = (IRodinProject) curr;
+		}
+		else {
+			// Trying to find the current project from the Project Explorer
+			UIUtils.debug("From Project Explorer: ");
+			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin.getActivePage().findView(ProjectExplorer.VIEW_ID);
+			project = explorer.getCurrentProject();
+		}
+
+		UIUtils.debug("Project " + project);
+		if (project != null) {
+			try {
+				IResource obj = project.getCorrespondingResource();
+		
+				IContainer container;
+				if (obj instanceof IContainer)
+					container = (IContainer) obj;
+				else
+					container = ((IResource) obj).getParent();
+				containerText.setText(container.getFullPath().toString());
+			}
+			catch (RodinDBException e) {
+				e.printStackTrace();
 			}
 		}
-		
 		componentText.setFocus();
 		componentText.selectAll();
 	}
