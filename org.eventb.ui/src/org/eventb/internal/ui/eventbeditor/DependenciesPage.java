@@ -11,15 +11,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -31,48 +24,24 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * An implementation of the Event-B Form Page
  * for editing the dependencies (e.g. Sees, refines clause).
  */
-public class DependenciesPage extends FormPage implements IEditorPart {
+public class DependenciesPage
+	extends FormPage 
+{
 	
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = "Dependencies"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Dependencies";
 	public static final String PAGE_TAB_TITLE = "Dependencies";
 	
-	// List of change listeners
-	private List<ChangeListener> changeListeners;
-	
-
 	/**
 	 * Contructor.
 	 * @param editor The form editor that holds the page 
 	 */
 	public DependenciesPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
-		changeListeners = new ArrayList<ChangeListener>();
 	}
 	
-	
-	/**
-	 * Register a change listener.
-	 * <p>
-	 * @param listener A change listener
-	 */
-	public void addChangedListener(ChangeListener listener) {
-		changeListeners.add(listener);
-	}
-
-	
-	/**
-	 * Notify the listeners about the change
-	 */
-	public void notifyChangeListeners() {
-		// TODO To be removed when the Editor implement the change listener.
-		for (int i = 0; i < changeListeners.size(); i++) {
-			((ChangeListener) changeListeners.get(i)).stateChanged(new ChangeEvent(this));
-		}
-	}
-	
-	
+		
 	/**
 	 * Creating the content of the page
 	 */
@@ -88,7 +57,7 @@ public class DependenciesPage extends FormPage implements IEditorPart {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		
-		managedForm.addPart(new SeeSection(this.getEditor(), this, body));
+		managedForm.addPart(new SeeSection(this.getEditor(), this.getManagedForm().getToolkit(), body));
 	}
 
 }

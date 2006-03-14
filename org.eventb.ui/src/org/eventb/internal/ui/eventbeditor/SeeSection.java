@@ -56,9 +56,6 @@ public class SeeSection
 	private static final String SECTION_TITLE = "Required Contexts";
 	private static final String SECTION_DESCRIPTION = "Select the context that the model sees";	
 	
-    // The Dependencies page contains this section. 
-	private DependenciesPage page;
-	
 	// The Form editor contains this section.
     private FormEditor editor;
     
@@ -81,11 +78,9 @@ public class SeeSection
      * @param page The Dependencies page contains this section
      * @param parent The composite parent
      */
-	public SeeSection(FormEditor editor, DependenciesPage page, Composite parent) {
-		super(parent, page.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
-		this.page = page;
+	public SeeSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
+		super(parent, toolkit, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		this.editor = editor;
-		FormToolkit toolkit = page.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
 	}
 
@@ -113,10 +108,11 @@ public class SeeSection
 					contextText.setEnabled(false);
 					browseButton.setEnabled(false);
 					try {
-						seen.delete(true, null);
-						seen = null;
-						markDirty();
-						page.notifyChangeListeners();
+						if (seen != null) {
+							seen.delete(true, null);
+							seen = null;
+							markDirty();
+						}
 					}
 					catch (RodinDBException exception) {
 						exception.printStackTrace();
@@ -214,7 +210,6 @@ public class SeeSection
 				seen = rodinFile.createInternalElement(ISees.ELEMENT_TYPE, null, null, null);
 				seen.setContents(context);
 				markDirty();
-				page.notifyChangeListeners();
 			}
 			catch (RodinDBException exception) {
 				exception.printStackTrace();
@@ -227,7 +222,6 @@ public class SeeSection
 //				if (!(seen.getContents().equals(contextText.getText()))) {
 					seen.setContents(context);
 					markDirty();
-					page.notifyChangeListeners();
 //				}
 			}
 			catch (RodinDBException exception) {

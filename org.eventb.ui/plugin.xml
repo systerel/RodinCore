@@ -88,6 +88,7 @@
       <page class="org.eventb.internal.ui.eventbeditor.InvariantsPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.TheoremsPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.EventsPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"/>
    </extension>
    <extension
          point="org.eventb.ui.contextPages">
