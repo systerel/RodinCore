@@ -72,7 +72,7 @@ public class SyntheticViewSection
      * @param parent The composite parent
      */
 	public SyntheticViewSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
-		super(parent, toolkit, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+		super(parent, toolkit, ExpandableComposite.TITLE_BAR);
 		this.editor = editor;
 		controls = new HashSet<Control>();
 		createClient(getSection(), toolkit);
