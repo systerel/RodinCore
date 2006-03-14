@@ -13,6 +13,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -30,9 +31,29 @@ import org.rodinp.core.RodinDBException;
  * An implementation of Event-B Input row for editing content of Rodin elements.
  */
 public class ContentInputRow
-	extends EventBInputRow 
+	extends EventBInputRow
 {
+	
+	private int lastModify;
+	
+	private class TimeRunnable implements Runnable {
+		private int time;
+		
+		TimeRunnable(int time) {
+			this.time = time;
+		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			// TODO Auto-generated method stub
+			if (lastModify == time) {
+				if (!textInput.getTextWidget().isDisposed()) commit();
+			}
+		}
+	}
+	
 	/**
 	 * Contructor.
 	 * <p>
@@ -47,6 +68,18 @@ public class ContentInputRow
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBInputRow#modifyText(org.eclipse.swt.events.ModifyEvent)
+	 */
+	@Override
+	public void modifyText(ModifyEvent e) {
+		
+		super.modifyText(e);
+		lastModify = e.time;
+		textInput.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
+	}
+
+
 	/**
 	 * Set the text for the text field part of the row.
 	 */
