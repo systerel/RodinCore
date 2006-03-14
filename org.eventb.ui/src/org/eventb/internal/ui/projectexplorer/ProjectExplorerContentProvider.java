@@ -59,14 +59,13 @@ public class ProjectExplorerContentProvider
 	private HashMap<IRodinFile, Object []> elementsMap = new HashMap<IRodinFile, Object []>();
 	
 	// The invisible root of the tree viewer.
-	private IRodinElement invisibleRoot = null;
+	private Object invisibleRoot = null;
 	
 	// The Project Explorer.
 	private ProjectExplorer explorer;
 	
 	// List of elements need to be refresh (when processing Delta of changes).
-	private List<IRodinElement> toRefresh;
-	
+	private List<Object> toRefresh;
 
 	/**
 	 * Constructor. 
@@ -84,7 +83,7 @@ public class ProjectExplorerContentProvider
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		toRefresh = new ArrayList<IRodinElement> ();
+		toRefresh = new ArrayList<Object> ();
 		processDelta(event.getDelta());
 		postRefresh(toRefresh, true);
 	}
@@ -99,7 +98,7 @@ public class ProjectExplorerContentProvider
 		int kind= delta.getKind();
 		IRodinElement element= delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
-			IRodinElement parent; 
+			Object parent; 
 			if (element instanceof IRodinProject) {
 				parent = invisibleRoot;
 			}
@@ -111,7 +110,7 @@ public class ProjectExplorerContentProvider
 		}
 		
 		if (kind == IRodinElementDelta.REMOVED) {
-			IRodinElement parent; 
+			Object parent; 
 			if (element instanceof IRodinProject) {
 				parent = invisibleRoot;
 			}
@@ -202,7 +201,10 @@ public class ProjectExplorerContentProvider
 			RodinCore.addElementChangedListener(this);
 		else if (oldInput != null && newInput == null)
 			RodinCore.removeElementChangedListener(this);
-		invisibleRoot = (IRodinElement) newInput;
+		invisibleRoot = newInput;
+		
+		
+		explorer.setRoot(invisibleRoot);
 	}
 	
 	
