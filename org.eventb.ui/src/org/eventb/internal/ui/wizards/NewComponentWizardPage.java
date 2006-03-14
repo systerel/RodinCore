@@ -223,6 +223,9 @@ public class NewComponentWizardPage
 				}
 			}
 		}
+		
+		componentText.setFocus();
+		componentText.selectAll();
 	}
 
 
