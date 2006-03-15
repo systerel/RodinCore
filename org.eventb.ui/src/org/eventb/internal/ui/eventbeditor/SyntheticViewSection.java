@@ -11,9 +11,9 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -91,6 +91,21 @@ public class SyntheticViewSection
     private FormEditor editor;
     private ScrolledForm scrolledForm;
     private TreeViewer viewer;
+    private MouseEvent lastMouseEvent;
+    private MouseAdapter mouseAdapter;
+    
+    private class StatusPair {
+    	Object object;
+    	boolean status;
+    	
+    	StatusPair(Object first, boolean second) {
+    		this.object = first;
+    		this.status = second;
+    	}
+
+    	Object getObject() {return object;}
+    	boolean getStatus() {return status;}
+    }
     
 	/**
 	 * @author htson
@@ -102,15 +117,18 @@ public class SyntheticViewSection
 		implements ITreeContentProvider, IElementChangedListener
 	{
 		// List of elements need to be refresh (when processing Delta of changes).
-		private List<Object> toRefresh;
-
+		private Collection<Object> toRefresh;
+		
+		private Collection<StatusPair> newStatus;
+		
 		/**
 		 * This response for the delta changes from the Rodin Database
 		 * <p>
 		 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 		 */
 		public void elementChanged(ElementChangedEvent event) {
-			toRefresh = new ArrayList<Object> ();
+			toRefresh = new HashSet<Object>();
+			newStatus = new HashSet<StatusPair>();
 			processDelta(event.getDelta());
 			postRefresh(toRefresh, true);
 		}
@@ -125,12 +143,19 @@ public class SyntheticViewSection
 			int kind= delta.getKind();
 			IRodinElement element= delta.getElement();
 			if (kind == IRodinElementDelta.ADDED) {
+				// Handle move operation
+				if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
+					IRodinElement oldElement = delta.getMovedFromElement();
+					newStatus.add(new StatusPair(element, viewer.getExpandedState(oldElement)));
+				}
 				Object parent = element.getParent();
 				toRefresh.add(parent);
 				return;
 			}
 			
 			if (kind == IRodinElementDelta.REMOVED) {
+				// Ignore the move operation
+				
 				Object parent = element.getParent();
 				toRefresh.add(parent);
 				return;
@@ -167,16 +192,25 @@ public class SyntheticViewSection
 		 * @param toRefresh List of node to refresh
 		 * @param updateLabels <code>true</code> if the label need to be updated as well
 		 */
-		private void postRefresh(final List toRefresh, final boolean updateLabels) {
+		private void postRefresh(final Collection toRefresh, final boolean updateLabels) {
 			postRunnable(new Runnable() {
 				public void run() {
 					Control ctrl= viewer.getControl();
 					if (ctrl != null && !ctrl.isDisposed()) {
-//						Object [] objects = viewer.getExpandedElements();
-						for (Iterator iter= toRefresh.iterator(); iter.hasNext();) {
-							viewer.refresh(iter.next(), updateLabels);
+						
+						Object [] objects = viewer.getExpandedElements();
+						for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+							IRodinElement element = (IRodinElement) iter.next();
+							UIUtils.debug("Refresh element " + element.getElementName());
+							viewer.refresh(element, updateLabels);
 						}
-//						viewer.setExpandedElements(objects);
+						viewer.setExpandedElements(objects);
+						for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
+							StatusPair state = (StatusPair) iter.next();
+							UIUtils.debug("Object: " + state.getObject() + " status: " + state.getStatus());
+							viewer.setExpandedState(state.getObject(), state.getStatus());
+						}
+						if (lastMouseEvent != null) mouseAdapter.mouseDown(lastMouseEvent);
 					}
 				}
 			});
@@ -465,20 +499,23 @@ public class SyntheticViewSection
 		viewer.setInput(((EventBEditor) editor).getRodinInput());
 		viewer.refresh();
 		final TreeEditor editor = new TreeEditor(tree);
-		tree.addMouseListener(new MouseAdapter() {
+		mouseAdapter = 
+		 
+		new MouseAdapter() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
-			public void mouseDoubleClick(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+//			public void mouseDoubleClick(MouseEvent e) {
+//				// TODO Auto-generated method stub
+//				
+//			}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent e) {
+				lastMouseEvent = e;
 				final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
 				Control old = editor.getEditor();
 		        if (old != null) old.dispose();
@@ -501,7 +538,7 @@ public class SyntheticViewSection
 		        	}
 //			        UIUtils.debug("Column: " + column);
 			        final int col = column;
-			        if (col < 1) return; // The first column is not editable
+			        if (col < 1) return; // The object column is not editable
 //			        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
 			        final Object itemData = item.getData();
 			        if (itemData instanceof IUnnamedInternalElement && col == 1) return;
@@ -524,12 +561,16 @@ public class SyntheticViewSection
 					});
 					Listener textListener = new Listener () {
 						public void handleEvent (final Event e) {
+							
+							UIUtils.debug("Not disposed");
 							switch (e.type) {
 								case SWT.FocusOut:
 									UIUtils.debug("FocusOut");
-									commit(pt, col, text.getText());
+									if (item.isDisposed()) return;
 									item.setText (col, text.getText());
+									commit(pt, col, text.getText());
 									composite.dispose ();
+									lastMouseEvent = null;
 									break;
 								case SWT.Verify:
 									String newText = text.getText();
@@ -551,7 +592,10 @@ public class SyntheticViewSection
 									switch (e.detail) {
 										case SWT.TRAVERSE_RETURN:
 											UIUtils.debug("TraverseReturn");
+											if (item.isDisposed()) return;
 											item.setText (col, text.getText ());
+											commit(pt, col, text.getText());
+											lastMouseEvent = null;
 											//FALL THROUGH
 										case SWT.TRAVERSE_ESCAPE:
 											composite.dispose ();
@@ -570,6 +614,7 @@ public class SyntheticViewSection
 								case 1:  // Commit name
 									try {
 										if (((IInternalElement) itemData).getElementName().equals(text)) return;
+										UIUtils.debug("Rename " + ((IInternalElement) itemData).getElementName() + " to " + text);
 										((IInternalElement) itemData).rename(text, false, null);
 										markDirty();
 									}
@@ -609,9 +654,8 @@ public class SyntheticViewSection
 				// TODO Auto-generated method stub
 				
 			}
-			
-		});
-
+		};
+		tree.addMouseListener(mouseAdapter);
 		scrolledForm.reflow(true);
 		section.setClient(scrolledForm);
 	}	
