@@ -172,11 +172,11 @@ public class SyntheticViewSection
 				public void run() {
 					Control ctrl= viewer.getControl();
 					if (ctrl != null && !ctrl.isDisposed()) {
-						Object [] objects = viewer.getExpandedElements();
+//						Object [] objects = viewer.getExpandedElements();
 						for (Iterator iter= toRefresh.iterator(); iter.hasNext();) {
 							viewer.refresh(iter.next(), updateLabels);
 						}
-						viewer.setExpandedElements(objects);
+//						viewer.setExpandedElements(objects);
 					}
 				}
 			});
@@ -569,6 +569,7 @@ public class SyntheticViewSection
 								switch (col) {
 								case 1:  // Commit name
 									try {
+										if (((IInternalElement) itemData).getElementName().equals(text)) return;
 										((IInternalElement) itemData).rename(text, false, null);
 										markDirty();
 									}
