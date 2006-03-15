@@ -126,7 +126,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.intelligentNewVariables(rodinFile);
-					editor.setActivePage(VariablesPage.PAGE_ID);
 				}
 			}
 		};
@@ -141,7 +140,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newInvariants(rodinFile);
-					editor.setActivePage(InvariantsPage.PAGE_ID);
 				}
 			}
 		};
@@ -156,7 +154,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newTheorems(rodinFile);
-					editor.setActivePage(TheoremsPage.PAGE_ID);
 				}
 			}
 		};
@@ -171,7 +168,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newEvent(rodinFile);
-					editor.setActivePage(EventsPage.PAGE_ID);
 				}
 			}
 		};
