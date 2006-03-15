@@ -151,7 +151,7 @@ public class NewEventInputDialog extends Dialog {
 		label.setLayoutData(gd);
 
 		for (int i = 1; i <= 3; i++) {
-			Text text = toolkit.createText(body, defaultName+"GRD"+i);
+			Text text = toolkit.createText(body, "grd"+i);
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.setLayoutData(gd);
 			grdNameTexts.add(text);
