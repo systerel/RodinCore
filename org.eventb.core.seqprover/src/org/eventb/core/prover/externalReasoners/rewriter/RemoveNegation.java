@@ -49,7 +49,7 @@ public class RemoveNegation implements Rewriter{
 		if (isFalse(negP))
 			return True;
 		if (isNeg(negP))
-			return negP;
+			return negPred(negP);
 		if (isConj(negP))
 			return makeDisj(te,makeNeg(te,conjuncts(negP)));
 		if (isDisj(negP))

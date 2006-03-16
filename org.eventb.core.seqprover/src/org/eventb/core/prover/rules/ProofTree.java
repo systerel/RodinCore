@@ -10,7 +10,6 @@ package org.eventb.core.prover.rules;
 
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
-import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -36,12 +35,24 @@ public final class ProofTree implements IProofTree {
 		root = new ProofTreeNode(this, sequent);
 		deltaProcessor = new DeltaProcessor(this);
 	}
+	
+	/**
+	 * Creates a new proof tree for the given (disconnected) IProofTreeNode.
+	 * 
+	 * Clients must not call this constructor, but rather the factory method in
+	 * {@link org.eventb.core.prover.SequentProver}.
+	 */
+	protected ProofTree(ProofTreeNode node) {
+		node.setProofTree(this);
+		root = node;
+		deltaProcessor = new DeltaProcessor(this);
+	}
 
 	public void addChangeListener(IProofTreeChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
 	}
 
-	public IProofTreeNode getRoot() {
+	public ProofTreeNode getRoot() {
 		return root;
 	}
 

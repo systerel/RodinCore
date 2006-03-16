@@ -142,14 +142,26 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode left = imp.getChildren()[0];
 		IProofTreeNode right = imp.getChildren()[1];
 
+		// the nodes to prune are part of the same proof tree.
+		assertSame(imp.getProofTree(),tree);
+		assertSame(left.getProofTree(),tree);
+		assertSame(right.getProofTree(),tree);
+		
 		assertNodePending(root);
-		root.pruneChildren();
+		IProofTree[] pruned = root.pruneChildren();
+		assertEquals(1, pruned.length);
 		assertNodeOpen(root);
-		// the pruned nodes are not part of the tree anymore.
+		
+		// the pruned node is the root of the pruned subtree.
 		assertNull(imp.getParent());
-		assertNull(imp.getProofTree());
-		assertNull(left.getProofTree());
-		assertNull(right.getProofTree());
+		assertSame(imp.getProofTree(),pruned[0]);
+		assertSame(left.getProofTree(),imp.getProofTree());
+		assertSame(right.getProofTree(),imp.getProofTree());
+		// the pruned nodes are not in the original tree
+		assertNotSame(imp.getProofTree(),tree);
+		assertNotSame(left.getProofTree(),tree);
+		assertNotSame(right.getProofTree(),tree);
+		
 	}
 
 	/**
@@ -172,13 +184,118 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		applyRule(left, rf.hyp());
 		applyRule(right, rf.hyp());
 		
+		// the nodes to prune are part of the same proof tree.
+		assertSame(left.getProofTree(),tree);
+		assertSame(right.getProofTree(),tree);
+		// their parent node is discharged
 		assertNodeDischarged(imp);
-		imp.pruneChildren();
+
+		IProofTree[] pruned = imp.pruneChildren();
+		assertEquals(2, pruned.length);
 		assertNodeOpen(imp);
 		assertNodePending(root);
 		// the pruned nodes are not part of the tree anymore.
-		assertNull(left.getProofTree());
-		assertNull(right.getProofTree());
+		assertNotSame(left.getProofTree(),tree);
+		assertNotSame(right.getProofTree(),tree);
+		// Pruned nodes are part of some proof tree.
+		assertNotNull(left.getProofTree());
+		assertNotNull(right.getProofTree());
+		
+		// they are roots of their own proof trees.
+		assertNull(left.getParent());
+		assertNull(right.getParent());
+		assertSame(left.getProofTree(),pruned[0]);
+		assertSame(right.getProofTree(),pruned[1]);
+	}
+	
+	/**
+	 * Checks that grafting a tree with a un-identical sequent results in failure.
+	 */
+	public void testGraftFailure() {
+		IProverSequent sequent = makeSimpleSequent("⊥");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode treeRoot = tree.getRoot();
+
+		sequent = makeSimpleSequent("⊤");
+		IProofTree graft = SequentProver.makeProofTree(sequent);
+		IProofTreeNode graftRoot = graft.getRoot();
+		applyRule(graftRoot, rf.hyp());
+		assertNodeDischarged(graftRoot);
+		
+		boolean success = treeRoot.graft(graft);
+		assertFalse(success);
+		
+		// Grafted tree is still discharged
+		assertNodeDischarged(graftRoot);
+		
+		// Original tree is still open
+		assertNodeOpen(treeRoot);		
+	}
+	
+	
+	/**
+	 * Checks consistency after grafting a pending subtree on an open node.
+	 */
+	public void testGraftPending() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊥");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode treeRoot = tree.getRoot();
+
+		sequent = makeSimpleSequent("⊤ ∧ ⊥");
+		IProofTree graft = SequentProver.makeProofTree(sequent);
+		IProofTreeNode graftRoot = graft.getRoot();
+		
+		applyRule(graftRoot, rf.conjI());
+		assertEquals(2, graftRoot.getChildren().length);
+		IProofTreeNode ch1 = graftRoot.getChildren()[0];
+		IProofTreeNode ch2 = graftRoot.getChildren()[1];
+				
+		treeRoot.graft(graft);
+		
+		// Grafted tree is pruned
+		assertNodeOpen(graftRoot);
+		
+		// Children have been grafted
+		assertNotSame(ch1.getProofTree(),graft);
+		assertNotSame(ch2.getProofTree(),graft);
+		assertSame(ch1.getProofTree(),tree);
+		assertSame(ch2.getProofTree(),tree);
+		
+	}
+
+	/**
+	 * Checks consistency after grafting a discharged subtree on an open node.
+	 */
+	public void testGraftDischarged() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊤");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode treeRoot = tree.getRoot();
+
+		sequent = makeSimpleSequent("⊤ ∧ ⊤");
+		IProofTree graft = SequentProver.makeProofTree(sequent);
+		IProofTreeNode graftRoot = graft.getRoot();
+		
+		applyRule(graftRoot, rf.conjI());
+		assertEquals(2, graftRoot.getChildren().length);
+		IProofTreeNode ch1 = graftRoot.getChildren()[0];
+		IProofTreeNode ch2 = graftRoot.getChildren()[1];
+		applyRule(ch1, rf.hyp());
+		applyRule(ch2, rf.hyp());
+		assertNodeDischarged(graftRoot);
+		
+		treeRoot.graft(graft);
+		
+		// Grafted tree is pruned
+		assertNodeOpen(graftRoot);
+		
+		// Children have been grafted
+		assertNotSame(ch1.getProofTree(),graft);
+		assertNotSame(ch2.getProofTree(),graft);
+		assertSame(ch1.getProofTree(),tree);
+		assertSame(ch2.getProofTree(),tree);
+		assertNodeDischarged(treeRoot);
+
+		
 	}
 
 

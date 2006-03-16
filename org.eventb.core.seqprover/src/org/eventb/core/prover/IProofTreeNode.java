@@ -2,7 +2,6 @@ package org.eventb.core.prover;
 
 import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.rules.ProofRule;
-import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -107,7 +106,7 @@ public interface IProofTreeNode {
 	 * 
 	 * @return the proof tree of this node or <code>null</code>
 	 */
-	ProofTree getProofTree();
+	IProofTree getProofTree();
 
 	/**
 	 * Returns the rule applied to this node.
@@ -153,7 +152,21 @@ public interface IProofTreeNode {
 	/**
 	 * Prune the children of this node, undoing the result of applying a rule to
 	 * this node. Has no effect if no rule was currently applied to this node.
+	 * 
+	 * @return the child subtrees that have been pruned, or <code>null</code> if no rule 
+	 * was applied to this node. 
 	 */
-	void pruneChildren();
+	IProofTree[] pruneChildren();
+	
+	
+	/**
+	 * Grafts a proof tree to this proof node if it is open, and its sequent is identical
+	 * to the root sequent of the given proof tree. 
+	 * 
+	 * A successful graft has the effect of pruning the input proof tree.
+	 * 
+	 * @return <code>true</code> iff the operation suceeded. 
+	 */
+	boolean graft(IProofTree tree);
 
 }
