@@ -33,7 +33,7 @@ public class TypeUnifier {
 	private List<TypeVariable> typeVariables;
 	private FormulaFactory factory;
 	private TypeCheckResult result;
-	
+
 	public TypeUnifier (List<TypeVariable> typeVariables, FormulaFactory factory, TypeCheckResult result) {
 		this.typeVariables = typeVariables;
 		this.factory = factory;
@@ -48,7 +48,7 @@ public class TypeUnifier {
 		}
 		%match (Type left, Type right) {
 			tv@TypeVar(), other
-		  | other,             tv@TypeVar() -> {
+		  | other, tv@TypeVar() -> {
 		  		TypeVariable typeVar = (TypeVariable) `tv;
 				Type type = typeVar.getValue();
 				if (type != null) {
@@ -74,7 +74,7 @@ public class TypeUnifier {
 					return type;
 				}				
 			}
-			PowSet (child1), PowSet (child2) -> {
+			PowSet(child1), PowSet(child2) -> {
 				Type newChild = unify(`child1, `child2, location);
 				if (newChild == null) {
 					return null;
@@ -87,7 +87,7 @@ public class TypeUnifier {
 				}
 				return factory.makePowerSetType(newChild);
 			}
-			CProd (left1, right1), CProd (left2, right2) -> {
+			CProd(left1, right1), CProd(left2, right2) -> {
 				Type newLeft = unify(`left1, `left2, location);
 				Type newRight = unify(`right1, `right2, location);
 				if (newLeft == null || newRight == null) {
@@ -101,10 +101,10 @@ public class TypeUnifier {
 				}
 				return factory.makeProductType(newLeft, newRight);
 			}
-			Int, Int -> {
+			Int(), Int() -> {
 				return left;
 			}
-			Bool, Bool -> {
+			Bool(), Bool() -> {
 				return left;
 			}
 			Set(name1), Set(name2) -> {
@@ -142,7 +142,7 @@ public class TypeUnifier {
 	public Type solve(Type intype) {
 		assert intype != null;
 		%match (Type intype) {
-			TypeVar -> {
+			TypeVar() -> {
 				TypeVariable typeVar = (TypeVariable) intype;
 				Type type = typeVar.getValue();		
 				if (type != null) {
@@ -154,14 +154,14 @@ public class TypeUnifier {
 					return intype;
 				}
 			}
-			PowSet (child) -> {
+			PowSet(child) -> {
 				Type newChild = solve(child);
 				if (newChild == child) {
 					return intype;
 				}
 				return factory.makePowerSetType(newChild);
 			}
-			CProd (left, right) -> {
+			CProd(left, right) -> {
 				Type newLeft = solve(left);
 				Type newRight = solve(right);
 				if (newLeft == left && newRight == right) {
@@ -180,10 +180,10 @@ public class TypeUnifier {
 			tv@TypeVar() -> {
 				return typeVar == `tv;
 			}
-			PowSet (child) -> {
+			PowSet(child) -> {
 				return occurs(typeVar, child);
 			}
-			CProd (left, right) -> {
+			CProd(left, right) -> {
 				return occurs(typeVar, left) || occurs(typeVar, right);
 			}
 			_ -> {

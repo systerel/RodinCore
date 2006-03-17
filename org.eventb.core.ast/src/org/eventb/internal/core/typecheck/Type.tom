@@ -1,43 +1,34 @@
-/* Declaration of the Formula AST for TOM */
+/* Declaration of the Abstract Syntax Trees of types for TOM */
 
 %typeterm Type {
 	implement { Type }
-	get_fun_sym(t) { null }
-	cmp_fun_sym(s1,s2) { false }
-	get_subterm(t,n) { null }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
 %op Type PowSet (child : Type) {
-	fsym { PowerSetType.class }
 	is_fsym(t) { t instanceof PowerSetType }
 	get_slot(child,t) { ((PowerSetType) t).getBaseType() }
 }
 
 %op Type CProd (left: Type, right: Type) {
-	fsym { ProductType.class }
 	is_fsym(t) { t instanceof ProductType }
 	get_slot(left,t) { ((ProductType) t).getLeft() }
 	get_slot(right,t) { ((ProductType) t).getRight() }
 }
 
 %op Type Set (name: String) {
-	fsym { GivenType.class }
 	is_fsym(t) { t instanceof GivenType }
 	get_slot(name,t) { ((GivenType) t).getName() }
 }
 
 %op Type Int {
-	fsym { IntegerType.class } 
 	is_fsym(t) { t instanceof IntegerType }
 }
 
 %op Type Bool {
-	fsym { BooleanType.class } 
 	is_fsym(t) { t instanceof BooleanType }
 }
 
 %op Type TypeVar {
-	fsym { TypeVariable.class }
 	is_fsym(t) { t instanceof TypeVariable }
 } 

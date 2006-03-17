@@ -11,7 +11,7 @@
 	<property name="javadoc" location="javadoc" />
 	<property name="coco-home" location="${tools}/Coco-R" />
 	<property name="jflex-home" location="${tools}/jflex" />
-	<property name="tom-home" location="${tools}/jtom-2.1" />
+	<property name="tom-home" location="${tools}/jtom-2.2" />
 	
 	<property name="lexerSrcDir" location="${src}/org/eventb/internal/core/parser" />
 	<eclipse.convertPath fileSystemPath="${lexerSrcDir}" property="lexerSrcPath"/>
