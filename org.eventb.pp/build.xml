@@ -1,0 +1,66 @@
+<project name="org.eventb.core.ast" default="generate" basedir=".">
+	<description>
+        Generates derived files in the Predicate Prover.
+	</description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
+
+	<property name="AST-lib" location="../org.eventb.core.ast" />
+	<property name="tools" location="${AST-lib}/tools" />
+	<property name="tom-home" location="${tools}/jtom-2.2" />
+	
+	<property name="translatorSrcDir"
+		location="${src}/org/eventb/internal/pp/translator" />
+	<eclipse.convertPath fileSystemPath="${translatorSrcDir}" property="translatorSrcPath"/>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+	</target>
+
+	<target name="generate" depends="tom" description="Generate all Java files">
+		<eclipse.incrementalBuild/>
+	</target>
+
+	<target name="tom-test" depends="init"
+			description="Test if generated tom files are up to date">
+		<uptodate property="tom.notRequired" 
+				targetfile="${translatorSrcDir}/Translator.java" >
+		    <srcfiles file= "${translatorSrcDir}/Translator.t" />
+		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
+		</uptodate>
+		<!-- echoproperties prefix="tom" /-->
+	</target>
+
+	<target name="tom" depends="init,tom-test"
+		description="launch tom"
+		unless="tom.notRequired" >
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+<!--			<arg value="-I" />
+			<arg value="${tom-home}/share/jtom" />  !-->
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="--output" />
+			<arg value="${translatorSrcDir}/Translator.java" />
+			<arg value="--pretty" />
+			<arg value="--static" />
+			<arg value="--optimize" />
+			<arg value="--optimize2" />
+			<arg value="${translatorSrcDir}/Translator.t" />
+		</java>
+		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete file="${translatorSrcDir}/Translator.java" />
+		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
+	</target>
+	
+</project>

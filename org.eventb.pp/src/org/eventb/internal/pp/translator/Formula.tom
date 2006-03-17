@@ -1,0 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
+/*
+ * Declaration of sorts used.
+ */
+
+%typeterm Predicate {
+	implement { Predicate }
+	equals(t1,t2) { t1.equals(t2) }
+}
+
+%typeterm Expression {
+	implement { Expression }
+	equals(t1,t2) { t1.equals(t2) }
+}
+
+%typeterm PredicateList {
+	implement { Predicate[] }
+	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+}
+
+%oparray PredicateList pList (Predicate*) {
+	is_fsym(t) { t instanceof Predicate[] }
+    get_size(t)      { t.length }
+    get_element(t,n) { t[n] }
+	make_empty(t) { null }
+	make_append(e, t) { null }
+}
+
+/*
+ * AssociativePredicate
+ */
+ 
+%op Predicate Land (children : PredicateList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LAND }
+	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
+}
+
+/*
+ * BinaryPredicate
+ */
+ 
+%op Predicate Limp (left: Predicate, right: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LIMP }
+	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
+	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
+}
+
+%op Predicate Leqv (left: Predicate, right: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LEQV }
+	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
+	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
+}
+
