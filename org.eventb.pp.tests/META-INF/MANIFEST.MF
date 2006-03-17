@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests of the Predicate Prover
+Bundle-SymbolicName: org.eventb.pp.tests
+Bundle-Version: 0.0.0
+Bundle-Vendor: ETH Zurich
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ org.eventb.pp
