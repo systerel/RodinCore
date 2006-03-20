@@ -205,124 +205,124 @@ public final class Lib {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	// TODO : Remove this function after type synthesis is implemented.
-	private static void typeCheckAfterConstruction(Formula f,ITypeEnvironment te){
-		ITypeCheckResult tcr = f.typeCheck(te);
-		assert tcr.isSuccess();
-		assert tcr.getInferredEnvironment().isEmpty();
+	private static void typeCheckAfterConstruction(Formula f){
+//		ITypeCheckResult tcr = f.typeCheck(te);
+//		assert tcr.isSuccess();
+//		assert tcr.getInferredEnvironment().isEmpty();
 		assert f.isTypeChecked();
+		// assert f.isWellFormed();
 	}
 	
 	
-	public static Predicate makeGoal(ITypeEnvironment te,Set<Predicate> Hyps,Predicate goal){
+	public static Predicate makeGoal(Set<Predicate> Hyps,Predicate goal){
 		Predicate result = goal;
 		for (Predicate hyp : Hyps){
-			result = makeImp(te,hyp,result);
+			result = makeImp(hyp,result);
 		}
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeGoal(ITypeEnvironment te,Predicate[] Hyps,Predicate goal){
+	public static Predicate makeGoal(Predicate[] Hyps,Predicate goal){
 		Predicate result = goal;
 		for (Predicate hyp : Hyps){
-			result = makeImp(te,hyp,result);
+			result = makeImp(hyp,result);
 		}
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeNeg(ITypeEnvironment te,Predicate P){
+	public static Predicate makeNeg(Predicate P){
 		Predicate result = ff.makeUnaryPredicate(Formula.NOT,P,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate[] makeNeg(ITypeEnvironment te,Predicate[] Ps){
+	public static Predicate[] makeNeg(Predicate[] Ps){
 		Predicate[] result = new Predicate[Ps.length];
 		for (int i=0;i < Ps.length;i++)
-			result[i] = makeNeg(te,Ps[i]);
+			result[i] = makeNeg(Ps[i]);
 		return result;
 	}
 	
-	public static Predicate makeConj(ITypeEnvironment te,Predicate...conjuncts)
+	public static Predicate makeConj(Predicate...conjuncts)
 	{
 		if (conjuncts.length == 0) return True;
 		if (conjuncts.length == 1) return conjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LAND,conjuncts,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeDisj(ITypeEnvironment te,Predicate...disjuncts)
+	public static Predicate makeDisj(Predicate...disjuncts)
 	{
 		if (disjuncts.length == 0) return False;
 		if (disjuncts.length == 1) return disjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LOR,disjuncts,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeConj(ITypeEnvironment te,Collection<Predicate> conjuncts)
+	public static Predicate makeConj(Collection<Predicate> conjuncts)
 	{
 		Predicate[] conjunctsArray = new Predicate[conjuncts.size()];
 		conjuncts.toArray(conjunctsArray);
-		return makeConj(te,conjunctsArray);
+		return makeConj(conjunctsArray);
 	}
 	
-	public static Predicate makeImp(ITypeEnvironment te,Predicate left, Predicate right)
+	public static Predicate makeImp(Predicate left, Predicate right)
 	{
 		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeEq(ITypeEnvironment te,Expression left, Expression right)
+	public static Predicate makeEq(Expression left, Expression right)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.EQUAL,left,right,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeNotEq(ITypeEnvironment te,Expression left, Expression right)
+	public static Predicate makeNotEq(Expression left, Expression right)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.NOTEQUAL,left,right,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeInclusion(ITypeEnvironment te,Expression element, Expression set)
+	public static Predicate makeInclusion(Expression element, Expression set)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.IN,element,set,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate makeNotInclusion(ITypeEnvironment te,Expression element, Expression set)
+	public static Predicate makeNotInclusion(Expression element, Expression set)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.NOTIN,element,set,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
 	
-	// Temporary solution to avoid fail typechecks for unbound idents
-	// used in external reasoner ExF where is is later typechecked
-	public static Predicate makeUncheckedImp(Predicate left, Predicate right)
-	{
-		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
-		return result;
-	}
+//	// Temporary solution to avoid fail typechecks for unbound idents
+//	// used in external reasoner ExF where is is later typechecked
+//	public static Predicate makeUncheckedImp(Predicate left, Predicate right)
+//	{
+//		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
+//		return result;
+//	}
+//	
+//	// Temporary solution to avoid fail typechecks for unbound idents
+//	public static Predicate makeUncheckedNeg(Predicate p)
+//	{
+//		Predicate result = ff.makeUnaryPredicate(Formula.NOT,p,null);
+//		return result;
+//	}
 	
-	// Temporary solution to avoid fail typechecks for unbound idents
-	public static Predicate makeUncheckedNeg(Predicate p)
-	{
-		Predicate result = ff.makeUnaryPredicate(Formula.NOT,p,null);
-		return result;
-	}
-	
-	public static Predicate makeImp(ITypeEnvironment te,Predicate...imps)
+	public static Predicate makeImp(Predicate...imps)
 	{
 		if (imps.length == 0) return True;
 		if (imps.length == 1) return imps[0];
@@ -330,15 +330,15 @@ public final class Lib {
 		for (int i=imps.length-2; i==0 ;i--){
 			result = ff.makeBinaryPredicate(Formula.LIMP,imps[i],result,null);
 		}
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate instantiateBoundIdents(ITypeEnvironment te,Predicate P,Expression[] instantiations){
+	public static Predicate instantiateBoundIdents(Predicate P,Expression[] instantiations){
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		Predicate result = qP.instantiate(instantiations,ff);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
@@ -356,44 +356,44 @@ public final class Lib {
 		return qP.getPredicate();
 	}
 	
-	public static Predicate makeUnivQuant(ITypeEnvironment te,
+	public static Predicate makeUnivQuant(
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,boundIdents,boundPred,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 		
 	}
 	
-	public static Predicate makeExQuant(ITypeEnvironment te,
+	public static Predicate makeExQuant(
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.EXISTS,boundIdents,boundPred,null);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 		
 	}
 	
-	public static Predicate WD(ITypeEnvironment te,Formula f){
+	public static Predicate WD(Formula f){
 		Predicate result = f.getWDPredicate(ff);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	
-	public static Predicate WD(ITypeEnvironment te,Collection<? extends Formula> formulae){
+	public static Predicate WD(Collection<? extends Formula> formulae){
 		Set<Predicate> WD = new HashSet<Predicate>(formulae.size());
 		for (Formula formula : formulae){
-			WD.add(WD(te,formula));
+			WD.add(WD(formula));
 		}	
-		return makeConj(te,WD);
+		return makeConj(WD);
 	}
 	
-	public static Predicate WD(ITypeEnvironment te,Formula[] formulae){
+	public static Predicate WD(Formula[] formulae){
 		Set<Predicate> WD = new HashSet<Predicate>(formulae.length);
 		for (Formula formula : formulae){
-			if (formula != null) WD.add(WD(te,formula));
+			if (formula != null) WD.add(WD(formula));
 		}	
-		return makeConj(te,WD);
+		return makeConj(WD);
 	}
 
 	public static Expression parseExpression(String str){
@@ -408,9 +408,9 @@ public final class Lib {
 		else return null;
 	}
 	
-	public static Expression typeToExpression(ITypeEnvironment te, Type type){
+	public static Expression typeToExpression(Type type){
 		Expression result = type.toExpression(ff);
-		typeCheckAfterConstruction(result,te);
+		typeCheckAfterConstruction(result);
 		return result;
 	}
 	

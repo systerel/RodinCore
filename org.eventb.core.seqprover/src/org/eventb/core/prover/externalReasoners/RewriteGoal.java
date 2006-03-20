@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -33,14 +32,16 @@ public class RewriteGoal implements IExternalReasoner{
 			return new UnSuccessfulExtReasonerOutput(this,I,
 					"Illegal rewriter: " + rewriter);
 		
-		ITypeEnvironment te = S.typeEnvironment();
+		// ITypeEnvironment te = S.typeEnvironment();
 		
-		Predicate newGoal = rewriter.apply(te,S.goal());
+		Predicate newGoal = rewriter.apply(S.goal());
 		if (newGoal == null)
 			return new UnSuccessfulExtReasonerOutput(this,I,
 					"Rewriter " + rewriter +" inapplicable for goal "+ S.goal());
 
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),Hypothesis.Hypotheses(),seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof);

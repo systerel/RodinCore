@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -47,27 +46,20 @@ public class ExF implements IExternalReasoner{
 		}
 		
 		
-		ITypeEnvironment te = S.typeEnvironment();
+		// ITypeEnvironment te = S.typeEnvironment();
+		Predicate newGoal = Lib.makeUnivQuant(Lib.getBoundIdents(exHypPred),
+				Lib.makeImp(Lib.getBoundPredicate(exHypPred),S.goal()));
+		// Note : newGoal may be not be type checkable here since it may have bound idents
 		
-		// Predicate newGoal = Lib.makeConj(te,cases);
-		Predicate newGoal = Lib.makeUnivQuant(te,Lib.getBoundIdents(exHypPred),
-				Lib.makeUncheckedImp(Lib.getBoundPredicate(exHypPred),S.goal()));
-		
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = (exHyp == null) ? 
 				new SimpleSequent(S.typeEnvironment(),seqGoal) :
 				new SimpleSequent(S.typeEnvironment(),exHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(exHyp));
 	}
-	
-	
-	
-		
-//	public PluginInput defaultInput(){
-//		return null;
-//	}
-	
 	
 	public static class Input implements IExtReasonerInput{
 

@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -21,10 +20,6 @@ public class ImpD implements IExternalReasoner{
 	public String name(){
 		return "remove implication";
 	}
-	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
 		if (! (I instanceof Input)) throw (new AssertionError(this));
@@ -39,11 +34,11 @@ public class ImpD implements IExternalReasoner{
 	
 		Predicate toShow;
 		Predicate toAssume;
-		ITypeEnvironment te = S.typeEnvironment();
+		// ITypeEnvironment te = S.typeEnvironment();
 		if (aI.useContrapositive) 
 		{
-			toShow = Lib.makeNeg(te,Lib.impRight(impHypPred));
-			toAssume = Lib.makeNeg(te,Lib.impLeft(impHypPred));
+			toShow = Lib.makeNeg(Lib.impRight(impHypPred));
+			toAssume = Lib.makeNeg(Lib.impLeft(impHypPred));
 		}
 		else 
 		{ 
@@ -52,23 +47,16 @@ public class ImpD implements IExternalReasoner{
 		}
 		
 		
-		Predicate asmImpGoal = Lib.makeImp(te,toAssume,S.goal());
-		Predicate shoImpAsmImpGoal = Lib.makeImp(te,toShow,asmImpGoal);
-		// The following line has been adapted in order to add new proven hypotheses.
-		// Predicate newGoal = ff.makeAssociativePredicate(Formula.LAND, new Predicate[] {toShow,asmImpGoal},null);
-		Predicate newGoal = Lib.makeConj(te,toShow,shoImpAsmImpGoal);
-			// ff.makeAssociativePredicate(Formula.LAND, new Predicate[] {toShow,shoImpAsmImpGoal},null);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		Predicate asmImpGoal = Lib.makeImp(toAssume,S.goal());
+		Predicate shoImpAsmImpGoal = Lib.makeImp(toShow,asmImpGoal);
+		Predicate newGoal = Lib.makeConj(toShow,shoImpAsmImpGoal);
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),impHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(impHyp));
 	}
-	
-//	public PluginInput defaultInput(){
-//		return null;
-//	}
-	
-
 	
 	public static class Input implements IExtReasonerInput{
 

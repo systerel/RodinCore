@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners.rewriter;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import static org.eventb.core.prover.Lib.*;
 
@@ -40,7 +39,7 @@ public class RemoveNegation implements Rewriter{
 		return false;
 	}
 
-	public Predicate apply(ITypeEnvironment te, Predicate p) {
+	public Predicate apply(Predicate p) {
 		if (! (isNeg(p))) return null;
 		Predicate negP = negPred(p);
 		
@@ -51,27 +50,27 @@ public class RemoveNegation implements Rewriter{
 		if (isNeg(negP))
 			return negPred(negP);
 		if (isConj(negP))
-			return makeDisj(te,makeNeg(te,conjuncts(negP)));
+			return makeDisj(makeNeg(conjuncts(negP)));
 		if (isDisj(negP))
-			return makeConj(te,makeNeg(te,disjuncts(negP)));
+			return makeConj(makeNeg(disjuncts(negP)));
 		if (isImp(negP))
-			return makeConj(te,impLeft(negP),makeNeg(te,impRight(negP)));
+			return makeConj(impLeft(negP),makeNeg(impRight(negP)));
 		if (isExQuant(negP))
-			return makeUnivQuant(te,getBoundIdents(negP),
-					makeUncheckedNeg(getBoundPredicate(negP)));
+			return makeUnivQuant(getBoundIdents(negP),
+					makeNeg(getBoundPredicate(negP)));
 		if (isUnivQuant(negP))
-			return makeExQuant(te,getBoundIdents(negP),
-					makeUncheckedNeg(getBoundPredicate(negP)));
+			return makeExQuant(getBoundIdents(negP),
+					makeNeg(getBoundPredicate(negP)));
 		
 		if (isEq(negP))
-			return makeNotEq(te,eqLeft(negP),eqRight(negP));
+			return makeNotEq(eqLeft(negP),eqRight(negP));
 		if (isNotEq(negP))
-			return makeEq(te,notEqLeft(negP),notEqRight(negP));
+			return makeEq(notEqLeft(negP),notEqRight(negP));
 		
 		if (isInclusion(negP))
-			return makeNotInclusion(te,getElement(negP),getSet(negP));
+			return makeNotInclusion(getElement(negP),getSet(negP));
 		if (isNotInclusion(negP))
-			return makeInclusion(te,getElement(negP),getSet(negP));
+			return makeInclusion(getElement(negP),getSet(negP));
 		
 		return null;
 	}

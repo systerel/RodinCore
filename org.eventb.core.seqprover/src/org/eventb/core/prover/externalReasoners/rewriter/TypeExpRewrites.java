@@ -13,7 +13,6 @@ import static org.eventb.core.prover.Lib.isNotInclusion;
 import static org.eventb.core.prover.Lib.notEqLeft;
 import static org.eventb.core.prover.Lib.notEqRight;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 
 public class TypeExpRewrites implements Rewriter{
@@ -46,7 +45,7 @@ public class TypeExpRewrites implements Rewriter{
 		return false;
 	}
 
-	public Predicate apply(ITypeEnvironment te, Predicate p) {
+	public Predicate apply(Predicate p) {
 		if (isNotEq(p)) {
 			if (isEmptySet(notEqRight(p)) &&
 					notEqLeft(p).isATypeExpression())

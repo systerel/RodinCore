@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners.rewriter;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import static org.eventb.core.prover.Lib.*;
 
@@ -24,7 +23,7 @@ public class TrivialRewrites implements Rewriter{
 		return false;
 	}
 
-	public Predicate apply(ITypeEnvironment te, Predicate p) {
+	public Predicate apply(Predicate p) {
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 
 			return  negPred(negPred(p));
 		

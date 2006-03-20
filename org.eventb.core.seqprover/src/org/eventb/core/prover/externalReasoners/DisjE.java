@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -21,10 +20,6 @@ public class DisjE implements IExternalReasoner{
 	public String name(){
 		return "do case";
 	}
-	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
 		Hypothesis disjHyp;
@@ -52,22 +47,20 @@ public class DisjE implements IExternalReasoner{
 		
 		Predicate[] disjuncts = Lib.disjuncts(disjHypPred);
 		Predicate[] cases = new Predicate[disjuncts.length];
-		ITypeEnvironment te = S.typeEnvironment();
+		// ITypeEnvironment te = S.typeEnvironment();
 		for (int i=0;i<disjuncts.length;i++){
-			cases[i] = Lib.makeImp(te,disjuncts[i],S.goal());
+			cases[i] = Lib.makeImp(disjuncts[i],S.goal());
 		}
-		Predicate newGoal = Lib.makeConj(te,cases);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		Predicate newGoal = Lib.makeConj(cases);
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = (disjHyp == null) ? 
 				new SimpleSequent(S.typeEnvironment(),seqGoal) :
 				new SimpleSequent(S.typeEnvironment(),disjHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(disjHyp));
 	}
-	
-//	public PluginInput defaultInput(){
-//		return null;
-//	}
 	
 	
 	public static class Input implements IExtReasonerInput{

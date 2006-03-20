@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -33,8 +32,10 @@ public class ConjD implements IExternalReasoner{
 		if (! Lib.isConj(conjHypPred))
 			return new UnSuccessfulExtReasonerOutput(this,I,"Hypothesis not a conjunction:"+conjHyp.toString());
 		
-		ITypeEnvironment te = S.typeEnvironment();
-		Predicate seqGoal = Lib.makeImp(te,Lib.makeGoal(te,Lib.conjuncts(conjHypPred),S.goal()),S.goal());
+		// ITypeEnvironment te = S.typeEnvironment();
+		Predicate seqGoal = Lib.makeImp(Lib.makeGoal(Lib.conjuncts(conjHypPred),S.goal()),S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),conjHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(conjHyp));

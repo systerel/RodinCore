@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -26,10 +25,6 @@ public class Eq implements IExternalReasoner{
 	public String name(){
 		return "apply equality";
 	}
-	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
 		if (! (I instanceof Input)) throw (new AssertionError(this));
@@ -71,19 +66,16 @@ public class Eq implements IExternalReasoner{
 				}
 			}
 		}
-		ITypeEnvironment te = S.typeEnvironment();
+		// ITypeEnvironment te = S.typeEnvironment();
 		Predicate rewrittenGoal = Lib.rewrite(S.goal(),(FreeIdentifier)from,to);
-		Predicate newGoal = Lib.makeGoal(te,rewrittenHyps,rewrittenGoal);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		Predicate newGoal = Lib.makeGoal(rewrittenHyps,rewrittenGoal);
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),toDeselect,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof,Lib.deselect(toDeselect));
 	}
-	
-
-//	public PluginInput defaultInput(){
-//		return null;
-//	}
 	
 	
 	public static class Input implements IExtReasonerInput{

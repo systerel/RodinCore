@@ -2,7 +2,6 @@ package org.eventb.core.prover.externalReasoners;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -20,10 +19,6 @@ public class ExI implements IExternalReasoner{
 	
 	public String name(){
 		return "provide witness";
-	}
-	
-	public boolean isApplicable(IProverSequent S,IExtReasonerInput I) {
-		return Lib.isExQuant(S.goal());
 	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
@@ -52,31 +47,23 @@ public class ExI implements IExternalReasoner{
 				if (! Lib.isWellTypedInstantiation(witness,boundIdentDecls[i].getType(),S.typeEnvironment())) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
 							"Type check failed : "+eI.witnesses[i]+" expected type "+ boundIdentDecls[i].getType());
-//				if (! Lib.isWellTyped(witness,S.typeEnvironment())) 
-//					return new UnSuccessfulExtReasonerOutput(this,I,
-//							"Type check failed for expression "+eI.witnesses[i]);
-//				if (! boundIdentDecls[i].getType().equals(witness.getType())) 
-//					return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
 				witnesses[i] = witness;
 			}
 		}
 		
 		// We can now assume that <code>witnesses</code> have been properly parsed and typed.
-		ITypeEnvironment te = S.typeEnvironment();
-		Predicate WDpred = Lib.WD(te,witnesses);
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(te,S.goal(),witnesses);
-		Predicate newGoal = Lib.makeConj(te,WDpred,instantiatedPred);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
+		// ITypeEnvironment te = S.typeEnvironment();
+		Predicate WDpred = Lib.WD(witnesses);
+		Predicate instantiatedPred = Lib.instantiateBoundIdents(S.goal(),witnesses);
+		Predicate newGoal = Lib.makeConj(WDpred,instantiatedPred);
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof);
 	}
 	
-//	public PluginInput defaultInput(){
-//		return new Input();
-//	}
-
-
 	
 	public static class Input implements IExtReasonerInput{
 		public final String[] witnesses;
@@ -84,17 +71,6 @@ public class ExI implements IExternalReasoner{
 			this.witnesses = witnesses;
 		}
 		
-		
-//		public exI_Input(String... witnessesArr){
-//			Map<Integer,String> = new Map<Integer,String>();
-//			for (i=0;i<witnessesArr.length;i++){
-//				if witnessesArr[i].
-//			}
-//			this.witnesses = witnesses;
-//		}
-//		public Input(){
-//			this.witnesses = new HashMap<Integer,String>();
-//		}
 	}
 
 }

@@ -2,7 +2,6 @@ package org.eventb.core.prover.externalReasoners;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -22,10 +21,6 @@ public class AllF implements IExternalReasoner{
 	public String name(){
 		return "instantiate";
 	}
-	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
 		if (! (I instanceof Input)) throw (new AssertionError(this));
@@ -55,32 +50,23 @@ public class AllF implements IExternalReasoner{
 				if (! Lib.isWellTypedInstantiation(instantiation,boundIdentDecls[i].getType(),S.typeEnvironment())) 
 					return new UnSuccessfulExtReasonerOutput(this,I,
 							"Type check failed : "+aI.instantiations[i]+" expected type "+ boundIdentDecls[i].getType());
-				
-//				if (! Lib.isWellTyped(instantiation,S.typeEnvironment())) 
-//					return new UnSuccessfulExtReasonerOutput(this,I,
-//							"Type check failed for expression "+aI.instantiations[i]);
-//				if (! boundIdentDecls[i].getType().equals(instantiation.getType())) 
-//					return new UnSuccessfulExtReasonerOutput(this,I,"types do not match for bounded identifier "+i);
 				instantiations[i] = instantiation;
 			}
 		}
 		
 		// We can now assume that <code>instantiations</code> have been properly parsed and typed.
-		ITypeEnvironment te = S.typeEnvironment();
 		Predicate goal = S.goal();
-		Predicate WDpred = Lib.WD(te,instantiations);
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(te,univHypPred,instantiations);
-		Predicate instantiatedPredImpGoal = Lib.makeImp(te,instantiatedPred,goal);
-		Predicate newGoal = Lib.makeConj(te,WDpred,instantiatedPredImpGoal);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,goal);
-		Lib.typeCheck(seqGoal);
+		Predicate WDpred = Lib.WD(instantiations);
+		Predicate instantiatedPred = Lib.instantiateBoundIdents(univHypPred,instantiations);
+		Predicate instantiatedPredImpGoal = Lib.makeImp(instantiatedPred,goal);
+		Predicate newGoal = Lib.makeConj(WDpred,instantiatedPredImpGoal);
+		Predicate seqGoal = Lib.makeImp(newGoal,goal);
+		// Lib.typeCheck(seqGoal);
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),univHyp,seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof);
-	}
-	
-	public IExtReasonerInput defaultInput(){
-		return null;
 	}
 	
 	public static class Input implements IExtReasonerInput{

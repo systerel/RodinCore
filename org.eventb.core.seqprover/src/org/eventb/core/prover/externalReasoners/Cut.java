@@ -1,6 +1,5 @@
 package org.eventb.core.prover.externalReasoners;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -20,10 +19,6 @@ public class Cut implements IExternalReasoner{
 	public String name(){
 		return "add hypothesis";
 	}
-	
-//	public boolean isApplicable(ProverSequent S,PluginInput I) {
-//		return true;
-//	}
 
 	public IExtReasonerOutput apply(IProverSequent S,IExtReasonerInput I) {
 		if (! (I instanceof Input)) throw (new AssertionError(this));
@@ -39,29 +34,23 @@ public class Cut implements IExternalReasoner{
 		
 		// We can now assume that <code>lemma</code> has been properly parsed and typed.
 		
-		ITypeEnvironment te = S.typeEnvironment();
-		Predicate lemmaWD = Lib.WD(te,lemma);
-		Predicate lemmaImpGoal = Lib.makeImp(te,lemma,S.goal());
-		Predicate newGoal = Lib.makeConj(te,lemma,lemmaWD,lemmaImpGoal);
-		Predicate seqGoal = Lib.makeImp(te,newGoal,S.goal());
-		// Set<Predicate> newHyps = Collections.emptySet();
+		// ITypeEnvironment te = S.typeEnvironment();
+		Predicate lemmaWD = Lib.WD(lemma);
+		Predicate lemmaImpGoal = Lib.makeImp(lemma,S.goal());
+		Predicate newGoal = Lib.makeConj(lemma,lemmaWD,lemmaImpGoal);
+		Predicate seqGoal = Lib.makeImp(newGoal,S.goal());
+		assert seqGoal.isTypeChecked();
+		assert seqGoal.isWellFormed();
 		ISequent outputSequent = new SimpleSequent(S.typeEnvironment(),Hypothesis.Hypotheses(),seqGoal);
 		Proof outputProof = new TrustedProof(outputSequent);
 		return new SuccessfullExtReasonerOutput(this,I,outputProof);
 	}
-	
-//	public PluginInput defaultInput(){
-//		return new Input();
-//	}
 	
 	public static class Input implements IExtReasonerInput{
 		public final String lemma;
 		public Input(String lemma){
 			this.lemma = lemma;
 		}
-//		public Input(){
-//			this.lemma = "\u22a4";
-//		}
 		
 		@Override
 		public String toString(){

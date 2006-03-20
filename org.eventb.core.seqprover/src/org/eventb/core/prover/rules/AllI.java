@@ -28,7 +28,8 @@ public final class AllI extends ProofRule {
 		ITypeEnvironment newITypeEnvironment = S.typeEnvironment().clone();
 		FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);
 		assert boundIdentDecls.length == freeIdents.length;
-		Predicate newGoal = UnivQ.instantiate(freeIdents,Lib.ff);	
+		Predicate newGoal = UnivQ.instantiate(freeIdents,Lib.ff);
+		assert UnivQ.isTypeChecked();
 		IProverSequent anticident = S;
 		anticident = anticident.replaceGoal(newGoal,newITypeEnvironment);
 		return new IProverSequent[] {anticident};
