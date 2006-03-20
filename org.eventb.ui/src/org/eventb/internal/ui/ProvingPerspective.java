@@ -26,6 +26,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 	    defineActions(layout);
 	    defineLayout(layout);
+	    layout.addPerspectiveShortcut(ModellingPerspective.PERSPECTIVE_ID);
 	}
 	
 	public void defineActions(IPageLayout layout) {
