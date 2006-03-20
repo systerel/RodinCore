@@ -6,7 +6,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IExtReasonerInput;
 import org.eventb.core.prover.IExtReasonerOutput;
@@ -159,8 +158,9 @@ public class TestRules extends TestCase {
 		IExtReasonerInput I = new Cut.Input("(x÷x)=1");
 
 		Predicate lemma = Lib.parsePredicate("(x÷x)=1");
-		ITypeEnvironment te = Lib.typeCheck(lemma);
-		Predicate lemmaWD = Lib.WD(te,lemma);
+		// ITypeEnvironment te = Lib.typeCheck(lemma);
+		Lib.typeCheck(lemma);
+		Predicate lemmaWD = Lib.WD(lemma);
 		
 //		assertTrue(cut.isApplicable(seq.hypSeqFail,I));
 		IExtReasonerOutput O = cut.apply(seq.hypSeqFail,I);
