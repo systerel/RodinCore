@@ -191,7 +191,7 @@ public class TestOldProver extends TestCase {
 		@Override
 		public void test() throws Exception {
 			StringBuffer buffer = ClassicB.translateSequent(smallTEnv, hypotheses, goal);
-			boolean result = ClassicB.proveWithML(buffer, timeOut);
+			boolean result = ClassicB.proveWithML(buffer, "0;1", timeOut);
 			assertEquals("Unexpected result", isTrue, result);
 		}
 		

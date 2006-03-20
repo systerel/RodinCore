@@ -4,6 +4,7 @@ package org.eventb.core.prover.tests;
 import junit.framework.TestCase;
 
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.externalReasoners.ExternalML;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.Tactics;
 
@@ -15,19 +16,20 @@ public class TacticsTest extends TestCase {
 	
 	public void testLegacyProvers(){	
 		pt = TestLib.genProofTreeNode("A ∈ℙ(ℤ) ;; B ∈ℙ(ℤ) ;; x∈A|- x∈A ∪B");
-		assertNull(Tactics.legacyProvers().apply(pt));
+		assertNull(Tactics.externalPP(true, null).apply(pt));
 		assertTrue(pt.isDischarged());
 		
 		pt = TestLib.genProofTreeNode(" 0 ≤ a ∧ 1 < b |- a mod b < b ");
-		assertNull(Tactics.legacyProvers().apply(pt));
+		assertNull(Tactics.externalPP(true, null).apply(pt));
 		assertTrue(pt.isDischarged());
 		
 		pt = TestLib.genProofTreeNode(" |- 23 = 23 ");
-		assertNull(Tactics.legacyProvers().apply(pt));
+		final int forces = ExternalML.Input.FORCE_0;
+		assertNull(Tactics.externalML(forces, null).apply(pt));
 		assertTrue(pt.isDischarged());
 		
 		pt = TestLib.genProofTreeNode(" ⊤|- ⊥");
-		assertNotNull(Tactics.legacyProvers().apply(pt));
+		assertNotNull(Tactics.externalPP(false, null).apply(pt));
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
 		assertEquals(desc[0],pt);

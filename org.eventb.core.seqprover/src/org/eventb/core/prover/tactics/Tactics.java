@@ -22,6 +22,8 @@ import org.eventb.core.prover.externalReasoners.DisjE;
 import org.eventb.core.prover.externalReasoners.Eq;
 import org.eventb.core.prover.externalReasoners.ExF;
 import org.eventb.core.prover.externalReasoners.ExI;
+import org.eventb.core.prover.externalReasoners.ExternalML;
+import org.eventb.core.prover.externalReasoners.ExternalPP;
 import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.RewriteGoal;
@@ -42,24 +44,18 @@ public class Tactics {
 	
 	// Globally applicable tactics
 	
-	public static ITactic legacyProvers() {
-		final LegacyProvers.Input input = new LegacyProvers.Input();
-		return pluginTac(new LegacyProvers(), input);
+	public static ITactic externalPP(boolean restricted,
+			IProgressMonitor monitor) {
+		final LegacyProvers.Input input = 
+			new ExternalPP.Input(restricted, monitor);
+		return pluginTac(new ExternalPP(), input);
 	}
 	
-	public static ITactic legacyProvers(long timeOutDelay) {
-		final LegacyProvers.Input input = new LegacyProvers.Input(timeOutDelay);
-		return pluginTac(new LegacyProvers(), input);
-	}
-	
-	public static ITactic legacyProvers(IProgressMonitor monitor) {
-		final LegacyProvers.Input input = new LegacyProvers.Input(monitor);
-		return pluginTac(new LegacyProvers(), input);
-	}
-	
-	public static ITactic legacyProvers(long timeOutDelay, IProgressMonitor monitor) {
-		final LegacyProvers.Input input = new LegacyProvers.Input(timeOutDelay, monitor);
-		return pluginTac(new LegacyProvers(), input);
+	public static ITactic externalML(int forces,
+			IProgressMonitor monitor) {
+		final LegacyProvers.Input input = 
+			new ExternalML.Input(forces, monitor);
+		return pluginTac(new ExternalML(), input);
 	}
 	
 	public static ITactic lemma(String strLemma){

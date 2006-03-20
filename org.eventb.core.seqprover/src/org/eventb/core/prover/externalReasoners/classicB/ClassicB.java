@@ -178,11 +178,13 @@ public abstract class ClassicB {
 		}
 	}
 	
-	private static void printML(String input) throws IOException {
+	private static void printML(String input, String forces) throws IOException {
 		PrintStream stream = new PrintStream(iName);
 		stream.println("THEORY Lemma;Unproved IS");
 		stream.println(input);
-		stream.print("WHEN Force IS (0;1;2;3) WHEN FileOut IS \"");
+		stream.print("WHEN Force IS (");
+		stream.print(forces);
+		stream.print(") WHEN FileOut IS \"");
 		stream.print(oName);
 		stream.println("\"");
 		stream.println("WHEN Options IS ? & ? & ? & OK & \"\" & dummy & KO");
@@ -197,7 +199,7 @@ public abstract class ClassicB {
 			return false;
 		try {
 			makeTempFileNames();
-			printML(patchSequentForML(input.toString()));
+			printML(patchSequentForML(input.toString()), "0");
 			return runPK(ProverShell.getMLParserCommand(iName));
 		} finally {
 			cleanup();
@@ -219,11 +221,6 @@ public abstract class ClassicB {
 		String moinsE = sequent.replace("_moinsE", "-");
 		String multE = moinsE.replace("_multE", "*");
 		return multE;
-	}
-	
-	public static boolean proveWithML(StringBuffer input)
-	throws IOException, InterruptedException {
-		return proveWithML(input, DEFAULT_DELAY);
 	}
 	
 	private static boolean callProver(String[] cmdArray, long delay, String successMsg, IProgressMonitor monitor) 
@@ -253,20 +250,20 @@ public abstract class ClassicB {
 		}
 	}
 	
-	public static boolean proveWithML(StringBuffer input, long delay)
-	throws IOException {
-		return proveWithML(input, delay, null);
+	public static boolean proveWithML(StringBuffer input, String forces,
+			long delay) throws IOException {
+		return proveWithML(input, forces, delay, null);
 	}
 
-	public static boolean proveWithML(StringBuffer input, long delay, IProgressMonitor monitor)
-	throws IOException {
+	public static boolean proveWithML(StringBuffer input, String forces,
+			long delay, IProgressMonitor monitor) throws IOException {
 		
 		if (! ProverShell.areToolsPresent())
 			return false;
 
 		try {
 			makeTempFileNames();
-			printML(patchSequentForML(input.toString()));
+			printML(patchSequentForML(input.toString()), forces);
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getMLCommand(iName);
 			return callProver(cmdArray, delay, ML_SUCCESS, monitor);
