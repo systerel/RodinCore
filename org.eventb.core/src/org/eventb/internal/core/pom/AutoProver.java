@@ -3,6 +3,7 @@ package org.eventb.internal.core.pom;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.externalReasoners.ExternalML;
 import org.eventb.core.prover.tactics.Tactics;
 import org.rodinp.core.RodinDBException;
 
@@ -57,7 +58,11 @@ public class AutoProver {
 		
 		// Then, try with the legacy provers.
 		pt.getRoot().pruneChildren();
-		Tactics.legacyProvers(timeOutDelay).apply(pt.getRoot());
+		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
+		Tactics.externalML(MLforces, timeOutDelay, null).apply(pt.getRoot());
+		if (! pt.isDischarged()) {
+			Tactics.externalPP(false, timeOutDelay, null).apply(pt.getRoot());
+		}
 	}
 	
 }

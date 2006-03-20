@@ -51,10 +51,24 @@ public class Tactics {
 		return pluginTac(new ExternalPP(), input);
 	}
 	
+	public static ITactic externalPP(boolean restricted, long timeOutDelay,
+			IProgressMonitor monitor) {
+		final LegacyProvers.Input input = 
+			new ExternalPP.Input(restricted, timeOutDelay, monitor);
+		return pluginTac(new ExternalPP(), input);
+	}
+	
 	public static ITactic externalML(int forces,
 			IProgressMonitor monitor) {
 		final LegacyProvers.Input input = 
 			new ExternalML.Input(forces, monitor);
+		return pluginTac(new ExternalML(), input);
+	}
+	
+	public static ITactic externalML(int forces, long timeOutDelay,
+			IProgressMonitor monitor) {
+		final LegacyProvers.Input input = 
+			new ExternalML.Input(forces, timeOutDelay, monitor);
 		return pluginTac(new ExternalML(), input);
 	}
 	
