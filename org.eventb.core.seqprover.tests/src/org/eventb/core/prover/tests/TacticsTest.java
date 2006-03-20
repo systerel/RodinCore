@@ -74,7 +74,7 @@ public class TacticsTest extends TestCase {
 		assertNull(Tactics.doCase("x = 21").apply(pt));
 		// System.out.println(pt);
 		desc = pt.getOpenDescendants();
-		assertEquals(desc.length,4);
+		assertEquals(desc.length,3);
 	}
 	
 	public void testContradictGoal(){

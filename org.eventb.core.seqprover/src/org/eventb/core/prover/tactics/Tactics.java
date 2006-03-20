@@ -96,7 +96,8 @@ public class Tactics {
 						pluginTac(new Cut(),new Cut.Input(lemma)),
 						onPending(0,conjI()),
 						onPending(2,pluginTac(new DisjE(),null)),
-						onPending(2,norm())
+						onPending(2,norm()),
+						onPending(0,externalPP(true,null))
 				));
 	}
 	
