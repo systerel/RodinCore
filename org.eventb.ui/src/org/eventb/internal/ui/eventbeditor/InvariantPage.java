@@ -25,23 +25,24 @@ import org.rodinp.core.IRodinFile;
  * @author htson
  * <p>
  * An implementation of the Event-B Form Page
- * for editing Variables (Rodin elements).
+ * for editing Invariants (Rodin elements).
  */
-public class VariablesPage
+public class InvariantPage 
 	extends NewEventBFormPage 
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Variables"; //$NON-NLS-1$
-	public static final String PAGE_TITLE = "Variables";
-	public static final String PAGE_TAB_TITLE = "Variables";
+	public static final String PAGE_ID = "Invariants"; //$NON-NLS-1$
+	public static final String PAGE_TITLE = "Invariants";
+	public static final String PAGE_TAB_TITLE = "Invariants";
+	
 
 	/**
 	 * Contructor.
 	 * <p>
 	 * @param editor The form editor that holds the page 
 	 */
-	public VariablesPage(FormEditor editor) {
+	public InvariantPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 
@@ -50,7 +51,7 @@ public class VariablesPage
 	 */
 	@Override
 	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
-		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		InvariantMasterSection part = new InvariantMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
@@ -58,7 +59,6 @@ public class VariablesPage
 		part.getSection().setLayoutData(gd);
 		return part;
 	}
-
 
 
 	/**
@@ -73,15 +73,6 @@ public class VariablesPage
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-
-		// Invariant mirror section.
-		InvariantMirrorSection invariantMirrorSection = new InvariantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(invariantMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 150;
-		gd.widthHint = 150;
-		invariantMirrorSection.getSection().setLayoutData(gd);
 		
 		// Theorem mirror section.
 		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
@@ -91,6 +82,16 @@ public class VariablesPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		theoremMirrorSection.getSection().setLayoutData(gd);
-	}
 
-}
+		// Event mirror section.
+		EventMirrorSection eventMirrorSection = new EventMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+		managedForm.addPart(eventMirrorSection);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		eventMirrorSection.getSection().setLayoutData(gd);
+	}
+		
+}	
+			

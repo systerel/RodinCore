@@ -27,7 +27,7 @@ import org.rodinp.core.IRodinFile;
  * An implementation of the Event-B Form Page
  * for editing Carrier Sets (Rodin elements).
  */
-public class CarrierSetsPage
+public class CarrierSetPage
 	extends NewEventBFormPage
 {
 	
@@ -41,7 +41,7 @@ public class CarrierSetsPage
 	 * Contructor.
 	 * @param editor The form editor that holds the page 
 	 */
-	public CarrierSetsPage(FormEditor editor) {
+	public CarrierSetPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 	

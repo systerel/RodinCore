@@ -29,7 +29,7 @@ import org.rodinp.core.IRodinFile;
  * An implementation of the Event-B Form Page
  * for editing Theorems (Rodin elements).
  */
-public class TheoremsPage
+public class TheoremPage
 	extends NewEventBFormPage 
 {
 	
@@ -44,7 +44,7 @@ public class TheoremsPage
 	 * <p>
 	 * @param editor The form editor that holds the page 
 	 */
-	public TheoremsPage(FormEditor editor) {
+	public TheoremPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 	

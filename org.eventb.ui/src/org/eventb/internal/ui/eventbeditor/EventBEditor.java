@@ -221,15 +221,15 @@ public abstract class EventBEditor
 	 */
 	private void setTreeNodeSelection(TreeNode node) {
 		if (node.isType(IVariable.ELEMENT_TYPE)) {
-			this.setActivePage(VariablesPage.PAGE_ID);
+			this.setActivePage(VariablePage.PAGE_ID);
 			return;
 		}
 		if (node.isType(IInvariant.ELEMENT_TYPE)) {
-			this.setActivePage(InvariantsPage.PAGE_ID);
+			this.setActivePage(InvariantPage.PAGE_ID);
 			return;
 		}
 		if (node.isType(ITheorem.ELEMENT_TYPE)) {
-			this.setActivePage(TheoremsPage.PAGE_ID);
+			this.setActivePage(TheoremPage.PAGE_ID);
 			return;
 		}
 		if (node.isType(IEvent.ELEMENT_TYPE)) {
@@ -237,7 +237,7 @@ public abstract class EventBEditor
 			return;
 		}
 		if (node.isType(ICarrierSet.ELEMENT_TYPE)) {
-			this.setActivePage(CarrierSetsPage.PAGE_ID);
+			this.setActivePage(CarrierSetPage.PAGE_ID);
 			return;
 		}
 		if (node.isType(IConstant.ELEMENT_TYPE)) {
@@ -264,7 +264,7 @@ public abstract class EventBEditor
 		}
 
 		if (element instanceof IContext) {
-			this.setActivePage(CarrierSetsPage.PAGE_ID);
+			this.setActivePage(CarrierSetPage.PAGE_ID);
 			return;
 		}
 
@@ -278,25 +278,25 @@ public abstract class EventBEditor
 		}
 		
 		else if (element instanceof ITheorem) {
-			this.setActivePage(TheoremsPage.PAGE_ID);
+			this.setActivePage(TheoremPage.PAGE_ID);
 		}
 
 		else if (element instanceof ICarrierSet) {
-			this.setActivePage(CarrierSetsPage.PAGE_ID);
+			this.setActivePage(CarrierSetPage.PAGE_ID);
 		}
 		
 		else if (element instanceof IConstant)
 			this.setActivePage(ConstantsPage.PAGE_ID);
 
 		else if (element instanceof IInvariant)
-			this.setActivePage(InvariantsPage.PAGE_ID);
+			this.setActivePage(InvariantPage.PAGE_ID);
 		
 		else if (element instanceof IEvent)
 			this.setActivePage(EventsPage.PAGE_ID);
 		
 		else if (element instanceof IVariable) {
 			if (element.getParent() instanceof IMachine) 
-				this.setActivePage(VariablesPage.PAGE_ID);
+				this.setActivePage(VariablePage.PAGE_ID);
 			else this.setActivePage(EventsPage.PAGE_ID);
 		}
 		
