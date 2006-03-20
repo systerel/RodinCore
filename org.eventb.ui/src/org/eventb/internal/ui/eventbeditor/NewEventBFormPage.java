@@ -18,6 +18,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author htson
@@ -31,7 +32,7 @@ public abstract class NewEventBFormPage
 	
 	// Title of the page.
 	private String pageTitle;
-	
+	private NewEventBTablePartWithButtons part;
 	/**
 	 * Contructor.
 	 * <p>
@@ -61,7 +62,7 @@ public abstract class NewEventBFormPage
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		
-		NewEventBTablePartWithButtons part = createMasterSection(managedForm, body, Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+		part = createMasterSection(managedForm, body, Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
 		managedForm.addPart(part);
 		
 		createMirrorSections(body, managedForm);
@@ -83,8 +84,9 @@ public abstract class NewEventBFormPage
 	 * Setting the selection within the page.
 	 * @param element A Rodin Element
 	 */
-//	public void setSelection(IRodinElement element) {
-//		block.setSelection(element);
-//	}
-
+	public void setSelection(IRodinElement element) {
+		part.setSelection(element);
+	}
+	
+	
 }

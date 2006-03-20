@@ -314,8 +314,13 @@ public abstract class EventBEditor
 		}
 		
 		// select the element within the page
-		EventBFormPage page = (EventBFormPage) this.getActivePageInstance();
-		page.setSelection(element);
+		IFormPage page = this.getActivePageInstance();
+		if (page instanceof EventBFormPage) {
+			((EventBFormPage) page).setSelection(element);
+		}
+		else if (page instanceof NewEventBFormPage) {
+			((NewEventBFormPage) page).setSelection(element);
+		}
 		
 	}
 	

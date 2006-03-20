@@ -31,6 +31,7 @@ public abstract class NewEventBTablePartWithButtons
 	private EventBEditableTableViewer viewer;
 
 	abstract protected void updateButtons();
+	abstract protected void edit(IRodinElement element);
 
 	public NewEventBTablePartWithButtons(final IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBEditor editor, String [] buttonLabels, String title, String description) {
@@ -191,6 +192,7 @@ public abstract class NewEventBTablePartWithButtons
 	public void setSelection(IRodinElement element) {
 		TableViewer viewer = this.getViewer();
 		viewer.setSelection(new StructuredSelection(element));
+		edit(element);
 	}
 	
 	

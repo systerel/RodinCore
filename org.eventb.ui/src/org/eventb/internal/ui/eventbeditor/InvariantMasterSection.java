@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IInvariant;
@@ -60,7 +61,7 @@ public class InvariantMasterSection
 	
 	private static final String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
 	private static final String SECTION_TITLE = "Invariants";
-	private static final String SECTION_DESCRIPTION = "Invariant"; 
+	private static final String SECTION_DESCRIPTION = "List of invariants of the component"; 
 	
 	/**
 	 * The content provider class. 
@@ -381,6 +382,20 @@ public class InvariantMasterSection
 		else {
 			return;
 		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 */
+	@Override
+	protected void edit(IRodinElement element) {
+		TableViewer viewer = this.getViewer();
+		viewer.reveal(element);
+		Table table = viewer.getTable();
+		TableItem item  = (TableItem) viewer.testFindItem(element);
+		int row = table.indexOf(item);
+		selectRow(row, 1);
 	}
 
 	

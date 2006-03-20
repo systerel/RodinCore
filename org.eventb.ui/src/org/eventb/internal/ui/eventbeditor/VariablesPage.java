@@ -50,7 +50,7 @@ public class VariablesPage
 	 */
 	@Override
 	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
-		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

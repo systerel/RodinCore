@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IMachine;
@@ -59,7 +60,7 @@ public class VariableMasterSection
 	
 	private static final String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
 	private static final String SECTION_TITLE = "Variables";
-	private static final String SECTION_DESCRIPTION = "Variables"; 
+	private static final String SECTION_DESCRIPTION = "List of variables of the component"; 
 	
 	/**
 	 * The content provider class. 
@@ -390,4 +391,19 @@ public class VariableMasterSection
 			return;
 		}
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 */
+	@Override
+	protected void edit(IRodinElement element) {
+		TableViewer viewer = this.getViewer();
+		viewer.reveal(element);
+		Table table = viewer.getTable();
+		TableItem item  = (TableItem) viewer.testFindItem(element);
+		int row = table.indexOf(item);
+		selectRow(row, 0);
+	}
+
 }

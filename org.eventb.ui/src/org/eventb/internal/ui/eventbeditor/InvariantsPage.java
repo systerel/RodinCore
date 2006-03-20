@@ -51,7 +51,7 @@ public class InvariantsPage
 	 */
 	@Override
 	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
-		InvariantMasterSection part = new InvariantMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+		InvariantMasterSection part = new InvariantMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
@@ -74,14 +74,14 @@ public class InvariantsPage
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		
-		// Invariant mirror section.
-		InvariantMirrorSection invariantMirrorSection = new InvariantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(invariantMirrorSection);
+		// Theorem mirror section.
+		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
+		managedForm.addPart(theoremMirrorSection);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
-		invariantMirrorSection.getSection().setLayoutData(gd);
+		theoremMirrorSection.getSection().setLayoutData(gd);
 
 		// Event mirror section.
 		EventMirrorSection eventMirrorSection = new EventMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);

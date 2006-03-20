@@ -5,15 +5,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eventb.core.IVariable;
+import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
-public class VariablesEditableTableViewer extends EventBEditableTableViewer {
+public class TheoremEditableTableViewer extends EventBEditableTableViewer {
 
-	public VariablesEditableTableViewer(Composite parent, int style, IRodinFile rodinFile) {
+	public TheoremEditableTableViewer(Composite parent, int style, IRodinFile rodinFile) {
 		super(parent, style, rodinFile);
 	}
 	
@@ -36,14 +36,26 @@ public class VariablesEditableTableViewer extends EventBEditableTableViewer {
 				}
 				
 				break;
+			case 1:  // Commit name
+				try {
+					UIUtils.debug("Commit content: " + ((IInternalElement) itemData).getContents() + " to be : " + text);
+					if (!((IInternalElement) itemData).getContents().equals(text)) {
+						((IInternalElement) itemData).setContents(text);
+					}
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				
+				break;
 			}
 		}
 	}
 
 	protected void newElement(Table table, TableItem item, int column) {
 		try {
-			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			IInternalElement element = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
+			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
+			IInternalElement element = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm"+(counter+1), null, null);
 			refresh();
 			reveal(element);
 			int row = table.indexOf(item);
@@ -53,12 +65,20 @@ public class VariablesEditableTableViewer extends EventBEditableTableViewer {
 			exception.printStackTrace();
 		}
 	}
-
+	
 	protected void createTableColumns(Table table) {
-		TableColumn column = new TableColumn(table, SWT.LEFT);
-		column.setText("Name");
-		column.setResizable(true);
-		column.setWidth(150);
+		TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+		nameColumn.setText("Name");
+		nameColumn.setResizable(true);
+		nameColumn.setWidth(100);
+
+		
+		TableColumn predicateColumn = new TableColumn(table, SWT.LEFT);
+		predicateColumn.setText("Predicate");
+		predicateColumn.setResizable(true);
+		predicateColumn.setWidth(250);
+		
 		table.setHeaderVisible(true);
 	}
+
 }

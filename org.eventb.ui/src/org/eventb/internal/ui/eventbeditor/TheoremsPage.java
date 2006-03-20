@@ -30,7 +30,7 @@ import org.rodinp.core.IRodinFile;
  * for editing Theorems (Rodin elements).
  */
 public class TheoremsPage
-	extends EventBFormPage 
+	extends NewEventBFormPage 
 {
 	
 	// Title, tab title and ID of the page.
@@ -48,14 +48,19 @@ public class TheoremsPage
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 	
-
-	/**
-	 * Create the Master detail block.
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
-	protected EventBMasterDetailsBlock createMasterDetailsBlock() {
-		return new TheoremMasterDetailsBlock(this);
+	@Override
+	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+		TheoremMasterSection part = new TheoremMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		part.getSection().setLayoutData(gd);
+		return part;
 	}
-	
 
 	/**
 	 * Creating the Mirror sections within the page.
