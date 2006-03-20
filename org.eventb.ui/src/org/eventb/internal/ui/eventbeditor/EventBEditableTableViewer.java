@@ -16,8 +16,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -29,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.ui.EventBMath;
@@ -71,29 +68,8 @@ public abstract class EventBEditableTableViewer
 		gd.widthHint = 100;
 		Table table = this.getTable();
 		table.setLayoutData(gd);
-		final TableColumn column = new TableColumn(table, SWT.LEFT);
-		column.setResizable(false);
-		column.setWidth(150);
-		column.addControlListener(new ControlListener() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
-			 */
-			public void controlMoved(ControlEvent e) {
-				int newWidth = getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-				column.setWidth(newWidth);
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
-			 */
-			public void controlResized(ControlEvent e) {
-				int newWidth = getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-				column.setWidth(newWidth);
-			}
-			
-		});
-		table.setHeaderVisible(false);
+		createTableColumns(table);
+		
 		
 		editor = new TableEditor(table);
 		editor.grabHorizontal = true;
@@ -137,6 +113,8 @@ public abstract class EventBEditableTableViewer
 			}
 		});
 	}
+	
+	protected abstract void createTableColumns(Table table);
 	
 	protected void selectRow(int row, int column) {
 		TableItem item = this.getTable().getItem(row);

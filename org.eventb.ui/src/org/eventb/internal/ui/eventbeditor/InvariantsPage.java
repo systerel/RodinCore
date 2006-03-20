@@ -28,7 +28,7 @@ import org.rodinp.core.IRodinFile;
  * for editing Invariants (Rodin elements).
  */
 public class InvariantsPage 
-	extends EventBFormPage 
+	extends NewEventBFormPage 
 {
 	
 	// Title, tab title and ID of the page.
@@ -45,15 +45,21 @@ public class InvariantsPage
 	public InvariantsPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
-	
 
-	/**
-	 * Create the Master detail block.
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
-	protected EventBMasterDetailsBlock createMasterDetailsBlock() {
-		return new InvariantMasterDetailsBlock(this);
+	@Override
+	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+		InvariantMasterSection part = new InvariantMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		part.getSection().setLayoutData(gd);
+		return part;
 	}
-	
+
 
 	/**
 	 * Creating the Mirror sections within the page.

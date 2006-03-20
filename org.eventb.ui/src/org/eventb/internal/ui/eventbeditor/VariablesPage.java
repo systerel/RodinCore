@@ -17,9 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.rodinp.core.IRodinFile;
 
@@ -30,7 +28,7 @@ import org.rodinp.core.IRodinFile;
  * for editing Variables (Rodin elements).
  */
 public class VariablesPage
-	extends FormPage 
+	extends NewEventBFormPage 
 {
 	
 	// Title, tab title and ID of the page.
@@ -44,39 +42,24 @@ public class VariablesPage
 	 * @param editor The form editor that holds the page 
 	 */
 	public VariablesPage(FormEditor editor) {
-		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
-	
 
-	
-	/**
-	 * Creating the content for the page
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
-	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
-		ScrolledForm form = managedForm.getForm();
-		
-		form.setText(PAGE_TITLE); //$NON-NLS-1$
-		Composite body = form.getBody();
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginWidth = 10;
-		layout.verticalSpacing = 20;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
-		
-		VariableMasterSection part = new VariableMasterSection(managedForm, body, managedForm.getToolkit(), Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+	@Override
+	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		part.getSection().setLayoutData(gd);
-		managedForm.addPart(part);
-		
-		createMirrorSections(body, managedForm);
-		
+		return part;
 	}
-	
+
+
 
 	/**
 	 * Creating the Mirror sections within the page.
