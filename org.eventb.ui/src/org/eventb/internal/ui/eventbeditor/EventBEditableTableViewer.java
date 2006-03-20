@@ -118,7 +118,6 @@ public abstract class EventBEditableTableViewer
 	
 	protected void selectRow(int row, int column) {
 		TableItem item = this.getTable().getItem(row);
-		
 		if (item != null) selectItem(item, row, column);
 	}
 	

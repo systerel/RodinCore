@@ -5,15 +5,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eventb.core.IVariable;
+import org.eventb.core.ICarrierSet;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
-public class VariablesEditableTableViewer extends EventBEditableTableViewer {
+public class CarrierSetEditableTableViewer extends EventBEditableTableViewer {
 
-	public VariablesEditableTableViewer(Composite parent, int style, IRodinFile rodinFile) {
+	public CarrierSetEditableTableViewer(Composite parent, int style, IRodinFile rodinFile) {
 		super(parent, style, rodinFile);
 	}
 	
@@ -42,8 +42,8 @@ public class VariablesEditableTableViewer extends EventBEditableTableViewer {
 
 	protected void newElement(Table table, TableItem item, int column) {
 		try {
-			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			IInternalElement element = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
+			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
+			IInternalElement element = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, "set"+(counter+1), null, null);
 			refresh();
 			reveal(element);
 			int row = table.indexOf(item);

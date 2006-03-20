@@ -102,22 +102,6 @@ public class VariableMasterSection
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-			if (columnIndex == 1) {
-				if (element instanceof IUnnamedInternalElement) return "";
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				return element.toString();
-			}
-			
-			if (columnIndex == 2) {
-				try {
-					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				return element.toString();
-			}
-			
 			if (columnIndex == 0) {
 				try {
 					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
@@ -223,7 +207,7 @@ public class VariableMasterSection
 	 * @param parent The composite parent
 	 */
 	protected EventBEditableTableViewer createTableViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new VariablesEditableTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION, editor.getRodinInput());
+		return new VariableEditableTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION, editor.getRodinInput());
 	}
 	
 	/**
