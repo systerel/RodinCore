@@ -145,7 +145,7 @@ public class ProofControlPage
 					IRunnableWithProgress op = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException {
 							try {
-								userSupport.applyTactic(Tactics.legacyProvers(monitor));
+								userSupport.applyTactic(Tactics.externalPP(false, monitor));
 //								apply(Tactics.legacyProvers(), monitor);
 							} catch (RodinDBException e) {
 								e.printStackTrace();
