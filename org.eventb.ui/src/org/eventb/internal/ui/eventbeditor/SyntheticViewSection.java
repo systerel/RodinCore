@@ -562,7 +562,7 @@ public class SyntheticViewSection
 					Listener textListener = new Listener () {
 						public void handleEvent (final Event e) {
 							
-							UIUtils.debug("Not disposed");
+//							UIUtils.debug("Not disposed");
 							switch (e.type) {
 								case SWT.FocusOut:
 									UIUtils.debug("FocusOut");

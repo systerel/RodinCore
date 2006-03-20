@@ -205,7 +205,7 @@ public class EventBContentOutlinePage
 	/**
 	 * Method declared on ContentOutlinePage.
 	 * This is called when there is a selection change in the tree. This responses 
-	 * by selecting the first element of the selection in the editor.
+	 * by selecting the object element of the selection in the editor.
 	 * <p>
 	 * @param event the selection event
 	 */
@@ -256,7 +256,7 @@ public class EventBContentOutlinePage
 //		StructuredSelection ssel = (StructuredSelection) sel;
 //		if (ssel.isEmpty()) return;
 //		
-//		IRodinElement lsel = (IRodinElement) ssel.getFirstElement();    // Set the first element only
+//		IRodinElement lsel = (IRodinElement) ssel.getFirstElement();    // Set the object element only
 //		
 //		this.setRodinElementSelection(lsel);
 //		
