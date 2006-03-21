@@ -92,6 +92,11 @@ public class GoalSection
 					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.removeNegGoal());
 					return;
 				}
+				
+				if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
+					((ProverUI) GoalSection.this.page.getEditor()).getUserSupport().applyTactic(Tactics.disjToImpGoal());
+					return;
+				}
 			}
 			catch (RodinDBException exception) {
 				exception.printStackTrace();

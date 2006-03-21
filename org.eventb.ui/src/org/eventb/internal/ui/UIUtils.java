@@ -243,6 +243,7 @@ public class UIUtils {
 		if (Tactics.allI_applicable(goal)) names.add(ALLI_SYMBOL);
 		if (Tactics.exI_applicable(goal)) names.add(EXI_SYMBOL);
 		if (Tactics.removeNegGoal_applicable(goal)) names.add(NEG_SYMBOL);
+		if (Tactics.disjToImpGoal_applicable(goal)) names.add(DISJE_SYMBOL);
 		// Extra tactics applicable to goal should be added here.
 		return names;
 	}
