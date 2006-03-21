@@ -27,8 +27,8 @@ import org.rodinp.core.IRodinFile;
  * An implementation of the Event-B Form Page
  * for editing Axioms (Rodin elements)
  */
-public class AxiomsPage
-	extends EventBFormPage
+public class AxiomPage
+	extends NewEventBFormPage
 {
 	
 	// Title, tab title and ID of the page.
@@ -41,16 +41,23 @@ public class AxiomsPage
 	 * Contructor.
 	 * @param editor The form editor that holds the page 
 	 */
-	public AxiomsPage(FormEditor editor) {
+	public AxiomPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 	
 	
-	/**
-	 * Create the Master detail block.
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
-	protected EventBMasterDetailsBlock createMasterDetailsBlock() {
-		return new AxiomMasterDetailsBlock(this);
+	@Override
+	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		part.getSection().setLayoutData(gd);
+		return part;
 	}
 	
 	

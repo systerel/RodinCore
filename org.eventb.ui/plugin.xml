@@ -84,18 +84,18 @@
    <extension
          point="org.eventb.ui.machinePages">
       <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.VariablesPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.InvariantsPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.TheoremsPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.EventsPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.VariablePage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.InvariantPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.TheoremPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.EventPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"/>
    </extension>
    <extension
          point="org.eventb.ui.contextPages">
-      <page class="org.eventb.internal.ui.eventbeditor.CarrierSetsPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.ConstantsPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.AxiomsPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.TheoremsPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.ConstantPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.AxiomPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.TheoremPage"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

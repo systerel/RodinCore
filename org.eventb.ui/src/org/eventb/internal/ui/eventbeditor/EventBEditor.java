@@ -241,11 +241,11 @@ public abstract class EventBEditor
 			return;
 		}
 		if (node.isType(IConstant.ELEMENT_TYPE)) {
-			this.setActivePage(ConstantsPage.PAGE_ID);
+			this.setActivePage(ConstantPage.PAGE_ID);
 			return;
 		}
 		if (node.isType(IAxiom.ELEMENT_TYPE)) {
-			this.setActivePage(AxiomsPage.PAGE_ID);
+			this.setActivePage(AxiomPage.PAGE_ID);
 			return;
 		}
 		return;
@@ -274,7 +274,7 @@ public abstract class EventBEditor
 		}
 		
 		if (element instanceof IAxiom) {
-			this.setActivePage(AxiomsPage.PAGE_ID);
+			this.setActivePage(AxiomPage.PAGE_ID);
 		}
 		
 		else if (element instanceof ITheorem) {
@@ -286,7 +286,7 @@ public abstract class EventBEditor
 		}
 		
 		else if (element instanceof IConstant)
-			this.setActivePage(ConstantsPage.PAGE_ID);
+			this.setActivePage(ConstantPage.PAGE_ID);
 
 		else if (element instanceof IInvariant)
 			this.setActivePage(InvariantPage.PAGE_ID);

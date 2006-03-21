@@ -32,9 +32,9 @@ public class CarrierSetPage
 {
 	
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Sets"; //$NON-NLS-1$
-	public static final String PAGE_TITLE = "Sets";
-	public static final String PAGE_TAB_TITLE = "Sets";
+	public static final String PAGE_ID = "Carrier Sets"; //$NON-NLS-1$
+	public static final String PAGE_TITLE = "Carrier Sets";
+	public static final String PAGE_TAB_TITLE = "Carrier Sets";
 	
 
 	/**

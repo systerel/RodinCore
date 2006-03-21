@@ -11,20 +11,35 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableFontProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContext;
+import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -34,19 +49,29 @@ import org.rodinp.core.RodinDBException;
  * for displaying axioms (used as master section in Master-Detail block).
  */
 public class AxiomMasterSection
-	extends EventBTablePartWithButtons 
+extends NewEventBTablePartWithButtons
 {
 
+	
+	// The indexes for different buttons.
+	private static final int ADD_INDEX = 0;
+	private static final int DELETE_INDEX = 1;
+	private static final int UP_INDEX = 2;
+	private static final int DOWN_INDEX = 3;
+	
+	private static final String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
+	private static final String SECTION_TITLE = "Theorems";
+	private static final String SECTION_DESCRIPTION = "List of theorems of the component"; 
+	
 	/**
 	 * The content provider class. 
 	 */
-	class MasterContentProvider
+	class AxiomContentProvider
 	implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IContext)
 				try {
-					// Return the set of axioms belong to this context
-					return ((IContext) parent).getAxioms();
+					return ((IContext) parent).getChildrenOfType(IAxiom.ELEMENT_TYPE);
 				}
 				catch (RodinDBException e) {
 					// TODO Exception handle
@@ -62,7 +87,102 @@ public class AxiomMasterSection
     	}
     }
 	
+	class AxiomLabelProvider 
+	implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider
+	{
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (columnIndex != 0) return null;
+			return UIUtils.getImage(element);
+		}
 	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			
+			if (columnIndex == 1) {
+				try {
+					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				return element.toString();
+			}
+			
+			if (columnIndex == 0) {
+				try {
+					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+				else return element.toString();
+			}
+			return element.toString();
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		 */
+		public Color getBackground(Object element, int columnIndex) {
+			 Display display = Display.getCurrent();
+	         return display.getSystemColor(SWT.COLOR_WHITE);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+		 */
+		public Color getForeground(Object element, int columnIndex) {
+			Display display = Display.getCurrent();
+	        return display.getSystemColor(SWT.COLOR_BLACK);
+	   }
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		 */
+		public Font getFont(Object element, int columnIndex) {
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		}
+	
+	}
 	/**
 	 * Contructor.
 	 * <p>
@@ -73,29 +193,163 @@ public class AxiomMasterSection
 	 * @param block The master detail block which this master section belong to
 	 */
 	public AxiomMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
-			int style, EventBMasterDetailsBlock block) {
-		super(managedForm, parent, toolkit, style, block);
+			int style, EventBEditor editor) {
+		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
+	}
+
+
+	/**
+	 * Setting the input for the (table) viewer.
+	 */
+	protected void setProvider() {
+		TableViewer viewer = this.getViewer();
+		viewer.setContentProvider(new AxiomContentProvider());
+		viewer.setLabelProvider(new AxiomLabelProvider());
+	}
+
+	/*
+	 * Create the table view part.
+	 * <p>
+	 * @param managedForm The Form used to create the viewer.
+	 * @param toolkit The Form Toolkit used to create the viewer
+	 * @param parent The composite parent
+	 */
+	protected EventBEditableTableViewer createTableViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
+		return new AxiomEditableTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION, editor.getRodinInput());
 	}
 	
+	/**
+	 * Update the status of buttons.
+	 */
+	protected void updateButtons() {
+		Table table = getViewer().getTable();
+		boolean hasOneSelection = table.getSelection().length == 1;
+		boolean hasSelection = table.getSelection().length > 0;
+		boolean canMove = table.getItemCount() > 1;
+		
+        setButtonEnabled(
+			UP_INDEX,
+			canMove && hasOneSelection && table.getSelectionIndex() > 0);
+		setButtonEnabled(
+			DOWN_INDEX,
+			canMove
+				&& hasOneSelection
+				&& table.getSelectionIndex() < table.getItemCount() - 1);
+    		
+		setButtonEnabled(ADD_INDEX, true);
+		setButtonEnabled(DELETE_INDEX, hasSelection);
+	}
+	
+
+	/**
+	 * Method to response to button selection.
+	 * <p>
+	 * @param index The index of selected button
+	 */
+	protected void buttonSelected(int index) {
+		switch (index) {
+			case ADD_INDEX:
+				handleAdd();
+				break;
+			case DELETE_INDEX:
+				handleDelete();
+				break;
+			case UP_INDEX:
+				handleUp();
+				break;
+			case DOWN_INDEX:
+				handleDown();
+				break;
+		}
+	}
 	
 	/**
-	 * Handle the adding (new Axiom) action
+	 * Handle the adding (new Variable) action.
 	 */
 	protected void handleAdd() {
-		UIUtils.newAxioms(rodinFile);
+		IRodinFile rodinFile = editor.getRodinInput();
+		try {
+			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
+			IInternalElement element = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm"+(counter+1), null, null);
+			TableViewer viewer = this.getViewer();
+			viewer.refresh();
+			viewer.reveal(element);
+			Table table = viewer.getTable();
+			selectRow(table.getItemCount() - 1, 1);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	/*
+	 * Handle deletion of elements.
+	 */
+	private void handleDelete() {
+		IStructuredSelection ssel = (IStructuredSelection) this.getViewer().getSelection();
+		// TODO Batch the deleting jobs
+		Object [] objects = ssel.toArray();
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IInternalElement) {
+				try {
+					((IInternalElement) objects[i]).delete(true, null);
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return;
+	}
+
+
+	/*
+	 * Handle moving up.
+	 */
+	private void handleUp() {
+		Table table = this.getViewer().getTable();
+		int index = table.getSelectionIndex();
+		IInternalElement current = (IInternalElement) table.getItem(index).getData();
+		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
+		try {
+			swap(current, previous);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	
+	/*
+	 * Handle moving down.
+	 *
+	 */
+	private void handleDown() {
+		Table table = this.getViewer().getTable();
+		int index = table.getSelectionIndex();
+		IInternalElement current = (IInternalElement) table.getItem(index).getData();
+		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
+		try {
+			swap(next, current);
+		}
+		catch (RodinDBException e) {
+			// TODO Exception handle
+			e.printStackTrace();
+		}
+		return;
 	}
 	
 	
 	/**
-	 * Setting the (tree) viewer input of this master section 
+	 * Swap Internal elements in the Rodin database
+	 * @param element1 the object internal element
+	 * @param element2 the status internal element
+	 * @throws RodinDBException an exception from the database when moving element.
 	 */
-	protected void setViewerInput() {
-		// TODO Move this to the super class
-		TableViewer viewer = this.getViewer();
-		viewer.setContentProvider(new MasterContentProvider());
-		viewer.setLabelProvider(new ElementLabelProvider());
-		rodinFile = ((EventBEditor) this.getBlock().getPage().getEditor()).getRodinInput();
-		viewer.setInput(rodinFile);
+	private void swap(IInternalElement element1, IInternalElement element2) throws RodinDBException {
+		element1.move(element1.getParent(), element2, null, true, null);
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +373,7 @@ public class AxiomMasterSection
 		if (element instanceof IAxiom) {
 			UIUtils.postRunnable(new Runnable() {
 				public void run() {
-					getViewer().setInput(rodinFile);
+					getViewer().setInput(editor.getRodinInput());
 					markDirty();
 					updateButtons();
 				}
@@ -129,4 +383,20 @@ public class AxiomMasterSection
 			return;
 		}
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 */
+	@Override
+	protected void edit(IRodinElement element) {
+		TableViewer viewer = this.getViewer();
+		viewer.reveal(element);
+		Table table = viewer.getTable();
+		TableItem item  = (TableItem) viewer.testFindItem(element);
+		int row = table.indexOf(item);
+		selectRow(row, 1);
+	}
+
+	
 }
