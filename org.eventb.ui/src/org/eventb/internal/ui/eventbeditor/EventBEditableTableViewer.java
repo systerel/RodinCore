@@ -42,7 +42,7 @@ import org.rodinp.core.IRodinFile;
 public abstract class EventBEditableTableViewer
 	extends TableViewer
 {
-
+	
 	private TableEditor editor;
 
 	// The Rodin File where the information belongs to.
@@ -142,6 +142,17 @@ public abstract class EventBEditableTableViewer
 		if (!isCarbon) composite.setBackground (black);
 		final Text text = new Text (composite, SWT.NONE);
 		new EventBMath(text);
+		new TimerText(text) {
+
+			/* (non-Javadoc)
+			 * @see org.eventb.internal.ui.eventbeditor.TimerText#commit()
+			 */
+			@Override
+			public void commit() {
+				EventBEditableTableViewer.this.commit(row, column, text.getText());
+			}
+			
+		};
 		final int inset = isCarbon ? 0 : 1;
 		composite.addListener (SWT.Resize, new Listener () {
 			public void handleEvent (Event e) {
