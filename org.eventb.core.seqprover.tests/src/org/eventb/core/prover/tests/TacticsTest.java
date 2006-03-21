@@ -75,6 +75,12 @@ public class TacticsTest extends TestCase {
 		// System.out.println(pt);
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,3);
+		
+		pt = TestLib.genProofTreeNode( "x=1 ∨x=2 |- x < 3 ");
+		assertNull(Tactics.doCase("3÷x = 21").apply(pt));
+		// System.out.println(pt);
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,3);
 	}
 	
 	public void testContradictGoal(){
@@ -164,6 +170,13 @@ public class TacticsTest extends TestCase {
 		desc = pt.getOpenDescendants();
 		assertEquals(desc.length,1);
 
+	}
+	
+	public void testDisjToImplGoal(){
+		pt = TestLib.genProofTreeNode( " ⊤|- x=1 ∨ x=2 ∨ x=3");
+		assertNull(Tactics.disjToImpGoal().apply(pt));
+		desc = pt.getOpenDescendants();
+		assertEquals(desc.length,1);
 	}
 	
 	// Tactics applicable on a hypothesis

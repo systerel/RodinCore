@@ -28,6 +28,7 @@ import org.eventb.core.prover.externalReasoners.ImpD;
 import org.eventb.core.prover.externalReasoners.LegacyProvers;
 import org.eventb.core.prover.externalReasoners.RewriteGoal;
 import org.eventb.core.prover.externalReasoners.RewriteHyp;
+import org.eventb.core.prover.externalReasoners.rewriter.DisjToImpl;
 import org.eventb.core.prover.externalReasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.externalReasoners.rewriter.TrivialRewrites;
 import org.eventb.core.prover.externalReasoners.rewriter.TypeExpRewrites;
@@ -97,7 +98,8 @@ public class Tactics {
 						onPending(0,conjI()),
 						onPending(2,pluginTac(new DisjE(),null)),
 						onPending(2,norm()),
-						onPending(0,externalPP(true,null))
+						// onPending(0,externalPP(true,null))
+						onPending(0,excludedMiddle())
 				));
 	}
 	
@@ -156,6 +158,14 @@ public class Tactics {
 	
 	public static boolean removeNegGoal_applicable(Predicate goal){
 		return (new RemoveNegation()).isApplicable(goal);
+	}
+	
+	public static ITactic disjToImpGoal(){
+		return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new DisjToImpl()));
+	}
+	
+	public static boolean disjToImpGoal_applicable(Predicate goal){
+		return (new DisjToImpl()).isApplicable(goal);
 	}
 	
 	
@@ -305,6 +315,13 @@ public class Tactics {
 	public static ITactic postProcess() {
 		return onAllPending(hyp());
 		
+	}
+	
+	private static ITactic excludedMiddle() {
+		return compose(
+				disjToImpGoal(),
+				norm()
+				);
 	}
 	
 }
