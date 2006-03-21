@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.IMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
@@ -69,9 +68,9 @@ public class TheoremMasterSection
 	class TheoremContentProvider
 	implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IMachine)
+			if (parent instanceof IRodinFile)
 				try {
-					return ((IMachine) parent).getChildrenOfType(ITheorem.ELEMENT_TYPE);
+					return ((IRodinFile) parent).getChildrenOfType(ITheorem.ELEMENT_TYPE);
 				}
 				catch (RodinDBException e) {
 					// TODO Exception handle
