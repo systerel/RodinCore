@@ -11,6 +11,8 @@ public class Hypothesis{
 	private final Predicate predicate;
 	
 	public Hypothesis(Predicate predicate){
+		assert predicate.isTypeChecked();
+		assert predicate.isWellFormed();
 		this.predicate = predicate;
 	}
 	

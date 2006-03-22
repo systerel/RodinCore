@@ -16,18 +16,24 @@ public class SimpleSequent implements ISequent {
 	public SimpleSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hypotheses,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.hypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>(hypotheses));
+		assert goal.isTypeChecked();
+		assert goal.isWellFormed();
 		this.goal = goal;
 	}
 	
 	public SimpleSequent(ITypeEnvironment typeEnvironment,Hypothesis hypothesis,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.hypotheses = Collections.singleton(hypothesis);
+		assert goal.isTypeChecked();
+		assert goal.isWellFormed();
 		this.goal = goal;
 	}
 	
 	public SimpleSequent(ITypeEnvironment typeEnvironment,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.hypotheses = Collections.emptySet();
+		assert goal.isTypeChecked();
+		assert goal.isWellFormed();
 		this.goal = goal;
 	}
 	

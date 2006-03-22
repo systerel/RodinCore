@@ -62,6 +62,8 @@ public class SimpleProverSequent implements IProverSequent{
 		this.localHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
 		this.hiddenHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
 		this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
+		assert goal.isTypeChecked();
+		assert goal.isWellFormed();
 		this.goal = goal;
 		
 		// assert this.invariant();
@@ -99,7 +101,11 @@ public class SimpleProverSequent implements IProverSequent{
 		else this.selectedHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>(selectedHypotheses));
 		
 		if (goal == null) this.goal = pS.goal;
-		else this.goal = goal;
+		else {
+			assert goal.isTypeChecked();
+			assert goal.isWellFormed();
+			this.goal = goal;
+		}
 		
 		assert this.hypotheses().containsAll(this.selectedHypotheses);
 		assert this.hypotheses().containsAll(this.hiddenHypotheses);
