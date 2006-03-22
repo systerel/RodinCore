@@ -206,7 +206,7 @@ public final class Lib {
 	
 	
 	// TODO : Remove this function after type synthesis is implemented.
-	private static void typeCheckAfterConstruction(Formula f){
+	private static void postConstructionCheck(Formula f){
 //		ITypeCheckResult tcr = f.typeCheck(te);
 //		assert tcr.isSuccess();
 //		assert tcr.getInferredEnvironment().isEmpty();
@@ -220,7 +220,7 @@ public final class Lib {
 		for (Predicate hyp : Hyps){
 			result = makeImp(hyp,result);
 		}
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -229,13 +229,16 @@ public final class Lib {
 		for (Predicate hyp : Hyps){
 			result = makeImp(hyp,result);
 		}
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
 	public static Predicate makeNeg(Predicate P){
+		// If the predicate is already negated, remove the negation.
+		if (isNeg(P)) return negPred(P);
+		
 		Predicate result = ff.makeUnaryPredicate(Formula.NOT,P,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -251,7 +254,7 @@ public final class Lib {
 		if (conjuncts.length == 0) return True;
 		if (conjuncts.length == 1) return conjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LAND,conjuncts,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -260,7 +263,7 @@ public final class Lib {
 		if (disjuncts.length == 0) return False;
 		if (disjuncts.length == 1) return disjuncts[0];
 		Predicate result = ff.makeAssociativePredicate(Formula.LOR,disjuncts,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -274,35 +277,35 @@ public final class Lib {
 	public static Predicate makeImp(Predicate left, Predicate right)
 	{
 		Predicate result = ff.makeBinaryPredicate(Formula.LIMP,left,right,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
 	public static Predicate makeEq(Expression left, Expression right)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.EQUAL,left,right,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
 	public static Predicate makeNotEq(Expression left, Expression right)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.NOTEQUAL,left,right,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
 	public static Predicate makeInclusion(Expression element, Expression set)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.IN,element,set,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
 	public static Predicate makeNotInclusion(Expression element, Expression set)
 	{
 		Predicate result = ff.makeRelationalPredicate(Formula.NOTIN,element,set,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -330,7 +333,7 @@ public final class Lib {
 		for (int i=imps.length-2; i==0 ;i--){
 			result = ff.makeBinaryPredicate(Formula.LIMP,imps[i],result,null);
 		}
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -338,7 +341,7 @@ public final class Lib {
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		Predicate result = qP.instantiate(instantiations,ff);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -360,7 +363,7 @@ public final class Lib {
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,boundIdents,boundPred,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 		
 	}
@@ -369,14 +372,14 @@ public final class Lib {
 			BoundIdentDecl[] boundIdents,
 			Predicate boundPred){
 		Predicate result = ff.makeQuantifiedPredicate(Formula.EXISTS,boundIdents,boundPred,null);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 		
 	}
 	
 	public static Predicate WD(Formula f){
 		Predicate result = f.getWDPredicate(ff);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
@@ -410,7 +413,7 @@ public final class Lib {
 	
 	public static Expression typeToExpression(Type type){
 		Expression result = type.toExpression(ff);
-		typeCheckAfterConstruction(result);
+		postConstructionCheck(result);
 		return result;
 	}
 	
