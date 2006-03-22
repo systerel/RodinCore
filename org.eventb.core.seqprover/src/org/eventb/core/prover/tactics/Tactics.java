@@ -313,8 +313,12 @@ public class Tactics {
 	}
 	
 	public static ITactic postProcess() {
-		return onAllPending(hyp());
-		
+		return onAllPending(
+				compose(
+						hyp(),
+						impI())
+						);
+				
 	}
 	
 	private static ITactic excludedMiddle() {
