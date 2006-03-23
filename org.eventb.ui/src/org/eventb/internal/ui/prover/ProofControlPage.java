@@ -28,13 +28,18 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -48,6 +53,7 @@ import org.eventb.core.pm.IStatusChangedListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.externalReasoners.ExternalML;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBImage;
@@ -80,23 +86,27 @@ public class ProofControlPage
 				IGoalChangedListener,
 				IStatusChangedListener
 {
+//	private static final String IMAGE_PATH = "images"
+//		+ System.getProperty("file.separator");
 
 	boolean share;
 	private Action switchLayout;
-	private Action action2;
 	private EventBMath textInput;
 	private IEventBFormText formTextInformation;
 	private ScrolledForm scrolledForm;
-	private Composite buttonContainer;
+	private ToolBar buttonBar1;
+//	private ToolBar buttonBar2;
 	private boolean isHorizontal;
 	private ProverUI editor;
-	private Button pn;
-	private Button dc;
-	private Button nm;
-	private Button pp;
-	private Button ah;
-	private Button ct;
-	private Button sh;
+	private ToolItem pn;
+	private ToolItem dc;
+	private ToolItem nm;
+	private ToolItem externalProvers;
+	private ToolItem ah;
+	private ToolItem ct;
+	private ToolItem sh;
+	private ToolItem pv;
+	private ToolItem ne;
 	private boolean isOpened;
 	
 	/*
@@ -110,84 +120,14 @@ public class ProofControlPage
 	 */
 	 
 	private class ContextButtonListener extends SelectionAdapter {
+		String label;
+		
+		ContextButtonListener(String label) {
+			this.label = label;
+		}
+		
 		public void widgetSelected(SelectionEvent e) {
-			Button button = (Button) e.getSource();
-			String label = button.getText();
-			
-			try {
-				if (label.equals("pn")) {
-					editor.getUserSupport().applyTactic(Tactics.prune());
-					return;
-				}
-			
-				if (label.equals("ne")) {
-					editor.getUserSupport().nextUndischargedPO();
-					return;
-				}
-			
-				if (label.equals("pv")) {
-					editor.getUserSupport().prevUndischargedPO();
-					return;
-				}
-			
-				if (label.equals("dc")) {
-					editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getTextWidget().getText()));
-					return;
-				}
-			
-				if (label.equals("nm")) {				
-					editor.getUserSupport().applyTactic(Tactics.norm());
-					return;
-				}
-			
-				if (label.equals("pp")) {
-					final UserSupport userSupport = editor.getUserSupport();
-					IRunnableWithProgress op = new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException {
-							try {
-								userSupport.applyTactic(Tactics.externalPP(false, monitor));
-//								apply(Tactics.legacyProvers(), monitor);
-							} catch (RodinDBException e) {
-								e.printStackTrace();
-								throw new InvocationTargetException(e);
-							}
-						}
-					};
-					
-					ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
-					
-					try {
-						dialog.run(true, true, op);
-					} catch (InterruptedException exception) {
-						return;
-					} catch (InvocationTargetException exception) {
-						Throwable realException = exception.getTargetException();
-						realException.printStackTrace();
-						MessageDialog.openError(ProofControlPage.this.scrolledForm.getShell(), "Error here", realException.getMessage());
-						return;
-					}
-					
-					return;
-				}
-			
-				if (label.equals("ah")) {
-					editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getTextWidget().getText()));
-					return;
-				}
-			
-				if (label.equals("ct")) {
-					editor.getUserSupport().applyTactic(Tactics.contradictGoal());
-					return;
-				}
-
-				if (label.equals("sh")) {
-					editor.getUserSupport().searchHyps(textInput.getTextWidget().getText());
-					return;
-				}
-			}
-			catch (RodinDBException exception) {
-				exception.printStackTrace();
-			}
+			buttonSelectedResponse(label);
 		}
 	}
 	   	
@@ -200,6 +140,194 @@ public class ProofControlPage
 		editor.getUserSupport().addStatusChangedListener(this);
 	}
     
+	private void buttonSelectedResponse(String label) {
+		try {
+			if (label.equals("pn")) {
+				editor.getUserSupport().applyTactic(Tactics.prune());
+				return;
+			}
+		
+			if (label.equals("ne")) {
+				editor.getUserSupport().nextUndischargedPO();
+				return;
+			}
+		
+			if (label.equals("pv")) {
+				editor.getUserSupport().prevUndischargedPO();
+				return;
+			}
+		
+			if (label.equals("dc")) {
+				editor.getUserSupport().applyTactic(Tactics.doCase(textInput.getTextWidget().getText()));
+				return;
+			}
+		
+			if (label.equals("nm")) {				
+				editor.getUserSupport().applyTactic(Tactics.norm());
+				return;
+			}
+		
+			if (label.equals("p0")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalPP(false, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+		
+			if (label.equals("pp")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalPP(true, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("m0")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_0, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("m1")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_1, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("m2")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_2, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("m3")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_3, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("ml")) {
+				final UserSupport userSupport = editor.getUserSupport();
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1 | ExternalML.Input.FORCE_2 | ExternalML.Input.FORCE_3, monitor));
+						} catch (RodinDBException e) {
+							e.printStackTrace();
+							throw new InvocationTargetException(e);
+						}
+					}
+				};
+				
+				applyTacticWithProgress(op);
+
+				return;
+			}
+
+			if (label.equals("ah")) {
+				editor.getUserSupport().applyTactic(Tactics.lemma(textInput.getTextWidget().getText()));
+				return;
+			}
+		
+			if (label.equals("ct")) {
+				editor.getUserSupport().applyTactic(Tactics.contradictGoal());
+				return;
+			}
+
+			if (label.equals("sh")) {
+				editor.getUserSupport().searchHyps(textInput.getTextWidget().getText());
+				return;
+			}
+		}
+		catch (RodinDBException exception) {
+			exception.printStackTrace();
+		}		
+	}
+
+	private void applyTacticWithProgress(IRunnableWithProgress op) {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
+		
+		try {
+			dialog.run(true, true, op);
+		} catch (InterruptedException exception) {
+			return;
+		} catch (InvocationTargetException exception) {
+			Throwable realException = exception.getTargetException();
+			realException.printStackTrace();
+			MessageDialog.openError(ProofControlPage.this.scrolledForm.getShell(), "Error here", realException.getMessage());
+			return;
+		}
+	}
+
 	@Override
 	public void dispose() {
 		// Deregister with the main plugin
@@ -209,59 +337,142 @@ public class ProofControlPage
 	}
 	
 	/**
+	  * Helper function to create tool item
+	  * 
+	  * @param parent the parent toolbar
+	  * @param type the type of tool item to create
+	  * @param text the text to display on the tool item
+	  * @param image the image to display on the tool item
+	  * @param hotImage the hot image to display on the tool item
+	  * @param toolTipText the tool tip text for the tool item
+	  * @return ToolItem
+	  */
+	private ToolItem createToolItem(ToolBar parent, int type, String text,
+		Image image, Image hotImage, String toolTipText) {
+	    ToolItem item = new ToolItem(parent, type);
+	    item.setText(text);
+	    item.setImage(image);
+	    item.setHotImage(hotImage);
+	    item.setToolTipText(toolTipText);
+	    return item;
+	}
+	
+
+	/**
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
 	 */
 	public void createControl(Composite parent) {	
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		int defaultWidth = 40;
 		
-		isHorizontal = true;
+		isHorizontal = false;
 		
 		scrolledForm = toolkit.createScrolledForm(parent);
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 2;
+		gl.numColumns = 1;
 		body.setLayout(gl);
-		
-		// Array of buttons
-		buttonContainer = toolkit.createComposite(body);
-		gl = new GridLayout();
-		gl.numColumns = 6;
-		gl.makeColumnsEqualWidth = true;
-		buttonContainer.setLayout(gl);
-		buttonContainer.setLayoutData(new GridData());
 				
-		pp = createButton(buttonContainer, "pp");
-		pp.setToolTipText("Run the legacy prover");
+		// Composite of toolbars
+		Composite comp = toolkit.createComposite(body);
+		gl = new GridLayout();
+		gl.numColumns = 1;
+		comp.setLayout(gl);
+		comp.setLayoutData(new GridData());
 		
-		nm = createButton(buttonContainer, "nm");
-		nm.setToolTipText("Apply normalise tactic");
+		buttonBar1 = new ToolBar(body, SWT.NONE);
+		buttonBar1.setLayoutData(new GridData());
 		
-		ah = createButton(buttonContainer, "ah");
-		ah.setToolTipText("Add predicate to the hypothesis");
-		
-		dc = createButton(buttonContainer, "dc");
-		dc.setToolTipText("Case distinction");
-		
-		ct = createButton(buttonContainer, "ct");
-		ct.setToolTipText("Prove by contradiction");
-		
-		pn = createButton(buttonContainer, "pn");
-		pn.setToolTipText("Prune the Proof Tree at the current node");
+	    new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    
+	    // Create drop-down externalProvers
+	    externalProvers = createToolItem(buttonBar1, SWT.DROP_DOWN, "p0", null, null,
+	        "External Prover: PP restricted to selected hypotheses");
+	    NewDropdownSelectionListener listenerOne = new NewDropdownSelectionListener(externalProvers);
+	    listenerOne.add("p0");
+	    listenerOne.add("pp");
+	    listenerOne.add("m0");
+	    listenerOne.add("m1");
+	    listenerOne.add("m2");
+	    listenerOne.add("m3");
+	    listenerOne.add("ml");
+	    externalProvers.addSelectionListener(listenerOne);
+	    Rectangle rec = externalProvers.getBounds();
+//	    UIUtils.debug("Width: " + rec.width);
+	    
+	    ToolItem separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+	    
+	    nm = createToolItem(buttonBar1, SWT.PUSH, "nm", null, null,
+        "Normalize tactic");
+	    nm.addSelectionListener(new ContextButtonListener("nm"));	
+	    rec = nm.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+	        
+	    ah = createToolItem(buttonBar1, SWT.PUSH, "ah", null, null,
+        "Add hypothesis");
+	    ah.addSelectionListener(new ContextButtonListener("ah"));	
+	    ah.setWidth(defaultWidth);
+	    rec = ah.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+	    
+	    dc = createToolItem(buttonBar1, SWT.PUSH, "dc", null, null,
+        "Case distinction");
+	    dc.addSelectionListener(new ContextButtonListener("dc"));	
+	    dc.setWidth(defaultWidth);
+	    rec = dc.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
 
-		sh = createButton(buttonContainer, "sh");
-		sh.setToolTipText("Search hypotheses");
-		sh.setImage(EventBUIPlugin.getDefault().getImageRegistry().get(EventBImage.IMG_SEARCH_BUTTON));
+	    ct = createToolItem(buttonBar1, SWT.PUSH, "ct", null, null,
+        "Contradiction");
+	    ct.addSelectionListener(new ContextButtonListener("ct"));	
+	    ct.setWidth(defaultWidth);
+	    rec = ct.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+
+//	    buttonBar2 = new ToolBar(comp, SWT.NONE);
+//		buttonBar2.setLayoutData(new GridData());
+
+//	    new ToolItem(buttonBar2, SWT.SEPARATOR);
+
+	    pn = createToolItem(buttonBar1, SWT.PUSH, "pn", null, null,
+        "Prune at the current node");
+	    pn.addSelectionListener(new ContextButtonListener("pn"));
+	    pn.setWidth(defaultWidth);
+	    rec = pn.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+
+	    sh = createToolItem(buttonBar1, SWT.PUSH, "", EventBUIPlugin.getDefault().getImageRegistry().get(EventBImage.IMG_SEARCH_BUTTON), null,
+        "Search hypotheses");
+	    sh.addSelectionListener(new ContextButtonListener("sh"));	
+	    sh.setWidth(defaultWidth);
+	    rec = sh.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+
+	    pv = createToolItem(buttonBar1, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
+        "Search hypotheses");
+	    pv.addSelectionListener(new ContextButtonListener("pv"));	
+	    pv.setWidth(defaultWidth);
+	    rec = pv.getBounds();
+	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
 		
-		Button pv = createButton(buttonContainer, "pv");
-		pv.setToolTipText("Previous undischarged obligation");
-		pv.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK));
-		
-		Button ne = createButton(buttonContainer, "ne");
-		ne.setToolTipText("Next undischarged obligation");
-		ne.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD));
-		
+	    ne = createToolItem(buttonBar1, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD), null,
+        "Search hypotheses");
+	    ne.addSelectionListener(new ContextButtonListener("ne"));	
+	    ne.setWidth(defaultWidth);
+//	    rec = ne.getBounds();
+	    new ToolItem(buttonBar1, SWT.SEPARATOR);
+//	    separator.setWidth(defaultWidth - rec.width);
+
 		// A text field
 		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL));
 		
@@ -271,7 +482,7 @@ public class ProofControlPage
 		textInput.getTextWidget().setLayoutData(gd);
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			 public void modifyText(ModifyEvent e) {
-				 updateButtons();
+				 updateToolItems();
 			 }
 		});
 		
@@ -281,7 +492,7 @@ public class ProofControlPage
 			isOpened = (node != null && node.isOpen()) ? true : false;
 		}
 		else isOpened = false;
-		updateButtons();
+		updateToolItems();
 
 		formTextInformation = new EventBFormText(toolkit.createFormText(body, true));
 		gd = new GridData();
@@ -303,13 +514,21 @@ public class ProofControlPage
 		formTextInformation.getFormText().setText(information, false, false);
 	}
 	
-	private Button createButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.addSelectionListener(new ContextButtonListener());
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.setText(label);
-		return button;
-	}
+//	private Button createButton(Composite parent, String label) {
+//		Button button = new Button(parent, SWT.PUSH);
+//		button.addSelectionListener(new ContextButtonListener(label));
+//		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//		button.setText(label);
+//		return button;
+//	}
+//	
+//	private Button createButton(Composite parent, String label, int style) {
+//		Button button = new Button(parent, style);
+//		button.addSelectionListener(new ContextButtonListener(label));
+//		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//		button.setText(label);
+//		return button;
+//	}
 	
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
@@ -327,7 +546,7 @@ public class ProofControlPage
 	}
 
 	private void contributeToActionBars() {
-		IActionBars bars = getSite().getActionBars();
+		IActionBars bars = getSite().getActionBars();	
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
@@ -335,19 +554,16 @@ public class ProofControlPage
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(switchLayout);
 		manager.add(new Separator());
-		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(switchLayout);
-		manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(switchLayout);
-		manager.add(action2);
 	}
 
 	private void makeActions() {
@@ -361,7 +577,7 @@ public class ProofControlPage
 					gl = new GridLayout();
 					gl.numColumns = 7;  // Total number of buttons?
 					gl.makeColumnsEqualWidth = true;
-					buttonContainer.setLayout(gl);
+					buttonBar1.setLayout(gl);
 				}
 				else {
 					GridLayout gl = new GridLayout();
@@ -370,7 +586,7 @@ public class ProofControlPage
 					gl = new GridLayout();
 					gl.numColumns = 9;  // TODO Should be the number of buttons
 					gl.makeColumnsEqualWidth = true;
-					buttonContainer.setLayout(gl);					
+					buttonBar1.setLayout(gl);					
 				}
 				scrolledForm.reflow(true);
 			}
@@ -380,29 +596,13 @@ public class ProofControlPage
 		switchLayout.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			this.getControl().getShell(),
-			"Proof Control",
-			message);
 	}
 
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		buttonContainer.setFocus();
+		buttonBar1.setFocus();
 	}
 	
     /* (non-Javadoc)
@@ -425,16 +625,16 @@ public class ProofControlPage
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
-				updateButtons();
+				updateToolItems();
 			}
 		});
 	}
 	
-	private void updateButtons() {
+	private void updateToolItems() {
 		if (isOpened) {
 			pn.setEnabled(false);
 			nm.setEnabled(true);
-			pp.setEnabled(true);
+			externalProvers.setEnabled(true);
 			ct.setEnabled(true);
 			if (textInput.getTextWidget().getText().equals("")) dc.setEnabled(false);
 			else dc.setEnabled(true);
@@ -445,7 +645,7 @@ public class ProofControlPage
 		else {
 			pn.setEnabled(true);
 			nm.setEnabled(false);
-			pp.setEnabled(false);
+			externalProvers.setEnabled(false);
 			dc.setEnabled(false);
 			ct.setEnabled(false);
 			ah.setEnabled(false);
@@ -471,4 +671,80 @@ public class ProofControlPage
 		});
 	}
 
+	
+	/**
+	 * This class provides the "drop down" functionality for our dropdown tool items.
+	 */
+	class NewDropdownSelectionListener extends SelectionAdapter {
+	  private ToolItem dropdown;
+	  private Menu menu;
+
+	  /**
+	   * Constructs a DropdownSelectionListener
+	   * 
+	   * @param dropdown the dropdown this listener belongs to
+	   */
+	  public NewDropdownSelectionListener(ToolItem dropdown) {
+	    this.dropdown = dropdown;
+	    menu = new Menu(dropdown.getParent().getShell());
+	  }
+
+	  /**
+	   * Adds an item to the dropdown list
+	   * 
+	   * @param item the item to add
+	   */
+	  public void add(String item) {
+	    MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+	    menuItem.setText(item);
+	    menuItem.addSelectionListener(new SelectionAdapter() {
+	      public void widgetSelected(SelectionEvent event) {
+	        MenuItem selected = (MenuItem) event.widget;
+	        String label = selected.getText();
+	        dropdown.setText(label);
+	        if (label.equals("p0"))
+	        	dropdown.setToolTipText("External Prover: PP restricted to selected hypotheses");
+	        else if (label.equals("pp"))
+	        	dropdown.setToolTipText("External Prover: PP with all hypotheses");
+	        else if (label.equals("m0"))
+	        	dropdown.setToolTipText("External Prover: ML in force 0");
+	        else if (label.equals("m1"))
+	        	dropdown.setToolTipText("External Prover: ML in force 1");
+	        else if (label.equals("m2"))
+	        	dropdown.setToolTipText("External Prover: ML in force 2");
+	        else if (label.equals("m3"))
+	        	dropdown.setToolTipText("External Prover: ML in force 3");
+	        else if (label.equals("ml"))
+	        	dropdown.setToolTipText("External Prover: ML in all forces");
+
+	        dropdown.getParent().redraw();
+	        scrolledForm.reflow(true);
+	      }
+	    });
+	  }
+
+	  /**
+	   * Called when either the button itself or the dropdown arrow is clicked
+	   * 
+	   * @param event the event that trigged this call
+	   */
+	  public void widgetSelected(SelectionEvent event) {
+	    // If they clicked the arrow, we show the list
+	    if (event.detail == SWT.ARROW) {
+	      // Determine where to put the dropdown list
+	      ToolItem item = (ToolItem) event.widget;
+	      Rectangle rect = item.getBounds();
+	      Point pt = item.getParent().toDisplay(new Point(rect.x, rect.y));
+	      menu.setLocation(pt.x, pt.y + rect.height);
+	      menu.setVisible(true);
+	    } else {
+	      // They pushed the button; take appropriate action
+	    	String label = dropdown.getText();
+	    	buttonSelectedResponse(label);
+	    }
+	  }
+	}
+	
 }
+
+
