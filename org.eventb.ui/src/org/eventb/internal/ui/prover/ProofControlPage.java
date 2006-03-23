@@ -110,6 +110,7 @@ public class ProofControlPage
 	private ToolItem pv;
 	private ToolItem ne;
 	private boolean isOpened;
+	private boolean isTop;
 	
 	/*
 	 * The content provider class is responsible for
@@ -505,8 +506,11 @@ public class ProofControlPage
 		if (proofState != null) {
 			IProofTreeNode node = proofState.getCurrentNode();
 			isOpened = (node != null && node.isOpen()) ? true : false;
+			isTop = (node != null && node.getParent() == null) ? true : false;
 		}
-		else isOpened = false;
+		else {
+			isOpened = false;
+		}
 		updateToolItems();
 
 		formTextInformation = new EventBFormText(toolkit.createFormText(body, true));
@@ -637,6 +641,8 @@ public class ProofControlPage
 		IProofTreeNode node = e.getDelta().getProofTreeNode();
 		if (node != null && node.isOpen()) isOpened = true;
 		else isOpened = false;
+		if (node.getParent() == null) isTop = true;
+		else isTop = false; 
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
@@ -649,7 +655,8 @@ public class ProofControlPage
 		if (isOpened) {
 			pn.setEnabled(false);
 			nm.setEnabled(true);
-			ba.setEnabled(true);
+			if (isTop) ba.setEnabled(false);
+			else ba.setEnabled(true);
 			externalProvers.setEnabled(true);
 			ct.setEnabled(true);
 			if (textInput.getTextWidget().getText().equals("")) dc.setEnabled(false);
