@@ -743,6 +743,7 @@ public class ProofControlPage
 
 	        dropdown.getParent().redraw();
 	        scrolledForm.reflow(true);
+	        buttonSelectedResponse(label);
 	      }
 	    });
 	  }

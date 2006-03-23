@@ -14,7 +14,9 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -237,18 +239,21 @@ public class ProverUI
 	@Override
 	public void setFocus() {
 		super.setFocus();
+		UIUtils.debug("Focus");
 		// Find obligationExplorer and sync
 		syncObligationExplorer();
 	}
 	
 	private void syncObligationExplorer() {
+		UIUtils.debug("Sync");
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
 		if (activePage != null) {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage.findView(ObligationExplorer.VIEW_ID);
 			if (obligationExplorer != null) {
-				UIUtils.debug("Obligation Explorer select: " + this.getRodinInput());
 				IPRSequent prSequent = this.getUserSupport().getCurrentPO().getPRSequent();
-				obligationExplorer.getTreeViewer().setSelection(new StructuredSelection(prSequent));
+				TreeViewer viewer = obligationExplorer.getTreeViewer();
+				UIUtils.debug("Make new selection ");
+				obligationExplorer.externalSetSelection(prSequent);
 				obligationExplorer.getTreeViewer().reveal(prSequent);
 			}
 		}
@@ -288,6 +293,7 @@ public class ProverUI
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
+		UIUtils.debug("PO Changed");
 		syncObligationExplorer();
 	}
 }

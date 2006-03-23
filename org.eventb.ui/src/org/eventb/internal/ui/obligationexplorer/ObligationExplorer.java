@@ -18,8 +18,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -81,12 +79,14 @@ public class ObligationExplorer
 
 	// Group of action that is used.
 	private ObligationExplorerActionGroup groupActionSet;
-
+	
+	private boolean byExternal;
 	
 	/**
 	 * The constructor.
 	 */
 	public ObligationExplorer() {
+		byExternal = false;
 	}
 
 	
@@ -169,7 +169,7 @@ public class ObligationExplorer
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new ProjectsSorter());
@@ -290,11 +290,11 @@ public class ObligationExplorer
 	 * Associate the double click action. 
 	 */
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
+//		viewer.addDoubleClickListener(new IDoubleClickListener() {
+//			public void doubleClick(DoubleClickEvent event) {
+//				doubleClickAction.run();
+//			}
+//		});
 	}
 
 	
@@ -315,8 +315,36 @@ public class ObligationExplorer
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (EventBUIPlugin.getActivePage().getActivePart().equals(this))
-			doubleClickAction.run();
+		if (byExternal) return;
+		
+		UIUtils.debug("Selection changed: ");
+		ISelection sel = event.getSelection();
+		
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			
+			if (!ssel.isEmpty()) {
+				UIUtils.debug("Activate UI " + ssel.toString());
+				doubleClickAction.run();
+			}
+			else {
+				UIUtils.debug("De-selected");
+				// Do nothing when there is no selection
+//				editor.getUserSupport().selectNode(null);
+			}
+		}
+		
 	}	
+	
+	public void externalSetSelection(IPRSequent pr) {
+		byExternal = true;
+		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(pr)) {
+			UIUtils.debug("Set new Selection");
+			viewer.getControl().setRedraw(false);
+			viewer.setSelection(new StructuredSelection(pr));
+			viewer.getControl().setRedraw(true);
+		}
+		byExternal = false;
+	}
 	
 }
