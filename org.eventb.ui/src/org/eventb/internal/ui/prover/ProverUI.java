@@ -14,22 +14,29 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.pm.IPOChangeEvent;
+import org.eventb.core.pm.IPOChangedListener;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class ProverUI
-	extends FormEditor 
+	extends FormEditor
+	implements IPOChangedListener
 {
 
 	/**
@@ -51,12 +58,15 @@ public class ProverUI
 	// The associated rodin file handle
 	private IPRFile prFile = null;
 	
+	
+	
 	/**
 	 * Default constructor.
 	 */
 	public ProverUI() {
 		super();
 		this.userSupport = new UserSupport();
+		userSupport.addPOChangedListener(this);
 	}
 	
 	
@@ -79,13 +89,13 @@ public class ProverUI
 		super.setInput(input);
 	}
 
-	private IPRFile getPRFileInput() {
-		if (prFile == null) {
-			IFile inputFile = ((IFileEditorInput) this.getEditorInput()).getFile();
-			prFile = (IPRFile) RodinCore.create(inputFile);
-		}
-		return prFile;
-	}
+//	private IPRFile getPRFileInput() {
+//		if (prFile == null) {
+//			IFile inputFile = ((IFileEditorInput) this.getEditorInput()).getFile();
+//			prFile = (IPRFile) RodinCore.create(inputFile);
+//		}
+//		return prFile;
+//	}
 	
 	public void setCurrentPO(IPRSequent prSequent) {
 		try {
@@ -203,7 +213,7 @@ public class ProverUI
 		// Save the file from the database to disk
 		try {
 			UIUtils.debug("Save to disk");
-			IPRFile prFile = this.getPRFileInput();
+			IPRFile prFile = this.getRodinInput();
 			prFile.save(monitor, true);
 		}
 		catch (RodinDBException e) {
@@ -219,7 +229,30 @@ public class ProverUI
 	 * @return the outline page
 	 */
 	protected ProofTreeUIPage getProofTreeUI() {return fProofTreeUI;}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
+	 */
+	@Override
+	public void setFocus() {
+		super.setFocus();
+		// Find obligationExplorer and sync
+		syncObligationExplorer();
+	}
 	
+	private void syncObligationExplorer() {
+		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+		if (activePage != null) {
+			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage.findView(ObligationExplorer.VIEW_ID);
+			if (obligationExplorer != null) {
+				UIUtils.debug("Obligation Explorer select: " + this.getRodinInput());
+				IPRSequent prSequent = this.getUserSupport().getCurrentPO().getPRSequent();
+				obligationExplorer.getTreeViewer().setSelection(new StructuredSelection(prSequent));
+				obligationExplorer.getTreeViewer().reveal(prSequent);
+			}
+		}
+	}
 //	public void setSelection(Object obj) {
 //		
 //		this.setActivePage(ProofsPage.PAGE_ID);
@@ -230,4 +263,31 @@ public class ProverUI
 //		return;
 //	}
 	
+	/**
+	 * Getting the RodinFile associated with this editor
+	 * <p>
+	 * @return a handle to a Rodin file
+	 */
+	private IPRFile getRodinInput() {
+		if (prFile == null) {
+			FileEditorInput editorInput = (FileEditorInput) this.getEditorInput();
+			
+			IFile inputFile = editorInput.getFile();
+			
+			prFile = (IPRFile) RodinCore.create(inputFile);
+		}
+		return prFile;
+	}
+	
+	public IPRSequent getCurrentProverSequent() {
+		return getUserSupport().getCurrentPO().getPRSequent();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
+	 */
+	public void poChanged(IPOChangeEvent e) {
+		syncObligationExplorer();
+	}
 }
