@@ -27,8 +27,8 @@ import org.rodinp.core.IRodinFile;
  * An implementation of the Event-B Form Page
  * for editing Events (Rodin elements).
  */
-public class EventsPage
-	extends EventBFormPage
+public class EventPage
+	extends NewEventBFormPage
 {
 	
 	// Title, tab title and ID of the page.
@@ -42,18 +42,23 @@ public class EventsPage
 	 * <p>
 	 * @param editor The form editor that holds the page 
 	 */
-	public EventsPage(FormEditor editor) {
+	public EventPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 
-
-	/**
-	 * Create the Master detail block.
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
-	protected EventBMasterDetailsBlock createMasterDetailsBlock() {
-		return new EventMasterDetailsBlock(this);
+	@Override
+	protected EventBPartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+		EventMasterSection part = new EventMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		part.getSection().setLayoutData(gd);
+		return part;
 	}
-	
 
 	/**
 	 * Creating the Mirror sections within the page.

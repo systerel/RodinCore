@@ -233,7 +233,7 @@ public abstract class EventBEditor
 			return;
 		}
 		if (node.isType(IEvent.ELEMENT_TYPE)) {
-			this.setActivePage(EventsPage.PAGE_ID);
+			this.setActivePage(EventPage.PAGE_ID);
 			return;
 		}
 		if (node.isType(ICarrierSet.ELEMENT_TYPE)) {
@@ -292,20 +292,20 @@ public abstract class EventBEditor
 			this.setActivePage(InvariantPage.PAGE_ID);
 		
 		else if (element instanceof IEvent)
-			this.setActivePage(EventsPage.PAGE_ID);
+			this.setActivePage(EventPage.PAGE_ID);
 		
 		else if (element instanceof IVariable) {
 			if (element.getParent() instanceof IMachine) 
 				this.setActivePage(VariablePage.PAGE_ID);
-			else this.setActivePage(EventsPage.PAGE_ID);
+			else this.setActivePage(EventPage.PAGE_ID);
 		}
 		
 		else if (element instanceof IGuard) {
-			this.setActivePage(EventsPage.PAGE_ID);
+			this.setActivePage(EventPage.PAGE_ID);
 		}
 		
 		else if (element instanceof IAction) {
-			this.setActivePage(EventsPage.PAGE_ID);
+			this.setActivePage(EventPage.PAGE_ID);
 		}
 		
 		else {

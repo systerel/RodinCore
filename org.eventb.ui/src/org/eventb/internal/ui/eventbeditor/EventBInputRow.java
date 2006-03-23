@@ -31,7 +31,7 @@ public abstract class EventBInputRow
 	implements ModifyListener
 {
 	
-	// Dirty status: The database is inconsistent with the physical file
+	// Dirty expanded: The database is inconsistent with the physical file
 	protected boolean dirty;
 	
 	// The text input area.

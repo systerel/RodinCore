@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -202,7 +203,7 @@ extends NewEventBTablePartWithButtons
 	 * Setting the input for the (table) viewer.
 	 */
 	protected void setProvider() {
-		TableViewer viewer = this.getViewer();
+		TableViewer viewer = (TableViewer) this.getViewer();
 		viewer.setContentProvider(new AxiomContentProvider());
 		viewer.setLabelProvider(new AxiomLabelProvider());
 	}
@@ -219,10 +220,10 @@ extends NewEventBTablePartWithButtons
 	}
 	
 	/**
-	 * Update the status of buttons.
+	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-		Table table = getViewer().getTable();
+		Table table = ((TableViewer) getViewer()).getTable();
 		boolean hasOneSelection = table.getSelection().length == 1;
 		boolean hasSelection = table.getSelection().length > 0;
 		boolean canMove = table.getItemCount() > 1;
@@ -271,7 +272,7 @@ extends NewEventBTablePartWithButtons
 		try {
 			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
 			IInternalElement element = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm"+(counter+1), null, null);
-			TableViewer viewer = this.getViewer();
+			TableViewer viewer = (TableViewer) this.getViewer();
 			viewer.refresh();
 			viewer.reveal(element);
 			Table table = viewer.getTable();
@@ -287,7 +288,7 @@ extends NewEventBTablePartWithButtons
 	 * Handle deletion of elements.
 	 */
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) this.getViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) ((StructuredViewer) this.getViewer()).getSelection();
 		// TODO Batch the deleting jobs
 		Object [] objects = ssel.toArray();
 		for (int i = 0; i < objects.length; i++) {
@@ -308,7 +309,7 @@ extends NewEventBTablePartWithButtons
 	 * Handle moving up.
 	 */
 	private void handleUp() {
-		Table table = this.getViewer().getTable();
+		Table table = ((TableViewer) this.getViewer()).getTable();
 		int index = table.getSelectionIndex();
 		IInternalElement current = (IInternalElement) table.getItem(index).getData();
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
@@ -327,7 +328,7 @@ extends NewEventBTablePartWithButtons
 	 *
 	 */
 	private void handleDown() {
-		Table table = this.getViewer().getTable();
+		Table table = ((TableViewer) this.getViewer()).getTable();
 		int index = table.getSelectionIndex();
 		IInternalElement current = (IInternalElement) table.getItem(index).getData();
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
@@ -345,7 +346,7 @@ extends NewEventBTablePartWithButtons
 	/**
 	 * Swap Internal elements in the Rodin database
 	 * @param element1 the object internal element
-	 * @param element2 the status internal element
+	 * @param element2 the expanded internal element
 	 * @throws RodinDBException an exception from the database when moving element.
 	 */
 	private void swap(IInternalElement element1, IInternalElement element2) throws RodinDBException {
@@ -390,7 +391,7 @@ extends NewEventBTablePartWithButtons
 	 */
 	@Override
 	protected void edit(IRodinElement element) {
-		TableViewer viewer = this.getViewer();
+		TableViewer viewer = (TableViewer) this.getViewer();
 		viewer.reveal(element);
 		Table table = viewer.getTable();
 		TableItem item  = (TableItem) viewer.testFindItem(element);

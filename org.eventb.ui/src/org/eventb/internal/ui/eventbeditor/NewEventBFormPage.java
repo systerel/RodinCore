@@ -32,7 +32,7 @@ public abstract class NewEventBFormPage
 	
 	// Title of the page.
 	private String pageTitle;
-	private NewEventBTablePartWithButtons part;
+	private EventBPartWithButtons part;
 	/**
 	 * Contructor.
 	 * <p>
@@ -77,7 +77,7 @@ public abstract class NewEventBFormPage
 	protected abstract void createMirrorSections(Composite body, IManagedForm managedForm);
 		
 	
-	protected abstract NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor);
+	protected abstract EventBPartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor);
 	
 	
 	/**

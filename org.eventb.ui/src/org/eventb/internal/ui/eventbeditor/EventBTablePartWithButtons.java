@@ -309,7 +309,7 @@ public abstract class EventBTablePartWithButtons
 	/**
 	 * Swap Internal elements in the Rodin database
 	 * @param element1 the object internal element
-	 * @param element2 the status internal element
+	 * @param element2 the expanded internal element
 	 * @throws RodinDBException an exception from the database when moving element.
 	 */
 	private void swap(IInternalElement element1, IInternalElement element2) throws RodinDBException {
@@ -318,7 +318,7 @@ public abstract class EventBTablePartWithButtons
 	
 	
 	/**
-	 * Update the status of buttons.
+	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
 		Table table = this.getViewer().getTable();

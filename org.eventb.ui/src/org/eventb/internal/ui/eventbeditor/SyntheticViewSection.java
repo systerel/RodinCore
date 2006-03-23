@@ -207,7 +207,7 @@ public class SyntheticViewSection
 						viewer.setExpandedElements(objects);
 						for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
 							StatusPair state = (StatusPair) iter.next();
-							UIUtils.debug("Object: " + state.getObject() + " status: " + state.getStatus());
+							UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getStatus());
 							viewer.setExpandedState(state.getObject(), state.getStatus());
 						}
 						if (lastMouseEvent != null) mouseAdapter.mouseDown(lastMouseEvent);

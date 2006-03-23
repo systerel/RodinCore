@@ -66,7 +66,7 @@ public class EventMasterSectionActionGroup
 	 */
 	public EventMasterSectionActionGroup(EventMasterSection eventSection) {
 		this.section = eventSection;
-		viewer = section.getViewer();
+		viewer = (TreeViewer) section.getViewer();
 		counter = 0;
 		
 		newLocalVariable = new Action() {

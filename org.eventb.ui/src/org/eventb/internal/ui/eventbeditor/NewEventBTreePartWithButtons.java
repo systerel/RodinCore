@@ -3,25 +3,26 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.IRodinElement;
 
-public abstract class NewEventBTablePartWithButtons
+public abstract class NewEventBTreePartWithButtons
 	extends EventBPartWithButtons
 {
-	public NewEventBTablePartWithButtons(final IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
+	public NewEventBTreePartWithButtons(final IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBEditor editor, String [] buttonLabels, String title, String description) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, title, description);
 	}
 	
 	@Override
 	protected Viewer createViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return createTableViewer(managedForm, toolkit, parent);
+		return createTreeViewer(managedForm, toolkit, parent);
 	}
 
-	abstract protected EventBEditableTableViewer createTableViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent);
+	abstract protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent);
 
 	/**
 	 * Set the selection in the table viewer.
@@ -33,9 +34,8 @@ public abstract class NewEventBTablePartWithButtons
 		viewer.setSelection(new StructuredSelection(element));
 		edit(element);
 	}
-	
-	protected void selectRow(int row, int column) {
-		((EventBEditableTableViewer) getViewer()).selectRow(row, column);
-	}
 
+	protected void selectRow(Point pt, int column) {
+		((EventBEditableTreeViewer) getViewer()).selectRow(pt, column);
+	}
 }

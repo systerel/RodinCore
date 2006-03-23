@@ -13,9 +13,9 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -26,31 +26,38 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.core.IEvent;
+import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author htson
  * <p>
- * An abstract class contains a table part with buttons
+ * An abstract class contains a tree part with buttons
  * for displaying Rodin elements (used as master section in Master-Detail block).
  */
-public abstract class EventBEditableTableViewer
-	extends TableViewer
+public abstract class EventBEditableTreeViewer
+	extends TreeViewer
 {
 	
-	private TableEditor editor;
+	private TreeEditor editor;
 
 	// The Rodin File where the information belongs to.
 	protected IRodinFile rodinFile;
 	
-	abstract protected void commit(int row, int col, String text);
-	abstract protected void newElement(Table table, TableItem item, int column);
-
+//	abstract protected void commit(int row, int col, String text);
+//	protected abstract void newElement(Tree tree, TreeItem item, int column);
+	
+	protected abstract void createTreeColumns(Tree tree);
+	
+	protected abstract void commit(Point pt, int col, String text);
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -60,20 +67,21 @@ public abstract class EventBEditableTableViewer
 	 * @param style The style used to creat the part
 	 * @param block The master-detail block contains this part
 	 */
-	public EventBEditableTableViewer(Composite parent, int style, IRodinFile rodinFile) {
+	public EventBEditableTreeViewer(Composite parent, int style, IRodinFile rodinFile) {
 		super(parent, style);
 		this.rodinFile = rodinFile;
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;
-		Table table = this.getTable();
-		table.setLayoutData(gd);
-		createTableColumns(table);
+		Tree tree = this.getTree();
+		tree.setLayoutData(gd);
+		
+		createTreeColumns(tree);
 		
 		
-		editor = new TableEditor(table);
+		editor = new TreeEditor(tree);
 		editor.grabHorizontal = true;
-		table.addMouseListener(new MouseAdapter() {
+		tree.addMouseListener(new MouseAdapter() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
@@ -87,20 +95,18 @@ public abstract class EventBEditableTableViewer
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent e) {
-				Table table = EventBEditableTableViewer.this.getTable();
+				Tree tree = EventBEditableTreeViewer.this.getTree();
 				Control old = editor.getEditor();
 		        if (old != null) old.dispose();
 
 		        // Determine where the mouse was clicked
 		        Point pt = new Point(e.x, e.y);
 
-		        TableItem item = table.getItem(pt);
-		        
+		        TreeItem item = tree.getItem(pt);
                 // Determine which column was selected
 	        	if (item != null) {
-	        		int row = table.indexOf(item);
 			        int column = -1;
-		        	for (int i = 0, n = table.getColumnCount(); i < n; i++) {
+		        	for (int i = 0, n = tree.getColumnCount(); i < n; i++) {
 		        		Rectangle rect = item.getBounds(i);
 		        		if (rect.contains(pt)) {
 		        			// This is the selected column
@@ -108,21 +114,19 @@ public abstract class EventBEditableTableViewer
 		        			break;
 		        		}
 		        	}
-					selectItem(item, row, column);
+					selectItem(item, pt, column);
 	        	}
 			}
 		});
 	}
 	
-	protected abstract void createTableColumns(Table table);
-	
-	public void selectRow(int row, int column) {
-		TableItem item = this.getTable().getItem(row);
-		if (item != null) selectItem(item, row, column);
+	public void selectRow(Point pt, int column) {
+		TreeItem item = this.getTree().getItem(pt);
+		if (item != null) selectItem(item, pt, column);
 	}
 	
-	private void selectItem(TableItem item, int row, int column) {
-		Table table = EventBEditableTableViewer.this.getTable();
+	private void selectItem(TreeItem item, Point pt, int column) {
+		Tree tree = EventBEditableTreeViewer.this.getTree();
 		
         UIUtils.debug("Item " + item);
         
@@ -131,14 +135,22 @@ public abstract class EventBEditableTableViewer
         if (!ssel.toList().contains(item.getData())) 
         	this.setSelection(new StructuredSelection(item.getData()));
 
-        select(table, editor, item, column, row);
+        select(tree, editor, item, column, pt);
 	}
 	
-	protected void select(final Table table, final TableEditor editor, final TableItem item, final int column, final int row) {
-		final Color black = table.getDisplay().getSystemColor (SWT.COLOR_BLACK);
-
+	protected void select(final Tree tree, final TreeEditor editor, final TreeItem item, final int column, final Point pt) {
+		final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
+        if (column < 1) return; // The object column is not editable
+//        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
+        final Object itemData = item.getData();
+        if (itemData instanceof IUnnamedInternalElement && column == 1) return;
+        if (column == 2) {
+        	if (itemData instanceof IVariable) return;
+        	if (itemData instanceof IEvent) return;
+        }
+        
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
-		final Composite composite = new Composite (table, SWT.NONE);
+		final Composite composite = new Composite (tree, SWT.NONE);
 		if (!isCarbon) composite.setBackground (black);
 		final Text text = new Text (composite, SWT.NONE);
 		new EventBMath(text);
@@ -149,7 +161,7 @@ public abstract class EventBEditableTableViewer
 			 */
 			@Override
 			public void commit() {
-				EventBEditableTableViewer.this.commit(row, column, text.getText());
+				EventBEditableTreeViewer.this.commit(pt, column, text.getText());
 			}
 			
 		};
@@ -167,7 +179,7 @@ public abstract class EventBEditableTableViewer
 				switch (e.type) {
 					case SWT.FocusOut:
 						UIUtils.debug("FocusOut");
-						commit(row, column, text.getText());
+						commit(pt, column, text.getText());
 						item.setText (column, text.getText());
 						composite.dispose ();
 						break;
@@ -180,30 +192,9 @@ public abstract class EventBEditableTableViewer
 						switch (e.detail) {
 							case SWT.TRAVERSE_RETURN:
 								UIUtils.debug("TraverseReturn");
-								commit(row, column, text.getText ());
+								commit(pt, column, text.getText ());
 								composite.dispose();
 								e.doit = false;
-								break;
-							case SWT.TRAVERSE_TAB_NEXT:
-								UIUtils.debug("Traverse Tab Next");
-								commit(row, column, text.getText ());
-								composite.dispose ();
-								e.doit = false;
-								if (table.getItem(table.getItemCount() - 1).equals(item)) {
-									newElement(table, item, column);
-								}
-								else {
-									int row = table.indexOf(item);
-									selectRow(row + 1, column);
-								}
-								break;
-							case SWT.TRAVERSE_TAB_PREVIOUS:
-								UIUtils.debug("Traverse Tab Previous");
-								int row = table.indexOf(item);
-								commit(row, column, text.getText ());
-								composite.dispose ();
-								e.doit = false;
-								if (row != 0) selectRow(row - 1, column);
 								break;
 							case SWT.TRAVERSE_ESCAPE:
 								composite.dispose ();

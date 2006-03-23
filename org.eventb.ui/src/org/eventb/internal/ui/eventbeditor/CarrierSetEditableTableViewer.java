@@ -17,7 +17,7 @@ public class CarrierSetEditableTableViewer extends EventBEditableTableViewer {
 		super(parent, style, rodinFile);
 	}
 	
-	protected void commit(int row, int col, String text) {
+	public void commit(int row, int col, String text) {
 		// Determine which row was selected
         TableItem item = this.getTable().getItem(row);
         if (item == null) return; 
