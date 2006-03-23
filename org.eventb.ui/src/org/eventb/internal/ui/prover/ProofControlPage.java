@@ -94,11 +94,13 @@ public class ProofControlPage
 	private EventBMath textInput;
 	private IEventBFormText formTextInformation;
 	private ScrolledForm scrolledForm;
-	private ToolBar buttonBar1;
+	private ToolBar buttonBar;
 //	private ToolBar buttonBar2;
 	private boolean isHorizontal;
 	private ProverUI editor;
+	private ToolItem ba;
 	private ToolItem pn;
+
 	private ToolItem dc;
 	private ToolItem nm;
 	private ToolItem externalProvers;
@@ -142,6 +144,11 @@ public class ProofControlPage
     
 	private void buttonSelectedResponse(String label) {
 		try {
+			if (label.equals("ba")) {
+				editor.getUserSupport().back();
+				return;
+			}
+			
 			if (label.equals("pn")) {
 				editor.getUserSupport().applyTactic(Tactics.prune());
 				return;
@@ -382,13 +389,13 @@ public class ProofControlPage
 		comp.setLayout(gl);
 		comp.setLayoutData(new GridData());
 		
-		buttonBar1 = new ToolBar(body, SWT.NONE);
-		buttonBar1.setLayoutData(new GridData());
+		buttonBar = new ToolBar(body, SWT.NONE);
+		buttonBar.setLayoutData(new GridData());
 		
-	    new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    new ToolItem(buttonBar, SWT.SEPARATOR);
 	    
 	    // Create drop-down externalProvers
-	    externalProvers = createToolItem(buttonBar1, SWT.DROP_DOWN, "p0", null, null,
+	    externalProvers = createToolItem(buttonBar, SWT.DROP_DOWN, "p0", null, null,
 	        "External Prover: PP restricted to selected hypotheses");
 	    NewDropdownSelectionListener listenerOne = new NewDropdownSelectionListener(externalProvers);
 	    listenerOne.add("p0");
@@ -402,38 +409,38 @@ public class ProofControlPage
 	    Rectangle rec = externalProvers.getBounds();
 //	    UIUtils.debug("Width: " + rec.width);
 	    
-	    ToolItem separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    ToolItem separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 	    
-	    nm = createToolItem(buttonBar1, SWT.PUSH, "nm", null, null,
+	    nm = createToolItem(buttonBar, SWT.PUSH, "nm", null, null,
         "Normalize tactic");
 	    nm.addSelectionListener(new ContextButtonListener("nm"));	
 	    rec = nm.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 	        
-	    ah = createToolItem(buttonBar1, SWT.PUSH, "ah", null, null,
+	    ah = createToolItem(buttonBar, SWT.PUSH, "ah", null, null,
         "Add hypothesis");
 	    ah.addSelectionListener(new ContextButtonListener("ah"));	
 	    ah.setWidth(defaultWidth);
 	    rec = ah.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 	    
-	    dc = createToolItem(buttonBar1, SWT.PUSH, "dc", null, null,
+	    dc = createToolItem(buttonBar, SWT.PUSH, "dc", null, null,
         "Case distinction");
 	    dc.addSelectionListener(new ContextButtonListener("dc"));	
 	    dc.setWidth(defaultWidth);
 	    rec = dc.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 
-	    ct = createToolItem(buttonBar1, SWT.PUSH, "ct", null, null,
+	    ct = createToolItem(buttonBar, SWT.PUSH, "ct", null, null,
         "Contradiction");
 	    ct.addSelectionListener(new ContextButtonListener("ct"));	
 	    ct.setWidth(defaultWidth);
 	    rec = ct.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 
 //	    buttonBar2 = new ToolBar(comp, SWT.NONE);
@@ -441,36 +448,44 @@ public class ProofControlPage
 
 //	    new ToolItem(buttonBar2, SWT.SEPARATOR);
 
-	    pn = createToolItem(buttonBar1, SWT.PUSH, "pn", null, null,
+	    ba = createToolItem(buttonBar, SWT.PUSH, "ba", null, null,
+        "Backtrack from current node");
+	    ba.addSelectionListener(new ContextButtonListener("ba"));
+	    ba.setWidth(defaultWidth);
+	    rec = ba.getBounds();
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+	    separator.setWidth(defaultWidth - rec.width);
+
+	    pn = createToolItem(buttonBar, SWT.PUSH, "pn", null, null,
         "Prune at the current node");
 	    pn.addSelectionListener(new ContextButtonListener("pn"));
 	    pn.setWidth(defaultWidth);
 	    rec = pn.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 
-	    sh = createToolItem(buttonBar1, SWT.PUSH, "", EventBUIPlugin.getDefault().getImageRegistry().get(EventBImage.IMG_SEARCH_BUTTON), null,
+	    sh = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin.getDefault().getImageRegistry().get(EventBImage.IMG_SEARCH_BUTTON), null,
         "Search hypotheses");
 	    sh.addSelectionListener(new ContextButtonListener("sh"));	
 	    sh.setWidth(defaultWidth);
 	    rec = sh.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 
-	    pv = createToolItem(buttonBar1, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
+	    pv = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
         "Search hypotheses");
 	    pv.addSelectionListener(new ContextButtonListener("pv"));	
 	    pv.setWidth(defaultWidth);
 	    rec = pv.getBounds();
-	    separator = new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    separator = new ToolItem(buttonBar, SWT.SEPARATOR);
 	    separator.setWidth(defaultWidth - rec.width);
 		
-	    ne = createToolItem(buttonBar1, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD), null,
+	    ne = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD), null,
         "Search hypotheses");
 	    ne.addSelectionListener(new ContextButtonListener("ne"));	
 	    ne.setWidth(defaultWidth);
 //	    rec = ne.getBounds();
-	    new ToolItem(buttonBar1, SWT.SEPARATOR);
+	    new ToolItem(buttonBar, SWT.SEPARATOR);
 //	    separator.setWidth(defaultWidth - rec.width);
 
 		// A text field
@@ -577,7 +592,7 @@ public class ProofControlPage
 					gl = new GridLayout();
 					gl.numColumns = 7;  // Total number of buttons?
 					gl.makeColumnsEqualWidth = true;
-					buttonBar1.setLayout(gl);
+					buttonBar.setLayout(gl);
 				}
 				else {
 					GridLayout gl = new GridLayout();
@@ -586,7 +601,7 @@ public class ProofControlPage
 					gl = new GridLayout();
 					gl.numColumns = 9;  // TODO Should be the number of buttons
 					gl.makeColumnsEqualWidth = true;
-					buttonBar1.setLayout(gl);					
+					buttonBar.setLayout(gl);					
 				}
 				scrolledForm.reflow(true);
 			}
@@ -602,7 +617,7 @@ public class ProofControlPage
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		buttonBar1.setFocus();
+		buttonBar.setFocus();
 	}
 	
     /* (non-Javadoc)
@@ -634,6 +649,7 @@ public class ProofControlPage
 		if (isOpened) {
 			pn.setEnabled(false);
 			nm.setEnabled(true);
+			ba.setEnabled(true);
 			externalProvers.setEnabled(true);
 			ct.setEnabled(true);
 			if (textInput.getTextWidget().getText().equals("")) dc.setEnabled(false);
@@ -645,6 +661,7 @@ public class ProofControlPage
 		else {
 			pn.setEnabled(true);
 			nm.setEnabled(false);
+			ba.setEnabled(false);
 			externalProvers.setEnabled(false);
 			dc.setEnabled(false);
 			ct.setEnabled(false);

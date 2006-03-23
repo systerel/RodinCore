@@ -546,5 +546,13 @@ public class UserSupport
 		}
 		return;
 	}
+
+
+	public void back() throws RodinDBException {
+		if (currentPS.getCurrentNode().getParent() != null) {
+			selectNode(currentPS.getCurrentNode().getParent());
+			applyTactic(Tactics.prune());
+		}
+	}
 	
 }
