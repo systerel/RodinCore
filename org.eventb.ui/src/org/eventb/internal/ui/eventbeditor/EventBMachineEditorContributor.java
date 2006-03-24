@@ -23,6 +23,9 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RefreshAction;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eventb.internal.ui.EventBImage;
@@ -120,12 +123,16 @@ public class EventBMachineEditorContributor
 				getImageDescriptor(ActionFactory.REFRESH.getId()));
 		
 		newVariables = new Action() {
+			// TODO Required that all page need to have the first part which is an AbstractFormPart.
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.intelligentNewVariables(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -140,6 +147,9 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newInvariants(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -154,6 +164,9 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newTheorems(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -168,6 +181,9 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newEvent(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};

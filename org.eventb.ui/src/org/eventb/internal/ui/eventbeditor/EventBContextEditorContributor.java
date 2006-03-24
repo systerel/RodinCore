@@ -20,6 +20,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eventb.internal.ui.EventBImage;
@@ -116,6 +119,9 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newCarrierSets(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -131,6 +137,9 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newConstants(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -146,6 +155,9 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newTheorems(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
@@ -161,6 +173,9 @@ public class EventBContextEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newAxioms(rodinFile);
+					IFormPage page = editor.getActivePageInstance();
+					IFormPart [] parts = page.getManagedForm().getParts();
+					((AbstractFormPart) parts[0]).markDirty();
 				}
 			}
 		};
