@@ -16,8 +16,6 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -61,8 +59,9 @@ public class EventMasterDetailsBlock
 	 * Method to create the master section.
 	 */
 	protected SectionPart createMasterSection(final IManagedForm managedForm, Composite parent) {
-		FormToolkit toolkit = managedForm.getToolkit();
-		return new EventMasterSection(managedForm, parent, toolkit, Section.TITLE_BAR | Section.DESCRIPTION, this);
+//		FormToolkit toolkit = managedForm.getToolkit();
+//		return new EventMasterSection(managedForm, parent, toolkit, Section.TITLE_BAR | Section.DESCRIPTION, this);
+		return null;
 	}
 
 

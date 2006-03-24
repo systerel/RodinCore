@@ -12,6 +12,7 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
@@ -30,7 +31,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -184,21 +184,22 @@ public class EventMasterSectionActionGroup
 						new Runnable() {
 							public void run() {
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-								//TODO Batch the deleted job
+								
 								Object [] objects = ssel.toArray();
+								Collection<IInternalElement> toDelete = new HashSet<IInternalElement>();
 								for (int i = 0; i < objects.length; i++) {
 									if (objects[i] instanceof IInternalElement) {
-										try {
-											UIUtils.debug("DELETE " + objects[i].toString());
-											((IInternalElement) objects[i]).delete(true, null);
-											viewer.refresh();
-										}
-										catch (RodinDBException e) {
-											e.printStackTrace();
-										}
+											toDelete.add((IInternalElement)objects[i]);
 									}
 								}
-								section.markDirty();
+								try {
+									EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
+									viewer.refresh();
+									section.markDirty();
+								}
+								catch (RodinDBException e) {
+									e.printStackTrace();
+								}
 								return;
 							}
 						});

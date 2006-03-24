@@ -1,11 +1,9 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -17,18 +15,18 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		super(parent, style, rodinFile);
 	}
 	
-	public void commit(Point pt, int col, String text) {
+	public void commit(IInternalElement element, int col, String text) {
 		// Determine which row was selected
-        TreeItem item = this.getTree().getItem(pt);
-        if (item == null) return; 
-        Object itemData = item.getData();
-		if (itemData instanceof IInternalElement) {
+//        TreeItem item = this.getTree().getItem(pt);
+//        if (item == null) return; 
+//        Object itemData = item.getData();
+//		if (itemData instanceof IInternalElement) {
 			switch (col) {
 			case 1:  // Commit name
 				try {
-					UIUtils.debug("Commit : " + ((IInternalElement) itemData).getElementName() + " to be : " + text);
-					if (!((IInternalElement) itemData).getElementName().equals(text)) {
-						((IInternalElement) itemData).rename(text, false, null);
+					UIUtils.debug("Commit : " + element.getElementName() + " to be : " + text);
+					if (!element.getElementName().equals(text)) {
+						element.rename(text, false, null);
 					}
 				}
 				catch (RodinDBException e) {
@@ -38,9 +36,9 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 				break;
 			case 2:  // Commit name
 				try {
-					UIUtils.debug("Commit content: " + ((IInternalElement) itemData).getContents() + " to be : " + text);
-					if (!((IInternalElement) itemData).getContents().equals(text)) {
-						((IInternalElement) itemData).setContents(text);
+					UIUtils.debug("Commit content: " + element.getContents() + " to be : " + text);
+					if (!element.getContents().equals(text)) {
+						element.setContents(text);
 					}
 				}
 				catch (RodinDBException e) {
@@ -49,7 +47,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 				
 				break;
 			}
-		}
+//		}
 	}
 
 //	protected void newElement(Tree tree, TreeItem item, int column) {

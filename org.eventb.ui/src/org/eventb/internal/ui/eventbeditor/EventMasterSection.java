@@ -38,8 +38,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -108,14 +106,25 @@ public class EventMasterSection
 		
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IMachine) {
+//				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
 				try {
-					return ((IMachine) parent).getEvents();
+					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+//					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+//					for (IRodinElement event : events) {
+//						UIUtils.debug("Event: " + event.getElementName());
+//						TreeNode node = new TreeNode(event);
+//						list.add(node);
+//					}
 				}
 				catch (RodinDBException e) {
 					// TODO Exception handle
 					e.printStackTrace();
 				}
+//				return list.toArray();
 			}
+			
+//			if (parent instanceof TreeNode) return ((TreeNode) parent).getChildren();
+			
 			if (parent instanceof IParent) {
 				try {
 					return ((IParent) parent).getChildren();
@@ -159,42 +168,45 @@ public class EventMasterSection
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(Object rodinElement, int columnIndex) {
+//			IRodinElement rodinElement = ((TreeLeaf) element).getElement();
 			if (columnIndex != 0) return null;
-			return UIUtils.getImage(element);
+			return UIUtils.getImage(rodinElement);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
-		public String getColumnText(Object element, int columnIndex) {
+		public String getColumnText(Object rodinElement, int columnIndex) {
+//			IRodinElement rodinElement = ((TreeLeaf) element).getElement();
+			
 			if (columnIndex == 1) {
-				if (element instanceof IUnnamedInternalElement) return "";
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				return element.toString();
+				if (rodinElement instanceof IUnnamedInternalElement) return "";
+				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
+				return rodinElement.toString();
 			}
 			
 			if (columnIndex == 2) {
 				try {
-					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
+					if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				return element.toString();
+				return rodinElement.toString();
 			}
 			
 			if (columnIndex == 0) {
 				try {
-					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
+					if (rodinElement instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) rodinElement).getContents();
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				else return element.toString();
+				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
+				else return rodinElement.toString();
 			}
-			return element.toString();
+			return rodinElement.toString();
 
 		}
 
@@ -291,10 +303,10 @@ public class EventMasterSection
 	        return cat1 - cat2;
 		}
 		
-		public int category(Object element) {
-			if (element instanceof IVariable) return 1;
-			if (element instanceof IGuard) return 2;
-			if (element instanceof IAction) return 3;
+		public int category(Object obj) {
+			if (obj instanceof IVariable) return 1;
+			if (obj instanceof IGuard) return 2;
+			if (obj instanceof IAction) return 3;
 			
 			return 0;
 		}
@@ -352,7 +364,7 @@ public class EventMasterSection
 	 * Handle add (new element) action.
 	 */
 	private void handleAddEvent() {
-//		UIUtils.newEvent(rodinFile);
+		UIUtils.newEvent(editor.getRodinInput());
 	}
 	
 
@@ -383,14 +395,27 @@ public class EventMasterSection
 		
 		boolean hasOneSelection = selections.length == 1;
 		
-		boolean anEventSelected = hasOneSelection && (selections[0] instanceof IEvent);
+		boolean initSelected = false;
 		
-		boolean notInitSelected = anEventSelected && !((IEvent) selections[0]).getElementName().equals("INITIALISATION");
-		
+		if (hasOneSelection) {
+			IRodinElement event;
+			if (selections[0] instanceof IEvent) {
+				event = (IRodinElement) selections[0];
+			}
+			else if (selections[0] instanceof IInternalElement) {
+				event = ((IInternalElement) selections[0]).getParent();
+			}
+			else { // Should not happen
+				event = null;
+			}
+			initSelected = (event.getElementName().equals("INITIALISATION")) ? true : false;
+			
+		}
+
 		setButtonEnabled(ADD_EVT_INDEX, true);
-		setButtonEnabled(ADD_VAR_INDEX, anEventSelected && notInitSelected);
-		setButtonEnabled(ADD_GRD_INDEX, anEventSelected && notInitSelected);
-		setButtonEnabled(ADD_ACT_INDEX, anEventSelected);
+		setButtonEnabled(ADD_VAR_INDEX, hasOneSelection && !initSelected);
+		setButtonEnabled(ADD_GRD_INDEX, hasOneSelection && !initSelected);
+		setButtonEnabled(ADD_ACT_INDEX, hasOneSelection);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
 	}
@@ -407,13 +432,14 @@ public class EventMasterSection
 				handleAddEvent();
 				break;
 			case ADD_VAR_INDEX:
-				EventMasterSectionActionGroup.newLocalVariable.run();
+				handleAddVar();
 				break;
 			case ADD_GRD_INDEX:
-				EventMasterSectionActionGroup.newGuard.run();
+				handleAddGuard();
 				break;
 			case ADD_ACT_INDEX:
-				EventMasterSectionActionGroup.newAction.run();
+				handleAddAction();
+//				EventMasterSectionActionGroup.newAction.run();
 				break;
 			case UP_INDEX:
 				handleUp();
@@ -425,6 +451,95 @@ public class EventMasterSection
 	}
 	
 
+	private void handleAddVar() {
+		try {
+			TreeViewer viewer = (TreeViewer) this.getViewer();
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			if (ssel.size() == 1) {
+				Object obj = ssel.getFirstElement();
+				IInternalElement event = getEvent(obj);
+				int counter = ((IInternalElement) event).getChildrenOfType(IVariable.ELEMENT_TYPE).length;
+				IInternalElement element = event.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
+				viewer.refresh();
+				viewer.reveal(element);
+				select(element, 1);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void handleAddGuard() {
+		try {
+			TreeViewer viewer = (TreeViewer) this.getViewer();
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			if (ssel.size() == 1) {
+				Object obj = ssel.getFirstElement();
+				IInternalElement event = getEvent(obj);
+				int counter = ((IInternalElement) event).getChildrenOfType(IGuard.ELEMENT_TYPE).length;
+				IInternalElement element = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd"+(counter+1), null, null);
+				viewer.refresh();
+				viewer.reveal(element);
+				select(element, 2);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void handleAddAction() {
+		try {
+			TreeViewer viewer = (TreeViewer) this.getViewer();
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			if (ssel.size() == 1) {
+				Object obj = ssel.getFirstElement();
+				IInternalElement event = getEvent(obj);
+				int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
+				IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+				element.setContents("act"+(counter+1));
+				viewer.refresh();
+				viewer.reveal(element);
+				select(element, 2);
+			}
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private IInternalElement getEvent(Object obj) {
+//		IRodinElement obj = ((TreeLeaf) obj).getElement();
+		if (obj instanceof IEvent) {
+			return (IEvent) obj;
+		}
+		else if (obj instanceof IInternalElement) {
+			return (IInternalElement) ((IInternalElement) obj).getParent();
+		}
+		else return null; // should not happen
+	}
+	
+	private void select(Object obj, int column) throws RodinDBException {
+		UIUtils.debug("Element: " + obj);
+		if (obj instanceof IAction) {
+			UIUtils.debug("Action: " + ((IAction) obj).getContents());
+		}
+		TreeViewer viewer = (TreeViewer) this.getViewer();
+		TreeItem item = (TreeItem) viewer.testFindItem(obj);
+		
+//		UIUtils.debug("Item: " + item);
+//		
+//		Rectangle rec = item.getBounds(0);
+//		
+//		UIUtils.debug("Bound: " + rec.toString());
+//		Point pt = new Point(rec.x, rec.y);
+//		Tree tree = viewer.getTree();
+//		TreeItem item1 = tree.getItem(pt);	
+//		UIUtils.debug("Found: " + item1);
+		((EventBEditableTreeViewer) viewer).selectItem(item, column); // try to select the second column to edit name
+	}
+	
 	/**
 	 * Setting the input for the (table) viewer.
 	 */
@@ -493,6 +608,7 @@ public class EventMasterSection
 		int kind= delta.getKind();
 		IRodinElement element= delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
+			UIUtils.debug("Added: " + element.getElementName());
 			// Handle move operation
 			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
 				IRodinElement oldElement = delta.getMovedFromElement();
@@ -508,7 +624,7 @@ public class EventMasterSection
 		
 		if (kind == IRodinElementDelta.REMOVED) {
 			// Ignore the move operation
-			
+			UIUtils.debug("Removed: " + element.getElementName());			
 			Object parent = element.getParent();
 			toRefresh.add(parent);
 			return;
@@ -516,8 +632,10 @@ public class EventMasterSection
 		
 		if (kind == IRodinElementDelta.CHANGED) {
 			int flags = delta.getFlags();
+			UIUtils.debug("Changed: " + element.getElementName());
 			
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
+				UIUtils.debug("CHILDREN");
 				IRodinElementDelta [] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
 					processDelta(deltas[i]);
@@ -526,11 +644,14 @@ public class EventMasterSection
 			}
 			
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
+				UIUtils.debug("REORDERED");
 				toRefresh.add(element.getParent());
 				return;
 			}
 			
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
+				UIUtils.debug("CONTENT");
+
 				toRefresh.add(element);
 				return;
 			}
@@ -555,7 +676,7 @@ public class EventMasterSection
 					Object [] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debug("Refresh element " + element.getElementName());
+						UIUtils.debug("Event Refresh element " + element.getElementName());
 						viewer.refresh(element, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
@@ -614,9 +735,9 @@ public class EventMasterSection
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item  = (TreeItem) viewer.testFindItem(element);
-		Rectangle rec = item.getBounds();
-		Point pt = new Point(rec.x + rec.width/2, rec.y + rec.height/2);
-		selectRow(pt, 1);
+//		Rectangle rec = item.getBounds();
+//		Point pt = new Point(rec.x + rec.width/2, rec.y + rec.height/2);
+		selectItem(item, 1);
 	}
 
 }
