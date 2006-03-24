@@ -11,6 +11,9 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -34,6 +37,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContext;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
@@ -272,6 +276,7 @@ extends NewEventBTablePartWithButtons
 		try {
 			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
 			IInternalElement element = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm"+(counter+1), null, null);
+			markDirty();
 			TableViewer viewer = (TableViewer) this.getViewer();
 			viewer.refresh();
 			viewer.reveal(element);
@@ -289,17 +294,20 @@ extends NewEventBTablePartWithButtons
 	 */
 	private void handleDelete() {
 		IStructuredSelection ssel = (IStructuredSelection) ((StructuredViewer) this.getViewer()).getSelection();
-		// TODO Batch the deleting jobs
+		
 		Object [] objects = ssel.toArray();
+		Collection<IInternalElement> toDelete = new HashSet<IInternalElement>();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IInternalElement) {
-				try {
-					((IInternalElement) objects[i]).delete(true, null);
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+					toDelete.add((IInternalElement)objects[i]);
 			}
+		}
+		try {
+			EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
+			markDirty();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 		return;
 	}
@@ -315,6 +323,7 @@ extends NewEventBTablePartWithButtons
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
 		try {
 			swap(current, previous);
+			markDirty();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -334,6 +343,7 @@ extends NewEventBTablePartWithButtons
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
 		try {
 			swap(next, current);
+			markDirty();
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle
@@ -375,7 +385,6 @@ extends NewEventBTablePartWithButtons
 			UIUtils.postRunnable(new Runnable() {
 				public void run() {
 					getViewer().setInput(editor.getRodinInput());
-					markDirty();
 					updateButtons();
 				}
 			}, this.getSection().getClient());
