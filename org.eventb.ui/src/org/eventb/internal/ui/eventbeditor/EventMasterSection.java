@@ -365,6 +365,7 @@ public class EventMasterSection
 	 */
 	private void handleAddEvent() {
 		UIUtils.newEvent(editor.getRodinInput());
+		markDirty();
 	}
 	
 
@@ -460,6 +461,7 @@ public class EventMasterSection
 				IInternalElement event = getEvent(obj);
 				int counter = ((IInternalElement) event).getChildrenOfType(IVariable.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
+				markDirty();
 				viewer.refresh();
 				viewer.reveal(element);
 				select(element, 1);
@@ -479,6 +481,7 @@ public class EventMasterSection
 				IInternalElement event = getEvent(obj);
 				int counter = ((IInternalElement) event).getChildrenOfType(IGuard.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd"+(counter+1), null, null);
+				markDirty();
 				viewer.refresh();
 				viewer.reveal(element);
 				select(element, 2);
@@ -499,6 +502,7 @@ public class EventMasterSection
 				int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
 				element.setContents("act"+(counter+1));
+				markDirty();
 				viewer.refresh();
 				viewer.reveal(element);
 				select(element, 2);
@@ -597,7 +601,6 @@ public class EventMasterSection
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		this.markDirty();
 		toRefresh = new HashSet<Object>();
 		newStatus = new HashSet<StatusObject>();
 		processDelta(event.getDelta());
