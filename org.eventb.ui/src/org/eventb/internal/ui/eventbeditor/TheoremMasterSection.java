@@ -11,6 +11,9 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -33,6 +36,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.ITheorem;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
@@ -271,6 +275,7 @@ public class TheoremMasterSection
 		try {
 			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
 			IInternalElement element = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm"+(counter+1), null, null);
+			markDirty();
 			TableViewer viewer = (TableViewer) this.getViewer();
 			viewer.refresh();
 			viewer.reveal(element);
@@ -290,15 +295,18 @@ public class TheoremMasterSection
 		IStructuredSelection ssel = (IStructuredSelection) ((StructuredViewer) this.getViewer()).getSelection();
 		// TODO Batch the deleting jobs
 		Object [] objects = ssel.toArray();
+		Collection<IInternalElement> toDelete = new HashSet<IInternalElement>();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IInternalElement) {
-				try {
-					((IInternalElement) objects[i]).delete(true, null);
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+					toDelete.add((IInternalElement)objects[i]);
 			}
+		}
+		try {
+			EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
+			markDirty();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 		return;
 	}
@@ -314,6 +322,7 @@ public class TheoremMasterSection
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
 		try {
 			swap(current, previous);
+			markDirty();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -333,6 +342,7 @@ public class TheoremMasterSection
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
 		try {
 			swap(next, current);
+			markDirty();
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle
@@ -374,7 +384,6 @@ public class TheoremMasterSection
 			UIUtils.postRunnable(new Runnable() {
 				public void run() {
 					getViewer().setInput(editor.getRodinInput());
-					markDirty();
 					updateButtons();
 				}
 			}, this.getSection().getClient());
