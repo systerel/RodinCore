@@ -33,6 +33,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IUnnamedInternalElement;
 
@@ -56,7 +57,7 @@ public abstract class EventBEditableTreeViewer
 	
 	protected abstract void createTreeColumns(Tree tree);
 	
-	protected abstract void commit(Point pt, int col, String text);
+	protected abstract void commit(IInternalElement elemnt, int col, String text);
 	
 	/**
 	 * Constructor.
@@ -114,18 +115,18 @@ public abstract class EventBEditableTreeViewer
 		        			break;
 		        		}
 		        	}
-					selectItem(item, pt, column);
+					selectItem(item, column);
 	        	}
 			}
 		});
 	}
 	
-	public void selectRow(Point pt, int column) {
-		TreeItem item = this.getTree().getItem(pt);
-		if (item != null) selectItem(item, pt, column);
-	}
+//	public void selectRow(Point pt, int column) {
+//		TreeItem item = this.getTree().getItem(pt);
+//		if (item != null) selectItem(item, pt, column);
+//	}
 	
-	private void selectItem(TreeItem item, Point pt, int column) {
+	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
 		
         UIUtils.debug("Item " + item);
@@ -135,10 +136,10 @@ public abstract class EventBEditableTreeViewer
         if (!ssel.toList().contains(item.getData())) 
         	this.setSelection(new StructuredSelection(item.getData()));
 
-        select(tree, editor, item, column, pt);
+        select(tree, editor, item, column);
 	}
 	
-	protected void select(final Tree tree, final TreeEditor editor, final TreeItem item, final int column, final Point pt) {
+	protected void select(final Tree tree, final TreeEditor editor, final TreeItem item, final int column) {
 		final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
         if (column < 1) return; // The object column is not editable
 //        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
@@ -161,7 +162,7 @@ public abstract class EventBEditableTreeViewer
 			 */
 			@Override
 			public void commit() {
-				EventBEditableTreeViewer.this.commit(pt, column, text.getText());
+				EventBEditableTreeViewer.this.commit((IInternalElement) itemData, column, text.getText());
 			}
 			
 		};
@@ -179,12 +180,12 @@ public abstract class EventBEditableTreeViewer
 				switch (e.type) {
 					case SWT.FocusOut:
 						UIUtils.debug("FocusOut");
-						commit(pt, column, text.getText());
+						commit((IInternalElement) itemData, column, text.getText());
 						item.setText (column, text.getText());
 						composite.dispose ();
 						break;
 					case SWT.Verify:
-						UIUtils.debug("Verify");
+//						UIUtils.debug("Verify");
 						editor.horizontalAlignment = SWT.LEFT;
 						editor.layout();
 						break;
@@ -192,7 +193,7 @@ public abstract class EventBEditableTreeViewer
 						switch (e.detail) {
 							case SWT.TRAVERSE_RETURN:
 								UIUtils.debug("TraverseReturn");
-								commit(pt, column, text.getText ());
+								commit((IInternalElement) itemData, column, text.getText ());
 								composite.dispose();
 								e.doit = false;
 								break;
