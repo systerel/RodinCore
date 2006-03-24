@@ -3,8 +3,8 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.IRodinElement;
@@ -35,7 +35,7 @@ public abstract class NewEventBTreePartWithButtons
 		edit(element);
 	}
 
-	protected void selectRow(Point pt, int column) {
-		((EventBEditableTreeViewer) getViewer()).selectRow(pt, column);
+	protected void selectItem(TreeItem item, int column) {
+		((EventBEditableTreeViewer) getViewer()).selectItem(item, column);
 	}
 }
