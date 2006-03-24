@@ -14,9 +14,6 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -251,8 +248,8 @@ public class ProverUI
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage.findView(ObligationExplorer.VIEW_ID);
 			if (obligationExplorer != null) {
 				IPRSequent prSequent = this.getUserSupport().getCurrentPO().getPRSequent();
-				TreeViewer viewer = obligationExplorer.getTreeViewer();
-				UIUtils.debug("Make new selection ");
+//				TreeViewer viewer = obligationExplorer.getTreeViewer();
+//				UIUtils.debug("Make new selection ");
 				obligationExplorer.externalSetSelection(prSequent);
 				obligationExplorer.getTreeViewer().reveal(prSequent);
 			}
