@@ -124,7 +124,8 @@ public class TestLexer extends TestCase {
                 { "max"				   			 },	// _KMAX
                 { ".", "\u2024"		   			 },	// _DOT
                 { "x", "_toto", "x'"  			 },	// _IDENT
-                { "2", "001"		   			 }	// _INTLIT
+                { "2", "001"		   			 },	// _INTLIT
+                { "\u2982"                       }, // _TYPING
         };
         
         private static final String[] invalidStrings = new String[] {

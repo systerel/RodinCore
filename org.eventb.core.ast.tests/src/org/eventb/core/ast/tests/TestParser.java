@@ -18,6 +18,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -41,6 +42,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 
 /**
  * @author franz
@@ -80,6 +82,12 @@ public class TestParser extends TestCase {
 	private static BoundIdentifier b3 = mBoundIdentifier(3);
 	
 	private static LiteralPredicate bfalse = mLiteralPredicate(Formula.BFALSE);
+	
+	private static Type INT = ff.makeIntegerType();
+	
+	private static Type POW(Type base) {
+		return ff.makePowerSetType(base);
+	}
 	
 	private static abstract class TestPair {
 		String image;
@@ -974,6 +982,15 @@ public class TestParser extends TestCase {
 							mBinaryExpression(Formula.MINUS, b1, b0)
 					)
 			),
+
+			// Typed empty set
+			new ExprTestPair(
+					"(\u2205\u2982\u2119(\u2124))", 
+					mEmptySet(POW(INT))
+			), new ExprTestPair(
+					"(\u2205\u2982\u2119(\u2119(\u2124)))", 
+					mEmptySet(POW(POW(INT)))
+			),
 	};
 	
 	String[] invalidExprs = new String[]{
@@ -981,8 +998,9 @@ public class TestParser extends TestCase {
 			"x mod x mod x", 
 			"x domsub y + z", 
 			"x setminus y inter z", 
-			"x\u2225y\u2225z"
-			
+			"x\u2225y\u2225z",
+			"(\u2205\u2982x\u21a6y)",	// rhs is not a type 
+			"(\u2205\u2982\u2124)",		// type is not a set type 
 	};
 
 	AssignmentTestPair[] assigns = new AssignmentTestPair[] {

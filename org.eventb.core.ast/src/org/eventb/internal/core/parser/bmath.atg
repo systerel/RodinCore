@@ -13,11 +13,14 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.InvalidExpressionException;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 
 COMPILER Bmath
     
@@ -74,6 +77,20 @@ COMPILER Bmath
         		return false;
         }
     }
+
+	// Returns true iff the next two tokens are EMPTYSET and TYPING
+	private boolean isTypedEmptySet() {
+		scanner.ResetPeek();
+		Token next = la;
+		if (next.kind != _EMPTYSET) {
+			return false;
+		}
+		next = scanner.Peek();
+		if (next.kind != _TYPING) {
+			return false;
+		}
+		return true;	
+	}
 
 	private boolean isCSet() {
 		scanner.ResetPeek();
@@ -336,6 +353,7 @@ TOKENS
 	DOT
 	IDENT
 	INTLIT
+	TYPING
 
 
 PRODUCTIONS
@@ -756,7 +774,32 @@ PRODUCTIONS
         RPAR                                             (. expr = factory.makeUnaryExpression(tagpos[0], inexpr, new SourceLocation(tagpos[1] ,t.pos)); .)
     |
         LPAR
-        Expression <out Expression inexpr, binding>		 (. expr = inexpr; .)
+        (
+        	IF (isTypedEmptySet())
+	        EMPTYSET
+        	TYPING
+        	Expression<out Expression typexpr, binding>
+				(.  Type type;
+					try {
+						type = typexpr.toType(factory);
+						if (! (type instanceof PowerSetType)) {
+							result.addProblem(new ASTProblem(
+									typexpr.getSourceLocation(), 
+									ProblemKind.InvalidTypeExpression, 
+									ProblemSeverities.Error));
+							type = null;
+						}
+					} catch (InvalidExpressionException e) {
+						result.addProblem(new ASTProblem(
+								typexpr.getSourceLocation(), 
+								ProblemKind.InvalidTypeExpression, 
+								ProblemSeverities.Error));
+						type = null;
+					}
+					expr = factory.makeEmptySet(type, new SourceLocation(pos, t.getEnd())); .)
+        |
+	        Expression <out Expression inexpr, binding>		 (. expr = inexpr; .)
+	    )
         RPAR
     |
         LBRACE

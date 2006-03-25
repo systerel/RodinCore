@@ -123,6 +123,7 @@ FullStop = "." | "\u2024"
 "\u2900"              { return symbol(Parser._PSUR); }
 "\u2914"              { return symbol(Parser._PINJ); }
 "\u2916"              { return symbol(Parser._TBIJ); }
+"\u2982"              { return symbol(Parser._TYPING); }
 "\u2a64"              { return symbol(Parser._DOMSUB); }
 "\u2a65"              { return symbol(Parser._RANSUB); }
 "\ue100"              { return symbol(Parser._TREL); }
