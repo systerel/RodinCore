@@ -68,11 +68,8 @@ public class AtomicExpression extends Expression {
 			resultType = ff.makeBooleanType();
 			break;
 		case Formula.EMPTYSET:
-			if (typeGiven instanceof PowerSetType) {
-				resultType = typeGiven;
-			} else {
-				resultType = null;
-			}
+			assert typeGiven == null || typeGiven instanceof PowerSetType;
+			resultType = typeGiven;
 			break;
 		case Formula.KPRED:
 		case Formula.KSUCC:
@@ -85,6 +82,7 @@ public class AtomicExpression extends Expression {
 			assert false;
 			resultType = null;
 		}
+		assert typeGiven == null || typeGiven.equals(resultType);
 		setType(resultType, null);
 	}
 	
