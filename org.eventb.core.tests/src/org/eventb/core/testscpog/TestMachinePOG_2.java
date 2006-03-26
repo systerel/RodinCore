@@ -56,7 +56,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		Assignment assignment = result.getParsedAssignment();
 		ITypeCheckResult tcResult = assignment.typeCheck(environment);
 		assert tcResult.isSuccess();
-		return assignment.getFISPredicate(factory).toString();
+		return assignment.getFISPredicate(factory).toStringWithTypes();
 	}
 
 	private String getBAStringForAssignment(String formula, ITypeEnvironment environment) {
@@ -65,7 +65,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		Assignment assignment = result.getParsedAssignment();
 		ITypeCheckResult tcResult = assignment.typeCheck(environment);
 		assert tcResult.isSuccess();
-		return assignment.getBAPredicate(factory).toString();
+		return assignment.getBAPredicate(factory).toStringWithTypes();
 	}
 
 	private int getIndexForName(String name, IRodinElement[] elements) {
@@ -162,7 +162,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 * Test method for creation of invariant preservation PO for machine without variables and an invariant
 	 */
 	public void testInvariant4() throws Exception {
-		String invariant = predicateFromString("∅⊆ℤ").toString();;
+		String invariant = predicateFromString("{1} ⊆ ℤ").toString();;
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, 
 				makeList("I1"), 
@@ -910,6 +910,45 @@ public class TestMachinePOG_2 extends BuilderTest {
 		Predicate goal3 = rewriteGoal(env, invariant3, "z≔z'");
 		assertEquals("i3 goal ok p", goal3.toString(), ((IPOPredicate) sequents[i3].getGoal()).getContents());
 		
+	}
+
+	/**
+	 * Test method for an initialisation which creates a predicate with typed
+	 * empty sets.
+	 */
+	public void testInitialisation2() throws Exception {
+		
+		ITypeEnvironment env = factory.makeTypeEnvironment();
+		env.addName("x", factory.makePowerSetType(INTEGER));
+		env.addName("y", factory.makePowerSetType(INTEGER));
+		
+		String inv1 = predicateFromString("x ⊆ ℤ").toString(); 
+		String inv2 = predicateFromString("y ⊆ x").toString(); 
+		String ass1 = assignmentFromString("x ≔ ∅").toString();
+		String ass2 = assignmentFromString("y ≔ ∅").toString();
+		
+		String exp1 = predicateFromString("(∅ ⦂ ℙ(ℤ)) ⊆ ℤ").toStringWithTypes();
+		String exp2 = predicateFromString("(∅ ⦂ ℙ(ℤ)) ⊆ (∅ ⦂ ℙ(ℤ))").toStringWithTypes();
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addInvariants(rodinFile, makeList("inv1", "inv2"), makeList(inv1, inv2));
+		addSCVariables(rodinFile, makeList("x", "y"), makeList("ℙ(ℤ)", "ℙ(ℤ)"));
+		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
+				makeList(), makeList(), makeList(ass1, ass2), makeList());
+		rodinFile.save(null, true);
+		
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		
+		assertTrue("Exactly 2 proof obligations", sequents.length == 2);
+		int po1 = getIndexForName("INITIALISATION/inv1/INV", sequents);
+		int po2 = getIndexForName("INITIALISATION/inv2/INV", sequents);
+		assertTrue("Bad PO names", po1 != -1 && po2 != -1);
+		String goal1 = sequents[po1].getGoal().getContents();
+		assertEquals("Bad goal for first PO", exp1, goal1);
+		String goal2 = sequents[po2].getGoal().getContents();
+		assertEquals("Bad goal for second PO", exp2, goal2);
 	}
 
 	/**

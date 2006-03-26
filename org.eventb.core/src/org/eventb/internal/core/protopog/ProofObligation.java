@@ -44,7 +44,7 @@ public class ProofObligation {
 	
 	private void putPredicate(IInternalParent element, Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
 		IPOPredicate poPredicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
-		poPredicate.setContents(predicate.toString(), monitor);
+		poPredicate.setContents(predicate.toStringWithTypes(), monitor);
 	}
 	
 	public void put(IPOFile file, IProgressMonitor monitor) throws RodinDBException {
