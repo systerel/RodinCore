@@ -153,12 +153,12 @@ public class BecomesMemberOf extends Assignment {
 
 	@Override
 	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames) {
+			String[] boundNames, boolean withTypes) {
 
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
 		result.append(" :\u2208 ");
-		result.append(setExpr.toString(false, STARTTAG, boundNames));
+		result.append(setExpr.toString(false, STARTTAG, boundNames, withTypes));
 		return result.toString();
 	}
 

@@ -122,11 +122,14 @@ public class AssociativePredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+		
 		StringBuffer str = new StringBuffer();
-		str.append(children[0].toString(false, getTag(), boundNames));
+		str.append(children[0].toString(false, getTag(), boundNames, withTypes));
 		for (int i=1; i<children.length;i++) {
-			str.append(getTagOperator()+children[i].toString(false,getTag(),boundNames));
+			str.append(getTagOperator());
+			str.append(children[i].toString(false,getTag(),boundNames,withTypes));
 		}
 		if (parenthesesMap[getTag()-firstTag].get(parentTag)) {
 			return "("+str.toString()+")";

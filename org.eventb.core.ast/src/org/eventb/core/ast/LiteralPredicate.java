@@ -42,7 +42,8 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
 		return tags[getTag()-firstTag];
 	}
 

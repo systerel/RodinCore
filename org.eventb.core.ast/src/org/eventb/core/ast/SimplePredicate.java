@@ -55,8 +55,11 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
-		return tags[getTag()-firstTag]+"("+child.toString(false, getTag(), boundNames)+")";
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
+		return tags[getTag()-firstTag] + "(" +
+			child.toString(false, getTag(), boundNames, withTypes) + ")";
 	}
 
 	@Override

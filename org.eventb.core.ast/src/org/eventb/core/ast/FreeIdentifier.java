@@ -50,7 +50,8 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
 		return name;
 	}
 	

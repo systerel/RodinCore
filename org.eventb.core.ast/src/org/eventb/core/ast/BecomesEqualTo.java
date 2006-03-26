@@ -216,16 +216,16 @@ public class BecomesEqualTo extends Assignment {
 
 	@Override
 	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames) {
+			String[] boundNames, boolean withTypes) {
 		
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
 		result.append(" \u2254 ");
-		boolean comma = false;
+		String comma = "";
 		for (Expression value: values) {
-			if (comma) result.append(", ");
-			result.append(value.toString(false, STARTTAG, boundNames));
-			comma = true;
+			result.append(comma);
+			result.append(value.toString(false, STARTTAG, boundNames, withTypes));
+			comma = ", ";
 		}
 		return result.toString();
 	}

@@ -249,7 +249,7 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames) {
+			String[] boundNames, boolean withTypes) {
 
 		StringBuilder result = new StringBuilder();
 		appendAssignedIdents(result);
@@ -257,7 +257,7 @@ public class BecomesSuchThat extends Assignment {
 		
 		final String[] localNames = getLocalNames();
 		final String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		result.append(condition.toString(false, STARTTAG, newBoundNames));
+		result.append(condition.toString(false, STARTTAG, newBoundNames, withTypes));
 		
 		return result.toString();
 	}

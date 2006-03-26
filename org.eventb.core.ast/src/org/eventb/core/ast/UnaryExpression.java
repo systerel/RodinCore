@@ -260,31 +260,43 @@ public class UnaryExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
+		final String childImage = 
+			child.toString(false, getTag(), boundNames, withTypes);
+		final String operator = getTagOperator();
 		if (isPrefix[getTag()-firstTag]) {
 			if (isAlwaysParenthesized()) {
-				return getTagOperator()+"("+child.toString(false, getTag(), boundNames)+")";
+				return operator + "(" + childImage + ")";
 			}
-			else if ((isRightChild && rightParenthesesMap[getTag()-firstTag].get(parentTag)) || (!isRightChild && leftParenthesesMap[getTag()-firstTag].get(parentTag))) {
-				return "("+getTagOperator()+child.toString(false, getTag(), boundNames)+")";
+			else if (needsParentheses(isRightChild, parentTag)) {
+				return "(" + operator + childImage + ")";
 			}
 			else {
-				return getTagOperator()+child.toString(false, getTag(), boundNames);
+				return operator + childImage;
 			}
 		}
 		else {
 			if (isAlwaysParenthesized()) {
 				// for now this is never the case
-				return "("+child.toString(false, getTag(), boundNames)+")"+getTagOperator();
+				return "(" + childImage + ")" + operator;
 			}
-			else if ((isRightChild && rightParenthesesMap[getTag()-firstTag].get(parentTag)) || (!isRightChild && leftParenthesesMap[getTag()-firstTag].get(parentTag))) {
-				return "("+child.toString(false, getTag(), boundNames)+getTagOperator()+")";
+			else if (needsParentheses(isRightChild, parentTag)) {
+				return "(" + childImage + operator + ")";
 			}
 			else {
-				return child.toString(false, getTag(), boundNames)+getTagOperator();
+				return childImage + operator;
 			}
 		}
 		
+	}
+
+	private boolean needsParentheses(boolean isRightChild, int parentTag) {
+		if (isRightChild) {
+			return rightParenthesesMap[getTag()-firstTag].get(parentTag);
+		}
+		return leftParenthesesMap[getTag()-firstTag].get(parentTag);
 	}
 
 	protected String getTagOperator() {

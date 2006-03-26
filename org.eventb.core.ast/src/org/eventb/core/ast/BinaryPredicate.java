@@ -87,11 +87,16 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		// parenthteses if AND OR or NOT
-		String str = left.toString(false, getTag(), boundNames)+getTagOperator()+right.toString(true, getTag(), boundNames);
+		final String str = 
+			left.toString(false, getTag(), boundNames, withTypes) +
+			getTagOperator() +
+			right.toString(true, getTag(), boundNames, withTypes);
 		if (parenthesesMap[getTag()-firstTag].get(parentTag)) {
-			return "("+str+")";
+			return "(" + str + ")";
 		}
 		return str;
 	}

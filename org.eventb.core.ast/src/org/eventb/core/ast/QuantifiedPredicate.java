@@ -129,14 +129,18 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		String[] localNames = resolveIdentsPred(boundNames);
 		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
 
 		// put parentheses when parent is : Formula.NOT
 		StringBuffer str = new StringBuffer();
-		str.append(tags[getTag()-firstTag]+getBoundIdentifiersString(localNames));
-		str.append("\u00b7"+pred.toString(false, getTag(), newBoundNames));
+		str.append(tags[getTag()-firstTag]);
+		str.append(getBoundIdentifiersString(localNames));
+		str.append("\u00b7");
+		str.append(pred.toString(false, getTag(), newBoundNames, withTypes));
 		if (parenthesesMap.get(parentTag)) {
 			return "("+str.toString()+")";
 		}		

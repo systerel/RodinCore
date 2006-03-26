@@ -415,22 +415,25 @@ public class BinaryExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		String str;
 		switch (getTag()) {
-			case (Formula.FUNIMAGE):
-				str = left.toString(false,getTag(),boundNames)+"("+
-		           right.toString(true,getTag(),boundNames)+")";
+			case FUNIMAGE:
+				str = left.toString(false,getTag(),boundNames,withTypes)+"("+
+		           right.toString(true,getTag(),boundNames,withTypes)+")";
 				break;
-			case (Formula.RELIMAGE):
-				str = left.toString(false,getTag(),boundNames)+"["+
-		           right.toString(true,getTag(),boundNames)+"]";
+			case RELIMAGE:
+				str = left.toString(false,getTag(),boundNames,withTypes)+"["+
+		           right.toString(true,getTag(),boundNames,withTypes)+"]";
 				break;
 			default:
-				str = left.toString(false,getTag(),boundNames)+" "+getTagOperator()+" "+right.toString(true,getTag(),boundNames);
+				str = left.toString(false,getTag(),boundNames,withTypes)+" "+
+					getTagOperator()+" "+
+					right.toString(true,getTag(),boundNames,withTypes);
 		}
-		if ((isRightChild && rightNoParenthesesMap[getTag()-firstTag].get(parentTag)) ||
-			(!isRightChild && leftNoParenthesesMap[getTag()-firstTag].get(parentTag))) {
+		if (needsNoParenthesis(isRightChild, parentTag)) {
 			return str;
 		}
 		return "("+str+")";
@@ -441,6 +444,14 @@ public class BinaryExpression extends Expression {
 		return tags[getTag()-firstTag];
 	}
 
+	private boolean needsNoParenthesis(boolean isRightChild, int parentTag) {
+		final int relativeTag = getTag() - firstTag;
+		if (isRightChild) {
+			return rightNoParenthesesMap[relativeTag].get(parentTag);
+		}
+		return leftNoParenthesesMap[relativeTag].get(parentTag);
+	}
+	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {
 		BinaryExpression otherExpr = (BinaryExpression) other;

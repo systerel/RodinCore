@@ -109,13 +109,21 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
+		// Might be a typed empty set
+		if (withTypes && type != null && members.length == 0) {
+			return "(\u2205 \u2982 " + type + ")";
+		}
+		
 		StringBuffer str = new StringBuffer();
 		str.append("{");
 		if (members.length > 0) {
-			str.append(members[0].toString(false, getTag(), boundNames));
+			str.append(members[0].toString(false, getTag(), boundNames, withTypes));
 			for (int i=1; i<members.length;i++) {
-				str.append(","+members[i].toString(false, getTag(), boundNames));
+				str.append(",");
+				str.append(members[i].toString(false, getTag(), boundNames, withTypes));
 			}
 		}
 		str.append("}");

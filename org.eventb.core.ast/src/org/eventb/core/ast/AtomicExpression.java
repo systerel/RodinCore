@@ -87,8 +87,14 @@ public class AtomicExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
-		return tags[getTag()-firstTag];
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+		
+		final String image = tags[getTag()-firstTag];
+		if (withTypes && getTag() == EMPTYSET && type != null) {
+			return "(" + image + " \u2982 " + type + ")";
+		}
+		return image;
 	}
 
 	@Override

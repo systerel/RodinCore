@@ -305,25 +305,29 @@ public class QuantifiedExpression extends Expression {
 	
 	@Override
 	protected String toStringFullyParenthesized(String[] existingBoundIdents) {
-		return toStringHelper(existingBoundIdents, true);
+		return toStringHelper(existingBoundIdents, true, false);
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		// put parentheses if parent is QuantifiedExpr...
 		if (noParenthesesMap.get(parentTag) ||
 				(isRightChild && rightNoParenthesesMap.get(parentTag)) ||
 				(form != Form.Lambda  && getTag() == Formula.CSET && csetImplicitNoParenthesesMap.get(parentTag))) {
-			return toStringHelper(boundNames, false);
+			return toStringHelper(boundNames, false, withTypes);
 		}
-		else return "("+toStringHelper(boundNames, false)+")";
+		else return "("+toStringHelper(boundNames, false, withTypes)+")";
 	}
 	
 	/*
 	 * avoid having to write almost twice the same for methods 
 	 * toString and method toStringFully parenthesized
 	 */ 
-	private String toStringHelper(String[] boundNames, boolean parenthesized) {
+	private String toStringHelper(String[] boundNames, boolean parenthesized,
+			boolean withTypes) {
+
 		// Collect names used in subformulas and not locally bound
 		HashSet<String> usedNames = new HashSet<String>();
 		expr.collectNamesAbove(usedNames, boundNames, quantifiedIdentifiers.length);
@@ -335,22 +339,24 @@ public class QuantifiedExpression extends Expression {
 		
 		switch (form) {
 		case Lambda: 
-			return toStringLambda(parenthesized, newBoundNames);
+			return toStringLambda(parenthesized, newBoundNames, withTypes);
 		case Implicit:
 			if (exprIsClosed) {
 				// Still OK to use implicit form.
-				return toStringImplicit(parenthesized, localNames, newBoundNames);
+				return toStringImplicit(parenthesized, localNames, newBoundNames, withTypes);
 			}
-			return toStringExplicit(parenthesized, localNames, newBoundNames);
+			return toStringExplicit(parenthesized, localNames, newBoundNames, withTypes);
 		case Explicit:
-			return toStringExplicit(parenthesized, localNames, newBoundNames);
+			return toStringExplicit(parenthesized, localNames, newBoundNames, withTypes);
 		default:
 			assert false;
 			return null;
 		}
 	}
 
-	private String toStringLambda(boolean parenthesized, String[] boundNames) {
+	private String toStringLambda(boolean parenthesized, String[] boundNames,
+			boolean withTypes) {
+
 		// Extract left and right subexpressions as Strings
 		assert expr.getTag() == MAPSTO;
 		BinaryExpression binExpr = (BinaryExpression) this.expr;
@@ -361,21 +367,23 @@ public class QuantifiedExpression extends Expression {
 			leftExprString = binExpr.getLeft().toStringFullyParenthesized(boundNames);
 			rightExprString = binExpr.getRight().toStringFullyParenthesized(boundNames);
 		} else {
-			leftExprString = binExpr.getLeft().toString(false, MAPSTO, boundNames);
-			rightExprString = binExpr.getRight().toString(true, MAPSTO, boundNames);
+			leftExprString = binExpr.getLeft().toString(false, MAPSTO, boundNames, withTypes);
+			rightExprString = binExpr.getRight().toString(true, MAPSTO, boundNames, withTypes);
 		}
 
 		StringBuffer str = new StringBuffer();
 		str.append("\u03bb");
 		str.append(leftExprString);
 		str.append("\u00b7");
-		str.append(getPredString(parenthesized, boundNames));
+		str.append(getPredString(parenthesized, boundNames, withTypes));
 		str.append(" \u2223 ");
 		str.append(rightExprString);
 		return str.toString();
 	}
 
-	private String toStringImplicit(boolean parenthesized, String[] localNames, String[] boundNames) {
+	private String toStringImplicit(boolean parenthesized, String[] localNames,
+			String[] boundNames, boolean withTypes) {
+
 		StringBuffer str = new StringBuffer();
 		if (getTag() == Formula.CSET) {
 			str.append("{");
@@ -383,16 +391,18 @@ public class QuantifiedExpression extends Expression {
 		else {
 			str.append(tags[getTag()-firstTag]);
 		}
-		str.append(getExprString(parenthesized, boundNames));
+		str.append(getExprString(parenthesized, boundNames, withTypes));
 		str.append(" \u2223 ");
-		str.append(getPredString(parenthesized, boundNames));
+		str.append(getPredString(parenthesized, boundNames, withTypes));
 		if (getTag() == Formula.CSET) {
 			str.append("}");
 		}
 		return str.toString();
 	}
 
-	private String toStringExplicit(boolean parenthesized, String[] localNames, String[] boundNames) {
+	private String toStringExplicit(boolean parenthesized, String[] localNames,
+			String[] boundNames, boolean withTypes) {
+		
 		StringBuffer str = new StringBuffer();
 		if (getTag() == Formula.CSET) { 
 			str.append("{");
@@ -402,27 +412,31 @@ public class QuantifiedExpression extends Expression {
 		}
 		str.append(getBoundIdentifiersString(localNames));
 		str.append("\u00b7");
-		str.append(getPredString(parenthesized, boundNames));
+		str.append(getPredString(parenthesized, boundNames, withTypes));
 		str.append(" \u2223 ");
-		str.append(getExprString(parenthesized, boundNames));
+		str.append(getExprString(parenthesized, boundNames, withTypes));
 		if (getTag() == Formula.CSET) {
 			str.append("}");
 		}
 		return str.toString();
 	}
 
-	private String getPredString(boolean parenthesized, String[] boundNames) {
+	private String getPredString(boolean parenthesized, String[] boundNames,
+			boolean withTypes) {
+
 		if (parenthesized) {
 			return "(" + pred.toStringFullyParenthesized(boundNames) + ")";
 		}
-		return pred.toString(false, getTag(), boundNames);
+		return pred.toString(false, getTag(), boundNames, withTypes);
 	}
-	
-	private String getExprString(boolean parenthesized, String[] boundNames) {
+
+	private String getExprString(boolean parenthesized, String[] boundNames,
+			boolean withTypes) {
+
 		if (parenthesized) {
 			return "(" + expr.toStringFullyParenthesized(boundNames) + ")";
 		}
-		return expr.toString(true, getTag(), boundNames);
+		return expr.toString(true, getTag(), boundNames, withTypes);
 	}
 	
 	@Override

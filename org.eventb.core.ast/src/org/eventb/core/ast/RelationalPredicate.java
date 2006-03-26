@@ -146,8 +146,11 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
-		return left.toString(false,getTag(),boundNames)+tags[getTag()-firstTag]+right.toString(true,getTag(),boundNames);
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+		return left.toString(false, getTag(), boundNames, withTypes)
+				+ tags[getTag()-firstTag]
+				+ right.toString(true,getTag(),boundNames, withTypes);
 	}
 
 	@Override

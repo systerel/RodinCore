@@ -50,9 +50,11 @@ public class BoolExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		// does not put parentheses when parent is: TILDE
-		return "bool("+child.toString(false, getTag(), boundNames)+")";
+		return "bool("+child.toString(false, getTag(), boundNames, withTypes)+")";
 	}
 
 	@Override

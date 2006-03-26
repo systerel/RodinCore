@@ -942,12 +942,31 @@ public abstract class Formula<T extends Formula<T>> {
 	 * parenthesis that are needed for the formula to be parsed again into the
 	 * same AST.
 	 * </p>
+	 * <p>
+	 * The string representation doesn't contain any type information.
+	 * </p>
 	 * 
 	 * @return Returns the string representation of this formula.
 	 */
 	@Override
 	public final String toString() {
-		return toString(false, STARTTAG, new String[0]);
+		return toString(false, STARTTAG, new String[0], false);
+	}
+
+	/**
+	 * Returns the string representation of the formula, including some type
+	 * information.
+	 * <p>
+	 * The string representation is the same as that returned by
+	 * {@link #toString()}, but with type information added to generic atomic
+	 * expressions (currently only the empty set).
+	 * </p>
+	 * 
+	 * @return Returns the string representation of this formula with type
+	 *         information.
+	 */
+	public final String toStringWithTypes() {
+		return toString(false, STARTTAG, new String[0], true);
 	}
 
 	/**
@@ -1600,13 +1619,16 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            the identifiers that are bound in the path from the root node
 	 *            to the current node. Should not be null, can be an empty
 	 *            array.
+	 * @param withTypes
+	 *            <code>true</code> iff type information should be output for
+	 *            atomic expressions.
 	 * 
 	 * @return Returns the string representation of this formula.
 	 * @see java.lang.Object#toString()
 	 * @see org.eventb.core.ast.Formula#toStringFullyParenthesized()
 	 */
 	protected abstract String toString(boolean isRightChild, int parentTag,
-			String[] boundNames);
+			String[] boundNames, boolean withTypes);
 
 	/**
 	 * Internal method that returns the string representation of the formula

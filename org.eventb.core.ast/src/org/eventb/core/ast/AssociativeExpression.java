@@ -309,23 +309,32 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+
 		StringBuffer str = new StringBuffer();
-		str.append(children[0].toString(false,getTag(),boundNames));
-		for (int i=1; i<children.length;i++) {
-			str.append(getTagOperator()+children[i].toString(true,getTag(),boundNames));
+		str.append(children[0].toString(false,getTag(),boundNames, withTypes));
+		for (int i=1; i<children.length; i++) {
+			str.append(getTagOperator());
+			str.append(children[i].toString(true,getTag(),boundNames, withTypes));
 		}
-		if ((isRightChild && rightNoParenthesesMap[getTag()-firstTag].get(parentTag)) ||
-			(!isRightChild && leftNoParenthesesMap[getTag()-firstTag].get(parentTag))) {
+		if (needsNoParenthesis(isRightChild, parentTag)) {
 			return str.toString();
 		}
 		return "("+str.toString()+")";
 	}
-	
+
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
 	}
 
+	private boolean needsNoParenthesis(boolean isRightChild, int parentTag) {
+		final int relativeTag = getTag() - firstTag;
+		if (isRightChild) {
+			return rightNoParenthesesMap[relativeTag].get(parentTag);
+		}
+		return leftNoParenthesesMap[relativeTag].get(parentTag);
+	}
 	
 	@Override
 	protected boolean equals(Formula other, boolean withAlphaConversion) {

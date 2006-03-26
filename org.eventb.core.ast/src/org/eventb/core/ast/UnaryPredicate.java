@@ -55,8 +55,11 @@ public class UnaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag, String[] boundNames) {
-		return getTagOperator()+child.toString(false,getTag(),boundNames);
+	protected String toString(boolean isRightChild, int parentTag,
+			String[] boundNames, boolean withTypes) {
+		
+		return getTagOperator() + 
+			child.toString(false, getTag(), boundNames, withTypes);
 	}
 
 	protected String getTagOperator() {

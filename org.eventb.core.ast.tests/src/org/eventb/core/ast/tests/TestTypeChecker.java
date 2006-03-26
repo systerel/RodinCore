@@ -1227,6 +1227,7 @@ public class TestTypeChecker extends TestCase {
 							mList(ty_S)
 					)
 			),
+			
 			// Example from Christophe.
 			new TestItem(
 					"x ∈ y",
@@ -1234,6 +1235,13 @@ public class TestTypeChecker extends TestCase {
 							mList("x", "y"),
 							mList(ty_S, POW(ty_S2))
 					),
+					mTypeEnvironment()
+			),
+
+			// Test with typed empty set
+			new TestItem(
+					"(∅⦂ℙ(S×ℤ)) ∈ (∅⦂ℙ(S)) → ℤ",
+					mTypeEnvironment(),
 					mTypeEnvironment()
 			),
 	};
