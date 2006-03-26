@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B Abstract Syntax Tree Plug-in
 Bundle-SymbolicName: org.eventb.core.ast
-Bundle-Version: 0.9.0
+Bundle-Version: 0.9.1
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Export-Package: org.eventb.core.ast,
