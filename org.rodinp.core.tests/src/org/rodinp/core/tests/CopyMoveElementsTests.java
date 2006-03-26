@@ -1148,6 +1148,25 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 	
 	/**
+	 * Ensures that a top-level internal element can be renamed twice.
+	 */
+	public void testRenameTopTwice() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		createNamedElement(neSource, "bar", null);
+
+		renamePositive(neSource, "baz", false);
+		NamedElement neDest = getNamedElement(rfSource, "baz");
+		NamedElement childDest = getNamedElement(neDest, "bar");
+		assertTrue("Children not renamed with parent", childDest.exists());
+
+		renamePositive(neDest, "foo", false);
+		NamedElement neDest2 = getNamedElement(rfSource, "foo");
+		NamedElement childDest2 = getNamedElement(neDest2, "bar");
+		assertTrue("Children not renamed with parent", childDest2.exists());
+	}
+	
+	/**
 	 * Ensures that a top-level internal element can be renamed, replacing an
 	 * existing element.
 	 */
