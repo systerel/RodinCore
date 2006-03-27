@@ -8,7 +8,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -69,7 +68,6 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
@@ -85,34 +83,33 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 		
-		Label label = toolkit.createLabel(body, "Name of the variable");
-		label.setLayoutData(new GridData());
-		label = toolkit.createLabel(body, "");
-		label.setLayoutData(new GridData());
-
+		toolkit.createLabel(body, "Name");
+		
 		nameText = toolkit.createText(body, defaultName);
-		GridData gd1 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd1.widthHint = 50;
-		nameText.setLayoutData(gd1);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.horizontalSpan = 2;
+		gd.widthHint = 200;
+		nameText.setLayoutData(gd);
 		
-		
-		label = toolkit.createLabel(body, "Type invariantPredicate");
-		label.setLayoutData(new GridData());
+		toolkit.createLabel(body, "Invariant");
 		
 		invariantNameText = toolkit.createText(body, defaultInvariantName);
-		invariantNameText.setLayoutData(gd1);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 50;
+		invariantNameText.setLayoutData(gd);
 		
 		invariantPredicateText = new EventBMath(toolkit.createText(body, ""));
-		GridData gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd2.widthHint = 150;
-		invariantPredicateText.getTextWidget().setLayoutData(gd2);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		invariantPredicateText.getTextWidget().setLayoutData(gd);
 		
-		label = toolkit.createLabel(body, "Initialisation");
-		label.setLayoutData(new GridData());
-		label = toolkit.createLabel(body, "");
-		label.setLayoutData(new GridData());
+		toolkit.createLabel(body, "Initialisation");
+		
 		initText = new EventBMath(toolkit.createText(body, ""));
-		initText.getTextWidget().setLayoutData(gd2);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.horizontalSpan = 2;
+		gd.widthHint = 200;
+		initText.getTextWidget().setLayoutData(gd);
 		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
