@@ -100,6 +100,22 @@ public abstract class EventBEditor
 		this.setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
+	 */
+	@Override
+	public boolean isDirty() {
+		UIUtils.debug("Checking dirty");
+		try {
+			return this.getRodinInput().hasUnsavedChanges();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return super.isDirty();
+	}
+
+
 	/** The <code>EventBMachineEditor</code> implementation of this 
 	 * <code>AbstractTextEditor</code> method performs any extra 
 	 * disposal actions required by the Event-B editor.
