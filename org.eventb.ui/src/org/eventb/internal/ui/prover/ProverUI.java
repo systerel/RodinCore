@@ -14,6 +14,7 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -291,6 +292,11 @@ public class ProverUI
 	 */
 	public void poChanged(IPOChangeEvent e) {
 		UIUtils.debug("PO Changed");
-		syncObligationExplorer();
+		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
+		display.syncExec (new Runnable () {
+			public void run () {
+				syncObligationExplorer();
+			}
+		});
 	}
 }
