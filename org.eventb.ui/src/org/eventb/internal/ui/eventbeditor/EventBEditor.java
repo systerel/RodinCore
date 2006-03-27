@@ -392,6 +392,7 @@ public abstract class EventBEditor
 				return;
 			}
 			notifyElementChangedListeners(delta);
+			editorDirtyStateChanged();
 			return;
 		}
 		
