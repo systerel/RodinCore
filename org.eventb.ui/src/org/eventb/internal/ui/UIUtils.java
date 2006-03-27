@@ -404,9 +404,16 @@ public class UIUtils {
 
 	public static void intelligentNewVariables(IRodinFile rodinFile) {
 		try {
-			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			int invCounter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
-			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Variables", "var" + (counter + 1), "inv" + (invCounter + 1));
+			final int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
+			final int invCounter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
+			IntelligentNewVariableInputDialog dialog = 
+				new IntelligentNewVariableInputDialog(
+						Display.getCurrent().getActiveShell(), 
+						new FormToolkit(Display.getCurrent()),
+						"New Variable",
+						"var" + (counter + 1),
+						"inv" + (invCounter + 1)
+				);
 
 			dialog.open();
 			String name = dialog.getName();
