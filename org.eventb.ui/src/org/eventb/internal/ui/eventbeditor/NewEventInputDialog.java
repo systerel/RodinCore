@@ -48,6 +48,7 @@ public class NewEventInputDialog extends Dialog {
 		grdNameTexts = new ArrayList<Text>();
 		grdPredicateTexts = new ArrayList<Text>();
 		actionTexts = new ArrayList<Text>();
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	
@@ -82,10 +83,10 @@ public class NewEventInputDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 320;
-		gd.widthHint = 500;
-		composite.setLayoutData(gd);
+//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		gd.heightHint = 320;
+//		gd.widthHint = 500;
+//		composite.setLayoutData(gd);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
@@ -94,11 +95,11 @@ public class NewEventInputDialog extends Dialog {
 		layout.numColumns = 5;
 		layout.verticalSpacing = 5;
 		body.setLayout(layout);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 		
 		Label label = toolkit.createLabel(body, "Name", SWT.LEFT);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		label.setLayoutData(gd);
 		
 		Composite separator = toolkit.createComposite(body);
@@ -108,12 +109,12 @@ public class NewEventInputDialog extends Dialog {
 		separator.setLayoutData(gd);
 		
 		label = toolkit.createLabel(body, "Variable name(s)", SWT.CENTER);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 		
 		nameText = toolkit.createText(body, defaultName);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		nameText.setLayoutData(gd);
 
 		separator = toolkit.createComposite(body);
@@ -136,7 +137,7 @@ public class NewEventInputDialog extends Dialog {
 		separator.setLayoutData(separatorGD);
 		
 		label = toolkit.createLabel(body, "Guard name(s)", SWT.LEFT);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		label.setLayoutData(gd);
 		
 		separator = toolkit.createComposite(body);
@@ -152,7 +153,7 @@ public class NewEventInputDialog extends Dialog {
 
 		for (int i = 1; i <= 3; i++) {
 			Text text = toolkit.createText(body, "grd"+i);
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			text.setLayoutData(gd);
 			grdNameTexts.add(text);
 			
@@ -165,6 +166,7 @@ public class NewEventInputDialog extends Dialog {
 			text = toolkit.createText(body, "");
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 3;
+			gd.widthHint = 200;
 			text.setLayoutData(gd);
 			grdPredicateTexts.add(text);
 			new EventBMath(text);
@@ -184,13 +186,15 @@ public class NewEventInputDialog extends Dialog {
 			Text text = toolkit.createText(body, "");
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 5;
+			gd.widthHint = 250;
 			text.setLayoutData(gd);
 			actionTexts.add(text);
 			new EventBMath(text);
 		}
 		
 
-				
+		composite.pack();
+		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
 		return body;

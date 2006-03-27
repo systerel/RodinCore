@@ -37,6 +37,7 @@ public class ElementAtributeInputDialog extends Dialog {
 		this.defaultName = defaultName;
 		texts = new ArrayList<Text>();
 		attributes = new ArrayList<String>();
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	
@@ -74,10 +75,10 @@ public class ElementAtributeInputDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.widthHint = 300;
-		composite.setLayoutData(gd);
+//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		gd.heightHint = 200;
+//		gd.widthHint = 300;
+//		composite.setLayoutData(gd);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
@@ -85,7 +86,7 @@ public class ElementAtributeInputDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		body.setLayout(layout);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 		
 		Label label = toolkit.createLabel(body, message);
@@ -98,19 +99,25 @@ public class ElementAtributeInputDialog extends Dialog {
 		texts.add(text.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
-		label.setLayoutData(new GridData());
+//		label.setLayoutData(new GridData());
 		
 		text = new EventBMath(toolkit.createText(body, ""));
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
-		label.setLayoutData(new GridData());
+//		label.setLayoutData(new GridData());
 		
 		text = new EventBMath(toolkit.createText(body, ""));
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text.getTextWidget());
+		
+		composite.pack();
 		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);

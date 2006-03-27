@@ -42,6 +42,7 @@ public class ElementNameContentInputDialog extends Dialog {
 		nameTexts = new ArrayList<Text>();
 		contents = new ArrayList<String>();
 		contentTexts = new ArrayList<Text>();
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	
@@ -79,10 +80,10 @@ public class ElementNameContentInputDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.widthHint = 500;
-		composite.setLayoutData(gd);
+//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		gd.heightHint = 200;
+//		gd.widthHint = 500;
+//		composite.setLayoutData(gd);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
@@ -90,50 +91,56 @@ public class ElementNameContentInputDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		body.setLayout(layout);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 		
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 		
 		Text text = toolkit.createText(body, defaultName + (counter++));
-		GridData gd1 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd1.widthHint = 50;
-		text.setLayoutData(gd1);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd.widthHint = 50;
+		text.setLayoutData(gd);
 		nameTexts.add(text);
 		
 		EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
-		GridData gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd2.widthHint = 150;
-		textMath.getTextWidget().setLayoutData(gd2);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd);
 		contentTexts.add(textMath.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
-		label.setLayoutData(new GridData());
+//		label.setLayoutData(new GridData());
 		
 		text = text = toolkit.createText(body, defaultName + (counter++));
-		text.setLayoutData(gd1);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd.widthHint = 50;
+		text.setLayoutData(gd);
 		nameTexts.add(text);
 		
 		textMath = new EventBMath(toolkit.createText(body, ""));
-		gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd2.widthHint = 150;
-		textMath.getTextWidget().setLayoutData(gd2);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd);
 		contentTexts.add(textMath.getTextWidget());
 		
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
-		label.setLayoutData(new GridData());
+//		label.setLayoutData(new GridData());
 		
 		text = text = toolkit.createText(body, defaultName + (counter++));
-		text.setLayoutData(gd1);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd.widthHint = 50;
+		text.setLayoutData(gd);
 		nameTexts.add(text);
 		
 		textMath = new EventBMath(toolkit.createText(body, ""));
-		gd2 = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd2.widthHint = 150;
-		textMath.getTextWidget().setLayoutData(gd2);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd);
 		contentTexts.add(textMath.getTextWidget());
+		
+		composite.pack();
 		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
