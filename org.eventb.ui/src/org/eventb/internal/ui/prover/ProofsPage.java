@@ -31,6 +31,7 @@ import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.IProofStatusChangedListener;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 
 public class ProofsPage
 	extends FormPage 
@@ -191,7 +192,9 @@ public class ProofsPage
 		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
 		display.syncExec (new Runnable () {
 			public void run () {
-				goalSection.markDirty();
+				UIUtils.debug("Dirty state changed");
+				ProofsPage.this.getEditor().editorDirtyStateChanged();
+//				goalSection.markDirty();
 			}
 		});
 	}

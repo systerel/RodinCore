@@ -98,6 +98,8 @@ public class ProverUI
 //		return prFile;
 //	}
 	
+	
+	
 	public void setCurrentPO(IPRSequent prSequent) {
 		try {
 			userSupport.setCurrentPO(prSequent);
@@ -307,5 +309,22 @@ public class ProverUI
 				syncObligationExplorer();
 			}
 		});
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
+	 */
+	@Override
+	public boolean isDirty() {
+		
+		try {
+			UIUtils.debug("Checking dirty state " + this.getRodinInput().hasUnsavedChanges());
+			return this.getRodinInput().hasUnsavedChanges();
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return super.isDirty();
 	}
 }
