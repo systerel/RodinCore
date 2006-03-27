@@ -263,12 +263,12 @@ public class VariableMasterSection
 	/**
 	 * Handle the adding (new Variable) action.
 	 */
-	protected void handleAdd() {
+	private void handleAdd() {
 		IRodinFile rodinFile = editor.getRodinInput();
 		try {
 			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
 			IInternalElement element = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
-			markDirty();
+			editor.editorDirtyStateChanged();
 			TableViewer viewer = (TableViewer) this.getViewer();
 			viewer.refresh();
 			viewer.reveal(element);
@@ -296,7 +296,7 @@ public class VariableMasterSection
 		}
 		try {
 			EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -315,7 +315,7 @@ public class VariableMasterSection
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
 		try {
 			swap(current, previous);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -335,7 +335,7 @@ public class VariableMasterSection
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
 		try {
 			swap(next, current);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle

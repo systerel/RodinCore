@@ -276,7 +276,7 @@ extends NewEventBTablePartWithButtons
 		try {
 			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
 			IInternalElement element = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm"+(counter+1), null, null);
-			markDirty();
+			editor.editorDirtyStateChanged();
 			TableViewer viewer = (TableViewer) this.getViewer();
 			viewer.refresh();
 			viewer.reveal(element);
@@ -304,7 +304,7 @@ extends NewEventBTablePartWithButtons
 		}
 		try {
 			EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -323,7 +323,7 @@ extends NewEventBTablePartWithButtons
 		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
 		try {
 			swap(current, previous);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
@@ -343,7 +343,7 @@ extends NewEventBTablePartWithButtons
 		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
 		try {
 			swap(next, current);
-			markDirty();
+			editor.editorDirtyStateChanged();
 		}
 		catch (RodinDBException e) {
 			// TODO Exception handle

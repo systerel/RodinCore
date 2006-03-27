@@ -44,8 +44,8 @@ public class EventMasterSectionActionGroup
 	extends ActionGroup 
 {
 	
-	// The Event Master section.
-	private EventMasterSection section;
+	// The Event-B Editor.
+	private EventBEditor editor;
 	
 	// The tree viewer in the master section
 	private TreeViewer viewer;
@@ -64,9 +64,9 @@ public class EventMasterSectionActionGroup
 	 * <p>
 	 * @param eventSection The Event Master section
 	 */
-	public EventMasterSectionActionGroup(EventMasterSection eventSection) {
-		this.section = eventSection;
-		viewer = (TreeViewer) section.getViewer();
+	public EventMasterSectionActionGroup(EventBEditor eventBEditor, TreeViewer treeViewer) {
+		this.editor = eventBEditor;
+		this.viewer = treeViewer;
 		counter = 0;
 		
 		newLocalVariable = new Action() {
@@ -78,7 +78,7 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 
-								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
+								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(editor.getSite().getShell(), editor.getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
 								dialog.open();
 								Collection<String> names = dialog.getAttributes();
 								try {
@@ -93,7 +93,7 @@ public class EventMasterSectionActionGroup
 								}
 								viewer.refresh(event, true);
 								viewer.setExpandedState(event, true);
-								section.markDirty();
+								editor.editorDirtyStateChanged();
 								}								
 							}
 						});
@@ -111,7 +111,7 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
-									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(section.getSection().getShell(), section.getManagedForm().getToolkit(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
+									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(editor.getSite().getShell(), editor.getToolkit(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
 									dialog.open();
 									String [] names = dialog.getNewNames();
 									String [] contents = dialog.getNewContents();
@@ -129,7 +129,7 @@ public class EventMasterSectionActionGroup
 									}
 									viewer.refresh(event, true);
 									viewer.setExpandedState(event, true);
-									section.markDirty();
+									editor.editorDirtyStateChanged();
 								}
 								
 							}
@@ -149,8 +149,8 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 									ElementAtributeInputDialog dialog = 
-										new ElementAtributeInputDialog(section.getSection().getShell(), 
-												section.getManagedForm().getToolkit(),
+										new ElementAtributeInputDialog(editor.getSite().getShell(), 
+												editor.getToolkit(),
 												"New Action",
 												"Substitute of the new action",
 												EventBUIPlugin.SUB_DEFAULT);
@@ -168,7 +168,7 @@ public class EventMasterSectionActionGroup
 									}
 									viewer.refresh(event, true);
 									viewer.setExpandedState(event, true);
-									section.markDirty();
+									editor.editorDirtyStateChanged();
 								}
 							}
 						});
@@ -195,7 +195,7 @@ public class EventMasterSectionActionGroup
 								try {
 									EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
 									viewer.refresh();
-									section.markDirty();
+									editor.editorDirtyStateChanged();
 								}
 								catch (RodinDBException e) {
 									e.printStackTrace();
