@@ -78,7 +78,7 @@ public class EventMasterSectionActionGroup
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
 
-								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(editor.getSite().getShell(), editor.getToolkit(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
+								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(editor.getSite().getShell(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
 								dialog.open();
 								Collection<String> names = dialog.getAttributes();
 								try {
@@ -111,7 +111,7 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
 								if (ssel.size() == 1) {
 									IEvent event = (IEvent) ssel.getFirstElement();
-									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(editor.getSite().getShell(), editor.getToolkit(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
+									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(editor.getSite().getShell(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
 									dialog.open();
 									String [] names = dialog.getNewNames();
 									String [] contents = dialog.getNewContents();
@@ -150,7 +150,6 @@ public class EventMasterSectionActionGroup
 									IEvent event = (IEvent) ssel.getFirstElement();
 									ElementAtributeInputDialog dialog = 
 										new ElementAtributeInputDialog(editor.getSite().getShell(), 
-												editor.getToolkit(),
 												"New Action",
 												"Substitute of the new action",
 												EventBUIPlugin.SUB_DEFAULT);

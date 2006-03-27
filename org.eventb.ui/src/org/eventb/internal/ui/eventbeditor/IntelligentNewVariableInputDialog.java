@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.eventbeditor;
 
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -27,11 +26,9 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	private EventBMath initText;
 	private ScrolledForm scrolledForm;
 	private String title;
-	private FormToolkit toolkit;
 	
-	public IntelligentNewVariableInputDialog(Shell parentShell, FormToolkit toolkit, String title, String defaultName, String defaultInvariantName) {
+	public IntelligentNewVariableInputDialog(Shell parentShell, String title, String defaultName, String defaultInvariantName) {
 		super(parentShell);
-		this.toolkit = toolkit;
 		this.title = title;
 		this.defaultName = defaultName;
 		this.defaultInvariantName = defaultInvariantName;
@@ -71,12 +68,17 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
-		
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.setBackground(parent.getBackground());
+		toolkit.setBorderStyle(SWT.BORDER);
+
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
+		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
@@ -96,6 +98,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		gd.widthHint = 50;
 		invariantNameText.setLayoutData(gd);
 		
+
 		invariantPredicateText = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;

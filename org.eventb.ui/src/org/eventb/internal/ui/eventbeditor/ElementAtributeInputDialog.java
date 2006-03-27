@@ -29,9 +29,8 @@ public class ElementAtributeInputDialog extends Dialog {
 	private String message;
 	private FormToolkit toolkit;
 	
-	public ElementAtributeInputDialog(Shell parentShell, FormToolkit toolkit, String title, String message, String defaultName) {
+	public ElementAtributeInputDialog(Shell parentShell, String title, String message, String defaultName) {
 		super(parentShell);
-		this.toolkit = toolkit;
 		this.title = title;
 		this.message = message;
 		this.defaultName = defaultName;
@@ -75,16 +74,17 @@ public class ElementAtributeInputDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
-//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-//		gd.heightHint = 200;
-//		gd.widthHint = 300;
-//		composite.setLayoutData(gd);
-		
+		toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.setBackground(parent.getBackground());
+		toolkit.setBorderStyle(SWT.BORDER);
+
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.horizontalSpacing = 10;
+		layout.verticalSpacing = 10;
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);

@@ -31,9 +31,8 @@ public class ElementNameContentInputDialog extends Dialog {
 	private FormToolkit toolkit;
 	private int counter;
 	
-	public ElementNameContentInputDialog(Shell parentShell, FormToolkit toolkit, String title, String message, String defaultName, int counter) {
+	public ElementNameContentInputDialog(Shell parentShell, String title, String message, String defaultName, int counter) {
 		super(parentShell);
-		this.toolkit = toolkit;
 		this.title = title;
 		this.message = message;
 		this.defaultName = defaultName;
@@ -80,10 +79,9 @@ public class ElementNameContentInputDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
-//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-//		gd.heightHint = 200;
-//		gd.widthHint = 500;
-//		composite.setLayoutData(gd);
+		toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.setBackground(parent.getBackground());
+		toolkit.setBorderStyle(SWT.BORDER);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
@@ -108,6 +106,7 @@ public class ElementNameContentInputDialog extends Dialog {
 		gd.widthHint = 150;
 		textMath.getTextWidget().setLayoutData(gd);
 		contentTexts.add(textMath.getTextWidget());
+		textMath.getTextWidget().setFocus();
 		
 		label = toolkit.createLabel(body, message);
 //		label.setLayoutData(new GridData());
@@ -196,4 +195,5 @@ public class ElementNameContentInputDialog extends Dialog {
 	public String [] getNewContents() {
 		return (String []) contents.toArray(new String[contents.size()]);
 	}
+	
 }

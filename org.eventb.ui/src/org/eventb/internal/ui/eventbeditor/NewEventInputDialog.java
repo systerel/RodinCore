@@ -33,11 +33,9 @@ public class NewEventInputDialog extends Dialog {
 	private Collection<Text> actionTexts;
 	private ScrolledForm scrolledForm;
 	private String title;
-	private FormToolkit toolkit;
 	
-	public NewEventInputDialog(Shell parentShell, FormToolkit toolkit, String title, String defaultName) {
+	public NewEventInputDialog(Shell parentShell, String title, String defaultName) {
 		super(parentShell);
-		this.toolkit = toolkit;
 		this.title = title;
 		this.defaultName = defaultName;
 		varNames = new HashSet<String>();
@@ -83,17 +81,18 @@ public class NewEventInputDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-//		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-//		gd.heightHint = 320;
-//		gd.widthHint = 500;
-//		composite.setLayoutData(gd);
+
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.setBackground(parent.getBackground());
+		toolkit.setBorderStyle(SWT.BORDER);
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 5;
-		layout.verticalSpacing = 5;
+		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
