@@ -164,11 +164,12 @@ public abstract class EventBEditableTableViewer
 		});
 		Listener textListener = new Listener () {
 			public void handleEvent (final Event e) {
+				final String contents = text.getText();
 				switch (e.type) {
 					case SWT.FocusOut:
 						UIUtils.debug("FocusOut");
-						commit(row, column, text.getText());
-						item.setText (column, text.getText());
+						commit(row, column, contents);
+						item.setText (column, contents);
 						composite.dispose ();
 						break;
 					case SWT.Verify:
@@ -180,13 +181,13 @@ public abstract class EventBEditableTableViewer
 						switch (e.detail) {
 							case SWT.TRAVERSE_RETURN:
 								UIUtils.debug("TraverseReturn");
-								commit(row, column, text.getText ());
+								commit(row, column, contents);
 								composite.dispose();
 								e.doit = false;
 								break;
 							case SWT.TRAVERSE_TAB_NEXT:
 								UIUtils.debug("Traverse Tab Next");
-								commit(row, column, text.getText ());
+								commit(row, column, contents);
 								composite.dispose ();
 								e.doit = false;
 								if (table.getItem(table.getItemCount() - 1).equals(item)) {
@@ -200,7 +201,7 @@ public abstract class EventBEditableTableViewer
 							case SWT.TRAVERSE_TAB_PREVIOUS:
 								UIUtils.debug("Traverse Tab Previous");
 								int row = table.indexOf(item);
-								commit(row, column, text.getText ());
+								commit(row, column, contents);
 								composite.dispose ();
 								e.doit = false;
 								if (row != 0) selectRow(row - 1, column);

@@ -177,11 +177,12 @@ public abstract class EventBEditableTreeViewer
 		});
 		Listener textListener = new Listener () {
 			public void handleEvent (final Event e) {
+				final String contents = text.getText();
 				switch (e.type) {
 					case SWT.FocusOut:
 						UIUtils.debug("FocusOut");
-						commit((IInternalElement) itemData, column, text.getText());
-						item.setText (column, text.getText());
+						commit((IInternalElement) itemData, column, contents);
+						item.setText (column, contents);
 						composite.dispose ();
 						break;
 					case SWT.Verify:
@@ -193,7 +194,7 @@ public abstract class EventBEditableTreeViewer
 						switch (e.detail) {
 							case SWT.TRAVERSE_RETURN:
 								UIUtils.debug("TraverseReturn");
-								commit((IInternalElement) itemData, column, text.getText ());
+								commit((IInternalElement) itemData, column, contents);
 								composite.dispose();
 								e.doit = false;
 								break;
