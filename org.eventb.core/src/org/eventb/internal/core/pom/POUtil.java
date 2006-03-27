@@ -99,6 +99,7 @@ public class POUtil {
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
 			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
+			// if (!wellTyped) System.out.println("Pred : " + poPred.getContents() +" NOT WELL TYPED");
 			assert wellTyped;
 			return pred;
 	}
@@ -159,14 +160,6 @@ public class POUtil {
 	private static void addPredicate(IInternalParent internalParent, String predicate) throws RodinDBException {
 		IInternalElement element = internalParent.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, null);
 		element.setContents(predicate);
-	}
-	
-	public static String[] mp(String... strings) {
-		return strings;
-	}
-	
-	public static String[] mh(String... strings) {
-		return strings;
 	}
 
 }

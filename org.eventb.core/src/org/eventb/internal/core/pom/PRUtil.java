@@ -86,19 +86,19 @@ public class PRUtil {
 		} else {
 			prSeq.getProof().setContents(Status.PENDING.toString());
 		}
-		IPRFile prFile = (IPRFile) prSeq.getParent();
-		prFile.save(null, false);
+		// IPRFile prFile = (IPRFile) prSeq.getParent();
+		// prFile.save(null, false);
 	}
 	
-	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
-		IPRSequent[] prSeqs = (IPRSequent[]) prFile.getSequents();
-		for (IPRSequent prSeq : prSeqs){
-			if (prSeq.getName().equals(poName)){
-				prSeq.getProof().setContents(status.toString());
-			}
-		}
-		prFile.save(null, false);
-	}
+//	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
+//		IPRSequent[] prSeqs = (IPRSequent[]) prFile.getSequents();
+//		for (IPRSequent prSeq : prSeqs){
+//			if (prSeq.getName().equals(poName)){
+//				prSeq.getProof().setContents(status.toString());
+//			}
+//		}
+//		// prFile.save(null, false);
+//	}
 	
 	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
 		Map<String, Status> result 
