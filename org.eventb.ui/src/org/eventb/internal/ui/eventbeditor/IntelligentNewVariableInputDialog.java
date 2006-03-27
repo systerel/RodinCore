@@ -35,6 +35,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		this.title = title;
 		this.defaultName = defaultName;
 		this.defaultInvariantName = defaultInvariantName;
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	
@@ -69,10 +70,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.widthHint = 500;
-		composite.setLayoutData(gd);
+
 		
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
@@ -80,7 +78,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		body.setLayout(layout);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 		
 		toolkit.createLabel(body, "Name");
@@ -94,7 +92,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		toolkit.createLabel(body, "Invariant");
 		
 		invariantNameText = toolkit.createText(body, defaultInvariantName);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
 		invariantNameText.setLayoutData(gd);
 		
@@ -110,6 +108,8 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
 		initText.getTextWidget().setLayoutData(gd);
+		
+		composite.pack();
 		
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
