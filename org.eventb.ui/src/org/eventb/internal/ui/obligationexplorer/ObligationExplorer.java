@@ -181,8 +181,15 @@ public class ObligationExplorer
 			IEditorPart editor = activePage.getActiveEditor();
 			if (editor instanceof ProverUI) {
 				IPRSequent prSequent = ((ProverUI) editor).getCurrentProverSequent();
-				viewer.setSelection(new StructuredSelection(prSequent));
-				viewer.reveal(prSequent);
+				if (prSequent != null) {
+					viewer.setSelection(new StructuredSelection(prSequent));
+					viewer.reveal(prSequent);
+				}
+				else {
+					IRodinFile prFile = ((ProverUI) editor).getRodinInput();
+					viewer.setSelection(new StructuredSelection(prFile));
+					viewer.reveal(prFile);
+				}
 			}
 		}
 		viewer.addSelectionChangedListener(this);
@@ -336,12 +343,12 @@ public class ObligationExplorer
 		
 	}	
 	
-	public void externalSetSelection(IPRSequent pr) {
+	public void externalSetSelection(Object obj) {
 		byExternal = true;
-		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(pr)) {
+		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(obj)) {
 			UIUtils.debug("Set new Selection");
 			viewer.getControl().setRedraw(false);
-			viewer.setSelection(new StructuredSelection(pr));
+			viewer.setSelection(new StructuredSelection(obj));
 			viewer.getControl().setRedraw(true);
 		}
 		byExternal = false;
