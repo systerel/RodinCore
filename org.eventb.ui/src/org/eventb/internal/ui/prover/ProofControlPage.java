@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -176,128 +177,42 @@ public class ProofControlPage
 			}
 		
 			if (label.equals("p0")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalPP(false, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runPP(true);
 				return;
 			}
 		
 			if (label.equals("pp")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalPP(true, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runPP(false);
 				return;
 			}
 
 			if (label.equals("m0")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_0, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runML(ExternalML.Input.FORCE_0);
 				return;
 			}
 
 			if (label.equals("m1")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_1, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runML(ExternalML.Input.FORCE_1);
 				return;
 			}
 
 			if (label.equals("m2")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_2, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runML(ExternalML.Input.FORCE_2);
 				return;
 			}
 
 			if (label.equals("m3")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_3, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runML(ExternalML.Input.FORCE_3);
 				return;
 			}
 
 			if (label.equals("ml")) {
-				final UserSupport userSupport = editor.getUserSupport();
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
-						try {
-							userSupport.applyTactic(Tactics.externalML(ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1 | ExternalML.Input.FORCE_2 | ExternalML.Input.FORCE_3, monitor));
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				
-				applyTacticWithProgress(op);
-
+				runML(
+						ExternalML.Input.FORCE_0 | 
+						ExternalML.Input.FORCE_1 |
+						ExternalML.Input.FORCE_2 |
+						ExternalML.Input.FORCE_3
+				);
 				return;
 			}
 
@@ -321,17 +236,61 @@ public class ProofControlPage
 		}		
 	}
 
+	/**
+	 * Runs the predicate prover on the current proof tree node.
+	 * 
+	 * @param restricted
+	 *            <code>true</code> is only selected hypotheses should be
+	 *            passed to PP
+	 */
+	private void runPP(final boolean restricted) {
+		final UserSupport userSupport = editor.getUserSupport();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					userSupport.applyTactic(Tactics.externalPP(restricted, monitor));
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+		applyTacticWithProgress(op);
+	}
+
+	/**
+	 * Runs the mono-lemma prover on the current proof tree node.
+	 * 
+	 * @param forces
+	 *            list of forces to use
+	 */
+	private void runML(final int forces) {
+		final UserSupport userSupport = editor.getUserSupport();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					userSupport.applyTactic(Tactics.externalML(forces, monitor));
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+		applyTacticWithProgress(op);
+	}
+
 	private void applyTacticWithProgress(IRunnableWithProgress op) {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(ProofControlPage.this.scrolledForm.getShell());
-		
+		final Shell shell = ProofControlPage.this.scrolledForm.getShell();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
 			dialog.run(true, true, op);
 		} catch (InterruptedException exception) {
 			return;
 		} catch (InvocationTargetException exception) {
-			Throwable realException = exception.getTargetException();
+			final Throwable realException = exception.getTargetException();
 			realException.printStackTrace();
-			MessageDialog.openError(ProofControlPage.this.scrolledForm.getShell(), "Error here", realException.getMessage());
+			final String message = realException.getMessage();
+			MessageDialog.openError(shell, "Unexpected Error", message);
 			return;
 		}
 	}
