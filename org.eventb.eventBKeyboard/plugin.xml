@@ -13,7 +13,7 @@
             icon="icons/keyboard.gif"
             category="org.eventb.eventBKeyboard"
             class="org.eventb.eventBKeyboard.internal.views.EventBKeyboardView"
-            id="org.eventb.eventBKeyboard.internal.views.EventBKeyboardView">
+            id="org.eventb.eventBKeyboard.views.EventBKeyboardView">
       </view>
    </extension>
    <extension
