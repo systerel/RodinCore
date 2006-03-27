@@ -73,7 +73,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class UIUtils {
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
 	public static final String CONJI_SYMBOL = "\u2227";
 	public static final String IMPI_SYMBOL = "\u21d2";
@@ -388,7 +388,7 @@ public class UIUtils {
 	public static void newVariables(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Variables", "Name of the new variable", "var" + (counter + 1));
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Variables", "Name", "var" + (counter + 1));
 
 			dialog.open();
 			Collection<String> names = dialog.getAttributes();
@@ -451,7 +451,7 @@ public class UIUtils {
 	public static void newInvariants(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Invariants", "Name and predicate of the new invariant", "inv", counter + 1);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Invariants", "Name and predicate", "inv", counter + 1);
 			dialog.open();
 			String [] names = dialog.getNewNames();
 			String [] contents = dialog.getNewContents();
@@ -471,7 +471,7 @@ public class UIUtils {
 	public static void newTheorems(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Theorems", "Name and predicate of the new theorem", "thm", counter + 1);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Theorems", "Name and predicate", "thm", counter + 1);
 			dialog.open();
 			String [] names = dialog.getNewNames();
 			String [] contents = dialog.getNewContents();
@@ -492,6 +492,7 @@ public class UIUtils {
 		try {
 			int counter = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE).length;
 			NewEventInputDialog dialog = new NewEventInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Events", "evt" + (counter + 1));
+			
 			dialog.open();
 			String name = dialog.getName();
 			if (name != null) {
@@ -525,7 +526,7 @@ public class UIUtils {
 	public static void newCarrierSets(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Carrier Sets", "Name of the new carrier set", "set" + (counter + 1));
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Carrier Sets", "Name", "set" + (counter + 1));
 
 			dialog.open();
 			Collection<String> names = dialog.getAttributes();
@@ -543,7 +544,7 @@ public class UIUtils {
 	public static void newConstants(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Constants", "Name of the new constant", "cst" + (counter + 1));
+			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Constants", "Name", "cst" + (counter + 1));
 			dialog.open();
 			Collection<String> names = dialog.getAttributes();
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
@@ -560,7 +561,7 @@ public class UIUtils {
 	public static void newAxioms(IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Axioms", "Name and predicate of the new axiom", "axm", counter + 1);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), new FormToolkit(Display.getCurrent()), "New Axioms", "Name and predicate", "axm", counter + 1);
 			dialog.open();
 			String [] names = dialog.getNewNames();
 			String [] contents = dialog.getNewContents();
