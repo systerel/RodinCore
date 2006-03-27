@@ -27,6 +27,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -248,11 +249,17 @@ public class ProverUI
 		if (activePage != null) {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage.findView(ObligationExplorer.VIEW_ID);
 			if (obligationExplorer != null) {
-				IPRSequent prSequent = this.getUserSupport().getCurrentPO().getPRSequent();
+				ProofState ps = this.getUserSupport().getCurrentPO();
+				if (ps != null) {
+					IPRSequent prSequent = this.getUserSupport().getCurrentPO().getPRSequent();
+					obligationExplorer.externalSetSelection(prSequent);
+					obligationExplorer.getTreeViewer().reveal(prSequent);
+				}
+				else {
+//					obligationExplorer.externalSetSelection(this.getRodinInput());
+				}
 //				TreeViewer viewer = obligationExplorer.getTreeViewer();
 //				UIUtils.debug("Make new selection ");
-				obligationExplorer.externalSetSelection(prSequent);
-				obligationExplorer.getTreeViewer().reveal(prSequent);
 			}
 		}
 	}
@@ -271,7 +278,7 @@ public class ProverUI
 	 * <p>
 	 * @return a handle to a Rodin file
 	 */
-	private IPRFile getRodinInput() {
+	public IPRFile getRodinInput() {
 		if (prFile == null) {
 			FileEditorInput editorInput = (FileEditorInput) this.getEditorInput();
 			
@@ -283,7 +290,9 @@ public class ProverUI
 	}
 	
 	public IPRSequent getCurrentProverSequent() {
-		return getUserSupport().getCurrentPO().getPRSequent();
+		ProofState ps = getUserSupport().getCurrentPO();
+		if (ps != null) return ps.getPRSequent();
+		else return null;
 	}
 
 
