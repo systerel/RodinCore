@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.eventb.core.IContext;
 import org.eventb.core.IMachine;
+import org.eventb.core.IPOHypothesis;
+import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeNode;
@@ -420,26 +422,75 @@ public class UserSupport
 				}
 			}
 		}
+//		else if (element instanceof IProof) {
+//			IPRSequent prSequent = (IPRSequent) element.getParent();
+//			UserSupportUtils.debug("Change status " + prSequent.toString());
+////			
+////			for (ProofState ps : proofStates) {
+////				if (ps.getPRSequent().equals(element)) {
+////					if (ps.equals())
+////				}
+////			}
+//
+//		}
 		else if (element instanceof IPRSequent) {
-//			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
-			Collection<ProofState> remove = new HashSet<ProofState>();
-			for (ProofState ps : proofStates) {
-				if (ps.getPRSequent().equals(element)) {
-					if (kind == IRodinElementDelta.ADDED) {
-						UserSupportUtils.debug("Updated " + ((IPRSequent) element).getElementName());
-						ps.initProofTree();
-						if (ps == currentPS) setCurrentPO(ps.getPRSequent());
+			
+			if (kind == IRodinElementDelta.ADDED) { // No rename
+				UserSupportUtils.debug("Added " + ((IPRSequent) element).getElementName());
+				ProofState ps = new ProofState((IPRSequent) element);
+				proofStates.add(ps);
+			}
+			else if (kind == IRodinElementDelta.CHANGED) {
+				UserSupportUtils.debug("Changed " + ((IPRSequent) element).getElementName());
+				boolean refresh = false;
+				for (IRodinElementDelta d : delta.getAffectedChildren()) {
+					processDelta(d);
+					IRodinElement child = d.getElement();
+					if (child instanceof IPOHypothesis || child instanceof IPOPredicate) {
+						refresh = true;
 					}
-					else if (kind == IRodinElementDelta.REMOVED) {
-						UserSupportUtils.debug("Removed " + ((IPRSequent) element).getElementName());
-						remove.add(ps);
-					}
-					else { // CHANGED
-						UserSupportUtils.debug("Changed " + ((IPRSequent) element).getElementName());
+				}
+				if (refresh) {
+					for (ProofState ps : proofStates) {
+						if (ps.getPRSequent().equals(element)) {
+							UserSupportUtils.debug("Updated " + ((IPRSequent) element).getElementName());							
+							if (ps.getProofTree() != null) ps.initProofTree();
+							if (ps == currentPS) setCurrentPO(ps.getPRSequent());
+						}
 					}
 				}
 			}
-			proofStates.removeAll(remove);
+			else {
+				ProofState toBeRemoved = null;
+				for (ProofState ps : proofStates) {
+					if (ps.getPRSequent().equals(element)) {
+						if (kind == IRodinElementDelta.REMOVED) {
+							UserSupportUtils.debug("Removed " + ((IPRSequent) element).getElementName());
+							toBeRemoved = ps;
+						}
+					}
+				}
+				proofStates.remove(toBeRemoved);
+			}
+//			UserSupportUtils.debug("IPRSequent changed " + kind + " for " + ((IPRSequent) element).getElementName());
+//			Collection<ProofState> remove = new HashSet<ProofState>();
+//			for (ProofState ps : proofStates) {
+//				if (ps.getPRSequent().equals(element)) {
+//					if (kind == IRodinElementDelta.ADDED) {
+//						UserSupportUtils.debug("Updated " + ((IPRSequent) element).getElementName());
+//						ps.initProofTree();
+//						if (ps == currentPS) setCurrentPO(ps.getPRSequent());
+//					}
+//					else if (kind == IRodinElementDelta.REMOVED) {
+//						UserSupportUtils.debug("Removed " + ((IPRSequent) element).getElementName());
+//						remove.add(ps);
+//					}
+//					else { // CHANGED
+//						UserSupportUtils.debug("Changed " + ((IPRSequent) element).getElementName());
+//					}
+//				}
+//			}
+//			proofStates.removeAll(remove);
 		}
 		else if (element instanceof IMachine) {
 			return;
