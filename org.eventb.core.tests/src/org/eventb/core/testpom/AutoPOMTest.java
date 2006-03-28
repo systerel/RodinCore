@@ -17,42 +17,42 @@ public class AutoPOMTest extends BuilderTest {
 
 	private IPOFile createPOFile() throws RodinDBException {
 		IPOFile poFile = (IPOFile) rodinProject.createRodinFile("x.bpo", true, null);
-		POUtil.addTypes(poFile, POUtil.mp("x"), POUtil.mp("ℤ"));
-		POUtil.addPredicateSet(poFile, "hyp0", POUtil.mp("1=1","2=2","x∈ℕ"), null);
+		POUtil.addTypes(poFile, mp("x"), mp("ℤ"));
+		POUtil.addPredicateSet(poFile, "hyp0", mp("1=1","2=2","x∈ℕ"), null);
 		POUtil.addSequent(poFile, "PO1", 
 				"hyp0", 
-				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh(), 
+				mp(), mp(), 
+				mh(), 
 				"1=1 ∧2=2 ∧x ∈ℕ");
 		POUtil.addSequent(poFile, "PO2", 
 				"hyp0", 
-				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh("y∈ℕ"), 
+				mp("y"), mp("ℤ"), 
+				mh("y∈ℕ"), 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO3", 
 				"hyp0", 
-				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh("3=3"), 
+				mp(), mp(), 
+				mh("3=3"), 
 				"∃x·x=3");
 		POUtil.addSequent(poFile, "PO4", 
 				"hyp0", 
-				POUtil.mp(), POUtil.mp(), 
-				POUtil.mh("3=3"), 
+				mp(), mp(), 
+				mh("3=3"), 
 				"1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))");
 		POUtil.addSequent(poFile, "PO5", 
 				"hyp0", 
-				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh("y∈ℕ"), 
+				mp("y"), mp("ℤ"), 
+				mh("y∈ℕ"), 
 				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO6", 
 				"hyp0", 
-				POUtil.mp("y","x'"), POUtil.mp("ℤ","ℤ"), 
-				POUtil.mh("y∈ℕ"), 
+				mp("y","x'"), mp("ℤ","ℤ"), 
+				mh("y∈ℕ"), 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ");
 		POUtil.addSequent(poFile, "PO7", 
 				"hyp0", 
-				POUtil.mp("y"), POUtil.mp("ℤ"), 
-				POUtil.mh(), 
+				mp("y"), mp("ℤ"), 
+				mh(), 
 				"y∈ℕ");
 		poFile.save(null, true);
 		return poFile;
@@ -132,6 +132,14 @@ public class AutoPOMTest extends BuilderTest {
 		assertEquals("PO " + prSequent.getName() + " should not be discharged",
 				IProof.Status.PENDING,
 				status.getStatus());
+	}
+	
+	public static String[] mp(String... strings) {
+		return strings;
+	}
+	
+	public static String[] mh(String... strings) {
+		return strings;
 	}
 
 }
