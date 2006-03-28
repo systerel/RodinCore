@@ -13,6 +13,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -132,8 +133,14 @@ public abstract class EventBMirrorSection
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		IRodinElementDelta delta = event.getDelta();
-		if (delta.getElement() instanceof IRodinFile & delta.getKind() != IRodinElementDelta.REMOVED)
-			this.refresh();
+		if (delta.getElement() instanceof IRodinFile && delta.getKind() != IRodinElementDelta.REMOVED) {
+			Display.getCurrent().syncExec(new Runnable() {
+				public void run() {
+					refresh();
+				}
+			});
+			
+		}
 	}
 
 }
