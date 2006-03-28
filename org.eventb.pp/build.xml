@@ -19,23 +19,33 @@
 		<tstamp />
 	</target>
 
-	<target name="generate" depends="tom" description="Generate all Java files">
+	<target name="generate" depends="tomIdentityTranslator, tomTranslator, tomIdentifierDecomposition" description="Generate all Java files">
 		<eclipse.incrementalBuild/>
 	</target>
 
 	<target name="tom-test" depends="init"
 			description="Test if generated tom files are up to date">
-		<uptodate property="tom.notRequired" 
+		<uptodate property="tom.IdentityTranslator.notRequired" 
+				targetfile="${translatorSrcDir}/IdentityTranslator.java" >
+		    <srcfiles file= "${translatorSrcDir}/IdentityTranslator.t" />
+		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
+		</uptodate>
+		<uptodate property="tom.IdentifierDecomposition.notRequired" 
+				targetfile="${translatorSrcDir}/IdentifierDecomposition.java" >
+		    <srcfiles file= "${translatorSrcDir}/IdentifierDecomposition.t" />
+		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
+		</uptodate>
+		<uptodate property="tom.Translator.notRequired" 
 				targetfile="${translatorSrcDir}/Translator.java" >
 		    <srcfiles file= "${translatorSrcDir}/Translator.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
 		<!-- echoproperties prefix="tom" /-->
-	</target>
+</target>
 
-	<target name="tom" depends="init,tom-test"
-		description="launch tom"
-		unless="tom.notRequired" >
+	<target name="tomTranslator" depends="init,tom-test"
+		description="launch tom for Translator.t"
+		unless="tom.Translator.notRequired" >
 		<java classname="jtom.Tom" fork="true">
 			<classpath>
 				<fileset dir="${tom-home}/lib">
@@ -57,9 +67,61 @@
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
+	
+	<target name="tomIdentityTranslator" depends="init,tom-test"
+		description="launch tom for IdentityTranslator.t"
+		unless="tom.IdentityTranslator.notRequired" >
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+<!--			<arg value="-I" />
+			<arg value="${tom-home}/share/jtom" />  !-->
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="--output" />
+			<arg value="${translatorSrcDir}/IdentityTranslator.java" />
+			<arg value="--pretty" />
+			<arg value="--static" />
+<!--			<arg value="- -optimize" />
+			<arg value="- -optimize2" />-->
+			<arg value="${translatorSrcDir}/IdentityTranslator.t" />
+		</java>
+		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	</target>
+
+	<target name="tomIdentifierDecomposition" depends="init,tom-test"
+		description="launch tom for IdentifierDecomposition.t"
+		unless="tom.IdentifierDecomposition.notRequired" >
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+<!--			<arg value="-I" />
+			<arg value="${tom-home}/share/jtom" />  !-->
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="--output" />
+			<arg value="${translatorSrcDir}/IdentifierDecomposition.java" />
+			<arg value="--pretty" />
+			<arg value="--static" />
+			<arg value="--optimize" />
+			<arg value="--optimize2" />
+			<arg value="${translatorSrcDir}/IdentifierDecomposition.t" />
+		</java>
+		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	</target>
 
 	<target name="clean" description="clean up">
 		<delete file="${translatorSrcDir}/Translator.java" />
+		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
+		<delete file="${translatorSrcDir}/IdentifierDecomposition.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	

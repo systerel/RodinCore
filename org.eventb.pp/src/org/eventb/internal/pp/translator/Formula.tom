@@ -20,13 +20,55 @@
 	equals(t1,t2) { t1.equals(t2) }
 }
 
+%typeterm Type {
+	implement { Type }
+	equals(t1,t2) { t1.equals(t2) }
+}
+
+%typeterm BoundIdentDecl {
+	implement { BoundIdentDecl }
+	equals(t1,t2) { t1.equals(t2) }
+}
+
+%typeterm BigInteger {
+	implement { BigInteger }
+	equals(t1,t2) { t1.equals(t2) }
+}
+
 %typeterm PredicateList {
 	implement { Predicate[] }
 	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
 }
 
+%typeterm ExpressionList {
+	implement { Expression[] }
+	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+}
+
+%typeterm BoundIdentDeclList {
+	implement { BoundIdentDecl[] }
+	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+}
+
+
 %oparray PredicateList pList (Predicate*) {
 	is_fsym(t) { t instanceof Predicate[] }
+    get_size(t)      { t.length }
+    get_element(t,n) { t[n] }
+	make_empty(t) { null }
+	make_append(e, t) { null }
+}
+
+%oparray ExpressionList eList (Expression*) {
+	is_fsym(t) { t instanceof Expression[] }
+    get_size(t)      { t.length }
+    get_element(t,n) { t[n] }
+	make_empty(t) { null }
+	make_append(e, t) { null }
+}
+
+%oparray BoundIdentDeclList bidList (BoundIdentDecl*) {
+	is_fsym(t) { t instanceof BoundIdentDecl[] }
     get_size(t)      { t.length }
     get_element(t,n) { t[n] }
 	make_empty(t) { null }
@@ -42,6 +84,13 @@
 	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
 }
 
+
+%op Predicate Lor (children : PredicateList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LOR }
+	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
+}
+
+
 /*
  * BinaryPredicate
  */
@@ -54,7 +103,275 @@
 
 %op Predicate Leqv (left: Predicate, right: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.LEQV }
-	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
+	get_slot(left,t) { ((BinaryPredicate) t). getLeft() }
 	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
 }
+
+/*
+ * UnaryPredicate
+ */
+
+%op Predicate Not (child: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.NOT }
+	get_slot(child,t) { ((UnaryPredicate) t). getChild() }
+}
+
+/*
+ * RelationalPredicate
+ */
+
+%op Predicate RelationalPredicate (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t instanceof RelationalPredicate }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Equal (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.EQUAL }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Lt (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LT }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Le (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.LE }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Gt (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.GT }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Ge (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.GE }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate In (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.IN }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate NotIn (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.NOTIN }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate Subset (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.SUBSET }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate NotSubset (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.NOTSUBSET }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate SubsetEq (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.SUBSETEQ }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate NotSubsetEq (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.NOTSUBSETEQ }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+/*
+ * QuantifiedPredicate
+ */
+
+%op Predicate ForAll (identifiers: BoundIdentDeclList, predicate: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.FORALL }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
+}
+
+%op Predicate Exists (identifiers: BoundIdentDeclList, predicate: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.EXISTS }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
+}
+
+/* 
+ * LiteralPredicate
+ */
+
+%op Predicate BTRUE {
+	is_fsym(t) { t != null && t.getTag() == Formula.BTRUE }
+}
+
+%op Predicate BFALSE {
+	is_fsym(t) { t != null && t.getTag() == Formula.BFALSE }
+}
+
+/*
+ * SimplePredicate
+ */
+ 
+%op Predicate Finite (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KFINITE }
+	get_slot(child,t) { ((SimplePredicate) t).getExpression() }
+}
+
+/*
+ * AtomicExpression
+ */
+
+%op Expression AtomicExpression {
+	is_fsym(t) { t != null && t instanceof AtomicExpression }
+}
+
+%op Expression NATURAL {
+	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL }
+}
+	
+%op Expression NATURAL1 {
+	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL1 }
+}
+
+%op Expression INTEGER {
+	is_fsym(t) { t != null && t.getTag() == Formula.INTEGER }
+}
+
+
+
+/*
+ * BinaryExpression
+ */
+
+%op Expression BinaryExpression (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t instanceof BinaryExpression }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Mapsto (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.MAPSTO }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+/*
+ * BoolExpression
+ */
+
+%op Expression Bool (predicate: Predicate) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KBOOL }
+	get_slot(predicate,t) { ((BoolExpression) t).getPredicate() }
+}
+
+/*
+ * FreeIdentifier
+ */
+%op Expression FreeIdentifier (name: String) {
+	is_fsym(t) { t != null && t.getTag() == Formula.FREE_IDENT }
+	get_slot(name,t) { ((FreeIdentifier)t).getName() }
+}
+
+/*
+ * BoundIdentifier
+ */
+%op Expression BoundIdentifier (boundIndex: int) {
+	is_fsym(t) { t != null && t.getTag() == Formula.BOUND_IDENT }
+	get_slot(boundIndex,t) { ((BoundIdentifier)t).getBoundIndex() }
+}
+
+/*
+ * IntegerLiteral
+ */
+
+%op Expression IntegerLiteral (value: BigInteger) {
+	is_fsym(t) { t != null && t instanceof IntegerLiteral }
+	get_slot(value,t) { ((IntegerLiteral) t).getValue() }
+}
+
+/*
+ * QuantifiedExpression
+ */
+
+%op Expression Cset (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.CSET }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
+	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
+}
+
+%op Expression Qinter (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.QINTER }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
+	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
+}
+
+%op Expression Qunion (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.QUNION }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
+	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
+}
+
+/*
+ * SetExtension
+ */
+
+%op Expression SetExtension (members: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.SETEXT }
+	get_slot(members,t) { ((SetExtension)t).getMembers() }
+}
+
+/*
+ * UnaryExpression
+ */
+ 
+%op Expression UnaryExpression (child: Expression) {
+	is_fsym(t) { t != null && t instanceof UnaryExpression }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Pow (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.POW }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+
+/*
+ * PowerSetType
+ */
+ 
+%op Type PowerSetType (baseType: Type) {
+	is_fsym(t) { t != null && t instanceof PowerSetType }
+	get_slot (baseType, t) { t.getBaseType() }
+}
+
+/*
+ * ProductType
+ */
+ 
+%op Type ProductType (left: Type, right: Type) {
+	is_fsym(t) { t != null && t instanceof ProductType }
+	get_slot (left, t) { ((ProductType)t).getLeft() }
+	get_slot (right, t) { ((ProductType)t).getRight() }
+}
+
+
+
+
+
+ 
 
