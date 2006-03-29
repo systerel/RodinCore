@@ -579,6 +579,68 @@ public class TestMachinePOG_2 extends BuilderTest {
 	}
 
 	/**
+	 * Test method for guard deadlock freeness (non-generation)
+	 */
+	public void testGuard7() throws Exception {
+		
+		String guard1 = predicateFromString("x∈ℕ").toString();
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
+		addInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
+		addSCEvent(rodinFile, "E",
+				makeList(), 
+				makeList("G"), 
+				makeList(guard1),
+				makeList(),
+				makeList("ℤ", "ℤ"));
+		addSCEvent(rodinFile, "F",
+				makeList(), 
+				makeList(), 
+				makeList(),
+				makeList(),
+				makeList());
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		assertTrue("number of proof obligations", sequents.length == 0);
+		
+	}
+
+	/**
+	 * Test method for guard deadlock freeness (non-generation)
+	 */
+	public void testGuard8() throws Exception {
+		
+		String guard1 = predicateFromString("x∈ℕ").toString();
+		
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
+		addInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
+		addSCEvent(rodinFile, "E",
+				makeList(), 
+				makeList("G"), 
+				makeList(guard1),
+				makeList(),
+				makeList("ℤ", "ℤ"));
+		addSCEvent(rodinFile, "INITIALISATION",
+				makeList(), 
+				makeList(), 
+				makeList(),
+				makeList(),
+				makeList());
+		rodinFile.save(null, true);
+		IPOFile poFile = runPOG(rodinFile);
+		
+		IPOSequent[] sequents = poFile.getSequents();
+		// assertTrue("number of proof obligations", sequents.length == 2);
+		
+		int dlk = getIndexForName("DLK", sequents);
+		assertTrue("names ok", dlk != -1);
+	}
+
+	/**
 	 * Test method for independence of type environments of local variables
 	 */
 	public void testLocalVariables1() throws Exception {

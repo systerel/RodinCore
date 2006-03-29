@@ -104,6 +104,8 @@ public class MachineRuleBase {
 					Predicate btrue = cache.getFactory().makeLiteralPredicate(Formula.BTRUE, null);
 					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getEvents().length * 2 + 1);
 					
+					boolean dlkPOrequired = true;
+					
 					// disjuncts of deadlock-freeness predicate
 					ArrayList<Predicate> dlkPredicate = new ArrayList<Predicate>(cache.getEvents().length);
 					
@@ -114,7 +116,13 @@ public class MachineRuleBase {
 						ITypeEnvironment fullTypeEnvironment = cache.getGlobalTypeEnvironment().clone();
 						fullTypeEnvironment.addAll(typeEnvironment);
 						
-						String globalHypsetName = (evtName.equals("INITIALISATION")) ? cache.getOldHypSetName() : cache.getNewHypsetName();
+						final boolean isInitialisation = evtName.equals("INITIALISATION");
+						String globalHypsetName = (isInitialisation) ? cache.getOldHypSetName() : cache.getNewHypsetName();
+						
+						// If there is one event with an empty list of guards, this means the guard of that event is true.
+						// Thus, the machine is deadlock-free.
+						if(!isInitialisation && guards.length == 0)
+							dlkPOrequired = false;
 						
 						// MDL_GRD_WD
 						ArrayList<Predicate> precGuards = new ArrayList<Predicate>(guards.length);
@@ -240,7 +248,7 @@ public class MachineRuleBase {
 									idInt = true;
 								}
 							}
-							if(idInt || evtName.equals("INITIALISATION")) {
+							if(idInt || isInitialisation) {
 								ArrayList<Predicate> prec = new ArrayList<Predicate>(precGuards);
 								ArrayList<BecomesEqualTo> post = new ArrayList<BecomesEqualTo>(postBA.size() + numAssignedVars);
 								for(BecomesEqualTo bet : postBA) {
@@ -280,7 +288,7 @@ public class MachineRuleBase {
 												globalHypsetName,
 												prec,
 												predicate,
-												"Invariant " + ((evtName.equals("INITIALISATION")) ? " establishment" : " preservation"),
+												"Invariant " + ((isInitialisation) ? " establishment" : " preservation"),
 												new HashMap<String, String>(0),
 												sources
 										)
@@ -292,10 +300,12 @@ public class MachineRuleBase {
 					
 					// MDL_DLK
 					Predicate DLK = null;
-					if(dlkPredicate.size() > 1)
-						DLK = cache.getFactory().makeAssociativePredicate(Formula.LOR, dlkPredicate, null);
-					else if(dlkPredicate.size() == 1)
-						DLK = dlkPredicate.get(0);
+					if(dlkPOrequired) {
+						if(dlkPredicate.size() > 1)
+							DLK = cache.getFactory().makeAssociativePredicate(Formula.LOR, dlkPredicate, null);
+						else if(dlkPredicate.size() == 1)
+							DLK = dlkPredicate.get(0);
+					}
 					if (DLK != null)
 						poList.add(
 								new ProofObligation(
