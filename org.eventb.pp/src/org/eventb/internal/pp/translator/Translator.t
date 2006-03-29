@@ -20,98 +20,22 @@ import org.eventb.core.ast.*;
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
-public abstract class Translator {
+public class Translator extends IdentityTranslator {
 
+
+	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
+		pred = IdentifierDecomposition.decomposeIdentifiers(pred, ff);
+		return new Translator().translate(pred, ff);
+	}
+	
 	%include {Formula.tom}
-	public static class QuantMapletBuilder {
 	
-		private Counter c = null;
-		private LinkedList<BoundIdentDecl> identDecls;
-		private Expression maplet;
-	
-		public void calculate(Type type, int offset, SourceLocation loc, FormulaFactory ff) {
-			c = new Counter(offset);
-			maplet = mapletOfType(type, loc, ff);
-			identDecls = new LinkedList<BoundIdentDecl>();
-			for( int i = offset; i < c.value(); i++) {
-				identDecls.addLast(ff.makeBoundIdentDecl("x_" + i, loc));
-			}
-		}
-		
-		public Expression getMaplet() {
-			return maplet;
-		}
-		
-		public LinkedList<BoundIdentDecl> getIdentDecls() {
-			return identDecls;
-		}
-		
-		private Expression mapletOfType(Type type, SourceLocation loc, FormulaFactory ff) {
-			%match (Type type) {
-				PowerSetType (_) -> {
-					return ff.makeBoundIdentifier(c.increment(), loc, `type);
-				}
-				ProductType (left, right) -> {
-					return ff.makeBinaryExpression(
-						Formula.MAPSTO, 
-						mapletOfType(`left, loc, ff),
-						mapletOfType(`right, loc, ff),
-						loc);
-				}
-				type -> {
-					return ff.makeBoundIdentifier(c.increment(), loc, `type);	
-				}
-			}
-		}
-	}
-	/*
-	private static Expression decomposeExpression(Expression expr, LinkedList<Type> identTypes, Counter c, FormulaFactory ff){
-		QuantMapletBuilder mb = new QuantMapletBuilder();
-		
-		%match (Expression expr) {
-			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
-				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
-				for (BoundIdentDecl decl: `is) {
-					mb.calculate(decl.getType(), decl.getSourceLocation(), ff);
-					identTypes.addFirst (decl.getType());
-					c.add(mb.getIdentDecls().size());
-					identDecls.addAll(mb.getIdentDecls());					
-				}	
-				QuantifiedExpression result = ff.makeQuantifiedExpression(
-					expr.getTag(),
-					identDecls,
-					decomposePredicate(`P, identTypes, new Counter(c), ff),
-					decomposeExpression(`E, identTypes, new Counter(c), ff),
-					null,
-					null);
-
-				for (int i = 0; i < `is.length; i++) {
-					identTypes.removeFirst();
-				}
-			}
-			_ -> {
-				return null;
-			}
-		}
-	}
-	
-	private static Predicate decomposePredicate(Predicate P, LinkedList<Type> identTypes, Counter c, FormulaFactory ff) {
-		%match (Predicate P) {
-			ForAll(is, P) | Exists(is, P) -> {
-				
-			}
-			_ -> {
-				return null;
-			}
-		}
-	}*/
-	
-	public static Predicate translateIn(Expression E, Expression right, SourceLocation loc, FormulaFactory ff) {
+	protected Predicate translateIn(Expression E, Expression right, SourceLocation loc, FormulaFactory ff) {
 		QuantMapletBuilder mb = new QuantMapletBuilder();
 
 		%match (Expression right) {
 			FreeIdentifier(name) -> {
-				/*TODO: Remove*/
+				/*TODO: Remove.*/
 				return ff.makeRelationalPredicate(
 					Formula.IN,
 					E,
@@ -192,60 +116,48 @@ public abstract class Translator {
 						loc),
 					loc);
 			}
+			SetExtension(members) -> {
+				if(`members.length == 0) {
+					return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+				}
+				else{
+					LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+					for(Expression member: `members){
+						predicates.add(
+							ff.makeRelationalPredicate(Formula.EQUAL, E, member, loc));
+								
+					}
+					if(predicates.size() == 1) {
+						return translate(predicates.getFirst(), ff);
+					}
+					else{
+						return translate(
+							ff.makeAssociativePredicate(Formula.LAND, predicates, loc), ff);
+					}
+				}
+			}
 			P -> {
 				throw new AssertionError("no mapping for: " + `P);
 	    	}
 		}					
 	}
-	/*
-	protected static Predicate translateEqv (Expression left, Expression right, 
+	
+	protected Predicate translateEqv (Expression left, Expression right, 
 		SourceLocation loc, FormulaFactory ff) {
-		
-	}*/
-	public static Predicate translate(Predicate pred, FormulaFactory ff) {
+		return null;
+	}
+	
+	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
-	    %match (Predicate pred) {
-	    	Land(children) -> {
-	    		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
-	    		for (Predicate child: `children) {
-	    			newChildren.add(translate(child, ff));
-	    		}
-		    	if (newChildren.size() == 1) {
-		    		return newChildren.get(0);
-	    		} else {
-		    		return ff.makeAssociativePredicate(Formula.LAND, 
-		    				newChildren, loc);
-	    		}
-	    	}
-	    	Lor(children) -> {
-	    		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
-	    		for (Predicate child: `children) {
-	    			newChildren.add(translate(child, ff));
-	    		}
-		    	if (newChildren.size() == 1) {
-		    		return newChildren.get(0);
-	    		} else {
-		    		return ff.makeAssociativePredicate(Formula.LOR, 
-		    				newChildren, loc);
-	    		}
-	    	}/*
-	    	Limp(left, right) -> {
-	    		return pred;
-	    	}*//*
-	        Leqv(left, right) -> {
+	    %match (Predicate pred) {/*
+	    	Leqv(left, right) -> {
 	        	return translateEqv (`left, `right, loc, ff);
-	        }		*/    		    	
+	        }		   		*/    	
 	    	In(left, right) -> {
 	    		return translateIn (`left, `right, loc, ff);
 	    	}
-	    	(BTRUE | BFALSE) -> {
-	    		return pred;
-	    	}
-	    	Not(P) -> {
-	    		return ff.makeUnaryPredicate(Formula.NOT, translate(`P, ff), loc);
-	    	}
-	    	P -> {
-	    		throw new AssertionError("No Predicate mapping for: " + `P);
+	    	_ -> {
+	    		return super.translate(pred, ff);
 	    	}
 	    }
 	}

@@ -24,7 +24,7 @@ public class IdentityTranslator {
 
 	%include {Formula.tom}
 	
-	public Expression translate(Expression expr, FormulaFactory ff) {
+	protected Expression translate(Expression expr, FormulaFactory ff) {
 		SourceLocation loc = expr.getSourceLocation();
 	    %match (Expression expr) {
 	    	AtomicExpression() | BoundIdentifier(_) | FreeIdentifier(_) | IntegerLiteral(_) -> { 
@@ -71,7 +71,7 @@ public class IdentityTranslator {
 	    }
 	}
 	
-	public Predicate translate(Predicate pred, FormulaFactory ff) {
+	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
 	    	Land(children) | Lor(children) -> {

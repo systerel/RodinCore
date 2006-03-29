@@ -46,13 +46,13 @@ public class TranslationTests extends TestCase {
 	
 	private TestTranslation translator = new TestTranslation() {
 		public Formula translate(Formula input, FormulaFactory formulaFactory) {
-			return Translator.translate((Predicate)input, formulaFactory);
+			return Translator.reduceToPredCalc((Predicate)input, formulaFactory);
 		}
 	};
 	
 	private TestTranslation identifierDecomposition = new TestTranslation() {
 		public Formula translate(Formula input, FormulaFactory formulaFactory) {
-			return new IdentifierDecomposition().translate((Predicate)input, formulaFactory);
+			return IdentifierDecomposition.decomposeIdentifiers((Predicate)input, formulaFactory);
 		}
 	};
 	
@@ -85,6 +85,10 @@ public class TranslationTests extends TestCase {
 		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, loc);
 	}
 	
+	private static IntegerLiteral IntLiteral(int value, SourceLocation loc) {
+		return ff.makeIntegerLiteral(new BigInteger("" + value), null);
+	}
+	
 	/**
 	 * Main test routine for predicates.
 	 */
@@ -99,8 +103,227 @@ public class TranslationTests extends TestCase {
 		doTest(pred, pred);
 	}
 	
+	public void testIdentifierDecomposition1() {
+		Predicate input, expected;
+		
+		input = ff.makeQuantifiedPredicate(
+					Formula.FORALL,
+					FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
+					ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
+						ff.makeBoundIdentifier(0, null),
+						null),
+					null);
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("x0", null)),
+				ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
+						Maplet(						
+								ff.makeBoundIdentifier(0, null),
+								ff.makeBoundIdentifier(1, null),
+								null),
+						null),
+				null);	
+		
+		doTest(input, expected, identifierDecomposition);		
+	}
 
-	public void testIdentifierDecomposition() {
+	public void testIdentifierDecomposition2() {
+		Predicate input, expected;
+		
+		input = ff.makeRelationalPredicate(
+				Formula.EQUAL,
+				Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
+				ff.makeFreeIdentifier("s", null),
+				null);
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("x0", null)),
+				ff.makeBinaryPredicate(
+						Formula.LIMP,
+						ff.makeRelationalPredicate(
+							Formula.EQUAL,
+							ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
+							Maplet(						
+									ff.makeBoundIdentifier(0, null),
+									ff.makeBoundIdentifier(1, null),
+									null),
+							null),
+						ff.makeRelationalPredicate(
+							Formula.EQUAL,
+							Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
+							Maplet(						
+									ff.makeBoundIdentifier(0, null),
+									ff.makeBoundIdentifier(1, null),
+									null),
+							null),
+						null),
+				null);	
+		
+		doTest(input, expected, identifierDecomposition);		
+	}
+	
+	public void testIdentifierDecomposition3() {
+		Predicate input, expected;
+		
+		input = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
+				ff.makeRelationalPredicate(
+					Formula.EQUAL,
+					ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
+					ff.makeBoundIdentifier(0, null),
+					null),
+				null);
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("x0", null)),
+				ff.makeBinaryPredicate(
+						Formula.LIMP,
+						ff.makeRelationalPredicate(
+							Formula.EQUAL,
+							ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
+							Maplet(						
+									ff.makeBoundIdentifier(0, null),
+									ff.makeBoundIdentifier(1, null),
+									null),
+							null),
+						ff.makeQuantifiedPredicate(
+							Formula.FORALL,
+							FastFactory.mList(
+									ff.makeBoundIdentDecl("x", null),
+									ff.makeBoundIdentDecl("x0", null)),
+							ff.makeRelationalPredicate(
+									Formula.EQUAL,
+									Maplet(
+											ff.makeBoundIdentifier(2, null),
+											ff.makeBoundIdentifier(3, null),
+											null),
+									Maplet(						
+											ff.makeBoundIdentifier(0, null),
+											ff.makeBoundIdentifier(1, null),
+											null),
+									null),
+							null),
+						null),
+				null);
+
+		
+		doTest(input, expected, identifierDecomposition);		
+	}
+	
+	public void testIdentifierDecomposition4() {
+		Predicate input, expected;
+		
+		input = ff.makeRelationalPredicate(
+				Formula.EQUAL,
+				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
+				ff.makeFreeIdentifier("s", null),
+				
+				null);
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("x0", null),
+						ff.makeBoundIdentDecl("x1", null),
+						ff.makeBoundIdentDecl("x2", null)),
+				ff.makeBinaryPredicate(
+						Formula.LIMP,
+						ff.makeAssociativePredicate(
+								Formula.LAND,
+								FastFactory.mList(
+										ff.makeRelationalPredicate(
+											Formula.EQUAL,
+											ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
+											Maplet(						
+													ff.makeBoundIdentifier(0, null),
+													ff.makeBoundIdentifier(1, null),
+													null),
+											null),
+										ff.makeRelationalPredicate(
+											Formula.EQUAL,
+											ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
+											Maplet(						
+													ff.makeBoundIdentifier(2, null),
+													ff.makeBoundIdentifier(3, null),
+													null),
+											null)),
+								null),
+						ff.makeRelationalPredicate(
+							Formula.EQUAL,
+							Maplet(						
+									ff.makeBoundIdentifier(0, null),
+									ff.makeBoundIdentifier(1, null),
+									null),
+							Maplet(						
+									ff.makeBoundIdentifier(2, null),
+									ff.makeBoundIdentifier(3, null),
+									null),
+							null),
+						null),
+				null);	
+		
+		doTest(input, expected, identifierDecomposition);		
+	}
+
+	public void testIdentifierDecomposition5() {
+		Predicate input, expected;
+		
+		input = ff.makeRelationalPredicate(
+				Formula.EQUAL,
+				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
+				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
+				
+				null);
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("x0", null)),
+				ff.makeBinaryPredicate(
+						Formula.LIMP,
+							ff.makeRelationalPredicate(
+									Formula.EQUAL,
+									ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
+									Maplet(						
+										ff.makeBoundIdentifier(0, null),
+										ff.makeBoundIdentifier(1, null),
+										null),
+									null),
+							ff.makeRelationalPredicate(
+								Formula.EQUAL,
+								Maplet(						
+										ff.makeBoundIdentifier(0, null),
+										ff.makeBoundIdentifier(1, null),
+										null),
+								Maplet(						
+										ff.makeBoundIdentifier(0, null),
+										ff.makeBoundIdentifier(1, null),
+										null),
+								null),
+							null),
+				null);	
+		
+		doTest(input, expected, identifierDecomposition);		
+	}
+
+/*
+	public void testIdentifierDecomposition4() {
 		Predicate input, expected;
 		
 		input = ff.makeRelationalPredicate(
@@ -120,10 +343,12 @@ public class TranslationTests extends TestCase {
 													FastFactory.mList(ff.makeBoundIdentDecl("x", null, CPROD(CPROD(INT, INT), CPROD(INT, INT)))),
 													ff.makeLiteralPredicate(Formula.BTRUE, null),
 													ff.makeSetExtension(
-															Maplet(
-																	ff.makeBoundIdentifier(1, null), 
-																	ff.makeBoundIdentifier(0, null), 
-																	null),
+															FastFactory.mList(
+																Maplet(
+																		ff.makeBoundIdentifier(1, null), 
+																		ff.makeBoundIdentifier(0, null), 
+																		null),
+																ff.makeFreeIdentifier("s", null)),	
 														    null),
 											        null,
 													QuantifiedExpression.Form.Explicit),
@@ -134,7 +359,46 @@ public class TranslationTests extends TestCase {
 						QuantifiedExpression.Form.Explicit),
 					null);
 		
-		expected = ff.makeRelationalPredicate(
+		Expression innerSet =
+			ff.makeSetExtension(
+					Maplet(
+							Maplet( 
+									ff.makeBoundIdentifier(4, null),
+									ff.makeBoundIdentifier(5, null),
+									null),
+							Maplet(
+									Maplet(
+											ff.makeBoundIdentifier(0, null),
+											ff.makeBoundIdentifier(1, null),
+											null),
+									Maplet(
+											ff.makeBoundIdentifier(2, null),
+											ff.makeBoundIdentifier(3, null),
+											null),
+									null),
+							null),
+				    null);
+		
+		Expression card = ff.makeUnaryExpression(
+				Formula.KCARD,
+				ff.makeQuantifiedExpression(
+						Formula.QUNION,
+						FastFactory.mList(
+								ff.makeBoundIdentDecl("x_0", null, INT),
+								ff.makeBoundIdentDecl("x_1", null, INT),
+								ff.makeBoundIdentDecl("x_2", null, INT),
+								ff.makeBoundIdentDecl("x_3", null, INT)),
+						ff.makeLiteralPredicate(Formula.BTRUE, null),
+						innerSet,
+				        null,
+						QuantifiedExpression.Form.Explicit),
+				null);			
+		
+		expected = ff.makeQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(
+						ff.makeBoundIdentDecl("x)
+			ff.makeRelationalPredicate(
 				Formula.IN,
 				ff.makeFreeIdentifier("i", null, CPROD(CPROD(INT, INT), INT)),
 				ff.makeQuantifiedExpression(
@@ -144,43 +408,15 @@ public class TranslationTests extends TestCase {
 								ff.makeBoundIdentDecl("x_1", null)),
 						ff.makeLiteralPredicate(Formula.BTRUE, null),
 						ff.makeSetExtension(
-								Maplet(
+								FastFactory.mList(
 									Maplet(
-											ff.makeBoundIdentifier(0, null),
-											ff.makeBoundIdentifier(1, null),
-											null),
-									ff.makeUnaryExpression(
-											Formula.KCARD,
-											ff.makeQuantifiedExpression(
-													Formula.QUNION,
-													FastFactory.mList(
-															ff.makeBoundIdentDecl("x_0", null, INT),
-															ff.makeBoundIdentDecl("x_1", null, INT),
-															ff.makeBoundIdentDecl("x_2", null, INT),
-															ff.makeBoundIdentDecl("x_3", null, INT)),
-													ff.makeLiteralPredicate(Formula.BTRUE, null),
-													ff.makeSetExtension(
-															Maplet(
-																	Maplet( 
-																			ff.makeBoundIdentifier(4, null),
-																			ff.makeBoundIdentifier(5, null),
-																			null),
-																	Maplet(
-																			Maplet(
-																					ff.makeBoundIdentifier(0, null),
-																					ff.makeBoundIdentifier(1, null),
-																					null),
-																			Maplet(
-																					ff.makeBoundIdentifier(2, null),
-																					ff.makeBoundIdentifier(3, null),
-																					null),
-																			null),
-																	null),
-														    null),
-											        null,
-													QuantifiedExpression.Form.Explicit),
-											null),
-									null),
+										Maplet(
+												ff.makeBoundIdentifier(0, null),
+												ff.makeBoundIdentifier(1, null),
+												null),
+										card,
+										null),
+									ff.makeFreeIdentifier("s", null)),								
 								null),
 						null,
 						QuantifiedExpression.Form.Explicit),
@@ -188,7 +424,7 @@ public class TranslationTests extends TestCase {
 		
 		doTest(input, expected, identifierDecomposition);		
 	}
-	
+	*/
 	public void testPowerSetInRule() {
 		Expression T, E, V;
 		Predicate input, expected;
@@ -343,10 +579,9 @@ public class TranslationTests extends TestCase {
 					Formula.LIMP,
 					ff.makeLiteralPredicate(Formula.BTRUE, null),
 					ff.makeRelationalPredicate(
-						Formula.IN,
+						Formula.EQUAL,
 						E,
-						ff.makeSetExtension(
-								FastFactory.mList(ff.makeBoundIdentifier(0, null)), null),
+						ff.makeBoundIdentifier(0, null), 
 						null),
 					null),
 				null);
@@ -377,10 +612,9 @@ public class TranslationTests extends TestCase {
 					FastFactory.mList(
 						ff.makeLiteralPredicate(Formula.BTRUE, null),
 						ff.makeRelationalPredicate(
-							Formula.IN,
+							Formula.EQUAL,
 							E,
-							ff.makeSetExtension(
-									FastFactory.mList(ff.makeBoundIdentifier(0, null)), null),
+							ff.makeBoundIdentifier(0, null),
 							null)),
 					null),
 				null);

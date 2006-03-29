@@ -39,18 +39,66 @@ public class IdentifierDecomposition extends IdentityTranslator {
 	List<Pair<Type, Integer>> identTypes;
 	Counter c;
 	
-	public IdentifierDecomposition() {
+	private IdentifierDecomposition() {
 		identTypes = new LinkedList<Pair<Type, Integer>>();
 		c = new Counter();
 	}
 	
-	public IdentifierDecomposition(List<Pair<Type, Integer>> identTypes, Counter c) {
+	private IdentifierDecomposition(List<Pair<Type, Integer>> identTypes, Counter c) {
 		this.identTypes = new LinkedList<Pair<Type, Integer>>(identTypes);
 		this.c = new Counter(c);
 	}
 	
-	public Expression translate(Expression expr, FormulaFactory ff){
-		Translator.QuantMapletBuilder mb = new Translator.QuantMapletBuilder();
+	public static Predicate decomposeIdentifiers(Predicate pred, FormulaFactory ff) {
+		QuantMapletBuilder mb = new QuantMapletBuilder();
+
+		//First the bound identifiers are decomposed
+		pred = new IdentifierDecomposition().translate(pred, ff);
+		
+		//Then the free Identifiers are decomposed by introducing bound identifiers.
+		if(pred.getFreeIdentifiers().length > 0) {
+			Map<FreeIdentifier, Expression> identMap = new HashMap();
+			Set<String> names = new HashSet<String>();
+			LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
+			LinkedList<Predicate> bindings = new LinkedList<Predicate>();
+			
+			int c = 0;
+			for(FreeIdentifier ident: pred.getFreeIdentifiers()) {
+				if(!names.contains(ident.getName())) {
+					names.add(ident.getName());
+					mb.calculate(ident.getType(), c, null, ff);
+					if(mb.getIdentDecls().size() > 1) {
+						c = c + mb.getIdentDecls().size();
+						for(BoundIdentDecl identDecl: mb.getIdentDecls()) {
+							identDecls.addFirst(identDecl);
+						}
+						identMap.put(ident, mb.getMaplet());
+						bindings.add(
+							ff.makeRelationalPredicate(Formula.EQUAL, ident, mb.getMaplet(),null));	
+					}
+				}
+			}
+			if(identMap.size() > 0) {
+				pred = pred.substituteFreeIdents(identMap, ff);
+				
+				pred = ff.makeQuantifiedPredicate(
+					Formula.FORALL,
+					identDecls,
+					ff.makeBinaryPredicate(
+							Formula.LIMP,
+							bindings.size() > 1 ? 
+								ff.makeAssociativePredicate(Formula.LAND, bindings,	null) :
+								bindings.getFirst(),
+							pred,
+							null),
+					null);
+			}
+		}
+		return pred;
+	}
+	
+	protected Expression translate(Expression expr, FormulaFactory ff){
+		QuantMapletBuilder mb = new QuantMapletBuilder();
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
 			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
@@ -81,13 +129,27 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		}
 	}
 	
-	public Predicate translate(Predicate P, FormulaFactory ff) {
-		%match (Predicate P) {
+	protected Predicate translate(Predicate pred, FormulaFactory ff) {
+		QuantMapletBuilder mb = new QuantMapletBuilder();
+		SourceLocation loc = pred.getSourceLocation();		
+		%match (Predicate pred) {
 			ForAll(is, P) | Exists(is, P) -> {
-				throw new AssertionError("not yet supported: " + P);
+				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
+				for (BoundIdentDecl decl: `is) {
+					mb.calculate(decl.getType(), 0, decl.getSourceLocation(), ff);
+					c.add(mb.getIdentDecls().size());
+					identTypes.add (0, 
+						new Pair<Type, Integer>(decl.getType(), new Integer(c.value())));
+					identDecls.addAll(mb.getIdentDecls());					
+				}	
+				return ff.makeQuantifiedPredicate(
+					pred.getTag(),
+					identDecls,
+					new IdentifierDecomposition(identTypes, c).translate(`P, ff),
+					loc);
 			}
 			_ -> {
-				return super.translate(P, ff);
+				return super.translate(pred, ff);
 			}
 		}
 	}
