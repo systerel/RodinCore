@@ -45,7 +45,7 @@ public class Translator extends IdentityTranslator {
 		
 	    %match (Predicate pred) {
 	    	Equal(left, right) -> {
-	        	return translateEqual (pred, loc, ff);
+	        	return translateEqual (pred,  ff);
 	        }		   		      	
 	    	In(E, rhs) -> {
 	    		return translateIn (`E, `rhs, loc, ff);
@@ -183,14 +183,14 @@ public class Translator extends IdentityTranslator {
 				return ff.makeRelationalPredicate(
 					Formula.GE,
 					translate(E, ff),
-					ff.makeIntegerLiteral(new BigInteger("0"), loc),
+					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
 					loc);
 			}
 			Natural1() -> {
 				return ff.makeRelationalPredicate(
 					Formula.GT,
 					translate(E, ff),
-					ff.makeIntegerLiteral(new BigInteger("0"), loc),
+					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
 					loc);
 			}
 			INTEGER() -> {
@@ -829,7 +829,10 @@ public class Translator extends IdentityTranslator {
 			loc);	
 	}
 	
-	protected Predicate translateEqual (Predicate pred, SourceLocation loc, FormulaFactory ff) {
+	protected Predicate translateEqual (Predicate pred, FormulaFactory ff) {
+		SourceLocation loc = pred.getSourceLocation();
+		QuantMapletBuilder mb = new QuantMapletBuilder();
+		
 		%match(Predicate pred) {
 			Equal(Mapsto(x, y), Mapsto(a,b)) -> {
 				return FormulaConstructor.makeLandPredicate(
@@ -837,6 +840,26 @@ public class Translator extends IdentityTranslator {
 					ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc),
 					ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc),
 					loc);						
+			}
+			Equal(n@Identifier(), Card(S)) -> {
+				mb.calculate(`S.getType().getBaseType(), loc, ff);
+				
+				return ff.makeQuantifiedPredicate(
+					Formula.EXISTS,
+					mb.X(),
+					translateIn(
+						mb.V(), 
+						ff.makeBinaryExpression(
+							Formula.TBIJ,
+							`S,
+							ff.makeBinaryExpression(
+									Formula.UPTO,
+									ff.makeIntegerLiteral(BigInteger.ONE, null),
+									`n,
+									loc),
+							loc).shiftBoundIdentifiers(mb.offset(), ff), 
+						loc, ff),
+					loc);
 			}
 			P -> {
 				/*

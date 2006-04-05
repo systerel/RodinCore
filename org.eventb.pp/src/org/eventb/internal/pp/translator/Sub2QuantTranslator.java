@@ -55,6 +55,10 @@ public abstract class Sub2QuantTranslator extends IdentityTranslator {
 		identDecls.addAll(alreadyBound);
 	}
 	
+	protected Predicate identityTranslate(Predicate pred, FormulaFactory ff) {
+		return super.translate(pred, ff);
+	}
+
 	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
@@ -96,6 +100,10 @@ public abstract class Sub2QuantTranslator extends IdentityTranslator {
 		}
 		else 
     		return super.translate(pred, ff);
+	}
+	
+	protected Expression identityTranslate(Expression pred, FormulaFactory ff) {
+		return super.translate(pred, ff);
 	}
 	
 	@Override
