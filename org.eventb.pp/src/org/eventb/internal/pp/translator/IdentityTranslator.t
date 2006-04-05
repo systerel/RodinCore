@@ -27,6 +27,13 @@ public class IdentityTranslator {
 	protected Expression translate(Expression expr, FormulaFactory ff) {
 		SourceLocation loc = expr.getSourceLocation();
 	    %match (Expression expr) {
+	    	AssociativeExpression(children) -> {
+	    		ArrayList<Expression> newChildren = new ArrayList<Expression>();
+	    		for (Expression child: `children) {
+	    			newChildren.add(translate(child, ff));
+	    		}
+	    		return ff.makeAssociativeExpression(expr.getTag(), newChildren, loc);
+	    	}
 	    	AtomicExpression() | BoundIdentifier(_) | FreeIdentifier(_) | IntegerLiteral(_) -> { 
 	    		return expr; 
 	    	}

@@ -20,7 +20,11 @@
 	</target>
 
 	<target name="generate" 
-		depends="tomIdentityTranslator, tomTranslator, tomIdentifierDecomposition, tomQuantMapletBuilder" 
+		depends="tomIdentityTranslator, 
+				 tomTranslator, 
+				 tomIdentifierDecomposition, 
+		         tomQuantMapletBuilder,
+		         tomGoalChecker" 
 		description="Generate all Java files">
 		<eclipse.incrementalBuild/>
 	</target>
@@ -47,6 +51,11 @@
 		    <srcfiles file= "${translatorSrcDir}/QuantMapletBuilder.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
+		<uptodate property="tom.GoalChecker.notRequired" 
+				targetfile="${translatorSrcDir}/GoalChecker.java" >
+		    <srcfiles file= "${translatorSrcDir}/GoalChecker.t" />
+		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
+		</uptodate>
 		<!-- echoproperties prefix="tom" /-->
 	</target>
 
@@ -66,8 +75,8 @@
 			<arg value="${translatorSrcDir}/Translator.java" />
 			<arg value="--pretty" />
 			<arg value="--static" />
-			<arg value="--optimize" />
-			<arg value="--optimize2" />
+<!--		<arg value="- -optimize" />
+			<arg value="- -optimize2" />-->
 			<arg value="${translatorSrcDir}/Translator.t" />
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
@@ -110,8 +119,8 @@
 			<arg value="${translatorSrcDir}/IdentifierDecomposition.java" />
 			<arg value="--pretty" />
 			<arg value="--static" />
-			<arg value="--optimize" />
-			<arg value="--optimize2" />
+<!--			<arg value="- -optimize" />
+			<arg value="- -optimize2" />-->
 			<arg value="${translatorSrcDir}/IdentifierDecomposition.t" />
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
@@ -140,11 +149,34 @@
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 	
-	<target name="clean" description="clean up">
+
+	<target name="tomGoalChecker" depends="init,tom-test"
+		description="launch tom for GoalChecker.t"
+		unless="tom.GoalChecker.notRequired" >
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="--output" />
+			<arg value="${translatorSrcDir}/GoalChecker.java" />
+			<arg value="--pretty" />
+			<arg value="--static" />
+			<arg value="${translatorSrcDir}/GoalChecker.t" />
+		</java>
+		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	</target>
+
+<target name="clean" description="clean up">
 		<delete file="${translatorSrcDir}/Translator.java" />
 		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
 		<delete file="${translatorSrcDir}/IdentifierDecomposition.java" />
 		<delete file="${translatorSrcDir}/QuantMapletBuilder.java" />
+		<delete file="${translatorSrcDir}/GoalChecker.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	

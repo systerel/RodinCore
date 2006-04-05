@@ -27,37 +27,54 @@ public class QuantMapletBuilder {
 	private Counter c = null;
 	private LinkedList<BoundIdentDecl> identDecls;
 	private Expression maplet;
+	private FormulaFactory ff;
+
+	public void calculate(Type type, SourceLocation loc, FormulaFactory ff) {
+		calculate(type, 0, loc, ff);
+	}
 
 	public void calculate(Type type, int offset, SourceLocation loc, FormulaFactory ff) {
+		this.ff = ff;
 		c = new Counter(offset);
-		maplet = mapletOfType(type, loc, ff);
 		identDecls = new LinkedList<BoundIdentDecl>();
-		for( int i = offset; i < c.value(); i++) {
-			identDecls.addLast(ff.makeBoundIdentDecl("x", loc));
-		}
+		maplet = mapletOfType(type, loc);
 	}
 	
 	public Expression getMaplet() {
 		return maplet;
+	}
+
+	public Expression V() {
+		return maplet;
+	}
+	
+	public int offset() {
+		return identDecls.size();
 	}
 	
 	public LinkedList<BoundIdentDecl> getIdentDecls() {
 		return identDecls;
 	}
 	
-	private Expression mapletOfType(Type type, SourceLocation loc, FormulaFactory ff) {
+	public LinkedList<BoundIdentDecl> X() {
+		return identDecls;
+	}
+	
+	private Expression mapletOfType(Type type, SourceLocation loc) {
 		%match (Type type) {
 			PowerSetType (_) -> {
+				identDecls.add(ff.makeBoundIdentDecl("X", loc, `type));
 				return ff.makeBoundIdentifier(c.increment(), loc, `type);
 			}
 			ProductType (left, right) -> {
 				return ff.makeBinaryExpression(
 					Formula.MAPSTO, 
-					mapletOfType(`left, loc, ff),
-					mapletOfType(`right, loc, ff),
+					mapletOfType(`left, loc),
+					mapletOfType(`right, loc),
 					loc);
 			}
 			type -> {
+				identDecls.add(ff.makeBoundIdentDecl("x", loc, `type));
 				return ff.makeBoundIdentifier(c.increment(), loc, `type);	
 			}
 		}

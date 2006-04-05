@@ -79,11 +79,15 @@
  * AssociativePredicate
  */
  
+%op Predicate AssociativePredicate (children : PredicateList) {
+	is_fsym(t) { t != null && t instanceof AssociativePredicate }
+	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
+}
+
 %op Predicate Land (children : PredicateList) {
 	is_fsym(t) { t != null && t.getTag() == Formula.LAND }
 	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
 }
-
 
 %op Predicate Lor (children : PredicateList) {
 	is_fsym(t) { t != null && t.getTag() == Formula.LOR }
@@ -95,6 +99,12 @@
  * BinaryPredicate
  */
  
+%op Predicate BinaryPredicate (left: Predicate, right: Predicate) {
+	is_fsym(t) { t != null && t instanceof BinaryPredicate }
+	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
+	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
+}
+
 %op Predicate Limp (left: Predicate, right: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.LIMP }
 	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
@@ -110,6 +120,11 @@
 /*
  * UnaryPredicate
  */
+
+%op Predicate UnaryPredicate (child: Predicate) {
+	is_fsym(t) { t != null && t instanceof UnaryPredicate }
+	get_slot(child,t) { ((UnaryPredicate) t). getChild() }
+}
 
 %op Predicate Not (child: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.NOT }
@@ -128,6 +143,12 @@
 
 %op Predicate Equal (left: Expression, right: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.EQUAL }
+	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
+	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
+}
+
+%op Predicate NotEqual (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.NOTEQUAL }
 	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
 	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
 }
@@ -196,6 +217,12 @@
  * QuantifiedPredicate
  */
 
+%op Predicate QuantifiedPredicate (identifiers: BoundIdentDeclList, predicate: Predicate) {
+	is_fsym(t) { t != null && t instanceof QuantifiedPredicate }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
+}
+
 %op Predicate ForAll (identifiers: BoundIdentDeclList, predicate: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.FORALL }
 	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
@@ -212,6 +239,10 @@
  * LiteralPredicate
  */
 
+%op Predicate LiteralPredicate {
+	is_fsym(t) { t instanceof LiteralPredicate }
+}
+
 %op Predicate BTRUE {
 	is_fsym(t) { t != null && t.getTag() == Formula.BTRUE }
 }
@@ -224,24 +255,73 @@
  * SimplePredicate
  */
  
+%op Predicate SimplePredicate (child: Expression) {
+	is_fsym(t) { t != null && t instanceof SimplePredicate}
+	get_slot(child,t) { ((SimplePredicate) t).getExpression() }
+}
+
 %op Predicate Finite (child: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.KFINITE }
 	get_slot(child,t) { ((SimplePredicate) t).getExpression() }
 }
 
 /*
- * AtomicExpression
+ * AssociativeExpression
  */
 
+%op Expression AssociativeExpression (children: ExpressionList) {
+	is_fsym(t) { t != null && t instanceof AssociativeExpression }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression BUnion (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.BUNION }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression BInter (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.BINTER }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression Bcomp (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.BCOMP }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression Fcomp (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.FCOMP }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression Ovr (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.OVR }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression Plus (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.PLUS }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+
+%op Expression Mul (children: ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.MUL }
+	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
+}
+ 
+/*
+ * AtomicExpression
+ */
+ 
 %op Expression AtomicExpression {
 	is_fsym(t) { t != null && t instanceof AtomicExpression }
 }
 
-%op Expression NATURAL {
+%op Expression Natural {
 	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL }
 }
 	
-%op Expression NATURAL1 {
+%op Expression Natural1 {
 	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL1 }
 }
 
@@ -249,6 +329,29 @@
 	is_fsym(t) { t != null && t.getTag() == Formula.INTEGER }
 }
 
+%op Expression BOOL {
+	is_fsym(t) { t != null && t.getTag() == Formula.BOOL }
+}
+	
+%op Expression TRUE {
+	is_fsym(t) { t != null && t.getTag() == Formula.TRUE }
+}
+
+%op Expression FALSE {
+	is_fsym(t) { t != null && t.getTag() == Formula.FALSE }
+}
+
+%op Expression EmptySet {
+	is_fsym(t) { t != null && t.getTag() == Formula.EMPTYSET }
+}
+	
+%op Expression PRED {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPRED }
+}
+
+%op Expression SUCC {
+	is_fsym(t) { t != null && t.getTag() == Formula.KSUCC }
+}
 
 
 /*
@@ -267,6 +370,162 @@
 	get_slot(right,t) { ((BinaryExpression) t).getRight() }
 }
 
+%op Expression Rel (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.REL }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Trel (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.TREL }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Srel (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.SREL }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Strel (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.STREL }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Pfun (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.PFUN }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Tfun (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.TFUN }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Pinj (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.PINJ }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Tinj (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.TINJ }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Psur (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.PSUR }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Tsur (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.TSUR }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Tbij (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.TBIJ }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression SetMinus (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.SETMINUS }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Cprod (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.CPROD }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Dprod (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.DPROD }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Pprod (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.PPROD }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression DomRes (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.DOMRES }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression DomSub (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.DOMSUB }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression RanRes (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.RANRES }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression RanSub (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.RANSUB }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression UpTo (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.UPTO }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Minus (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.MINUS }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Div (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.DIV }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Mod (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.MOD }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression Expn (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.EXPN }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression FunImage (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.FUNIMAGE }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
+%op Expression RelImage (left: Expression, right: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.RELIMAGE }
+	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
+	get_slot(right,t) { ((BinaryExpression) t).getRight() }
+}
+
 /*
  * BoolExpression
  */
@@ -274,6 +533,14 @@
 %op Expression Bool (predicate: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.KBOOL }
 	get_slot(predicate,t) { ((BoolExpression) t).getPredicate() }
+}
+
+/*
+ * Identifier
+ */
+
+%op Expression Identifier {
+	is_fsym(t) { t != null && t instanceof Identifier }
 }
 
 /*
@@ -344,11 +611,78 @@
 	get_slot(child,t) { ((UnaryExpression) t).getChild() }
 }
 
+%op Expression Card (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KCARD }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
 %op Expression Pow (child: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.POW }
 	get_slot(child,t) { ((UnaryExpression) t).getChild() }
 }
 
+%op Expression Pow1 (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.POW1 }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Union (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KUNION }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Inter (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KINTER }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Dom (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KDOM }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Ran (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KRAN }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Prj1 (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ1 }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Prj2 (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ2 }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Id (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KID }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Min (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KMIN }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Max (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KMAX }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression Converse (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.CONVERSE }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+%op Expression UnMinus (child: Expression) {
+	is_fsym(t) { t != null && t.getTag() == Formula.UNMINUS }
+	get_slot(child,t) { ((UnaryExpression) t).getChild() }
+}
+
+
+/*Delete these...*/
 
 /*
  * PowerSetType
@@ -368,6 +702,8 @@
 	get_slot (left, t) { ((ProductType)t).getLeft() }
 	get_slot (right, t) { ((ProductType)t).getRight() }
 }
+
+
 
 
 
