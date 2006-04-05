@@ -20,35 +20,17 @@ import org.eventb.core.ast.*;
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
-public class ExpressionPurifier extends IdentityTranslator {
-	private static final shiftOffset = Integer.maxValue / 2;
-	private List<Predicate> bindings = new LinkedList<Predicate>();
-	private List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
-	
+public class ExpressionPurifier extends Sub2QuantTranslator {
 	protected enum ExpressionState { Floating, Maplet, Set, Arithmetic};
 	protected ExpressionState exprState;
 	
-	protected ExpressionPurifier(List<BoundIdentDecls> alreadyBound){
-		identDecls.addAll(alreadyBound);
-	}
-	
-	protected BoundIdentifier addBoundIdentifier(
-		Type type, SourceLocation loc, FormulaFactory ff) {
-		identDecls.add(
-			ff.makeBoundIdentDecl(
-				type.getBaseType() == null ? "x" : "X",
-				loc,
-				type));
+	@Override
+	protected Sub2QuantTranslator create() {
+		return new ExpressionPurifier();
+	}	
 
-		return ff.makeBoundIdentifier(identDecls.size() - 1, loc, type);	
-	}
-	
-	protected BoundIdentifier bindExpression(Expression expr, FormulaFactory ff) {
-		SourceLocation loc = expr.getSourceLocation();
-		
-		BoundIdentifier ident = addBoundIdentifier(expr.getType(), loc, ff);
-		bindings.add(ff.makeBinaryPredicate(Formula.EQUAL, ident, expr, loc));
-		return ident;		
+	public static Predicate purify(Predicate P, FormulaFactory ff) {
+		return Sub2QuantTranslator.translate(P, new ExpressionPurifier(), ff);
 	}
 	
 	%include {Formula.tom}
@@ -56,30 +38,7 @@ public class ExpressionPurifier extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
-	    	ForAll(is, P) -> {
-		    	`P = `P.shiftBoundIdentifiers(shiftOffset, ff);
-		    	
-		    	ExpressionPurifier purifier = new ExpressionPurifier(`is);
-				Predicate purifiedP = purifier.translate(`P, ff);
-				LinkedList<Predicate> purifiedBindings = new LinkedList<Predicate>();
-				
-				while(purifier.bindings.size() > 0) { 
-					Predicate act = purifier.bindings.remove(0);
-					purifiedBindings.add(purifier.translate(act, ff));
-				}
-				Predicate result = ff.makeQuantifiedPredicate(
-					Formula.FORALL,
-					purifier.identDecls,
-					ff.makeBinaryPredicate(
-						Formula.LIMP,
-						FormulaConstructor.makeLandPredicate(ff, purifiedBindings, loc),
-						purifiedP,
-						loc),
-					loc);
-				
-				return result.shiftBoundIdentifiers(-shiftOffset, ff);	    		
-	    	}
-	    	Lt(AE1, AE2) | Le(AE1, AE2) | Gt(AE1, AE2) | Ge(AE1, AE2) -> {
+	       	Lt(AE1, AE2) | Le(AE1, AE2) | Gt(AE1, AE2) | Ge(AE1, AE2) -> {
 				exprState = ExpressionState.Arithmetic;
 				return super.translate(pred, ff);
 			}
@@ -93,9 +52,9 @@ public class ExpressionPurifier extends IdentityTranslator {
 				if(`ME1 == purifiedME1 && `SE1 == purifiedSE1)
 					return pred;
 				else
-					return ff.makeBinaryPredicate(Formula.IN, purifiedME1, purifiedSE1, loc);
+					return ff.makeRelationalPredicate(Formula.IN, purifiedME1, purifiedSE1, loc);
 			}	
-			Equal(E1, E2) | NotEqual(E1, E2) -> {
+			Equal(E1, E2) -> {
 				exprState = ExpressionState.Floating;
 				Expression purifiedE1 = translate(`E1, ff);
 				Expression purifiedE2 = translate(`E2, ff);
@@ -103,15 +62,24 @@ public class ExpressionPurifier extends IdentityTranslator {
 				if(`E1 == purifiedE1 && `E2 == purifiedE2)
 					return pred;
 				else
-					return ff.makeBinaryPredicate(Formula.EQUAL, purifiedE1, purifiedE1, loc);
+					return ff.makeRelationalPredicate(pred.getTag(), purifiedE1, purifiedE2, loc);
 			}	
-	   	   	_ -> {
+			_ -> {
+	   	   		//throw new AssertionError("Undefined: " + pred);
 	    		return super.translate(pred, ff);
 	    	}
 	    }
 	}
 	
 	protected Expression translate(Expression expr, FormulaFactory ff) {
+		if(exprState == ExpressionState.Floating) {
+			if(expr.getType() instanceof ProductType)
+				exprState = ExpressionState.Maplet;
+			else if(expr.getType() instanceof PowerSetType)
+				exprState = ExpressionState.Set;
+			else
+				exprState = ExpressionState.Arithmetic;
+		}
 		switch(exprState) {
 			case Maplet: 
 				return translateMaplet(expr, ff);
@@ -148,19 +116,6 @@ public class ExpressionPurifier extends IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();
 		
 		%match(Expression expr) {
-			Cset(is, P, E) | Qinter(is, P, E) | Qunion(is, P, E) -> {
-	    		
-	    		return ff.makeQuantifiedExpression(
-	    			expr.getTag(),
-	    			`is,
-	    			translate(`P, ff),
-	    			translate(`E, ff),
-	    			loc,
-	    			QuantifiedExpression.Form.Explicit);	    			
-	    	}
-			SetExtension(children) -> {
-				super.translate(expr, ff);
-			}
 			BoundIdentifier(_) | FreeIdentifier(_) | INTEGER() | BOOL() -> { 
 				return expr;
 			}
@@ -174,13 +129,9 @@ public class ExpressionPurifier extends IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();
 
 		%match(Expression expr) {
-			Card(children) -> {
-				return bindExpression(expr, ff);
-			}
 			_ -> {	
 				return super.translate(expr, ff);
 			}
 		}
-		
 	}
 }

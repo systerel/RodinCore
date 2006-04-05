@@ -78,7 +78,7 @@ public abstract class GoalChecker {
 				return isArithmeticExpression(`AE, ff);
 			}
 			Identifier() -> {
-				return expr.getType() == ff.makeIntegerType();
+				return ff.makeIntegerType().equals(expr.getType());
 			}
 			IntegerLiteral(_) -> {
 				return true;

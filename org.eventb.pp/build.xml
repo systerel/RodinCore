@@ -24,7 +24,8 @@
 				 tomTranslator, 
 				 tomIdentifierDecomposition, 
 		         tomQuantMapletBuilder,
-		         tomGoalChecker" 
+		         tomGoalChecker,
+				 tomExpressionPurifier" 
 		description="Generate all Java files">
 		<eclipse.incrementalBuild/>
 	</target>
@@ -55,6 +56,11 @@
 				targetfile="${translatorSrcDir}/GoalChecker.java" >
 		    <srcfiles file= "${translatorSrcDir}/GoalChecker.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
+		</uptodate>
+		<uptodate property="tom.ExpressionPurifier.notRequired" 
+				targetfile="${translatorSrcDir}/ExpressionPurifier.java" >
+			<srcfiles file= "${translatorSrcDir}/ExpressionPurifier.t" />
+			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
 		<!-- echoproperties prefix="tom" /-->
 	</target>
@@ -171,12 +177,34 @@
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 
-<target name="clean" description="clean up">
+	<target name="tomExpressionPurifier" depends="init,tom-test"
+		description="launch tom for ExpressionPurifier.t"
+		unless="tom.ExpressionPurifier.notRequired" >
+		<java classname="jtom.Tom" fork="true">
+			<classpath>
+				<fileset dir="${tom-home}/lib">
+		        	<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<sysproperty key="tom.home" value="${tom-home}" />
+			<arg value="-X" />
+			<arg value="${tom-home}/Tom.xml" />
+			<arg value="--output" />
+			<arg value="${translatorSrcDir}/ExpressionPurifier.java" />
+			<arg value="--pretty" />
+			<arg value="--static" />
+			<arg value="${translatorSrcDir}/ExpressionPurifier.t" />
+		</java>
+		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	</target>
+
+	<target name="clean" description="clean up">
 		<delete file="${translatorSrcDir}/Translator.java" />
 		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
 		<delete file="${translatorSrcDir}/IdentifierDecomposition.java" />
 		<delete file="${translatorSrcDir}/QuantMapletBuilder.java" />
 		<delete file="${translatorSrcDir}/GoalChecker.java" />
+		<delete file="${translatorSrcDir}/ExpressionPurifier.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	

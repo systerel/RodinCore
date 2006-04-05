@@ -31,7 +31,10 @@ public class Translator extends IdentityTranslator {
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 		pred = IdentifierDecomposition.decomposeIdentifiers(pred, ff);
-		return new Translator().translate(pred, ff);
+		pred = ExprReorganizer.reorganize(pred, ff);
+		pred = new Translator().translate(pred, ff);
+		pred = ExpressionPurifier.purify(pred, ff);
+		return pred;
 	}
 	
 	Stack<QuantLayer> quantStack = new Stack<QuantLayer>();
@@ -127,63 +130,7 @@ public class Translator extends IdentityTranslator {
 	    	}
 	    }
 	}
-	
-	protected enum ExpressionState {Maplet, Set, Arithmetic};
-	protected ExpressionState exprState;
-	
-	protected Expression translate(Expression expr, FormulaFactory ff) {
-		switch(exprState) {
-			case Maplet: 
-				return translateMaplet(expr, ff);
-			case Set:
-				return translateSet(expr, ff);
-			case Arithmetic:
-				return translateArithmetic(expr, ff);
-			default:
-				throw new AssertionError("Unknown state: " + exprState);
-		}
-	}
-	
-	protected Expression translateMaplet(Expression expr, FormulaFactory ff) {
-		SourceLocation loc = expr.getSourceLocation();
 		
-		%match(Expression expr) {
-			Mapsto(l, r) -> {
-				return ff.makeBinaryExpression(
-					Formula.MAPSTO,
-					translate(`l, ff),
-					translate(`r, ff),
-					loc);
-			}
-			BoundIdentifier(_) | FreeIdentifier(_) | INTEGER() | BOOL() -> { 
-				return expr;
-			}
-			_ -> {
-				/*TODO: Add Binding for new Bound Identifier and return*/
-				return null;
-			}			
-		} 
-	}
-	
-	protected Expression translateSet(Expression expr, FormulaFactory ff) {
-		return expr;
-	}
-	
-	protected Expression translateArithmetic(Expression expr, FormulaFactory ff) {
-		SourceLocation loc = expr.getSourceLocation();
-
-		%match(Expression expr) {
-			Card(children) -> {
-				/*TODO: Add Binding for new Bound Identifier and return*/
-				return null;				
-			}
-			_ -> {	
-				return super.translate(expr, ff);
-			}
-		}
-		
-	}
-	
 	protected Predicate translateIn(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
 		try {
     		return translateIn_E(expr, rhs, loc, ff);
