@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -48,9 +47,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -84,15 +81,14 @@ public class SyntheticViewSection
 {
 
 	// Title and description of the section.
-	private static final String SECTION_TITLE = "Synthetic View";
-	private static final String SECTION_DESCRIPTION = "The synthetic view of the component";	
+//	private static final String SECTION_TITLE = "Synthetic View";
+//	private static final String SECTION_DESCRIPTION = "The synthetic view of the component";	
 	
 	// The Form editor contains this section.
     private FormEditor editor;
-    private ScrolledForm scrolledForm;
     private TreeViewer viewer;
-    private MouseEvent lastMouseEvent;
     private MouseAdapter mouseAdapter;
+    private Tree tree;
     
     private class StatusPair {
     	Object object;
@@ -210,7 +206,6 @@ public class SyntheticViewSection
 							UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getStatus());
 							viewer.setExpandedState(state.getObject(), state.getStatus());
 						}
-						if (lastMouseEvent != null) mouseAdapter.mouseDown(lastMouseEvent);
 					}
 				}
 			});
@@ -451,7 +446,8 @@ public class SyntheticViewSection
      * @param parent The composite parent
      */
 	public SyntheticViewSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
-		super(parent, toolkit, ExpandableComposite.TITLE_BAR);
+//		super(parent, toolkit, ExpandableComposite.TITLE_BAR);
+		super(parent, toolkit, SWT.NONE);
 		this.editor = editor;
 		createClient(getSection(), toolkit);
 	}
@@ -461,27 +457,29 @@ public class SyntheticViewSection
 	 * Creat the content of the section.
 	 */
 	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText(SECTION_TITLE);
-        section.setDescription(SECTION_DESCRIPTION);
+//        section.setText(SECTION_TITLE);
+//        section.setDescription(SECTION_DESCRIPTION);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 400;
 		gd.minimumHeight = 300;
 		gd.widthHint = 300;
 		section.setLayoutData(gd);
-		scrolledForm = toolkit.createScrolledForm(section);
-		scrolledForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 1;
-        layout.marginHeight = 2;
-        layout.makeColumnsEqualWidth = true;
-        Composite body = scrolledForm.getBody();
-		body.setLayout(layout);
+//		scrolledForm = toolkit.createScrolledForm(section);
+//		scrolledForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+//        GridLayout layout = new GridLayout();
+//        layout.numColumns = 1;
+//        layout.marginHeight = 2;
+//        layout.makeColumnsEqualWidth = true;
+//        Composite body = scrolledForm.getBody();
+//		body.setLayout(layout);
 
-		viewer = new TreeViewer(body, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+//		viewer = new TreeViewer(body, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		viewer = new TreeViewer(section, SWT.MULTI | SWT.FULL_SELECTION);
+		
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new MasterLabelProvider());
 		viewer.setSorter(new ElementsSorter());
-		final Tree tree = viewer.getTree();
+		tree = viewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tree.setHeaderVisible(true);
 		TreeColumn column = new TreeColumn(tree, SWT.LEFT);
@@ -515,7 +513,6 @@ public class SyntheticViewSection
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent e) {
-				lastMouseEvent = e;
 				final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
 				Control old = editor.getEditor();
 		        if (old != null) old.dispose();
@@ -552,6 +549,17 @@ public class SyntheticViewSection
 					if (!isCarbon) composite.setBackground (black);
 					final Text text = new Text (composite, SWT.NONE);
 					new EventBMath(text);
+					new TimerText(text) {
+
+						/* (non-Javadoc)
+						 * @see org.eventb.internal.ui.eventbeditor.TimerText#commit()
+						 */
+						@Override
+						public void commit() {
+							SyntheticViewSection.this.commit(pt, col, text.getText());
+						}
+						
+					};
 					final int inset = isCarbon ? 0 : 1;
 					composite.addListener (SWT.Resize, new Listener () {
 						public void handleEvent (Event e) {
@@ -567,10 +575,9 @@ public class SyntheticViewSection
 								case SWT.FocusOut:
 									UIUtils.debug("FocusOut");
 									if (item.isDisposed()) return;
-									item.setText (col, text.getText());
 									commit(pt, col, text.getText());
+									item.setText (col, text.getText());
 									composite.dispose ();
-									lastMouseEvent = null;
 									break;
 								case SWT.Verify:
 									String newText = text.getText();
@@ -595,44 +602,12 @@ public class SyntheticViewSection
 											if (item.isDisposed()) return;
 											item.setText (col, text.getText ());
 											commit(pt, col, text.getText());
-											lastMouseEvent = null;
 											//FALL THROUGH
 										case SWT.TRAVERSE_ESCAPE:
 											composite.dispose ();
 											e.doit = false;
 									}
 									break;
-							}
-						}
-
-						private void commit(Point pt, int col, String text) {
-					        // Determine which row was selected
-					        TreeItem item = tree.getItem(pt);
-					        Object itemData = item.getData();
-							if (itemData instanceof IInternalElement) {
-								switch (col) {
-								case 1:  // Commit name
-									try {
-										if (((IInternalElement) itemData).getElementName().equals(text)) return;
-										UIUtils.debug("Rename " + ((IInternalElement) itemData).getElementName() + " to " + text);
-										((IInternalElement) itemData).rename(text, false, null);
-										markDirty();
-									}
-									catch (RodinDBException e) {
-										e.printStackTrace();
-									}
-									
-									break;
-								case 2:  // Commit content
-									try {
-										((IInternalElement) itemData).setContents(text);
-										markDirty();
-									}
-									catch (RodinDBException e) {
-										e.printStackTrace();
-									}
-									break;
-								}
 							}
 						}
 					};
@@ -656,8 +631,40 @@ public class SyntheticViewSection
 			}
 		};
 		tree.addMouseListener(mouseAdapter);
-		scrolledForm.reflow(true);
-		section.setClient(scrolledForm);
+//		scrolledForm.reflow(true);
+		section.setClient(viewer.getControl());
+		
 	}	
+
+	private void commit(Point pt, int col, String text) {
+        // Determine which row was selected
+        TreeItem item = tree.getItem(pt);
+        Object itemData = item.getData();
+		if (itemData instanceof IInternalElement) {
+			switch (col) {
+			case 1:  // Commit name
+				try {
+					if (((IInternalElement) itemData).getElementName().equals(text)) return;
+					UIUtils.debug("Rename " + ((IInternalElement) itemData).getElementName() + " to " + text);
+					((IInternalElement) itemData).rename(text, false, null);
+//					markDirty();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				
+				break;
+			case 2:  // Commit content
+				try {
+					((IInternalElement) itemData).setContents(text);
+//					markDirty();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+	}
 
 }
