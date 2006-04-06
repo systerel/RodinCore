@@ -530,4 +530,71 @@ public class TestSubstituteFormula extends TestCase {
 		assertEquals(expPred, actualPred);
 	}
 	
+	static class ShiftTestItem extends TestItem {
+		public final Formula formula;
+		public final int offset;
+		public final Formula expected;
+		
+		public ShiftTestItem(Formula formula, int offset, Formula expected) {
+			this.formula = formula;
+			this.offset = offset;
+			this.expected = expected;
+		}
+		
+		@Override
+		public void doTest() {
+			Formula result = formula.shiftBoundIdentifiers(offset, ff);
+			assertEquals(formula + "\n" + offset + "\n" , expected, result);
+		}
+		
+		@Override
+		public String toString() {
+			return formula.toString() + " //" + offset + " == " + expected.toString();
+		}
+	}
+
+	ShiftTestItem[] shiftTestItems = new ShiftTestItem[] {
+		// Test on closed expression
+		new ShiftTestItem(
+			id_x,
+			1,
+			id_x
+		// Test on open expression (without internally bound)
+		), new ShiftTestItem(
+			bd(0),
+			0,
+			bd(0)
+		), new ShiftTestItem(
+			bd(0),
+			1,
+			bd(1)
+		), new ShiftTestItem(
+			bd(1),
+			-1,
+			bd(0)
+		// Test on open expression (with internally bound)
+		), new ShiftTestItem(
+			exists(BD("x"), lt(bd(0), bd(1))),
+			0,
+			exists(BD("x"), lt(bd(0), bd(1)))
+		), new ShiftTestItem(
+			exists(BD("x"), lt(bd(0), bd(1))),
+			1,
+			exists(BD("x"), lt(bd(0), bd(2)))
+		), new ShiftTestItem(
+			exists(BD("x"), lt(bd(0), bd(2))),
+			-1,
+			exists(BD("x"), lt(bd(0), bd(1)))
+		),	
+	};
+	
+	/**
+	 * Test for {@link Formula#shiftBoundIdentifiers(int, FormulaFactory)}.
+	 */
+	public void testShiftBoundIdentifiers() {
+		for (TestItem item : shiftTestItems) {
+			item.doTest();
+		}
+	}
+
 }
