@@ -360,14 +360,17 @@ public class UserSupport
 
 
 	public void searchHyps(String token) {
+		
+		// Trim off white space from token.
+		token = token.trim();
+		
 		Set<Hypothesis> hyps = Hypothesis.textSearch(currentPS.getCurrentNode().getSequent().hypotheses(), token);
 		
 		Collection<Hypothesis> currentHyps = currentPS.getSearched();
 		
 		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
 		
-		for (Iterator<Hypothesis> it = currentHyps.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
+		for (Hypothesis hp: currentHyps) {
 			if (!isValid(hp, currentPS.getCurrentNode()) || !hyps.contains(hp)) {
 				HypothesisDelta d = new HypothesisDelta(hp);
 				d.setRemovedFromSearched();
@@ -375,8 +378,7 @@ public class UserSupport
 			}
 		}
 	
-		for (Iterator<Hypothesis> it = hyps.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
+		for (Hypothesis hp: hyps) {
 			if (isValid(hp, currentPS.getCurrentNode()) && !currentHyps.contains(hp)) {
 				HypothesisDelta d = new HypothesisDelta(hp);
 				d.setAddedToSearched();
