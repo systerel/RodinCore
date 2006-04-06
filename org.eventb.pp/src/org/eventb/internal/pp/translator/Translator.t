@@ -842,7 +842,7 @@ public class Translator extends IdentityTranslator {
 					ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc),
 					loc);						
 			}
-			Equal(n@Identifier(), Card(S)) -> {
+			Equal(n@Identifier(), Card(S)) | Equal(Card(S), n@Identifier())-> {
 				Expression bij = ff.makeBinaryExpression(
 						Formula.TBIJ,
 						`S,
@@ -862,6 +862,7 @@ public class Translator extends IdentityTranslator {
 					translateIn(mb.V(), bij, loc, ff),
 					loc);
 			}
+			Equal(
 			P -> {
 				/*
 				throw new AssertionError("not yet supported!: " + pred);*/

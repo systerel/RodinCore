@@ -25,7 +25,7 @@ public class ExprReorganizer extends Sub2QuantTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 		%match(Predicate pred) {
-			Equal(ident@Identifier(), Card(S)) -> {
+			Equal(ident@Identifier(), Card(S)) | Equal(Card(S), ident@Identifier())-> {
 				Expression newS = translate(`S, ff);
 				if(newS == `S)
 					return pred;
@@ -36,7 +36,7 @@ public class ExprReorganizer extends Sub2QuantTranslator {
 						ff.makeUnaryExpression(Formula.KCARD, newS, loc),
 						loc);
 			}
-			Equal(ident@Identifier(), Bool(P)) -> {
+			Equal(ident@Identifier(), Bool(P)) | Equal(Bool(P), ident@Identifier()) -> {
 				Predicate newP = translate(`P, ff);
 				if(newP == `P)
 					return pred;
