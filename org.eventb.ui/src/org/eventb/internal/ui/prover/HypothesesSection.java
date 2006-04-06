@@ -102,8 +102,10 @@ public abstract class HypothesesSection
 		final SectionPart part = this;
 		display.syncExec (new Runnable () {
 			public void run () {
-				scrolledForm.reflow(true); // Important for refresh
-				part.refresh();
+				if (!scrolledForm.isDisposed()) {
+					scrolledForm.reflow(true); // Important for refresh
+					part.refresh();
+				}
 			}
 		});
 		
