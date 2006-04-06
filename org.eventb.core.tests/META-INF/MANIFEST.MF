@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Event-B Core Plug-in
 Bundle-SymbolicName: org.eventb.core.tests
-Bundle-Version: 0.5.2
+Bundle-Version: 0.5.4
 Bundle-Vendor: Rodin
 Bundle-Localization: plugin
 Require-Bundle: org.junit,
