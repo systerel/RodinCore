@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
+import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.SimpleSubstitution;
@@ -1145,7 +1146,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * </p>
 	 * 
 	 * @param names
-	 *            identifier names collected so far (extended by side-effect
+	 *            identifier names collected so far (extended by side-effect)
 	 * @param boundNames
 	 *            names that we consider bound globally
 	 * @param offset
@@ -1222,10 +1223,13 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 	
 	/**
-	 * Checks whether a formula is well-formed.
+	 * Checks whether this formula is well-formed.
 	 * <p>
-	 * A formula is called well-formed if it has no dangling de Bruijn indices.
+	 * A formula is called well-formed iff all bound identifiers occurring in it
+	 * are declared within that same formula. In other words, the formula
+	 * contains no dangling de Bruijn indices.
 	 * </p>
+	 * 
 	 * @return <code>true</code> iff the formula is well-formed
 	 */
 	public final boolean isWellFormed() {
@@ -1666,5 +1670,28 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return <code>true</code> iff this formaul has been type-checked
 	 */
 	public abstract boolean isTypeChecked();
+	
+	/**
+	 * Returns a copy of this formula where all externally bound identifier
+	 * indexes have been shifted by the given offset.
+	 * <p>
+	 * As a consequence, this operation returns this formula, when it's
+	 * well-defined, as there is no externally bound identifier in this case.
+	 * </p>
+	 * 
+	 * @param offset
+	 *            offset to apply to bound identifier indexes. Use the number of
+	 *            bound identifier declarations that you plan to add just atop
+	 *            this formula. If you plan to remove some bound identifier
+	 *            declarations, then use a negative offset
+	 * @param factory
+	 *            factory to use for building the result
+	 * @return a copy of this formula with all bound identifiers shifted by the
+	 *         given offset
+	 */
+	public T shiftBoundIdentifiers(int offset, FormulaFactory factory) {
+		final Substitution subst = new BoundIdentifierShifter(offset, factory);
+		return applySubstitution(subst);
+	}
 	
 }
