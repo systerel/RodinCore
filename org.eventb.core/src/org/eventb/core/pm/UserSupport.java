@@ -284,7 +284,8 @@ public class UserSupport
 	public void applyTactic(ITactic t) throws RodinDBException {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object information = t.apply(currentNode);
-		Tactics.postProcess().apply(currentNode);
+		if (!t.equals(Tactics.prune()))
+			Tactics.postProcess().apply(currentNode);
 		if (information == null) {
 			currentPS.updateStatus();
 			
@@ -327,6 +328,50 @@ public class UserSupport
 		}
 	}
 
+	public void prune() throws RodinDBException {
+		IProofTreeNode currentNode = currentPS.getCurrentNode();
+		Object information = Tactics.prune().apply(currentNode);
+		if (information == null) {
+			currentPS.updateStatus();
+			
+			notifyProofStatusChangedListener(currentPS.isDischarged());
+			
+			IProofTreeNode newNode = currentPS.getNextPendingSubgoal(currentNode);
+			if (newNode == null) newNode = currentNode;
+			
+			Collection<IHypothesisDelta> hypDelta = calculateHypDelta(currentPS, newNode);
+			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, hypDelta);
+			notifyHypothesisChangedListener(hypEvent);
+			
+			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
+			currentPS.setCurrentNode(newNode);
+			
+			IPODelta poDelta = new PODelta(currentPS);
+			IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+			notifyPOChangedListener(poEvent);
+			notifyStatusChangedListener("Tactic applied successfully");
+		}
+		else {
+			currentPS.updateStatus();
+			
+			notifyProofStatusChangedListener(currentPS.isDischarged());
+			
+			IProofTreeNode newNode = currentPS.getNextPendingSubgoal(currentNode);
+			if (newNode == null) newNode = currentNode;
+			
+			Collection<IHypothesisDelta> hypDelta = calculateHypDelta(currentPS, newNode);
+			IHypothesisChangeEvent hypEvent = new HypothesisChangeEvent(this, hypDelta);
+			notifyHypothesisChangedListener(hypEvent);
+			
+			notifyGoalChangedListener(new GoalChangeEvent(new GoalDelta(newNode)));
+			currentPS.setCurrentNode(newNode);
+			
+			IPODelta poDelta = new PODelta(currentPS);
+			IPOChangeEvent poEvent = new POChangeEvent(poDelta);
+			notifyPOChangedListener(poEvent);
+			notifyStatusChangedListener(information);
+		}
+	}
 
 	
 	public void removeCachedHypotheses(Collection<Hypothesis> hyps) {
@@ -602,9 +647,11 @@ public class UserSupport
 
 
 	public void back() throws RodinDBException {
+//		UserSupportUtils.debug("Trying back");
 		if (currentPS.getCurrentNode().getParent() != null) {
+//			UserSupportUtils.debug("Prune at " + currentPS.getCurrentNode().getParent());
 			selectNode(currentPS.getCurrentNode().getParent());
-			applyTactic(Tactics.prune());
+			prune();
 		}
 	}
 	
