@@ -32,6 +32,10 @@ public abstract class Expression extends Formula<Expression> {
 			type = null;
 			return false;
 		}
+		if (type == null) {
+			// Shared node, already cleaned up in second pass.
+			return false;
+		}
 		if (type.isSolved()) {
 			return true;
 		}
