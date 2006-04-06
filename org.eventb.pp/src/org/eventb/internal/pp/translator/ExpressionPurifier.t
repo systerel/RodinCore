@@ -21,9 +21,6 @@ import org.eventb.core.ast.*;
  */
 @SuppressWarnings("unused")
 public class ExpressionPurifier extends Sub2QuantTranslator {
-	protected enum ExpressionState { Floating, Maplet, Set, Arithmetic};
-	protected ExpressionState exprState;
-	
 	@Override
 	protected Sub2QuantTranslator create() {
 		return new ExpressionPurifier();
@@ -34,20 +31,17 @@ public class ExpressionPurifier extends Sub2QuantTranslator {
 	}
 	
 	%include {Formula.tom}
+	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
 	       	Lt(AE1, AE2) | Le(AE1, AE2) | Gt(AE1, AE2) | Ge(AE1, AE2) -> {
-				exprState = ExpressionState.Arithmetic;
 				return super.translate(pred, ff);
 			}
 			In(ME1, SE1) -> {
-				exprState = ExpressionState.Maplet;
-				Expression purifiedME1 = translate(`ME1, ff);
-				
-				exprState = ExpressionState.Set;
-				Expression purifiedSE1 = translate(`SE1, ff);
+				Expression purifiedME1 = translateMaplet(`ME1, ff);
+				Expression purifiedSE1 = translateSet(`SE1, ff);
 				
 				if(`ME1 == purifiedME1 && `SE1 == purifiedSE1)
 					return pred;
@@ -55,12 +49,19 @@ public class ExpressionPurifier extends Sub2QuantTranslator {
 					return ff.makeRelationalPredicate(Formula.IN, purifiedME1, purifiedSE1, loc);
 			}	
 			Equal(E1, E2) -> {
-				exprState = ExpressionState.Floating;
-				Expression purifiedE1 = translate(`E1, ff);
-				Expression purifiedE2 = translate(`E2, ff);
+				Expression purifiedE1 = null;
+				Expression purifiedE2 = null;
 				
-				if(`E1 == purifiedE1 && `E2 == purifiedE2)
-					return pred;
+				if(`E1.getType().getBaseType() != null) {
+					purifiedE1 = translateSet(`E1, ff);
+					purifiedE2 = translateSet(`E2, ff);
+				}
+				else {
+					purifiedE1 = translate(`E1, ff);
+					purifiedE2 = translate(`E2, ff);
+				}
+				
+				if(`E1 == purifiedE1 && `E2 == purifiedE2) return pred;
 				else
 					return ff.makeRelationalPredicate(pred.getTag(), purifiedE1, purifiedE2, loc);
 			}	
@@ -71,37 +72,17 @@ public class ExpressionPurifier extends Sub2QuantTranslator {
 	    }
 	}
 	
-	protected Expression translate(Expression expr, FormulaFactory ff) {
-		if(exprState == ExpressionState.Floating) {
-			if(expr.getType() instanceof ProductType)
-				exprState = ExpressionState.Maplet;
-			else if(expr.getType() instanceof PowerSetType)
-				exprState = ExpressionState.Set;
-			else
-				exprState = ExpressionState.Arithmetic;
-		}
-		switch(exprState) {
-			case Maplet: 
-				return translateMaplet(expr, ff);
-			case Set:
-				return translateSet(expr, ff);
-			case Arithmetic:
-				return translateArithmetic(expr, ff);
-			default:
-				throw new AssertionError("Unknown state: " + exprState);
-		}
-	}
-	
 	protected Expression translateMaplet(Expression expr, FormulaFactory ff) {
 		SourceLocation loc = expr.getSourceLocation();
 		
 		%match(Expression expr) {
 			Mapsto(l, r) -> {
-				return ff.makeBinaryExpression(
-					Formula.MAPSTO,
-					translate(`l, ff),
-					translate(`r, ff),
-					loc);
+				Expression nl = translateMaplet(`l, ff);
+				Expression nr = translateMaplet(`r, ff);
+				
+				if(nl == `l && nr == `r) return expr;
+				else
+					return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
 			}
 			BoundIdentifier(_) | FreeIdentifier(_) | INTEGER() | BOOL() -> { 
 				return expr;
@@ -123,15 +104,5 @@ public class ExpressionPurifier extends Sub2QuantTranslator {
 				return bindExpression(expr, ff);
 			}			
 		} 
-	}
-	
-	protected Expression translateArithmetic(Expression expr, FormulaFactory ff) {
-		SourceLocation loc = expr.getSourceLocation();
-
-		%match(Expression expr) {
-			_ -> {	
-				return super.translate(expr, ff);
-			}
-		}
 	}
 }

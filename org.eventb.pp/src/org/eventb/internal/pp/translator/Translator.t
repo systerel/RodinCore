@@ -40,6 +40,7 @@ public class Translator extends IdentityTranslator {
 	Stack<QuantLayer> quantStack = new Stack<QuantLayer>();
 	
 	%include {Formula.tom}
+	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 		
@@ -842,23 +843,23 @@ public class Translator extends IdentityTranslator {
 					loc);						
 			}
 			Equal(n@Identifier(), Card(S)) -> {
-				mb.calculate(`S.getType().getBaseType(), loc, ff);
+				Expression bij = ff.makeBinaryExpression(
+						Formula.TBIJ,
+						`S,
+						ff.makeBinaryExpression(
+								Formula.UPTO,
+								ff.makeIntegerLiteral(BigInteger.ONE, null),
+								`n,
+								loc),
+						loc);
+				mb.calculate(bij.getType().getBaseType(), loc, ff);
 				
+				bij = bij.shiftBoundIdentifiers(mb.offset(), ff);
+
 				return ff.makeQuantifiedPredicate(
 					Formula.EXISTS,
 					mb.X(),
-					translateIn(
-						mb.V(), 
-						ff.makeBinaryExpression(
-							Formula.TBIJ,
-							`S,
-							ff.makeBinaryExpression(
-									Formula.UPTO,
-									ff.makeIntegerLiteral(BigInteger.ONE, null),
-									`n,
-									loc),
-							loc).shiftBoundIdentifiers(mb.offset(), ff), 
-						loc, ff),
+					translateIn(mb.V(), bij, loc, ff),
 					loc);
 			}
 			P -> {

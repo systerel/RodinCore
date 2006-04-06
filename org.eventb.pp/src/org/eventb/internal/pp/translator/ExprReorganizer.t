@@ -1,16 +1,9 @@
 package org.eventb.internal.pp.translator;
 
-import java.util.LinkedList;
+import java.util.*;
+import java.math.*;
 
-import org.eventb.core.ast.BoolExpression;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.*;
 
 public class ExprReorganizer extends Sub2QuantTranslator {
 
@@ -29,9 +22,30 @@ public class ExprReorganizer extends Sub2QuantTranslator {
 
 	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
+		SourceLocation loc = pred.getSourceLocation();
+		
 		%match(Predicate pred) {
-			Equal(Identifier(), Card(_)) | Equal(Identifier(), Bool(_))-> {
-				return identityTranslate(pred, ff);
+			Equal(ident@Identifier(), Card(S)) -> {
+				Expression newS = translate(`S, ff);
+				if(newS == `S)
+					return pred;
+				else
+					return ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						`ident,
+						ff.makeUnaryExpression(Formula.KCARD, newS, loc),
+						loc);
+			}
+			Equal(ident@Identifier(), Bool(P)) -> {
+				Predicate newP = translate(`P, ff);
+				if(newP == `P)
+					return pred;
+				else
+					return ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						`ident,
+						ff.makeBoolExpression(newP, loc),
+						loc);
 			}
 			_-> {
 				return super.translate(pred, ff);

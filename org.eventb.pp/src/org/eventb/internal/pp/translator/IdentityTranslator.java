@@ -112,10 +112,16 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Expression[]  children=tom_match1_1_children;
 
 	    		ArrayList<Expression> newChildren = new ArrayList<Expression>();
+	    		boolean hasChanged = false;
 	    		for (Expression child: children) {
-	    			newChildren.add(translate(child, ff));
+	    			Expression newChild = translate(child, ff);
+	    			newChildren.add(newChild);
+	    			hasChanged = hasChanged || (newChild != child);
 	    		}
-	    		return ff.makeAssociativeExpression(expr.getTag(), newChildren, loc);
+	    		if(hasChanged)
+		    		return ff.makeAssociativeExpression(expr.getTag(), newChildren, loc);
+		    	else
+		    		return expr;		    	
 	    	}
 }
     }
@@ -141,11 +147,12 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Expression  l=tom_match1_1_left;
       { Expression  r=tom_match1_1_right;
 
-	    		return ff.makeBinaryExpression(
-	    			expr.getTag(),
-	    			translate(l, ff),
-	    			translate(r, ff),
-	    			loc);
+	    		Expression nl = translate(l, ff);
+	    		Expression nr = translate(r, ff);
+
+	    		if(nl == l&& nr == r) return expr;
+	    		else
+		    		return ff.makeBinaryExpression(expr.getTag(), nl, nr, loc);
 	    	}
 }
 }
@@ -155,9 +162,11 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate  tom_match1_1_predicate=tom_get_slot_Bool_predicate(tom_match1_1);
       { Predicate  P=tom_match1_1_predicate;
 
-	    		return ff.makeBoolExpression(
-	    			translate(P, ff),
-	    			loc);
+	    		Predicate nP = translate(P, ff);
+	    		
+	    		if(nP == P) return expr;
+	    		else 
+	    			return ff.makeBoolExpression(nP, loc);
 	    	}
 }
     }
@@ -169,13 +178,13 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate  P=tom_match1_1_predicate;
       { Expression  E=tom_match1_1_expression;
 
-	    		return ff.makeQuantifiedExpression(
-	    			expr.getTag(),
-	    			is,
-	    			translate(P, ff),
-	    			translate(E, ff),
-	    			loc,
-	    			QuantifiedExpression.Form.Explicit);	    			
+	    		Predicate nP = translate(P, ff);
+	    		Expression nE = translate(E, ff);
+
+	    		if(nP == P&& nE == E) return expr;
+	    		else
+	    			return ff.makeQuantifiedExpression(
+	    				expr.getTag(), is, nP, nE, loc, QuantifiedExpression.Form.Explicit);	    			
 	    	}
 }
 }
@@ -191,13 +200,13 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate  P=tom_match1_1_predicate;
       { Expression  E=tom_match1_1_expression;
 
-	    		return ff.makeQuantifiedExpression(
-	    			expr.getTag(),
-	    			is,
-	    			translate(P, ff),
-	    			translate(E, ff),
-	    			loc,
-	    			QuantifiedExpression.Form.Explicit);	    			
+	    		Predicate nP = translate(P, ff);
+	    		Expression nE = translate(E, ff);
+
+	    		if(nP == P&& nE == E) return expr;
+	    		else
+	    			return ff.makeQuantifiedExpression(
+	    				expr.getTag(), is, nP, nE, loc, QuantifiedExpression.Form.Explicit);	    			
 	    	}
 }
 }
@@ -213,13 +222,13 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate  P=tom_match1_1_predicate;
       { Expression  E=tom_match1_1_expression;
 
-	    		return ff.makeQuantifiedExpression(
-	    			expr.getTag(),
-	    			is,
-	    			translate(P, ff),
-	    			translate(E, ff),
-	    			loc,
-	    			QuantifiedExpression.Form.Explicit);	    			
+	    		Predicate nP = translate(P, ff);
+	    		Expression nE = translate(E, ff);
+
+	    		if(nP == P&& nE == E) return expr;
+	    		else
+	    			return ff.makeQuantifiedExpression(
+	    				expr.getTag(), is, nP, nE, loc, QuantifiedExpression.Form.Explicit);	    			
 	    	}
 }
 }
@@ -231,11 +240,17 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Expression[]  tom_match1_1_members=tom_get_slot_SetExtension_members(tom_match1_1);
       { Expression[]  children=tom_match1_1_members;
 
+	    		boolean hasChanged = false;
 	    		ArrayList<Expression> newChildren = new ArrayList<Expression>();
 	    		for (Expression child: children) {
-	    			newChildren.add(translate(child, ff));
+	    			Expression newChild = translate(child, ff);
+	    			newChildren.add(newChild);
+	    			hasChanged = hasChanged || (newChild != child);
 	    		}
-	    		return ff.makeSetExtension(newChildren, loc);
+	    		if(hasChanged)
+		    		return ff.makeSetExtension(newChildren, loc);
+		    	else
+		    		return expr;
 	    	}
 }
     }
@@ -243,10 +258,11 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Expression  tom_match1_1_child=tom_get_slot_UnaryExpression_child(tom_match1_1);
       { Expression  child=tom_match1_1_child;
 
-	    		return ff.makeUnaryExpression(
-	    			expr.getTag(), 
-	    			translate(child, ff),
-	    			loc);
+	    		Expression newChild = translate(child, ff);
+	    		
+	    		if(newChild == child) return expr;
+	    		else
+		    		return ff.makeUnaryExpression(expr.getTag(), newChild, loc);
 	    	}
 }
     }
@@ -264,10 +280,16 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate[]  children=tom_match2_1_children;
 
 	    		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
+	    		boolean hasChanged = false;
 	    		for (Predicate child: children) {
-	    			newChildren.add(translate(child, ff));
+	    			Predicate newChild = translate(child, ff);
+	    			newChildren.add(newChild);
+	    			hasChanged = hasChanged || (newChild != child);
 	    		}
-		    	return ff.makeAssociativePredicate(pred.getTag(), newChildren, loc);
+	    		if(hasChanged)
+	    			return ff.makeAssociativePredicate(pred.getTag(), newChildren, loc);
+	    		else
+	    			return pred;
 	    	}
 }
     }
@@ -276,24 +298,31 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate[]  children=tom_match2_1_children;
 
 	    		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
+	    		boolean hasChanged = false;
 	    		for (Predicate child: children) {
-	    			newChildren.add(translate(child, ff));
+	    			Predicate newChild = translate(child, ff);
+	    			newChildren.add(newChild);
+	    			hasChanged = hasChanged || (newChild != child);
 	    		}
-		    	return ff.makeAssociativePredicate(pred.getTag(), newChildren, loc);
+	    		if(hasChanged)
+	    			return ff.makeAssociativePredicate(pred.getTag(), newChildren, loc);
+	    		else
+	    			return pred;
 	    	}
 }
     }
     if(tom_is_fun_sym_Limp(tom_match2_1) ||  false ) {
       { Predicate  tom_match2_1_left=tom_get_slot_Limp_left(tom_match2_1);
       { Predicate  tom_match2_1_right=tom_get_slot_Limp_right(tom_match2_1);
-      { Predicate  left=tom_match2_1_left;
-      { Predicate  right=tom_match2_1_right;
+      { Predicate  l=tom_match2_1_left;
+      { Predicate  r=tom_match2_1_right;
 
-	    		return ff.makeBinaryPredicate(
-	    			pred.getTag(),
-	    			translate(left, ff),
-	    			translate(right, ff),
-	    			loc);
+				Predicate nl = translate(l, ff);
+				Predicate nr = translate(r, ff);
+				
+				if(nl == l&& nr == r) return pred;
+				else
+					return ff.makeBinaryPredicate(pred.getTag(),nl, nr, loc);
 	    	}
 }
 }
@@ -302,14 +331,15 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
     if(tom_is_fun_sym_Leqv(tom_match2_1) ||  false ) {
       { Predicate  tom_match2_1_left=tom_get_slot_Leqv_left(tom_match2_1);
       { Predicate  tom_match2_1_right=tom_get_slot_Leqv_right(tom_match2_1);
-      { Predicate  left=tom_match2_1_left;
-      { Predicate  right=tom_match2_1_right;
+      { Predicate  l=tom_match2_1_left;
+      { Predicate  r=tom_match2_1_right;
 
-	    		return ff.makeBinaryPredicate(
-	    			pred.getTag(),
-	    			translate(left, ff),
-	    			translate(right, ff),
-	    			loc);
+				Predicate nl = translate(l, ff);
+				Predicate nr = translate(r, ff);
+				
+				if(nl == l&& nr == r) return pred;
+				else
+					return ff.makeBinaryPredicate(pred.getTag(),nl, nr, loc);
 	    	}
 }
 }
@@ -319,15 +349,21 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Predicate  tom_match2_1_child=tom_get_slot_Not_child(tom_match2_1);
       { Predicate  P=tom_match2_1_child;
 
-	    		return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
+	      		Predicate nP = translate(P, ff);
+	      		if(nP == P) return pred;
+	      		else
+	    			return ff.makeUnaryPredicate(Formula.NOT, nP, loc);
 	    	}
 }
     }
     if(tom_is_fun_sym_Finite(tom_match2_1) ||  false ) {
       { Expression  tom_match2_1_child=tom_get_slot_Finite_child(tom_match2_1);
-      { Expression  P=tom_match2_1_child;
+      { Expression  E=tom_match2_1_child;
 
-	    		return ff.makeSimplePredicate(Formula.KFINITE, translate(P, ff), loc);
+	      		Expression nE = translate(E, ff);
+	      		if(nE == E) return pred;
+	      		else
+	    			return ff.makeSimplePredicate(Formula.KFINITE, nE, loc);
 	    	}
 }
     }
@@ -337,11 +373,12 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { Expression  l=tom_match2_1_left;
       { Expression  r=tom_match2_1_right;
 
-	    		return  ff.makeRelationalPredicate(
-	    			pred.getTag(),
-	    			translate(l, ff),
-	    			translate(r, ff),
-	    			loc);
+				Expression nl = translate(l, ff);
+	    		Expression nr = translate(r, ff);
+
+	    		if(nl == l&& nr == r) return pred;
+	    		else
+					return  ff.makeRelationalPredicate(pred.getTag(), nl, nr, loc);
 	    	}
 }
 }
@@ -353,11 +390,11 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { BoundIdentDecl[]  is=tom_match2_1_identifiers;
       { Predicate  P=tom_match2_1_predicate;
 
-	    		return ff.makeQuantifiedPredicate(
-	    			pred.getTag(),
-	    			is,
-	    			translate(P, ff),
-	    			loc);	    			
+	      		Predicate nP = translate(P, ff);
+	      		
+	      		if(nP == P) return pred;
+	      		else
+	    			return ff.makeQuantifiedPredicate(pred.getTag(), is, nP, loc);	
 	    	}
 }
 }
@@ -369,11 +406,11 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
       { BoundIdentDecl[]  is=tom_match2_1_identifiers;
       { Predicate  P=tom_match2_1_predicate;
 
-	    		return ff.makeQuantifiedPredicate(
-	    			pred.getTag(),
-	    			is,
-	    			translate(P, ff),
-	    			loc);	    			
+	      		Predicate nP = translate(P, ff);
+	      		
+	      		if(nP == P) return pred;
+	      		else
+	    			return ff.makeQuantifiedPredicate(pred.getTag(), is, nP, loc);	
 	    	}
 }
 }

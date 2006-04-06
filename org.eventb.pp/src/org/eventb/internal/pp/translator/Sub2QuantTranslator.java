@@ -27,7 +27,7 @@ public abstract class Sub2QuantTranslator extends IdentityTranslator {
 			P = ff.makeQuantifiedPredicate(Formula.FORALL, new BoundIdentDecl[0], P,	loc);
 		}
 		QuantifiedPredicate result = (QuantifiedPredicate)translator.translate(P, ff);
-		if(result.getBoundIdentifiers().length == 0) 
+		if(result.getBoundIdentifiers().length	 == 0) 
 			return result.getPredicate();
 		else
 			return result;		
