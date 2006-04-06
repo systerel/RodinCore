@@ -417,7 +417,7 @@ public class ProofControlPage
 	    separator.setWidth(defaultWidth - rec.width);
 
 	    pn = createToolItem(buttonBar, SWT.PUSH, "pn", null, null,
-        "Prune at the current node");
+        "Prune the current subtree");
 	    pn.addSelectionListener(new ContextButtonListener("pn"));
 	    pn.setWidth(defaultWidth);
 	    rec = pn.getBounds();
@@ -433,7 +433,7 @@ public class ProofControlPage
 	    separator.setWidth(defaultWidth - rec.width);
 
 	    pv = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
-        "Search hypotheses");
+        "Previous undischarged PO");
 	    pv.addSelectionListener(new ContextButtonListener("pv"));	
 	    pv.setWidth(defaultWidth);
 	    rec = pv.getBounds();
@@ -441,7 +441,7 @@ public class ProofControlPage
 	    separator.setWidth(defaultWidth - rec.width);
 		
 	    ne = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD), null,
-        "Search hypotheses");
+        "Next undischarged PO");
 	    ne.addSelectionListener(new ContextButtonListener("ne"));	
 	    ne.setWidth(defaultWidth);
 //	    rec = ne.getBounds();
