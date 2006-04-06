@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.ide"
       label="org.eventb.ide"
-      version="0.5.3"
+      version="0.5.4"
       provider-name="ETH Zürich">
 
    <description>
@@ -39,7 +39,7 @@ http://www.eclipse.org/legal/epl-v10.html
          id="org.eventb.core.ast"
          download-size="0"
          install-size="0"
-         version="0.9.1"
+         version="0.9.2"
          unpack="false"/>
 
    <plugin
@@ -53,14 +53,14 @@ http://www.eclipse.org/legal/epl-v10.html
          id="org.eventb.core"
          download-size="0"
          install-size="0"
-         version="0.5.2"
+         version="0.5.4"
          unpack="false"/>
 
    <plugin
          id="org.eventb.ui"
          download-size="0"
          install-size="0"
-         version="0.5.3"
+         version="0.5.4"
          unpack="false"/>
 
    <plugin
