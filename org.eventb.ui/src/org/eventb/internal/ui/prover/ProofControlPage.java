@@ -152,7 +152,7 @@ public class ProofControlPage
 			}
 			
 			if (label.equals("pn")) {
-				editor.getUserSupport().applyTactic(Tactics.prune());
+				editor.getUserSupport().prune();
 				return;
 			}
 		
