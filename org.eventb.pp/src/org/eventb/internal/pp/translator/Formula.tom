@@ -684,30 +684,18 @@
 
 /*Delete these...*/
 
-/*
- * PowerSetType
- */
- 
-%op Type PowerSetType (baseType: Type) {
-	is_fsym(t) { t != null && t instanceof PowerSetType }
-	get_slot (baseType, t) { t.getBaseType() }
+%op Type PowSet (child : Type) {
+	is_fsym(t) { t instanceof PowerSetType }
+	get_slot(child,t) { ((PowerSetType) t).getBaseType() }
 }
 
-/*
- * ProductType
- */
- 
-%op Type ProductType (left: Type, right: Type) {
-	is_fsym(t) { t != null && t instanceof ProductType }
-	get_slot (left, t) { ((ProductType)t).getLeft() }
-	get_slot (right, t) { ((ProductType)t).getRight() }
+%op Type CProd (left: Type, right: Type) {
+	is_fsym(t) { t instanceof ProductType }
+	get_slot(left,t) { ((ProductType) t).getLeft() }
+	get_slot(right,t) { ((ProductType) t).getRight() }
 }
 
-
-
-
-
-
-
- 
-
+%op Type Set (name: String) {
+	is_fsym(t) { t instanceof GivenType }
+	get_slot(name,t) { ((GivenType) t).getName() }
+}

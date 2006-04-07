@@ -46,7 +46,23 @@ public class ExprReorganizer extends Sub2QuantTranslator {
 						`ident,
 						ff.makeBoolExpression(newP, loc),
 						loc);
+			}/*
+			RelationalPredicate(E1, FunImage(r, E2)) {
+				Expression newE1 = translate(`E1, ff);
+				Expression newE2 = translate(`E2, ff);
+				Expression nr = translate(`r, ff);
+				
+				if(newE1 == `E1 && newE2 == `E2 && nr == `r)
+					return pred;
+				else
+					return ff.makeRelationalPredicate(
+						pred.getTag(),
+						E,
+						ff.makeBoolExpression(newP, loc),
+						loc);*/
 			}
+			
+			
 			_-> {
 				return super.translate(pred, ff);
 			}
@@ -58,6 +74,12 @@ public class ExprReorganizer extends Sub2QuantTranslator {
 		%match(Expression expr) {
 			Card(_) | Bool(_) -> {
 				return bindExpression(expr, ff);
+			}
+			FunImage(_) -> {
+				if(expr.getType().getBaseType() != null)
+					return super.translate(expr, ff);
+				else
+					return bindExpression(expr, ff);
 			}
 			_ -> {
 				return super.translate(expr, ff);

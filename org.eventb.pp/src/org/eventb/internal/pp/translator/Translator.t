@@ -37,8 +37,6 @@ public class Translator extends IdentityTranslator {
 		return pred;
 	}
 	
-	Stack<QuantLayer> quantStack = new Stack<QuantLayer>();
-	
 	%include {Formula.tom}
 	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
@@ -862,7 +860,30 @@ public class Translator extends IdentityTranslator {
 					translateIn(mb.V(), bij, loc, ff),
 					loc);
 			}
-			Equal(
+			Equal(n@Identifier(), Bool(P)) | Equal(Bool(P), n@Identifier())-> {
+				return ff.makeBinaryPredicate(
+					Formula.LEQV,
+					ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						`n,
+						ff.makeAtomicExpression(Formula.TRUE, loc),
+						loc),
+					`P,
+					loc);
+			}
+			Equal(FunImage(r, E1), E2) | Equal(E2, FunImage(r, E1)) -> {
+				throw new AssertionError("Function application not yet supported");
+			}
+			Equal(FALSE(), E) | Equal(E, FALSE()) -> {
+				return ff.makeUnaryPredicate(
+					Formula.NOT,
+					ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						E,
+						ff.makeAtomicExpression(Formula.TRUE, loc),
+						loc),
+					loc);						
+			}
 			P -> {
 				/*
 				throw new AssertionError("not yet supported!: " + pred);*/

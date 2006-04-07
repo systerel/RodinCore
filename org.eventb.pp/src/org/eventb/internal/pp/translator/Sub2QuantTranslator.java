@@ -81,12 +81,19 @@ public abstract class Sub2QuantTranslator extends IdentityTranslator {
 			if (pred.getTag() == Formula.FORALL) {
 				if(translatedBindings.size() == 0)
 					quantPred = translatedP;
-				else
+				else {
+					Predicate left = null;
+					if(translatedBindings.size() == 1)
+						left = translatedBindings.getFirst();
+					else 
+						left = FormulaConstructor.makeLandPredicate(ff, translatedBindings, loc);
+					
 					quantPred = ff.makeBinaryPredicate(
 						Formula.LIMP,
-						FormulaConstructor.makeLandPredicate(ff, translatedBindings, loc),
+						left,
 						translatedP,
 						loc);
+				}
 			}
 			else {
 				translatedBindings.add(translatedP);
@@ -132,10 +139,14 @@ public abstract class Sub2QuantTranslator extends IdentityTranslator {
 		
 			translatedBindings.add(translatedP);
 			
+			Predicate quantPred = translatedBindings.size() == 1 ?
+					 translatedBindings.getFirst() :
+						 FormulaConstructor.makeLandPredicate(ff, translatedBindings, loc);
+
 			Expression result = ff.makeQuantifiedExpression(
 				expr.getTag(), 
 				translator.identDecls, 
-				FormulaConstructor.makeLandPredicate(ff, translatedBindings, loc),
+				quantPred,
 				translatedE,
 				loc,
 				QuantifiedExpression.Form.Explicit);

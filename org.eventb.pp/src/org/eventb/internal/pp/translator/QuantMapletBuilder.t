@@ -62,11 +62,12 @@ public class QuantMapletBuilder {
 	
 	private Expression mapletOfType(Type type, SourceLocation loc) {
 		%match (Type type) {
-			PowerSetType (_) -> {
+			PowSet(_) | Set(_) -> {
 				identDecls.add(ff.makeBoundIdentDecl("X", loc, `type));
 				return ff.makeBoundIdentifier(c.increment(), loc, `type);
 			}
-			ProductType (left, right) -> {
+			
+			CProd (left, right) -> {
 				return ff.makeBinaryExpression(
 					Formula.MAPSTO, 
 					mapletOfType(`left, loc),
