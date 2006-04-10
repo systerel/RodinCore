@@ -494,7 +494,21 @@ public class AssociativeExpression extends Expression {
 		}
 
 		for (int i = 0; goOn && i < children.length; i++) {
-			goOn = children[i].accept(visitor);
+			if (i != 0) {
+				switch (getTag()) {
+				case BUNION: goOn = visitor.continueBUNION(this); break;
+				case BINTER: goOn = visitor.continueBINTER(this); break;
+				case BCOMP:  goOn = visitor.continueBCOMP(this);  break;
+				case FCOMP:  goOn = visitor.continueFCOMP(this);  break;
+				case OVR:    goOn = visitor.continueOVR(this);    break;
+				case PLUS:   goOn = visitor.continuePLUS(this);   break;
+				case MUL:    goOn = visitor.continueMUL(this);    break;
+				default:     assert false;
+				}
+			}
+			if (goOn) {
+				goOn = children[i].accept(visitor);
+			}
 		}
 		
 		switch (getTag()) {

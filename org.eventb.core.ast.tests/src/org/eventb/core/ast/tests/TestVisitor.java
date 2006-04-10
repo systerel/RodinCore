@@ -57,10 +57,347 @@ public class TestVisitor extends TestCase {
 	}
 
 	private static class CounterVisitor extends DefaultVisitor {
+
 		private int count;
 		
 		int getCount() {
 			return count;
+		}
+
+		@Override
+		public boolean continueBCOMP(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueBINTER(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueBUNION(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueCPROD(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueCSET(QuantifiedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueDIV(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueDOMRES(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueDOMSUB(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueDPROD(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueEQUAL(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueEXISTS(QuantifiedPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueEXPN(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueFCOMP(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueFORALL(QuantifiedPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueFUNIMAGE(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueGE(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueGT(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueIN(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLAND(AssociativePredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLE(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLEQV(BinaryPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLIMP(BinaryPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLOR(AssociativePredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueLT(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueMAPSTO(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueMINUS(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueMOD(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueMUL(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueNOTEQUAL(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueNOTIN(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueNOTSUBSET(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueNOTSUBSETEQ(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueOVR(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continuePFUN(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continuePINJ(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continuePLUS(AssociativeExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continuePPROD(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continuePSUR(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueQINTER(QuantifiedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueQUNION(QuantifiedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueRANRES(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueRANSUB(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueREL(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueRELIMAGE(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSETEXT(SetExtension set) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSETMINUS(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSREL(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSTREL(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSUBSET(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueSUBSETEQ(RelationalPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueTBIJ(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueTFUN(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueTINJ(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueTREL(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueTSUR(BinaryExpression expr) {
+			++ count;
+			return true;
+		}
+
+		@Override
+		public boolean continueUPTO(BinaryExpression expr) {
+			++ count;
+			return true;
 		}
 
 		@Override
@@ -1028,6 +1365,7 @@ public class TestVisitor extends TestCase {
 			++ count;
 			return true;
 		}
+
 	}
 	
 	// Some simple expressions.
@@ -1062,207 +1400,207 @@ public class TestVisitor extends TestCase {
 				),
 				new TestItem(
 					ff.makeSetExtension(mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.EQUAL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.NOTEQUAL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.LT, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.LE, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.GT, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.GE, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.IN, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.NOTIN, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.SUBSET, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.NOTSUBSET, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.SUBSETEQ, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeRelationalPredicate(Formula.NOTSUBSETEQ, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.MAPSTO, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.REL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.TREL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.SREL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.STREL, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.PFUN, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.TFUN, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.PINJ, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.TINJ, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.PSUR, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.TSUR, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.TBIJ, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.SETMINUS, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.CPROD, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.DPROD, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.PPROD, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.DOMRES, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.DOMSUB, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.RANRES, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.RANSUB, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.UPTO, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.MINUS, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.DIV, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.MOD, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.EXPN, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.FUNIMAGE, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryExpression(Formula.RELIMAGE, e1, e2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryPredicate(Formula.LIMP, p1, p2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeBinaryPredicate(Formula.LEQV, p1, p2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.BUNION, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.BINTER, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.BCOMP, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.FCOMP, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.OVR, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.PLUS, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativeExpression(Formula.MUL, mList(e1, e2, e3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativePredicate(Formula.LAND, mList(p1, p2, p3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAssociativePredicate(Formula.LOR, mList(p1, p2, p3), null),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeAtomicExpression(Formula.INTEGER, null),
@@ -1378,23 +1716,23 @@ public class TestVisitor extends TestCase {
 				),
 				new TestItem(
 					ff.makeQuantifiedExpression(Formula.QUNION, mList(bid), p1, e1, null, Explicit),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeQuantifiedExpression(Formula.QINTER, mList(bid), p1, e1, null, Explicit),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeQuantifiedExpression(Formula.CSET, mList(bid), p1, e1, null, Explicit),
-					5
+					7
 				),
 				new TestItem(
 					ff.makeQuantifiedPredicate(Formula.FORALL, mList(bid), p2, null),
-					4
+					5
 				),
 				new TestItem(
 					ff.makeQuantifiedPredicate(Formula.EXISTS, mList(bid), p2, null),
-					4
+					5
 				),
 	};
 	
@@ -1431,7 +1769,7 @@ public class TestVisitor extends TestCase {
 		// Example without shortcut
 		CounterVisitor visitor = new CounterVisitor();
 		expr.accept(visitor);
-		assertEquals(8, visitor.getCount());
+		assertEquals(11, visitor.getCount());
 		
 		// Example with shortcut after "x"
 		visitor = new CounterVisitor() {
@@ -1453,7 +1791,18 @@ public class TestVisitor extends TestCase {
 			}
 		};
 		expr.accept(visitor);
-		assertEquals(6, visitor.getCount());
+		assertEquals(8, visitor.getCount());
+
+		// Example with shortcut after continuing PLUS
+		visitor = new CounterVisitor() {
+			@Override
+			public boolean continuePLUS(AssociativeExpression assocExpr) {
+				super.continuePLUS(assocExpr);
+				return false;
+			}
+		};
+		expr.accept(visitor);
+		assertEquals(4, visitor.getCount());
 	}
 
 }

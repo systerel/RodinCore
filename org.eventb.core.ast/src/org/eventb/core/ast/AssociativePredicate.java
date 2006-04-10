@@ -249,7 +249,16 @@ public class AssociativePredicate extends Predicate {
 		}
 
 		for (int i = 0; goOn && i < children.length; i++) {
-			goOn = children[i].accept(visitor);
+			if (i != 0) {
+				switch (getTag()) {
+				case LAND: goOn = visitor.continueLAND(this); break;
+				case LOR:  goOn = visitor.continueLOR(this);  break;
+				default:     assert false;
+				}
+			}
+			if (goOn) {
+				goOn = children[i].accept(visitor);
+			}
 		}
 		
 		switch (getTag()) {

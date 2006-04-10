@@ -73,29 +73,29 @@ leaf	AtomicExpression	EMPTYSET	expr
 leaf	AtomicExpression	KPRED	expr
 leaf	AtomicExpression	KSUCC	expr
 
-parent	BoolExpression	KBOOL	expr
+unary	BoolExpression	KBOOL	expr
 
 leaf	LiteralPredicate	BTRUE	pred
 leaf	LiteralPredicate	BFALSE	pred
 
-parent	SimplePredicate	KFINITE	pred
+unary	SimplePredicate	KFINITE	pred
 
-parent	UnaryPredicate	NOT	pred
+unary	UnaryPredicate	NOT	pred
 
-parent	UnaryExpression	KCARD	expr
-parent	UnaryExpression	POW	expr
-parent	UnaryExpression	POW1	expr
-parent	UnaryExpression	KUNION	expr
-parent	UnaryExpression	KINTER	expr
-parent	UnaryExpression	KDOM	expr
-parent	UnaryExpression	KRAN	expr
-parent	UnaryExpression	KPRJ1	expr
-parent	UnaryExpression	KPRJ2	expr
-parent	UnaryExpression	KID	expr
-parent	UnaryExpression	KMIN	expr
-parent	UnaryExpression	KMAX	expr
-parent	UnaryExpression	CONVERSE	expr
-parent	UnaryExpression	UNMINUS	expr
+unary	UnaryExpression	KCARD	expr
+unary	UnaryExpression	POW	expr
+unary	UnaryExpression	POW1	expr
+unary	UnaryExpression	KUNION	expr
+unary	UnaryExpression	KINTER	expr
+unary	UnaryExpression	KDOM	expr
+unary	UnaryExpression	KRAN	expr
+unary	UnaryExpression	KPRJ1	expr
+unary	UnaryExpression	KPRJ2	expr
+unary	UnaryExpression	KID	expr
+unary	UnaryExpression	KMIN	expr
+unary	UnaryExpression	KMAX	expr
+unary	UnaryExpression	CONVERSE	expr
+unary	UnaryExpression	UNMINUS	expr
 
 parent	QuantifiedExpression	QUNION	expr
 parent	QuantifiedExpression	QINTER	expr

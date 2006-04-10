@@ -272,6 +272,25 @@ public class RelationalPredicate extends Predicate {
 		}
 
 		if (goOn) goOn = left.accept(visitor);
+
+		if (goOn) {
+			switch (getTag()) {
+			case EQUAL:       goOn = visitor.continueEQUAL(this);       break;
+			case NOTEQUAL:    goOn = visitor.continueNOTEQUAL(this);    break;
+			case LT:          goOn = visitor.continueLT(this);          break;
+			case LE:          goOn = visitor.continueLE(this);          break;
+			case GT:          goOn = visitor.continueGT(this);          break;
+			case GE:          goOn = visitor.continueGE(this);          break;
+			case IN:          goOn = visitor.continueIN(this);          break;
+			case NOTIN:       goOn = visitor.continueNOTIN(this);       break;
+			case SUBSET:      goOn = visitor.continueSUBSET(this);      break;
+			case NOTSUBSET:   goOn = visitor.continueNOTSUBSET(this);   break;
+			case SUBSETEQ:    goOn = visitor.continueSUBSETEQ(this);    break;
+			case NOTSUBSETEQ: goOn = visitor.continueNOTSUBSETEQ(this); break;
+			default:          assert false;
+			}
+		}
+		
 		if (goOn) goOn = right.accept(visitor);
 		
 		switch (getTag()) {

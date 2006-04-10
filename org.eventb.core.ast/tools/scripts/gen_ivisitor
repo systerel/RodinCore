@@ -7,15 +7,17 @@ use integer;
 use strict;
 
 sub visit($$$);
-sub enter($$$);
+sub enter($$$$);
 
 while (<>) {
     next if m/^\s*$/;
     my ($nat, $class, $tag, $name) = split;
     if ($nat eq 'leaf') {
 	visit($class, $tag, $name);
+    } elsif ($nat eq 'unary') {
+	enter($class, $tag, $name, 1);
     } elsif ($nat eq 'parent') {
-	enter($class, $tag, $name);
+	enter($class, $tag, $name, 0);
     } else {
 	die;
     }
@@ -39,8 +41,8 @@ sub visit($$$) {
 EOT
 }
 
-sub enter($$$) {
-    my ($class, $tag, $name) = @_;
+sub enter($$$$) {
+    my ($class, $tag, $name, $unary) = @_;
     print <<EOT;
 	/**
 	 * Enters a <code>$tag</code> node.
@@ -54,6 +56,25 @@ sub enter($$$) {
 	 */
 	boolean enter$tag($class $name);
 
+EOT
+
+    print <<EOT unless $unary;
+	/**
+	 * Advances to the next child of a <code>$tag</code> node.
+	 *
+	 * \@param $name
+	 *             the parent node
+	 * \@return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * \@see Formula#accept(IVisitor)
+	 */
+	boolean continue$tag($class $name);
+
+EOT
+
+    print <<EOT;
 	/**
 	 * Exits a <code>$tag</code> node.
 	 *
@@ -67,4 +88,3 @@ sub enter($$$) {
 	boolean exit$tag($class $name);
 EOT
 }
-

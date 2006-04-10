@@ -210,6 +210,15 @@ public class BinaryPredicate extends Predicate {
 		}
 
 		if (goOn) goOn = left.accept(visitor);
+		
+		if (goOn) {
+			switch (getTag()) {
+			case LIMP: goOn = visitor.continueLIMP(this); break;
+			case LEQV: goOn = visitor.continueLEQV(this); break;
+			default:   assert false;
+			}
+		}
+		
 		if (goOn) goOn = right.accept(visitor);
 		
 		switch (getTag()) {

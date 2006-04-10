@@ -15,79 +15,113 @@ package org.eventb.core.ast;
  * {@link Formula#accept(IVisitor)} in order to traverse an AST in depth-first
  * order. Then, for each node encountered during that traversal, methods of that
  * interface will be called back.
- * </p><p>
+ * </p>
+ * <p>
  * Foreach leaf node tag of event-B (a tag that corresponds to a node that never
  * has children), a visitor provides a <code>visit</code> method. This method
  * takes the node to visit as argument.
- * </p><p>
- * Foreach parent node tag of event-B (a tag that corresponds to a node that can
- * have children), a visitor provides two methods called <code>enter</code>
- * and <code>exit</code>. The <code>enter</code> method is called before
- * visiting the children (prefix order), while the <code>exit</code> method is
- * called after visiting the children (postfix order). Both methods take the
- * node to visit as argument.
- * </p><p>
- * All methods return a boolean value which is used to possibly accelerate the
- * traversal of an AST. A <code>true</code> result means to resume the
- * traversal normally, while a <code>false</code> result means to take some
- * shortcut:
+ * </p>
+ * <p>
+ * Foreach unary parent node tag of event-B (a tag that corresponds to a node
+ * that has exactly one child), a visitor provides two methods called
+ * <code>enter</code> and <code>exit</code>. The <code>enter</code>
+ * method is called before visiting the child (prefix order), while the
+ * <code>exit</code> method is called after visiting the child (postfix
+ * order). Both methods take the node to visit as argument.
+ * </p>
+ * <p>
+ * Foreach non-unary parent node tag of event-B (a tag that corresponds to a
+ * node that can have several children), a visitor provides three methods called
+ * <code>enter</code>, <code>continue</code> and <code>exit</code>. The
+ * <code>enter</code> method is called before visiting the children (prefix
+ * order). The <code>continue</code> method is called in between two children
+ * (infix order). The <code>exit</code> method is called after visiting the
+ * children (postfix order). All methods take the node to visit as argument.
+ * </p>
+ * <p>
+ * All visitor methods return a boolean value which is used to possibly
+ * accelerate the traversal of an AST. A <code>true</code> result means to
+ * resume the traversal normally, while a <code>false</code> result means to
+ * take some shortcut:
  * <ul>
- *   <li>When a <code>visit</code> or <code>exit</code> method returns
- *       <code>false</code>, then the siblings of the visited node will not be
- *       traversed anymore.  The traversal is resumed at the call of the
- *        <code>exit</code> method on the parent of the last visited node.</li>
- *   <li>When an <code>enter</code> method returns <code>false</code>, then the
- *       children of the visited node will not be traversed.
- *       The traversal is resumed at the call of the <code>exit</code>
- *       method on the same node.</li>
+ * <li>When a <code>visit</code> or <code>exit</code> method returns
+ * <code>false</code>, then the siblings of the visited node will not be
+ * traversed anymore. The traversal is resumed at the call of the
+ * <code>exit</code> method on the parent of the last visited node.</li>
+ * <li>When an <code>enter</code> method returns <code>false</code>, then
+ * the children of the visited node will not be traversed. The traversal is
+ * resumed at the call of the <code>exit</code> method on the same node.</li>
+ * <li>When a <code>continue</code> method returns <code>false</code>,
+ * then the remaining children of the visited node will not be traversed. The
+ * traversal is resumed at the call of the <code>exit</code> method on the
+ * same node.</li>
  * </ul>
- * </p><p>
+ * </p>
+ * <p>
  * <em>Note</em> that, whatever the result of the visit calls, for each parent
  * node traversed, there will be exactly one call of both <code>enter</code>
  * and <code>exit</code> methods.
- * </p><p>
+ * </p>
+ * <p>
  * For instance, suppose we have the following AST:
  * <pre>
- *     PLUS
- *      +--- FREE_IDENT("x")
+ *    PLUS
+ *      +--- FREE_IDENT(&quot;x&quot;)
  *      +--- MINUS
- *      |      +--- FREE_IDENT("y") 
- *      |      +--- FREE_IDENT("z") 
- *      +--- FREE_IDENT("t")
+ *      |      +--- FREE_IDENT(&quot;y&quot;) 
+ *      |      +--- FREE_IDENT(&quot;z&quot;) 
+ *      +--- FREE_IDENT(&quot;t&quot;)
  * </pre>
- * </p><p>
+ * </p>
+ * <p>
  * Normal in-depth traversal (the one obtained when all calls return
  * <code>true</code>) produces the following sequence of calls:
  * <pre>
- *      true <-- enterPLUS
- *      true <-- visitFREE_IDENT("x")
- *      true <-- enterMINUS
- *      true <-- visitFREE_IDENT("y")
- *      true <-- visitFREE_IDENT("z")
- *      true <-- exitMINUS
- *      true <-- visitFREE_IDENT("t")
- *      true <-- exitPLUS
+ *     true &lt;-- enterPLUS
+ *     true &lt;-- visitFREE_IDENT(&quot;x&quot;)
+ *     true &lt;-- continuePLUS
+ *     true &lt;-- enterMINUS
+ *     true &lt;-- visitFREE_IDENT(&quot;y&quot;)
+ *     true &lt;-- continueMINUS
+ *     true &lt;-- visitFREE_IDENT(&quot;z&quot;)
+ *     true &lt;-- exitMINUS
+ *     true &lt;-- continuePLUS
+ *     true &lt;-- visitFREE_IDENT(&quot;t&quot;)
+ *     true &lt;-- exitPLUS
  * </pre>
- * </p><p>
+ * </p>
+ * <p>
  * Then, suppose that the visit of identifier <code>x</code> returns
  * <code>false</code>, the sequence of calls becomes:
  * <pre>
- *      true <-- enterPLUS
- *     false <-- visitFREE_IDENT("x")
- *      true <-- exitPLUS
+ *     true &lt;-- enterPLUS
+ *    false &lt;-- visitFREE_IDENT(&quot;x&quot;)
+ *     true &lt;-- exitPLUS
  * </pre>
- * </p><p>
+ * </p>
+ * <p>
  * If, instead, it's the call to <code>enterMINUS</code> which returns
  * <code>false</code>, the sequence of calls becomes:
  * <pre>
- *      true <-- enterPLUS
- *      true <-- visitFREE_IDENT("x")
- *     false <-- enterMINUS
- *      true <-- exitMINUS
- *      true <-- visitFREE_IDENT("t")
- *      true <-- exitPLUS
+ *     true &lt;-- enterPLUS
+ *     true &lt;-- visitFREE_IDENT(&quot;x&quot;)
+ *     true &lt;-- continuePLUS
+ *    false &lt;-- enterMINUS
+ *     true &lt;-- exitMINUS
+ *     true &lt;-- continuePLUS
+ *     true &lt;-- visitFREE_IDENT(&quot;t&quot;)
+ *     true &lt;-- exitPLUS
  * </pre>
  * </p>
+ * <p>
+ * Finally, if the first call to <code>continuePLUS</code> returns
+ * <code>false</code>, the sequence of calls is:
+ * <pre>
+ *     true &lt;-- enterPLUS
+ *     true &lt;-- visitFREE_IDENT(&quot;x&quot;)
+ *    false &lt;-- continuePLUS
+ *     true &lt;-- exitPLUS
+ * </pre>
  * 
  * @see Formula#accept(IVisitor)
  * 
@@ -156,6 +190,19 @@ public interface IVisitor {
 	boolean enterSETEXT(SetExtension set);
 
 	/**
+	 * Advances to the next child of a <code>SETEXT</code> node.
+	 *
+	 * @param set
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSETEXT(SetExtension set);
+
+	/**
 	 * Exits a <code>SETEXT</code> node.
 	 *
 	 * @param set
@@ -178,6 +225,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterEQUAL(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>EQUAL</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueEQUAL(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>EQUAL</code> node.
@@ -204,6 +264,19 @@ public interface IVisitor {
 	boolean enterNOTEQUAL(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>NOTEQUAL</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueNOTEQUAL(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>NOTEQUAL</code> node.
 	 *
 	 * @param pred
@@ -226,6 +299,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterLT(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>LT</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLT(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>LT</code> node.
@@ -252,6 +338,19 @@ public interface IVisitor {
 	boolean enterLE(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>LE</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLE(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>LE</code> node.
 	 *
 	 * @param pred
@@ -274,6 +373,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterGT(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>GT</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueGT(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>GT</code> node.
@@ -300,6 +412,19 @@ public interface IVisitor {
 	boolean enterGE(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>GE</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueGE(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>GE</code> node.
 	 *
 	 * @param pred
@@ -322,6 +447,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterIN(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>IN</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueIN(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>IN</code> node.
@@ -348,6 +486,19 @@ public interface IVisitor {
 	boolean enterNOTIN(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>NOTIN</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueNOTIN(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>NOTIN</code> node.
 	 *
 	 * @param pred
@@ -370,6 +521,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterSUBSET(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>SUBSET</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSUBSET(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>SUBSET</code> node.
@@ -396,6 +560,19 @@ public interface IVisitor {
 	boolean enterNOTSUBSET(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>NOTSUBSET</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueNOTSUBSET(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>NOTSUBSET</code> node.
 	 *
 	 * @param pred
@@ -418,6 +595,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterSUBSETEQ(RelationalPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>SUBSETEQ</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSUBSETEQ(RelationalPredicate pred);
 
 	/**
 	 * Exits a <code>SUBSETEQ</code> node.
@@ -444,6 +634,19 @@ public interface IVisitor {
 	boolean enterNOTSUBSETEQ(RelationalPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>NOTSUBSETEQ</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueNOTSUBSETEQ(RelationalPredicate pred);
+
+	/**
 	 * Exits a <code>NOTSUBSETEQ</code> node.
 	 *
 	 * @param pred
@@ -466,6 +669,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterMAPSTO(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>MAPSTO</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueMAPSTO(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>MAPSTO</code> node.
@@ -492,6 +708,19 @@ public interface IVisitor {
 	boolean enterREL(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>REL</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueREL(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>REL</code> node.
 	 *
 	 * @param expr
@@ -514,6 +743,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterTREL(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>TREL</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueTREL(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>TREL</code> node.
@@ -540,6 +782,19 @@ public interface IVisitor {
 	boolean enterSREL(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>SREL</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSREL(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>SREL</code> node.
 	 *
 	 * @param expr
@@ -562,6 +817,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterSTREL(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>STREL</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSTREL(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>STREL</code> node.
@@ -588,6 +856,19 @@ public interface IVisitor {
 	boolean enterPFUN(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>PFUN</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continuePFUN(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>PFUN</code> node.
 	 *
 	 * @param expr
@@ -610,6 +891,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterTFUN(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>TFUN</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueTFUN(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>TFUN</code> node.
@@ -636,6 +930,19 @@ public interface IVisitor {
 	boolean enterPINJ(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>PINJ</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continuePINJ(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>PINJ</code> node.
 	 *
 	 * @param expr
@@ -658,6 +965,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterTINJ(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>TINJ</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueTINJ(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>TINJ</code> node.
@@ -684,6 +1004,19 @@ public interface IVisitor {
 	boolean enterPSUR(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>PSUR</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continuePSUR(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>PSUR</code> node.
 	 *
 	 * @param expr
@@ -706,6 +1039,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterTSUR(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>TSUR</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueTSUR(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>TSUR</code> node.
@@ -732,6 +1078,19 @@ public interface IVisitor {
 	boolean enterTBIJ(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>TBIJ</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueTBIJ(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>TBIJ</code> node.
 	 *
 	 * @param expr
@@ -754,6 +1113,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterSETMINUS(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>SETMINUS</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueSETMINUS(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>SETMINUS</code> node.
@@ -780,6 +1152,19 @@ public interface IVisitor {
 	boolean enterCPROD(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>CPROD</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueCPROD(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>CPROD</code> node.
 	 *
 	 * @param expr
@@ -802,6 +1187,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterDPROD(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>DPROD</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueDPROD(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>DPROD</code> node.
@@ -828,6 +1226,19 @@ public interface IVisitor {
 	boolean enterPPROD(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>PPROD</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continuePPROD(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>PPROD</code> node.
 	 *
 	 * @param expr
@@ -850,6 +1261,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterDOMRES(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>DOMRES</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueDOMRES(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>DOMRES</code> node.
@@ -876,6 +1300,19 @@ public interface IVisitor {
 	boolean enterDOMSUB(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>DOMSUB</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueDOMSUB(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>DOMSUB</code> node.
 	 *
 	 * @param expr
@@ -898,6 +1335,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterRANRES(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>RANRES</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueRANRES(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>RANRES</code> node.
@@ -924,6 +1374,19 @@ public interface IVisitor {
 	boolean enterRANSUB(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>RANSUB</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueRANSUB(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>RANSUB</code> node.
 	 *
 	 * @param expr
@@ -946,6 +1409,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterUPTO(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>UPTO</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueUPTO(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>UPTO</code> node.
@@ -972,6 +1448,19 @@ public interface IVisitor {
 	boolean enterMINUS(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>MINUS</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueMINUS(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>MINUS</code> node.
 	 *
 	 * @param expr
@@ -994,6 +1483,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterDIV(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>DIV</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueDIV(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>DIV</code> node.
@@ -1020,6 +1522,19 @@ public interface IVisitor {
 	boolean enterMOD(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>MOD</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueMOD(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>MOD</code> node.
 	 *
 	 * @param expr
@@ -1042,6 +1557,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterEXPN(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>EXPN</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueEXPN(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>EXPN</code> node.
@@ -1068,6 +1596,19 @@ public interface IVisitor {
 	boolean enterFUNIMAGE(BinaryExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>FUNIMAGE</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueFUNIMAGE(BinaryExpression expr);
+
+	/**
 	 * Exits a <code>FUNIMAGE</code> node.
 	 *
 	 * @param expr
@@ -1090,6 +1631,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterRELIMAGE(BinaryExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>RELIMAGE</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueRELIMAGE(BinaryExpression expr);
 
 	/**
 	 * Exits a <code>RELIMAGE</code> node.
@@ -1116,6 +1670,19 @@ public interface IVisitor {
 	boolean enterLIMP(BinaryPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>LIMP</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLIMP(BinaryPredicate pred);
+
+	/**
 	 * Exits a <code>LIMP</code> node.
 	 *
 	 * @param pred
@@ -1138,6 +1705,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterLEQV(BinaryPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>LEQV</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLEQV(BinaryPredicate pred);
 
 	/**
 	 * Exits a <code>LEQV</code> node.
@@ -1164,6 +1744,19 @@ public interface IVisitor {
 	boolean enterBUNION(AssociativeExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>BUNION</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBUNION(AssociativeExpression expr);
+
+	/**
 	 * Exits a <code>BUNION</code> node.
 	 *
 	 * @param expr
@@ -1186,6 +1779,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterBINTER(AssociativeExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>BINTER</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBINTER(AssociativeExpression expr);
 
 	/**
 	 * Exits a <code>BINTER</code> node.
@@ -1212,6 +1818,19 @@ public interface IVisitor {
 	boolean enterBCOMP(AssociativeExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>BCOMP</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBCOMP(AssociativeExpression expr);
+
+	/**
 	 * Exits a <code>BCOMP</code> node.
 	 *
 	 * @param expr
@@ -1234,6 +1853,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterFCOMP(AssociativeExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>FCOMP</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueFCOMP(AssociativeExpression expr);
 
 	/**
 	 * Exits a <code>FCOMP</code> node.
@@ -1260,6 +1892,19 @@ public interface IVisitor {
 	boolean enterOVR(AssociativeExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>OVR</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueOVR(AssociativeExpression expr);
+
+	/**
 	 * Exits a <code>OVR</code> node.
 	 *
 	 * @param expr
@@ -1282,6 +1927,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterPLUS(AssociativeExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>PLUS</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continuePLUS(AssociativeExpression expr);
 
 	/**
 	 * Exits a <code>PLUS</code> node.
@@ -1308,6 +1966,19 @@ public interface IVisitor {
 	boolean enterMUL(AssociativeExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>MUL</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueMUL(AssociativeExpression expr);
+
+	/**
 	 * Exits a <code>MUL</code> node.
 	 *
 	 * @param expr
@@ -1332,6 +2003,19 @@ public interface IVisitor {
 	boolean enterLAND(AssociativePredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>LAND</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLAND(AssociativePredicate pred);
+
+	/**
 	 * Exits a <code>LAND</code> node.
 	 *
 	 * @param pred
@@ -1354,6 +2038,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterLOR(AssociativePredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>LOR</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueLOR(AssociativePredicate pred);
 
 	/**
 	 * Exits a <code>LOR</code> node.
@@ -1920,6 +2617,19 @@ public interface IVisitor {
 	boolean enterQUNION(QuantifiedExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>QUNION</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueQUNION(QuantifiedExpression expr);
+
+	/**
 	 * Exits a <code>QUNION</code> node.
 	 *
 	 * @param expr
@@ -1942,6 +2652,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterQINTER(QuantifiedExpression expr);
+
+	/**
+	 * Advances to the next child of a <code>QINTER</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueQINTER(QuantifiedExpression expr);
 
 	/**
 	 * Exits a <code>QINTER</code> node.
@@ -1968,6 +2691,19 @@ public interface IVisitor {
 	boolean enterCSET(QuantifiedExpression expr);
 
 	/**
+	 * Advances to the next child of a <code>CSET</code> node.
+	 *
+	 * @param expr
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueCSET(QuantifiedExpression expr);
+
+	/**
 	 * Exits a <code>CSET</code> node.
 	 *
 	 * @param expr
@@ -1992,6 +2728,19 @@ public interface IVisitor {
 	boolean enterFORALL(QuantifiedPredicate pred);
 
 	/**
+	 * Advances to the next child of a <code>FORALL</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueFORALL(QuantifiedPredicate pred);
+
+	/**
 	 * Exits a <code>FORALL</code> node.
 	 *
 	 * @param pred
@@ -2014,6 +2763,19 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean enterEXISTS(QuantifiedPredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>EXISTS</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueEXISTS(QuantifiedPredicate pred);
 
 	/**
 	 * Exits a <code>EXISTS</code> node.

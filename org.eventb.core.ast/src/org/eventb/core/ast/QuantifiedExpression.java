@@ -601,8 +601,10 @@ public class QuantifiedExpression extends Expression {
 
 		for (int i = 0; goOn && i < quantifiedIdentifiers.length; i++) {
 			goOn = quantifiedIdentifiers[i].accept(visitor);
+			if (goOn) goOn = acceptContinue(visitor);
 		}
 		if (goOn) goOn = pred.accept(visitor);
+		if (goOn) goOn = acceptContinue(visitor);
 		if (goOn) goOn = expr.accept(visitor);
 		
 		switch (getTag()) {
@@ -613,6 +615,15 @@ public class QuantifiedExpression extends Expression {
 		}
 	}
 	
+	private boolean acceptContinue(IVisitor visitor) {
+		switch (getTag()) {
+		case QUNION: return visitor.continueQUNION(this);
+		case QINTER: return visitor.continueQINTER(this);
+		case CSET:   return visitor.continueCSET(this);   
+		default:     assert false; return true;
+		}
+	}
+
 	private Predicate getWDPredicateQINTER(FormulaFactory formulaFactory) {
 		Predicate conj0 = getWDPredicateQUNION(formulaFactory);
 		Predicate conj1 = getWDSimplifyQ(formulaFactory, EXISTS, quantifiedIdentifiers, pred);

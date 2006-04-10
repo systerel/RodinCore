@@ -243,7 +243,12 @@ public class SetExtension extends Expression {
 		boolean goOn = visitor.enterSETEXT(this);
 
 		for (int i = 0; goOn && i < members.length; i++) {
-			goOn = members[i].accept(visitor);
+			if (i != 0) {
+				goOn = visitor.continueSETEXT(this);
+			}
+			if (goOn) { 
+				goOn = members[i].accept(visitor);
+			}
 		}
 		
 		return visitor.exitSETEXT(this);

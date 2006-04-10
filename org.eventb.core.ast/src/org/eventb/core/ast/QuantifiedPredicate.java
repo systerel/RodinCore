@@ -286,6 +286,13 @@ public class QuantifiedPredicate extends Predicate {
 
 		for (int i = 0; goOn && i < quantifiedIdentifiers.length; i++) {
 			goOn = quantifiedIdentifiers[i].accept(visitor);
+			if (goOn) {
+				switch (getTag()) {
+				case FORALL: goOn = visitor.continueFORALL(this); break;
+				case EXISTS: goOn = visitor.continueEXISTS(this); break;
+				default:     assert false;
+				}
+			}
 		}
 		if (goOn) goOn = pred.accept(visitor);
 		

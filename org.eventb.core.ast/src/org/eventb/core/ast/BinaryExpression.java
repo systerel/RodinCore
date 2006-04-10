@@ -688,6 +688,40 @@ public class BinaryExpression extends Expression {
 		}
 
 		if (goOn) goOn = left.accept(visitor);
+		
+		if (goOn) {
+			switch (getTag()) {
+			case MAPSTO:   goOn = visitor.continueMAPSTO(this);   break;
+			case REL:      goOn = visitor.continueREL(this);      break;
+			case TREL:     goOn = visitor.continueTREL(this);     break;
+			case SREL:     goOn = visitor.continueSREL(this);     break;
+			case STREL:    goOn = visitor.continueSTREL(this);    break;
+			case PFUN:     goOn = visitor.continuePFUN(this);     break;
+			case TFUN:     goOn = visitor.continueTFUN(this);     break;
+			case PINJ:     goOn = visitor.continuePINJ(this);     break;
+			case TINJ:     goOn = visitor.continueTINJ(this);     break;
+			case PSUR:     goOn = visitor.continuePSUR(this);     break;
+			case TSUR:     goOn = visitor.continueTSUR(this);     break;
+			case TBIJ:     goOn = visitor.continueTBIJ(this);     break;
+			case SETMINUS: goOn = visitor.continueSETMINUS(this); break;
+			case CPROD:    goOn = visitor.continueCPROD(this);    break;
+			case DPROD:    goOn = visitor.continueDPROD(this);    break;
+			case PPROD:    goOn = visitor.continuePPROD(this);    break;
+			case DOMRES:   goOn = visitor.continueDOMRES(this);   break;
+			case DOMSUB:   goOn = visitor.continueDOMSUB(this);   break;
+			case RANRES:   goOn = visitor.continueRANRES(this);   break;
+			case RANSUB:   goOn = visitor.continueRANSUB(this);   break;
+			case UPTO:     goOn = visitor.continueUPTO(this);     break;
+			case MINUS:    goOn = visitor.continueMINUS(this);    break;
+			case DIV:      goOn = visitor.continueDIV(this);      break;
+			case MOD:      goOn = visitor.continueMOD(this);      break;
+			case EXPN:     goOn = visitor.continueEXPN(this);     break;
+			case FUNIMAGE: goOn = visitor.continueFUNIMAGE(this); break;
+			case RELIMAGE: goOn = visitor.continueRELIMAGE(this); break;
+			default:       assert false;
+			}
+		}
+		
 		if (goOn) goOn = right.accept(visitor);
 		
 		switch (getTag()) {

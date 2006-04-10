@@ -38,11 +38,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueSETEXT(SetExtension set) {
+		return true;
+	}
+
 	public boolean exitSETEXT(SetExtension set) {
 		return true;
 	}
 
 	public boolean enterEQUAL(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueEQUAL(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -54,11 +62,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueNOTEQUAL(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitNOTEQUAL(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterLT(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueLT(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -70,11 +86,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueLE(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitLE(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterGT(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueGT(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -86,11 +110,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueGE(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitGE(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterIN(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueIN(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -102,11 +134,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueNOTIN(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitNOTIN(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterSUBSET(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueSUBSET(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -118,11 +158,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueNOTSUBSET(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitNOTSUBSET(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterSUBSETEQ(RelationalPredicate pred) {
+		return true;
+	}
+
+	public boolean continueSUBSETEQ(RelationalPredicate pred) {
 		return true;
 	}
 
@@ -134,11 +182,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueNOTSUBSETEQ(RelationalPredicate pred) {
+		return true;
+	}
+
 	public boolean exitNOTSUBSETEQ(RelationalPredicate pred) {
 		return true;
 	}
 
 	public boolean enterMAPSTO(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueMAPSTO(BinaryExpression expr) {
 		return true;
 	}
 
@@ -150,11 +206,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueREL(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitREL(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterTREL(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueTREL(BinaryExpression expr) {
 		return true;
 	}
 
@@ -166,11 +230,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueSREL(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitSREL(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterSTREL(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueSTREL(BinaryExpression expr) {
 		return true;
 	}
 
@@ -182,11 +254,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continuePFUN(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitPFUN(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterTFUN(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueTFUN(BinaryExpression expr) {
 		return true;
 	}
 
@@ -198,11 +278,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continuePINJ(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitPINJ(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterTINJ(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueTINJ(BinaryExpression expr) {
 		return true;
 	}
 
@@ -214,11 +302,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continuePSUR(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitPSUR(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterTSUR(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueTSUR(BinaryExpression expr) {
 		return true;
 	}
 
@@ -230,11 +326,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueTBIJ(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitTBIJ(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterSETMINUS(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueSETMINUS(BinaryExpression expr) {
 		return true;
 	}
 
@@ -246,11 +350,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueCPROD(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitCPROD(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterDPROD(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueDPROD(BinaryExpression expr) {
 		return true;
 	}
 
@@ -262,11 +374,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continuePPROD(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitPPROD(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterDOMRES(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueDOMRES(BinaryExpression expr) {
 		return true;
 	}
 
@@ -278,11 +398,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueDOMSUB(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitDOMSUB(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterRANRES(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueRANRES(BinaryExpression expr) {
 		return true;
 	}
 
@@ -294,11 +422,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueRANSUB(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitRANSUB(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterUPTO(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueUPTO(BinaryExpression expr) {
 		return true;
 	}
 
@@ -310,11 +446,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueMINUS(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitMINUS(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterDIV(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueDIV(BinaryExpression expr) {
 		return true;
 	}
 
@@ -326,11 +470,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueMOD(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitMOD(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterEXPN(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueEXPN(BinaryExpression expr) {
 		return true;
 	}
 
@@ -342,11 +494,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueFUNIMAGE(BinaryExpression expr) {
+		return true;
+	}
+
 	public boolean exitFUNIMAGE(BinaryExpression expr) {
 		return true;
 	}
 
 	public boolean enterRELIMAGE(BinaryExpression expr) {
+		return true;
+	}
+
+	public boolean continueRELIMAGE(BinaryExpression expr) {
 		return true;
 	}
 
@@ -358,11 +518,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueLIMP(BinaryPredicate pred) {
+		return true;
+	}
+
 	public boolean exitLIMP(BinaryPredicate pred) {
 		return true;
 	}
 
 	public boolean enterLEQV(BinaryPredicate pred) {
+		return true;
+	}
+
+	public boolean continueLEQV(BinaryPredicate pred) {
 		return true;
 	}
 
@@ -374,11 +542,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueBUNION(AssociativeExpression expr) {
+		return true;
+	}
+
 	public boolean exitBUNION(AssociativeExpression expr) {
 		return true;
 	}
 
 	public boolean enterBINTER(AssociativeExpression expr) {
+		return true;
+	}
+
+	public boolean continueBINTER(AssociativeExpression expr) {
 		return true;
 	}
 
@@ -390,11 +566,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueBCOMP(AssociativeExpression expr) {
+		return true;
+	}
+
 	public boolean exitBCOMP(AssociativeExpression expr) {
 		return true;
 	}
 
 	public boolean enterFCOMP(AssociativeExpression expr) {
+		return true;
+	}
+
+	public boolean continueFCOMP(AssociativeExpression expr) {
 		return true;
 	}
 
@@ -406,11 +590,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueOVR(AssociativeExpression expr) {
+		return true;
+	}
+
 	public boolean exitOVR(AssociativeExpression expr) {
 		return true;
 	}
 
 	public boolean enterPLUS(AssociativeExpression expr) {
+		return true;
+	}
+
+	public boolean continuePLUS(AssociativeExpression expr) {
 		return true;
 	}
 
@@ -422,6 +614,10 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueMUL(AssociativeExpression expr) {
+		return true;
+	}
+
 	public boolean exitMUL(AssociativeExpression expr) {
 		return true;
 	}
@@ -430,11 +626,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueLAND(AssociativePredicate pred) {
+		return true;
+	}
+
 	public boolean exitLAND(AssociativePredicate pred) {
 		return true;
 	}
 
 	public boolean enterLOR(AssociativePredicate pred) {
+		return true;
+	}
+
+	public boolean continueLOR(AssociativePredicate pred) {
 		return true;
 	}
 
@@ -626,11 +830,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueQUNION(QuantifiedExpression expr) {
+		return true;
+	}
+
 	public boolean exitQUNION(QuantifiedExpression expr) {
 		return true;
 	}
 
 	public boolean enterQINTER(QuantifiedExpression expr) {
+		return true;
+	}
+
+	public boolean continueQINTER(QuantifiedExpression expr) {
 		return true;
 	}
 
@@ -642,6 +854,10 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueCSET(QuantifiedExpression expr) {
+		return true;
+	}
+
 	public boolean exitCSET(QuantifiedExpression expr) {
 		return true;
 	}
@@ -650,11 +866,19 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean continueFORALL(QuantifiedPredicate pred) {
+		return true;
+	}
+
 	public boolean exitFORALL(QuantifiedPredicate pred) {
 		return true;
 	}
 
 	public boolean enterEXISTS(QuantifiedPredicate pred) {
+		return true;
+	}
+
+	public boolean continueEXISTS(QuantifiedPredicate pred) {
 		return true;
 	}
 
