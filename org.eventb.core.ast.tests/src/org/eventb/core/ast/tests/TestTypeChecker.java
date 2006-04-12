@@ -418,23 +418,23 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(mList("x","a"), mList(POW(INTEGER),POW(BOOL)))
 			),
 			new TestItem("f[x](y)=a",
-					mTypeEnvironment(),
-					null
+					mTypeEnvironment(mList("f"), mList(REL(ty_S, CPROD(ty_T, ty_U)))),
+					mTypeEnvironment(mList("x", "y", "a"), mList(POW(ty_S), ty_T, ty_U))
 			),
-//			new TestItem("f[x](y)=a",
-//			mTypeEnvironment(),
-//			true,
-//			null
-//			),
-			
-//			"f(x)[y]=a",
-//			
-//			"f(x)(y)=a",
-//			
-//			"f[x][y]=a",
-//			
-//			
-//			// Factor
+			new TestItem("f(x)[y]=a",
+					mTypeEnvironment(mList("f"), mList(REL(ty_S, REL(ty_T, ty_U)))),
+					mTypeEnvironment(mList("x", "y", "a"), mList(ty_S, POW(ty_T), POW(ty_U)))
+			),
+			new TestItem("f(x)(y)=a",
+					mTypeEnvironment(mList("f"), mList(REL(ty_S, REL(ty_T, ty_U)))),
+					mTypeEnvironment(mList("x", "y", "a"), mList(ty_S, ty_T, ty_U))
+			),
+			new TestItem("f[x][y]=a",
+					mTypeEnvironment(mList("f"), mList(REL(ty_S, CPROD(ty_T, ty_U)))),
+					mTypeEnvironment(mList("x", "y", "a"), mList(POW(ty_S), POW(ty_T), POW(ty_U)))
+			),
+
+			// Factor
 			new TestItem("x^y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
@@ -566,10 +566,14 @@ public class TestTypeChecker extends TestCase {
 					),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_U,ty_T))))
 			),
-//			new TestItem("x;y;z=a",
-//			mTypeEnvironment(),
-//			true,
-////			
+
+			new TestItem("x;y;z=a",
+					mTypeEnvironment(
+							mList("a",            "x",            "z"),
+							mList(REL(ty_S,ty_T), REL(ty_S,ty_U), REL(ty_V, ty_T))
+					),
+					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_U,ty_V))))
+			),
 			new TestItem("x\u25b7y=a",
 					mTypeEnvironment(
 							mList("x"),
@@ -621,14 +625,28 @@ public class TestTypeChecker extends TestCase {
 							mList(POW(ty_T), POW(ty_T))
 					)
 			),
-//			new TestItem("x;y\u2a65z=a",
-//			
-//			new TestItem("x\u2229y\u2a65z=a",
-//			
-//			new TestItem("x\u2229y\\z=a",
-//			
-//			
-//			// SetExpr
+			new TestItem("x;y\u2a65z=a",
+					mTypeEnvironment("x", REL(ty_S, ty_T), "z", POW(ty_U)),
+					mTypeEnvironment("y", REL(ty_T, ty_U), "a", REL(ty_S, ty_U))
+			),
+			new TestItem("x\u2229y\u2a65z=a",
+					mTypeEnvironment("x", REL(ty_S, ty_T)),
+					mTypeEnvironment(
+							"y", REL(ty_S, ty_T), 
+							"z", POW(ty_T), 
+							"a", REL(ty_S, ty_T)
+					)
+			),
+			new TestItem("x\u2229y\u2216z=a",
+					mTypeEnvironment("x", REL(ty_S, ty_T)),
+					mTypeEnvironment(
+							"y", REL(ty_S, ty_T), 
+							"z", REL(ty_S, ty_T), 
+							"a", REL(ty_S, ty_T)
+					)
+			),
+
+			// SetExpr
 			new TestItem("x\u222ay=a",
 					mTypeEnvironment(
 							mList("x"),
@@ -1001,78 +1019,116 @@ public class TestTypeChecker extends TestCase {
 							mList(ty_S, ty_T)
 					)
 			),
-//			// QuantifiedExpr & IdentPattern
-//			// UnBound
-//			new TestItem("finite(\u03bb x\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6y\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z)",
-//			
-//			
-//			// Bound
-//			new TestItem("finite(\u03bb x\u00b7\u22a5\u2223x)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6y\u00b7\u22a5\u2223y)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223s)",
-//			
-//			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223s)",
-//			
-//			
+			// QuantifiedExpr & IdentPattern
 			// UnBound
-//			new TestItem("finite(\u22c3x\u00b7\u22a5\u2223z)"
-//			),
-//			
-//			new TestItem("finite(\u22c3y,x\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u22c3s,y,x\u00b7\u22a5\u2223z)",
-//			
-//			
-//			// Bound
-			new TestItem("(\u22c3 x \u00b7 \u22a5 \u2223 x) = a",
-					mTypeEnvironment(mList("a"), mList(POW(INTEGER))),
+			new TestItem("finite(\u03bb x\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u03bb x\u00b7 x\u2208\u2124 \u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
 					mTypeEnvironment()
 			),
-//			
-//			new TestItem("finite(\u22c3y,x\u00b7\u22a5\u2223y \u25b7 x)",
-//			mTypeEnvironment(new FreeIdentifier[]{formulaFactory.makeFreeIdentifier("x",Formula.FREE_IDENT)}, mList(formulaFactory.makeUnaryExpression(formulaFactory.makeAtomicExpression(Formula.INTEGER),Formula.POW))),
-//			true,
-//			mTypeEnvironment(new FreeIdentifier[]{formulaFactory.makeFreeIdentifier("x",Formula.FREE_IDENT)}, mList(formulaFactory.makeUnaryExpression(formulaFactory.makeAtomicExpression(Formula.INTEGER),Formula.POW)))
-//			),
-//			
-//			new TestItem("finite(\u22c3s,y,x\u00b7\u22a5\u2223s)",
-//			
-//			
-//			// UnBound
-//			new TestItem("finite(\u22c3x\u2223\u22a5)",
-//			
-//			new TestItem("finite(\u22c3y−x\u2223\u22a5)",
-//			
-//			
-//			// UnBound
-//			new TestItem("finite(\u22c2x\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u22c2y,x\u00b7\u22a5\u2223z)",
-//			
-//			new TestItem("finite(\u22c2s,y,x\u00b7\u22a5\u2223z)",
-//			
-//			
-//			// Bound
-//			new TestItem("finite(\u22c2x\u00b7\u22a5\u2223x)",
-//			
-//			new TestItem("finite(\u22c2y,x\u00b7\u22a5\u2223y)",
-//			
-//			new TestItem("finite(\u22c2s,y,x\u00b7\u22a5\u2223s)",
-//			
-//			
-//			// UnBound
-//			new TestItem("finite(\u22c2x\u2223\u22a5)",
-//			
-//			new TestItem("finite(\u22c2y−x\u2223\u22a5)",
-//			
+			new TestItem("finite(\u03bb x\u21a6y\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u03bb x\u21a6y\u00b7 " +
+					"x\u21a6y\u2208\u2124\u00d7\u2124 \u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u03bb x\u21a6y\u21a6s\u00b7" +
+					"x\u21a6y\u21a6s\u2208\u2124\u00d7\u2124\u00d7\u2124" +
+					"\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u03bb x\u21a6(y\u21a6s)\u00b7" +
+					"x\u21a6y\u21a6s\u2208\u2124\u00d7\u2124\u00d7\u2124" +
+					"\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+
+			// Bound
+			new TestItem("a = (\u03bb x\u00b7\u22a5\u2223x)",
+					mTypeEnvironment("a", REL(ty_S, ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("a = (\u03bb x\u21a6y\u00b7\u22a5\u2223y)",
+					mTypeEnvironment("a", REL(CPROD(ty_S, ty_T), ty_T)),
+					mTypeEnvironment()
+			),
+			new TestItem("a = (\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223s)",
+					mTypeEnvironment("a", REL(CPROD(CPROD(ty_S, ty_T), ty_U), ty_U)),
+					mTypeEnvironment()
+			),
+			new TestItem("a = (\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223s)",
+					mTypeEnvironment("a", REL(CPROD(ty_S, CPROD(ty_T, ty_U)), ty_U)),
+					mTypeEnvironment()
+			),
+			
+			// UnBound
+			new TestItem("finite(\u22c3x\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u22c3x\u00b7 x\u2208\u2124 \u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("finite(\u22c3y,x\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u22c3y,x\u00b7" +
+					"x\u21a6y\u2208\u2124\u00d7\u2124 \u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("finite(\u22c3s,y,x\u00b7\u22a5\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					null
+			),
+			new TestItem("finite(\u22c3s,y,x\u00b7" +
+					"x\u21a6y\u21a6s\u2208\u2124\u00d7\u2124\u00d7\u2124" +
+					"\u2223z)",
+					mTypeEnvironment("z", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			
+			// Bound
+			new TestItem("(\u22c3 x \u00b7 \u22a5 \u2223 x) = a",
+					mTypeEnvironment("a", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("(\u22c3y,x\u00b7\u22a5\u2223y \u25b7 x) = a",
+					mTypeEnvironment("a", REL(ty_S, ty_T)),
+					mTypeEnvironment()
+			),
+			new TestItem("(\u22c3s,y,x\u00b7\u22a5\u2223 (s\u25b7y)\u25b7x) = a",
+					mTypeEnvironment("a", REL(ty_S, ty_T)),
+					mTypeEnvironment()
+			),
+			
+			// Implicitly Bound
+			new TestItem("(\u22c3x\u2223\u22a5) = a",
+					mTypeEnvironment("a", POW(ty_S)),
+					mTypeEnvironment()
+			),
+			new TestItem("(\u22c3y\u2229x\u2223\u22a5) = a",
+					mTypeEnvironment("a", POW(ty_S)),
+					mTypeEnvironment()
+			),
 			
 			// Special formulas
 			new TestItem("∀ s \u00b7 id ( N ) ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
