@@ -31,10 +31,16 @@ public class Translator extends IdentityTranslator {
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 		pred = IdentifierDecomposition.decomposeIdentifiers(pred, ff);
-		pred = ExprReorganizer.reorganize(pred, ff);
+		
+		pred = new Reorganizer().translate(pred, ff);
 		pred = new Translator().translate(pred, ff);
-		pred = ExpressionPurifier.purify(pred, ff);
-		return pred;
+		
+		Predicate newPred;
+		while(true) {
+			newPred = new Reorganizer().translate(pred, ff);
+			if(newPred == pred) return pred;
+			pred = new Translator().translate(newPred, ff);
+		}
 	}
 	
 	%include {Formula.tom}
@@ -91,13 +97,13 @@ public class Translator extends IdentityTranslator {
 	    		LinkedList<BoundIdentDecl> existDecls = new LinkedList<BoundIdentDecl>();
 	    		
 	    		Type elementType = `S.getType().getBaseType();
-	    		
+
 	    		mb.calculate(ff.makePowerSetType(ff.makeProductType(elementType, elementType)), loc, ff);
 	    		existDecls.addAll(mb.X());
 	    		f = mb.V();
 	    		
 				mb.calculate(elementType, existDecls.size(), loc, ff);
-	    		existDecls.addAll(mb.X());
+	    		existDecls.addAll(0, mb.X());
 	    		b = mb.V();
 	    		
 				mb.calculate(elementType, existDecls.size(), loc, ff);
@@ -131,36 +137,26 @@ public class Translator extends IdentityTranslator {
 	}
 		
 	protected Predicate translateIn(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
-		try {
-    		return translateIn_E(expr, rhs, loc, ff);
-		}
-		catch(TranslationException ex) {}
+		Predicate result = translateIn_E(expr, rhs, loc, ff);
+		if(result != null) return result;
+
+		result = translateIn_EF(expr, rhs, loc, ff);
+		if(result != null) return result;
 		
-		try {
-	    	return translateIn_EF(expr, rhs, loc, ff);
-		}
-		catch(TranslationException ex) {}
+		result = translateIn_EF_G(expr, rhs, loc, ff);
+		if(result != null) return result;
 		
-		try {
-    		return translateIn_EF_G(expr, rhs, loc, ff);
-		}
-		catch(TranslationException ex) {}
-				
-		try {
-    		return translateIn_E_FG(expr, rhs, loc, ff);
-		}
-		catch(TranslationException ex) {}
+		result = translateIn_E_FG(expr, rhs, loc, ff);
+		if(result != null) return result;
 		
-   		try {
-	   		return translateIn_EF_GH(expr, rhs, loc, ff);
-	   	}
-	   	catch(TranslationException ex) {
-	   		throw new AssertionError(ex);
-	   	}
+		result = translateIn_EF_GH(expr, rhs, loc, ff);
+		if(result != null) return result;
+		
+		throw new AssertionError("No Mapping for: " + expr + " ? " + rhs);		
 	}
 	
-	protected Predicate translateIn_E(Expression E, Expression right, SourceLocation loc, FormulaFactory ff) 
-		throws TranslationException {
+	protected Predicate translateIn_E(
+		Expression E, Expression right, SourceLocation loc, FormulaFactory ff) {
 	
 		QuantMapletBuilder mb = new QuantMapletBuilder();
 
@@ -253,7 +249,7 @@ public class Translator extends IdentityTranslator {
 					loc);
 			}
 			Pow1(T) -> {
-				mb.calculate(E.getType(), 0, loc, ff);
+				mb.calculate(E.getType().getBaseType(), 0, loc, ff);
 				return FormulaConstructor.makeLandPredicate(
 					ff,
 					translateIn(E, ff.makeUnaryExpression(Formula.POW, `T, loc), loc, ff),
@@ -544,22 +540,21 @@ public class Translator extends IdentityTranslator {
 						loc);
 				}
 			}	
-			
-			P -> {
-				throw new TranslationException("No Mapping for: " + E + " in " + right);
-	    	}
+			_ -> {
+				return null;
+			}
 		}					
 	}
 	
-	protected Predicate translateIn_EF(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff)
-		throws TranslationException {
+	protected Predicate translateIn_EF(
+		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff){
 		Expression E = null, F = null;
 		%match(Expression expr) {
 			Mapsto(left, right) -> {
 				E = `left; F = `right;
 			}
 		}
-		if(E == null) throw new TranslationException();
+		if(E == null) return null;
 		
 		%match(Expression rhs) {
 			Cprod(S, T) -> {
@@ -569,21 +564,23 @@ public class Translator extends IdentityTranslator {
 					translateIn(F, `T, loc, ff),
 					loc);			
 			}
-			Ovr(children) -> {
+			Ovr(children) -> { //E?F?q?r becomes E?F?r ? E?>F?dom(r)?q
+			
 				LinkedList<Predicate> preds = new LinkedList<Predicate>();
-				Expression maplet = ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc);
+				Expression maplet = expr;
 				
 				for(int i = 0; i < `children.length; i++) {
 					LinkedList<Expression> exprs = new LinkedList<Expression>();
 					
 					for(int j = i + 1; j < `children.length; j++) {
 						exprs.add(ff.makeUnaryExpression(Formula.KDOM, `children[j], loc));
-					}
+					}	
 					
 					if(exprs.size() > 0) {
 						Expression sub;
 
-						if(exprs.size() > 1) sub = ff.makeAssociativeExpression(Formula.KUNION, exprs, loc);
+						if(exprs.size() > 1) sub = 
+							ff.makeAssociativeExpression(Formula.BUNION, exprs, loc);
 						else sub = exprs.get(0);
 		
 						preds.add(
@@ -646,11 +643,11 @@ public class Translator extends IdentityTranslator {
 				V[0] = E; 
 				V[`children.length] = F;
 				
-				for(int i = 0; i < `children.length; i++) {
-					Type type = ((ProductType)`children[i].getType().getBaseType()).getRight();
+				for(int i = 1; i < `children.length; i++) {
+					Type type = ((ProductType)`children[i].getType().getBaseType()).getLeft();
 					mb.calculate(type, X.size(), loc, ff);
-					X.addAll(mb.X());
-					V[i+1] = mb.V();
+					X.addAll(0, mb.X());
+					V[i] = mb.V();
 				}			
 				for(int i = 0; i < `children.length; i++) {
 					preds.add(
@@ -671,9 +668,12 @@ public class Translator extends IdentityTranslator {
 					loc);						
 			}
 			Bcomp(children) -> {
+				List<Expression> reversedChilds = Arrays.asList(`children);
+				Collections.reverse(reversedChilds);
+				
 				return translateIn(
-					ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc),
-					ff.makeAssociativeExpression(Formula.FCOMP, children, loc),
+					expr,
+					ff.makeAssociativeExpression(Formula.FCOMP, reversedChilds, loc),
 					loc,
 					ff);
 			}
@@ -681,20 +681,20 @@ public class Translator extends IdentityTranslator {
 				return translateIn(ff.makeBinaryExpression(Formula.MAPSTO, F, E, loc), `r, loc, ff);
 			}
 			_ -> {
-				throw new AssertionError("No Mapping for: " + expr + " in " + rhs);
+				return null;
 	    	}
 		}
 	}
 	
-	protected Predicate translateIn_EF_G(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff)
-		throws TranslationException {
+	protected Predicate translateIn_EF_G(
+		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
 		Expression E = null, F = null, G = null;
 		%match(Expression expr){
 			Mapsto(Mapsto(one, two), three) -> {
 				E = `one; F = `two; G = `three;
 			}
 		}
-		if(E == null) throw new TranslationException();
+		if(E == null) return null;
 		
 		%match(Expression rhs) {
 			Prj1(r) -> {
@@ -711,21 +711,22 @@ public class Translator extends IdentityTranslator {
 					translate(ff.makeRelationalPredicate(Formula.EQUAL, G, F, loc), ff),
 					loc);
 			}
-			P -> {
-				throw new TranslationException("No Mapping!");
+			_ -> {
+				return null;
 	    	}
 		}
 	}
 
-	protected Predicate translateIn_E_FG(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) 
-		throws TranslationException {
+	protected Predicate translateIn_E_FG(
+		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
+		
 		Expression E = null, F = null, G = null;
 		%match(Expression expr){
 			Mapsto(one, Mapsto(two, three)) -> {
 				E = `one; F = `two; G = `three;
 			}
 		}
-		if(E == null) throw new TranslationException();
+		if(E == null) return null;
 
 		%match(Expression rhs){
 			Dprod(p, q) -> {
@@ -736,20 +737,21 @@ public class Translator extends IdentityTranslator {
 					loc);
 			}
 			_ -> {
-				throw new TranslationException("No Mapping!");
+				return null;
 	    	}
 		}
 	}
 
-	protected Predicate translateIn_EF_GH(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff)
-		throws TranslationException {
+	protected Predicate translateIn_EF_GH(
+		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff){
+		
 		Expression E = null, F = null, G = null, H = null;
 		%match(Expression expr){
 			Mapsto(Mapsto(one, two), Mapsto(three, four)) -> {
 				E = `one; F = `two; G = `three; H = `four;
 			}
 		}
-		if(E == null) throw new TranslationException();
+		if(E == null) return null;
 
 		%match(Expression rhs) {
 			Pprod(p, q) -> {
@@ -759,8 +761,8 @@ public class Translator extends IdentityTranslator {
 					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, F, H, loc), `q, loc, ff),
 					loc);
 			}
-			P -> {
-				throw new TranslationException("No Mapping!");
+			_ -> {
+				return null;
 	    	}
 		}
 	}
@@ -786,16 +788,16 @@ public class Translator extends IdentityTranslator {
 
 		mb.calculate(dom, 0, loc, ff);
 		A = mb.getMaplet();
-		X.addAll(mb.getIdentDecls());
+		X.addAll(0, mb.getIdentDecls());
 		
 		mb.calculate(ran, X.size(), loc, ff);
 		B = mb.getMaplet();
-		X.addAll(mb.getIdentDecls());
+		X.addAll(0, mb.getIdentDecls());
 		
 
 		mb.calculate(ran, X.size(), loc, ff);
 		C = mb.getMaplet();
-		X.addAll(mb.getIdentDecls());
+		X.addAll(0, mb.getIdentDecls());
 
 		return ff.makeQuantifiedPredicate(
 			Formula.FORALL,
@@ -836,8 +838,8 @@ public class Translator extends IdentityTranslator {
 			Equal(Mapsto(x, y), Mapsto(a,b)) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc),
-					ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc),
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc), ff),
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc), ff),
 					loc);						
 			}
 			Equal(n@Identifier(), Card(S)) | Equal(Card(S), n@Identifier())-> {
@@ -868,11 +870,12 @@ public class Translator extends IdentityTranslator {
 						`n,
 						ff.makeAtomicExpression(Formula.TRUE, loc),
 						loc),
-					`P,
+					translate(`P, ff),
 					loc);
 			}
-			Equal(FunImage(r, E1), E2) | Equal(E2, FunImage(r, E1)) -> {
-				throw new AssertionError("Function application not yet supported");
+			Equal(FunImage(r, E), x) | Equal(x, FunImage(r, E)) -> {
+				return translateIn(
+					ff.makeBinaryExpression(Formula.MAPSTO, `E, `x, loc), `r, loc, ff);
 			}
 			Equal(FALSE(), E) | Equal(E, FALSE()) -> {
 				return ff.makeUnaryPredicate(

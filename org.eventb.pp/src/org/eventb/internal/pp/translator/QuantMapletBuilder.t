@@ -28,13 +28,19 @@ public class QuantMapletBuilder {
 	private LinkedList<BoundIdentDecl> identDecls;
 	private Expression maplet;
 	private FormulaFactory ff;
+	private String name;
 
 	public void calculate(Type type, SourceLocation loc, FormulaFactory ff) {
 		calculate(type, 0, loc, ff);
 	}
-
+	
 	public void calculate(Type type, int offset, SourceLocation loc, FormulaFactory ff) {
+		calculate(type, offset, "x", loc, ff);
+	}	
+
+	public void calculate(Type type, int offset, String name, SourceLocation loc, FormulaFactory ff) {
 		this.ff = ff;
+		this.name = name;
 		c = new Counter(offset);
 		identDecls = new LinkedList<BoundIdentDecl>();
 		maplet = mapletOfType(type, loc);
@@ -63,7 +69,7 @@ public class QuantMapletBuilder {
 	private Expression mapletOfType(Type type, SourceLocation loc) {
 		%match (Type type) {
 			PowSet(_) | Set(_) -> {
-				identDecls.add(ff.makeBoundIdentDecl("X", loc, `type));
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, `type));
 				return ff.makeBoundIdentifier(c.increment(), loc, `type);
 			}
 			
@@ -75,7 +81,7 @@ public class QuantMapletBuilder {
 					loc);
 			}
 			type -> {
-				identDecls.add(ff.makeBoundIdentDecl("x", loc, `type));
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, `type));
 				return ff.makeBoundIdentifier(c.increment(), loc, `type);	
 			}
 		}

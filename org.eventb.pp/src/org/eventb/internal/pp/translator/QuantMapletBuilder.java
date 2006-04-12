@@ -108,13 +108,19 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
 	private LinkedList<BoundIdentDecl> identDecls;
 	private Expression maplet;
 	private FormulaFactory ff;
+	private String name;
 
 	public void calculate(Type type, SourceLocation loc, FormulaFactory ff) {
 		calculate(type, 0, loc, ff);
 	}
-
+	
 	public void calculate(Type type, int offset, SourceLocation loc, FormulaFactory ff) {
+		calculate(type, offset, "x", loc, ff);
+	}	
+
+	public void calculate(Type type, int offset, String name, SourceLocation loc, FormulaFactory ff) {
 		this.ff = ff;
+		this.name = name;
 		c = new Counter(offset);
 		identDecls = new LinkedList<BoundIdentDecl>();
 		maplet = mapletOfType(type, loc);
@@ -144,12 +150,12 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
 		    { Type  tom_match1_1=(( Type )type);
     if(tom_is_fun_sym_Set(tom_match1_1)) {
 
-				identDecls.add(ff.makeBoundIdentDecl("X", loc, type));
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
 				return ff.makeBoundIdentifier(c.increment(), loc, type);
 			    } else {
       if(tom_is_fun_sym_PowSet(tom_match1_1)) {
 
-				identDecls.add(ff.makeBoundIdentDecl("X", loc, type));
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
 				return ff.makeBoundIdentifier(c.increment(), loc, type);
 			      } else {
         if(tom_is_fun_sym_CProd(tom_match1_1)) {
@@ -168,7 +174,7 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
     }
     { Type  tom_type=tom_match1_1;
 
-				identDecls.add(ff.makeBoundIdentDecl("x", loc, tom_type));
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, tom_type));
 				return ff.makeBoundIdentifier(c.increment(), loc, tom_type);	
 			}
 }

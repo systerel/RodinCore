@@ -13,12 +13,12 @@ import java.util.*;
 import org.eventb.core.ast.*;
 
 public class FormulaConstructor {
-	private static AssociativePredicate makeAssociativePredicate(
+	private static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, Predicate left, Predicate right, SourceLocation loc) {
 		return makeAssociativePredicate(ff, tag, Arrays.asList(new Predicate[]{left, right}), loc);
 	}
 	
-	private static AssociativePredicate makeAssociativePredicate(
+	private static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, List<Predicate> preds, SourceLocation loc) {
 		LinkedList<Predicate> childs = new LinkedList<Predicate>();
 		for(Predicate pred: preds) {
@@ -30,26 +30,27 @@ public class FormulaConstructor {
 				childs.add(pred);
 			}
 		}
-		return ff.makeAssociativePredicate(tag, childs, loc);		
+		if(childs.size() == 1) return childs.getFirst();
+		else return ff.makeAssociativePredicate(tag, childs, loc);		
 	}
 	
 
-	public static AssociativePredicate makeLandPredicate(
+	public static Predicate makeLandPredicate(
 			FormulaFactory ff, Predicate left, Predicate right, SourceLocation loc) {
 		return makeAssociativePredicate(ff, Formula.LAND, left, right, loc);
 	}
 	
-	public static AssociativePredicate makeLandPredicate(
+	public static Predicate makeLandPredicate(
 			FormulaFactory ff, List<Predicate> preds, SourceLocation loc) {
 		return makeAssociativePredicate(ff, Formula.LAND, preds, loc);
 	}
 	
-	public static AssociativePredicate makeLorPredicate(
+	public static Predicate makeLorPredicate(
 			FormulaFactory ff, Predicate left, Predicate right, SourceLocation loc) {
 		return makeAssociativePredicate(ff, Formula.LOR, left, right, loc);
 	}
 	
-	public static AssociativePredicate makeLorPredicate(
+	public static Predicate makeLorPredicate(
 			FormulaFactory ff, List<Predicate> preds, SourceLocation loc) {
 		return makeAssociativePredicate(ff, Formula.LOR, preds, loc);
 	}

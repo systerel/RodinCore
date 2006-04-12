@@ -8,28 +8,22 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BooleanType;
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.translator.GoalChecker;
 import org.eventb.internal.pp.translator.IdentifierDecomposition;
 import org.eventb.internal.pp.translator.Translator;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 /**
  * Ensures that the translator from set-theory to predicate calculus works
@@ -82,12 +76,23 @@ public class TranslationTests extends TestCase {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	private static BinaryExpression Maplet(Expression left, Expression right, SourceLocation loc) {
-		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, loc);
+	private static BinaryExpression Maplet(Expression left, Expression right) {
+		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, null);
 	}
 	
-	private static IntegerLiteral IntLiteral(int value, SourceLocation loc) {
+	private static IntegerLiteral IntLiteral(int value) {
 		return ff.makeIntegerLiteral(new BigInteger("" + value), null);
+	}
+	
+	public Predicate parse(String string, ITypeEnvironment te) {
+		Predicate pred = ff.parsePredicate(string).getParsedPredicate();
+		pred.typeCheck(te);
+		assertTrue(string + ": is not typed", pred.isTypeChecked());
+		return pred;
+	}
+	
+	public Predicate parse(String string) {
+		return parse(string, ff.makeTypeEnvironment());
 	}
 	
 	/**
@@ -105,351 +110,61 @@ public class TranslationTests extends TestCase {
 	}
 	
 	public void testIdentifierDecomposition1() {
-		Predicate input, expected;
-		
-		input = ff.makeQuantifiedPredicate(
-					Formula.FORALL,
-					FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-					ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
-						ff.makeBoundIdentifier(0, null),
-						null),
-					null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x", null),
-						ff.makeBoundIdentDecl("x0", null)),
-				ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
-						Maplet(						
-								ff.makeBoundIdentifier(0, null),
-								ff.makeBoundIdentifier(1, null),
-								null),
-						null),
-				null);	
+		Predicate input = parse("∀x·10↦20 = x");
+		Predicate expected = parse("∀x,x0·10=x0 ∧ 20=x");
 		
 		doTest(input, expected);		
 	}
 
 	public void testIdentifierDecomposition2() {
-		Predicate input, expected;
-		
-		input = ff.makeRelationalPredicate(
-				Formula.EQUAL,
-				Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
-				ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
-				null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x", null),
-						ff.makeBoundIdentDecl("x0", null)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-						ff.makeRelationalPredicate(
-							Formula.EQUAL,
-							ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
-							Maplet(						
-									ff.makeBoundIdentifier(0, null),
-									ff.makeBoundIdentifier(1, null),
-									null),
-							null),
-						ff.makeRelationalPredicate(
-							Formula.EQUAL,
-							Maplet(IntLiteral(10, null), IntLiteral(20, null), null),
-							Maplet(						
-									ff.makeBoundIdentifier(0, null),
-									ff.makeBoundIdentifier(1, null),
-									null),
-							null),
-						null),
-				null);	
-		
+		Predicate input = parse("10 ↦ 20 = s");
+		Predicate expected = parse("∀x,x0·s=x0 ↦ x⇒10=x0∧20=x");
 		doTest(input, expected);		
 	}
 	
 	public void testIdentifierDecomposition3() {
-		Predicate input, expected;
-		
-		input = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-				ff.makeRelationalPredicate(
-					Formula.EQUAL,
-					ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
-					ff.makeBoundIdentifier(0, null),
-					null),
-				null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x", null),
-						ff.makeBoundIdentDecl("x0", null)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-						ff.makeRelationalPredicate(
-							Formula.EQUAL,
-							ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
-							Maplet(						
-									ff.makeBoundIdentifier(0, null),
-									ff.makeBoundIdentifier(1, null),
-									null),
-							null),
-						ff.makeQuantifiedPredicate(
-							Formula.FORALL,
-							FastFactory.mList(
-									ff.makeBoundIdentDecl("x", null),
-									ff.makeBoundIdentDecl("x0", null)),
-							ff.makeRelationalPredicate(
-									Formula.EQUAL,
-									Maplet(
-											ff.makeBoundIdentifier(2, null),
-											ff.makeBoundIdentifier(3, null),
-											null),
-									Maplet(						
-											ff.makeBoundIdentifier(0, null),
-											ff.makeBoundIdentifier(1, null),
-											null),
-									null),
-							null),
-						null),
-				null);
-
-		
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, INT)});
+		Predicate input = parse("∀x·s=x", te);
+		Predicate expected =parse("∀x,x0·s=x0↦x⇒(∀y,y0·x0↦x=y0↦y)", te);
 		doTest(input, expected, identifierDecomposition);		
 	}
 	
 	public void testIdentifierDecomposition4() {
-		Predicate input, expected;
-		
-		input = ff.makeRelationalPredicate(
-				Formula.EQUAL,
-				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
-				ff.makeFreeIdentifier("s", null),
-				
-				null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x", null),
-						ff.makeBoundIdentDecl("x0", null),
-						ff.makeBoundIdentDecl("x1", null),
-						ff.makeBoundIdentDecl("x2", null)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-						ff.makeAssociativePredicate(
-								Formula.LAND,
-								FastFactory.mList(
-										ff.makeRelationalPredicate(
-											Formula.EQUAL,
-											ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
-											Maplet(						
-													ff.makeBoundIdentifier(0, null),
-													ff.makeBoundIdentifier(1, null),
-													null),
-											null),
-										ff.makeRelationalPredicate(
-											Formula.EQUAL,
-											ff.makeFreeIdentifier("s", null, CPROD(INT, INT)),
-											Maplet(						
-													ff.makeBoundIdentifier(2, null),
-													ff.makeBoundIdentifier(3, null),
-													null),
-											null)),
-								null),
-						ff.makeRelationalPredicate(
-							Formula.EQUAL,
-							Maplet(						
-									ff.makeBoundIdentifier(0, null),
-									ff.makeBoundIdentifier(1, null),
-									null),
-							Maplet(						
-									ff.makeBoundIdentifier(2, null),
-									ff.makeBoundIdentifier(3, null),
-									null),
-							null),
-						null),
-				null);	
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, INT)});
+		Predicate input = parse("t=s", te);
+		Predicate expected = parse("∀x,x0,x1,x2·(t=x2↦x1∧s=x0↦x)⇒(x2=x0∧x1=x)", te);
 		
 		doTest(input, expected);		
 	}
 
 	public void testIdentifierDecomposition5() {
-		Predicate input, expected;
-		
-		input = ff.makeRelationalPredicate(
-				Formula.EQUAL,
-				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
-				ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
-				
-				null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x", null),
-						ff.makeBoundIdentDecl("x0", null)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-							ff.makeRelationalPredicate(
-									Formula.EQUAL,
-									ff.makeFreeIdentifier("t", null, CPROD(INT, INT)),
-									Maplet(						
-										ff.makeBoundIdentifier(0, null),
-										ff.makeBoundIdentifier(1, null),
-										null),
-									null),
-							ff.makeRelationalPredicate(
-								Formula.EQUAL,
-								Maplet(						
-										ff.makeBoundIdentifier(0, null),
-										ff.makeBoundIdentifier(1, null),
-										null),
-								Maplet(						
-										ff.makeBoundIdentifier(0, null),
-										ff.makeBoundIdentifier(1, null),
-										null),
-								null),
-							null),
-				null);	
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(INT, INT)});
+		Predicate input = parse("t=t", te);
+		Predicate expected = parse("∀x,x0·t=x0↦x⇒(x0=x0∧x=x)", te);
 		
 		doTest(input, expected);		
 	}
-
-/*
-	public void testIdentifierDecomposition4() {
-		Predicate input, expected;
-		
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				ff.makeFreeIdentifier("i", null, CPROD(CPROD(INT, INT), INT)),
-				ff.makeQuantifiedExpression(
-						Formula.QUNION,
-						FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-						ff.makeLiteralPredicate(Formula.BTRUE, null),
-						ff.makeSetExtension(
-								Maplet(
-									ff.makeBoundIdentifier(0, null),
-									ff.makeUnaryExpression(
-											Formula.KCARD,
-											ff.makeQuantifiedExpression(
-													Formula.QUNION,
-													FastFactory.mList(ff.makeBoundIdentDecl("x", null, CPROD(CPROD(INT, INT), CPROD(INT, INT)))),
-													ff.makeLiteralPredicate(Formula.BTRUE, null),
-													ff.makeSetExtension(
-															FastFactory.mList(
-																Maplet(
-																		ff.makeBoundIdentifier(1, null), 
-																		ff.makeBoundIdentifier(0, null), 
-																		null),
-																ff.makeFreeIdentifier("s", null)),	
-														    null),
-											        null,
-													QuantifiedExpression.Form.Explicit),
-											null),
-									null),
-								null),
-						null,
-						QuantifiedExpression.Form.Explicit),
-					null);
-		
-		Expression innerSet =
-			ff.makeSetExtension(
-					Maplet(
-							Maplet( 
-									ff.makeBoundIdentifier(4, null),
-									ff.makeBoundIdentifier(5, null),
-									null),
-							Maplet(
-									Maplet(
-											ff.makeBoundIdentifier(0, null),
-											ff.makeBoundIdentifier(1, null),
-											null),
-									Maplet(
-											ff.makeBoundIdentifier(2, null),
-											ff.makeBoundIdentifier(3, null),
-											null),
-									null),
-							null),
-				    null);
-		
-		Expression card = ff.makeUnaryExpression(
-				Formula.KCARD,
-				ff.makeQuantifiedExpression(
-						Formula.QUNION,
-						FastFactory.mList(
-								ff.makeBoundIdentDecl("x_0", null, INT),
-								ff.makeBoundIdentDecl("x_1", null, INT),
-								ff.makeBoundIdentDecl("x_2", null, INT),
-								ff.makeBoundIdentDecl("x_3", null, INT)),
-						ff.makeLiteralPredicate(Formula.BTRUE, null),
-						innerSet,
-				        null,
-						QuantifiedExpression.Form.Explicit),
-				null);			
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("x)
-			ff.makeRelationalPredicate(
-				Formula.IN,
-				ff.makeFreeIdentifier("i", null, CPROD(CPROD(INT, INT), INT)),
-				ff.makeQuantifiedExpression(
-						Formula.QUNION,
-						FastFactory.mList(
-								ff.makeBoundIdentDecl("x_0", null),
-								ff.makeBoundIdentDecl("x_1", null)),
-						ff.makeLiteralPredicate(Formula.BTRUE, null),
-						ff.makeSetExtension(
-								FastFactory.mList(
-									Maplet(
-										Maplet(
-												ff.makeBoundIdentifier(0, null),
-												ff.makeBoundIdentifier(1, null),
-												null),
-										card,
-										null),
-									ff.makeFreeIdentifier("s", null)),								
-								null),
-						null,
-						QuantifiedExpression.Form.Explicit),
-					null);
-		
-		doTest(input, expected, identifierDecomposition);		
-	}
-	*/
 	
 	public void testSubsetEqRule() {
 		Predicate input, expected;
 		
-		Expression s = ff.makeFreeIdentifier("s", null, INT_SET);
-		Expression t = ff.makeFreeIdentifier("t", null, INT_SET);
+		Expression s = FastFactory.mFreeIdentifier("s", INT_SET);
+		Expression t = FastFactory.mFreeIdentifier("t", INT_SET);
 		
-		input = ff.makeRelationalPredicate(
+		input = FastFactory.mRelationalPredicate(
 				Formula.SUBSETEQ,
 				s,
-				t,
-				null);
+				t);
 		
-		expected = ff.makeQuantifiedPredicate(
+		expected = FastFactory.mQuantifiedPredicate(
 				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-				ff.makeBinaryPredicate(
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", null)),
+				FastFactory.mBinaryPredicate(
 					Formula.LIMP,
-					ff.makeRelationalPredicate(
-							Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-					ff.makeRelationalPredicate(
-							Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-					null),
-				null);
+					FastFactory.mRelationalPredicate(
+							Formula.IN, FastFactory.mBoundIdentifier(0), s),
+					FastFactory.mRelationalPredicate(
+							Formula.IN, FastFactory.mBoundIdentifier(0), t)));
 		
 		doTest(input, expected);		
 	}
@@ -457,25 +172,22 @@ public class TranslationTests extends TestCase {
 	public void testNotSubsetEqRule() {
 		Predicate input, expected;
 		
-		Expression s = ff.makeFreeIdentifier("s", null, INT_SET);
-		Expression t = ff.makeFreeIdentifier("t", null, INT_SET);
+		Expression s = FastFactory.mFreeIdentifier("s", INT_SET);
+		Expression t = FastFactory.mFreeIdentifier("t", INT_SET);
 		
-		input = ff.makeRelationalPredicate(Formula.NOTSUBSETEQ,	s, t, null);
+		input = FastFactory.mRelationalPredicate(Formula.NOTSUBSETEQ,	s, t);
 		
-		expected = ff.makeUnaryPredicate(
+		expected = FastFactory.mUnaryPredicate(
 				Formula.NOT, 
-				ff.makeQuantifiedPredicate(
+				FastFactory.mQuantifiedPredicate(
 					Formula.FORALL,
-					FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-					ff.makeBinaryPredicate(
+					FastFactory.mList(FastFactory.mBoundIdentDecl("x")),
+					FastFactory.mBinaryPredicate(
 						Formula.LIMP,
-						ff.makeRelationalPredicate(
-								Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-						ff.makeRelationalPredicate(
-								Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-						null),
-					null),
-				null);					
+						FastFactory.mRelationalPredicate(
+								Formula.IN, FastFactory.mBoundIdentifier(0), s),
+						FastFactory.mRelationalPredicate(
+								Formula.IN, FastFactory.mBoundIdentifier(0), t))));					
 		
 		doTest(input, expected);		
 	}
@@ -483,38 +195,33 @@ public class TranslationTests extends TestCase {
 	public void testSubsetRule() {
 		Predicate input, expected;
 		
-		Expression s = ff.makeFreeIdentifier("s", null, INT_SET);
-		Expression t = ff.makeFreeIdentifier("t", null, INT_SET);
+		Expression s = FastFactory.mFreeIdentifier("s", INT_SET);
+		Expression t = FastFactory.mFreeIdentifier("t", INT_SET);
 		
-		input = ff.makeRelationalPredicate(Formula.SUBSET, s, t, null);
+		input = FastFactory.mRelationalPredicate(Formula.SUBSET, s, t);
 
-		expected = FastFactory.mAssociativePredicate(
+		expected = mAssociativePredicate(
 				Formula.LAND,
-				ff.makeQuantifiedPredicate(
+				FastFactory.mQuantifiedPredicate(
 						Formula.FORALL,
-						FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-						ff.makeBinaryPredicate(
+						FastFactory.mList(FastFactory.mBoundIdentDecl("x")),
+						FastFactory.mBinaryPredicate(
 							Formula.LIMP,
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-							null),
-						null),
-				ff.makeUnaryPredicate(
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), s),
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), t))),
+				FastFactory.mUnaryPredicate(
 					Formula.NOT, 
-					ff.makeQuantifiedPredicate(
+					FastFactory.mQuantifiedPredicate(
 						Formula.FORALL,
-						FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-						ff.makeBinaryPredicate(
+						FastFactory.mList(FastFactory.mBoundIdentDecl("x")),
+						FastFactory.mBinaryPredicate(
 							Formula.LIMP,
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-							null),
-						null),
-					null));
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), t),
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), s)))));
 		
 		doTest(input, expected);		
 	}
@@ -522,318 +229,201 @@ public class TranslationTests extends TestCase {
 	public void testNotSubsetRule() {
 		Predicate input, expected;
 
-		Expression s = ff.makeFreeIdentifier("s", null, INT_SET);
-		Expression t = ff.makeFreeIdentifier("t", null, INT_SET);
+		Expression s = FastFactory.mFreeIdentifier("s", INT_SET);
+		Expression t = FastFactory.mFreeIdentifier("t", INT_SET);
 		
-		input = ff.makeRelationalPredicate(Formula.NOTSUBSET, s, t, null);
+		input = FastFactory.mRelationalPredicate(Formula.NOTSUBSET, s, t);
 
-		expected = FastFactory.mAssociativePredicate(
+		expected = mAssociativePredicate(
 				Formula.LOR,
-				ff.makeUnaryPredicate(
+				FastFactory.mUnaryPredicate(
 						Formula.NOT, 
-						ff.makeQuantifiedPredicate(
+						FastFactory.mQuantifiedPredicate(
 							Formula.FORALL,
-							FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-							ff.makeBinaryPredicate(
+							FastFactory.mList(FastFactory.mBoundIdentDecl("x")),
+							FastFactory.mBinaryPredicate(
 								Formula.LIMP,
-								ff.makeRelationalPredicate(
-										Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-								ff.makeRelationalPredicate(
-										Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-								null),
-							null),
-						null),
-				ff.makeQuantifiedPredicate(
+								FastFactory.mRelationalPredicate(
+										Formula.IN, FastFactory.mBoundIdentifier(0), s),
+								FastFactory.mRelationalPredicate(
+										Formula.IN, FastFactory.mBoundIdentifier(0), t)))),
+				FastFactory.mQuantifiedPredicate(
 						Formula.FORALL,
-						FastFactory.mList(ff.makeBoundIdentDecl("x", null)),
-						ff.makeBinaryPredicate(
+						FastFactory.mList(FastFactory.mBoundIdentDecl("x")),
+						FastFactory.mBinaryPredicate(
 							Formula.LIMP,
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), t, null),
-							ff.makeRelationalPredicate(
-									Formula.IN, ff.makeBoundIdentifier(0, null), s, null),
-							null),
-						null));
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), t),
+							FastFactory.mRelationalPredicate(
+									Formula.IN, FastFactory.mBoundIdentifier(0), s))));
 		
 		doTest(input, expected);		
 	}
 
 	public void testFiniteRule() {
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"S"}, new Type[]{INT_SET});
+		Predicate input = parse("finite(S)", te);
+		Predicate expected = parse("∀a·∃b,f·f∈(S↣a‥b)", te);
 		
-		input = ff.makeSimplePredicate(
-				Formula.KFINITE,
-				ff.makeSetExtension(IntLiteral(10, null), null),
-				null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("a", null)),
-				ff.makeQuantifiedPredicate(
-						Formula.EXISTS,
-						FastFactory.mList(
-								ff.makeBoundIdentDecl("b", null),
-								ff.makeBoundIdentDecl("f", null)),
-						ff.makeRelationalPredicate(
-								Formula.IN,
-								ff.makeBoundIdentifier(0, null),
-								ff.makeBinaryExpression(
-										Formula.TINJ,
-										ff.makeSetExtension(IntLiteral(10, null), null),
-										ff.makeBinaryExpression(
-												Formula.UPTO,
-												ff.makeBoundIdentifier(2, null),
-												ff.makeBoundIdentifier(1, null),
-												null),
-										null),
-								null),
-						null),
-				null);
-		
-		doTest(input, expected);
+		expected.typeCheck(FastFactory.mTypeEnvironment());
+		doTest(input, Translator.reduceToPredCalc(expected, ff));
 	}
-	
+	/*
 	public void testTinjTule() {
 		Predicate input, expected;
 		
-		input = ff.makeRelationalPredicate(
+		input = FastFactory.mRelationalPredicate(
 				Formula.IN,
-				ff.makeFreeIdentifier("f", null),
-				ff.makeBinaryExpression(
+				FastFactory.mFreeIdentifier("f"),
+				FastFactory.mBinaryExpression(
 						Formula.TINJ,
-						ff.makeFreeIdentifier("S", null, INT_SET),
-						ff.makeBinaryExpression(
+						FastFactory.mFreeIdentifier("S", INT_SET),
+						FastFactory.mBinaryExpression(
 								Formula.UPTO, 
-								ff.makeFreeIdentifier("a", null, INT),
-								ff.makeFreeIdentifier("b", null, INT),
-								null),
-						null),
-				null);
+								FastFactory.mFreeIdentifier("a", INT),
+								FastFactory.mFreeIdentifier("b", INT))));
 		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
 		
 		doTest(input, expected);
-	}
+	}*/
 	
 	public void testPowerSetInRule1() {
-		Expression T, E, V;
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
+		Predicate input = parse("E∈ℙ(T)", te);
+		Predicate expected = parse("∀x·x∈E⇒x∈T", te);
 		
-		T = ff.makeFreeIdentifier("T", null, INT_SET);
-		E = ff.makeFreeIdentifier("E", null, INT_SET);
-		
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeUnaryExpression(Formula.POW, T, null),
-				null);
-
-		V = ff.makeBoundIdentifier(0, null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-						ff.makeRelationalPredicate(
-								Formula.IN,
-								V,
-								E,
-								null),
-						ff.makeRelationalPredicate(
-								Formula.IN,
-								V,
-								T,
-								null), 
-						null),
-				null);
-	
-		
-		doTest (input, expected);		
+		expected.typeCheck(FastFactory.mTypeEnvironment());
+		doTest(input, Translator.reduceToPredCalc(expected, ff));
 	}
 	
 	public void testPowerSetInRule2() {
-		Expression T, E, V;
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"T", "E"}, new Type[]{POW(CPROD(BOOL, INT)), POW(CPROD(BOOL, INT))});
+		Predicate input = parse("E∈ℙ(T)", te);
+		Predicate expected = parse("∀x·x∈E⇒x∈T", te);
 		
-		T = ff.makeFreeIdentifier("T", null, POW(CPROD(INT_SET, INT)));
-		E = ff.makeFreeIdentifier("E", null, POW(CPROD(INT_SET, INT)));
-		
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeUnaryExpression(Formula.POW, T, null),
-				null);
-
-		V = Maplet(
-			ff.makeBoundIdentifier(0, null, INT_SET), 
-			ff.makeBoundIdentifier(1, null, INT),
-			null);
-		
-		expected = ff.makeQuantifiedPredicate(
-				Formula.FORALL,
-				FastFactory.mList(
-						ff.makeBoundIdentDecl("X", null, INT_SET),
-						ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeBinaryPredicate(
-						Formula.LIMP,
-						ff.makeRelationalPredicate(
-								Formula.IN,
-								V,
-								E,
-								null),
-						ff.makeRelationalPredicate(
-								Formula.IN,
-								V,
-								T,
-								null), 
-						null),
-				null);
-	
-		
-		doTest (input, expected);		
+		expected.typeCheck(FastFactory.mTypeEnvironment());
+		doTest(input, Translator.reduceToPredCalc(expected, ff));
 	}
 
 	public void testNaturalInRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeAtomicExpression(
-						Formula.NATURAL, null),
-				null);
+				FastFactory.mAtomicExpression(Formula.NATURAL));
 		
-		Predicate expected = ff.makeRelationalPredicate(
-				Formula.GE,
-				E,
-				ff.makeIntegerLiteral(new BigInteger("0"), null),
-				null);
+		Predicate expected = FastFactory.mRelationalPredicate(Formula.GE, E, IntLiteral(0));
 		
 		doTest (input, expected);		
 	}
 	
 	public void testNatural1InRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeAtomicExpression(Formula.NATURAL1, null),
-				null);
+				FastFactory.mAtomicExpression(Formula.NATURAL1));
 		
-		Predicate expected = ff.makeRelationalPredicate(
+		Predicate expected = FastFactory.mRelationalPredicate(
 				Formula.GT,
 				E,
-				ff.makeIntegerLiteral(new BigInteger("0"), null),
-				null);
+				IntLiteral(0));
 		
 		doTest (input, expected);		
 	}
 	
 	public void testIntegerInRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeAtomicExpression(Formula.INTEGER, null),
-				null);
+				FastFactory.mAtomicExpression(Formula.INTEGER));
 		
-		Predicate expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		Predicate expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
 		
 		doTest (input, expected);
 	}
 	
 	public void testCSetInRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeQuantifiedExpression(
+				FastFactory.mQuantifiedExpression(
 					Formula.CSET,
-					FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-					ff.makeLiteralPredicate(Formula.BTRUE, null),
-					ff.makeBoundIdentifier(0, null),
-					null,
-					null),
-				null);
+					QuantifiedExpression.Form.Explicit,
+					FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+					FastFactory.mLiteralPredicate(Formula.BTRUE),
+					FastFactory.mBoundIdentifier(0)));
 				
-		Predicate expected = ff.makeQuantifiedPredicate(
+		Predicate expected = FastFactory.mQuantifiedPredicate(
 				Formula.EXISTS,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeAssociativePredicate(
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+				mAssociativePredicate(
 					Formula.LAND,
 					FastFactory.mList(
-						ff.makeLiteralPredicate(Formula.BTRUE, null),
-						ff.makeRelationalPredicate(
+						FastFactory.mLiteralPredicate(Formula.BTRUE),
+						FastFactory.mRelationalPredicate(
 							Formula.EQUAL,
 							E,
-							ff.makeBoundIdentifier(0, null),
-							null)),
-					null),
-				null);
+							FastFactory.mBoundIdentifier(0)))));
 		
 		doTest(input, expected);	
 	}
 	
 	public void testQInterInRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeQuantifiedExpression(
+				FastFactory.mQuantifiedExpression(
 					Formula.QINTER,
-					FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-					ff.makeLiteralPredicate(Formula.BTRUE, null),
-					ff.makeSetExtension(
-							FastFactory.mList(ff.makeBoundIdentifier(0, null)), null),
-					null, null),
-				null);
+					QuantifiedExpression.Form.Explicit,
+					FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+					FastFactory.mLiteralPredicate(Formula.BTRUE),
+					FastFactory.mSetExtension(
+							FastFactory.mList(FastFactory.mBoundIdentifier(0)))));
 
-		Predicate expected = ff.makeQuantifiedPredicate(
+		Predicate expected = FastFactory.mQuantifiedPredicate(
 				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeBinaryPredicate(
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+				FastFactory.mBinaryPredicate(
 					Formula.LIMP,
-					ff.makeLiteralPredicate(Formula.BTRUE, null),
-					ff.makeRelationalPredicate(
+					FastFactory.mLiteralPredicate(Formula.BTRUE),
+					FastFactory.mRelationalPredicate(
 						Formula.EQUAL,
 						E,
-						ff.makeBoundIdentifier(0, null), 
-						null),
-					null),
-				null);
+						FastFactory.mBoundIdentifier(0))));
 		
 		doTest(input, expected);				
 	}
 
 	public void testQUnionInRule() {
-		Expression E = ff.makeFreeIdentifier("E", null);
-		Predicate input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E");
+		Predicate input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeQuantifiedExpression(
+				FastFactory.mQuantifiedExpression(
 					Formula.QUNION,
-					FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-					ff.makeLiteralPredicate(Formula.BTRUE, null),
-					ff.makeSetExtension(
-							FastFactory.mList(ff.makeBoundIdentifier(0, null)), null),
-					null,
-					null),
-				null);
+					QuantifiedExpression.Form.Explicit,
+					FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+					FastFactory.mLiteralPredicate(Formula.BTRUE),
+					FastFactory.mSetExtension(
+							FastFactory.mList(FastFactory.mBoundIdentifier(0)))));
 
-		Predicate expected = ff.makeQuantifiedPredicate(
+		Predicate expected = FastFactory.mQuantifiedPredicate(
 				Formula.EXISTS,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeAssociativePredicate(
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+				mAssociativePredicate(
 					Formula.LAND,
 					FastFactory.mList(
-						ff.makeLiteralPredicate(Formula.BTRUE, null),
-						ff.makeRelationalPredicate(
+						FastFactory.mLiteralPredicate(Formula.BTRUE),
+						FastFactory.mRelationalPredicate(
 							Formula.EQUAL,
 							E,
-							ff.makeBoundIdentifier(0, null),
-							null)),
-					null),
-				null);
+							FastFactory.mBoundIdentifier(0)))));
 		
 		doTest(input, expected);				
 	}
@@ -841,47 +431,63 @@ public class TranslationTests extends TestCase {
 	public void testUnionRule() {
 		Predicate input, expected;
 		
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		input = ff.makeRelationalPredicate(
+		Expression S = FastFactory.mFreeIdentifier("S", POW(INT_SET));
+		Expression E = FastFactory.mFreeIdentifier("E", INT);
+		input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeUnaryExpression(Formula.KUNION, S, null),
-				null);
+				FastFactory.mUnaryExpression(Formula.KUNION, S));
 		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-
+		expected = FastFactory.mQuantifiedPredicate(
+				Formula.EXISTS,
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT_SET)),
+				mAssociativePredicate(
+						Formula.LAND,
+						FastFactory.mRelationalPredicate(
+								Formula.IN,
+								FastFactory.mBoundIdentifier(0), 
+								S),
+						FastFactory.mRelationalPredicate(
+								Formula.IN,
+								E, 
+								FastFactory.mBoundIdentifier(0))));
+		
 		doTest(input, expected);				
 	}
 
 	public void testInterRule() {
 		Predicate input, expected;
 		
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		input = ff.makeRelationalPredicate(
+		Expression S = FastFactory.mFreeIdentifier("S", POW(INT_SET));
+		Expression E = FastFactory.mFreeIdentifier("E", INT);
+		input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeUnaryExpression(Formula.KINTER, S, null),
-				null);
+				FastFactory.mUnaryExpression(Formula.KINTER, S));
 		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		expected = FastFactory.mQuantifiedPredicate(
+				Formula.FORALL,
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT_SET)),
+				FastFactory.mBinaryPredicate(
+						Formula.LIMP,
+						FastFactory.mRelationalPredicate(
+								Formula.IN,
+								FastFactory.mBoundIdentifier(0),
+								S),
+						FastFactory.mRelationalPredicate(
+								Formula.IN,
+								E,
+								FastFactory.mBoundIdentifier(0))));
+						
 
 		doTest(input, expected);
 	}
 	
 	public void testPow1Rule() {
-		Predicate input, expected;
-		
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression E = ff.makeFreeIdentifier("E", null, INT_SET);
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeUnaryExpression(Formula.POW1, S, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
+		Predicate input = parse("E∈ℙ1(T)", te);
+		Predicate expected = parse("E∈ℙ(T) ∧ (∃x·x∈E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
 		doTest(input, expected);
 	}
@@ -889,406 +495,409 @@ public class TranslationTests extends TestCase {
 	public void testEmptySetRule() {
 		Predicate input, expected;
 		
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		input = ff.makeRelationalPredicate(
+		Expression E = FastFactory.mFreeIdentifier("E", INT);
+		input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeEmptySet(INT_SET, null),
-				null);
+				FastFactory.mEmptySet(INT_SET));
 		
-		expected = ff.makeLiteralPredicate(Formula.BFALSE, null);
+		expected = FastFactory.mLiteralPredicate(Formula.BFALSE);
 		
 		doTest(input, expected);
 	}
 	
 	public void testSetExtensionRule() {
-		Predicate input, expected;
-		
-		Expression a = ff.makeFreeIdentifier("a", null, INT);
-		Expression b = ff.makeFreeIdentifier("b", null, INT);
-		Expression c = ff.makeFreeIdentifier("c", null, INT);
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeSetExtension(FastFactory.mList(a, b, c), null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		Predicate input = parse("E∈{a,b,c}", te);
+		Predicate expected = parse("E=a ∨ E=b ∨ E=c", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
 		doTest(input, expected);
 	}
 	
 	public void testUpToRule() {
-		Predicate input, expected;
-		
-		Expression a = ff.makeFreeIdentifier("a", null, INT);
-		Expression b = ff.makeFreeIdentifier("b", null, INT);
-		Expression E = ff.makeFreeIdentifier("E", null, INT_SET);
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.UPTO, a, b, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E", "a", "b"}, new Type[]{INT, INT, INT});
+		Predicate input = parse("E∈a‥b", te);
+		Predicate expected = parse("E≥a∧E≤b", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
 		doTest(input, expected);
 	}
 	
 	public void testSetMinusRule() {
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
+		Predicate input = parse("E∈S∖T", te);
+		Predicate expected = parse("E∈S∧¬(E∈T)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.SETMINUS, S, T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-
-		doTest(input, expected);				
+		doTest(input, expected);
 	}
 
 	public void testBInterRule() {
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
+		Predicate input = parse("E∈S∩T", te);
+		Predicate expected = parse("E∈S∧E∈T", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeAssociativeExpression(
-						Formula.BINTER, FastFactory.mList(S, T), null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-
-		doTest(input, expected);				
+		doTest(input, expected);	
 	}
 
 	public void testBUnionRule() {
-		Predicate input, expected;
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
+		Predicate input = parse("E∈S∩T", te);
+		Predicate expected = parse("E∈S∧E∈T", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
 		
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeAssociativeExpression(
-						Formula.BUNION, FastFactory.mList(S, T), null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-
-		doTest(input, expected);				
+		doTest(input, expected);	
 	}
 	
-	public void testRelRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.REL, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+	public void testRelRule() {		
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S↔T", te);
+		Predicate expected = parse("dom(E)⊆S∧ran(E)⊆T", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testRelImgRule() {
-		Predicate input, expected;
-				
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression r = ff.makeFreeIdentifier("r", null, REL(INT, INT));
-		Expression w = ff.makeFreeIdentifier("w", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.RELIMAGE, r, w,	null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "r", "w"}, new Type[]{INT, REL(INT, INT), INT_SET});
+		Predicate input = parse("E∈r[w]", te);
+		Predicate expected = parse("∃x·x∈w∧x↦E∈r", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
-	public void testFundImgRule() {
-		Predicate input, expected;
-				
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression f = ff.makeFreeIdentifier("f", null, REL(INT, INT));
-		Expression w = ff.makeFreeIdentifier("w", null, INT);
+	public void testFunImgRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "f", "w"}, new Type[]{INT, REL(INT, INT_SET), INT});
+		Predicate input = parse("E∈f(w)", te);
+		Predicate expected = parse("∃x·w↦x∈f∧E∈x", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testFundImgRule2() {
+		Type intRel = REL(INT, INT);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
+		Predicate input = parse("g(s(t(10))) > 10", te);
+		Predicate expected = parse("∀x·x=g(s(t(10))) ⇒ x>10", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
 
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.FUNIMAGE, f, w,	null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+	public void testFundImgRule3() {
+		Type intRel = REL(INT, INT);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
+		Predicate input = parse("f(23) − g(s(t(10))) > g(29)", te);
+		Predicate expected = parse("∀x,x0,x1·x1=f(23)∧x0=g(s(t(10)))∧x=g(29) ⇒ x1−x0>x", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 
 	public void testRangeRule() {
-		Predicate input, expected;
-				
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression r = ff.makeFreeIdentifier("f", null, REL(INT, INT));
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeUnaryExpression(Formula.KRAN, r,	null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"r", "E"}, new Type[]{REL(INT, INT), INT});
+		Predicate input = parse("E∈ran(r)", te);
+		Predicate expected = parse("∃x·x↦E∈r", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 
 	public void testDomainRule() {
-		Predicate input, expected;
-				
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
-		Expression r = ff.makeFreeIdentifier("f", null, REL(INT, INT));
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeUnaryExpression(Formula.KDOM, r,	null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"r", "E"}, new Type[]{REL(INT, INT), INT});
+		Predicate input = parse("E∈dom(r)", te);
+		Predicate expected = parse("∃x·E↦x∈r", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testTotRelRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.TREL, S, T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈ST", te);
+		Predicate expected = parse("E∈S↔T∧S⊆dom(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testSurRelRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.SREL, S, T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈ST", te);
+		Predicate expected = parse("E∈S↔T∧T⊆ran(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testSurjTotalRelRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.STREL, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈ST", te);
+		Predicate expected = parse("E∈ST∧T⊆ran(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
-	public void tesTotBijRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.TBIJ, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+	public void testTotBijRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S⤖T", te);
+		Predicate expected = parse("E∈S↠T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testTotSurjRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.TSUR, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S↠T", te);
+		Predicate expected = parse("E∈S→T∧T⊆ran(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testParSurjRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.PSUR, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S⤀T", te);
+		Predicate expected = parse("E∈S⇸T∧T⊆ran(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testTotInjRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.TINJ, S, T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S↣T", te);
+//		Predicate expected = parse("E∈S→T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", te);
+		Predicate expected = parse("E∈S→T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testPartInjRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.PINJ, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S⤔T", te);
+//		Predicate expected = parse("E∈S⇸T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", te);
+		Predicate expected = parse("E∈S⇸T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 
 	public void testTotFunRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.TFUN, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S→T", te);
+		Predicate expected = parse("E∈S⇸T∧S⊆dom(E)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 	
 	public void testPartFunRule() {
-		Predicate input, expected;
-		
-		Expression E = ff.makeFreeIdentifier("E", null, REL(INT, INT));
-		Expression S = ff.makeFreeIdentifier("S", null, INT_SET);
-		Expression T = ff.makeFreeIdentifier("T", null, INT_SET);
-
-		input = ff.makeRelationalPredicate(
-				Formula.IN,
-				E,
-				ff.makeBinaryExpression(Formula.PFUN, S,	T, null),
-				null);
-		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
-		
-		doTest(input, expected);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+		Predicate input = parse("E∈S⇸T", te);
+//		Predicate expected = parse("E∈S↔T∧(∀C,B,A·(A↦B∈E∧A↦C∈E)⇒B=C)", te);
+		Predicate expected = parse("E∈S↔T∧(∀x,x0,x1·(x1↦x0∈E∧x1↦x∈E)⇒x0=x)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
+	
+	public void testCProdRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "S", "T"}, new Type[]{INT, INT, INT_SET, INT_SET});
+		Predicate input = parse("E↦F∈S×T", te);
+		Predicate expected = parse("E∈S∧F∈T", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testRelOvrRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "q", "r"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
+		Predicate input = parse("E↦F∈qr", te);
+		Predicate expected = parse("E↦F∈dom(r)⩤q∨E↦F∈r", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testRelOvrRule2() {
+		Type rt = REL(INT, BOOL);
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "q", "s", "t", "w"}, new Type[]{INT, BOOL, rt, rt, rt, rt});
+		Predicate input = parse("E↦F∈qstw", te);
+		Predicate expected = 
+			parse("E↦F∈(dom(s)∪dom(t)∪dom(w))⩤q ∨E↦F∈(dom(t)∪dom(w))⩤s ∨ E↦F∈dom(w)⩤t ∨ E↦F∈w", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testRanSubRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
+		Predicate input = parse("E↦F∈r⩥T", te);
+		Predicate expected = parse("E↦F∈r∧¬(F∈T)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testDomSubRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "S"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
+		Predicate input = parse("E↦F∈S⩤r", te);
+		Predicate expected = parse("E↦F∈r∧¬(E∈S)", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testRanResRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
+		Predicate input = parse("E↦F∈r▷T", te);
+		Predicate expected = parse("E↦F∈r∧F∈T", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testDomResRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "S"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
+		Predicate input = parse("E↦F∈S◁r", te);
+		Predicate expected = parse("E↦F∈r∧E∈S", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testIdRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "S"}, new Type[]{INT, INT, INT_SET});
+		Predicate input = parse("E↦F∈id(S)", te);
+		Predicate expected = parse("E∈S∧E=F", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+	public void testFCompRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
+		Predicate input = parse("E↦F∈p;q", te);
+		Predicate expected = parse("∃x·E↦x∈p∧x↦F∈q", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testFCompRule2() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, INT, REL(INT, BOOL), REL(BOOL, BOOL), REL(BOOL, INT)});
+		Predicate input = parse("E↦F∈p;q;w", te);
+		Predicate expected = parse("∃x,x0·E↦x0∈p∧x0↦x∈q∧x↦F∈w", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+
+
+	public void testBCompRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
+		Predicate input = parse("E↦F∈p∘q", te);
+		Predicate expected = parse("E↦F∈q;p", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testBCompRule2() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, INT, REL(BOOL, INT), REL(BOOL, BOOL), REL(INT, BOOL)});
+		Predicate input = parse("E↦F∈p∘q∘w", te);
+		Predicate expected = parse("E↦F∈w;q;p", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testInvRelRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r"}, new Type[]{INT, INT, REL(INT, INT)});
+		Predicate input = parse("E↦F∈(r^−1)", te);
+		Predicate expected = parse("F↦E∈r", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testPrj1Rule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, INT, INT, REL(INT, INT)});
+		Predicate input = parse("(E↦F)↦G ∈ prj1(r)", te);
+		Predicate expected = parse("E↦F∈r ∧ G=E", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testPrj2Rule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, INT, INT, REL(INT, INT)});
+		Predicate input = parse("(E↦F)↦G ∈ prj2(r)", te);
+		Predicate expected = parse("E↦F∈r ∧ G=F", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testDirectProdRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "p", "q"}, new Type[]{INT, INT, INT, REL(INT, INT), REL(INT, INT)});
+		Predicate input = parse("E↦(F↦G) ∈ p⊗q", te);
+		Predicate expected = parse("E↦F∈p ∧ E↦G∈q", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testPrallelProdRule() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "H", "p", "q"}, 
+				new Type[]{INT, INT, INT, INT, REL(INT, INT), REL(INT, INT)});
+		Predicate input = parse("(E↦F)↦(G↦H) ∈ p∥q", te);
+		Predicate expected = parse("E↦G∈p ∧ F↦H∈q", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}	
 	
 	public void testArithmeticRule() {
 		Predicate input, expected;
 		
-		Expression E = ff.makeFreeIdentifier("E", null, INT);
+		Expression E = FastFactory.mFreeIdentifier("E", INT);
 
-		input = ff.makeRelationalPredicate(
+		input = FastFactory.mRelationalPredicate(
 				Formula.IN,
 				E,
-				ff.makeSetExtension(
+				FastFactory.mSetExtension(
 						FastFactory.mList(
-								ff.makeBinaryExpression(
+								FastFactory.mAssociativeExpression(
 										Formula.MUL, 
-										ff.makeIntegerLiteral(new BigInteger("10"), null),
-										ff.makeIntegerLiteral(new BigInteger("20"), null),
-										null),
-								ff.makeIntegerLiteral(new BigInteger("30"), null)),
-						null),
-				null);
+										FastFactory.mList(
+											FastFactory.mIntegerLiteral(10),
+											FastFactory.mIntegerLiteral(20))),
+								FastFactory.mIntegerLiteral(20))));
 		
-		expected = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
 		
 		/*
-		Predicate p = ff.makeQuantifiedPredicate(
+		Predicate p = FastFactory.mQuantifiedPredicate(
 				Formula.FORALL,
-				FastFactory.mList(ff.makeBoundIdentDecl("x", null, INT)),
-				ff.makeRelationalPredicate(
+				FastFactory.mList(FastFactory.mBoundIdentDecl("x", INT)),
+				FastFactory.mRelationalPredicate(
 						Formula.GE,
-						ff.makeBoundIdentifier(1, null, INT),
-						ff.makeBoundIdentifier(0, null, INT),
-						null),
-				null);
+						FastFactory.mBoundIdentifier(1, INT),
+						FastFactory.mBoundIdentifier(0, INT),
+						),
+				);
 		
 		
 		System.out.println("P: " + p);
@@ -1298,23 +907,111 @@ public class TranslationTests extends TestCase {
 		System.out.println("P: " + p);
 		*/
 		
-		doTest(input, expected);
-		
+		doTest(input, expected);		
+	}
+	
+	public void testCardinality1() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"S", "n"}, new Type[]{INT_SET, INT});
+		Predicate input = parse("card(S)=n", te);
+		Predicate expected = parse("∃f·f∈S⤖1‥n", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
 	}
 
+	public void testCardinality2() {
+		Predicate input = parse("card({1}) > 1");
+		Predicate expected = parse("∀x·x=card({1})⇒x>1");
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testCardinality3() {
+		Predicate input =  parse("card({card({1})}) = card({2})");
+		Predicate expected = parse("∀x,x0·x0=card({card({1})})∧x=card({2}) ⇒ x0=x");
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}
+	
+	public void testCardinality4() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"S"}, new Type[]{INT_SET});
+		Predicate input =  parse("∀s·card(S)>card({t·t>s∧t<card({t,t})∣t})", te);
+		Predicate expected = parse("∀s·∀x,x0·x0=card(S)∧x=card({t·t>s∧t<card({t,t})∣t})⇒x0>x", te);
+		expected = Translator.reduceToPredCalc(expected, ff);
+		doTest(input, expected);	
+	}	
+
+	public void testBool() {
+		Predicate input, expected;
+		
+		Expression E = FastFactory.mFreeIdentifier("E", BOOL);
+
+		Expression x = FastFactory.mFreeIdentifier("x", INT);
+		Expression y = FastFactory.mFreeIdentifier("y", INT);
+
+		input = FastFactory.mRelationalPredicate(
+				Formula.IN,
+				E,
+				FastFactory.mSetExtension(
+						FastFactory.mAtomicExpression(Formula.FALSE),
+						FastFactory.mBoolExpression(
+								FastFactory.mRelationalPredicate(Formula.GT, x, y))));
+		
+		expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
+		
+		doTest(input, expected);
+	}
+	
+	public void testBool2() {
+		Predicate input, expected;
+		
+		Expression E = FastFactory.mFreeIdentifier("E", BOOL);
+
+		input = FastFactory.mRelationalPredicate(
+				Formula.IN,
+				E,
+				FastFactory.mSetExtension(
+						FastFactory.mBoolExpression(
+								FastFactory.mRelationalPredicate(
+										Formula.EQUAL,
+										FastFactory.mAtomicExpression(Formula.TRUE),
+										FastFactory.mBoolExpression(FastFactory.mLiteralPredicate(Formula.BFALSE))))));
+		
+		expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
+		
+		doTest(input, expected);
+	}
+	
+	public void testBool3() {
+		Predicate input = parse("e ∈ {bool(⊤)↦bool(1>2)}");
+		Predicate expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
+		
+		doTest(input, expected);
+	}
+	
+	public void testCardExt() {
+		Predicate input = parse("e ∈ {card({1})↦card({1})}");
+		Predicate expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
+		
+		doTest(input, expected);
+	}
+	
 	private void doTest(Predicate input, Predicate expected) {
 		doTest(input, expected, translator);
 	}
 	
 	private void doTest(Formula input, Formula expected, TestTranslation translation) {
-		input.typeCheck(ff.makeTypeEnvironment());
-		expected.typeCheck(ff.makeTypeEnvironment());
+		ITypeCheckResult tcr = null;
+		tcr = input.typeCheck(FastFactory.mTypeEnvironment());
+		assertTrue("Input is not typed: " + tcr.getProblems(), tcr.isSuccess());
+		tcr=expected.typeCheck(FastFactory.mTypeEnvironment());
+		assertTrue("Expected result is not typed: " + tcr.getProblems(), tcr.isSuccess());
 
-		assertTrue("Input is not typed", input.isTypeChecked());
-		assertTrue("Expected result is not typed", expected.isTypeChecked());
 		Formula actual = translation.translate(input, ff);
-		actual.typeCheck(ff.makeTypeEnvironment());
-		assertTrue("Actual result is not typed", actual.isTypeChecked());
+		
+		tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
+		assertTrue("Actual result is not typed: " + tcr.getProblems(), tcr.isSuccess());
 		if(actual instanceof Predicate)
 			assertTrue("Result not in goal: " + actual, GoalChecker.isInGoal((Predicate)actual, ff));
 		assertEquals("Unexpected result of translation", expected, actual);

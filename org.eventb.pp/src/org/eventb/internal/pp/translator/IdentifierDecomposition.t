@@ -33,7 +33,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		T1 first() { return first; }
 		T2 second() { return second; }
 	}
-	
+
 	%include {Formula.tom}
 	
 	List<Pair<Type, Integer>> identTypes;
@@ -136,7 +136,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 			ForAll(is, P) | Exists(is, P) -> {
 				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 				for (BoundIdentDecl decl: `is) {
-					mb.calculate(decl.getType(), 0, decl.getSourceLocation(), ff);
+					mb.calculate(decl.getType(), 0, decl.getName(), decl.getSourceLocation(), ff);
 					c.add(mb.getIdentDecls().size());
 					identTypes.add (0, 
 						new Pair<Type, Integer>(decl.getType(), new Integer(c.value())));

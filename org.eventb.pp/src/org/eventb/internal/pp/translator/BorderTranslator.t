@@ -20,62 +20,27 @@ import org.eventb.core.ast.*;
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
-public class BorderTranslator extends IdentityTranslator {
-
-	protected Predicate translatePred2Expr(Predicate pred, Expression left, Expression right, FormulaFactory ff) {
-		return super.translate(pred, ff);
-	}
-	protected Predicate translatePred2Set(Predicate pred, Expression set, FormulaFactory ff) {
-		return super.translate(pred, ff);
-	}
-	protected Expression translateExpr2Pred(Expression expr, Predicate pred, FormulaFactory ff) {
-		return super.translate(expr, ff);
-	}
-	protected Expression translateBool2Pred(Expression bexpr, Predicate pred, FormulaFactory ff) {
-		return translateExpr2Pred(bexpr, pred, ff);
-	}
-	protected Expression translateSet2Pred(Expression set, Predicate pred, FormulaFactory ff) {
-		return translateExpr2Pred(set, pred, ff);
-	}
+public abstract class BorderTranslator extends IdentityTranslator {
 	
-	protected Expression idTransExpression(Expression expr, FormulaFactory ff) {
-		return super.translate(expr, ff);
-	}
-	
-	protected Predicate idTransPredicate(Predicate pred, FormulaFactory ff) {
-		return super.translate(pred, ff);
-	}
-
+	protected abstract Predicate translateBorder(RelationalPredicate pred, FormulaFactory ff);
+		
 	%include {Formula.tom}
 	
 	protected Expression translate(Expression expr, FormulaFactory ff) {
-		SourceLocation loc = expr.getSourceLocation();
-	    %match (Expression expr) {
-	    	Bool(P) -> {
-	    		return translateBool2Pred(expr, `P, ff);
-	    	}
-	    	Cset(_, P, _) | Qinter(_, P, _) | Qunion(_, P, _) -> {
-	    		return translateSet2Pred(expr, `P, ff);
-	    	}
-	    	_ -> {
-	    		return super.translate(expr, ff);
-	    	}
-	    }
+		return expr;
 	}
 	
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
-	    	Finite(E) -> {
-	    		return translatePred2Set(pred, `E, ff);
-	    	}
 	    	RelationalPredicate(l, r)-> {
 	    		Type intType = ff.makeIntegerType();
-	    		if(`l.equals(intType) && `r.equals(intType)) {
-	    			
+	    		if(`l.getType().equals(intType) && `r.getType().equals(intType)) {
+	    			return translateBorder((RelationalPredicate)pred, ff);
 	    		}
-	    		
-	    		return translatePred2Expr(pred, `l, `r, ff);
+	    		else {
+	    			return pred;
+	    		}
 	    	}
 	       	_ -> {
 	    		return super.translate(pred, ff);

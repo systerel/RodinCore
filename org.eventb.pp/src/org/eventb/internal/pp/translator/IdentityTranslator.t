@@ -20,7 +20,7 @@ import org.eventb.core.ast.*;
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
-public class IdentityTranslator {
+public class IdentityTranslator extends IdentityTranslatorBase {
 
 	%include {Formula.tom}
 	
@@ -28,64 +28,26 @@ public class IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();
 	    %match (Expression expr) {
 	    	AssociativeExpression(children) -> {
-	    		ArrayList<Expression> newChildren = new ArrayList<Expression>();
-	    		boolean hasChanged = false;
-	    		for (Expression child: `children) {
-	    			Expression newChild = translate(child, ff);
-	    			newChildren.add(newChild);
-	    			hasChanged = hasChanged || (newChild != child);
-	    		}
-	    		if(hasChanged)
-		    		return ff.makeAssociativeExpression(expr.getTag(), newChildren, loc);
-		    	else
-		    		return expr;		    	
+	    		return idTransAssociativeExpression(expr, ff, `children);
 	    	}
 	    	AtomicExpression() | BoundIdentifier(_) | FreeIdentifier(_) | IntegerLiteral(_) -> { 
 	    		return expr; 
 	    	}
 	    	BinaryExpression(l, r) -> {
-	    		Expression nl = translate(`l, ff);
-	    		Expression nr = translate(`r, ff);
-
-	    		if(nl == `l && nr == `r) return expr;
-	    		else
-		    		return ff.makeBinaryExpression(expr.getTag(), nl, nr, loc);
+	    		return idTransBinaryExpression(expr, ff, `l, `r);
 	    	}
 	    	Bool(P) -> {
-	    		Predicate nP = translate(`P, ff);
-	    		
-	    		if(nP == `P) return expr;
-	    		else 
-	    			return ff.makeBoolExpression(nP, loc);
+	    		return idTransBoolExpression(expr, ff, `P);
 	    	}
 	    	Cset(is, P, E) | Qinter(is, P, E) | Qunion(is, P, E) -> {
-	    		Predicate nP = translate(`P, ff);
-	    		Expression nE = translate(`E, ff);
-
-	    		if(nP == `P && nE == `E) return expr;
-	    		else
-	    			return ff.makeQuantifiedExpression(
-	    				expr.getTag(), `is, nP, nE, loc, QuantifiedExpression.Form.Explicit);	    			
+	    		return idTransQuantifiedExpression(expr, ff, `is, `P, `E);
 	    	}
 	    	SetExtension(children) -> {
-	    		boolean hasChanged = false;
-	    		ArrayList<Expression> newChildren = new ArrayList<Expression>();
-	    		for (Expression child: `children) {
-	    			Expression newChild = translate(child, ff);
-	    			newChildren.add(newChild);
-	    			hasChanged = hasChanged || (newChild != child);
-	    		}
-	    		if(hasChanged)
-		    		return ff.makeSetExtension(newChildren, loc);
-		    	else
-		    		return expr;
+	    		return idTransSetExtension(expr, ff, `children);
 	    	}
+	    	
 	    	UnaryExpression(child) -> {
-	    		Expression newChild = translate(`child, ff);
-	    		
-	    		if(newChild == child) return expr;
-	    		else
-		    		return ff.makeUnaryExpression(expr.getTag(), newChild, loc);
+	    		return idTransUnaryExpression(expr, ff, `child);
 	    	}
 	    	_ -> {
 	    		throw new AssertionError("Unknown expression: " + expr);
@@ -97,53 +59,23 @@ public class IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
 	    	Land(children) | Lor(children) -> {
-	    		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
-	    		boolean hasChanged = false;
-	    		for (Predicate child: `children) {
-	    			Predicate newChild = translate(child, ff);
-	    			newChildren.add(newChild);
-	    			hasChanged = hasChanged || (newChild != child);
-	    		}
-	    		if(hasChanged)
-	    			return ff.makeAssociativePredicate(pred.getTag(), newChildren, loc);
-	    		else
-	    			return pred;
+	    		return idTransAssociativePredicate(pred, ff, `children);
 	    	}
 	    	Limp(l, r) | Leqv(l, r)  -> {
-				Predicate nl = translate(`l, ff);
-				Predicate nr = translate(`r, ff);
-				
-				if(nl == `l && nr == `r) return pred;
-				else
-					return ff.makeBinaryPredicate(pred.getTag(),nl, nr, loc);
+	    		return idTransBinaryPredicate(pred, ff, `l, `r);
 	    	}
 	      	Not(P)-> {
-	      		Predicate nP = translate(`P, ff);
-	      		if(nP == `P) return pred;
-	      		else
-	    			return ff.makeUnaryPredicate(Formula.NOT, nP, loc);
+	    		return idTransUnaryPredicate(pred, ff, `P);
 	    	}
 	    	Finite(E)-> {
-	      		Expression nE = translate(`E, ff);
-	      		if(nE == `E) return pred;
-	      		else
-	    			return ff.makeSimplePredicate(Formula.KFINITE, nE, loc);
+	    		return idTransSimplePredicate(pred, ff, `E);
 	    	}
 			RelationalPredicate(l, r) -> 
 			{
-				Expression nl = translate(`l, ff);
-	    		Expression nr = translate(`r, ff);
-
-	    		if(nl == `l && nr == `r) return pred;
-	    		else
-					return  ff.makeRelationalPredicate(pred.getTag(), nl, nr, loc);
+	    		return idTransRelationalPredicate(pred, ff, `l, `r);
 	    	}
 	    	ForAll (is, P) | Exists (is, P) -> {
-	      		Predicate nP = translate(`P, ff);
-	      		
-	      		if(nP == `P) return pred;
-	      		else
-	    			return ff.makeQuantifiedPredicate(pred.getTag(), `is, nP, loc);	
+	    		return idTransQuantifiedPredicate(pred, ff, `is, `P);
 	    	}
 	    	BTRUE() | BFALSE() -> { return pred; }
 	       	P -> {
