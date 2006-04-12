@@ -104,10 +104,15 @@ public class ASTProblem {
 	@Override
 	public String toString() {
 		final SourceLocation loc = getSourceLocation();
-		Object[] formatArgs = new Object[args.length + 2];
-		System.arraycopy(args, 0, formatArgs, 0, args.length);
-		formatArgs[args.length] = loc.getStart();
-		formatArgs[args.length + 1] = loc.getEnd();
+		final Object[] formatArgs;
+		if (loc != null) {
+			formatArgs = new Object[args.length + 2];
+			System.arraycopy(args, 0, formatArgs, 0, args.length);
+			formatArgs[args.length] = loc.getStart();
+			formatArgs[args.length + 1] = loc.getEnd();
+		} else {
+			formatArgs = args;
+		}
 		return String.format(getMessage().toString(), formatArgs);
 	}
 	
