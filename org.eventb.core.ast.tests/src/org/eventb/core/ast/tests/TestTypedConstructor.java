@@ -48,9 +48,6 @@ public class TestTypedConstructor extends TestCase {
 	
 	ITypeEnvironment env;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -163,7 +160,7 @@ public class TestTypedConstructor extends TestCase {
 
 		doTest(mUnaryExpression(Formula.CONVERSE, fST), REL(ty_T, ty_S));
 		
-		// doTest(mUnaryExpression(Formula.CARD, id_A), INT);
+		doTest(mUnaryExpression(Formula.KCARD, id_A), INT);
 
 		doTest(mUnaryExpression(Formula.POW,  id_A), POW(POW(ty_S)));
 		doTest(mUnaryExpression(Formula.POW1, id_A), POW(POW(ty_S)));
