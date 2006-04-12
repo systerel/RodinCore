@@ -247,6 +247,15 @@ public class FastFactory {
 		return result;
 	}
 
+	public static ITypeEnvironment mTypeEnvironment(Object... objs) {
+		assert (objs.length & 1) == 0;
+		ITypeEnvironment result = ff.makeTypeEnvironment();
+		for (int i = 0; i < objs.length; i += 2) {
+			result.addName((String) objs[i], (Type) objs[i+1]);
+		}
+		return result;
+	}
+
 	public static UnaryExpression mUnaryExpression(Expression child) {
 		return mUnaryExpression(Formula.POW, child);
 	}
