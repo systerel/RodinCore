@@ -148,13 +148,12 @@ static private  BoundIdentDecl[]  tom_append_array_bidList( BoundIdentDecl[]  l2
 					names.add(ident.getName());
 					mb.calculate(ident.getType(), c, null, ff);
 					if(mb.getIdentDecls().size() > 1) {
-						c = c + mb.getIdentDecls().size();
-						for(BoundIdentDecl identDecl: mb.getIdentDecls()) {
-							identDecls.addFirst(identDecl);
-						}
+						c = c + mb.offset();
+						identDecls.addAll(0, mb.X());
+
 						identMap.put(ident, mb.getMaplet());
 						bindings.add(
-							ff.makeRelationalPredicate(Formula.EQUAL, ident, mb.getMaplet(),null));	
+							ff.makeRelationalPredicate(Formula.EQUAL, ident, mb.V(),null));	
 					}
 				}
 			}

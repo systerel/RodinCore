@@ -22,7 +22,13 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public abstract class BorderTranslator extends IdentityTranslator {
 	
-	protected abstract Predicate translateBorder(RelationalPredicate pred, FormulaFactory ff);
+	protected Predicate translateArithmeticBorder(RelationalPredicate pred, FormulaFactory ff) {
+		return pred;
+	}
+	
+	protected Predicate translateSetBorder(RelationalPredicate pred, FormulaFactory ff) {
+		return pred;
+	}
 		
 	%include {Formula.tom}
 	
@@ -35,12 +41,14 @@ public abstract class BorderTranslator extends IdentityTranslator {
 	    %match (Predicate pred) {
 	    	RelationalPredicate(l, r)-> {
 	    		Type intType = ff.makeIntegerType();
-	    		if(`l.getType().equals(intType) && `r.getType().equals(intType)) {
-	    			return translateBorder((RelationalPredicate)pred, ff);
-	    		}
-	    		else {
-	    			return pred;
-	    		}
+	    		
+	    		if(`l.getType().equals(intType) && `r.getType().equals(intType))
+	    			return translateArithmeticBorder((RelationalPredicate)pred, ff);
+	    			
+	    		if(`l.getType().getBaseType() != null && `r.getType().getBaseType() != null)
+	    			return translateSetBorder((RelationalPredicate)pred, ff);
+
+    			return pred;
 	    	}
 	       	_ -> {
 	    		return super.translate(pred, ff);

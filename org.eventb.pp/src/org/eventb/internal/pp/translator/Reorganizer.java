@@ -55,6 +55,19 @@ public class Reorganizer extends BorderTranslator {
 			condCount();
 			return false;			
 		}
+		
+		@Override
+		public boolean enterKMIN(UnaryExpression expr) {
+			condCount();
+			return false;			
+		}
+		
+		@Override
+		public boolean enterKMAX(UnaryExpression expr) {
+			condCount();
+			return false;			
+		}
+		
 	}
 	
 	public class ExpressionExtractor extends IdentityTranslator {
@@ -91,6 +104,8 @@ public class Reorganizer extends BorderTranslator {
 				switch(expr.getTag()) {
 				case Formula.KCARD:
 				case Formula.FUNIMAGE:
+				case Formula.KMIN:
+				case Formula.KMAX:
 					return bindExpression(expr, ff);
 				default:
 					return super.translate(expr, ff);
@@ -120,9 +135,8 @@ public class Reorganizer extends BorderTranslator {
 	}
 	
 	@Override
-	protected Predicate translateBorder(RelationalPredicate pred, FormulaFactory ff) {
+	protected Predicate translateArithmeticBorder(RelationalPredicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
-		
 		
 		boolean isEquality = isIdentifierEquality(pred);
 		
@@ -154,5 +168,10 @@ public class Reorganizer extends BorderTranslator {
 					loc),
 				loc);
 		}
+	}
+	
+	@Override
+	protected Predicate translateSetBorder(RelationalPredicate pred, FormulaFactory ff) {
+		return pred;
 	}
 }

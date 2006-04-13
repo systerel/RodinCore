@@ -96,17 +96,18 @@ public class Translator extends IdentityTranslator {
 	    		List<BoundIdentDecl> forallDecls;
 	    		LinkedList<BoundIdentDecl> existDecls = new LinkedList<BoundIdentDecl>();
 	    		
-	    		Type elementType = `S.getType().getBaseType();
+	    		Type setElementType = `S.getType().getBaseType();
+	    		Type intType = ff.makeIntegerType();
 
-	    		mb.calculate(ff.makePowerSetType(ff.makeProductType(elementType, elementType)), loc, ff);
+	    		mb.calculate(ff.makePowerSetType(ff.makeProductType(setElementType, intType)), 0, "f", loc, ff);
 	    		existDecls.addAll(mb.X());
 	    		f = mb.V();
 	    		
-				mb.calculate(elementType, existDecls.size(), loc, ff);
+				mb.calculate(intType, existDecls.size(), "b", loc, ff);
 	    		existDecls.addAll(0, mb.X());
 	    		b = mb.V();
 	    		
-				mb.calculate(elementType, existDecls.size(), loc, ff);
+				mb.calculate(intType, existDecls.size(), "a", loc, ff);
 	    		forallDecls = mb.X();
 	    		a = mb.V();
 	    		
@@ -170,7 +171,7 @@ public class Translator extends IdentityTranslator {
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
 						translateIn(mb.V(), E.shiftBoundIdentifiers(mb.offset(), ff), loc, ff),
-						translateIn(mb.V(), `child.shiftBoundIdentifiers(mb.offset(), ff),	loc, ff), 
+						translateIn(mb.V(), `child.shiftBoundIdentifiers(mb.offset(), ff), loc, ff), 
 						loc),
 				loc);
 			}
@@ -526,16 +527,18 @@ public class Translator extends IdentityTranslator {
 						mb.X(),
 						FormulaConstructor.makeLandPredicate(
 							ff,
-							ff.makeRelationalPredicate(
-								Formula.IN, 
+							translateIn(
 								mb.V(), 
 								right.shiftBoundIdentifiers(mb.offset(), ff), 
-								loc),
-							ff.makeRelationalPredicate(
-								Formula.EQUAL, 
-								mb.V(), 
-								E.shiftBoundIdentifiers(mb.offset(), ff), 
-								loc),
+								loc,
+								ff),
+							translateEqual(
+								ff.makeRelationalPredicate(
+									Formula.EQUAL,
+									mb.V(), 
+									E.shiftBoundIdentifiers(mb.offset(), ff), 
+									loc),
+								ff),
 							loc),
 						loc);
 				}
@@ -784,7 +787,7 @@ public class Translator extends IdentityTranslator {
 		Type dom = ((ProductType)f.getType().getBaseType()).getLeft();
 		Type ran = ((ProductType)f.getType().getBaseType()).getRight();
 		
-		if(inverse) { Type t = dom; dom = ran; ran = dom; }
+		if(inverse) { Type t = dom; dom = ran; ran = t; }
 
 		mb.calculate(dom, 0, loc, ff);
 		A = mb.getMaplet();
@@ -798,6 +801,8 @@ public class Translator extends IdentityTranslator {
 		mb.calculate(ran, X.size(), loc, ff);
 		C = mb.getMaplet();
 		X.addAll(0, mb.getIdentDecls());
+		
+		Expression shiftedF = f.shiftBoundIdentifiers(X.size(), ff);
 
 		return ff.makeQuantifiedPredicate(
 			Formula.FORALL,
@@ -812,7 +817,7 @@ public class Translator extends IdentityTranslator {
 							inverse ? B : A, 
 							inverse ? A : B, 
 							loc),	
-						f.shiftBoundIdentifiers(X.size(), ff), 
+						shiftedF, 
 						loc, 
 						ff),
 					translateIn(
@@ -821,7 +826,7 @@ public class Translator extends IdentityTranslator {
 							inverse ? C : A, 
 							inverse ? A : C, 
 							loc),	
-						f.shiftBoundIdentifiers(X.size(), ff), 
+						shiftedF, 
 						loc, 
 						ff),
 					loc),
@@ -873,6 +878,60 @@ public class Translator extends IdentityTranslator {
 					translate(`P, ff),
 					loc);
 			}
+			Equal(n@Identifier(), Min(S)) | Equal(Min(S), n@Identifier()) -> {
+				//  x = min(S) == x ? S ? (?x1. x1 ? S ? x ? x1)
+				mb.calculate(ff.makeIntegerType(), loc, ff);
+				
+				return FormulaConstructor.makeLandPredicate(
+					ff,
+					translateIn(`n, `S, loc, ff),
+					ff.makeQuantifiedPredicate(
+						Formula.FORALL,
+						mb.X(),
+						ff.makeBinaryPredicate(
+							Formula.LIMP,
+							translateIn(mb.V(), `S.shiftBoundIdentifiers(mb.offset(), ff), loc, ff),
+							translate(
+								ff.makeRelationalPredicate(
+									Formula.LE,
+									`n.shiftBoundIdentifiers(mb.offset(), ff), 
+									mb.V(),
+									loc),
+								ff),
+							loc),
+						loc),
+					loc);
+			}
+			Equal(n@Identifier(), Max(S)) | Equal(Max(S), n@Identifier()) -> {
+				//  x = max(S) == x ? S ? (?x1. x1 ? S ? x1 ? x)
+					mb.calculate(ff.makeIntegerType(), loc, ff);
+				
+				return FormulaConstructor.makeLandPredicate(
+					ff,
+					translateIn(`n, `S, loc, ff),
+					ff.makeQuantifiedPredicate(
+						Formula.FORALL,
+						mb.X(),
+						ff.makeBinaryPredicate(
+							Formula.LIMP,
+							translateIn(mb.V(), `S.shiftBoundIdentifiers(mb.offset(), ff), loc, ff),
+							translate(
+								ff.makeRelationalPredicate(
+									Formula.LE,
+									mb.V(),
+									`n.shiftBoundIdentifiers(mb.offset(), ff), 
+									loc),
+								ff),
+							loc),
+						loc),
+					loc);
+			}
+			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
+				return translate(P, ff);
+			}
+			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
+				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
+			}
 			Equal(FunImage(r, E), x) | Equal(x, FunImage(r, E)) -> {
 				return translateIn(
 					ff.makeBinaryExpression(Formula.MAPSTO, `E, `x, loc), `r, loc, ff);
@@ -887,9 +946,28 @@ public class Translator extends IdentityTranslator {
 						loc),
 					loc);						
 			}
-			P -> {
-				/*
-				throw new AssertionError("not yet supported!: " + pred);*/
+			Equal(S, T) -> {
+				if(`S.getType().getBaseType() != null) {
+					return FormulaConstructor.makeLandPredicate(
+						ff,
+						translate(
+							ff.makeRelationalPredicate(
+								Formula.SUBSETEQ,
+								`S,
+								`T,
+								loc),
+							ff),
+						translate(
+							ff.makeRelationalPredicate(
+								Formula.SUBSETEQ,
+								`T,
+								`S,
+								loc),
+							ff),
+						loc);						
+				}
+			}	
+			_ -> {
 				return super.translate(pred, ff);
 			}
 		}
