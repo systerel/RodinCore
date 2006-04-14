@@ -27,6 +27,7 @@ import static org.eventb.core.ast.Formula.OVR;
 import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
@@ -422,13 +423,12 @@ public class TestUnparse extends TestCase {
 			), new ExprTestPair(
 					"x × y",
 					mBinaryExpression(CPROD, id_x, id_y)
-// TODO restore test of optimality of toString()
-//			), new ExprTestPair(
-//					"f;g ▷ A",
-//					mAssociativeExpression(FCOMP,
-//							id_f, 
-//							mBinaryExpression(RANRES, id_g, id_A)
-//					)
+			), new ExprTestPair(
+					"f;g ▷ A",
+					mBinaryExpression(RANRES,
+							mAssociativeExpression(FCOMP, id_f, id_g),
+							id_A 
+					)
 			),
 	};
 	
@@ -541,7 +541,7 @@ public class TestUnparse extends TestCase {
 	//--------------------------------------------------------------
 
 	private Expression[] constructBinaryBinaryTrees () {
-//		 {MAPSTO,REL,TREL,SREL,STREL,PFUN,TFUN,PINJ,TINJ,PSUR,TSUR,TBIJ,SETMINUS,CPROD,DPROD,PPROD,DOMRES,DOMSUB,RANRES,RANSUB,UPTO,MINUS,DIV,MOD,EXPN}
+		// {MAPSTO,REL,TREL,SREL,STREL,PFUN,TFUN,PINJ,TINJ,PSUR,TSUR,TBIJ,SETMINUS,CPROD,DPROD,PPROD,DOMRES,DOMSUB,RANRES,RANSUB,UPTO,MINUS,DIV,MOD,EXPN}
 		int length = BINARY_EXPRESSION_LENGTH;
 		Expression[]  formulae = new Expression[(length)*(length)*2];
 		int idx = 0;
@@ -620,7 +620,7 @@ public class TestUnparse extends TestCase {
 	}
 	
 	private Expression[] constructBinaryUnaryTrees() {
-//		 {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
+		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
 		Expression[]  formulae = new Expression[(UNARY_EXPRESSION_LENGTH)*(BINARY_EXPRESSION_LENGTH)*3];
 		int idx = 0;
 		for (int i=0;i<UNARY_EXPRESSION_LENGTH;i++) {
@@ -643,7 +643,7 @@ public class TestUnparse extends TestCase {
 	}
 	
 	private Expression[] constructAssociativeUnaryTrees() {
-//		 {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
+		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
 		Expression[]  formulae = new Expression[4 * UNARY_EXPRESSION_LENGTH * ASSOCIATIVE_EXPRESSION_LENGTH];
 		int idx = 0;
 		for (int i=0;i<UNARY_EXPRESSION_LENGTH;i++) {
