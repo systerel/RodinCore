@@ -186,7 +186,14 @@ public class TranslationTests extends TestCase {
 		doTest( "s⊆t",
 				"∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t", false);
 	}
-	
+
+	public void testSubsetEqRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
+		doTest( "s∪t ⊆ s∪t",
+				"∀x·x∈s∪t⇒x∈s∪t", true);
+	}
+
 	public void testNotSubsetEqRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
@@ -201,6 +208,13 @@ public class TranslationTests extends TestCase {
 				"¬(∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t)", false);
 	}
 	
+	public void testNotSubsetEqRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
+		doTest( "s∪t⊈s∪t",
+				"¬(∀x·x∈s∪t⇒x∈s∪t)", true);
+	}
+
 	public void testSubsetRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
@@ -214,6 +228,13 @@ public class TranslationTests extends TestCase {
 		doTest( "s⊂t", "(∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t)∧¬(∀x,x0,x1·x1↦(x0↦x)∈t⇒x1↦(x0↦x)∈s)", false);
 	}
 
+	public void testSubsetRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
+		doTest( "s∪t⊂s∪t",
+				"(∀x·x∈s∪t⇒x∈s∪t)∧¬(∀x·x∈s∪t⇒x∈s∪t)", true);
+	}
+	
 	public void testNotSubsetRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
@@ -228,6 +249,13 @@ public class TranslationTests extends TestCase {
 				"¬((∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t))∨(∀x,x0,x1·x1↦(x0↦x)∈t⇒x1↦(x0↦x)∈s)", false);
 	}
 	
+	public void testNotSubsetRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
+		doTest( "s∪t⊄s∪t",
+				"¬(∀x·x∈s∪t⇒x∈s∪t)∨(∀x·x∈s∪t⇒x∈s∪t)", true);
+	}
+
 	public void testFiniteRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"S"}, new Type[]{INT_SET});
 		doTest( "finite(S)",
@@ -235,6 +263,12 @@ public class TranslationTests extends TestCase {
 	}
 	
 	public void testFiniteRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(CPROD(BOOL, INT), BOOL)});
+		doTest( "∀y·y=t∨finite({y})",
+				"∀y·y=t∨(∀a·∃b,f·f∈({y}↣a‥b))", true);
+	}
+	
+	public void testFiniteRule3() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"S", "T"}, new Type[]{INT_SET, INT_SET});
 		doTest( "finite(ℙ(S∪T))",
 				"∀a·∃b,f·f∈(ℙ(S∪T)↣a‥b)", true);
@@ -256,8 +290,14 @@ public class TranslationTests extends TestCase {
 	
 	public void testPowerSetInRule3() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"T", "S", "E"}, new Type[]{INT_SET, INT_SET, POW(INT_SET)});
-		doTest( "E∈ℙ(ℙ(S∪T))",
-				"∀x·x∈E⇒x∈ℙ(S∪T)", true);
+		doTest( "E∪E∈ℙ(ℙ(S∪T))",
+				"∀x·x∈E∪E⇒x∈ℙ(S∪T)", true);
+	}
+	
+	public void testPowerSetInRule4() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
+		doTest( "∀s·E∈ℙ({s})",
+				"∀s·(∀x·x∈E⇒x=s)", false);
 	}
 
 	public void testNaturalInRule() {
@@ -266,8 +306,8 @@ public class TranslationTests extends TestCase {
 	}
 	
 	public void testNaturalInRule2() {
-		doTest( "(3∗4+5)∈ℕ",
-				"3∗4+5≥0", false);
+		doTest( "card({1,2})∈ℕ",
+				"∀c·c=card({1,2})⇒c≥0", true);
 	}
 
 	public void testNatural1InRule() {
@@ -275,6 +315,11 @@ public class TranslationTests extends TestCase {
 				"E>0", false);
 	}
 	
+	public void testNatural1InRule2() {
+		doTest( "card({1,2})∈ℕ1",
+				"∀c·c=card({1,2})⇒c>0", true);
+	}
+
 	public void testIntegerInRule() {
 		doTest( "E∈ℤ",
 				"⊤", false);
@@ -288,8 +333,8 @@ public class TranslationTests extends TestCase {
 	
 	public void testCSetInRule2() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
-		doTest( "E∈{x·x>3∣ x∗2}",
-				"∃x·x>3∧E=x∗2", false);
+		doTest( "E∈{x·x∈{1}∣ x∗2}",
+				"∃x·x∈{1}∧E=x∗2", true);
 	}
 
 	public void testCSetInRule3() {
@@ -297,11 +342,23 @@ public class TranslationTests extends TestCase {
 		doTest( "E∈{x·x>3∣ {2}}",
 				"∃x·x>3∧E={2}", true);
 	}
-
+	
+	public void testCSetInRule4() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{REL(BOOL, INT)});
+		doTest( "∀y·({bool(y>3)↦1∗2}∈{x·x>3∣{bool(y>x)↦x}})",
+				"∀y·({bool(y>3)↦1∗2}∈{x·x>3∣{bool(y>x)↦x}})", true);
+	}
+	
 	public void testQInterInRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈(⋂x·⊤ ∣ {x})",
 				"∀x·⊤⇒E=x", false);
+	}
+
+	public void testQInterInRule1() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{REL(BOOL, INT)});
+		doTest( "∀y·(bool(y>3)↦1∗2∈(⋂x·x∈{1}∣{bool(y>x)↦x}))",
+				"∀y·(bool(y>3)↦1∗2∈(⋂x·x∈{1}∣{bool(y>x)↦x}))", true);
 	}
 
 	public void testQUnionInRule() {
@@ -310,11 +367,30 @@ public class TranslationTests extends TestCase {
 				"∃x·⊤∧E=x", false);
 	}
 	
+	public void testQUnionInRule1() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{REL(BOOL, INT)});
+		doTest( "∀y·(bool(y>3)↦1∗2∈(⋃x·x∈{1}∣{bool(y>x)↦x}))",
+				"∀y·(bool(y>3)↦1∗2∈(⋃x·x∈{1}∣{bool(y>x)↦x}))", true);
+	}
+	
 	public void testUnionRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈union(S)",
 				"∃x·x∈S∧E∈x", false);
 	}
+
+	public void testUnionRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E ∈ union({{1}})",
+				"∃x·x∈{{1}} ∧ E∈x ", true);
+	}
+	
+	public void testUnionRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{CPROD(BOOL, CPROD(INT, BOOL))});
+		doTest( "∀t·E ∈ union({{t, t}, {t} ∪ {t}})",
+				"∀t·(∃x·x∈{{t, t}, {t} ∪ {t}} ∧ E∈x) ", true);
+	}
+
 
 	public void testInterRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
@@ -322,85 +398,110 @@ public class TranslationTests extends TestCase {
 				"∀x·x∈S⇒E∈x", false);
 	}
 	
+	public void testInterRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E ∈ inter({{1}})",
+				"∀x·x∈{{1}}⇒E∈x ", true);
+	}
+	
+	public void testInterRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{CPROD(BOOL, CPROD(INT, BOOL))});
+		doTest( "∀t·E ∈ inter({{t, t}, {t} ∪ {t}})",
+				"∀t·(∀x·x∈{{t, t}, {t} ∪ {t}} ⇒ E∈x) ", true);
+	}
+
 	public void testPow1Rule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
-		Predicate input = parse("E∈ℙ1(T)", te);
-		Predicate expected = parse("E∈ℙ(T) ∧ (∃x·x∈E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
-		doTest(input, expected);
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
+		doTest( "E∈ℙ1(T)",
+				"E∈ℙ(T) ∧ (∃x·x∈E)", true);
+	}
+	
+	public void testPow1Rule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT_SET});
+		doTest( "∀t,s·E∈ℙ1({s}∪t)",
+				"(∀t,s·E∈ℙ({s}∪t) ∧(∃x·x∈E))", true);
 	}
 	
 	public void testEmptySetRule() {
-		Predicate input, expected;
-		
-		Expression E = FastFactory.mFreeIdentifier("E", INT);
-		input = FastFactory.mRelationalPredicate(
-				Formula.IN,
-				E,
-				FastFactory.mEmptySet(INT_SET));
-		
-		expected = FastFactory.mLiteralPredicate(Formula.BFALSE);
-		
-		doTest(input, expected);
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT_SET});
+		doTest( "E∈∅",
+				"⊥", false);
 	}
 	
 	public void testSetExtensionRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
-		Predicate input = parse("E∈{a,b,c}", te);
-		Predicate expected = parse("E=a ∨ E=b ∨ E=c", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
-		doTest(input, expected);
+		doTest( "E∈{a,b,1}",
+				"E=a ∨ E=b ∨ E=1", false);
 	}
 	
-	public void testUpToRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E", "a", "b"}, new Type[]{INT, INT, INT});
-		Predicate input = parse("E∈a‥b", te);
-		Predicate expected = parse("E≥a∧E≤b", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
+	public void testSetExtensionRule2() {
+		doTest( "E∈{1}",
+				"E=1", false);
+	}
+	
+	public void testSetExtensionRule3() {
+		Predicate input = FastFactory.mRelationalPredicate(
+				Formula.IN, FastFactory.mFreeIdentifier("E", INT), FastFactory.mSetExtension());
+		Predicate expected = parse("⊥");
 		doTest(input, expected);
+	}
+
+	public void testUpToRule() {
+		doTest( "E∈a‥b",
+				"E≥a∧E≤b", false);
 	}
 	
 	public void testSetMinusRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
-		Predicate input = parse("E∈S∖T", te);
-		Predicate expected = parse("E∈S∧¬(E∈T)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
-		doTest(input, expected);
+		doTest( "E∈S∖T", 
+				"E∈S∧¬(E∈T)", true);
+	}
+
+	public void testSetMinusRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E∈(S∪X) ∖ (T∪Y)", 
+				"E∈S∪X ∧ ¬(E∈T∪Y)", true);
 	}
 
 	public void testBInterRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
-		Predicate input = parse("E∈S∩T", te);
-		Predicate expected = parse("E∈S∧E∈T", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E∈S∩T",
+				"E∈S∧E∈T", true);
+	}
+
+	public void testBInterRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E∈(S∪X)∩(T∪Y)",
+				"E∈S∪X∧E∈T∪Y", true);
 	}
 
 	public void testBUnionRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{INT, INT_SET, INT_SET});
-		Predicate input = parse("E∈S∩T", te);
-		Predicate expected = parse("E∈S∧E∈T", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E∈S∪T", 
+				"E∈S∨E∈T", true);
+	}
+	
+	public void testBUnionRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
+		doTest( "E∈(S∪X)∪(T∪Y)", 
+				"E∈S∪X∨E∈T∪Y", true);
 	}
 	
 	public void testRelRule() {		
 		actTypeEnv = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
 		doTest( "E∈S↔T",
 				"dom(E)⊆S∧ran(E)⊆T", true);
 	}
 	
 	public void testRelRule2() {		
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		doTest( "E∈(S∪X)↔(T∪Y)",
+				"dom(E)⊆(S∪X)∧ran(E)⊆(T∪Y)", true);
+	}
+	
+	public void testRelRule3() {		
 		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"E", "S", "T"}, 
 				new Type[]{REL(CPROD(BOOL, INT), INT_SET), REL(BOOL, INT), POW(INT_SET)});
@@ -410,128 +511,186 @@ public class TranslationTests extends TestCase {
 	}
 	
 	public void testRelImgRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "r", "w"}, new Type[]{INT, REL(INT, INT), INT_SET});
-		Predicate input = parse("E∈r[w]", te);
-		Predicate expected = parse("∃x·x∈w∧x↦E∈r", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "r", "w"}, new Type[]{BOOL, REL(INT, BOOL), INT_SET});
+		doTest( "E∈r[w]", 
+				"∃x·x∈w∧x↦E∈r", false);
 	}
 	
-	public void testFunImgRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "f", "w"}, new Type[]{INT, REL(INT, INT_SET), INT});
-		Predicate input = parse("E∈f(w)", te);
-		Predicate expected = parse("∃x·w↦x∈f∧E∈x", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+	public void testRelImgRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "r", "w"}, new Type[]{BOOL, REL(INT, BOOL), INT_SET});
+		doTest( "∀t,v·E∈(r∪t)[w∪v]", 
+				"∀t,v·∃x·x∈(w∪v)∧x↦E∈(r∪t)", true);
 	}
 	
-	public void testFundImgRule2() {
-		Type intRel = REL(INT, INT);
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
-		Predicate input = parse("g(s(t(10))) > 10", te);
-		Predicate expected = parse("∀x·x=g(s(t(10))) ⇒ x>10", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+	public void testRelImgRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"r", "w"}, new Type[]{REL(INT, BOOL), INT_SET});
+		doTest( "∀E,t,v·E∈(r∪t)[w∪v]", 
+				"∀E,t,v·∃x·x∈(w∪v)∧x↦E∈(r∪t)", true);
 	}
 
-	public void testFundImgRule3() {
+	public void testFunImgRule() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "f", "w"}, new Type[]{INT, REL(INT, INT_SET), INT});
+		doTest( "E∈f(w)",
+				"∃x·w↦x∈f∧E∈x", true);
+	}
+	
+	public void testFunImgRule2() {
 		Type intRel = REL(INT, INT);
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
-		Predicate input = parse("f(23) − g(s(t(10))) > g(29)", te);
-		Predicate expected = parse("∀x,x0,x1·x1=f(23)∧x0=g(s(t(10)))∧x=g(29) ⇒ x1−x0>x", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		doTest( "∀n·g(s(t(n))) > n", 
+				"∀n·(∀x·x=g(s(t(n))) ⇒ x>n)", true);
+	}
+
+	public void testFunImgRule3() {
+		Type intRel = REL(INT, INT);
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
+		doTest( "f(23) − g(s(t(10))) > g(29)", 
+				"∀x,x0,x1·x1=f(23)∧x0=g(s(t(10)))∧x=g(29) ⇒ x1−x0>x", true);
 	}
 	
 	public void testCardImgRule() {
 		Type intRel = REL(INT, INT);
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"f", "g", "s", "t"}, new Type[]{intRel, intRel, intRel, intRel});
-		Predicate input = parse("f(card({w·f(card({w·f(3)>1∣2∗w}))>1∣2∗w}))>1", te);
-		Predicate expected = parse("f(card({w·f(card({w·f(3)>1∣2∗w}))>1∣2∗w}))>1", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		doTest("f(card({w·f(card({w·f(3)>1∣2∗w}))>1∣2∗w}))>1", 
+				"f(card({w·f(card({w·f(3)>1∣2∗w}))>1∣2∗w}))>1", true);
 	}
 
 	public void testRangeRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"r", "E"}, new Type[]{REL(INT, INT), INT});
-		Predicate input = parse("E∈ran(r)", te);
-		Predicate expected = parse("∃x·x↦E∈r", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
-	}
-
-	public void testDomainRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"r", "E"}, new Type[]{REL(INT, INT), INT});
-		Predicate input = parse("E∈dom(r)", te);
-		Predicate expected = parse("∃x·E↦x∈r", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"r", "E"}, new Type[]{REL(INT, BOOL), BOOL});
+		doTest( "E∈ran(r)", 
+				"∃x·x↦E∈r", true);
 	}
 	
+	public void testRangeRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"r"}, new Type[]{REL(BOOL, INT)});
+		doTest( "∀t,E·E∈ran(r∪t)", 
+				"∀t,E·∃x·x↦E∈r∪t", true);
+	}
+
+
+	public void testDomainRule() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"r", "E"}, new Type[]{REL(INT, BOOL), INT});
+		doTest( "E∈dom(r)", 
+				"∃x·E↦x∈r", true);
+	}
+	
+	public void testDomainRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"r"}, new Type[]{REL(BOOL, INT)});
+		
+		doTest( "∀t,E·E∈dom(r∪t)", 
+				"∀t,E·∃x·E↦x∈r∪t", true);
+	}
+
 	public void testTotRelRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈ST", te);
-		Predicate expected = parse("E∈S↔T∧S⊆dom(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈ST", 
+				"E∈S↔T∧S⊆dom(E)", true);
+	}
+	
+	public void testTotRelRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈(S∪X)(T∪Y)", 
+				"E∈(S∪X)↔(T∪Y)∧(S∪X)⊆dom(E)", true);
 	}
 	
 	public void testSurRelRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈ST", te);
-		Predicate expected = parse("E∈S↔T∧T⊆ran(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈ST", 
+				"E∈S↔T∧T⊆ran(E)", true);
 	}
 	
+	public void testSurRelRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈(S∪X)(T∪Y)", 
+				"E∈(S∪X)↔(T∪Y)∧(T∪Y)⊆ran(E)", true);
+	}
+
 	public void testSurjTotalRelRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈ST", te);
-		Predicate expected = parse("E∈ST∧T⊆ran(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈(S∪X)(T∪Y)", 
+				"E∈(S∪X)(T∪Y)∧(T∪Y)⊆ran(E)", true);
+	}
+
+	public void testSurjTotalRelRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈(S)(T)", 
+				"E∈(S)(T)∧(T)⊆ran(E)", true);
 	}
 	
 	public void testTotBijRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈S⤖T", te);
-		Predicate expected = parse("E∈S↠T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S⤖T", 
+				"E∈S↠T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", true);
 	}
 	
+	public void testTotBijRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)});
+		
+		doTest( "∀E,X,Y·E∈S∪X⤖T∪Y",
+				"∀E,X,Y·E∈S∪X↠T∪Y∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", true);
+	}
+
 	public void testTotSurjRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈S↠T", te);
-		Predicate expected = parse("E∈S→T∧T⊆ran(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S↠T",
+				"E∈S→T∧T⊆ran(E)", true);
+	}
+	
+	public void testTotSurjRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S∪X↠T∪Y",
+				"E∈S∪X→T∪Y∧T∪Y⊆ran(E)", true);
 	}
 	
 	public void testParSurjRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈S⤀T", te);
-		Predicate expected = parse("E∈S⇸T∧T⊆ran(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S⤀T",
+				"E∈S⇸T∧T⊆ran(E)", true);
 	}
 	
+	public void testParSurjRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S∪X⤀T∪Y",
+				"E∈S∪X⇸T∪Y∧T∪Y⊆ran(E)", true);
+	}
+
 	public void testTotInjRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
 		
 		doTest( "E∈S↣T",
 				"E∈S→T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", true);
@@ -545,28 +704,49 @@ public class TranslationTests extends TestCase {
 				"E∈ℙ(S∪T)→T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", true);
 	}
 
+	public void testTotInjRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "∀E,X,Y·E∈S∪X↣T∪Y",
+				"∀E,X,Y·(E∈S∪X→T∪Y∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C))", true);
+	}
+
 	public void testPartInjRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈S⤔T", te);
-//		Predicate expected = parse("E∈S⇸T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", te);
-		Predicate expected = parse("E∈S⇸T∧(∀x,x0,x1·(x0↦x1∈E∧x↦x1∈E)⇒x0=x)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+
+		doTest( "E∈S⤔T", 
+				"E∈S⇸T∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", true);
+	}
+
+	public void testPartInjRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)});
+
+		doTest( "∀E,X,Y·E∈S∪X⤔T∪Y", 
+				"∀E,X,Y·E∈S∪X⇸T∪Y∧(∀C,B,A·(B↦A∈E∧C↦A∈E)⇒B=C)", true);
 	}
 
 	public void testTotFunRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
-		Predicate input = parse("E∈S→T", te);
-		Predicate expected = parse("E∈S⇸T∧S⊆dom(E)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
+		
+		doTest( "E∈S→T", 
+				"E∈S⇸T∧S⊆dom(E)", true);
 	}
 	
+	public void testTotFunRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)});
+		
+		doTest( "∀E,X,Y·E∈S∪X→T∪Y", 
+				"∀E,X,Y·E∈S∪X⇸T∪Y∧S∪X⊆dom(E)", true);
+	}
+
 	public void testPartFunRule() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+				new String[]{"E", "S", "T"}, new Type[]{REL(INT, BOOL), INT_SET, POW(BOOL)});
 		
 		doTest( "E∈S⇸T",
 				"E∈S↔T∧(∀C,B,A·(A↦B∈E∧A↦C∈E)⇒B=C)", true);
@@ -574,66 +754,114 @@ public class TranslationTests extends TestCase {
 	
 	public void testPartFunRule2() {
 		actTypeEnv = FastFactory.mTypeEnvironment(
-				new String[]{"E", "S", "T"}, new Type[]{REL(INT, INT), INT_SET, INT_SET});
+				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)});
 		
-		doTest( "E∈S∪T⇸T",
-				"E∈S∪T↔T∧(∀C,B,A·(A↦B∈E∧A↦C∈E)⇒B=C)", true);
-	}
+		doTest( "∀E,X,Y·E∈S∪X⇸T∪Y",
+				"∀E,X,Y·E∈S∪X↔T∪Y∧(∀C,B,A·(A↦B∈E∧A↦C∈E)⇒B=C)", true);
+	}	
 
 	public void testCProdRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "S", "T"}, new Type[]{INT, INT, INT_SET, INT_SET});
-		Predicate input = parse("E↦F∈S×T", te);
-		Predicate expected = parse("E∈S∧F∈T", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "S", "T"}, new Type[]{INT, BOOL, INT_SET, POW(BOOL)});
+
+		doTest( "E↦F∈S×T", 
+				"E∈S∧F∈T", true);
+	}
+	
+	public void testCProdRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "S", "T"}, new Type[]{INT, BOOL, INT_SET, POW(BOOL)});
+
+		doTest( "E↦F∈(S∪X)×(T∪Y)", 
+				"E∈(S∪X)∧F∈(T∪Y)", true);
 	}
 	
 	public void testRelOvrRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "q", "r"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
-		Predicate input = parse("E↦F∈qr", te);
-		Predicate expected = parse("E↦F∈dom(r)⩤q∨E↦F∈r", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "q", "r"}, new Type[]{INT, BOOL, REL(INT, BOOL), REL(INT, BOOL)});
+
+		doTest( "E↦F∈qr", 
+				"E↦F∈dom(r)⩤q∨E↦F∈r", true);
 	}
 
 	public void testRelOvrRule2() {
 		Type rt = REL(INT, BOOL);
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "q", "s", "t", "w"}, new Type[]{INT, BOOL, rt, rt, rt, rt});
-		Predicate input = parse("E↦F∈qstw", te);
-		Predicate expected = 
-			parse("E↦F∈(dom(s)∪dom(t)∪dom(w))⩤q ∨E↦F∈(dom(t)∪dom(w))⩤s ∨ E↦F∈dom(w)⩤t ∨ E↦F∈w", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		
+		doTest( "E↦F∈qstw", 
+				"E↦F∈(dom(s)∪dom(t)∪dom(w))⩤q ∨E↦F∈(dom(t)∪dom(w))⩤s ∨ E↦F∈dom(w)⩤t ∨ E↦F∈w", true);
+ 	}
+	
+	public void testRelOvrRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "q", "r"}, new Type[]{INT, BOOL, REL(INT, BOOL), REL(INT, BOOL)});
+
+		doTest( "E↦F∈(q∪q2)(r∪r2)", 
+				"E↦F∈dom(r∪r2)⩤(q∪q2)∨E↦F∈(r∪r2)", true);
 	}
+	
+	/* Not allowed by type checker
+	public void testRelOvrRule4() {
+		Predicate input = FastFactory.mRelationalPredicate(
+				FastFactory.mFreeIdentifier("E", CPROD(INT, BOOL)),
+				FastFactory.mAssociativeExpression(
+						Formula.OVR, 
+						FastFactory.mFreeIdentifier("r", REL(INT, BOOL))));
+		Predicate expected = FastFactory.mRelationalPredicate(
+				FastFactory.mFreeIdentifier("E", CPROD(INT, BOOL)),
+				FastFactory.mFreeIdentifier("r", REL(INT, BOOL)));
+		
+		doTest(input, Translator.reduceToPredCalc(expected, ff));
+	}
+	*/
 
 	public void testRanSubRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "r", "T"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
-		Predicate input = parse("E↦F∈r⩥T", te);
-		Predicate expected = parse("E↦F∈r∧¬(F∈T)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, BOOL, REL(INT, BOOL), POW(BOOL)});
+		
+		doTest ("E↦F∈r⩥T", 
+				"E↦F∈r∧¬(F∈T)", true);
+	}
+
+	public void testRanSubRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, BOOL, REL(INT, BOOL), POW(BOOL)});
+		
+		doTest ("E↦F∈(r∪r2)⩥(T∪S)", 
+				"E↦F∈(r∪r2)∧¬(F∈T∪S)", true);
 	}
 
 	public void testDomSubRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "r", "S"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
-		Predicate input = parse("E↦F∈S⩤r", te);
-		Predicate expected = parse("E↦F∈r∧¬(E∈S)", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "S"}, new Type[]{INT, BOOL, REL(INT, BOOL), INT_SET});
+		
+		doTest( "E↦F∈S⩤r", 
+				"E↦F∈r∧¬(E∈S)", true);
+	}
+	
+	public void testDomSubRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "S"}, new Type[]{INT, BOOL, REL(INT, BOOL), INT_SET});
+		
+		doTest( "E↦F∈(T∪S)⩤(r∪r2)", 
+				"E↦F∈(r∪r2)∧¬(E∈(T∪S))", true);
 	}
 
 	public void testRanResRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "r", "T"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
-		Predicate input = parse("E↦F∈r▷T", te);
-		Predicate expected = parse("E↦F∈r∧F∈T", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, BOOL, REL(INT, BOOL), POW(BOOL)});
+		
+		doTest( "E↦F∈r▷T", 
+				"E↦F∈r∧F∈T", true);
+	}
+
+	public void testRanResRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "T"}, new Type[]{INT, BOOL, REL(INT, BOOL), POW(BOOL)});
+		
+		doTest( "E↦F∈(r∪r2)▷(T∪S)", 
+				"E↦F∈(r∪r2)∧F∈(T∪S)", true);
 	}
 
 	public void testDomResRule() {
@@ -646,95 +874,141 @@ public class TranslationTests extends TestCase {
 	}
 
 	public void testIdRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "S"}, new Type[]{INT, INT, INT_SET});
-		Predicate input = parse("E↦F∈id(S)", te);
-		Predicate expected = parse("E∈S∧E=F", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		
+		doTest( "E↦F∈id(S)",
+				"E∈S∧E=F", true);
+	}
+
+	public void testIdRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "S"}, new Type[]{INT, INT, INT_SET});
+		
+		doTest( "E↦F∈id(S∪T)",
+				"E∈(S∪T)∧E=F", true);
 	}
 
 	public void testFCompRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
-		Predicate input = parse("E↦F∈p;q", te);
-		Predicate expected = parse("∃x·E↦x∈p∧x↦F∈q", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT_SET, REL(INT, BOOL), REL(BOOL, INT_SET)});
+		
+		doTest( "E↦F∈p;q", 
+				"∃x·E↦x∈p∧x↦F∈q", true);
 	}
 	
 	public void testFCompRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, INT, REL(INT, BOOL), REL(BOOL, BOOL), REL(BOOL, INT)});
-		Predicate input = parse("E↦F∈p;q;w", te);
-		Predicate expected = parse("∃x,x0·E↦x0∈p∧x0↦x∈q∧x↦F∈w", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, POW(BOOL), REL(INT, BOOL), REL(BOOL, INT_SET), REL(INT_SET, POW(BOOL))});
+
+		doTest( "E↦F∈p;q;w",
+				"∃x,x0·E↦x0∈p∧x0↦x∈q∧x↦F∈w", true);
+	}
+	
+	public void testFCompRule3() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"p", "q", "w"}, new Type[]{REL(INT, BOOL), REL(BOOL, INT_SET), REL(INT_SET, POW(BOOL))});
+
+		doTest( "∀E,F,p2,q2,w2·E↦F∈(p∪p2);(q∪q2);(w∪w2)",
+				"∀E,F,p2,q2,w2·(∃x,x0·E↦x0∈(p∪p2)∧x0↦x∈(q∪q2)∧x↦F∈(w∪w2))", true);
 	}
 
-
 	public void testBCompRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT, REL(INT, INT), REL(INT, INT)});
-		Predicate input = parse("E↦F∈p∘q", te);
-		Predicate expected = parse("E↦F∈q;p", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q"}, new Type[]{INT, INT_SET, REL(BOOL, INT_SET), REL(INT, BOOL)});
+
+		doTest( "E↦F∈p∘q", 
+				"E↦F∈q;p", true);
 	}
 	
 	public void testBCompRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, INT, REL(BOOL, INT), REL(BOOL, BOOL), REL(INT, BOOL)});
-		Predicate input = parse("E↦F∈p∘q∘w", te);
-		Predicate expected = parse("E↦F∈w;q;p", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "p", "q", "w"}, new Type[]{INT, POW(BOOL), REL(INT_SET, POW(BOOL)), REL(BOOL, INT_SET), REL(INT, BOOL)});
+		
+		doTest( "E↦F∈(p∪p2)∘(q∪q2)∘(w∪w2)", 
+				"E↦F∈(w∪w2);(q∪q2);(p∪p2)", true);
 	}
 	
 	public void testInvRelRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "r"}, new Type[]{INT, INT, REL(INT, INT)});
-		Predicate input = parse("E↦F∈(r∼)", te);
-		Predicate expected = parse("F↦E∈r", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r"}, new Type[]{INT, BOOL, REL(BOOL, INT)});
+
+		doTest( "E↦F∈(r∼)", 
+				"F↦E∈r", true);
+	}
+	
+	public void testInvRelRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r"}, new Type[]{INT, BOOL, REL(BOOL, INT)});
+
+		doTest( "E↦F∈((r∪r2)∼)", 
+				"F↦E∈(r∪r2)", true);
 	}
 	
 	public void testPrj1Rule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "G", "r"}, new Type[]{INT, INT, INT, REL(INT, INT)});
-		Predicate input = parse("(E↦F)↦G ∈ prj1(r)", te);
-		Predicate expected = parse("E↦F∈r ∧ G=E", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, BOOL, INT, REL(INT, BOOL)});
+		
+		doTest( "(E↦F)↦G ∈ prj1(r)", 
+				"E↦F∈r ∧ G=E", true);
+	}
+
+	public void testPrj1Rule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, BOOL, INT, REL(INT, BOOL)});
+		
+		doTest( "(E↦F)↦G ∈ prj1((r∪r2))", 
+				"E↦F∈(r∪r2) ∧ G=E", true);
+	}
+
+	public void testPrj2Rule() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, BOOL, BOOL, REL(INT, BOOL)});
+
+		doTest( "(E↦F)↦G ∈ prj2(r)", 
+				"E↦F∈r ∧ G=F", true);
 	}
 	
-	public void testPrj2Rule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "G", "r"}, new Type[]{INT, INT, INT, REL(INT, INT)});
-		Predicate input = parse("(E↦F)↦G ∈ prj2(r)", te);
-		Predicate expected = parse("E↦F∈r ∧ G=F", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+	public void testPrj2Rule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "r"}, new Type[]{INT, BOOL, BOOL, REL(INT, BOOL)});
+
+		doTest( "(E↦F)↦G ∈ prj2(r∪r2)", 
+				"E↦F∈(r∪r2) ∧ G=F", true);
 	}
 	
 	public void testDirectProdRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"E", "F", "G", "p", "q"}, new Type[]{INT, INT, INT, REL(INT, INT), REL(INT, INT)});
-		Predicate input = parse("E↦(F↦G) ∈ p⊗q", te);
-		Predicate expected = parse("E↦F∈p ∧ E↦G∈q", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "p", "q"}, new Type[]{INT, BOOL, INT_SET, REL(INT, BOOL), REL(INT, INT_SET)});
+		
+		doTest( "E↦(F↦G) ∈ p⊗q",
+				"E↦F∈p ∧ E↦G∈q", true);
+	}
+	
+	public void testDirectProdRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "p", "q"}, new Type[]{INT, BOOL, INT_SET, REL(INT, BOOL), REL(INT, INT_SET)});
+		
+		doTest( "E↦(F↦G) ∈ (p∪p2)⊗(q∪q2)",
+				"E↦F∈(p∪p2) ∧ E↦G∈(q∪q2)", true);
 	}
 	
 	public void testPrallelProdRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		actTypeEnv = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "G", "H", "p", "q"}, 
-				new Type[]{INT, INT, INT, INT, REL(INT, INT), REL(INT, INT)});
-		Predicate input = parse("(E↦F)↦(G↦H) ∈ p∥q", te);
-		Predicate expected = parse("E↦G∈p ∧ F↦H∈q", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+				new Type[]{INT, BOOL, INT_SET, POW(BOOL), REL(INT, INT_SET), REL(BOOL, POW(BOOL))});
+		
+		doTest( "(E↦F)↦(G↦H) ∈ p∥q",
+				"E↦G∈p ∧ F↦H∈q", true);
+	}	
+
+	public void testPrallelProdRule2() {
+		actTypeEnv = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "G", "H", "p", "q"}, 
+				new Type[]{INT, BOOL, INT_SET, POW(BOOL), REL(INT, INT_SET), REL(BOOL, POW(BOOL))});
+		
+		doTest( "(E↦F)↦(G↦H) ∈ (p∪p2)∥(q∪q2)",
+				"E↦G∈(p∪p2) ∧ F↦H∈(q∪q2)", true);
 	}	
 	
 	public void testArithmeticRule() {
@@ -828,10 +1102,8 @@ public class TranslationTests extends TestCase {
 	}	
 	
 	public void testCardExt() {
-		Predicate input = parse("e ∈ {card({1})↦card({1})}");
-		Predicate expected = FastFactory.mLiteralPredicate(Formula.BTRUE);
-		
-		doTest(input, expected);
+		doTest ("e ∈ {card({1})↦card({1})}",
+				"e ∈ {card({1})↦card({1})}", true);
 	}
 	
 	private void doTest(Predicate input, Predicate expected) {

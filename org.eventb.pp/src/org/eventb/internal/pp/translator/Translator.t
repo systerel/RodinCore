@@ -232,8 +232,16 @@ public class Translator extends IdentityTranslator {
 					mb.X(),
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translateIn(mb.V(), `S.shiftBoundIdentifiers(mb.offset(), ff), loc, ff),
-						translateIn(E.shiftBoundIdentifiers(mb.offset(), ff), mb.V(), loc, ff),
+						translateIn(
+							mb.V(), 
+							`S.shiftBoundIdentifiers(mb.offset(), ff),
+							loc, 
+							ff),
+						translateIn(
+							E.shiftBoundIdentifiers(mb.offset(), ff), 
+							mb.V(), 
+							loc, 
+							ff),
 						loc),
 					loc);
 			}
@@ -643,15 +651,16 @@ public class Translator extends IdentityTranslator {
 				Expression[] V = new Expression[`children.length + 1];
 				LinkedList<Predicate> preds = new LinkedList<Predicate>();
 				
-				V[0] = E; 
-				V[`children.length] = F;
-				
 				for(int i = 1; i < `children.length; i++) {
 					Type type = ((ProductType)`children[i].getType().getBaseType()).getLeft();
 					mb.calculate(type, X.size(), loc, ff);
 					X.addAll(0, mb.X());
 					V[i] = mb.V();
-				}			
+				}		
+					
+				V[0] = E.shiftBoundIdentifiers(X.size(), ff); 
+				V[`children.length] = F.shiftBoundIdentifiers(X.size(), ff);
+				
 				for(int i = 0; i < `children.length; i++) {
 					preds.add(
 						translateIn(
@@ -796,7 +805,6 @@ public class Translator extends IdentityTranslator {
 		mb.calculate(ran, X.size(), loc, ff);
 		B = mb.getMaplet();
 		X.addAll(0, mb.getIdentDecls());
-		
 
 		mb.calculate(ran, X.size(), loc, ff);
 		C = mb.getMaplet();
@@ -878,6 +886,19 @@ public class Translator extends IdentityTranslator {
 					translate(`P, ff),
 					loc);
 			}
+			Equal(Bool(P1), Bool(P2)) -> {
+				return ff.makeBinaryPredicate(
+					Formula.LEQV,
+					translate(`P1, ff),
+					translate(`P2, ff),
+					loc);
+			}
+			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
+				return translate(P, ff);
+			}
+			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
+				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
+			}
 			Equal(n@Identifier(), Min(S)) | Equal(Min(S), n@Identifier()) -> {
 				//  x = min(S) == x ? S ? (?x1. x1 ? S ? x ? x1)
 				mb.calculate(ff.makeIntegerType(), loc, ff);
@@ -925,12 +946,6 @@ public class Translator extends IdentityTranslator {
 							loc),
 						loc),
 					loc);
-			}
-			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
-				return translate(P, ff);
-			}
-			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
-				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
 			}
 			Equal(FunImage(r, E), x) | Equal(x, FunImage(r, E)) -> {
 				return translateIn(
