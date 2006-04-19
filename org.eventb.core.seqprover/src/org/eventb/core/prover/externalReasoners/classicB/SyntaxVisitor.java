@@ -739,7 +739,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 		String[] boundNames = boundStack.peek();
 		Set<String> usedNames = expr.collectNamesAbove(boundNames); 
 		
-		String[] localNames = QuantifiedUtil.resolveIdents(expr.getBoundIdentifiers(), usedNames);
+		String[] localNames = QuantifiedUtil.resolveIdents(expr.getBoundIdentDecls(), usedNames);
 		String[] newBoundNames = QuantifiedUtil.catenateBoundIdentLists(boundNames, localNames);
 		
 		quantStack.push(localNames);
@@ -801,7 +801,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 	
 	@Override
 	public boolean exitQUNION(QuantifiedExpression expr) {
-		pushQexpr("UNION", expr.getBoundIdentifiers());
+		pushQexpr("UNION", expr.getBoundIdentDecls());
 		return true;
 	}
 
@@ -813,7 +813,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 
 	@Override
 	public boolean exitQINTER(QuantifiedExpression expr) {
-		pushQexpr("INTER", expr.getBoundIdentifiers());
+		pushQexpr("INTER", expr.getBoundIdentDecls());
 		return true;
 	}
 
@@ -834,7 +834,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 		String[] newName = QuantifiedUtil.resolveIdents(newIdent, usedNames);
 		String exp = syntaxStack.pop();
 		String prd = syntaxStack.pop();
-		String types = getTypes(localNames, expr.getBoundIdentifiers());
+		String types = getTypes(localNames, expr.getBoundIdentDecls());
 		String newType = getType(newName[0], expr.getExpression().getType());
 //		String result = 
 //			"{" + newName[0] + " | " + newType + " &  # " + declList(localNames) + 
@@ -851,7 +851,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 		String[] boundNames = boundStack.peek();
 		Set<String> usedNames = pred.collectNamesAbove(boundNames);
 		
-		String[] localNames = QuantifiedUtil.resolveIdents(pred.getBoundIdentifiers(), usedNames);
+		String[] localNames = QuantifiedUtil.resolveIdents(pred.getBoundIdentDecls(), usedNames);
 		String[] newBoundNames = QuantifiedUtil.catenateBoundIdentLists(boundNames, localNames);
 		
 		quantStack.push(localNames);
@@ -885,7 +885,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 
 	@Override
 	public boolean exitFORALL(QuantifiedPredicate pred) {
-		pushQpred('!', pred.getBoundIdentifiers());
+		pushQpred('!', pred.getBoundIdentDecls());
 		return true;
 	}
 
@@ -897,7 +897,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 
 	@Override
 	public boolean exitEXISTS(QuantifiedPredicate pred) {
-		pushQpred('#', pred.getBoundIdentifiers());
+		pushQpred('#', pred.getBoundIdentDecls());
 		return true;
 	}
 

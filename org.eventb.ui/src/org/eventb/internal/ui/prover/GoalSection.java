@@ -191,7 +191,7 @@ public class GoalSection
 				QuantifiedPredicate qpred = 
 					(QuantifiedPredicate) parseResult.getParsedPredicate();
 				
-				BoundIdentDecl []  idents = qpred.getBoundIdentifiers();
+				BoundIdentDecl []  idents = qpred.getBoundIdentDecls();
 
 				GridLayout gl = new GridLayout();
 				gl.numColumns = idents.length * 2 + 2;

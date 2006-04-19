@@ -113,8 +113,8 @@ public class TestAST extends TestCase {
 			}
 			QuantifiedExpression expr = ff.makeQuantifiedExpression(i + FIRST_QUANTIFIED_EXPRESSION,
 					new BoundIdentDecl[] { bd_x, bd_z }, btrue, two, null, QuantifiedExpression.Form.Explicit);
-			assertEquals(expr.getBoundIdentifiers()[0], bd_x);
-			assertEquals(expr.getBoundIdentifiers()[1], bd_z);
+			assertEquals(expr.getBoundIdentDecls()[0], bd_x);
+			assertEquals(expr.getBoundIdentDecls()[1], bd_z);
 		}
 		for (int i = 0; i < QUANTIFIED_PREDICATE_LENGTH; i++) {
 			for (int j = 0; j < predicates.length; j++) {
@@ -124,8 +124,8 @@ public class TestAST extends TestCase {
 			}
 			QuantifiedPredicate expr = ff.makeQuantifiedPredicate(i + FIRST_QUANTIFIED_PREDICATE,
 					new BoundIdentDecl[] { bd_x, bd_z }, btrue, null);
-			assertEquals(expr.getBoundIdentifiers()[0], bd_x);
-			assertEquals(expr.getBoundIdentifiers()[1], bd_z);
+			assertEquals(expr.getBoundIdentDecls()[0], bd_x);
+			assertEquals(expr.getBoundIdentDecls()[1], bd_z);
 		}
 		for (int i = 0; i < RELATIONAL_PREDICATE_LENGTH; i++) {
 			for (int j = 0; j < expressions.length; j++) {

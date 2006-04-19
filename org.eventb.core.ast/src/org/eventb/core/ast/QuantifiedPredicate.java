@@ -113,7 +113,7 @@ public class QuantifiedPredicate extends Predicate {
 	 * 
 	 * @return list of bound identifiers
 	 */
-	public BoundIdentDecl[] getBoundIdentifiers() {
+	public BoundIdentDecl[] getBoundIdentDecls() {
 		BoundIdentDecl[] idents = new BoundIdentDecl[quantifiedIdentifiers.length];
 		System.arraycopy(quantifiedIdentifiers, 0, idents, 0, quantifiedIdentifiers.length);
 		return idents;
@@ -324,7 +324,7 @@ public class QuantifiedPredicate extends Predicate {
 	 * <p>
 	 * The replacements to do are specified by the given array. This array must
 	 * have exactly the same length as the array returned by
-	 * {@link #getBoundIdentifiers()}. Each element of the given array
+	 * {@link #getBoundIdentDecls()}. Each element of the given array
 	 * specifies the replacement expression for the bound identifier declaration
 	 * with the same index. The element can be <code>null</code>, in which
 	 * case the corresponding bound identifier declaration will be kept (no

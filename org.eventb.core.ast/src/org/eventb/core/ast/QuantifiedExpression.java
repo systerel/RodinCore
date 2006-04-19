@@ -275,11 +275,11 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	/**
-	 * Returns the list of the identifiers which are bound by this formula.
+	 * Returns the list of the identifiers which are declared as bound by this formula.
 	 * 
-	 * @return list of bound identifiers
+	 * @return list of bound identifier declarations
 	 */
-	public BoundIdentDecl[] getBoundIdentifiers() {
+	public BoundIdentDecl[] getBoundIdentDecls() {
 		BoundIdentDecl[] idents = new BoundIdentDecl[quantifiedIdentifiers.length];
 		System.arraycopy(quantifiedIdentifiers, 0, idents, 0, quantifiedIdentifiers.length);
 		return idents;

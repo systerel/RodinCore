@@ -348,7 +348,7 @@ public final class Lib {
 	public static BoundIdentDecl[] getBoundIdents(Predicate P){
 		if (! (P instanceof QuantifiedPredicate)) return null;
 		QuantifiedPredicate qP = (QuantifiedPredicate) P;
-		return qP.getBoundIdentifiers();
+		return qP.getBoundIdentDecls();
 	}
 	
 	// Note returned predicate will have bound variables.

@@ -122,7 +122,7 @@ public class TestSubstituteFormula extends TestCase {
 			assertTrue(formula.toString(), iresult.isTypeChecked());
 
 			Predicate result = ff.makeQuantifiedPredicate(formula.getTag(),
-					formula.getBoundIdentifiers(), iresult, null);
+					formula.getBoundIdentDecls(), iresult, null);
 
 			assertTrue(formula.toString(), result.isTypeChecked());
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
