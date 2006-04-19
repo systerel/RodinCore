@@ -46,6 +46,7 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.YesNoDialog;
 import org.eventb.internal.ui.prover.ProofControl;
 import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;

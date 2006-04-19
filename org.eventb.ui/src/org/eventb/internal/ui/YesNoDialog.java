@@ -1,13 +1,16 @@
 /**
  * 
  */
-package org.eventb.internal.ui.obligationexplorer;
+package org.eventb.internal.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -43,6 +46,13 @@ public class YesNoDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		
+		Image icon = Display.getDefault().getSystemImage(SWT.ICON_QUESTION);
+		Label iconLabel = new Label(composite, SWT.NONE);
+		iconLabel.setImage(icon);
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(message);
 		return composite;
