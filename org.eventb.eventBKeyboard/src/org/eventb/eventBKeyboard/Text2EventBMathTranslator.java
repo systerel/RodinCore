@@ -1,6 +1,6 @@
 package org.eventb.eventBKeyboard;
 
-public class Text2EventBMathTranslation {
+public class Text2EventBMathTranslator {
 	
 	private static final String [] textCombo =
 	{"NAT1", "NAT", "POW1", "POW", "INT", "INTER", "UNION", "or",
