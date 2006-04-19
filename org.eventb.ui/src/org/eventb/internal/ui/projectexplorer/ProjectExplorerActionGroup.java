@@ -19,6 +19,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -40,7 +41,6 @@ import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.YesNoDialog;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
@@ -130,10 +130,10 @@ public class ProjectExplorerActionGroup
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];
 							// Confirmation dialog
-							YesNoDialog dialog = new YesNoDialog(explorer.getSite().getShell(), 
-									"Confirm Project Delete", "Are you sure you want to delete project '" + rodinProject.getElementName() + "' ?");
-							dialog.open();
-							if (dialog.getAnswer()) {
+							boolean answer = MessageDialog.openQuestion(explorer.getSite().getShell(),
+									"Confirm Project Delete", 
+									"Are you sure you want to delete project '" + rodinProject.getElementName() + "' ?");
+							if (answer) {
 								IProject project = rodinProject.getProject();
 							
 								try {
@@ -158,10 +158,9 @@ public class ProjectExplorerActionGroup
 						}
 					
 						else if (slist[i] instanceof IRodinFile) {
-							YesNoDialog dialog = new YesNoDialog(explorer.getSite().getShell(), 
+							boolean answer = MessageDialog.openQuestion(explorer.getSite().getShell(),
 									"Confirm File Delete", "Are you sure you want to delete file '" + ((IRodinFile) slist[i]).getElementName() + "' ?");
-							dialog.open();
-							if (dialog.getAnswer()) {
+							if (answer) {
 								try {
 									closeOpenedEditor((IRodinFile) slist[i]);
 									((IRodinFile) slist[i]).delete(true, new NullProgressMonitor());

@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -46,7 +47,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.YesNoDialog;
 import org.eventb.internal.ui.prover.ProofControl;
 import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -275,9 +275,7 @@ public class ObligationExplorer
 							UIUtils.activateView(ProofTreeUI.VIEW_ID);
 						}
 						else {
-							YesNoDialog dialog = new YesNoDialog(viewer.getControl().getShell(), "Re-prove the obligation", "The obligation has been proved. Do you want to re-prove?");
-							dialog.open();
-							boolean answer = dialog.getAnswer();
+							boolean answer = MessageDialog.openQuestion(viewer.getControl().getShell(), "Re-prove the obligation", "The obligation has been proved. Do you want to re-prove?");
 							if (answer) {
 								UIUtils.linkToProverUI(ps);
 								UIUtils.activateView(ProofControl.VIEW_ID);
