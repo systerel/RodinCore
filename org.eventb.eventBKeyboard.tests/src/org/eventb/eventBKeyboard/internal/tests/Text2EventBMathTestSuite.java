@@ -18,15 +18,14 @@ import junit.framework.TestSuite;
  * @author htson
  * JUnit Testing Suite contain all the Test Case for Event-B Keyboard
  */
-public class EventBKeyboardTestSuite {
+public class Text2EventBMathTestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"Test for org.eventb.eventBKeyboard");
+				"Test for org.eventb.eventBKeyboard.internal.Text2EventBMathTransltation");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(EventBKeyboardSimpleTestCase.class);
-		suite.addTestSuite(EventBKeyboardExpressionTestCase.class);
-		suite.addTestSuite(EventBKeyboardJumpingTestCase.class);
+		suite.addTestSuite(Text2EventBMathSimpleTestCase.class);
+		suite.addTestSuite(Text2EventBMathExpressionTestCase.class);
 		//$JUnit-END$
 		return suite;
 	}
