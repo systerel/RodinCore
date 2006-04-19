@@ -40,6 +40,7 @@ import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.YesNoDialog;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.rodinp.core.IRodinElement;
@@ -128,38 +129,49 @@ public class ProjectExplorerActionGroup
 						UIUtils.debug(slist[i].toString() + " : " + slist[i].getClass().toString());
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];
-							IProject project = rodinProject.getProject();
+							// Confirmation dialog
+							YesNoDialog dialog = new YesNoDialog(explorer.getSite().getShell(), 
+									"Confirm Project Delete", "Are you sure you want to delete project '" + rodinProject.getElementName() + "' ?");
+							dialog.open();
+							if (dialog.getAnswer()) {
+								IProject project = rodinProject.getProject();
 							
-							try {
-								IRodinElement [] files =  rodinProject.getChildren();
-								for (int j = 0; j < files.length; j++) {
-									if (files[j] instanceof IRodinFile) 
-										closeOpenedEditor((IRodinFile) files[j]);
+								try {
+									IRodinElement [] files =  rodinProject.getChildren();
+									for (int j = 0; j < files.length; j++) {
+										if (files[j] instanceof IRodinFile) 
+											closeOpenedEditor((IRodinFile) files[j]);
+									}
+							
+									project.delete(true, true, null);
 								}
-							
-								project.delete(true, true, null);
-							}
-							catch (PartInitException e) {
-								e.printStackTrace();
-							}
-							catch (RodinDBException e) {
-								e.printStackTrace();
-							}
-							catch (CoreException e) {
-								e.printStackTrace();
+								catch (PartInitException e) {
+									e.printStackTrace();
+								}
+								catch (RodinDBException e) {
+									e.printStackTrace();
+								}
+								catch (CoreException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					
 						else if (slist[i] instanceof IRodinFile) {
-							try {
-								closeOpenedEditor((IRodinFile) slist[i]);
-								((IRodinFile) slist[i]).delete(true, new NullProgressMonitor());
-							}
-							catch (PartInitException e) {
-								e.printStackTrace();
-							}
-							catch (RodinDBException e) {
-								e.printStackTrace();
+							YesNoDialog dialog = new YesNoDialog(explorer.getSite().getShell(), 
+									"Confirm File Delete", "Are you sure you want to delete file '" + ((IRodinFile) slist[i]).getElementName() + "' ?");
+							dialog.open();
+							if (dialog.getAnswer()) {
+								try {
+									closeOpenedEditor((IRodinFile) slist[i]);
+									((IRodinFile) slist[i]).delete(true, new NullProgressMonitor());
+								}
+								catch (PartInitException e) {
+									e.printStackTrace();
+								}
+								catch (RodinDBException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}
