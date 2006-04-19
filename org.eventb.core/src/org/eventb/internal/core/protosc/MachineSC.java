@@ -8,7 +8,6 @@
 package org.eventb.internal.core.protosc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,10 +36,6 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BecomesEqualTo;
-import org.eventb.core.ast.BecomesMemberOf;
-import org.eventb.core.ast.BecomesSuchThat;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -405,23 +400,6 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		return null;
 	}
 	
-	FreeIdentifier[] getFreeIdentifiers(BecomesEqualTo assignment) {
-		HashSet<FreeIdentifier> set = new HashSet<FreeIdentifier>(31);
-		for(Expression expression : assignment.getExpressions())
-			set.addAll(Arrays.asList(expression.getFreeIdentifiers()));
-		FreeIdentifier[] ids = new FreeIdentifier[set.size()];
-		set.toArray(ids);
-		return ids;
-	}
-	
-	FreeIdentifier[] getFreeIdentifiers(BecomesMemberOf assignment) {
-		return assignment.getSet().getFreeIdentifiers();
-	}
-	
-	FreeIdentifier[] getFreeIdentifiers(BecomesSuchThat assignment) {
-		return assignment.getCondition().getFreeIdentifiers();
-	}
-	
 	protected SCParser parseAndVerifyAssignment(IInternalElement element, ITypeEnvironment typeEnvironment, boolean isOrdinaryEvent) {
 		Collection<FreeIdentifier> declaredIdentifiers = new HashSet<FreeIdentifier>();
 		declaredIdentifiers.addAll(makeIdentifiers(machineCache.getOldCarrierSets().keySet(), machineCache.getFactory()));
@@ -439,16 +417,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 				
 				FreeIdentifier[] assignedIdentifiers = assignment.getAssignedIdentifiers();
 				
-				FreeIdentifier[] freeIdentifiers = null;
-				if(assignment instanceof BecomesEqualTo)
-					freeIdentifiers = getFreeIdentifiers((BecomesEqualTo) assignment);
-				else if(assignment instanceof BecomesMemberOf)
-					freeIdentifiers = getFreeIdentifiers((BecomesMemberOf) assignment);
-				else if(assignment instanceof BecomesSuchThat)
-					freeIdentifiers = getFreeIdentifiers((BecomesSuchThat) assignment);
-				else
-					assert false;
-				
+				FreeIdentifier[] freeIdentifiers = assignment.getUsedIdentifiers();
 				ArrayList<String> unboundList = new ArrayList<String>(freeIdentifiers.length);
 				
 				boolean allContained = true;
