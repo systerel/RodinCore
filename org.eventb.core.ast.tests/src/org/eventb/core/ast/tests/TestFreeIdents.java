@@ -451,12 +451,12 @@ public class TestFreeIdents extends TestCase {
 	
 	
 	/**
-	 * Test method for 'org.eventb.core.ast.Formula.getFreeIdentifiers()'
+	 * Test method for 'org.eventb.core.ast.Formula.getSyntacticallyFreeIdentifiers()'
 	 */
-	public final void testGetFreeIdentifiers() {
+	public final void testGetSyntacticallyFreeIdentifiers() {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
-			FreeIdentifier[] result = testItem.formula.getFreeIdentifiers();
+			FreeIdentifier[] result = testItem.formula.getSyntacticallyFreeIdentifiers();
 			assertEquals(msg, testItem.freeIdents, result);
 		}
 	}
@@ -518,7 +518,7 @@ public class TestFreeIdents extends TestCase {
 	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
 			assertTrue("Should be well-formed: " + testItem.formula, testItem.formula.isWellFormed());
-			FreeIdentifier[] result = testItem.formula.getFreeIdentifiers();
+			FreeIdentifier[] result = testItem.formula.getSyntacticallyFreeIdentifiers();
 			TreeSet<String> freeIds = new TreeSet<String>(freeToString(result));
 			freeIds.removeAll(freeToString(testItem.freeIdents));
 			boolean varBound = freeIds.size() < result.length;
