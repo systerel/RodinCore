@@ -1071,9 +1071,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <p>
 	 * There are several cases where a formula can be flattened:
 	 * <ul>
-	 * <li>If someone writes (x+x)+x, it is flattened as x+x+x.</li>
+	 * <li>If someone writes (x+x)+x, it is flattened to x+x+x.</li>
 	 * <li>If someone writes \u2203x\u2203y respectively \u2200x\u2200y, it is
-	 * flattened as \u2203x,y respectively \u2200x,y</li>
+	 * flattened to \u2203x,y respectively \u2200x,y</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -1084,16 +1084,73 @@ public abstract class Formula<T extends Formula<T>> {
 	public abstract T flatten(FormulaFactory factory);
 
 	/**
+	 * Returns a list of all identifiers that occur free in this type-checked
+	 * formula.
+	 * <p>
+	 * This method is only applicable to a <em>type-checked</em> formula. It
+	 * uses directly the type-checker cache, so that it doesn't have to traverse
+	 * the formula.
+	 * </p>
+	 * <p>
+	 * If this formula is not type-checked, use
+	 * {@link #getSyntacticallyFreeIdentifiers()} to compute the list of free
+	 * identifiers of this formula (which will indeed traverse the formula).
+	 * </p>
+	 * 
+	 * @return an array of all free identifiers occurring in this formula.
+	 * 
+	 * @see #getSyntacticallyFreeIdentifiers()
+	 */
+	public final FreeIdentifier[] getFreeIdentifiers() {
+		assert isTypeChecked();
+		FreeIdentifier[] result = new FreeIdentifier[freeIdents.length];
+		System.arraycopy(freeIdents, 0, result, 0, freeIdents.length);
+		return result;
+	}
+
+	/**
+	 * Returns a list of all identifiers that occur bound and are not declared
+	 * within this type-checked formula.
+	 * <p>
+	 * This method is only applicable to a <em>type-checked</em> formula. It
+	 * uses directly the type-checker cache, so that it doesn't have to traverse
+	 * the formula.
+	 * </p>
+	 * <p>
+	 * The identifiers returned are the identifiers with dangling de Bruijn
+	 * indices. If the same identifier occurs more than once, only one
+	 * occurrence is reported. Thus, all elements of the returned array are
+	 * different.
+	 * </p>
+	 * 
+	 * @return an array of all identifiers that occur bound and are not declared
+	 *         within this formula
+	 */
+	public final BoundIdentifier[] getBoundIdentifiers() {
+		assert isTypeChecked();
+		BoundIdentifier[] result = new BoundIdentifier[boundIdents.length];
+		System.arraycopy(boundIdents, 0, result, 0, boundIdents.length);
+		return result;
+	}
+
+	/**
 	 * Returns a list of all identifiers that occur free in this formula.
 	 * <p>
 	 * The actual elements of this list are the first (leftmost) free occurrence
 	 * of each identifier. It is sorted in left-to-right order when reading the
 	 * formula.
 	 * </p>
+	 * <p>
+	 * If this formula is known to be type-checked and if they have no requirements
+	 * on the order of the free identifiers returned, clients should rather use
+	 * {@link #getFreeIdentifiers()} to compute the array of free identifiers.
+	 * </p>
 	 * 
 	 * @return an array of all first free occurrences of identifiers.
+	 * 
+	 * @see #getFreeIdentifiers()
 	 */
-	public final FreeIdentifier[] getFreeIdentifiers() {
+	public final FreeIdentifier[] getSyntacticallyFreeIdentifiers() {
 		LinkedHashSet<FreeIdentifier> freeIdentSet = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(freeIdentSet);
 		FreeIdentifier[] model = new FreeIdentifier[freeIdentSet.size()];
@@ -1233,6 +1290,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return <code>true</code> iff the formula is well-formed
 	 */
 	public final boolean isWellFormed() {
+		if (isTypeChecked()) {
+			return boundIdents.length == 0;
+		}
 		return isWellFormed(0);
 	}
 	
@@ -1667,7 +1727,7 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Returns whether this formula has been type-checked.
 	 * 
-	 * @return <code>true</code> iff this formaul has been type-checked
+	 * @return <code>true</code> iff this formula has been type-checked
 	 */
 	public abstract boolean isTypeChecked();
 	
