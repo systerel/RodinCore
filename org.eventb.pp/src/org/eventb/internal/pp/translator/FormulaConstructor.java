@@ -13,12 +13,12 @@ import java.util.*;
 import org.eventb.core.ast.*;
 
 public class FormulaConstructor {
-	private static Predicate makeAssociativePredicate(
+	public static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, Predicate left, Predicate right, SourceLocation loc) {
 		return makeAssociativePredicate(ff, tag, Arrays.asList(new Predicate[]{left, right}), loc);
 	}
 	
-	private static Predicate makeAssociativePredicate(
+	public static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, List<Predicate> preds, SourceLocation loc) {
 		LinkedList<Predicate> childs = new LinkedList<Predicate>();
 		for(Predicate pred: preds) {

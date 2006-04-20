@@ -682,7 +682,7 @@
 }
 
 
-/*Delete these...*/
+/*TODO: Delete these...*/
 
 %op Type PowSet (child : Type) {
 	is_fsym(t) { t instanceof PowerSetType }
