@@ -378,13 +378,13 @@ public class QuantifiedPredicate extends Predicate {
 	
 	@Override
 	public QuantifiedPredicate applySubstitution(Substitution subst) {
-		final FormulaFactory ff = subst.getFactory();
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 		subst.enter(nbOfBoundIdentDecls);
 		Predicate newPred = pred.applySubstitution(subst);
 		subst.exit(nbOfBoundIdentDecls);
 		if (newPred == pred)
 			return this;
+		final FormulaFactory ff = subst.getFactory();
 		return ff.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
 	}
 
