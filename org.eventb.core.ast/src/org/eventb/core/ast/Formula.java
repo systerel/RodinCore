@@ -1084,17 +1084,18 @@ public abstract class Formula<T extends Formula<T>> {
 	public abstract T flatten(FormulaFactory factory);
 
 	/**
-	 * Returns a list of all identifiers that occur free in this type-checked
-	 * formula.
+	 * Returns a list of all identifiers that occur free in this formula.
 	 * <p>
-	 * This method is only applicable to a <em>type-checked</em> formula. It
-	 * uses directly the type-checker cache, so that it doesn't have to traverse
-	 * the formula.
+	 * This method uses directly the type-checker cache, so that it doesn't have
+	 * to traverse the formula. Only one instance of each identifier occurring
+	 * free in this formula is reported, hence all elements of the returned
+	 * array are different.
 	 * </p>
 	 * <p>
-	 * If this formula is not type-checked, use
-	 * {@link #getSyntacticallyFreeIdentifiers()} to compute the list of free
-	 * identifiers of this formula (which will indeed traverse the formula).
+	 * Clients having special requirements on the order of identifiers should
+	 * rather use {@link #getSyntacticallyFreeIdentifiers()} to compute a sorted
+	 * list of free identifiers of this formula (that latter method will indeed
+	 * traverse the formula).
 	 * </p>
 	 * 
 	 * @return an array of all free identifiers occurring in this formula.
@@ -1102,7 +1103,6 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see #getSyntacticallyFreeIdentifiers()
 	 */
 	public final FreeIdentifier[] getFreeIdentifiers() {
-		assert isTypeChecked();
 		FreeIdentifier[] result = new FreeIdentifier[freeIdents.length];
 		System.arraycopy(freeIdents, 0, result, 0, freeIdents.length);
 		return result;
@@ -1110,11 +1110,10 @@ public abstract class Formula<T extends Formula<T>> {
 
 	/**
 	 * Returns a list of all identifiers that occur bound and are not declared
-	 * within this type-checked formula.
+	 * within this formula.
 	 * <p>
-	 * This method is only applicable to a <em>type-checked</em> formula. It
-	 * uses directly the type-checker cache, so that it doesn't have to traverse
-	 * the formula.
+	 * This method uses directly the type-checker cache, so that it doesn't have
+	 * to traverse the formula.
 	 * </p>
 	 * <p>
 	 * The identifiers returned are the identifiers with dangling de Bruijn
@@ -1127,7 +1126,6 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         within this formula
 	 */
 	public final BoundIdentifier[] getBoundIdentifiers() {
-		assert isTypeChecked();
 		BoundIdentifier[] result = new BoundIdentifier[boundIdents.length];
 		System.arraycopy(boundIdents, 0, result, 0, boundIdents.length);
 		return result;
@@ -1141,9 +1139,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * formula.
 	 * </p>
 	 * <p>
-	 * If this formula is known to be type-checked and if they have no requirements
-	 * on the order of the free identifiers returned, clients should rather use
-	 * {@link #getFreeIdentifiers()} to compute the array of free identifiers.
+	 * If they have no requirements on the order of the free identifiers
+	 * returned, clients should rather use {@link #getFreeIdentifiers()} to
+	 * compute the array of free identifiers.
 	 * </p>
 	 * 
 	 * @return an array of all first free occurrences of identifiers.
