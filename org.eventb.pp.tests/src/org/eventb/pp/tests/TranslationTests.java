@@ -131,7 +131,7 @@ public class TranslationTests extends TestCase {
 		doTest( "⊤ ∧ ⊤",
 				"⊤ ∧ ⊤", false);
 	}
-	
+	/*
 	public void testIdentifierDecomposition1() {
 		doTest( "∀x·10↦20 = x", 
 				"∀x,x0·10=x0∧20=x", false);		
@@ -151,28 +151,28 @@ public class TranslationTests extends TestCase {
 	
 	
 	public void testIdentifierDecomposition4() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, INT)});
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
 		
-		doTest( "10 ↦ 20 = s",
-				"∀x,x0·s=x0 ↦ x⇒10=x0∧20=x", false, te);
+		doTest( "10 ↦ bool(⊤) = s",
+				"∀x,x0·s=x0 ↦ x⇒10=x0∧bool(⊤)=x", true, te);
 	}
 	
 	public void testIdentifierDecomposition5() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, INT)});
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
 		
 		doTest( "t = s",
-				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", false, te);
+				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", true, te);
 	}
 	
 	public void testIdentifierDecomposition6() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, INT)});
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
 		
 		doTest( "t = s",
-				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", false, te);
+				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", true, te);
 	}
 
 	public void testIdentifierDecomposition7() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(INT, INT)});
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(INT, BOOL)});
 		doTest( "t=t",
 				"∀x,x0·t=x0↦x⇒(x0=x0∧x=x)", false, te);
 	}
@@ -183,7 +183,7 @@ public class TranslationTests extends TestCase {
 		doTest( "∀a·∃b·∀c·∃d·E∈S∧ a=1 ∧ b=1 ∧ c=1 ∧ d=1",
 				"∀x,x0,x1,x2·E=x2 ↦ (x1 ↦ (x0 ↦ x))⇒(∀a·∃b·∀c·∃d·x2 ↦ (x1 ↦ (x0 ↦ x))∈S∧a=1∧b=1∧c=1∧d=1)", false, te);
 		
-	}
+	}*/
 	
 	public void testSubsetEqRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
