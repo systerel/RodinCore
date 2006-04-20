@@ -294,12 +294,20 @@ public class BecomesEqualTo extends Assignment {
 
 	@Override
 	public FreeIdentifier[] getUsedIdentifiers() {
-		LinkedHashSet<FreeIdentifier> freeIdentSet = new LinkedHashSet<FreeIdentifier>();
-		for (Expression expr: values) {
-			expr.collectFreeIdentifiers(freeIdentSet);
+		if (values.length == 1) {
+			return values[0].getFreeIdentifiers();
 		}
-		FreeIdentifier[] model = new FreeIdentifier[freeIdentSet.size()];
-		return freeIdentSet.toArray(model);
+
+		// More than one value, we need to merge the free identifiers of every
+		// child
+		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(values);
+		FreeIdentifier[] idents = freeIdentMerger.getFreeMergedArray();
+
+		// Need to copy the array, as it can be maximal for one child (and then
+		// we would expose an internal array to clients)
+		FreeIdentifier[] result = new FreeIdentifier[idents.length];
+		System.arraycopy(idents, 0, result, 0, idents.length);
+		return result;
 	}
 
 }
