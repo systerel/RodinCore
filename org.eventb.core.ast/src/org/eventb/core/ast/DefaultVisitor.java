@@ -886,4 +886,40 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		return true;
+	}
+
+	public boolean continueBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		return true;
+	}
+
+	public boolean exitBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		return true;
+	}
+
+	public boolean enterBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		return true;
+	}
+
+	public boolean continueBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		return true;
+	}
+
+	public boolean exitBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		return true;
+	}
+
+	public boolean enterBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		return true;
+	}
+
+	public boolean continueBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		return true;
+	}
+
+	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		return true;
+	}
+
 }

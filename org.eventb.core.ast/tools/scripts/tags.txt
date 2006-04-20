@@ -103,3 +103,7 @@ parent	QuantifiedExpression	CSET	expr
 
 parent	QuantifiedPredicate	FORALL	pred
 parent	QuantifiedPredicate	EXISTS	pred
+
+parent	BecomesEqualTo	BECOMES_EQUAL_TO	assign
+parent	BecomesMemberOf	BECOMES_MEMBER_OF	assign
+parent	BecomesSuchThat	BECOMES_SUCH_THAT	assign

@@ -172,13 +172,20 @@ public class BecomesMemberOf extends Assignment {
 		return result.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#accept(org.eventb.core.ast.IVisitor)
-	 */
 	@Override
 	public boolean accept(IVisitor visitor) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean goOn = visitor.enterBECOMES_MEMBER_OF(this);
+
+		if (goOn) {
+			goOn = assignedIdents[0].accept(visitor);
+		}
+		if (goOn) {
+			goOn = visitor.continueBECOMES_MEMBER_OF(this);
+		}
+		if (goOn) {
+			goOn = setExpr.accept(visitor);
+		}
+		return visitor.exitBECOMES_MEMBER_OF(this);
 	}
 
 	@Override

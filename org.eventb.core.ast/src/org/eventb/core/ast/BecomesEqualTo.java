@@ -246,13 +246,27 @@ public class BecomesEqualTo extends Assignment {
 		return result.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#accept(org.eventb.core.ast.IVisitor)
-	 */
 	@Override
 	public boolean accept(IVisitor visitor) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean goOn = visitor.enterBECOMES_EQUAL_TO(this);
+
+		for (int i = 0; goOn && i < assignedIdents.length; ++i) {
+			goOn = assignedIdents[i].accept(visitor);
+			if (goOn) {
+				goOn = visitor.continueBECOMES_EQUAL_TO(this);
+			}
+		}
+		
+		for (int i = 0; goOn && i < values.length; i++) {
+			if (i != 0) {
+				goOn = visitor.continueBECOMES_EQUAL_TO(this);
+			}
+			if (goOn) {
+				goOn = values[i].accept(visitor);
+			}
+		}
+
+		return visitor.exitBECOMES_EQUAL_TO(this);
 	}
 
 	@Override

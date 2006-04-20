@@ -2789,4 +2789,115 @@ public interface IVisitor {
 	 */
 	boolean exitEXISTS(QuantifiedPredicate pred);
 
+	/**
+	 * Enters a <code>BECOMES_EQUAL_TO</code> node.
+	 *
+	 * @param assign
+	 *             the node which is entered
+	 * @return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign);
+
+	/**
+	 * Advances to the next child of a <code>BECOMES_EQUAL_TO</code> node.
+	 *
+	 * @param assign
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBECOMES_EQUAL_TO(BecomesEqualTo assign);
+
+	/**
+	 * Exits a <code>BECOMES_EQUAL_TO</code> node.
+	 *
+	 * @param assign
+	 *             the node which is exited
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean exitBECOMES_EQUAL_TO(BecomesEqualTo assign);
+
+	/**
+	 * Enters a <code>BECOMES_MEMBER_OF</code> node.
+	 *
+	 * @param assign
+	 *             the node which is entered
+	 * @return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean enterBECOMES_MEMBER_OF(BecomesMemberOf assign);
+
+	/**
+	 * Advances to the next child of a <code>BECOMES_MEMBER_OF</code> node.
+	 *
+	 * @param assign
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBECOMES_MEMBER_OF(BecomesMemberOf assign);
+
+	/**
+	 * Exits a <code>BECOMES_MEMBER_OF</code> node.
+	 *
+	 * @param assign
+	 *             the node which is exited
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean exitBECOMES_MEMBER_OF(BecomesMemberOf assign);
+
+	/**
+	 * Enters a <code>BECOMES_SUCH_THAT</code> node.
+	 *
+	 * @param assign
+	 *             the node which is entered
+	 * @return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean enterBECOMES_SUCH_THAT(BecomesSuchThat assign);
+
+	/**
+	 * Advances to the next child of a <code>BECOMES_SUCH_THAT</code> node.
+	 *
+	 * @param assign
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueBECOMES_SUCH_THAT(BecomesSuchThat assign);
+
+	/**
+	 * Exits a <code>BECOMES_SUCH_THAT</code> node.
+	 *
+	 * @param assign
+	 *             the node which is exited
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign);
+
 }
