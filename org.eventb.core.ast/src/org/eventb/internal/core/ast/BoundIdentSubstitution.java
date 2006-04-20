@@ -29,13 +29,13 @@ import org.eventb.core.ast.FreeIdentifier;
 public class BoundIdentSubstitution extends Substitution {
 
 	// New declarations to use after substitution
-	final List<BoundIdentDecl> newDecls;
+	protected final List<BoundIdentDecl> newDecls;
 	
 	// Size of the new declarations
-	final int newDeclSize;
+	protected final int newDeclSize;
 	
 	// Reversed array of substitutes
-	final Substitute[] substitutes;
+	protected final Substitute[] substitutes;
 	
 	/**
 	 * Creates a new substitution for bound identifiers.
