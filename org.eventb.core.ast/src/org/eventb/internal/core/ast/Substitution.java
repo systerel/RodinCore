@@ -14,7 +14,7 @@ public abstract class Substitution {
 
 	protected final FormulaFactory ff;
 	
-	// Number of bound variable between current point and the root of the
+	// Number of bound variables between current point and the root of the
 	// formula to which this substitution is applied.
 	protected int nbOfInternallyBound = 0;
 
