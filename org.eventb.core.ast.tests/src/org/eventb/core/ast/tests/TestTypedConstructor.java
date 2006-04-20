@@ -266,9 +266,11 @@ public class TestTypedConstructor extends TestCase {
 	
 	private void doTest(Expression expr, Type expected) {
 		assertTrue("Result is not typed", expr.isTypeChecked());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(expr, ff));
 		assertEquals("Bad type", expected, expr.getType());
 		ITypeCheckResult result = expr.typeCheck(env);
 		assertTrue("Expression didn't typecheck", result.isSuccess());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(expr, ff));
 	}
 
 	/**
@@ -367,8 +369,10 @@ public class TestTypedConstructor extends TestCase {
 	
 	private void doTest(Predicate pred) {
 		assertTrue("Result is not typed", pred.isTypeChecked());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(pred, ff));
 		ITypeCheckResult result = pred.typeCheck(env);
 		assertTrue("Predicate didn't typecheck", result.isSuccess());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(pred, ff));
 	}
 
 	/**
@@ -421,8 +425,10 @@ public class TestTypedConstructor extends TestCase {
 
 	private void doTest(Assignment assign) {
 		assertTrue("Result is not typed", assign.isTypeChecked());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(assign, ff));
 		ITypeCheckResult result = assign.typeCheck(env);
 		assertTrue("Assignment didn't typecheck", result.isSuccess());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(assign, ff));
 	}
 
 	// TODO ajouter fonction de test sur un peu tout ce qui échoue systématiquement
