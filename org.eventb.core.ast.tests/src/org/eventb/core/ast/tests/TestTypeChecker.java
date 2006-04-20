@@ -1300,6 +1300,13 @@ public class TestTypeChecker extends TestCase {
 					mTypeEnvironment(),
 					mTypeEnvironment()
 			),
+			
+			// Nested quantified expressions
+			new TestItem(
+					"ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}",
+					mTypeEnvironment(),
+					mTypeEnvironment()
+			),
 	};
 
 	private TestItem[] assignItems = new TestItem[] {
@@ -1414,6 +1421,7 @@ public class TestTypeChecker extends TestCase {
 			
 			if (result.isSuccess()) {
 				assertTrue(formula.isTypeChecked());
+				assertTrue("Problem with identifier caches", IdentsChecker.check(formula, ff));
 			}
 		}
 	}
@@ -1436,6 +1444,7 @@ public class TestTypeChecker extends TestCase {
 			
 			if (result.isSuccess()) {
 				assertTrue(formula.isTypeChecked());
+				assertTrue("Problem with identifier caches", IdentsChecker.check(formula, ff));
 			}
 		}
 	}
