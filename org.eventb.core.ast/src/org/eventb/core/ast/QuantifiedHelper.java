@@ -57,18 +57,20 @@ abstract class QuantifiedHelper {
 
 	/**
 	 * Returns the array of bound identifiers which are bound outside of a
-	 * quantified formula.
+	 * quantified formula, and after renumbering them properly.
 	 * 
 	 * @param boundIdentsBelow
 	 *            array of bound identifiers occurring in the quantified
 	 *            formula.
 	 * @param boundIdentDecls
 	 *            declaration of bound identifiers at the quantified formula
+	 * @param ff
+	 *            formula factory to use for building the result
 	 * @return an array of identifiers which are used in the formula, but bound
 	 *         outside of it
 	 */
 	protected static BoundIdentifier[] getBoundIdentsAbove(
-			BoundIdentifier[] boundIdentsBelow, BoundIdentDecl[] boundIdentDecls) {
+			BoundIdentifier[] boundIdentsBelow, BoundIdentDecl[] boundIdentDecls, FormulaFactory ff) {
 		
 		final int nbBoundBelow = boundIdentsBelow.length;
 		final int nbBound = boundIdentDecls.length;
@@ -78,7 +80,12 @@ abstract class QuantifiedHelper {
 				// We're on the first identifier bound outside
 				final int length = nbBoundBelow - i;
 				final BoundIdentifier[] result = new BoundIdentifier[length];
-				System.arraycopy(boundIdentsBelow, i, result, 0, length);
+				for (int j = 0; j < length; ++j, ++i) {
+					result[j] = ff.makeBoundIdentifier(
+							boundIdentsBelow[i].getBoundIndex() - nbBound,
+							boundIdentsBelow[i].getSourceLocation(),
+							boundIdentsBelow[i].getType());
+				}
 				return result;
 			}
 		}

@@ -231,7 +231,7 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier ident,
 			BoundIdentDecl primedIdent, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(ident, primedIdent, condition, location);
+		return new BecomesSuchThat(ident, primedIdent, condition, location, this);
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier[] idents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(idents, primedIdents, condition, location);
+		return new BecomesSuchThat(idents, primedIdents, condition, location, this);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(List<FreeIdentifier> idents,
 			List<BoundIdentDecl> primedIdents, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(idents, primedIdents, condition, location);
+		return new BecomesSuchThat(idents, primedIdents, condition, location, this);
 	}
 
 	/**
@@ -571,7 +571,7 @@ public class FormulaFactory {
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate pred, SourceLocation location) {
-		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location);
+		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location, this);
 	}
 
 	/**
@@ -590,7 +590,7 @@ public class FormulaFactory {
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			List<BoundIdentDecl> boundIdentifiers, Predicate pred, SourceLocation location) {
-		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location);
+		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location, this);
 	}
 	
 	/**

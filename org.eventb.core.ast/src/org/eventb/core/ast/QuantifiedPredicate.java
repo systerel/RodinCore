@@ -51,7 +51,7 @@ public class QuantifiedPredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 
 	protected QuantifiedPredicate(Predicate pred, BoundIdentDecl[] boundIdentifiers, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
 
@@ -60,11 +60,11 @@ public class QuantifiedPredicate extends Predicate {
 		this.pred = pred;
 		
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	protected QuantifiedPredicate(Predicate pred, List<BoundIdentDecl> boundIdentifiers, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.size(), pred.hashCode()));
 		
@@ -73,7 +73,7 @@ public class QuantifiedPredicate extends Predicate {
 		this.pred = pred;
 		
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	private void checkPreconditions() {
@@ -83,12 +83,12 @@ public class QuantifiedPredicate extends Predicate {
 		assert pred != null;
 	}
 
-	private void synthesizeType() {
+	private void synthesizeType(FormulaFactory ff) {
 		this.freeIdents = pred.freeIdents;
 
 		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
 		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers);
+			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);
 
 		// Check types of identifiers bound here.
 		if (! checkBoundIdentTypes(boundIdentsBelow, quantifiedIdentifiers)) {
@@ -222,6 +222,12 @@ public class QuantifiedPredicate extends Predicate {
 		}
 		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, quantifiedIdentifiers);
 		pred.typeCheck(result, boundBelow);
+		
+		// Also set a type to bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			ident.typeCheck(result, boundAbove);
+		}
 	}
 	
 	@Override
@@ -231,6 +237,12 @@ public class QuantifiedPredicate extends Predicate {
 			success &= ident.solveType(unifier);
 		}
 		success &= pred.solveType(unifier);
+
+		// Also solve type of bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			success &= ident.solveType(unifier);
+		}
 
 		return finalizeTypeCheck(success);
 	}

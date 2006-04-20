@@ -150,7 +150,7 @@ public class QuantifiedExpression extends Expression {
 		final BoundIdentifier[] boundIdentsBelow = 
 			boundIdentMerger.getBoundMergedArray(); 
 		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers);
+			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);
 
 		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.
@@ -516,6 +516,13 @@ public class QuantifiedExpression extends Expression {
 			assert false;
 			resultType = null;
 		}
+		
+		// Also set a type to bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			ident.typeCheck(result, quantifiedIdents);
+		}
+
 		setType(resultType, result);
 	}
 	
@@ -527,6 +534,12 @@ public class QuantifiedExpression extends Expression {
 		}
 		success &= expr.solveType(unifier);
 		success &= pred.solveType(unifier);
+
+		// Also solve type of bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			success &= ident.solveType(unifier);
+		}
 
 		return finalizeType(success, unifier);
 	}
