@@ -1134,7 +1134,7 @@ public class Translator extends IdentityTranslator {
 								`n,
 								loc),
 						loc);
-				mb.calculate(bij.getType().getBaseType(), loc, ff);
+				mb.calculate(bij.getType().getBaseType(), 0, "b", loc, ff);
 				
 				bij = bij.shiftBoundIdentifiers(mb.offset(), ff);
 

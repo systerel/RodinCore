@@ -77,19 +77,19 @@ public class Reorganizer extends BorderTranslator {
 		private QuantMapletBuilder mb = new QuantMapletBuilder();
 		public boolean inEquality;
 		
-		private Expression addBoundIdentifier(Type type, SourceLocation loc, FormulaFactory ff) {
+		private Expression addBoundIdentifier(Type type, SourceLocation loc, FormulaFactory ff, String name) {
 			
-			mb.calculate(type, boundIdentOffset, loc, ff);
+			mb.calculate(type, boundIdentOffset, name, loc, ff);
 			identDecls.addAll(mb.X());
 			boundIdentOffset += mb.offset();
 			
 			return mb.V();
 		}
 			
-		protected Expression bindExpression(Expression expr, FormulaFactory ff) {
+		protected Expression bindExpression(Expression expr, FormulaFactory ff, String name) {
 			SourceLocation loc = expr.getSourceLocation();
 			
-			Expression ident = addBoundIdentifier(expr.getType(), loc, ff);
+			Expression ident = addBoundIdentifier(expr.getType(), loc, ff, name);
 			bindings.add(ff.makeRelationalPredicate(Formula.EQUAL, ident, expr, loc));
 			return ident;		
 		}
@@ -103,10 +103,13 @@ public class Reorganizer extends BorderTranslator {
 			else {
 				switch(expr.getTag()) {
 				case Formula.KCARD:
+					return bindExpression(expr, ff, "cd");
 				case Formula.FUNIMAGE:
+					return bindExpression(expr, ff, "fi");
 				case Formula.KMIN:
+					return bindExpression(expr, ff, "mi");
 				case Formula.KMAX:
-					return bindExpression(expr, ff);
+					return bindExpression(expr, ff, "ma");
 				default:
 					return super.translate(expr, ff);
 				}
