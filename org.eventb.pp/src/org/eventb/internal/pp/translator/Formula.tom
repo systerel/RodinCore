@@ -219,19 +219,19 @@
 
 %op Predicate QuantifiedPredicate (identifiers: BoundIdentDeclList, predicate: Predicate) {
 	is_fsym(t) { t != null && t instanceof QuantifiedPredicate }
-	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
 }
 
 %op Predicate ForAll (identifiers: BoundIdentDeclList, predicate: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.FORALL }
-	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
 }
 
 %op Predicate Exists (identifiers: BoundIdentDeclList, predicate: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.EXISTS }
-	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
 }
 
@@ -574,21 +574,21 @@
 
 %op Expression Cset (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.CSET }
-	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
 	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
 }
 
 %op Expression Qinter (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.QINTER }
-	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
 	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
 }
 
 %op Expression Qunion (identifiers: BoundIdentDeclList, predicate: Predicate, expression: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.QUNION }
-	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentifiers() }
+	get_slot(identifiers,t) { ((QuantifiedExpression)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedExpression)t).getPredicate() }
 	get_slot(expression,t) { ((QuantifiedExpression)t).getExpression() }
 }
