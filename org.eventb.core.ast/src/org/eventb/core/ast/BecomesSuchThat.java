@@ -54,43 +54,46 @@ public class BecomesSuchThat extends Assignment {
 	
 	protected BecomesSuchThat(FreeIdentifier assignedIdent,
 			BoundIdentDecl primedIdent, Predicate condition,
-			SourceLocation location) {
+			SourceLocation location,
+			FormulaFactory ff) {
 		
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdent);
 		this.condition = condition;
 		this.primedIdents = new BoundIdentDecl[] {primedIdent};
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	protected BecomesSuchThat(FreeIdentifier[] assignedIdents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
-			SourceLocation location) {
+			SourceLocation location,
+			FormulaFactory ff) {
 		
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
 		this.primedIdents = new BoundIdentDecl[primedIdents.length];
 		System.arraycopy(primedIdents, 0, this.primedIdents, 0, primedIdents.length);
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	protected BecomesSuchThat(List<FreeIdentifier> assignedIdents,
 			List<BoundIdentDecl> primedIdents, Predicate condition,
-			SourceLocation location) {
+			SourceLocation location,
+			FormulaFactory ff) {
 
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
 		this.primedIdents = primedIdents.toArray(new BoundIdentDecl[primedIdents.size()]);
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 	
 	private void checkPreconditions() {
 		assert this.primedIdents.length == assignedIdents.length;
 	}
 	
-	private void synthesizeType() {
+	private void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;
 		final Formula[] children = new Formula[length + 1];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
@@ -99,13 +102,11 @@ public class BecomesSuchThat extends Assignment {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
-		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(children);
-		final BoundIdentifier[] boundIdentsBelow = 
-			boundIdentMerger.getBoundMergedArray(); 
+		final BoundIdentifier[] boundIdentsBelow = condition.boundIdents; 
 		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, primedIdents);
+			getBoundIdentsAbove(boundIdentsBelow, primedIdents, ff);
 
-		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
+		if (freeIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.
 			return;
 		}
@@ -207,6 +208,12 @@ public class BecomesSuchThat extends Assignment {
 			result.unify(assignedIdents[i].getType(), primedIdents[i].getType(), loc);
 		}
 		
+		// Also set a type to bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			ident.typeCheck(result, boundAbove);
+		}
+		
 		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, primedIdents);
 		condition.typeCheck(result, boundBelow);
 	}
@@ -244,6 +251,13 @@ public class BecomesSuchThat extends Assignment {
 			result &= ident.solveType(unifier);
 		}
 		result &= condition.solveType(unifier);
+
+		// Also solve type of bound identifiers in the type-checker cache, as
+		// they are created by this node.
+		for (BoundIdentifier ident: boundIdents) {
+			result &= ident.solveType(unifier);
+		}
+
 		return finalizeTypeCheck(result, unifier);
 	}
 
