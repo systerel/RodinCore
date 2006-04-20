@@ -684,14 +684,6 @@ public class TranslationTests extends TestCase {
 	public void testSurRelRule3() {
 		doTest( "∀e·{e+3↦(e↦2)} ∈ {e}  {e↦2}", 
 				"∀e·(∀T,E·(E={e+3↦(e↦2)}∧T={e↦2} ⇒ E∈{e}↔T ∧ T ⊆ ran(E)))", true);
-//		doTest( "∀e·{1+1↦1} ∈ e  e∪e", 
-//				"∀e·(∀T,E·(E={1+1↦1}∧T=e∪e ⇒ E∈e↔T ∧ e ⊆ ran(E)))", true);
-//		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-//				new String[]{"e", "f"}, new Type[]{INT_SET, REL(INT, INT)});
-//		
-//		doTest( "∀b·{1↦(1↦b)} ∈ e  f", 
-//				"∀b·∀E·E={1↦(1↦b)} ⇒ E∈e↔f ∧ f ⊆ ran(E)", true, te);
-////				"(∀T,E·(E={1↦1}∧T=e∪e ⇒ E∈e↔T ∧ e ⊆ ran(E)))", true);
 	}
 
 	public void testSurjTotalRelRule() {
@@ -910,9 +902,14 @@ public class TranslationTests extends TestCase {
 				new String[]{"E", "F", "q", "r"}, new Type[]{INT, BOOL, REL(INT, BOOL), REL(INT, BOOL)});
 
 		doTest( "E↦F∈(q∪q2)(r∪r2)", 
-				"E↦F∈dom(r∪r2)⩤(q∪q2)∨E↦F∈(r∪r2)", true, te);
+				"∀R·R=r∪r2⇒E↦F∈dom(R)⩤(q∪q2)∨E↦F∈(R)", true, te);
 	}
 	
+	public void testRelOvrRule4() {
+		doTest( "∀e,f,q2,r2·E+e↦F+f∈(q∪q2)(r∪r2)", 
+				"∀e,f,q2,r2·(∀rr,EF·EF=E+e↦F+f∧rr=r∪r2 ⇒ EF∈dom(rr)⩤(q∪q2)∨EF∈(rr))", true);
+	}
+
 	/* Not allowed by type checker
 	public void testRelOvrRule4() {
 		Predicate input = FastFactory.mRelationalPredicate(
@@ -943,6 +940,11 @@ public class TranslationTests extends TestCase {
 		doTest ("E↦F∈(r∪r2)⩥(T∪S)", 
 				"E↦F∈(r∪r2)∧¬(F∈T∪S)", true, te);
 	}
+	
+	public void testRanSubRule3() {
+		doTest ( "∀e1,f1,R1,S1·(e1+1↦f1+1∈(S1∪{1})⩤(R1∪{1↦1}))", 
+				 "∀e1,f1,R1,S1·(∀E·E=e1+1⇒E↦f1+1∈R1∪{1↦1}∧¬(E∈S1∪{1}))", true);
+	}
 
 	public void testDomSubRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
@@ -958,6 +960,11 @@ public class TranslationTests extends TestCase {
 		
 		doTest( "E↦F∈(T∪S)⩤(r∪r2)", 
 				"E↦F∈(r∪r2)∧¬(E∈(T∪S))", true, te);
+	}
+	
+	public void testDomSubRule3() {
+		doTest ( "∀e1,f1,R1,T1·(e1+1↦f1+1∈(R1∪{1↦1})⩥(T1∪{1}))", 
+				 "∀e1,f1,R1,T1·(∀F·F=f1+1⇒e1+1↦F∈R1∪{1↦1}∧¬(F∈T1∪{1}))", true);
 	}
 
 	public void testRanResRule() {
@@ -976,15 +983,30 @@ public class TranslationTests extends TestCase {
 				"E↦F∈(r∪r2)∧F∈(T∪S)", true, te);
 	}
 
+	public void testRanResRule3() {
+		doTest ( "∀e1,f1,R1,T1·(e1+1↦f1+1∈(R1∪{1↦1})▷(T1∪{1}))", 
+				 "∀e1,f1,R1,T1·(∀F·F=f1+1⇒e1+1↦F∈R1∪{1↦1}∧(F∈T1∪{1}))", true);
+	}
+
 	public void testDomResRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "r", "S"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
-		Predicate input = parse("E↦F∈S◁r", te);
-		Predicate expected = parse("E↦F∈r∧E∈S", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
-		doTest(input, expected);	
+		doTest( "E↦F∈S◁r", 
+				"E↦F∈r∧E∈S", true, te);
+	}
+	
+	public void testDomResRule2() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"E", "F", "r", "S"}, new Type[]{INT, INT, REL(INT, INT), INT_SET});
+		doTest( "E↦F∈(S∪S2)◁(r∪r2)", 
+				"E↦F∈(r∪r2)∧E∈(S∪S2)", true, te);
 	}
 
+	public void testDomResRule3() {
+		doTest ( "∀e1,f1,R1,S1·(e1+1↦f1+1∈(S1∪{1})◁(R1∪{1↦1}))", 
+				 "∀e1,f1,R1,S1·(∀E·E=e1+1⇒E↦f1+1∈R1∪{1↦1}∧ (E∈S1∪{1}))", true);
+	}
+	
 	public void testIdRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "S"}, new Type[]{INT, INT, INT_SET});
@@ -999,6 +1021,11 @@ public class TranslationTests extends TestCase {
 		
 		doTest( "E↦F∈id(S∪T)",
 				"E∈(S∪T)∧E=F", true, te);
+	}
+
+	public void testIdRule3() {
+		doTest( "∀S,e,f·(e+1↦f+1 ∈ id(S∪{1}))",
+				"∀S,e,f·(∀E·E=e+1 ⇒ E∈S∪{1} ∧ E = f+1)", true);
 	}
 
 	public void testFCompRule() {
@@ -1073,6 +1100,11 @@ public class TranslationTests extends TestCase {
 				"E↦F∈(r∪r2) ∧ G=E", true, te);
 	}
 
+	public void testPrj1Rule3() {
+		doTest( "∀r,e,f,g·(e+1↦f+1)↦g+1 ∈ prj1(r∪{1↦1})", 
+				"∀r,e,f,g·(∀E·E=e+1 ⇒ E↦f+1∈r∪{1↦1} ∧ g+1=E)", true);
+	}
+
 	public void testPrj2Rule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "G", "r"}, new Type[]{INT, BOOL, BOOL, REL(INT, BOOL)});
@@ -1089,6 +1121,11 @@ public class TranslationTests extends TestCase {
 				"E↦F∈(r∪r2) ∧ G=F", true, te);
 	}
 	
+	public void testPrj2Rule3() {
+		doTest( "∀r,e,f,g·(e+1↦f+1)↦g+1 ∈ prj2(r∪{1↦1})", 
+				"∀r,e,f,g·(∀F·F=f+1 ⇒ e+1↦F∈r∪{1↦1} ∧ g+1=F)", true);
+	}
+
 	public void testDirectProdRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"E", "F", "G", "p", "q"}, new Type[]{INT, BOOL, INT_SET, REL(INT, BOOL), REL(INT, INT_SET)});
@@ -1103,6 +1140,11 @@ public class TranslationTests extends TestCase {
 		
 		doTest( "E↦(F↦G) ∈ (p∪p2)⊗(q∪q2)",
 				"E↦F∈(p∪p2) ∧ E↦G∈(q∪q2)", true, te);
+	}
+	
+	public void testDirectProdRule3() {
+		doTest( "∀p,q,e,f,g·e+1↦(f+1↦g+1) ∈ (p∪{1↦1})⊗(q∪{1↦1})",
+				"∀p,q,e,f,g·(∀E·E=e+1 ⇒ E↦f+1∈p∪{1↦1} ∧ E↦g+1∈q∪{1↦1})", true);
 	}
 	
 	public void testPrallelProdRule() {
@@ -1221,6 +1263,8 @@ public class TranslationTests extends TestCase {
 	public void testCardHard() {
 		doTest( "E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})}",
 				"E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})}", true);
+//		doTest( "E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}",
+//				"E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}", true);
 	}
 	
 	public void testPerf() {

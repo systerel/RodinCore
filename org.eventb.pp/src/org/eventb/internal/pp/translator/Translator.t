@@ -758,8 +758,18 @@ public class Translator extends IdentityTranslator {
 			Ovr(children) -> { //E?F?q?r becomes E?F?r ? E?>F?dom(r)?q
 			
 				LinkedList<Predicate> preds = new LinkedList<Predicate>();
-				Expression maplet = expr;
+				CondQuantifier cq = new CondQuantifier(ff);
+
+				Expression maplet = cq.condSubstitute(expr);
+				for(int i = 1; i < `children.length; i++) {
+					`children[i] = cq.condSubstitute(`children[i]);
+				}
 				
+				maplet = cq.condShift(maplet);
+				for(int i = 0; i < `children.length; i++) {
+					`children[i] = cq.condShift(`children[i]);
+				}				
+								
 				for(int i = 0; i < `children.length; i++) {
 					LinkedList<Expression> exprs = new LinkedList<Expression>();
 					
@@ -785,45 +795,93 @@ public class Translator extends IdentityTranslator {
 						preds.add(translateIn(maplet, `children[i], loc, ff));		
 				}
 				
-				return ff.makeAssociativePredicate(
-					Formula.LOR,
-					preds,
-					loc);
+				return  cq.conditionalQuantify(
+					ff.makeAssociativePredicate(Formula.LOR, preds, loc),
+					this);
 			}
 			RanSub(r, T) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
-					ff.makeUnaryPredicate(Formula.NOT, translateIn(F, `T, loc, ff), loc),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				F = cq.condSubstitute(F);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				`r = cq.condShift(`r);
+				`T = cq.condShift(`T);
+				
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
+						ff.makeUnaryPredicate(Formula.NOT, translateIn(F, `T, loc, ff), loc),
+						loc),
+					this);
 			}
 			DomSub(S, r) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
-					ff.makeUnaryPredicate(Formula.NOT, translateIn(E, `S, loc, ff), loc),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				E = cq.condSubstitute(E);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				`r = cq.condShift(`r);
+				`S = cq.condShift(`S);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
+						ff.makeUnaryPredicate(Formula.NOT, translateIn(E, `S, loc, ff), loc),
+						loc),
+					this);
 			}
 			RanRes(r, T) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
-					translateIn(F, `T, loc, ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				F = cq.condSubstitute(F);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				`r = cq.condShift(`r);
+				`T = cq.condShift(`T);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
+						translateIn(F, `T, loc, ff),
+						loc),
+					this);
 			}
 			DomRes(S, r) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
-					translateIn(E, `S, loc, ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				E = cq.condSubstitute(E);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				`r = cq.condShift(`r);
+				`S = cq.condShift(`S);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r,	loc, ff),
+						translateIn(E, `S, loc, ff),
+						loc),
+					this);
 			}
 			Id(S) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(E, `S, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, E, F, loc), ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				E = cq.condSubstitute(E);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				`S = cq.condShift(`S);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(E, `S, loc, ff),
+						translate(ff.makeRelationalPredicate(Formula.EQUAL, E, F, loc), ff),
+						loc),
+					this);
 			}
 			Fcomp(children) -> {
 				QuantMapletBuilder mb = new QuantMapletBuilder();
@@ -890,18 +948,38 @@ public class Translator extends IdentityTranslator {
 		
 		%match(Expression rhs) {
 			Prj1(r) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, G, E, loc), ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				E = cq.condSubstitute(E);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				G = cq.condShift(G);
+				`r = cq.condShift(`r);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r, loc, ff),
+						translate(ff.makeRelationalPredicate(Formula.EQUAL, G, E, loc), ff),
+						loc),
+					this);
 			}
 			Prj2(r) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, G, F, loc), ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				F = cq.condSubstitute(F);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				G = cq.condShift(G);
+				`r = cq.condShift(`r);
+
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `r, loc, ff),
+						translate(ff.makeRelationalPredicate(Formula.EQUAL, G, F, loc), ff),
+						loc),
+					this);
 			}
 			_ -> {
 				return null;
@@ -922,11 +1000,22 @@ public class Translator extends IdentityTranslator {
 
 		%match(Expression rhs){
 			Dprod(p, q) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `p, loc, ff),
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, G, loc), `q, loc, ff),
-					loc);
+				CondQuantifier cq = new CondQuantifier(ff);
+				E = cq.condSubstitute(E);
+
+				E = cq.condShift(E);
+				F = cq.condShift(F);
+				G = cq.condShift(G);
+				`p = cq.condShift(`p);	
+				`q = cq.condShift(`q);
+					
+				return cq.conditionalQuantify(
+					FormulaConstructor.makeLandPredicate(
+						ff,
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, F, loc), `p, loc, ff),
+						translateIn(ff.makeBinaryExpression(Formula.MAPSTO, E, G, loc), `q, loc, ff),
+						loc),
+					this);
 			}
 			_ -> {
 				return null;

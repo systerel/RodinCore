@@ -66,7 +66,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 			for(FreeIdentifier ident: pred.getFreeIdentifiers()) {
 				if(!names.contains(ident.getName())) {
 					names.add(ident.getName());
-					mb.calculate(ident.getType(), c, null, ff);
+					mb.calculate(ident.getType(), c, ident.getName(), null, ff);
 					if(mb.getIdentDecls().size() > 1) {
 						c = c + mb.offset();
 						identDecls.addAll(0, mb.X());
@@ -103,7 +103,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
 				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 				for (BoundIdentDecl decl: `is) {
-					mb.calculate(decl.getType(), 0, decl.getSourceLocation(), ff);
+					mb.calculate(decl.getType(), 0, decl.getName(), decl.getSourceLocation(), ff);
 					c.add(mb.getIdentDecls().size());
 					identTypes.add (0, 
 						new Pair<Type, Integer>(decl.getType(), new Integer(c.value())));

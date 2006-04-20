@@ -40,18 +40,14 @@ public class CondQuantifier {
 		}
 	}
 	
-	public Expression condShift(Expression expr, int offset) {
+	public Expression condShift(Expression expr) {
 		for(Expression subsistute : substitutes) {
 			if(expr == subsistute)
 				return expr;
 		}
-		return expr.shiftBoundIdentifiers(offset, ff);
+		return expr.shiftBoundIdentifiers(offset(), ff);
 	}
 	
-	public Expression condShift(Expression expr) {
-		return condShift(expr, offset());
-	}
-
 	public int offset() {
 		return identDecls.size();
 	}
