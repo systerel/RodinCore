@@ -18,23 +18,31 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableFontProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -47,6 +55,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 
@@ -86,7 +95,7 @@ public class ProofTreeUIPage
 	private Object [] filters = {"allI"}; // Default filters 
 		
 	private boolean byUserSupport;
-	
+	private TreeColumn elementColumn;
 	// The current editting element.
 	private Object fInput;
 	
@@ -98,27 +107,17 @@ public class ProofTreeUIPage
 	// Group of action that is used.
 	private ProofTreeUIActionGroup groupActionSet;
 	
-	class ViewLabelProvider extends LabelProvider {
-
-		public String getText(Object obj) {
-			if (obj instanceof IProofTreeNode) {
-				IProofTreeNode proofTree = (IProofTreeNode) obj;
-				
-				if (!proofTree.isOpen()) {
-					return proofTree.getRule().getName() +" : " + proofTree.getSequent().goal();
-				}
-				else {
-					return proofTree.getSequent().goal().toString();
-				}
-			}
-			return obj.toString();
-		}
+	class ViewLabelProvider
+		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
 		
-		public Image getImage(Object obj) {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
 			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		
-			if (obj instanceof IProofTreeNode) {
-				IProofTreeNode pt = (IProofTreeNode) obj;
+			
+			if (element instanceof IProofTreeNode) {
+				IProofTreeNode pt = (IProofTreeNode) element;
 				if (pt.isOpen()) return registry.get(EventBImage.IMG_PENDING);
 				if (!pt.isDischarged()) return registry.get(EventBImage.IMG_APPLIED);
 				else return registry.get(EventBImage.IMG_DISCHARGED);
@@ -128,8 +127,105 @@ public class ProofTreeUIPage
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 		}
-	}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof IProofTreeNode) {
+				IProofTreeNode proofTree = (IProofTreeNode) element;
+				
+				if (!proofTree.isOpen()) {
+					return proofTree.getRule().getName() +" : " + proofTree.getSequent().goal();
+				}
+				else {
+					return proofTree.getSequent().goal().toString();
+				}
+			}
+			return element.toString();
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		 */
+		public Color getBackground(Object element, int columnIndex) {
+			 Display display = Display.getCurrent();
+             return display.getSystemColor(SWT.COLOR_WHITE);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+		 */
+		public Color getForeground(Object element, int columnIndex) {
+			Display display = Display.getCurrent();
+            return display.getSystemColor(SWT.COLOR_BLACK);
+       }
+
+//		public String getText(Object obj) {
+//			if (obj instanceof IAction) {
+//				try {
+//					return ((IAction) obj).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					// TODO Handle Exception
+//					e.printStackTrace();
+//					return "";
+//				}
+//			}
+//			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
+//			return obj.toString();
+//		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		 */
+		public Font getFont(Object element, int columnIndex) {
+//			UIUtils.debug("Get fonts");
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		}
+		
+		
+//		public Image getImage(Object obj) {
+//			return UIUtils.getImage(obj);
+//		}
 	
+	
+	
+	}
+
 	/**
 	 * Creates a content outline page using the given editor.
 	 * Register as a change listener for the Rodin Database.
@@ -158,6 +254,10 @@ public class ProofTreeUIPage
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
+		Tree tree = viewer.getTree();
+		tree.setHeaderVisible(false);
+		elementColumn = new TreeColumn(tree, SWT.LEFT);
+//		elementColumn.setResizable(true);
 		// TODO Implement using ViewerFilter????
 //		viewer.addFilter(new ViewerFilter() {
 //
@@ -177,6 +277,7 @@ public class ProofTreeUIPage
 //		});
 		if (fInput != null) viewer.setInput(fInput);
 		if (root != null) viewer.setSelection(new StructuredSelection(root));
+		elementColumn.pack();
 
 		makeActions();
 		hookContextMenu();
@@ -206,8 +307,11 @@ public class ProofTreeUIPage
 				// Saving the expanded elements
 				Object [] elements = viewer.getExpandedElements(); 
 				viewer.setInput(fInput);
-				viewer.refresh();
+//				viewer.refresh();
 				viewer.setExpandedElements(elements);
+				elementColumn.pack();
+//				UIUtils.debug("Width: " + elementColumn.getWidth());
+				viewer.refresh();
 				control.setRedraw(true);
 			}
 		}
