@@ -190,7 +190,7 @@ public abstract class Substitute {
 	 * @param index
 	 *            initial index of the bound identifier
 	 * @param ff
-	 *            factory to used when building the actual substitute expression
+	 *            factory to use when building the actual substitute expression
 	 * @return the substitute object for that identifier
 	 */
 	public static Substitute makeSubstitute(int index, FormulaFactory ff) {
