@@ -241,8 +241,27 @@ public class TestFlattener extends TestCase {
 	public void testNormalizer() {
 		routineTest(unnormalizedExpressions,normalizedExpressions);
 		routineTest(unnormalizedPredicates,normalizedPredicates);
-		routineTest(constructPredicates(unnormalizedPredicates, unnormalizedExpressions),constructPredicates(normalizedPredicates,normalizedExpressions));
 		routineTest(constructExpressions(unnormalizedPredicates,unnormalizedExpressions),constructExpressions(normalizedPredicates,normalizedExpressions));
+		routineTest(constructPredicates(unnormalizedPredicates, unnormalizedExpressions),constructPredicates(normalizedPredicates,normalizedExpressions));
+	}
+	
+	/**
+	 * Ensures that flattening an already flattened formula doesn't create a new
+	 * formula.
+	 */
+	public void testNormalizerNop() {
+		assertNop(normalizedExpressions);
+		assertNop(normalizedPredicates);
+		assertNop(constructExpressions(normalizedPredicates,normalizedExpressions));
+		assertNop(constructPredicates(normalizedPredicates,normalizedExpressions));
+	}
+
+	private void assertNop(Formula[] formulas) {
+		for (Formula formula : formulas) {
+			final Formula flattened = formula.flatten(ff);
+			assertEquals("Flattener not involutive for formula: " + formula, formula, flattened);
+			assertSame("Flattener created a copy of formula: " + formula, formula, flattened);
+		}
 	}
 	
 }
