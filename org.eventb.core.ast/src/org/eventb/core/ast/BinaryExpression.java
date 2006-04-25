@@ -462,7 +462,12 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	public Expression flatten(FormulaFactory factory) {
-		return factory.makeBinaryExpression(getTag(), left.flatten(factory),right.flatten(factory),getSourceLocation());
+		final Expression newLeft = left.flatten(factory);
+		final Expression newRight = right.flatten(factory);
+		if (newLeft == left && newRight == right) {
+			return this;
+		}
+		return factory.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
 	@Override

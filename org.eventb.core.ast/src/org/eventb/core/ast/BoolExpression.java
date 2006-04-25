@@ -75,7 +75,11 @@ public class BoolExpression extends Expression {
 
 	@Override
 	public Expression flatten(FormulaFactory factory) {
-		return factory.makeBoolExpression(child.flatten(factory),getSourceLocation());
+		final Predicate newChild = child.flatten(factory);
+		if (newChild == child) {
+			return this;
+		}
+		return factory.makeBoolExpression(newChild,getSourceLocation());
 	}
 
 	@Override

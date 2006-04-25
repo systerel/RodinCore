@@ -347,15 +347,21 @@ public class AssociativeExpression extends Expression {
 	@Override
 	public Expression flatten(FormulaFactory factory) {
 		List<Expression> newChildren = new ArrayList<Expression>();
-		for (int i = 0; i < children.length; i++) {
-			Expression normChild = children[i].flatten(factory);
+		boolean changed = false;
+		for (Expression child: children) {
+			Expression normChild = child.flatten(factory);
 			if (normChild.getTag() == getTag()) {
-				AssociativeExpression assocExprChild = (AssociativeExpression) normChild;
-				newChildren.addAll(Arrays.asList(assocExprChild.getChildren()));
+				AssociativeExpression assocNormChild = (AssociativeExpression) normChild;
+				newChildren.addAll(Arrays.asList(assocNormChild.children));
+				changed = true;
 			}
 			else {
 				newChildren.add(normChild);
+				changed |= (child != normChild);
 			}
+		}
+		if (! changed) {
+			return this;
 		}
 		return factory.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
 	}

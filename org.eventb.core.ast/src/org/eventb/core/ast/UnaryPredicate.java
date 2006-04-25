@@ -74,7 +74,11 @@ public class UnaryPredicate extends Predicate {
 
 	@Override
 	public Predicate flatten(FormulaFactory factory) {
-		return factory.makeUnaryPredicate(getTag(),child.flatten(factory),getSourceLocation());
+		final Predicate newChild = child.flatten(factory);
+		if (newChild == child) {
+			return this;
+		}
+		return factory.makeUnaryPredicate(getTag(),newChild,getSourceLocation());
 	}
 
 	@Override

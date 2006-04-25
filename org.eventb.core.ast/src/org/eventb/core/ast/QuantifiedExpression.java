@@ -488,7 +488,12 @@ public class QuantifiedExpression extends Expression {
 
 	@Override
 	public Expression flatten(FormulaFactory factory) {
-		return factory.makeQuantifiedExpression(getTag(),quantifiedIdentifiers, pred.flatten(factory), expr.flatten(factory), getSourceLocation(), form);
+		final Predicate newPred = pred.flatten(factory);
+		final Expression newExpr = expr.flatten(factory);
+		if (newPred == pred && newExpr == expr) {
+			return this;
+		}
+		return factory.makeQuantifiedExpression(getTag(),quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
 	}
 
 	@Override

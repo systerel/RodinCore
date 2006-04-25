@@ -150,15 +150,21 @@ public class AssociativePredicate extends Predicate {
 	@Override
 	public Predicate flatten(FormulaFactory factory) {
 		List<Predicate> newChildren = new ArrayList<Predicate>();
+		boolean changed = false;
 		for (Predicate child: children) {
 			Predicate normChild = child.flatten(factory);
 			if (normChild.getTag() == getTag()) {
-				AssociativePredicate temp = (AssociativePredicate) normChild;
-				newChildren.addAll(Arrays.asList(temp.getChildren()));
+				AssociativePredicate assocNormChild = (AssociativePredicate) normChild;
+				newChildren.addAll(Arrays.asList(assocNormChild.children));
+				changed = true;
 			}
 			else {
 				newChildren.add(normChild);
+				changed |= (child != normChild);
 			}
+		}
+		if (! changed) {
+			return this;
 		}
 		return factory.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
 	}

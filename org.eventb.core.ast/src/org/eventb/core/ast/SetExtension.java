@@ -177,13 +177,18 @@ public class SetExtension extends Expression {
 	@Override
 	public Expression flatten(FormulaFactory factory) {
 		if (members.length == 0) {
-			return factory.makeAtomicExpression(Formula.EMPTYSET,getSourceLocation());
+			return factory.makeEmptySet(getType(), getSourceLocation());
 		}
 		Expression[] newChildren = new Expression[members.length];
+		boolean changed = false;
 		for (int i=0;i<members.length;i++) {
 			newChildren[i] = members[i].flatten(factory);
+			changed |= (newChildren[i] != members[i]);
 		}
-		return factory.makeSetExtension(newChildren,getSourceLocation());
+		if (! changed) {
+			return this;
+		}
+		return factory.makeSetExtension(newChildren, getSourceLocation());
 	}
 
 	@Override

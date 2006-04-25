@@ -317,15 +317,15 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	public Expression flatten(FormulaFactory factory) {
-		Expression normalizedChild = child.flatten(factory);
-		if (getTag()==Formula.UNMINUS && normalizedChild.getTag() == Formula.INTLIT) {
-			IntegerLiteral intLit = (IntegerLiteral) normalizedChild;
+		Expression newChild = child.flatten(factory);
+		if (getTag()==Formula.UNMINUS && newChild.getTag() == Formula.INTLIT) {
+			IntegerLiteral intLit = (IntegerLiteral) newChild;
 			return factory.makeIntegerLiteral(intLit.getValue().negate(), getSourceLocation());
 		}
-		if (child != normalizedChild) {
-			return factory.makeUnaryExpression(getTag(), normalizedChild, getSourceLocation());
+		if (newChild == child) {
+			return this;
 		}
-		return this;
+		return factory.makeUnaryExpression(getTag(), newChild, getSourceLocation());
 	}
 
 	@Override

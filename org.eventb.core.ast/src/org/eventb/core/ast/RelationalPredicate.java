@@ -184,7 +184,12 @@ public class RelationalPredicate extends Predicate {
 
 	@Override
 	public Predicate flatten(FormulaFactory factory) {
-		return factory.makeRelationalPredicate(getTag(), left.flatten(factory),right.flatten(factory),getSourceLocation());
+		final Expression newLeft = left.flatten(factory);
+		final Expression newRight = right.flatten(factory);
+		if (newLeft == left && newRight == right) {
+			return this;
+		}
+		return factory.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
 	@Override

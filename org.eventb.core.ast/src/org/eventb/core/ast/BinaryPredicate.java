@@ -115,7 +115,12 @@ public class BinaryPredicate extends Predicate {
 
 	@Override
 	public Predicate flatten(FormulaFactory factory) {
-		return factory.makeBinaryPredicate(getTag(), left.flatten(factory),right.flatten(factory),getSourceLocation());
+		final Predicate newLeft = left.flatten(factory);
+		final Predicate newRight = right.flatten(factory);
+		if (newLeft == left && newRight == right) {
+			return this;
+		}
+		return factory.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
 	@Override

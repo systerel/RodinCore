@@ -212,6 +212,9 @@ public class QuantifiedPredicate extends Predicate {
 			BoundIdentDecl[] idents = catenateBoundIdentLists(quantifiedIdentifiers, quantChild.quantifiedIdentifiers);
 			return factory.makeQuantifiedPredicate(getTag(), idents, quantChild.pred, getSourceLocation());
 		}
+		if (newPred == pred) {
+			return this;
+		}
 		return factory.makeQuantifiedPredicate(getTag(),quantifiedIdentifiers,newPred,getSourceLocation());
 	}
 

@@ -87,7 +87,11 @@ public class SimplePredicate extends Predicate {
 
 	@Override
 	public Predicate flatten(FormulaFactory factory) {
-		return factory.makeSimplePredicate(getTag(),child.flatten(factory),getSourceLocation());
+		final Expression newChild = child.flatten(factory);
+		if (newChild == child) {
+			return this;
+		}
+		return factory.makeSimplePredicate(getTag(), newChild, getSourceLocation());
 	}
 
 	@Override
