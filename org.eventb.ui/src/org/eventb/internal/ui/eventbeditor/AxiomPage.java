@@ -13,13 +13,10 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -51,64 +48,13 @@ public class AxiomPage
 	 */
 	@Override
 	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
-		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		part.getSection().setLayoutData(gd);
 		return part;
-	}
-	
-	
-	/**
-	 * Creating the Mirror sections within the page.
-	 */
-	protected void createMirrorSections(Composite body, IManagedForm managedForm) {	
-		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput();
-		
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-	    Composite composite = managedForm.getToolkit().createComposite(body);
-		composite.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-
-		// Axiom mirror section
-		AxiomMirrorSection axiomMirrorSection = new AxiomMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(axiomMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 150;
-		gd.widthHint = 150;
-		axiomMirrorSection.getSection().setLayoutData(gd);
-		
-		// Theorem mirror section
-		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(theoremMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 150;
-		gd.widthHint = 150;
-		theoremMirrorSection.getSection().setLayoutData(gd);
-
-		// Carrier Set mirror section
-		CarrierSetMirrorSection carrierSetMirrorSection = new CarrierSetMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(carrierSetMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 100;
-		gd.minimumHeight = 50;
-		gd.widthHint = 150;
-		carrierSetMirrorSection.getSection().setLayoutData(gd);
-		
-		// Constant mirror section
-		ConstantMirrorSection constantMirrorSection = new ConstantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(constantMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 100;
-		gd.minimumHeight = 50;
-		gd.widthHint = 150;
-		constantMirrorSection.getSection().setLayoutData(gd);
 	}
 	
 }

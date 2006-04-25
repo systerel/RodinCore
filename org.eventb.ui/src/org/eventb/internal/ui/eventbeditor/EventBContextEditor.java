@@ -27,12 +27,18 @@ import org.eventb.internal.ui.ExtensionLoader;
 public class EventBContextEditor
 	extends EventBEditor 
 {	
+	
 	/**
 	 * The plug-in identifier of the Event-B Machine Editor (value
 	 * <code>"org.eventb.internal.ui.editors.EventBMachineEditor"</code>).
 	 */
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID + ".editors.EventBContextEditor";
 	
+	private EventBMirrorPage theoremMirrorPage;
+	private EventBMirrorPage axiomMirrorPage;
+	private EventBMirrorPage carrierSetMirrorPage;
+	private EventBMirrorPage constantMirrorPage;
+
 	/**
 	 * Default constructor.
 	 */
@@ -67,5 +73,48 @@ public class EventBContextEditor
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#getAdapter(java.lang.Class)
+	 */
+	@Override
+	public Object getAdapter(Class required) {
+		if (ITheoremMirrorPage.class.equals(required)) {
+			if (theoremMirrorPage == null) {
+				theoremMirrorPage = new TheoremMirrorPage(this);
+				return theoremMirrorPage;
+			}
+		}
+		if (IAxiomMirrorPage.class.equals(required)) {
+			if (axiomMirrorPage == null) {
+				axiomMirrorPage = new AxiomMirrorPage(this);
+				return axiomMirrorPage;
+			}
+		}
+		if (ICarrierSetMirrorPage.class.equals(required)) {
+			if (carrierSetMirrorPage == null) {
+				carrierSetMirrorPage = new CarrierSetMirrorPage(this);
+				return carrierSetMirrorPage;
+			}
+		}
+		if (ICarrierSetMirrorPage.class.equals(required)) {
+			if (constantMirrorPage == null) {
+				constantMirrorPage = new CarrierSetMirrorPage(this);
+				return constantMirrorPage;
+			}
+		}
+		return super.getAdapter(required);
+	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (theoremMirrorPage != null) theoremMirrorPage.dispose();
+		if (axiomMirrorPage != null) axiomMirrorPage.dispose();
+		if (carrierSetMirrorPage != null) carrierSetMirrorPage.dispose();
+		if (constantMirrorPage != null) constantMirrorPage.dispose();
+		super.dispose();
+	}
 }

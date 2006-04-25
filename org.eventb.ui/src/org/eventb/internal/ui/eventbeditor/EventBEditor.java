@@ -105,7 +105,7 @@ public abstract class EventBEditor
 	 */
 	@Override
 	public boolean isDirty() {
-		UIUtils.debug("Checking dirty");
+//		UIUtils.debug("Checking dirty");
 		try {
 			return this.getRodinInput().hasUnsavedChanges();
 		}

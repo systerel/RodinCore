@@ -23,7 +23,6 @@ public class SyntheticViewPage
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);  //$NON-NLS-1$
 	}
 
-	
 	/**
 	 * Creating the content of the page
 	 */
@@ -38,7 +37,7 @@ public class SyntheticViewPage
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
-		
+//		form.
 		managedForm.addPart(new SyntheticViewSection(this.getEditor(), this.getManagedForm().getToolkit(), body));
 	}		
 }

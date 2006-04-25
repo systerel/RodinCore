@@ -11,56 +11,50 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eventb.core.IContext;
+import org.eventb.core.IAxiom;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
-/**
- * @author htson
- * <p>
- * An implementation of Event-B Mirror section to display the information of
- * axioms.
- */
-public class AxiomMirrorSection
-	extends EventBMirrorSection
-{
-    
-	// Title and description of the section.
-	private static final String title = "Axioms";
-    private static final String description = "List of axioms of the component";
-    
-    
-    /**
-     * Contructor.
-     * <p>
-     * @param page The Form Page that this mirror section belong to
-     * @param parent The Composite parent 
-     * @param style The style for the section
-     * @param rodinFile The Rodin File which the axioms belong to
-     */
-	public AxiomMirrorSection(FormPage page, Composite parent, int style, IRodinFile rodinFile) {
-		super(page, parent, style, title, description, rodinFile);
-	}
 
-	
+/**
+ * This sample class demonstrates how to plug-in a new
+ * workbench view. The view shows data obtained from the
+ * model. The sample creates a dummy model on the fly,
+ * but a real implementation would connect to the model
+ * available either in this or another plug-in (e.g. the workspace).
+ * The view is connected to the model using a content provider.
+ * <p>
+ * The view uses a label provider to define how model
+ * objects should be presented in the view. Each
+ * view can present the same model objects using
+ * different labels and icons, if needed. Alternatively,
+ * a single label provider can be shared between views
+ * in order to ensure that objects of the same type are
+ * presented in the same way everywhere.
+ * <p>
+ */
+
+public class AxiomMirrorPage
+	extends EventBMirrorPage
+	implements	IAxiomMirrorPage
+{
+
+	public AxiomMirrorPage(EventBEditor editor) {
+		super(editor);
+	}   
+    
 	/**
 	 * Return the form (XML formatted) string that represents the information 
 	 * of the axioms.
 	 */
 	protected String getFormString() {
-		IRodinElement [] axioms;
 		String formString = "<form>";
 		try {
-			axioms = ((IContext) rodinFile).getAxioms();
+			IRodinElement [] axioms = editor.getRodinInput().getChildrenOfType(IAxiom.ELEMENT_TYPE);
 			for (int i = 0; i < axioms.length; i++) {
 				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(axioms[i].getElementName()) + ": ";
 				formString = formString + UIUtils.XMLWrapUp(((IInternalElement) axioms[i]).getContents()); 
@@ -83,10 +77,8 @@ public class AxiomMirrorSection
 	protected HyperlinkAdapter createHyperlinkListener() {
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				EventBEditor editor = ((EventBEditor) getPage().getEditor());
-				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IRodinElement [] axioms = ((IContext) rodinFile).getAxioms();
+					IRodinElement [] axioms = editor.getRodinInput().getChildrenOfType(IAxiom.ELEMENT_TYPE);
 					for (int i = 0; i < axioms.length; i++) {
 						if (e.getHref().equals(axioms[i].getElementName())) {
 							editor.setSelection(axioms[i]);
@@ -101,24 +93,5 @@ public class AxiomMirrorSection
 			}
 		});
 	}
-
-	@Override
-	protected void expansionStateChanging(boolean expanding) {
-		if (expanding) {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 200;
-			gd.minimumHeight = 150;
-			gd.widthHint = 150;
-			this.getSection().setLayoutData(gd);
-		}
-		else {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-			gd.heightHint = 0;
-			gd.widthHint = 150;
-			this.getSection().setLayoutData(gd);
-		}
-		super.expansionStateChanging(expanding);
-	}
-	
 
 }

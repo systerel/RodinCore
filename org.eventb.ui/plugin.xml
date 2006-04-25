@@ -36,6 +36,42 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofTreeUI"
             name="Proof Tree UI"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.InvariantMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.InvariantMirror"
+            name="Invariant Mirror"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.TheoremMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.TheoremMirror"
+            name="Theorem Mirror"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.AxiomMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.AxiomMirror"
+            name="Axiom Mirror"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.CarrierSetMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.CarrierSetMirror"
+            name="Carrier Set Mirror"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.ConstantMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.ConstantMirror"
+            name="Constant Mirror"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.eventbeditor.EventMirror"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.EventMirror"
+            name="Event Mirror"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

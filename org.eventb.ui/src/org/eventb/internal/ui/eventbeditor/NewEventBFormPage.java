@@ -65,7 +65,7 @@ public abstract class NewEventBFormPage
 		part = createMasterSection(managedForm, body, Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
 		managedForm.addPart(part);
 		
-		createMirrorSections(body, managedForm);
+//		createMirrorSections(body, managedForm);
 		
 	}
 	
@@ -74,7 +74,7 @@ public abstract class NewEventBFormPage
 	 * @param body The composite to create the mirror sections
 	 * @param managedForm The form to create the mirror sections
 	 */
-	protected abstract void createMirrorSections(Composite body, IManagedForm managedForm);
+//	protected abstract void createMirrorSections(Composite body, IManagedForm managedForm);
 		
 	
 	protected abstract EventBPartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor);

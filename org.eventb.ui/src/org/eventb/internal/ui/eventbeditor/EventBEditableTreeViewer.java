@@ -33,9 +33,8 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author htson
@@ -57,7 +56,7 @@ public abstract class EventBEditableTreeViewer
 	
 	protected abstract void createTreeColumns(Tree tree);
 	
-	protected abstract void commit(IInternalElement elemnt, int col, String text);
+	protected abstract void commit(IRodinElement element, int col, String text);
 	
 	/**
 	 * Constructor.
@@ -144,8 +143,8 @@ public abstract class EventBEditableTreeViewer
         if (column < 1) return; // The object column is not editable
 //        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
         final Object itemData = item.getData();
-        if (itemData instanceof IUnnamedInternalElement && column == 1) return;
-        if (column == 2) {
+//        if (itemData instanceof IUnnamedInternalElement && column == 1) return;
+        if (column == 1) {
         	if (itemData instanceof IVariable) return;
         	if (itemData instanceof IEvent) return;
         }
@@ -162,7 +161,7 @@ public abstract class EventBEditableTreeViewer
 			 */
 			@Override
 			public void commit() {
-				EventBEditableTreeViewer.this.commit((IInternalElement) itemData, column, text.getText());
+				EventBEditableTreeViewer.this.commit((IRodinElement) itemData, column, text.getText());
 			}
 			
 		};
@@ -181,7 +180,7 @@ public abstract class EventBEditableTreeViewer
 				switch (e.type) {
 					case SWT.FocusOut:
 						UIUtils.debug("FocusOut");
-						commit((IInternalElement) itemData, column, contents);
+						commit((IRodinElement) itemData, column, contents);
 						item.setText (column, contents);
 						composite.dispose ();
 						break;
@@ -194,7 +193,7 @@ public abstract class EventBEditableTreeViewer
 						switch (e.detail) {
 							case SWT.TRAVERSE_RETURN:
 								UIUtils.debug("TraverseReturn");
-								commit((IInternalElement) itemData, column, contents);
+								commit((IRodinElement) itemData, column, contents);
 								composite.dispose();
 								e.doit = false;
 								break;

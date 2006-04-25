@@ -310,6 +310,138 @@ public class SyntheticViewSection
 
 	/**
 	 * @author htson
+	 * This class provides the label for different elements in the tree.
+	 */
+	class SyntheticLabelProvider 
+		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+//			IRodinElement rodinElement = ((Leaf) element).getElement();
+			if (columnIndex != 0) return null;
+			return UIUtils.getImage(element);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+//			IRodinElement element = ((Leaf) element).getElement();
+			
+			if (columnIndex == 0) {
+				if (element instanceof IUnnamedInternalElement) return "";
+				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+				return element.toString();
+			}
+			
+			if (columnIndex == 1) {
+				try {
+					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				return element.toString();
+			}
+			
+//			if (columnIndex == 0) {
+//				try {
+//					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+//				else return element.toString();
+//			}
+			return element.toString();
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		 */
+		public Color getBackground(Object element, int columnIndex) {
+			 Display display = Display.getCurrent();
+             return display.getSystemColor(SWT.COLOR_WHITE);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+		 */
+		public Color getForeground(Object element, int columnIndex) {
+			Display display = Display.getCurrent();
+            return display.getSystemColor(SWT.COLOR_BLACK);
+       }
+
+//		public String getText(Object obj) {
+//			if (obj instanceof IAction) {
+//				try {
+//					return ((IAction) obj).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					// TODO Handle Exception
+//					e.printStackTrace();
+//					return "";
+//				}
+//			}
+//			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
+//			return obj.toString();
+//		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		 */
+		public Font getFont(Object element, int columnIndex) {
+//			UIUtils.debug("Get fonts");
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		}
+		
+		
+//		public Image getImage(Object obj) {
+//			return UIUtils.getImage(obj);
+//		}
+	
+	
+	
+	}
+
+	/**
+	 * @author htson
 	 * <p>
 	 * This class sorts the RODIN elements by types. 
 	 */
@@ -335,108 +467,108 @@ public class SyntheticViewSection
 			return 0;
 		}
 	}
-	
-	class MasterLabelProvider 
-		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex != 0) return null;
-			return UIUtils.getImage(element);
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			
-			if (columnIndex == 1) {
-				if (element instanceof IUnnamedInternalElement) return "";
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				return element.toString();
-			}
-			
-			if (columnIndex == 2) {
-				try {
-					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				return element.toString();
-			}
-			
-			if (columnIndex == 0) {
-				try {
-					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				else return element.toString();
-			}
-			return element.toString();
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
-		 */
-		public Color getBackground(Object element, int columnIndex) {
-			 Display display = Display.getCurrent();
-	         return display.getSystemColor(SWT.COLOR_WHITE);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
-		 */
-		public Color getForeground(Object element, int columnIndex) {
-			Display display = Display.getCurrent();
-	        return display.getSystemColor(SWT.COLOR_BLACK);
-	   }
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
-		 */
-		public Font getFont(Object element, int columnIndex) {
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		}
-	
-	}
+//	
+//	class MasterLabelProvider 
+//		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+//		
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+//		 */
+//		public Image getColumnImage(Object element, int columnIndex) {
+//			if (columnIndex != 0) return null;
+//			return UIUtils.getImage(element);
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+//		 */
+//		public String getColumnText(Object element, int columnIndex) {
+//			
+//			if (columnIndex == 1) {
+//				if (element instanceof IUnnamedInternalElement) return "";
+//				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+//				return element.toString();
+//			}
+//			
+//			if (columnIndex == 2) {
+//				try {
+//					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				return element.toString();
+//			}
+//			
+//			if (columnIndex == 0) {
+//				try {
+//					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
+//				else return element.toString();
+//			}
+//			return element.toString();
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+//		 */
+//		public void addListener(ILabelProviderListener listener) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+//		 */
+//		public void dispose() {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+//		 */
+//		public boolean isLabelProperty(Object element, String property) {
+//			// TODO Auto-generated method stub
+//			return false;
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+//		 */
+//		public void removeListener(ILabelProviderListener listener) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+//		 */
+//		public Color getBackground(Object element, int columnIndex) {
+//			 Display display = Display.getCurrent();
+//	         return display.getSystemColor(SWT.COLOR_WHITE);
+//		}
+//		
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+//		 */
+//		public Color getForeground(Object element, int columnIndex) {
+//			Display display = Display.getCurrent();
+//	        return display.getSystemColor(SWT.COLOR_BLACK);
+//	   }
+//	
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+//		 */
+//		public Font getFont(Object element, int columnIndex) {
+//			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+//		}
+//	
+//	}
 	
 	/**
      * Constructor.
@@ -474,24 +606,25 @@ public class SyntheticViewSection
 //		body.setLayout(layout);
 
 //		viewer = new TreeViewer(body, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		viewer = new TreeViewer(section, SWT.MULTI | SWT.FULL_SELECTION);
+		viewer = new SyntheticEditableTreeViewer(section, SWT.MULTI | SWT.FULL_SELECTION, ((EventBEditor) editor).getRodinInput());
+//		viewer = new TreeViewer(section, SWT.MULTI | SWT.FULL_SELECTION);
 		
 		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new MasterLabelProvider());
+		viewer.setLabelProvider(new SyntheticLabelProvider());
 		viewer.setSorter(new ElementsSorter());
 		tree = viewer.getTree();
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tree.setHeaderVisible(true);
 		TreeColumn column = new TreeColumn(tree, SWT.LEFT);
-		column.setText("Structure");
+		column.setText("Elements");
 		column.setResizable(true);
-		column.setWidth(250);
-		TreeColumn column2 = new TreeColumn(tree, SWT.LEFT);
-		column2.setText("Name");
-		column2.setResizable(true);
-		column2.setWidth(150);
+		column.setWidth(200);
+//		TreeColumn column2 = new TreeColumn(tree, SWT.LEFT);
+//		column2.setText("Name");
+//		column2.setResizable(true);
+//		column2.setWidth(150);
 		TreeColumn column3 = new TreeColumn(tree, SWT.LEFT);
-		column3.setText("Content");
+		column3.setText("Contents");
 		column3.setResizable(true);
 		column3.setWidth(300);
 		viewer.setInput(((EventBEditor) editor).getRodinInput());
@@ -538,8 +671,8 @@ public class SyntheticViewSection
 			        if (col < 1) return; // The object column is not editable
 //			        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
 			        final Object itemData = item.getData();
-			        if (itemData instanceof IUnnamedInternalElement && col == 1) return;
-			        if (col == 2) {
+//			        if (itemData instanceof IUnnamedInternalElement && col == 1) return;
+			        if (col == 1) {
 			        	if (itemData instanceof IVariable) return;
 			        	if (itemData instanceof IEvent) return;
 			        }
@@ -556,7 +689,7 @@ public class SyntheticViewSection
 						 */
 						@Override
 						public void commit() {
-							SyntheticViewSection.this.commit(pt, col, text.getText());
+							SyntheticViewSection.this.commit((IRodinElement) itemData, col, text.getText());
 						}
 						
 					};
@@ -575,7 +708,7 @@ public class SyntheticViewSection
 								case SWT.FocusOut:
 									UIUtils.debug("FocusOut");
 									if (item.isDisposed()) return;
-									commit(pt, col, text.getText());
+									commit((IRodinElement) itemData, col, text.getText());
 									item.setText (col, text.getText());
 									composite.dispose ();
 									break;
@@ -601,7 +734,7 @@ public class SyntheticViewSection
 											UIUtils.debug("TraverseReturn");
 											if (item.isDisposed()) return;
 											item.setText (col, text.getText ());
-											commit(pt, col, text.getText());
+											commit((IRodinElement) itemData, col, text.getText());
 											//FALL THROUGH
 										case SWT.TRAVERSE_ESCAPE:
 											composite.dispose ();
@@ -636,35 +769,70 @@ public class SyntheticViewSection
 		
 	}	
 
-	private void commit(Point pt, int col, String text) {
-        // Determine which row was selected
-        TreeItem item = tree.getItem(pt);
-        Object itemData = item.getData();
-		if (itemData instanceof IInternalElement) {
+//	private void commit(Point pt, int col, String text) {
+//        // Determine which row was selected
+//        TreeItem item = tree.getItem(pt);
+//        Object itemData = item.getData();
+//		if (itemData instanceof IInternalElement) {
+//			switch (col) {
+//			case 1:  // Commit name
+//				try {
+//					if (((IInternalElement) itemData).getElementName().equals(text)) return;
+//					UIUtils.debug("Rename " + ((IInternalElement) itemData).getElementName() + " to " + text);
+//					((IInternalElement) itemData).rename(text, false, null);
+////					markDirty();
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				
+//				break;
+//			case 2:  // Commit content
+//				try {
+//					((IInternalElement) itemData).setContents(text);
+////					markDirty();
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				break;
+//			}
+//		}
+//	}
+
+	public void commit(IRodinElement element, int col, String text) {
+		// Determine which row was selected
+//		IInternalElement rodinElement = (IInternalElement) leaf.getElement();
+//        TreeItem item = this.getTree().getItem(pt);
+//        if (item == null) return; 
+//        Object itemData = item.getData();
+//		if (itemData instanceof IInternalElement) {
 			switch (col) {
-			case 1:  // Commit name
+			case 0:  // Commit name
 				try {
-					if (((IInternalElement) itemData).getElementName().equals(text)) return;
-					UIUtils.debug("Rename " + ((IInternalElement) itemData).getElementName() + " to " + text);
-					((IInternalElement) itemData).rename(text, false, null);
-//					markDirty();
+					UIUtils.debug("Commit : " + element.getElementName() + " to be : " + text);
+					if (!element.getElementName().equals(text)) {
+						((IInternalElement) element).rename(text, false, null);
+					}
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 				
 				break;
-			case 2:  // Commit content
+			case 1:  // Commit content
 				try {
-					((IInternalElement) itemData).setContents(text);
-//					markDirty();
+					UIUtils.debug("Commit content: " + ((IInternalElement) element).getContents() + " to be : " + text);
+					if (!((IInternalElement) element).getContents().equals(text)) {
+						((IInternalElement) element).setContents(text);
+					}
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
+				
 				break;
 			}
-		}
+//		}
 	}
-
 }

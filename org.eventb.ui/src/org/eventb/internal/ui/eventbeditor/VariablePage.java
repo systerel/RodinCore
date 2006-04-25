@@ -13,13 +13,10 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -50,7 +47,7 @@ public class VariablePage
 	 */
 	@Override
 	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
-		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.TITLE_BAR, (EventBEditor) this.getEditor());
+		VariableMasterSection part = new VariableMasterSection(managedForm, parent, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;
@@ -59,38 +56,5 @@ public class VariablePage
 		return part;
 	}
 
-
-
-	/**
-	 * Creating the Mirror sections within the page.
-	 */
-	protected void createMirrorSections(Composite body, IManagedForm managedForm) {
-		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput();
-		
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		Composite composite = managedForm.getToolkit().createComposite(body);
-		composite.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-
-		// Invariant mirror section.
-		InvariantMirrorSection invariantMirrorSection = new InvariantMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(invariantMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 150;
-		gd.widthHint = 150;
-		invariantMirrorSection.getSection().setLayoutData(gd);
-		
-		// Theorem mirror section.
-		TheoremMirrorSection theoremMirrorSection = new TheoremMirrorSection(this, composite, ExpandableComposite.TITLE_BAR |Section.EXPANDED, rodinFile);
-		managedForm.addPart(theoremMirrorSection);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = 200;
-		gd.minimumHeight = 150;
-		gd.widthHint = 150;
-		theoremMirrorSection.getSection().setLayoutData(gd);
-	}
 
 }
