@@ -153,11 +153,11 @@ public class TestWD extends TestCase {
 					"⊤"
 			), new TestPredicate(
 					"(B×Y)(x) ∈ Y",
-					"x∈dom(B × Y) ∧ (B × Y)\u223c;({x}◁(B × Y)) ⊆ id(ran(B × Y))"
+					"x∈dom(B × Y) ∧ (B × Y)\u223c;({x}◁(B × Y)) ⊆ id(BOOL)"
 			), new TestPredicate(
 					"x=f(f(y))",
-					"((y∈dom(f) ∧ f\u223c;({y}◁f)⊆id(ran(f)))" +
-					"∧ f(y)∈dom(f)) ∧ f\u223c;({f(y)}◁f)⊆id(ran(f))"
+					"((y∈dom(f) ∧ f\u223c;({y}◁f)⊆id(ℤ))" +
+					"∧ f(y)∈dom(f)) ∧ f\u223c;({f(y)}◁f)⊆id(ℤ)"
 			), new TestPredicate(
 					"(x÷y=y) ⇔ (y mod x=0)",
 					"y≠0 ∧ x≠0"
@@ -173,13 +173,13 @@ public class TestWD extends TestCase {
 			), new TestPredicate(
 					"(λ m↦n \u00b7 m>n \u2223 y)(1↦x) = y",
 					"1 ↦ x∈dom(λm ↦ n\u00b7m>n ∣ y) " +
-					"∧ (λm ↦ n\u00b7m>n ∣ y)\u223c;({1 ↦ x}◁(λm ↦ n\u00b7m>n ∣ y))⊆id(ran(λm ↦ n\u00b7m>n ∣ y))"
+					"∧ (λm ↦ n\u00b7m>n ∣ y)\u223c;({1 ↦ x}◁(λm ↦ n\u00b7m>n ∣ y))⊆id(ℤ)"
 			), new TestPredicate(
 					"{m,n \u00b7 m=f(n) \u2223 m↦n}[A] ⊂ B",
-					"∀n \u00b7 n∈dom(f) ∧ f\u223c;({n}◁f) ⊆ id(ran(f))"
+					"∀n \u00b7 n∈dom(f) ∧ f\u223c;({n}◁f) ⊆ id(ℤ)"
 			), new TestPredicate(
 					"{f(n)↦m \u2223 x=n ∧ y+x=m ∧ f ∈ ℤ→A} = A×B",
-					"∀f,n,m \u00b7 x=n ∧ y+x=m ∧ f ∈ ℤ→A ⇒ n∈dom(f) ∧ f\u223c;({n}◁f)⊆id(ran(f))"
+					"∀f,n,m \u00b7 x=n ∧ y+x=m ∧ f ∈ ℤ→A ⇒ n∈dom(f) ∧ f\u223c;({n}◁f)⊆id(ℤ)"
 			), new TestPredicate(
 					"{1, 2, x, x+y, 4, 6} = B",
 					"⊤"
@@ -209,7 +209,7 @@ public class TestWD extends TestCase {
 					"y≠0"
 			), new TestAssignment(
 					"f(x)≔f(x)",
-					"x∈dom(f)∧f\u223c;({x} ◁ f)⊆id(ran(f))"
+					"x∈dom(f)∧f\u223c;({x} ◁ f)⊆id(ℤ)"
 			), new TestAssignment(
 					"x :\u2223 x'=min(A∪{x'})",
 					"∀x' \u00b7 A∪{x'}≠∅"

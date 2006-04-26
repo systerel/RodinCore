@@ -795,7 +795,7 @@ public class BinaryExpression extends Expression {
 		Expression comp0 = ff.makeUnaryExpression(CONVERSE, left, null);
 		Expression comp1 = ff.makeBinaryExpression(DOMRES, singleton, left, null);
 		Expression comp = ff.makeAssociativeExpression(FCOMP, new Expression[]{comp0, comp1}, null);
-		Expression ran = ff.makeUnaryExpression(KRAN, left, null);
+		Expression ran = left.getType().getTarget().toExpression(ff);
 		Expression id = ff.makeUnaryExpression(KID, ran, null);
 		Predicate rightFct = ff.makeRelationalPredicate(SUBSETEQ, comp, id, null);
 		return 
