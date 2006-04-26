@@ -57,7 +57,8 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		
 		//Then the free Identifiers are decomposed by introducing bound identifiers.
 		if(pred.getFreeIdentifiers().length > 0) {
-			Map<FreeIdentifier, Expression> identMap = new HashMap();
+			Map<FreeIdentifier, Expression> identMap =
+				new HashMap<FreeIdentifier, Expression>();
 			Set<String> names = new HashSet<String>();
 			LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 			LinkedList<Predicate> bindings = new LinkedList<Predicate>();
