@@ -1550,12 +1550,13 @@ public abstract class Formula<T extends Formula<T>> {
 			BoundIdentDecl[] quantifiedIdents);
 
 	/**
-	 * Computes the Well-definedness predicate for this formula.
+	 * Computes the Well-Definedness predicate for this formula.
 	 * <p>
 	 * The following optimisations are implemented:
 	 * <ul>
 	 * <li>"⊤" is elimated from formulas where possible</li>
-	 * <li>implications are replaced by conjunctions according to the equivalences
+	 * <li>implications are replaced by conjunctions according to the
+	 *     equivalences
 	 * <pre>
 	 * 		(⊤ ∧ A) ⇔ A							- getWDSimplifyC
 	 * 		(A ∧ ⊤) ⇔ A							- getWDSimplifyC
@@ -1566,14 +1567,16 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 		(⊤ ⇒ A) ⇔ A							- getWDSimplifyI
 	 * 		(∀x·⊤) ⇔ ⊤								- getWDSimplifyQ
 	 * 		(∃x·⊤) ⇔ ⊤								- getWDSimplifyQ
-	 * TODO (∃x·A) ⇔ A provided x nfin A	(absence of this rule causes the type-check to fail for some WD-formulas)
+	 *      (∀x·A) ⇔ A provided x nfin A           - getWDSimplifyQ
+	 *      (∃x·A) ⇔ A provided x nfin A           - getWDSimplifyQ
 	 * </pre></li></ul></p>
 	 * <p>
-	 * This formula must be type-checked before <code>getWDPredicate()</code> can be invoked.
+	 * This formula must be type-checked before <code>getWDPredicate()</code>
+	 * can be invoked.
 	 * </p>
 	 * @param formulaFactory
-	 *    factory to use for creating the predicate
-	 * @return Returns the well-definedness predicate for this formula.
+	 *    factory to use for creating the WD predicate
+	 * @return the well-definedness predicate for this formula.
 	 */
 	public final Predicate getWDPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
