@@ -34,14 +34,14 @@ import org.eventb.internal.pp.translator.Translator;
 public class TranslationTests extends TestCase {
 	
 	public interface TestTranslation {
-		Formula translate(Formula input, FormulaFactory ff);
+		Formula translate(Formula input, FormulaFactory pff);
 	}
 	
-	private static TestTranslation identifierDecomposition = new TestTranslation() {
-		public Formula translate(Formula input, FormulaFactory formulaFactory) {
-			return IdentifierDecomposition.decomposeIdentifiers((Predicate)input, formulaFactory);
-		}
-	};
+//	private static TestTranslation identifierDecomposition = new TestTranslation() {
+//		public Formula translate(Formula input, FormulaFactory formulaFactory) {
+//			return IdentifierDecomposition.decomposeIdentifiers((Predicate)input, formulaFactory);
+//		}
+//	};
 	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -50,10 +50,10 @@ public class TranslationTests extends TestCase {
 	private static BooleanType BOOL = ff.makeBooleanType();
 	private static PowerSetType INT_SET = ff.makePowerSetType(INT);
 
-	private static GivenType ty_S = ff.makeGivenType("S");
-	private static GivenType ty_T = ff.makeGivenType("T");
-	private static GivenType ty_U = ff.makeGivenType("U");
-	private static GivenType ty_V = ff.makeGivenType("V");
+//	private static GivenType ty_S = ff.makeGivenType("S");
+//	private static GivenType ty_T = ff.makeGivenType("T");
+//	private static GivenType ty_U = ff.makeGivenType("U");
+//	private static GivenType ty_V = ff.makeGivenType("V");
 
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -65,14 +65,6 @@ public class TranslationTests extends TestCase {
 	
 	private static Type REL(Type left, Type right) {
 		return ff.makeRelationalType(left, right);
-	}
-	
-	private static BinaryExpression Maplet(Expression left, Expression right) {
-		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, null);
-	}
-	
-	private static IntegerLiteral IntLiteral(int value) {
-		return ff.makeIntegerLiteral(new BigInteger("" + value), null);
 	}
 	
 	public static Predicate parse(String string, ITypeEnvironment te) {
@@ -101,8 +93,8 @@ public class TranslationTests extends TestCase {
 	
 	private static void doTest(Predicate input, Predicate expected) {
 		doTest(input, expected, new TestTranslation() {
-			public Formula translate(Formula input, FormulaFactory formulaFactory) {
-				return Translator.reduceToPredCalc((Predicate)input, formulaFactory);
+			public Formula translate(Formula inp, FormulaFactory formulaFactory) {
+				return Translator.reduceToPredCalc((Predicate)inp, formulaFactory);
 			}});
 	}
 	
@@ -131,10 +123,10 @@ public class TranslationTests extends TestCase {
 		doTest( "⊤ ∧ ⊤",
 				"⊤ ∧ ⊤", false);
 	}
-	/*
+	
 	public void testIdentifierDecomposition1() {
-		doTest( "∀x·10↦20 = x", 
-				"∀x,x0·10=x0∧20=x", false);		
+		doTest( "∀x·10↦(20↦30) = x", 
+				"∀x,x0,x1·10=x1∧20=x0∧30=x", false);		
 	}
 
 	public void testIdentifierDecomposition2() {
@@ -148,7 +140,7 @@ public class TranslationTests extends TestCase {
 		doTest( "E ∈ S", 
 				"∀x,x0,x1·E=x1↦(x0↦x) ⇒ x1↦(x0↦x)∈S", false, te);		
 	}
-	
+/*	
 	
 	public void testIdentifierDecomposition4() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
@@ -340,7 +332,7 @@ public class TranslationTests extends TestCase {
 	public void testCSetInRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈{x·⊤ ∣ x}",
-				"∃x·⊤∧E=x", false, te);
+				"∃x·E=x", false, te);
 	}
 	
 	public void testCSetInRule2() {
@@ -376,7 +368,7 @@ public class TranslationTests extends TestCase {
 	public void testQUnionInRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈(⋃x·⊤ ∣ {x})",
-				"∃x·⊤∧E=x", false, te);
+				"∃x·E=x", false, te);
 	}
 	
 	public void testQUnionInRule1() {
@@ -1260,20 +1252,48 @@ public class TranslationTests extends TestCase {
 				"e ∈ {card({1})↦card({1})}", true);
 	}
 	
+	public void testFunImgHard() {
+		doTest( "∃f·f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(1)+1))+1))+1))+1))+1))+1))+1))+1))+1))+1))+1))+1)=1",
+				"∃f·f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(1)+1))+1))+1))+1))+1))+1))+1))+1))+1))+1))+1))+1)=1", true);
+	}
+	
+	public void testRelImgHard() {
+		doTest( "∃r,n·r[r[r[r[r[r[r[r[r[r[r[r[{1+n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}={1}",
+				"∃r,n·r[r[r[r[r[r[r[r[r[r[r[r[{1+n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}]∪{n}={1}", true);
+	}
+	/*
+	public void testMinHard() {
+		doTest( "E ∈ {a·⊤∣a+min({b·⊤∣b+min({c·⊤∣c+min({d·⊤∣d+min( {e·⊤∣e+min({f·⊤∣f+min({g·⊤∣g+min({h·⊤∣h+min({a·⊤∣a+min({b·⊤∣b+min({c·⊤∣c+min({d·⊤∣d+min( {e·⊤∣e+min({f·⊤∣f+min({g·⊤∣g+min({h·⊤∣h+min({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}",
+				"E ∈ {a·⊤∣a+min({b·⊤∣b+min({c·⊤∣c+min({d·⊤∣d+min( {e·⊤∣e+min({f·⊤∣f+min({g·⊤∣g+min({h·⊤∣h+min({a·⊤∣a+min({b·⊤∣b+min({c·⊤∣c+min({d·⊤∣d+min( {e·⊤∣e+min({f·⊤∣f+min({g·⊤∣g+min({h·⊤∣h+min({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}", true);
+	}
+
+	public void testMaxHard() {
+		doTest( "E ∈ {a·⊤∣a+max({b·⊤∣b+max({c·⊤∣c+max({d·⊤∣d+max( {e·⊤∣e+max({f·⊤∣f+max({g·⊤∣g+max({h·⊤∣h+max({a·⊤∣a+max({b·⊤∣b+max({c·⊤∣c+max({d·⊤∣d+max( {e·⊤∣e+max({f·⊤∣f+max({g·⊤∣g+max({h·⊤∣h+max({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}",
+				"E ∈ {a·⊤∣a+max({b·⊤∣b+max({c·⊤∣c+max({d·⊤∣d+max( {e·⊤∣e+max({f·⊤∣f+max({g·⊤∣g+max({h·⊤∣h+max({a·⊤∣a+max({b·⊤∣b+max({c·⊤∣c+max({d·⊤∣d+max( {e·⊤∣e+max({f·⊤∣f+max({g·⊤∣g+max({h·⊤∣h+max({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}", true);
+	}
+
 	public void testCardHard() {
 		doTest( "E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})}",
 				"E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})}", true);
 //		doTest( "E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}",
 //				"E ∈ {a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({a·⊤∣a+card({b·⊤∣b+card({c·⊤∣c+card({d·⊤∣d+card( {e·⊤∣e+card({f·⊤∣f+card({g·⊤∣g+card({h·⊤∣h+card({1+a+b+c+d+e+f+g+h})})})})})})})})})})})})})})})})}", true);
-	}
+	}*/
+	/*
+	public void testD1() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[] {"a"}, new Type[] {CPROD(INT, INT)});
+		doTest( "a = b ∧ a ∈ S",
+				"a=b", true, te);
+	}*/
 	
 	public void testPerf() {
 		Predicate pred = parse("E∈S∪X↠T∪Y", FastFactory.mTypeEnvironment(
 				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)}));
 		
-		for(int i = 0; i < 1; i++) {
+		System.out.println("start");
+		for(int i = 0; i < 1000; i++) {
 			Translator.reduceToPredCalc(pred, ff);
 		}
+		System.out.println("end");
 	}
 	
 	
