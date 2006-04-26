@@ -50,6 +50,7 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 
 	%include {Formula.tom}
 	
+	@Override
 	protected Expression translate(Expression expr, FormulaFactory ff) {
 		SourceLocation loc = expr.getSourceLocation();
 	    %match (Expression expr) {
@@ -81,6 +82,7 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    }
 	}
 	
+	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
