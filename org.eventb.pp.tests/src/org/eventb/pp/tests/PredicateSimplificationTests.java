@@ -134,10 +134,20 @@ public class PredicateSimplificationTests extends TestCase {
 	}
 
 	public void testImplRule4() {
+		doTest( "⊤ ⇒ (⊤ ∨ (a>b))",
+				"⊤", false);
+	}
+
+	public void testImplRule5() {
 		doTest( "a>b ⇒ ⊥",
 				"¬(a>b)", false);
 	}
 	
+	public void testImplRule6() {
+		doTest( "⊤∧(a>b) ⇒ ⊥",
+				"¬(a>b)", false);
+	}
+
 	public void testNotRule1() {
 		doTest( "¬⊤",
 				"⊥", false);
