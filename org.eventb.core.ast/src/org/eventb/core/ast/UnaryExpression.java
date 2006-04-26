@@ -511,12 +511,14 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
-		case KCARD:    return getWDPredicateKCARD(formulaFactory);
+		case KCARD:
+			return getWDPredicateKCARD(formulaFactory);
 		case KMIN:
 		case KMAX:
-		case KINTER:   return getWDPredicateKINTER(formulaFactory);
+		case KINTER:
+			return getWDPredicateKINTER(formulaFactory);
 		default:
 			return child.getWDPredicateRaw(formulaFactory);
 		}

@@ -145,7 +145,7 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return child.getWDPredicateRaw(formulaFactory);
 	}
 

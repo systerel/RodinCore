@@ -144,7 +144,7 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return child.getWDPredicateRaw(formulaFactory);
 	}
 

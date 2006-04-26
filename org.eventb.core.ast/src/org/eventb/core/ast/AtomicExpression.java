@@ -108,7 +108,7 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return formulaFactory.makeLiteralPredicate(BTRUE, null);
 	}
 	

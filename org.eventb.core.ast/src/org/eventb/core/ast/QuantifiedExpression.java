@@ -656,11 +656,16 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		if(getTag() == QINTER) {
-			return getWDPredicateQINTER(formulaFactory);
-		} else {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+		switch (getTag()) {
+		case QUNION:
+		case CSET:
 			return getWDPredicateQUNION(formulaFactory);
+		case QINTER:
+			return getWDPredicateQINTER(formulaFactory);
+		default:
+			assert false; 
+			return formulaFactory.makeLiteralPredicate(BFALSE, null);
 		}
 	}
 

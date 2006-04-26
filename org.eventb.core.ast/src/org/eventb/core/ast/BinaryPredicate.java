@@ -244,7 +244,7 @@ public class BinaryPredicate extends Predicate {
 	}
 	
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
 		case LIMP: return getWDPredicateLIMP(formulaFactory);
 		case LEQV: return getWDPredicateLEQV(formulaFactory);

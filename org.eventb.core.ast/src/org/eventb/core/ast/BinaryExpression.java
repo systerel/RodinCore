@@ -807,7 +807,7 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
 		case DIV:      
 		case MOD:      return getWDPredicateDIV(formulaFactory);

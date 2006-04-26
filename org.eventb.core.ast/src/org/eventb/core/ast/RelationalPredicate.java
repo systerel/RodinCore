@@ -316,7 +316,7 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return getWDConjunction(formulaFactory, left, right);
 	}
 

@@ -197,9 +197,6 @@ public class BecomesEqualTo extends Assignment {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#getWDPredicateRaw(org.eventb.core.ast.FormulaFactory)
-	 */
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return getWDConjunction(formulaFactory, values);

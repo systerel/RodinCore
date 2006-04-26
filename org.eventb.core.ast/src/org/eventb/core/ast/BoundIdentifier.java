@@ -161,7 +161,7 @@ public class BoundIdentifier extends Identifier {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return formulaFactory.makeLiteralPredicate(BTRUE, null);
 	}
 

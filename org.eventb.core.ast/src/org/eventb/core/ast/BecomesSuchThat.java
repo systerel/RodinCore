@@ -235,9 +235,6 @@ public class BecomesSuchThat extends Assignment {
 		condition.isLegible(result, boundBelow);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.Formula#getWDPredicateRaw(org.eventb.core.ast.FormulaFactory)
-	 */
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		Predicate wdCondition = condition.getWDPredicateRaw(formulaFactory);

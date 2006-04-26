@@ -260,7 +260,7 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return getWDConjunction(formulaFactory, members);
 	}
 

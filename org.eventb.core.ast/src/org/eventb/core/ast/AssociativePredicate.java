@@ -275,7 +275,7 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
 		case LAND: return getWDPredicateLAND(0, formulaFactory);
 		case LOR:  return getWDPredicateLOR(0, formulaFactory);

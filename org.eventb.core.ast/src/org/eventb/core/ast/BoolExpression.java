@@ -138,7 +138,7 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return child.getWDPredicateRaw(formulaFactory);
 	}
 

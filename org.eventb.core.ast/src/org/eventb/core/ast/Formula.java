@@ -3,6 +3,9 @@
  */
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
+import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
+import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -1584,58 +1588,53 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract Predicate getWDPredicateRaw(FormulaFactory formulaFactory);
 	
 	protected final Predicate getWDSimplifyC(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if(left.equals(btrue))
+		if (left.getTag() == BTRUE)
 			return right;
-		else if(right.equals(btrue))
+		if (right.getTag() == BTRUE)
 			return left;
-		else
-			return formulaFactory.makeAssociativePredicate(LAND, new Predicate[]{left, right}, null);
+		final Predicate[] children = new Predicate[] {left, right};
+		return formulaFactory.makeAssociativePredicate(LAND, children, null);
 	}
 	
 	protected final Predicate getWDSimplifyD(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if(left.equals(btrue) || right.equals(btrue))
-			return btrue;
-		else
-			return formulaFactory.makeAssociativePredicate(LOR, new Predicate[]{left, right}, null);
+		if (left.getTag() == BTRUE)
+			return left;
+		if (right.getTag() == BTRUE)
+			return right;
+		final Predicate[] children = new Predicate[] {left, right};
+		return formulaFactory.makeAssociativePredicate(LOR, children, null);
 	}
 	
 	protected final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
-		Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
-		Predicate conj1 = right.getWDPredicateRaw(formulaFactory);
+		final Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
+		final Predicate conj1 = right.getWDPredicateRaw(formulaFactory);
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}
 	
 	protected final <S extends Formula> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
-		LinkedList<Predicate> conjuncts = new LinkedList<Predicate>();
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		for(int i = 0; i < children.length; i++) {
-			Predicate conj = children[i].getWDPredicateRaw(formulaFactory);
-			if(!conj.equals(btrue))
+		final LinkedList<Predicate> conjuncts = new LinkedList<Predicate>();
+		for (S child: children) {
+			final Predicate conj = child.getWDPredicateRaw(formulaFactory);
+			if (conj.getTag() != BTRUE)
 				conjuncts.add(conj);
 		}
-		if(conjuncts.isEmpty())
-			return btrue;
-		else if(conjuncts.size() == 1)
+		if (conjuncts.isEmpty())
+			return formulaFactory.makeLiteralPredicate(BTRUE, null);
+		if (conjuncts.size() == 1)
 			return conjuncts.getFirst();
-		else
-			return formulaFactory.makeAssociativePredicate(LAND, conjuncts, null);
+		return formulaFactory.makeAssociativePredicate(LAND, conjuncts, null);
 	}
 	
 	protected final Predicate getWDSimplifyI(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if(left.equals(btrue))
+		if (left.getTag() == BTRUE || right.getTag() == BTRUE)
 			return right;
-		else if(right.equals(btrue))
-			return btrue;
-		else if(right.getTag() == LIMP) {
-			Predicate rightLeft = ((BinaryPredicate) right).getLeft();
-			Predicate newRight = ((BinaryPredicate) right).getRight();
-			Predicate newLeft = getWDSimplifyC(formulaFactory, left, rightLeft);
-			return formulaFactory.makeBinaryPredicate(LIMP, newLeft, newRight, null);
-		} else
-			return formulaFactory.makeBinaryPredicate(LIMP, left, right, null);
+		if (right.getTag() == LIMP) {
+			final Predicate rightLeft = ((BinaryPredicate) right).getLeft();
+			final Predicate newRight = ((BinaryPredicate) right).getRight();
+			final Predicate newLeft = getWDSimplifyC(formulaFactory, left, rightLeft);
+			return getWDSimplifyI(formulaFactory, newLeft, newRight);
+		}
+		return formulaFactory.makeBinaryPredicate(LIMP, left, right, null);
 	}
 	
 	protected final <S extends Formula> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
@@ -1644,13 +1643,23 @@ public abstract class Formula<T extends Formula<T>> {
 		return getWDSimplifyI(formulaFactory, antecedent, consequent);
 	}
 	
-	protected final Predicate getWDSimplifyQ(FormulaFactory formulaFactory, int quant, BoundIdentDecl[] decl, Predicate pred) {
-		Predicate btrue = formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if(pred.equals(btrue))
-			return btrue;
-		else {
-			return formulaFactory.makeQuantifiedPredicate(quant, decl, pred, null);
+	protected final Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
+			int quant, BoundIdentDecl[] decls, Predicate pred) {
+		
+		if (pred.getTag() == BTRUE)
+			return pred;
+		
+		final boolean[] used = new boolean[decls.length];
+		addUsedBoundIdentifiers(used, pred);
+		if (! areAllUsed(used)) {
+			BoundIdentDeclRemover subst = 
+				new BoundIdentDeclRemover(decls, used, formulaFactory);
+			return formulaFactory.makeQuantifiedPredicate(quant,
+					subst.getNewDeclarations(),
+					pred.applySubstitution(subst),
+					null);
 		}
+		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, null);
 	}
 	
 	/**

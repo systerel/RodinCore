@@ -126,10 +126,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 	
 	@Override
-	public Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
+	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		// this method should never be called
 		assert false;
-		return formulaFactory.makeLiteralPredicate(BTRUE, null);
+		return null;
 	}
 	
 	@Override
