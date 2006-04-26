@@ -15,59 +15,28 @@ import org.eventb.core.ast.*;
 public class FormulaConstructor {
 	public static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, Predicate left, Predicate right, SourceLocation loc) {
-		return makeAssociativePredicate(ff, tag, Arrays.asList(new Predicate[]{left, right}), loc , null);
+		return makeAssociativePredicate(ff, tag, Arrays.asList(new Predicate[]{left, right}), loc);
 	}
 	
 	public static Predicate makeAssociativePredicate(
 			FormulaFactory ff, int tag, List<Predicate> preds, SourceLocation loc) {
-		return makeAssociativePredicate(ff, tag, preds, loc, null);
-	}
-
-	public static Predicate makeAssociativePredicate(
-			FormulaFactory ff, int tag, List<Predicate> preds, SourceLocation loc,
-			Predicate oldPredicate) {
 		LinkedList<Predicate> childs = new LinkedList<Predicate>();
-		
-		boolean hasChanged = false;
-		Predicate bTrue = ff.makeLiteralPredicate(Formula.BTRUE, loc);
-		Predicate bFalse = ff.makeLiteralPredicate(Formula.BFALSE, loc);
-		
-		Predicate neutral = null, determinant = null;
-		if(tag == Formula.LAND) {
-			neutral  = bTrue; determinant = bFalse;			
-		}
-		else if(tag == Formula.LOR ) {
-			neutral = bFalse; determinant = bTrue;
-		}
-		else { assert false : "expedted tag LAND or LOR"; }
 		
 		for(Predicate pred: preds) {
 			if(pred.getTag() == tag) {
 				for(Predicate child: ((AssociativePredicate)pred).getChildren()) {
-					if(child.equals(determinant))
-						return determinant;
-					else if(!child.equals(neutral))
-						childs.add(child);
+					childs.add(child);
 				}
-				hasChanged = true;
 			}
 			else{
-				if(pred.equals(determinant))
-					return determinant;
-				else if(!pred.equals(neutral))
-					childs.add(pred);
+				childs.add(pred);
 			}
 		}
-		if(childs.size() == 0) return neutral;
-		else if(childs.size() == 1) return childs.getFirst();
-		else {
-			if(hasChanged || oldPredicate == null)
-				return ff.makeAssociativePredicate(tag, childs, loc);
-			else
-				return oldPredicate;
-		}
+		if(childs.size() == 1) return childs.getFirst();
+		else
+			return ff.makeAssociativePredicate(tag, childs, loc);
 	}
-
+	
 	public static Predicate makeLandPredicate(
 			FormulaFactory ff, Predicate left, Predicate right, SourceLocation loc) {
 		return makeAssociativePredicate(ff, Formula.LAND, left, right, loc);
@@ -133,4 +102,31 @@ public class FormulaConstructor {
     			loc),
     		loc);	   
 	}
+	
+	public static Predicate makeSimplifiedAssociativePredicate(
+			FormulaFactory ff, int tag, List<Predicate> children, Predicate neutral, 
+			Predicate determinant, SourceLocation loc, Predicate oldPredicate) {
+		LinkedList<Predicate> childs = new LinkedList<Predicate>();
+		
+		boolean hasChanged = false;
+		
+	
+		for(Predicate child: children) {
+			if(child.equals(determinant))
+				return determinant;
+			else if(child.equals(neutral))
+				hasChanged = true;
+			else
+				childs.add(child);
+		}
+		if(childs.size() == 0) return neutral;
+		else if(childs.size() == 1) return childs.getFirst();
+		else {
+			if(hasChanged || oldPredicate == null)
+				return ff.makeAssociativePredicate(tag, childs, loc);
+			else
+				return oldPredicate;
+		}
+	}
+
 }

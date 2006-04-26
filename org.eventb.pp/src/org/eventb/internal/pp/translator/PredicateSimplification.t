@@ -65,10 +65,18 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    			newChilds.add(newChild);
 	    			hasChanged = hasChanged || (newChild != child);
 	    		}
-	    		if(hasChanged) return FormulaConstructor.makeAssociativePredicate(
-	    			ff, pred.getTag(), newChilds, loc);
-	    		else
-	    			return pred;
+				boolean isAnd = pred.getTag() == Formula.LAND;
+				Predicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, loc);
+				Predicate bfalse = ff.makeLiteralPredicate(Formula.BFALSE, loc);	
+							
+    			return FormulaConstructor.makeSimplifiedAssociativePredicate(
+    				ff, 
+    				pred.getTag(), 
+    				newChilds, 
+    				isAnd ? btrue : bfalse,
+    				isAnd ? bfalse : btrue,
+    				loc, 
+    				hasChanged ? null : pred);
 	    	}
 	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
