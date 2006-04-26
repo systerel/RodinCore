@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;

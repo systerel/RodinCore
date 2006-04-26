@@ -11,7 +11,6 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IVisitor;
