@@ -1,10 +1,8 @@
 package org.eventb.internal.pp.translator;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;

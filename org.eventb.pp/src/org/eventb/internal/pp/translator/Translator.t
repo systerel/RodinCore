@@ -32,15 +32,14 @@ public class Translator extends IdentityTranslator {
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 		pred = IdentifierDecomposition.decomposeIdentifiers(pred, ff);
 		
-		pred = new Reorganizer().translate(pred, ff);
 		pred = new Translator().translate(pred, ff);
+		Predicate newPred = new Reorganizer().translate(pred, ff);
 		
-		Predicate newPred;
-		while(true) {
-			newPred = new Reorganizer().translate(pred, ff);
-			if(newPred == pred) return pred;
+		while(newPred != pred) {
 			pred = new Translator().translate(newPred, ff);
+			newPred = new Reorganizer().translate(pred, ff);
 		}
+		return pred;		
 	}
 	
 	%include {Formula.tom}
@@ -49,12 +48,63 @@ public class Translator extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
-	    	Equal(left, right) -> {
-	        	return translateEqual (pred,  ff);
-	        }		   		      	
+	    	Land(children) | Lor(children) -> {
+	    		return super.translate(
+	    				FormulaConstructor.makeAssociativePredicate(
+	    				ff,
+	    				pred.getTag(),
+	    				Arrays.asList(`children),
+	    				loc,
+	    				pred), ff);
+	    	}
+	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
+	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	}
+	    	Limp(BTRUE(), P) -> {
+	    		return translate(`P, ff);
+	    	}
+	    	Limp(P, BFALSE()) -> {
+	    		return ff.makeUnaryPredicate(
+	    			Formula.NOT, 
+	    			translate(`P, ff), 
+	    			loc);
+	    	}
+	    	Not(BTRUE()) -> {
+	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+	    	}
+	    	Not(BFALSE()) -> {
+	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	}
 	    	In(E, rhs) -> {
 	    		return translateIn (`E, `rhs, loc, ff);
 	    	}
+	    	Equal(_, _) -> {
+	        	return translateEqual (pred,  ff);
+	        }
+	        Le(a, Min(S)) | Lt(a, Min(S)) | Gt(a, Max(S)) |  Ge(a, Max(S)) -> {
+	        	return FormulaConstructor.makeGreaterThanExtremumPredicate(
+	        		ff, 
+	        		translate(`a, ff), 
+	        		translate(`S, ff), 
+	        		pred.getTag(), 
+	        		loc);
+	        }
+	        
+	        Le(a, Max(S)) | Lt(a, Max(S)) | Ge(a, Min(S)) | Gt(a, Min(S))-> {
+	        	return FormulaConstructor.makeLessThanExtremumPredicate(
+	        		ff, 
+	        		translate(`a, ff), 
+	        		translate(`S, ff), 
+	        		pred.getTag(), 
+	        		loc);
+	        }
+	        NotEqual (left, right) -> {
+	        	return ff.makeUnaryPredicate(
+	        		Formula.NOT, 
+	        		translateEqual(
+	        			ff.makeRelationalPredicate(Formula.EQUAL, `left, `right, loc), ff),
+	        		loc);
+	        }		   		      	
 	    	SubsetEq(s, t) -> {
 	    		return translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff);   				
 	    	}

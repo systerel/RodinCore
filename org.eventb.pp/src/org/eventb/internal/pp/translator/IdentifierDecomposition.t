@@ -96,6 +96,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		return pred;
 	}
 	
+	@Override
 	protected Expression translate(Expression expr, FormulaFactory ff){
 		QuantMapletBuilder mb = new QuantMapletBuilder();
 		SourceLocation loc = expr.getSourceLocation();		
@@ -128,6 +129,7 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		}
 	}
 	
+	@Override
 	protected Predicate translate(Predicate pred, FormulaFactory ff) {
 		QuantMapletBuilder mb = new QuantMapletBuilder();
 		SourceLocation loc = pred.getSourceLocation();		

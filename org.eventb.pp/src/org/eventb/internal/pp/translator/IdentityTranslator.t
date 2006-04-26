@@ -9,9 +9,35 @@
 package org.eventb.internal.pp.translator;
 
 import java.math.BigInteger;
-import java.util.*;
 
-import org.eventb.core.ast.*;
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
 
 
 /**

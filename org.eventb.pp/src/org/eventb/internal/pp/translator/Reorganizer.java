@@ -28,8 +28,7 @@ public class Reorganizer extends BorderTranslator {
 			calc.inEquality = inEquality;
 			expr.accept(calc);
 			return calc.count;
-		}
-		
+		}		
 		
 		@Override
 		public boolean visitExpression(Expression expr) {

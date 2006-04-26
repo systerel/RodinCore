@@ -3,6 +3,9 @@ package org.eventb.internal.pp.translator;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.BecomesMemberOf;
+import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
@@ -473,64 +476,67 @@ public class IdentityVisitor implements IVisitor {
 	}
 
 	public boolean exitBINTER(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean enterBCOMP(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean exitBCOMP(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean enterFCOMP(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean exitFCOMP(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean enterOVR(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean exitOVR(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean enterPLUS(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean exitPLUS(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean enterMUL(AssociativeExpression expr) {
-		return true;
+		return visitAssociativeExpression(expr);
 	}
 
 	public boolean exitMUL(AssociativeExpression expr) {
-
-		return true;
+		return visitAssociativeExpression(expr);
+	}
+	
+	public boolean visitAssociativePredicate(AssociativePredicate pred) {
+		return visitPredicate(pred);
 	}
 
 	public boolean enterLAND(AssociativePredicate pred) {
-		return true;
+		return visitAssociativePredicate(pred);
 	}
 
 	public boolean exitLAND(AssociativePredicate pred) {
-		return true;
+		return visitAssociativePredicate(pred);
 	}
 
 	public boolean enterLOR(AssociativePredicate pred) {
-		return true;
+		return visitAssociativePredicate(pred);
 	}
 
 	public boolean exitLOR(AssociativePredicate pred) {
-		return true;
+		return visitAssociativePredicate(pred);
 	}
 	
 	public boolean visitAtomicExpression(AtomicExpression expr) {
@@ -1004,5 +1010,50 @@ public class IdentityVisitor implements IVisitor {
 
 	public boolean continueEXISTS(QuantifiedPredicate pred) {
 		return true;
+	}
+
+	public boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean continueBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean exitBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean enterBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean continueBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean exitBECOMES_MEMBER_OF(BecomesMemberOf assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean enterBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean continueBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
