@@ -80,14 +80,22 @@ public class TranslationTests extends TestCase {
 	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
-		if(transformExpected) pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
+		if(transformExpected) {
+			pexpected = Translator.decomposeIdentifiers(pexpected, ff);
+			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
+			pexpected = Translator.simplifyPredicate(pexpected, ff);
+		}
 		doTest(pinput, pexpected);
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
 		doTest(input, expected, new TestTranslation() {
 			public Formula translate(Formula inp, FormulaFactory formulaFactory) {
-				return Translator.reduceToPredicateCalulus((Predicate)inp, formulaFactory);
+				Predicate result = (Predicate)inp;
+				result = Translator.decomposeIdentifiers(result, ff);
+				result = Translator.reduceToPredicateCalulus(result, ff);
+				return Translator.simplifyPredicate(result, ff);
+
 			}});
 	}
 	
