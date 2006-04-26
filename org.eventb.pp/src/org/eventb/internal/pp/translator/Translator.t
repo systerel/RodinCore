@@ -30,10 +30,9 @@ public class Translator extends IdentityTranslator {
 	}
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
-		pred = IdentifierDecomposition.decomposeIdentifiers(pred, ff);
-		
-		pred = new Translator().translate(pred, ff);
-		Predicate newPred = new Reorganizer().translate(pred, ff);
+
+		Predicate newPred = pred;
+		pred = null;
 		
 		while(newPred != pred) {
 			pred = new Translator().translate(newPred, ff);
