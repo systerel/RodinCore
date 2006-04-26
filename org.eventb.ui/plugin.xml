@@ -79,14 +79,14 @@
             class="org.eventb.internal.ui.eventbeditor.EventBMachineEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBMachineEditorContributor"
             extensions="bum"
-            icon="icons/machine.gif"
+            icon="icons/obj16/mch_obj.gif"
             id="org.eventb.ui.editors.EventBMachineEditor"
             name="Event-B Machine Editor"/>
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
             extensions="buc"
-            icon="icons/context.gif"
+            icon="icons/obj16/cxt_obj.gif"
             id="org.eventb.ui.editors.EventBContextEditor"
             name="Event-B Context Editor"/>
       <editor

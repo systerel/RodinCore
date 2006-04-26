@@ -180,7 +180,7 @@ public class ProjectExplorerActionGroup
 		};
 		deleteAction.setText("Delete");
 		deleteAction.setToolTipText("Delete selected elements");
-		deleteAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_DELETE));
+		deleteAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		
 		proveAction = new Action() {
 			public void run() {

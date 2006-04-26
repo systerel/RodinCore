@@ -16,7 +16,6 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.RodinDBException;
 
 public class ProofTreeUIActionGroup 
@@ -55,7 +54,7 @@ public class ProofTreeUIActionGroup
 		};
 		filterAction.setText("Filter");
 		filterAction.setToolTipText("Filter the rules");
-		filterAction.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEXTPO_PATH));
+		filterAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 
 		nextPOAction = new Action() {
 			public void run() {
@@ -76,7 +75,7 @@ public class ProofTreeUIActionGroup
 		};
 		nextPOAction.setText("Next PO");
 		nextPOAction.setToolTipText("Next Proof Obligation");
-		nextPOAction.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEXTPO_PATH));
+		nextPOAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
 		prevPOAction = new Action() {
 			public void run() {
@@ -97,7 +96,7 @@ public class ProofTreeUIActionGroup
 		};
 		prevPOAction.setText("Previous PO");
 		prevPOAction.setToolTipText("Previous Proof Obligation");
-		prevPOAction.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_PREVPO_PATH));
+		prevPOAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 
 		pruneAction = new Action() {
 			public void run() {

@@ -15,7 +15,6 @@ public class EventBImage {
 	public static final String IMG_INVARIANT = "Invariant";
 	public static final String IMG_THEOREM = "Theorem";
 	public static final String IMG_EVENT = "Event";
-	public static final String IMG_LOCAL_VARIABLE = "Local variable";
 	public static final String IMG_GUARD = "Guard";
 	public static final String IMG_ACTION = "Action";
 	public static final String IMG_CARRIER_SET = "CarrierSet";
@@ -24,11 +23,7 @@ public class EventBImage {
 	public static final String IMG_VARIABLES = "Variables";
 	public static final String IMG_INVARIANTS = "Invariants";
 	public static final String IMG_THEOREMS = "Theorems";
-	public static final String IMG_INITIALISATION = "Initialisation";
 	public static final String IMG_EVENTS = "Events";
-	public static final String IMG_LOCAL_VARIABLES = "Local variables";
-	public static final String IMG_GUARDS = "Guards";
-	public static final String IMG_ACTIONS = "Actions";
 	public static final String IMG_CARRIER_SETS = "CarrierSets";
 	public static final String IMG_CONSTANTS = "Constants";
 	public static final String IMG_AXIOMS = "Axioms";
@@ -44,23 +39,19 @@ public class EventBImage {
 	/**
 	 * Image IDs for buttons, menu, etc.
 	 */
-	public static final String IMG_DELETE = "Delete";
 	public static final String IMG_NEW_PROJECT = "New Project";
 	public static final String IMG_NEW_COMPONENT = "New Component";
 	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
-	public static final String IMG_PREVPO_PATH = "icons/prev.gif";
-	public static final String IMG_NEXTPO_PATH = "icons/next.gif";
-	
-	public static final String IMG_NEW_VARIABLES_PATH = "icons/new-variables.gif";
-	public static final String IMG_NEW_INVARIANTS_PATH = "icons/new-invariants.gif";
-	public static final String IMG_NEW_THEOREMS_PATH = "icons/new-theorems.gif";
-	public static final String IMG_NEW_EVENT_PATH = "icons/new-event.gif";
-	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/new-carriersets.gif";
-	public static final String IMG_NEW_CONSTANTS_PATH = "icons/new-constants.gif";
-	public static final String IMG_NEW_AXIOMS_PATH = "icons/new-axioms.gif";
+	public static final String IMG_NEW_VARIABLES_PATH = "icons/ctool16/newvar_edit.gif";
+	public static final String IMG_NEW_INVARIANTS_PATH = "icons/ctool16/newinv_edit.gif";
+	public static final String IMG_NEW_THEOREMS_PATH = "icons/ctool16/newthm_edit.gif";
+	public static final String IMG_NEW_EVENT_PATH = "icons/ctool16/newevt_edit.gif";
+	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/ctool16/newset_edit.gif";
+	public static final String IMG_NEW_CONSTANTS_PATH = "icons/ctool16/newcst_edit.gif";
+	public static final String IMG_NEW_AXIOMS_PATH = "icons/ctool16/newaxm_edit.gif";
 
 	/**
 	 * Returns an image descriptor for the image file at the given
@@ -78,40 +69,34 @@ public class EventBImage {
 	 * Additional image should be added here.
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IMG_PROJECT, "project.gif");
-		registerImage(registry, IMG_MACHINE, "machine.gif");
-		registerImage(registry, IMG_CONTEXT, "context.gif");
-		registerImage(registry, IMG_VARIABLE, "variable.gif");
-		registerImage(registry, IMG_INVARIANT, "invariant.gif");
-		registerImage(registry, IMG_THEOREM, "theorem.gif");
-		registerImage(registry, IMG_EVENT, "event.gif");
-		registerImage(registry, IMG_LOCAL_VARIABLE, "localvariable.gif");
-		registerImage(registry, IMG_GUARD, "guard.gif");
-		registerImage(registry, IMG_ACTION, "action.gif");
-		registerImage(registry, IMG_CARRIER_SET, "carrierset.gif");
-		registerImage(registry, IMG_CONSTANT, "constant.gif");
-		registerImage(registry, IMG_AXIOM, "axiom.gif");
-		registerImage(registry, IMG_VARIABLES, "variables.gif");
-		registerImage(registry, IMG_INVARIANTS, "invariants.gif");
-		registerImage(registry, IMG_THEOREMS, "theorems.gif");
-		registerImage(registry, IMG_INITIALISATION, "initialisation.gif");
-		registerImage(registry, IMG_EVENTS, "events.gif");
-		registerImage(registry, IMG_LOCAL_VARIABLES, "localvariables.gif");
-		registerImage(registry, IMG_GUARDS, "guards.gif");
-		registerImage(registry, IMG_ACTIONS, "actions.gif");
-		registerImage(registry, IMG_CARRIER_SETS, "carriersets.gif");
-		registerImage(registry, IMG_CONSTANTS, "constants.gif");
-		registerImage(registry, IMG_AXIOMS, "axioms.gif");
-		registerImage(registry, IMG_DELETE, "delete.gif");
-		registerImage(registry, IMG_NEW_PROJECT, "new-project.gif");
-		registerImage(registry, IMG_NEW_COMPONENT, "new-component.gif");
+		registerImage(registry, IMG_PROJECT, "obj16/prj_obj.gif");
+		registerImage(registry, IMG_MACHINE, "obj16/mch_obj.gif");
+		registerImage(registry, IMG_CONTEXT, "obj16/cxt_obj.gif");
+		registerImage(registry, IMG_VARIABLE, "obj16/var_obj.gif");
+		registerImage(registry, IMG_INVARIANT, "obj16/inv_obj.gif");
+		registerImage(registry, IMG_THEOREM, "obj16/thm_obj.gif");
+		registerImage(registry, IMG_EVENT, "obj16/evt_obj.gif");
+		registerImage(registry, IMG_GUARD, "obj16/grd_obj.gif");
+		registerImage(registry, IMG_ACTION, "obj16/act_obj.gif");
+		registerImage(registry, IMG_CARRIER_SET, "obj16/set_obj.gif");
+		registerImage(registry, IMG_CONSTANT, "obj16/cst_obj.gif");
+		registerImage(registry, IMG_AXIOM, "obj16/axm_obj.gif");
+		registerImage(registry, IMG_VARIABLES, "obj16/vars_obj.gif");
+		registerImage(registry, IMG_INVARIANTS, "obj16/invs_obj.gif");
+		registerImage(registry, IMG_THEOREMS, "obj16/thms_obj.gif");
+		registerImage(registry, IMG_EVENTS, "obj16/evts_obj.gif");
+		registerImage(registry, IMG_CARRIER_SETS, "obj16/sets_obj.gif");
+		registerImage(registry, IMG_CONSTANTS, "obj16/csts_obj.gif");
+		registerImage(registry, IMG_AXIOMS, "obj16/axms_obj.gif");
+		registerImage(registry, IMG_NEW_PROJECT, "clcl16/newprj_wiz.gif");
+		registerImage(registry, IMG_NEW_COMPONENT, "clcl16/newcomp_wiz.gif");
 		
 		registerImage(registry, IMG_PENDING, "pending.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 		
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
-		registerImage(registry, IMG_SEARCH_BUTTON, "full/eview16/searchres.gif");
+		registerImage(registry, IMG_SEARCH_BUTTON, "clcl16/searchres.gif");
 	}
 
 	/*
