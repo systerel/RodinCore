@@ -1,7 +1,6 @@
 package org.eventb.pp.tests;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -40,9 +39,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		Predicate actual = Translator.decomposeIdentifiers(input, ff);
 		actual = Translator.reduceToPredicateCalulus(actual, ff);
 
-		// TODO remove type-check of result.
-		ITypeCheckResult tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
-		assertTrue("Actual result is not typed: " + tcr.getProblems(), 
+		assertTrue("Actual result is not typed: " + actual,
 				actual.isTypeChecked());
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual, ff));
 		assertEquals("Unexpected result of translation", expected, actual);
