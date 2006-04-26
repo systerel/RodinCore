@@ -1,18 +1,10 @@
 package org.eventb.pp.tests;
 
-import junit.framework.TestCase;
-
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-
 import org.eventb.pp.Translator;
 
 
@@ -24,45 +16,13 @@ import org.eventb.pp.Translator;
  * @author Matthias Konrad
  */
 
-public class TranslationTests extends TestCase {
+public class TranslationTests extends AbstractTranslationTests {
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
-	// Types used in these tests
-	private static IntegerType INT = ff.makeIntegerType();
-	private static BooleanType BOOL = ff.makeBooleanType();
-	private static PowerSetType INT_SET = ff.makePowerSetType(INT);
-
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static Type REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
-	}
-	
-	public static Predicate parse(String string, ITypeEnvironment te) {
-		IParseResult parseResult = ff.parsePredicate(string);
-		assertTrue("Parse error for: " + string + " Problems: " + parseResult.getProblems(), parseResult.isSuccess());
-		Predicate pred = parseResult.getParsedPredicate();
-		ITypeCheckResult tcResult = pred.typeCheck(te);
-		assertTrue(string + " is not typed. Problems: " + tcResult.getProblems(), tcResult.isSuccess());
-		return pred;
-	}
-	
-	public static Predicate parse(String string) {
-		return parse(string, ff.makeTypeEnvironment());
-	}
-	
-	public static void doTest(String input, String expected, boolean transformExpected) {
+	private static void doTest(String input, String expected, boolean transformExpected) {
 		doTest(input, expected, transformExpected, FastFactory.mTypeEnvironment());
 	}
 
-	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
+	private static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if(transformExpected) {
@@ -73,17 +33,17 @@ public class TranslationTests extends TestCase {
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
-		ITypeCheckResult tcr = null;
-		tcr = input.typeCheck(FastFactory.mTypeEnvironment());
-		assertTrue("Input is not typed: " + tcr.getProblems(), tcr.isSuccess());
-		tcr=expected.typeCheck(FastFactory.mTypeEnvironment());
-		assertTrue("Expected result is not typed: " + tcr.getProblems(), tcr.isSuccess());
+		assertTrue("Input is not typed: " + input, input.isTypeChecked());
+		assertTrue("Expected result is not typed: " + expected, 
+				expected.isTypeChecked());
 
 		Predicate actual = Translator.decomposeIdentifiers(input, ff);
 		actual = Translator.reduceToPredicateCalulus(actual, ff);
-		
-		tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
-		assertTrue("Actual result is not typed: " + tcr.getProblems(), tcr.isSuccess());
+
+		// TODO remove type-check of result.
+		ITypeCheckResult tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
+		assertTrue("Actual result is not typed: " + tcr.getProblems(), 
+				actual.isTypeChecked());
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual, ff));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
@@ -364,8 +324,9 @@ public class TranslationTests extends TestCase {
 	}
 	
 	public void testSetExtensionRule3() {
-		Predicate input = FastFactory.mRelationalPredicate(
-				Formula.IN, FastFactory.mFreeIdentifier("E", INT), FastFactory.mSetExtension());
+		Predicate input = FastFactory.mRelationalPredicate(Formula.IN,
+				FastFactory.mFreeIdentifier("E", INT), 
+				FastFactory.mEmptySet(POW(INT)));
 		Predicate expected = parse("⊥");
 		doTest(input, expected);
 	}
