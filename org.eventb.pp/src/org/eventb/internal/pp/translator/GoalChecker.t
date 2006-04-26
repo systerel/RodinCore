@@ -16,6 +16,7 @@ import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -25,6 +26,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -44,7 +46,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Matthias Konrad
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("all")	// Should be ("unused", "uselessTypeCheck")
 public abstract class GoalChecker {
 
 %include {Formula.tom}
@@ -87,7 +89,7 @@ public abstract class GoalChecker {
 		}
 	}
 	
-	public static boolean isArithmeticExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isArithmeticExpression(Expression expr, FormulaFactory ff) {
 		%match(Expression expr) {
 			Plus(children) | Mul(children) -> {
 				for(Expression child: `children) {
@@ -103,7 +105,7 @@ public abstract class GoalChecker {
 				return isArithmeticExpression(`AE, ff);
 			}
 			Identifier() -> {
-				return ff.makeIntegerType().equals(expr.getType());
+				return expr.getType() instanceof IntegerType;
 			}
 			IntegerLiteral(_) -> {
 				return true;
@@ -114,11 +116,10 @@ public abstract class GoalChecker {
 		}
 	}
 	
-	public static boolean isSetExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isSetExpression(Expression expr, FormulaFactory ff) {
 		%match(Expression expr) {
 			Identifier() -> {
-				/*TODO: correct!*/
-				return expr.getType().getBaseType() != null;
+				return expr.getType() instanceof PowerSetType;
 			}
 			_ -> {
 				return false;
@@ -126,12 +127,14 @@ public abstract class GoalChecker {
 		}
 	}
 
-	public static boolean isMapletExpression(Expression expr, FormulaFactory ff) {
+/* TODO turn back to private ? */
+	protected static boolean isMapletExpression(Expression expr, FormulaFactory ff) {
 		%match(Expression expr) {
 			Mapsto(l, r) -> {
 				return isMapletExpression(`l, ff) && isMapletExpression(`r, ff);
 			}
-			BoundIdentifier(_) | FreeIdentifier(_) | INTEGER() | BOOL() -> { 
+			Identifier() | INTEGER() | BOOL() -> { 
+/* TODO add check on identifier type (must not be a cartesian product. */
 				return true; 
 			}
 			_ -> {
@@ -140,13 +143,13 @@ public abstract class GoalChecker {
 		}
 	}
 
-	public static boolean isBooleanExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isBooleanExpression(Expression expr, FormulaFactory ff) {
 		%match(Expression expr) {
 			TRUE() -> {
 				return true;
 			}
 			Identifier() -> {
-				return ff.makeBooleanType().equals(expr.getType());
+				return expr.getType() instanceof BooleanType;
 			}
 			_ -> {
 				return false;
