@@ -80,7 +80,7 @@
  */
  
 %op Predicate AssociativePredicate (children : PredicateList) {
-	is_fsym(t) { t != null && t instanceof AssociativePredicate }
+	is_fsym(t) { t instanceof AssociativePredicate }
 	get_slot(children,t) { ((AssociativePredicate) t).getChildren() }
 }
 
@@ -100,7 +100,7 @@
  */
  
 %op Predicate BinaryPredicate (left: Predicate, right: Predicate) {
-	is_fsym(t) { t != null && t instanceof BinaryPredicate }
+	is_fsym(t) { t instanceof BinaryPredicate }
 	get_slot(left,t) { ((BinaryPredicate) t).getLeft() }
 	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
 }
@@ -122,7 +122,7 @@
  */
 
 %op Predicate UnaryPredicate (child: Predicate) {
-	is_fsym(t) { t != null && t instanceof UnaryPredicate }
+	is_fsym(t) { t instanceof UnaryPredicate }
 	get_slot(child,t) { ((UnaryPredicate) t). getChild() }
 }
 
@@ -136,7 +136,7 @@
  */
 
 %op Predicate RelationalPredicate (left: Expression, right: Expression) {
-	is_fsym(t) { t != null && t instanceof RelationalPredicate }
+	is_fsym(t) { t instanceof RelationalPredicate }
 	get_slot(left,t) { ((RelationalPredicate) t). getLeft() }
 	get_slot(right,t) { ((RelationalPredicate) t).getRight() }
 }
@@ -218,7 +218,7 @@
  */
 
 %op Predicate QuantifiedPredicate (identifiers: BoundIdentDeclList, predicate: Predicate) {
-	is_fsym(t) { t != null && t instanceof QuantifiedPredicate }
+	is_fsym(t) { t instanceof QuantifiedPredicate }
 	get_slot(identifiers,t) { ((QuantifiedPredicate)t).getBoundIdentDecls() }
 	get_slot(predicate,t) { ((QuantifiedPredicate)t).getPredicate() }
 }
@@ -256,7 +256,7 @@
  */
  
 %op Predicate SimplePredicate (child: Expression) {
-	is_fsym(t) { t != null && t instanceof SimplePredicate}
+	is_fsym(t) { t instanceof SimplePredicate}
 	get_slot(child,t) { ((SimplePredicate) t).getExpression() }
 }
 
@@ -270,7 +270,7 @@
  */
 
 %op Expression AssociativeExpression (children: ExpressionList) {
-	is_fsym(t) { t != null && t instanceof AssociativeExpression }
+	is_fsym(t) { t instanceof AssociativeExpression }
 	get_slot(children,t) { ((AssociativeExpression) t).getChildren() }
 }
 
@@ -314,7 +314,7 @@
  */
  
 %op Expression AtomicExpression {
-	is_fsym(t) { t != null && t instanceof AtomicExpression }
+	is_fsym(t) { t instanceof AtomicExpression }
 }
 
 %op Expression Natural {
@@ -359,7 +359,7 @@
  */
 
 %op Expression BinaryExpression (left: Expression, right: Expression) {
-	is_fsym(t) { t != null && t instanceof BinaryExpression }
+	is_fsym(t) { t instanceof BinaryExpression }
 	get_slot(left,t) { ((BinaryExpression) t).getLeft() }
 	get_slot(right,t) { ((BinaryExpression) t).getRight() }
 }
@@ -540,7 +540,7 @@
  */
 
 %op Expression Identifier {
-	is_fsym(t) { t != null && t instanceof Identifier }
+	is_fsym(t) { t instanceof Identifier }
 }
 
 /*
@@ -564,7 +564,7 @@
  */
 
 %op Expression IntegerLiteral (value: BigInteger) {
-	is_fsym(t) { t != null && t instanceof IntegerLiteral }
+	is_fsym(t) { t instanceof IntegerLiteral }
 	get_slot(value,t) { ((IntegerLiteral) t).getValue() }
 }
 
@@ -607,7 +607,7 @@
  */
  
 %op Expression UnaryExpression (child: Expression) {
-	is_fsym(t) { t != null && t instanceof UnaryExpression }
+	is_fsym(t) { t instanceof UnaryExpression }
 	get_slot(child,t) { ((UnaryExpression) t).getChild() }
 }
 
