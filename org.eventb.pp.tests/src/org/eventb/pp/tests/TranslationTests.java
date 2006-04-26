@@ -26,27 +26,12 @@ import org.eventb.pp.Translator;
 
 public class TranslationTests extends TestCase {
 	
-	public interface TestTranslation {
-		Formula translate(Formula input, FormulaFactory pff);
-	}
-	
-//	private static TestTranslation identifierDecomposition = new TestTranslation() {
-//		public Formula translate(Formula input, FormulaFactory formulaFactory) {
-//			return IdentifierDecomposition.decomposeIdentifiers((Predicate)input, formulaFactory);
-//		}
-//	};
-	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	// Types used in these tests
 	private static IntegerType INT = ff.makeIntegerType();
 	private static BooleanType BOOL = ff.makeBooleanType();
 	private static PowerSetType INT_SET = ff.makePowerSetType(INT);
-
-//	private static GivenType ty_S = ff.makeGivenType("S");
-//	private static GivenType ty_T = ff.makeGivenType("T");
-//	private static GivenType ty_U = ff.makeGivenType("U");
-//	private static GivenType ty_V = ff.makeGivenType("V");
 
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -83,164 +68,29 @@ public class TranslationTests extends TestCase {
 		if(transformExpected) {
 			pexpected = Translator.decomposeIdentifiers(pexpected, ff);
 			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
-			pexpected = Translator.simplifyPredicate(pexpected, ff);
 		}
 		doTest(pinput, pexpected);
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
-		doTest(input, expected, new TestTranslation() {
-			public Formula translate(Formula inp, FormulaFactory formulaFactory) {
-				Predicate result = (Predicate)inp;
-				result = Translator.decomposeIdentifiers(result, ff);
-				result = Translator.reduceToPredicateCalulus(result, ff);
-				return Translator.simplifyPredicate(result, ff);
-
-			}});
-	}
-	
-	private static void doTest(Formula input, Formula expected, TestTranslation translation) {
 		ITypeCheckResult tcr = null;
 		tcr = input.typeCheck(FastFactory.mTypeEnvironment());
 		assertTrue("Input is not typed: " + tcr.getProblems(), tcr.isSuccess());
 		tcr=expected.typeCheck(FastFactory.mTypeEnvironment());
 		assertTrue("Expected result is not typed: " + tcr.getProblems(), tcr.isSuccess());
 
-		Formula actual = translation.translate(input, ff);
+		Predicate actual = Translator.decomposeIdentifiers(input, ff);
+		actual = Translator.reduceToPredicateCalulus(actual, ff);
 		
 		tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
 		assertTrue("Actual result is not typed: " + tcr.getProblems(), tcr.isSuccess());
-		if(actual instanceof Predicate)
-			assertTrue("Result not in goal: " + actual, Translator.isInGoal((Predicate)actual, ff));
+		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual, ff));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
 	/**
 	 * Main test routine for predicates.
 	 */
-	
-	public void testAndRule1 () {
-		doTest( "⊤ ∧ ⊤",
-				"⊤ ", false);
-	}
-	
-	public void testAndRule12 () {
-		doTest( "⊤ ∧ ⊥",
-				"⊥ ", false);
-	}
-	
-	public void testAndRule3 () {
-		doTest( "⊥ ∧ ⊤",
-				"⊥ ", false);
-	}
-
-	public void testAndRule4 () {
-		doTest( "(⊤ ∧ ⊥) ∨ (⊤ ∧ ⊤ ∧ ⊤)",
-				"⊤", false);
-	}
-
-	public void testOrRule1 () {
-		doTest( "⊤ ∨ ⊤",
-				"⊤ ", false);
-	}
-
-	public void testOrRule2 () {
-		doTest( "⊥ ∨ ⊤",
-				"⊤ ", false);
-	}
-
-	public void testOrRule3 () {
-		doTest( "⊤ ∨ ⊥",
-				"⊤ ", false);
-	}
-	
-	public void testOrRule4 () {
-		doTest( "(⊤ ∨ ⊥) ∧ (⊥ ∨ ⊥ ∨ ⊥)",
-				"⊥ ", false);
-	}
-	
-	public void testImplRule1() {
-		doTest( "a>b ⇒ ⊤",
-				"⊤", false);
-	}
-	
-	public void testImplRule2() {
-		doTest( "⊥ ⇒ a>b",
-				"⊤", false);
-	}
-	
-	public void testImplRule3() {
-		doTest( "⊤ ⇒ a>b",
-				"a>b", false);
-	}
-
-	public void testImplRule4() {
-		doTest( "a>b ⇒ ⊥",
-				"¬(a>b)", false);
-	}
-	
-	public void testNotRule1() {
-		doTest( "¬⊤",
-				"⊥", false);
-	}
-	
-	public void testNotRule2() {
-		doTest( "¬⊥",
-				"⊤", false);
-	}
-
-	public void testIdentifierDecomposition1() {
-		doTest( "∀x·10↦(20↦30) = x", 
-				"∀x,x0,x1·10=x1∧20=x0∧30=x", false);		
-	}
-
-	public void testIdentifierDecomposition2() {
-		doTest( "10↦20 = s",
-				"∀x,x0·s=x0 ↦ x⇒10=x0∧20=x", false);
-	}
-	
-	public void testIdentifierDecomposition3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"S"}, new Type[]{REL(BOOL, CPROD(INT, INT))});
-		
-		doTest( "E ∈ S", 
-				"∀x,x0,x1·E=x1↦(x0↦x) ⇒ x1↦(x0↦x)∈S", false, te);		
-	}
-/*	
-	
-	public void testIdentifierDecomposition4() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
-		
-		doTest( "10 ↦ bool(⊤) = s",
-				"∀x,x0·s=x0 ↦ x⇒10=x0∧bool(⊤)=x", true, te);
-	}
-	
-	public void testIdentifierDecomposition5() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
-		
-		doTest( "t = s",
-				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", true, te);
-	}
-	
-	public void testIdentifierDecomposition6() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"s"}, new Type[]{CPROD(INT, BOOL)});
-		
-		doTest( "t = s",
-				"∀x,x0,x1,x2·t=x2↦x1∧s=x0↦x⇒x2=x0∧x1=x", true, te);
-	}
-
-	public void testIdentifierDecomposition7() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(INT, BOOL)});
-		doTest( "t=t",
-				"∀x,x0·t=x0↦x⇒(x0=x0∧x=x)", false, te);
-	}
-	
-	public void testIdentifierDecomposition8() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"S"}, new Type[]{REL(INT, CPROD(BOOL, CPROD(INT, BOOL)))});
-		doTest( "∀a·∃b·∀c·∃d·E∈S∧ a=1 ∧ b=1 ∧ c=1 ∧ d=1",
-				"∀x,x0,x1,x2·E=x2 ↦ (x1 ↦ (x0 ↦ x))⇒(∀a·∃b·∀c·∃d·x2 ↦ (x1 ↦ (x0 ↦ x))∈S∧a=1∧b=1∧c=1∧d=1)", false, te);
-		
-	}*/
 	
 	public void testSubsetEqRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
@@ -397,7 +247,7 @@ public class TranslationTests extends TestCase {
 	public void testCSetInRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈{x·⊤ ∣ x}",
-				"∃x·E=x", false, te);
+				"∃x·⊤∧E=x", false, te);
 	}
 	
 	public void testCSetInRule2() {
@@ -433,7 +283,7 @@ public class TranslationTests extends TestCase {
 	public void testQUnionInRule() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"E"}, new Type[]{INT});
 		doTest( "E∈(⋃x·⊤ ∣ {x})",
-				"∃x·E=x", false, te);
+				"∃x·⊤∧E=x", false, te);
 	}
 	
 	public void testQUnionInRule1() {
@@ -1223,63 +1073,47 @@ public class TranslationTests extends TestCase {
 	}	
 	
 	public void testArithmeticRule() {
-		Predicate input = parse("E∈{10∗20,20}");
-		Predicate expected = parse("E=10∗20 ∨ E=20");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "E∈{10∗20,20}",
+				"E=10∗20 ∨ E=20", true);
 	}
 	
 	public void testCardinality1() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"S", "n"}, new Type[]{INT_SET, INT});
-		Predicate input = parse("card(S)=n", te);
-		Predicate expected = parse("∃f·f∈S⤖1‥n", te);
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "card(S)=n",
+				"∃f·f∈S⤖1‥n", true, te);
 	}
 
 	public void testCardinality2() {
-		Predicate input = parse("card({1}) > 1");
-		Predicate expected = parse("∀x·x=card({1})⇒x>1");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "card({1}) > 1",
+				"∀x·x=card({1})⇒x>1", true);
 	}
 	
 	public void testCardinality3() {
-		Predicate input =  parse("card({card({1})}) = card({2})");
-		Predicate expected = parse("∀x,x0·x0=card({card({1})})∧x=card({2}) ⇒ x0=x");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "card({card({1})}) = card({2})",
+				"∀x,x0·x0=card({card({1})})∧x=card({2}) ⇒ x0=x", true);
 	}
 	
 	public void testCardinality4() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"S"}, new Type[]{INT_SET});
-		Predicate input =  parse("∀s·card(S)>card({t·t>s∧t<card({t,t})∣t})", te);
-		Predicate expected = parse("∀s·∀x,x0·x0=card(S)∧x=card({t·t>s∧t<card({t,t})∣t})⇒x0>x", te);
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "∀s·card(S)>card({t·t>s∧t<card({t,t})∣t})",
+				"∀s·∀x,x0·x0=card(S)∧x=card({t·t>s∧t<card({t,t})∣t})⇒x0>x", true, te);
 	}	
 
 	public void testBool() {
-		Predicate input = parse("E∈{FALSE,bool(x>y)}");
-		Predicate expected = parse("E=FALSE ∨ E=bool(x>y)");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "E∈{FALSE,bool(x>y)}",
+				"E=FALSE ∨ E=bool(x>y)", true);
 	}
 	
 	public void testBool2() {
-		Predicate input = parse("E∈{bool(TRUE=bool(⊥))}");
-		Predicate expected = parse("E=bool(TRUE=bool(⊥))");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);	
+		doTest( "E∈{bool(TRUE=bool(⊥))}",
+				"E=bool(TRUE=bool(⊥))", true);
 	}
 	
 	public void testBool3() {
-		Predicate input = parse("e ∈ {bool(⊥)↦bool(1>2)}");
-		Predicate expected = parse("e ∈ {bool(⊥)↦bool(1>2)}");
-		expected = Translator.reduceToPredicateCalulus(expected, ff);
-		doTest(input, expected);
+		doTest( "e ∈ {bool(⊥)↦bool(1>2)}",
+				"e ∈ {bool(⊥)↦bool(1>2)}", true);
 	}
 	
 	public void testMinRule() {
