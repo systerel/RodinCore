@@ -88,7 +88,10 @@ public class TestWD extends TestCase {
 			newEnv.addAll(result.getInferredEnvironment());
 			
 			Predicate inWD = inP.getWDPredicate(ff);
-			assertTrue(input + "\n" + inWD.toString() + "\n" + inWD.getSyntaxTree() + "\n", inWD.isTypeChecked());
+			assertTrue(input + "\n"
+					+ inWD.toString() + "\n"
+					+ inWD.getSyntaxTree() + "\n",
+					inWD.isTypeChecked());
 			
 			IParseResult resExp = ff.parsePredicate(expected);
 			assertTrue(input, resExp.isSuccess());
@@ -171,13 +174,12 @@ public class TestWD extends TestCase {
 					"(λ m↦n \u00b7 m>n \u2223 y)(1↦x) = y",
 					"1 ↦ x∈dom(λm ↦ n\u00b7m>n ∣ y) " +
 					"∧ (λm ↦ n\u00b7m>n ∣ y)\u223c;({1 ↦ x}◁(λm ↦ n\u00b7m>n ∣ y))⊆id(ran(λm ↦ n\u00b7m>n ∣ y))"
-// TODO put back these tests					
-//			), new TestPredicate(
-//					"{m,n \u00b7 m=f(n) \u2223 m↦n}[A] ⊂ B",
-//					"∀n \u00b7 n∈dom(f) ∧ f\u223c;({n}◁f) ⊆ id(ran(f))"
-//			), new TestPredicate(
-//					"{f(n)↦m \u2223 x=n ∧ y+x=m} = A×B",
-//					"∀f,n,m \u00b7 x=n ∧ y+x=m ⇒ n∈dom(f) ∧ f\u223c;({n}◁f)⊆id(ran(f))"
+			), new TestPredicate(
+					"{m,n \u00b7 m=f(n) \u2223 m↦n}[A] ⊂ B",
+					"∀n \u00b7 n∈dom(f) ∧ f\u223c;({n}◁f) ⊆ id(ran(f))"
+			), new TestPredicate(
+					"{f(n)↦m \u2223 x=n ∧ y+x=m ∧ f ∈ ℤ→A} = A×B",
+					"∀f,n,m \u00b7 x=n ∧ y+x=m ∧ f ∈ ℤ→A ⇒ n∈dom(f) ∧ f\u223c;({n}◁f)⊆id(ran(f))"
 			), new TestPredicate(
 					"{1, 2, x, x+y, 4, 6} = B",
 					"⊤"
@@ -215,34 +217,9 @@ public class TestWD extends TestCase {
 	};
 	
 	public void testWD() {
-		
-		for(int i=0; i<formulas.length; i++) {
-			
+		for (int i=0; i<formulas.length; i++) {
 			formulas[i].test();
-			
-//			IParseResult resIn = ff.parsePredicate(formulas[i].input);
-//			assertTrue(resIn.isSuccess());
-//			Predicate inP = resIn.getParsedPredicate();
-//			ITypeCheckResult result = inP.typeCheck(formulas[i].env);
-//			assertTrue(formulas[i].input, result.isSuccess());
-//			
-//			ITypeEnvironment newEnv = formulas[i].env.clone();
-//			newEnv.addAll(result.getInferredEnvironment());
-//			
-//			Predicate inWD = inP.getWDPredicate(ff);
-//			ITypeCheckResult intResult = inWD.typeCheck(newEnv);
-//			assertTrue(formulas[i].input + "\n" + inWD.toString() + "\n" + inWD.getSyntaxTree() + "\n", intResult.isSuccess());
-//			
-//			IParseResult resExp = ff.parsePredicate(formulas[i].expected);
-//			assertTrue(formulas[i].input, resExp.isSuccess());
-//			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-//			ITypeCheckResult newResult = exP.typeCheck(newEnv);
-//			assertTrue(newResult.isSuccess());
-//			
-//			assertEquals(formulas[i].input, exP, inWD);
 		}
-
-		return;
 	}
 	
 }
