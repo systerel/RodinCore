@@ -59,23 +59,19 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		if(pred.getFreeIdentifiers().length > 0) {
 			Map<FreeIdentifier, Expression> identMap =
 				new HashMap<FreeIdentifier, Expression>();
-			Set<String> names = new HashSet<String>();
 			LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 			LinkedList<Predicate> bindings = new LinkedList<Predicate>();
 			
 			int c = 0;
-			for(FreeIdentifier ident: pred.getFreeIdentifiers()) {
-				if(!names.contains(ident.getName())) {
-					names.add(ident.getName());
-					mb.calculate(ident.getType(), c, ident.getName(), null, ff);
-					if(mb.getIdentDecls().size() > 1) {
-						c = c + mb.offset();
-						identDecls.addAll(0, mb.X());
+			for (FreeIdentifier ident: pred.getFreeIdentifiers()) {
+				mb.calculate(ident.getType(), c, ident.getName(), null, ff);
+				if (mb.getIdentDecls().size() > 1) {
+					c = c + mb.offset();
+					identDecls.addAll(0, mb.X());
 
-						identMap.put(ident, mb.getMaplet());
-						bindings.add(
-							ff.makeRelationalPredicate(Formula.EQUAL, ident, mb.V(),null));	
-					}
+					identMap.put(ident, mb.getMaplet());
+					bindings.add(
+						ff.makeRelationalPredicate(Formula.EQUAL, ident, mb.V(),null));	
 				}
 			}
 			if(identMap.size() > 0) {
