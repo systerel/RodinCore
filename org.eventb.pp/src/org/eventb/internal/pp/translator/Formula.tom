@@ -52,7 +52,7 @@
 
 
 %oparray PredicateList pList (Predicate*) {
-	is_fsym(t) { t instanceof Predicate[] }
+	is_fsym(t) { true }
     get_size(t)      { t.length }
     get_element(t,n) { t[n] }
 	make_empty(t) { null }
@@ -60,7 +60,7 @@
 }
 
 %oparray ExpressionList eList (Expression*) {
-	is_fsym(t) { t instanceof Expression[] }
+	is_fsym(t) { true }
     get_size(t)      { t.length }
     get_element(t,n) { t[n] }
 	make_empty(t) { null }
@@ -68,7 +68,7 @@
 }
 
 %oparray BoundIdentDeclList bidList (BoundIdentDecl*) {
-	is_fsym(t) { t instanceof BoundIdentDecl[] }
+	is_fsym(t) { true }
     get_size(t)      { t.length }
     get_element(t,n) { t[n] }
 	make_empty(t) { null }
