@@ -6,4 +6,4 @@ Bundle-Version: 0.0.0
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.core.ast;visibility:=reexport
-Export-Package: org.eventb.internal.pp.translator;x-friends:="org.eventb.core.pp.tests"
+Export-Package: org.eventb.pp

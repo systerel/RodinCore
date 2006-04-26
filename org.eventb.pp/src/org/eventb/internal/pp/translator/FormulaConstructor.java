@@ -58,7 +58,8 @@ public class FormulaConstructor {
 					childs.add(pred);
 			}
 		}
-		if(childs.size() == 1) return childs.getFirst();
+		if(childs.size() == 0) return neutral;
+		else if(childs.size() == 1) return childs.getFirst();
 		else {
 			if(hasChanged || oldPredicate == null)
 				return ff.makeAssociativePredicate(tag, childs, loc);

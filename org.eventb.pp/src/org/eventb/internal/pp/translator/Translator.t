@@ -48,33 +48,6 @@ public class Translator extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
-	    	Land(children) | Lor(children) -> {
-	    		return super.translate(
-	    				FormulaConstructor.makeAssociativePredicate(
-	    				ff,
-	    				pred.getTag(),
-	    				Arrays.asList(`children),
-	    				loc,
-	    				pred), ff);
-	    	}
-	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
-	    	}
-	    	Limp(BTRUE(), P) -> {
-	    		return translate(`P, ff);
-	    	}
-	    	Limp(P, BFALSE()) -> {
-	    		return ff.makeUnaryPredicate(
-	    			Formula.NOT, 
-	    			translate(`P, ff), 
-	    			loc);
-	    	}
-	    	Not(BTRUE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
-	    	}
-	    	Not(BFALSE()) -> {
-	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
-	    	}
 	    	In(E, rhs) -> {
 	    		return translateIn (`E, `rhs, loc, ff);
 	    	}

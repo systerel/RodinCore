@@ -4,3 +4,4 @@ GoalChecker.java
 IdentifierDecomposition.java
 IdentityTranslator.java
 QuantMapletBuilder.java
+PredicateSimplification.java

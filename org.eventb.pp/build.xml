@@ -25,7 +25,8 @@
 				 tomIdentifierDecomposition, 
 		         tomQuantMapletBuilder,
 		         tomGoalChecker,
-				 tomBorderTranslator" 
+				 tomBorderTranslator,
+				 tomPredicateSimplification" 
 		description="Generate all Java files">
 		<eclipse.incrementalBuild/>
 	</target>
@@ -57,17 +58,12 @@
 		    <srcfiles file= "${translatorSrcDir}/GoalChecker.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
-		<uptodate property="tom.ExpressionPurifier.notRequired" 
-				targetfile="${translatorSrcDir}/ExpressionPurifier.java" >
-			<srcfiles file= "${translatorSrcDir}/ExpressionPurifier.t" />
+		<uptodate property="tom.PredicateSimplification.notRequired" 
+				targetfile="${translatorSrcDir}/PredicateSimplification.java" >
+			<srcfiles file= "${translatorSrcDir}/PredicateSimplification.t" />
 			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
-		<uptodate property="tom.ExprReorganizer.notRequired" 
-				targetfile="${translatorSrcDir}/ExprReorganizer.java" >
-			<srcfiles file= "${translatorSrcDir}/ExprReorganizer.t" />
-			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.ExprReorganizer.notRequired" 
+		<uptodate property="tom.BorderTranslator.java.notRequired" 
 				targetfile="${translatorSrcDir}/BorderTranslator.java" >
 			<srcfiles file= "${translatorSrcDir}/BorderTranslator.t" />
 			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
@@ -187,9 +183,9 @@
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 
-	<target name="tomExpressionPurifier" depends="init,tom-test"
-		description="launch tom for ExpressionPurifier.t"
-		unless="tom.ExpressionPurifier.notRequired" >
+	<target name="tomPredicateSimplification" depends="init,tom-test"
+		description="launch tom forPredicateSimplification.t"
+		unless="tom.PredicateSimplification.notRequired" >
 		<java classname="jtom.Tom" fork="true">
 			<classpath>
 				<fileset dir="${tom-home}/lib">
@@ -200,33 +196,12 @@
 			<arg value="-X" />
 			<arg value="${tom-home}/Tom.xml" />
 			<arg value="--output" />
-			<arg value="${translatorSrcDir}/ExpressionPurifier.java" />
+			<arg value="${translatorSrcDir}/PredicateSimplification.java" />
 			<arg value="--pretty" />
 			<arg value="--static" />
-			<arg value="${translatorSrcDir}/ExpressionPurifier.t" />
+			<arg value="${translatorSrcDir}/PredicateSimplification.t" />
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-	
-	<target name="tomExprReorganizer" depends="init,tom-test"
-			description="launch tom for ExpressionPurifier.t"
-			unless="tom.ExprReorganizer.notRequired" >
-			<java classname="jtom.Tom" fork="true">
-				<classpath>
-					<fileset dir="${tom-home}/lib">
-			        	<include name="*.jar"/>
-					</fileset>
-				</classpath>
-				<sysproperty key="tom.home" value="${tom-home}" />
-				<arg value="-X" />
-				<arg value="${tom-home}/Tom.xml" />
-				<arg value="--output" />
-				<arg value="${translatorSrcDir}/ExprReorganizer.java" />
-				<arg value="--pretty" />
-				<arg value="--static" />
-				<arg value="${translatorSrcDir}/ExprReorganizer.t" />
-			</java>
-			<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 	
 	<target name="tomBorderTranslator" depends="init,tom-test"
@@ -256,8 +231,7 @@
 		<delete file="${translatorSrcDir}/IdentifierDecomposition.java" />
 		<delete file="${translatorSrcDir}/QuantMapletBuilder.java" />
 		<delete file="${translatorSrcDir}/GoalChecker.java" />
-		<delete file="${translatorSrcDir}/ExpressionPurifier.java" />
-		<delete file="${translatorSrcDir}/ExprReorganizer.java" />
+		<delete file="${translatorSrcDir}/PredicateSimplification.java" />
 		<delete file="${translatorSrcDir}/BorderTranslator.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
