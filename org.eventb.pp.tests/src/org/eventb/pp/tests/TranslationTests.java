@@ -12,8 +12,8 @@ import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.internal.pp.translator.GoalChecker;
-import org.eventb.internal.pp.translator.Translator;
+
+import org.eventb.pp.Translator;
 
 
 /**
@@ -80,14 +80,14 @@ public class TranslationTests extends TestCase {
 	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
-		if(transformExpected) pexpected = Translator.reduceToPredCalc(pexpected, ff);
+		if(transformExpected) pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
 		doTest(pinput, pexpected);
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
 		doTest(input, expected, new TestTranslation() {
 			public Formula translate(Formula inp, FormulaFactory formulaFactory) {
-				return Translator.reduceToPredCalc((Predicate)inp, formulaFactory);
+				return Translator.reduceToPredicateCalulus((Predicate)inp, formulaFactory);
 			}});
 	}
 	
@@ -103,7 +103,7 @@ public class TranslationTests extends TestCase {
 		tcr=actual.typeCheck(FastFactory.mTypeEnvironment());
 		assertTrue("Actual result is not typed: " + tcr.getProblems(), tcr.isSuccess());
 		if(actual instanceof Predicate)
-			assertTrue("Result not in goal: " + actual, GoalChecker.isInGoal((Predicate)actual, ff));
+			assertTrue("Result not in goal: " + actual, Translator.isInGoal((Predicate)actual, ff));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
@@ -111,12 +111,76 @@ public class TranslationTests extends TestCase {
 	 * Main test routine for predicates.
 	 */
 	
-	public void testPredicateTranslation () {
-
+	public void testAndRule1 () {
 		doTest( "⊤ ∧ ⊤",
-				"⊤ ∧ ⊤", false);
+				"⊤ ", false);
 	}
 	
+	public void testAndRule12 () {
+		doTest( "⊤ ∧ ⊥",
+				"⊥ ", false);
+	}
+	
+	public void testAndRule3 () {
+		doTest( "⊥ ∧ ⊤",
+				"⊥ ", false);
+	}
+
+	public void testAndRule4 () {
+		doTest( "(⊤ ∧ ⊥) ∨ (⊤ ∧ ⊤ ∧ ⊤)",
+				"⊤", false);
+	}
+
+	public void testOrRule1 () {
+		doTest( "⊤ ∨ ⊤",
+				"⊤ ", false);
+	}
+
+	public void testOrRule2 () {
+		doTest( "⊥ ∨ ⊤",
+				"⊤ ", false);
+	}
+
+	public void testOrRule3 () {
+		doTest( "⊤ ∨ ⊥",
+				"⊤ ", false);
+	}
+	
+	public void testOrRule4 () {
+		doTest( "(⊤ ∨ ⊥) ∧ (⊥ ∨ ⊥ ∨ ⊥)",
+				"⊥ ", false);
+	}
+	
+	public void testImplRule1() {
+		doTest( "a>b ⇒ ⊤",
+				"⊤", false);
+	}
+	
+	public void testImplRule2() {
+		doTest( "⊥ ⇒ a>b",
+				"⊤", false);
+	}
+	
+	public void testImplRule3() {
+		doTest( "⊤ ⇒ a>b",
+				"a>b", false);
+	}
+
+	public void testImplRule4() {
+		doTest( "a>b ⇒ ⊥",
+				"¬(a>b)", false);
+	}
+	
+	public void testNotRule1() {
+		doTest( "¬⊤",
+				"⊥", false);
+	}
+	
+	public void testNotRule2() {
+		doTest( "¬⊥",
+				"⊤", false);
+	}
+
 	public void testIdentifierDecomposition1() {
 		doTest( "∀x·10↦(20↦30) = x", 
 				"∀x,x0,x1·10=x1∧20=x0∧30=x", false);		
@@ -906,7 +970,7 @@ public class TranslationTests extends TestCase {
 				FastFactory.mFreeIdentifier("E", CPROD(INT, BOOL)),
 				FastFactory.mFreeIdentifier("r", REL(INT, BOOL)));
 		
-		doTest(input, Translator.reduceToPredCalc(expected, ff));
+		doTest(input, Translator.reduceToPredicateCalulus(expected, ff));
 	}
 	*/
 
@@ -1153,7 +1217,7 @@ public class TranslationTests extends TestCase {
 	public void testArithmeticRule() {
 		Predicate input = parse("E∈{10∗20,20}");
 		Predicate expected = parse("E=10∗20 ∨ E=20");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 	
@@ -1162,21 +1226,21 @@ public class TranslationTests extends TestCase {
 				new String[]{"S", "n"}, new Type[]{INT_SET, INT});
 		Predicate input = parse("card(S)=n", te);
 		Predicate expected = parse("∃f·f∈S⤖1‥n", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 
 	public void testCardinality2() {
 		Predicate input = parse("card({1}) > 1");
 		Predicate expected = parse("∀x·x=card({1})⇒x>1");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 	
 	public void testCardinality3() {
 		Predicate input =  parse("card({card({1})}) = card({2})");
 		Predicate expected = parse("∀x,x0·x0=card({card({1})})∧x=card({2}) ⇒ x0=x");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 	
@@ -1185,28 +1249,28 @@ public class TranslationTests extends TestCase {
 				new String[]{"S"}, new Type[]{INT_SET});
 		Predicate input =  parse("∀s·card(S)>card({t·t>s∧t<card({t,t})∣t})", te);
 		Predicate expected = parse("∀s·∀x,x0·x0=card(S)∧x=card({t·t>s∧t<card({t,t})∣t})⇒x0>x", te);
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}	
 
 	public void testBool() {
 		Predicate input = parse("E∈{FALSE,bool(x>y)}");
 		Predicate expected = parse("E=FALSE ∨ E=bool(x>y)");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 	
 	public void testBool2() {
 		Predicate input = parse("E∈{bool(TRUE=bool(⊥))}");
 		Predicate expected = parse("E=bool(TRUE=bool(⊥))");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);	
 	}
 	
 	public void testBool3() {
 		Predicate input = parse("e ∈ {bool(⊥)↦bool(1>2)}");
 		Predicate expected = parse("e ∈ {bool(⊥)↦bool(1>2)}");
-		expected = Translator.reduceToPredCalc(expected, ff);
+		expected = Translator.reduceToPredicateCalulus(expected, ff);
 		doTest(input, expected);
 	}
 	
@@ -1284,7 +1348,7 @@ public class TranslationTests extends TestCase {
 		
 		System.out.println("start");
 		for(int i = 0; i < 1000; i++) {
-			Translator.reduceToPredCalc(pred, ff);
+			Translator.reduceToPredicateCalulus(pred, ff);
 		}
 		System.out.println("end");
 	}
