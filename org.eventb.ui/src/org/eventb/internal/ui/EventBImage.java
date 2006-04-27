@@ -71,7 +71,7 @@ public class EventBImage {
 	public static void initializeImageRegistry(ImageRegistry registry) {
 		registerImage(registry, IMG_PROJECT, "obj16/prj_obj.gif");
 		registerImage(registry, IMG_MACHINE, "obj16/mch_obj.gif");
-		registerImage(registry, IMG_CONTEXT, "obj16/cxt_obj.gif");
+		registerImage(registry, IMG_CONTEXT, "obj16/ctx_obj.gif");
 		registerImage(registry, IMG_VARIABLE, "obj16/var_obj.gif");
 		registerImage(registry, IMG_INVARIANT, "obj16/inv_obj.gif");
 		registerImage(registry, IMG_THEOREM, "obj16/thm_obj.gif");
