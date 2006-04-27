@@ -14,6 +14,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IInternalElement extends IRodinElement, IInternalParent, IElementManipulation{
 
 	/**
+	 * Returns the occurrence count of this internal element.
+	 * <p>
+	 * The occurrence count uniquely identifies this element in the case that a
+	 * duplicate named element exists in the same parent. For example, if there
+	 * are two variables in a machine with the same name, the occurrence
+	 * count is used to distinguish them. The occurrence count starts at 1 (thus
+	 * the first occurrence is occurrence 1, not occurrence 0) inside its
+	 * parent.
+	 * </p>
+	 * 
+	 * @return the occurrence count of this internal element
+	 */
+	int getOccurrenceCount();
+
+	/**
 	 * Returns the contents of this internal element. The file containing this
 	 * internal element is opened if it was not already.
 	 * 

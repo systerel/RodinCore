@@ -230,6 +230,10 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return null;
 	}
 
+	public int getOccurrenceCount() {
+		return occurrenceCount;
+	}
+
 	@Override
 	protected void generateInfos(RodinElementInfo info,
 			HashMap<IRodinElement, RodinElementInfo> newElements,
