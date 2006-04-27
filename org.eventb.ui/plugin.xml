@@ -132,6 +132,7 @@
       <page class="org.eventb.internal.ui.eventbeditor.ConstantPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.AxiomPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.TheoremPage"/>
+      <page class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
