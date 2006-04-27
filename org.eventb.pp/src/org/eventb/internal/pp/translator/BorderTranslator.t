@@ -68,12 +68,10 @@ public abstract class BorderTranslator extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
 	    	RelationalPredicate(l, r)-> {
-	    		Type intType = ff.makeIntegerType();
-	    		
-	    		if(`l.getType().equals(intType) && `r.getType().equals(intType))
+	    		if(`l.getType() instanceof IntegerType && `r.getType() instanceof IntegerType)
 	    			return translateArithmeticBorder((RelationalPredicate)pred, ff);
 	    			
-	    		if(`l.getType().getBaseType() != null && `r.getType().getBaseType() != null)
+	    		if(`l.getType() instanceof PowerSetType && `r.getType() instanceof PowerSetType)
 	    			return translateSetBorder((RelationalPredicate)pred, ff);
 
     			return pred;
