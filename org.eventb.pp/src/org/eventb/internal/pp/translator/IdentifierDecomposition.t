@@ -99,19 +99,20 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
 			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
+				IdentifierDecomposition ic = new IdentifierDecomposition(identTypes, c);
 				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 				for (BoundIdentDecl decl: `is) {
 					mb.calculate(decl.getType(), 0, decl.getName(), decl.getSourceLocation(), ff);
-					c.add(mb.getIdentDecls().size());
-					identTypes.add (0, 
-						new Pair<Type, Integer>(decl.getType(), new Integer(c.value())));
+					ic.c.add(mb.getIdentDecls().size());
+					ic.identTypes.add (0, 
+						new Pair<Type, Integer>(decl.getType(), new Integer(ic.c.value())));
 					identDecls.addAll(mb.getIdentDecls());					
 				}	
 				return ff.makeQuantifiedExpression(
 					expr.getTag(),
 					identDecls,
-					new IdentifierDecomposition(identTypes, c).translate(`P, ff),
-					new IdentifierDecomposition(identTypes, c).translate(`E, ff),
+					ic.translate(`P, ff),
+					ic.translate(`E, ff),
 					loc,
 					QuantifiedExpression.Form.Explicit);
 			}
@@ -132,18 +133,19 @@ public class IdentifierDecomposition extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();		
 		%match (Predicate pred) {
 			ForAll(is, P) | Exists(is, P) -> {
+				IdentifierDecomposition ic = new IdentifierDecomposition(identTypes, c);
 				List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 				for (BoundIdentDecl decl: `is) {
 					mb.calculate(decl.getType(), 0, decl.getName(), decl.getSourceLocation(), ff);
-					c.add(mb.getIdentDecls().size());
-					identTypes.add (0, 
-						new Pair<Type, Integer>(decl.getType(), new Integer(c.value())));
+					ic.c.add(mb.getIdentDecls().size());
+					ic.identTypes.add (0, 
+						new Pair<Type, Integer>(decl.getType(), new Integer(ic.c.value())));
 					identDecls.addAll(mb.getIdentDecls());					
 				}	
 				return ff.makeQuantifiedPredicate(
 					pred.getTag(),
 					identDecls,
-					new IdentifierDecomposition(identTypes, c).translate(`P, ff),
+					ic.translate(`P, ff),
 					loc);
 			}
 			_ -> {
