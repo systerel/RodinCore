@@ -33,8 +33,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -46,17 +44,18 @@ public abstract class EventBEditableTreeViewer
 	extends TreeViewer
 {
 	
-	private TreeEditor editor;
-
+	private TreeEditor treeEditor;
+//	private EventBEditor editor;
+	
 	// The Rodin File where the information belongs to.
-	protected IRodinFile rodinFile;
+//	protected IRodinFile rodinFile;
 	
 //	abstract protected void commit(int row, int col, String text);
 //	protected abstract void newElement(Tree tree, TreeItem item, int column);
 	
 	protected abstract void createTreeColumns(Tree tree);
 	
-	protected abstract void commit(IRodinElement element, int col, String text);
+	protected abstract void commit(Leaf leaf, int col, String text);
 	
 	/**
 	 * Constructor.
@@ -67,9 +66,10 @@ public abstract class EventBEditableTreeViewer
 	 * @param style The style used to creat the part
 	 * @param block The master-detail block contains this part
 	 */
-	public EventBEditableTreeViewer(Composite parent, int style, IRodinFile rodinFile) {
+	public EventBEditableTreeViewer(Composite parent, int style) {
 		super(parent, style);
-		this.rodinFile = rodinFile;
+//		this.editor = editor;
+//		this.rodinFile = rodinFile;
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;
@@ -79,8 +79,8 @@ public abstract class EventBEditableTreeViewer
 		createTreeColumns(tree);
 		
 		
-		editor = new TreeEditor(tree);
-		editor.grabHorizontal = true;
+		treeEditor = new TreeEditor(tree);
+		treeEditor.grabHorizontal = true;
 		tree.addMouseListener(new MouseAdapter() {
 
 			/* (non-Javadoc)
@@ -96,7 +96,7 @@ public abstract class EventBEditableTreeViewer
 			 */
 			public void mouseDown(MouseEvent e) {
 				Tree tree = EventBEditableTreeViewer.this.getTree();
-				Control old = editor.getEditor();
+				Control old = treeEditor.getEditor();
 		        if (old != null) old.dispose();
 
 		        // Determine where the mouse was clicked
@@ -120,11 +120,6 @@ public abstract class EventBEditableTreeViewer
 		});
 	}
 	
-//	public void selectRow(Point pt, int column) {
-//		TreeItem item = this.getTree().getItem(pt);
-//		if (item != null) selectItem(item, pt, column);
-//	}
-	
 	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
 		
@@ -135,12 +130,12 @@ public abstract class EventBEditableTreeViewer
         if (!ssel.toList().contains(item.getData())) 
         	this.setSelection(new StructuredSelection(item.getData()));
 
-        select(tree, editor, item, column);
+        select(tree, treeEditor, item, column);
 	}
 	
-	protected void select(final Tree tree, final TreeEditor editor, final TreeItem item, final int column) {
+	protected void select(final Tree tree, final TreeEditor treeEditor, final TreeItem item, final int column) {
 		final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
-        if (column < 1) return; // The object column is not editable
+//        if (column < 1) return; // The object column is not editable
 //        UIUtils.debug("Item: " + item.getData() + " of class: " + item.getData().getClass());
         final Object itemData = item.getData();
 //        if (itemData instanceof IUnnamedInternalElement && column == 1) return;
@@ -152,7 +147,19 @@ public abstract class EventBEditableTreeViewer
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
 		final Composite composite = new Composite (tree, SWT.NONE);
 		if (!isCarbon) composite.setBackground (black);
-		final Text text = new Text (composite, SWT.NONE);
+		final Text text = new Text(composite, SWT.NONE); 
+		new ElementText(text, treeEditor, item, tree, (Leaf) itemData, column) {
+			/* (non-Javadoc)
+			 * @see org.eventb.internal.ui.eventbeditor.ElementText#commit(org.rodinp.core.IRodinElement, int, java.lang.String)
+			 */
+			@Override
+			public void commit(Leaf leaf, int column, String contents) {
+				// TODO Auto-generated method stub
+				EventBEditableTreeViewer.this.commit(leaf, column, contents);
+			}
+			
+		};
+//		final Text text = new Text (composite, SWT.NONE);
 		new EventBMath(text);
 		new TimerText(text) {
 
@@ -161,54 +168,54 @@ public abstract class EventBEditableTreeViewer
 			 */
 			@Override
 			public void commit() {
-				EventBEditableTreeViewer.this.commit((IRodinElement) itemData, column, text.getText());
+				EventBEditableTreeViewer.this.commit((Leaf) itemData, column, text.getText());
 			}
 			
 		};
 		final int inset = isCarbon ? 0 : 1;
 		composite.addListener (SWT.Resize, new Listener () {
 			public void handleEvent (Event e) {
-				UIUtils.debug("Event: " + e.toString());
+//				UIUtils.debug("Event: " + e.toString());
 				Rectangle rect = composite.getClientArea ();
-				UIUtils.debug("Rectangle: " + rect.toString());
+//				UIUtils.debug("Rectangle: " + rect.toString());
 				text.setBounds (rect.x + inset, rect.y + inset, rect.width - inset * 2, rect.height - inset * 2);
 			}
 		});
-		Listener textListener = new Listener () {
-			public void handleEvent (final Event e) {
-				final String contents = text.getText();
-				switch (e.type) {
-					case SWT.FocusOut:
-						UIUtils.debug("FocusOut");
-						commit((IRodinElement) itemData, column, contents);
-						item.setText (column, contents);
-						composite.dispose ();
-						break;
-					case SWT.Verify:
-//						UIUtils.debug("Verify");
-						editor.horizontalAlignment = SWT.LEFT;
-						editor.layout();
-						break;
-					case SWT.Traverse:
-						switch (e.detail) {
-							case SWT.TRAVERSE_RETURN:
-								UIUtils.debug("TraverseReturn");
-								commit((IRodinElement) itemData, column, contents);
-								composite.dispose();
-								e.doit = false;
-								break;
-							case SWT.TRAVERSE_ESCAPE:
-								composite.dispose ();
-								e.doit = false;
-						}
-						break;
-				}
-			}
-				};
-		text.addListener (SWT.FocusOut, textListener);
-		text.addListener (SWT.Traverse, textListener);
-		text.addListener (SWT.Verify, textListener);
-		editor.setEditor(composite, item, column);
+//		Listener textListener = new Listener () {
+//			public void handleEvent (final Event e) {
+//				final String contents = text.getText();
+//				switch (e.type) {
+//					case SWT.FocusOut:
+//						UIUtils.debug("FocusOut");
+//						commit((IRodinElement) itemData, column, contents);
+//						item.setText (column, contents);
+//						composite.dispose ();
+//						break;
+//					case SWT.Verify:
+////						UIUtils.debug("Verify");
+//						treeEditor.horizontalAlignment = SWT.LEFT;
+//						treeEditor.layout();
+//						break;
+//					case SWT.Traverse:
+//						switch (e.detail) {
+//							case SWT.TRAVERSE_RETURN:
+//								UIUtils.debug("TraverseReturn");
+//								commit((IRodinElement) itemData, column, contents);
+//								composite.dispose();
+//								e.doit = false;
+//								break;
+//							case SWT.TRAVERSE_ESCAPE:
+//								composite.dispose ();
+//								e.doit = false;
+//						}
+//						break;
+//				}
+//			}
+//				};
+//		text.addListener (SWT.FocusOut, textListener);
+//		text.addListener (SWT.Traverse, textListener);
+//		text.addListener (SWT.Verify, textListener);
+		treeEditor.setEditor(composite, item, column);
 		text.setText (item.getText(column));
 		text.selectAll ();
 		text.setFocus ();

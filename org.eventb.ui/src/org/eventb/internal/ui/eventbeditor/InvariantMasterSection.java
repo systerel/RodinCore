@@ -54,7 +54,7 @@ import org.rodinp.core.RodinDBException;
  * for displaying invariants (used as master section in Master-Detail block).
  */
 public class InvariantMasterSection
-	extends NewEventBTablePartWithButtons
+	extends EventBTablePartWithButtons
 {
 
 	
@@ -396,7 +396,7 @@ public class InvariantMasterSection
 
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.NewEventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
 	@Override
 	protected void edit(IRodinElement element) {

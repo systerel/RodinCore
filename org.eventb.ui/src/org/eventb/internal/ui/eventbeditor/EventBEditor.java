@@ -334,9 +334,6 @@ public abstract class EventBEditor
 		if (page instanceof EventBFormPage) {
 			((EventBFormPage) page).setSelection(element);
 		}
-		else if (page instanceof NewEventBFormPage) {
-			((NewEventBFormPage) page).setSelection(element);
-		}
 		
 	}
 	

@@ -13,9 +13,11 @@ package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -33,6 +35,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -42,11 +45,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -70,7 +75,7 @@ import org.rodinp.core.RodinDBException;
  * for displaying constants (used as master section in Master-Detail block).
  */
 public class EventMasterSection 
-	extends NewEventBTreePartWithButtons
+	extends EventBTreePartWithButtons
 {
 	// The indexes for different buttons.
 	private static final int ADD_EVT_INDEX = 0;
@@ -80,7 +85,7 @@ public class EventMasterSection
 	private static final int UP_INDEX = 4;
 	private static final int DOWN_INDEX = 5;
 
-//	private HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
+	private HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
 	
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Events";
@@ -92,6 +97,8 @@ public class EventMasterSection
 	// The group of actions for the tree part.
 	private ActionGroup groupActionSet;
 	
+	private ViewerFilter varFilter;
+	private ViewerFilter grdFilter;
 
 	/**
 	 * The content provider class. 
@@ -108,59 +115,63 @@ public class EventMasterSection
 		
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IMachine) {
-//				ArrayList<Node> list = new ArrayList<Node>();
+				ArrayList<Node> list = new ArrayList<Node>();
 				try {
-					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
-//					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
-//					for (IRodinElement event : events) {
-//						UIUtils.debug("Event: " + event.getElementName());
-//						Node node = new Node(event);
-//						elementsMap.put(event, node);
-//						list.add(node);
-//					}
+//					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+					for (IRodinElement event : events) {
+						UIUtils.debug("Event: " + event.getElementName());
+						Node node = new Node(event);
+						elementsMap.put(event, node);
+						list.add(node);
+					}
 				}
 				catch (RodinDBException e) {
 					// TODO Exception handle
 					e.printStackTrace();
 				}
-//				return list.toArray();
+				return list.toArray();
 			}
 			
-//			if (parent instanceof Node) {
-//				Node node = (Node) parent;
-//				if (node.isExplored()) return node.getChildren();
-//				else {
-//					try {
-//						IRodinElement element = node.getElement();
-//						
-//						if (element instanceof IParent) {
-//							IRodinElement [] children = ((IParent) element).getChildren();
-//							for (IRodinElement child : children) {
-//								Leaf leaf = new Leaf(child);
-//								elementsMap.put(child, leaf);
-//								node.addChildren(leaf);
-//							}
-//						}
-//					}
-//					catch (RodinDBException e) {
-//						e.printStackTrace();
-//					}
-//					node.setExplored();
+			if (parent instanceof Node) {
+				Node node = (Node) parent;
+				if (node.isExplored()) return node.getChildren();
+				else {
+					try {
+						IRodinElement element = node.getElement();
+						
+						if (element instanceof IParent) {
+							IRodinElement [] children = ((IParent) element).getChildren();
+							for (IRodinElement child : children) {
+								Leaf leaf;
+								if (child instanceof IParent) leaf = new Node(child);
+								else leaf = new Leaf(child);
+								elementsMap.put(child, leaf);
+								node.addChildren(leaf);
+							}
+						}
+					}
+					catch (RodinDBException e) {
+						e.printStackTrace();
+					}
+					node.setExplored();
+				}
+				return node.getChildren();
+			}
+			
+//			if (parent instanceof IParent) {
+//				try {
+//					return ((IParent) parent).getChildren();
 //				}
-//				return node.getChildren();
+//				catch (RodinDBException e) {
+//					// TODO Exception handle
+//					e.printStackTrace();
+//				}
 //			}
 			
-			if (parent instanceof IParent) {
-				try {
-					return ((IParent) parent).getChildren();
-				}
-				catch (RodinDBException e) {
-					// TODO Exception handle
-					e.printStackTrace();
-				}
-			}
 			return new Object[0];
 		}
+		
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
@@ -179,7 +190,7 @@ public class EventMasterSection
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
-//			elementsMap = new HashMap<IRodinElement, Leaf>();
+			elementsMap = new HashMap<IRodinElement, Leaf>();
 		}
 	}
 	
@@ -195,31 +206,31 @@ public class EventMasterSection
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
-//			IRodinElement rodinElement = ((Leaf) element).getElement();
+			IRodinElement rodinElement = ((Leaf) element).getElement();
 			if (columnIndex != 0) return null;
-			return UIUtils.getImage(element);
+			return UIUtils.getImage(rodinElement);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-//			IRodinElement element = ((Leaf) element).getElement();
+			IRodinElement rodinElement = ((Leaf) element).getElement();
 			
 			if (columnIndex == 0) {
-				if (element instanceof IUnnamedInternalElement) return "";
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				return element.toString();
+				if (rodinElement instanceof IUnnamedInternalElement) return "";
+				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
+				return rodinElement.toString();
 			}
 			
 			if (columnIndex == 1) {
 				try {
-					if (element instanceof IInternalElement) return ((IInternalElement) element).getContents();
+					if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
 				}
 				catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				return element.toString();
+				return rodinElement.toString();
 			}
 			
 //			if (columnIndex == 0) {
@@ -232,7 +243,7 @@ public class EventMasterSection
 //				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
 //				else return element.toString();
 //			}
-			return element.toString();
+			return rodinElement.toString();
 
 		}
 
@@ -283,21 +294,6 @@ public class EventMasterSection
 			Display display = Display.getCurrent();
             return display.getSystemColor(SWT.COLOR_BLACK);
        }
-
-//		public String getText(Object obj) {
-//			if (obj instanceof IAction) {
-//				try {
-//					return ((IAction) obj).getContents();
-//				}
-//				catch (RodinDBException e) {
-//					// TODO Handle Exception
-//					e.printStackTrace();
-//					return "";
-//				}
-//			}
-//			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
-//			return obj.toString();
-//		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
@@ -306,14 +302,7 @@ public class EventMasterSection
 //			UIUtils.debug("Get fonts");
 			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		}
-		
-		
-//		public Image getImage(Object obj) {
-//			return UIUtils.getImage(obj);
-//		}
-	
-	
-	
+			
 	}
 	
 	
@@ -330,9 +319,10 @@ public class EventMasterSection
 		}
 		
 		public int category(Object obj) {
-			if (obj instanceof IVariable) return 1;
-			if (obj instanceof IGuard) return 2;
-			if (obj instanceof IAction) return 3;
+			IRodinElement rodinElement = ((Leaf) obj).getElement();
+			if (rodinElement instanceof IVariable) return 1;
+			if (rodinElement instanceof IGuard) return 2;
+			if (rodinElement instanceof IAction) return 3;
 			
 			return 0;
 		}
@@ -354,9 +344,66 @@ public class EventMasterSection
 		
 		makeActions();
 		hookContextMenu();
+		createToolBarActions(managedForm);
 		((StructuredViewer) getViewer()).setSorter(new ElementsSorter());
 	}
 	
+	/**
+	 * Create the Toolbar actions
+	 */
+	protected void createToolBarActions(IManagedForm managedForm) {
+		final ScrolledForm form = managedForm.getForm();
+		varFilter = new ViewerFilter() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				IRodinElement rodinElement = ((Leaf) element).getElement();
+				
+				if (rodinElement instanceof IVariable) return false;
+				else return true;
+			}
+			
+		};
+		
+		grdFilter = new ViewerFilter() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				IRodinElement rodinElement = ((Leaf) element).getElement();
+				if (rodinElement instanceof IGuard) return false;
+				else return true;
+			}
+			
+		};
+
+		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
+				if (isChecked()) viewer.addFilter(varFilter);
+				else viewer.removeFilter(varFilter);
+			}
+		};
+		filterVarAction.setChecked(false);
+		filterVarAction.setToolTipText("Filter variable elements");
+		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
+				if (isChecked()) viewer.addFilter(grdFilter);
+				else viewer.removeFilter(grdFilter);
+			}
+		};
+		filterGrdAtion.setChecked(false);
+		filterGrdAtion.setToolTipText("Filter guard elements");
+		form.getToolBarManager().add(filterVarAction);
+		form.getToolBarManager().add(filterGrdAtion);
+		form.updateToolBar();
+	}
 	
 	/*
 	 * Create the actions that can be used in the tree.
@@ -426,8 +473,8 @@ public class EventMasterSection
 		
 		if (hasOneSelection) {
 			IRodinElement event;
-			if (selections[0] instanceof IRodinElement) {
-				IRodinElement element = (IRodinElement) selections[0];
+			if (selections[0] instanceof Leaf) {
+				IRodinElement element = ((Leaf) selections[0]).getElement();
 				if (element instanceof IEvent) {
 					event = (IRodinElement) element;
 				}
@@ -590,7 +637,7 @@ public class EventMasterSection
 	 * @param parent The composite parent
 	 */
 	protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new EventEditableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION, editor.getRodinInput());
+		return new EventEditableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 	
 	
@@ -638,20 +685,63 @@ public class EventMasterSection
 		processDelta(event.getDelta());
 		postRefresh(toRefresh, true);
 	}
-	
-	private void processMove(IRodinElement oldElement, IRodinElement newElement) {
+		
+	private void processMove(TreeItem item, IRodinElement newElement) {
 		TreeViewer viewer = (TreeViewer) getViewer();
+		Leaf leaf = (Leaf) item.getData();
+		IRodinElement oldElement = leaf.getElement();
+		UIUtils.debug("--- Process Move ---");
+//		try {
+			UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
+			UIUtils.debug("to: " + newElement.getElementName() + " content: ");
+//		}
+//		catch (RodinDBException e) {
+//			e.printStackTrace();
+//		}
 		IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-		boolean selected = ssel.toList().contains(oldElement);
-		newStatus.add(new StatusObject(newElement, oldElement, viewer.getExpandedState(oldElement), selected));
-		try {
-			for (IRodinElement element : ((IInternalElement) oldElement).getChildren()) {
-				processMove(element, ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName()));
+		boolean selected = ssel.toList().contains(leaf);
+		newStatus.add(new StatusObject(newElement, oldElement, viewer.getExpandedState(leaf), selected));
+
+		TreeItem [] items = item.getItems();
+		for (TreeItem i : items) {
+			Leaf l = (Leaf) i.getData();
+			if (l == null) continue;
+			IRodinElement element = l.getElement();
+			IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
+			processMove(i, newChild);
+		}
+	}
+	
+	private TreeItem findItem(IRodinElement element) {
+//		UIUtils.debug("Trying to find " + element.getElementName());
+		TreeViewer viewer = (TreeViewer) getViewer();
+		Tree tree = viewer.getTree();
+		TreeItem [] items = tree.getItems();
+		for (TreeItem item : items) {
+			TreeItem temp = findItem(item, element);
+			if (temp != null) return temp;
+		}
+		return null;
+	}
+	
+	private TreeItem findItem(TreeItem item, IRodinElement element) {
+//		UIUtils.debug("From " + item);
+		Leaf leaf = (Leaf) item.getData();
+		if (leaf == null) return null;
+		if (leaf.getElement().equals(element)) {
+			UIUtils.debug("Found");
+			return item;
+		}
+		else {
+//			UIUtils.debug("Recursively ...");
+			TreeItem [] items = item.getItems();
+			for (TreeItem i : items) {
+				TreeItem temp = findItem(i, element);
+				if (temp != null) return temp;
 			}
 		}
-		catch (RodinDBException re) {
-			re.printStackTrace();
-		}
+//		UIUtils.debug("... Not found");
+		return null;
 	}
 	
 	private void processDelta(IRodinElementDelta delta) {
@@ -663,7 +753,9 @@ public class EventMasterSection
 				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
 				IRodinElement oldElement = delta.getMovedFromElement();
 				// Recursively process the children
-				processMove(oldElement, element);
+				TreeItem item = findItem(oldElement);
+				UIUtils.debug("Item found: " + item);
+				processMove(item, element);
 //				TreeViewer viewer = (TreeViewer) getViewer();
 //				IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 //				boolean selected = ssel.toList().contains(elementsMap.get(oldElement));
@@ -712,7 +804,7 @@ public class EventMasterSection
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				UIUtils.debug("CONTENT");
 
-				toRefresh.add(element);
+				if (!(element instanceof IRodinFile)) toRefresh.add(element);
 				return;
 			}
 		}
@@ -737,8 +829,8 @@ public class EventMasterSection
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						IRodinElement element = (IRodinElement) iter.next();
 						UIUtils.debug("Event Refresh element " + element.getElementName());
-//						Leaf leaf = elementsMap.get(element);
-						viewer.refresh(element, updateLabels);
+						Leaf leaf = elementsMap.get(element);
+						viewer.refresh(leaf, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
 					viewer.setSelection(sel);
@@ -746,20 +838,20 @@ public class EventMasterSection
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
 						StatusObject state = (StatusObject) iter.next();
 						UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getExpandedStatus());
-//						Leaf leaf = elementsMap.get(state.getMoveFrom());
-//						leaf.setElement((IRodinElement) state.getObject());
-//						elementsMap.remove(state.getMoveFrom());
-//						elementsMap.put((IRodinElement) state.getObject(), leaf);
-						viewer.setExpandedState(state.getObject(), state.getExpandedStatus());
-						viewer.update(state.getObject(), null);
+						Leaf leaf = elementsMap.get(state.getMoveFrom());
+						leaf.setElement((IRodinElement) state.getObject());
+						elementsMap.remove(state.getMoveFrom());
+						elementsMap.put((IRodinElement) state.getObject(), leaf);
+						viewer.setExpandedState(leaf, state.getExpandedStatus());
+						viewer.update(leaf, null);
 												
 						if (state.getSelectedStatus()) {
 							IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 							ArrayList<Object> list = new ArrayList<Object>(ssel.size() + 1);
 							for (Iterator it = ssel.iterator(); it.hasNext();) {
-								list.add(it.next());
+								list.add(elementsMap.get(it.next()));
 							}
-							list.add(state.getObject());
+							list.add(leaf);
 							viewer.setSelection(new StructuredSelection(list));
 						}
 					}

@@ -54,7 +54,7 @@ import org.rodinp.core.RodinDBException;
  * for displaying carrier sets (used as master section in Master-Detail block).
  */
 public class CarrierSetMasterSection
-	extends NewEventBTablePartWithButtons
+	extends EventBTablePartWithButtons
 {
 	
 	// The indexes for different buttons.
@@ -388,7 +388,7 @@ public class CarrierSetMasterSection
 	
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.NewEventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
 	@Override
 	protected void edit(IRodinElement element) {

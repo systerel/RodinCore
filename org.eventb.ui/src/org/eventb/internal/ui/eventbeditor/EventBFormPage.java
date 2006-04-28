@@ -11,12 +11,13 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -31,10 +32,7 @@ public abstract class EventBFormPage
 	
 	// Title of the page.
 	private String pageTitle;
-	
-	// The master detail block within the page
-	EventBMasterDetailsBlock block;
-	
+	private EventBPartWithButtons part;
 	/**
 	 * Contructor.
 	 * <p>
@@ -46,7 +44,6 @@ public abstract class EventBFormPage
 	public EventBFormPage(FormEditor editor, String pageID, String pageTitle, String pageTabTitle) {
 		super(editor, pageID, pageTabTitle);  //$NON-NLS-1$
 		this.pageTitle = pageTitle;
-		block = createMasterDetailsBlock();
 	}
 	
 	/**
@@ -57,50 +54,39 @@ public abstract class EventBFormPage
 		ScrolledForm form = managedForm.getForm();
 		
 		form.setText(pageTitle); //$NON-NLS-1$
-		block.createContent(managedForm);
 		Composite body = form.getBody();
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginWidth = 10;
+		layout.verticalSpacing = 20;
+		layout.horizontalSpacing = 10;
+		body.setLayout(layout);
 		
-		createMirrorSections(body, managedForm);
+		part = createMasterSection(managedForm, body, Section.TITLE_BAR | Section.DESCRIPTION, (EventBEditor) this.getEditor());
+		managedForm.addPart(part);
+		
+//		createMirrorSections(body, managedForm);
+		
 	}
-	
-	
-	/**
-	 * Create and return the master detail block
-	 * @return
-	 */
-	protected abstract EventBMasterDetailsBlock createMasterDetailsBlock();
-	
 	
 	/**
 	 * Creating mirror sections in the page.
 	 * @param body The composite to create the mirror sections
 	 * @param managedForm The form to create the mirror sections
 	 */
-	protected abstract void createMirrorSections(Composite body, IManagedForm managedForm);
+//	protected abstract void createMirrorSections(Composite body, IManagedForm managedForm);
 		
+	
+	protected abstract EventBPartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor);
+	
 	
 	/**
 	 * Setting the selection within the page.
 	 * @param element A Rodin Element
 	 */
 	public void setSelection(IRodinElement element) {
-		block.setSelection(element);
+		part.setSelection(element);
 	}
-
-	
-	/**
-	 * Return the master-detail block.
-	 * @return An Event-B Master-Detail block
-	 */
-	protected EventBMasterDetailsBlock getMasterDetailsBlock() {return block;}
 	
 	
-	/**
-	 * Save the page.
-	 */
-	public void doSave(IProgressMonitor monitor) {
-		this.getMasterDetailsBlock().doSave(true);
-		super.doSave(monitor);
-	}
-
 }

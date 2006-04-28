@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * for editing Events (Rodin elements).
  */
 public class EventPage
-	extends NewEventBFormPage
+	extends EventBFormPage
 {
 	
 	// Title, tab title and ID of the page.
@@ -44,7 +44,7 @@ public class EventPage
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
 	@Override
 	protected EventBPartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {

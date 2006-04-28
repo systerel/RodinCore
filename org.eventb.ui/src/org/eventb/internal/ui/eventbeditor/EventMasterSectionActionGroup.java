@@ -22,7 +22,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
@@ -206,7 +208,7 @@ public class EventMasterSectionActionGroup
 		};
 		delete.setText("&Delete");
 		delete.setToolTipText("Delete selected element");
-		delete.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_DELETE));
+		delete.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 	}
 
 

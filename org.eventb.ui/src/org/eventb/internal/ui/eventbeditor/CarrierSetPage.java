@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * for editing Carrier Sets (Rodin elements).
  */
 public class CarrierSetPage
-	extends NewEventBFormPage
+	extends EventBFormPage
 {
 	
 	// Title, tab title and ID of the page.
@@ -44,10 +44,10 @@ public class CarrierSetPage
 	
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.NewEventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite, int, org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
 	@Override
-	protected NewEventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
+	protected EventBTablePartWithButtons createMasterSection(IManagedForm managedForm, Composite parent, int style, EventBEditor editor) {
 		CarrierSetMasterSection part = new CarrierSetMasterSection(managedForm, parent, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
