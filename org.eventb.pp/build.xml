@@ -22,8 +22,8 @@
 	<target name="generate" 
 		depends="tomIdentityTranslator, 
 				 tomTranslator, 
-				 tomIdentifierDecomposition, 
-		         tomQuantMapletBuilder,
+				 tomBoundIdentifierDecomposition, 
+		         tomDecomposedQuant,
 		         tomGoalChecker,
 				 tomBorderTranslator,
 				 tomPredicateSimplification" 
@@ -38,9 +38,9 @@
 		    <srcfiles file= "${translatorSrcDir}/IdentityTranslator.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
-		<uptodate property="tom.IdentifierDecomposition.notRequired" 
-				targetfile="${translatorSrcDir}/IdentifierDecomposition.java" >
-		    <srcfiles file= "${translatorSrcDir}/IdentifierDecomposition.t" />
+		<uptodate property="tom.BoundIdentifierDecomposition.notRequired" 
+				targetfile="${translatorSrcDir}/BoundIdentifierDecomposition.java" >
+		    <srcfiles file= "${translatorSrcDir}/BoundIdentifierDecomposition.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
 		<uptodate property="tom.Translator.notRequired" 
@@ -48,9 +48,9 @@
 		    <srcfiles file= "${translatorSrcDir}/Translator.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
-		<uptodate property="tom.QuantMapletBuilder.notRequired" 
-				targetfile="${translatorSrcDir}/QuantMapletBuilder.java" >
-		    <srcfiles file= "${translatorSrcDir}/QuantMapletBuilder.t" />
+		<uptodate property="tom.DecomposedQuant.notRequired" 
+				targetfile="${translatorSrcDir}/DecomposedQuant.java" >
+		    <srcfiles file= "${translatorSrcDir}/DecomposedQuant.t" />
 		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
 		<uptodate property="tom.GoalChecker.notRequired" 
@@ -115,9 +115,9 @@
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 
-	<target name="tomIdentifierDecomposition" depends="init,tom-test"
-		description="launch tom for IdentifierDecomposition.t"
-		unless="tom.IdentifierDecomposition.notRequired" >
+	<target name="tomBoundIdentifierDecomposition" depends="init,tom-test"
+		description="launch tom for BoundIdentifierDecomposition.t"
+		unless="tom.BoundIdentifierDecomposition.notRequired" >
 		<java classname="jtom.Tom" fork="true">
 			<classpath>
 				<fileset dir="${tom-home}/lib">
@@ -128,19 +128,19 @@
 			<arg value="-X" />
 			<arg value="${tom-home}/Tom.xml" />
 			<arg value="--output" />
-			<arg value="${translatorSrcDir}/IdentifierDecomposition.java" />
+			<arg value="${translatorSrcDir}/BoundIdentifierDecomposition.java" />
 			<arg value="--pretty" />
 			<arg value="--static" />
 <!--			<arg value="- -optimize" />
 			<arg value="- -optimize2" />-->
-			<arg value="${translatorSrcDir}/IdentifierDecomposition.t" />
+			<arg value="${translatorSrcDir}/BoundIdentifierDecomposition.t" />
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 	
-	<target name="tomQuantMapletBuilder" depends="init,tom-test"
-		description="launch tom for QuantMapletBuilder.t"
-		unless="tom.QuantMapletBuilder.notRequired" >
+	<target name="tomDecomposedQuant" depends="init,tom-test"
+		description="launch tom for DecomposedQuant.t"
+		unless="tom.DecomposedQuant.notRequired" >
 		<java classname="jtom.Tom" fork="true">
 			<classpath>
 				<fileset dir="${tom-home}/lib">
@@ -151,12 +151,12 @@
 			<arg value="-X" />
 			<arg value="${tom-home}/Tom.xml" />
 			<arg value="--output" />
-			<arg value="${translatorSrcDir}/QuantMapletBuilder.java" />
+			<arg value="${translatorSrcDir}/DecomposedQuant.java" />
 			<arg value="--pretty" />
 			<arg value="--static" />
 			<arg value="--optimize" />
 			<arg value="--optimize2" />
-			<arg value="${translatorSrcDir}/QuantMapletBuilder.t" />
+			<arg value="${translatorSrcDir}/DecomposedQuant.t" />
 		</java>
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
@@ -228,8 +228,8 @@
 	<target name="clean" description="clean up">
 		<delete file="${translatorSrcDir}/Translator.java" />
 		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
-		<delete file="${translatorSrcDir}/IdentifierDecomposition.java" />
-		<delete file="${translatorSrcDir}/QuantMapletBuilder.java" />
+		<delete file="${translatorSrcDir}/BoundIdentifierDecomposition.java" />
+		<delete file="${translatorSrcDir}/DecomposedQuant.java" />
 		<delete file="${translatorSrcDir}/GoalChecker.java" />
 		<delete file="${translatorSrcDir}/PredicateSimplification.java" />
 		<delete file="${translatorSrcDir}/BorderTranslator.java" />

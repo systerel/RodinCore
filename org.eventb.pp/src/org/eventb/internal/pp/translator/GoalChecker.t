@@ -21,7 +21,6 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Identifier;
@@ -51,58 +50,58 @@ public abstract class GoalChecker {
 
 %include {Formula.tom}
 
-	public static boolean isInGoal(Predicate pred, FormulaFactory ff) {
+	public static boolean isInGoal(Predicate pred) {
 		%match(Predicate pred) {
 			BinaryPredicate(P1, P2) -> {
-				return isInGoal(`P1, ff) && isInGoal(`P2, ff);
+				return isInGoal(`P1) && isInGoal(`P2);
 			}
 			AssociativePredicate(children) -> {
 				for(Predicate child: `children) {
-					if(!isInGoal(child, ff))
+					if(!isInGoal(child))
 						return false;
 				}
 				return true;
 			}
 			UnaryPredicate(P) | QuantifiedPredicate(_, P) -> {
-				return isInGoal(`P, ff);
+				return isInGoal(`P);
 			}
 			LiteralPredicate() -> {
 				return true;
 			}
 			NotEqual(AE1, AE2) | Lt(AE1, AE2) | 
 			Le(AE1, AE2) | Gt(AE1, AE2) | Ge(AE1, AE2) -> {
-				return isArithmeticExpression(`AE1, ff) && isArithmeticExpression(`AE2, ff);
+				return isArithmeticExpression(`AE1) && isArithmeticExpression(`AE2);
 			}
 			In(ME1, SE1) -> {
-				return isMapletExpression(`ME1, ff) && isSetExpression(`SE1, ff);
+				return isMapletExpression(`ME1) && isSetExpression(`SE1);
 			}
 			Equal(E1, E2) -> {
 				return 
-					(isArithmeticExpression(`E1, ff) && isArithmeticExpression(`E2, ff)) ||
-					(isSetExpression(`E1, ff) && isSetExpression(`E2, ff)) ||
-					(isBooleanExpression(`E1, ff) && isBooleanExpression(`E2, ff)) ||
-/*TODO: control*/	(isMapletExpression(`E1, ff) && isMapletExpression(`E2, ff));
+					(isArithmeticExpression(`E1) && isArithmeticExpression(`E2)) ||
+					(isSetExpression(`E1) && isSetExpression(`E2)) ||
+					(isBooleanExpression(`E1) && isBooleanExpression(`E2)) ||
+/*TODO: control*/	(isMapletExpression(`E1) && isMapletExpression(`E2));
 			}	
 			_ -> {
-				throw new AssertionError("Unknown Predicate: " + pred);
+				return false;
 			}	
 		}
 	}
 	
-	private static boolean isArithmeticExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isArithmeticExpression(Expression expr) {
 		%match(Expression expr) {
 			Plus(children) | Mul(children) -> {
 				for(Expression child: `children) {
-					if(!isArithmeticExpression(child, ff))
+					if(!isArithmeticExpression(child))
 						return false;
 				}
 				return true;
 			}
 			Minus(AE1, AE2) | Div(AE1, AE2) | Mod(AE1, AE2) | Expn(AE1, AE2) -> {
-				return isArithmeticExpression(`AE1, ff) && isArithmeticExpression(`AE2, ff);
+				return isArithmeticExpression(`AE1) && isArithmeticExpression(`AE2);
 			}
 			UnMinus(AE) -> {
-				return isArithmeticExpression(`AE, ff);
+				return isArithmeticExpression(`AE);
 			}
 			Identifier() -> {
 				return expr.getType() instanceof IntegerType;
@@ -116,7 +115,7 @@ public abstract class GoalChecker {
 		}
 	}
 	
-	private static boolean isSetExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isSetExpression(Expression expr) {
 		%match(Expression expr) {
 			Identifier() -> {
 				return expr.getType() instanceof PowerSetType;
@@ -128,10 +127,10 @@ public abstract class GoalChecker {
 	}
 
 /* TODO turn back to private ? */
-	protected static boolean isMapletExpression(Expression expr, FormulaFactory ff) {
+	protected static boolean isMapletExpression(Expression expr) {
 		%match(Expression expr) {
 			Mapsto(l, r) -> {
-				return isMapletExpression(`l, ff) && isMapletExpression(`r, ff);
+				return isMapletExpression(`l) && isMapletExpression(`r);
 			}
 			Identifier() | INTEGER() | BOOL() -> { 
 /* TODO add check on identifier type (must not be a cartesian product. */
@@ -143,7 +142,7 @@ public abstract class GoalChecker {
 		}
 	}
 
-	private static boolean isBooleanExpression(Expression expr, FormulaFactory ff) {
+	private static boolean isBooleanExpression(Expression expr) {
 		%match(Expression expr) {
 			TRUE() -> {
 				return true;

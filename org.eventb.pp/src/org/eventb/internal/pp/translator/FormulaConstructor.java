@@ -59,22 +59,22 @@ public class FormulaConstructor {
 	
 	public static Predicate makeGreaterThanExtremumPredicate(
 			FormulaFactory ff, Expression value, Expression set, int relationTag, SourceLocation loc) {
-		QuantMapletBuilder mb = new QuantMapletBuilder();
-		mb.calculate(value.getType(), loc, ff);
-    	return ff.makeQuantifiedPredicate(
+
+		DecomposedQuant forall = new DecomposedQuant(ff);
+		Expression x = forall.addQuantifier(value.getType(), loc);
+    	return forall.makeQuantifiedPredicate(
     		Formula.FORALL,
-    		mb.X(),
     		ff.makeBinaryPredicate(
     			Formula.LIMP,
     			ff.makeRelationalPredicate(
     				Formula.IN,
-    				mb.V(),
-    				set.shiftBoundIdentifiers(mb.offset(), ff),
+    				x,
+    				forall.push(set),
     				loc),
     			ff.makeRelationalPredicate(
     				relationTag,
-    				value.shiftBoundIdentifiers(mb.offset(), ff),
-    				mb.V(),
+    				forall.push(value),
+    				x,
     				loc),
     			loc),
     		loc);	   
@@ -82,22 +82,22 @@ public class FormulaConstructor {
 	
 	public static Predicate makeLessThanExtremumPredicate(
 			FormulaFactory ff, Expression value, Expression set, int relationTag, SourceLocation loc) {
-		QuantMapletBuilder mb = new QuantMapletBuilder();
-		mb.calculate(value.getType(), loc, ff);
-    	return ff.makeQuantifiedPredicate(
+
+		DecomposedQuant exists = new DecomposedQuant(ff);
+		Expression x = exists.addQuantifier(value.getType(), loc);
+    	return exists.makeQuantifiedPredicate(
     		Formula.EXISTS,
-    		mb.X(),
     		ff.makeBinaryPredicate(
     			Formula.LAND,
     			ff.makeRelationalPredicate(
     				Formula.IN,
-    				mb.V(),
-    				set.shiftBoundIdentifiers(mb.offset(), ff),
+    				x,
+    				exists.push(set),
     				loc),
     			ff.makeRelationalPredicate(
     				relationTag,
-    				value.shiftBoundIdentifiers(mb.offset(), ff),
-    				mb.V(),
+    				exists.push(value),
+    				x,
     				loc),
     			loc),
     		loc);	   

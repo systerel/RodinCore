@@ -4,54 +4,46 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
-public class CondQuantifier {
-	QuantMapletBuilder mb = new QuantMapletBuilder();
-	FormulaFactory ff;
-	List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>(); 
-	ArrayList<Expression> substitutes = new ArrayList<Expression>();
-	ArrayList<Expression> substituted = new ArrayList<Expression>();
+public class ConditionalQuant extends DecomposedQuant {
 
-	public CondQuantifier(FormulaFactory ff) {
-		this.ff = ff;
-	}
+	final ArrayList<Expression> substitutes = new ArrayList<Expression>();
+	final ArrayList<Expression> substituted = new ArrayList<Expression>();
 
 	
+	public ConditionalQuant(FormulaFactory ff) {
+		super(ff);
+	}
+	
 	public Expression condSubstitute(Expression expr) {
-		if(GoalChecker.isMapletExpression(expr, ff)) {
+		if(GoalChecker.isMapletExpression(expr)) {
 			return expr;
 		}
 		else {
 			SourceLocation loc = expr.getSourceLocation();
-			mb.calculate(expr.getType(), identDecls.size(), loc, ff);
-			Expression substitute = mb.getMaplet();
-			identDecls.addAll(0, mb.getIdentDecls());
+			Expression substitute = addQuantifier(expr.getType(), loc); 
 			substitutes.add(substitute);
 			substituted.add(expr);
 			return substitute;			
 		}
 	}
 	
-	public Expression condShift(Expression expr) {
+	@Override
+	public Expression push(Expression expr) {
 		for(Expression subsistute : substitutes) {
 			if(expr == subsistute)
 				return expr;
 		}
-		return expr.shiftBoundIdentifiers(offset(), ff);
-	}
-	
-	public int offset() {
-		return identDecls.size();
+		return super.push(expr);
 	}
 	
 	public Predicate conditionalQuantify(Predicate pred, Translator translator) {
-		if(identDecls.size() == 0) return pred;
+		if(substitutes.size() == 0) return pred;
 		else {
 			SourceLocation loc = pred.getSourceLocation();
 			List<Predicate> bindings = new LinkedList<Predicate>();
@@ -61,14 +53,13 @@ public class CondQuantifier {
 						ff.makeRelationalPredicate(
 								Formula.EQUAL, 
 								substitutes.get(i), 
-								substituted.get(i).shiftBoundIdentifiers(identDecls.size(), ff), 
+								push(substituted.get(i)), 
 								loc), 
 						ff));
 			}
 			
-			return ff.makeQuantifiedPredicate(
+			return makeQuantifiedPredicate(
 					Formula.FORALL,
-					identDecls,
 					ff.makeBinaryPredicate(
 							Formula.LIMP,
 							FormulaConstructor.makeLandPredicate(

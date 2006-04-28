@@ -69,25 +69,18 @@ public class Reorganizer extends BorderTranslator {
 	}
 	
 	public class ExpressionExtractor extends IdentityTranslator {
-		private int boundIdentOffset = 0;
-		public List<Predicate> bindings = new LinkedList<Predicate>();
-		public List<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
-		private QuantMapletBuilder mb = new QuantMapletBuilder();
+		public final List<Predicate> bindings = new LinkedList<Predicate>();
 		public boolean inEquality;
+		private final DecomposedQuant quantification;
 		
-		private Expression addBoundIdentifier(Type type, SourceLocation loc, FormulaFactory ff, String name) {
-			
-			mb.calculate(type, boundIdentOffset, name, loc, ff);
-			identDecls.addAll(mb.X());
-			boundIdentOffset += mb.offset();
-			
-			return mb.V();
+		public ExpressionExtractor(DecomposedQuant quantification) {
+			this.quantification = quantification;
 		}
-			
+		
 		protected Expression bindExpression(Expression expr, FormulaFactory ff, String name) {
 			SourceLocation loc = expr.getSourceLocation();
 			
-			Expression ident = addBoundIdentifier(expr.getType(), loc, ff, name);
+			Expression ident = quantification.addQuantifier(expr.getType(), name, loc);
 			bindings.add(ff.makeRelationalPredicate(Formula.EQUAL, ident, expr, loc));
 			return ident;		
 		}
@@ -148,7 +141,8 @@ public class Reorganizer extends BorderTranslator {
 		if(totalShift == 0)
 			return pred;
 		else {			
-			ExpressionExtractor extractor = new ExpressionExtractor();
+			DecomposedQuant forall = new DecomposedQuant(ff);
+			ExpressionExtractor extractor = new ExpressionExtractor(forall);
 			extractor.inEquality = isEquality;
 			Expression left = leftShift > 0 ? 
 				extractor.translate(pred.getLeft().shiftBoundIdentifiers(totalShift, ff), ff) :
@@ -159,9 +153,8 @@ public class Reorganizer extends BorderTranslator {
 				extractor.translate(pred.getRight().shiftBoundIdentifiers(totalShift, ff), ff) :
 				pred.getRight().shiftBoundIdentifiers(totalShift, ff);
 			
-			return ff.makeQuantifiedPredicate(
+			return forall.makeQuantifiedPredicate(
 				Formula.FORALL, 
-				extractor.identDecls, 
 				ff.makeBinaryPredicate(
 					Formula.LIMP,
 					FormulaConstructor.makeLandPredicate(ff, extractor.bindings, loc),
