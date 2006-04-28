@@ -1,5 +1,8 @@
 package org.eventb.pp.tests;
 
+import static org.eventb.pp.tests.FastFactory.mList;
+import static org.eventb.pp.tests.FastFactory.mTypeEnvironment;
+
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -1142,6 +1145,12 @@ public class TranslationTests extends AbstractTranslationTests {
 				"a=b", true, te);
 	}*/
 	
+	public void testIn() {
+		ITypeEnvironment te = mTypeEnvironment(mList("S"), mList(REL(BOOL,INT)));
+		doTest( "a↦1 ∈ S",
+				"∃x·a↦x∈S ∧ x=1", false, te);
+	}
+	
 	public void testPerf() {
 		Predicate pred = parse("E∈S∪X↠T∪Y", FastFactory.mTypeEnvironment(
 				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)}));
@@ -1152,6 +1161,5 @@ public class TranslationTests extends AbstractTranslationTests {
 		}
 		System.out.println("end");
 	}
-	
 	
 }
