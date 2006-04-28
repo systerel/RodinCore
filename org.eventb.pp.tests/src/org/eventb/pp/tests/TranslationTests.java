@@ -1148,9 +1148,38 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testIn() {
 		ITypeEnvironment te = mTypeEnvironment(mList("S"), mList(REL(BOOL,INT)));
 		doTest( "a↦1 ∈ S",
-				"∃x·a↦x∈S ∧ x=1", false, te);
+				"∃x·a↦x ∈ S∧x=1", false, te);
 	}
 	
+	public void testIn2() {
+		ITypeEnvironment te = mTypeEnvironment(mList("S"), mList(REL(CPROD(BOOL, INT),INT)));
+		doTest( "a↦1↦2 ∈ S",
+				"∃x1,x2·a↦x1↦x2∈S ∧ x1=1 ∧ x2=2", false, te);
+	}
+	
+	public void testIn3() {
+		ITypeEnvironment te = mTypeEnvironment(mList("S"), mList(POW(CPROD(CPROD(BOOL, INT),INT))));
+		doTest( "a↦f(10)∈S",
+				"∃x·a↦x∈S ∧ x=f(10)", true, te);
+	}
+
+	public void testIn4() {
+		Type A = ff.makeGivenType("A");
+		Type B = ff.makeGivenType("B");
+		ITypeEnvironment te = mTypeEnvironment(mList("f"), mList(REL(A, B)));
+		doTest( "f(a)  ∈ S",
+				"∃x·x∈S ∧ x=f(a)", true, te);
+	}
+	
+	public void testIn5() {
+		Type A = ff.makeGivenType("A");
+		Type B = ff.makeGivenType("B");
+		Type C = ff.makeGivenType("C");
+		ITypeEnvironment te = mTypeEnvironment(mList("f"), mList(REL(A, CPROD(B, C))));
+		doTest( "f(a)  ∈ S",
+				"∃x1,x2·x1↦x2∈S ∧ x1↦x2=f(a)", true, te);
+	}
+
 	public void testPerf() {
 		Predicate pred = parse("E∈S∪X↠T∪Y", FastFactory.mTypeEnvironment(
 				new String[]{"S", "T"}, new Type[]{INT_SET, POW(BOOL)}));
