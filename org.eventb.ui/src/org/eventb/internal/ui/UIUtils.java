@@ -177,12 +177,8 @@ public class UIUtils {
 			return registry.get(EventBImage.IMG_INVARIANTS);
 		if (node.isType(ITheorem.ELEMENT_TYPE))
 			return registry.get(EventBImage.IMG_THEOREMS);
-		if (node.isType(IAction.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_INITIALISATION);
 		if (node.isType(IEvent.ELEMENT_TYPE))
 			return registry.get(EventBImage.IMG_EVENTS);
-		if (node.isType(IGuard.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_GUARDS);
 		if (node.isType(ICarrierSet.ELEMENT_TYPE))
 			return registry.get(EventBImage.IMG_CARRIER_SETS);
 		if (node.isType(IConstant.ELEMENT_TYPE))
