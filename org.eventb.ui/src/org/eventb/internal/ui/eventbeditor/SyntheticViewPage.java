@@ -38,6 +38,6 @@ public class SyntheticViewPage
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 //		form.
-		managedForm.addPart(new SyntheticViewSection(this.getEditor(), this.getManagedForm().getToolkit(), body));
+		managedForm.addPart(new SyntheticViewSection((EventBEditor) this.getEditor(), this.getManagedForm().getToolkit(), body));
 	}		
 }
