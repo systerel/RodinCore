@@ -5,3 +5,5 @@ IdentifierDecomposition.java
 IdentityTranslator.java
 QuantMapletBuilder.java
 PredicateSimplification.java
+BoundIdentifierDecomposition.java
+DecomposedQuant.java
