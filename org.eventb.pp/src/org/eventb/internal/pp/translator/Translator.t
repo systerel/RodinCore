@@ -716,18 +716,19 @@ public class Translator extends IdentityTranslator {
 					return ff.makeRelationalPredicate(Formula.IN, E, right, loc);
 				else {
 					final DecomposedQuant exists = new DecomposedQuant(ff);
-					final Expression x = exists.addQuantifier(E.getType(), loc);
-	
+					List<Predicate> bindings = new LinkedList<Predicate>();
+					
+					int offset = purificationOffset(E, ff);
+					E = E.shiftBoundIdentifiers(offset, ff);
+					right = right.shiftBoundIdentifiers(offset, ff);
+											
+					final Expression x = purifyMaplet(E, exists, bindings, ff);
+					
+					bindings.add(0, translateIn(x, right, loc,	ff));			
+					
 	    			return exists.makeQuantifiedPredicate(
 						Formula.EXISTS,
-						FormulaConstructor.makeLandPredicate(
-							ff,
-							translateIn(x, exists.push(right), loc,	ff),
-							translateEqual(
-								ff.makeRelationalPredicate(
-									Formula.EQUAL, x, exists.push(E), loc),
-								ff),
-							loc),
+						FormulaConstructor.makeLandPredicate(ff, bindings, loc),
 						loc);
 				}
 			}	
@@ -735,6 +736,46 @@ public class Translator extends IdentityTranslator {
 				return null;
 			}
 		}					
+	}
+	
+	private int purificationOffset(Expression expr, FormulaFactory ff) {
+		if(GoalChecker.isMapletExpression(expr))
+			return 0;
+		%match(Expression expr) {
+			Mapsto(l, r) -> {
+				return purificationOffset(`r, ff) + purificationOffset(`l, ff);
+			}
+			_ -> {
+				DecomposedQuant quant = new DecomposedQuant(ff);
+				quant.addQuantifier(expr.getType(), null);
+				return quant.offset();
+			}
+		}
+	}
+
+	private Expression purifyMaplet(
+		Expression expr, DecomposedQuant quant, List<Predicate> bindings, 
+		FormulaFactory ff) {
+		SourceLocation loc = expr.getSourceLocation();
+		
+		if(GoalChecker.isMapletExpression(expr))
+			return expr;
+		%match(Expression expr) {
+			Mapsto(l, r) -> {
+				Expression nr = purifyMaplet(`r, quant, bindings, ff);
+				Expression nl = purifyMaplet(`l, quant, bindings, ff);
+
+				if(nr == `r && nl == `l) return expr;
+				else
+					return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
+			}
+			_ -> {
+				Expression substitute = quant.addQuantifier(expr.getType(), loc);
+				bindings.add(0, translateEqual(
+					ff.makeRelationalPredicate(Formula.EQUAL, substitute, expr, loc), ff));
+				return substitute;
+			}
+		}
 	}
 	
 	protected Predicate translateIn_EF(
