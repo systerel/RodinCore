@@ -26,7 +26,7 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 		assertTrue("Actual result is not typed: " + actual, 
 				actual.isTypeChecked());
 		assertTrue("Result not in goal: " + actual,
-				Translator.isInGoal(actual, ff));
+				Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	

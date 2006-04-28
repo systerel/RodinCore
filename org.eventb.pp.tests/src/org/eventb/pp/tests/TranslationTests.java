@@ -44,7 +44,7 @@ public class TranslationTests extends AbstractTranslationTests {
 
 		assertTrue("Actual result is not typed: " + actual,
 				actual.isTypeChecked());
-		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual, ff));
+		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
@@ -63,7 +63,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
 		doTest( "s⊆t",
-				"∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t", false, te);
+				"∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t", false, te);
 	}
 
 	public void testSubsetEqRule3() {
@@ -84,7 +84,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
 		doTest( "s⊈t",
-				"¬(∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t)", false, te);
+				"¬(∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t)", false, te);
 	}
 	
 	public void testNotSubsetEqRule3() {
@@ -104,7 +104,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testSubsetRule2() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
-		doTest( "s⊂t", "(∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t)∧¬(∀x,x0,x1·x1↦(x0↦x)∈t⇒x1↦(x0↦x)∈s)", false, te);
+		doTest( "s⊂t", "(∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t)∧¬(∀x,x0,x1·x↦(x0↦x1)∈t⇒x↦(x0↦x1)∈s)", false, te);
 	}
 
 	public void testSubsetRule3() {
@@ -125,7 +125,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(
 				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
 		doTest( "s⊄t",
-				"¬((∀x,x0,x1·x1↦(x0↦x)∈s⇒x1↦(x0↦x)∈t))∨(∀x,x0,x1·x1↦(x0↦x)∈t⇒x1↦(x0↦x)∈s)", false, te);
+				"¬((∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t))∨(∀x,x0,x1·x↦(x0↦x1)∈t⇒x↦(x0↦x1)∈s)", false, te);
 	}
 	
 	public void testNotSubsetRule3() {

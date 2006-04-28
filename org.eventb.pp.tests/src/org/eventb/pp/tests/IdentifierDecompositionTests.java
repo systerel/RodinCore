@@ -36,7 +36,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * occurring outside of any quantified construct.
 	 */
 	public final void testDecomposeFreeOutside1() {
-		dotest("x ∈ S×T", "∀x2,x1 · x = x1↦x2 ⇒ x1↦x2 ∈ S×T");
+		dotest("x ∈ S×T", "∀x1,x2 · x = x1↦x2 ⇒ x1↦x2 ∈ S×T");
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeOutside2() {
 		dotest("x ∈ S×(T×U)",
-				"∀x3,x2,x1 · x = x1↦(x2↦x3) ⇒ x1↦(x2↦x3) ∈ S×(T×U)");
+				"∀x1,x2,x3 · x = x1↦(x2↦x3) ⇒ x1↦(x2↦x3) ∈ S×(T×U)");
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeOutside3() {
 		dotest("x ∈ S×T ∧ y ∈ U×V",
-				"∀y2,y1,x2,x1 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
+				"∀y1,y2,x1,x2 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
 				+ "x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
 	}
 
@@ -64,7 +64,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeInQPred() {
 		dotest("∀z · z ∈ BOOL ⇒ x ∈ S×T",
-				"∀x2,x1 · x = x1↦x2 ⇒ (∀z · z ∈ BOOL ⇒ x1↦x2 ∈ S×T)");
+				"∀x1,x2 · x = x1↦x2 ⇒ (∀z · z ∈ BOOL ⇒ x1↦x2 ∈ S×T)");
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeInQExpr() {
 		dotest("finite({z ∣ z ∈ BOOL ∧ x ∈ S×T})",
-				"∀x2,x1 · x = x1↦x2 ⇒ finite({z ∣ z ∈ BOOL ∧ x1↦x2 ∈ S×T})");
+				"∀x1,x2 · x = x1↦x2 ⇒ finite({z ∣ z ∈ BOOL ∧ x1↦x2 ∈ S×T})");
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * occurring outside of any other quantified construct.
 	 */
 	public final void testDecomposeBoundOutside1() {
-		dotest("∃x · x ∈ S×T", "∃x2,x1 · x1↦x2 ∈ S×T");
+		dotest("∃x · x ∈ S×T", "∃x1,x2 · x1↦x2 ∈ S×T");
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeBoundOutside2() {
 		dotest("∃x,y · x ∈ S×T ∧ y ∈ U×V", 
-				"∃x2,x1,y2,y1 · x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
+				"∃x1,x2,y1,y2 · x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeBoundOutsideFirst() {
 		dotest("∃x,y,z · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
-				"∃x2,x1,y,z · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
+				"∃x1,x2,y,z · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeBoundOutsideLast() {
 		dotest("∃y,z,x · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
-				"∃y,z,x2,x1 · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
+				"∃y,z,x1,x2 · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeBoundInside1() {
 		dotest("∃a·a ∈ ℤ ∧ (∃x·x ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a",
-				"∃a·a ∈ ℤ ∧ (∃x2,x1·x1↦x2 ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a");
+				"∃a·a ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a");
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeBoundInside2() {
 		dotest("∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x·x ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a",
-				"∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x2,x1·x1↦x2 ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a");
+				"∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a");
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeBound() {
 		dotest("∃x·x ∈ S×T ∧ y ∈ U×V",
-				"∀y2,y1·y = y1↦y2 ⇒ (∃x2,x1·x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V)");
+				"∀y1,y2·y = y1↦y2 ⇒ (∃x1,x2·x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V)");
 	}
 
 	/**
@@ -148,9 +148,9 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		dotest("∃a,x·a∈ℤ ∧ x∈S×T ∧ X∈S×T ∧ Y∈T×U" +
 				" ∧ (∀y,b·y∈U×V ∧ Y∈T×U ∧ b∈BOOL ∧ X=x" +
 				" ⇒ (∃z·z=x ∧ Y=y ∧ X∈S×T))",
-				"∀X2,X1,Y2,Y1·X=X1↦X2 ∧ Y=Y1↦Y2 ⇒ " +
-				"(∃a,x2,x1·a∈ℤ ∧ x1↦x2∈S×T ∧ X1↦X2∈S×T ∧ Y1↦Y2∈T×U" +
-				" ∧ (∀y2,y1,b·y1↦y2∈U×V ∧ Y1↦Y2∈T×U ∧ b∈BOOL ∧ X1↦X2=x1↦x2" +
+				"∀X1,X2,Y1,Y2·X=X1↦X2 ∧ Y=Y1↦Y2 ⇒ " +
+				"(∃a,x1,x2·a∈ℤ ∧ x1↦x2∈S×T ∧ X1↦X2∈S×T ∧ Y1↦Y2∈T×U" +
+				" ∧ (∀y1,y2,b·y1↦y2∈U×V ∧ Y1↦Y2∈T×U ∧ b∈BOOL ∧ X1↦X2=x1↦x2" +
 				" ⇒ (∃z·z=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
 	}
 
