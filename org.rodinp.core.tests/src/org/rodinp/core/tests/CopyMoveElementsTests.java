@@ -11,6 +11,7 @@
 package org.rodinp.core.tests;
 
 import org.eclipse.core.runtime.CoreException;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -367,7 +368,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	Y.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][+]: {}"
+					"		foo[org.rodinp.core.tests.namedElement]1[+]: {}"
 			);
 			
 			IRodinElement copy= generateHandle(nesSource[0], null, rfDest);
@@ -413,7 +414,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 					"Unexpected delta",
 					"P2[*]: {CHILDREN}\n" + 
 					"	Y.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][+]: {}"
+					"		foo[org.rodinp.core.tests.namedElement]1[+]: {}"
 			);
 			
 			IRodinElement copy= generateHandle(nesSource[0], null, rfDest);
@@ -885,9 +886,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][-]: {MOVED_TO(foo[org.rodinp.core.tests.namedElement] [in Y.test [in P]])}\n" +
+					"		foo[org.rodinp.core.tests.namedElement]1[-]: {MOVED_TO(foo[org.rodinp.core.tests.namedElement]1 [in Y.test [in P]])}\n" +
 					"	Y.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement] [in X.test [in P]])}"
+					"		foo[org.rodinp.core.tests.namedElement]1[+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement]1 [in X.test [in P]])}"
 			);
 			
 			IRodinElement move= generateHandle(nesSource[0], null, rfDest);
@@ -933,10 +934,10 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][-]: {MOVED_TO(foo[org.rodinp.core.tests.namedElement] [in Y.test [in P2]])}\n" +
+					"		foo[org.rodinp.core.tests.namedElement]1[-]: {MOVED_TO(foo[org.rodinp.core.tests.namedElement]1 [in Y.test [in P2]])}\n" +
 					"P2[*]: {CHILDREN}\n" + 
 					"	Y.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement] [in X.test [in P]])}"
+					"		foo[org.rodinp.core.tests.namedElement]1[+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement]1 [in X.test [in P]])}"
 			);
 			
 			IRodinElement move= generateHandle(nesSource[0], null, rfDest);
@@ -1220,8 +1221,8 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][-]: {MOVED_TO(fun[org.rodinp.core.tests.namedElement] [in X.test [in P]])}\n" +
-					"		fun[org.rodinp.core.tests.namedElement][+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement] [in X.test [in P]])}"
+					"		foo[org.rodinp.core.tests.namedElement]1[-]: {MOVED_TO(fun[org.rodinp.core.tests.namedElement]1 [in X.test [in P]])}\n" +
+					"		fun[org.rodinp.core.tests.namedElement]1[+]: {MOVED_FROM(foo[org.rodinp.core.tests.namedElement]1 [in X.test [in P]])}"
 			);
 			
 			IRodinElement rename= generateHandle(nesSource[0], "fun", rfSource);
@@ -1258,6 +1259,33 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
+	 * Ensures that renaming a top element with unnamed children does indeed
+	 * move the children.
+	 */
+	public void testRenameTopWithUnnamedChildren() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		createUnnamedElement(neSource, null).setContents("child1");
+		createUnnamedElement(neSource, null).setContents("child2");
+
+		renamePositive(neSource, "baz", false);
+		NamedElement neDest = getNamedElement(rfSource, "baz");
+		assertElementDescendants("Unexpected children",
+				"baz[org.rodinp.core.tests.namedElement]1\n" +
+				"  [org.rodinp.core.tests.unnamedElement]1\n" +
+				"  [org.rodinp.core.tests.unnamedElement]2",
+				neDest
+		);
+		IRodinElement[] children = 
+			neDest.getChildrenOfType(UnnamedElement.ELEMENT_TYPE);
+		assertEquals("Destination should have two children", 2, children.length);
+		assertContents("Wrong contents for first child", "child1", 
+				(IInternalElement) children[0]);
+		assertContents("Wrong contents for first child", "child2", 
+				(IInternalElement) children[1]);
+	}
+
+	/**
 	 * Ensures that an internal element can be reordered.
 	 */
 	public void testReorderTop() throws CoreException {
@@ -1267,9 +1295,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		NamedElement baz = createNamedElement(rfSource, "baz", null);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 
@@ -1277,9 +1305,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(foo, bar, false);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1287,9 +1315,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(foo, baz, true);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]",
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1297,9 +1325,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(bar, null, true); 
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1307,9 +1335,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(baz, foo, true);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  baz[org.rodinp.core.tests.namedElement]1\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1317,9 +1345,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(foo, bar, false);  
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  baz[org.rodinp.core.tests.namedElement]1\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1327,9 +1355,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(foo, null, true);  
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  baz[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  foo[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1337,9 +1365,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(foo, baz, true);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1347,9 +1375,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(bar, baz, true);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 		
@@ -1357,9 +1385,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		reorderPositive(baz, null, false);
 		assertElementDescendants("Unexpected children",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]\n" + 
-				"  baz[org.rodinp.core.tests.namedElement]",
+				"  foo[org.rodinp.core.tests.namedElement]1\n" + 
+				"  bar[org.rodinp.core.tests.namedElement]1\n" + 
+				"  baz[org.rodinp.core.tests.namedElement]1",
 				rfSource
 		);
 	}
