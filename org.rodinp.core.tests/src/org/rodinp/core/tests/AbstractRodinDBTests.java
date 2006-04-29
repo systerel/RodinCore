@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
@@ -267,6 +268,16 @@ public abstract class AbstractRodinDBTests extends TestCase {
 //			independantExpectedString,
 //			actual);
 //	}
+
+	/**
+	 * Ensures that the given element has the given contents.
+	 */
+	public void assertContents(String message, String expectedContents,
+			IInternalElement element) throws RodinDBException {
+		
+		assertTrue("Element should exist", element.exists());
+		assertEquals(message, expectedContents, element.getContents());
+	}
 	
 	/**
 	 * Ensures the elements are present after creation.
