@@ -133,7 +133,8 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	private InternalElement getChildSimilarTo(InternalElement dest, InternalElement sourceChild) {
 		return dest.getInternalElement(
 				sourceChild.getElementType(),
-				sourceChild.getElementName());
+				sourceChild.getElementName(),
+				sourceChild.getOccurrenceCount());
 	}
 
 	public synchronized void create(InternalElement newElement, InternalElement nextSibling) {
