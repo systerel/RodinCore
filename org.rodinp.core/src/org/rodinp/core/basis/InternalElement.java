@@ -341,6 +341,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		buffer.append("[");
 		buffer.append(getElementType());
 		buffer.append("]");
+		buffer.append(getOccurrenceCount());
 	}
 
 }
