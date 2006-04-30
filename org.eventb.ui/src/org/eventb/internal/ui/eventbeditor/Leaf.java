@@ -15,4 +15,6 @@ public class Leaf {
 	public void setElement(IRodinElement element) {
 		this.element = element;
 	}
+	
+	public String toString() {return element.getElementName();}
 }

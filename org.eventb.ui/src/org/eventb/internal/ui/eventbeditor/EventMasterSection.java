@@ -11,39 +11,20 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -55,17 +36,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -85,8 +60,6 @@ public class EventMasterSection
 	private static final int UP_INDEX = 4;
 	private static final int DOWN_INDEX = 5;
 
-	private HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
-	
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Events";
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
@@ -100,233 +73,6 @@ public class EventMasterSection
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
 
-	/**
-	 * The content provider class. 
-	 */
-	class EventContentProvider
-	implements IStructuredContentProvider, ITreeContentProvider
-	{
-		private IMachine invisibleRoot = null;
-		
-		public Object getParent(Object child) {
-			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
-			return null;
-		}
-		
-		public Object[] getChildren(Object parent) {
-			if (parent instanceof IMachine) {
-				ArrayList<Node> list = new ArrayList<Node>();
-				try {
-//					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
-					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
-					for (IRodinElement event : events) {
-						UIUtils.debug("Event: " + event.getElementName());
-						Node node = new Node(event);
-						elementsMap.put(event, node);
-						list.add(node);
-					}
-				}
-				catch (RodinDBException e) {
-					// TODO Exception handle
-					e.printStackTrace();
-				}
-				return list.toArray();
-			}
-			
-			if (parent instanceof Node) {
-				Node node = (Node) parent;
-				if (node.isExplored()) return node.getChildren();
-				else {
-					try {
-						IRodinElement element = node.getElement();
-						
-						if (element instanceof IParent) {
-							IRodinElement [] children = ((IParent) element).getChildren();
-							for (IRodinElement child : children) {
-								Leaf leaf;
-								if (child instanceof IParent) leaf = new Node(child);
-								else leaf = new Leaf(child);
-								elementsMap.put(child, leaf);
-								node.addChildren(leaf);
-							}
-						}
-					}
-					catch (RodinDBException e) {
-						e.printStackTrace();
-					}
-					node.setExplored();
-				}
-				return node.getChildren();
-			}
-			
-//			if (parent instanceof IParent) {
-//				try {
-//					return ((IParent) parent).getChildren();
-//				}
-//				catch (RodinDBException e) {
-//					// TODO Exception handle
-//					e.printStackTrace();
-//				}
-//			}
-			
-			return new Object[0];
-		}
-		
-		public boolean hasChildren(Object parent) {
-			return getChildren(parent).length > 0;
-		}
-		
-		public Object[] getElements(Object parent) {
-			if (parent instanceof IRodinFile) {
-				if (invisibleRoot == null) {
-					invisibleRoot = (IMachine) parent;
-					return getChildren(invisibleRoot);
-				}
-			}
-			return getChildren(parent);
-		}
-		
-		public void dispose() {
-		}
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			invisibleRoot = null;
-			elementsMap = new HashMap<IRodinElement, Leaf>();
-		}
-	}
-	
-	
-	/**
-	 * @author htson
-	 * This class provides the label for different elements in the tree.
-	 */
-	class EventLabelProvider 
-		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			IRodinElement rodinElement = ((Leaf) element).getElement();
-			if (columnIndex != 0) return null;
-			return UIUtils.getImage(rodinElement);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			IRodinElement rodinElement = ((Leaf) element).getElement();
-			
-			if (columnIndex == 0) {
-				if (rodinElement instanceof IUnnamedInternalElement) return "";
-				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
-				return rodinElement.toString();
-			}
-			
-			if (columnIndex == 1) {
-				try {
-					if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				return rodinElement.toString();
-			}
-			
-//			if (columnIndex == 0) {
-//				try {
-//					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
-//				}
-//				catch (RodinDBException e) {
-//					e.printStackTrace();
-//				}
-//				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-//				else return element.toString();
-//			}
-			return rodinElement.toString();
-
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
-		 */
-		public Color getBackground(Object element, int columnIndex) {
-			 Display display = Display.getCurrent();
-             return display.getSystemColor(SWT.COLOR_WHITE);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
-		 */
-		public Color getForeground(Object element, int columnIndex) {
-			Display display = Display.getCurrent();
-            return display.getSystemColor(SWT.COLOR_BLACK);
-       }
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
-		 */
-		public Font getFont(Object element, int columnIndex) {
-//			UIUtils.debug("Get fonts");
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		}
-			
-	}
-	
-	
-	/**
-	 * @author htson
-	 * This class sorts the elements by types.
-	 */
-	private class ElementsSorter extends ViewerSorter {
-		
-		public int compare(Viewer viewer, Object e1, Object e2) {
-	        int cat1 = category(e1);
-	        int cat2 = category(e2);
-	        return cat1 - cat2;
-		}
-		
-		public int category(Object obj) {
-			IRodinElement rodinElement = ((Leaf) obj).getElement();
-			if (rodinElement instanceof IVariable) return 1;
-			if (rodinElement instanceof IGuard) return 2;
-			if (rodinElement instanceof IAction) return 3;
-			
-			return 0;
-		}
-	}
 	
 
 	/**
@@ -345,7 +91,7 @@ public class EventMasterSection
 		makeActions();
 		hookContextMenu();
 		createToolBarActions(managedForm);
-		((StructuredViewer) getViewer()).setSorter(new ElementsSorter());
+//		((StructuredViewer) getViewer()).setSorter(new ElementsSorter());
 	}
 	
 	/**
@@ -516,7 +262,6 @@ public class EventMasterSection
 				break;
 			case ADD_ACT_INDEX:
 				handleAddAction();
-//				EventMasterSectionActionGroup.newAction.run();
 				break;
 			case UP_INDEX:
 				handleUp();
@@ -537,10 +282,9 @@ public class EventMasterSection
 				IInternalElement event = getEvent(obj);
 				int counter = ((IInternalElement) event).getChildrenOfType(IVariable.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
-				editor.editorDirtyStateChanged();
-				viewer.refresh();
-				viewer.reveal(element);
-				select(element, 1);
+//				Leaf leaf = new Leaf(event);
+				viewer.setExpandedState(findItem(event).getData(), true);
+				select(element, 0);
 			}
 		}
 		catch (RodinDBException e) {
@@ -557,10 +301,9 @@ public class EventMasterSection
 				IInternalElement event = getEvent(obj);
 				int counter = ((IInternalElement) event).getChildrenOfType(IGuard.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd"+(counter+1), null, null);
-//				editor.editorDirtyStateChanged();
-				viewer.refresh();
-				viewer.reveal(element);
-				select(element, 2);
+//				Leaf leaf = new Leaf(event);
+				viewer.setExpandedState(findItem(event).getData(), true);
+				select(element, 1);
 			}
 		}
 		catch (RodinDBException e) {
@@ -578,10 +321,10 @@ public class EventMasterSection
 				int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
 				IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
 				element.setContents("act"+(counter+1));
-//				editor.editorDirtyStateChanged();
-				viewer.refresh();
-				viewer.reveal(element);
-				select(element, 2);
+//				Leaf leaf = new Leaf(event);
+				viewer.setExpandedState(findItem(event).getData(), true);
+				/* TODO Should use the previous findItem to avoid searching again */
+				select(element, 1);
 			}
 		}
 		catch (RodinDBException e) {
@@ -590,47 +333,61 @@ public class EventMasterSection
 	}
 	
 	private IInternalElement getEvent(Object obj) {
-//		IRodinElement obj = ((TreeLeaf) obj).getElement();
-		if (obj instanceof IEvent) {
-			return (IEvent) obj;
+		IRodinElement rodinElement = ((Leaf) obj).getElement();
+		if (rodinElement instanceof IEvent) {
+			return (IEvent) rodinElement;
 		}
-		else if (obj instanceof IInternalElement) {
-			return (IInternalElement) ((IInternalElement) obj).getParent();
+		else if (rodinElement instanceof IInternalElement) {
+			return (IInternalElement) ((IInternalElement) rodinElement).getParent();
 		}
 		else return null; // should not happen
 	}
 	
-	private void select(Object obj, int column) throws RodinDBException {
-		UIUtils.debug("Element: " + obj);
-		if (obj instanceof IAction) {
-			UIUtils.debug("Action: " + ((IAction) obj).getContents());
+	private TreeItem findItem(IRodinElement element) {
+		Tree tree = ((TreeViewer) this.getViewer()).getTree();
+		TreeItem [] items = tree.getItems();
+		for (TreeItem item : items) {
+			TreeItem temp = findItem(item, element);
+			if (temp != null) return temp;
 		}
+		return null;
+	}
+	
+	private TreeItem findItem(TreeItem item, IRodinElement element) {
+		UIUtils.debug("From " + item);
+		Leaf leaf = (Leaf) item.getData();
+		if (leaf == null) return null;
+		if (leaf.getElement().equals(element)) {
+			UIUtils.debug("Found");
+			return item;
+		}
+		else {
+//			UIUtils.debug("Recursively ...");
+			TreeItem [] items = item.getItems();
+			for (TreeItem i : items) {
+				TreeItem temp = findItem(i, element);
+				if (temp != null) return temp;
+			}
+		}
+//		UIUtils.debug("... Not found");
+		return null;
+	}
+	
+	
+	private void select(Object obj, int column) throws RodinDBException {
+//		UIUtils.debug("Element: " + obj);
+//		if (obj instanceof IAction) {
+//			UIUtils.debug("Action: " + ((IAction) obj).getContents());
+//		}
 		TreeViewer viewer = (TreeViewer) this.getViewer();
-		TreeItem item = (TreeItem) viewer.testFindItem(obj);
-		
-//		UIUtils.debug("Item: " + item);
-//		
-//		Rectangle rec = item.getBounds(0);
-//		
-//		UIUtils.debug("Bound: " + rec.toString());
-//		Point pt = new Point(rec.x, rec.y);
-//		Tree tree = viewer.getTree();
-//		TreeItem item1 = tree.getItem(pt);	
-//		UIUtils.debug("Found: " + item1);
+		TreeItem item = findItem((IRodinElement) obj);
+		viewer.reveal(item.getData());
+
 		((EventBEditableTreeViewer) viewer).selectItem(item, column); // try to select the second column to edit name
 	}
 	
-	/**
-	 * Setting the input for the (table) viewer.
-	 */
-	protected void setProvider() {
-		TreeViewer viewer = (TreeViewer) this.getViewer();
-		viewer.setContentProvider(new EventContentProvider());
-		viewer.setLabelProvider(new EventLabelProvider());
-	}
-
 	/*
-	 * Create the table view part.
+	 * Create the tree view part.
 	 * <p>
 	 * @param managedForm The Form used to create the viewer.
 	 * @param toolkit The Form Toolkit used to create the viewer
@@ -650,239 +407,12 @@ public class EventMasterSection
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.setSelection(new StructuredSelection(element));
 	}
-
 	
-	// List of elements need to be refresh (when processing Delta of changes).
-	private Collection<Object> toRefresh;
-	
-	private Collection<StatusObject> newStatus;
-
-    private class StatusObject {
-    	Object object;
-    	Object moveFrom;
-    	boolean expanded;
-		boolean selected;
-    	
-    	StatusObject(Object object, Object moveFrom, boolean expanded, boolean selected) {
-    		this.object = object;
-    		this.moveFrom = moveFrom;
-    		this.expanded = expanded;
-    		this.selected = selected;
-    	}
-
-    	Object getObject() {return object;}
-    	Object getMoveFrom() {return moveFrom;}
-    	boolean getExpandedStatus() {return expanded;}
-    	boolean getSelectedStatus() {return selected;}
-    }
-    
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		toRefresh = new HashSet<Object>();
-		newStatus = new HashSet<StatusObject>();
-		processDelta(event.getDelta());
-		postRefresh(toRefresh, true);
-	}
-		
-	private void processMove(TreeItem item, IRodinElement newElement) {
-		TreeViewer viewer = (TreeViewer) getViewer();
-		Leaf leaf = (Leaf) item.getData();
-		IRodinElement oldElement = leaf.getElement();
-		UIUtils.debug("--- Process Move ---");
-//		try {
-			UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
-			UIUtils.debug("to: " + newElement.getElementName() + " content: ");
-//		}
-//		catch (RodinDBException e) {
-//			e.printStackTrace();
-//		}
-		IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-		boolean selected = ssel.toList().contains(leaf);
-		newStatus.add(new StatusObject(newElement, oldElement, viewer.getExpandedState(leaf), selected));
-
-		TreeItem [] items = item.getItems();
-		for (TreeItem i : items) {
-			Leaf l = (Leaf) i.getData();
-			if (l == null) continue;
-			IRodinElement element = l.getElement();
-			IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
-			processMove(i, newChild);
-		}
-	}
-	
-	private TreeItem findItem(IRodinElement element) {
-//		UIUtils.debug("Trying to find " + element.getElementName());
-		TreeViewer viewer = (TreeViewer) getViewer();
-		Tree tree = viewer.getTree();
-		TreeItem [] items = tree.getItems();
-		for (TreeItem item : items) {
-			TreeItem temp = findItem(item, element);
-			if (temp != null) return temp;
-		}
-		return null;
-	}
-	
-	private TreeItem findItem(TreeItem item, IRodinElement element) {
-//		UIUtils.debug("From " + item);
-		Leaf leaf = (Leaf) item.getData();
-		if (leaf == null) return null;
-		if (leaf.getElement().equals(element)) {
-			UIUtils.debug("Found");
-			return item;
-		}
-		else {
-//			UIUtils.debug("Recursively ...");
-			TreeItem [] items = item.getItems();
-			for (TreeItem i : items) {
-				TreeItem temp = findItem(i, element);
-				if (temp != null) return temp;
-			}
-		}
-//		UIUtils.debug("... Not found");
-		return null;
-	}
-	
-	private void processDelta(IRodinElementDelta delta) {
-		int kind= delta.getKind();
-		IRodinElement element= delta.getElement();
-		if (kind == IRodinElementDelta.ADDED) {
-			// Handle move operation
-			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
-				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
-				IRodinElement oldElement = delta.getMovedFromElement();
-				// Recursively process the children
-				TreeItem item = findItem(oldElement);
-				UIUtils.debug("Item found: " + item);
-				processMove(item, element);
-//				TreeViewer viewer = (TreeViewer) getViewer();
-//				IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-//				boolean selected = ssel.toList().contains(elementsMap.get(oldElement));
-//				newStatus.add(new StatusObject(element, oldElement, viewer.getExpandedState(elementsMap.get(oldElement)), selected));
-				
-				// Children
-				
-			}
-			else {
-				UIUtils.debug("Added: " + element.getElementName());
-				Object parent = element.getParent();
-				toRefresh.add(parent);
-			}
-			return;
-		}
-		
-		if (kind == IRodinElementDelta.REMOVED) {
-			// Ignore the move operation
-			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
-				UIUtils.debug("Removed: " + element.getElementName());			
-				Object parent = element.getParent();
-				toRefresh.add(parent);
-			}
-			return;
-		}
-		
-		if (kind == IRodinElementDelta.CHANGED) {
-			int flags = delta.getFlags();
-			UIUtils.debug("Changed: " + element.getElementName());
-			
-			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				UIUtils.debug("CHILDREN");
-				IRodinElementDelta [] deltas = delta.getAffectedChildren();
-				for (int i = 0; i < deltas.length; i++) {
-					processDelta(deltas[i]);
-				}
-				return;
-			}
-			
-			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				UIUtils.debug("REORDERED");
-				toRefresh.add(element.getParent());
-				return;
-			}
-			
-			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				UIUtils.debug("CONTENT");
-
-				if (!(element instanceof IRodinFile)) toRefresh.add(element);
-				return;
-			}
-		}
-
-	}
-	
-	/**
-	 * Refresh the nodes.
-	 * <p>
-	 * @param toRefresh List of node to refresh
-	 * @param updateLabels <code>true</code> if the label need to be updated as well
-	 */
-	private void postRefresh(final Collection toRefresh, final boolean updateLabels) {
-		postRunnable(new Runnable() {
-			public void run() {
-				TreeViewer viewer = (TreeViewer) getViewer();
-				Control ctrl = viewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					
-					ISelection sel = viewer.getSelection();
-					Object [] objects = viewer.getExpandedElements();
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
-						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debug("Event Refresh element " + element.getElementName());
-						Leaf leaf = elementsMap.get(element);
-						viewer.refresh(leaf, updateLabels);
-					}
-					viewer.setExpandedElements(objects);
-					viewer.setSelection(sel);
-
-					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
-						StatusObject state = (StatusObject) iter.next();
-						UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getExpandedStatus());
-						Leaf leaf = elementsMap.get(state.getMoveFrom());
-						leaf.setElement((IRodinElement) state.getObject());
-						elementsMap.remove(state.getMoveFrom());
-						elementsMap.put((IRodinElement) state.getObject(), leaf);
-						viewer.setExpandedState(leaf, state.getExpandedStatus());
-						viewer.update(leaf, null);
-												
-						if (state.getSelectedStatus()) {
-							IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-							ArrayList<Object> list = new ArrayList<Object>(ssel.size() + 1);
-							for (Iterator it = ssel.iterator(); it.hasNext();) {
-								list.add(elementsMap.get(it.next()));
-							}
-							list.add(leaf);
-							viewer.setSelection(new StructuredSelection(list));
-						}
-					}
-//					if (lastMouseEvent != null) mouseAdapter.mouseDown(lastMouseEvent);
-				}
-			}
-		});
-	}
-	
-	private void postRunnable(final Runnable r) {
-		Viewer viewer = getViewer();
-		Control ctrl= viewer.getControl();
-		final Runnable trackedRunnable= new Runnable() {
-			public void run() {
-				try {
-					r.run();
-				} finally {
-					//removePendingChange();
-					//if (UIUtils.DEBUG) System.out.println("Runned");
-				}
-			}
-		};
-		if (ctrl != null && !ctrl.isDisposed()) {
-			try {
-				ctrl.getDisplay().asyncExec(trackedRunnable); 
-			} catch (RuntimeException e) {
-				throw e;
-			} catch (Error e) {
-				throw e; 
-			}
-		}
+		((EventEditableTreeViewer) this.getViewer()).elementChanged(event);
 	}
 	
 	/* (non-Javadoc)
@@ -892,9 +422,7 @@ public class EventMasterSection
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
-		TreeItem item  = (TreeItem) viewer.testFindItem(element);
-//		Rectangle rec = item.getBounds();
-//		Point pt = new Point(rec.x + rec.width/2, rec.y + rec.height/2);
+		TreeItem item  = findItem(element);
 		selectItem(item, 1);
 	}
 

@@ -34,6 +34,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -187,16 +188,15 @@ public class EventMasterSectionActionGroup
 								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 								
 								Object [] objects = ssel.toArray();
-								Collection<IInternalElement> toDelete = new HashSet<IInternalElement>();
+								Collection<IRodinElement> toDelete = new HashSet<IRodinElement>();
 								for (int i = 0; i < objects.length; i++) {
-									if (objects[i] instanceof IInternalElement) {
-											toDelete.add((IInternalElement)objects[i]);
+									if (objects[i] instanceof Leaf) {
+											toDelete.add(((Leaf)objects[i]).getElement());
 									}
 								}
 								try {
 									EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
 									viewer.refresh();
-									editor.editorDirtyStateChanged();
 								}
 								catch (RodinDBException e) {
 									e.printStackTrace();

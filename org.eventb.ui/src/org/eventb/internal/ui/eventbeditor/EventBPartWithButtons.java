@@ -47,7 +47,7 @@ public abstract class EventBPartWithButtons
 		toolkit.paintBordersFor(client);
 				
 		viewer = createViewer(managedForm, toolkit, client);
-		setProvider();
+//		setProvider();
 		viewer.setInput(editor.getRodinInput());
 		
 		createButtons(toolkit, (Composite) this.getSection().getClient(), buttonLabels);
@@ -69,7 +69,7 @@ public abstract class EventBPartWithButtons
 	 */
 	abstract protected void buttonSelected(int index);
 		
-	abstract protected void setProvider();
+//	abstract protected void setProvider();
 
 	abstract protected Viewer createViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent);
 	
