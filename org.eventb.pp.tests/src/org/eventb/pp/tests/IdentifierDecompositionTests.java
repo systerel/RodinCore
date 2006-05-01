@@ -54,7 +54,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeFreeOutside3() {
 		dotest("x ∈ S×T ∧ y ∈ U×V",
-				"∀y1,y2,x1,x2 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
+				"∀x1,x2,y1,y2 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
 				+ "x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
 	}
 
@@ -146,12 +146,12 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	public final void testDecomposeComplex() {
 		dotest("∃a,x·a∈ℤ ∧ x∈S×T ∧ X∈S×T ∧ Y∈T×U" +
-				" ∧ (∀y,b·y∈U×V ∧ Y∈T×U ∧ b∈BOOL ∧ X=x" +
+				" ∧ (∀y,b·y∈T×U ∧ Y∈T×U ∧ b∈BOOL ∧ X=x" +
 				" ⇒ (∃z·z=x ∧ Y=y ∧ X∈S×T))",
 				"∀X1,X2,Y1,Y2·X=X1↦X2 ∧ Y=Y1↦Y2 ⇒ " +
 				"(∃a,x1,x2·a∈ℤ ∧ x1↦x2∈S×T ∧ X1↦X2∈S×T ∧ Y1↦Y2∈T×U" +
-				" ∧ (∀y1,y2,b·y1↦y2∈U×V ∧ Y1↦Y2∈T×U ∧ b∈BOOL ∧ X1↦X2=x1↦x2" +
-				" ⇒ (∃z·z=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
+				" ∧ (∀y1,y2,b·y1↦y2∈T×U ∧ Y1↦Y2∈T×U ∧ b∈BOOL ∧ X1↦X2=x1↦x2" +
+				" ⇒ (∃z1,z2·z1↦z2=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
 	}
-
+	
 }
