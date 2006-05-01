@@ -56,15 +56,9 @@ public abstract class EventBEditableTreeViewer
 {
 	
 	private TreeEditor treeEditor;
-//	private EventBEditor editor;
 	
-	// The Rodin File where the information belongs to.
-//	protected IRodinFile rodinFile;
-	
-//	abstract protected void commit(int row, int col, String text);
-//	protected abstract void newElement(Tree tree, TreeItem item, int column);
-	
-	protected abstract void createTreeColumns(Tree tree);
+	/* Abstract methods */
+	protected abstract void createTreeColumns();
 	protected abstract boolean isNotSelectable(Object object, int column);
 	protected abstract void commit(Leaf leaf, int col, String text);
 	
@@ -79,16 +73,13 @@ public abstract class EventBEditableTreeViewer
 	 */
 	public EventBEditableTreeViewer(Composite parent, int style) {
 		super(parent, style);
-//		this.editor = editor;
-//		this.rodinFile = rodinFile;
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;
 		Tree tree = this.getTree();
 		tree.setLayoutData(gd);
 		
-		createTreeColumns(tree);
-		
+		createTreeColumns();
 		
 		treeEditor = new TreeEditor(tree);
 		treeEditor.grabHorizontal = true;
@@ -145,9 +136,16 @@ public abstract class EventBEditableTreeViewer
 	}
 	
 	
-	protected void select(final Tree tree, final TreeEditor treeEditor, final TreeItem item, final int column) {
+	protected void select(
+			final Tree tree, 
+			final TreeEditor treeEditor, 
+			final TreeItem item, 
+			final int column) 
+	{
         final Object itemData = item.getData();
-		if (isNotSelectable(itemData, column)) return;
+		
+        /* Check if the cell is editable or not */
+        if (isNotSelectable(itemData, column)) return;
 		
 		final Color black = tree.getDisplay().getSystemColor (SWT.COLOR_BLACK);
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
@@ -160,7 +158,6 @@ public abstract class EventBEditableTreeViewer
 			 */
 			@Override
 			public void commit(Leaf leaf, int column, String contents) {
-				// TODO Auto-generated method stub
 				EventBEditableTreeViewer.this.commit(leaf, column, contents);
 			}
 			
@@ -190,11 +187,11 @@ public abstract class EventBEditableTreeViewer
 		text.setFocus ();
     }
 	
+	
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<Object> toRefresh;
 	private Collection<StatusObject> newStatus;
 	protected HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
-	
 
     private class StatusObject {
     	Object object;
@@ -255,7 +252,6 @@ public abstract class EventBEditableTreeViewer
 	
 	private TreeItem findItem(IRodinElement element) {
 //		UIUtils.debug("Trying to find " + element.getElementName());
-//		TreeViewer viewer = (TreeViewer) getViewer();
 		Tree tree = this.getTree();
 		TreeItem [] items = tree.getItems();
 		for (TreeItem item : items) {
@@ -353,7 +349,7 @@ public abstract class EventBEditableTreeViewer
 	 */
 	private void postRefresh(final Collection toRefresh, final boolean updateLabels) {
 		final TreeViewer viewer = this;
-		postRunnable(new Runnable() {
+		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
@@ -403,25 +399,4 @@ public abstract class EventBEditableTreeViewer
 		}, this.getControl());
 	}
 	
-	private void postRunnable(final Runnable r, Control ctrl) {
-		final Runnable trackedRunnable= new Runnable() {
-			public void run() {
-				try {
-					r.run();
-				} finally {
-					//removePendingChange();
-					//if (UIUtils.DEBUG) System.out.println("Runned");
-				}
-			}
-		};
-		if (ctrl != null && !ctrl.isDisposed()) {
-			try {
-				ctrl.getDisplay().syncExec(trackedRunnable); 
-			} catch (RuntimeException e) {
-				throw e;
-			} catch (Error e) {
-				throw e; 
-			}
-		}
-	}
 }

@@ -14,29 +14,16 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
@@ -44,7 +31,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -68,117 +54,6 @@ extends EventBTablePartWithButtons
 	private static final String SECTION_DESCRIPTION = "List of constants of the component"; 
 	
 	/**
-	 * The content provider class. 
-	 */
-	class ConstantContentProvider
-	implements IStructuredContentProvider {
-		public Object[] getElements(Object parent) {
-			if (parent instanceof IContext)
-				try {
-					return ((IContext) parent).getChildrenOfType(IConstant.ELEMENT_TYPE);
-				}
-				catch (RodinDBException e) {
-					// TODO Exception handle
-					e.printStackTrace();
-				}
-			return new Object[0];
-		}
-    	
-    	public void dispose() {return;}
-
-    	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    		return;
-    	}
-    }
-	
-	class ConstantLabelProvider 
-		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider
-	{
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex != 0) return null;
-			return UIUtils.getImage(element);
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			if (columnIndex == 0) {
-				try {
-					if (element instanceof IUnnamedInternalElement) return ((IUnnamedInternalElement) element).getContents();
-				}
-				catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				if (element instanceof IInternalElement) return ((IInternalElement) element).getElementName();
-				else return element.toString();
-			}
-			return element.toString();
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
-		 */
-		public Color getBackground(Object element, int columnIndex) {
-			 Display display = Display.getCurrent();
-	         return display.getSystemColor(SWT.COLOR_WHITE);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
-		 */
-		public Color getForeground(Object element, int columnIndex) {
-			Display display = Display.getCurrent();
-	        return display.getSystemColor(SWT.COLOR_BLACK);
-	   }
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
-		 */
-		public Font getFont(Object element, int columnIndex) {
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		}
-	
-	}
-
-	
-	/**
 	 * Contructor.
 	 * <p>
 	 * @param managedForm The form to create this master section
@@ -192,18 +67,7 @@ extends EventBTablePartWithButtons
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
 	}
 
-	
 
-	/**
-	 * Setting the input for the (table) viewer.
-	 */
-	protected void setProvider() {
-		TableViewer viewer = (TableViewer) this.getViewer();
-		viewer.setContentProvider(new ConstantContentProvider());
-		viewer.setLabelProvider(new ConstantLabelProvider());
-	}
-	
-	
 	/*
 	 * Create the table view part.
 	 * <p>
@@ -374,7 +238,7 @@ extends EventBTablePartWithButtons
 			return;
 		}
 		if (element instanceof IConstant) {
-			UIUtils.postRunnable(new Runnable() {
+			UIUtils.asyncPostRunnable(new Runnable() {
 				public void run() {
 					getViewer().setInput(editor.getRodinInput());
 					updateButtons();

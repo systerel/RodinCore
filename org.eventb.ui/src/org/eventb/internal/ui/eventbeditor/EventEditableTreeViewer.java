@@ -244,35 +244,12 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			return 0;
 		}
 	}
-
-//	private class EventComparer implements IElementComparer {
-//
-//		/* (non-Javadoc)
-//		 * @see org.eclipse.jface.viewers.IElementComparer#equals(java.lang.Object, java.lang.Object)
-//		 */
-//		public boolean equals(Object a, Object b) {
-//			if (a instanceof Leaf && b instanceof Leaf) {
-//				return ((Leaf) a).getElement() == ((Leaf) b).getElement();
-//			}
-//			return false;
-//		}
-//
-//		/* (non-Javadoc)
-//		 * @see org.eclipse.jface.viewers.IElementComparer#hashCode(java.lang.Object)
-//		 */
-//		public int hashCode(Object element) {
-//			// TODO Auto-generated method stub
-//			return 0;
-//		}
-//		
-//	}
 	
 	public EventEditableTreeViewer(Composite parent, int style) {
 		super(parent, style);
 		this.setContentProvider(new EventContentProvider());
 		this.setLabelProvider(new EventLabelProvider());
 		this.setSorter(new EventElementsSorter());
-//		this.setComparer(new EventComparer());
 	}
 	
 	public void commit(Leaf leaf, int col, String text) {
@@ -307,7 +284,8 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 	
-	protected void createTreeColumns(Tree tree) {
+	protected void createTreeColumns() {
+		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Elements");
 		elementColumn.setResizable(true);
