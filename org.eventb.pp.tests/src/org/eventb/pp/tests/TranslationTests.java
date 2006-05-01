@@ -19,16 +19,30 @@ import org.eventb.pp.Translator;
  */
 
 public class TranslationTests extends AbstractTranslationTests {
-	
+	protected static final Type S = ff.makeGivenType("S");
+	protected static final Type T = ff.makeGivenType("T");
+	protected static final Type U = ff.makeGivenType("U");
+	protected static final Type V = ff.makeGivenType("V");
+	protected static final Type X = ff.makeGivenType("X");
+	protected static final Type Y = ff.makeGivenType("Y");
+	protected static final ITypeEnvironment defaultTe;
+	static {
+		defaultTe = ff.makeTypeEnvironment();
+		defaultTe.addGivenSet("S");
+		defaultTe.addGivenSet("T");
+		defaultTe.addGivenSet("U");
+		defaultTe.addGivenSet("V");
+	}
+
 	private static void doTest(String input, String expected, boolean transformExpected) {
-		doTest(input, expected, transformExpected, FastFactory.mTypeEnvironment());
+		doTest(input, expected, transformExpected, defaultTe);
 	}
 
 	private static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if(transformExpected) {
-			pexpected = Translator.decomposeIdentifiers(pexpected, ff);
+//			pexpected = Translator.decomposeIdentifiers(pexpected, ff);
 			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
 		}
 		doTest(pinput, pexpected);
@@ -39,8 +53,8 @@ public class TranslationTests extends AbstractTranslationTests {
 		assertTrue("Expected result is not typed: " + expected, 
 				expected.isTypeChecked());
 
-		Predicate actual = Translator.decomposeIdentifiers(input, ff);
-		actual = Translator.reduceToPredicateCalulus(actual, ff);
+//		Predicate actual = Translator.decomposeIdentifiers(input, ff);
+		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
 
 		assertTrue("Actual result is not typed: " + actual,
 				actual.isTypeChecked());
@@ -48,110 +62,460 @@ public class TranslationTests extends AbstractTranslationTests {
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
+
+	static ITypeEnvironment br_te = FastFactory.mTypeEnvironment(
+			new String[]{"s", "t", "v", "w", "p", "q"}, 
+			new Type[]{POW(S), POW(S), POW(S), POW(S), REL(S, T), REL(S, T)});
+
 	/**
-	 * Main test routine for predicates.
+	 *  Tests for BR1
 	 */
-	
-	public void testSubsetEqRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
+	public void testBR1_simple() {
+		
 		doTest( "s⊆t",
-				"∀x·x∈s⇒x∈t", false, te);
+				"s ∈ ℙ(t)", true, br_te);
 	}
 	
-	public void testSubsetEqRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
-		doTest( "s⊆t",
-				"∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t", false, te);
-	}
+	public void testBR1_recursion() {
 
-	public void testSubsetEqRule3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s∪t ⊆ s∪t",
-				"∀x·x∈s∪t⇒x∈s∪t", true, te);
-	}
-
-	public void testNotSubsetEqRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s⊈t",
-				"¬(∀x·x∈s⇒x∈t)", false, te);
+		doTest( "s∪v ⊆ t∪w",
+				"s∪v ∈ ℙ(t∪w)", true, br_te);
 	}
 	
-	public void testNotSubsetEqRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
-		doTest( "s⊈t",
-				"¬(∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t)", false, te);
+	/**
+	 *  Tests for BR2
+	 */
+	public void testBR2_simple() {
+
+		doTest( "s ⊈ t",
+				"¬(s ∈ ℙ(t))", true, br_te);
 	}
 	
-	public void testNotSubsetEqRule3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s∪t⊈s∪t",
-				"¬(∀x·x∈s∪t⇒x∈s∪t)", true, te);
+	public void testBR2_recursion() {
+		
+		doTest( "s∪v ⊈ t∪w",
+				"¬(s∪v ∈ ℙ(t∪w))", true, br_te);
 	}
+	
+	/**
+	 *  Tests for BR3
+	 */
+	public void testBR3_simple() {
 
-	public void testSubsetRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
 		doTest( "s⊂t",
-				"(∀x·x∈s⇒x∈t)∧¬(∀x·x∈t⇒x∈s)", false, te);
+				"s ∈ ℙ(t) ∧ ¬�(t ∈ ℙ(s))", true, br_te);
 	}
 
-	public void testSubsetRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
-		doTest( "s⊂t", "(∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t)∧¬(∀x,x0,x1·x↦(x0↦x1)∈t⇒x↦(x0↦x1)∈s)", false, te);
-	}
+	public void testBR3_recursion() {
 
-	public void testSubsetRule3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s∪t⊂s∪t",
-				"(∀x·x∈s∪t⇒x∈s∪t)∧¬(∀x·x∈s∪t⇒x∈s∪t)", true, te);
-	}
-
-	public void testNotSubsetRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s⊄t",
-				"¬(∀x·x∈s⇒x∈t)∨(∀x·x∈t⇒x∈s)", false, te);
-	}
-
-	public void testNotSubsetRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{REL(BOOL, CPROD(INT, BOOL)), REL(BOOL, CPROD(INT, BOOL))});
-		doTest( "s⊄t",
-				"¬((∀x,x0,x1·x↦(x0↦x1)∈s⇒x↦(x0↦x1)∈t))∨(∀x,x0,x1·x↦(x0↦x1)∈t⇒x↦(x0↦x1)∈s)", false, te);
+		doTest( "s∪v ⊂ t∪w",
+				"s∪v ∈ ℙ(t∪w) ∧ ¬�(t∪w ∈ ℙ(s∪v))", true, br_te);
 	}
 	
-	public void testNotSubsetRule3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
-				new String[]{"s", "t"}, new Type[]{INT_SET, INT_SET});
-		doTest( "s∪t⊄s∪t",
-				"¬(∀x·x∈s∪t⇒x∈s∪t)∨(∀x·x∈s∪t⇒x∈s∪t)", true, te);
+	/**
+	 *  Tests for BR4
+	 */
+	public void testBR4_simple() {
+
+		doTest( "s ⊄ t",
+				"¬�(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)", true, br_te);
 	}
 
-	public void testFiniteRule() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"S"}, new Type[]{INT_SET});
-		doTest( "finite(S)",
-				"∀a·∃b,f·f∈(S↣a‥b)", true, te);
+	public void testBR4_recursion() {
+
+		doTest( "s∪v ⊄ t∪w",
+				"¬�(s∪v ∈ ℙ(t∪w)) ∨ t∪w ∈ ℙ(s∪v)", true, br_te);
 	}
 	
-	public void testFiniteRule2() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"t"}, new Type[]{CPROD(CPROD(BOOL, INT), BOOL)});
-		doTest( "∀y·y=t∨finite({y})",
-				"∀y·y=t∨(∀a·∃b,f·f∈({y}↣a‥b))", true, te);
+	/**
+	 *  Tests for BR5
+	 */
+	public void testBR5_simple() {
+
+		doTest( "s ≠ t",
+				"¬(s = t)", false, br_te);
+	}
+
+	public void testBR5_recursion() {
+
+		doTest( "s∪v ≠ t∪w",
+				"¬(s∪v = t∪w)", true, br_te);
 	}
 	
-	public void testFiniteRule3() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"S", "T"}, new Type[]{INT_SET, INT_SET});
-		doTest( "finite(ℙ(S∪T))",
-				"∀a·∃b,f·f∈(ℙ(S∪T)↣a‥b)", true, te);
+	/**
+	 *  Tests for BR6
+	 */
+	public void testBR6_simple() {
+
+		doTest( "x ∉ s",
+				"¬(x ∈ s)", false, br_te);
 	}
+
+	public void testBR6_recursion() {
+
+		doTest( "s∪v ∉ ℙ(t∪w)",
+				"¬(s∪v ∈  ℙ(t∪w))", true, br_te);
+	}
+
+	/**
+	 * Tests fo BR7
+	 */
+	public void testBR7_simple() {
+
+		doTest( "finite(s)",
+				"∀a·∃b,f·f∈(s↣a‥b)", true, br_te);
+	}
+	
+	public void testBR7_recursive() {
+
+		doTest( "finite(ℙ(s∪t))",
+				"∀a·∃b,f·f∈(ℙ(s∪t)↣a‥b)", true, br_te);
+	}
+	
+	public void testBR7_complex() {
+		
+		doTest( "∀x·∃y·y=t∨finite({s∪x∪y})",
+				"∀x·∃y·y=t∨(∀a·∃b,f·f∈({s∪x∪y}↣a‥b))", true, br_te);
+	}
+	
+	static ITypeEnvironment er_te = FastFactory.mTypeEnvironment(
+			new String[]{	"f", "s", "t", "v", "w", "x", "y", "a", "b", "is", "it"}, 
+			new Type[]{		REL(S, T), POW(S), POW(S), POW(S), POW(S), S, T, S, T, INT_SET, INT_SET});
+
+	/**
+	 * Tests fo ER1
+	 */
+	public void testER1_simple() {
+		
+		doTest( "f(a) = f(a)", 
+				"⊤", false, er_te);
+	}
+	
+	/**
+	 * Tests fo ER2
+	 */
+	public void testER2_simple() {
+		
+		doTest( "x↦y = a↦b", 
+				"x=a ∧ y=b", false, er_te);
+	}
+	
+	public void testER2_recursive() {
+		doTest( "s∪v↦v∪t = t∪s↦v∪w", 
+				"s∪v=t∪s ∧ v∪t=v∪w", true, er_te);
+	}
+	
+	/**
+	 * Tests fo ER3
+	 */
+	public void testER3_simple() {
+		
+		doTest( "bool(n>0) = bool(n>2)", 
+				"n>0 ⇔ n>2", true, er_te);
+	}
+	
+	public void testER3_recursive() {
+
+		doTest( "bool(1∈{1}) = bool(1∈{1,2})", 
+				"1∈{1} ⇔ 1∈{1,2}", true, er_te);
+	}
+	
+	/**
+	 * Tests fo ER4
+	 */
+	public void testER4_simple() {
+		
+		doTest( "bool(n>0) = TRUE", 
+				"n>0", true, er_te);
+	}
+	
+	public void testER4_recursive() {
+
+		doTest( "bool(1∈{1}) = TRUE", 
+				"1∈{1}", true, er_te);
+	}
+
+	/**
+	 * Tests fo ER5
+	 */
+	public void testER5_simple() {
+		
+		doTest( "bool(n>0) = FALSE", 
+				"¬(n>0)", true, er_te);
+	}
+	
+	public void testER5_recursive() {
+
+		doTest( "bool(1∈{1}) = FALSE", 
+				"¬(1∈{1})", true, er_te);
+	}
+	
+	/**
+	 * Tests fo ER6
+	 */
+	public void testER6_simple() {
+		
+		doTest( "x = FALSE", 
+				"¬(x=TRUE)", true);
+	}
+	
+	public void testER6_recursive() {
+
+		doTest( "x = bool(1∈{1})", 
+				"x = TRUE ⇔ 1∈{1}", true);
+	}
+	
+	/**
+	 * Tests fo ER7
+	 */
+	public void testER7_simple() {
+		
+		doTest( "x = bool(n>0)", 
+				"x = TRUE ⇔ n>0", true);
+	}
+	
+	public void testER7_recursive() {
+
+		doTest( "x = bool(1∈{1})", 
+				"x = TRUE ⇔ 1∈{1}", true);
+	}
+
+	/**
+	 * Tests fo ER8
+	 */
+	public void testER8_simple() {
+		
+		doTest( "y = f(x)", 
+				"x↦y ∈ f", true, er_te);
+	}
+	
+	public void testER8_recursive() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{ "f", "s", "t", "v", "w"}, 
+				new Type[]  { REL(POW(S), POW(T)), POW(S), POW(T), POW(S), POW(T)});
+
+		doTest( "t∪w = f(s∪v)", 
+				"s∪v↦t∪w ∈ f", true, te);
+	}
+
+	/**
+	 * Tests fo ER9
+	 */
+	public void testER9_simple() {
+		
+		doTest( "s = t", 
+				"s = t", false, er_te);
+	}
+	
+	public void testER9_recursive() {
+		doTest( "s∪v = t∪w", 
+				"s∪v ⊆ t∪w ∧ t∪w ⊆ s∪v", true, er_te);
+	}
+	
+	/**
+	 * Tests fo ER10
+	 */
+	public void testER10_simple() {
+		
+		doTest( "n = card(s)", 
+				"∃f·f ∈ s⤖1‥n", true, er_te);
+	}
+	
+	public void testER10_recursive() {
+
+		doTest( "n = card(s∪t)", 
+				"∃f·f ∈ s∪t⤖1‥n", true, er_te);
+	}
+	
+	public void testER10_complex() {
+		doTest( "∀m,d·m = card(s∪d)", 
+				"∀m,d·∃f·f ∈ s∪d⤖1‥m", true, er_te);
+	}
+
+	/**
+	 * Tests fo ER11
+	 */
+	public void testER11_simple() {
+		
+		doTest( "n = min(is)", 
+				"n∈is ∧ n≤min(is)", true, er_te);
+	}
+	
+	public void testER11_recursive() {
+
+		doTest( "n = min(is∪it)", 
+				"n∈is∪it ∧ n≤min(is∪it)", true, er_te);
+	}
+
+	/**
+	 * Tests fo ER12
+	 */
+	public void testER12_simple() {
+		
+		doTest( "n = max(is)", 
+				"n∈is ∧ max(is)≤n", true, er_te);
+	}
+	
+	public void testER12_recursive() {
+
+		doTest( "n = max(is∪it)", 
+				"n∈is∪it ∧ max(is∪it)≤n", true, er_te);
+	}
+	
+	
+	private static ITypeEnvironment cr_te = FastFactory.mTypeEnvironment(
+			new String[]{ "s", "t"}, 
+			new Type[]  { INT_SET, INT_SET});
+
+	/**
+	 * Tests fo CR1
+	 */
+	public void testCR1_simple() {
+		
+		doTest( "a < min(s)", 
+				"∀x·x∈s ⇒ a < x", true, cr_te);
+	}
+	
+	public void testCR1_recursive() {
+
+		doTest( "min(t) < min(s∪t)", 
+				"∀x·x∈s∪t ⇒ min(t) < x", true, cr_te);
+	}	
+	
+	public void testCR1_complex() {
+		
+		doTest( "∀s·∃t·min(t) < min(s∪t)",
+				"∀s·∃t·∀x·x∈s∪t ⇒ min(t) < x", true, cr_te);
+	}
+	
+	/**
+	 * Tests fo CR2
+	 */
+	public void testCR2_simple() {
+		
+		doTest( "max(s) < a", 
+				"∀x·x∈s ⇒ x < a", true, cr_te);
+	}
+	
+	public void testCR2_recursive() {
+
+		doTest( "max(s∪t) < max(t)", 
+				"∀x·x∈s∪t ⇒ x < max(t)", true, cr_te);
+	}	
+	
+	public void testCR2_complex() {
+		
+		doTest( "∀s·∃t·max(s∪t) < max(t)",
+				"∀s·∃t·∀x·x∈s∪t ⇒ x < max(t)", true, cr_te);
+	}
+
+	/**
+	 * Tests fo CR3
+	 */
+	public void testCR3_simple() {
+		
+		doTest( "min(s) < a", 
+				"∃x·x∈s ∧ x < a", true, cr_te);
+	}
+	
+	public void testCR3_recursive() {
+
+		doTest( "min(s∪t) < min(t)", 
+				"∀x·x∈t ⇒ (∃y·y∈s∪t ∧ y < x)", true, cr_te);
+	}	
+	
+	public void testCR3_complex() {
+		
+		doTest( "∀s·∃t·min(s∪t) < min(t)",
+				"∀s·∃t·∀x·x∈t ⇒ (∃y·y∈s∪t ∧ y < x)", true, cr_te);
+	}
+
+	/**
+	 * Tests fo CR4
+	 */
+	public void testCR4_simple() {
+		
+		doTest( "a < max(s)", 
+				"∃x·x∈s ∧ a < x", true, cr_te);
+	}
+	
+	public void testCR4_recursive() {
+
+		doTest( "max(t) < max(s∪t)", 
+				"∀x·x∈t ⇒ (∃y·y∈s∪t ∧ x<y)", true, cr_te);
+	}	
+	
+	public void testCR4_complex() {
+		
+		doTest( "∀s·∃t·max(t) < max(s∪t)",
+				"∀s·∃t·∀x·x∈t ⇒ (∃y·y∈s∪t ∧ x<y)", true, cr_te);
+	}
+	
+	/**
+	 * Tests fo CR5
+	 */
+	public void testCR5_simple() {
+		
+		doTest( "a > b", 
+				"b < a", true, cr_te);
+	}
+	
+	public void testCR5_recursive() {
+
+		doTest( "min(t) > max(s)", 
+				"∀x·x∈t ⇒ (∀y·y∈s ⇒ y < x)", true, cr_te);
+	}	
+	
+/*
+	public void testCardinality1() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"S", "n"}, new Type[]{INT_SET, INT});
+		doTest( "card(S)=n",
+				"∃f·f∈S⤖1‥n", true, te);
+	}
+
+	public void testCardinality2() {
+		doTest( "card({1}) > 1",
+				"∀x·x=card({1})⇒x>1", true);
+	}
+	
+	public void testCardinality3() {
+		doTest( "card({card({1})}) = card({2})",
+				"∀x,x0·x0=card({card({1})})∧x=card({2}) ⇒ x0=x", true);
+	}
+	
+	public void testCardinality4() {
+		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+				new String[]{"S"}, new Type[]{INT_SET});
+		doTest( "∀s·card(S)>card({t·t>s∧t<card({t,t})∣t})",
+				"∀s·∀x,x0·x0=card(S)∧x=card({t·t>s∧t<card({t,t})∣t})⇒x0>x", true, te);
+	}	
+
+	public void testBool() {
+		doTest( "E∈{FALSE,bool(x>y)}",
+				"E=FALSE ∨ E=bool(x>y)", true);
+	}
+	
+	public void testBool2() {
+		doTest( "E∈{bool(TRUE=bool(⊥))}",
+				"E=bool(TRUE=bool(⊥))", true);
+	}
+	
+	public void testBool3() {
+		doTest( "e ∈ {bool(⊥)↦bool(1>2)}",
+				"e ∈ {bool(⊥)↦bool(1>2)}", true);
+	}
+	
+	public void testMinRule() {
+		doTest( "n = min(S)",
+				"n ∈ S ∧ (∀x·x∈S ⇒ n≤x)", true);
+	}
+	
+	public void testMaxRule() {
+		doTest( "n = max(S)",
+				"n ∈ S ∧ (∀x·x ∈ S ⇒ x ≤ n)", true);
+	}
+*/
 		
 	public void testPowerSetInRule1() {
 		ITypeEnvironment te = FastFactory.mTypeEnvironment(new String[]{"T", "E"}, new Type[]{INT_SET, INT_SET});
@@ -1179,6 +1543,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "f(a)  ∈ S",
 				"∃x1,x2·x1↦x2∈S ∧ x1↦x2=f(a)", true, te);
 	}
+	
 
 	public void testPerf() {
 		Predicate pred = parse("E∈S∪X↠T∪Y", FastFactory.mTypeEnvironment(
