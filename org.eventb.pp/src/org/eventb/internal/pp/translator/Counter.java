@@ -9,5 +9,6 @@ public class Counter{
 	public int add(int n) { count += n; return count - n;}
 	public int sub(int n) { count -= n; return count + n;}
 	public int value() { return count;}
+	public void reset() { count = 0; }
 } 
 
