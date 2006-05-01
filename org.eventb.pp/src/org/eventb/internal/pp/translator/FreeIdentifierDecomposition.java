@@ -1,7 +1,10 @@
 package org.eventb.internal.pp.translator;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
@@ -21,8 +24,10 @@ public abstract class FreeIdentifierDecomposition {
 				new HashMap<FreeIdentifier, Expression>();
 
 			LinkedList<Predicate> bindings = new LinkedList<Predicate>();
+			List<FreeIdentifier> freeIdentifiers = Arrays.asList(pred.getFreeIdentifiers());
+			Collections.reverse(freeIdentifiers);
 			
-			for (FreeIdentifier ident: pred.getFreeIdentifiers()) {
+			for (FreeIdentifier ident: freeIdentifiers) {
 				
 				if(ident.getType() instanceof ProductType) {
 					final Expression substitute =
@@ -30,7 +35,7 @@ public abstract class FreeIdentifierDecomposition {
 								ident.getType(), ident.getName(), ident.getSourceLocation());
 
 					identMap.put(ident, substitute);
-					bindings.add(
+					bindings.add(0, 
 						ff.makeRelationalPredicate(Formula.EQUAL, ident, substitute,null));	
 				}
 			}
