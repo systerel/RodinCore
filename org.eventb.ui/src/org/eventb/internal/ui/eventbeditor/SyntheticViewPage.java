@@ -1,11 +1,14 @@
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class SyntheticViewPage
 	extends FormPage 
@@ -37,7 +40,14 @@ public class SyntheticViewPage
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
-//		form.
-		managedForm.addPart(new SyntheticViewSection((EventBEditor) this.getEditor(), this.getManagedForm().getToolkit(), body));
+
+		SyntheticViewSection part = new SyntheticViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor()); 
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.heightHint = 200;
+		gd.minimumHeight = 150;
+		gd.widthHint = 150;
+		part.getSection().setLayoutData(gd);
+		managedForm.addPart(part);
 	}		
+
 }

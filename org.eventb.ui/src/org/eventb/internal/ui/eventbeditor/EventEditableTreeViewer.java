@@ -50,14 +50,13 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 		
 		public Object[] getChildren(Object parent) {
-			UIUtils.debug("Get Children: " + parent);
+//			UIUtils.debug("Get Children: " + parent);
 			if (parent instanceof IMachine) {
 				ArrayList<Node> list = new ArrayList<Node>();
 				try {
-//					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
 					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
 					for (IRodinElement event : events) {
-						UIUtils.debug("Event: " + event.getElementName());
+//						UIUtils.debug("Event: " + event.getElementName());
 						Node node = new Node(event);
 						elementsMap.put(event, node);
 						list.add(node);
@@ -73,27 +72,23 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			if (parent instanceof Node) {
 				Node node = (Node) parent;
 				node.removeAllChildren();
-//				if (node.isExplored()) return node.getChildren();
-//				else {
-					try {
-						IRodinElement element = node.getElement();
-						
-						if (element instanceof IParent) {
-							IRodinElement [] children = ((IParent) element).getChildren();
-							for (IRodinElement child : children) {
-								Leaf leaf;
-								if (child instanceof IParent) leaf = new Node(child);
-								else leaf = new Leaf(child);
-								elementsMap.put(child, leaf);
-								node.addChildren(leaf);
-							}
+				try {
+					IRodinElement element = node.getElement();
+					
+					if (element instanceof IParent) {
+						IRodinElement [] children = ((IParent) element).getChildren();
+						for (IRodinElement child : children) {
+							Leaf leaf;
+							if (child instanceof IParent) leaf = new Node(child);
+							else leaf = new Leaf(child);
+							elementsMap.put(child, leaf);
+							node.addChildren(leaf);
 						}
 					}
-					catch (RodinDBException e) {
-						e.printStackTrace();
-					}
-//					node.setExplored();
-//				}
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
 				return node.getChildren();
 			}
 			

@@ -67,6 +67,33 @@ public abstract class EventBEditor
 	
 	public static Collection<IElementChangedListener> listeners;
 	
+	private Collection<IRodinElement> newElements;
+	
+	private Collection<IStatusChangedListener> statusListeners;
+	
+	public void addNewElement(IRodinElement element) {
+		newElements.add(element);
+		notifyStatusChanged(element);
+	}
+	
+	private void notifyStatusChanged(IRodinElement element) {
+		for (IStatusChangedListener listener : statusListeners) {
+			listener.statusChanged(element);
+		}		
+	}
+	
+	public void addStatusListener(IStatusChangedListener listener) {
+		statusListeners.add(listener);
+	}
+	
+	public void removeStatusListener(IStatusChangedListener listener) {
+		statusListeners.remove(listener);
+	}
+
+	public boolean isNewElement(IRodinElement element) {
+		return newElements.contains(element);
+	}
+	
 	/**
 	 * Default constructor.
 	 */
@@ -74,9 +101,10 @@ public abstract class EventBEditor
 		super();
 		RodinCore.addElementChangedListener(this);
 		listeners = new HashSet<IElementChangedListener>();
+		newElements = new HashSet<IRodinElement>();
+		statusListeners = new HashSet<IStatusChangedListener>();
 	}
 
-	
 	public void addElementChangedListener(IElementChangedListener listener) {
 		listeners.add(listener);
 	}
@@ -183,8 +211,6 @@ public abstract class EventBEditor
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			// TODO Commit the information in the UI to the database
-			// clear the dirty state on all the pages
 			UIUtils.debug("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
@@ -202,6 +228,12 @@ public abstract class EventBEditor
 			// Save the file from the database to file
 			IRodinFile inputFile = this.getRodinInput();
 			inputFile.save(monitor, true);
+			
+			while (!newElements.isEmpty()) {
+				IRodinElement element = (IRodinElement) newElements.toArray()[0];
+				newElements.remove(element);
+				notifyStatusChanged(element);
+			}
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();

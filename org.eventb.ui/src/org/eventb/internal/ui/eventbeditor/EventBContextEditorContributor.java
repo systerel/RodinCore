@@ -115,7 +115,7 @@ public class EventBContextEditorContributor
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newCarrierSets(rodinFile);
+					UIUtils.newCarrierSets(editor, rodinFile);
 					editor.editorDirtyStateChanged();
 				}
 			}
@@ -131,7 +131,7 @@ public class EventBContextEditorContributor
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newConstants(rodinFile);
+					UIUtils.newConstants(editor, rodinFile);
 					editor.editorDirtyStateChanged();
 				}
 			}
@@ -147,7 +147,7 @@ public class EventBContextEditorContributor
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newTheorems(rodinFile);
+					UIUtils.newTheorems(editor, rodinFile);
 					editor.editorDirtyStateChanged();
 				}
 			}
@@ -163,7 +163,7 @@ public class EventBContextEditorContributor
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
-					UIUtils.newAxioms(rodinFile);
+					UIUtils.newAxioms(editor, rodinFile);
 					editor.editorDirtyStateChanged();
 				}
 			}

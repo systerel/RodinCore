@@ -18,7 +18,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,14 +25,11 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
@@ -41,7 +37,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -68,7 +63,7 @@ public class EventMasterSection
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
 	
 	// The group of actions for the tree part.
-	private ActionGroup groupActionSet;
+	private EventMasterSectionActionGroup groupActionSet;
 	
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
@@ -180,8 +175,7 @@ public class EventMasterSection
 	 * Handle add (new element) action.
 	 */
 	private void handleAddEvent() {
-		UIUtils.newEvent(editor.getRodinInput());
-		editor.editorDirtyStateChanged();
+		UIUtils.newEvent(editor, editor.getRodinInput());
 	}
 	
 
@@ -271,118 +265,17 @@ public class EventMasterSection
 	
 
 	private void handleAddVar() {
-		try {
-			TreeViewer viewer = (TreeViewer) this.getViewer();
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				IInternalElement event = getEvent(obj);
-				int counter = ((IInternalElement) event).getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-				IInternalElement element = event.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
-//				Leaf leaf = new Leaf(event);
-				viewer.setExpandedState(findItem(event).getData(), true);
-				select(element, 0);
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		groupActionSet.newLocalVariable.run();
 	}
 
 	private void handleAddGuard() {
-		try {
-			TreeViewer viewer = (TreeViewer) this.getViewer();
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				IInternalElement event = getEvent(obj);
-				int counter = ((IInternalElement) event).getChildrenOfType(IGuard.ELEMENT_TYPE).length;
-				IInternalElement element = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd"+(counter+1), null, null);
-//				Leaf leaf = new Leaf(event);
-				viewer.setExpandedState(findItem(event).getData(), true);
-				select(element, 1);
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		groupActionSet.newGuard.run();
 	}
 
 	private void handleAddAction() {
-		try {
-			TreeViewer viewer = (TreeViewer) this.getViewer();
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				IInternalElement event = getEvent(obj);
-				int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
-				IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
-				element.setContents("act"+(counter+1));
-//				Leaf leaf = new Leaf(event);
-				viewer.setExpandedState(findItem(event).getData(), true);
-				/* TODO Should use the previous findItem to avoid searching again */
-				select(element, 1);
-			}
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		groupActionSet.newAction.run();
 	}
-	
-	private IInternalElement getEvent(Object obj) {
-		IRodinElement rodinElement = ((Leaf) obj).getElement();
-		if (rodinElement instanceof IEvent) {
-			return (IEvent) rodinElement;
-		}
-		else if (rodinElement instanceof IInternalElement) {
-			return (IInternalElement) ((IInternalElement) rodinElement).getParent();
-		}
-		else return null; // should not happen
-	}
-	
-	private TreeItem findItem(IRodinElement element) {
-		Tree tree = ((TreeViewer) this.getViewer()).getTree();
-		TreeItem [] items = tree.getItems();
-		for (TreeItem item : items) {
-			TreeItem temp = findItem(item, element);
-			if (temp != null) return temp;
-		}
-		return null;
-	}
-	
-	private TreeItem findItem(TreeItem item, IRodinElement element) {
-		UIUtils.debug("From " + item);
-		Leaf leaf = (Leaf) item.getData();
-		if (leaf == null) return null;
-		if (leaf.getElement().equals(element)) {
-			UIUtils.debug("Found");
-			return item;
-		}
-		else {
-//			UIUtils.debug("Recursively ...");
-			TreeItem [] items = item.getItems();
-			for (TreeItem i : items) {
-				TreeItem temp = findItem(i, element);
-				if (temp != null) return temp;
-			}
-		}
-//		UIUtils.debug("... Not found");
-		return null;
-	}
-	
-	
-	private void select(Object obj, int column) throws RodinDBException {
-//		UIUtils.debug("Element: " + obj);
-//		if (obj instanceof IAction) {
-//			UIUtils.debug("Action: " + ((IAction) obj).getContents());
-//		}
-		TreeViewer viewer = (TreeViewer) this.getViewer();
-		TreeItem item = findItem((IRodinElement) obj);
-		viewer.reveal(item.getData());
 
-		((EventBEditableTreeViewer) viewer).selectItem(item, column); // try to select the second column to edit name
-	}
-	
 	/*
 	 * Create the tree view part.
 	 * <p>
@@ -400,10 +293,10 @@ public class EventMasterSection
 	 * <p>
 	 * @param element A Rodin element
 	 */
-	public void setSelection(IRodinElement element) {
-		TreeViewer viewer = (TreeViewer) this.getViewer();
-		viewer.setSelection(new StructuredSelection(element));
-	}
+//	public void setSelection(IRodinElement element) {
+//		TreeViewer viewer = (TreeViewer) this.getViewer();
+//		viewer.setSelection(new StructuredSelection(element));
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
@@ -420,7 +313,7 @@ public class EventMasterSection
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
-		TreeItem item  = findItem(element);
+		TreeItem item  = TreeSupports.findItem(viewer.getTree(), element);
 		selectItem(item, 1);
 	}
 

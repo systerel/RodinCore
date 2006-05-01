@@ -358,7 +358,7 @@ public class UIUtils {
 	}
 
 
-	public static void postRunnable(final Runnable r, Control ctrl) {
+	public static void asyncPostRunnable(final Runnable r, Control ctrl) {
 		final Runnable trackedRunnable= new Runnable() {
 			public void run() {
 				try {
@@ -380,7 +380,29 @@ public class UIUtils {
 		}
 	}
 
-	public static void newVariables(IRodinFile rodinFile) {
+	public static void syncPostRunnable(final Runnable r, Control ctrl) {
+		final Runnable trackedRunnable= new Runnable() {
+			public void run() {
+				try {
+					r.run();
+				} finally {
+					//removePendingChange();
+					//if (UIUtils.DEBUG) System.out.println("Runned");
+				}
+			}
+		};
+		if (ctrl != null && !ctrl.isDisposed()) {
+			try {
+				ctrl.getDisplay().syncExec(trackedRunnable); 
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Error e) {
+				throw e; 
+			}
+		}
+	}
+
+	public static void newVariables(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
 			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), "New Variables", "Name", "var" + (counter + 1));
@@ -389,7 +411,8 @@ public class UIUtils {
 			Collection<String> names = dialog.getAttributes();
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();
-				rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+				IInternalElement var = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(var);
 			}
 		}
 		catch (RodinDBException e) {
@@ -397,7 +420,7 @@ public class UIUtils {
 		}
 	}
 
-	public static void intelligentNewVariables(IRodinFile rodinFile) {
+	public static void intelligentNewVariables(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			final int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
 			final int invCounter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
@@ -416,17 +439,20 @@ public class UIUtils {
 			boolean newInit = true;
 			
 			if (name != null) {
-				rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+				IInternalElement var = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(var);
 				
-				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, invariantName, null, null);
-				invariant.setContents(dialog.getInvariantPredicate());
+				IInternalElement inv = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, invariantName, null, null);
+				inv.setContents(dialog.getInvariantPredicate());
+				editor.addNewElement(inv);
 				
 				IRodinElement [] events = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE);
 				for (IRodinElement event : events) {
 					if (event.getElementName().equals("INITIALISATION")) {
 						newInit = false;
-						IUnnamedInternalElement action = (IUnnamedInternalElement) ((IInternalElement) event).createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
-						action.setContents(init);
+						IUnnamedInternalElement act = (IUnnamedInternalElement) ((IInternalElement) event).createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
+						act.setContents(init);
+						editor.addNewElement(act);
 					}
 				}
 				if (newInit) {
@@ -442,7 +468,7 @@ public class UIUtils {
 		}
 	}
 	
-	public static void newInvariants(IRodinFile rodinFile) {
+	public static void newInvariants(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
 			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), "New Invariants", "Name and predicate", "inv", counter + 1);
@@ -452,8 +478,9 @@ public class UIUtils {
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
 				String content = contents[i];
-				IInternalElement invariant = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, name, null, null);
-				invariant.setContents(content);
+				IInternalElement inv = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, name, null, null);
+				inv.setContents(content);
+				editor.addNewElement(inv);
 			}
 		}
 		catch (RodinDBException e) {
@@ -462,7 +489,7 @@ public class UIUtils {
 	}
 
 
-	public static void newTheorems(IRodinFile rodinFile) {
+	public static void newTheorems(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
 			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), "New Theorems", "Name and predicate", "thm", counter + 1);
@@ -472,8 +499,9 @@ public class UIUtils {
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
 				String content = contents[i];
-				IInternalElement theorem = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, name, null, null);
-				theorem.setContents(content);
+				IInternalElement thm = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, name, null, null);
+				thm.setContents(content);
+				editor.addNewElement(thm);
 			}
 		}
 		catch (RodinDBException e) {
@@ -482,7 +510,7 @@ public class UIUtils {
 	}
 
 
-	public static void newEvent(IRodinFile rodinFile) {
+	public static void newEvent(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE).length;
 			NewEventInputDialog dialog = new NewEventInputDialog(Display.getCurrent().getActiveShell(), "New Events", "evt" + (counter + 1));
@@ -495,19 +523,23 @@ public class UIUtils {
 				String [] grdPredicates = dialog.getGrdPredicates();
 				String [] actions = dialog.getActions();
 				
-				IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, name, null, null);
+				IInternalElement evt = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(evt);
 				for (String varName : varNames) {
-					event.createInternalElement(IVariable.ELEMENT_TYPE, varName, null, null);
+					IInternalElement var = evt.createInternalElement(IVariable.ELEMENT_TYPE, varName, null, null);
+					editor.addNewElement(var);
 				}
 				
 				for (int i = 0; i < grdNames.length; i++) {
-					IInternalElement grd = event.createInternalElement(IGuard.ELEMENT_TYPE, grdNames[i], null, null);
+					IInternalElement grd = evt.createInternalElement(IGuard.ELEMENT_TYPE, grdNames[i], null, null);
 					grd.setContents(grdPredicates[i]);
+					editor.addNewElement(grd);
 				}
 				
 				for (String action : actions) {
-					IInternalElement act = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+					IInternalElement act = evt.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
 					act.setContents(action);
+					editor.addNewElement(act);
 				}
 			}
 		}
@@ -517,7 +549,7 @@ public class UIUtils {
 	}
 
 
-	public static void newCarrierSets(IRodinFile rodinFile) {
+	public static void newCarrierSets(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
 			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), "New Carrier Sets", "Name", "set" + (counter + 1));
@@ -526,7 +558,8 @@ public class UIUtils {
 			Collection<String> names = dialog.getAttributes();
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();
-				rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
+				IInternalElement set = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(set);
 			}
 		}
 		catch (RodinDBException e) {
@@ -535,7 +568,7 @@ public class UIUtils {
 	}
 
 
-	public static void newConstants(IRodinFile rodinFile) {
+	public static void newConstants(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
 			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(Display.getCurrent().getActiveShell(), "New Constants", "Name", "cst" + (counter + 1));
@@ -543,7 +576,8 @@ public class UIUtils {
 			Collection<String> names = dialog.getAttributes();
 			for (Iterator<String> it = names.iterator(); it.hasNext();) {
 				String name = it.next();
-				rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
+				IInternalElement cst = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(cst);
 			}
 		}
 		catch (RodinDBException e) {
@@ -552,7 +586,7 @@ public class UIUtils {
 	}
 
 
-	public static void newAxioms(IRodinFile rodinFile) {
+	public static void newAxioms(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
 			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(Display.getCurrent().getActiveShell(), "New Axioms", "Name and predicate", "axm", counter + 1);
@@ -562,8 +596,9 @@ public class UIUtils {
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
 				String content = contents[i];
-				IInternalElement theorem = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, name, null, null);
-				theorem.setContents(content);
+				IInternalElement axm = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, name, null, null);
+				axm.setContents(content);
+				editor.addNewElement(axm);
 			}
 		}
 		catch (RodinDBException e) {

@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -17,6 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -38,8 +40,12 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
+public class SyntheticEditableTreeViewer 
+	extends EventBEditableTreeViewer
+{
 
+	private EventBEditor editor;
+	
 	/**
 	 * The content provider class. 
 	 */
@@ -60,7 +66,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					IRodinElement [] elements = ((IRodinFile) parent).getChildren();
 					for (IRodinElement element : elements) {
 						Leaf leaf;
-						UIUtils.debug("Element: " + element.getElementName());
+//						UIUtils.debug("Element: " + element.getElementName());
 						if (element instanceof IParent) {
 							leaf = new Node(element);
 						}
@@ -78,6 +84,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			
 			if (parent instanceof Node) {
 				Node node = (Node) parent;
+				node.removeAllChildren();
 				try {
 					IRodinElement element = node.getElement();
 						
@@ -202,6 +209,9 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 */
 		public Color getBackground(Object element, int columnIndex) {
 			 Display display = Display.getCurrent();
+			 
+			 if (editor.isNewElement(((Leaf) element).getElement()))
+				 return display.getSystemColor(SWT.COLOR_YELLOW);
              return display.getSystemColor(SWT.COLOR_WHITE);
 		}
 		
@@ -210,6 +220,8 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 */
 		public Color getForeground(Object element, int columnIndex) {
 			Display display = Display.getCurrent();
+			 if (editor.isNewElement(((Leaf) element).getElement()))
+				 return display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
             return display.getSystemColor(SWT.COLOR_BLACK);
        }
 		
@@ -250,8 +262,9 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 	
-	public SyntheticEditableTreeViewer(Composite parent, int style, EventBEditor editor) {
+	public SyntheticEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(parent, style);
+		this.editor = editor;
 		this.setContentProvider(new SyntheticContentProvider());
 		this.setLabelProvider(new SyntheticLabelProvider());
 		this.setSorter(new SyntheticElementsSorter());
@@ -309,6 +322,10 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof Leaf)) return false;
 		object = ((Leaf) object ).getElement();
+		
+		if (column == 0) {
+			if (!editor.isNewElement((IRodinElement) object)) return true;
+		}
 		//        if (column < 1) return; // The object column is not editable
 //		UIUtils.debug("Item: " + object + " of class: " + object.getClass());
 		if (column == 0) {
@@ -319,5 +336,22 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			if (object instanceof IEvent) return true;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
+	 */
+	public void statusChanged(final IRodinElement element) {
+		UIUtils.debug("Change status " + element.getElementName());
+		final TreeViewer viewer = this;
+		UIUtils.syncPostRunnable(new Runnable() {
+			public void run() {
+				Control ctrl = viewer.getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					Leaf leaf = elementsMap.get(element);
+					viewer.refresh(leaf);
+				}
+			}
+		}, this.getControl());
 	}
 }

@@ -11,10 +11,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -22,6 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
@@ -54,13 +51,10 @@ public class EventMasterSectionActionGroup
 	private TreeViewer viewer;
 	
 	// Some actions
-	protected static Action newLocalVariable;
-	protected static Action newGuard;
-	protected static Action newAction;
-	protected static Action delete;
-	
-	// The counter used to create automatic name for new elements.
-	private int counter;
+	protected Action newLocalVariable;
+	protected Action newGuard;
+	protected Action newAction;
+	protected Action delete;
 	
 	/**
 	 * Constructor: Create the actions
@@ -70,34 +64,27 @@ public class EventMasterSectionActionGroup
 	public EventMasterSectionActionGroup(EventBEditor eventBEditor, TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;
-		counter = 0;
 		
 		newLocalVariable = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 						new Runnable() {
 							public void run() {
-								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
-								if (ssel.size() == 1) {
-									IEvent event = (IEvent) ssel.getFirstElement();
-
-								ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(editor.getSite().getShell(), "New Local Variable", "Name of the new (local) variable", "var" + (counter + 1));
-								dialog.open();
-								Collection<String> names = dialog.getAttributes();
 								try {
-									for (Iterator<String> it = names.iterator(); it.hasNext();) {
-										String name = it.next();
-										event.createInternalElement(IVariable.ELEMENT_TYPE, name, null, null);
-										counter++;
+									IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+									if (ssel.size() == 1) {
+										Object obj = ssel.getFirstElement();
+										IInternalElement event = TreeSupports.getEvent(obj);
+										int counter = ((IInternalElement) event).getChildrenOfType(IVariable.ELEMENT_TYPE).length;
+										IInternalElement var = event.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
+										editor.addNewElement(var);
+										viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(), event).getData(), true);
+										select(var, 0);
 									}
 								}
 								catch (RodinDBException e) {
 									e.printStackTrace();
 								}
-								viewer.refresh(event, true);
-								viewer.setExpandedState(event, true);
-								editor.editorDirtyStateChanged();
-								}								
 							}
 						});
 			}
@@ -111,30 +98,22 @@ public class EventMasterSectionActionGroup
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 						new Runnable() {
 							public void run() {
-								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
-								if (ssel.size() == 1) {
-									IEvent event = (IEvent) ssel.getFirstElement();
-									ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(editor.getSite().getShell(), "New Invariants", "Name and predicate of the new invariant", "grd", counter + 1);
-									dialog.open();
-									String [] names = dialog.getNewNames();
-									String [] contents = dialog.getNewContents();
-									try {
-										for (int i = 0; i < names.length; i++) {
-											String name = names[i];
-											String content = contents[i];
-											IInternalElement guard = event.createInternalElement(IGuard.ELEMENT_TYPE, name, null, null);
-											guard.setContents(content);
-											counter++;
-										}
+								try {
+									IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+									if (ssel.size() == 1) {
+										Object obj = ssel.getFirstElement();
+										IInternalElement event = TreeSupports.getEvent(obj);
+										int counter = ((IInternalElement) event).getChildrenOfType(IGuard.ELEMENT_TYPE).length;
+										IInternalElement grd = event.createInternalElement(IGuard.ELEMENT_TYPE, "grd"+(counter+1), null, null);
+										grd.setContents(EventBUIPlugin.GRD_DEFAULT);
+										editor.addNewElement(grd);
+										viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(), event).getData(), true);
+										select(grd, 1);
 									}
-									catch (RodinDBException e) {
-										e.printStackTrace();
-									}
-									viewer.refresh(event, true);
-									viewer.setExpandedState(event, true);
-									editor.editorDirtyStateChanged();
 								}
-								
+								catch (RodinDBException e) {
+									e.printStackTrace();
+								}
 							}
 						});
 			}
@@ -148,29 +127,21 @@ public class EventMasterSectionActionGroup
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 						new Runnable() {
 							public void run() {
-								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection(); 
-								if (ssel.size() == 1) {
-									IEvent event = (IEvent) ssel.getFirstElement();
-									ElementAtributeInputDialog dialog = 
-										new ElementAtributeInputDialog(editor.getSite().getShell(), 
-												"New Action",
-												"Substitute of the new action",
-												EventBUIPlugin.SUB_DEFAULT);
-									dialog.open();
-									Collection<String> subs = dialog.getAttributes();
-									try {
-										for (Iterator<String> it = subs.iterator(); it.hasNext();) {
-											String sub = it.next();
-											IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
-											action.setContents(sub);
-										}
+								try {
+									IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+									if (ssel.size() == 1) {
+										Object obj = ssel.getFirstElement();
+										IInternalElement event = TreeSupports.getEvent(obj);
+										int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
+										IInternalElement act = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+										act.setContents("act" + (counter+1));
+										editor.addNewElement(act);
+										viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(), event).getData(), true);
+										select(act, 1);
 									}
-									catch (RodinDBException e) {
-										e.printStackTrace();
-									}
-									viewer.refresh(event, true);
-									viewer.setExpandedState(event, true);
-									editor.editorDirtyStateChanged();
+								}
+								catch (RodinDBException e) {
+									e.printStackTrace();
 								}
 							}
 						});
@@ -185,23 +156,22 @@ public class EventMasterSectionActionGroup
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
 						new Runnable() {
 							public void run() {
-								IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-								
-								Object [] objects = ssel.toArray();
-								Collection<IRodinElement> toDelete = new HashSet<IRodinElement>();
-								for (int i = 0; i < objects.length; i++) {
-									if (objects[i] instanceof Leaf) {
-											toDelete.add(((Leaf)objects[i]).getElement());
-									}
-								}
 								try {
-									EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
-									viewer.refresh();
+									IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+									if (ssel.size() == 1) {
+										Object obj = ssel.getFirstElement();
+										IInternalElement event = TreeSupports.getEvent(obj);
+										int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
+										IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
+										element.setContents("act"+(counter+1));
+										viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(), event).getData(), true);
+										/* TODO Should use the previous findItem to avoid searching again */
+										select(element, 1);
+									}
 								}
 								catch (RodinDBException e) {
 									e.printStackTrace();
 								}
-								return;
 							}
 						});
 			}
@@ -220,11 +190,11 @@ public class EventMasterSectionActionGroup
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			menu.add(delete);
 			IStructuredSelection ssel = (IStructuredSelection) sel; 
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
-				if (obj instanceof IEvent) {
+				
+				if (((Leaf) obj).getElement() instanceof IEvent) {
 					menu.add(newLocalVariable);
 					menu.add(newGuard);
 					menu.add(newAction);
@@ -235,6 +205,7 @@ public class EventMasterSectionActionGroup
 //					menu.add(newMenu);
 				}
 			}
+			menu.add(delete);
 //			menu.add(deleteAction);
 //			menu.add(new Separator());
 //			drillDownAdapter.addNavigationActions(menu);
@@ -244,4 +215,14 @@ public class EventMasterSectionActionGroup
 		}
 	}
 
+	private void select(Object obj, int column) throws RodinDBException {
+//		UIUtils.debug("Element: " + obj);
+//		if (obj instanceof IAction) {
+//			UIUtils.debug("Action: " + ((IAction) obj).getContents());
+//		}
+		TreeItem item = TreeSupports.findItem(viewer.getTree(), (IRodinElement) obj);
+		viewer.reveal(item.getData());
+
+		((EventBEditableTreeViewer) viewer).selectItem(item, column); // try to select the second column to edit name
+	}
 }
