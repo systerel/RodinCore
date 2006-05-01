@@ -27,7 +27,6 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -47,7 +46,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	class SyntheticContentProvider
 	implements IStructuredContentProvider, ITreeContentProvider
 	{
-		private IMachine invisibleRoot = null;
+		private IRodinFile invisibleRoot = null;
 		
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
@@ -55,10 +54,10 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 		
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IMachine) {
+			if (parent instanceof IRodinFile) {
 				ArrayList<Leaf> list = new ArrayList<Leaf>();
 				try {
-					IRodinElement [] elements = ((IMachine) parent).getChildren();
+					IRodinElement [] elements = ((IRodinFile) parent).getChildren();
 					for (IRodinElement element : elements) {
 						Leaf leaf;
 						UIUtils.debug("Element: " + element.getElementName());
@@ -109,7 +108,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IMachine) parent;
+					invisibleRoot = (IRodinFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}
@@ -259,7 +258,8 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	}
 
 	@Override
-	protected void createTreeColumns(Tree tree) {
+	protected void createTreeColumns() {
+		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Elements");
 		elementColumn.setResizable(true);
