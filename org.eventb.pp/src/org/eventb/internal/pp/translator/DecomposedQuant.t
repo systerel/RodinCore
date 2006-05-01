@@ -24,8 +24,8 @@ public class DecomposedQuant {
 
 %include {Formula.tom}
 
-	private final Counter c = new Counter();
-	private final LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
+	protected final Counter c = new Counter();
+	protected final LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 	private boolean hasPushed = false;
 	protected final FormulaFactory ff;
 
