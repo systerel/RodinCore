@@ -57,52 +57,6 @@ public class FormulaConstructor {
 		return makeAssociativePredicate(ff, Formula.LOR, preds, loc);
 	}
 	
-	public static Predicate makeGreaterThanExtremumPredicate(
-			FormulaFactory ff, Expression value, Expression set, int relationTag, SourceLocation loc) {
-
-		DecomposedQuant forall = new DecomposedQuant(ff);
-		Expression x = forall.addQuantifier(value.getType(), loc);
-    	return forall.makeQuantifiedPredicate(
-    		Formula.FORALL,
-    		ff.makeBinaryPredicate(
-    			Formula.LIMP,
-    			ff.makeRelationalPredicate(
-    				Formula.IN,
-    				x,
-    				forall.push(set),
-    				loc),
-    			ff.makeRelationalPredicate(
-    				relationTag,
-    				forall.push(value),
-    				x,
-    				loc),
-    			loc),
-    		loc);	   
-	}
-	
-	public static Predicate makeLessThanExtremumPredicate(
-			FormulaFactory ff, Expression value, Expression set, int relationTag, SourceLocation loc) {
-
-		DecomposedQuant exists = new DecomposedQuant(ff);
-		Expression x = exists.addQuantifier(value.getType(), loc);
-    	return exists.makeQuantifiedPredicate(
-    		Formula.EXISTS,
-    		ff.makeBinaryPredicate(
-    			Formula.LAND,
-    			ff.makeRelationalPredicate(
-    				Formula.IN,
-    				x,
-    				exists.push(set),
-    				loc),
-    			ff.makeRelationalPredicate(
-    				relationTag,
-    				exists.push(value),
-    				x,
-    				loc),
-    			loc),
-    		loc);	   
-	}
-	
 	public static Predicate makeSimplifiedAssociativePredicate(
 			FormulaFactory ff, int tag, List<Predicate> children, Predicate neutral, 
 			Predicate determinant, SourceLocation loc, Predicate oldPredicate) {
