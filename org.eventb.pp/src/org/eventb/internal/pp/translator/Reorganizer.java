@@ -17,62 +17,12 @@ import org.eventb.core.ast.UnaryExpression;
 
 public class Reorganizer extends BorderTranslator {
 	
-	public static class OffsetCalculator extends IdentityVisitor {
-		protected int count;
-		protected FormulaFactory ff;
-		private boolean inEquality;
-		
-		public static int calculate(Expression expr, boolean inEquality) {
-			OffsetCalculator calc = new OffsetCalculator();
-			calc.inEquality = inEquality;
-			expr.accept(calc);
-			return calc.count;
-		}		
-		
-		@Override
-		public boolean visitExpression(Expression expr) {
-			inEquality = false;
-			return true;
-		}
-		
-		private void condCount() {
-			if(inEquality)
-				inEquality = false;
-			else
-				count++;
-		}
-		
-		@Override
-		public boolean enterKCARD(UnaryExpression expr) {
-			condCount();
-			return false;			
-		}
-		
-		@Override
-		public boolean enterFUNIMAGE(BinaryExpression expr) {
-			condCount();
-			return false;			
-		}
-		
-		@Override
-		public boolean enterKMIN(UnaryExpression expr) {
-			condCount();
-			return false;			
-		}
-		
-		@Override
-		public boolean enterKMAX(UnaryExpression expr) {
-			condCount();
-			return false;			
-		}
-		
-	}
-	
 	public class ExpressionExtractor extends IdentityTranslator {
 		public final List<Predicate> bindings = new LinkedList<Predicate>();
-		public boolean inEquality;
 		private final DecomposedQuant quantification;
-		
+
+		public boolean inEquality;
+
 		public ExpressionExtractor(DecomposedQuant quantification) {
 			this.quantification = quantification;
 		}
@@ -81,7 +31,12 @@ public class Reorganizer extends BorderTranslator {
 			SourceLocation loc = expr.getSourceLocation();
 			
 			Expression ident = quantification.addQuantifier(expr.getType(), name, loc);
-			bindings.add(ff.makeRelationalPredicate(Formula.EQUAL, ident, expr, loc));
+			bindings.add(
+					ff.makeRelationalPredicate(
+							Formula.EQUAL, 
+							ident, 
+							quantification.push(expr), 
+							loc));
 			return ident;		
 		}
 		
@@ -101,6 +56,8 @@ public class Reorganizer extends BorderTranslator {
 					return bindExpression(expr, ff, "mi");
 				case Formula.KMAX:
 					return bindExpression(expr, ff, "ma");
+				case Formula.BOUND_IDENT:
+					return quantification.push(expr);
 				default:
 					return super.translate(expr, ff);
 				}
@@ -128,37 +85,41 @@ public class Reorganizer extends BorderTranslator {
 			return false;
 	}
 	
+	
+	protected RelationalPredicate doPhase(
+			RelationalPredicate pred, ExpressionExtractor extractor, FormulaFactory ff) {
+	
+		boolean isEquality = isIdentifierEquality(pred);
+		
+		extractor.inEquality = isEquality;
+		Expression left = extractor.translate(pred.getLeft(), ff);
+		extractor.inEquality = isEquality;
+		Expression right = extractor.translate(pred.getRight(), ff);
+		return ff.makeRelationalPredicate(pred.getTag(), left, right, pred.getSourceLocation());
+	}
+	
 	@Override
 	protected Predicate translateArithmeticBorder(RelationalPredicate pred, FormulaFactory ff) {
 		SourceLocation loc = pred.getSourceLocation();
 		
-		boolean isEquality = isIdentifierEquality(pred);
-		
-		int leftShift = OffsetCalculator.calculate(pred.getLeft(), isEquality);
-		int rightShift = OffsetCalculator.calculate(pred.getRight(), isEquality);
-		int totalShift = leftShift + rightShift;
-		
-		if(totalShift == 0)
+		Decomp2PhaseQuant forall = new Decomp2PhaseQuant(ff);
+
+		ExpressionExtractor extractor = new ExpressionExtractor(forall);
+		doPhase(pred, extractor, ff);
+
+		if(extractor.bindings.size() == 0)
 			return pred;
-		else {			
-			DecomposedQuant forall = new DecomposedQuant(ff);
-			ExpressionExtractor extractor = new ExpressionExtractor(forall);
-			extractor.inEquality = isEquality;
-			Expression left = leftShift > 0 ? 
-				extractor.translate(pred.getLeft().shiftBoundIdentifiers(totalShift, ff), ff) :
-				pred.getLeft().shiftBoundIdentifiers(totalShift, ff);
-			
-			extractor.inEquality = isEquality;
-			Expression right = rightShift > 0 ?
-				extractor.translate(pred.getRight().shiftBoundIdentifiers(totalShift, ff), ff) :
-				pred.getRight().shiftBoundIdentifiers(totalShift, ff);
+		else {
+			forall.startPhase2();
+			extractor = new ExpressionExtractor(forall);
+			pred = doPhase(pred, extractor, ff);
 			
 			return forall.makeQuantifiedPredicate(
 				Formula.FORALL, 
 				ff.makeBinaryPredicate(
 					Formula.LIMP,
 					FormulaConstructor.makeLandPredicate(ff, extractor.bindings, loc),
-					ff.makeRelationalPredicate(pred.getTag(), left, right, loc),
+					pred,
 					loc),
 				loc);
 		}
