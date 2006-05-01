@@ -47,45 +47,132 @@ public class Translator extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
+	    	/**
+	    	 *	All ∈ rules are implemented in translateEqual
+	    	 */
 	    	In(E, rhs) -> {
 	    		return translateIn (`E, `rhs, loc, ff);
 	    	}
+	    	/**
+	    	 *	All = rules are implemented in translateEqual
+	    	 */
 	    	Equal(_, _) -> {
 	        	return translateEqual (pred,  ff);
 	        }
-	        Le(a, Min(S)) | Lt(a, Min(S)) | Gt(a, Max(S)) |  Ge(a, Max(S)) -> {
-	        	return FormulaConstructor.makeGreaterThanExtremumPredicate(
-	        		ff, 
-	        		translate(`a, ff), 
-	        		translate(`S, ff), 
-	        		pred.getTag(), 
-	        		loc);
+	       	/**
+	 		 *  RULE CR1: 	a <∣≤ min(s) 
+	 		 * 				∀x·x∈s ⇒ a <∣≤ x
+	 		 */
+	 		Le(a, Min(s)) | Lt(a, Min(s)) -> {
+	        	
+	        	final DecomposedQuant forall = new DecomposedQuant(ff);
+				final Expression x = forall.addQuantifier(`a.getType(), loc);
+
+		    	return forall.makeQuantifiedPredicate(
+		    		Formula.FORALL,
+		    		ff.makeBinaryPredicate(
+		    			Formula.LIMP,
+		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translate(
+			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc),
+		    				ff),
+		    			loc),
+		    		loc);	   
 	        }
-	        
-	        Le(a, Max(S)) | Lt(a, Max(S)) | Ge(a, Min(S)) | Gt(a, Min(S))-> {
-	        	return FormulaConstructor.makeLessThanExtremumPredicate(
-	        		ff, 
-	        		translate(`a, ff), 
-	        		translate(`S, ff), 
-	        		pred.getTag(), 
-	        		loc);
+	 		/**
+	 		 *  RULE CR2:	max(s) <∣≤ a
+			 *				∀x·x∈s ⇒ x <∣≤ a
+	 		 */	   		      	
+	        Le(Max(s), a) | Lt(Max(s), a) -> {
+	        	
+	        	final DecomposedQuant forall = new DecomposedQuant(ff);
+				final Expression x = forall.addQuantifier(`a.getType(), loc);
+
+		    	return forall.makeQuantifiedPredicate(
+		    		Formula.FORALL,
+		    		ff.makeBinaryPredicate(
+		    			Formula.LIMP,
+		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translate(
+			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc),
+		    				ff),
+		    			loc),
+		    		loc);	   
 	        }
-	        NotEqual (left, right) -> {
-	        	return ff.makeUnaryPredicate(
-	        		Formula.NOT, 
-	        		translateEqual(
-	        			ff.makeRelationalPredicate(Formula.EQUAL, `left, `right, loc), ff),
-	        		loc);
-	        }		   		      	
+	 		/**
+	 		 *  RULE CR3:   min(s) <∣≤  a
+			 *				∃x·x∈s ∧ x <∣≤ a
+	 		 */	   		      	
+	        Le(Min(s), a) | Lt(Min(s), a) -> {
+	        	
+	        	final DecomposedQuant exists = new DecomposedQuant(ff);
+				final Expression x = exists.addQuantifier(`a.getType(), loc);
+		    	
+		    	return exists.makeQuantifiedPredicate(
+		    		Formula.EXISTS,
+		    		FormulaConstructor.makeLandPredicate(
+		    			ff,
+		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translate(
+		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc),
+		    				ff),
+		    			loc),
+		    		loc);
+	        }
+	        /**
+ 	 		 *  RULE CR4: 	a <∣≤ max(s) 
+	 		 * 				∃x·x∈s ∧ a <∣≤ x
+	 		 */
+	 	    Le(a, Max(s)) | Lt(a, Max(s)) -> {
+	        	
+	        	final DecomposedQuant exists = new DecomposedQuant(ff);
+				final Expression x = exists.addQuantifier(`a.getType(), loc);
+		    	
+		    	return exists.makeQuantifiedPredicate(
+		    		Formula.EXISTS,
+		    		FormulaConstructor.makeLandPredicate(
+		    			ff,
+		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translate(
+		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc),
+		    				ff),
+		    			loc),
+		    		loc);
+	        }
+	        /**
+	         * RULE CR5:	a >|≥ b
+	         *				b <|≤ a
+	         */
+	        Ge(a, b) | Gt(a, b) -> {
+	        	return translate(
+	        		ff.makeRelationalPredicate(
+		        		pred.getTag() == Formula.GE ? Formula.LE : Formula.LT,
+		        		`b,
+		        		`a,
+		        		loc),
+		        	ff);
+	        }
+	        /**
+	 		*  RULE BR1: 	s ⊆ t
+	 		* 				s ∈ ℙ(t)
+	 		*/	   		      	
 	    	SubsetEq(s, t) -> {
 	    		return translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff);   				
 	    	}
+	        /**
+	 		*  RULE BR2: 	s ⊈ t
+	 		* 				¬(s ∈ ℙ(t))
+	 		*/	   		      	
 	    	NotSubsetEq(s, t) -> {
 	    		return ff.makeUnaryPredicate(
 	    			Formula.NOT, 
 	    			translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff),
 	    			loc);
 	    	}
+	        /**
+	 		*  RULE BR3:	s ⊂ t
+	 		* 				s ∈ ℙ(t) ∧ ¬�(t ∈ ℙ(s))
+	 		*/	   		      	
 	    	Subset(s, t) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
@@ -96,6 +183,10 @@ public class Translator extends IdentityTranslator {
 		    			loc),
 			    	loc);	    				
 	    	}
+	        /**
+	 		*  RULE BR4: 	s ⊄ t
+	 		* 				�¬�(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)
+	 		*/	   		      	
 	    	NotSubset(s, t) -> {
 				return FormulaConstructor.makeLorPredicate(
 					ff,
@@ -106,17 +197,36 @@ public class Translator extends IdentityTranslator {
 		    		translateIn(`t, ff.makeUnaryExpression(Formula.POW, `s, loc), loc, ff),
 			    	loc);	    				
 	    	}
-	    	NotIn(s, t) -> {
+	        /**
+	 		*  RULE BR4: 	x ≠ y
+	 		* 				¬(x = y)
+	 		*/	   		      	
+	    	NotEqual (x, y) -> {
+	        	return ff.makeUnaryPredicate(
+	        		Formula.NOT, 
+	        		translateEqual(
+	        			ff.makeRelationalPredicate(Formula.EQUAL, `x, `y, loc), ff),
+	        		loc);
+	        }	
+	        /**
+	        * RULE BR6: 	x ∉ s
+	        *	   			�¬(x ∈ s)
+	        */
+	    	NotIn(x, s) -> {
 	    		return ff.makeUnaryPredicate(
 	    			Formula.NOT, 
-	    			translateIn (`s, `t, loc, ff),
+	    			translateIn (`x, `s, loc, ff),
 	    			loc);
 	    	}
-	    	Finite(S) -> {
+	        /**
+	        * RULE BR7: 	finite(s)
+	        *	  			∀a·∃b,f·f∈(s↣a‥b)
+	        */
+	    	Finite(s) -> {
 	    		final DecomposedQuant forall = new DecomposedQuant(ff);
 	    		final DecomposedQuant exists = new DecomposedQuant(ff);
 
-	    		final Type setElementType = `S.getType().getBaseType();
+	    		final Type setElementType = `s.getType().getBaseType();
 	    		final Type intType = ff.makeIntegerType();
 
 				final Expression f = 
@@ -135,7 +245,7 @@ public class Translator extends IdentityTranslator {
 			    			f,
 			    			ff.makeBinaryExpression(
 			    				Formula.TINJ,
-			    				DecomposedQuant.pushThroughAll(`S, ff, forall, exists),
+			    				DecomposedQuant.pushThroughAll(`s, ff, forall, exists),
 			    				ff.makeBinaryExpression(
 			    					Formula.UPTO, 
 			    					exists.push(a), 
@@ -152,7 +262,7 @@ public class Translator extends IdentityTranslator {
 	    	}
 	    }
 	}
-		
+	
 	protected Predicate translateIn(Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
 		Predicate result = translateIn_E(expr, rhs, loc, ff);
 		if(result != null) return result;
@@ -715,20 +825,25 @@ public class Translator extends IdentityTranslator {
 				if(GoalChecker.isMapletExpression(E))
 					return ff.makeRelationalPredicate(Formula.IN, E, right, loc);
 				else {
-					final DecomposedQuant exists = new DecomposedQuant(ff);
-					List<Predicate> bindings = new LinkedList<Predicate>();
+					final Decomp2PhaseQuant exists = new Decomp2PhaseQuant(ff);
+					final List<Predicate> bindings = new LinkedList<Predicate>();
 					
-					int offset = purificationOffset(E, ff);
-					E = E.shiftBoundIdentifiers(offset, ff);
-					right = right.shiftBoundIdentifiers(offset, ff);
-											
+					purifyMaplet(E, exists, new LinkedList<Predicate>(), ff);		
+					exists.startPhase2();
 					final Expression x = purifyMaplet(E, exists, bindings, ff);
 					
-					bindings.add(0, translateIn(x, right, loc,	ff));			
+					final List<Predicate> transformedBindings = new LinkedList<Predicate>();
+					transformedBindings.add(
+						translateIn(x, exists.push(right), loc,	ff));			
+					for(Predicate pred : bindings) {
+						transformedBindings.add(
+							translateEqual(pred, ff));
+					}
 					
 	    			return exists.makeQuantifiedPredicate(
 						Formula.EXISTS,
-						FormulaConstructor.makeLandPredicate(ff, bindings, loc),
+						FormulaConstructor.makeLandPredicate(
+							ff, transformedBindings, loc),
 						loc);
 				}
 			}	
@@ -738,28 +853,13 @@ public class Translator extends IdentityTranslator {
 		}					
 	}
 	
-	private int purificationOffset(Expression expr, FormulaFactory ff) {
-		if(GoalChecker.isMapletExpression(expr))
-			return 0;
-		%match(Expression expr) {
-			Mapsto(l, r) -> {
-				return purificationOffset(`r, ff) + purificationOffset(`l, ff);
-			}
-			_ -> {
-				DecomposedQuant quant = new DecomposedQuant(ff);
-				quant.addQuantifier(expr.getType(), null);
-				return quant.offset();
-			}
-		}
-	}
-
-	private Expression purifyMaplet(
+	private static Expression purifyMaplet(
 		Expression expr, DecomposedQuant quant, List<Predicate> bindings, 
 		FormulaFactory ff) {
 		SourceLocation loc = expr.getSourceLocation();
 		
 		if(GoalChecker.isMapletExpression(expr))
-			return expr;
+			return quant.push(expr);
 		%match(Expression expr) {
 			Mapsto(l, r) -> {
 				Expression nr = purifyMaplet(`r, quant, bindings, ff);
@@ -771,8 +871,12 @@ public class Translator extends IdentityTranslator {
 			}
 			_ -> {
 				Expression substitute = quant.addQuantifier(expr.getType(), loc);
-				bindings.add(0, translateEqual(
-					ff.makeRelationalPredicate(Formula.EQUAL, substitute, expr, loc), ff));
+				bindings.add(0, 
+					ff.makeRelationalPredicate(
+						Formula.EQUAL, 
+						substitute, 
+						quant.push(expr), 
+						loc));
 				return substitute;
 			}
 		}
@@ -1143,19 +1247,127 @@ public class Translator extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();
 		
 		%match(Predicate pred) {
+	        /**
+	        * RULE ER1: 	e = e
+	        *	  			⊤
+	        */
+			Equal(E, E) -> {
+				return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+			}
+	        /**
+	        * RULE ER2: 	x↦y = a↦b  
+	        *	  			x=a ∧ y=b
+	        */
 			Equal(Mapsto(x, y), Mapsto(a,b)) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc), ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc), ff),
+					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc), ff),
+					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc), ff),
 					loc);						
 			}
-			Equal(n@Identifier(), Card(S)) | Equal(Card(S), n@Identifier())-> {
+			/**
+	        * RULE ER3: 	bool(P) = bool(Q)  
+	        *	  			P ⇔ Q
+	        */
+			Equal(Bool(P), Bool(Q)) -> {
+				
+				return ff.makeBinaryPredicate(
+					Formula.LEQV,
+					translate(`P, ff),
+					translate(`Q, ff),
+					loc);
+			}
+			/**
+	        * RULE ER4: 	bool(P) = TRUE  
+	        *	  			P
+	        */
+			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
+				return translate(P, ff);
+			}
+			/**
+	        * RULE ER5: 	bool(P) = FALSE  
+	        *	  			¬P
+	        */
+			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
+				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
+			}
+			/**
+	        * RULE ER6: 	x = FALSE  
+	        *	  			¬(x = TRUE)
+	        */
+			Equal(FALSE(), x) | Equal(x, FALSE()) -> {
+				return ff.makeUnaryPredicate(
+					Formula.NOT,
+					translateEqual(
+						ff.makeRelationalPredicate(
+							Formula.EQUAL,
+							x,
+							ff.makeAtomicExpression(Formula.TRUE, loc),
+							loc),
+						ff),
+					loc);						
+			}
+			/**
+	        * RULE ER7: 	x = bool(P)  
+	        *	  			x = TRUE ⇔ P
+	        */
+	        Equal(x@Identifier(), Bool(P)) | Equal(Bool(P), x@Identifier())-> {
+				
+				return ff.makeBinaryPredicate(
+					Formula.LEQV,
+					ff.makeRelationalPredicate(
+						Formula.EQUAL,
+						`x,
+						ff.makeAtomicExpression(Formula.TRUE, loc),
+						loc),
+					translate(`P, ff),
+					loc);
+			}
+			/**
+	        * RULE ER8: 	y = f(x)  
+	        *	  			x↦y ∈ f
+	        */
+			Equal(FunImage(f, x), y) | Equal(y, FunImage(f, x)) -> {
+				return translateIn(
+					ff.makeBinaryExpression(Formula.MAPSTO, `x, `y, loc), `f, loc, ff);
+			}
+	        /**
+	        * RULE ER9: 	s = t
+	        *	  			s ⊆ t ∧ t ⊆ s
+	        */
+			Equal(s, t) -> {
+				if(GoalChecker.isInGoal(pred)) return pred;
+				else if(`s.getType() instanceof PowerSetType) {
+					return FormulaConstructor.makeLandPredicate(
+						ff,
+						translate(
+							ff.makeRelationalPredicate(
+								Formula.SUBSETEQ,
+								`s,
+								`t,
+								loc),
+							ff),
+						translate(
+							ff.makeRelationalPredicate(
+								Formula.SUBSETEQ,
+								`t,
+								`s,
+								loc),
+							ff),
+						loc);						
+				}
+			}		
+	        /**
+	        * RULE ER10: 	n = card(s)  
+	        *	  			∃f·f ∈ s⤖1‥n
+	        */
+			Equal(n@Identifier(), Card(s)) | Equal(Card(s), n@Identifier())-> {
+				
 				final DecomposedQuant exists = new DecomposedQuant(ff);
 	
 				final Expression bij = ff.makeBinaryExpression(
 						Formula.TBIJ,
-						`S,
+						`s,
 						ff.makeBinaryExpression(
 								Formula.UPTO,
 								ff.makeIntegerLiteral(BigInteger.ONE, null),
@@ -1163,115 +1375,42 @@ public class Translator extends IdentityTranslator {
 								loc),
 						loc);
 
-				final Expression x = 
-					exists.addQuantifier(bij.getType().getBaseType(), "b", loc);
+				final Expression f = 
+					exists.addQuantifier(bij.getType().getBaseType(), "f", loc);
 				
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
-					translateIn(x, exists.push(bij), loc, ff),
+					translateIn(f, exists.push(bij), loc, ff),
 					loc);
 			}
-			Equal(n@Identifier(), Bool(P)) | Equal(Bool(P), n@Identifier())-> {
-				return ff.makeBinaryPredicate(
-					Formula.LEQV,
-					ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						`n,
-						ff.makeAtomicExpression(Formula.TRUE, loc),
-						loc),
-					translate(`P, ff),
-					loc);
-			}
-			Equal(Bool(P1), Bool(P2)) -> {
-				return ff.makeBinaryPredicate(
-					Formula.LEQV,
-					translate(`P1, ff),
-					translate(`P2, ff),
-					loc);
-			}
-			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
-				return translate(P, ff);
-			}
-			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
-				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
-			}
-			Equal(n@Identifier(), Min(S)) | Equal(Min(S), n@Identifier()) -> {
-				//  x = min(S) == x ? S ? (?x1. x1 ? S ? x ? x1)
-				final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = 
-					forall.addQuantifier(ff.makeIntegerType(), loc);
+	        /**
+	        * RULE ER11: 	n = min(s)  
+	        *	  			n∈s ∧ n≤min(s)
+	        */
+   			Equal(n@Identifier(), min@Min(s)) 
+   			| Equal(min@Min(s), n@Identifier()) -> {
 				
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(`n, `S, loc, ff),
-					forall.makeQuantifiedPredicate(
-						Formula.FORALL,
-						ff.makeBinaryPredicate(
-							Formula.LIMP,
-							translateIn(x, forall.push(`S), loc, ff),
-							translate(
-								ff.makeRelationalPredicate(Formula.LE, forall.push(`n), x, loc),
-								ff),
-							loc),
-						loc),
+					translateIn(`n, `s, loc, ff),
+					translate(
+						ff.makeRelationalPredicate(Formula.LE, `n, `min, loc), ff),
 					loc);
 			}
-			Equal(n@Identifier(), Max(S)) | Equal(Max(S), n@Identifier()) -> {
-				//  x = max(S) == x ? S ? (?x1. x1 ? S ? x1 ? x)
-				final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = 
-					forall.addQuantifier(ff.makeIntegerType(), loc);
-	
+	        /**
+	        * RULE ER12: 	n = max(s)  
+	        *	  			n∈s ∧ max(s)≤n
+	        */
+			Equal(n@Identifier(), max@Max(s)) 
+			| Equal(max@Max(s), n@Identifier()) -> {
+
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(`n, `S, loc, ff),
-					forall.makeQuantifiedPredicate(
-						Formula.FORALL,
-						ff.makeBinaryPredicate(
-							Formula.LIMP,
-							translateIn(x, forall.push(`S), loc, ff),
-							translate(
-								ff.makeRelationalPredicate(Formula.LE, x, forall.push(`n), loc),
-								ff),
-							loc),
-						loc),
+					translateIn(`n, `s, loc, ff),
+					translate(
+						ff.makeRelationalPredicate(Formula.LE, `max, `n, loc), ff),
 					loc);
 			}
-			Equal(FunImage(r, E), x) | Equal(x, FunImage(r, E)) -> {
-				return translateIn(
-					ff.makeBinaryExpression(Formula.MAPSTO, `E, `x, loc), `r, loc, ff);
-			}
-			Equal(FALSE(), E) | Equal(E, FALSE()) -> {
-				return ff.makeUnaryPredicate(
-					Formula.NOT,
-					ff.makeRelationalPredicate(
-						Formula.EQUAL,
-						E,
-						ff.makeAtomicExpression(Formula.TRUE, loc),
-						loc),
-					loc);						
-			}
-			Equal(S, T) -> {
-				if(`S.getType().getBaseType() != null) {
-					return FormulaConstructor.makeLandPredicate(
-						ff,
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ,
-								`S,
-								`T,
-								loc),
-							ff),
-						translate(
-							ff.makeRelationalPredicate(
-								Formula.SUBSETEQ,
-								`T,
-								`S,
-								loc),
-							ff),
-						loc);						
-				}
-			}	
 			_ -> {
 				return super.translate(pred, ff);
 			}
