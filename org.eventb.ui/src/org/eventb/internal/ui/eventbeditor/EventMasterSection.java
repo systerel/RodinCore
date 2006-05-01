@@ -60,20 +60,18 @@ public class EventMasterSection
 	private static final int UP_INDEX = 4;
 	private static final int DOWN_INDEX = 5;
 
+	private static final String [] buttonLabels =
+		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down"};
+
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Events";
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
 	
-	private static final String [] buttonLabels =
-		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down"};
-
 	// The group of actions for the tree part.
 	private ActionGroup groupActionSet;
 	
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
-
-	
 
 	/**
 	 * Contructor.
@@ -91,7 +89,6 @@ public class EventMasterSection
 		makeActions();
 		hookContextMenu();
 		createToolBarActions(managedForm);
-//		((StructuredViewer) getViewer()).setSorter(new ElementsSorter());
 	}
 	
 	/**
@@ -413,6 +410,7 @@ public class EventMasterSection
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		((EventEditableTreeViewer) this.getViewer()).elementChanged(event);
+		updateButtons();
 	}
 	
 	/* (non-Javadoc)
