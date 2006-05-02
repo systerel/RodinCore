@@ -11,6 +11,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -158,16 +160,13 @@ public class EventMasterSectionActionGroup
 							public void run() {
 								try {
 									IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-									if (ssel.size() == 1) {
-										Object obj = ssel.getFirstElement();
-										IInternalElement event = TreeSupports.getEvent(obj);
-										int counter = ((IInternalElement) event).getChildrenOfType(IAction.ELEMENT_TYPE).length;
-										IInternalElement element = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
-										element.setContents("act"+(counter+1));
-										viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(), event).getData(), true);
-										/* TODO Should use the previous findItem to avoid searching again */
-										select(element, 1);
+									IRodinElement [] elements = new IRodinElement[ssel.size()];
+									int i = 0;
+									for (Iterator it = ssel.iterator();it.hasNext();i++) {
+										Object obj = it.next();
+										elements[i] = ((Leaf) obj).getElement();
 									}
+									EventBUIPlugin.getRodinDatabase().delete(elements, true, null);
 								}
 								catch (RodinDBException e) {
 									e.printStackTrace();
