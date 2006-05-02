@@ -5,10 +5,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.IMachine;
 
 public class SyntheticViewPage
 	extends FormPage 
@@ -41,7 +43,11 @@ public class SyntheticViewPage
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		SyntheticViewSection part = new SyntheticViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor()); 
+		SectionPart part;
+		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachine) 
+			part = new SyntheticMachineViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
+		else
+			part = new SyntheticContextViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

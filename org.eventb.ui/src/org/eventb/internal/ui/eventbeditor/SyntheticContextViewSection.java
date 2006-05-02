@@ -31,10 +31,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.IAction;
-import org.eventb.core.IEvent;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -51,21 +51,21 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * An implementation of Section Part for displaying and editting Sees clause.
  */
-public class SyntheticViewSection
+public class SyntheticContextViewSection
 	extends EventBTreePartWithButtons
 	implements IStatusChangedListener
 {
 
 	// The indexes for different buttons.
-	private static final int ADD_VAR_INDEX = 0;
-	private static final int ADD_INV_INDEX = 1;
-	private static final int ADD_THM_INDEX = 2;
-	private static final int ADD_EVT_INDEX = 3;
+	private static final int ADD_SET_INDEX = 0;
+	private static final int ADD_CST_INDEX = 1;
+	private static final int ADD_AXM_INDEX = 2;
+	private static final int ADD_THM_INDEX = 3;
 	private static final int UP_INDEX = 4;
 	private static final int DOWN_INDEX = 5;
 
-	private static final String [] buttonLabels =
-	{"Add Var.", "Add Inv.", "Add Thm.", "Add Evt.", "Up", "Down"};
+	private static String [] buttonLabels =
+	{"Add Set.", "Add Cst.", "Add Axm.", "Add Thm.", "Up", "Down"};
 
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Synthetics";
@@ -84,7 +84,7 @@ public class SyntheticViewSection
      * @param page The Dependencies page contains this section
      * @param parent The composite parent
      */
-	public SyntheticViewSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit,
+	public SyntheticContextViewSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit,
 			int style, EventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -130,7 +130,7 @@ public class SyntheticViewSection
 
 		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
-				TreeViewer viewer = ((TreeViewer) SyntheticViewSection.this.getViewer());
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this.getViewer());
 				if (isChecked()) viewer.addFilter(varFilter);
 				else viewer.removeFilter(varFilter);
 			}
@@ -139,7 +139,7 @@ public class SyntheticViewSection
 		filterVarAction.setToolTipText("Filter variable elements");
 		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
-				TreeViewer viewer = ((TreeViewer) SyntheticViewSection.this.getViewer());
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this.getViewer());
 				if (isChecked()) viewer.addFilter(grdFilter);
 				else viewer.removeFilter(grdFilter);
 			}
@@ -188,9 +188,9 @@ public class SyntheticViewSection
 		
 		boolean hasOneSelection = selections.length == 1;
 
-		setButtonEnabled(ADD_EVT_INDEX, true);
-		setButtonEnabled(ADD_VAR_INDEX, true);
-		setButtonEnabled(ADD_INV_INDEX, true);
+		setButtonEnabled(ADD_SET_INDEX, true);
+		setButtonEnabled(ADD_CST_INDEX, true);
+		setButtonEnabled(ADD_AXM_INDEX, true);
 		setButtonEnabled(ADD_THM_INDEX, true);
 		setButtonEnabled(UP_INDEX, hasOneSelection);
 		setButtonEnabled(DOWN_INDEX, hasOneSelection);
@@ -204,17 +204,17 @@ public class SyntheticViewSection
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case ADD_VAR_INDEX:
-			handleAddVar();
+		case ADD_SET_INDEX:
+			handleAddSet();
 			break;
-		case ADD_INV_INDEX:
-			handleAddInv();
+		case ADD_CST_INDEX:
+			handleAddCst();
+			break;
+		case ADD_AXM_INDEX:
+			handleAddAxm();
 			break;
 		case ADD_THM_INDEX:
 			handleAddThm();
-			break;
-		case ADD_EVT_INDEX:
-			handleAddEvt();
 			break;
 		case UP_INDEX:
 			handleUp();
@@ -225,32 +225,46 @@ public class SyntheticViewSection
 		}
 	}
 
-	private void handleAddVar() {
+	private void handleAddSet() {
 		IRodinFile rodinFile = editor.getRodinInput();
 		try {
-			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			IRodinElement var = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, "var" + (counter+1), null, null);
-			editor.addNewElement(var);
-			edit(var);
+			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
+			IRodinElement set = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, "set" + (counter+1), null, null);
+			editor.addNewElement(set);
+			edit(set);
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void handleAddInv() {
+	private void handleAddCst() {
 		IRodinFile rodinFile = editor.getRodinInput();
 		try {
-			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
-			IInternalElement inv = rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, "inv" + (counter+1), null, null);
-			inv.setContents(EventBUIPlugin.INV_DEFAULT);
-			editor.addNewElement(inv);
-			edit(inv);
+			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
+			IInternalElement cst = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, "cst" + (counter+1), null, null);
+			editor.addNewElement(cst);
+			edit(cst);
 		}
 		catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 	}
+
+	private void handleAddAxm() {
+		IRodinFile rodinFile = editor.getRodinInput();
+		try {
+			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
+			IInternalElement axm = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm" + (counter+1), null, null);
+			axm.setContents(EventBUIPlugin.AXM_DEFAULT);
+			editor.addNewElement(axm);
+			edit(axm);
+		}
+		catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void handleAddThm() {
 		IRodinFile rodinFile = editor.getRodinInput();
@@ -265,49 +279,6 @@ public class SyntheticViewSection
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * Handle add (new element) action.
-	 */
-	private void handleAddEvt() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE).length;
-			String [] varNames = {"var1", "var2", "var3"};
-			String [] grdNames = {"grd1", "grd2", "grd3"};
-			String [] actions = {"act1", "act2", "act3"};
-				
-			IInternalElement event = rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "evt" + (counter+1), null, null);
-			editor.addNewElement(event);
-			for (String varName : varNames) {
-				IInternalElement var = event.createInternalElement(IVariable.ELEMENT_TYPE, varName, null, null);
-				editor.addNewElement(var);
-			}
-				
-			for (int i = 0; i < grdNames.length; i++) {
-				IInternalElement grd = event.createInternalElement(IGuard.ELEMENT_TYPE, grdNames[i], null, null);
-				grd.setContents(EventBUIPlugin.GRD_DEFAULT);
-				editor.addNewElement(grd);
-			}
-				
-			IInternalElement act = null;
-			for (String action : actions) {
-				act = event.createInternalElement(IAction.ELEMENT_TYPE, null, null, null);
-				act.setContents(action);
-				editor.addNewElement(act);
-			}
-			TreeViewer viewer = (TreeViewer) this.getViewer();
-			Leaf leaf = (Leaf) TreeSupports.findItem(viewer.getTree(), event).getData();
-			viewer.setExpandedState(leaf, true);
-			
-			viewer.reveal(TreeSupports.findItem(viewer.getTree(), act).getData());
-			edit(event);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-	
 
 	/*
 	 * Handle up action.
@@ -343,8 +314,8 @@ public class SyntheticViewSection
 		viewer.reveal(element);
 		TreeItem item  = TreeSupports.findItem(viewer.getTree(), element);
 		if (element instanceof IUnnamedInternalElement) selectItem(item, 1);
-		else if (element instanceof IVariable) selectItem(item, 0);
-		else if (element instanceof IEvent) selectItem(item, 0);
+		else if (element instanceof ICarrierSet) selectItem(item, 0);
+		else if (element instanceof IConstant) selectItem(item, 0);
 		else selectItem(item, 1);
 	}
 
