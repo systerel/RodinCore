@@ -49,7 +49,13 @@ import org.eventb.core.ast.UnaryPredicate;
 public class PredicateSimplification extends IdentityTranslator  {
 	
 	public static Predicate simplifyPredicate(Predicate pred, FormulaFactory ff) {
-		return new PredicateSimplification().translate(pred, ff);
+		Predicate newPred = pred;
+		pred = null;
+		while(newPred != pred) {
+			pred = newPred;
+			newPred = new PredicateSimplification().translate(pred, ff);
+		}
+		return newPred;
 	}
 
 %include {Formula.tom}
@@ -57,6 +63,16 @@ public class PredicateSimplification extends IdentityTranslator  {
 	protected Predicate translate(Predicate pred, FormulaFactory ff){
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
+	    	/**
+	    	 *	RULE PR1:	... ∧ ⊥ ∧ ...
+	    	 *				⊥
+	    	 *	RULE PR2:   ... ∨ ⊤ ∨ ...
+	    	 *				⊤
+	    	 *	RULE PR3:	... ∧ c(k−1) ∧ ⊤ ∧ c(k+1) ∧ ...
+	    	 *				... ∧ c(k−1) ∧ c(k+1) ∧ ...
+	    	 *	RULE PR4:	... ∨ c(k−1) ∨ ⊥ ∨ c(k+1) ∨ ...
+	    	 *				... ∨ c(k−1) ∨ c(k+1) ∨ ...
+	    	 */
 	    	Land(children) | Lor(children) -> {
 	    		LinkedList<Predicate> newChilds = new LinkedList<Predicate>();
 	    		boolean hasChanged = false;
@@ -78,23 +94,72 @@ public class PredicateSimplification extends IdentityTranslator  {
     				loc, 
     				hasChanged ? null : pred);
 	    	}
+	    	/**
+	    	 *	RULE PR5:	P ⇒ ⊤
+	    	 *				⊤
+	    	 *	RULE PR6:	⊥ ⇒ P	
+	    	 *				⊤
+	    	 */
 	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
 	    	}
+	    	/**
+	    	 *	RULE PR7:	⊤ ⇒ P
+	    	 *				P
+	    	 */
 	    	Limp(BTRUE(), P) -> {
 	    		return translate(`P, ff);
 	    	}
+	    	/**
+	    	 *	RULE PR8:	P ⇒ ⊥	
+	    	 *				¬P
+	    	 */
 	    	Limp(P, BFALSE()) -> {
-	    		return ff.makeUnaryPredicate(
-	    			Formula.NOT, 
-	    			translate(`P, ff), 
-	    			loc);
+	    		return translate(
+	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc), ff);
 	    	}
+	    	/**
+	    	 *	RULE PR9:	¬⊤ 	
+	    	 *				⊥
+	    	 */
 	    	Not(BTRUE()) -> {
 	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 	    	}
+	    	/**
+	    	 *	RULE PR10:	¬⊥ 
+	    	 *				⊤
+	    	 */
 	    	Not(BFALSE()) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	}
+	    	/**
+	    	 *	RULE PR11:	¬¬P 
+	    	 *				P
+	    	 */
+	    	Not(Not(P)) -> {
+	    		return translate(`P, ff);
+	    	}
+	    	/**
+	    	 *	RULE PR12:	P ⇔ P 
+	    	 *				⊤
+	    	 */
+	    	Leqv(P, P) -> {
+	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	}
+	    	/**
+	    	 *	RULE PR13: 	P ⇔ ⊤
+	    	 *				P
+	    	 */
+	    	Leqv(P, BTRUE()) | Leqv(P, BFALSE()) -> {
+	    		return translate(`P, ff);
+	    	}
+	    	/**
+	    	 *	RULE PR14: 	P ⇔ ⊥
+	    	 *				¬P
+	    	 */
+	    	Leqv(P, BTRUE()) | Leqv(P, BFALSE()) -> {
+	    		return translate(
+	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc), ff);
 	    	}
 	    	_ -> {
 	    		return super.translate(pred, ff);
