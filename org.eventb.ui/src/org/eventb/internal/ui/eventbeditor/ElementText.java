@@ -22,9 +22,14 @@ public abstract class ElementText
 	private TreeItem item;
 	private Tree tree;
 	private int inset;
+	private String original;
 	
 	public abstract void commit(Leaf leaf, int column, String contents);
 
+	public abstract void nextEditableCell();
+	
+	public abstract void prevEditableCell();
+	
 	private class ElementTextListener implements Listener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
@@ -32,45 +37,81 @@ public abstract class ElementText
 		public void handleEvent(Event event) {
 			final String contents = text.getText();
 			switch (event.type) {
-				case SWT.FocusOut:
-					UIUtils.debug("FocusOut");
-					commit(leaf, column, contents);
-					text.getParent().dispose();
-					break;
-				case SWT.Verify:
+			case SWT.FocusOut:
+				UIUtils.debug("FocusOut");
+				commit(leaf, column, contents);
+				text.getParent().dispose();
+				break;
+			case SWT.Verify:
 //					UIUtils.debug("Verify");
-					String newText = text.getText();
-					String leftText = newText.substring (0, event.start);
-					String rightText = newText.substring (event.end, newText.length ());
-					GC gc = new GC (text);
-					Point size = gc.textExtent (leftText + event.text + rightText);
-					gc.dispose ();
-					size = text.computeSize (size.x, SWT.DEFAULT);
-					editor.horizontalAlignment = SWT.LEFT;
-					Rectangle itemRect = item.getBounds (), rect = tree.getClientArea ();
+				String newText = text.getText();
+				String leftText = newText.substring (0, event.start);
+				String rightText = newText.substring (event.end, newText.length ());
+				GC gc = new GC (text);
+				Point size = gc.textExtent (leftText + event.text + rightText);
+				gc.dispose ();
+				size = text.computeSize (size.x, SWT.DEFAULT);
+				editor.horizontalAlignment = SWT.LEFT;
+				Rectangle itemRect = item.getBounds (), rect = tree.getClientArea ();
 //					UIUtils.debug("ItemRect: " + itemRect);
 //					UIUtils.debug("Rect: " + rect);
 //					UIUtils.debug("Size: " + size.x);
-					editor.minimumWidth = Math.max (size.x, itemRect.width) + inset * 2;
-					int left = itemRect.x, right = rect.x + rect.width;
-					editor.minimumWidth = Math.min (editor.minimumWidth, right - left);
-					editor.minimumHeight = size.y + inset * 2;
-					UIUtils.debug("Editor layout --- Height: " + editor.minimumHeight + " Width: " + editor.minimumWidth);
-					editor.layout();
+				editor.minimumWidth = Math.max (size.x, itemRect.width) + inset * 2;
+				int left = itemRect.x, right = rect.x + rect.width;
+				editor.minimumWidth = Math.min (editor.minimumWidth, right - left);
+				editor.minimumHeight = size.y + inset * 2;
+				UIUtils.debug("Editor layout --- Height: " + editor.minimumHeight + " Width: " + editor.minimumWidth);
+				editor.layout();
+				break;
+			case SWT.Traverse:
+				switch (event.detail) {
+				case SWT.TRAVERSE_RETURN:
+					UIUtils.debug("TraverseReturn");
+					commit(leaf, column, contents);
+					text.getParent().dispose();
+					event.doit = false;
 					break;
-				case SWT.Traverse:
-					switch (event.detail) {
-						case SWT.TRAVERSE_RETURN:
-							UIUtils.debug("TraverseReturn");
-							commit(leaf, column, contents);
-							text.getParent().dispose();
-							event.doit = false;
-							break;
-						case SWT.TRAVERSE_ESCAPE:
-							text.getParent().dispose();
-							event.doit = false;
-					}
+				case SWT.TRAVERSE_ESCAPE:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					event.doit = false;
 					break;
+				case SWT.TRAVERSE_TAB_NEXT:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					nextEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_TAB_PREVIOUS:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					prevEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_ARROW_NEXT:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					nextEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_ARROW_PREVIOUS:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					prevEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_PAGE_NEXT:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					nextEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+					commit(leaf, column, original);
+					text.getParent().dispose();
+					prevEditableCell();
+					event.doit = false;
+					break;				}
 			}
 		}
 	}
@@ -89,6 +130,7 @@ public abstract class ElementText
 		this.column = column;
 		this.tree = tree;
 		this.item = item;
+		this.original = item.getText(column);
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
 		inset = isCarbon ? 0 : 1;
 		

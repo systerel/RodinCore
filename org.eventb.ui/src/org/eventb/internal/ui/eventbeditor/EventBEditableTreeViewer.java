@@ -54,6 +54,7 @@ import org.rodinp.core.RodinDBException;
 public abstract class EventBEditableTreeViewer
 	extends TreeViewer
 {
+	private final static int MAX_COLUMN = 2;
 	
 	private TreeEditor treeEditor;
 	
@@ -161,6 +162,53 @@ public abstract class EventBEditableTreeViewer
 				EventBEditableTreeViewer.this.commit(leaf, column, contents);
 			}
 			
+			public void nextEditableCell() {
+				selectNextEditableCell(item, column);
+			}
+			
+			private void selectNextEditableCell(TreeItem item, int column) {
+				Rectangle rec = item.getBounds();
+//				UIUtils.debug("Bound: " + rec);
+				
+				if (column == MAX_COLUMN - 1) {
+					TreeItem next = tree.getItem(new Point(rec.x + rec.width/2, rec.y + rec.height/2 + tree.getItemHeight()));
+					if (next != null) {
+//						UIUtils.debug("Found item: " + next);
+						if (isNotSelectable(next.getData(), 0)) selectNextEditableCell(next, 0);
+						else selectItem(next, 0);
+					}
+					else return;
+				}
+				else {
+					if (isNotSelectable(item.getData(), column + 1)) selectNextEditableCell(item, column + 1); 
+					else selectItem(item, column + 1);
+				}
+				
+			}
+			public void prevEditableCell() {
+				selectPrevEditableCell(item, column);
+			}
+			
+			private void selectPrevEditableCell(TreeItem item, int column) {
+				Rectangle rec = item.getBounds();
+//				UIUtils.debug("Bound: " + rec);
+				
+				if (column == 0) {
+					TreeItem next = tree.getItem(new Point(rec.x + rec.width/2, rec.y + rec.height/2 - tree.getItemHeight()));
+					if (next != null) {
+//						UIUtils.debug("Found item: " + next);
+						if (isNotSelectable(next.getData(), MAX_COLUMN - 1)) selectPrevEditableCell(next, MAX_COLUMN - 1);
+						else selectItem(next, MAX_COLUMN - 1);
+					}
+					else return;
+				}
+				else {
+					if (isNotSelectable(item.getData(), column - 1)) selectPrevEditableCell(item, column - 1); 
+					else selectItem(item, column - 1);
+				}
+				
+			}
+
 		};
 		new EventBMath(text);
 		new TimerText(text) {
@@ -399,4 +447,20 @@ public abstract class EventBEditableTreeViewer
 		}, this.getControl());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
+	 */
+	public void statusChanged(final IRodinElement element) {
+		UIUtils.debug("Change status " + element.getElementName());
+		final TreeViewer viewer = this;
+		UIUtils.syncPostRunnable(new Runnable() {
+			public void run() {
+				Control ctrl = viewer.getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					Leaf leaf = elementsMap.get(element);
+					viewer.refresh(leaf);
+				}
+			}
+		}, this.getControl());
+	}
 }

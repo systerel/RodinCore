@@ -70,10 +70,6 @@ public class SyntheticViewSection
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Synthetics";
 	private final static String SECTION_DESCRIPTION = "Synthetics View";
-
-	// The Form editor contains this section.
-//    private EventBEditor editor;
-//    private TreeViewer viewer;
 	
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
@@ -361,7 +357,7 @@ public class SyntheticViewSection
 	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
 	 */
 	public void statusChanged(IRodinElement element) {
-		((SyntheticEditableTreeViewer) this.getViewer()).statusChanged(element);
+		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
 		updateButtons();
 	}
 

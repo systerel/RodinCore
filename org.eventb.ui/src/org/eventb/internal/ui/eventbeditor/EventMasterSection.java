@@ -37,6 +37,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author htson
@@ -46,6 +47,7 @@ import org.rodinp.core.IRodinElement;
  */
 public class EventMasterSection 
 	extends EventBTreePartWithButtons
+	implements IStatusChangedListener
 {
 	// The indexes for different buttons.
 	private static final int ADD_EVT_INDEX = 0;
@@ -84,6 +86,7 @@ public class EventMasterSection
 		makeActions();
 		hookContextMenu();
 		createToolBarActions(managedForm);
+		editor.addStatusListener(this);
 	}
 	
 	/**
@@ -284,7 +287,7 @@ public class EventMasterSection
 	 * @param parent The composite parent
 	 */
 	protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new EventEditableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		return new EventEditableTreeViewer(editor, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 	
 	
@@ -314,7 +317,28 @@ public class EventMasterSection
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item  = TreeSupports.findItem(viewer.getTree(), element);
-		selectItem(item, 1);
+		if (element instanceof IUnnamedInternalElement) selectItem(item, 1);
+		else if (element instanceof IVariable) selectItem(item, 0);
+		else if (element instanceof IEvent) selectItem(item, 0);
+		else selectItem(item, 1);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
+	 */
+	public void statusChanged(IRodinElement element) {
+		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
+		updateButtons();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	@Override
+	public void dispose() {
+		editor.removeStatusListener(this);
+		super.dispose();
+	}
+	
 }
