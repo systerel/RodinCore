@@ -42,10 +42,6 @@ public enum ProblemKind {
 	 */
 	SyntaxError ("Syntax error at %2$d:%3$d: %1$s"),
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location
-	 */
-	SemanticError ("Semantic error at %2$d: %1$s"),
-	/**
 	 * Argument 0 is the name of the variable
 	 */
 	ParserException ("Parser exception: %1$s"),
