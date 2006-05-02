@@ -37,7 +37,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 		
 		public Object[] getChildren(Object parent) {
-//			UIUtils.debug("Get Children: " + parent);
+			UIUtils.debug("Get Children: " + parent);
 			if (parent instanceof IMachine) {
 				ArrayList<Node> list = new ArrayList<Node>();
 				try {

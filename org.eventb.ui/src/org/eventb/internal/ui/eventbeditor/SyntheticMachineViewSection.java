@@ -131,8 +131,14 @@ public class SyntheticMachineViewSection
 		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this.getViewer());
+				Object [] objects = viewer.getExpandedElements();
 				if (isChecked()) viewer.addFilter(varFilter);
 				else viewer.removeFilter(varFilter);
+				// This only work for tree with 2 layers
+				for (Object object : objects) {
+					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
+					viewer.setExpandedState(item.getData(), true);
+				}
 			}
 		};
 		filterVarAction.setChecked(false);
@@ -140,8 +146,14 @@ public class SyntheticMachineViewSection
 		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this.getViewer());
+				Object [] objects = viewer.getExpandedElements();
 				if (isChecked()) viewer.addFilter(grdFilter);
 				else viewer.removeFilter(grdFilter);
+				// This only work for tree with 2 layers
+				for (Object object : objects) {
+					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
+					viewer.setExpandedState(item.getData(), true);
+				}
 			}
 		};
 		filterGrdAtion.setChecked(false);
