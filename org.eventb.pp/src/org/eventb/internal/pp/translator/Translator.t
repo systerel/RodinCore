@@ -50,8 +50,8 @@ public class Translator extends IdentityTranslator {
 	    	/**
 	    	 *	All ∈ rules are implemented in translateEqual
 	    	 */
-	    	In(E, rhs) -> {
-	    		return translateIn (`E, `rhs, loc, ff);
+	    	In(e, rhs) -> {
+	    		return translateIn (`e, `rhs, loc, ff);
 	    	}
 	    	/**
 	    	 *	All = rules are implemented in translateEqual
@@ -61,7 +61,7 @@ public class Translator extends IdentityTranslator {
 	        }
 	       	/**
 	 		 *  RULE CR1: 	a <∣≤ min(s) 
-	 		 * 				∀x·x∈s ⇒ a <∣≤ x
+	 		 * 				∀x·x∈s' ⇒ a' <∣≤ x
 	 		 */
 	 		Le(a, Min(s)) | Lt(a, Min(s)) -> {
 	        	
@@ -81,7 +81,7 @@ public class Translator extends IdentityTranslator {
 	        }
 	 		/**
 	 		 *  RULE CR2:	max(s) <∣≤ a
-			 *				∀x·x∈s ⇒ x <∣≤ a
+			 *				∀x·x∈s' ⇒ x <∣≤ a'
 	 		 */	   		      	
 	        Le(Max(s), a) | Lt(Max(s), a) -> {
 	        	
@@ -101,7 +101,7 @@ public class Translator extends IdentityTranslator {
 	        }
 	 		/**
 	 		 *  RULE CR3:   min(s) <∣≤  a
-			 *				∃x·x∈s ∧ x <∣≤ a
+			 *				∃x·x∈s' ∧ x <∣≤ a'
 	 		 */	   		      	
 	        Le(Min(s), a) | Lt(Min(s), a) -> {
 	        	
@@ -121,7 +121,7 @@ public class Translator extends IdentityTranslator {
 	        }
 	        /**
  	 		 *  RULE CR4: 	a <∣≤ max(s) 
-	 		 * 				∃x·x∈s ∧ a <∣≤ x
+	 		 * 				∃x·x∈s' ∧ a' <∣≤ x
 	 		 */
 	 	    Le(a, Max(s)) | Lt(a, Max(s)) -> {
 	        	
@@ -220,7 +220,7 @@ public class Translator extends IdentityTranslator {
 	    	}
 	        /**
 	        * RULE BR7: 	finite(s)
-	        *	  			∀a·∃b,f·f∈(s↣a‥b)
+	        *	  			∀a·∃b,f·f∈(s''↣a'‥b)
 	        */
 	    	Finite(s) -> {
 	    		final DecomposedQuant forall = new DecomposedQuant(ff);
@@ -283,121 +283,140 @@ public class Translator extends IdentityTranslator {
 	}
 	
 	protected Predicate translateIn_E(
-		Expression E, Expression right, SourceLocation loc, FormulaFactory ff) {
+		Expression e, Expression right, SourceLocation loc, FormulaFactory ff) {
 	
 		%match (Expression right) {
-			Pow(child) -> {
+	        /**
+	        * RULE IR1: 	e ∈ ℙ(t)
+	        *	  			∀X·V∈e ⇒ V∈t
+	        */
+			Pow(t) -> {
 				final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(E.getType().getBaseType(), loc);
+				final Expression x = forall.addQuantifier(e.getType().getBaseType(), loc);
 	
 	    		return forall.makeQuantifiedPredicate(
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
-						translateIn(x, forall.push(E), loc, ff),
-						translateIn(x, forall.push(`child), loc, ff), 
+						translateIn(x, forall.push(e), loc, ff),
+						translateIn(x, forall.push(`t), loc, ff), 
 						loc),
 				loc);
 			}
+			/**
+	        * RULE IR2: 	e ∈ ℕ 
+	        *	  			e ≥ 0
+	        */
 			Natural() -> {
 				return ff.makeRelationalPredicate(
 					Formula.GE,
-					translate(E, ff),
+					translate(e, ff),
 					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
 					loc);
 			}
+			/**
+	        * RULE IR3: 	e ∈ ℕ1 
+	        *	  			e > 0
+	        */
 			Natural1() -> {
 				return ff.makeRelationalPredicate(
 					Formula.GT,
-					translate(E, ff),
+					translate(e, ff),
 					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
 					loc);
 			}
+			/**
+	        * RULE IR4: 	e ∈ ℤ 
+	        *	  			⊤ 
+	        */
 			INTEGER() -> {
 				return  ff.makeLiteralPredicate(Formula.BTRUE, loc);	
 			}
-			Cset(is, P, F) -> {
-				return ff.makeQuantifiedPredicate(
+			Cset(is, P, f) -> {
+				final DecomposedQuant exists = new DecomposedQuant(ff, `is);
+
+	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
-					`is,
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translate(`P, ff),
-						translate(ff.makeRelationalPredicate(Formula.EQUAL, E,`F, loc), ff),
+						translate(ff.makeRelationalPredicate(Formula.EQUAL, exists.push(e),`f, loc), ff),
 						loc),
 					loc);
 			} 
-			Qinter(is, P, F) -> {
-				return ff.makeQuantifiedPredicate(
+			Qinter(is, P, f) -> {
+				final DecomposedQuant forall = new DecomposedQuant(ff, `is);
+
+	    		return forall.makeQuantifiedPredicate(
 					Formula.FORALL,
-					`is,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
 						translate(`P, ff),
-						translateIn(E, `F, loc,	ff),
+						translateIn(forall.push(e), `f, loc, ff),
 						loc),
 					loc);
 			}
-			Qunion(is, P, F) -> {
-				return ff.makeQuantifiedPredicate(
+			Qunion(is, P, f) -> {
+				final DecomposedQuant exists = new DecomposedQuant(ff, `is);
+
+	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
-					`is,
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translate(`P, ff),
-						translateIn(E, `F, loc, ff),
+						translateIn(exists.push(e), `f, loc, ff),
 						loc),
 					loc);
 			}
-			Union(S) -> {
+			Union(s) -> {
 				final DecomposedQuant exists = new DecomposedQuant(ff);
 				final Expression x = 
-					exists.addQuantifier(`S.getType().getBaseType(), loc);
+					exists.addQuantifier(`s.getType().getBaseType(), loc);
 	
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translateIn(x, exists.push(`S), loc, ff),
-						translateIn(exists.push(E), x, loc, ff),
+						translateIn(x, exists.push(`s), loc, ff),
+						translateIn(exists.push(e), x, loc, ff),
 						loc),
 					loc);
 			}
-			Inter(S) -> {
+			Inter(s) -> {
 				final DecomposedQuant forall = new DecomposedQuant(ff);
 				final Expression x = 
-					forall.addQuantifier(`S.getType().getBaseType(), loc);
+					forall.addQuantifier(`s.getType().getBaseType(), loc);
 	
 	    		return forall.makeQuantifiedPredicate(
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
-						translateIn(x, forall.push(`S), loc, ff),
-						translateIn(forall.push(E), x, loc, ff),
+						translateIn(x, forall.push(`s), loc, ff),
+						translateIn(forall.push(e), x, loc, ff),
 						loc),
 					loc);
 			}
-			Pow1(T) -> {
+			Pow1(t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
+				e = condQuant.condSubstitute(e);
 				
 				final DecomposedQuant exists = new DecomposedQuant(ff);
-				final Expression x = exists.addQuantifier(E.getType().getBaseType(), loc);
+				final Expression x = exists.addQuantifier(e.getType().getBaseType(), loc);
 				
-				`T = condQuant.push(`T);
-				E = condQuant.push(E);
+				`t = condQuant.push(`t);
+				e = condQuant.push(e);
 				
 				return condQuant.conditionalQuantify(				
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeUnaryExpression(Formula.POW, `T, loc), 
+							e, 
+							ff.makeUnaryExpression(Formula.POW, `t, loc), 
 							loc, 
 							ff),
 						exists.makeQuantifiedPredicate(
 							Formula.EXISTS,
-							translateIn(x, exists.push(E), loc, ff),
+							translateIn(x, exists.push(e), loc, ff),
 							loc),
 						loc), this);					
 			}
@@ -410,20 +429,20 @@ public class Translator extends IdentityTranslator {
 				}
 				else if(members.length == 1) {
 					return translateEqual(
-						ff.makeRelationalPredicate(Formula.EQUAL, E, `members[0], loc),
+						ff.makeRelationalPredicate(Formula.EQUAL, e, `members[0], loc),
 						ff);
 				}
 				else{
 					final LinkedList<Predicate> predicates = new LinkedList<Predicate>();
 					final ConditionalQuant condQuant = new ConditionalQuant(ff);
-					E = condQuant.condSubstitute(E);
-					E = condQuant.push(E);
+					e = condQuant.condSubstitute(e);
+					e = condQuant.push(e);
 
 					for(Expression member: `members){
 						predicates.add(
 							ff.makeRelationalPredicate(
 								Formula.EQUAL, 
-								E, 
+								e, 
 								condQuant.push(member), 
 								loc));
 					}
@@ -435,58 +454,58 @@ public class Translator extends IdentityTranslator {
 			}
 			UpTo(a, b) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				E = condQuant.push(E);
+				e = condQuant.condSubstitute(e);
+				e = condQuant.push(e);
 				
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						ff.makeRelationalPredicate(
-							Formula.GE,
-							translate(E, ff), 
+							Formula.LE,
 							translate(condQuant.push(`a), ff),
+							translate(e, ff), 
 							loc),
 						ff.makeRelationalPredicate(
 							Formula.LE,
-							translate(E, ff), 
+							translate(e, ff), 
 							translate(condQuant.push(`b), ff),
 							loc),
 						loc), this);
 			}
-			SetMinus(S, T) -> {
+			SetMinus(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				E = condQuant.push(E);
+				e = condQuant.condSubstitute(e);
+				e = condQuant.push(e);
 				
 				return condQuant.conditionalQuantify(				
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translateIn(E, condQuant.push(`S), loc, ff),
+						translateIn(e, condQuant.push(`s), loc, ff),
 						ff.makeUnaryPredicate(
 							Formula.NOT, 
-							translateIn(E, condQuant.push(`T), loc, ff), 
+							translateIn(e, condQuant.push(`t), loc, ff), 
 							loc),
 						loc), this);
 			}
 			BInter(children) | BUnion(children) -> {
 				final LinkedList<Predicate> preds = new LinkedList<Predicate>();
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				E = condQuant.push(E);
+				e = condQuant.condSubstitute(e);
+				e = condQuant.push(e);
 				
 				int tag = right.getTag() == Formula.BINTER ? Formula.LAND : Formula.LOR;
 
 				for(Expression child: `children) {
 					preds.add(
-						translateIn(E, condQuant.push(child), loc, ff));
+						translateIn(e, condQuant.push(child), loc, ff));
 				}
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeAssociativePredicate(ff, tag, preds, loc), this);
 			}
-			Rel(S, T) -> {
+			Rel(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				E = condQuant.push(E);
+				e = condQuant.condSubstitute(e);
+				e = condQuant.push(e);
 
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
@@ -494,15 +513,15 @@ public class Translator extends IdentityTranslator {
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ, 
-								ff.makeUnaryExpression(Formula.KDOM, E, loc),
-								condQuant.push(`S),
+								ff.makeUnaryExpression(Formula.KDOM, e, loc),
+								condQuant.push(`s),
 								loc),
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ, 
-								ff.makeUnaryExpression(Formula.KRAN, E, loc),
-								condQuant.push(`T),
+								ff.makeUnaryExpression(Formula.KRAN, e, loc),
+								condQuant.push(`t),
 								loc),
 							ff),
 						loc), this);
@@ -519,7 +538,7 @@ public class Translator extends IdentityTranslator {
 						ff,
 						translateIn(x, exists.push(`w), loc, ff),
 						translateIn(
-							ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(E), loc),
+							ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(e), loc),
 							exists.push(`r),
 							loc,
 							ff),
@@ -530,7 +549,7 @@ public class Translator extends IdentityTranslator {
 				final DecomposedQuant exists = new DecomposedQuant(ff);
 				final Expression x = 
 					exists.addQuantifier(
-						ff.makePowerSetType(E.getType()), loc);
+						ff.makePowerSetType(e.getType()), loc);
 	
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
@@ -545,7 +564,7 @@ public class Translator extends IdentityTranslator {
 							 exists.push(`f), 
 							 loc, 
 							 ff),
-						translateIn(E, x, loc,	ff),
+						translateIn(exists.push(e), x, loc,	ff),
 						loc),
 					loc);
 			}
@@ -558,7 +577,7 @@ public class Translator extends IdentityTranslator {
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
 					translateIn(
-						ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(E), loc), 
+						ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(e), loc), 
 						exists.push(`r), 
 						loc, 
 						ff),
@@ -573,264 +592,264 @@ public class Translator extends IdentityTranslator {
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
 					translateIn(
-						ff.makeBinaryExpression(Formula.MAPSTO, exists.push(E), x, loc), 
+						ff.makeBinaryExpression(Formula.MAPSTO, exists.push(e), x, loc), 
 						exists.push(`r), 
 						loc, 
 						ff),
 					loc);
 			}
-			Trel(S, T) -> {
+			Trel(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`S = condQuant.condSubstitute(`S);
+				e = condQuant.condSubstitute(e);
+				`s = condQuant.condSubstitute(`s);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 				
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.REL, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`S,
-								ff.makeUnaryExpression(Formula.KDOM, E, loc),
+								`s,
+								ff.makeUnaryExpression(Formula.KDOM, e, loc),
 								loc),
 							ff),
 						loc), 
 					this);
 			}
-			Srel(S, T) -> {
+			Srel(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`T = condQuant.condSubstitute(`T);
+				e = condQuant.condSubstitute(e);
+				`t = condQuant.condSubstitute(`t);
 
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 				
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.REL, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`T,
-								ff.makeUnaryExpression(Formula.KRAN, E, loc),
+								`t,
+								ff.makeUnaryExpression(Formula.KRAN, e, loc),
 								loc),
 							ff),
 						loc),
 					this);
 			}
-			Strel(S, T) -> {
+			Strel(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`T = condQuant.condSubstitute(`T);
+				e = condQuant.condSubstitute(e);
+				`t = condQuant.condSubstitute(`t);
 
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 				
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.TREL, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.TREL, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`T,
-								ff.makeUnaryExpression(Formula.KRAN, E, loc),
+								`t,
+								ff.makeUnaryExpression(Formula.KRAN, e, loc),
 								loc),
 							ff),
 						loc),
 					this);
 			}
-			Tbij(S, T) -> {
+			Tbij(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
+				e = condQuant.condSubstitute(e);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.TSUR, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.TSUR, `s, `t, loc), 
 							loc, 
 							ff),
-					funcInv(E, ff),
+					funcInv(e, ff),
 					loc),
 					this);
 			}
-			Tsur(S, T) -> {
+			Tsur(s, t) -> {
 				final ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`T = condQuant.condSubstitute(`T);
+				e = condQuant.condSubstitute(e);
+				`t = condQuant.condSubstitute(`t);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.TFUN, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.TFUN, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`T,
-								ff.makeUnaryExpression(Formula.KRAN, E, loc),
+								`t,
+								ff.makeUnaryExpression(Formula.KRAN, e, loc),
 								loc),
 							ff),
 						loc),
 					this);			
 			}
-			Psur(S, T) -> {
+			Psur(s, t) -> {
 				ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`T = condQuant.condSubstitute(`T);
+				e = condQuant.condSubstitute(e);
+				`t = condQuant.condSubstitute(`t);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.PFUN, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`T,
-								ff.makeUnaryExpression(Formula.KRAN, E, loc),
+								`t,
+								ff.makeUnaryExpression(Formula.KRAN, e, loc),
 								loc),
 							ff),
 						loc),
 					this);			
 			}
-			Tinj(S, T) -> {
+			Tinj(s, t) -> {
 				ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
+				e = condQuant.condSubstitute(e);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.TFUN, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.TFUN, `s, `t, loc), 
 							loc, 
 							ff),
-						funcInv(E, ff),
+						funcInv(e, ff),
 						loc),
 					this);
 			}			
-			Pinj(S, T) -> {
+			Pinj(s, t) -> {
 				ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
+				e = condQuant.condSubstitute(e);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.PFUN, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
 							loc, 
 							ff),
-						funcInv(E, ff),
+						funcInv(e, ff),
 						loc),
 					this);		
 			}	
-			Tfun(S, T) -> {
+			Tfun(s, t) -> {
 				ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
-				`S = condQuant.condSubstitute(`S);
+				e = condQuant.condSubstitute(e);
+				`s = condQuant.condSubstitute(`s);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.PFUN, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
 							loc, 
 							ff),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
-								`S,
-								ff.makeUnaryExpression(Formula.KDOM, E, loc),
+								`s,
+								ff.makeUnaryExpression(Formula.KDOM, e, loc),
 								loc),
 							ff),
 						loc),
 					this);			
 			}
-			Pfun(S, T) -> {
+			Pfun(s, t) -> {
 				ConditionalQuant condQuant = new ConditionalQuant(ff);
-				E = condQuant.condSubstitute(E);
+				e = condQuant.condSubstitute(e);
 				
-				E = condQuant.push(E);
-				`S = condQuant.push(`S);
-				`T = condQuant.push(`T);
+				e = condQuant.push(e);
+				`s = condQuant.push(`s);
+				`t = condQuant.push(`t);
 								
 				return condQuant.conditionalQuantify(
 					FormulaConstructor.makeLandPredicate(
 						ff,
 						translateIn(
-							E, 
-							ff.makeBinaryExpression(Formula.REL, `S, `T, loc), 
+							e, 
+							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
 							loc, 
 							ff),
-						func(E, ff),
+						func(e, ff),
 						loc),
 					this);	
 			}	
 			BoundIdentifier(_) | FreeIdentifier(_) -> {
-				if(GoalChecker.isMapletExpression(E))
-					return ff.makeRelationalPredicate(Formula.IN, E, right, loc);
+				if(GoalChecker.isMapletExpression(e))
+					return ff.makeRelationalPredicate(Formula.IN, e, right, loc);
 				else {
 					final Decomp2PhaseQuant exists = new Decomp2PhaseQuant(ff);
 					final List<Predicate> bindings = new LinkedList<Predicate>();
 					
-					purifyMaplet(E, exists, new LinkedList<Predicate>(), ff);		
+					purifyMaplet(e, exists, new LinkedList<Predicate>(), ff);		
 					exists.startPhase2();
-					final Expression x = purifyMaplet(E, exists, bindings, ff);
+					final Expression x = purifyMaplet(e, exists, bindings, ff);
 					
 					final List<Predicate> transformedBindings = new LinkedList<Predicate>();
 					transformedBindings.add(
@@ -1359,7 +1378,7 @@ public class Translator extends IdentityTranslator {
 			}		
 	        /**
 	        * RULE ER10: 	n = card(s)  
-	        *	  			∃f·f ∈ s⤖1‥n
+	        *	  			∃f·f ∈ s'⤖1‥n'
 	        */
 			Equal(n@Identifier(), Card(s)) | Equal(Card(s), n@Identifier())-> {
 				
