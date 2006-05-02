@@ -69,7 +69,7 @@ public class LiteralPredicate extends Predicate {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		return;
+		// Nothing to do
 	}
 	
 	@Override
