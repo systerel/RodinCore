@@ -24,8 +24,6 @@ public class SyntheticEditableTreeViewer
 	extends EventBEditableTreeViewer
 {
 
-	private EventBEditor editor;
-	
 	/**
 	 * The content provider class. 
 	 */
@@ -112,8 +110,7 @@ public class SyntheticEditableTreeViewer
 
 	
 	public SyntheticEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
-		super(parent, style);
-		this.editor = editor;
+		super(editor, parent, style);
 		this.setContentProvider(new SyntheticContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());

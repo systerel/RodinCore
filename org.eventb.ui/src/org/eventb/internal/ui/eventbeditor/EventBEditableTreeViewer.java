@@ -57,7 +57,10 @@ public abstract class EventBEditableTreeViewer
 	private final static int MAX_COLUMN = 2;
 	
 	private TreeEditor treeEditor;
+
+	protected EventBEditor editor;
 	
+
 	/* Abstract methods */
 	protected abstract void createTreeColumns();
 	protected abstract boolean isNotSelectable(Object object, int column);
@@ -72,8 +75,9 @@ public abstract class EventBEditableTreeViewer
 	 * @param style The style used to creat the part
 	 * @param block The master-detail block contains this part
 	 */
-	public EventBEditableTreeViewer(Composite parent, int style) {
+	public EventBEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(parent, style);
+		this.editor = editor;
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;

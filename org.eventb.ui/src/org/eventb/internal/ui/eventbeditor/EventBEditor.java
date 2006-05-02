@@ -85,7 +85,8 @@ public abstract class EventBEditor
 			if (activePage != null) {
 				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
 				if (selectionProvider != null)
-					return selectionProvider.getSelection();
+					if (selectionProvider != this)
+						return selectionProvider.getSelection();
 			}
 			return globalSelection;
 		}
@@ -97,8 +98,10 @@ public abstract class EventBEditor
 			IFormPage activePage = formEditor.getActivePageInstance();
 			if (activePage != null) {
 				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
-				if (selectionProvider != null)
-					selectionProvider.setSelection(selection);
+				if (selectionProvider != null) {
+					if (selectionProvider != this)
+						selectionProvider.setSelection(selection);
+				}
 			}
 			else {
 				this.globalSelection = selection;

@@ -105,7 +105,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	}
 	
 	public EventEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
-		super(parent, style);
+		super(editor, parent, style);
 		this.setContentProvider(new EventContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());
@@ -162,9 +162,9 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof Leaf)) return false;
 		object = ((Leaf) object ).getElement();
-//		if (column == 0) {
-//			if (!editor.isNewElement((IRodinElement) object)) return true;
-//		}
+		if (column == 0) {
+			if (!editor.isNewElement((IRodinElement) object)) return true;
+		}
 		
 		//        if (column < 1) return; // The object column is not editable
 //		UIUtils.debug("Item: " + object.toString() + " of class: " + object.getClass());
