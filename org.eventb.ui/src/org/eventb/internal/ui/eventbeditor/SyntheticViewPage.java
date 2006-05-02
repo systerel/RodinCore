@@ -18,6 +18,7 @@ public class SyntheticViewPage
 	public static final String PAGE_ID = "Synthetic View"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "Synthetic View";
 	public static final String PAGE_TAB_TITLE = "Synthetic";
+	EventBTreePartWithButtons part;
 	
 	/**
 	 * Contructor.
@@ -42,7 +43,6 @@ public class SyntheticViewPage
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		EventBTreePartWithButtons part;
 		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachine) 
 			part = new SyntheticMachineViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		else
@@ -54,6 +54,6 @@ public class SyntheticViewPage
 		part.getSection().setLayoutData(gd);
 		managedForm.addPart(part);
 		this.getSite().setSelectionProvider(part.getViewer());
-	}		
-
+	}
+	
 }

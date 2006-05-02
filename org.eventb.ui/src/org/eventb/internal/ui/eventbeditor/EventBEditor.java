@@ -16,7 +16,14 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -58,6 +65,81 @@ public abstract class EventBEditor
 	extends FormEditor
 	implements IElementChangedListener 
 {	
+
+	private static class FormEditorSelectionProvider
+	implements ISelectionProvider
+	{
+		private ISelection globalSelection;
+		private ListenerList listeners;
+		private FormEditor formEditor;
+		/**
+		 * @param multiPageEditor
+		 */
+		public FormEditorSelectionProvider(FormEditor formEditor) {
+			listeners = new ListenerList();
+			this.formEditor = formEditor;
+		}
+
+		public ISelection getSelection() {
+			IFormPage activePage = formEditor.getActivePageInstance();
+			if (activePage != null) {
+				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
+				if (selectionProvider != null)
+					return selectionProvider.getSelection();
+			}
+			return globalSelection;
+		}
+
+		/*
+		 * (non-Javadoc) Method declared on <code> ISelectionProvider </code> .
+		 */
+		public void setSelection(ISelection selection) {
+			IFormPage activePage = formEditor.getActivePageInstance();
+			if (activePage != null) {
+				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
+				if (selectionProvider != null)
+					selectionProvider.setSelection(selection);
+			}
+			else {
+				this.globalSelection = selection;
+				fireSelectionChanged(new SelectionChangedEvent(this,
+						globalSelection));
+			}
+		}
+
+	    /**
+	     * Notifies all registered selection changed listeners that the editor's 
+	     * selection has changed. Only listeners registered at the time this method is
+	     * called are notified.
+	     *
+	     * @param event the selection changed event
+	     */
+	    public void fireSelectionChanged(final SelectionChangedEvent event) {
+	        Object[] listeners = this.listeners.getListeners();
+	        for (int i = 0; i < listeners.length; ++i) {
+	            final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+	            Platform.run(new SafeRunnable() {
+	                public void run() {
+	                    l.selectionChanged(event);
+	                }
+	            });
+	        }
+	    }
+
+	    /* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			listeners.add(listener);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			listeners.remove(listener);
+		}
+	}
 
 	// The outline page
 	private EventBContentOutlinePage fOutlinePage;
@@ -119,10 +201,13 @@ public abstract class EventBEditor
 		}
 	}
 	
-	@Override
+	/**
+	 * Overrides super to plug in a different selection provider.
+	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		super.init(site, input);
-		
+		setSite(site);
+		setInput(input);
+		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		IRodinFile rodinFile = this.getRodinInput();
 		
 		this.setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));

@@ -52,7 +52,7 @@ public abstract class EventBPartWithButtons
 		
 		createButtons(toolkit, (Composite) this.getSection().getClient(), buttonLabels);
 		
-		getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(EventBPartWithButtons.this, event.getSelection());
 				updateButtons();

@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
@@ -31,7 +32,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -123,14 +127,30 @@ public class EventBMachineEditorContributor
 		rename = new Action() {
 			public void run() {
 				UIUtils.debug("Rename");
-				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				IEditorPart part = EventBMachineEditorContributor.this.getPage().getActiveEditor();
 				ISelectionService selService = part.getSite().getWorkbenchWindow().getSelectionService();
 				ISelection sel = selService.getSelection();
 				UIUtils.debug("Current selection: " + sel);
 				if (sel instanceof IStructuredSelection) { 
 					IStructuredSelection ssel = (IStructuredSelection) sel;
 					if (ssel.size() == 1) {
-						UIUtils.debug("Rename dialog (Refactoring): " + ((Leaf) ssel.getFirstElement()).getElement().getElementName());
+						if (ssel.getFirstElement() instanceof Leaf) {
+							IRodinElement element = ((Leaf) ssel.getFirstElement()).getElement();
+							InputDialog dialog = new InputDialog(part.getSite().getShell(), "Rename", "Rename element", element.getElementName(), null);
+							dialog.open();
+							try {
+								String text = dialog.getValue();
+								if (text != null) {
+									UIUtils.debug("Commit : " + element.getElementName() + " to be : " + text);
+									if (!element.getElementName().equals(text)) {
+										((IInternalElement) element).rename(text, false, null);
+									}
+								}
+							}
+							catch (RodinDBException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 //					UIUtils.intelligentNewVariables(editor, rodinFile);
