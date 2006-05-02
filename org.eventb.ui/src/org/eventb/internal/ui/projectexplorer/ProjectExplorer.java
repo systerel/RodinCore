@@ -159,6 +159,7 @@ public class ProjectExplorer
 		contributeToActionBars();
 		IStatusLineManager slManager= getViewSite().getActionBars().getStatusLineManager();
 		viewer.addSelectionChangedListener(new StatusBarUpdater(slManager));
+		this.getSite().setSelectionProvider(viewer);
 //		setContentDescription("Hello");
 //		setTitleToolTip("How are you?");
 	}

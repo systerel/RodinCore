@@ -17,8 +17,11 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -40,12 +43,12 @@ public class EventBMachineEditorContributor
 	extends MultiPageEditorActionBarContributor
 {
 	public static RefreshAction sampleAction;
-	private IEditorPart activeEditorPart;
 	
 	public static Action newVariables;
 	public static Action newInvariants;
 	public static Action newTheorems;
 	public static Action newEvent;
+	public static Action rename;
 	
 	/**
 	 * Creates a multi-page contributor.
@@ -66,19 +69,17 @@ public class EventBMachineEditorContributor
 	 */
 
 	public void setActivePage(IEditorPart part) {
-		if (activeEditorPart == part)
-			return;
-
-		activeEditorPart = part;
+		UIUtils.debug("Add global action here");
 
 		IActionBars actionBars = getActionBars();
-//		if (actionBars != null) {
+		if (actionBars != null) {
+			UIUtils.debug("Add to action bars");
 //
 //			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 //
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.DELETE.getId(),
-//				getAction(editor, ITextEditorActionConstants.DELETE));
+			actionBars.setGlobalActionHandler(
+				ActionFactory.RENAME.getId(),
+				rename);
 //			actionBars.setGlobalActionHandler(
 //				ActionFactory.UNDO.getId(),
 //				getAction(editor, ITextEditorActionConstants.UNDO));
@@ -103,13 +104,13 @@ public class EventBMachineEditorContributor
 //			actionBars.setGlobalActionHandler(
 //				IDEActionFactory.BOOKMARK.getId(),
 //				getAction(editor, IDEActionFactory.BOOKMARK.getId()));
-//			actionBars.updateActionBars();
-//		}
-//		else {
-			IToolBarManager manager = actionBars.getToolBarManager();
-			manager.add(sampleAction);
 			actionBars.updateActionBars();
-			
+		}
+//		else {
+//			IToolBarManager manager = actionBars.getToolBarManager();
+//			manager.add(sampleAction);
+//			actionBars.updateActionBars();
+//			
 //		}
 	}
 	private void createActions() {
@@ -119,6 +120,26 @@ public class EventBMachineEditorContributor
 		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ActionFactory.REFRESH.getId()));
 		
+		rename = new Action() {
+			public void run() {
+				UIUtils.debug("Rename");
+				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				ISelectionService selService = part.getSite().getWorkbenchWindow().getSelectionService();
+				ISelection sel = selService.getSelection();
+				UIUtils.debug("Current selection: " + sel);
+				if (sel instanceof IStructuredSelection) { 
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ssel.size() == 1) {
+						UIUtils.debug("Rename dialog (Refactoring): " + ((Leaf) ssel.getFirstElement()).getElement().getElementName());
+					}
+				}
+//					UIUtils.intelligentNewVariables(editor, rodinFile);
+			}
+		};
+		rename.setText("New Variables");
+		rename.setToolTipText("Create new variables for the component");
+		rename.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
+
 		newVariables = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
@@ -141,7 +162,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newInvariants(editor, rodinFile);
-					editor.editorDirtyStateChanged();
 				}
 			}
 		};
@@ -156,7 +176,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newTheorems(editor, rodinFile);
-					editor.editorDirtyStateChanged();
 				}
 			}
 		};
@@ -171,7 +190,6 @@ public class EventBMachineEditorContributor
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
 					UIUtils.newEvent(editor, rodinFile);
-					editor.editorDirtyStateChanged();
 				}
 			}
 		};

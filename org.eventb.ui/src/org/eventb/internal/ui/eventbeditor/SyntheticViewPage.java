@@ -5,7 +5,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -43,7 +42,7 @@ public class SyntheticViewPage
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		SectionPart part;
+		EventBTreePartWithButtons part;
 		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachine) 
 			part = new SyntheticMachineViewSection(managedForm, body, managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this.getEditor());
 		else
@@ -54,6 +53,7 @@ public class SyntheticViewPage
 		gd.widthHint = 150;
 		part.getSection().setLayoutData(gd);
 		managedForm.addPart(part);
+		this.getSite().setSelectionProvider(part.getViewer());
 	}		
 
 }

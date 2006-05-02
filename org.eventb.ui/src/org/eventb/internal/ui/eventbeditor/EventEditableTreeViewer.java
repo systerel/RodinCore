@@ -162,8 +162,12 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof Leaf)) return false;
 		object = ((Leaf) object ).getElement();
+//		if (column == 0) {
+//			if (!editor.isNewElement((IRodinElement) object)) return true;
+//		}
+		
 		//        if (column < 1) return; // The object column is not editable
-		UIUtils.debug("Item: " + object.toString() + " of class: " + object.getClass());
+//		UIUtils.debug("Item: " + object.toString() + " of class: " + object.getClass());
 		if (column == 0) {
 			if (object instanceof IUnnamedInternalElement) return true;
 		}
