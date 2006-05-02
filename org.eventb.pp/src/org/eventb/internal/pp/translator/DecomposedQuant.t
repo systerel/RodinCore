@@ -33,6 +33,16 @@ public class DecomposedQuant {
 		this.ff = ff;
 	}
 	
+	public DecomposedQuant(FormulaFactory ff, BoundIdentDecl[] ids) {
+		this(ff);
+		for(BoundIdentDecl decl: ids) {
+			assert !(decl.getType() instanceof ProductType) : "Only decomposed identifiers allowed!";
+			identDecls.add(decl);
+			c.increment();
+		}
+		hasPushed = true;
+	}
+	
 	public Expression addQuantifier(Type type, SourceLocation loc) {
 		return addQuantifier(type, "x", loc);
 	}	
