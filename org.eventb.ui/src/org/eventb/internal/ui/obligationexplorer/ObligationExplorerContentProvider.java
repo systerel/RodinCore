@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.obligationexplorer;
 
@@ -35,160 +36,138 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-
 /**
  * @author htson
- * This class provide the content for the tree viewer in the Project Explorer.
+ *         <p>
+ *         This class provide the content for the tree viewer in the Obligation
+ *         Explorer.
  */
-public class ObligationExplorerContentProvider
-	implements	IStructuredContentProvider, 
-				ITreeContentProvider,
-				IElementChangedListener 
-{
+public class ObligationExplorerContentProvider implements
+		IStructuredContentProvider, ITreeContentProvider,
+		IElementChangedListener {
 
 	// The invisible root of the tree viewer.
 	private IRodinElement invisibleRoot = null;
-	
+
 	// The Project Explorer.
 	private ObligationExplorer explorer;
-	
+
 	// List of elements need to be refresh (when processing Delta of changes).
 	private List<IRodinElement> toRefresh;
-	
 
 	/**
-	 * Constructor. 
-	 * @param explorer The Project Explorer
+	 * Constructor.
+	 * 
+	 * @param explorer
+	 *            The Project Explorer
 	 */
 	public ObligationExplorerContentProvider(ObligationExplorer explorer) {
 		this.explorer = explorer;
 	}
-	
-	
-	
+
 	/**
 	 * This response for the delta changes from the Rodin Database
 	 * <p>
+	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		toRefresh = new ArrayList<IRodinElement> ();
+		toRefresh = new ArrayList<IRodinElement>();
 		processDelta(event.getDelta());
 		postRefresh(toRefresh, true);
 	}
-	
-	
-	/*
+
+	/**
 	 * Process the delta recursively and depend on the kind of the delta.
-	 * <p> 
-	 * @param delta The Delta from the Rodin Database
+	 * <p>
+	 * 
+	 * @param delta
+	 *            The Delta from the Rodin Database
 	 */
 	private void processDelta(IRodinElementDelta delta) {
-		int kind= delta.getKind();
+		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
-			IRodinElement parent; 
+			IRodinElement parent;
 			if (element instanceof IRodinProject) {
 				parent = invisibleRoot;
-			}
-			else {
+			} else {
 				parent = element.getParent();
 			}
 			toRefresh.add(parent);
 			return;
 		}
-		
+
 		if (kind == IRodinElementDelta.REMOVED) {
-			IRodinElement parent; 
+			IRodinElement parent;
 			if (element instanceof IRodinProject) {
 				parent = invisibleRoot;
-			}
-			else {
+			} else {
 				parent = element.getParent();
 			}
 			toRefresh.add(parent);
 			return;
 		}
-		
+
 		if (kind == IRodinElementDelta.CHANGED) {
 			int flags = delta.getFlags();
-			
+
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				IRodinElementDelta [] deltas = delta.getAffectedChildren();
+				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
 					processDelta(deltas[i]);
 				}
 				return;
 			}
-			
+
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
 				toRefresh.add(element.getParent());
 				return;
 			}
-			
+
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				if (element instanceof IProof) {
 					toRefresh.add(element.getParent());
-				}
-				else toRefresh.add(element);
+				} else
+					toRefresh.add(element);
 				return;
 			}
 		}
 
 	}
 
-
 	/**
 	 * Refresh the nodes.
 	 * <p>
-	 * @param toRefresh List of node to refresh
-	 * @param updateLabels <code>true</code> if the label need to be updated as well
+	 * 
+	 * @param toRefresh
+	 *            List of node to refresh
+	 * @param updateLabels
+	 *            <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
-//		if (UIUtils.DEBUG) System.out.println("Post refresh");
-		postRunnable(new Runnable() {
+		UIUtils.asyncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
-				Control ctrl= viewer.getControl();
+				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					Object [] objects = viewer.getExpandedElements();
+					Object[] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
-//						if (UIUtils.DEBUG) System.out.println("Refresh " + obj);
 						viewer.refresh(obj, updateLabels);
 					}
 					viewer.setExpandedElements(objects);
 				}
 			}
-		});
+		}, explorer.getTreeViewer().getControl());
 	}
-	
-	private void postRunnable(final Runnable r) {
-		Control ctrl= explorer.getTreeViewer().getControl();
-		final Runnable trackedRunnable= new Runnable() {
-			public void run() {
-				try {
-					r.run();
-				} finally {
-					//removePendingChange();
-					//if (UIUtils.DEBUG) System.out.println("Runned");
-				}
-			}
-		};
-		if (ctrl != null && !ctrl.isDisposed()) {
-			try {
-				ctrl.getDisplay().asyncExec(trackedRunnable); 
-			} catch (RuntimeException e) {
-				throw e;
-			} catch (Error e) {
-				throw e; 
-			}
-		}
-	}
-	
-	
+
 	/**
-	 * Register/De-register to the Rodin Core when the input is change 
+	 * Register/De-register to the Rodin Core when the input is change
+	 * <p>
+	 * 
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		if (oldInput == null && newInput != null)
@@ -197,50 +176,51 @@ public class ObligationExplorerContentProvider
 			RodinCore.removeElementChangedListener(this);
 		invisibleRoot = (IRodinElement) newInput;
 	}
-	
-	
-	/**
-	 * The tree is dispose
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		RodinCore.removeElementChangedListener(this);
-		UIUtils.debug("******* DISPOSE ********");
 	}
-	
-	
-	/**
-	 * Return the list of elements for a particular parent
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object parent) {
 		return getChildren(parent);
 	}
-	
-	
-	/**
-	 * Return the parent for an element.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object child) {
-		if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
+		if (child instanceof IRodinElement)
+			return ((IRodinElement) child).getParent();
 		return null;
 	}
-	
-	
-	/**
-	 * Return the list of children for a particular parent.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
-	public Object [] getChildren(Object parent) {
+	public Object[] getChildren(Object parent) {
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
 				return prj.getChildrenOfType(IPRFile.ELEMENT_TYPE);
-			}
-			catch (RodinDBException e) {
+			} catch (RodinDBException e) {
 				e.printStackTrace();
-				MessageDialog.openWarning(EventBUIPlugin.getActiveWorkbenchShell(), "Resource out of date", "Project " + ((IRodinProject) parent).getElementName() + " is out of date with the file system and will be refresh.");
+				MessageDialog
+						.openWarning(
+								EventBUIPlugin.getActiveWorkbenchShell(),
+								"Resource out of date",
+								"Project "
+										+ ((IRodinProject) parent)
+												.getElementName()
+										+ " is out of date with the file system and will be refresh.");
 				ObligationExplorerActionGroup.refreshAction.refreshAll();
 			}
 		}
-		
+
 		try {
 			if (parent instanceof IPRFile) {
 				IPRFile prFile = (IPRFile) parent;
@@ -249,12 +229,15 @@ public class ObligationExplorerContentProvider
 			if (parent instanceof IRodinDB) {
 				return ((IRodinDB) parent).getChildren();
 			}
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			// TODO Handle Exception
-			MessageDialog.openWarning(EventBUIPlugin.getActiveWorkbenchShell(),
-					"Resource out of date", 
-					"Element " + ((IParent) parent).toString() + " is out of date with the file system and will be refresh.");
+			MessageDialog
+					.openWarning(
+							EventBUIPlugin.getActiveWorkbenchShell(),
+							"Resource out of date",
+							"Element "
+									+ ((IParent) parent).toString()
+									+ " is out of date with the file system and will be refresh.");
 			ObligationExplorerActionGroup.refreshAction.refreshAll();
 			e.printStackTrace();
 		}
@@ -262,9 +245,8 @@ public class ObligationExplorerContentProvider
 		return new Object[0];
 	}
 
-	
-	/**
-	 * Check if the object has any children.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object parent) {
 		return getChildren(parent).length != 0;
