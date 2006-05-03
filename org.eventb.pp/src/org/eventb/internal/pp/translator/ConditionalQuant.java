@@ -1,20 +1,19 @@
 package org.eventb.internal.pp.translator;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
-public class ConditionalQuant extends DecomposedQuant {
+public class ConditionalQuant extends Decomp2PhaseQuant {
 
-	final ArrayList<Expression> substitutes = new ArrayList<Expression>();
-	final ArrayList<Expression> substituted = new ArrayList<Expression>();
-
+	final List<Expression> substitutes = new LinkedList<Expression>();
+	final List<Predicate> bindings = new LinkedList<Predicate>();
 	
 	public ConditionalQuant(FormulaFactory ff) {
 		super(ff);
@@ -25,10 +24,8 @@ public class ConditionalQuant extends DecomposedQuant {
 			return expr;
 		}
 		else {
-			SourceLocation loc = expr.getSourceLocation();
-			Expression substitute = addQuantifier(expr.getType(), loc); 
+			Expression substitute = purifyMaplet(expr);
 			substitutes.add(substitute);
-			substituted.add(expr);
 			return substitute;			
 		}
 	}
@@ -42,32 +39,73 @@ public class ConditionalQuant extends DecomposedQuant {
 		return super.push(expr);
 	}
 	
-	public Predicate conditionalQuantify(Predicate pred, Translator translator) {
+	protected Predicate conditionalQuantify(
+			int tag, Predicate pred, Translator translator) {
 		if(substitutes.size() == 0) return pred;
 		else {
 			SourceLocation loc = pred.getSourceLocation();
-			List<Predicate> bindings = new LinkedList<Predicate>();
-			for(int i = 0; i < substitutes.size(); i++) { 
-				bindings.add(
-					translator.translateEqual(
-						ff.makeRelationalPredicate(
-								Formula.EQUAL, 
-								substitutes.get(i), 
-								push(substituted.get(i)), 
-								loc), 
-						ff));
+			List<Predicate> translatedBindings = new LinkedList<Predicate>();
+			if(translator == null)
+				translatedBindings = bindings;
+			else { 
+				for(Predicate binding : bindings) { 
+					translatedBindings.add(
+						translator.translateEqual(binding, ff));
+				}
 			}
-			
-			return makeQuantifiedPredicate(
+			if(tag == Formula.FORALL) {
+				return makeQuantifiedPredicate(
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 							Formula.LIMP,
 							FormulaConstructor.makeLandPredicate(
-									ff, bindings, loc), 
+									ff, translatedBindings, loc), 
 							pred,
 							loc),
-					loc);	
+					loc);
+			}
+			else {
+				translatedBindings.add(pred);
+				return makeQuantifiedPredicate(
+						Formula.EXISTS,
+						FormulaConstructor.makeLandPredicate(ff, translatedBindings, loc),
+						loc);
+			}	
 		}
 	}
+	
+	@Override
+	public void startPhase2() {
+		substitutes.clear();
+		bindings.clear();
+		super.startPhase2();
+	}
+	
+	private Expression purifyMaplet(Expression expr) {
+			SourceLocation loc = expr.getSourceLocation();
+			
+			if(GoalChecker.isMapletExpression(expr))
+				return push(expr);
+			switch(expr.getTag()) {
+			case Formula.MAPSTO:
+				BinaryExpression bexpr = (BinaryExpression)expr;
+						
+				Expression nr = purifyMaplet(bexpr.getRight());
+				Expression nl = purifyMaplet(bexpr.getLeft());
 
+				if(nr == bexpr.getLeft() && nl == bexpr.getRight()) return expr;
+				else
+					return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
+
+			default:
+				Expression substitute = addQuantifier(expr.getType(), loc);
+				bindings.add(0, 
+					ff.makeRelationalPredicate(
+						Formula.EQUAL, 
+						substitute, 
+						push(expr), 
+						loc));
+				return substitute;
+			}
+		}
 }
