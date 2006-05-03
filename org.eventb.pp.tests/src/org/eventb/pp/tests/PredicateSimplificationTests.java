@@ -34,83 +34,150 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	 * Main test routine for predicates.
 	 */
 	
-	public void testAndRule1 () {
-		doTest( "⊤ ∧ ⊤",
-				"⊤ ", false);
+	/**
+	 * Tests for PR1
+	 */
+	public void testPR1_simple () {
+		doTest( "a>b ∧ ⊥ ∧ c>d",
+				"⊥", false);
 	}
 	
-	public void testAndRule12 () {
-		doTest( "⊤ ∧ ⊥",
-				"⊥ ", false);
-	}
-	
-	public void testAndRule3 () {
-		doTest( "⊥ ∧ ⊤",
-				"⊥ ", false);
-	}
-
-	public void testAndRule4 () {
-		doTest( "(⊤ ∧ ⊥) ∨ (⊤ ∧ ⊤ ∧ ⊤)",
+	/**
+	 * Tests for PR2
+	 */
+	public void testPR2_simple () {
+		doTest( "a>b ∨ ⊤ ∨ c>d",
 				"⊤", false);
 	}
 
-	public void testOrRule1 () {
-		doTest( "⊤ ∨ ⊤",
-				"⊤ ", false);
+	/**
+	 * Tests for PR3
+	 */
+	public void testPR3_simple () {
+		doTest( "a>b ∧ ⊤ ∧ c>d",
+				"a>b ∧ c>d", false);
 	}
 
-	public void testOrRule2 () {
-		doTest( "⊥ ∨ ⊤",
-				"⊤ ", false);
+	public void testPR3_recursive () {
+		doTest( "(⊤ ∧ ⊤) ∧ ⊤ ∧ c>d",
+				"c>d", false);
 	}
 
-	public void testOrRule3 () {
-		doTest( "⊤ ∨ ⊥",
-				"⊤ ", false);
+	/**
+	 * Tests for PR4
+	 */
+	public void testPR4_simple () {
+		doTest( "a>b ∨ ⊥ ∨ c>d",
+				"a>b ∨ c>d", false);
+	}
+
+	public void testPR4_recursive () {
+		doTest( "(⊥ ∨ ⊥) ∨ ⊥ ∨ c>d",
+				"c>d", false);
 	}
 	
-	public void testOrRule4 () {
-		doTest( "(⊤ ∨ ⊥) ∧ (⊥ ∨ ⊥ ∨ ⊥)",
-				"⊥ ", false);
-	}
-	
-	public void testImplRule1() {
+	/**
+	 * Tests for PR5
+	 */
+	public void testPR5_simple () {
 		doTest( "a>b ⇒ ⊤",
 				"⊤", false);
 	}
-	
-	public void testImplRule2() {
+
+	/**
+	 * Tests for PR6
+	 */
+	public void testPR6_simple () {
 		doTest( "⊥ ⇒ a>b",
 				"⊤", false);
 	}
 	
-	public void testImplRule3() {
+	/**
+	 * Tests for PR7
+	 */
+	public void testPR7_simple () {
 		doTest( "⊤ ⇒ a>b",
 				"a>b", false);
 	}
 
-	public void testImplRule4() {
-		doTest( "⊤ ⇒ (⊤ ∨ (a>b))",
-				"⊤", false);
+	public void testPR7_recursive () {
+		doTest( "⊤ ⇒ (⊤ ⇒ a>b)",
+				"a>b", false);
 	}
 
-	public void testImplRule5() {
+	/**
+	 * Tests for PR8
+	 */
+	public void testPR8_simple () {
 		doTest( "a>b ⇒ ⊥",
 				"¬(a>b)", false);
 	}
-	
-	public void testImplRule6() {
-		doTest( "⊤∧(a>b) ⇒ ⊥",
-				"¬(a>b)", false);
-	}
 
-	public void testNotRule1() {
+	public void testPR8_recursive () {
+		doTest( "(a>b ⇒ ⊥) ⇒ ⊥",
+				"a>b", false);
+	}
+	
+	/**
+	 * Tests for PR9
+	 */
+	public void testPR9_simple() {
 		doTest( "¬⊤",
 				"⊥", false);
 	}
 	
-	public void testNotRule2() {
+	/**
+	 * Tests for PR10
+	 */
+	public void testPR10_simple() {
 		doTest( "¬⊥",
 				"⊤", false);
+	}
+
+	/**
+	 * Tests for PR11
+	 */
+	public void testPR11_simple() {
+		doTest( "¬¬(a>b)",
+				"a>b", false);
+	}
+
+	public void testPR11_recursive() {
+		doTest( "¬¬(¬¬(a>b))",
+				"a>b", false);
+	}
+
+	/**
+	 * Tests for PR12
+	 */
+	public void testPR12_simple() {
+		doTest( "a>b ⇔ a>b",
+				"⊤", false);
+	}
+	
+	/**
+	 * Tests for PR13
+	 */
+	public void testPR13_simple() {
+		doTest( "a>b ⇔ ⊤",
+				"a>b", false);
+	}
+
+	public void testPR13_recursive() {
+		doTest( "(a>b⇔ ⊤) ⇔ ⊤",
+				"a>b", false);
+	}
+
+	/**
+	 * Tests for PR14
+	 */
+	public void testPR14_simple() {
+		doTest( "a>b ⇔ ⊥",
+				"a>b", false);
+	}
+
+	public void testPR15_recursive() {
+		doTest( "(a>b⇔ ⊥) ⇔ ⊥",
+				"a>b", false);
 	}
 }
