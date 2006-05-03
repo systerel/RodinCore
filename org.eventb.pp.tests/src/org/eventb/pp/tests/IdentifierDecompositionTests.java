@@ -13,8 +13,8 @@ import org.eventb.pp.Translator;
  */
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
-	protected static final ITypeEnvironment te;
-	static {
+	protected final ITypeEnvironment te;
+	{
 		te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		te.addGivenSet("T");
