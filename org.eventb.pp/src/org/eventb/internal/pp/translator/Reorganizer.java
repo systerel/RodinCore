@@ -18,26 +18,12 @@ import org.eventb.core.ast.UnaryExpression;
 public class Reorganizer extends BorderTranslator {
 	
 	public class ExpressionExtractor extends IdentityTranslator {
-		public final List<Predicate> bindings = new LinkedList<Predicate>();
-		private final DecomposedQuant quantification;
+		private final ConditionalQuant quantification;
 
 		public boolean inEquality;
 
-		public ExpressionExtractor(DecomposedQuant quantification) {
+		public ExpressionExtractor(ConditionalQuant quantification) {
 			this.quantification = quantification;
-		}
-		
-		protected Expression bindExpression(Expression expr, FormulaFactory ff, String name) {
-			SourceLocation loc = expr.getSourceLocation();
-			
-			Expression ident = quantification.addQuantifier(expr.getType(), name, loc);
-			bindings.add(
-					ff.makeRelationalPredicate(
-							Formula.EQUAL, 
-							ident, 
-							quantification.push(expr), 
-							loc));
-			return ident;		
 		}
 		
 		@Override
@@ -49,13 +35,10 @@ public class Reorganizer extends BorderTranslator {
 			else {
 				switch(expr.getTag()) {
 				case Formula.KCARD:
-					return bindExpression(expr, ff, "cd");
 				case Formula.FUNIMAGE:
-					return bindExpression(expr, ff, "fi");
 				case Formula.KMIN:
-					return bindExpression(expr, ff, "mi");
 				case Formula.KMAX:
-					return bindExpression(expr, ff, "ma");
+					return  quantification.condSubstitute(expr);
 				case Formula.BOUND_IDENT:
 					return quantification.push(expr);
 				default:
@@ -95,34 +78,24 @@ public class Reorganizer extends BorderTranslator {
 		Expression left = extractor.translate(pred.getLeft(), ff);
 		extractor.inEquality = isEquality;
 		Expression right = extractor.translate(pred.getRight(), ff);
-		return ff.makeRelationalPredicate(pred.getTag(), left, right, pred.getSourceLocation());
+		if(left != pred.getLeft() || right != pred.getRight())
+			return ff.makeRelationalPredicate(pred.getTag(), left, right, pred.getSourceLocation());
+		else
+			return pred;
 	}
 	
 	@Override
 	protected Predicate translateArithmeticBorder(RelationalPredicate pred, FormulaFactory ff) {
-		SourceLocation loc = pred.getSourceLocation();
-		
-		Decomp2PhaseQuant forall = new Decomp2PhaseQuant(ff);
+		ConditionalQuant forall = new ConditionalQuant(ff);
 
-		ExpressionExtractor extractor = new ExpressionExtractor(forall);
-		doPhase(pred, extractor, ff);
-
-		if(extractor.bindings.size() == 0)
-			return pred;
-		else {
-			forall.startPhase2();
-			extractor = new ExpressionExtractor(forall);
-			pred = doPhase(pred, extractor, ff);
+		doPhase(pred, new ExpressionExtractor(forall), ff);
+		forall.startPhase2();
+		pred = doPhase(pred, new ExpressionExtractor(forall), ff);
 			
-			return forall.makeQuantifiedPredicate(
-				Formula.FORALL, 
-				ff.makeBinaryPredicate(
-					Formula.LIMP,
-					FormulaConstructor.makeLandPredicate(ff, extractor.bindings, loc),
-					pred,
-					loc),
-				loc);
-		}
+		return forall.conditionalQuantify(
+			Formula.FORALL,
+			pred,
+			null);
 	}
 	
 	@Override
