@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.wizards;
 
@@ -29,7 +30,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWizard;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachine;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -40,58 +40,62 @@ import org.rodinp.core.IRodinProject;
 
 /**
  * @author htson
- * <p>
- * This is the new wizard for creating new Event-B components (machine, context, etc.)
- * resource in the provided project. If the project resource
- * (a folder or a project) is selected in the workspace 
- * when the wizard is opened, it will accept it as the target
- * project. The wizard creates one file with the extension
- * "bum" / "buc" (for machine/context respectively).
- * An instance of the Event-B Editor will be opened for editting
- * the new component.
+ *         <p>
+ *         This is the new wizard for creating new Event-B components (machine,
+ *         context, etc.) resource in the provided project. If the project
+ *         resource (a folder or a project) is selected in the workspace when
+ *         the wizard is opened, it will accept it as the target project. The
+ *         wizard creates one file with the extension "bum" / "buc" (for
+ *         machine/context respectively). An instance of the Event-B Editor will
+ *         be opened for editting the new component.
  */
-public class NewComponentWizard 
-	extends Wizard 
-	implements INewWizard 
-{
-	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID + ".wizards.NewComponent";
-	
+public class NewComponentWizard extends Wizard implements INewWizard {
+
+	/**
+	 * The identifier of the new component wizard (value
+	 * <code>"org.eventb.ui.wizards.NewComponent"</code>).
+	 */
+	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".wizards.NewComponent";
+
 	// The wizard page.
 	private NewComponentWizardPage page;
-	
+
 	// The selection when the wizard is launched.
 	private ISelection selection;
 
-
 	/**
-	 * Constructor for NewComponentWizard.
+	 * Constructor: This wizard needs a progress monitor.
 	 */
 	public NewComponentWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
-	
-	
-	/**
-	 * Adding the page to the wizard.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
 	public void addPages() {
 		page = new NewComponentWizardPage(selection);
 		addPage(page);
 	}
 
-
 	/**
-	 * This method is called when 'Finish' button is pressed in
-	 * the wizard. We will create an operation and run it
-	 * using wizard as execution context.
+	 * This method is called when 'Finish' button is pressed in the wizard. We
+	 * will create an operation and run it using wizard as execution context.
+	 * <p>
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		final String projectName = page.getContainerName();
 		final String fileName = page.getComponentName() + "." + page.getType();
-		
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
 				try {
 					doFinish(projectName, fileName, monitor);
 				} catch (CoreException e) {
@@ -107,43 +111,51 @@ public class NewComponentWizard
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			MessageDialog.openError(getShell(), "Error", realException
+					.getMessage());
 			return false;
 		}
 		return true;
 	}
-	
 
 	/**
-	 * The worker method. It will find the project, create the
-	 * file if missing or just replace its contents, and open
+	 * The worker method. It will find the project, create the file, and open
 	 * the editor on the newly created file.
+	 * <p>
+	 * 
+	 * @param projectName
+	 *            the name of the project
+	 * @param fileName
+	 *            the name of the file
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws CoreException
+	 *             a core exception when creating the new file
 	 */
-	private void doFinish(
-		String projectName,
-		String fileName,
-		IProgressMonitor monitor)
-		throws CoreException {
-		
+	private void doFinish(String projectName, String fileName,
+			IProgressMonitor monitor) throws CoreException {
+
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(projectName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Project \"" + projectName + "\" does not exist.");
+			throwCoreException("Project \"" + projectName
+					+ "\" does not exist.");
 		}
 
 		IRodinDB db = EventBUIPlugin.getRodinDatabase();
 		// Creating a project handle
-		IRodinProject rodinProject = db.getRodinProject(projectName); 
+		IRodinProject rodinProject = db.getRodinProject(projectName);
 
-		final IRodinFile rodinFile = rodinProject.createRodinFile(fileName, false, null);
+		final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
+				false, null);
 		if (rodinFile instanceof IMachine) {
-			rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
+			rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
+					"INITIALISATION", null, null);
 		}
-		
+
 		monitor.worked(1);
-		
-		
+
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -152,26 +164,29 @@ public class NewComponentWizard
 		});
 		monitor.worked(1);
 	}
-	
 
 	/**
 	 * Throw a Core exception.
 	 * <p>
-	 * @param message The message for displaying
-	 * @throws CoreException a Core exception with the status contains the input message
+	 * 
+	 * @param message
+	 *            The message for displaying
+	 * @throws CoreException
+	 *             a Core exception with the status contains the input message
 	 */
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "org.eventb.internal.ui", IStatus.OK, message, null);
+		IStatus status = new Status(IStatus.ERROR, "org.eventb.internal.ui",
+				IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
-
 	/**
-	 * We will accept the selection in the workbench to see if
-	 * we can initialize from it.
+	 * We will accept the selection in the workbench to see if we can initialize
+	 * from it.
 	 * <p>
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
+	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;

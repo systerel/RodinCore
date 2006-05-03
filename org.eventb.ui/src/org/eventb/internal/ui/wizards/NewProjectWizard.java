@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.wizards;
 
@@ -29,56 +30,62 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWizard;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
- * This is a sample new wizard. Its role is to create a new project 
- * resource.
+ *         <p>
+ *         This is the new wizard for creating new Event-B projects,
+ * 
  */
-public class NewProjectWizard 
-	extends Wizard 
-	implements INewWizard 
-{
-	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID + ".wizards.NewProject";
-	
+public class NewProjectWizard extends Wizard implements INewWizard {
+
+	/**
+	 * The identifier of the new component wizard (value
+	 * <code>"org.eventb.ui.wizards.NewProject"</code>).
+	 */
+	public static final String WIZARD_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".wizards.NewProject";
+
 	// The wizard page.
 	private NewProjectWizardPage page;
 
-	// The selection when the wizard is launched (this is not used for this wizard).
+	// The selection when the wizard is launched (this is not used for this
+	// wizard).
 	private ISelection selection;
 
-
 	/**
-	 * Constructor for NewProjectWizard.
+	 * Constructor: This wizard needs a progress monitor.
 	 */
 	public NewProjectWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
-	
-	
-	/**
-	 * Adding the page to the wizard.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
 	public void addPages() {
 		page = new NewProjectWizardPage(selection);
 		addPage(page);
 	}
 
-
 	/**
-	 * This method is called when 'Finish' button is pressed in
-	 * the wizard. We will create an operation and run it
-	 * using wizard as execution context.
+	 * This method is called when 'Finish' button is pressed in the wizard. We
+	 * will create an operation and run it using wizard as execution context.
+	 * <p>
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		final String projectName = page.getProjectName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
 				try {
 					doFinish(projectName, monitor);
 				} catch (CoreException e) {
@@ -95,65 +102,78 @@ public class NewProjectWizard
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			MessageDialog.openError(getShell(), "Error", realException
+					.getMessage());
 			return false;
 		}
 		return true;
 	}
-	
-	
+
 	/**
-	 * The worker method. This will create a new project 
-	 * (provided that it does not exist before).
+	 * The worker method. This will create a new project (provided that it does
+	 * not exist before).
+	 * <p>
+	 * 
+	 * @param projectName
+	 *            the name of the project
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws CoreException
+	 *             a core exception throws when creating a new project
 	 */
-	private void doFinish(
-		String projectName,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void doFinish(String projectName, IProgressMonitor monitor)
+			throws CoreException {
 		// create an empty Rodin project
 		monitor.beginTask("Creating " + projectName, 1);
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(projectName));
-		
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(new Path(projectName));
+
 		if (resource != null) {
-			throwCoreException("Project \"" + projectName + "\" is already existed.");
+			throwCoreException("Project \"" + projectName
+					+ "\" is already existed.");
 			return;
 		}
-		
+
 		try {
-			IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase().getRodinProject(projectName);
-			
+			IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
+					.getRodinProject(projectName);
+
 			IProject project = rodinProject.getProject();
-			if (!project.exists()) project.create(null);
+			if (!project.exists())
+				project.create(null);
 			project.open(null);
 			IProjectDescription description = project.getDescription();
 			description.setNatureIds(new String[] { RodinCore.NATURE_ID });
 			project.setDescription(description, null);
 			monitor.worked(1);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * Throw a Core exception.
 	 * <p>
-	 * @param message The message for displaying
-	 * @throws CoreException a Core exception with the status contains the input message
+	 * 
+	 * @param message
+	 *            The message for displaying
+	 * @throws CoreException
+	 *             a Core exception with the status contains the input message
 	 */
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "org.eventb.internal.ui", IStatus.OK, message, null);
+		IStatus status = new Status(IStatus.ERROR, "org.eventb.internal.ui",
+				IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
-	
 	/**
-	 * We will accept the selection in the workbench to see if
-	 * we can initialize from it.
+	 * We will accept the selection in the workbench to see if we can initialize
+	 * from it.
 	 * <p>
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
+	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.wizards;
 
@@ -15,7 +16,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -44,30 +44,33 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * The "New" wizard page allows setting the container for the new component as well
- * as the component name. The page will only accept component name without the extension
+ * @author htson
+ *         <p>
+ *         The "New" wizard page allows setting the container for the new
+ *         component as well as the component name. The page will only accept
+ *         component name without the extension.
  */
-
-public class NewComponentWizardPage 
-	extends WizardPage 
-{
+public class NewComponentWizardPage extends WizardPage {
 
 	// Some text areas.
 	private Text containerText;
+
 	private Text componentText;
 
 	// Some buttons.
 	private Button machineButton;
+
 	private Button contextButton;
-	
+
 	// The selection when the wizard is launched.
 	private ISelection selection;
 
-	
 	/**
 	 * Constructor for NewComponentWizardPage.
-	 * <p> 
-	 * @param selection The selection when the wizard is launched
+	 * <p>
+	 * 
+	 * @param selection
+	 *            The selection when the wizard is launched
 	 */
 	public NewComponentWizardPage(ISelection selection) {
 		super("wizardPage");
@@ -76,11 +79,11 @@ public class NewComponentWizardPage
 		this.selection = selection;
 	}
 
-	
 	/**
 	 * Creating the components of the dialog.
 	 * <p>
-	 * @see IDialogPage#createControl(Composite)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -118,85 +121,91 @@ public class NewComponentWizardPage
 				dialogChanged();
 			}
 		});
-		
-		createComposite(container, 1); // ignore the next cell
-		
-		// composite_tab << parent
-        Composite composite_tab = createComposite(container, 1);
-        createLabel(composite_tab, "Please choose the type of the new component"); //$NON-NLS-1$
-        GridData data = new GridData();
-        data.verticalAlignment = GridData.FILL;
-        data.horizontalAlignment = GridData.FILL;
-        data.horizontalSpan = 3;
-        composite_tab.setLayoutData(data);
 
-        //radio button composite << tab composite
-        Composite composite_radioButton = createComposite(composite_tab, 1);
-        machineButton = createRadioButton(composite_radioButton, "Machine"); //$NON-NLS-1$
-        contextButton = createRadioButton(composite_radioButton, "Context"); //$NON-NLS-1$
-		
+		createComposite(container, 1); // ignore the next cell
+
+		// composite_tab << parent
+		Composite composite_tab = createComposite(container, 1);
+		createLabel(composite_tab,
+				"Please choose the type of the new component"); //$NON-NLS-1$
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = 3;
+		composite_tab.setLayoutData(data);
+
+		// radio button composite << tab composite
+		Composite composite_radioButton = createComposite(composite_tab, 1);
+		machineButton = createRadioButton(composite_radioButton, "Machine"); //$NON-NLS-1$
+		contextButton = createRadioButton(composite_radioButton, "Context"); //$NON-NLS-1$
+
 		initialize();
 		dialogChanged();
 		setControl(container);
 	}
 
-    
 	/**
-     * Creates composite control and sets the default layout data.
-     * <p>
-     * @param parent  the parent of the new composite
-     * @param numColumns  the number of columns for the new composite
-     * @return the newly-created coposite
-     */
-    private Composite createComposite(Composite parent, int numColumns) {
-        Composite composite = new Composite(parent, SWT.NULL);
+	 * Creates composite control and sets the default layout data.
+	 * <p>
+	 * 
+	 * @param parent
+	 *            the parent of the new composite
+	 * @param numColumns
+	 *            the number of columns for the new composite
+	 * @return the newly-created coposite
+	 */
+	private Composite createComposite(Composite parent, int numColumns) {
+		Composite composite = new Composite(parent, SWT.NULL);
 
-        //GridLayout
-        GridLayout layout = new GridLayout();
-        layout.numColumns = numColumns;
-        composite.setLayout(layout);
+		// GridLayout
+		GridLayout layout = new GridLayout();
+		layout.numColumns = numColumns;
+		composite.setLayout(layout);
 
-        return composite;
-    }
+		return composite;
+	}
 
-    
-    /**
-     * Utility method that creates a label instance
-     * and sets the default layout data.
-     * <p>
-     * @param parent  the parent for the new label
-     * @param text  the text for the new label
-     * @return the new label
-     */
-    private Label createLabel(Composite parent, String text) {
-        Label label = new Label(parent, SWT.LEFT);
-        label.setText(text);
-        GridData data = new GridData();
-        data.horizontalSpan = 2;
-        data.horizontalAlignment = GridData.FILL;
-        label.setLayoutData(data);
-        return label;
-    }
-	
-    
-    /**
-     * Utility method that creates a radio button instance
-     * and sets the default layout data.
-     * <p>
-     * @param parent  the parent for the new button
-     * @param label  the label for the new button
-     * @return the newly-created button
-     */
-    private Button createRadioButton(Composite parent, String label) {
-        Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
-        button.setText(label);
-        GridData data = new GridData();
-        button.setLayoutData(data);
-        return button;
-    }
+	/**
+	 * Utility method that creates a label instance and sets the default layout
+	 * data.
+	 * <p>
+	 * 
+	 * @param parent
+	 *            the parent for the new label
+	 * @param text
+	 *            the text for the new label
+	 * @return the new label
+	 */
+	private Label createLabel(Composite parent, String text) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData(data);
+		return label;
+	}
 
-    
-    /**
+	/**
+	 * Utility method that creates a radio button instance and sets the default
+	 * layout data.
+	 * <p>
+	 * 
+	 * @param parent
+	 *            the parent for the new button
+	 * @param label
+	 *            the label for the new button
+	 * @return the newly-created button
+	 */
+	private Button createRadioButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
+		button.setText(label);
+		GridData data = new GridData();
+		button.setLayoutData(data);
+		return button;
+	}
+
+	/**
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */
 	private void initialize() {
@@ -214,20 +223,19 @@ public class NewComponentWizardPage
 			IRodinElement curr;
 			if (element instanceof IRodinElement) {
 				curr = (IRodinElement) element;
-			}
-			else if (element instanceof TreeNode) {
+			} else if (element instanceof TreeNode) {
 				curr = (IRodinElement) ((TreeNode) element).getParent();
-			}
-			else curr = null;
+			} else
+				curr = null;
 			while (!(curr instanceof IRodinProject || curr == null)) {
 				curr = curr.getParent();
 			}
 			project = (IRodinProject) curr;
-		}
-		else {
+		} else {
 			// Trying to find the current project from the Project Explorer
 			UIUtils.debug("From Project Explorer: ");
-			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin.getActivePage().findView(ProjectExplorer.VIEW_ID);
+			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin
+					.getActivePage().findView(ProjectExplorer.VIEW_ID);
 			project = explorer.getCurrentProject();
 		}
 
@@ -235,22 +243,20 @@ public class NewComponentWizardPage
 		if (project != null) {
 			try {
 				IResource obj = project.getCorrespondingResource();
-		
+
 				IContainer container;
 				if (obj instanceof IContainer)
 					container = (IContainer) obj;
 				else
 					container = ((IResource) obj).getParent();
 				containerText.setText(container.getFullPath().toString());
-			}
-			catch (RodinDBException e) {
+			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 		}
 		componentText.setFocus();
 		componentText.selectAll();
 	}
-
 
 	/**
 	 * Uses the standard container selection dialog to choose the new value for
@@ -268,7 +274,6 @@ public class NewComponentWizardPage
 		}
 	}
 
-	
 	/**
 	 * Ensures that both text fields are set correctly.
 	 */
@@ -281,7 +286,7 @@ public class NewComponentWizardPage
 			updateStatus("Project must be specified");
 			return;
 		}
-		
+
 		if (container == null
 				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
 			updateStatus("Project must exist");
@@ -299,65 +304,70 @@ public class NewComponentWizardPage
 			updateStatus("Component name must be valid");
 			return;
 		}
-		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase().getRodinProject(getContainerName());
+		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
+				.getRodinProject(getContainerName());
 		try {
-			IRodinElement [] elements = rodinProject.getChildren();
+			IRodinElement[] elements = rodinProject.getChildren();
 			for (IRodinElement elem : elements) {
 				if (elem instanceof IMachine || elem instanceof IContext) {
-					if (EventBPlugin.getComponentName(((IRodinFile) elem).getElementName()).equals(componentName)) {
+					if (EventBPlugin.getComponentName(
+							((IRodinFile) elem).getElementName()).equals(
+							componentName)) {
 						updateStatus("Component name already exists");
 						return;
 					}
 				}
 			}
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		
+
 		updateStatus(null);
 	}
 
-
-	/*
+	/**
 	 * Update the status of this dialog.
 	 * <p>
-	 * @param message A string message
+	 * 
+	 * @param message
+	 *            A string message
 	 */
 	private void updateStatus(String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}
 
-	
 	/**
 	 * Get the name of the container (project).
 	 * <p>
+	 * 
 	 * @return The name of the container project
 	 */
 	public String getContainerName() {
 		return containerText.getText();
 	}
 
-	
 	/**
 	 * Get the name of the new component.
 	 * <p>
+	 * 
 	 * @return The name of the new component (without extension)
 	 */
 	public String getComponentName() {
 		return componentText.getText();
 	}
-	
-	
+
 	/**
 	 * Get the type of the new component ("bum" / "buc").
 	 * <p>
+	 * 
 	 * @return The extension for the new component
 	 */
 	public String getType() {
-		if (machineButton.getSelection()) return "bum";
-		if (contextButton.getSelection()) return "buc";
+		if (machineButton.getSelection())
+			return "bum";
+		if (contextButton.getSelection())
+			return "buc";
 		return null;
 	}
 
