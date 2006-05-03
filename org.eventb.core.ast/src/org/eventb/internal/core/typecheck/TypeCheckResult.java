@@ -51,7 +51,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		super();
 		this.initialTypeEnvironment = (TypeEnvironment) typeEnvironment;
 		this.factory = this.initialTypeEnvironment.ff;
-		this.unifier = new TypeUnifier(typeVariables, factory, this);
+		this.unifier = new TypeUnifier(this);
 		this.inferredTypeEnvironment = (TypeEnvironment) factory.makeTypeEnvironment();
 	}
 
@@ -226,11 +226,13 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 *            the type on the right hand side of the equation
 	 * @param location
 	 *            the location of the expression that generated this equation
-	 * @return the type issued from the unification of this equation with the
-	 *         existing type equations
 	 */
-	public Type unify(Type left, Type right, SourceLocation location) {
-		return unifier.unify(left,right,location);
+	public void unify(Type left, Type right, SourceLocation location) {
+		unifier.unify(left,right,location);
+	}
+	
+	public final FormulaFactory getFormulaFactory() {
+		return factory;
 	}
 
 }

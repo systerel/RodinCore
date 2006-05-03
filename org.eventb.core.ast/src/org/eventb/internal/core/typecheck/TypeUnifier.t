@@ -8,8 +8,6 @@
 
 package org.eventb.internal.core.typecheck;
 
-import java.util.List;
-
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.GivenType;
@@ -30,19 +28,17 @@ import org.eventb.core.ast.FormulaFactory;
  */
 @SuppressWarnings("all")		// Hide warnings caused by Tom.
 public class TypeUnifier {
-	private List<TypeVariable> typeVariables;
 	private FormulaFactory factory;
 	private TypeCheckResult result;
 
-	public TypeUnifier (List<TypeVariable> typeVariables, FormulaFactory factory, TypeCheckResult result) {
-		this.typeVariables = typeVariables;
-		this.factory = factory;
+	public TypeUnifier (TypeCheckResult result) {
+		this.factory = result.getFormulaFactory();
 		this.result = result;
 	}
 	
 	%include{ Type.tom }
 	
-	public Type unify(Type left, Type right, SourceLocation location) {
+	protected final Type unify(Type left, Type right, SourceLocation location) {
 		if (left == null || right == null) {
 			return null;
 		}
@@ -85,7 +81,7 @@ public class TypeUnifier {
 				if (newChild == child2) {
 					return right;
 				}
-				return factory.makePowerSetType(newChild);
+				return result.makePowerSetType(newChild);
 			}
 			CProd(left1, right1), CProd(left2, right2) -> {
 				Type newLeft = unify(`left1, `left2, location);
@@ -99,7 +95,7 @@ public class TypeUnifier {
 				if (newLeft == left2 && newRight == right2) {
 					return right;
 				}
-				return factory.makeProductType(newLeft, newRight);
+				return result.makeProductType(newLeft, newRight);
 			}
 			Int(), Int() -> {
 				return left;
@@ -136,10 +132,10 @@ public class TypeUnifier {
 	/**
 	 * Returns the type variable's corresponding type.  Never returns <code>null</code>.
 	 *
-	 * @param inexpr the type variable to solve
+	 * @param intype the type variable to solve
 	 * @return the solved type
 	 */
-	public Type solve(Type intype) {
+	public final Type solve(Type intype) {
 		assert intype != null;
 		%match (Type intype) {
 			TypeVar() -> {
@@ -159,7 +155,7 @@ public class TypeUnifier {
 				if (newChild == child) {
 					return intype;
 				}
-				return factory.makePowerSetType(newChild);
+				return result.makePowerSetType(newChild);
 			}
 			CProd(left, right) -> {
 				Type newLeft = solve(left);
@@ -167,7 +163,7 @@ public class TypeUnifier {
 				if (newLeft == left && newRight == right) {
 					return intype;
 				}
-				return factory.makeProductType(newLeft, newRight);
+				return result.makeProductType(newLeft, newRight);
 			}
 			_ -> {
 				return intype;
@@ -175,7 +171,7 @@ public class TypeUnifier {
 		}
 	}
 
-	public boolean occurs(TypeVariable typeVar, Type expr) {
+	protected final boolean occurs(TypeVariable typeVar, Type expr) {
 		%match (Type expr) {
 			tv@TypeVar() -> {
 				return typeVar == `tv;
@@ -191,4 +187,9 @@ public class TypeUnifier {
 			}
 		}
 	}
+	
+	public final FormulaFactory getFormulaFactory() {
+		return factory;
+	}
+	
 }
