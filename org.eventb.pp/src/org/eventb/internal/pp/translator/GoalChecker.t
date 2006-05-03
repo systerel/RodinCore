@@ -75,12 +75,14 @@ public abstract class GoalChecker {
 			In(ME1, SE1) -> {
 				return isMapletExpression(`ME1) && isSetExpression(`SE1);
 			}
+			Equal(Identifier(), Identifier()) -> {
+				return true;
+			}
 			Equal(E1, E2) -> {
 				return 
 					(isArithmeticExpression(`E1) && isArithmeticExpression(`E2)) ||
 					(isSetExpression(`E1) && isSetExpression(`E2)) ||
-					(isBooleanExpression(`E1) && isBooleanExpression(`E2)) ||
-/*TODO: control*/	(isMapletExpression(`E1) && isMapletExpression(`E2));
+					(isBooleanExpression(`E1) && isBooleanExpression(`E2));
 			}	
 			_ -> {
 				return false;
