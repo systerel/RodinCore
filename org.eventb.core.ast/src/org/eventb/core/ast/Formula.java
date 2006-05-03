@@ -1760,8 +1760,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         given offset
 	 */
 	public T shiftBoundIdentifiers(int offset, FormulaFactory factory) {
-		final Substitution subst = new BoundIdentifierShifter(offset, factory);
-		return applySubstitution(subst);
+		if(offset == 0)
+			return getTypedThis();
+		else {
+			final Substitution subst = new BoundIdentifierShifter(offset, factory);
+			return applySubstitution(subst);
+		}
 	}
 	
 }
