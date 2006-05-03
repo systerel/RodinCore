@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
@@ -1407,22 +1408,8 @@ public class TestTypeChecker extends TestCase {
 		for (TestItem item: testItems) {
 			IParseResult parseResult = ff.parsePredicate(item.formula);
 			assertTrue("Couldn't parse " + item.formula, parseResult.isSuccess());
-			
 			Predicate formula = parseResult.getParsedPredicate();
-			ITypeCheckResult result = formula.typeCheck(item.initialEnv);
-			
-			assertEquals("\nTest failed on: " + item.formula
-					+ "\nParser result: " + formula.toString()
-					+ "\nType check results:\n" + result.toString()
-					+ "\nInitial type environment:\n" + result.getInitialTypeEnvironment() + "\n",
-					item.result, result.isSuccess());
-			assertEquals("\nResult typenv differ for: " + item.formula + "\n",
-						item.inferredEnv, result.getInferredEnvironment());
-			
-			if (result.isSuccess()) {
-				assertTrue(formula.isTypeChecked());
-				assertTrue("Problem with identifier caches", IdentsChecker.check(formula, ff));
-			}
+			doTest(item, formula);
 		}
 	}
 	
@@ -1430,22 +1417,24 @@ public class TestTypeChecker extends TestCase {
 		for (TestItem item: assignItems) {
 			IParseResult parseResult = ff.parseAssignment(item.formula);
 			assertTrue(parseResult.isSuccess());
-			
 			Assignment formula = parseResult.getParsedAssignment();
-			ITypeCheckResult result = formula.typeCheck(item.initialEnv);
-			
-			assertEquals("\nTest failed on: " + item.formula
-					+ "\nParser result: " + formula.toString()
-					+ "\nType check results:\n" + result.toString()
-					+ "\nInitial type environment:\n" + result.getInitialTypeEnvironment() + "\n",
-					item.result, result.isSuccess());
-			assertEquals("\nResult typenv differ for: " + item.formula + "\n",
-						item.inferredEnv, result.getInferredEnvironment());
-			
-			if (result.isSuccess()) {
-				assertTrue(formula.isTypeChecked());
-				assertTrue("Problem with identifier caches", IdentsChecker.check(formula, ff));
-			}
+			doTest(item, formula);
 		}
+	}
+
+	private void doTest(TestItem item, Formula formula) {
+		ITypeCheckResult result = formula.typeCheck(item.initialEnv);
+		
+		assertEquals("\nTest failed on: " + item.formula
+				+ "\nParser result: " + formula.toString()
+				+ "\nType check results:\n" + result.toString()
+				+ "\nInitial type environment:\n" + result.getInitialTypeEnvironment() + "\n",
+				item.result, result.isSuccess());
+		assertEquals("\nResult typenv differ for: " + item.formula + "\n",
+					item.inferredEnv, result.getInferredEnvironment());
+		
+		assertEquals("Incompatible result for isTypeChecked(): " + item.formula,
+				item.result, formula.isTypeChecked());
+		assertTrue("Problem with identifier caches", IdentsChecker.check(formula, ff));
 	}
 }
