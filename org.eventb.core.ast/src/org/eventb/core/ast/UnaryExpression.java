@@ -98,21 +98,21 @@ public class UnaryExpression extends Expression {
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert child != null;
 		
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
 
-		Type childType = child.getType();
-		
 		// Fast exit if children are not typed
 		// (the most common case where type synthesis can't be done)
-		if (childType == null) {
+		if (! child.isTypeChecked()) {
 			return;
 		}
 		
+		Type childType = child.getType();
 		final Type resultType;
 		final Type alpha, beta;
 		switch (getTag()) {
@@ -217,7 +217,10 @@ public class UnaryExpression extends Expression {
 			assert false;
 			resultType = null;
 		}
-		setType(resultType, null);
+		if (resultType == null) {
+			return;
+		}
+		setFinalType(resultType, givenType);
 	}
 
 	// for the operands that do not always need to be parenthesized,
@@ -331,11 +334,11 @@ public class UnaryExpression extends Expression {
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
-		TypeVariable alpha, beta;
-		Type resultType;
 		
 		child.typeCheck(result,quantifiedIdentifiers);
 		
+		final TypeVariable alpha, beta;
+		final Type resultType;
 		switch (getTag()) {
 		case Formula.UNMINUS:
 			resultType = result.makeIntegerType();
@@ -355,9 +358,9 @@ public class UnaryExpression extends Expression {
 		case Formula.POW:
 		case Formula.POW1:
 			alpha = result.newFreshVariable(null);
-			resultType = result.makePowerSetType(alpha);
-			result.unify(child.getType(), resultType, loc);
-			resultType = result.makePowerSetType(resultType);
+			Type childPattern = result.makePowerSetType(alpha);
+			result.unify(child.getType(), childPattern, loc);
+			resultType = result.makePowerSetType(childPattern);
 			break;
 		case Formula.KUNION:
 		case Formula.KINTER:
@@ -401,15 +404,14 @@ public class UnaryExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, result);
+		setTemporaryType(resultType, result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = child.solveType(unifier);
-		return finalizeType(success, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return child.solveType(unifier);
 	}
 
 	@Override

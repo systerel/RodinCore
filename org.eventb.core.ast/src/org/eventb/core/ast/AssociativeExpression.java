@@ -61,7 +61,7 @@ public class AssociativeExpression extends Expression {
 		this.children = new Expression[children.length];
 		System.arraycopy(children, 0, this.children, 0, children.length);
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
 	protected AssociativeExpression(List<? extends Expression> children,
@@ -71,7 +71,7 @@ public class AssociativeExpression extends Expression {
 		Expression[] model = new Expression[children.size()];
 		this.children = children.toArray(model);
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
 	private void checkPreconditions() {
@@ -80,7 +80,8 @@ public class AssociativeExpression extends Expression {
 		assert children.length >= 2;
 	}
 
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -169,9 +170,9 @@ public class AssociativeExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, null);
+		setFinalType(resultType, givenType);
 	}
 	
 	// indicates when the toString method should put parentheses
@@ -370,7 +371,6 @@ public class AssociativeExpression extends Expression {
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final SourceLocation loc = getSourceLocation();
 		Type resultType;
-		
 		switch (getTag()) {
 		case Formula.BUNION:
 		case Formula.BINTER:
@@ -420,18 +420,18 @@ public class AssociativeExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, result);
+		setTemporaryType(resultType, result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (Expression child : children) {
 			success &= child.solveType(unifier);
 		}
-		return finalizeType(success, unifier);
+		return success;
 	}
 
 	@Override

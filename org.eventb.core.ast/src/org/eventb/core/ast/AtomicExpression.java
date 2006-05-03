@@ -49,7 +49,8 @@ public class AtomicExpression extends Expression {
 		synthesizeType(factory, type);
 	}
 
-	private void synthesizeType(FormulaFactory ff, Type typeGiven) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = NO_FREE_IDENTS;
 		this.boundIdents = NO_BOUND_IDENTS;
 
@@ -68,8 +69,11 @@ public class AtomicExpression extends Expression {
 			resultType = ff.makeBooleanType();
 			break;
 		case Formula.EMPTYSET:
-			assert typeGiven == null || typeGiven instanceof PowerSetType;
-			resultType = typeGiven;
+			if (givenType == null) {
+				return;
+			}
+			assert givenType instanceof PowerSetType;
+			resultType = givenType;
 			break;
 		case Formula.KPRED:
 		case Formula.KSUCC:
@@ -80,10 +84,9 @@ public class AtomicExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		assert typeGiven == null || typeGiven.equals(resultType);
-		setType(resultType, null);
+		setFinalType(resultType, givenType);
 	}
 	
 	@Override
@@ -91,8 +94,8 @@ public class AtomicExpression extends Expression {
 			String[] boundNames, boolean withTypes) {
 		
 		final String image = tags[getTag()-firstTag];
-		if (withTypes && getTag() == EMPTYSET && type != null) {
-			return "(" + image + " \u2982 " + type + ")";
+		if (withTypes && getTag() == EMPTYSET && isTypeChecked()) {
+			return "(" + image + " \u2982 " + getType() + ")";
 		}
 		return image;
 	}
@@ -153,14 +156,14 @@ public class AtomicExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, result);
+		setTemporaryType(resultType, result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		return finalizeType(true, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return true;
 	}
 
 	@Override

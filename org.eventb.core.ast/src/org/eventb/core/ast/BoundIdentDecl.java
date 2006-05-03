@@ -35,17 +35,26 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	private final String name;
 	private Type type;
 	
-	protected BoundIdentDecl(String name, int tag, SourceLocation location, Type type) {
+	protected BoundIdentDecl(String name, int tag, SourceLocation location, Type givenType) {
 		super(tag, location, name.hashCode());
 		assert tag == Formula.BOUND_IDENT_DECL;
 		assert name != null;
 		assert name.length() != 0;
+		this.name = name;
 
+		synthesizeType(givenType);
+	}
+
+	private void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENTS;
 		this.boundIdents = NO_BOUND_IDENTS;
 
-		this.name = name;
-		this.type = type;
+		if (givenType == null)
+			return;
+		
+		assert givenType.isSolved();
+		this.type = givenType;
+		this.typeChecked = true;
 	}
 	
 	/**
@@ -129,17 +138,20 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		// this method should never be called
 		assert false;
-		return null;
+		return formulaFactory.makeLiteralPredicate(BTRUE, null);
 	}
 	
 	@Override
 	protected boolean solveType(TypeUnifier unifier) {
-		type = unifier.solve(type);
-		if (type.isSolved()) {
+		if (isTypeChecked()) {
 			return true;
 		}
+		Type inferredType = unifier.solve(type);
 		type = null;
-		return false;
+		if (inferredType != null && inferredType.isSolved()) {
+			synthesizeType(inferredType);
+		}
+		return isTypeChecked();
 	}
 
 	public Type getType() {
@@ -174,11 +186,6 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	@Override
 	protected boolean isWellFormed(int noOfBoundVars) {
 		return true;
-	}
-
-	@Override
-	public boolean isTypeChecked() {
-		return type != null;
 	}
 
 	@Override

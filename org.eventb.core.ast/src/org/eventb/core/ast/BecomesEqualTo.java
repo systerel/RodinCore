@@ -28,28 +28,28 @@ public class BecomesEqualTo extends Assignment {
 	private final Expression[] values;
 	
 	public BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, value.hashCode(), assignedIdent);
 		this.values = new Expression[] {value};
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	public BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = new Expression[values.length];
 		System.arraycopy(values, 0, this.values, 0, values.length);
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	public BecomesEqualTo(List<FreeIdentifier> assignedIdents, List<Expression> values,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.toArray(new Expression[values.size()]);
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	private void checkPreconditions() {
@@ -57,7 +57,8 @@ public class BecomesEqualTo extends Assignment {
 		assert assignedIdents.length == values.length;
 	}
 	
-	private void synthesizeType() {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;
 		final Expression[] children = new Expression[length * 2];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
@@ -81,7 +82,7 @@ public class BecomesEqualTo extends Assignment {
 				return;
 			}
 		}
-		finalizeTypeCheck(true, null);
+		typeChecked = true;
 	}
 	
 	/**
@@ -203,12 +204,12 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean result = true;
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		boolean success = true;
 		for (Expression value: values) {
-			result &= value.solveType(unifier);
+			success &= value.solveType(unifier);
 		}
-		return finalizeTypeCheck(result, unifier);
+		return success;
 	}
 
 	@Override

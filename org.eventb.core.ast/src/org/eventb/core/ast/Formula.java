@@ -61,6 +61,12 @@ public abstract class Formula<T extends Formula<T>> {
 	// not necessarily the Formula constructor).
 	protected BoundIdentifier[] boundIdents;
 	
+	// True iff this formula has been type-checked. When true, any type
+	// information associated to this formula is frozen. When false, type
+	// information is either inexistant (pure syntactical formula) or transitory
+	// (during type-check).
+	protected boolean typeChecked;
+	
 	/**
 	 * <code>STARTTAG</code> represents the tag of a node parent, when the
 	 * node is the root node of a formula.
@@ -1739,7 +1745,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @return <code>true</code> iff this formula has been type-checked
 	 */
-	public abstract boolean isTypeChecked();
+	public final boolean isTypeChecked() {
+		return typeChecked;
+	}
 	
 	/**
 	 * Returns a copy of this formula where all externally bound identifier
@@ -1760,12 +1768,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         given offset
 	 */
 	public T shiftBoundIdentifiers(int offset, FormulaFactory factory) {
-		if(offset == 0)
+		if (offset == 0) {
 			return getTypedThis();
-		else {
-			final Substitution subst = new BoundIdentifierShifter(offset, factory);
-			return applySubstitution(subst);
 		}
+		final Substitution subst = new BoundIdentifierShifter(offset, factory);
+		return applySubstitution(subst);
 	}
 	
 }

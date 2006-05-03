@@ -32,13 +32,20 @@ public class LiteralPredicate extends Predicate {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 	
-	protected LiteralPredicate(int tag, SourceLocation location) {
+	protected LiteralPredicate(int tag, SourceLocation location,
+			FormulaFactory ff) {
+		
 		super(tag, location, 0);
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		
+		synthesizeType(ff);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		this.freeIdents = NO_FREE_IDENTS;
 		this.boundIdents = NO_BOUND_IDENTS;
-		finalizeTypeCheck(true);
+		typeChecked = true;
 	}
 
 	@Override
@@ -73,8 +80,8 @@ public class LiteralPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		return finalizeTypeCheck(true);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return true;
 	}
 	
 	@Override

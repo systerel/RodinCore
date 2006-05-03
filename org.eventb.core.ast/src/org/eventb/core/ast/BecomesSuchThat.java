@@ -93,7 +93,8 @@ public class BecomesSuchThat extends Assignment {
 		assert this.primedIdents.length == assignedIdents.length;
 	}
 	
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;
 		final Formula[] children = new Formula[length + 1];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
@@ -122,7 +123,7 @@ public class BecomesSuchThat extends Assignment {
 				return;
 			}
 		}
-		finalizeTypeCheck(true, null);
+		typeChecked = true;
 	}
 
 	/**
@@ -207,13 +208,6 @@ public class BecomesSuchThat extends Assignment {
 			primedIdents[i].typeCheck(result, boundAbove);
 			result.unify(assignedIdents[i].getType(), primedIdents[i].getType(), loc);
 		}
-		
-		// Also set a type to bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			ident.typeCheck(result, boundAbove);
-		}
-		
 		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, primedIdents);
 		condition.typeCheck(result, boundBelow);
 	}
@@ -242,20 +236,13 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean result = true;
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		boolean success = true;
 		for (BoundIdentDecl ident : primedIdents) {
-			result &= ident.solveType(unifier);
+			success &= ident.solveType(unifier);
 		}
-		result &= condition.solveType(unifier);
-
-		// Also solve type of bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			result &= ident.solveType(unifier);
-		}
-
-		return finalizeTypeCheck(result, unifier);
+		success &= condition.solveType(unifier);
+		return success;
 	}
 
 	@Override

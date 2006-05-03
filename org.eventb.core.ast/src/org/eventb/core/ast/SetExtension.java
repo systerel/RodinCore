@@ -38,7 +38,7 @@ public class SetExtension extends Expression {
 		this.members = new Expression[] {expression};
 
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
 	protected SetExtension(Expression[] expressions, SourceLocation location,
@@ -48,7 +48,7 @@ public class SetExtension extends Expression {
 		System.arraycopy(expressions, 0, this.members, 0, expressions.length);
 
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
 	protected SetExtension(List<? extends Expression> expressions,
@@ -58,7 +58,7 @@ public class SetExtension extends Expression {
 		this.members = expressions.toArray(temp);
 
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 
 	// Common initialization.
@@ -67,7 +67,8 @@ public class SetExtension extends Expression {
 		assert members != null;
 	}
 	
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -79,22 +80,28 @@ public class SetExtension extends Expression {
 			return;
 		}
 		
-		
 		final int length = members.length;
+		final Type resultType;
 		if (length == 0) {
 			// Empty set, no way to synthesize its type.
-			return;
-		}
-		final Type memberType = members[0].getType();
-		if (memberType == null) {
-			return;
-		}
-		for (int i = 1; i < length; i++) {
-			if (! memberType.equals(members[i].getType())) {
+			if (givenType == null) {
 				return;
 			}
+			assert givenType instanceof PowerSetType;
+			resultType = givenType;
+		} else {
+			final Type memberType = members[0].getType();
+			if (memberType == null) {
+				return;
+			}
+			for (int i = 1; i < length; i++) {
+				if (! memberType.equals(members[i].getType())) {
+					return;
+				}
+			}
+			resultType = ff.makePowerSetType(memberType);
 		}
-		setType(ff.makePowerSetType(memberType), null);
+		setFinalType(resultType, givenType);
 	}
 
 	/**
@@ -113,8 +120,8 @@ public class SetExtension extends Expression {
 			String[] boundNames, boolean withTypes) {
 
 		// Might be a typed empty set
-		if (withTypes && type != null && members.length == 0) {
-			return "(\u2205 \u2982 " + type + ")";
+		if (withTypes && members.length == 0 && isTypeChecked()) {
+			return "(\u2205 \u2982 " + getType() + ")";
 		}
 		
 		StringBuffer str = new StringBuffer();
@@ -203,16 +210,16 @@ public class SetExtension extends Expression {
 			member.typeCheck(result, quantifiedIdentifiers);
 			result.unify(member.getType(), alpha, getSourceLocation());
 		}
-		setType(result.makePowerSetType(alpha), result);
+		setTemporaryType(result.makePowerSetType(alpha), result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (Expression member : members) {
 			success &= member.solveType(unifier);
 		}
-		return finalizeType(success, unifier);
+		return success;
 	}
 
 	@Override

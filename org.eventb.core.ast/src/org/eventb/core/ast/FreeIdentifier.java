@@ -28,16 +28,25 @@ public class FreeIdentifier extends Identifier {
 	private final String name;
 	
 	protected FreeIdentifier(String name, int tag, SourceLocation location,
-			Type type) {
+			Type type, FormulaFactory ff) {
 		super(tag, location, name.hashCode());
 		assert tag == Formula.FREE_IDENT;
 		assert name != null;
 		assert name.length() != 0;
 
 		this.name = name;
+		synthesizeType(ff, type);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = new FreeIdentifier[] {this};
 		this.boundIdents = NO_BOUND_IDENTS;
-		this.setType(type, null);
+		
+		if (givenType == null) {
+			return;
+		}
+		setFinalType(givenType, givenType);
 	}
 	
 	/**
@@ -100,12 +109,12 @@ public class FreeIdentifier extends Identifier {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		setType(result.getIdentType(this), result);
+		setTemporaryType(result.getIdentType(this), result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		return finalizeType(true, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return true;
 	}
 
 	@Override

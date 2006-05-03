@@ -41,7 +41,7 @@ public class BinaryPredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 	
 	protected BinaryPredicate(Predicate left, Predicate right, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
@@ -50,10 +50,11 @@ public class BinaryPredicate extends Predicate {
 		assert left != null;
 		assert right != null;
 
-		synthesizeType();
+		synthesizeType(ff);
 	}
 	
-	private void synthesizeType() {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
@@ -67,7 +68,9 @@ public class BinaryPredicate extends Predicate {
 			return;
 		}
 		
-		finalizeTypeCheck(left.isTypeChecked() && right.isTypeChecked());
+		if (left.isTypeChecked() && right.isTypeChecked()) {
+			typeChecked = true;
+		}
 	}
 
 	// indicates when toString should put itself inside parentheses
@@ -130,9 +133,8 @@ public class BinaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = left.solveType(unifier) & right.solveType(unifier);
-		return finalizeTypeCheck(success);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return left.solveType(unifier) & right.solveType(unifier);
 	}
 
 	@Override

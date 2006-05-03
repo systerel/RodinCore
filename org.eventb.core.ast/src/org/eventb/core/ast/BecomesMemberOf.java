@@ -27,16 +27,21 @@ public class BecomesMemberOf extends Assignment {
 	private final Expression setExpr;
 	
 	public BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(), assignedIdent);
 		this.setExpr = setExpr;
 
+		synthesizeType(ff);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
-					assignedIdent.freeIdents, setExpr.freeIdents);
+					assignedIdents[0].freeIdents, setExpr.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		IdentListMerger boundIdentMerger = IdentListMerger.makeMerger(
-					assignedIdent.boundIdents, setExpr.boundIdents);
+					assignedIdents[0].boundIdents, setExpr.boundIdents);
 		this.boundIdents = boundIdentMerger.getBoundMergedArray();
 
 		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
@@ -44,11 +49,15 @@ public class BecomesMemberOf extends Assignment {
 			return;
 		}
 
+		if (! setExpr.isTypeChecked())
+			return;
+
 		// Check equality of types
-		final Type type = assignedIdent.getType();
-		if (type != null && type.equals(setExpr.getType().getBaseType())) {
-			finalizeTypeCheck(true, null);
+		final Type type = assignedIdents[0].getType();
+		if (type == null || ! type.equals(setExpr.getType().getBaseType())) {
+			return;
 		}
+		typeChecked = true;
 	}
 
 	/**
@@ -143,9 +152,8 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean result = setExpr.solveType(unifier);
-		return finalizeTypeCheck(result, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return setExpr.solveType(unifier);
 	}
 
 	@Override

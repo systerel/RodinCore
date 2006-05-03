@@ -94,7 +94,7 @@ public class FormulaFactory {
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, List<Predicate> predicates, SourceLocation location) {
-		return new AssociativePredicate(predicates, tag, location);
+		return new AssociativePredicate(predicates, tag, location, this);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class FormulaFactory {
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Predicate[] predicates, SourceLocation location) {
-		return new AssociativePredicate(predicates, tag, location);
+		return new AssociativePredicate(predicates, tag, location, this);
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier ident,
 			Expression value, SourceLocation location) {
-		return new BecomesEqualTo(ident, value, location);
+		return new BecomesEqualTo(ident, value, location, this);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier[] idents,
 			Expression[] values, SourceLocation location) {
-		return new BecomesEqualTo(idents, values, location);
+		return new BecomesEqualTo(idents, values, location, this);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(List<FreeIdentifier> idents,
 			List<Expression> values, SourceLocation location) {
-		return new BecomesEqualTo(idents, values, location);
+		return new BecomesEqualTo(idents, values, location, this);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class FormulaFactory {
 	 */
 	public BecomesMemberOf makeBecomesMemberOf(FreeIdentifier ident,
 			Expression setExpr, SourceLocation location) {
-		return new BecomesMemberOf(ident, setExpr, location);
+		return new BecomesMemberOf(ident, setExpr, location, this);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class FormulaFactory {
 	 */
 	public BinaryPredicate makeBinaryPredicate(int tag,
 			Predicate left, Predicate right, SourceLocation location) {
-		return new BinaryPredicate(left, right, tag, location);
+		return new BinaryPredicate(left, right, tag, location, this);
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentifier makeBoundIdentifier(int index,
 			SourceLocation location) {
-		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, null);
+		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, null, this);
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentifier makeBoundIdentifier(int index,
 			SourceLocation location, Type type) {
-		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, type);
+		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, type, this);
 	}
 
 	/**
@@ -430,7 +430,7 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location) {
-		return new FreeIdentifier(name, Formula.FREE_IDENT, location, null);
+		return new FreeIdentifier(name, Formula.FREE_IDENT, location, null, this);
 	}
 	
 	/**
@@ -449,7 +449,7 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location, Type type) {
-		return new FreeIdentifier(name, Formula.FREE_IDENT, location, type);
+		return new FreeIdentifier(name, Formula.FREE_IDENT, location, type, this);
 	}
 	
 	/**
@@ -499,7 +499,7 @@ public class FormulaFactory {
 	 */
 	public LiteralPredicate makeLiteralPredicate(int tag,
 			SourceLocation location) {
-		return new LiteralPredicate(tag, location);
+		return new LiteralPredicate(tag, location, this);
 	}
 
 	/**
@@ -611,7 +611,7 @@ public class FormulaFactory {
 	 */
 	public RelationalPredicate makeRelationalPredicate(int tag,
 			Expression left, Expression right, SourceLocation location) {
-		return new RelationalPredicate(left, right, tag, location);
+		return new RelationalPredicate(left, right, tag, location, this);
 	}
 
 	/**
@@ -675,7 +675,7 @@ public class FormulaFactory {
 	 */
 	public SimplePredicate makeSimplePredicate(int tag, Expression child,
 			SourceLocation location) {
-		return new SimplePredicate(child, tag, location);
+		return new SimplePredicate(child, tag, location, this);
 	}
 
 	/**
@@ -721,7 +721,7 @@ public class FormulaFactory {
 	 */
 	public UnaryPredicate makeUnaryPredicate(int tag, Predicate child,
 			SourceLocation location) {
-		return new UnaryPredicate(child, tag, location);
+		return new UnaryPredicate(child, tag, location, this);
 	}
 	
 	/**

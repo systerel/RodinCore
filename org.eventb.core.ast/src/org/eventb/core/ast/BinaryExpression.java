@@ -80,10 +80,11 @@ public class BinaryExpression extends Expression {
 		assert left != null;
 		assert right != null;
 		
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 	
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
@@ -97,14 +98,13 @@ public class BinaryExpression extends Expression {
 			return;
 		}
 
-		Type leftType = left.getType();
-		Type rightType = right.getType();
-		
 		// Fast exit if children are not typed
 		// (the most common case where type synthesis can't be done)
-		if (leftType == null || rightType == null) {
+		if (! left.isTypeChecked() || ! right.isTypeChecked()) {
 			return;
 		}
+		Type leftType = left.getType();
+		Type rightType = right.getType();
 		
 		final Type resultType;
 		Type alpha, beta, gamma, delta;
@@ -230,7 +230,11 @@ public class BinaryExpression extends Expression {
 			assert false;
 			resultType = null;
 		}
-		setType(resultType, null);
+		
+		if (resultType == null) {
+			return;
+		}
+		setFinalType(resultType, givenType);
 	}
 	
 	
@@ -576,15 +580,14 @@ public class BinaryExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, result);
+		setTemporaryType(resultType, result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = left.solveType(unifier) & right.solveType(unifier);
-		return finalizeType(success, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return left.solveType(unifier) & right.solveType(unifier);
 	}
 
 	@Override

@@ -34,9 +34,6 @@ public abstract class Assignment extends Formula<Assignment> {
 
 	protected final FreeIdentifier[] assignedIdents;
 	
-	// True iff this formula has been type-checked
-	private boolean typeChecked;
-	
 	/**
 	 * Creates a new assignment with the given arguments.
 	 * 
@@ -102,16 +99,24 @@ public abstract class Assignment extends Formula<Assignment> {
 		return this;
 	}
 
-	protected final boolean finalizeTypeCheck(boolean childrenOK, TypeUnifier unifier) {
-		assert typeChecked == false || typeChecked == childrenOK;
-		typeChecked = childrenOK;
-		if (unifier != null) {
-			for (FreeIdentifier ident: assignedIdents) {
-				typeChecked &= ident.solveType(unifier);
-			}
+	@Override
+	protected final boolean solveType(TypeUnifier unifier) {
+		if (isTypeChecked()) {
+			return true;
 		}
-		return typeChecked;
+		boolean success = solveChildrenTypes(unifier);
+		for (FreeIdentifier ident: assignedIdents) {
+			success &= ident.solveType(unifier);
+		}
+		if (success) {
+			synthesizeType(unifier.getFormulaFactory());
+		}
+		return isTypeChecked();
 	}
+
+	// Calls recursively solveType on each child of this node and
+	// returns true if all calls where successful.
+	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
 
 	/**
 	 * Return the left-hand side of this assignment.
@@ -119,7 +124,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * @return an array of the free identifiers that make up the left-hand side
 	 *         of this assignment
 	 */
-	public FreeIdentifier[] getAssignedIdentifiers() {
+	public final FreeIdentifier[] getAssignedIdentifiers() {
 		FreeIdentifier[] result = new FreeIdentifier[this.assignedIdents.length];
 		System.arraycopy(assignedIdents, 0, result, 0, assignedIdents.length);
 		return result;
@@ -143,11 +148,6 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	public final boolean isTypeChecked() {
-		return typeChecked;
-	}
-
-	@Override
 	public final Assignment applySubstitution(Substitution subst) {
 		// Should never happen
 		assert false;
@@ -162,7 +162,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 *            factory to use for creating the predicate
 	 * @return Returns the feasibility predicate
 	 */
-	public Predicate getFISPredicate(FormulaFactory formulaFactory) {
+	public final Predicate getFISPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
 		return getFISPredicateRaw(formulaFactory).flatten(formulaFactory);
 	}
@@ -177,7 +177,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 *            factory to use for creating the predicate
 	 * @return Returns the before-after predicate of this assignment
 	 */
-	public Predicate getBAPredicate(FormulaFactory formulaFactory) {
+	public final Predicate getBAPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
 		return getBAPredicateRaw(formulaFactory).flatten(formulaFactory);
 	}
@@ -196,4 +196,6 @@ public abstract class Assignment extends Formula<Assignment> {
 	 */
 	public abstract FreeIdentifier[] getUsedIdentifiers();
 	
+	protected abstract void synthesizeType(FormulaFactory ff);
+
 }

@@ -103,7 +103,7 @@ public class QuantifiedExpression extends Expression {
 		this.form = form;
 
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 	
 	protected QuantifiedExpression(Expression expr, Predicate pred,
@@ -123,7 +123,7 @@ public class QuantifiedExpression extends Expression {
 		this.form = form;
 
 		checkPreconditions();
-		synthesizeType(factory);
+		synthesizeType(factory, null);
 	}
 	
 	// Common initialization.
@@ -140,7 +140,8 @@ public class QuantifiedExpression extends Expression {
 		}
 	}
 	
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		final IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(pred.freeIdents, expr.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
@@ -162,14 +163,13 @@ public class QuantifiedExpression extends Expression {
 			return;
 		}
 		
-		final Type exprType = expr.getType();
-		
 		// Fast exit if children are not typed
 		// (the most common case where type synthesis can't be done)
-		if (! pred.isTypeChecked() || exprType == null) {
+		if (! pred.isTypeChecked() || ! expr.isTypeChecked()) {
 			return;
 		}
 		
+		final Type exprType = expr.getType();
 		final Type resultType;
 		switch (getTag()) {
 		case Formula.QUNION:
@@ -178,7 +178,7 @@ public class QuantifiedExpression extends Expression {
 			if (alpha != null) {
 				resultType = exprType;
 			} else {
-				resultType = null;
+				return;
 			}
 			break;
 		case Formula.CSET:
@@ -186,9 +186,10 @@ public class QuantifiedExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		setType(resultType, null);
+		
+		setFinalType(resultType, givenType);
 	}
 	
 	// indicates when the toString method should put parentheses
@@ -502,7 +503,8 @@ public class QuantifiedExpression extends Expression {
 			decl.typeCheck(result, quantifiedIdents);
 		}
 		
-		final BoundIdentDecl[] newQuantifiers = catenateBoundIdentLists(quantifiedIdents, quantifiedIdentifiers);
+		final BoundIdentDecl[] newQuantifiers = 
+			catenateBoundIdentLists(quantifiedIdents, quantifiedIdentifiers);
 		pred.typeCheck(result,newQuantifiers);
 		expr.typeCheck(result,newQuantifiers);
 
@@ -519,34 +521,20 @@ public class QuantifiedExpression extends Expression {
 			break;
 		default:
 			assert false;
-			resultType = null;
+			return;
 		}
-		
-		// Also set a type to bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			ident.typeCheck(result, quantifiedIdents);
-		}
-
-		setType(resultType, result);
+		setTemporaryType(resultType, result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (BoundIdentDecl ident: quantifiedIdentifiers) {
 			success &= ident.solveType(unifier);
 		}
 		success &= expr.solveType(unifier);
 		success &= pred.solveType(unifier);
-
-		// Also solve type of bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			success &= ident.solveType(unifier);
-		}
-
-		return finalizeType(success, unifier);
+		return success;
 	}
 
 	@Override

@@ -32,11 +32,19 @@ public class BoolExpression extends Expression {
 		super(tag, location, child.hashCode());
 		assert tag == KBOOL;
 		this.child = child;
+		synthesizeType(ff, null);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
-		if (child.isTypeChecked()) {
-			setType(ff.makeBooleanType(), null);
+		
+		if (! child.isTypeChecked()) {
+			return;
 		}
+		
+		setFinalType(ff.makeBooleanType(), givenType);
 	}
 
 	/**
@@ -85,13 +93,12 @@ public class BoolExpression extends Expression {
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		child.typeCheck(result, quantifiedIdentifiers);
-		setType(result.makeBooleanType(), result);
+		setTemporaryType(result.makeBooleanType(), result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = child.solveType(unifier);
-		return finalizeType(success, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return child.solveType(unifier);
 	}
 	
 	@Override

@@ -35,9 +35,15 @@ public class IntegerLiteral extends Expression {
 		assert literal != null;
 		this.literal = literal;
 		
+		synthesizeType(ff, null);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = NO_FREE_IDENTS;
 		this.boundIdents = NO_BOUND_IDENTS;
-		setType(ff.makeIntegerType(), null);
+		
+		setFinalType(ff.makeIntegerType(), givenType);
 	}
 
 	/**
@@ -78,12 +84,12 @@ public class IntegerLiteral extends Expression {
 
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
-		setType(result.makeIntegerType(), result);
+		setTemporaryType(result.makeIntegerType(), result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		return finalizeType(true, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return true;
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package org.eventb.core.ast;
 
+import org.eventb.internal.core.typecheck.TypeUnifier;
+
 
 
 /**
@@ -11,9 +13,6 @@ package org.eventb.core.ast;
  */
 public abstract class Predicate extends Formula<Predicate> {
 
-	// True iff this formula has been type-checked
-	private boolean typeChecked;
-	
 	/**
 	 * Creates a new predicate with the specified tag and source location.
 	 * 
@@ -26,19 +25,26 @@ public abstract class Predicate extends Formula<Predicate> {
 	}
 
 	@Override
-	protected Predicate getTypedThis() {
+	protected final Predicate getTypedThis() {
 		return this;
 	}
 
+	protected abstract void synthesizeType(FormulaFactory ff);
+	
 	@Override
-	public boolean isTypeChecked() {
-		return typeChecked;
+	protected final boolean solveType(TypeUnifier unifier) {
+		if (isTypeChecked()) {
+			return true;
+		}
+		boolean success = solveChildrenTypes(unifier);
+		if (success) {
+			synthesizeType(unifier.getFormulaFactory());
+		}
+		return isTypeChecked();
 	}
 
-	protected final boolean finalizeTypeCheck(boolean childrenOK) {
-		assert typeChecked == false || typeChecked == childrenOK;
-		typeChecked = childrenOK;
-		return typeChecked;
-	}
-
+	// Calls recursively solveType on each child of this node and
+	// returns true if all calls where successful.
+	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+	
 }

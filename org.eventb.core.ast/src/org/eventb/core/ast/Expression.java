@@ -14,7 +14,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public abstract class Expression extends Formula<Expression> {
 
-	protected Type type = null;
+	private Type type = null;
 
 	/**
 	 * Creates a new expression with the specified tag and source location.
@@ -27,24 +27,14 @@ public abstract class Expression extends Formula<Expression> {
 		super(tag, location, hashCode);
 	}
 	
-	protected final boolean finalizeType(boolean childrenOK, TypeUnifier unifier) {
-		if (childrenOK == false) {
-			type = null;
-			return false;
-		}
-		if (type == null) {
-			// Shared node, already cleaned up in second pass.
-			return false;
-		}
-		if (type.isSolved()) {
-			return true;
-		}
-		type = unifier.solve(type);
-		if (type.isSolved()) {
-			return true;
-		}
-		type = null;
-		return false;
+	protected abstract void synthesizeType(FormulaFactory ff, Type givenType);
+	
+	protected final void setFinalType(Type synType, Type givenType) {
+		assert synType != null;
+		assert synType.isSolved();
+		assert givenType == null || givenType.equals(synType);
+		type = synType;
+		typeChecked = true;
 	}
 
 	/**
@@ -53,12 +43,12 @@ public abstract class Expression extends Formula<Expression> {
 	 * @return the type of this expression. <code>null</code> if this 
 	 * expression is ill-typed or typecheck has not been done yet
 	 */
-	public Type getType() {
+	public final Type getType() {
 		return type;
 	}
 	
 	@Override
-	protected Expression getTypedThis() {
+	protected final Expression getTypedThis() {
 		return this;
 	}
 
@@ -67,20 +57,15 @@ public abstract class Expression extends Formula<Expression> {
 		return type != null ? " [type: " + type + "]" : "";
 	}
 
-	protected boolean hasSameType(Formula other) {
+	protected final boolean hasSameType(Formula other) {
 		// By construction, other is also an expression
 		Expression otherExpr = (Expression) other;
 		return type == null ? otherExpr.type == null : type.equals(otherExpr.type);
 	}
 	
-	@Override
-	public boolean isTypeChecked() {
-		return type != null;
-	}
-
 	/**
-	 * Sets a type for this expression. This method should only be used by
-	 * method {@link Formula#typeCheck(TypeEnvironment)}.
+	 * Sets a temporary type for this expression. This method should only be
+	 * used by method {@link Formula#typeCheck(TypeEnvironment)}.
 	 * <p>
 	 * If the formula has already been type-checked, we just verify that the
 	 * given type is unifiable with the already set type.
@@ -89,12 +74,9 @@ public abstract class Expression extends Formula<Expression> {
 	 * @param type
 	 *            the type of the formula
 	 */
-	protected void setType(Type type, TypeCheckResult result) {
+	protected final void setTemporaryType(Type type, TypeCheckResult result) {
 		if (this.type == null) {
 			this.type = type;
-		} else if (result == null) {
-			// Internal setting of type, outside of type-check
-			assert this.type.equals(type);
 		} else {
 			result.unify(this.type, type, getSourceLocation());
 		}
@@ -157,4 +139,23 @@ public abstract class Expression extends Formula<Expression> {
 		return result;
 	}
 
+	@Override
+	protected final boolean solveType(TypeUnifier unifier) {
+		if (isTypeChecked()) {
+			return true;
+		}
+		Type inferredType = unifier.solve(type);
+		type = null;
+		boolean success = inferredType != null && inferredType.isSolved();
+		success &= solveChildrenTypes(unifier);
+		if (success) {
+			synthesizeType(unifier.getFormulaFactory(), inferredType);
+		}
+		return isTypeChecked();
+	}
+
+	// Calls recursively solveType on each child of this node and
+	// returns true if all calls where successful.
+	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+	
 }

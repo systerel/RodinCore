@@ -33,16 +33,26 @@ public class UnaryPredicate extends Predicate {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 
-	protected UnaryPredicate(Predicate child, int tag, SourceLocation location) {
+	protected UnaryPredicate(Predicate child, int tag, SourceLocation location,
+			FormulaFactory ff) {
+
 		super(tag, location, child.hashCode());
 		this.child = child;
 		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert child != null;
 		
+		synthesizeType(ff);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
-		finalizeTypeCheck(child.isTypeChecked());
+		
+		if (! child.isTypeChecked())
+			return;
+		typeChecked = true;
 	}
 	
 	/**
@@ -87,9 +97,8 @@ public class UnaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = child.solveType(unifier);
-		return finalizeTypeCheck(success);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return child.solveType(unifier);
 	}
 
 	@Override

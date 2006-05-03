@@ -33,7 +33,7 @@ public class BoundIdentifier extends Identifier {
 	private final int boundIndex;
 
 	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location,
-			Type type) {
+			Type type, FormulaFactory ff) {
 
 		super(tag, location, boundIndex);
 		assert tag == Formula.BOUND_IDENT;
@@ -41,9 +41,18 @@ public class BoundIdentifier extends Identifier {
 		
 		this.boundIndex = boundIndex;
 		
+		synthesizeType(ff, type);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = NO_FREE_IDENTS;
 		this.boundIdents = new BoundIdentifier[] {this};
-		this.setType(type, null);
+		
+		if (givenType == null) {
+			return;
+		}
+		setFinalType(givenType, givenType);
 	}
 
 	/**
@@ -120,12 +129,12 @@ public class BoundIdentifier extends Identifier {
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		final BoundIdentDecl decl = getDeclaration(quantifiedIdentifiers);
 		assert decl != null : "Bound variable without a declaration";
-		setType(decl.getType(), result);
+		setTemporaryType(decl.getType(), result);
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		return finalizeType(true, unifier);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return true;
 	}
 
 	@Override

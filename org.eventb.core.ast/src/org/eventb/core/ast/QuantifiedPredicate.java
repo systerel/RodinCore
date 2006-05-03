@@ -83,7 +83,8 @@ public class QuantifiedPredicate extends Predicate {
 		assert pred != null;
 	}
 
-	private void synthesizeType(FormulaFactory ff) {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		this.freeIdents = pred.freeIdents;
 
 		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
@@ -95,7 +96,10 @@ public class QuantifiedPredicate extends Predicate {
 			return;
 		}
 
-		finalizeTypeCheck(pred.isTypeChecked());
+		if (! pred.isTypeChecked())
+			return;
+		
+		typeChecked = true;
 	}
 	
 	// indicates when the toString method should put parentheses
@@ -225,29 +229,16 @@ public class QuantifiedPredicate extends Predicate {
 		}
 		BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, quantifiedIdentifiers);
 		pred.typeCheck(result, boundBelow);
-		
-		// Also set a type to bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			ident.typeCheck(result, boundAbove);
-		}
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (BoundIdentDecl ident: quantifiedIdentifiers) {
 			success &= ident.solveType(unifier);
 		}
 		success &= pred.solveType(unifier);
-
-		// Also solve type of bound identifiers in the type-checker cache, as
-		// they are created by this node.
-		for (BoundIdentifier ident: boundIdents) {
-			success &= ident.solveType(unifier);
-		}
-
-		return finalizeTypeCheck(success);
+		return success;
 	}
 
 	@Override

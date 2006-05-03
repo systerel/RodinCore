@@ -34,15 +34,25 @@ public class SimplePredicate extends Predicate {
 		"finite" // KFINITE
 	};
 	
-	protected SimplePredicate(Expression child, int tag, SourceLocation location) {
+	protected SimplePredicate(Expression child, int tag,
+			SourceLocation location, FormulaFactory ff) {
+		
 		super(tag, location, child.hashCode());
 		this.child = child;
 		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		
+		synthesizeType(ff);
+	}
+
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
-		finalizeTypeCheck(child.isTypeChecked());
+		
+		if (! child.isTypeChecked())
+			return;
+		typeChecked = true;
 	}
 	
 	/**
@@ -102,9 +112,8 @@ public class SimplePredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = child.solveType(unifier);
-		return finalizeTypeCheck(success);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return child.solveType(unifier);
 	}
 
 	@Override

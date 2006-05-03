@@ -47,25 +47,25 @@ public class AssociativePredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 	
 	protected AssociativePredicate(Predicate[] children, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(children));
 		this.children = new Predicate[children.length];
 		System.arraycopy(children, 0, this.children, 0, children.length);
 		
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	protected AssociativePredicate(List<Predicate> children, int tag,
-			SourceLocation location) {
+			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(children));
 		Predicate[] model = new Predicate[children.size()];
 		this.children = children.toArray(model);
 
 		checkPreconditions();
-		synthesizeType();
+		synthesizeType(ff);
 	}
 
 	// Common initialization.
@@ -75,7 +75,8 @@ public class AssociativePredicate extends Predicate {
 		assert children.length >= 2;
 	}
 	
-	private void synthesizeType() {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -92,7 +93,7 @@ public class AssociativePredicate extends Predicate {
 				return;
 			}
 		}
-		finalizeTypeCheck(true);
+		typeChecked = true;
 	}
 	
 	// indicates when the toString method should put parentheses
@@ -177,12 +178,12 @@ public class AssociativePredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (Predicate child: children) {
 			success &= child.solveType(unifier);
 		}
-		return finalizeTypeCheck(success);
+		return success;
 	}
 
 	@Override

@@ -51,7 +51,7 @@ public class RelationalPredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 
 	protected RelationalPredicate(Expression left, Expression right,
-			int tag, SourceLocation location) {
+			int tag, SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
@@ -61,10 +61,11 @@ public class RelationalPredicate extends Predicate {
 		assert left != null;
 		assert right != null;
 		
-		synthesizeType();
+		synthesizeType(ff);
 	}
 	
-	private void synthesizeType() {
+	@Override
+	protected void synthesizeType(FormulaFactory ff) {
 		IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
@@ -78,14 +79,13 @@ public class RelationalPredicate extends Predicate {
 			return;
 		}
 
-		Type leftType = left.getType();
-		Type rightType = right.getType();
-		
 		// Fast exit if children are not typed
 		// (the most common case where type synthesis can't be done)
-		if (leftType == null || rightType == null) {
+		if (! left.isTypeChecked() || ! right.isTypeChecked()) {
 			return;
 		}
+		Type leftType = left.getType();
+		Type rightType = right.getType();
 		
 		final Type alpha;
 		switch(getTag()) {
@@ -124,7 +124,7 @@ public class RelationalPredicate extends Predicate {
 			assert false;
 			return;
 		}
-		finalizeTypeCheck(true);
+		typeChecked = true;
 	}
 
 	/**
@@ -229,9 +229,8 @@ public class RelationalPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		boolean success = left.solveType(unifier) & right.solveType(unifier);
-		return finalizeTypeCheck(success);
+	protected boolean solveChildrenTypes(TypeUnifier unifier) {
+		return left.solveType(unifier) & right.solveType(unifier);
 	}
 
 	@Override
