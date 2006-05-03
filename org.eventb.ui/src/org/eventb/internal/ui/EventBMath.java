@@ -31,7 +31,7 @@ public class EventBMath implements IEventBInputText {
 	private Text text;
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * 
 	 * @param parent

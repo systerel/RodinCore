@@ -55,7 +55,7 @@ public class TheoremMasterSection
 	private static final String SECTION_DESCRIPTION = "List of theorems of the component"; 
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param managedForm The form to create this master section
 	 * @param parent The composite parent

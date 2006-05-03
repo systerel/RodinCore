@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
 
@@ -37,15 +38,32 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.rodinp.core.RodinDBException;
 
-public class SearchHypothesesSection
-	extends HypothesesSection
-{
+/**
+ * @author htson
+ *         <p>
+ *         This class is an sub-class of Hypotheses Section to show the set of
+ *         search hypotheses in Prover UI editor.
+ */
+public class SearchHypothesesSection extends HypothesesSection {
+
+	// Title and description
 	private static final String SECTION_TITLE = "Searched Hypotheses";
-	private static final String SECTION_DESCRIPTION = "The set of searched hypotheses";	
-    
+
+	private static final String SECTION_DESCRIPTION = "The set of searched hypotheses";
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         This class extends HyperlinkAdapter and provide response actions
+	 *         when a hyperlink is activated.
+	 */
 	private class CachedHyperlinkAdapter extends HyperlinkAdapter {
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
+		 */
 		public void linkActivated(HyperlinkEvent e) {
 			if (e.getLabel().equals("sl")) {
 				Set<Hypothesis> selected = new HashSet<Hypothesis>();
@@ -55,33 +73,36 @@ public class SearchHypothesesSection
 						selected.add(hr.getHypothesis());
 					}
 				}
-				if (selected.isEmpty()) return;
-				
+				if (selected.isEmpty())
+					return;
+
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
 				try {
-					editor.getUserSupport().applyTacticToHypotheses(t, selected);
-				}
-				catch (RodinDBException exception) {
+					editor.getUserSupport()
+							.applyTacticToHypotheses(t, selected);
+				} catch (RodinDBException exception) {
 					exception.printStackTrace();
 				}
-				
-				
+
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					editor.getProofTreeUI().refresh(proofTree);
 					// Expand the node
-					viewer.expandToLevel(proofTree, AbstractTreeViewer.ALL_LEVELS);
+					viewer.expandToLevel(proofTree,
+							AbstractTreeViewer.ALL_LEVELS);
 					ProofState ps = editor.getUserSupport().getCurrentPO();
 					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
 					if (pt != null)
-						editor.getProofTreeUI().getViewer().setSelection(new StructuredSelection(pt));
+						editor.getProofTreeUI().getViewer().setSelection(
+								new StructuredSelection(pt));
 				}
 			}
-			
+
 			else if (e.getLabel().equals("ds")) {
 				Set<Hypothesis> deselected = new HashSet<Hypothesis>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
@@ -90,20 +111,36 @@ public class SearchHypothesesSection
 						deselected.add(hr.getHypothesis());
 					}
 				}
-				if (deselected.isEmpty()) return;
+				if (deselected.isEmpty())
+					return;
 				ProverUI editor = (ProverUI) page.getEditor();
 				editor.getUserSupport().removeSearchedHypotheses(deselected);
 			}
-		
-		}
-    	
-    }
 
-	// Contructor
+		}
+
+	}
+
+	/**
+	 * Constructor
+	 * <p>
+	 * 
+	 * @param page
+	 *            The page that contain this section
+	 * @param parent
+	 *            the composite parent of the section
+	 * @param style
+	 *            style to create this section
+	 */
 	public SearchHypothesesSection(ProofsPage page, Composite parent, int style) {
 		super(page, parent, style, SECTION_TITLE, SECTION_DESCRIPTION);
-	}	
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.SectionPart#expansionStateChanging(boolean)
+	 */
 	@Override
 	protected void expansionStateChanging(boolean expanding) {
 		if (expanding) {
@@ -112,8 +149,7 @@ public class SearchHypothesesSection
 			gd.minimumHeight = 100;
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);
-		}
-		else {
+		} else {
 			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			gd.widthHint = 200;
 			this.getSection().setLayoutData(gd);
@@ -121,20 +157,24 @@ public class SearchHypothesesSection
 		super.expansionStateChanging(expanding);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.prover.HypothesesSection#createTopFormText()
 	 */
 	@Override
 	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
-        GridData gd;
-		IEventBFormText formText = new EventBFormText(toolkit.createFormText(comp, true));
+		GridData gd;
+		IEventBFormText formText = new EventBFormText(toolkit.createFormText(
+				comp, true));
 		gd = new GridData();
 		gd.widthHint = 50;
 		gd.horizontalAlignment = SWT.LEFT;
 		FormText ft = formText.getFormText();
 		ft.setLayoutData(gd);
 		ft.addHyperlinkListener(new CachedHyperlinkAdapter());
-		ft.setText("<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>", true, false);		
+		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>";
+		ft.setText(string, true, false);
 	}
 
 }

@@ -34,7 +34,7 @@ public class VariablePage
 	public static final String PAGE_TAB_TITLE = "Variables";
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param editor The form editor that holds the page 
 	 */

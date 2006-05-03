@@ -54,7 +54,7 @@ public class CarrierSetMasterSection
 	private static final String SECTION_DESCRIPTION = "List of carrier sets of the component"; 	
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param managedForm The form to create this master section
 	 * @param parent The composite parent

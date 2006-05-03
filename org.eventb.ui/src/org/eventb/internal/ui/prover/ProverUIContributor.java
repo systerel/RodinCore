@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
 
@@ -25,29 +26,38 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
- * Manages the installation/deinstallation of global actions for multi-page editors.
- * Responsible for the redirection of global actions to the active editor.
- * Multi-page contributor replaces the contributors for the individual editors in the multi-page editor.
+ * @author htson
+ *         <p>
+ *         Manages the installation/deinstallation of global actions for Prover
+ *         UI editor.
  */
 public class ProverUIContributor extends MultiPageEditorActionBarContributor {
+
+	// TODO Define the action for the Prover UI Editor.
 	private IEditorPart activeEditorPart;
+
 	private Action sampleAction;
+
 	/**
-	 * Creates a multi-page contributor.
+	 * Constructor: Create a multi-page contributor.
 	 */
 	public ProverUIContributor() {
 		super();
 		createActions();
 	}
+
 	/**
 	 * Returns the action registed with the given text editor.
+	 * 
 	 * @return IAction or null if editor is null.
 	 */
 	protected IAction getAction(ITextEditor editor, String actionID) {
 		return (editor == null ? null : editor.getAction(actionID));
 	}
-	/* (non-JavaDoc)
-	 * Method declared in AbstractMultiPageEditorActionBarContributor.
+
+	/*
+	 * (non-JavaDoc) Method declared in
+	 * AbstractMultiPageEditorActionBarContributor.
 	 */
 
 	public void setActivePage(IEditorPart part) {
@@ -59,54 +69,52 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
 
-			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
+			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part
+					: null;
 
+			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
+					getAction(editor, ITextEditorActionConstants.DELETE));
+			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
+					getAction(editor, ITextEditorActionConstants.UNDO));
+			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
+					getAction(editor, ITextEditorActionConstants.REDO));
+			actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(),
+					getAction(editor, ITextEditorActionConstants.CUT));
+			actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+					getAction(editor, ITextEditorActionConstants.COPY));
+			actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+					getAction(editor, ITextEditorActionConstants.PASTE));
+			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+					getAction(editor, ITextEditorActionConstants.SELECT_ALL));
+			actionBars.setGlobalActionHandler(ActionFactory.FIND.getId(),
+					getAction(editor, ITextEditorActionConstants.FIND));
 			actionBars.setGlobalActionHandler(
-				ActionFactory.DELETE.getId(),
-				getAction(editor, ITextEditorActionConstants.DELETE));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.UNDO.getId(),
-				getAction(editor, ITextEditorActionConstants.UNDO));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.REDO.getId(),
-				getAction(editor, ITextEditorActionConstants.REDO));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.CUT.getId(),
-				getAction(editor, ITextEditorActionConstants.CUT));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.COPY.getId(),
-				getAction(editor, ITextEditorActionConstants.COPY));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.PASTE.getId(),
-				getAction(editor, ITextEditorActionConstants.PASTE));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.SELECT_ALL.getId(),
-				getAction(editor, ITextEditorActionConstants.SELECT_ALL));
-			actionBars.setGlobalActionHandler(
-				ActionFactory.FIND.getId(),
-				getAction(editor, ITextEditorActionConstants.FIND));
-			actionBars.setGlobalActionHandler(
-				IDEActionFactory.BOOKMARK.getId(),
-				getAction(editor, IDEActionFactory.BOOKMARK.getId()));
+					IDEActionFactory.BOOKMARK.getId(), getAction(editor,
+							IDEActionFactory.BOOKMARK.getId()));
 			actionBars.updateActionBars();
 		}
 	}
+
 	private void createActions() {
 		sampleAction = new Action() {
 			public void run() {
-				MessageDialog.openInformation(null, "Event-B UI Plug-in", "Sample Action Executed");
+				MessageDialog.openInformation(null, "Event-B UI Plug-in",
+						"Sample Action Executed");
 			}
 		};
 		sampleAction.setText("Sample Action");
 		sampleAction.setToolTipText("Sample Action tool tip");
-		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(IDE.SharedImages.IMG_OBJS_TASK_TSK));
+		sampleAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						IDE.SharedImages.IMG_OBJS_TASK_TSK));
 	}
+
 	public void contributeToMenu(IMenuManager manager) {
 		IMenuManager menu = new MenuManager("Editor &Menu");
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
 		menu.add(sampleAction);
 	}
+
 	public void contributeToToolBar(IToolBarManager manager) {
 		manager.add(new Separator());
 		manager.add(sampleAction);

@@ -26,7 +26,7 @@ public class EventBImageDescriptor extends ImageDescriptor {
 	private ImageData imageData;
 
 	/**
-	 * Contructor: Create the object with the given Image Id
+	 * Constructor: Create the object with the given Image Id
 	 * <p>
 	 * 
 	 * @param string

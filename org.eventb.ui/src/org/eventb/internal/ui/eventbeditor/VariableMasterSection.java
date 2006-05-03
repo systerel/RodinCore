@@ -55,7 +55,7 @@ public class VariableMasterSection
 	
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param managedForm The form to create this master section
 	 * @param parent The composite parent

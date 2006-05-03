@@ -34,7 +34,7 @@ public class DependenciesPage
 	public static final String PAGE_TAB_TITLE = "Dependencies";
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * @param editor The form editor that holds the page 
 	 */
 	public DependenciesPage(FormEditor editor) {

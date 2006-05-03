@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
 
@@ -59,86 +60,91 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 
-
 /**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
+ * @author htson
+ *         <p>
+ *         This class is an implementation of a Proof Tree UI 'page'.
  */
+public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
+		ISelectionChangedListener, IPOChangedListener {
 
-public class ProofTreeUIPage
-	extends Page 
-	implements	IProofTreeUIPage,
-				ISelectionChangedListener,
-				IPOChangedListener
-{
+	// list of Selection Changed listeners.
 	private ListenerList selectionChangedListeners = new ListenerList();
 
+	// The contained tree viewer.
 	private TreeViewer viewer;
+
 	// The invisible root of the tree.
-	
 	private IProofTree invisibleRoot = null;
+
 	private IProofTreeNode root = null;
+
 	// TODO Change to Rule class?
-	private Object [] filters = {"allI"}; // Default filters 
-		
+	private Object[] filters = { "allI" }; // Default filters
+
 	private boolean byUserSupport;
+
 	private TreeColumn elementColumn;
+
 	// The current editting element.
 	private Object fInput;
-	
+
 	// The current associated editor.
-//	private ProverUI editor;
-	
+	// private ProverUI editor;
+
 	private UserSupport userSupport;
-	
+
 	// Group of action that is used.
 	private ProofTreeUIActionGroup groupActionSet;
-	
-	class ViewLabelProvider
-		implements  ITableLabelProvider, ITableFontProvider, ITableColorProvider {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         This class provides the labels for elements in the tree viewer.
+	 */
+	class ViewLabelProvider implements ITableLabelProvider, ITableFontProvider,
+			ITableColorProvider {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
+		 *      int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
-			ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-			
+			ImageRegistry registry = EventBUIPlugin.getDefault()
+					.getImageRegistry();
+
 			if (element instanceof IProofTreeNode) {
 				IProofTreeNode pt = (IProofTreeNode) element;
-				if (pt.isOpen()) return registry.get(EventBImage.IMG_PENDING);
-				if (!pt.isDischarged()) return registry.get(EventBImage.IMG_APPLIED);
-				else return registry.get(EventBImage.IMG_DISCHARGED);
+				if (pt.isOpen())
+					return registry.get(EventBImage.IMG_PENDING);
+				if (!pt.isDischarged())
+					return registry.get(EventBImage.IMG_APPLIED);
+				else
+					return registry.get(EventBImage.IMG_DISCHARGED);
 			}
 
 			// TODO Removed?
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(
+					imageKey);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+		 *      int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) element;
-				
+
 				if (!proofTree.isOpen()) {
-					return proofTree.getRule().getName() +" : " + proofTree.getSequent().goal();
-				}
-				else {
+					return proofTree.getRule().getName() + " : "
+							+ proofTree.getSequent().goal();
+				} else {
 					return proofTree.getSequent().goal().toString();
 				}
 			}
@@ -146,91 +152,89 @@ public class ProofTreeUIPage
 
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void addListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+		 *      java.lang.String)
 		 */
 		public boolean isLabelProperty(Object element, String property) {
 			// TODO Auto-generated method stub
 			return false;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void removeListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
+		 *      int)
 		 */
 		public Color getBackground(Object element, int columnIndex) {
-			 Display display = Display.getCurrent();
-             return display.getSystemColor(SWT.COLOR_WHITE);
+			Display display = Display.getCurrent();
+			return display.getSystemColor(SWT.COLOR_WHITE);
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
+		 *      int)
 		 */
 		public Color getForeground(Object element, int columnIndex) {
 			Display display = Display.getCurrent();
-            return display.getSystemColor(SWT.COLOR_BLACK);
-       }
+			return display.getSystemColor(SWT.COLOR_BLACK);
+		}
 
-//		public String getText(Object obj) {
-//			if (obj instanceof IAction) {
-//				try {
-//					return ((IAction) obj).getContents();
-//				}
-//				catch (RodinDBException e) {
-//					// TODO Handle Exception
-//					e.printStackTrace();
-//					return "";
-//				}
-//			}
-//			if (obj instanceof IInternalElement) return ((IInternalElement) obj).getElementName();
-//			return obj.toString();
-//		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
+		 *      int)
 		 */
 		public Font getFont(Object element, int columnIndex) {
-//			UIUtils.debug("Get fonts");
+			// UIUtils.debug("Get fonts");
 			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		}
-		
-		
-//		public Image getImage(Object obj) {
-//			return UIUtils.getImage(obj);
-//		}
-	
-	
-	
+
 	}
 
 	/**
-	 * Creates a content outline page using the given editor.
-	 * Register as a change listener for the Rodin Database.
-	 * <p> 
-	 * @param editor the editor
+	 * Creates a content outline page using the given editor. Register as a
+	 * change listener for the Rodin Database.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor
 	 */
 	public ProofTreeUIPage(UserSupport userSupport) {
 		super();
@@ -238,45 +242,52 @@ public class ProofTreeUIPage
 		byUserSupport = false;
 		userSupport.addPOChangedListener(this);
 	}
-	
+
 	/*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-     */
-    public void init(IPageSite pageSite) {
-        super.init(pageSite);
-        pageSite.setSelectionProvider(this);
-    }
-        
-    
-    public void createControl(Composite parent) {
-    	viewer = new TreeViewer(parent, SWT.SINGLE| SWT.H_SCROLL | SWT.V_SCROLL);
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
+	 */
+	public void init(IPageSite pageSite) {
+		super.init(pageSite);
+		pageSite.setSelectionProvider(this);
+	}
+
+	public void createControl(Composite parent) {
+		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
+				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
 		elementColumn = new TreeColumn(tree, SWT.LEFT);
-//		elementColumn.setResizable(true);
+		// elementColumn.setResizable(true);
 		// TODO Implement using ViewerFilter????
-//		viewer.addFilter(new ViewerFilter() {
-//
-//			/* (non-Javadoc)
-//			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-//			 */
-//			@Override
-//			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				if (UIUtils.DEBUG) System.out.println("Filter");
-//				if (element instanceof IProofTreeNode) {
-//					if (((IProofTreeNode) element).isOpen()) return true;
-//					if (((IProofTreeNode) element).getRule().getName().equals("hyp")) return false;
-//				}
-//				return true;
-//			}
-//			
-//		});
-		if (fInput != null) viewer.setInput(fInput);
-		if (root != null) viewer.setSelection(new StructuredSelection(root));
+		// viewer.addFilter(new ViewerFilter() {
+		//
+		// /* (non-Javadoc)
+		// * @see
+		// org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+		// java.lang.Object, java.lang.Object)
+		// */
+		// @Override
+		// public boolean select(Viewer viewer, Object parentElement, Object
+		// element) {
+		// if (UIUtils.DEBUG) System.out.println("Filter");
+		// if (element instanceof IProofTreeNode) {
+		// if (((IProofTreeNode) element).isOpen()) return true;
+		// if (((IProofTreeNode) element).getRule().getName().equals("hyp"))
+		// return false;
+		// }
+		// return true;
+		// }
+		//			
+		// });
+		if (fInput != null)
+			viewer.setInput(fInput);
+		if (root != null)
+			viewer.setSelection(new StructuredSelection(root));
 		elementColumn.pack();
 
 		makeActions();
@@ -288,13 +299,15 @@ public class ProofTreeUIPage
 	/**
 	 * Sets the input of the outline page
 	 * <p>
-	 * @param input the input of this outline page
+	 * 
+	 * @param input
+	 *            the input of this outline page
 	 */
 	public void setInput(Object input) {
 		fInput = input;
 		update();
 	}
-	
+
 	/**
 	 * Updates the outline page. Remember the previous expand states.
 	 */
@@ -305,72 +318,81 @@ public class ProofTreeUIPage
 				control.setRedraw(false);
 
 				// Saving the expanded elements
-				Object [] elements = viewer.getExpandedElements(); 
+				Object[] elements = viewer.getExpandedElements();
 				viewer.setInput(fInput);
-//				viewer.refresh();
+				// viewer.refresh();
 				viewer.setExpandedElements(elements);
 				elementColumn.pack();
-//				UIUtils.debug("Width: " + elementColumn.getWidth());
+				// UIUtils.debug("Width: " + elementColumn.getWidth());
 				viewer.refresh();
 				control.setRedraw(true);
 			}
 		}
 	}
-	
+
+	/**
+	 * Setup the context menu.
+	 */
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
+				groupActionSet.setContext(new ActionContext(viewer
+						.getSelection()));
 				groupActionSet.fillContextMenu(manager);
 				groupActionSet.setContext(null);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-//		getSite().registerContextMenu(menuMgr, viewer);
+		// getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+	/**
+	 * Setup the action bar.
+	 */
 	private void contributeToActionBars() {
 		IActionBars bars = this.getSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
+	/**
+	 * Setup the local pull down.
+	 * <p>
+	 * 
+	 * @param manager
+	 *            the menu manager
+	 */
 	private void fillLocalPullDown(IMenuManager manager) {
-//		if (UIUtils.DEBUG) System.out.println("Fill Local Pull Down");
-//		manager.addMenuListener(new IMenuListener() {
-//			public void menuAboutToShow(IMenuManager manager) {
-//				groupActionSet.setContext(new ActionContext(viewer.getSelection()));
-//				groupActionSet.fillContextMenu(manager);
-//				groupActionSet.setContext(null);
-//			}
-//		});
-//		manager.add(groupActionSet.pruneAction);
-//		manager.add(groupActionSet.conjIAction);
-//		manager.add(groupActionSet.hypAction);
-//		manager.add(groupActionSet.allIAction);
-//		manager.add(groupActionSet.impIAction);
-//		manager.add(groupActionSet.trivialAction);
 		manager.add(groupActionSet.filterAction);
 		manager.add(new Separator());
 		manager.add(groupActionSet.nextPOAction);
 		manager.add(groupActionSet.prevPOAction);
 	}
-	
+
+	/**
+	 * Setup the local tool bar.
+	 * <p>
+	 * 
+	 * @param manager
+	 *            the menu manager
+	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		groupActionSet.drillDownAdapter.addNavigationActions(manager);
-//		manager.add(groupActionSet.prevPOAction);
-//		manager.add(groupActionSet.nextPOAction);
-//		manager.add(new Separator());
 	}
 
+	/**
+	 * Create various actions.
+	 */
 	private void makeActions() {
 		groupActionSet = new ProofTreeUIActionGroup(this);
-
 	}
-	
+
+	/**
+	 * Hook the double click action.
+	 */
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -378,96 +400,139 @@ public class ProofTreeUIPage
 			}
 		});
 	}
-	
+
+	/**
+	 * Refresh the tree viewer from the proof tree node.
+	 * <p>
+	 * 
+	 * @param pt
+	 *            a proof tree node
+	 */
 	protected void refresh(IProofTreeNode pt) {
-		// TODO Refresh the parent of this proof tree	
-		Object [] expands = viewer.getExpandedElements();
+		// TODO Refresh the parent of this proof tree
+		Object[] expands = viewer.getExpandedElements();
 		viewer.refresh(true);
 		viewer.setExpandedElements(expands);
 		return;
 	}
-	
+
+	/**
+	 * Refresh the whole tree viewer.
+	 */
 	protected void refresh() {
 		viewer.refresh(true);
 		return;
 	}
-	
+
 	/**
 	 * Passing the focus request to the viewer's control.
+	 * <p>
+	 * 
+	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
-//	public ProverUI getEditor() {return editor;}
-	
-	protected TreeViewer getViewer() {return viewer;}
-	
-	protected Object [] getFilters() {return filters;}
-	
-	protected void setFilters(Object [] filters) {this.filters = filters;}
-	
-	
 	/**
-	 * @author htson
-	 * An extension of Dialog for choosing seen context. 
+	 * Getting the viewer.
+	 * <p>
+	 * 
+	 * @return the tree viewer contains in the page
 	 */
+	protected TreeViewer getViewer() {
+		return viewer;
+	}
+
 	/**
-     * Fires a selection changed event.
-     *
-     * @param selection the new selection
-     */
-    protected void fireSelectionChanged(ISelection selection) {
-        // create an event
-        final SelectionChangedEvent event = new SelectionChangedEvent(this,
-                selection);
+	 * Get the list of filters.
+	 * <p>
+	 * 
+	 * @return List of current filters.
+	 */
+	protected Object[] getFilters() {
+		return filters;
+	}
 
-        // fire the event
-        Object[] listeners = selectionChangedListeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
-                public void run() {
-                    l.selectionChanged(event);
-                }
-            });
-        }
-    }
+	/**
+	 * Set the list of filters.
+	 * <p>
+	 * 
+	 * @param filters
+	 *            a list of filters
+	 */
+	protected void setFilters(Object[] filters) {
+		this.filters = filters;
+	}
 
-	/* (non-Javadoc)
+	/**
+	 * Fires a selection changed event.
+	 * 
+	 * @param selection
+	 *            the new selection
+	 */
+	protected void fireSelectionChanged(ISelection selection) {
+		// create an event
+		final SelectionChangedEvent event = new SelectionChangedEvent(this,
+				selection);
+
+		// fire the event
+		Object[] listeners = selectionChangedListeners.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.selectionChanged(event);
+				}
+			});
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.Page#getControl()
 	 */
 	@Override
 	public Control getControl() {
-        if (viewer == null)
-            return null;
-        return viewer.getControl();
+		if (viewer == null)
+			return null;
+		return viewer.getControl();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
 	public ISelection getSelection() {
-        if (viewer == null)
-            return StructuredSelection.EMPTY;
-        return viewer.getSelection();
+		if (viewer == null)
+			return StructuredSelection.EMPTY;
+		return viewer.getSelection();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
 		selectionChangedListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
 	public void setSelection(ISelection selection) {
@@ -476,11 +541,14 @@ public class ProofTreeUIPage
 	}
 
 	/**
-	 * Method declared on ContentOutlinePage.
-	 * This is called when there is a selection change in the tree. This responses
-	 * by selecting the first element of the selection in the editor.
+	 * This is called when there is a selection change in the tree. This
+	 * responses by selecting the first element of the selection in the editor.
 	 * <p>
-	 * @param event the selection event
+	 * 
+	 * @param event
+	 *            the selection event
+	 * 
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
@@ -488,49 +556,99 @@ public class ProofTreeUIPage
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
-				if (byUserSupport) {  // Do nothing if the selection is from UserSupport
+				if (byUserSupport) { // Do nothing if the selection is from
+					// UserSupport
 					byUserSupport = false;
 					return;
 				}
-				
+
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					userSupport.selectNode((IProofTreeNode) obj);
 				}
-			}
-			else { // Do nothing when there is no selection
-//				editor.getUserSupport().selectNode(null);
+			} else { // Do nothing when there is no selection
+				// editor.getUserSupport().selectNode(null);
 			}
 		}
-		
+
 	}
 
-	public void setInvisibleRoot(IProofTree pt) {this.invisibleRoot = pt;}
-	
-	public IProofTree getInvisibleRoot() {return invisibleRoot;}
-	
-	public void setRoot(IProofTreeNode pt) {this.root = pt;}
-	
-	public IProofTreeNode getRoot() {return root;}
-	
-	public UserSupport getUserSupport() {return userSupport;}
-	
-	public void selectRoot() {this.setSelection(new StructuredSelection(root));}
+	/**
+	 * Set the invisible root of the tree viewer.
+	 * <p>
+	 * 
+	 * @param pt
+	 *            a Proof Tree
+	 */
+	public void setInvisibleRoot(IProofTree pt) {
+		this.invisibleRoot = pt;
+	}
 
-	/* (non-Javadoc)
+	/**
+	 * Return the invisible root of the tree viewer.
+	 * <p>
+	 * 
+	 * @return a Proof Tree which is the invisible root of the tree viewer
+	 */
+	public IProofTree getInvisibleRoot() {
+		return invisibleRoot;
+	}
+
+	/**
+	 * Setting the root of the tree viewer.
+	 * <p>
+	 * 
+	 * @param pt
+	 *            a Proof Tree Node
+	 */
+	public void setRoot(IProofTreeNode pt) {
+		this.root = pt;
+	}
+
+	/**
+	 * Return the roof of the tree viewer.
+	 * <p>
+	 * 
+	 * @return the Proof Tree Node which is the root of the tree viewer
+	 */
+	public IProofTreeNode getRoot() {
+		return root;
+	}
+
+	/**
+	 * Return the associated UserSupport.
+	 * @return the associated UserSupport
+	 */
+	public UserSupport getUserSupport() {
+		return userSupport;
+	}
+
+	/**
+	 * Select the root of the tree viewer. 
+	 */
+	public void selectRoot() {
+		this.setSelection(new StructuredSelection(root));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
 		byUserSupport = true;
 		final ProofState ps = e.getDelta().getProofState();
 		final ProofTreeUIPage page = this;
-		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
-		display.syncExec (new Runnable () {
-			public void run () {
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
 				page.setInput(ps.getProofTree());
-				if (ps.getCurrentNode() != null) page.getViewer().setSelection(new StructuredSelection(ps.getCurrentNode()));
+				if (ps.getCurrentNode() != null)
+					page.getViewer().setSelection(
+							new StructuredSelection(ps.getCurrentNode()));
 			}
 		});
 	}
-	
+
 }

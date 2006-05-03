@@ -35,7 +35,7 @@ public class AxiomPage
 	
 	
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * @param editor The form editor that holds the page 
 	 */
 	public AxiomPage(FormEditor editor) {

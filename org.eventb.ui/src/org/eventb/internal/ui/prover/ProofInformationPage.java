@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
 
@@ -48,66 +49,54 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
+ * @author htson
+ *         <p>
+ *         This class is an implementation of a Proof Control 'page'.
  */
-
-public class ProofInformationPage 
-	extends Page 
-	implements	IProofInformationPage,
-				IPOChangedListener
-{
+public class ProofInformationPage extends Page implements
+		IProofInformationPage, IPOChangedListener {
 	private ScrolledForm scrolledForm;
+
 	private ProverUI editor;
+
 	private IEventBFormText formText;
-	
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
-	 */
-	 	
+
 	/**
-	 * The constructor.
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the Prover UI Editor corresponding to this page.
 	 */
 	public ProofInformationPage(ProverUI editor) {
 		this.editor = editor;
 		editor.getUserSupport().addPOChangedListener(this);
 	}
-    
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.IPage#dispose()
+	 */
 	@Override
 	public void dispose() {
 		// Deregister with the user support.
 		editor.getUserSupport().removePOChangedListener(this);
 		super.dispose();
 	}
-	
+
 	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
+	 * This is a callback that will allow us to create the viewer and initialize
+	 * it.
+	 * <p>
+	 * 
+	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		
+
 		scrolledForm = toolkit.createScrolledForm(parent);
-		
+
 		ProofState ps = editor.getUserSupport().getCurrentPO();
 		if (ps != null)
 			scrolledForm.setText(ps.getPRSequent().getName());
@@ -118,22 +107,31 @@ public class ProofInformationPage
 		body.setLayout(gl);
 
 		formText = new EventBFormText(toolkit.createFormText(body, true));
-		if (ps != null) setFormText(ps.getPRSequent());
-		
+		if (ps != null)
+			setFormText(ps.getPRSequent());
+
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
 	}
 
-	private void setFormText(IPRSequent prSequent) {		
+	/**
+	 * Set the formText according to the current prSequent.
+	 * <p>
+	 * 
+	 * @param prSequent
+	 *            the current prSequent
+	 */
+	private void setFormText(IPRSequent prSequent) {
 		try {
 			String formString = "<form>";
 
 			IPODescription desc = prSequent.getDescription();
-			IPOSource [] sources = desc.getSources();
+			IPOSource[] sources = desc.getSources();
 			for (IPOSource source : sources) {
 				String role = source.getSourceRole();
-//				UIUtils.debug("Role " + role);
-				formString = formString + "<li style=\"bullet\">" + role + "</li>";
+				// UIUtils.debug("Role " + role);
+				formString = formString + "<li style=\"bullet\">" + role
+						+ "</li>";
 
 				String id = source.getSourceHandleIdentifier();
 
@@ -141,81 +139,124 @@ public class ProofInformationPage
 				id = id.replaceFirst("bcm", "bum");
 				id = id.replaceFirst("bcc", "buc");
 				id = id.replaceFirst("scEvent", "event");
-//				UIUtils.debug("ID unchecked model " + id);
-				
+				// UIUtils.debug("ID unchecked model " + id);
+
 				IRodinElement element = RodinCore.create(id);
 				if (element instanceof ITheorem) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
-					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+					formString = formString
+							+ "<li style=\"text\" value=\"\">"
+							+ UIUtils.makeHyperlink(id, element
+									.getElementName()) + ": ";
+					formString = formString
+							+ UIUtils.XMLWrapUp(((IInternalElement) element)
+									.getContents());
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
-					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+					formString = formString
+							+ "<li style=\"text\" value=\"\">"
+							+ UIUtils.makeHyperlink(id, element
+									.getElementName()) + ": ";
+					formString = formString
+							+ UIUtils.XMLWrapUp(((IInternalElement) element)
+									.getContents());
 					formString = formString + "</li>";
-				}
-				else if (element instanceof IInvariant) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ": ";
-					formString = formString + UIUtils.XMLWrapUp(((IInternalElement) element).getContents()); 
+				} else if (element instanceof IInvariant) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\">"
+							+ UIUtils.makeHyperlink(id, element
+									.getElementName()) + ": ";
+					formString = formString
+							+ UIUtils.XMLWrapUp(((IInternalElement) element)
+									.getContents());
 					formString = formString + "</li>";
-				}
-				else if (element instanceof IEvent) {
-					formString = formString + "<li style=\"text\" value=\"\">" + UIUtils.makeHyperlink(id, element.getElementName()) + ":</li>";
-					IRodinElement [] lvars = ((IParent) element).getChildrenOfType(IVariable.ELEMENT_TYPE);
-					IRodinElement [] guards = ((IParent) element).getChildrenOfType(IGuard.ELEMENT_TYPE);
-					IRodinElement [] actions = ((IParent) element).getChildrenOfType(IAction.ELEMENT_TYPE);
-					
+				} else if (element instanceof IEvent) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\">"
+							+ UIUtils.makeHyperlink(id, element
+									.getElementName()) + ":</li>";
+					IRodinElement[] lvars = ((IParent) element)
+							.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					IRodinElement[] guards = ((IParent) element)
+							.getChildrenOfType(IGuard.ELEMENT_TYPE);
+					IRodinElement[] actions = ((IParent) element)
+							.getChildrenOfType(IAction.ELEMENT_TYPE);
+
 					if (lvars.length != 0) {
-						formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 						formString = formString + "<b>ANY</b> ";
 						for (int j = 0; j < lvars.length; j++) {
-							if (j == 0)	{
-								formString = formString + UIUtils.makeHyperlink(lvars[j].getHandleIdentifier(), lvars[j].getElementName());
-							}
-							else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getHandleIdentifier(), lvars[j].getElementName());
-						}			
+							if (j == 0) {
+								formString = formString
+										+ UIUtils.makeHyperlink(lvars[j]
+												.getHandleIdentifier(),
+												lvars[j].getElementName());
+							} else
+								formString = formString
+										+ ", "
+										+ UIUtils.makeHyperlink(lvars[j]
+												.getHandleIdentifier(),
+												lvars[j].getElementName());
+						}
 						formString = formString + " <b>WHERE</b>";
 						formString = formString + "</li>";
-					}
-					else {
-						if (guards.length !=0) {
-							formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+					} else {
+						if (guards.length != 0) {
+							formString = formString
+									+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 							formString = formString + "<b>WHEN</b></li>";
-						}
-						else {
-							formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+						} else {
+							formString = formString
+									+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 							formString = formString + "<b>BEGIN</b></li>";
 						}
-					
+
 					}
 
 					for (int j = 0; j < guards.length; j++) {
-						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString + UIUtils.makeHyperlink(guards[j].getHandleIdentifier(), guards[j].getElementName()) + ": "
-							+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+						formString = formString
+								+ UIUtils.makeHyperlink(guards[j]
+										.getHandleIdentifier(), guards[j]
+										.getElementName())
+								+ ": "
+								+ UIUtils
+										.XMLWrapUp(((IInternalElement) guards[j])
+												.getContents());
 						formString = formString + "</li>";
 					}
-					
+
 					if (guards.length != 0) {
-						formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent=\"20\">";
 						formString = formString + "<b>THEN</b></li>";
 					}
-				
+
 					for (int j = 0; j < actions.length; j++) {
-						formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString + UIUtils.makeHyperlink(actions[j].getHandleIdentifier(), ((IInternalElement) actions[j]).getContents());
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+						formString = formString
+								+ UIUtils.makeHyperlink(actions[j]
+										.getHandleIdentifier(),
+										((IInternalElement) actions[j])
+												.getContents());
 						formString = formString + "</li>";
 					}
-					formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"20\">";
 					formString = formString + "<b>END</b></li>";
 				}
 			}
 			formString = formString + "</form>";
 			formText.getFormText().setText(formString, true, false);
-			
+
 			formText.getFormText().addHyperlinkListener(new HyperlinkAdapter() {
 
-				/* (non-Javadoc)
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 				 */
 				@Override
@@ -229,38 +270,45 @@ public class ProofInformationPage
 
 			});
 			scrolledForm.reflow(true);
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-			
+
 	}
+
 	/**
-	 * Passing the focus request to the viewer's control.
+	 * Passing the focus request to the ScrolledForm.
+	 * <p>
+	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	public void setFocus() {
 		scrolledForm.setFocus();
 	}
-	
-	
-    /* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.Page#getControl()
 	 */
 	@Override
 	public Control getControl() {
-        if (scrolledForm == null)
-            return null;
-        return scrolledForm;
-    }
+		if (scrolledForm == null)
+			return null;
+		return scrolledForm;
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
 	 */
 	public void poChanged(IPOChangeEvent e) {
-		final IPRSequent prSequent = e.getDelta().getProofState().getPRSequent();
-		Display display = EventBUIPlugin.getDefault().getWorkbench().getDisplay();
-		display.syncExec (new Runnable () {
-			public void run () {
+		final IPRSequent prSequent = e.getDelta().getProofState()
+				.getPRSequent();
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
 				if (prSequent.exists()) {
 					scrolledForm.setText(prSequent.getName());
 					scrolledForm.reflow(true);
@@ -269,5 +317,5 @@ public class ProofInformationPage
 			}
 		});
 	}
-	
+
 }

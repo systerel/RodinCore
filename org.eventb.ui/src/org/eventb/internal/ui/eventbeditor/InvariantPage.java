@@ -35,7 +35,7 @@ public class InvariantPage
 	
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param editor The form editor that holds the page 
 	 */

@@ -34,7 +34,7 @@ public abstract class EventBFormPage
 	private String pageTitle;
 	private EventBPartWithButtons part;
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * @param editor The editor contains this page
 	 * @param pageID The ID of the page

@@ -35,7 +35,7 @@ public class ConstantPage
 	
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * @param editor The form editor that holds the page 
 	 */
 	public ConstantPage(FormEditor editor) {

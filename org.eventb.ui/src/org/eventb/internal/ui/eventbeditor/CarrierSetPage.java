@@ -35,7 +35,7 @@ public class CarrierSetPage
 	
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * @param editor The form editor that holds the page 
 	 */
 	public CarrierSetPage(FormEditor editor) {

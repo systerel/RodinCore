@@ -32,7 +32,7 @@ public class EventBFormText implements IEventBFormText {
 	FormText formText;
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * <p>
 	 * 
 	 * @param formText
