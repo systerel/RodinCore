@@ -12,30 +12,16 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.RefreshAction;
-import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -44,122 +30,22 @@ import org.rodinp.core.RodinDBException;
  * Multi-page contributor replaces the contributors for the individual editors in the multi-page editor.
  */
 public class EventBMachineEditorContributor
-	extends MultiPageEditorActionBarContributor
+	extends EventBEditorContributor
 {
-	public static RefreshAction sampleAction;
-	
 	public static Action newVariables;
 	public static Action newInvariants;
 	public static Action newTheorems;
 	public static Action newEvent;
-	public static Action rename;
 	
 	/**
 	 * Creates a multi-page contributor.
 	 */
 	public EventBMachineEditorContributor() {
 		super();
-		createActions();
 	}
-	/**
-	 * Returns the action registed with the given text editor.
-	 * @return IAction or null if editor is null.
-	 */
-	protected IAction getAction(ITextEditor editor, String actionID) {
-		return (editor == null ? null : editor.getAction(actionID));
-	}
-	/* (non-JavaDoc)
-	 * Method declared in AbstractMultiPageEditorActionBarContributor.
-	 */
 
-	public void setActivePage(IEditorPart part) {
-		UIUtils.debug("Add global action here");
-
-		IActionBars actionBars = getActionBars();
-		if (actionBars != null) {
-			UIUtils.debug("Add to action bars");
-//
-//			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
-//
-			actionBars.setGlobalActionHandler(
-				ActionFactory.RENAME.getId(),
-				rename);
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.UNDO.getId(),
-//				getAction(editor, ITextEditorActionConstants.UNDO));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.REDO.getId(),
-//				getAction(editor, ITextEditorActionConstants.REDO));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.CUT.getId(),
-//				getAction(editor, ITextEditorActionConstants.CUT));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.COPY.getId(),
-//				getAction(editor, ITextEditorActionConstants.COPY));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.PASTE.getId(),
-//				getAction(editor, ITextEditorActionConstants.PASTE));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.SELECT_ALL.getId(),
-//				getAction(editor, ITextEditorActionConstants.SELECT_ALL));
-//			actionBars.setGlobalActionHandler(
-//				ActionFactory.FIND.getId(),
-//				getAction(editor, ITextEditorActionConstants.FIND));
-//			actionBars.setGlobalActionHandler(
-//				IDEActionFactory.BOOKMARK.getId(),
-//				getAction(editor, IDEActionFactory.BOOKMARK.getId()));
-			actionBars.updateActionBars();
-		}
-//		else {
-//			IToolBarManager manager = actionBars.getToolBarManager();
-//			manager.add(sampleAction);
-//			actionBars.updateActionBars();
-//			
-//		}
-	}
-	private void createActions() {
-		sampleAction = new RefreshAction(EventBUIPlugin.getActiveWorkbenchShell());
-
-		sampleAction.setToolTipText("Refresh the component");
-		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ActionFactory.REFRESH.getId()));
-		
-		rename = new Action() {
-			public void run() {
-				UIUtils.debug("Rename");
-				IEditorPart part = EventBMachineEditorContributor.this.getPage().getActiveEditor();
-				ISelectionService selService = part.getSite().getWorkbenchWindow().getSelectionService();
-				ISelection sel = selService.getSelection();
-				UIUtils.debug("Current selection: " + sel);
-				if (sel instanceof IStructuredSelection) { 
-					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.size() == 1) {
-						if (ssel.getFirstElement() instanceof Leaf) {
-							IRodinElement element = ((Leaf) ssel.getFirstElement()).getElement();
-							InputDialog dialog = new InputDialog(part.getSite().getShell(), "Rename", "Rename element", element.getElementName(), null);
-							dialog.open();
-							try {
-								String text = dialog.getValue();
-								if (text != null) {
-									UIUtils.debug("Commit : " + element.getElementName() + " to be : " + text);
-									if (!element.getElementName().equals(text)) {
-										((IInternalElement) element).rename(text, false, null);
-									}
-								}
-							}
-							catch (RodinDBException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-//					UIUtils.intelligentNewVariables(editor, rodinFile);
-			}
-		};
-		rename.setText("New Variables");
-		rename.setToolTipText("Create new variables for the component");
-		rename.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
-
+	protected void createActions() {
+		super.createActions();
 		newVariables = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
