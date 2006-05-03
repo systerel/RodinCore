@@ -119,7 +119,7 @@ public abstract class IdentListMerger {
 	protected abstract Identifier[] getMaximalArray();
 
 	// Runs this merger and builds the resulting merged array
-	public FreeIdentifier[] getFreeMergedArray() {
+	public final FreeIdentifier[] getFreeMergedArray() {
 		final int maxLength = this.getPotentialLength();
 		FreeIdentifier[] result = new FreeIdentifier[maxLength];
 		int length = buildMergedArray(result);
@@ -139,7 +139,7 @@ public abstract class IdentListMerger {
 		return result;
 	}
 
-	public BoundIdentifier[] getBoundMergedArray() {
+	public final BoundIdentifier[] getBoundMergedArray() {
 		final int maxLength = this.getPotentialLength();
 		BoundIdentifier[] result = new BoundIdentifier[maxLength];
 		int length = buildMergedArray(result);
