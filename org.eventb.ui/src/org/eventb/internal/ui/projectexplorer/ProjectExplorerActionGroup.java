@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.projectexplorer;
 
@@ -50,138 +51,155 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
- * <p>
- * This class provides the actions that will be used with the tree viewer 
- * for the Project Explorer.
+ *         <p>
+ *         This class provides the actions that will be used with the tree
+ *         viewer for the Project Explorer.
  */
-public class ProjectExplorerActionGroup 
-	extends ActionGroup 
-{
+public class ProjectExplorerActionGroup extends ActionGroup {
 
 	// The project explorer.
 	private ProjectExplorer explorer;
-	
+
 	// Some actions and the drill down adapter
 	public static DrillDownAdapter drillDownAdapter;
+
 	public static Action newProjectAction;
+
 	public static Action newComponentAction;
+
 	public static Action deleteAction;
+
 	public static Action proveAction;
+
 	public static RefreshAction refreshAction;
-	
+
 	/**
 	 * Constructor: Create the actions.
-	 * @param projectExplorer The project explorer
+	 * 
+	 * @param projectExplorer
+	 *            The project explorer
 	 */
 	public ProjectExplorerActionGroup(ProjectExplorer projectExplorer) {
 		this.explorer = projectExplorer;
 		drillDownAdapter = new DrillDownAdapter(explorer.getTreeViewer());
-		
-		
+
 		refreshAction = new RefreshAction(projectExplorer.getSite().getShell());
-		
+
 		// Creating the public action
 		newProjectAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(explorer.getTreeViewer().getTree().getDisplay(),
-						new Runnable() {
-							public void run() {
-								NewProjectWizard wizard = new NewProjectWizard();
-								WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
-								dialog.create();
-								dialog.open();
-							}
-						});
+				BusyIndicator.showWhile(explorer.getTreeViewer().getTree()
+						.getDisplay(), new Runnable() {
+					public void run() {
+						NewProjectWizard wizard = new NewProjectWizard();
+						WizardDialog dialog = new WizardDialog(EventBUIPlugin
+								.getActiveWorkbenchShell(), wizard);
+						dialog.create();
+						dialog.open();
+					}
+				});
 			}
 		};
 		newProjectAction.setText("&Project");
 		newProjectAction.setToolTipText("Create new project");
-		newProjectAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_PROJECT));
+		newProjectAction.setImageDescriptor(new EventBImageDescriptor(
+				EventBImage.IMG_NEW_PROJECT));
 
 		newComponentAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(explorer.getTreeViewer().getTree().getDisplay(),
-					new Runnable() {
-						public void run() {
-							IStructuredSelection sel = (IStructuredSelection) explorer.getTreeViewer().getSelection();
-							NewComponentWizard wizard = new NewComponentWizard();
-							wizard.init(EventBUIPlugin.getDefault().getWorkbench(), sel);
-							WizardDialog dialog = new WizardDialog(EventBUIPlugin.getActiveWorkbenchShell(), wizard);
-							dialog.create();
-							//SWTUtil.setDialogSize(dialog, 500, 500);
-							dialog.open();
-						}
-					});
+				BusyIndicator.showWhile(explorer.getTreeViewer().getTree()
+						.getDisplay(), new Runnable() {
+					public void run() {
+						IStructuredSelection sel = (IStructuredSelection) explorer
+								.getTreeViewer().getSelection();
+						NewComponentWizard wizard = new NewComponentWizard();
+						wizard.init(EventBUIPlugin.getDefault().getWorkbench(),
+								sel);
+						WizardDialog dialog = new WizardDialog(EventBUIPlugin
+								.getActiveWorkbenchShell(), wizard);
+						dialog.create();
+						// SWTUtil.setDialogSize(dialog, 500, 500);
+						dialog.open();
+					}
+				});
 			}
 		};
 		newComponentAction.setText("&Component");
 		newComponentAction.setToolTipText("Create new component");
-		newComponentAction.setImageDescriptor(new EventBImageDescriptor(EventBImage.IMG_NEW_COMPONENT));
-	
+		newComponentAction.setImageDescriptor(new EventBImageDescriptor(
+				EventBImage.IMG_NEW_COMPONENT));
+
 		deleteAction = new Action() {
 			public void run() {
 				ISelection selection = explorer.getTreeViewer().getSelection();
 				if (!(selection.isEmpty())) {
 					IStructuredSelection ssel = (IStructuredSelection) selection;
-					Object [] slist = ssel.toArray();
-				
+					Object[] slist = ssel.toArray();
+
 					for (int i = 0; i < slist.length; i++) {
-						UIUtils.debug(slist[i].toString() + " : " + slist[i].getClass().toString());
+						UIUtils.debug(slist[i].toString() + " : "
+								+ slist[i].getClass().toString());
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];
 							// Confirmation dialog
-							boolean answer = MessageDialog.openQuestion(explorer.getSite().getShell(),
-									"Confirm Project Delete", 
-									"Are you sure you want to delete project '" + rodinProject.getElementName() + "' ?");
+							boolean answer = MessageDialog.openQuestion(
+									explorer.getSite().getShell(),
+									"Confirm Project Delete",
+									"Are you sure you want to delete project '"
+											+ rodinProject.getElementName()
+											+ "' ?");
 							if (answer) {
 								IProject project = rodinProject.getProject();
-							
+
 								try {
-									IRodinElement [] files =  rodinProject.getChildren();
+									IRodinElement[] files = rodinProject
+											.getChildren();
 									for (int j = 0; j < files.length; j++) {
-										if (files[j] instanceof IRodinFile) 
+										if (files[j] instanceof IRodinFile)
 											closeOpenedEditor((IRodinFile) files[j]);
 									}
-							
+
 									project.delete(true, true, null);
-								}
-								catch (PartInitException e) {
+								} catch (PartInitException e) {
 									e.printStackTrace();
-								}
-								catch (RodinDBException e) {
+								} catch (RodinDBException e) {
 									e.printStackTrace();
-								}
-								catch (CoreException e) {
+								} catch (CoreException e) {
 									e.printStackTrace();
 								}
 							}
 						}
-					
+
 						else if (slist[i] instanceof IRodinFile) {
-							boolean answer = MessageDialog.openQuestion(explorer.getSite().getShell(),
-									"Confirm File Delete", "Are you sure you want to delete file '" + ((IRodinFile) slist[i]).getElementName() + "' ?");
+							boolean answer = MessageDialog.openQuestion(
+									explorer.getSite().getShell(),
+									"Confirm File Delete",
+									"Are you sure you want to delete file '"
+											+ ((IRodinFile) slist[i])
+													.getElementName() + "' ?");
 							if (answer) {
 								try {
 									closeOpenedEditor((IRodinFile) slist[i]);
-									((IRodinFile) slist[i]).delete(true, new NullProgressMonitor());
-								}
-								catch (PartInitException e) {
+									((IRodinFile) slist[i]).delete(true,
+											new NullProgressMonitor());
+								} catch (PartInitException e) {
 									e.printStackTrace();
-								}
-								catch (RodinDBException e) {
+								} catch (RodinDBException e) {
 									e.printStackTrace();
 								}
 							}
 						}
 					}
-				//viewer.refresh();
+					// viewer.refresh();
 				}
 			}
 		};
 		deleteAction.setText("Delete");
 		deleteAction.setToolTipText("Delete selected elements");
-		deleteAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		
+		deleteAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_DELETE));
+
 		proveAction = new Action() {
 			public void run() {
 				ISelection selection = explorer.getTreeViewer().getSelection();
@@ -189,57 +207,65 @@ public class ProjectExplorerActionGroup
 					IStructuredSelection ssel = (IStructuredSelection) selection;
 					if (ssel.size() == 1) {
 						Object obj = ssel.getFirstElement();
-						if (!(obj instanceof IRodinFile)) return;
+						if (!(obj instanceof IRodinFile))
+							return;
 						IRodinFile component = (IRodinFile) obj;
 						IRodinProject prj = component.getRodinProject();
-						String bareName = EventBPlugin.getComponentName(component.getElementName());
-						IRodinFile prFile = prj.getRodinFile(EventBPlugin.getPRFileName(bareName));
+						String bareName = EventBPlugin
+								.getComponentName(component.getElementName());
+						IRodinFile prFile = prj.getRodinFile(EventBPlugin
+								.getPRFileName(bareName));
 						UIUtils.linkToProverUI(prFile);
 						try {
-							EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench()
-								.showPerspective(ProvingPerspective.PERSPECTIVE_ID, EventBUIPlugin.getActiveWorkbenchWindow());
-						}
-						catch (WorkbenchException e) {
+							EventBUIPlugin
+									.getActiveWorkbenchWindow()
+									.getWorkbench()
+									.showPerspective(
+											ProvingPerspective.PERSPECTIVE_ID,
+											EventBUIPlugin
+													.getActiveWorkbenchWindow());
+						} catch (WorkbenchException e) {
 							e.printStackTrace();
 						}
-//						UIUtils.activateView(ProofTreeUI.VIEW_ID);
-//						UIUtils.activateView(ProofControl.VIEW_ID);
-//						UIUtils.activateView(ProofInformation.VIEW_ID);
-//						UIUtils.activateView(ObligationExplorer.VIEW_ID);
 					}
 				}
 			}
 		};
 		proveAction.setText("Prove");
 		proveAction.setToolTipText("Start the prover");
-		proveAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		
+		proveAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_OBJS_INFO_TSK));
+
 	}
-	
-	
-	/*
-	 * Close the open editor for a particular Rodin File 
-	 * @param file A Rodin File
-	 * @throws PartInitException Exception when closing the editor
+
+	/**
+	 * Close the open editor for a particular Rodin File
+	 * 
+	 * @param file
+	 *            A Rodin File
+	 * @throws PartInitException
+	 *             Exception when closing the editor
 	 */
 	private void closeOpenedEditor(IRodinFile file) throws PartInitException {
-		IEditorReference [] editorReferences = EventBUIPlugin.getActivePage().getEditorReferences();
+		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage()
+				.getEditorReferences();
 		for (int j = 0; j < editorReferences.length; j++) {
-			IFile inputFile = (IFile) editorReferences[j].getEditorInput().getAdapter(IFile.class);
-	
+			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
+					.getAdapter(IFile.class);
+
 			if (file.getResource().equals(inputFile)) {
 				IEditorPart editor = editorReferences[j].getEditor(true);
-				IWorkbenchPage page = EventBUIPlugin.getActivePage(); 
+				IWorkbenchPage page = EventBUIPlugin.getActivePage();
 				page.closeEditor(editor, false);
 			}
 		}
 	}
 
-	
-	/* 
+	/**
 	 * Dynamically fill the context menu (depends on the selection).
-	 * <p> 
+	 * <p>
+	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menu) {
@@ -247,26 +273,29 @@ public class ProjectExplorerActionGroup
 		Object input = getContext().getInput();
 		if (sel instanceof IStructuredSelection) {
 			MenuManager newMenu = new MenuManager("&New");
-			
+
 			IStructuredSelection ssel = (IStructuredSelection) sel;
-			if (input == null) {   // Can only create new Project if at the Workspace level
+
+			// Can only create new Project if at the Workspace level
+			if (input == null) {
 				newMenu.add(newProjectAction);
 				if (ssel.size() == 1) {
 					newMenu.add(newComponentAction);
 				}
-			}
-			else {
+			} else {
 				newMenu.add(newComponentAction);
 			}
 			newMenu.add(new Separator());
-			
+
 			menu.add(newMenu);
 			menu.add(deleteAction);
 			menu.add(refreshAction);
-			if ((ssel.size() == 1) && (ssel.getFirstElement() instanceof IRodinFile)) menu.add(proveAction);
+			if ((ssel.size() == 1)
+					&& (ssel.getFirstElement() instanceof IRodinFile))
+				menu.add(proveAction);
 			menu.add(new Separator());
 			drillDownAdapter.addNavigationActions(menu);
-			
+
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);
