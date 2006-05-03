@@ -366,14 +366,6 @@ public class SyntheticMachineViewSection
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
-	 */
-	public void statusChanged(IRodinElement element) {
-		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
-		updateButtons();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	@Override

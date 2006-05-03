@@ -47,7 +47,6 @@ import org.rodinp.core.IUnnamedInternalElement;
  */
 public class EventMasterSection 
 	extends EventBTreePartWithButtons
-	implements IStatusChangedListener
 {
 	// The indexes for different buttons.
 	private static final int ADD_EVT_INDEX = 0;
@@ -192,7 +191,7 @@ public class EventMasterSection
 	/*
 	 * Handle add (new element) action.
 	 */
-	private void handleAddEvent() {
+	private void handleAddEvt() {
 		UIUtils.newEvent(editor, editor.getRodinInput());
 	}
 	
@@ -261,16 +260,16 @@ public class EventMasterSection
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_EVT_INDEX:
-				handleAddEvent();
+				handleAddEvt();
 				break;
 			case ADD_VAR_INDEX:
 				handleAddVar();
 				break;
 			case ADD_GRD_INDEX:
-				handleAddGuard();
+				handleAddGrd();
 				break;
 			case ADD_ACT_INDEX:
-				handleAddAction();
+				handleAddAct();
 				break;
 			case UP_INDEX:
 				handleUp();
@@ -286,11 +285,11 @@ public class EventMasterSection
 		groupActionSet.newLocalVariable.run();
 	}
 
-	private void handleAddGuard() {
+	private void handleAddGrd() {
 		groupActionSet.newGuard.run();
 	}
 
-	private void handleAddAction() {
+	private void handleAddAct() {
 		groupActionSet.newAction.run();
 	}
 
@@ -304,17 +303,6 @@ public class EventMasterSection
 	protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new EventEditableTreeViewer(editor, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
-	
-	
-	/**
-	 * Set the selection in the tree viewer.
-	 * <p>
-	 * @param element A Rodin element
-	 */
-//	public void setSelection(IRodinElement element) {
-//		TreeViewer viewer = (TreeViewer) this.getViewer();
-//		viewer.setSelection(new StructuredSelection(element));
-//	}
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
@@ -338,14 +326,6 @@ public class EventMasterSection
 		else selectItem(item, 1);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
-	 */
-	public void statusChanged(IRodinElement element) {
-		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
-		updateButtons();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()

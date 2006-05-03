@@ -11,6 +11,7 @@ import org.rodinp.core.IRodinElement;
 
 public abstract class EventBTreePartWithButtons
 	extends EventBPartWithButtons
+	implements IStatusChangedListener
 {
 	public EventBTreePartWithButtons(final IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
 			int style, EventBEditor editor, String [] buttonLabels, String title, String description) {
@@ -37,5 +38,14 @@ public abstract class EventBTreePartWithButtons
 
 	protected void selectItem(TreeItem item, int column) {
 		((EventBEditableTreeViewer) getViewer()).selectItem(item, column);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
+	 */
+	public void statusChanged(IRodinElement element) {
+		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
+		updateButtons();
 	}
 }
