@@ -532,8 +532,8 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 	public void testIR3_additional_3() {
 		
-		doTest( "a↦f(10)∈S",
-				"∃x·x=f(10) ∧ a↦x∈S", 
+		doTest( "a↦b↦f(10)∈S",
+				"∃x·x=f(10) ∧ a↦b↦x∈S", 
 				true, 
 				mTypeEnvironment(mList("S"), mList(POW(CPROD(CPROD(BOOL, INT),INT)))));
 	}
