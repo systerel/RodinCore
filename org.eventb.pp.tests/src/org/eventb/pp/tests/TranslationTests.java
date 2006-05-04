@@ -60,7 +60,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 	
 
-	static ITypeEnvironment br_te = FastFactory.mTypeEnvironment(
+	static ITypeEnvironment br_te = mTypeEnvironment(
 			mList("s", "t", "v", "w", "p", "q"), 
 			mList(POW(S), POW(S), POW(S), POW(S), REL(S, T), REL(S, T)));
 
@@ -175,7 +175,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				"∀x·∃y·y=t∨(∀a·∃b,f·f∈({s∪x∪y}↣a‥b))", true, br_te);
 	}
 	
-	static ITypeEnvironment er_te = FastFactory.mTypeEnvironment(
+	static ITypeEnvironment er_te = mTypeEnvironment(
 			mList("f", "s", "t", "v", "w", "x", "y", "a", "b", "is", "it"), 
 			mList(REL(S, T), POW(S), POW(S), POW(S), POW(S), S, T, S, T, INT_SET, INT_SET));
 
@@ -287,7 +287,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 	
 	public void testER8_recursive() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		ITypeEnvironment te = mTypeEnvironment(
 				mList( "f", "s", "t", "v", "w"),
 				mList(REL(POW(S), POW(T)), POW(S), POW(T), POW(S), POW(T)));
 
@@ -359,7 +359,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				"n∈is∪it ∧ max(is∪it)≤n", true, er_te);
 	}
 	
-	private static ITypeEnvironment cr_te = FastFactory.mTypeEnvironment(
+	private static ITypeEnvironment cr_te = mTypeEnvironment(
 			mList( "s", "t"), mList(INT_SET, INT_SET));
 
 	/**
@@ -465,7 +465,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Tests for IR1
 	 */
 	public void testIR1_simple1() {
-		ITypeEnvironment te = FastFactory.mTypeEnvironment(
+		ITypeEnvironment te = mTypeEnvironment(
 				mList("e"), mList(S));
 
 		doTest( "e ∈ S", 
@@ -592,7 +592,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈{x·x∈{1}∣f∪g}",
 				"∃x·x∈{1}∧e=f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(mList("e"), mList(POW(S))));
+				mTypeEnvironment(mList("e"), mList(POW(S))));
 	}
 
 	public void testIR6_complex() {
@@ -600,7 +600,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e∈{x·x∈{1, b}∣f∪g}",
 				"∀f,b·∃x·x∈{1, b}∧e=f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(mList("e"), mList(POW(S))));
+				mTypeEnvironment(mList("e"), mList(POW(S))));
 	}
 
 	/**
@@ -619,7 +619,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋂x·x∈{1}∣f∪g)",
 				"∀x·x∈{1} ⇒ e∈f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(mList("e"), mList(S)));
+				mTypeEnvironment(mList("e"), mList(S)));
 	}
 
 	public void testIR7_complex() {
@@ -627,7 +627,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e ∈ (⋂x·x∈{1, b}∣f∪g)",
 				"∀f,b·∀x·x∈{1, b} ⇒ e∈f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(mList("e"), mList(S)));
+				mTypeEnvironment(mList("e"), mList(S)));
 	}
 	
 	/**
@@ -646,7 +646,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋃x·x∈{1}∣f∪g)",
 				"∃x·x∈{1} ∧ e∈f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
 	public void testIR8_complex() {
@@ -654,7 +654,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e ∈ (⋃x·x∈{1, b}∣f∪g)",
 				"∀f,b·∃x·x∈{1, b} ∧ e∈f∪g", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
 	/**
@@ -673,7 +673,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ union(s∪t)",
 				"∃x·x∈s∪t ∧ e∈x", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
 	public void testIR9_complex() {
@@ -681,7 +681,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀t·e ∈ union(s∪t)",
 				"∀t·∃x·x∈s∪t ∧ e∈x", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
 	/**
@@ -700,7 +700,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ inter(s∪t)",
 				"∀x·x∈s∪t ⇒ e∈x", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
 	public void testIR10_complex() {
@@ -708,7 +708,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀t·e ∈ inter(s∪t)",
 				"∀t·∀x·x∈s∪t ⇒ e∈x", 
 				true, 
-				FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
 	/**
@@ -719,7 +719,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈∅",
 				"⊥", 
 				false,
-				 FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				 mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
 	public void testIR11_simple2() {
@@ -727,7 +727,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈{}",
 				"⊥", 
 				false,
-				 FastFactory.mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				 mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
 	/**
