@@ -29,18 +29,18 @@ import org.eventb.internal.core.ast.AbstractResult;
 public class TypeCheckResult extends AbstractResult implements ITypeCheckResult {
 
 	// Factory to use during type checking (for creating types).
-	private FormulaFactory factory;
+	private final FormulaFactory factory;
 	
 	// Initial type environment provided as input to type-check
-	private TypeEnvironment initialTypeEnvironment;
+	private final TypeEnvironment initialTypeEnvironment;
 
 	// Inferred type environment filled during type-check
-	private TypeEnvironment inferredTypeEnvironment;
+	private final TypeEnvironment inferredTypeEnvironment;
 
 	// Type variables created during this type-check
-	private List<TypeVariable> typeVariables = new ArrayList<TypeVariable>();
+	private final List<TypeVariable> typeVariables;
 	
-	private TypeUnifier unifier;
+	private final TypeUnifier unifier;
 	
 	/**
 	 * Constructs the result with the specified initial type environment
@@ -53,6 +53,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		this.factory = this.initialTypeEnvironment.ff;
 		this.unifier = new TypeUnifier(this);
 		this.inferredTypeEnvironment = (TypeEnvironment) factory.makeTypeEnvironment();
+		this.typeVariables = new ArrayList<TypeVariable>();
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 *            the free identifier to lookup
 	 * @return the type associated to the given identifier
 	 */
-	public Type getIdentType(FreeIdentifier ident) {
+	public final Type getIdentType(FreeIdentifier ident) {
 		String name = ident.getName();
 		Type result = initialTypeEnvironment.getType(name); 
 		if (result != null) {
@@ -84,7 +85,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeCheckResult#getInferredEnvironment()
 	 */
-	public ITypeEnvironment getInferredEnvironment() {
+	public final ITypeEnvironment getInferredEnvironment() {
 		if (! isSuccess()) return null;
 		return inferredTypeEnvironment;
 	}
@@ -92,7 +93,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeCheckResult#getInitialTypeEnvironment()
 	 */
-	public ITypeEnvironment getInitialTypeEnvironment() {
+	public final ITypeEnvironment getInitialTypeEnvironment() {
 		return initialTypeEnvironment;
 	}
 	
@@ -101,49 +102,49 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * 
 	 * @return the type unifier
 	 */
-	public TypeUnifier getUnifier() {
+	public final TypeUnifier getUnifier() {
 		return unifier;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeBooleanType()
 	 */
-	public BooleanType makeBooleanType() {
+	public final BooleanType makeBooleanType() {
 		return factory.makeBooleanType();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeGivenType(java.lang.String)
 	 */
-	public GivenType makeGivenType(String name) {
+	public final GivenType makeGivenType(String name) {
 		return factory.makeGivenType(name);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeIntegerType()
 	 */
-	public IntegerType makeIntegerType() {
+	public final IntegerType makeIntegerType() {
 		return factory.makeIntegerType();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makePowerSetType(org.eventb.core.ast.Type)
 	 */
-	public PowerSetType makePowerSetType(Type base) {
+	public final PowerSetType makePowerSetType(Type base) {
 		return factory.makePowerSetType(base);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeProductType(org.eventb.core.ast.Type, org.eventb.core.ast.Type)
 	 */
-	public ProductType makeProductType(Type left, Type right) {
+	public final ProductType makeProductType(Type left, Type right) {
 		return factory.makeProductType(left, right);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeRelationalType(org.eventb.core.ast.Type, org.eventb.core.ast.Type)
 	 */
-	public PowerSetType makeRelationalType(Type left, Type right) {
+	public final PowerSetType makeRelationalType(Type left, Type right) {
 		return factory.makeRelationalType(left, right);
 	}
 
@@ -155,7 +156,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * @param location the location of the type variable's corresponding symbol
 	 * @return a type variable
 	 */
-	public TypeVariable newFreshVariable(SourceLocation location) {
+	public final TypeVariable newFreshVariable(SourceLocation location) {
 		TypeVariable tv = new TypeVariable(typeVariables.size(), location);
 		typeVariables.add(tv);
 		return tv;
@@ -169,7 +170,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * If the type variable can not be solved, it adds the corresponding problem
 	 * and makes this result fail.
 	 */
-	public void solveTypeVariables() {
+	public final void solveTypeVariables() {
 		if (! isSuccess()) {
 			return;
 		}
@@ -227,7 +228,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * @param location
 	 *            the location of the expression that generated this equation
 	 */
-	public void unify(Type left, Type right, SourceLocation location) {
+	public final void unify(Type left, Type right, SourceLocation location) {
 		unifier.unify(left,right,location);
 	}
 	
