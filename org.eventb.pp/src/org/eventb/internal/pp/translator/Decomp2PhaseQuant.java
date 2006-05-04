@@ -3,7 +3,7 @@ package org.eventb.internal.pp.translator;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 
-public class Decomp2PhaseQuant extends DecomposedQuant {
+public abstract class Decomp2PhaseQuant extends DecomposedQuant {
 	
 	int count = 0;
 	
