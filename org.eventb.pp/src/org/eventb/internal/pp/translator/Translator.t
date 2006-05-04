@@ -22,13 +22,6 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public class Translator extends IdentityTranslator {
 	
-	public class TranslationException extends Exception{
-		public TranslationException() {	super(); }
-		public TranslationException(String message) { super(message); }
-		public TranslationException(String message, Throwable cause) { super(message, cause); }
-		public TranslationException(Throwable cause) { super(cause); }
-	}
-	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 
 		Predicate newPred = pred;
