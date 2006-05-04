@@ -24,7 +24,6 @@ public class DecomposedQuant {
 
 %include {Formula.tom}
 
-	protected final Counter c = new Counter();
 	protected final LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 	private boolean hasPushed = false;
 	protected final FormulaFactory ff;
@@ -38,7 +37,6 @@ public class DecomposedQuant {
 		for(BoundIdentDecl decl: ids) {
 			assert !(decl.getType() instanceof ProductType) : "Only decomposed identifiers allowed!";
 			identDecls.add(decl);
-			c.increment();
 		}
 		hasPushed = true;
 	}
@@ -49,10 +47,7 @@ public class DecomposedQuant {
 
 	public Expression addQuantifier(Type type, String name, SourceLocation loc) {
 		assert !hasPushed : "Tried to add quantifiers after having started pushing stuff";
-		List<BoundIdentDecl> newIdentDecls = new LinkedList<BoundIdentDecl>();
-		Expression result = mapletOfType(newIdentDecls, type, name, loc);
-		identDecls.addAll(0, newIdentDecls);
-		return result;
+		return mapletOfType(type, name, loc);
 	}
 	
 	public Expression push(Expression expr) {
@@ -88,26 +83,22 @@ public class DecomposedQuant {
 		return identDecls;
 	}
 	
-	protected List<BoundIdentDecl> X() {
-		return identDecls;
-	}
-
 	public int offset() {
 		return identDecls.size();
 	}
 	
-	private Expression mapletOfType(List<BoundIdentDecl> newIdentDecls, 
-		Type type, String name, SourceLocation loc) {
+	private Expression mapletOfType(Type type, String name, SourceLocation loc) {
 		%match (Type type) {
 			CProd (left, right) -> {
-				Expression r = mapletOfType(newIdentDecls, `right, name, loc);
-				Expression l = mapletOfType(newIdentDecls, `left, name, loc);
-				
+				// Process right child first
+				final Expression r = mapletOfType(`right, name, loc);
+				final Expression l = mapletOfType(`left, name, loc);
 				return ff.makeBinaryExpression(Formula.MAPSTO, l, r, loc);
 			}
 			_ -> {
-				newIdentDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
-				return ff.makeBoundIdentifier(c.increment(), loc, type);	
+				final int index = identDecls.size();
+				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
+				return ff.makeBoundIdentifier(index, loc, type);	
 			}
 		}
 	}

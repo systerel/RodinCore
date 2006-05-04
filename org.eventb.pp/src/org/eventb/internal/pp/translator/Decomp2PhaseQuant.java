@@ -20,10 +20,9 @@ public class Decomp2PhaseQuant extends DecomposedQuant {
 	}
 	
 	public void startPhase2() {
-		assert recording : "Recoring was already finished";
+		assert recording : "Recording was already finished";
 		recording = false;
 		count = offset();
 		identDecls.clear();
-		c.reset();	
 	}
 }
