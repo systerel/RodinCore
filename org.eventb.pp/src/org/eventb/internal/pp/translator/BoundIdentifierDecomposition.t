@@ -22,30 +22,29 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public class BoundIdentifierDecomposition extends IdentityTranslator {
 
-	private static class Pair<T1, T2> {
-		private T1 first;
-		private T2 second;
-		public Pair(T1 first, T2 second) {
-			this.first = first;
-			this.second = second;
-		}
+	private static class Substitute {
+		final Expression expr;
+		final int boundIndex;
 		
-		T1 first() { return first; }
-		T2 second() { return second; }
+		Substitute(Expression expr, int boundIndex) {
+			this.expr = expr;
+			this.boundIndex = boundIndex;
+		}
+
 	}
 
 	%include {Formula.tom}
 	
-	private final List<Pair<Expression, Integer>> mapletOffsets;
+	private final List<Substitute> mapletOffsets;
 	private int count;
 	
 	private BoundIdentifierDecomposition() {
-		mapletOffsets = new LinkedList<Pair<Expression, Integer>>();
+		mapletOffsets = new LinkedList<Substitute>();
 		count = 0;
 	}
 	
-	private BoundIdentifierDecomposition(List<Pair<Expression, Integer>> mapletOffsets, int count) {
-		this.mapletOffsets = new LinkedList<Pair<Expression, Integer>>(mapletOffsets);
+	private BoundIdentifierDecomposition(List<Substitute> mapletOffsets, int count) {
+		this.mapletOffsets = new LinkedList<Substitute>(mapletOffsets);
 		this.count = count;
 	}
 	
@@ -71,9 +70,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				}
 				for (Expression quantifier: quantifiers) {
 					ic.mapletOffsets.add(0, 
-						new Pair<Expression, Integer>(
-							quantifier,
-							new Integer(ic.count + quant.offset())));
+						new Substitute(quantifier, ic.count + quant.offset()));
 				} 	
 				ic.count += quant.offset();
 				return quant.makeQuantifiedExpression(
@@ -83,8 +80,8 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 					loc);
 			}
 			BoundIdentifier(idx) -> {
-				Pair<Expression, Integer> p = mapletOffsets.get(`idx);
-				return p.first().shiftBoundIdentifiers(count - p.second().intValue(), ff);
+				Substitute p = mapletOffsets.get(`idx);
+				return p.expr.shiftBoundIdentifiers(count - p.boundIndex, ff);
 			}
 			_ -> {
 				return super.translate(expr, ff);
@@ -108,9 +105,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				}
 				for (Expression quantifier: quantifiers) {
 					ic.mapletOffsets.add(0,
-						new Pair<Expression, Integer>(
-							quantifier,
-							new Integer(ic.count + quant.offset())));
+						new Substitute(quantifier, ic.count + quant.offset()));
 				} 	
 				ic.count += quant.offset();
 				return quant.makeQuantifiedPredicate(
