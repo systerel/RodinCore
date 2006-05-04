@@ -43,6 +43,7 @@ public class TestAll {
 		suite.addTestSuite(TestIdentRenaming.class);
 		suite.addTestSuite(TestTypedConstructor.class);
 		suite.addTestSuite(TestTypedEmptySet.class);
+		suite.addTestSuite(TestTypeCheckError.class);
 		//$JUnit-END$
 		return suite;
 	}
