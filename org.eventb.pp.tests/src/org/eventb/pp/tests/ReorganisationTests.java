@@ -24,10 +24,6 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		defaultTe.addGivenSet("V");
 	}
 
-	private static void doTest(String input, String expected, boolean transformExpected) {
-		doTest(input, expected, transformExpected, defaultTe);
-	}
-
 	private static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
