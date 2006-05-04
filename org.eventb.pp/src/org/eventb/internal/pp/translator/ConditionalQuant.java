@@ -32,8 +32,8 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 	
 	@Override
 	public Expression push(Expression expr) {
-		for(Expression subsistute : substitutes) {
-			if(expr == subsistute)
+		for(Expression substitute : substitutes) {
+			if(expr == substitute)
 				return expr;
 		}
 		return super.push(expr);
