@@ -1311,12 +1311,12 @@ public class Translator extends IdentityTranslator {
 					loc);
 			}
 			/**
-	        * RULE ER8: 	y = f(x)  
-	        *	  			x↦y ∈ f
+	        * RULE ER8: 	x = f(y)  
+	        *	  			y↦x ∈ f
 	        */
-			Equal(FunImage(f, x), y) | Equal(y, FunImage(f, x)) -> {
+			Equal(FunImage(f, y), x) | Equal(x, FunImage(f, y)) -> {
 				return translateIn(
-					ff.makeBinaryExpression(Formula.MAPSTO, `x, `y, loc), `f, loc, ff);
+					ff.makeBinaryExpression(Formula.MAPSTO, `y, `x, loc), `f, loc, ff);
 			}
 	        /**
 	        * RULE ER9: 	s = t
