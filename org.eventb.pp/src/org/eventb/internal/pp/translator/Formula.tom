@@ -682,7 +682,7 @@
 }
 
 
-/*TODO: Delete these...*/
+/*TODO: Delete these, they're duplicates from Type.tom.*/
 
 %op Type PowSet (child : Type) {
 	is_fsym(t) { t instanceof PowerSetType }
