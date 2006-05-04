@@ -255,11 +255,6 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return left.isWellFormed(noOfBoundVars) && right.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public BinaryPredicate applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Predicate newLeft = left.applySubstitution(subst);

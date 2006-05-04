@@ -159,11 +159,6 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return child.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public UnaryPredicate applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Predicate newChild = child.applySubstitution(subst);

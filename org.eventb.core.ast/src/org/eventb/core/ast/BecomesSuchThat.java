@@ -188,12 +188,6 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		int newNoOfBoundVars = noOfBoundVars + primedIdents.length;
-		return condition.isWellFormed(newNoOfBoundVars);
-	}
-
-	@Override
 	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
 		BecomesSuchThat other = (BecomesSuchThat) otherFormula;
 		return hasSameAssignedIdentifiers(other)

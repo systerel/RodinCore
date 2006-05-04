@@ -205,11 +205,6 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return true;
-	}
-
-	@Override
 	public AtomicExpression applySubstitution(Substitution subst) {
 		return this;
 	}

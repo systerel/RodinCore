@@ -184,11 +184,6 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return true;
-	}
-
-	@Override
 	public BoundIdentDecl applySubstitution(Substitution subst) {
 		// this method should never be called
 		assert false;

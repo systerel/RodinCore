@@ -154,15 +154,6 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		for (Expression value: values) {
-			if (! value.isWellFormed(noOfBoundVars))
-				return false;
-		}
-		return true;
-	}
-
-	@Override
 	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
 		BecomesEqualTo other = (BecomesEqualTo) otherFormula;
 		if (! this.hasSameAssignedIdentifiers(other))

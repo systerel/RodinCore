@@ -509,6 +509,7 @@ public class TestFreeIdents extends TestCase {
 		Predicate pp = ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
 						ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),ff.makeBoundIdentifier(4,null),null, QuantifiedExpression.Form.Explicit),id_a,null);
 
+		assertTrue("Problem with idents cache", IdentsChecker.check(pp, ff));
 		assertFalse("Formula has dangling bound index", pp.isWellFormed());
 	}
 	
@@ -517,15 +518,19 @@ public class TestFreeIdents extends TestCase {
 	 */
 	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
-			assertTrue("Should be well-formed: " + testItem.formula, testItem.formula.isWellFormed());
-			FreeIdentifier[] result = testItem.formula.getSyntacticallyFreeIdentifiers();
+			final Formula formula = testItem.formula;
+			assertTrue("Problem with idents cache", IdentsChecker.check(formula, ff));
+			assertTrue("Should be well-formed: " + formula, formula.isWellFormed());
+			FreeIdentifier[] result = formula.getSyntacticallyFreeIdentifiers();
 			TreeSet<String> freeIds = new TreeSet<String>(freeToString(result));
 			freeIds.removeAll(freeToString(testItem.freeIdents));
 			boolean varBound = freeIds.size() < result.length;
-			if(varBound)
-				assertFalse("Should not be well-formed: " + testItem.boundFormula, testItem.boundFormula.isWellFormed());
+			final Formula boundFormula = testItem.boundFormula;
+			assertTrue("Problem with idents cache", IdentsChecker.check(boundFormula, ff));
+			if (varBound)
+				assertFalse("Should not be well-formed: " + boundFormula, boundFormula.isWellFormed());
 			else
-				assertTrue("Should be well-formed: " + testItem.boundFormula, testItem.boundFormula.isWellFormed());
+				assertTrue("Should be well-formed: " + boundFormula, boundFormula.isWellFormed());
 		}
 		
 		isWellFormedSpecialCases();

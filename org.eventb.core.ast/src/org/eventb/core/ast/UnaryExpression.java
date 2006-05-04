@@ -528,11 +528,6 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return child.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public UnaryExpression applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Expression newChild = child.applySubstitution(subst);

@@ -658,12 +658,6 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		int newNoOfBoundVars = noOfBoundVars + quantifiedIdentifiers.length;
-		return pred.isWellFormed(newNoOfBoundVars) && expr.isWellFormed(newNoOfBoundVars);
-	}
-
-	@Override
 	public QuantifiedExpression applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;

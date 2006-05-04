@@ -119,11 +119,6 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return true;
-	}
-
-	@Override
 	public LiteralPredicate applySubstitution(Substitution subst) {
 		return this;
 	}

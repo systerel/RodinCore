@@ -1298,13 +1298,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return <code>true</code> iff the formula is well-formed
 	 */
 	public final boolean isWellFormed() {
-		if (isTypeChecked()) {
-			return boundIdents.length == 0;
-		}
-		return isWellFormed(0);
+		return boundIdents.length == 0;
 	}
-	
-	protected abstract boolean isWellFormed(int noOfBoundVars);
 
 	/**
 	 * Statically type-checks the formula.
@@ -1317,14 +1312,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the result of the type checker
 	 */
 	public final ITypeCheckResult typeCheck(ITypeEnvironment environment) {
-		
 		TypeCheckResult result = new TypeCheckResult(environment);
-		boolean wasTypeChecked = isTypeChecked();
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
-		if (!wasTypeChecked) {
-			solveType(result.getUnifier());
-		}
+		solveType(result.getUnifier());
 		return result;
 	}
 

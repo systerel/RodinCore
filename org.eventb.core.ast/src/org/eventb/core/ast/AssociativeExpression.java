@@ -530,15 +530,6 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		for(int i=0; i<children.length; i++) {
-			if(!children[i].isWellFormed(noOfBoundVars))
-				return false;
-		}
-		return true;
-	}
-
-	@Override
 	public AssociativeExpression applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Expression[] newChildren = new Expression[children.length]; 

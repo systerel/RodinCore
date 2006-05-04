@@ -150,11 +150,6 @@ public class BoolExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return child.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public BoolExpression applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Predicate newChild = child.applySubstitution(subst);

@@ -309,14 +309,6 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		for(int i=0; i<children.length; i++)
-			if(!children[i].isWellFormed(noOfBoundVars))
-				return false;
-		return true;
-	}
-
-	@Override
 	public AssociativePredicate applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Predicate[] newChildren = new Predicate[children.length]; 

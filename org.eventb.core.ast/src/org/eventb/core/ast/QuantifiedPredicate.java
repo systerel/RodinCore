@@ -314,12 +314,6 @@ public class QuantifiedPredicate extends Predicate {
 		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers, pred.getWDPredicateRaw(formulaFactory));
 	}
 
-	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		int newNoOfBoundVars = noOfBoundVars + quantifiedIdentifiers.length;
-		return pred.isWellFormed(newNoOfBoundVars);
-	}
-
 	/**
 	 * Instantiates this quantified predicate with the given expressions.
 	 * <p>

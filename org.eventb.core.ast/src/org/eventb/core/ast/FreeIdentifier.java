@@ -151,11 +151,6 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return true;
-	}
-
-	@Override
 	public Expression applySubstitution(Substitution subst) {
 		return subst.getReplacement(this);
 	}

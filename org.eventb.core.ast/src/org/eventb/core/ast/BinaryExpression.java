@@ -824,11 +824,6 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return left.isWellFormed(noOfBoundVars) && right.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public BinaryExpression applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Expression newLeft = left.applySubstitution(subst);

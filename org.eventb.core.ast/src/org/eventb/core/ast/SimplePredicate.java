@@ -158,11 +158,6 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return child.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	public SimplePredicate applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Expression newChild = child.applySubstitution(subst);

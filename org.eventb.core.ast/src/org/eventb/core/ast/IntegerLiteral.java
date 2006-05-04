@@ -125,11 +125,6 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return true;
-	}
-
-	@Override
 	public IntegerLiteral applySubstitution(Substitution subst) {
 		return this;
 	}

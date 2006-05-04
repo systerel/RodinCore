@@ -112,11 +112,6 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		return setExpr.isWellFormed(noOfBoundVars);
-	}
-
-	@Override
 	protected boolean equals(Formula otherFormula, boolean withAlphaConversion) {
 		BecomesMemberOf other = (BecomesMemberOf) otherFormula;
 		return this.hasSameAssignedIdentifiers(other)

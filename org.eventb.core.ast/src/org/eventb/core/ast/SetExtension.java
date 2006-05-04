@@ -272,14 +272,6 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected boolean isWellFormed(int noOfBoundVars) {
-		for(int i=0; i<members.length; i++)
-			if(!members[i].isWellFormed(noOfBoundVars))
-				return false;
-		return true;
-	}
-
-	@Override
 	public SetExtension applySubstitution(Substitution subst) {
 		final FormulaFactory ff = subst.getFactory();
 		Expression[] newMembers = new Expression[members.length];
