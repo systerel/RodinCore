@@ -1,19 +1,11 @@
 package org.eventb.internal.pp.translator;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 
 public class Reorganizer extends BorderTranslator {
 	
