@@ -3,7 +3,6 @@ package org.eventb.pp.tests;
 import static org.eventb.pp.tests.FastFactory.mList;
 import static org.eventb.pp.tests.FastFactory.mTypeEnvironment;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
