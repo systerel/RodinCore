@@ -134,8 +134,10 @@ public abstract class GoalChecker {
 			Mapsto(l, r) -> {
 				return isMapletExpression(`l) && isMapletExpression(`r);
 			}
-			Identifier() | INTEGER() | BOOL() -> { 
-/* TODO add check on identifier type (must not be a cartesian product. */
+			Identifier() -> { 
+				return ! (expr.getType() instanceof ProductType); 
+			}
+			INTEGER() | BOOL() -> { 
 				return true; 
 			}
 			_ -> {
