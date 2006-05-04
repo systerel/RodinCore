@@ -22,7 +22,7 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public class BoundIdentifierDecomposition extends IdentityTranslator {
 
-	public static class Pair<T1, T2> {
+	private static class Pair<T1, T2> {
 		private T1 first;
 		private T2 second;
 		public Pair(T1 first, T2 second) {
@@ -36,17 +36,17 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 
 	%include {Formula.tom}
 	
-	List<Pair<Expression, Integer>> mapletOffsets;
-	Counter c;
+	private final List<Pair<Expression, Integer>> mapletOffsets;
+	private int count;
 	
 	private BoundIdentifierDecomposition() {
 		mapletOffsets = new LinkedList<Pair<Expression, Integer>>();
-		c = new Counter();
+		count = 0;
 	}
 	
-	private BoundIdentifierDecomposition(List<Pair<Expression, Integer>> mapletOffsets, Counter c) {
+	private BoundIdentifierDecomposition(List<Pair<Expression, Integer>> mapletOffsets, int count) {
 		this.mapletOffsets = new LinkedList<Pair<Expression, Integer>>(mapletOffsets);
-		this.c = new Counter(c);
+		this.count = count;
 	}
 	
 	public static Predicate decomposeBoundIdentifiers(Predicate pred, FormulaFactory ff) {
@@ -60,7 +60,8 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
 			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
-				BoundIdentifierDecomposition ic = new BoundIdentifierDecomposition(mapletOffsets, c);
+				BoundIdentifierDecomposition ic =
+						new BoundIdentifierDecomposition(mapletOffsets, count);
 				DecomposedQuant quant = new DecomposedQuant(ff);
 				Collections.reverse(Arrays.asList(`is));
 				List<Expression> quantifiers = new LinkedList<Expression>();
@@ -72,9 +73,9 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 					ic.mapletOffsets.add(0, 
 						new Pair<Expression, Integer>(
 							quantifier,
-							new Integer(ic.c.value() + quant.offset())));
+							new Integer(ic.count + quant.offset())));
 				} 	
-				ic.c.add(quant.offset());
+				ic.count += quant.offset();
 				return quant.makeQuantifiedExpression(
 					expr.getTag(),
 					ic.translate(`P, ff),
@@ -83,7 +84,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 			}
 			BoundIdentifier(idx) -> {
 				Pair<Expression, Integer> p = mapletOffsets.get(`idx);
-				return p.first().shiftBoundIdentifiers(c.value() - p.second().intValue(), ff);
+				return p.first().shiftBoundIdentifiers(count - p.second().intValue(), ff);
 			}
 			_ -> {
 				return super.translate(expr, ff);
@@ -96,7 +97,8 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		SourceLocation loc = pred.getSourceLocation();		
 		%match (Predicate pred) {
 			ForAll(is, P) | Exists(is, P) -> {
-				BoundIdentifierDecomposition ic = new BoundIdentifierDecomposition(mapletOffsets, c);
+				BoundIdentifierDecomposition ic = 
+						new BoundIdentifierDecomposition(mapletOffsets, count);
 				DecomposedQuant quant = new DecomposedQuant(ff);
 				Collections.reverse(Arrays.asList(`is));
 				List<Expression> quantifiers = new LinkedList<Expression>();
@@ -108,9 +110,9 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 					ic.mapletOffsets.add(0,
 						new Pair<Expression, Integer>(
 							quantifier,
-							new Integer(ic.c.value() + quant.offset())));
+							new Integer(ic.count + quant.offset())));
 				} 	
-				ic.c.add(quant.offset());
+				ic.count += quant.offset();
 				return quant.makeQuantifiedPredicate(
 					pred.getTag(),
 					ic.translate(`P, ff),
