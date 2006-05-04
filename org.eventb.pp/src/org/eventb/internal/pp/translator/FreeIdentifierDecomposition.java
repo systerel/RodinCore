@@ -14,6 +14,8 @@ import org.eventb.core.ast.ProductType;
 public abstract class FreeIdentifierDecomposition {
 	
 	public static Predicate decomposeIdentifiers(Predicate pred, FormulaFactory ff) {
+		
+		assert pred.isWellFormed();
 
 		final FreeIdentifier[] freeIdentifiers = pred.getFreeIdentifiers();
 		if (freeIdentifiers.length != 0) {
