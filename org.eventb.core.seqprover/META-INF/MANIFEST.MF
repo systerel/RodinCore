@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B Sequent Prover Plug-in
 Bundle-SymbolicName: org.eventb.core.seqprover
-Bundle-Version: 0.5.2
+Bundle-Version: 0.5.5
 Bundle-Activator: org.eventb.core.prover.SequentProver
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
