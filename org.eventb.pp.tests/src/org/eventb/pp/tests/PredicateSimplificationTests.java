@@ -173,10 +173,10 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	 */
 	public void testPR14_simple() {
 		doTest( "a>b ⇔ ⊥",
-				"a>b", false);
+				"¬(a>b)", false);
 	}
 
-	public void testPR15_recursive() {
+	public void testPR14_recursive() {
 		doTest( "(a>b⇔ ⊥) ⇔ ⊥",
 				"a>b", false);
 	}
