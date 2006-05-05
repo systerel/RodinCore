@@ -177,6 +177,21 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc));
 	    	}
 
+	    	/**
+	    	 *	RULE PR15: 	∀/∃x1,...,xn·⊤
+	    	 *				⊤
+	    	 */
+	    	ForAll(_, BTRUE()) | Exists(_, BTRUE()) -> {
+	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
+	    	}
+
+	    	/**
+	    	 *	RULE PR16: 	∀/∃x1,...,xn·⊥
+	    	 *				⊥
+	    	 */
+	    	ForAll(_, BFALSE()) | Exists(_, BFALSE()) -> {
+	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
+	    	}
 	    	_ -> {
 	    		return super.translate(pred);
 	    	}
