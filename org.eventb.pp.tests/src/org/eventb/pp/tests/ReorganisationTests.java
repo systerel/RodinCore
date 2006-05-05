@@ -94,4 +94,28 @@ public class ReorganisationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("S"), mList(INT_SET)));
 	}
 	
+	public void testComplex() {
+		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
+				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
+				true, 
+				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
+	}
+	
+	public void testComplex2() {
+		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
+				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
+				true, 
+				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
+
+	}
+	
+	public void testComplex3() {
+		doTest( "card({1,2}) + f(20) + min({1,2,3}) + max({2,1}) > 2",
+				"∀x4,x3,x2,x1·x1=card({1,2}) ∧ x2=f(20) ∧ x3=min({1,2,3}) ∧ x4=max({2,1}) ⇒ x1+x2+x3+x4 > 2", 
+				true, 
+				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
+
+	}
+
+	
 }
