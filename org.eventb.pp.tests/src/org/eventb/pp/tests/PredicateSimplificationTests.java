@@ -1,5 +1,8 @@
 package org.eventb.pp.tests;
 
+import static org.eventb.pp.tests.FastFactory.mList;
+
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.pp.Translator;
@@ -191,9 +194,54 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 				"a>b", false);
 	}
 
-	public void testPR1_reversed() {
+	public void testPR14_reversed() {
 		doTest( "⊥ ⇔ a>b",
 				"¬(a>b)", false);
 	}
-
+	
+	/**
+	 * Tests for PR15
+	 */
+	public void testPR15_simple() {
+		doTest( FastFactory.mQuantifiedPredicate(
+					Formula.FORALL, 
+					mList(
+							FastFactory.mBoundIdentDecl("x0", INT),
+							FastFactory.mBoundIdentDecl("x1", INT)),
+					FastFactory.mLiteralPredicate(Formula.BTRUE)),
+				FastFactory.mLiteralPredicate(Formula.BTRUE));
+	}
+	
+	public void testPR15_simple2() {
+		doTest( FastFactory.mQuantifiedPredicate(
+				Formula.EXISTS, 
+				mList(
+						FastFactory.mBoundIdentDecl("x0", INT),
+						FastFactory.mBoundIdentDecl("x1", INT)),
+				FastFactory.mLiteralPredicate(Formula.BTRUE)),
+			FastFactory.mLiteralPredicate(Formula.BTRUE));
+	}
+	
+	/**
+	 * Tests for PR16
+	 */
+	public void testPR16_simple() {
+		doTest( FastFactory.mQuantifiedPredicate(
+				Formula.FORALL, 
+				mList(
+						FastFactory.mBoundIdentDecl("x0", INT),
+						FastFactory.mBoundIdentDecl("x1", INT)),
+				FastFactory.mLiteralPredicate(Formula.BFALSE)),
+			FastFactory.mLiteralPredicate(Formula.BFALSE));
+	}
+	
+	public void testPR16_simple2() {
+		doTest( FastFactory.mQuantifiedPredicate(
+				Formula.EXISTS, 
+				mList(
+						FastFactory.mBoundIdentDecl("x0", INT),
+						FastFactory.mBoundIdentDecl("x1", INT)),
+				FastFactory.mLiteralPredicate(Formula.BFALSE)),
+			FastFactory.mLiteralPredicate(Formula.BFALSE));
+	}
 }
