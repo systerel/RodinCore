@@ -47,7 +47,6 @@ public abstract class EventBPartWithButtons
 		toolkit.paintBordersFor(client);
 				
 		viewer = createViewer(managedForm, toolkit, client);
-//		setProvider();
 		viewer.setInput(editor.getRodinInput());
 		
 		createButtons(toolkit, (Composite) this.getSection().getClient(), buttonLabels);

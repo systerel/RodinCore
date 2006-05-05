@@ -48,4 +48,49 @@ public class TreeSupports {
 //		UIUtils.debug("... Not found");
 		return null;
 	}
+	
+	public static int getIndex(TreeItem [] items, TreeItem item) {
+		for (int i = 0; i < items.length; i++) {
+			if (item == items[i]) return i;
+		}
+		return -1;
+	}
+	
+	public static TreeItem findPrevItem(Tree tree, TreeItem item) {
+		TreeItem parent = item.getParentItem();
+		int index = 0;
+		if (parent == null) {
+			index = TreeSupports.getIndex(tree.getItems(), item);
+			if (index != 0 ) {
+				return tree.getItem(index - 1);
+			}
+		}
+		else {
+			index = TreeSupports.getIndex(parent.getItems(), item);
+			if (index != 0 ) {
+				return parent.getItem(index - 1);
+			}
+		}
+		
+		return null;
+	}
+	
+	public static TreeItem findNextItem(Tree tree, TreeItem item) {
+		TreeItem parent = item.getParentItem();
+		int index = 0;
+		if (parent == null) {
+			index = TreeSupports.getIndex(tree.getItems(), item);
+			if (index != tree.getItemCount() - 1)
+				return tree.getItem(index + 1);
+		}
+		else {
+			index = TreeSupports.getIndex(parent.getItems(), item);
+			if (index != parent.getItemCount() - 1)
+				return parent.getItem(index + 1);
+			
+		}
+		
+		return null;
+	}
+	
 }

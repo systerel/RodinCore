@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2005 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
@@ -11,29 +23,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IEvent;
-import org.eventb.core.IVariable;
+import org.eventb.core.IAxiom;
+import org.eventb.core.IContext;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class SyntheticEditableTreeViewer 
-	extends EventBEditableTreeViewer
-{
+/**
+ * @author htson
+ *         <p>
+ *         This sub-class Event-B Editable table viewer for editing axiom
+ *         elements.
+ */
+public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
+
 
 	/**
 	 * The content provider class. 
 	 */
-	class SyntheticContentProvider
+	class AxiomContentProvider
 	implements IStructuredContentProvider, ITreeContentProvider
 	{
-		private IRodinFile invisibleRoot = null;
+		private IContext invisibleRoot = null;
 		
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
@@ -41,19 +55,16 @@ public class SyntheticEditableTreeViewer
 		}
 		
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IRodinFile) {
-				ArrayList<Leaf> list = new ArrayList<Leaf>();
+//			UIUtils.debug("Get Children: " + parent);
+			if (parent instanceof IContext) {
+				ArrayList<Node> list = new ArrayList<Node>();
 				try {
-					IRodinElement [] elements = ((IRodinFile) parent).getChildren();
-					for (IRodinElement element : elements) {
-						Leaf leaf;
-//						UIUtils.debug("Element: " + element.getElementName());
-						if (element instanceof IParent) {
-							leaf = new Node(element);
-						}
-						else leaf = new Leaf(element);
-						elementsMap.put(element, leaf);
-						list.add(leaf);
+					IRodinElement [] axioms =   ((IContext) parent).getChildrenOfType(IAxiom.ELEMENT_TYPE);
+					for (IRodinElement axiom : axioms) {
+//						UIUtils.debug("Event: " + event.getElementName());
+						Node node = new Node(axiom);
+						elementsMap.put(axiom, node);
+						list.add(node);
 					}
 				}
 				catch (RodinDBException e) {
@@ -68,7 +79,7 @@ public class SyntheticEditableTreeViewer
 				node.removeAllChildren();
 				try {
 					IRodinElement element = node.getElement();
-						
+					
 					if (element instanceof IParent) {
 						IRodinElement [] children = ((IParent) element).getChildren();
 						for (IRodinElement child : children) {
@@ -96,7 +107,7 @@ public class SyntheticEditableTreeViewer
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IRodinFile) parent;
+					invisibleRoot = (IContext) parent;
 					return getChildren(invisibleRoot);
 				}
 			}
@@ -110,33 +121,16 @@ public class SyntheticEditableTreeViewer
 			elementsMap = new HashMap<IRodinElement, Leaf>();
 		}
 	}
-
 	
-	public SyntheticEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
+	public AxiomEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(editor, parent, style);
-		this.setContentProvider(new SyntheticContentProvider());
+		this.setContentProvider(new AxiomContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());
 	}
 
-	@Override
-	protected void createTreeColumns() {
-		Tree tree = this.getTree();
-		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
-		elementColumn.setText("Elements");
-		elementColumn.setResizable(true);
-		elementColumn.setWidth(200);
-
-		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-		predicateColumn.setText("Contents");
-		predicateColumn.setResizable(true);
-		predicateColumn.setWidth(250);
-		
-		tree.setHeaderVisible(true);
-	}
-
-	@Override
-	protected void commit(Leaf leaf, int col, String text) {
+	public void commit(Leaf leaf, int col, String text) {
+		// Determine which row was selected
 		IInternalElement element = (IInternalElement) leaf.getElement();
 		
 		switch (col) {
@@ -166,23 +160,29 @@ public class SyntheticEditableTreeViewer
 			break;
 		}
 	}
+	
 
+	protected void createTreeColumns() {
+		Tree tree = this.getTree();
+		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
+		elementColumn.setText("Name");
+		elementColumn.setResizable(true);
+		elementColumn.setWidth(200);
+
+		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
+		predicateColumn.setText("Predicates");
+		predicateColumn.setResizable(true);
+		predicateColumn.setWidth(250);
+		
+		tree.setHeaderVisible(true);
+	}
+	
 	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof Leaf)) return false;
-		object = ((Leaf) object ).getElement();
-		
+		object = ((Leaf) object).getElement();
 		if (column == 0) {
 			if (!editor.isNewElement((IRodinElement) object)) return true;
-		}
-		//        if (column < 1) return; // The object column is not editable
-//		UIUtils.debug("Item: " + object + " of class: " + object.getClass());
-		if (column == 0) {
-			if (object instanceof IUnnamedInternalElement) return true;
-		}
-		else if (column == 1) {
-			if (object instanceof IVariable) return true;
-			if (object instanceof IEvent) return true;
 		}
 		return false;
 	}
@@ -190,12 +190,6 @@ public class SyntheticEditableTreeViewer
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item  = TreeSupports.findItem(this.getTree(), element);
-		if (element instanceof IUnnamedInternalElement) selectItem(item, 1);
-		else if (element instanceof IVariable) selectItem(item, 0);
-		else if (element instanceof IEvent) selectItem(item, 0);
-		else if (element instanceof ICarrierSet) selectItem(item, 0);
-		else if (element instanceof IConstant) selectItem(item, 0);
-		else selectItem(item, 1);
+		selectItem(item, 1);
 	}
-
 }

@@ -270,6 +270,7 @@ public abstract class EventBEditableTreeViewer
 	public void elementChanged(ElementChangedEvent event) {
 		toRefresh = new HashSet<Object>();
 		newStatus = new HashSet<StatusObject>();
+		UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
 		postRefresh(toRefresh, true);
 	}
@@ -411,9 +412,7 @@ public abstract class EventBEditableTreeViewer
 						IRodinElement element = (IRodinElement) iter.next();
 						UIUtils.debug("Refresh element " + element.getElementName());
 						Leaf leaf = elementsMap.get(element);
-//						boolean expanded = viewer.getExpandedState(leaf);
 						viewer.refresh(leaf, updateLabels);
-//						viewer.setExpandedState(leaf, expanded);
 					}
 					viewer.setExpandedElements(objects);
 					viewer.setSelection(sel);
@@ -445,7 +444,6 @@ public abstract class EventBEditableTreeViewer
 							viewer.setSelection(new StructuredSelection(list));
 						}
 					}
-//					if (lastMouseEvent != null) mouseAdapter.mouseDown(lastMouseEvent);
 				}
 			}
 		}, this.getControl());
@@ -467,4 +465,6 @@ public abstract class EventBEditableTreeViewer
 			}
 		}, this.getControl());
 	}
+	
+	protected abstract void edit(IRodinElement element);
 }

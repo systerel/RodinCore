@@ -15,9 +15,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,6 +23,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.forms.IManagedForm;
@@ -63,9 +62,6 @@ public class EventMasterSection
 	private final static String SECTION_TITLE = "Events";
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
 	
-	// The group of actions for the tree part.
-	private EventMasterSectionActionGroup groupActionSet;
-	
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
 
@@ -82,10 +78,8 @@ public class EventMasterSection
 			int style, EventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
 		
-		makeActions();
 		hookContextMenu();
 		createToolBarActions(managedForm);
-		editor.addStatusListener(this);
 	}
 	
 	/**
@@ -160,13 +154,6 @@ public class EventMasterSection
 		form.updateToolBar();
 	}
 	
-	/*
-	 * Create the actions that can be used in the tree.
-	 */
-	private void makeActions() {
-		groupActionSet = new EventMasterSectionActionGroup(editor, (TreeViewer) this.getViewer());
-	}
-	
 	
 	/**
 	 * Hook the actions to the menu
@@ -186,49 +173,23 @@ public class EventMasterSection
 		((Viewer) viewer).getControl().setMenu(menu);
 		this.editor.getSite().registerContextMenu(menuMgr, (ISelectionProvider) viewer);
 	}
-
-	
-	/*
-	 * Handle add (new element) action.
-	 */
-	private void handleAddEvt() {
-		UIUtils.newEvent(editor, editor.getRodinInput());
-	}
-	
-
-	/*
-	 * Handle up action.
-	 */
-	private void handleUp() {
-		UIUtils.debug("Up: To be implemented");
-		return;
-	}
-	
-	
-	/*
-	 * Handle down action. 
-	 */
-	private void handleDown() {
-		UIUtils.debug("Down: To be implemented");
-		return;
-	}
-	
 	
 	/**
 	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-		ISelection sel = ((ISelectionProvider) getViewer()).getSelection();
-		Object [] selections = ((IStructuredSelection) sel).toArray();
+		Tree tree = ((TreeViewer) getViewer()).getTree();
+		TreeItem [] items = tree.getSelection();
 		
-		boolean hasOneSelection = selections.length == 1;
-		
+		boolean hasOneSelection = items.length == 1;
 		boolean initSelected = false;
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
 		
 		if (hasOneSelection) {
 			IRodinElement event;
-			if (selections[0] instanceof Leaf) {
-				IRodinElement element = ((Leaf) selections[0]).getElement();
+			if (items[0].getData() instanceof Leaf) {
+				IRodinElement element = ((Leaf) items[0].getData()).getElement();
 				if (element instanceof IEvent) {
 					event = (IRodinElement) element;
 				}
@@ -243,12 +204,33 @@ public class EventMasterSection
 			
 		}
 
+		if (hasOneSelection) {
+			TreeItem item = items[0];
+			IRodinElement element = ((Leaf) item.getData()).getElement();
+			TreeItem prev = TreeSupports.findPrevItem(tree, item);
+			if (prev != null) {
+				Leaf leaf = (Leaf) prev.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveUp = true;
+			}
+			TreeItem next = TreeSupports.findNextItem(tree, item);
+			if (next != null) {
+				Leaf leaf = (Leaf) next.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveDown = true;
+			}
+		}
+        setButtonEnabled(
+			UP_INDEX,
+			hasOneSelection && canMoveUp);
+		setButtonEnabled(
+			DOWN_INDEX,
+			hasOneSelection && canMoveDown);
+		
 		setButtonEnabled(ADD_EVT_INDEX, true);
 		setButtonEnabled(ADD_VAR_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_GRD_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_ACT_INDEX, hasOneSelection);
-		setButtonEnabled(UP_INDEX, hasOneSelection);
-		setButtonEnabled(DOWN_INDEX, hasOneSelection);
 	}
 	
 
@@ -260,39 +242,26 @@ public class EventMasterSection
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_EVT_INDEX:
-				handleAddEvt();
+				UIUtils.newEvent(editor, editor.getRodinInput());
 				break;
 			case ADD_VAR_INDEX:
-				handleAddVar();
+				groupActionSet.addLocalVariable.run();
 				break;
 			case ADD_GRD_INDEX:
-				handleAddGrd();
+				groupActionSet.addGuard.run();
 				break;
 			case ADD_ACT_INDEX:
-				handleAddAct();
+				groupActionSet.addAction.run();
 				break;
 			case UP_INDEX:
-				handleUp();
+				groupActionSet.handleUp.run();
 				break;
 			case DOWN_INDEX:
-				handleDown();
+				groupActionSet.handleDown.run();
 				break;
 		}
 	}
 	
-
-	private void handleAddVar() {
-		groupActionSet.newLocalVariable.run();
-	}
-
-	private void handleAddGrd() {
-		groupActionSet.newGuard.run();
-	}
-
-	private void handleAddAct() {
-		groupActionSet.newAction.run();
-	}
-
 	/*
 	 * Create the tree view part.
 	 * <p>

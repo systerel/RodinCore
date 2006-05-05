@@ -15,9 +15,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,26 +23,19 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IGuard;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IUnnamedInternalElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -74,9 +65,6 @@ public class SyntheticContextViewSection
 	private ViewerFilter varFilter;
 	private ViewerFilter grdFilter;
 
-	// The group of actions for the tree part.
-	private ActionGroup groupActionSet;
-
 	/**
      * Constructor.
      * <p>
@@ -88,10 +76,8 @@ public class SyntheticContextViewSection
 			int style, EventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
 
-		makeActions();
 		hookContextMenu();
 		createToolBarActions(managedForm);
-		editor.addStatusListener(this);
 	}
 
 	/**
@@ -151,13 +137,6 @@ public class SyntheticContextViewSection
 		form.updateToolBar();
 	}
 	
-	/*
-	 * Create the actions that can be used in the tree.
-	 */
-	private void makeActions() {
-		groupActionSet = new EventMasterSectionActionGroup(editor, (TreeViewer) this.getViewer());
-	}
-	
 	
 	/**
 	 * Hook the actions to the menu
@@ -183,17 +162,41 @@ public class SyntheticContextViewSection
 	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-		ISelection sel = ((ISelectionProvider) getViewer()).getSelection();
-		Object [] selections = ((IStructuredSelection) sel).toArray();
-		
-		boolean hasOneSelection = selections.length == 1;
+		Tree tree = ((TreeViewer) getViewer()).getTree();
+		TreeItem [] items = tree.getSelection();
 
+		boolean hasOneSelection = items.length == 1;
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
+		
+		if (hasOneSelection) {
+			TreeItem item = items[0];
+			IRodinElement element = ((Leaf) item.getData()).getElement();
+			TreeItem prev = TreeSupports.findPrevItem(tree, item);
+			if (prev != null) {
+				Leaf leaf = (Leaf) prev.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveUp = true;
+			}
+			TreeItem next = TreeSupports.findNextItem(tree, item);
+			if (next != null) {
+				Leaf leaf = (Leaf) next.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveDown = true;
+			}
+		}
+        setButtonEnabled(
+			UP_INDEX,
+			hasOneSelection && canMoveUp);
+		setButtonEnabled(
+			DOWN_INDEX,
+			hasOneSelection && canMoveDown);
+		
 		setButtonEnabled(ADD_SET_INDEX, true);
 		setButtonEnabled(ADD_CST_INDEX, true);
 		setButtonEnabled(ADD_AXM_INDEX, true);
 		setButtonEnabled(ADD_THM_INDEX, true);
-		setButtonEnabled(UP_INDEX, hasOneSelection);
-		setButtonEnabled(DOWN_INDEX, hasOneSelection);
+		
 	}
 	
 
@@ -205,96 +208,24 @@ public class SyntheticContextViewSection
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case ADD_SET_INDEX:
-			handleAddSet();
+			groupActionSet.addSet.run();
 			break;
 		case ADD_CST_INDEX:
-			handleAddCst();
+			groupActionSet.addConstant.run();
 			break;
 		case ADD_AXM_INDEX:
-			handleAddAxm();
+			groupActionSet.addAxiom.run();
 			break;
 		case ADD_THM_INDEX:
-			handleAddThm();
+			groupActionSet.addTheorem.run();
 			break;
 		case UP_INDEX:
-			handleUp();
+			groupActionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			handleDown();
+			groupActionSet.handleDown.run();
 			break;
 		}
-	}
-
-	private void handleAddSet() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
-			IRodinElement set = rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, "set" + (counter+1), null, null);
-			editor.addNewElement(set);
-			edit(set);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void handleAddCst() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
-			IInternalElement cst = rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, "cst" + (counter+1), null, null);
-			editor.addNewElement(cst);
-			edit(cst);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void handleAddAxm() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
-			IInternalElement axm = rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, "axm" + (counter+1), null, null);
-			axm.setContents(EventBUIPlugin.AXM_DEFAULT);
-			editor.addNewElement(axm);
-			edit(axm);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-	
-
-	private void handleAddThm() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
-			IInternalElement thm = rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, "thm" + (counter+1), null, null);
-			thm.setContents(EventBUIPlugin.THM_DEFAULT);
-			editor.addNewElement(thm);
-			edit(thm);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * Handle up action.
-	 */
-	private void handleUp() {
-		UIUtils.debug("Up: To be implemented");
-		return;
-	}
-	
-	
-	/*
-	 * Handle down action. 
-	 */
-	private void handleDown() {
-		UIUtils.debug("Down: To be implemented");
-		return;
 	}
 	
 	/* (non-Javadoc)

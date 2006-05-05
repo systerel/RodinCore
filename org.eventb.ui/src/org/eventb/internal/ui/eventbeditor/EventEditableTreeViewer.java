@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachine;
 import org.eventb.core.IVariable;
@@ -176,5 +177,14 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			if (object instanceof IEvent) return true;
 		}
 		return false;
+	}
+	
+	protected void edit(IRodinElement element) {
+		this.reveal(element);
+		TreeItem item  = TreeSupports.findItem(this.getTree(), element);
+		if (element instanceof IUnnamedInternalElement) selectItem(item, 1);
+		else if (element instanceof IVariable) selectItem(item, 0);
+		else if (element instanceof IEvent) selectItem(item, 0);
+		else selectItem(item, 1);
 	}
 }
