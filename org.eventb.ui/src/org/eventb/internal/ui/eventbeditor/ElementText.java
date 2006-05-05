@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.UIUtils;
 
 public abstract class ElementText
-//	implements IElementChangedListener
 {
 	private Leaf leaf;
 	private int column;
@@ -88,30 +87,31 @@ public abstract class ElementText
 					prevEditableCell();
 					event.doit = false;
 					break;
-				case SWT.TRAVERSE_ARROW_NEXT:
-					commit(leaf, column, original);
-					text.getParent().dispose();
-					nextEditableCell();
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_ARROW_PREVIOUS:
-					commit(leaf, column, original);
-					text.getParent().dispose();
-					prevEditableCell();
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_PAGE_NEXT:
-					commit(leaf, column, original);
-					text.getParent().dispose();
-					nextEditableCell();
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_PAGE_PREVIOUS:
-					commit(leaf, column, original);
-					text.getParent().dispose();
-					prevEditableCell();
-					event.doit = false;
-					break;				}
+//				case SWT.TRAVERSE_ARROW_NEXT:
+//					commit(leaf, column, original);
+//					text.getParent().dispose();
+//					nextEditableCell();
+//					event.doit = false;
+//					break;
+//				case SWT.TRAVERSE_ARROW_PREVIOUS:
+//					commit(leaf, column, original);
+//					text.getParent().dispose();
+//					prevEditableCell();
+//					event.doit = false;
+//					break;
+//				case SWT.TRAVERSE_PAGE_NEXT:
+//					commit(leaf, column, original);
+//					text.getParent().dispose();
+//					nextEditableCell();
+//					event.doit = false;
+//					break;
+//				case SWT.TRAVERSE_PAGE_PREVIOUS:
+//					commit(leaf, column, original);
+//					text.getParent().dispose();
+//					prevEditableCell();
+//					event.doit = false;
+//					break;
+				}
 			}
 		}
 	}
