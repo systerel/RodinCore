@@ -24,14 +24,7 @@ public class Translator extends IdentityTranslator {
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 
-		Predicate newPred = pred;
-		pred = null;
-		
-		while(newPred != pred) {
-			pred = new Translator().translate(newPred, ff);
-			newPred = new Reorganizer().translate(pred, ff);
-		}
-		return pred;		
+		return new Translator().translate(pred, ff);
 	}
 	
 	%include {Formula.tom}
@@ -53,99 +46,6 @@ public class Translator extends IdentityTranslator {
 	    	 */
 	    	Equal(_, _) -> {
 	        	return translateEqual (pred,  ff);
-	        }
-	       	/**
-	 		 *  RULE CR1: 	a <∣≤ min(s) 
-	 		 * 				∀x·x∈s' ⇒ a' <∣≤ x
-	 		 */
-	 		Le(a, Min(s)) | Lt(a, Min(s)) -> {
-	        	
-	        	final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(`a.getType(), loc);
-
-		    	return forall.makeQuantifiedPredicate(
-		    		Formula.FORALL,
-		    		ff.makeBinaryPredicate(
-		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc, ff),
-		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc),
-		    				ff),
-		    			loc),
-		    		loc);	   
-	        }
-	 		/**
-	 		 *  RULE CR2:	max(s) <∣≤ a
-			 *				∀x·x∈s' ⇒ x <∣≤ a'
-	 		 */	   		      	
-	        Le(Max(s), a) | Lt(Max(s), a) -> {
-	        	
-	        	final DecomposedQuant forall = new DecomposedQuant(ff);
-				final Expression x = forall.addQuantifier(`a.getType(), loc);
-
-		    	return forall.makeQuantifiedPredicate(
-		    		Formula.FORALL,
-		    		ff.makeBinaryPredicate(
-		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc, ff),
-		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc),
-		    				ff),
-		    			loc),
-		    		loc);	   
-	        }
-	 		/**
-	 		 *  RULE CR3:   min(s) <∣≤  a
-			 *				∃x·x∈s' ∧ x <∣≤ a'
-	 		 */	   		      	
-	        Le(Min(s), a) | Lt(Min(s), a) -> {
-	        	
-	        	final DecomposedQuant exists = new DecomposedQuant(ff);
-				final Expression x = exists.addQuantifier(`a.getType(), loc);
-		    	
-		    	return exists.makeQuantifiedPredicate(
-		    		Formula.EXISTS,
-		    		FormulaConstructor.makeLandPredicate(
-		    			ff,
-		    			translateIn (x, exists.push(`s), loc, ff),
-		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc),
-		    				ff),
-		    			loc),
-		    		loc);
-	        }
-	        /**
- 	 		 *  RULE CR4: 	a <∣≤ max(s) 
-	 		 * 				∃x·x∈s' ∧ a' <∣≤ x
-	 		 */
-	 	    Le(a, Max(s)) | Lt(a, Max(s)) -> {
-	        	
-	        	final DecomposedQuant exists = new DecomposedQuant(ff);
-				final Expression x = exists.addQuantifier(`a.getType(), loc);
-		    	
-		    	return exists.makeQuantifiedPredicate(
-		    		Formula.EXISTS,
-		    		FormulaConstructor.makeLandPredicate(
-		    			ff,
-		    			translateIn (x, exists.push(`s), loc, ff),
-		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc),
-		    				ff),
-		    			loc),
-		    		loc);
-	        }
-	        /**
-	         * RULE CR5:	a >|≥ b
-	         *				b <|≤ a
-	         */
-	        Ge(a, b) | Gt(a, b) -> {
-	        	return translate(
-	        		ff.makeRelationalPredicate(
-		        		pred.getTag() == Formula.GE ? Formula.LE : Formula.LT,
-		        		`b,
-		        		`a,
-		        		loc),
-		        	ff);
 	        }
 	        /**
 	 		*  RULE BR1: 	s ⊆ t
@@ -251,6 +151,113 @@ public class Translator extends IdentityTranslator {
 			    			ff),
 			    		loc),
 			    	loc);
+	    	}
+	    		       	/**
+	 		 *  RULE CR1: 	a <∣≤ min(s) 
+	 		 * 				∀x·x∈s' ⇒ a' <∣≤ x
+	 		 */
+	 		Le(a, Min(s)) | Lt(a, Min(s)) -> {
+	        	
+	        	final DecomposedQuant forall = new DecomposedQuant(ff);
+				final Expression x = forall.addQuantifier(`a.getType(), loc);
+
+		    	return forall.makeQuantifiedPredicate(
+		    		Formula.FORALL,
+		    		ff.makeBinaryPredicate(
+		    			Formula.LIMP,
+		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translate(
+			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc),
+		    				ff),
+		    			loc),
+		    		loc);	   
+	        }
+	 		/**
+	 		 *  RULE CR2:	max(s) <∣≤ a
+			 *				∀x·x∈s' ⇒ x <∣≤ a'
+	 		 */	   		      	
+	        Le(Max(s), a) | Lt(Max(s), a) -> {
+	        	
+	        	final DecomposedQuant forall = new DecomposedQuant(ff);
+				final Expression x = forall.addQuantifier(`a.getType(), loc);
+
+		    	return forall.makeQuantifiedPredicate(
+		    		Formula.FORALL,
+		    		ff.makeBinaryPredicate(
+		    			Formula.LIMP,
+		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translate(
+			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc),
+		    				ff),
+		    			loc),
+		    		loc);	   
+	        }
+	 		/**
+	 		 *  RULE CR3:   min(s) <∣≤  a
+			 *				∃x·x∈s' ∧ x <∣≤ a'
+	 		 */	   		      	
+	        Le(Min(s), a) | Lt(Min(s), a) -> {
+	        	
+	        	final DecomposedQuant exists = new DecomposedQuant(ff);
+				final Expression x = exists.addQuantifier(`a.getType(), loc);
+		    	
+		    	return exists.makeQuantifiedPredicate(
+		    		Formula.EXISTS,
+		    		FormulaConstructor.makeLandPredicate(
+		    			ff,
+		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translate(
+		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc),
+		    				ff),
+		    			loc),
+		    		loc);
+	        }
+	        /**
+ 	 		 *  RULE CR4: 	a <∣≤ max(s) 
+	 		 * 				∃x·x∈s' ∧ a' <∣≤ x
+	 		 */
+	 	    Le(a, Max(s)) | Lt(a, Max(s)) -> {
+	        	
+	        	final DecomposedQuant exists = new DecomposedQuant(ff);
+				final Expression x = exists.addQuantifier(`a.getType(), loc);
+		    	
+		    	return exists.makeQuantifiedPredicate(
+		    		Formula.EXISTS,
+		    		FormulaConstructor.makeLandPredicate(
+		    			ff,
+		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translate(
+		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc),
+		    				ff),
+		    			loc),
+		    		loc);
+	        }
+	        /**
+	         * RULE CR5:	a >|≥ b
+	         *				b <|≤ a
+	         */
+	        Ge(a, b) | Gt(a, b) -> {
+	        	return translate(
+	        		ff.makeRelationalPredicate(
+		        		pred.getTag() == Formula.GE ? Formula.LE : Formula.LT,
+		        		`b,
+		        		`a,
+		        		loc),
+		        	ff);
+	        }
+	        /**
+	         * RULE CR6:	a(bop(s)) <|≤ b
+	         *				c∀ a(bop(s)∗) <|≤ b 
+	         * RULE CR7:    a <|≤ b(bop(s))
+	         *				c∀ a <|≤ b(bop(s)∗) 
+	         */
+	        
+	    	Le(_, _) | Lt(_, _) -> {
+	    		Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
+				if(newPred != pred)
+					return translate(newPred, ff);
+				else
+					return super.translate(pred, ff);
 	    	}
 	    	_ -> {
 	    		return super.translate(pred, ff);
@@ -1390,8 +1397,17 @@ public class Translator extends IdentityTranslator {
 						ff.makeRelationalPredicate(Formula.LE, `max, `n, loc), ff),
 					loc);
 			}
+	        /**
+	        * RULE ER13: 	el(bop(s)) = er  
+	        *	  			c∀ el(bop(s)∗) = er
+	        */
 			_ -> {
-				return super.translate(pred, ff);
+				Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
+
+				if(newPred != pred)
+					return translate(newPred, ff);
+				else
+					return super.translate(pred, ff);
 			}
 		}
 	}
