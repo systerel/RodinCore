@@ -2,7 +2,7 @@
 <feature
       id="org.rodinp.platform"
       label="org.rodinp.platform-feature"
-      version="0.5.2"
+      version="0.5.5"
       provider-name="ETH Zürich">
 
    <description url="http://www.example.com/description">
@@ -22,11 +22,11 @@ http://www.eclipse.org/legal/epl-v10.html
 
    <includes
          id="org.eclipse.rcp"
-         version="0.0.0"/>
+         version="3.1.2"/>
 
    <includes
          id="org.eclipse.platform"
-         version="0.0.0"/>
+         version="3.1.2"/>
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
@@ -44,21 +44,21 @@ http://www.eclipse.org/legal/epl-v10.html
          id="org.rodinp.platform"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.5.5"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.ide"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.1.1"
          unpack="false"/>
 
    <plugin
          id="org.rodinp.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.5.5"
          unpack="false"/>
 
 </feature>
