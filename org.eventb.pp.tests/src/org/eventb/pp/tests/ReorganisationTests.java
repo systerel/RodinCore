@@ -117,5 +117,50 @@ public class ReorganisationTests extends AbstractTranslationTests {
 
 	}
 
+	/**
+	 * Ensures that no extraction is performed when it's not needed.
+	 */
+	public void testMin0() {
+		doTest( "x=min(S)",
+				"x∈S ∧ (∀y·y∈S ⇒ x≤y)", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+		doTest( "x≤min(S)",
+				"∀y·y∈S ⇒ x≤y", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+		doTest( "x+1≤min(S)",
+				"∀y·y∈S ⇒ x+1≤y", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+	}
+	
+	/**
+	 * Ensures that an extraction is performed when needed.
+	 */
+	public void testMin1() {
+		doTest( "x+1=min(S)",
+				"∀y·y∈S ∧ (∀z·z∈S ⇒ y≤z) ⇒ x+1=y", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+	}
+	
+	/**
+	 * Ensures that extraction is compatible with bound identifiers.
+	 */
+	public void testMin2() {
+		doTest( "∃x·x+1=min(S)",
+				"∃x·∀y·y∈S ∧ (∀z·z∈S ⇒ y≤z) ⇒ x+1=y", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+		doTest( "∃x·min(S)=x+1",
+				"∃x·∀y·y∈S ∧ (∀z·z∈S ⇒ y≤z) ⇒ y=x+1", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+		doTest( "∃x·min(S)≤x+1",
+				"∃x·∃y·y∈S ∧ y≤x+1", 
+				false, 
+				mTypeEnvironment(mList("S"), mList(INT_SET)));
+	}
 	
 }
