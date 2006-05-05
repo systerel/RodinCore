@@ -24,7 +24,9 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 			return expr;
 		}
 		else {
-			Expression substitute = purifyMaplet(expr);
+			List<Predicate> newBindings = new LinkedList<Predicate>(); 
+			Expression substitute = purifyMaplet(expr, newBindings);
+			bindings.addAll(newBindings);
 			substitutes.add(substitute);
 			return substitute;			
 		}
@@ -81,7 +83,7 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 		super.startPhase2();
 	}
 	
-	private Expression purifyMaplet(Expression expr) {
+	private Expression purifyMaplet(Expression expr, List<Predicate> newBindings) {
 			SourceLocation loc = expr.getSourceLocation();
 			
 			if(GoalChecker.isMapletExpression(expr))
@@ -90,8 +92,8 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 			case Formula.MAPSTO:
 				BinaryExpression bexpr = (BinaryExpression)expr;
 						
-				Expression nr = purifyMaplet(bexpr.getRight());
-				Expression nl = purifyMaplet(bexpr.getLeft());
+				Expression nr = purifyMaplet(bexpr.getRight(), newBindings);
+				Expression nl = purifyMaplet(bexpr.getLeft(), newBindings);
 
 				if(nr == bexpr.getLeft() && nl == bexpr.getRight()) return expr;
 				else
@@ -99,7 +101,7 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 
 			default:
 				Expression substitute = addQuantifier(expr.getType(), loc);
-				bindings.add(0, 
+				newBindings.add(0, 
 					ff.makeRelationalPredicate(
 						Formula.EQUAL, 
 						substitute, 
