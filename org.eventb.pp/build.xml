@@ -25,7 +25,6 @@
 				 tomBoundIdentifierDecomposition, 
 		         tomDecomposedQuant,
 		         tomGoalChecker,
-				 tomBorderTranslator,
 				 tomPredicateSimplification" 
 		description="Generate all Java files">
 		<eclipse.incrementalBuild/>
@@ -61,11 +60,6 @@
 		<uptodate property="tom.PredicateSimplification.notRequired" 
 				targetfile="${translatorSrcDir}/PredicateSimplification.java" >
 			<srcfiles file= "${translatorSrcDir}/PredicateSimplification.t" />
-			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.BorderTranslator.java.notRequired" 
-				targetfile="${translatorSrcDir}/BorderTranslator.java" >
-			<srcfiles file= "${translatorSrcDir}/BorderTranslator.t" />
 			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
 		</uptodate>
 		<!-- echoproperties prefix="tom" /-->
@@ -204,27 +198,6 @@
 		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
 	</target>
 	
-	<target name="tomBorderTranslator" depends="init,tom-test"
-			description="launch tom for BorderTranslator.t"
-			unless="tom.BorderTranslator.notRequired" >
-			<java classname="jtom.Tom" fork="true">
-				<classpath>
-					<fileset dir="${tom-home}/lib">
-			        	<include name="*.jar"/>
-					</fileset>
-				</classpath>
-				<sysproperty key="tom.home" value="${tom-home}" />
-				<arg value="-X" />
-				<arg value="${tom-home}/Tom.xml" />
-				<arg value="--output" />
-				<arg value="${translatorSrcDir}/BorderTranslator.java" />
-				<arg value="--pretty" />
-				<arg value="--static" />
-				<arg value="${translatorSrcDir}/BorderTranslator.t" />
-			</java>
-			<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-		</target>
-
 	<target name="clean" description="clean up">
 		<delete file="${translatorSrcDir}/Translator.java" />
 		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
@@ -232,7 +205,6 @@
 		<delete file="${translatorSrcDir}/DecomposedQuant.java" />
 		<delete file="${translatorSrcDir}/GoalChecker.java" />
 		<delete file="${translatorSrcDir}/PredicateSimplification.java" />
-		<delete file="${translatorSrcDir}/BorderTranslator.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	
