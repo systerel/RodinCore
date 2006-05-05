@@ -13,18 +13,25 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 
 public abstract class IdentityTranslatorBase {
- 	
-	protected abstract Expression translate(Expression expr, FormulaFactory ff);
-	protected abstract Predicate translate(Predicate expr, FormulaFactory ff);
+	
+	protected final FormulaFactory ff;
+	
+	protected IdentityTranslatorBase(FormulaFactory ff) {
+		this.ff = ff;
+	}
+
+	protected abstract Expression translate(Expression expr);
+	
+	protected abstract Predicate translate(Predicate expr);
 	
 	protected Expression idTransAssociativeExpression(
-			Expression expr, FormulaFactory ff, Expression[] children) {
+			Expression expr, Expression[] children) {
 
 		SourceLocation loc = expr.getSourceLocation();
 		ArrayList<Expression> newChildren = new ArrayList<Expression>();
 		boolean hasChanged = false;
 		for (Expression child: children) {
-			Expression newChild = translate(child, ff);
+			Expression newChild = translate(child);
 			if (newChild.getTag() == expr.getTag()) {
 				AssociativeExpression assChild = (AssociativeExpression) newChild;
 				newChildren.addAll(Arrays.asList(assChild.getChildren()));
@@ -42,11 +49,11 @@ public abstract class IdentityTranslatorBase {
 	
 	
 	protected Expression idTransBinaryExpression(
-			Expression expr, FormulaFactory ff, Expression l, Expression r) {
+			Expression expr, Expression l, Expression r) {
 
 		SourceLocation loc = expr.getSourceLocation();
-		Expression nl = translate(l, ff);
-		Expression nr = translate(r, ff);
+		Expression nl = translate(l);
+		Expression nr = translate(r);
 
 		if (nl == l && nr == r) {
 			return expr;
@@ -55,10 +62,10 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Expression idTransBoolExpression(
-			Expression expr, FormulaFactory ff, Predicate P) {
+			Expression expr, Predicate P) {
 
 		SourceLocation loc = expr.getSourceLocation();
-		Predicate nP = translate(P, ff);
+		Predicate nP = translate(P);
 		
 		if (nP == P) {
 			return expr;
@@ -67,11 +74,11 @@ public abstract class IdentityTranslatorBase {
 	}
 
 	protected Expression idTransQuantifiedExpression(
-			Expression expr, FormulaFactory ff, BoundIdentDecl[] is, Predicate P, Expression E) {
+			Expression expr, BoundIdentDecl[] is, Predicate P, Expression E) {
 
 		SourceLocation loc = expr.getSourceLocation();
-		Predicate nP = translate(P, ff);
-		Expression nE = translate(E, ff);
+		Predicate nP = translate(P);
+		Expression nE = translate(E);
 
 		if (nP == P && nE == E) {
 			return expr;
@@ -81,13 +88,13 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Expression idTransSetExtension(
-		Expression expr, FormulaFactory ff, Expression[] children) {
+		Expression expr, Expression[] children) {
 
 		SourceLocation loc = expr.getSourceLocation();
 		boolean hasChanged = false;
 		ArrayList<Expression> newChildren = new ArrayList<Expression>();
 		for (Expression child: children) {
-			Expression newChild = translate(child, ff);
+			Expression newChild = translate(child);
 			newChildren.add(newChild);
 			hasChanged |= newChild != child;
 		}
@@ -98,10 +105,10 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Expression idTransUnaryExpression(
-			Expression expr, FormulaFactory ff, Expression child) {
+			Expression expr, Expression child) {
 
 		SourceLocation loc = expr.getSourceLocation();
-		Expression newChild = translate(child, ff);
+		Expression newChild = translate(child);
 		if (newChild == child) {
 			return expr;
 		}
@@ -109,14 +116,14 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Predicate idTransAssociativePredicate(
-			Predicate pred, FormulaFactory ff, Predicate[] children) {
+			Predicate pred, Predicate[] children) {
 
 		SourceLocation loc = pred.getSourceLocation();
 
 		ArrayList<Predicate> newChildren = new ArrayList<Predicate>();
 		boolean hasChanged = false;
 		for (Predicate child: children) {
-			Predicate newChild = translate(child, ff);
+			Predicate newChild = translate(child);
 			if (newChild.getTag() == pred.getTag()) {
 				AssociativePredicate assPred = (AssociativePredicate) newChild;
 				newChildren.addAll(Arrays.asList(assPred.getChildren()));
@@ -134,11 +141,11 @@ public abstract class IdentityTranslatorBase {
 	}
 
 	protected Predicate idTransBinaryPredicate(
-			Predicate pred, FormulaFactory ff, Predicate l, Predicate r) {
+			Predicate pred, Predicate l, Predicate r) {
 
 		SourceLocation loc = pred.getSourceLocation();
-		Predicate nl = translate(l, ff);
-		Predicate nr = translate(r, ff);
+		Predicate nl = translate(l);
+		Predicate nr = translate(r);
 		
 		if (nl == l && nr == r) {
 			return pred;
@@ -147,10 +154,10 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Predicate idTransUnaryPredicate(
-			Predicate pred, FormulaFactory ff, Predicate P) {
+			Predicate pred, Predicate P) {
 
 		SourceLocation loc = pred.getSourceLocation();
-  		Predicate nP = translate(P, ff);
+  		Predicate nP = translate(P);
   		
   		if (nP == P) {
   			return pred;
@@ -159,10 +166,10 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Predicate idTransSimplePredicate(
-			Predicate pred, FormulaFactory ff, Expression E) {
+			Predicate pred, Expression E) {
 
 		SourceLocation loc = pred.getSourceLocation();
-  		Expression nE = translate(E, ff);
+  		Expression nE = translate(E);
   		
   		if (nE == E) {
   			return pred;
@@ -171,11 +178,11 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Predicate idTransRelationalPredicate(
-			Predicate pred, FormulaFactory ff, Expression l, Expression r) {
+			Predicate pred, Expression l, Expression r) {
 
 		SourceLocation loc = pred.getSourceLocation();
-		Expression nl = translate(l, ff);
-		Expression nr = translate(r, ff);
+		Expression nl = translate(l);
+		Expression nr = translate(r);
 
 		if (nl == l && nr == r) {
 			return pred;
@@ -184,10 +191,10 @@ public abstract class IdentityTranslatorBase {
 	}
 	
 	protected Predicate idTransQuantifiedPredicate(
-			Predicate pred, FormulaFactory ff, BoundIdentDecl[] is, Predicate P) {
+			Predicate pred, BoundIdentDecl[] is, Predicate P) {
 
 		SourceLocation loc = pred.getSourceLocation();
-		Predicate nP = translate(P, ff);
+		Predicate nP = translate(P);
   		
   		if (nP == P) {
   			return pred;

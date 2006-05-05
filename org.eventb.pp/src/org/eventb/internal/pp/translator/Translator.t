@@ -24,13 +24,17 @@ public class Translator extends IdentityTranslator {
 	
 	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 
-		return new Translator().translate(pred, ff);
+		return new Translator(ff).translate(pred);
 	}
 	
+	protected Translator(FormulaFactory ff) {
+		super(ff);
+	}
+
 	%include {Formula.tom}
+
 	@Override
-	
-	protected Predicate translate(Predicate pred, FormulaFactory ff) {
+	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 		
 	    %match (Predicate pred) {
@@ -38,21 +42,21 @@ public class Translator extends IdentityTranslator {
 	    	 *	All ∈ rules are implemented in translateEqual
 	    	 */
 	    	In(e, rhs) -> {
-	    		Predicate result = translateIn (`e, `rhs, loc, ff);
-	    		return result != null ? result : super.translate(pred, ff);
+	    		Predicate result = translateIn(`e, `rhs, loc);
+	    		return result != null ? result : super.translate(pred);
 	    	}
 	    	/**
 	    	 *	All = rules are implemented in translateEqual
 	    	 */
 	    	Equal(_, _) -> {
-	        	return translateEqual (pred,  ff);
+	        	return translateEqual(pred);
 	        }
 	        /**
 	 		*  RULE BR1: 	s ⊆ t
 	 		* 				s ∈ ℙ(t)
 	 		*/	   		      	
 	    	SubsetEq(s, t) -> {
-	    		return translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff);   				
+	    		return translateIn(`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc);   				
 	    	}
 	        /**
 	 		*  RULE BR2: 	s ⊈ t
@@ -61,7 +65,7 @@ public class Translator extends IdentityTranslator {
 	    	NotSubsetEq(s, t) -> {
 	    		return ff.makeUnaryPredicate(
 	    			Formula.NOT, 
-	    			translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff),
+	    			translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc),
 	    			loc);
 	    	}
 	        /**
@@ -71,10 +75,10 @@ public class Translator extends IdentityTranslator {
 	    	Subset(s, t) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-	    			translateIn(`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff),
+	    			translateIn(`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc),
 	    			ff.makeUnaryPredicate(
 	    				Formula.NOT,
-		    			translateIn (`t, ff.makeUnaryExpression(Formula.POW, `s, loc), loc, ff),
+		    			translateIn (`t, ff.makeUnaryExpression(Formula.POW, `s, loc), loc),
 		    			loc),
 			    	loc);	    				
 	    	}
@@ -87,9 +91,9 @@ public class Translator extends IdentityTranslator {
 					ff,
 	    			ff.makeUnaryPredicate(
 		    			Formula.NOT,
-			    		translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc, ff),
+			    		translateIn (`s, ff.makeUnaryExpression(Formula.POW, `t, loc), loc),
 			    		loc),
-		    		translateIn(`t, ff.makeUnaryExpression(Formula.POW, `s, loc), loc, ff),
+		    		translateIn(`t, ff.makeUnaryExpression(Formula.POW, `s, loc), loc),
 			    	loc);	    				
 	    	}
 	        /**
@@ -100,7 +104,7 @@ public class Translator extends IdentityTranslator {
 	        	return ff.makeUnaryPredicate(
 	        		Formula.NOT, 
 	        		translateEqual(
-	        			ff.makeRelationalPredicate(Formula.EQUAL, `x, `y, loc), ff),
+	        			ff.makeRelationalPredicate(Formula.EQUAL, `x, `y, loc)),
 	        		loc);
 	        }	
 	        /**
@@ -110,7 +114,7 @@ public class Translator extends IdentityTranslator {
 	    	NotIn(x, s) -> {
 	    		return ff.makeUnaryPredicate(
 	    			Formula.NOT, 
-	    			translateIn (`x, `s, loc, ff),
+	    			translateIn (`x, `s, loc),
 	    			loc);
 	    	}
 	        /**
@@ -147,8 +151,7 @@ public class Translator extends IdentityTranslator {
 			    					b, 
 			    					loc),
 			    				loc),
-			    			loc,
-			    			ff),
+			    			loc),
 			    		loc),
 			    	loc);
 	    	}
@@ -165,10 +168,10 @@ public class Translator extends IdentityTranslator {
 		    		Formula.FORALL,
 		    		ff.makeBinaryPredicate(
 		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translateIn(x, forall.push(`s),	loc),
 		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc),
-		    				ff),
+			    			ff.makeRelationalPredicate(pred.getTag(), forall.push(`a), x, loc)
+			    		),
 		    			loc),
 		    		loc);	   
 	        }
@@ -185,10 +188,10 @@ public class Translator extends IdentityTranslator {
 		    		Formula.FORALL,
 		    		ff.makeBinaryPredicate(
 		    			Formula.LIMP,
-		    			translateIn(x, forall.push(`s),	loc, ff),
+		    			translateIn(x, forall.push(`s),	loc),
 		    			translate(
-			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc),
-		    				ff),
+			    			ff.makeRelationalPredicate(pred.getTag(), x, forall.push(`a), loc)
+		    			),
 		    			loc),
 		    		loc);	   
 	        }
@@ -205,10 +208,10 @@ public class Translator extends IdentityTranslator {
 		    		Formula.EXISTS,
 		    		FormulaConstructor.makeLandPredicate(
 		    			ff,
-		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translateIn (x, exists.push(`s), loc),
 		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc),
-		    				ff),
+		    				ff.makeRelationalPredicate(pred.getTag(), x, exists.push(`a), loc)
+		    			),
 		    			loc),
 		    		loc);
 	        }
@@ -225,10 +228,10 @@ public class Translator extends IdentityTranslator {
 		    		Formula.EXISTS,
 		    		FormulaConstructor.makeLandPredicate(
 		    			ff,
-		    			translateIn (x, exists.push(`s), loc, ff),
+		    			translateIn (x, exists.push(`s), loc),
 		    			translate(
-		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc),
-		    				ff),
+		    				ff.makeRelationalPredicate(pred.getTag(), exists.push(`a), x, loc)
+		    			),
 		    			loc),
 		    		loc);
 	        }
@@ -242,8 +245,8 @@ public class Translator extends IdentityTranslator {
 		        		pred.getTag() == Formula.GE ? Formula.LE : Formula.LT,
 		        		`b,
 		        		`a,
-		        		loc),
-		        	ff);
+		        		loc)
+		        );
 	        }
 	        /**
 	         * RULE CR6:	a(bop(s)) <|≤ b
@@ -255,36 +258,36 @@ public class Translator extends IdentityTranslator {
 	    	Le(_, _) | Lt(_, _) -> {
 	    		Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
 				if(newPred != pred)
-					return translate(newPred, ff);
+					return translate(newPred);
 				else
-					return super.translate(pred, ff);
+					return super.translate(pred);
 	    	}
 	    	_ -> {
-	    		return super.translate(pred, ff);
+	    		return super.translate(pred);
 	    	}
 	    }
 	}
 	
-	protected Predicate translateIn(Expression e, Expression rhs, SourceLocation loc, FormulaFactory ff) {
+	protected Predicate translateIn(Expression e, Expression rhs, SourceLocation loc) {
 		
-		Predicate result = translateIn_E(e, rhs, loc, ff);
+		Predicate result = translateIn_E(e, rhs, loc);
 		if(result != null) return result;
 
-		result = translateIn_EF(e, rhs, loc, ff);
+		result = translateIn_EF(e, rhs, loc);
 		if(result != null) return result;
 		
-		result = translateIn_EF_G(e, rhs, loc, ff);
+		result = translateIn_EF_G(e, rhs, loc);
 		if(result != null) return result;
 		
-		result = translateIn_E_FG(e, rhs, loc, ff);
+		result = translateIn_E_FG(e, rhs, loc);
 		if(result != null) return result;
 		
-		result = translateIn_EF_GH(e, rhs, loc, ff);
+		result = translateIn_EF_GH(e, rhs, loc);
 		return result;
 	}
 	
 	protected Predicate translateIn_E(
-		Expression e, Expression right, SourceLocation loc, FormulaFactory ff) {
+		Expression e, Expression right, SourceLocation loc) {
 	
 		%match (Expression right) {
 			/**
@@ -308,8 +311,8 @@ public class Translator extends IdentityTranslator {
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
-						translateIn(x, forall.push(e), loc, ff),
-						translateIn(x, forall.push(`t), loc, ff), 
+						translateIn(x, forall.push(e), loc),
+						translateIn(x, forall.push(`t), loc), 
 						loc),
 				loc);
 			}
@@ -328,7 +331,7 @@ public class Translator extends IdentityTranslator {
 
 					return exists.conditionalQuantify(
 						Formula.EXISTS,
-						translateIn(x, exists.push(right), loc,	ff),
+						translateIn(x, exists.push(right), loc),
 						this);
 				}
 			}
@@ -345,7 +348,7 @@ public class Translator extends IdentityTranslator {
 				return ff.makeRelationalPredicate(
 					Formula.LE,
 					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
-					translate(e, ff),
+					translate(e),
 					loc);
 			}
 			/**
@@ -356,7 +359,7 @@ public class Translator extends IdentityTranslator {
 				return ff.makeRelationalPredicate(
 					Formula.LT,
 					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
-					translate(e, ff),
+					translate(e),
 					loc);
 			}
 			/**
@@ -370,8 +373,8 @@ public class Translator extends IdentityTranslator {
 					Formula.EXISTS,
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translate(`P, ff),
-						translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, exists.push(e),`f, loc), ff),
+						translate(`P),
+						translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, exists.push(e),`f, loc)),
 						loc),
 					loc);
 			} 
@@ -386,8 +389,8 @@ public class Translator extends IdentityTranslator {
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
-						translate(`P, ff),
-						translateIn(forall.push(e), `f, loc, ff),
+						translate(`P),
+						translateIn(forall.push(e), `f, loc),
 						loc),
 					loc);
 			}
@@ -402,8 +405,8 @@ public class Translator extends IdentityTranslator {
 					Formula.EXISTS,
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translate(`P, ff),
-						translateIn(exists.push(e), `f, loc, ff),
+						translate(`P),
+						translateIn(exists.push(e), `f, loc),
 						loc),
 					loc);
 			}
@@ -420,8 +423,8 @@ public class Translator extends IdentityTranslator {
 					Formula.EXISTS,
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translateIn(x, exists.push(`s), loc, ff),
-						translateIn(exists.push(e), x, loc, ff),
+						translateIn(x, exists.push(`s), loc),
+						translateIn(exists.push(e), x, loc),
 						loc),
 					loc);
 			}
@@ -438,8 +441,8 @@ public class Translator extends IdentityTranslator {
 					Formula.FORALL,
 					ff.makeBinaryPredicate(
 						Formula.LIMP,
-						translateIn(x, forall.push(`s), loc, ff),
-						translateIn(forall.push(e), x, loc, ff),
+						translateIn(x, forall.push(`s), loc),
+						translateIn(forall.push(e), x, loc),
 						loc),
 					loc);
 			}
@@ -465,12 +468,11 @@ public class Translator extends IdentityTranslator {
 					Formula.EXISTS,
 					FormulaConstructor.makeLandPredicate(
 						ff,
-						translateIn(x, exists.push(`w), loc, ff),
+						translateIn(x, exists.push(`w), loc),
 						translateIn(
 							ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(e), loc),
 							exists.push(`r),
-							loc,
-							ff),
+							loc),
 						loc),
 					loc);
 			}
@@ -495,9 +497,9 @@ public class Translator extends IdentityTranslator {
 								x,	
 								loc),
 							 exists.push(`f), 
-							 loc, 
-							 ff),
-						translateIn(exists.push(e), x, loc,	ff),
+							 loc
+						),
+						translateIn(exists.push(e), x, loc),
 						loc),
 					loc);
 			}
@@ -516,8 +518,7 @@ public class Translator extends IdentityTranslator {
 					translateIn(
 						ff.makeBinaryExpression(Formula.MAPSTO, x, exists.push(e), loc), 
 						exists.push(`r), 
-						loc, 
-						ff),
+						loc),
 					loc);
 			}
 			/**
@@ -535,8 +536,7 @@ public class Translator extends IdentityTranslator {
 					translateIn(
 						ff.makeBinaryExpression(Formula.MAPSTO, exists.push(e), x, loc), 
 						exists.push(`r), 
-						loc, 
-						ff),
+						loc),
 					loc);
 			}
 	        /**
@@ -545,7 +545,7 @@ public class Translator extends IdentityTranslator {
 	         */
 	        SetExtension((a)) -> {
 				return translateEqual(
-						ff.makeRelationalPredicate(Formula.EQUAL, e, `a, loc), ff);
+						ff.makeRelationalPredicate(Formula.EQUAL, e, `a, loc));
 						
 			}
 			SetExtension(members) -> {
@@ -557,7 +557,7 @@ public class Translator extends IdentityTranslator {
 							Formula.EQUAL, e, member, loc));
 				}
 				return translate(
-					FormulaConstructor.makeLorPredicate(ff, predicates, loc), ff);
+					FormulaConstructor.makeLorPredicate(ff, predicates, loc));
 			}
 			
 	        /**
@@ -573,11 +573,10 @@ public class Translator extends IdentityTranslator {
 					translateIn(
 						e, 
 						ff.makeUnaryExpression(Formula.POW, `s, loc), 
-						loc, 
-						ff),
+						loc),
 					exists.makeQuantifiedPredicate(
 						Formula.EXISTS,
-						translateIn(x, exists.push(e), loc, ff),
+						translateIn(x, exists.push(e), loc),
 						loc),
 					loc);					
 			}
@@ -590,13 +589,13 @@ public class Translator extends IdentityTranslator {
 					ff,
 					ff.makeRelationalPredicate(
 						Formula.LE,
-						translate(`a, ff),
-						translate(e, ff), 
+						translate(`a),
+						translate(e), 
 						loc),
 					ff.makeRelationalPredicate(
 						Formula.LE,
-						translate(e, ff), 
-						translate(`b, ff),
+						translate(e), 
+						translate(`b),
 						loc),
 					loc);
 			}
@@ -607,10 +606,10 @@ public class Translator extends IdentityTranslator {
 			SetMinus(s, t) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(e, `s, loc, ff),
+					translateIn(e, `s, loc),
 					ff.makeUnaryPredicate(
 						Formula.NOT, 
-						translateIn(e, `t, loc, ff), 
+						translateIn(e, `t, loc), 
 						loc),
 					loc);
 			}
@@ -627,7 +626,7 @@ public class Translator extends IdentityTranslator {
 
 				for(Expression child: `children) {
 					preds.add(
-						translateIn(e, child, loc, ff));
+						translateIn(e, child, loc));
 				}
 				return FormulaConstructor.makeAssociativePredicate(ff, tag, preds, loc);
 			}
@@ -643,15 +642,13 @@ public class Translator extends IdentityTranslator {
 								Formula.SUBSETEQ, 
 								ff.makeUnaryExpression(Formula.KDOM, e, loc),
 								`s,
-								loc),
-							ff),
+								loc)),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ, 
 								ff.makeUnaryExpression(Formula.KRAN, e, loc),
 								`t,
-								loc),
-							ff),
+								loc)),
 						loc);
 			}
 	        /**
@@ -664,15 +661,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`s,
 								ff.makeUnaryExpression(Formula.KDOM, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);
 			}
 	        /**
@@ -685,15 +680,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`t,
 								ff.makeUnaryExpression(Formula.KRAN, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);
 			}
 	        /**
@@ -706,15 +699,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.TREL, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`t,
 								ff.makeUnaryExpression(Formula.KRAN, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);
 			}
 	        /**
@@ -727,9 +718,8 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.TSUR, `s, `t, loc), 
-							loc, 
-							ff),
-					funcInv(e, ff),
+							loc),
+					funcInv(e),
 					loc);
 			}
 	        /**
@@ -742,15 +732,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.TFUN, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`t,
 								ff.makeUnaryExpression(Formula.KRAN, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);			
 			}
 	        /**
@@ -763,15 +751,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`t,
 								ff.makeUnaryExpression(Formula.KRAN, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);			
 			}
 	        /**
@@ -784,9 +770,8 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.TFUN, `s, `t, loc), 
-							loc, 
-							ff),
-						funcInv(e, ff),
+							loc),
+						funcInv(e),
 						loc);
 			}			
 	        /**
@@ -799,9 +784,8 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
-							loc, 
-							ff),
-						funcInv(e, ff),
+							loc),
+						funcInv(e),
 						loc);		
 			}	
 	        /**
@@ -814,15 +798,13 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.PFUN, `s, `t, loc), 
-							loc, 
-							ff),
+							loc),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`s,
 								ff.makeUnaryExpression(Formula.KDOM, e, loc),
-								loc),
-							ff),
+								loc)),
 						loc);			
 			}
 	        /**
@@ -835,9 +817,8 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							e, 
 							ff.makeBinaryExpression(Formula.REL, `s, `t, loc), 
-							loc, 
-							ff),
-						func(e, ff),
+							loc),
+						func(e),
 						loc);	
 			}	
 			_ -> {
@@ -846,17 +827,16 @@ public class Translator extends IdentityTranslator {
 		}					
 	}
 	
-	private static Expression purifyMaplet(
-		Expression expr, DecomposedQuant quant, List<Predicate> bindings, 
-		FormulaFactory ff) {
+	private Expression purifyMaplet(
+		Expression expr, DecomposedQuant quant, List<Predicate> bindings) {
 		SourceLocation loc = expr.getSourceLocation();
 		
 		if(GoalChecker.isMapletExpression(expr))
 			return quant.push(expr);
 		%match(Expression expr) {
 			Mapsto(l, r) -> {
-				Expression nr = purifyMaplet(`r, quant, bindings, ff);
-				Expression nl = purifyMaplet(`l, quant, bindings, ff);
+				Expression nr = purifyMaplet(`r, quant, bindings);
+				Expression nl = purifyMaplet(`l, quant, bindings);
 
 				if(nr == `r && nl == `l) return expr;
 				else
@@ -876,7 +856,7 @@ public class Translator extends IdentityTranslator {
 	}
 	
 	protected Predicate translateIn_EF(
-		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff){
+		Expression expr, Expression rhs, SourceLocation loc){
 		Expression e = null, f = null;
 		%match(Expression expr) {
 			Mapsto(left, right) -> {
@@ -893,8 +873,8 @@ public class Translator extends IdentityTranslator {
 			Cprod(s, t) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(e, `s, loc, ff),
-					translateIn(f, `t, loc, ff),
+					translateIn(e, `s, loc),
+					translateIn(f, `t, loc),
 					loc);			
 			}
 	        /**
@@ -941,11 +921,10 @@ public class Translator extends IdentityTranslator {
 							translateIn(
 								expr, 
 								ff.makeBinaryExpression(Formula.DOMSUB, sub, `children[i], loc),
-								loc,
-								ff));
+								loc));
 					}
 					else 
-						preds.add(translateIn(expr, `children[i], loc, ff));		
+						preds.add(translateIn(expr, `children[i], loc));		
 				}
 				
 				return  condQuant.conditionalQuantify(
@@ -961,9 +940,9 @@ public class Translator extends IdentityTranslator {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
 					translateIn(
-						ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc, ff),
+						ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc),
 					ff.makeUnaryPredicate(
-						Formula.NOT, translateIn(f, `T, loc, ff), loc),
+						Formula.NOT, translateIn(f, `T, loc), loc),
 					loc);
 			}
 	        /**
@@ -974,8 +953,8 @@ public class Translator extends IdentityTranslator {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
 					translateIn(
-						ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc, ff),
-					ff.makeUnaryPredicate(Formula.NOT, translateIn(e, `S, loc, ff), loc),
+						ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc),
+					ff.makeUnaryPredicate(Formula.NOT, translateIn(e, `S, loc), loc),
 					loc);
 			}
 	        /**
@@ -985,8 +964,8 @@ public class Translator extends IdentityTranslator {
 			RanRes(r, T) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc, ff),
-					translateIn(f, `T, loc, ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc),
+					translateIn(f, `T, loc),
 					loc);
 			}
 	        /**
@@ -996,8 +975,8 @@ public class Translator extends IdentityTranslator {
 			DomRes(S, r) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc, ff),
-					translateIn(e, `S, loc, ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r,	loc),
+					translateIn(e, `S, loc),
 					loc);
 			}
 	        /**
@@ -1007,8 +986,8 @@ public class Translator extends IdentityTranslator {
 			Id(S) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(e, `S, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, e, f, loc), ff),
+					translateIn(e, `S, loc),
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, e, f, loc)),
 					loc);
 			}
 	        /**
@@ -1041,8 +1020,7 @@ public class Translator extends IdentityTranslator {
 						translateIn(
 							ff.makeBinaryExpression(Formula.MAPSTO, X[i], X[i+1], loc), 
 							exists.push(`children[i]),
-							loc,
-							ff));								
+							loc));								
 				}				
 								
 	    		return exists.makeQuantifiedPredicate(
@@ -1064,15 +1042,14 @@ public class Translator extends IdentityTranslator {
 				return translateIn(
 					expr,
 					ff.makeAssociativeExpression(Formula.FCOMP, reversedChilds, loc),
-					loc,
-					ff);
+					loc);
 			}
 	        /**
 	        * RULE IR42:	e ↦ f ∈ r^
 	        *	  			f↦e ∈ r
 	        */
 			Converse(r) -> {
-				return translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, e, loc), `r, loc, ff);
+				return translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, e, loc), `r, loc);
 			}
 			_ -> {
 				return null;
@@ -1081,7 +1058,7 @@ public class Translator extends IdentityTranslator {
 	}
 	
 	protected Predicate translateIn_EF_G(
-		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
+		Expression expr, Expression rhs, SourceLocation loc) {
 		Expression e = null, f = null, g = null;
 		%match(Expression expr){
 			Mapsto(Mapsto(one, two), three) -> {
@@ -1098,8 +1075,8 @@ public class Translator extends IdentityTranslator {
 			Prj1(r) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, e, loc), ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc),
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, e, loc)),
 					loc);
 			}
 	        /**
@@ -1109,8 +1086,8 @@ public class Translator extends IdentityTranslator {
 			Prj2(r) -> {	
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc, ff),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, f, loc), ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc),
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, f, loc)),
 					loc);
 			}
 			_ -> {
@@ -1120,7 +1097,7 @@ public class Translator extends IdentityTranslator {
 	}
 
 	protected Predicate translateIn_E_FG(
-		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff) {
+		Expression expr, Expression rhs, SourceLocation loc) {
 		
 		Expression e = null, f = null, g = null;
 		%match(Expression expr){
@@ -1138,8 +1115,8 @@ public class Translator extends IdentityTranslator {
 			Dprod(p, q) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `p, loc, ff),
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, g, loc), `q, loc, ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `p, loc),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, g, loc), `q, loc),
 					loc);
 			}
 			_ -> {
@@ -1149,7 +1126,7 @@ public class Translator extends IdentityTranslator {
 	}
 
 	protected Predicate translateIn_EF_GH(
-		Expression expr, Expression rhs, SourceLocation loc, FormulaFactory ff){
+		Expression expr, Expression rhs, SourceLocation loc){
 		
 		Expression e = null, f = null, g = null, h = null;
 		%match(Expression expr){
@@ -1167,8 +1144,8 @@ public class Translator extends IdentityTranslator {
 			Pprod(p, q) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, g, loc), `p, loc, ff),
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, h, loc), `q, loc, ff),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, g, loc), `p, loc),
+					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, h, loc), `q, loc),
 					loc);
 			}
 			_ -> {
@@ -1177,15 +1154,15 @@ public class Translator extends IdentityTranslator {
 		}
 	}
 	
-	protected Predicate func(Expression f, FormulaFactory ff) {
-		return func(f, false, ff);
+	protected Predicate func(Expression f) {
+		return func(f, false);
 	}
 	
-	protected Predicate funcInv(Expression f, FormulaFactory ff) {
-		return func(f, true, ff);
+	protected Predicate funcInv(Expression f) {
+		return func(f, true);
 	}
 	
-	protected Predicate func(Expression f, boolean inverse, FormulaFactory ff) {
+	protected Predicate func(Expression f, boolean inverse) {
 		SourceLocation loc = f.getSourceLocation();
 		final DecomposedQuant forall = new DecomposedQuant(ff);
 
@@ -1213,8 +1190,7 @@ public class Translator extends IdentityTranslator {
 							inverse ? a : b, 
 							loc),	
 						f, 
-						loc, 
-						ff),
+						loc),
 					translateIn(
 						ff.makeBinaryExpression(
 							Formula.MAPSTO, 
@@ -1222,15 +1198,14 @@ public class Translator extends IdentityTranslator {
 							inverse ? a : c, 
 							loc),	
 						f, 
-						loc, 
-						ff),
+						loc),
 					loc),
-				translate(ff.makeRelationalPredicate(Formula.EQUAL, b, c, loc), ff),
+				translate(ff.makeRelationalPredicate(Formula.EQUAL, b, c, loc)),
 				loc),
 			loc);	
 	}
 	
-	protected Predicate translateEqual (Predicate pred, FormulaFactory ff) {
+	protected Predicate translateEqual (Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 		
 		%match(Predicate pred) {
@@ -1248,8 +1223,8 @@ public class Translator extends IdentityTranslator {
 			Equal(Mapsto(x, y), Mapsto(a,b)) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc), ff),
-					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc), ff),
+					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `x, `a, loc)),
+					translateEqual(ff.makeRelationalPredicate(Formula.EQUAL, `y, `b, loc)),
 					loc);						
 			}
 			/**
@@ -1260,8 +1235,8 @@ public class Translator extends IdentityTranslator {
 				
 				return ff.makeBinaryPredicate(
 					Formula.LEQV,
-					translate(`P, ff),
-					translate(`Q, ff),
+					translate(`P),
+					translate(`Q),
 					loc);
 			}
 			/**
@@ -1269,14 +1244,14 @@ public class Translator extends IdentityTranslator {
 	        *	  			P
 	        */
 			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
-				return translate(P, ff);
+				return translate(P);
 			}
 			/**
 	        * RULE ER5: 	bool(P) = FALSE  
 	        *	  			¬P
 	        */
 			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
-				return ff.makeUnaryPredicate(Formula.NOT, translate(P, ff), loc);
+				return ff.makeUnaryPredicate(Formula.NOT, translate(P), loc);
 			}
 			/**
 	        * RULE ER6: 	x = FALSE  
@@ -1290,8 +1265,7 @@ public class Translator extends IdentityTranslator {
 							Formula.EQUAL,
 							x,
 							ff.makeAtomicExpression(Formula.TRUE, loc),
-							loc),
-						ff),
+							loc)),
 					loc);						
 			}
 			/**
@@ -1307,7 +1281,7 @@ public class Translator extends IdentityTranslator {
 						`x,
 						ff.makeAtomicExpression(Formula.TRUE, loc),
 						loc),
-					translate(`P, ff),
+					translate(`P),
 					loc);
 			}
 			/**
@@ -1316,7 +1290,7 @@ public class Translator extends IdentityTranslator {
 	        */
 			Equal(FunImage(f, y), x) | Equal(x, FunImage(f, y)) -> {
 				return translateIn(
-					ff.makeBinaryExpression(Formula.MAPSTO, `y, `x, loc), `f, loc, ff);
+					ff.makeBinaryExpression(Formula.MAPSTO, `y, `x, loc), `f, loc);
 			}
 	        /**
 	        * RULE ER9: 	s = t
@@ -1332,15 +1306,13 @@ public class Translator extends IdentityTranslator {
 								Formula.SUBSETEQ,
 								`s,
 								`t,
-								loc),
-							ff),
+								loc)),
 						translate(
 							ff.makeRelationalPredicate(
 								Formula.SUBSETEQ,
 								`t,
 								`s,
-								loc),
-							ff),
+								loc)),
 						loc);						
 				}
 			}		 
@@ -1367,7 +1339,7 @@ public class Translator extends IdentityTranslator {
 				
 	    		return exists.makeQuantifiedPredicate(
 					Formula.EXISTS,
-					translateIn(f, exists.push(bij), loc, ff),
+					translateIn(f, exists.push(bij), loc),
 					loc);
 			}
 	        /**
@@ -1378,9 +1350,9 @@ public class Translator extends IdentityTranslator {
    			| Equal(min@Min(s), n@Identifier()) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(`n, `s, loc, ff),
+					translateIn(`n, `s, loc),
 					translate(
-						ff.makeRelationalPredicate(Formula.LE, `n, `min, loc), ff),
+						ff.makeRelationalPredicate(Formula.LE, `n, `min, loc)),
 					loc);
 			}
 	        /**
@@ -1392,9 +1364,9 @@ public class Translator extends IdentityTranslator {
    				
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					translateIn(`n, `s, loc, ff),
+					translateIn(`n, `s, loc),
 					translate(
-						ff.makeRelationalPredicate(Formula.LE, `max, `n, loc), ff),
+						ff.makeRelationalPredicate(Formula.LE, `max, `n, loc)),
 					loc);
 			}
 	        /**
@@ -1405,9 +1377,9 @@ public class Translator extends IdentityTranslator {
 				Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
 
 				if(newPred != pred)
-					return translate(newPred, ff);
+					return translate(newPred);
 				else
-					return super.translate(pred, ff);
+					return super.translate(pred);
 			}
 		}
 	}

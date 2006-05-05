@@ -38,29 +38,31 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 	private final List<Substitute> mapletOffsets;
 	private int count;
 	
-	private BoundIdentifierDecomposition() {
+	private BoundIdentifierDecomposition(FormulaFactory ff) {
+		super(ff);
 		mapletOffsets = new LinkedList<Substitute>();
 		count = 0;
 	}
 	
-	private BoundIdentifierDecomposition(List<Substitute> mapletOffsets, int count) {
+	private BoundIdentifierDecomposition(FormulaFactory ff, List<Substitute> mapletOffsets, int count) {
+		super(ff);
 		this.mapletOffsets = new LinkedList<Substitute>(mapletOffsets);
 		this.count = count;
 	}
 	
 	public static Predicate decomposeBoundIdentifiers(Predicate pred, FormulaFactory ff) {
-		pred = new BoundIdentifierDecomposition().translate(pred, ff);
+		pred = new BoundIdentifierDecomposition(ff).translate(pred);
 		
 		return pred;
 	}
 	
 	@Override
-	protected Expression translate(Expression expr, FormulaFactory ff){
+	protected Expression translate(Expression expr){
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
 			Cset(is, P, E) | Qunion(is, P, E) | Qinter(is, P, E) -> {
 				BoundIdentifierDecomposition ic =
-						new BoundIdentifierDecomposition(mapletOffsets, count);
+						new BoundIdentifierDecomposition(ff, mapletOffsets, count);
 				DecomposedQuant quant = new DecomposedQuant(ff);
 				Collections.reverse(Arrays.asList(`is));
 				List<Expression> quantifiers = new LinkedList<Expression>();
@@ -75,8 +77,8 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				ic.count += quant.offset();
 				return quant.makeQuantifiedExpression(
 					expr.getTag(),
-					ic.translate(`P, ff),
-					ic.translate(`E, ff),
+					ic.translate(`P),
+					ic.translate(`E),
 					loc);
 			}
 			BoundIdentifier(idx) -> {
@@ -84,18 +86,18 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				return p.expr.shiftBoundIdentifiers(count - p.boundIndex, ff);
 			}
 			_ -> {
-				return super.translate(expr, ff);
+				return super.translate(expr);
 			}
 		}
 	}
 	
 	@Override
-	protected Predicate translate(Predicate pred, FormulaFactory ff) {
+	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();		
 		%match (Predicate pred) {
 			ForAll(is, P) | Exists(is, P) -> {
 				BoundIdentifierDecomposition ic = 
-						new BoundIdentifierDecomposition(mapletOffsets, count);
+						new BoundIdentifierDecomposition(ff, mapletOffsets, count);
 				DecomposedQuant quant = new DecomposedQuant(ff);
 				Collections.reverse(Arrays.asList(`is));
 				List<Expression> quantifiers = new LinkedList<Expression>();
@@ -110,11 +112,11 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				ic.count += quant.offset();
 				return quant.makeQuantifiedPredicate(
 					pred.getTag(),
-					ic.translate(`P, ff),
+					ic.translate(`P),
 					loc);
 			}
 			_ -> {
-				return super.translate(pred, ff);
+				return super.translate(pred);
 			}
 		}
 	}

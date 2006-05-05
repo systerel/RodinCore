@@ -48,33 +48,36 @@ import org.eventb.core.ast.UnaryPredicate;
 @SuppressWarnings("unused")
 public class IdentityTranslator extends IdentityTranslatorBase {
 
+	protected IdentityTranslator(FormulaFactory ff) {
+		super(ff);
+	}
+
 	%include {Formula.tom}
 	
 	@Override
-	protected Expression translate(Expression expr, FormulaFactory ff) {
+	protected Expression translate(Expression expr) {
 		SourceLocation loc = expr.getSourceLocation();
 	    %match (Expression expr) {
 	    	AssociativeExpression(children) -> {
-	    		return idTransAssociativeExpression(expr, ff, `children);
+	    		return idTransAssociativeExpression(expr, `children);
 	    	}
-	    	AtomicExpression() | BoundIdentifier(_) | FreeIdentifier(_) | IntegerLiteral(_) -> { 
+	    	AtomicExpression() | Identifier(_) | IntegerLiteral(_) -> { 
 	    		return expr; 
 	    	}
 	    	BinaryExpression(l, r) -> {
-	    		return idTransBinaryExpression(expr, ff, `l, `r);
+	    		return idTransBinaryExpression(expr, `l, `r);
 	    	}
 	    	Bool(P) -> {
-	    		return idTransBoolExpression(expr, ff, `P);
+	    		return idTransBoolExpression(expr, `P);
 	    	}
 	    	Cset(is, P, E) | Qinter(is, P, E) | Qunion(is, P, E) -> {
-	    		return idTransQuantifiedExpression(expr, ff, `is, `P, `E);
+	    		return idTransQuantifiedExpression(expr, `is, `P, `E);
 	    	}
 	    	SetExtension(children) -> {
-	    		return idTransSetExtension(expr, ff, `children);
+	    		return idTransSetExtension(expr, `children);
 	    	}
-	    	
 	    	UnaryExpression(child) -> {
-	    		return idTransUnaryExpression(expr, ff, `child);
+	    		return idTransUnaryExpression(expr, `child);
 	    	}
 	    	_ -> {
 	    		throw new AssertionError("Unknown expression: " + expr);
@@ -83,31 +86,33 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	}
 	
 	@Override
-	protected Predicate translate(Predicate pred, FormulaFactory ff) {
+	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
 	    	Land(children) | Lor(children) -> {
-	    		return idTransAssociativePredicate(pred, ff, `children);
+	    		return idTransAssociativePredicate(pred, `children);
 	    	}
 	    	Limp(l, r) | Leqv(l, r)  -> {
-	    		return idTransBinaryPredicate(pred, ff, `l, `r);
+	    		return idTransBinaryPredicate(pred, `l, `r);
 	    	}
 	      	Not(P)-> {
-	    		return idTransUnaryPredicate(pred, ff, `P);
+	    		return idTransUnaryPredicate(pred, `P);
 	    	}
 	    	Finite(E)-> {
-	    		return idTransSimplePredicate(pred, ff, `E);
+	    		return idTransSimplePredicate(pred, `E);
 	    	}
 			RelationalPredicate(l, r) -> 
 			{
-	    		return idTransRelationalPredicate(pred, ff, `l, `r);
+	    		return idTransRelationalPredicate(pred, `l, `r);
 	    	}
-	    	ForAll (is, P) | Exists (is, P) -> {
-	    		return idTransQuantifiedPredicate(pred, ff, `is, `P);
+	    	ForAll(is, P) | Exists(is, P) -> {
+	    		return idTransQuantifiedPredicate(pred, `is, `P);
 	    	}
-	    	BTRUE() | BFALSE() -> { return pred; }
-	       	P -> {
-	    		throw new AssertionError("Unknown Predicate: " + `P);
+	    	BTRUE() | BFALSE() -> {
+	    		return pred;
+	    	}
+	       	_ -> {
+	    		throw new AssertionError("Unknown Predicate: " + pred);
 	    	}
 	    }
 	}

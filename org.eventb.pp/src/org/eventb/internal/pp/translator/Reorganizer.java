@@ -12,11 +12,11 @@ public abstract class Reorganizer {
 		
 		final ConditionalQuant forall = new ConditionalQuant(ff);
 
-		final Predicate newPred = doPhase(pred, new ExpressionExtractor(forall), ff);
+		final Predicate newPred = doPhase(pred, new ExpressionExtractor(forall, ff), ff);
 		if(newPred == pred) return pred;
 		else {
 			forall.startPhase2();
-			pred = doPhase(pred, new ExpressionExtractor(forall), ff);
+			pred = doPhase(pred, new ExpressionExtractor(forall, ff), ff);
 			
 			return forall.conditionalQuantify(Formula.FORALL, pred, null);
 		}
@@ -25,8 +25,8 @@ public abstract class Reorganizer {
 	protected static RelationalPredicate doPhase(
 			RelationalPredicate pred, ExpressionExtractor extractor, FormulaFactory ff) {
 	
-		Expression left = extractor.translate(pred.getLeft(), ff);
-		Expression right = extractor.translate(pred.getRight(), ff);
+		Expression left = extractor.translate(pred.getLeft());
+		Expression right = extractor.translate(pred.getRight());
 		
 		if(left != pred.getLeft() || right != pred.getRight())
 			return ff.makeRelationalPredicate(pred.getTag(), left, right, pred.getSourceLocation());
@@ -37,12 +37,13 @@ public abstract class Reorganizer {
 	private static class ExpressionExtractor extends IdentityTranslator {
 		private final ConditionalQuant quantification;
 
-		public ExpressionExtractor(ConditionalQuant quantification) {
+		public ExpressionExtractor(ConditionalQuant quantification, FormulaFactory ff) {
+			super(ff);
 			this.quantification = quantification;
 		}
 		
 		@Override
-		protected Expression translate(Expression expr, FormulaFactory ff) {
+		protected Expression translate(Expression expr) {
 			switch(expr.getTag()) {
 			case Formula.KCARD:
 			case Formula.FUNIMAGE:
@@ -52,12 +53,12 @@ public abstract class Reorganizer {
 			case Formula.BOUND_IDENT:
 				return quantification.push(expr);
 			default:
-				return super.translate(expr, ff);
+				return super.translate(expr);
 			}
 		}
 		
 		@Override
-		protected Predicate translate(Predicate pred, FormulaFactory ff) {
+		protected Predicate translate(Predicate pred) {
 			return pred;
 		}
 	}

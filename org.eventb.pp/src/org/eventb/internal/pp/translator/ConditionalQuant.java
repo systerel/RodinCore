@@ -52,7 +52,7 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 			else { 
 				for(Predicate binding : bindings) { 
 					translatedBindings.add(
-						translator.translateEqual(binding, ff));
+						translator.translateEqual(binding));
 				}
 			}
 			if(tag == Formula.FORALL) {
