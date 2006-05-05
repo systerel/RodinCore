@@ -51,16 +51,21 @@ public class PredicateSimplification extends IdentityTranslator  {
 	public static Predicate simplifyPredicate(Predicate pred, FormulaFactory ff) {
 		Predicate newPred = pred;
 		pred = null;
-		while(newPred != pred) {
+		while (newPred != pred) {
 			pred = newPred;
-			newPred = new PredicateSimplification().translate(pred, ff);
+			newPred = new PredicateSimplification(ff).translate(pred);
 		}
 		return newPred;
 	}
 
-%include {Formula.tom}
+	protected PredicateSimplification(FormulaFactory ff) {
+		super(ff);
+	}
+
+	%include {Formula.tom}
+
 	@Override
-	protected Predicate translate(Predicate pred, FormulaFactory ff){
+	protected Predicate translate(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 	    %match (Predicate pred) {
 	    	/**
@@ -76,10 +81,10 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	Land(children) | Lor(children) -> {
 	    		LinkedList<Predicate> newChilds = new LinkedList<Predicate>();
 	    		boolean hasChanged = false;
-	    		for(Predicate child: `children) {
-	    			Predicate newChild = translate(child, ff);
+	    		for (Predicate child: `children) {
+	    			Predicate newChild = translate(child);
 	    			newChilds.add(newChild);
-	    			hasChanged = hasChanged || (newChild != child);
+	    			hasChanged |= newChild != child;
 	    		}
 				boolean isAnd = pred.getTag() == Formula.LAND;
 				Predicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, loc);
@@ -94,6 +99,7 @@ public class PredicateSimplification extends IdentityTranslator  {
     				loc, 
     				hasChanged ? null : pred);
 	    	}
+
 	    	/**
 	    	 *	RULE PR5:	P ⇒ ⊤
 	    	 *				⊤
@@ -103,21 +109,25 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	Limp(_, BTRUE()) | Limp(BFALSE(), _) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
 	    	}
+
 	    	/**
 	    	 *	RULE PR7:	⊤ ⇒ P
 	    	 *				P
 	    	 */
 	    	Limp(BTRUE(), P) -> {
-	    		return translate(`P, ff);
+	    		return translate(`P);
 	    	}
+	    	
 	    	/**
 	    	 *	RULE PR8:	P ⇒ ⊥	
 	    	 *				¬P
 	    	 */
+
 	    	Limp(P, BFALSE()) -> {
 	    		return translate(
-	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc), ff);
+	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc));
 	    	}
+
 	    	/**
 	    	 *	RULE PR9:	¬⊤ 	
 	    	 *				⊥
@@ -125,6 +135,7 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	Not(BTRUE()) -> {
 	    		return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 	    	}
+
 	    	/**
 	    	 *	RULE PR10:	¬⊥ 
 	    	 *				⊤
@@ -132,13 +143,15 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	Not(BFALSE()) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
 	    	}
+
 	    	/**
 	    	 *	RULE PR11:	¬¬P 
 	    	 *				P
 	    	 */
 	    	Not(Not(P)) -> {
-	    		return translate(`P, ff);
+	    		return translate(`P);
 	    	}
+
 	    	/**
 	    	 *	RULE PR12:	P ⇔ P 
 	    	 *				⊤
@@ -146,29 +159,33 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    	Leqv(P, P) -> {
 	    		return ff.makeLiteralPredicate(Formula.BTRUE, loc);
 	    	}
+
 	    	/**
 	    	 *	RULE PR13: 	P ⇔ ⊤
 	    	 *				P
 	    	 */
-	    	Leqv(P, BTRUE()) | Leqv(P, BFALSE()) -> {
-	    		return translate(`P, ff);
+	    	Leqv(P, BTRUE()) | Leqv(BTRUE(), P) -> {
+	    		return translate(`P);
 	    	}
+
 	    	/**
 	    	 *	RULE PR14: 	P ⇔ ⊥
 	    	 *				¬P
 	    	 */
-	    	Leqv(P, BTRUE()) | Leqv(P, BFALSE()) -> {
+	    	Leqv(P, BFALSE()) | Leqv(BFALSE(), P) -> {
 	    		return translate(
-	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc), ff);
+	    			ff.makeUnaryPredicate(Formula.NOT, `P, loc));
 	    	}
+
 	    	_ -> {
-	    		return super.translate(pred, ff);
+	    		return super.translate(pred);
 	    	}
 	    }
 	}
 	
 	@Override
-	protected Expression translate(Expression expr, FormulaFactory ff){
+	protected Expression translate(Expression expr) {
 		return expr;
 	}
+
 }
