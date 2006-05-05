@@ -61,7 +61,7 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    	AssociativeExpression(children) -> {
 	    		return idTransAssociativeExpression(expr, `children);
 	    	}
-	    	AtomicExpression() | Identifier(_) | IntegerLiteral(_) -> { 
+	    	AtomicExpression() | Identifier() | IntegerLiteral(_) -> { 
 	    		return expr; 
 	    	}
 	    	BinaryExpression(l, r) -> {
