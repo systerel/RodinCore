@@ -132,6 +132,18 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	}
 
 	/**
+	 * Ensures that a bound identifier which hides a maplet is decomposed, when
+	 * occurring inside another nested quantified construct and with mixing
+	 * of bound variables from both quantifiers.
+	 */
+	public final void testDecomposeBoundInside3() {
+		dotest("∃a,x,b·a∈S ∧ b∈T ∧ x=a↦b"
+				+ " ∧ (∃c,y,d·a↦x↦b↦c↦y↦d∈S×(S×T)×T×U×(U×V)×V)",
+				"∃a,x1,x2,b·a∈S ∧ b∈T ∧ x1↦x2=a↦b"
+				+ " ∧ (∃c,y1,y2,d·a↦(x1↦x2)↦b↦c↦(y1↦y2)↦d∈S×(S×T)×T×U×(U×V)×V)");
+	}
+
+	/**
 	 * Ensures that a free and a bound identifier which hide a maplet are both
 	 * decomposed.
 	 */
