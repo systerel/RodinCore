@@ -147,6 +147,11 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 				"a>b", false);
 	}
 
+	public void testPR11_recursive2() {
+		doTest( "¬¬¬(a>b)",
+				"¬(a>b)", false);
+	}
+
 	/**
 	 * Tests for PR12
 	 */
@@ -168,6 +173,11 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 				"a>b", false);
 	}
 
+	public void testPR13_reversed() {
+		doTest( "⊤ ⇔ a>b",
+				"a>b", false);
+	}
+
 	/**
 	 * Tests for PR14
 	 */
@@ -180,4 +190,10 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 		doTest( "(a>b⇔ ⊥) ⇔ ⊥",
 				"a>b", false);
 	}
+
+	public void testPR1_reversed() {
+		doTest( "⊥ ⇔ a>b",
+				"¬(a>b)", false);
+	}
+
 }
