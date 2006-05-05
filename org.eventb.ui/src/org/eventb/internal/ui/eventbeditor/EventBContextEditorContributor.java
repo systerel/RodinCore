@@ -46,6 +46,7 @@ public class EventBContextEditorContributor
 	
 	protected void createActions() {
 		super.createActions();
+		
 		newCarrierSets = new Action() {
 			public void run() {
 				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();

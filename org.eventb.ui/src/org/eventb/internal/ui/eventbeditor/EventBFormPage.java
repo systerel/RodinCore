@@ -88,5 +88,5 @@ public abstract class EventBFormPage
 		part.setSelection(element);
 	}
 	
-	
+	public EventBPartWithButtons getPart() {return part;}
 }

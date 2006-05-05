@@ -121,6 +121,8 @@ public class SyntheticEditableTreeViewer
 
 	@Override
 	protected void createTreeColumns() {
+		numColumn = 2;
+
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Elements");
@@ -175,14 +177,14 @@ public class SyntheticEditableTreeViewer
 		if (column == 0) {
 			if (!editor.isNewElement((IRodinElement) object)) return true;
 		}
-		//        if (column < 1) return; // The object column is not editable
-//		UIUtils.debug("Item: " + object + " of class: " + object.getClass());
 		if (column == 0) {
 			if (object instanceof IUnnamedInternalElement) return true;
 		}
 		else if (column == 1) {
 			if (object instanceof IVariable) return true;
 			if (object instanceof IEvent) return true;
+			if (object instanceof ICarrierSet) return true;
+			if (object instanceof IConstant) return true;		
 		}
 		return false;
 	}

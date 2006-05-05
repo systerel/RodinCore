@@ -38,8 +38,8 @@ extends EventBTreePartWithButtons
 	private static final int DOWN_INDEX = 3;
 	
 	private static final String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
-	private static final String SECTION_TITLE = "Axioms";
-	private static final String SECTION_DESCRIPTION = "List of axioms of the component"; 
+	private static final String SECTION_TITLE = "Constants";
+	private static final String SECTION_DESCRIPTION = "List of constants of the component"; 
 	
 	/**
 	 * Constructor.

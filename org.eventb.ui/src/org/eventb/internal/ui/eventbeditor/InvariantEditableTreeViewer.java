@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.IAxiom;
-import org.eventb.core.IContext;
+import org.eventb.core.IInvariant;
+import org.eventb.core.IMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -38,16 +38,16 @@ import org.rodinp.core.RodinDBException;
  *         This sub-class Event-B Editable table viewer for editing axiom
  *         elements.
  */
-public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
+public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 
 
 	/**
 	 * The content provider class. 
 	 */
-	class AxiomContentProvider
+	class InvariantContentProvider
 	implements IStructuredContentProvider, ITreeContentProvider
 	{
-		private IContext invisibleRoot = null;
+		private IMachine invisibleRoot = null;
 		
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
@@ -56,14 +56,14 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		
 		public Object[] getChildren(Object parent) {
 //			UIUtils.debug("Get Children: " + parent);
-			if (parent instanceof IContext) {
+			if (parent instanceof IMachine) {
 				ArrayList<Node> list = new ArrayList<Node>();
 				try {
-					IRodinElement [] axioms =   ((IContext) parent).getChildrenOfType(IAxiom.ELEMENT_TYPE);
-					for (IRodinElement axiom : axioms) {
+					IRodinElement [] invs =   ((IMachine) parent).getChildrenOfType(IInvariant.ELEMENT_TYPE);
+					for (IRodinElement inv : invs) {
 //						UIUtils.debug("Event: " + event.getElementName());
-						Node node = new Node(axiom);
-						elementsMap.put(axiom, node);
+						Node node = new Node(inv);
+						elementsMap.put(inv, node);
 						list.add(node);
 					}
 				}
@@ -107,7 +107,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IContext) parent;
+					invisibleRoot = (IMachine) parent;
 					return getChildren(invisibleRoot);
 				}
 			}
@@ -122,9 +122,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 	
-	public AxiomEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
+	public InvariantEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(editor, parent, style);
-		this.setContentProvider(new AxiomContentProvider());
+		this.setContentProvider(new InvariantContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());
 	}

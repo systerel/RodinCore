@@ -23,8 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.IAxiom;
-import org.eventb.core.IContext;
+import org.eventb.core.IMachine;
+import org.eventb.core.IVariable;
+import org.eventb.core.basis.Machine;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -35,19 +36,19 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This sub-class Event-B Editable table viewer for editing axiom
+ *         This sub-class Event-B Editable table viewer for editing carrier set
  *         elements.
  */
-public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
+public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 
 
 	/**
 	 * The content provider class. 
 	 */
-	class AxiomContentProvider
+	class VariableContentProvider
 	implements IStructuredContentProvider, ITreeContentProvider
 	{
-		private IContext invisibleRoot = null;
+		private IMachine invisibleRoot = null;
 		
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
@@ -56,14 +57,14 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		
 		public Object[] getChildren(Object parent) {
 //			UIUtils.debug("Get Children: " + parent);
-			if (parent instanceof IContext) {
+			if (parent instanceof IMachine) {
 				ArrayList<Node> list = new ArrayList<Node>();
 				try {
-					IRodinElement [] axioms =   ((IContext) parent).getChildrenOfType(IAxiom.ELEMENT_TYPE);
-					for (IRodinElement axiom : axioms) {
+					IRodinElement [] vars =   ((IMachine) parent).getChildrenOfType(IVariable.ELEMENT_TYPE);
+					for (IRodinElement var : vars) {
 //						UIUtils.debug("Event: " + event.getElementName());
-						Node node = new Node(axiom);
-						elementsMap.put(axiom, node);
+						Node node = new Node(var);
+						elementsMap.put(var, node);
 						list.add(node);
 					}
 				}
@@ -107,7 +108,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IContext) parent;
+					invisibleRoot = (Machine) parent;
 					return getChildren(invisibleRoot);
 				}
 			}
@@ -122,9 +123,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 	
-	public AxiomEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
+	public VariableEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(editor, parent, style);
-		this.setContentProvider(new AxiomContentProvider());
+		this.setContentProvider(new VariableContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());
 	}
@@ -147,35 +148,35 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 				
 			break;
 
-		case 1:  // Commit content
-			try {
-				UIUtils.debug("Commit content: " + ((IInternalElement) element).getContents() + " to be : " + text);
-				if (!((IInternalElement) element).getContents().equals(text)) {
-					((IInternalElement) element).setContents(text);
-				}
-			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			break;
+//		case 1:  // Commit content
+//			try {
+//				UIUtils.debug("Commit content: " + ((IInternalElement) element).getContents() + " to be : " + text);
+//				if (!((IInternalElement) element).getContents().equals(text)) {
+//					((IInternalElement) element).setContents(text);
+//				}
+//			}
+//			catch (RodinDBException e) {
+//				e.printStackTrace();
+//			}
+//			break;
 		}
 	}
 	
 
 	protected void createTreeColumns() {
-		numColumn = 2;
+		numColumn = 1;
 
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Name");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
-
-		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-		predicateColumn.setText("Predicates");
-		predicateColumn.setResizable(true);
-		predicateColumn.setWidth(250);
-		
+//
+//		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
+//		predicateColumn.setText("Predicates");
+//		predicateColumn.setResizable(true);
+//		predicateColumn.setWidth(250);
+//		
 		tree.setHeaderVisible(true);
 	}
 	
@@ -192,6 +193,6 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item  = TreeSupports.findItem(this.getTree(), element);
-		selectItem(item, 1);
+		selectItem(item, 0);
 	}
 }

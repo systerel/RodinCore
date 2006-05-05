@@ -163,6 +163,8 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	
 
 	protected void createTreeColumns() {
+		numColumn = 1;
+
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Name");

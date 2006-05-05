@@ -11,27 +11,15 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.IVariable;
-import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -40,9 +28,9 @@ import org.rodinp.core.RodinDBException;
  * for displaying variables (used as master section in Master-Detail block).
  */
 public class VariableMasterSection 
-	extends EventBTablePartWithButtons
+extends EventBTreePartWithButtons
 {
-	
+
 	// The indexes for different buttons.
 	private static final int ADD_INDEX = 0;
 	private static final int DELETE_INDEX = 1;
@@ -50,9 +38,8 @@ public class VariableMasterSection
 	private static final int DOWN_INDEX = 3;
 	
 	private static final String [] buttonLabels = {"Add", "Delete", "Up", "Down"};
-	private static final String SECTION_TITLE = "Variables";
-	private static final String SECTION_DESCRIPTION = "List of variables of the component"; 
-	
+	private static final String SECTION_TITLE = "Axioms";
+	private static final String SECTION_DESCRIPTION = "List of axioms of the component"; 
 	
 	/**
 	 * Constructor.
@@ -68,36 +55,52 @@ public class VariableMasterSection
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
 	}
 
-	
-	
+
 	/*
-	 * Create the table view part.
+	 * Create the tree view part.
 	 * <p>
 	 * @param managedForm The Form used to create the viewer.
 	 * @param toolkit The Form Toolkit used to create the viewer
 	 * @param parent The composite parent
 	 */
-	protected EventBEditableTableViewer createTableViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new VariableEditableTableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION, editor.getRodinInput());
+	protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
+		return new VariableEditableTreeViewer(editor, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 	
+
 	/**
 	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-		Table table = ((TableViewer) getViewer()).getTable();
-		boolean hasOneSelection = table.getSelection().length == 1;
-		boolean hasSelection = table.getSelection().length > 0;
-		boolean canMove = table.getItemCount() > 1;
+		Tree tree = ((TreeViewer) getViewer()).getTree();
+		TreeItem [] items = tree.getSelection();
 		
+		boolean hasOneSelection = items.length == 1;
+		boolean hasSelection = items.length > 0;
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
+		if (hasOneSelection) {
+			TreeItem item = items[0];
+			IRodinElement element = ((Leaf) item.getData()).getElement();
+			TreeItem prev = TreeSupports.findPrevItem(tree, item);
+			if (prev != null) {
+				Leaf leaf = (Leaf) prev.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveUp = true;
+			}
+			TreeItem next = TreeSupports.findNextItem(tree, item);
+			if (next != null) {
+				Leaf leaf = (Leaf) next.getData();
+				if (element.getElementType() == leaf.getElement().getElementType())
+					canMoveDown = true;
+			}
+		}
         setButtonEnabled(
 			UP_INDEX,
-			canMove && hasOneSelection && table.getSelectionIndex() > 0);
+			hasOneSelection && canMoveUp);
 		setButtonEnabled(
 			DOWN_INDEX,
-			canMove
-				&& hasOneSelection
-				&& table.getSelectionIndex() < table.getItemCount() - 1);
+			hasOneSelection && canMoveDown);
     		
 		setButtonEnabled(ADD_INDEX, true);
 		setButtonEnabled(DELETE_INDEX, hasSelection);
@@ -112,158 +115,39 @@ public class VariableMasterSection
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_INDEX:
-				handleAdd();
+				groupActionSet.addVariable.run();
 				break;
 			case DELETE_INDEX:
-				handleDelete();
+				groupActionSet.delete.run();
 				break;
 			case UP_INDEX:
-				handleUp();
+				groupActionSet.handleUp.run();
 				break;
 			case DOWN_INDEX:
-				handleDown();
+				groupActionSet.handleDown.run();
 				break;
 		}
 	}
-	
-	/**
-	 * Handle the adding (new Variable) action.
-	 */
-	private void handleAdd() {
-		IRodinFile rodinFile = editor.getRodinInput();
-		try {
-			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			IInternalElement element = rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, "var"+(counter+1), null, null);
-			editor.editorDirtyStateChanged();
-			TableViewer viewer = (TableViewer) this.getViewer();
-			viewer.refresh();
-			viewer.reveal(element);
-			Table table = viewer.getTable();
-			selectRow(table.getItemCount() - 1, 0);
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
 
-
-	/*
-	 * Handle deletion of elements.
-	 */
-	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) ((StructuredViewer) this.getViewer()).getSelection();
-		Object [] objects = ssel.toArray();
-		
-		Collection<IInternalElement> toDelete = new HashSet<IInternalElement>();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IInternalElement) {
-					toDelete.add((IInternalElement)objects[i]);
-			}
-		}
-		try {
-			EventBUIPlugin.getRodinDatabase().delete(toDelete.toArray(new IInternalElement[toDelete.size()]), true, null);
-			editor.editorDirtyStateChanged();
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return;
-	}
-
-
-	/*
-	 * Handle moving up.
-	 */
-	private void handleUp() {
-		Table table = ((TableViewer) this.getViewer()).getTable();
-		int index = table.getSelectionIndex();
-		IInternalElement current = (IInternalElement) table.getItem(index).getData();
-		IInternalElement previous = (IInternalElement) table.getItem(index - 1).getData();
-		try {
-			swap(current, previous);
-			editor.editorDirtyStateChanged();
-		}
-		catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return;
-	}
-	
-	
-	/*
-	 * Handle moving down.
-	 *
-	 */
-	private void handleDown() {
-		Table table = ((TableViewer) this.getViewer()).getTable();
-		int index = table.getSelectionIndex();
-		IInternalElement current = (IInternalElement) table.getItem(index).getData();
-		IInternalElement next = (IInternalElement) table.getItem(index + 1).getData();
-		try {
-			swap(next, current);
-			editor.editorDirtyStateChanged();
-		}
-		catch (RodinDBException e) {
-			// TODO Exception handle
-			e.printStackTrace();
-		}
-		return;
-	}
-	
-	
-	/**
-	 * Swap Internal elements in the Rodin database
-	 * @param element1 the object internal element
-	 * @param element2 the expanded internal element
-	 * @throws RodinDBException an exception from the database when moving element.
-	 */
-	private void swap(IInternalElement element1, IInternalElement element2) throws RodinDBException {
-		element1.move(element1.getParent(), element2, null, true, null);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		IRodinElementDelta delta = event.getDelta();
-		processDelta(delta);
-	}
-	
-	private void processDelta(IRodinElementDelta delta) {
-		IRodinElement element= delta.getElement();
-		if (element instanceof IRodinFile) {
-			IRodinElementDelta [] deltas = delta.getAffectedChildren();
-			for (int i = 0; i < deltas.length; i++) {
-				processDelta(deltas[i]);
-			}
-
-			return;
-		}
-		if (element instanceof IVariable) {
-			UIUtils.asyncPostRunnable(new Runnable() {
-				public void run() {
-					getViewer().setInput(editor.getRodinInput());
-					updateButtons();
-				}
-			}, this.getSection().getClient());
-		}
-		else {
-			return;
-		}
+		((EventBEditableTreeViewer) this.getViewer()).elementChanged(event);
+		updateButtons();
 	}
 	
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.EventBTablePartWithButtons#edit(org.rodinp.core.IRodinElement)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
 	@Override
 	protected void edit(IRodinElement element) {
-		TableViewer viewer = (TableViewer) this.getViewer();
+		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
-		Table table = viewer.getTable();
-		TableItem item  = (TableItem) viewer.testFindItem(element);
-		int row = table.indexOf(item);
-		selectRow(row, 0);
+		TreeItem item  = TreeSupports.findItem(viewer.getTree(), element);
+		selectItem(item, 1);
 	}
-
+	
 }

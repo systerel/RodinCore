@@ -426,7 +426,7 @@ public class EventBMasterSectionActionGroup
 								IRodinElement nextObj = ((Leaf) next.getData()).getElement();
 								
 								try {
-									((IInternalElement) nextObj).move(nextObj.getParent(), currObj, null, true, null);
+									((IInternalElement) nextObj).move(nextObj.getParent(), currObj, null, false, null);
 									TreeItem newItem = TreeSupports.findItem(tree, currObj);
 									viewer.setSelection(new StructuredSelection(newItem.getData()));
 								}
@@ -450,6 +450,7 @@ public class EventBMasterSectionActionGroup
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menu) {
+		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel; 
@@ -473,7 +474,6 @@ public class EventBMasterSectionActionGroup
 //			drillDownAdapter.addNavigationActions(menu);
 			// Other plug-ins can contribute there actions here
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			super.fillContextMenu(menu);
 		}
 	}
 

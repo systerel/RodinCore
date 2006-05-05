@@ -82,11 +82,15 @@ public abstract class EventBEditor
 
 		public ISelection getSelection() {
 			IFormPage activePage = formEditor.getActivePageInstance();
+			UIUtils.debug("Active Pages " + activePage);
 			if (activePage != null) {
-				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
-				if (selectionProvider != null)
-					if (selectionProvider != this)
-						return selectionProvider.getSelection();
+				if (activePage instanceof EventBFormPage) {
+					ISelectionProvider selectionProvider = ((EventBFormPage) activePage).getPart().getViewer();
+					UIUtils.debug("Provider: " + selectionProvider);
+					if (selectionProvider != null)
+						if (selectionProvider != this)
+							return selectionProvider.getSelection();
+				}
 			}
 			return globalSelection;
 		}

@@ -145,6 +145,8 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	}
 	
 	protected void createTreeColumns() {
+		numColumn = 2;
+
 		Tree tree = this.getTree();
 		TreeColumn elementColumn = new TreeColumn(tree, SWT.LEFT);
 		elementColumn.setText("Elements");

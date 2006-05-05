@@ -54,7 +54,6 @@ public class EventPage
 		gd.minimumHeight = 150;
 		gd.widthHint = 150;
 		part.getSection().setLayoutData(gd);
-		this.getSite().setSelectionProvider(part.getViewer());
 		return part;
 	}
 

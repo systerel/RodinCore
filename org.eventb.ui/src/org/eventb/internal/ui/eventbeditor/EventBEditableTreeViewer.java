@@ -54,13 +54,12 @@ import org.rodinp.core.RodinDBException;
 public abstract class EventBEditableTreeViewer
 	extends TreeViewer
 {
-	private final static int MAX_COLUMN = 2;
-	
 	private TreeEditor treeEditor;
 
 	protected EventBEditor editor;
 	
-
+	protected int numColumn;
+	
 	/* Abstract methods */
 	protected abstract void createTreeColumns();
 	protected abstract boolean isNotSelectable(Object object, int column);
@@ -156,7 +155,8 @@ public abstract class EventBEditableTreeViewer
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
 		final Composite composite = new Composite (tree, SWT.NONE);
 		if (!isCarbon) composite.setBackground (black);
-		final Text text = new Text(composite, SWT.NONE); 
+		final Text text = new Text(composite, SWT.NONE);
+
 		new ElementText(text, treeEditor, item, tree, (Leaf) itemData, column) {
 			/* (non-Javadoc)
 			 * @see org.eventb.internal.ui.eventbeditor.ElementText#commit(org.rodinp.core.IRodinElement, int, java.lang.String)
@@ -174,7 +174,7 @@ public abstract class EventBEditableTreeViewer
 				Rectangle rec = item.getBounds();
 //				UIUtils.debug("Bound: " + rec);
 				
-				if (column == MAX_COLUMN - 1) {
+				if (column == numColumn - 1) {
 					TreeItem next = tree.getItem(new Point(rec.x + rec.width/2, rec.y + rec.height/2 + tree.getItemHeight()));
 					if (next != null) {
 //						UIUtils.debug("Found item: " + next);
@@ -201,8 +201,8 @@ public abstract class EventBEditableTreeViewer
 					TreeItem next = tree.getItem(new Point(rec.x + rec.width/2, rec.y + rec.height/2 - tree.getItemHeight()));
 					if (next != null) {
 //						UIUtils.debug("Found item: " + next);
-						if (isNotSelectable(next.getData(), MAX_COLUMN - 1)) selectPrevEditableCell(next, MAX_COLUMN - 1);
-						else selectItem(next, MAX_COLUMN - 1);
+						if (isNotSelectable(next.getData(), numColumn - 1)) selectPrevEditableCell(next, numColumn - 1);
+						else selectItem(next, numColumn - 1);
 					}
 					else return;
 				}

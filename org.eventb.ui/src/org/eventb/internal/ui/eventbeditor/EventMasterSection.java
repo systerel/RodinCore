@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -242,7 +241,7 @@ public class EventMasterSection
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_EVT_INDEX:
-				UIUtils.newEvent(editor, editor.getRodinInput());
+				groupActionSet.addEvent.run();
 				break;
 			case ADD_VAR_INDEX:
 				groupActionSet.addLocalVariable.run();
