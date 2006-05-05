@@ -42,6 +42,7 @@ public class AutoProver {
 				run(tree);
 				if (tree.isDischarged()) {
 					po.updateStatus(tree);
+					prFile.save(null, false);
 				}
 			}
 		}
