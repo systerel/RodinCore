@@ -46,7 +46,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * The idea behind identity translation is the following: The  pp 
  * package contains several recursively implemented translators. 
  * These translators do just in few cases transform a formula part but 
- * more often call them self on the child formulas. This work is factorized
+ * more often call themselves  on the child formulas. This work is factorized
  * to the IdentityTranslator.
  * @author Matthias Konrad
  */
