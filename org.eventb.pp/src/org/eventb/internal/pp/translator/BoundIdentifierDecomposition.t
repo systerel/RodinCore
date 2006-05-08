@@ -16,7 +16,10 @@ import org.eventb.core.ast.*;
 
 /**
  * Implements the Bound Identifier Decomposition.
- * 
+ * The method decomposeBoundIdentifiers decomposes all bound identifiers of a predicate,
+ * such that after the decomposition there are no bound identifiers of cartesian product type.
+ * Example:		∀x·x=1↦2 ⇒ x∈S	becomes: ∀x0,x1·x0↦x1=1↦2 ⇒ x0↦x1∈S
+ * 				
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
@@ -50,6 +53,13 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		this.count = count;
 	}
 	
+	/**
+	 * Implements the Bound Identifier Decomposition
+ 	 * Example:	∀x·x=1↦2 ⇒ x∈S	becomes: ∀x0,x1·x0↦x1=1↦2 ⇒ x0↦x1∈S	
+ 	 * @param pred the predicate that is decomposed
+	 * @param ff the Formula Factory used during the decomposition
+	 * @return a new predicate, which is the decomposed version of pred
+	 */
 	public static Predicate decomposeBoundIdentifiers(Predicate pred, FormulaFactory ff) {
 		pred = new BoundIdentifierDecomposition(ff).translate(pred);
 		

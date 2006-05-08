@@ -15,7 +15,7 @@ import org.eventb.core.ast.*;
 
 
 /**
- * Implements the translator from set-theory to predicate calculus.
+ * Implements the predicate reduction rules: BR1-BR7, ER1-ER13, CR1-CR7
  * 
  * @author Matthias Konrad
  */
@@ -27,7 +27,7 @@ public class Translator extends IdentityTranslator {
 		return new Translator(ff).translate(pred);
 	}
 	
-	protected Translator(FormulaFactory ff) {
+	private Translator(FormulaFactory ff) {
 		super(ff);
 	}
 
@@ -318,7 +318,7 @@ public class Translator extends IdentityTranslator {
 			}
 	        /**
 	         * RULE IR3: 	e ∈ f
-	         *	  			∃x·x=e ∧ x∈f
+	         *	  			c∃ (e*) ∈f
 	         */
 			_ -> {
 

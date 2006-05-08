@@ -42,7 +42,12 @@ import org.eventb.core.ast.UnaryPredicate;
 
 /**
  * Implements the identity translation
- * 
+ * Contains the pattern matching part of the identity translation. 
+ * The idea behind identity translation is the following: The  pp 
+ * package contains several recursivly implemented translators. 
+ * These translators do just in few cases transform a formula part but 
+ * more often call them self on the child formulas. This work is factorized
+ * to the IdentityTranslator.
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")

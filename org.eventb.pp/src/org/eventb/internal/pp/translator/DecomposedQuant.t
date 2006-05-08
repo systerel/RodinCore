@@ -15,7 +15,10 @@ import org.eventb.core.ast.*;
 
 
 /**
- * ...
+ * Implements the decomposed quantification. The class is normaly used by
+ * first calling the addQuantifier Method one ore more times. Followed by calls
+ * to push. At the end a quantification is generated with a call to method 
+ * makeQuantifiedExpression or makeQuantifiedPredicate.
  * 
  * @author Matthias Konrad
  */
@@ -28,10 +31,18 @@ public class DecomposedQuant {
 	private boolean hasPushed = false;
 	protected final FormulaFactory ff;
 
+	/**
+	 * @param ff the Formula Factory to be used
+	 */
 	public DecomposedQuant(FormulaFactory ff) {
 		this.ff = ff;
 	}
 	
+	/**
+	 * This constructor is used, when a given quantification is modified.
+	 * @param ff the Formula Factory to be used
+	 * @param ids the bound identifiers of the source quantification
+	 */
 	public DecomposedQuant(FormulaFactory ff, BoundIdentDecl[] ids) {
 		this(ff);
 		for(BoundIdentDecl decl: ids) {
@@ -41,20 +52,52 @@ public class DecomposedQuant {
 		hasPushed = true;
 	}
 	
+	/**
+	 * Adds one or several instances of BoundIdentDecl, depending on type.
+	 *  If type is CPROD(INT, INT), two bound identifiers would be added. 
+	 * @param The type to be decomposed and added to the quantification.
+	 * @param loc location for the new expression
+	 * @return a new Identifier or maplet of Identifiers that refers to the BoundIdentDecl instances.
+	 */
 	public Expression addQuantifier(Type type, SourceLocation loc) {
 		return addQuantifier(type, "x", loc);
 	}	
 
+	/**
+	 * Adds one or several instances of BoundIdentDecl, depending on type.
+	 * If type is CPROD(INT, INT), two bound identifiers would be added. 
+	 * @param The type to be decomposed and added to the quantification.
+	 * @param name name for the new BoundIdentDecl instances.
+	 * @param loc location for the new expression
+	 * @return a new Identifier or maplet of Identifiers that refers to the BoundIdentDecl instances.
+	 */
 	public Expression addQuantifier(Type type, String name, SourceLocation loc) {
 		assert !hasPushed : "Tried to add quantifiers after having started pushing stuff";
 		return mapletOfType(type, name, loc);
 	}
 	
+	/**
+	 * If an expression that was previously outside of a quantification is no inside,
+	 * its externally bound identifiers have to be shifted. This can be done safely by
+	 * a call to push. As soon as the first expression is pushed, no more calls to
+	 * addQuantifier are allowed! 
+	 * @param expr the expression to be pushed
+	 * @return the expression with shifted bound identifiers
+	 */
 	public Expression push(Expression expr) {
 		hasPushed = true;
 		return expr.shiftBoundIdentifiers(offset(), ff); 
 	}
 	
+	/**
+	 * Exists for performance reasons. When an existing expression is placed inside two
+	 * or more nested quantifications, pushThroughAll does all the necessary work with
+	 * just one call to shiftBoundIdentifiers.
+	 * @param expr the expression to be pushed
+	 * @param ff the Formula Factory to be used
+	 * @param quantifications the quantifications through which the expr needs to be pushed.
+	 * @return the expression with shifted bound identifiers
+	 */
 	public static Expression pushThroughAll(
 		Expression expr, FormulaFactory ff, DecomposedQuant... quantifications) {
 		int totalOffset = 0;
@@ -65,6 +108,14 @@ public class DecomposedQuant {
 		return expr.shiftBoundIdentifiers(totalOffset, ff);
 	}
 	
+	/**
+	 * Generates a new quantified expression
+	 * @param tag either Formula.EXISTS or Formula.FORALL
+	 * @param pred the predicate to be used in the quantified expression
+	 * @param expr the quantified expression
+	 * @param loc the source location
+	 * @return a new quantified expression
+	 */
 	public Expression makeQuantifiedExpression(
 		int tag, Predicate pred, Expression expr, SourceLocation loc) {
 
@@ -72,6 +123,13 @@ public class DecomposedQuant {
 			tag, identDecls, pred, expr, loc, QuantifiedExpression.Form.Explicit);
 	}
 		
+	/**
+	 * Generates a new quantified predicate
+	 * @param tag either Formula.EXISTS or Formula.FORALL
+	 * @param pred the quantified predicate
+	 * @param loc the source location
+	 * @return a new quantified predicate
+	 */
 	public Predicate makeQuantifiedPredicate(
 		int tag, Predicate pred, SourceLocation loc) {
 

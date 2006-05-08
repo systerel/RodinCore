@@ -41,7 +41,8 @@ import org.eventb.core.ast.UnaryPredicate;
 
 
 /**
- * ...
+ * The GoalChecker checks, wether a given predicate is in a reduced form. Meaning,
+ * that ∈ is the only set theoretic construct and arithmetic expressions are separated
  * 
  * @author Matthias Konrad
  */
@@ -50,6 +51,11 @@ public abstract class GoalChecker {
 
 %include {Formula.tom}
 
+	/**
+	 * Checks wheter a given predicate is in a reduced form
+	 * @param pred the predicate to be checked
+	 * @return returns true if the predicate is in a reduced form
+	 */
 	public static boolean isInGoal(Predicate pred) {
 		%match(Predicate pred) {
 			BinaryPredicate(P1, P2) -> {

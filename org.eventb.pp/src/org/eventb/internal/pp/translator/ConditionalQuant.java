@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.internal.pp.translator;
 
 import java.util.LinkedList;
@@ -10,6 +17,14 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
+
+/**
+ * @author mkonrad
+ * Implements the conditional quantification c∀/c∃. The * operator is
+ * implemented by the method condSubstitute. Sinse ConditionalQuant
+ * specializes Decomp2PhaseQuant, the substitutions need to be done twice,
+ * separated by a call to startPhase2. 
+ */
 public class ConditionalQuant extends Decomp2PhaseQuant {
 
 	final List<Expression> substitutes = new LinkedList<Expression>();
@@ -19,6 +34,11 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 		super(ff);
 	}
 	
+	/**
+	 * Implements the * operator. See documentation.
+	 * @param expr the expression to be *ed
+	 * @return The substitute for expr
+	 */
 	public Expression condSubstitute(Expression expr) {
 		if(GoalChecker.isMapletExpression(expr)) {
 			return expr;
@@ -41,7 +61,14 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 		return super.push(expr);
 	}
 	
-	protected Predicate conditionalQuantify(
+	/**
+	 * Conditionally generates a new quantified predicate
+	 * @param tag either Formula.EXISTS or Formula.FORALL
+	 * @param pred the quantified predicate
+	 * @param translator if present is used to translate the bindings.
+	 * @return a new quantified predicate
+	 */
+	public  Predicate conditionalQuantify(
 			int tag, Predicate pred, Translator translator) {
 		if(substitutes.size() == 0) return pred;
 		else {
@@ -84,30 +111,30 @@ public class ConditionalQuant extends Decomp2PhaseQuant {
 	}
 	
 	private Expression purifyMaplet(Expression expr, List<Predicate> newBindings) {
-			SourceLocation loc = expr.getSourceLocation();
-			
-			if(GoalChecker.isMapletExpression(expr))
-				return push(expr);
-			switch(expr.getTag()) {
-			case Formula.MAPSTO:
-				BinaryExpression bexpr = (BinaryExpression)expr;
-						
-				Expression nr = purifyMaplet(bexpr.getRight(), newBindings);
-				Expression nl = purifyMaplet(bexpr.getLeft(), newBindings);
+		SourceLocation loc = expr.getSourceLocation();
+		
+		if(GoalChecker.isMapletExpression(expr))
+			return push(expr);
+		switch(expr.getTag()) {
+		case Formula.MAPSTO:
+			BinaryExpression bexpr = (BinaryExpression)expr;
+					
+			Expression nr = purifyMaplet(bexpr.getRight(), newBindings);
+			Expression nl = purifyMaplet(bexpr.getLeft(), newBindings);
 
-				if(nr == bexpr.getLeft() && nl == bexpr.getRight()) return expr;
-				else
-					return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
+			if(nr == bexpr.getLeft() && nl == bexpr.getRight()) return expr;
+			else
+				return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
 
-			default:
-				Expression substitute = addQuantifier(expr.getType(), loc);
-				newBindings.add(0, 
-					ff.makeRelationalPredicate(
-						Formula.EQUAL, 
-						substitute, 
-						push(expr), 
-						loc));
-				return substitute;
-			}
+		default:
+			Expression substitute = addQuantifier(expr.getType(), loc);
+			newBindings.add(0, 
+				ff.makeRelationalPredicate(
+					Formula.EQUAL, 
+					substitute, 
+					push(expr), 
+					loc));
+			return substitute;
 		}
+	}
 }

@@ -41,13 +41,19 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 /**
- * ...
+ * Simplifies predicates with rules PR1 - PR16
  * 
  * @author Matthias Konrad
  */
 @SuppressWarnings("unused")
 public class PredicateSimplification extends IdentityTranslator  {
 	
+	/**
+	 *	Simplifies a predicate
+	 *	@param pred the predicate to simplify
+	 *	@param ff the Formula Factory to be used during simplification
+	 *	@return returns a new simplified predicate.
+	 */
 	public static Predicate simplifyPredicate(Predicate pred, FormulaFactory ff) {
 		Predicate newPred = pred;
 		pred = null;
@@ -58,7 +64,7 @@ public class PredicateSimplification extends IdentityTranslator  {
 		return newPred;
 	}
 
-	protected PredicateSimplification(FormulaFactory ff) {
+	private PredicateSimplification(FormulaFactory ff) {
 		super(ff);
 	}
 

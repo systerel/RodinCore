@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.internal.pp.translator;
 
 import java.util.ArrayList;
@@ -12,6 +19,11 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 
+/**
+ *  Contains the logic of the IdentityTranslator. For more details see the IdentityTranslator.t
+ * @author mkonrad
+ *
+ */
 public abstract class IdentityTranslatorBase {
 	
 	protected final FormulaFactory ff;
