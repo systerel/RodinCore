@@ -25,7 +25,7 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 
 	public static final boolean debug = true;
 	
-	public static final String EventBKeyboardView_ID = "org.eventb.eventBKeyboard.internal.views.EventBKeyboardView";
+	public static final String EventBKeyboardView_ID = "org.eventb.eventBKeyboard.views.EventBKeyboardView";
 	
 	//The shared instance.
 	private static EventBKeyboardPlugin plugin;
