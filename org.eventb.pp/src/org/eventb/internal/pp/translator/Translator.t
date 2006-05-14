@@ -1205,10 +1205,10 @@ public class Translator extends IdentityTranslator {
 			loc);	
 	}
 	
-	protected Predicate translateEqual (Predicate pred) {
+	protected Predicate translateEqual(Predicate pred) {
 		SourceLocation loc = pred.getSourceLocation();
 		
-		%match(Predicate pred) {
+		%match (Predicate pred) {
 	        /**
 	        * RULE ER1: 	e = e
 	        *	  			⊤
@@ -1244,14 +1244,14 @@ public class Translator extends IdentityTranslator {
 	        *	  			P
 	        */
 			Equal(TRUE(), Bool(P)) | Equal(Bool(P), TRUE()) -> {
-				return translate(P);
+				return translate(`P);
 			}
 			/**
 	        * RULE ER5: 	bool(P) = FALSE  
 	        *	  			¬P
 	        */
 			Equal(FALSE(), Bool(P)) | Equal(Bool(P), FALSE()) -> {
-				return ff.makeUnaryPredicate(Formula.NOT, translate(P), loc);
+				return ff.makeUnaryPredicate(Formula.NOT, translate(`P), loc);
 			}
 			/**
 	        * RULE ER6: 	x = FALSE  
@@ -1263,7 +1263,7 @@ public class Translator extends IdentityTranslator {
 					translateEqual(
 						ff.makeRelationalPredicate(
 							Formula.EQUAL,
-							x,
+							`x,
 							ff.makeAtomicExpression(Formula.TRUE, loc),
 							loc)),
 					loc);						
