@@ -7,6 +7,12 @@
  *******************************************************************************/
 
 /*
+ *  This file contains the Tom declarations for the Formula class hierarchy,
+ *  so that clients can use Tom pattern matching on formulas.
+ */
+
+
+/*
  * Declaration of sorts used.
  */
 
@@ -17,11 +23,6 @@
 
 %typeterm Expression {
 	implement { Expression }
-	equals(t1,t2) { t1.equals(t2) }
-}
-
-%typeterm Type {
-	implement { Type }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
@@ -50,6 +51,10 @@
 	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
 }
 
+
+/*
+ * Operators for lists
+ */
 
 %oparray PredicateList pList (Predicate*) {
 	is_fsym(t) { true }
@@ -679,23 +684,4 @@
 %op Expression UnMinus (child: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.UNMINUS }
 	get_slot(child,t) { ((UnaryExpression) t).getChild() }
-}
-
-
-/*TODO: Delete these, they're duplicates from Type.tom.*/
-
-%op Type PowSet (child : Type) {
-	is_fsym(t) { t instanceof PowerSetType }
-	get_slot(child,t) { ((PowerSetType) t).getBaseType() }
-}
-
-%op Type CProd (left: Type, right: Type) {
-	is_fsym(t) { t instanceof ProductType }
-	get_slot(left,t) { ((ProductType) t).getLeft() }
-	get_slot(right,t) { ((ProductType) t).getRight() }
-}
-
-%op Type Set (name: String) {
-	is_fsym(t) { t instanceof GivenType }
-	get_slot(name,t) { ((GivenType) t).getName() }
 }
