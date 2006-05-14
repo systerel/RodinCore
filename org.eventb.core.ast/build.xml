@@ -5,7 +5,6 @@
 
 	<!-- Global properties for this build -->
 	<property name="src" location="src" />
-	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
 
 	<property name="tools" location="tools" />
 	<property name="javadoc" location="javadoc" />
@@ -13,7 +12,6 @@
 	<property name="jflex.home" location="${tools}/jflex" />
 	
 	<property name="lexer.src" location="${src}/org/eventb/internal/core/parser" />
-	<eclipse.convertPath fileSystemPath="${lexer.src}" property="lexerSrcPath"/>
 	<taskdef name="jflex"
 		classname="JFlex.anttask.JFlexTask"
 		classpath="${jflex.home}/lib/JFlex.jar"
@@ -21,10 +19,8 @@
 
 	<property name="parser.pkg" value="org.eventb.internal.core.parser" />
 	<property name="parser.src" location="${src}/org/eventb/internal/core/parser" />
-	<eclipse.convertPath fileSystemPath="${parser.src}" property="parserSrcPath"/>
 
 	<property name="unifier.src" location="${src}/org/eventb/internal/core/typecheck" />
-	<eclipse.convertPath fileSystemPath="${unifier.src}" property="unifierSrcPath"/>
 
 	<property name="org.eventb.core.ast.home" location="." />
 	<import file="${org.eventb.core.ast.home}/tom/tom-task.xml"/>
@@ -35,7 +31,6 @@
 
 	<target name="generate" depends="lexer,parser,unifier"
 			description="Generate all Java files">
-		<eclipse.incrementalBuild/>
 	</target>
 
 	<target name="lexer" depends="init"
@@ -44,7 +39,6 @@
 			file="${lexer.src}/bmath.lex"
 			skeleton="${lexer.src}/jflex.skeleton"
 		/>
-		<eclipse.refreshLocal resource="${lexerSrcPath}" depth="one"/>
 	</target>
 
 	<target name="parser.test" depends="init"
@@ -64,7 +58,6 @@
 			<arg line="-package ${parser.pkg}" />
 			<arg file="${parser.src}/bmath.atg" />
 		</java>
-		<eclipse.refreshLocal resource="${parserSrcPath}" depth="one"/>
 	</target>
 
 	<target name="unifier" depends="init"
@@ -77,7 +70,6 @@
 				optimize="true">
 			<include name="**/*.t" />
 		</tom>
-		<eclipse.refreshLocal resource="${unifierSrcPath}" depth="one"/>
 	</target>
 
 	<target name="coco.regen" 
@@ -118,7 +110,6 @@
 		<delete file="${parser.src}/Parser.java" />
 		<delete file="${parser.src}/Parser.java.old" />
 		<delete file="${unifier.src}/TypeUnifier.java" />
-		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	
 	<target name="javadoc" description="Generates the javadoc of the published API">
