@@ -2,137 +2,122 @@
 	<description>
         Generates derived files in the Event-B AST library.
 	</description>
-	<!-- set global properties for this build -->
+
+	<!-- Global properties for this build -->
 	<property name="src" location="src" />
 	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
 
-	<property name="test" location="test" />
 	<property name="tools" location="tools" />
 	<property name="javadoc" location="javadoc" />
-	<property name="coco-home" location="${tools}/Coco-R" />
-	<property name="jflex-home" location="${tools}/jflex" />
-	<property name="tom-home" location="${tools}/jtom-2.2" />
+	<property name="coco.home" location="${tools}/Coco-R" />
+	<property name="jflex.home" location="${tools}/jflex" />
 	
-	<property name="lexerSrcDir" location="${src}/org/eventb/internal/core/parser" />
-	<eclipse.convertPath fileSystemPath="${lexerSrcDir}" property="lexerSrcPath"/>
+	<property name="lexer.src" location="${src}/org/eventb/internal/core/parser" />
+	<eclipse.convertPath fileSystemPath="${lexer.src}" property="lexerSrcPath"/>
+	<taskdef name="jflex"
+		classname="JFlex.anttask.JFlexTask"
+		classpath="${jflex.home}/lib/JFlex.jar"
+	/>
 
-	<property name="parserPkg" value="org.eventb.internal.core.parser" />
-	<property name="parserSrcDir" location="${src}/org/eventb/internal/core/parser" />
-	<eclipse.convertPath fileSystemPath="${parserSrcDir}" property="parserSrcPath"/>
+	<property name="parser.pkg" value="org.eventb.internal.core.parser" />
+	<property name="parser.src" location="${src}/org/eventb/internal/core/parser" />
+	<eclipse.convertPath fileSystemPath="${parser.src}" property="parserSrcPath"/>
 
-	<property name="unifierSrcDir" location="${src}/org/eventb/internal/core/typecheck" />
-	<eclipse.convertPath fileSystemPath="${unifierSrcDir}" property="unifierSrcPath"/>
+	<property name="unifier.src" location="${src}/org/eventb/internal/core/typecheck" />
+	<eclipse.convertPath fileSystemPath="${unifier.src}" property="unifierSrcPath"/>
 
-	<target name="init">
-		<!-- Create the time stamp -->
+	<property name="org.eventb.core.ast.home" location="." />
+	<import file="${org.eventb.core.ast.home}/tom/tom-task.xml"/>
+
+	<target name="init" description="Create the initial time stamp">
 		<tstamp />
 	</target>
 
-	<target name="generate" depends="lex,parser,tom" description="Generate all Java files">
+	<target name="generate" depends="lexer,parser,unifier"
+			description="Generate all Java files">
 		<eclipse.incrementalBuild/>
 	</target>
 
-	<target name="lex" depends="init" description="generate the lexer">
-		<taskdef classname="JFlex.anttask.JFlexTask" classpath="${jflex-home}/lib/JFlex.jar" name="jflex" />
+	<target name="lexer" depends="init"
+		description="Generate the lexer">
 		<jflex destdir="${src}"
-			file="${lexerSrcDir}/bmath.lex"
-			skeleton="${lexerSrcDir}/jflex.skeleton"
+			file="${lexer.src}/bmath.lex"
+			skeleton="${lexer.src}/jflex.skeleton"
 		/>
 		<eclipse.refreshLocal resource="${lexerSrcPath}" depth="one"/>
 	</target>
 
-	<target name="parser-test" depends="init"
-			description="Test if generated parser is up to date">
+	<target name="parser.test" depends="init"
+			description="Test if the generated parser is up to date">
 		<uptodate property="parser.notRequired" 
-				targetfile="${parserSrcDir}/Parser.java" >
-		    <srcfiles file= "${parserSrcDir}/bmath.atg" />
-		    <srcfiles file= "${parserSrcDir}/Parser.frame" />
+				targetfile="${parser.src}/Parser.java" >
+		    <srcfiles file= "${parser.src}/bmath.atg" />
+		    <srcfiles file= "${parser.src}/Parser.frame" />
 		</uptodate>
-		<!-- echoproperties prefix="parser" /-->
 	</target>
 
 	<target name="parser" 
-			depends="init,parser-test"
-			description="generate the parser"
+			depends="init,parser.test"
+			description="Generate the parser"
 			unless="parser.notRequired">
-		<java 
-			jar="${coco-home}/Coco.jar"
-			fork="true"
-			dir="${parserSrcDir}"	>
-			<arg line="-package ${parserPkg}" />
-			<arg file="${parserSrcDir}/bmath.atg" />
+		<java jar="${coco.home}/Coco.jar" fork="true" dir="${parser.src}">
+			<arg line="-package ${parser.pkg}" />
+			<arg file="${parser.src}/bmath.atg" />
 		</java>
 		<eclipse.refreshLocal resource="${parserSrcPath}" depth="one"/>
 	</target>
 
-	<target name="tom-test" depends="init"
-			description="Test if generated tom files are up to date">
-		<uptodate property="tom.notRequired" 
-				targetfile="${unifierSrcDir}/TypeUnifier.java" >
-		    <srcfiles file= "${unifierSrcDir}/TypeUnifier.t" />
-		    <srcfiles file= "${unifierSrcDir}/Type.tom" />
-		</uptodate>
-		<!-- echoproperties prefix="tom" /-->
-	</target>
-
-	<target name="tom" depends="init,tom-test"
-		description="launch tom"
-		unless="tom.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-I" />
-			<arg value="${tom-home}/share/jtom" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="-o" />
-			<arg value="${unifierSrcDir}/TypeUnifier.java" />
-			<arg value="-p" />
-			<arg value="${unifierSrcDir}/TypeUnifier.t" />
-		</java>
+	<target name="unifier" depends="init"
+			description="Generate the type unifier using Tom">
+		<tom config="${tom.home}/Tom.xml"
+				srcdir="${src}"
+				destdir="${src}"
+				options="-I ${org.eventb.core.ast.home}/tom"
+				pretty="true"
+				optimize="true">
+			<include name="**/*.t" />
+		</tom>
 		<eclipse.refreshLocal resource="${unifierSrcPath}" depth="one"/>
 	</target>
 
-	<target 
-		name="coco-regen" 
-		depends="coco-compile"
+	<target name="coco.regen" 
+		depends="coco.compile"
 		description="Regenerate the Coco/R source files from its grammar (bootstrap it)">
-		<java jar="${coco-home}/Coco.jar" fork="true">
+		<java jar="${coco.home}/Coco.jar" fork="true">
 			<arg line="-package Coco" />
-			<arg file="${coco-home}/Coco.atg" />
+			<arg file="${coco.home}/Coco.atg" />
 		</java>
-		<move file="${coco-home}/Parser.java" todir="${coco-home}/Coco" />
-		<move file="${coco-home}/Scanner.java" todir="${coco-home}/Coco" />
+		<move file="${coco.home}/Parser.java" todir="${coco.home}/Coco" />
+		<move file="${coco.home}/Scanner.java" todir="${coco.home}/Coco" />
 	</target>
 
-	<target name="coco-compile" depends="init" description="Compile the Coco/R Parser Generator">
-		<javac srcdir="${coco-home}" />
+	<target name="coco.compile" depends="init"
+		description="Compile the Coco/R Parser Generator">
+		<javac srcdir="${coco.home}" />
 		<jar 
-			destfile="${coco-home}/Coco.jar" 
-			basedir="${coco-home}"
+			destfile="${coco.home}/Coco.jar" 
+			basedir="${coco.home}"
 			includes="Coco/*.class"
-			manifest="${coco-home}/Coco.manifest"
+			manifest="${coco.home}/Coco.manifest"
 		/>
 	</target>
 
-	<target name="jflex-compile" depends="init" description="Compile the JFlex Scanner Generator">
-		<ant antfile="${jflex-home}/src/build.xml"
-			dir="${jflex-home}/src"
+	<target name="jflex.compile" depends="init"
+			description="Compile the JFlex Scanner Generator">
+		<ant antfile="${jflex.home}/src/build.xml"
+			dir="${jflex.home}/src"
 			target="jar"
 			inheritAll="false"
 		/>
 	</target>
 
-	<target name="clean" description="clean up">
+	<target name="clean"
+			description="Clean up generated files">
 		<delete dir="${javadoc}" />
-		<delete file="${lexerSrcDir}/Lexer.java" />
-		<delete file="${parserSrcDir}/Parser.java" />
-		<delete file="${parserSrcDir}/Parser.java.old" />
-		<delete file="${unifierSrcDir}/TypeUnifier.java" />
+		<delete file="${lexer.src}/Lexer.java" />
+		<delete file="${parser.src}/Parser.java" />
+		<delete file="${parser.src}/Parser.java.old" />
+		<delete file="${unifier.src}/TypeUnifier.java" />
 		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
 	</target>
 	
