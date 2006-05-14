@@ -54,16 +54,16 @@ public class TypeUnifier {
 		  		TypeVariable typeVar = (TypeVariable) `tv;
 				Type type = typeVar.getValue();
 				if (type != null) {
-					type = unify(type, other, location);
+					type = unify(type, `other, location);
 					if (type != null) {
 						typeVar.setValue(type);
 					}
 					return type;
 				}
 				else {
-					type = solve(other);
-					if (type == tv) {
-						return tv;
+					type = solve(`other);
+					if (type == `tv) {
+						return `tv;
 					}
 					else if (occurs(typeVar, type)) {
 						result.addProblem(new ASTProblem(
@@ -81,10 +81,10 @@ public class TypeUnifier {
 				if (newChild == null) {
 					return null;
 				}
-				if (newChild == child1) {
+				if (newChild == `child1) {
 					return left;
 				}
-				if (newChild == child2) {
+				if (newChild == `child2) {
 					return right;
 				}
 				return result.makePowerSetType(newChild);
@@ -95,10 +95,10 @@ public class TypeUnifier {
 				if (newLeft == null || newRight == null) {
 					return null;
 				}
-				if (newLeft == left1 && newRight == right1) {
+				if (newLeft == `left1 && newRight == `right1) {
 					return left;
 				}
-				if (newLeft == left2 && newRight == right2) {
+				if (newLeft == `left2 && newRight == `right2) {
 					return right;
 				}
 				return result.makeProductType(newLeft, newRight);
@@ -157,16 +157,16 @@ public class TypeUnifier {
 				}
 			}
 			PowSet(child) -> {
-				Type newChild = solve(child);
-				if (newChild == child) {
+				Type newChild = solve(`child);
+				if (newChild == `child) {
 					return intype;
 				}
 				return result.makePowerSetType(newChild);
 			}
 			CProd(left, right) -> {
-				Type newLeft = solve(left);
-				Type newRight = solve(right);
-				if (newLeft == left && newRight == right) {
+				Type newLeft = solve(`left);
+				Type newRight = solve(`right);
+				if (newLeft == `left && newRight == `right) {
 					return intype;
 				}
 				return result.makeProductType(newLeft, newRight);
@@ -183,10 +183,10 @@ public class TypeUnifier {
 				return typeVar == `tv;
 			}
 			PowSet(child) -> {
-				return occurs(typeVar, child);
+				return occurs(typeVar, `child);
 			}
 			CProd(left, right) -> {
-				return occurs(typeVar, left) || occurs(typeVar, right);
+				return occurs(typeVar, `left) || occurs(typeVar, `right);
 			}
 			_ -> {
 				return false;
