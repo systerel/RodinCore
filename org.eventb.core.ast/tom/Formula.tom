@@ -59,7 +59,7 @@
 %oparray PredicateList pList (Predicate*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n] }
+    get_element(t,n) { t[n-1] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
@@ -67,7 +67,7 @@
 %oparray ExpressionList eList (Expression*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n] }
+    get_element(t,n) { t[n-1] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
@@ -75,7 +75,7 @@
 %oparray BoundIdentDeclList bidList (BoundIdentDecl*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n] }
+    get_element(t,n) { t[n-1] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
