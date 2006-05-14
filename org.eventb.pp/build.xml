@@ -1,211 +1,40 @@
-<project name="org.eventb.core.ast" default="generate" basedir=".">
+<project name="org.eventb.core.ast" default="tom" basedir=".">
 	<description>
         Generates derived files in the Predicate Prover.
 	</description>
+
 	<!-- set global properties for this build -->
 	<property name="src" location="src" />
-	<eclipse.convertPath fileSystemPath="${src}" property="srcPath"/>
 
-	<property name="AST-lib" location="../org.eventb.core.ast" />
-	<property name="tools" location="${AST-lib}/tools" />
-	<property name="tom-home" location="${tools}/jtom-2.2" />
+	<property name="org.eventb.core.ast.home" location="../org.eventb.core.ast" />
+	<import file="${org.eventb.core.ast.home}/tom/tom-task.xml"/>
 	
-	<property name="translatorSrcDir"
+	<property name="translator.src"
 		location="${src}/org/eventb/internal/pp/translator" />
-	<eclipse.convertPath fileSystemPath="${translatorSrcDir}" property="translatorSrcPath"/>
 
-	<target name="init">
-		<!-- Create the time stamp -->
+	<target name="init" description="Create the initial time stamp">
 		<tstamp />
 	</target>
 
-	<target name="generate" 
-		depends="tomIdentityTranslator, 
-				 tomTranslator, 
-				 tomBoundIdentifierDecomposition, 
-		         tomDecomposedQuant,
-		         tomGoalChecker,
-				 tomPredicateSimplification" 
-		description="Generate all Java files">
-		<eclipse.incrementalBuild/>
-	</target>
-
-	<target name="tom-test" depends="init"
-			description="Test if generated tom files are up to date">
-		<uptodate property="tom.IdentityTranslator.notRequired" 
-				targetfile="${translatorSrcDir}/IdentityTranslator.java" >
-		    <srcfiles file= "${translatorSrcDir}/IdentityTranslator.t" />
-		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.BoundIdentifierDecomposition.notRequired" 
-				targetfile="${translatorSrcDir}/BoundIdentifierDecomposition.java" >
-		    <srcfiles file= "${translatorSrcDir}/BoundIdentifierDecomposition.t" />
-		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.Translator.notRequired" 
-				targetfile="${translatorSrcDir}/Translator.java" >
-		    <srcfiles file= "${translatorSrcDir}/Translator.t" />
-		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.DecomposedQuant.notRequired" 
-				targetfile="${translatorSrcDir}/DecomposedQuant.java" >
-		    <srcfiles file= "${translatorSrcDir}/DecomposedQuant.t" />
-		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.GoalChecker.notRequired" 
-				targetfile="${translatorSrcDir}/GoalChecker.java" >
-		    <srcfiles file= "${translatorSrcDir}/GoalChecker.t" />
-		    <srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<uptodate property="tom.PredicateSimplification.notRequired" 
-				targetfile="${translatorSrcDir}/PredicateSimplification.java" >
-			<srcfiles file= "${translatorSrcDir}/PredicateSimplification.t" />
-			<srcfiles file= "${translatorSrcDir}/Formula.tom" />
-		</uptodate>
-		<!-- echoproperties prefix="tom" /-->
-	</target>
-
-	<target name="tomTranslator" depends="init,tom-test"
-		description="launch tom for Translator.t"
-		unless="tom.Translator.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/Translator.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-<!--		<arg value="- -optimize" />
-			<arg value="- -optimize2" />-->
-			<arg value="${translatorSrcDir}/Translator.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-	
-	<target name="tomIdentityTranslator" depends="init,tom-test"
-		description="launch tom for IdentityTranslator.t"
-		unless="tom.IdentityTranslator.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/IdentityTranslator.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-			<arg value="${translatorSrcDir}/IdentityTranslator.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-
-	<target name="tomBoundIdentifierDecomposition" depends="init,tom-test"
-		description="launch tom for BoundIdentifierDecomposition.t"
-		unless="tom.BoundIdentifierDecomposition.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/BoundIdentifierDecomposition.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-<!--			<arg value="- -optimize" />
-			<arg value="- -optimize2" />-->
-			<arg value="${translatorSrcDir}/BoundIdentifierDecomposition.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-	
-	<target name="tomDecomposedQuant" depends="init,tom-test"
-		description="launch tom for DecomposedQuant.t"
-		unless="tom.DecomposedQuant.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/DecomposedQuant.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-			<arg value="--optimize" />
-			<arg value="--optimize2" />
-			<arg value="${translatorSrcDir}/DecomposedQuant.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-	
-
-	<target name="tomGoalChecker" depends="init,tom-test"
-		description="launch tom for GoalChecker.t"
-		unless="tom.GoalChecker.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/GoalChecker.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-			<arg value="${translatorSrcDir}/GoalChecker.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
-	</target>
-
-	<target name="tomPredicateSimplification" depends="init,tom-test"
-		description="launch tom forPredicateSimplification.t"
-		unless="tom.PredicateSimplification.notRequired" >
-		<java classname="jtom.Tom" fork="true">
-			<classpath>
-				<fileset dir="${tom-home}/lib">
-		        	<include name="*.jar"/>
-				</fileset>
-			</classpath>
-			<sysproperty key="tom.home" value="${tom-home}" />
-			<arg value="-X" />
-			<arg value="${tom-home}/Tom.xml" />
-			<arg value="--output" />
-			<arg value="${translatorSrcDir}/PredicateSimplification.java" />
-			<arg value="--pretty" />
-			<arg value="--static" />
-			<arg value="${translatorSrcDir}/PredicateSimplification.t" />
-		</java>
-		<eclipse.refreshLocal resource="${translatorSrcPath}" depth="one"/>
+	<target name="tom" depends="init"
+		description="Launch tom for all files">
+		<tom config="${tom.home}/Tom.xml"
+				srcdir="${src}"
+				destdir="${src}"
+				options="-I ${org.eventb.core.ast.home}/tom --static"
+				pretty="true"
+				optimize="true">
+			<include name="**/*.t" />
+		</tom>
 	</target>
 	
 	<target name="clean" description="clean up">
-		<delete file="${translatorSrcDir}/Translator.java" />
-		<delete file="${translatorSrcDir}/IdentityTranslator.java" />
-		<delete file="${translatorSrcDir}/BoundIdentifierDecomposition.java" />
-		<delete file="${translatorSrcDir}/DecomposedQuant.java" />
-		<delete file="${translatorSrcDir}/GoalChecker.java" />
-		<delete file="${translatorSrcDir}/PredicateSimplification.java" />
-		<eclipse.refreshLocal resource="${srcPath}" depth="infinite"/>
+		<delete file="${translator.src}/Translator.java" />
+		<delete file="${translator.src}/IdentityTranslator.java" />
+		<delete file="${translator.src}/BoundIdentifierDecomposition.java" />
+		<delete file="${translator.src}/DecomposedQuant.java" />
+		<delete file="${translator.src}/GoalChecker.java" />
+		<delete file="${translator.src}/PredicateSimplification.java" />
 	</target>
 	
 </project>
