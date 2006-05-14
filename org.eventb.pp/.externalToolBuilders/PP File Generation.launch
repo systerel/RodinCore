@@ -14,7 +14,7 @@
 <stringAttribute key="org.eclipse.ant.ui.ATTR_ANT_CLEAN_TARGETS" value="clean,"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_INSTALL_TYPE_ID" value="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_INSTALL_NAME" value="j2sdk1.5-sun"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eventb.core.pp"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eventb.pp"/>
 <stringAttribute key="org.eclipse.debug.core.ATTR_REFRESH_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;launchConfigurationWorkingSet factoryID=&quot;org.eclipse.ui.internal.WorkingSetFactory&quot; name=&quot;PP generated files&quot;&gt;&#10;&lt;item factoryID=&quot;org.eclipse.ui.internal.model.ResourceFactory&quot; path=&quot;/org.eventb.pp/src/org/eventb/internal/pp/translator&quot; type=&quot;2&quot;/&gt;&#10;&lt;/launchConfigurationWorkingSet&gt;}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/org.eventb.pp/build.xml}"/>
 </launchConfiguration>
