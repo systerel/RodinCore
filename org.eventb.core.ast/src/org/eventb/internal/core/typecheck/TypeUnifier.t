@@ -38,6 +38,12 @@ public class TypeUnifier {
 	
 	%include{ Type.tom }
 	
+	// This declaration is made local to this file, as type variables are not
+	// exposed to the published API.
+	%op Type TypeVar {
+		is_fsym(t) { t instanceof TypeVariable }
+	}
+
 	protected final Type unify(Type left, Type right, SourceLocation location) {
 		if (left == null || right == null) {
 			return null;
