@@ -8,10 +8,22 @@
 
 package org.eventb.internal.pp.translator;
 
-import java.util.*;
-import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eventb.core.ast.*;
+import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 
 
 /**
@@ -25,14 +37,14 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public class DecomposedQuant {
 
-%include {Formula.tom}
+	%include {Type.tom}
 
 	protected final LinkedList<BoundIdentDecl> identDecls = new LinkedList<BoundIdentDecl>();
 	private boolean hasPushed = false;
 	protected final FormulaFactory ff;
 
 	/**
-	 * @param ff the Formula Factory to be used
+	 * @param ff the formula factory to be used
 	 */
 	public DecomposedQuant(FormulaFactory ff) {
 		this.ff = ff;
@@ -40,7 +52,7 @@ public class DecomposedQuant {
 	
 	/**
 	 * This constructor is used, when a given quantification is modified.
-	 * @param ff the Formula Factory to be used
+	 * @param ff the formula factory to be used
 	 * @param ids the bound identifiers of the source quantification
 	 */
 	public DecomposedQuant(FormulaFactory ff, BoundIdentDecl[] ids) {
@@ -55,8 +67,8 @@ public class DecomposedQuant {
 	/**
 	 * Adds one or several instances of BoundIdentDecl, depending on type.
 	 *  If type is CPROD(INT, INT), two bound identifiers would be added. 
-	 * @param The type to be decomposed and added to the quantification.
-	 * @param loc location for the new expression
+	 * @param type type to be decomposed and added to the quantification
+	 * @param loc source location for the new expression
 	 * @return a new Identifier or maplet of Identifiers that refers to the BoundIdentDecl instances.
 	 */
 	public Expression addQuantifier(Type type, SourceLocation loc) {
@@ -66,9 +78,9 @@ public class DecomposedQuant {
 	/**
 	 * Adds one or several instances of BoundIdentDecl, depending on type.
 	 * If type is CPROD(INT, INT), two bound identifiers would be added. 
-	 * @param The type to be decomposed and added to the quantification.
-	 * @param name name for the new BoundIdentDecl instances.
-	 * @param loc location for the new expression
+	 * @param type type to be decomposed and added to the quantification
+	 * @param name name for the new BoundIdentDecl instances
+	 * @param loc source location for the new expression
 	 * @return a new Identifier or maplet of Identifiers that refers to the BoundIdentDecl instances.
 	 */
 	public Expression addQuantifier(Type type, String name, SourceLocation loc) {
@@ -94,7 +106,7 @@ public class DecomposedQuant {
 	 * or more nested quantifications, pushThroughAll does all the necessary work with
 	 * just one call to shiftBoundIdentifiers.
 	 * @param expr the expression to be pushed
-	 * @param ff the Formula Factory to be used
+	 * @param ff the formula factory to be used
 	 * @param quantifications the quantifications through which the expr needs to be pushed.
 	 * @return the expression with shifted bound identifiers
 	 */
