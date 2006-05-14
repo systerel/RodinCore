@@ -49,32 +49,11 @@ public class TypeUnifier {
 			return null;
 		}
 		%match (Type left, Type right) {
-			tv@TypeVar(), other
-		  | other, tv@TypeVar() -> {
-		  		TypeVariable typeVar = (TypeVariable) `tv;
-				Type type = typeVar.getValue();
-				if (type != null) {
-					type = unify(type, `other, location);
-					if (type != null) {
-						typeVar.setValue(type);
-					}
-					return type;
-				}
-				else {
-					type = solve(`other);
-					if (type == `tv) {
-						return `tv;
-					}
-					else if (occurs(typeVar, type)) {
-						result.addProblem(new ASTProblem(
-								location,
-								ProblemKind.Circularity,
-								ProblemSeverities.Error));
-						return null;		
-					}
-					typeVar.setValue(type);
-					return type;
-				}				
+			tv@TypeVar(), other -> {
+				return unifyVariable((TypeVariable) `tv, `other, location);
+			}
+		  	other, tv@TypeVar() -> {
+				return unifyVariable((TypeVariable) `tv, `other, location);
 			}
 			PowSet(child1), PowSet(child2) -> {
 				Type newChild = unify(`child1, `child2, location);
@@ -132,6 +111,33 @@ public class TypeUnifier {
 						right));
 				return null;
 			}
+		}
+	}
+
+	private Type unifyVariable(TypeVariable variable, Type otherType,
+			SourceLocation location) {
+			
+		Type type = variable.getValue();
+		if (type != null) {
+			type = unify(type, otherType, location);
+			if (type != null) {
+				variable.setValue(type);
+			}
+			return type;
+		} else {
+			type = solve(otherType);
+			if (type == variable) {
+				return variable;
+			}
+			else if (occurs(variable, type)) {
+				result.addProblem(new ASTProblem(
+						location,
+						ProblemKind.Circularity,
+						ProblemSeverities.Error));
+				return null;		
+			}
+			variable.setValue(type);
+			return type;
 		}
 	}
 
