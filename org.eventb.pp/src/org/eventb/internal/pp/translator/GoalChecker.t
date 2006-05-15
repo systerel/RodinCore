@@ -22,7 +22,6 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
@@ -68,27 +67,36 @@ public abstract class GoalChecker {
 				}
 				return true;
 			}
-			UnaryPredicate(P) | QuantifiedPredicate(_, P) -> {
+			QuantifiedPredicate(bids, P) -> {
+				return areBoundDeclsUsed(`bids, `P) && isInGoal(`P);
+			}
+			UnaryPredicate(P) -> {
 				return isInGoal(`P);
 			}
 			LiteralPredicate() -> {
 				return true;
 			}
-			NotEqual(AE1, AE2) | Lt(AE1, AE2) | 
-			Le(AE1, AE2) | Gt(AE1, AE2) | Ge(AE1, AE2) -> {
+			(NotEqual|Lt|Le|Gt|Ge)(AE1, AE2) -> {
 				return isArithmeticExpression(`AE1) && isArithmeticExpression(`AE2);
 			}
 			In(ME1, SE1) -> {
 				return isMapletExpression(`ME1) && isSetExpression(`SE1);
 			}
-			Equal(Identifier(), Identifier()) -> {
-				return true;
+			Equal(id@Identifier(), Identifier()) -> {
+				return ! (`id.getType() instanceof ProductType);
 			}
 			Equal(E1, E2) -> {
-				return 
-					(isArithmeticExpression(`E1) && isArithmeticExpression(`E2)) ||
-					(isSetExpression(`E1) && isSetExpression(`E2)) ||
-					(isBooleanExpression(`E1) && isBooleanExpression(`E2));
+      			final Type type = `E1.getType();
+      			if (type instanceof IntegerType) {
+      				return isArithmeticExpression(`E1) && isArithmeticExpression(`E2);
+      			}
+      			if (type instanceof BooleanType) {
+      				return isBooleanExpression(`E1) && isBooleanExpression(`E2);
+      			}
+      			if (type instanceof PowerSetType) {
+      				return isSetExpression(`E1) && isSetExpression(`E2);
+      			}
+      			return false;
 			}	
 			_ -> {
 				return false;
@@ -96,16 +104,43 @@ public abstract class GoalChecker {
 		}
 	}
 	
+    /**
+	 * Tells whether all bound identifier declarations are actually used in the
+	 * given predicate.
+	 * 
+	 * @param bids
+	 *            array of declarations to check for use
+	 * @param P
+	 *            predicate where bound identifiers should appear
+	 * @return <code>true</code> iff all bound identifiers do occur in the
+	 *         given predicate
+	 */
+    private static boolean areBoundDeclsUsed(BoundIdentDecl[] bids, Predicate P) {
+    	final int length = bids.length;
+    	final BoundIdentifier[] bis = P.getBoundIdentifiers();
+    	if (bis.length < length) {
+    		// Not enough bound identifiers in given predicate
+    		return false;
+    	}
+    	for (int i = 0; i < length; ++i) {
+    		if (bis[i].getBoundIndex() != i) {
+    			// Missing index: this bound identifier is not used.
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+
 	private static boolean isArithmeticExpression(Expression expr) {
 		%match(Expression expr) {
-			Plus(children) | Mul(children) -> {
-				for(Expression child: `children) {
-					if(!isArithmeticExpression(child))
+			(Plus|Mul)(children) -> {
+				for (Expression child: `children) {
+					if (! isArithmeticExpression(child))
 						return false;
 				}
 				return true;
 			}
-			Minus(AE1, AE2) | Div(AE1, AE2) | Mod(AE1, AE2) | Expn(AE1, AE2) -> {
+			(Minus|Div|Mod|Expn)(AE1, AE2) -> {
 				return isArithmeticExpression(`AE1) && isArithmeticExpression(`AE2);
 			}
 			UnMinus(AE) -> {
@@ -143,7 +178,7 @@ public abstract class GoalChecker {
 			Identifier() -> { 
 				return ! (expr.getType() instanceof ProductType); 
 			}
-			INTEGER() | BOOL() -> { 
+			(INTEGER|BOOL)() -> { 
 				return true; 
 			}
 			_ -> {
