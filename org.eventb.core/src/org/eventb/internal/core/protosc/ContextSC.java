@@ -38,7 +38,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 /**
  * @author halstefa
@@ -47,7 +46,6 @@ import org.rodinp.core.builder.IInterrupt;
 public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	@SuppressWarnings("unused")
-//	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
 	private IContext context;
@@ -66,9 +64,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	public void init(
 			@SuppressWarnings("hiding") IContext context, 
 			@SuppressWarnings("hiding") ISCContext scContext, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
-//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.context = context;
 		this.scContext = scContext;
@@ -81,7 +77,6 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	public boolean run(
 			IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
 		if(DEBUG)
@@ -93,7 +88,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if (! contextIn.exists())
 			ContextSC.makeError("Source context does not exist.");
 		
-		init(contextIn, newSCContext, interrupt, monitor);
+		init(contextIn, newSCContext, monitor);
 		runSC();
 		return true;
 	}
@@ -103,7 +98,6 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	 */
 	public void clean(
 			IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		file.delete(true, monitor);
 	}
@@ -118,11 +112,8 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IPath targetPath = target.getPath();
 		
 		graph.addNode(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
-		IPath[] paths = graph.getDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
-		if (paths.length != 1 || ! paths[0].equals(targetPath)) {
-			graph.removeDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
-			graph.addToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
-		}
+		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
+		graph.updateGraph();
 	}
 
 	public void runSC() throws CoreException {

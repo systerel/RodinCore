@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -22,9 +23,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.builder.IExtractor;
-import org.rodinp.core.builder.IInterrupt;
 import org.rodinp.core.builder.IAutomaticTool;
+import org.rodinp.core.builder.IExtractor;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -52,7 +52,7 @@ import org.rodinp.internal.core.util.Util;
  * </ul>
  * </p>
  */
-public class Graph implements Serializable {
+public class Graph implements Serializable, Iterable<Node> {
 	
 	/**
 	 * 
@@ -120,14 +120,14 @@ public class Graph implements Serializable {
 		return printGraph();
 	}
 		
-	private void runTool(Node node, IInterrupt interrupt, IProgressMonitor monitor) {
+	private void runTool(Node node, IProgressMonitor monitor) {
 		if(node.isPhantom())
 			return;
 		if(node.dependsOnPhantom()) {
 			node.printPhantomProblem();
 			return;
 		}
-		String toolName = node.getProducerId();
+		String toolName = node.getToolId();
 		IFile file = node.getFile();
 		if (file == null) {// resource is not a file
 			Util.log(null, "Builder resource not a file" + file.getName()); //$NON-NLS-1$
@@ -143,7 +143,7 @@ public class Graph implements Serializable {
 			RodinBuilder.deleteMarkers(file);
 			node.markSuccessorsDated();
 			try {
-				extract(node, new GraphHandler(this, node), null, null);
+				extract(node, new GraphHandler(this, node), monitor);
 			} catch (CoreException e){
 				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
 			}
@@ -158,7 +158,7 @@ public class Graph implements Serializable {
 		RodinBuilder.deleteMarkers(file);
 		boolean changed = false;
 		try {
-			changed = tool.run(file, interrupt, monitor);
+			changed = tool.run(file, monitor);
 		} catch (OperationCanceledException e) {
 			throw e;
 		} catch (CoreException e) {
@@ -169,10 +169,7 @@ public class Graph implements Serializable {
 			return;
 		}
 		
-		// check if not interruped before accepting the output
-		if(interrupt.isInterrupted())
-			return;
-		// we can ignore the rest of this method on interrupt
+		// we can ignore the rest of this method on cancelation
 		// the updated file only becomes committed after node.dated is set to false
 		
 		node.setDated(false);
@@ -180,24 +177,24 @@ public class Graph implements Serializable {
 		if(changed) {
 			node.markSuccessorsDated();
 			try {
-				extract(node, new GraphHandler(this, node), interrupt, monitor);
+				extract(node, new GraphHandler(this, node), monitor);
 			} catch (CoreException e) {
 				Util.log(e, "while extracting dependencies"); //$NON-NLS-1$
 			}
 		}
 	}
 	
-	private void extract(Node node, GraphHandler handler, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	private void extract(Node node, GraphHandler handler, IProgressMonitor monitor) throws CoreException {
 		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
 		if(extractor == null)
 			return;
 		for(int j = 0; j < extractor.length; j++)
-			extractor[j].extract(node.getFile(), handler);
+			extractor[j].extract(node.getFile(), new GraphFacade(handler));
 	}
 
-	public void extractNode(Node node, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
+	public void extractNode(Node node, IProgressMonitor monitor) throws CoreException {
 		node.markSuccessorsDated();
-		extract(node, new GraphHandler(this, node), progress, monitor);
+		extract(node, new GraphHandler(this, node), monitor);
 	}
 
 	public void activate(String name) {
@@ -244,7 +241,7 @@ public class Graph implements Serializable {
 		nodePostList.add(node);
 	}
 	
-	public void removeNodeFromGraph(Node node, IInterrupt interrupt, IProgressMonitor monitor) {
+	public void removeNodeFromGraph(Node node, IProgressMonitor monitor) {
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node n : values)
 			n.done = true;
@@ -253,7 +250,7 @@ public class Graph implements Serializable {
 			if(!n.done) {
 				removeNode(n);
 				try {
-					cleanNode(n, interrupt, monitor);
+					cleanNode(n, monitor);
 				} catch(CoreException e) {
 					if(RodinBuilder.DEBUG)
 						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
@@ -263,20 +260,20 @@ public class Graph implements Serializable {
 		initCaches();
 	}
 	
-	private void cleanNode(Node node, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	private void cleanNode(Node node, IProgressMonitor monitor) throws CoreException {
 		node.setDated(true);
 		if(node.isNotDerived())
 			return;
-		IAutomaticTool tool = getManager().getTool(node.getProducerId());
-		tool.clean(node.getFile(), interrupt, monitor);
+		IAutomaticTool tool = getManager().getTool(node.getToolId());
+		tool.clean(node.getFile(), monitor);
 	}
 	
-	public void cleanGraph(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	public void cleanGraph(IProgressMonitor monitor) throws CoreException {
 		ArrayList<IStatus> vStats = null; // lazy initialized
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
 		for(Node node : values) {
 			try {
-				cleanNode(node, interrupt, monitor);
+				cleanNode(node, monitor);
 				if(node.isDerived()) //$NON-NLS-1$
 					tryRemoveNode(node);
 				
@@ -346,14 +343,12 @@ public class Graph implements Serializable {
 	 * it can happen that the build would have been started with wrong dependencies, hence,
 	 * the topological order would be invalid for the Rodin project. In this case
 	 * the build is restarted, recreating all derived resources that may have been invalidated.
-	 * @param interrupt
-	 * 		The interrupt request
 	 * @param monitor
 	 * 		The progress monitor to use
 	 * @throws CoreException
 	 * 		If any problem occurred during build.
 	 */
-	public void buildGraph(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	public void buildGraph(IProgressMonitor monitor) throws CoreException {
 		if(RodinBuilder.DEBUG)
 			System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
 //		this.progress = progress;
@@ -361,7 +356,7 @@ public class Graph implements Serializable {
 		instable = true;
 		while(instable) {
 			topSortInit();
-			topSortNodes(nodePreList, true, true, interrupt, monitor);
+			topSortNodes(nodePreList, true, true, monitor);
 			if(RodinBuilder.DEBUG)
 				System.out.print(getClass().getName() + ": OUT Graph:\n" + printGraph()); //$NON-NLS-1$
 			if(RodinBuilder.DEBUG)
@@ -371,18 +366,16 @@ public class Graph implements Serializable {
 					System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
 				continue;
 			}
-			commit(interrupt, monitor);
+			commit(monitor);
 		}
 		removePhantoms();
 	}
 	
-	private void topSortNodes(LinkedList<Node> sorted, boolean run, boolean toolLinks, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	private void topSortNodes(LinkedList<Node> sorted, boolean run, boolean toolLinks, IProgressMonitor monitor) throws CoreException {
 		// sort all undone nodes in nodes append to sorted
 		// tools are only run if run is true
 		// if toolLinks is false only user links are considered (for cycle analysis)
 		while(!instable) {
-			if(interrupt.isInterrupted())
-				return;
 			if(monitor.isCanceled())
 				throw new OperationCanceledException();
 			if(nodeStack.isEmpty()) {
@@ -403,7 +396,7 @@ public class Graph implements Serializable {
 				firstNode.done = true;
 				if(run)
 					if(firstNode.isDated())
-						runTool(firstNode, interrupt, monitor);
+						runTool(firstNode, monitor);
 //				else if(node.isCycle())
 //				RodinBuilderX.deleteMarkers(node.getFile());
 			} else {
@@ -424,7 +417,7 @@ public class Graph implements Serializable {
 							succNode.done = true;
 							if(run)
 								if(succNode.isDated())
-									runTool(succNode, interrupt, monitor);
+									runTool(succNode, monitor);
 //							else if(succNode.isCycle())
 //							RodinBuilderX.deleteMarkers(succNode.getFile());
 						}
@@ -437,7 +430,7 @@ public class Graph implements Serializable {
 		}
 	}
 	
-	private void commit(IInterrupt interrupt, IProgressMonitor monitor) throws CoreException {
+	private void commit(IProgressMonitor monitor) throws CoreException {
 		// the purpose of this method is analyze the cycles more closely
 		// in order to avoid faulty error messages. In particular, when
 		// an error message is shown to the user, the user should be responsible
@@ -485,7 +478,7 @@ public class Graph implements Serializable {
 		// if spurious is empty everything is ok from the point of view of the tools:
 		// it's the user's fault!
 		LinkedList<Node> spurious = new LinkedList<Node>();
-		topSortNodes(spurious, false, false, interrupt, monitor);
+		topSortNodes(spurious, false, false, monitor);
 		
 		// print to error console all spurious errors
 		if(spurious.size() > 0)
@@ -501,7 +494,7 @@ public class Graph implements Serializable {
 		String message = new String("Spurious dependency cycle"); //$NON-NLS-1$
 		String cycle = new String("Cycle:\n"); //$NON-NLS-1$
 		for(Node node : spurious) {
-			cycle += "\nName: " + node.getPath().toOSString() + " Tool: " + node.getProducerId(); //$NON-NLS-1$ //$NON-NLS-2$
+			cycle += "\nName: " + node.getPath().toOSString() + " Tool: " + node.getToolId(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		// N == 0 means there is no cycle left. So it's a bug in a plug-in.
@@ -528,6 +521,10 @@ public class Graph implements Serializable {
 	
 	protected boolean isInstable() {
 		return instable;
+	}
+
+	public Iterator<Node> iterator() {
+		return nodes.values().iterator();
 	}
 	
 }

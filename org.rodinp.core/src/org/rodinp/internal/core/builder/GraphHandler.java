@@ -16,13 +16,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.builder.IGraph;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class GraphHandler implements IGraph {
+public class GraphHandler {
 
 	private final Node current;
 	
@@ -36,21 +35,22 @@ public class GraphHandler implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public void addNode(IPath path, String producerId) throws CoreException {
+	public void addNode(IPath path, String producerId) { //throws CoreException {
 		Node node = graph.getNode(path);
 
 		if(node == null) {
 			node = new Node();
 			node.setPath(path);
-			node.setProducerId(producerId);
+			node.setToolId(producerId);
 			graph.addNodeToGraph(node);
 			graph.incN();
 		} else if(node.isPhantom()) {
-			node.setProducerId(producerId);
+			node.setToolId(producerId);
 			node.setDated(true);
 			node.setPhantom(false);
+			graph.setInstable(); // nodes depending on this phantom may already have been processed
 		} else
-			node.setProducerId(producerId);
+			node.setToolId(producerId);
 //			throw new CoreException(new Status(IStatus.ERROR,
 //					RodinCore.PLUGIN_ID, 
 //					Platform.PLUGIN_ERROR, "Node already exists: " + node.getName(), null)); //$NON-NLS-1$
@@ -62,16 +62,16 @@ public class GraphHandler implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#removeNode(org.eclipse.core.runtime.IPath)
 	 */
-	public void removeNode(IPath path) throws CoreException {
+	public void removeNode(IPath path) { //throws CoreException {
 		Node node = graph.getNode(path);
 		if(node == null || node.isPhantom())
 			return;
 		
-		boolean notCurrentEqualsSource = !current.equals(node);
+		boolean notCurrentEqualsNode = !current.equals(node);
 		boolean nodeIsSuccessor = current.hasSuccessor(node);
 		boolean nodeIsRoot = node.getInCount() == 0;
 		
-		if( notCurrentEqualsSource || nodeIsSuccessor || nodeIsRoot) {
+		if( notCurrentEqualsNode || nodeIsSuccessor || nodeIsRoot) {
 			node.markSuccessorsDated();
 			graph.tryRemoveNode(node);
 			graph.decN();
@@ -82,11 +82,13 @@ public class GraphHandler implements IGraph {
 			graph.setInstable();
 			if(RodinBuilder.DEBUG)
 				System.out.println(getClass().getName() + ": Node removed: " + node.getName()); //$NON-NLS-1$
-		
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Illegal attempt to remove node: " + node.getName(), null)); //$NON-NLS-1$
+			if(RodinBuilder.DEBUG)
+				System.out.println(getClass().getName() + ": Cannot remove node: " + node.getName()); //$NON-NLS-1$
+		
+//			throw new CoreException(new Status(IStatus.ERROR,
+//					RodinCore.PLUGIN_ID, 
+//					Platform.PLUGIN_ERROR, "Illegal attempt to remove node: " + node.getName(), null)); //$NON-NLS-1$
 		}
 
 	}
@@ -113,6 +115,18 @@ public class GraphHandler implements IGraph {
 	public void addUserDependency(IPath origin, IPath source, IPath target,
 			String id, boolean prioritize) throws CoreException {
 		addDependency(origin, source, target, id, prioritize, Link.Provider.USER);
+	}
+	
+	protected Node getNodeOrPhantom(IPath path) {
+		Node node = graph.getNode(path);
+		if(node == null) {
+			node = new Node();
+			node.setPath(path);
+			node.setDated(false);
+			node.setPhantom(true);
+			graph.addNodeToGraph(node);
+		}		
+		return node;
 	}
 
 	private void addDependency(IPath origin, IPath source, IPath target, String id, boolean prioritize, Link.Provider prov) throws CoreException {
@@ -176,13 +190,14 @@ public class GraphHandler implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#getDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public IPath[] getDependencies(IPath target, String id)
-			throws CoreException {
+	public IPath[] getDependencies(IPath target, String id) {
+//			throws CoreException {
 		Node node = graph.getNode(target);
 		if(node == null || node.isPhantom())
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Unknown node: " + target, null)); //$NON-NLS-1$
+			return null;
+//			throw new CoreException(new Status(IStatus.ERROR,
+//					RodinCore.PLUGIN_ID, 
+//					Platform.PLUGIN_ERROR, "Unknown node: " + target, null)); //$NON-NLS-1$
 		Collection<IPath> deps = node.getSources(id);
 		IPath[] paths = new IPath[deps.size()];
 		deps.toArray(paths);
@@ -192,24 +207,22 @@ public class GraphHandler implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#removeDependencies(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public void removeDependencies(IPath target, String id)
-			throws CoreException {
-		Node node = graph.getNode(target);
-		if(node == null || node.isPhantom())
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Unknown node: " + target, null));
-//		if(!current.hasSuccessor(node))
-//			throw new CoreException(new Status(IStatus.ERROR,
-//					RodinCore.PLUGIN_ID, 
-//					Platform.PLUGIN_ERROR, "Cannot remove dependencies for target: " + node.getName(), null));
-		node.removeLinks(id);
-		node.setDated(true);
-		graph.setInstable();
-		if(RodinBuilder.DEBUG)
-			System.out.println(getClass().getName() + ": removed dependencies: " +  //$NON-NLS-1$
-					node.getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$
-
+	public void removeDependencies(Collection<String> ids) { //throws CoreException {
+		for (String id : ids) {
+			for (Node node : graph) {
+				node.removeLinks(id);
+				node.setDated(true);
+				if (RodinBuilder.DEBUG)
+					System.out.println(getClass().getName()
+							+ ": removed dependencies: " + //$NON-NLS-1$
+							node.getName());
+			}
+		}
+		if (!ids.isEmpty())
+			graph.setInstable();
+		if (RodinBuilder.DEBUG)
+			System.out.println(getClass().getName()
+					+ " instable = " + graph.isInstable()); //$NON-NLS-1$
 	}
 
 }

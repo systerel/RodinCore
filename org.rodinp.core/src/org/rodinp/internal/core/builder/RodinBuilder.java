@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.IRodinDBMarker;
-import org.rodinp.core.builder.IInterrupt;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Util;
 
@@ -30,7 +30,7 @@ import org.rodinp.internal.core.util.Util;
  */
 public class RodinBuilder extends IncrementalProjectBuilder {
 	
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 	
 	BuildState state;
 	
@@ -66,7 +66,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				Node node = state.graph.getNode(resource.getFullPath());
 				if(node == null)
 					break;
-				state.graph.removeNodeFromGraph(node, makeInterrupt(), new NullProgressMonitor());
+				state.graph.removeNodeFromGraph(node, makeMonitor(new NullProgressMonitor()));
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
@@ -147,13 +147,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 	
-	IInterrupt makeInterrupt() {
-		return new IInterrupt() {
-			
-			public boolean isInterrupted() {
-				return RodinBuilder.this.isInterrupted();
-			}
-		};
+	IProgressMonitor makeMonitor(IProgressMonitor monitor) {
+		return new BuilderProgressMonitor(monitor, this);
 	}
 
 	/**
@@ -165,7 +160,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
     }
     
 	private void buildGraph(IProgressMonitor monitor) throws CoreException {
-		state.graph.buildGraph(makeInterrupt(), monitor);
+		state.graph.buildGraph(makeMonitor(monitor));
 	}
 	
 	/**
@@ -179,7 +174,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	private void cleanGraph(IProgressMonitor monitor) throws CoreException {
 		if (state == null)
 			state = BuildState.getBuildState(getProject(), monitor);
-		state.graph.cleanGraph(makeInterrupt(), monitor);
+		state.graph.cleanGraph(makeMonitor(monitor));
 	}
 	
 	void markNodeDated(IResource resource, boolean changed, IProgressMonitor monitor) {
@@ -203,7 +198,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// So by default we could always implement for the case "changed = true".
 				if (changed)
 					try {
-						state.graph.extractNode(node, makeInterrupt(), monitor);
+						state.graph.extractNode(node, makeMonitor(monitor));
 					} catch (CoreException e) {
 						Util.log(e, "during extraction after change");
 					}
@@ -220,8 +215,14 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		} catch (CoreException e) {
 			Util.log(e, "during builder full build");
 		}
-		cleanGraph(monitor);
-		buildGraph(monitor);
+		try {
+			cleanGraph(monitor);
+			buildGraph(monitor);
+		} catch (OperationCanceledException e) {
+			if(isInterrupted())
+				return;
+			else throw e;
+		}
 	}
 	
 	@Override
@@ -230,6 +231,10 @@ public class RodinBuilder extends IncrementalProjectBuilder {
         	cleanGraph(monitor);
         } catch(CoreException e) {
 			Util.log(e, "during builder clean");
+		} catch (OperationCanceledException e) {
+			if(isInterrupted())
+				return;
+			else throw e;
 		}
      }
 
@@ -237,7 +242,13 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
 		delta.accept(new RodinBuilderDeltaVisitor());
-		buildGraph(monitor);
+		try {
+			buildGraph(monitor);
+		} catch (OperationCanceledException e) {
+			if(isInterrupted())
+				return;
+			else throw e;
+		}
 	}
 
 }

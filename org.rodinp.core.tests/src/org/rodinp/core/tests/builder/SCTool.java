@@ -1,7 +1,6 @@
 package org.rodinp.core.tests.builder;
 
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
@@ -15,7 +14,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 public class SCTool implements IExtractor, IAutomaticTool {
 	
@@ -29,7 +27,7 @@ public class SCTool implements IExtractor, IAutomaticTool {
 	// Id of the associated extractor
 	private static String SC_XID = "org.rodinp.core.tests.xTestSC";
 	
-	public void clean(IFile file, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
+	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		ToolTrace.addTrace("SC", "clean", file);
 
 		if (file.getFileExtension().equals("csc"))
@@ -58,26 +56,21 @@ public class SCTool implements IExtractor, IAutomaticTool {
 		
 		ISCContext sctx = ctx.getCheckedVersion();
 		IPath scPath = sctx.getResource().getFullPath();
-		if (! graph.containsNode(scPath)) {
-			graph.addNode(scPath, SC_ID);
-			graph.addToolDependency(ctx.getResource().getFullPath(), scPath, SC_ID, true);
-		}
+		graph.addNode(scPath, SC_ID);
+		graph.putToolDependency(ctx.getResource().getFullPath(), scPath, SC_ID, true);
 		
-		HashSet<IPath> oldSources = new HashSet<IPath>(Arrays.asList(graph.getDependencies(scPath, SC_XID)));
-		HashSet<IPath> newSources = new HashSet<IPath>(oldSources.size() * 4 / 3 + 1);
-//		graph.removeDependencies(scPath, SC_XID);
+		HashSet<IPath> newSources = new HashSet<IPath>(ctx.getUsedContexts().length * 4 / 3 + 1);
 		for (IContext usedContext: ctx.getUsedContexts()) {
 			IPath source = usedContext.getCheckedVersion().getResource().getFullPath();
-			oldSources.remove(source);
 			newSources.add(source);
 		}
-		if(!oldSources.isEmpty())
-			graph.removeDependencies(scPath, SC_XID);
 		for (IPath path : newSources)
-			graph.addUserDependency(ctx.getResource().getFullPath(), path, scPath, SC_XID, false);;
+			graph.putUserDependency(ctx.getResource().getFullPath(), path, scPath, SC_XID, false);
+		
+		graph.updateGraph();
 	}
 	
-	public boolean run(IFile file, IInterrupt progress, IProgressMonitor monitor) throws CoreException {
+	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
 		ToolTrace.addTrace("SC", "run", file);
 
 		ISCContext target = (ISCContext) RodinCore.create(file);

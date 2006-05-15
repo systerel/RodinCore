@@ -1,22 +1,32 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
+
 package org.rodinp.core.builder;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
  * @author Stefan Hallerstede
  * 
+ * <p>
  * This interface is used by the extractors registers with the builder
  * to manipulate the dependency graph of all Rodin resources of a Rodin
- * project.
- * 
+ * project. It is a Facade to the more complicated ways of manipulating
+ * the dependency graph inside the builder.
+ * </p><p>
+ * Some information is cached in the corresponding object so the contents
+ * of the facade must be synchronised with the graph at the end of an extraction.
+ * </p><p>
+ * Requests to add and remove nodes to resp. from the graph must be made
+ * explicitly by methods <code>addNode()</code> and <code>removeNode()</code>.
+ * Dependencies are managed by the facade. This saves clients from having 
+ * to compute dependency graph deltas themselves.
+ * </p>
  * @see org.rodinp.core.builder.IExtractor
  *
  */
@@ -28,12 +38,11 @@ public interface IGraph {
 	 * 
 	 * @param path
 	 *            The path of the node
-	 * @param producerId
+	 * @param toolId
 	 *            The path of the tool
 	 */
-	public void addNode(IPath path, String producerId)
-			throws CoreException;
-
+	public void addNode(IPath path, String toolId);
+	
 	/**
 	 * Remove the node "path" from the graph. If the node does not exist,
 	 * nothing happens. All dependencies are removed with the node.
@@ -41,35 +50,8 @@ public interface IGraph {
 	 * @param path
 	 *            The path of the node to be removed.
 	 */
-	public void removeNode(IPath path) throws CoreException;
-
-	/**
-	 * Checks whether the graph contains a particular node.
-	 * 
-	 * @param path
-	 *            The path of the node.
-	 * @return true if the node exists in the graph, false otherwise
-	 */
-	public boolean containsNode(IPath path);
-
-	/**
-	 * Adds a dependency controlled by a tool to the graph.
-	 * @param source
-	 *            The source of the dependency.
-	 * @param target
-	 *            The target of the dependency.
-	 * @param id
-	 *            The kind identifier of the dependency.
-	 * @param prioritize
-	 *            True if this dependency should be prioritized in the
-	 *            topological order derived from the graph.
-	 * @throws CoreException
-	 *             If the target node does not exist or if there is already a
-	 *             dependency with the same source.
-	 */
-	public void addToolDependency(IPath source, IPath target, String id,
-			boolean prioritize) throws CoreException;
-
+	public void removeNode(IPath path);
+	
 	/**
 	 * Adds a dependency controlled by the user to the graph.
 	 * 
@@ -86,35 +68,28 @@ public interface IGraph {
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
-	 * @throws CoreException
-	 *             If the target node does not exist or if there is already a
-	 *             dependency with the same source.
 	 */
-	public void addUserDependency(IPath origin, IPath source, IPath target,
-			String id, boolean prioritize) throws CoreException;
-
+	public void putUserDependency(IPath origin, IPath source, IPath target,
+			String id, boolean prioritize);
+	
 	/**
-	 * Returns the sources of the dependencies of target.
-	 * 
-	 * @param target
-	 *            The target of the sources.
-	 * @return The array of sources.
-	 * @throws CoreException
-	 *             If the target node does not exist.
-	 */
-	public IPath[] getDependencies(IPath target, String id)
-			throws CoreException;
-
-	/**
-	 * Removes dependencies of kind "id" for the target from the graph
-	 * 
+	 * Adds a dependency controlled by a tool to the graph.
+	 * @param source
+	 *            The source of the dependency.
 	 * @param target
 	 *            The target of the dependency.
 	 * @param id
-	 *            The kind of dependency to be removed.
-	 * @throws CoreException
-	 *             If the target node does not exist.
+	 *            The kind identifier of the dependency.
+	 * @param prioritize
+	 *            True if this dependency should be prioritized in the
+	 *            topological order derived from the graph.
 	 */
-	public void removeDependencies(IPath target, String id)
-			throws CoreException;
+	public void putToolDependency(IPath source, IPath target, String id,
+			boolean prioritize);
+
+	/**
+	 * When all manipulations have been done method <code>updateGraph()</code>
+	 * must be called to synchronise the state of the graph.
+	 */
+	public void updateGraph();
 }

@@ -35,7 +35,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 /**
  * @author Stefan Hallerstede
@@ -58,7 +57,6 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 	public void init(
 			@SuppressWarnings("hiding") ISCContext scContext, 
 			@SuppressWarnings("hiding") IPOFile poFile, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
 //		this.interrupt = interrupt;
 		this.monitor = monitor;
@@ -86,7 +84,6 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 	}
 	
 	public boolean run(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
@@ -95,13 +92,12 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		if (! contextIn.exists())
 			ContextSC.makeError("Source SC context does not exist.");
 		
-		init(contextIn, newPOFile, interrupt, monitor);
+		init(contextIn, newPOFile, monitor);
 		run();
 		return true;
 	}
 
 	public void clean(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		file.delete(true, monitor);
 	}
@@ -115,13 +111,8 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		IPath targetPath = target.getPath();
 		
 		graph.addNode(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
-		IPath[] paths = graph.getDependencies(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
-		if (paths.length == 1 && paths[0].equals(targetPath))
-			return;
-		else {
-			graph.removeDependencies(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
-			graph.addToolDependency(inPath, targetPath, POGCore.CONTEXT_POG_TOOL_ID, true);
-		}
+		graph.putToolDependency(inPath, targetPath, POGCore.CONTEXT_POG_TOOL_ID, true);
+		graph.updateGraph();
 	}
 
 	void createPOFile() throws CoreException {

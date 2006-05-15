@@ -36,11 +36,9 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 public class MachinePOG implements IAutomaticTool, IExtractor {
 	
-//	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
 	private ISCMachine scMachine;
@@ -55,9 +53,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 	public void init(
 			@SuppressWarnings("hiding") ISCMachine scMachine, 
 			@SuppressWarnings("hiding") IPOFile poFile, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
-//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.scMachine = scMachine;
 		this.poFile = poFile;
@@ -83,7 +79,6 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 	}
 	
 	public boolean run(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
@@ -92,13 +87,12 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		if (! machineIn.exists())
 			MachineSC.makeError("Source SC context does not exist.");
 		
-		init(machineIn, newPOFile, interrupt, monitor);
+		init(machineIn, newPOFile, monitor);
 		run();
 		return true;
 	}
 
 	public void clean(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		file.delete(true, monitor);
 	}
@@ -112,13 +106,8 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		IPath targetPath = target.getPath();
 		
 		graph.addNode(targetPath, POGCore.MACHINE_POG_TOOL_ID);
-		IPath[] paths = graph.getDependencies(targetPath, POGCore.MACHINE_POG_TOOL_ID);
-		if(paths.length == 1 && paths[0].equals(targetPath))
-			return;
-		else {
-			graph.removeDependencies(targetPath, POGCore.MACHINE_POG_TOOL_ID);
-			graph.addToolDependency(inPath, targetPath, POGCore.MACHINE_POG_TOOL_ID, true);
-		}
+		graph.putToolDependency(inPath, targetPath, POGCore.MACHINE_POG_TOOL_ID, true);
+		graph.updateGraph();
 	}
 
 	void createPOFile() throws CoreException {

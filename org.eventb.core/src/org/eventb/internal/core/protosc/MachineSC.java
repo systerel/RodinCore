@@ -48,7 +48,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 /**
  * @author halstefa
@@ -73,9 +72,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	public void init(
 			@SuppressWarnings("hiding") IMachine machine, 
 			@SuppressWarnings("hiding") ISCMachine scMachine, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
-//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.machine = machine;
 		this.scMachine = scMachine;
@@ -93,7 +90,6 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	 */
 	public boolean run(
 			IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
 		if(DEBUG)
@@ -105,7 +101,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if (! machineIn.exists())
 			MachineSC.makeError("Source machine does not exist.");
 		
-		init(machineIn, newSCMachine, interrupt, monitor);
+		init(machineIn, newSCMachine, monitor);
 		runSC();
 		return true;
 	}
@@ -115,14 +111,12 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	 */
 	public void clean(
 			IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt,
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		file.delete(true, monitor);
 
 	}
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
-//		 the prototype does not have refinements
 		IMachine machineIn = (IMachine) RodinCore.create(file);
 		ISCMachine target = machineIn.getSCMachine();
 		ISCContext seen = null;
@@ -136,17 +130,10 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IPath seenPath = seen != null ? seen.getPath() : null;
 		
 		graph.addNode(targetPath, SCCore.MACHINE_SC_TOOL_ID);
-		IPath[] toolPaths = graph.getDependencies(targetPath, SCCore.MACHINE_SC_TOOL_ID);
-		if (toolPaths.length != 1 || ! toolPaths[0].equals(targetPath)) {
-			graph.removeDependencies(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
-			graph.addToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
-		}
-		IPath[] seesPaths = graph.getDependencies(targetPath, SCCore.MACHINE_SEES_REL_ID);
-		if (seesPaths.length != 1 || ! seesPaths[0].equals(seenPath)) {
-			graph.removeDependencies(targetPath, SCCore.MACHINE_SEES_REL_ID);
-			if (seen != null)
-				graph.addUserDependency(inPath, seenPath, targetPath, SCCore.MACHINE_SEES_REL_ID, true);
-		}
+		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
+		if (seenPath != null)
+			graph.putUserDependency(inPath, seenPath, targetPath, SCCore.MACHINE_SEES_REL_ID, true);
+		graph.updateGraph();
 	}
 
 	public void runSC() throws CoreException {

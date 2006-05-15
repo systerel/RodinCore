@@ -11,7 +11,6 @@ package org.eventb.internal.core.pom;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +35,6 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
-import org.rodinp.core.builder.IInterrupt;
 
 /**
  * @author halstefa
@@ -54,9 +52,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public void init(
 			@SuppressWarnings("hiding") IPOFile poFile, 
 			@SuppressWarnings("hiding") IPRFile prFile, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
-//		this.interrupt = interrupt;
 		this.monitor = monitor;
 		this.poFile = poFile;
 		this.prFile = prFile;
@@ -64,7 +60,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	
 	public boolean run(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 
 		IPRFile newPRFile = (IPRFile) RodinCore.create(file);
@@ -74,7 +69,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			ContextSC.makeError("Source PO file does not exist.");
 		}
 		
-		init(poIn, newPRFile, interrupt, monitor);
+		init(poIn, newPRFile, monitor);
 
 		// Create the resulting PR file atomically.
 		RodinCore.run(
@@ -121,7 +116,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	
 	public void clean(IFile file, 
-			@SuppressWarnings("hiding") IInterrupt interrupt, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		file.delete(true, monitor);
 	}
@@ -135,13 +129,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		IPath targetPath = target.getPath();
 		
 		graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
-		IPath[] paths = graph.getDependencies(targetPath, POMCore.AUTO_POM_TOOL_ID);
-		if(paths.length == 1 && paths[0].equals(targetPath))
-			return;
-		else {
-			graph.removeDependencies(targetPath, POMCore.AUTO_POM_TOOL_ID);
-			graph.addToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
-		}
+		graph.putToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
+		graph.updateGraph();
 	}
 
 	void createFreshPRFile(Map<String, Status> newStatus) throws CoreException {

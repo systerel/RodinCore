@@ -32,20 +32,18 @@ public interface IAutomaticTool {
 	/**
 	 * run a tool that updates a file (or a set of files)
 	 * @param file The file to be updated
-	 * @param interrupt indicates whether progress should be interrupted or not
 	 * @param monitor The progress monitor
 	 * @return True if file has changed, false otherwise
 	 * @throws CoreException If some internal problem occured
 	 */
-	public boolean run(IFile file, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException;
+	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * a tool responsible for creating a file is also responsible for cleaning it
 	 * @param file to be cleaned
-	 * @param interrupt indicates whether progress should be interrupted or not
 	 * @param monitor The progress monitor
 	 * @throws CoreException If some internal problem occured
 	 */
-	public void clean(IFile file, IInterrupt interrupt, IProgressMonitor monitor) throws CoreException;
+	public void clean(IFile file, IProgressMonitor monitor) throws CoreException;
 
 }

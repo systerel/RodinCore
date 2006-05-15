@@ -12,18 +12,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.TempMarkerHelper;
 import org.rodinp.internal.core.ElementTypeManager;
 
@@ -40,7 +36,7 @@ public class Node implements Serializable {
 	private String name; // name of the resource (full name in workspace!)
 	private String fileElementTypeId; // the extension of the resource
 	private LinkedList<Link> pred; // the predecessor list
-	private String producerId; // producerId to be run to produce the resource of this node
+	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
 	private boolean phantom; // a node that was created by a dependency requirement
 	private boolean cycle; // node is on a cycle
@@ -67,7 +63,7 @@ public class Node implements Serializable {
 		name = null;
 		fileElementTypeId = null;
 		pred = new LinkedList<Link>();
-		producerId = null;
+		toolId = null;
 		dated = true;
 		totalCount = 0;
 		succNodes = new ArrayList<Node>(3);
@@ -86,25 +82,31 @@ public class Node implements Serializable {
 		return name.equals(((Node) o).name);
 	}
 	
-	protected void addLink(Node origin, Node source, String id, Link.Provider prov, Link.Priority prio) throws CoreException {
-		Link link = new Link(prov, prio, id, source, origin);
+	protected List<Link> getLinks() {
+		return pred;
+	}
+	
+	protected void addLink(Link link) { 
 		if(pred.contains(link))
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Duplicate link: " + link.toString(), null)); //$NON-NLS-1$
-		source.targets.put(this.name, this);
+			return;
+		link.source.targets.put(this.name, this);
 		pred.add(link);
 		totalCount++;
-		if(source.succPos <= source.succSize())
+		if(link.source.succPos <= link.source.succSize())
 			count++;
 		
-		if(prio == Link.Priority.LOW) {
-			source.succNodes.add(this);
-			source.succLinks.add(link);
+		if(link.prio == Link.Priority.LOW) {
+			link.source.succNodes.add(this);
+			link.source.succLinks.add(link);
 		} else {
-			source.succNodes.add(0, this);
-			source.succLinks.add(0, link);
+			link.source.succNodes.add(0, this);
+			link.source.succLinks.add(0, link);
 		}
+	}
+
+	protected void addLink(Node origin, Node source, String id, Link.Provider prov, Link.Priority prio) { 
+		Link link = new Link(prov, prio, id, source, origin);
+		addLink(link);
 	}
 	
 	protected void removeLinks(String id) {
@@ -159,19 +161,19 @@ public class Node implements Serializable {
 	}
 	
 	protected boolean isDerived() {
-		return producerId != null && !producerId.equals("");
+		return toolId != null && !toolId.equals("");
 	}
 
 	protected boolean isNotDerived() {
-		return producerId == null || producerId.equals("");
+		return toolId == null || toolId.equals("");
 	}
 
-	protected void setProducerId(String tool) {
-		this.producerId = tool;
+	protected void setToolId(String tool) {
+		this.toolId = tool;
 	}
 	
-	protected String getProducerId() {
-		return producerId;
+	protected String getToolId() {
+		return toolId;
 	}
 	
 	// after removal of a node node from the graph
@@ -305,7 +307,7 @@ public class Node implements Serializable {
 	protected void printPhantomProblem() {
 		for(Link link : pred) {
 			if(link.source.isPhantom())
-				if(link.source.producerId == null || link.source.producerId.equals("")) {
+				if(link.source.toolId == null || link.source.toolId.equals("")) {
 					IFile originFile = link.origin.getFile();
 					if(originFile != null)
 						TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency does not exist: " + link.source.getName()); //$NON-NLS-1$
