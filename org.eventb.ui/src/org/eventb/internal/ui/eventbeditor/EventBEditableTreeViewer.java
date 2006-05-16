@@ -270,12 +270,14 @@ public abstract class EventBEditableTreeViewer
 	public void elementChanged(ElementChangedEvent event) {
 		toRefresh = new HashSet<Object>();
 		newStatus = new HashSet<StatusObject>();
+		UIUtils.debug("Table: " + this);
 		UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
 		postRefresh(toRefresh, true);
 	}
 		
 	private void processMove(TreeItem item, IRodinElement newElement) {
+		if (item == null) return; // The element tree table has not been create yet
 		Leaf leaf = (Leaf) item.getData();
 		IRodinElement oldElement = leaf.getElement();
 		UIUtils.debug("--- Process Move ---");
@@ -302,38 +304,7 @@ public abstract class EventBEditableTreeViewer
 			processMove(i, newChild);
 		}
 	}
-	
-	private TreeItem findItem(IRodinElement element) {
-//		UIUtils.debug("Trying to find " + element.getElementName());
-		Tree tree = this.getTree();
-		TreeItem [] items = tree.getItems();
-		for (TreeItem item : items) {
-			TreeItem temp = findItem(item, element);
-			if (temp != null) return temp;
-		}
-		return null;
-	}
-	
-	private TreeItem findItem(TreeItem item, IRodinElement element) {
-//		UIUtils.debug("From " + item);
-		Leaf leaf = (Leaf) item.getData();
-		if (leaf == null) return null;
-		if (leaf.getElement().equals(element)) {
-//			UIUtils.debug("Found");
-			return item;
-		}
-		else {
-//			UIUtils.debug("Recursively ...");
-			TreeItem [] items = item.getItems();
-			for (TreeItem i : items) {
-				TreeItem temp = findItem(i, element);
-				if (temp != null) return temp;
-			}
-		}
-//		UIUtils.debug("... Not found");
-		return null;
-	}
-	
+		
 	private void processDelta(IRodinElementDelta delta) {
 		int kind= delta.getKind();
 		IRodinElement element= delta.getElement();
@@ -343,7 +314,7 @@ public abstract class EventBEditableTreeViewer
 				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
 				IRodinElement oldElement = delta.getMovedFromElement();
 				// Recursively process the children
-				TreeItem item = findItem(oldElement);
+				TreeItem item = TreeSupports.findItem(this.getTree(), oldElement);
 				UIUtils.debug("Item found: " + item);
 				processMove(item, element);				
 			}
@@ -442,6 +413,10 @@ public abstract class EventBEditableTreeViewer
 							}
 							list.add(leaf);
 							viewer.setSelection(new StructuredSelection(list));
+						}
+						
+						if (EventBEditableTreeViewer.this.editor.isNewElement((IRodinElement) state.getMoveFrom())) {
+							EventBEditableTreeViewer.this.editor.addNewElement((IRodinElement) state.getObject());
 						}
 					}
 				}
