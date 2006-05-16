@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -483,6 +484,7 @@ public abstract class EventBEditor
 	 */
 	public void elementChanged(ElementChangedEvent event) {		
 		IRodinElementDelta delta = event.getDelta();
+		UIUtils.debug("Delta: " + delta);
 		processDelta(delta);
 	}
 
@@ -498,7 +500,7 @@ public abstract class EventBEditor
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) element;
-			if (!rodinFile.getParent().equals(prj)) {
+			if (!this.getRodinInput().getParent().equals(prj)) {
 				return;
 			}
 			IRodinElementDelta [] deltas = delta.getAffectedChildren();
@@ -509,11 +511,16 @@ public abstract class EventBEditor
 		}
 
 		if (element instanceof IRodinFile) {
-			if (!rodinFile.equals(element)) {
+			if (!this.getRodinInput().equals(element)) {
 				return;
 			}
 			notifyElementChangedListeners(delta);
-			editorDirtyStateChanged();
+			Display display = Display.getDefault();
+			display.syncExec(new Runnable() {
+				public void run() {
+					editorDirtyStateChanged();
+				}
+			});
 			return;
 		}
 		
