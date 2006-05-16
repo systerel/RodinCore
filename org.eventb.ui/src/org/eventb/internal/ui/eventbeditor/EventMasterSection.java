@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -275,9 +276,15 @@ public class EventMasterSection
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	public void elementChanged(ElementChangedEvent event) {
-		((EventEditableTreeViewer) this.getViewer()).elementChanged(event);
-		updateButtons();
+	public void elementChanged(final ElementChangedEvent event) {
+		if (this.getViewer().getControl().isDisposed()) return;
+		Display display = Display.getDefault();
+		display.syncExec(new Runnable() {
+			public void run() {
+				((EventBEditableTreeViewer) EventMasterSection.this.getViewer()).elementChanged(event);
+				updateButtons();	
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
