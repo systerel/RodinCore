@@ -62,11 +62,11 @@ public class EventBEditorContributor
 	 */
 
 	public void setActivePage(IEditorPart part) {
-		UIUtils.debug("Add global action here");
+//		UIUtils.debug("Add global action here");
 
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
-			UIUtils.debug("Add to action bars");
+//			UIUtils.debug("Add to action bars");
 //
 //			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 //

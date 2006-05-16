@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -65,6 +66,30 @@ public abstract class EventBEditableTreeViewer
 	protected abstract boolean isNotSelectable(Object object, int column);
 	protected abstract void commit(Leaf leaf, int col, String text);
 	
+	private class ObjectComparer implements IElementComparer {
+		public boolean equals(Object a, Object b) {
+			return a == b;
+		}
+
+		public int hashCode(Object element) {
+			return 0;
+		}
+	}
+	
+	private class LeafComparer implements IElementComparer {
+		
+		public boolean equals(Object a, Object b) {
+			if (a instanceof Leaf && b instanceof Leaf) {
+				return ((Leaf) a).getElement() == ((Leaf) b).getElement();
+			}
+			return a == b;
+		}
+
+		public int hashCode(Object element) {
+			return 0;
+		}
+	}
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -84,7 +109,7 @@ public abstract class EventBEditableTreeViewer
 		tree.setLayoutData(gd);
 		
 		createTreeColumns();
-		
+		setComparer(new LeafComparer());
 		treeEditor = new TreeEditor(tree);
 		treeEditor.grabHorizontal = true;
 		tree.addMouseListener(new MouseAdapter() {
@@ -276,9 +301,8 @@ public abstract class EventBEditableTreeViewer
 		postRefresh(toRefresh, true);
 	}
 		
-	private void processMove(TreeItem item, IRodinElement newElement) {
-		if (item == null) return; // The element tree table has not been create yet
-		Leaf leaf = (Leaf) item.getData();
+	private void processMove(Leaf leaf, IRodinElement newElement) {
+		if (leaf == null) return; // The element tree table has not been create yet
 		IRodinElement oldElement = leaf.getElement();
 		UIUtils.debug("--- Process Move ---");
 		try {
@@ -293,15 +317,16 @@ public abstract class EventBEditableTreeViewer
 
 		newStatus.add(new StatusObject(newElement, oldElement, this.getExpandedState(leaf), selected));
 
-		TreeItem [] items = item.getItems();
-		
-		for (TreeItem i : items) {
-			UIUtils.debug("Tree Items: " + i);
-			Leaf l = (Leaf) i.getData();
-			if (l == null) continue;
-			IRodinElement element = l.getElement();
-			IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
-			processMove(i, newChild);
+		if (leaf instanceof Node) {
+			Leaf [] leaves = ((Node) leaf).getChildren();
+			
+			for (Leaf l : leaves) {
+				UIUtils.debug("Leaf: " + l);
+				if (l == null) continue;
+				IRodinElement element = l.getElement();
+				IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
+				processMove(l, newChild);
+			}
 		}
 	}
 		
@@ -314,9 +339,10 @@ public abstract class EventBEditableTreeViewer
 				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
 				IRodinElement oldElement = delta.getMovedFromElement();
 				// Recursively process the children
-				TreeItem item = TreeSupports.findItem(this.getTree(), oldElement);
-				UIUtils.debug("Item found: " + item);
-				processMove(item, element);				
+				Leaf leaf = elementsMap.get(oldElement); 
+//				TreeItem item = TreeSupports.findItem(this.getTree(), oldElement);
+//				UIUtils.debug("Item found: " + item);
+				processMove(leaf, element);				
 			}
 			else {
 				UIUtils.debug("Added: " + element.getElementName());
@@ -379,15 +405,8 @@ public abstract class EventBEditableTreeViewer
 				if (ctrl != null && !ctrl.isDisposed()) {
 					ISelection sel = viewer.getSelection();
 					Object [] objects = viewer.getExpandedElements();
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
-						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debug("Refresh element " + element.getElementName());
-						Leaf leaf = elementsMap.get(element);
-						viewer.refresh(leaf, updateLabels);
-					}
-					viewer.setExpandedElements(objects);
-					viewer.setSelection(sel);
-
+					
+					EventBEditableTreeViewer.this.setComparer(new ObjectComparer());
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
 						StatusObject state = (StatusObject) iter.next();
 						UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getExpandedStatus());
@@ -419,6 +438,17 @@ public abstract class EventBEditableTreeViewer
 							EventBEditableTreeViewer.this.editor.addNewElement((IRodinElement) state.getObject());
 						}
 					}
+					EventBEditableTreeViewer.this.setComparer(new LeafComparer());
+					
+					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+						IRodinElement element = (IRodinElement) iter.next();
+						UIUtils.debug("Refresh element " + element.getElementName());
+						Leaf leaf = elementsMap.get(element);
+						viewer.refresh(leaf, updateLabels);
+					}
+					viewer.setExpandedElements(objects);
+					viewer.setSelection(sel);
+
 				}
 			}
 		}, this.getControl());

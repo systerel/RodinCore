@@ -3,7 +3,6 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IEvent;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -30,11 +29,11 @@ public class TreeSupports {
 	}
 	
 	private static TreeItem findItem(TreeItem item, IRodinElement element) {
-		UIUtils.debug("From " + item);
+//		UIUtils.debug("From " + item);
 		Leaf leaf = (Leaf) item.getData();
 		if (leaf == null) return null;
 		if (leaf.getElement().equals(element)) {
-			UIUtils.debug("Found");
+//			UIUtils.debug("Found");
 			return item;
 		}
 		else {

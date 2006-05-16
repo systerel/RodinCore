@@ -147,18 +147,6 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 			}
 				
 			break;
-
-//		case 1:  // Commit content
-//			try {
-//				UIUtils.debug("Commit content: " + ((IInternalElement) element).getContents() + " to be : " + text);
-//				if (!((IInternalElement) element).getContents().equals(text)) {
-//					((IInternalElement) element).setContents(text);
-//				}
-//			}
-//			catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//			break;
 		}
 	}
 	
@@ -171,12 +159,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		elementColumn.setText("Name");
 		elementColumn.setResizable(true);
 		elementColumn.setWidth(200);
-//
-//		TreeColumn predicateColumn = new TreeColumn(tree, SWT.LEFT);
-//		predicateColumn.setText("Predicates");
-//		predicateColumn.setResizable(true);
-//		predicateColumn.setWidth(250);
-//		
+
 		tree.setHeaderVisible(true);
 	}
 	

@@ -38,7 +38,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 		
 		public Object[] getChildren(Object parent) {
-			UIUtils.debug("Get Children: " + parent);
+//			UIUtils.debug("Get Children: " + parent);
 			if (parent instanceof IMachine) {
 				ArrayList<Node> list = new ArrayList<Node>();
 				try {
@@ -168,9 +168,6 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		if (column == 0) {
 			if (!editor.isNewElement((IRodinElement) object)) return true;
 		}
-		
-		//        if (column < 1) return; // The object column is not editable
-//		UIUtils.debug("Item: " + object.toString() + " of class: " + object.getClass());
 		if (column == 0) {
 			if (object instanceof IUnnamedInternalElement) return true;
 		}

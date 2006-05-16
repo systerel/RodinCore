@@ -37,7 +37,7 @@ public abstract class ElementText
 			final String contents = text.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
-				UIUtils.debug("FocusOut");
+//				UIUtils.debug("FocusOut");
 				commit(leaf, column, contents);
 				text.getParent().dispose();
 				break;
@@ -59,7 +59,7 @@ public abstract class ElementText
 				int left = itemRect.x, right = rect.x + rect.width;
 				editor.minimumWidth = Math.min (editor.minimumWidth, right - left);
 				editor.minimumHeight = size.y + inset * 2;
-				UIUtils.debug("Editor layout --- Height: " + editor.minimumHeight + " Width: " + editor.minimumWidth);
+//				UIUtils.debug("Editor layout --- Height: " + editor.minimumHeight + " Width: " + editor.minimumWidth);
 				editor.layout();
 				break;
 			case SWT.Traverse:

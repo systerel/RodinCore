@@ -67,8 +67,6 @@ public abstract class EventBPartWithButtons
 	 * @param index The index of selected button
 	 */
 	abstract protected void buttonSelected(int index);
-		
-//	abstract protected void setProvider();
 
 	abstract protected Viewer createViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent);
 	
