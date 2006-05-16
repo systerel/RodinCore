@@ -12,17 +12,11 @@ import static org.eventb.pp.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.pp.Translator;
 
 public class ReorganisationTests extends AbstractTranslationTests {
-	protected static final Type S = ff.makeGivenType("S");
-	protected static final Type T = ff.makeGivenType("T");
-	protected static final Type U = ff.makeGivenType("U");
-	protected static final Type V = ff.makeGivenType("V");
-	protected static final Type X = ff.makeGivenType("X");
-	protected static final Type Y = ff.makeGivenType("Y");
-	protected static final ITypeEnvironment defaultTe;
+	
+	private static final ITypeEnvironment defaultTe;
 	static {
 		defaultTe = ff.makeTypeEnvironment();
 		defaultTe.addGivenSet("S");
@@ -31,24 +25,24 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		defaultTe.addGivenSet("V");
 	}
 
-	private static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
+	private static void doTest(String input, String expected,
+			boolean transformExpected, ITypeEnvironment te) {
+
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
-		if(transformExpected) {
+		if (transformExpected) {
 			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
 		}
 		doTest(pinput, pexpected);
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
-		assertTrue("Input is not typed: " + input, input.isTypeChecked());
-		assertTrue("Expected result is not typed: " + expected, 
-				expected.isTypeChecked());
+		assertTypeChecked(input);
+		assertTypeChecked(expected);
 
 		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
 
-		assertTrue("Actual result is not typed: " + actual,
-				actual.isTypeChecked());
+		assertTypeChecked(actual);
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}

@@ -27,15 +27,13 @@ public class DocTests extends AbstractTranslationTests {
 	}
 	
 	private static void doTransTest(Predicate input, Predicate expected) {
-		assertTrue("Input is not typed: " + input, input.isTypeChecked());
-		assertTrue("Expected result is not typed: " + expected, 
-				expected.isTypeChecked());
+		assertTypeChecked(input);
+		assertTypeChecked(expected);
 
 		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
 		actual = Translator.simplifyPredicate(actual, ff);
 
-		assertTrue("Actual result is not typed: " + actual,
-				actual.isTypeChecked());
+		assertTypeChecked(actual);
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
@@ -44,8 +42,7 @@ public class DocTests extends AbstractTranslationTests {
 		final Predicate input = parse(inputString, te);
 		final Predicate expected = parse(expectedString, te);
 		final Predicate actual = Translator.decomposeIdentifiers(input, ff);
-		assertTrue("Actual result is not typed: " + actual,
-				actual.isTypeChecked());
+		assertTypeChecked(actual);
 		assertEquals("Wrong identifier decomposition", expected, actual);
 	}
 

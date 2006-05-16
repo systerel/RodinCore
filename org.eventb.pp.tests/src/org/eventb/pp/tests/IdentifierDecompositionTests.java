@@ -178,8 +178,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		final Predicate input = parse(inputString, te);
 		final Predicate expected = parse(expectedString, te);
 		final Predicate actual = Translator.decomposeIdentifiers(input, ff);
-		assertTrue("Actual result is not typed: " + actual,
-				actual.isTypeChecked());
+		assertTypeChecked(actual);
 		assertEquals("Wrong identifier decomposition", expected, actual);
 		assertDecomposed(actual);
 	}

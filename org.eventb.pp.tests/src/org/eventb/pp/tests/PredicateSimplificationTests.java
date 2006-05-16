@@ -27,16 +27,13 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	}
 	
 	private static void doTest(Predicate input, Predicate expected) {
-		assertTrue("Input is not typed: " + input, input.isTypeChecked());
-		assertTrue("Expected result is not typed: " + expected, 
-				expected.isTypeChecked());
+		assertTypeChecked(input);
+		assertTypeChecked(expected);
 
 		Predicate actual = Translator.simplifyPredicate(input, ff);
 		
-		assertTrue("Actual result is not typed: " + actual, 
-				actual.isTypeChecked());
-		assertTrue("Result not in goal: " + actual,
-				Translator.isInGoal(actual));
+		assertTypeChecked(actual);
+		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
