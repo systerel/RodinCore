@@ -7,9 +7,22 @@
  *******************************************************************************/
 package org.eventb.pp.tests;
 
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultVisitor;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.pp.Translator;
 
 /**
@@ -29,6 +42,138 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		te.addGivenSet("V");
 	}
 
+	private static void assertDecomposed(Predicate pred) {
+		if (needsFreeIdentDecomposition(pred)) {
+			assertEquals("Free identifiers haven't been decomposed",
+					pred.getTag(), Formula.FORALL);
+			final QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
+			final Predicate subPred = qPred.getPredicate();
+			assertEquals("Invalid free identifier decomposition",
+					subPred.getTag(), Formula.LIMP);
+			final BinaryPredicate binPred = (BinaryPredicate) subPred;
+			final Predicate lhs = binPred.getLeft();
+			final Predicate rhs = binPred.getRight();
+			assertFreeIdentsDecomposition(
+					qPred.getBoundIdentDecls(), 
+					lhs);
+			rhs.accept(new DecompositionChecker());
+		} else {
+			pred.accept(new DecompositionChecker());
+		}
+	}
+	
+	private static boolean needsFreeIdentDecomposition(Predicate pred) {
+		final FreeIdentifier[] freeIdents = pred.getFreeIdentifiers();
+		for (FreeIdentifier ident : freeIdents) {
+			if (ident.getType() instanceof ProductType) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static void assertFreeIdentsDecomposition(BoundIdentDecl[] bids,
+			Predicate pred) {
+
+		// Ensure declarations are not composite
+		for (BoundIdentDecl bid : bids) {
+			assertNotComposite(bid);
+		}
+		
+		// Then, ensures the left-hand side is a conjunction of equalities
+		final int length = bids.length;
+		final boolean[] bidUsed = new boolean[length];
+		if (pred.getTag() == Formula.LAND) {
+			AssociativePredicate assocPred = (AssociativePredicate) pred;
+			for (Predicate child : assocPred.getChildren()) {
+				assertFreeIdentDecomposition(bidUsed, child);
+			}
+		} else {
+			assertFreeIdentDecomposition(bidUsed, pred);
+		}
+		
+		final int end = length - 1;
+		for (int i = 0; i < length; i++) {
+			assertTrue(
+					"Unused bound identifier declaration" + bids[end - i],
+					bidUsed[i]
+			);
+		}
+	}
+
+	private static void assertFreeIdentDecomposition(boolean[] bidUsed,
+			Predicate pred) {
+		
+		assertEquals("Invalid free identifier decomposition" + pred,
+				pred.getTag(), Formula.EQUAL);
+		final RelationalPredicate relPred = (RelationalPredicate) pred;
+		final Expression lhs = relPred.getLeft();
+		final Expression rhs = relPred.getRight();
+		
+		// Ensure left-hand side is a free identifier of a composite type
+		assertEquals(lhs.getTag(), Formula.FREE_IDENT);
+		assertTrue(lhs.getType() instanceof ProductType);
+		
+		// Ensure right-hand side is a maplet of unused bound identifiers
+		assertUnusedBoundMaplet(bidUsed, rhs);
+	}
+
+	private static void assertUnusedBoundMaplet(boolean[] bidUsed,
+			Expression expr) {
+		
+		final int tag = expr.getTag();
+		if (tag == Formula.BOUND_IDENT) {
+			final BoundIdentifier ident = (BoundIdentifier) expr;
+			assertNotComposite(ident);
+			final int index = ident.getBoundIndex();
+			assertFalse("Bound identifier " + index + "is used twice",
+					bidUsed[index]);
+			bidUsed[index] = true;
+		} else {
+			assertEquals("Invalid maplet decomposition" + expr,
+					tag, Formula.MAPSTO);
+			final BinaryExpression binExpr = (BinaryExpression) expr;
+			assertUnusedBoundMaplet(bidUsed, binExpr.getLeft());
+			assertUnusedBoundMaplet(bidUsed, binExpr.getRight());
+		}
+	}
+
+	static void assertNotComposite(BoundIdentDecl ident) {
+		assertFalse(
+				"Bound Identifier declaration has a composite type: " + ident,
+				ident.getType() instanceof ProductType
+		);
+	}
+	
+	static void assertNotComposite(Identifier ident) {
+		assertFalse(
+				"Identifier has a composite type: " + ident,
+				ident.getType() instanceof ProductType
+		);
+	}
+	
+	private static class DecompositionChecker extends DefaultVisitor {
+		
+		@Override
+		public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
+			assertNotComposite(ident);
+			return true;
+		}
+
+		@Override
+		public boolean visitBOUND_IDENT(BoundIdentifier ident) {
+			assertNotComposite(ident);
+			return true;
+		}
+
+		@Override
+		public boolean visitFREE_IDENT(FreeIdentifier ident) {
+			assertNotComposite(ident);
+			return true;
+		}
+		
+	}
+	
 	private void dotest(String inputString, String expectedString) {
 		final Predicate input = parse(inputString, te);
 		final Predicate expected = parse(expectedString, te);
@@ -36,6 +181,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		assertTrue("Actual result is not typed: " + actual,
 				actual.isTypeChecked());
 		assertEquals("Wrong identifier decomposition", expected, actual);
+		assertDecomposed(actual);
 	}
 
 	/**
