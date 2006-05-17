@@ -41,19 +41,16 @@
 		/>
 	</target>
 
-	<target name="parser.test" depends="init"
-			description="Test if the generated parser is up to date">
-		<uptodate property="parser.notRequired" 
-				targetfile="${parser.src}/Parser.java" >
-		    <srcfiles file= "${parser.src}/bmath.atg" />
-		    <srcfiles file= "${parser.src}/Parser.frame" />
-		</uptodate>
-	</target>
+	<uptodate property="parser.upToDate" 
+			targetfile="${parser.src}/Parser.java" >
+	    <srcfiles file= "${parser.src}/bmath.atg" />
+	    <srcfiles file= "${parser.src}/Parser.frame" />
+	</uptodate>
 
 	<target name="parser" 
-			depends="init,parser.test"
+			depends="init"
 			description="Generate the parser"
-			unless="parser.notRequired">
+			unless="parser.upToDate">
 		<java jar="${coco.home}/Coco.jar" fork="true" dir="${parser.src}">
 			<arg line="-package ${parser.pkg}" />
 			<arg file="${parser.src}/bmath.atg" />
