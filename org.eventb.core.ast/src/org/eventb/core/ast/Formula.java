@@ -1654,8 +1654,12 @@ public abstract class Formula<T extends Formula<T>> {
 		if (! areAllUsed(used)) {
 			BoundIdentDeclRemover subst = 
 				new BoundIdentDeclRemover(decls, used, formulaFactory);
+			final List<BoundIdentDecl> newDecls = subst.getNewDeclarations();
+			if (newDecls.size() == 0) {
+				return pred;
+			}
 			return formulaFactory.makeQuantifiedPredicate(quant,
-					subst.getNewDeclarations(),
+					newDecls,
 					pred.applySubstitution(subst),
 					null);
 		}

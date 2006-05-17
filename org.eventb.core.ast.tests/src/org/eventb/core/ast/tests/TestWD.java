@@ -213,7 +213,10 @@ public class TestWD extends TestCase {
 			), new TestAssignment(
 					"x :\u2223 x'=min(A∪{x'})",
 					"∀x' \u00b7 A∪{x'}≠∅"
-			)
+			), new TestPredicate(
+					"a = {x∣x≤card(A)}",
+					"finite(A)"
+			),
 	};
 	
 	public void testWD() {
