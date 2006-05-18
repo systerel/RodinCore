@@ -1644,7 +1644,8 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 	
 	protected final Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
-			int quant, BoundIdentDecl[] decls, Predicate pred) {
+			int quant, BoundIdentDecl[] decls, Predicate pred,
+			SourceLocation loc) {
 		
 		if (pred.getTag() == BTRUE)
 			return pred;
@@ -1661,9 +1662,9 @@ public abstract class Formula<T extends Formula<T>> {
 			return formulaFactory.makeQuantifiedPredicate(quant,
 					newDecls,
 					pred.applySubstitution(subst),
-					null);
+					loc);
 		}
-		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, null);
+		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);
 	}
 	
 	/**

@@ -311,7 +311,10 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers, pred.getWDPredicateRaw(formulaFactory));
+		final Predicate predWD = pred.getWDPredicateRaw(formulaFactory);
+		final SourceLocation loc = getSourceLocation();
+		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers,
+				predWD, loc);
 	}
 
 	/**

@@ -631,16 +631,21 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	private Predicate getWDPredicateQINTER(FormulaFactory formulaFactory) {
+		final SourceLocation loc = getSourceLocation();
 		Predicate conj0 = getWDPredicateQUNION(formulaFactory);
-		Predicate conj1 = getWDSimplifyQ(formulaFactory, EXISTS, quantifiedIdentifiers, pred);
+		Predicate conj1 = getWDSimplifyQ(formulaFactory, EXISTS,
+				quantifiedIdentifiers, pred, loc);
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}
 
 	private Predicate getWDPredicateQUNION(FormulaFactory formulaFactory) {
 		Predicate conj0 = pred.getWDPredicateRaw(formulaFactory);
-		Predicate conj1 = getWDSimplifyI(formulaFactory, pred, expr.getWDPredicateRaw(formulaFactory));
+		Predicate conj1 = getWDSimplifyI(formulaFactory, pred, 
+				expr.getWDPredicateRaw(formulaFactory));
 		Predicate inner = getWDSimplifyC(formulaFactory, conj0, conj1);
-		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers, inner);
+		final SourceLocation loc = getSourceLocation();
+		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers,
+				inner, loc);
 	}
 
 	@Override
