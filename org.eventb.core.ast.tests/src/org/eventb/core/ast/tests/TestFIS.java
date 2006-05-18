@@ -90,8 +90,13 @@ public class TestFIS extends TestCase {
 	
 	private TestItem[] testItems = new TestItem[] {
 			new TestItem("x≔x+y", "⊤", defaultTEnv),
+			new TestItem("x,y≔y,x", "⊤", defaultTEnv),
 			new TestItem("x:∈A", "A≠∅", defaultTEnv),
-			new TestItem("x:\u2223 x'∈A", "∃x'·x'∈A", defaultTEnv)
+			new TestItem("x:\u2223 x'∈A", "∃x'·x'∈A", defaultTEnv),
+			// Test where no after-value occurs in the condition.
+			new TestItem("x:\u2223 x∈A", "x∈A", defaultTEnv),
+			// Test where one after-value doesn't occur in the condition.
+			new TestItem("x,y:\u2223 x'∈A", "∃x'·x'∈A", defaultTEnv),
 	};
 	
 	public void testFIS() throws Exception {
