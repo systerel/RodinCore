@@ -9,12 +9,15 @@ import org.rodinp.core.IRodinElement;
 public class TreeSupports {
 
 	public static IInternalElement getEvent(Object obj) {
-		IRodinElement rodinElement = ((Leaf) obj).getElement();
-		if (rodinElement instanceof IEvent) {
-			return (IEvent) rodinElement;
-		}
-		else if (rodinElement instanceof IInternalElement) {
-			return (IInternalElement) ((IInternalElement) rodinElement).getParent();
+		if (obj instanceof IRodinElement) {
+			IRodinElement rodinElement = (IRodinElement) obj;
+			if (rodinElement instanceof IEvent) {
+				return (IEvent) rodinElement;
+			}
+			else if (rodinElement instanceof IInternalElement) {
+				return getEvent(((IInternalElement) rodinElement).getParent());
+			}
+			else return null; // should not happen
 		}
 		else return null; // should not happen
 	}
@@ -30,10 +33,9 @@ public class TreeSupports {
 	
 	private static TreeItem findItem(TreeItem item, IRodinElement element) {
 //		UIUtils.debug("From " + item);
-		Leaf leaf = (Leaf) item.getData();
-		if (leaf == null) return null;
-		if (leaf.getElement().equals(element)) {
-//			UIUtils.debug("Found");
+		Object object = item.getData();
+		if (object == null) return null;
+		if (object.equals(element)) {
 			return item;
 		}
 		else {

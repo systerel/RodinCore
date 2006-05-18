@@ -129,10 +129,8 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new RodinElementSorter());
 	}
 
-	public void commit(Leaf leaf, int col, String text) {
-		// Determine which row was selected
-		IInternalElement element = (IInternalElement) leaf.getElement();
-		
+	public void commit(IRodinElement element, int col, String text) {
+				
 		switch (col) {
 		case 0:  // Commit name
 			try {

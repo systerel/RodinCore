@@ -1,6 +1,5 @@
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -40,45 +39,58 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getChildren(Object parent) {
 //			UIUtils.debug("Get Children: " + parent);
 			if (parent instanceof IMachine) {
-				ArrayList<Node> list = new ArrayList<Node>();
+//				ArrayList<Node> list = new ArrayList<Node>();
+//				try {
+//					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+//					for (IRodinElement event : events) {
+////						UIUtils.debug("Event: " + event.getElementName());
+//						Node node = new Node(event);
+//						elementsMap.put(event, node);
+//						list.add(node);
+//					}
+//				}
+//				catch (RodinDBException e) {
+//					// TODO Exception handle
+//					e.printStackTrace();
+//				}
+//				return list.toArray();
 				try {
-					IRodinElement [] events =   ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
-					for (IRodinElement event : events) {
-//						UIUtils.debug("Event: " + event.getElementName());
-						Node node = new Node(event);
-						elementsMap.put(event, node);
-						list.add(node);
-					}
-				}
-				catch (RodinDBException e) {
-					// TODO Exception handle
+					return ((IMachine) parent).getChildrenOfType(IEvent.ELEMENT_TYPE);
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				return list.toArray();
 			}
 			
-			if (parent instanceof Node) {
-				Node node = (Node) parent;
-				node.removeAllChildren();
+			if (parent instanceof IParent) {
 				try {
-					IRodinElement element = node.getElement();
-					
-					if (element instanceof IParent) {
-						IRodinElement [] children = ((IParent) element).getChildren();
-						for (IRodinElement child : children) {
-							Leaf leaf;
-							if (child instanceof IParent) leaf = new Node(child);
-							else leaf = new Leaf(child);
-							elementsMap.put(child, leaf);
-							node.addChildren(leaf);
-						}
-					}
-				}
-				catch (RodinDBException e) {
+					return ((IParent) parent).getChildren();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return node.getChildren();
 			}
+//			if (parent instanceof Node) {
+//				Node node = (Node) parent;
+//				node.removeAllChildren();
+//				try {
+//					IRodinElement element = node.getElement();
+//					
+//					if (element instanceof IParent) {
+//						IRodinElement [] children = ((IParent) element).getChildren();
+//						for (IRodinElement child : children) {
+//							Leaf leaf;
+//							if (child instanceof IParent) leaf = new Node(child);
+//							else leaf = new Leaf(child);
+//							elementsMap.put(child, leaf);
+//							node.addChildren(leaf);
+//						}
+//					}
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				return node.getChildren();
+//			}
 			
 			return new Object[0];
 		}
@@ -112,9 +124,8 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new RodinElementSorter());
 	}
 	
-	public void commit(Leaf leaf, int col, String text) {
-		// Determine which row was selected
-		IInternalElement element = (IInternalElement) leaf.getElement();
+	public void commit(IRodinElement element, int col, String text) {
+//		IInternalElement element = (IInternalElement) leaf.getElement();
 		
 		switch (col) {
 		case 0:  // Commit name
@@ -163,17 +174,17 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 
 	@Override
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof Leaf)) return false;
-		object = ((Leaf) object ).getElement();
+		if (!(object instanceof IRodinElement)) return false;
+		IRodinElement element = (IRodinElement) object;
 		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object)) return true;
+			if (!editor.isNewElement(element)) return true;
 		}
 		if (column == 0) {
-			if (object instanceof IUnnamedInternalElement) return true;
+			if (element instanceof IUnnamedInternalElement) return true;
 		}
 		else if (column == 1) {
-			if (object instanceof IVariable) return true;
-			if (object instanceof IEvent) return true;
+			if (element instanceof IVariable) return true;
+			if (element instanceof IEvent) return true;
 		}
 		return false;
 	}

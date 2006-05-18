@@ -32,34 +32,39 @@ public class EventBTreeLabelProvider
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
-		IRodinElement rodinElement = ((Leaf) element).getElement();
 		if (columnIndex != 0) return null;
-		return UIUtils.getImage(rodinElement);
+		if (element instanceof IRodinElement) {
+			IRodinElement rodinElement = (IRodinElement) element;
+			return UIUtils.getImage(rodinElement);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		IRodinElement rodinElement = ((Leaf) element).getElement();
-		
-		if (columnIndex == 0) {
-			if (rodinElement instanceof IUnnamedInternalElement) return "";
-			if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
-			return rodinElement.toString();
+		if (element instanceof IRodinElement) {
+			IRodinElement rodinElement = (IRodinElement) element;
+			
+			if (columnIndex == 0) {
+				if (rodinElement instanceof IUnnamedInternalElement) return "";
+				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
+				return rodinElement.toString();
+			}
+			
+			if (columnIndex == 1) {
+				try {
+					if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
+				}
+				catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				return rodinElement.toString();
+			}
 		}
 		
-		if (columnIndex == 1) {
-			try {
-				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
-			}
-			catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			return rodinElement.toString();
-		}
-		
-		return rodinElement.toString();
+		return element.toString();
 
 	}
 
@@ -100,9 +105,10 @@ public class EventBTreeLabelProvider
 	 */
 	public Color getBackground(Object element, int columnIndex) {
 		 Display display = Display.getCurrent();
-		 
-		 if (editor.isNewElement(((Leaf) element).getElement()))
-			 return display.getSystemColor(SWT.COLOR_YELLOW);
+		 if (element instanceof IRodinElement) {
+			 if (editor.isNewElement((IRodinElement) element))
+				 return display.getSystemColor(SWT.COLOR_YELLOW);
+		 }
          return display.getSystemColor(SWT.COLOR_WHITE);
 	}
 	
@@ -111,8 +117,10 @@ public class EventBTreeLabelProvider
 	 */
 	public Color getForeground(Object element, int columnIndex) {
 		Display display = Display.getCurrent();
-		 if (editor.isNewElement(((Leaf) element).getElement()))
-			 return display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		if (element instanceof IRodinElement) {
+			if (editor.isNewElement((IRodinElement) element))
+				 return display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		}
         return display.getSystemColor(SWT.COLOR_BLACK);
    }
 	

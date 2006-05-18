@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.jface.viewers.IElementComparer;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -64,31 +62,47 @@ public abstract class EventBEditableTreeViewer
 	/* Abstract methods */
 	protected abstract void createTreeColumns();
 	protected abstract boolean isNotSelectable(Object object, int column);
-	protected abstract void commit(Leaf leaf, int col, String text);
+	protected abstract void commit(IRodinElement element, int col, String text);
 	
-	private class ObjectComparer implements IElementComparer {
-		public boolean equals(Object a, Object b) {
-			return a == b;
-		}
-
-		public int hashCode(Object element) {
-			return 0;
+	private Collection<IElementMovedListener> elementMovedListeners;
+	
+	public void addElementMovedListener(IElementMovedListener listener) {
+		elementMovedListeners.add(listener);
+	}
+	
+	public void removeElementMovedListener(IElementMovedListener listener) {
+		elementMovedListeners.remove(listener);
+	}
+	
+	public void notifyElementMovedListener(HashMap<IRodinElement, IRodinElement> moved) {
+		for (IElementMovedListener listener : elementMovedListeners) {
+			listener.elementMoved(moved);
 		}
 	}
 	
-	private class LeafComparer implements IElementComparer {
-		
-		public boolean equals(Object a, Object b) {
-			if (a instanceof Leaf && b instanceof Leaf) {
-				return ((Leaf) a).getElement() == ((Leaf) b).getElement();
-			}
-			return a == b;
-		}
-
-		public int hashCode(Object element) {
-			return 0;
-		}
-	}
+//	private class ObjectComparer implements IElementComparer {
+//		public boolean equals(Object a, Object b) {
+//			return a == b;
+//		}
+//
+//		public int hashCode(Object element) {
+//			return 0;
+//		}
+//	}
+//	
+//	private class LeafComparer implements IElementComparer {
+//		
+//		public boolean equals(Object a, Object b) {
+//			if (a instanceof Leaf && b instanceof Leaf) {
+//				return ((Leaf) a).getElement() == ((Leaf) b).getElement();
+//			}
+//			return a == b;
+//		}
+//
+//		public int hashCode(Object element) {
+//			return 0;
+//		}
+//	}
 
 	/**
 	 * Constructor.
@@ -102,6 +116,8 @@ public abstract class EventBEditableTreeViewer
 	public EventBEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
 		super(parent, style);
 		this.editor = editor;
+		elementMovedListeners = new HashSet<IElementMovedListener>();
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;
@@ -109,7 +125,7 @@ public abstract class EventBEditableTreeViewer
 		tree.setLayoutData(gd);
 		
 		createTreeColumns();
-		setComparer(new LeafComparer());
+//		setComparer(new LeafComparer());
 		treeEditor = new TreeEditor(tree);
 		treeEditor.grabHorizontal = true;
 		tree.addMouseListener(new MouseAdapter() {
@@ -182,13 +198,13 @@ public abstract class EventBEditableTreeViewer
 		if (!isCarbon) composite.setBackground (black);
 		final Text text = new Text(composite, SWT.NONE);
 
-		new ElementText(text, treeEditor, item, tree, (Leaf) itemData, column) {
+		new ElementText(this, text, treeEditor, item, tree, (IRodinElement) itemData, column) {
 			/* (non-Javadoc)
 			 * @see org.eventb.internal.ui.eventbeditor.ElementText#commit(org.rodinp.core.IRodinElement, int, java.lang.String)
 			 */
 			@Override
-			public void commit(Leaf leaf, int column, String contents) {
-				EventBEditableTreeViewer.this.commit(leaf, column, contents);
+			public void commit(IRodinElement element, int column, String contents) {
+				EventBEditableTreeViewer.this.commit(element, column, contents);
 			}
 			
 			public void nextEditableCell() {
@@ -240,17 +256,17 @@ public abstract class EventBEditableTreeViewer
 
 		};
 		new EventBMath(text);
-		new TimerText(text) {
-
-			/* (non-Javadoc)
-			 * @see org.eventb.internal.ui.eventbeditor.TimerText#commit()
-			 */
-			@Override
-			public void commit() {
-				EventBEditableTreeViewer.this.commit((Leaf) itemData, column, text.getText());
-			}
-			
-		};
+//		new TimerText(this, text, (IRodinElement) itemData) {
+//
+//			/* (non-Javadoc)
+//			 * @see org.eventb.internal.ui.eventbeditor.TimerText#commit()
+//			 */
+//			@Override
+//			public void commit() {
+//				EventBEditableTreeViewer.this.commit(element, column, text.getText());
+//			}
+//			
+//		};
 		final int inset = isCarbon ? 0 : 1;
 		composite.addListener (SWT.Resize, new Listener () {
 			public void handleEvent (Event e) {
@@ -295,16 +311,18 @@ public abstract class EventBEditableTreeViewer
 	public void elementChanged(ElementChangedEvent event) {
 		toRefresh = new HashSet<Object>();
 		newStatus = new HashSet<StatusObject>();
-		UIUtils.debug("Table: " + this);
-		UIUtils.debug("Delta: " + event.getDelta());
+		moved = new HashMap<IRodinElement, IRodinElement>();
+//		UIUtils.debug("Table: " + this);
+//		if (this instanceof EventEditableTreeViewer) 
+//			UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
+		notifyElementMovedListener(moved);
 		postRefresh(toRefresh, true);
 	}
 		
-	private void processMove(Leaf leaf, IRodinElement newElement) {
-		if (leaf == null) return; // The element tree table has not been create yet
-		IRodinElement oldElement = leaf.getElement();
-		UIUtils.debug("--- Process Move ---");
+	private HashMap<IRodinElement, IRodinElement> moved;
+	
+	private void processMoveRecursive(IRodinElement oldElement, IRodinElement newElement) {
 		try {
 			UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
 			UIUtils.debug("to: " + newElement.getElementName() + " content: " + ((IInternalElement) newElement).getContents());
@@ -313,22 +331,116 @@ public abstract class EventBEditableTreeViewer
 			e.printStackTrace();
 		}
 		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
-		boolean selected = ssel.toList().contains(leaf);
-
-		newStatus.add(new StatusObject(newElement, oldElement, this.getExpandedState(leaf), selected));
-
-		if (leaf instanceof Node) {
-			Leaf [] leaves = ((Node) leaf).getChildren();
-			
-			for (Leaf l : leaves) {
-				UIUtils.debug("Leaf: " + l);
-				if (l == null) continue;
-				IRodinElement element = l.getElement();
-				IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
-				processMove(l, newChild);
+		boolean selected = ssel.toList().contains(oldElement);
+		
+//		newStatus.add(new StatusObject(newElement, oldElement, this.getExpandedState(leaf), selected));
+		moved.put(oldElement, newElement);
+		newStatus.add(new StatusObject(newElement, oldElement, this.getExpandedState(oldElement), selected));
+		
+		if (newElement instanceof IInternalElement) {
+			IRodinElement[] elements;
+			try {
+				elements = ((IInternalElement) newElement).getChildren();
+				for (IRodinElement element : elements) {
+//					UIUtils.debug("Leaf: " + l);
+//					if (l == null) continue;
+//					IRodinElement element = l.getElement();
+					IRodinElement oldChild = ((IInternalElement) oldElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
+					processMoveRecursive(oldChild, element);
+				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		}
 	}
+
+	
+//	private void processMove(IRodinElementDelta delta) {
+//		int kind= delta.getKind();
+//		IRodinElement element= delta.getElement();
+//		if (kind == IRodinElementDelta.ADDED) {
+//			// Handle move operation
+//			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
+//				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
+//				IRodinElement oldElement = delta.getMovedFromElement();
+//				// Recursively process the children
+//				UIUtils.debug("--- Process Move ---");
+//				processMoveRecursive(oldElement, element);				
+//			}
+//			else {
+//				UIUtils.debug("Added: " + element.getElementName());
+//				Object parent = element.getParent();
+//			}
+//			return;
+//		}
+//		
+//		if (kind == IRodinElementDelta.REMOVED) {
+//			// Ignore the move operation
+//			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
+//				UIUtils.debug("Removed: " + element.getElementName());			
+//				Object parent = element.getParent();
+//			}
+//			return;
+//		}
+//		
+//		if (kind == IRodinElementDelta.CHANGED) {
+//			int flags = delta.getFlags();
+//			UIUtils.debug("Changed: " + element.getElementName());
+//			
+//			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
+//				UIUtils.debug("CHILDREN");
+//				IRodinElementDelta [] deltas = delta.getAffectedChildren();
+//				for (int i = 0; i < deltas.length; i++) {
+//					processMove(deltas[i]);
+//				}
+//				return;
+//			}
+//			
+//			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
+//				UIUtils.debug("REORDERED");
+////				toRefresh.add(element.getParent());
+//				return;
+//			}
+//			
+//			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
+//				UIUtils.debug("CONTENT");
+//
+////				if (!(element instanceof IRodinFile)) toRefresh.add(element);
+//				return;
+//			}
+//		}
+//
+//	}
+
+//	private void processMove(Leaf leaf, IRodinElement newElement) {
+//		if (leaf == null) return; // The element tree table has not been create yet
+//		IRodinElement oldElement = leaf.getElement();
+////		try {
+////			UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
+////			UIUtils.debug("to: " + newElement.getElementName() + " content: " + ((IInternalElement) newElement).getContents());
+////		}
+////		catch (RodinDBException e) {
+////			e.printStackTrace();
+////		}
+//		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
+//		boolean selected = ssel.toList().contains(leaf);
+//
+//		newStatus.add(new StatusObject(newElement, oldElement, this.getExpandedState(leaf), selected));
+//
+//		if (leaf instanceof Node) {
+//			Leaf [] leaves = ((Node) leaf).getChildren();
+//			
+//			for (Leaf l : leaves) {
+////				UIUtils.debug("Leaf: " + l);
+//				if (l == null) continue;
+//				IRodinElement element = l.getElement();
+//				IRodinElement newChild = ((IInternalElement) newElement).getInternalElement(element.getElementType(), element.getElementName(), ((IInternalElement) element).getOccurrenceCount());
+//				processMove(l, newChild);
+//			}
+//		}
+//	}
 		
 	private void processDelta(IRodinElementDelta delta) {
 		int kind= delta.getKind();
@@ -338,27 +450,28 @@ public abstract class EventBEditableTreeViewer
 			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
 				UIUtils.debug("Moved: " + element.getElementName() + " from: " + delta.getMovedFromElement());
 				IRodinElement oldElement = delta.getMovedFromElement();
-				// Recursively process the children
-				Leaf leaf = elementsMap.get(oldElement); 
+//				Leaf leaf = elementsMap.get(oldElement); 
 //				TreeItem item = TreeSupports.findItem(this.getTree(), oldElement);
 //				UIUtils.debug("Item found: " + item);
-				processMove(leaf, element);				
+				UIUtils.debug("--- Process Move ---");
+				processMoveRecursive(oldElement, element);
 			}
-			else {
-				UIUtils.debug("Added: " + element.getElementName());
-				Object parent = element.getParent();
-				toRefresh.add(parent);
-			}
+//			else {
+//				UIUtils.debug("Added: " + element.getElementName());
+//				
+//			}
+			Object parent = element.getParent();
+			toRefresh.add(parent);
 			return;
 		}
 		
 		if (kind == IRodinElementDelta.REMOVED) {
 			// Ignore the move operation
-			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
+//			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
 				UIUtils.debug("Removed: " + element.getElementName());			
 				Object parent = element.getParent();
 				toRefresh.add(parent);
-			}
+//			}
 			return;
 		}
 		
@@ -403,51 +516,55 @@ public abstract class EventBEditableTreeViewer
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					ISelection sel = viewer.getSelection();
 					Object [] objects = viewer.getExpandedElements();
+					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+						IRodinElement element = (IRodinElement) iter.next();
+						UIUtils.debug("Refresh element " + element.getElementName());
+//						Leaf leaf = elementsMap.get(element);
+						viewer.refresh(element, updateLabels);
+					}
+
+//					ISelection sel = viewer.getSelection();
+					viewer.setExpandedElements(objects);
 					
-					EventBEditableTreeViewer.this.setComparer(new ObjectComparer());
+//					EventBEditableTreeViewer.this.setComparer(new ObjectComparer());
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
 						StatusObject state = (StatusObject) iter.next();
-						UIUtils.debug("Object: " + state.getObject() + " expanded: " + state.getExpandedStatus());
+						Object newElement = state.getObject();
+						UIUtils.debug("Object: " + newElement + " expanded: " + state.getExpandedStatus());
 						try {
 //							UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
-							UIUtils.debug("Details: " + ((IInternalElement) state.getObject()).getElementName() + " content: " + ((IInternalElement) state.getObject()).getContents());
+							UIUtils.debug("Details: " + ((IInternalElement) newElement).getElementName() + " content: " + ((IInternalElement) newElement).getContents());
 						}
 						catch (RodinDBException e) {
 							e.printStackTrace();
 						}
-						Leaf leaf = elementsMap.get(state.getMoveFrom());
-						leaf.setElement((IRodinElement) state.getObject());
-						elementsMap.remove(state.getMoveFrom());
-						elementsMap.put((IRodinElement) state.getObject(), leaf);
-						viewer.setExpandedState(leaf, state.getExpandedStatus());
-						viewer.update(leaf, null);
+						Object oldElement = state.getMoveFrom();
+//						Leaf leaf = elementsMap.get(oldElement);
+//						leaf.setElement((IRodinElement) newElement);
+//						elementsMap.remove(oldElement);
+//						elementsMap.put((IRodinElement) newElement, leaf);
+						viewer.setExpandedState(newElement, state.getExpandedStatus());
+						viewer.update(newElement, null);
 												
 						if (state.getSelectedStatus()) {
 							IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 							ArrayList<Object> list = new ArrayList<Object>(ssel.size() + 1);
 							for (Iterator it = ssel.iterator(); it.hasNext();) {
-								list.add(elementsMap.get(it.next()));
+								list.add(it.next());
 							}
-							list.add(leaf);
+							list.add(newElement);
 							viewer.setSelection(new StructuredSelection(list));
 						}
 						
-						if (EventBEditableTreeViewer.this.editor.isNewElement((IRodinElement) state.getMoveFrom())) {
-							EventBEditableTreeViewer.this.editor.addNewElement((IRodinElement) state.getObject());
+						if (EventBEditableTreeViewer.this.editor.isNewElement((IRodinElement) oldElement)) {
+							EventBEditableTreeViewer.this.editor.addNewElement((IRodinElement) newElement);
 						}
+						
 					}
-					EventBEditableTreeViewer.this.setComparer(new LeafComparer());
+//					EventBEditableTreeViewer.this.setComparer(new LeafComparer());
 					
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
-						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debug("Refresh element " + element.getElementName());
-						Leaf leaf = elementsMap.get(element);
-						viewer.refresh(leaf, updateLabels);
-					}
-					viewer.setExpandedElements(objects);
-					viewer.setSelection(sel);
+//					viewer.setSelection(sel);
 
 				}
 			}
@@ -458,7 +575,7 @@ public abstract class EventBEditableTreeViewer
 	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
 	 */
 	public void statusChanged(final IRodinElement element) {
-		UIUtils.debug("Change status " + element.getElementName());
+		UIUtils.debug("Change status " + element);
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {

@@ -22,16 +22,18 @@ public class RodinElementSorter extends ViewerSorter {
 	}
 	
 	public int category(Object obj) {
-		IRodinElement rodinElement = ((Leaf) obj).getElement();
-		if (rodinElement instanceof IVariable) return 1;
-		if (rodinElement instanceof IInvariant) return 2;
-		if (rodinElement instanceof ITheorem) return 4;
-		if (rodinElement instanceof IEvent) return 5;
-		if (rodinElement instanceof IGuard) return 2;
-		if (rodinElement instanceof IAction) return 3;
-		if (rodinElement instanceof ICarrierSet) return 1;
-		if (rodinElement instanceof IConstant) return 2;
-		if (rodinElement instanceof IAxiom) return 3;
+		if (obj instanceof IRodinElement) {
+			IRodinElement rodinElement = (IRodinElement) obj;
+			if (rodinElement instanceof IVariable) return 1;
+			if (rodinElement instanceof IInvariant) return 2;
+			if (rodinElement instanceof ITheorem) return 4;
+			if (rodinElement instanceof IEvent) return 5;
+			if (rodinElement instanceof IGuard) return 2;
+			if (rodinElement instanceof IAction) return 3;
+			if (rodinElement instanceof ICarrierSet) return 1;
+			if (rodinElement instanceof IConstant) return 2;
+			if (rodinElement instanceof IAxiom) return 3;
+		}
 		return 0;
 	}
 	

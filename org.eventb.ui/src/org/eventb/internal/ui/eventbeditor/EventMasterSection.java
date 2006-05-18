@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -24,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.forms.IManagedForm;
@@ -94,9 +94,9 @@ public class EventMasterSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
+//				IRodinElement rodinElement = ((Leaf) element).getElement();
 				
-				if (rodinElement instanceof IVariable) return false;
+				if (element instanceof IVariable) return false;
 				else return true;
 			}
 			
@@ -109,8 +109,8 @@ public class EventMasterSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
-				if (rodinElement instanceof IGuard) return false;
+//				IRodinElement rodinElement = ((Leaf) element).getElement();
+				if (element instanceof IGuard) return false;
 				else return true;
 			}
 			
@@ -119,14 +119,14 @@ public class EventMasterSection
 		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
-				Object [] objects = viewer.getExpandedElements();
+//				Object [] objects = viewer.getExpandedElements();
 				if (isChecked()) viewer.addFilter(varFilter);
 				else viewer.removeFilter(varFilter);
 				// This only work for tree with 2 layers
-				for (Object object : objects) {
-					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-					viewer.setExpandedState(item.getData(), true);
-				}
+//				for (Object object : objects) {
+//					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
+//					viewer.setExpandedState(item.getData(), true);
+//				}
 			}
 		};
 		filterVarAction.setChecked(false);
@@ -134,17 +134,17 @@ public class EventMasterSection
 		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
-				Object [] objects = viewer.getExpandedElements();
+//				Object [] objects = viewer.getExpandedElements();
 //				for (Object object : objects) {
 //				UIUtils.debug("Object: " + object + " type: " + object.getClass());
 //			}
 				if (isChecked()) viewer.addFilter(grdFilter);
 				else viewer.removeFilter(grdFilter);
 				// This only work for tree with 2 layers
-				for (Object object : objects) {
-					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-					viewer.setExpandedState(item.getData(), true);
-				}
+//				for (Object object : objects) {
+//					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
+//					viewer.setExpandedState(item.getData(), true);
+//				}
 			}
 		};
 		filterGrdAtion.setChecked(false);
@@ -178,18 +178,18 @@ public class EventMasterSection
 	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-		Tree tree = ((TreeViewer) getViewer()).getTree();
-		TreeItem [] items = tree.getSelection();
-		
-		boolean hasOneSelection = items.length == 1;
+//		Tree tree = ((TreeViewer) getViewer()).getTree();
+//		TreeItem [] items = tree.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) getViewer().getSelection();
+		boolean hasOneSelection = ssel.size() == 1;
 		boolean initSelected = false;
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
 		
 		if (hasOneSelection) {
 			IRodinElement event;
-			if (items[0].getData() instanceof Leaf) {
-				IRodinElement element = ((Leaf) items[0].getData()).getElement();
+			if (ssel.getFirstElement() instanceof IRodinElement) {
+				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				if (element instanceof IEvent) {
 					event = (IRodinElement) element;
 				}
@@ -205,20 +205,20 @@ public class EventMasterSection
 		}
 
 		if (hasOneSelection) {
-			TreeItem item = items[0];
-			IRodinElement element = ((Leaf) item.getData()).getElement();
-			TreeItem prev = TreeSupports.findPrevItem(tree, item);
-			if (prev != null) {
-				Leaf leaf = (Leaf) prev.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
-					canMoveUp = true;
-			}
-			TreeItem next = TreeSupports.findNextItem(tree, item);
-			if (next != null) {
-				Leaf leaf = (Leaf) next.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
-					canMoveDown = true;
-			}
+//			TreeItem item = items[0];
+//			IRodinElement element = ((IRodinElement) item.getData());
+//			TreeItem prev = TreeSupports.findPrevItem(tree, item);
+//			if (prev != null) {
+//				Leaf leaf = (Leaf) prev.getData();
+//				if (element.getElementType() == leaf.getElement().getElementType())
+//					canMoveUp = true;
+//			}
+//			TreeItem next = TreeSupports.findNextItem(tree, item);
+//			if (next != null) {
+//				Leaf leaf = (Leaf) next.getData();
+//				if (element.getElementType() == leaf.getElement().getElementType())
+//					canMoveDown = true;
+//			}
 		}
         setButtonEnabled(
 			UP_INDEX,

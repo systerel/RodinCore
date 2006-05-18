@@ -1,7 +1,11 @@
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -11,10 +15,32 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IRodinElement;
 
 public abstract class ElementText
+	implements ModifyListener, IElementMovedListener
 {
-	private Leaf leaf;
+	int lastModify;
+
+	private class TimeRunnable implements Runnable {
+		private int time;
+		
+		TimeRunnable(int time) {
+			this.time = time;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			// TODO Auto-generated method stub
+			if (lastModify == time) {
+				if (!text.isDisposed()) commit(element, column, text.getText());
+			}
+		}
+	}
+	
+	private IRodinElement element;
 	private int column;
 	private TreeEditor editor;
 	private Text text;
@@ -23,11 +49,19 @@ public abstract class ElementText
 	private int inset;
 	private String original;
 	
-	public abstract void commit(Leaf leaf, int column, String contents);
+	public abstract void commit(IRodinElement element, int column, String contents);
 
 	public abstract void nextEditableCell();
 	
 	public abstract void prevEditableCell();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+	 */
+	public void modifyText(ModifyEvent e) {
+		lastModify = e.time;
+		text.getDisplay().timerExec(1000, new TimeRunnable(e.time));
+	}
 	
 	private class ElementTextListener implements Listener {
 		/* (non-Javadoc)
@@ -38,7 +72,7 @@ public abstract class ElementText
 			switch (event.type) {
 			case SWT.FocusOut:
 //				UIUtils.debug("FocusOut");
-				commit(leaf, column, contents);
+				commit(element, column, contents);
 				text.getParent().dispose();
 				break;
 			case SWT.Verify:
@@ -66,23 +100,23 @@ public abstract class ElementText
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
 					UIUtils.debug("TraverseReturn");
-					commit(leaf, column, contents);
+					commit(element, column, contents);
 					text.getParent().dispose();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_ESCAPE:
-					commit(leaf, column, original);
+					commit(element, column, original);
 					text.getParent().dispose();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
-					commit(leaf, column, original);
+					commit(element, column, contents);
 					text.getParent().dispose();
 					nextEditableCell();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_PREVIOUS:
-					commit(leaf, column, original);
+					commit(element, column, contents);
 					text.getParent().dispose();
 					prevEditableCell();
 					event.doit = false;
@@ -118,14 +152,15 @@ public abstract class ElementText
 	
 	
 	public ElementText(
+			EventBEditableTreeViewer viewer,
 			Text text, 
 			TreeEditor editor,
 			TreeItem item,
 			Tree tree,
-			Leaf leaf,
+			IRodinElement element,
 			int column) {
 		this.text = text;
-		this.leaf = leaf;
+		this.element = element;
 		this.editor = editor;
 		this.column = column;
 		this.tree = tree;
@@ -133,11 +168,23 @@ public abstract class ElementText
 		this.original = item.getText(column);
 		boolean isCarbon = SWT.getPlatform ().equals ("carbon");
 		inset = isCarbon ? 0 : 1;
-		
+		viewer.addElementMovedListener(this);
 		Listener textListener = new ElementTextListener();
 		text.addListener (SWT.FocusOut, textListener);
 		text.addListener (SWT.Traverse, textListener);
 		text.addListener (SWT.Verify, textListener);
+		text.addModifyListener(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IElementMovedListener#elementMoved(java.util.HashMap)
+	 */
+	public void elementMoved(HashMap<IRodinElement, IRodinElement> moved) {
+		if (moved.containsKey(element)) {
+			UIUtils.debug("Element moved, update from " + element.getElementName() + " to " + moved.get(element).getElementName());
+			element = moved.get(element);
+		}
+	}
+
+	
 }

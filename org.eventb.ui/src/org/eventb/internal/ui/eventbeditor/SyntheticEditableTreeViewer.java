@@ -138,8 +138,7 @@ public class SyntheticEditableTreeViewer
 	}
 
 	@Override
-	protected void commit(Leaf leaf, int col, String text) {
-		IInternalElement element = (IInternalElement) leaf.getElement();
+	protected void commit(IRodinElement element, int col, String text) {
 		
 		switch (col) {
 		case 0:  // Commit name

@@ -266,12 +266,12 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 										act.setContents(action);
 										editor.addNewElement(act);
 									}
-									Leaf leaf = (Leaf) TreeSupports.findItem(
-											viewer.getTree(), event).getData();
-									viewer.setExpandedState(leaf, true);
-
-									viewer.reveal(TreeSupports.findItem(
-											viewer.getTree(), act).getData());
+									// Leaf leaf = (Leaf) TreeSupports.findItem(
+									//		viewer.getTree(), event).getData();
+									viewer.setExpandedState(event, true);
+									viewer.reveal(act);
+									// viewer.reveal(TreeSupports.findItem(
+									//		viewer.getTree(), act).getData());
 									((EventBEditableTreeViewer) viewer)
 											.edit(event);
 								} catch (RodinDBException e) {

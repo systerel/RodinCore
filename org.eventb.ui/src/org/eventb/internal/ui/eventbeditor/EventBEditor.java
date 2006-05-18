@@ -64,7 +64,7 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class EventBEditor
 	extends FormEditor
-	implements IElementChangedListener 
+	implements IElementChangedListener
 {	
 
 	private static class FormEditorSelectionProvider
@@ -183,6 +183,7 @@ public abstract class EventBEditor
 	public boolean isNewElement(IRodinElement element) {
 		return newElements.contains(element);
 	}
+	
 	
 	/**
 	 * Default constructor.
@@ -484,7 +485,7 @@ public abstract class EventBEditor
 	 */
 	public void elementChanged(ElementChangedEvent event) {		
 		IRodinElementDelta delta = event.getDelta();
-		UIUtils.debug("Delta: " + delta);
+//		UIUtils.debug("Delta: " + delta);
 		processDelta(delta);
 	}
 
@@ -523,7 +524,6 @@ public abstract class EventBEditor
 			});
 			return;
 		}
-		
-
 	}
+	
 }
