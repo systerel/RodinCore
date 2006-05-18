@@ -226,7 +226,9 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		Predicate wdCondition = condition.getWDPredicateRaw(formulaFactory);
-		return getWDSimplifyQ(formulaFactory, FORALL, primedIdents, wdCondition);
+		final SourceLocation loc = getSourceLocation();
+		return getWDSimplifyQ(formulaFactory, FORALL, primedIdents,
+				wdCondition, loc);
 	}
 
 	@Override
@@ -304,12 +306,9 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected Predicate getFISPredicateRaw(FormulaFactory ff) {		
-		if (condition.getTag() == BTRUE)
-			return condition;
-		else
-			return ff.makeQuantifiedPredicate(EXISTS, 
-					primedIdents, condition, getSourceLocation()); 
+	protected Predicate getFISPredicateRaw(FormulaFactory ff) {
+		final SourceLocation loc = getSourceLocation();
+		return getWDSimplifyQ(ff, EXISTS, primedIdents, condition, loc); 
 	}
 
 	@Override
