@@ -896,6 +896,49 @@ public class TestMachinePOG_2 extends BuilderTest {
 	}
 		
 	/**
+	 * Test method for non-deterministic action where the assigned variable
+	 * doesn't occur in the rhs.
+	 */
+	public void testAction4() throws Exception {
+		
+		ITypeEnvironment env = factory.makeTypeEnvironment();
+		env.addName("x", INTEGER);
+
+		String inv1 = predicateFromString("x∈ℤ").toString();
+		String asn1 = assignmentFromString("x:∣⊤").toString();
+		String asn2 = assignmentFromString("x:∣x=2").toString();
+		String fis2 = predicateFromString("x=2").toString();
+
+		ISCMachine rodinFile = createSCMachine("test");
+		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
+		addInvariants(rodinFile, makeList("I1"), makeList(inv1));
+		addSCEvent(rodinFile, "E1", makeList(), 
+				makeList(), makeList(), makeList(asn1), makeList());
+		addSCEvent(rodinFile, "E2", makeList(), 
+				makeList(), makeList(), makeList(asn2), makeList());
+		rodinFile.save(null, true);
+		
+		IPOFile poFile = runPOG(rodinFile);
+		IPOSequent[] sequents = poFile.getSequents();
+		// Should have 2 POs for invariant preservation,
+		// and one for E2 feasibility.
+		assertEquals("Unexpected number of POs", 3, sequents.length);
+		int cnt = 0;
+		for (IPOSequent sequent : sequents) {
+			if (sequent.getName().equals("E1/x/FIS")) {
+				fail("shouldn't produce this PO");
+			}
+			if (sequent.getName().equals("E2/x/FIS")) {
+				assertEquals("Feasibility of non-deterministic assignment",
+						fis2,
+						sequent.getGoal().getContents());
+				++cnt;
+			}
+		}
+		assertEquals("Some expected PO not found", 1, cnt);
+	}
+		
+	/**
 	 * Test method for action without guard (well-definedness, feasility, invariant)
 	 */
 	public void testInitialisation1() throws Exception {
