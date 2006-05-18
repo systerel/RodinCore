@@ -82,17 +82,15 @@ extends EventBTreePartWithButtons
 		boolean canMoveDown = false;
 		if (hasOneSelection) {
 			TreeItem item = items[0];
-			IRodinElement element = ((Leaf) item.getData()).getElement();
+			IRodinElement element = (IRodinElement) item.getData();
 			TreeItem prev = TreeSupports.findPrevItem(tree, item);
 			if (prev != null) {
-				Leaf leaf = (Leaf) prev.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) prev.getData()).getElementType())
 					canMoveUp = true;
 			}
 			TreeItem next = TreeSupports.findNextItem(tree, item);
 			if (next != null) {
-				Leaf leaf = (Leaf) next.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) next.getData()).getElementType())
 					canMoveDown = true;
 			}
 		}

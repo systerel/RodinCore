@@ -1,8 +1,5 @@
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -42,48 +39,60 @@ public class SyntheticEditableTreeViewer
 		
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IRodinFile) {
-				ArrayList<Leaf> list = new ArrayList<Leaf>();
+//				ArrayList<Leaf> list = new ArrayList<Leaf>();
+//				try {
+//					IRodinElement [] elements = ((IRodinFile) parent).getChildren();
+//					for (IRodinElement element : elements) {
+//						Leaf leaf;
+////						UIUtils.debug("Element: " + element.getElementName());
+//						if (element instanceof IParent) {
+//							leaf = new Node(element);
+//						}
+//						else leaf = new Leaf(element);
+//						elementsMap.put(element, leaf);
+//						list.add(leaf);
+//					}
+//				}
+//				catch (RodinDBException e) {
+//					// TODO Exception handle
+//					e.printStackTrace();
+//				}
+//				return list.toArray();
 				try {
-					IRodinElement [] elements = ((IRodinFile) parent).getChildren();
-					for (IRodinElement element : elements) {
-						Leaf leaf;
-//						UIUtils.debug("Element: " + element.getElementName());
-						if (element instanceof IParent) {
-							leaf = new Node(element);
-						}
-						else leaf = new Leaf(element);
-						elementsMap.put(element, leaf);
-						list.add(leaf);
-					}
-				}
-				catch (RodinDBException e) {
-					// TODO Exception handle
+					return ((IRodinFile) parent).getChildren();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return list.toArray();
 			}
 			
-			if (parent instanceof Node) {
-				Node node = (Node) parent;
-				node.removeAllChildren();
+			if (parent instanceof IParent) {
 				try {
-					IRodinElement element = node.getElement();
-						
-					if (element instanceof IParent) {
-						IRodinElement [] children = ((IParent) element).getChildren();
-						for (IRodinElement child : children) {
-							Leaf leaf;
-							if (child instanceof IParent) leaf = new Node(child);
-							else leaf = new Leaf(child);
-							elementsMap.put(child, leaf);
-							node.addChildren(leaf);
-						}
-					}
-				}
-				catch (RodinDBException e) {
+					return ((IParent) parent).getChildren();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return node.getChildren();
+//				Node node = (Node) parent;
+//				node.removeAllChildren();
+//				try {
+//					IRodinElement element = node.getElement();
+//						
+//					if (element instanceof IParent) {
+//						IRodinElement [] children = ((IParent) element).getChildren();
+//						for (IRodinElement child : children) {
+//							Leaf leaf;
+//							if (child instanceof IParent) leaf = new Node(child);
+//							else leaf = new Leaf(child);
+//							elementsMap.put(child, leaf);
+//							node.addChildren(leaf);
+//						}
+//					}
+//				}
+//				catch (RodinDBException e) {
+//					e.printStackTrace();
+//				}
+//				return node.getChildren();
 			}
 			
 			return new Object[0];
@@ -107,7 +116,7 @@ public class SyntheticEditableTreeViewer
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
-			elementsMap = new HashMap<IRodinElement, Leaf>();
+//			elementsMap = new HashMap<IRodinElement, Leaf>();
 		}
 	}
 
@@ -170,8 +179,7 @@ public class SyntheticEditableTreeViewer
 
 	@Override
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof Leaf)) return false;
-		object = ((Leaf) object ).getElement();
+		if (!(object instanceof IRodinElement)) return false;
 		
 		if (column == 0) {
 			if (!editor.isNewElement((IRodinElement) object)) return true;

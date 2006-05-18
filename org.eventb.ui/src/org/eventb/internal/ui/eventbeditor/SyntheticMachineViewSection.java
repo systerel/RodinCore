@@ -91,9 +91,9 @@ public class SyntheticMachineViewSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
-				
-				if (rodinElement instanceof IVariable) return false;
+//				IRodinElement rodinElement = ((Leaf) element).getElement();
+//				
+				if (element instanceof IVariable) return false;
 				else return true;
 			}
 			
@@ -106,8 +106,8 @@ public class SyntheticMachineViewSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
-				if (rodinElement instanceof IGuard) return false;
+//				IRodinElement rodinElement = ((Leaf) element).getElement();
+				if (element instanceof IGuard) return false;
 				else return true;
 			}
 			
@@ -116,14 +116,14 @@ public class SyntheticMachineViewSection
 		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this.getViewer());
-				Object [] objects = viewer.getExpandedElements();
+//				Object [] objects = viewer.getExpandedElements();
 				if (isChecked()) viewer.addFilter(varFilter);
 				else viewer.removeFilter(varFilter);
 				// This only work for tree with 2 layers
-				for (Object object : objects) {
-					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-					viewer.setExpandedState(item.getData(), true);
-				}
+//				for (Object object : objects) {
+//					TreeItem item = TreeSupports.findItem(viewer.getTree(), (IRodine) object);
+//					viewer.setExpandedState(item.getData(), true);
+//				}
 			}
 		};
 		filterVarAction.setChecked(false);
@@ -131,14 +131,14 @@ public class SyntheticMachineViewSection
 		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this.getViewer());
-				Object [] objects = viewer.getExpandedElements();
+//				Object [] objects = viewer.getExpandedElements();
 				if (isChecked()) viewer.addFilter(grdFilter);
 				else viewer.removeFilter(grdFilter);
 				// This only work for tree with 2 layers
-				for (Object object : objects) {
-					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-					viewer.setExpandedState(item.getData(), true);
-				}
+//				for (Object object : objects) {
+//					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
+//					viewer.setExpandedState(item.getData(), true);
+//				}
 			}
 		};
 		filterGrdAtion.setChecked(false);
@@ -182,17 +182,15 @@ public class SyntheticMachineViewSection
 		
 		if (hasOneSelection) {
 			TreeItem item = items[0];
-			IRodinElement element = ((Leaf) item.getData()).getElement();
+			IRodinElement element = (IRodinElement) item.getData();
 			TreeItem prev = TreeSupports.findPrevItem(tree, item);
 			if (prev != null) {
-				Leaf leaf = (Leaf) prev.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) prev.getData()).getElementType())
 					canMoveUp = true;
 			}
 			TreeItem next = TreeSupports.findNextItem(tree, item);
 			if (next != null) {
-				Leaf leaf = (Leaf) next.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) next.getData()).getElementType())
 					canMoveDown = true;
 			}
 		}

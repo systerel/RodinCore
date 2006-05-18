@@ -1,7 +1,5 @@
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.HashMap;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -113,7 +111,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
-			elementsMap = new HashMap<IRodinElement, Leaf>();
+//			elementsMap = new HashMap<IRodinElement, Leaf>();
 		}
 	}
 	

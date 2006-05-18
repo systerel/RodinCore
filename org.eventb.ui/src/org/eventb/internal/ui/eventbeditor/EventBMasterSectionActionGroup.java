@@ -266,14 +266,9 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 										act.setContents(action);
 										editor.addNewElement(act);
 									}
-									// Leaf leaf = (Leaf) TreeSupports.findItem(
-									//		viewer.getTree(), event).getData();
 									viewer.setExpandedState(event, true);
 									viewer.reveal(act);
-									// viewer.reveal(TreeSupports.findItem(
-									//		viewer.getTree(), act).getData());
-									((EventBEditableTreeViewer) viewer)
-											.edit(event);
+									((EventBEditableTreeViewer) viewer).edit(event);
 								} catch (RodinDBException e) {
 									e.printStackTrace();
 								}
@@ -528,8 +523,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 									int i = 0;
 									for (Iterator it = ssel.iterator(); it
 											.hasNext(); i++) {
-										Object obj = it.next();
-										elements[i] = ((Leaf) obj).getElement();
+										elements[i] = (IRodinElement) it.next();
 									}
 									EventBUIPlugin.getRodinDatabase().delete(
 											elements, true, null);
@@ -555,10 +549,8 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								TreeItem item = items[0];
 								TreeItem prev = TreeSupports.findPrevItem(tree,
 										item);
-								IRodinElement currObj = ((Leaf) item.getData())
-										.getElement();
-								IRodinElement prevObj = ((Leaf) prev.getData())
-										.getElement();
+								IRodinElement currObj = (IRodinElement) item.getData();
+								IRodinElement prevObj = (IRodinElement) prev.getData();
 
 								try {
 									((IInternalElement) currObj).move(currObj
@@ -566,8 +558,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 											null);
 									TreeItem newItem = TreeSupports.findItem(
 											tree, currObj);
-									viewer
-											.setSelection(new StructuredSelection(
+									viewer.setSelection(new StructuredSelection(
 													newItem.getData()));
 								} catch (RodinDBException e) {
 									e.printStackTrace();
@@ -591,10 +582,8 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								TreeItem item = items[0];
 								TreeItem next = TreeSupports.findNextItem(tree,
 										item);
-								IRodinElement currObj = ((Leaf) item.getData())
-										.getElement();
-								IRodinElement nextObj = ((Leaf) next.getData())
-										.getElement();
+								IRodinElement currObj = (IRodinElement) item.getData();
+								IRodinElement nextObj = (IRodinElement) next.getData();
 
 								try {
 									((IInternalElement) nextObj).move(nextObj
@@ -633,7 +622,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 
-				if (((Leaf) obj).getElement() instanceof IEvent) {
+				if (obj instanceof IEvent) {
 					menu.add(addLocalVariable);
 					menu.add(addGuard);
 					menu.add(addAction);

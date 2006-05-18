@@ -123,8 +123,8 @@ public class EventBEditorContributor
 				if (sel instanceof IStructuredSelection) { 
 					IStructuredSelection ssel = (IStructuredSelection) sel;
 					if (ssel.size() == 1) {
-						if (ssel.getFirstElement() instanceof Leaf) {
-							IRodinElement element = ((Leaf) ssel.getFirstElement()).getElement();
+						if (ssel.getFirstElement() instanceof IRodinElement) {
+							IRodinElement element = (IRodinElement) ssel.getFirstElement();
 							InputDialog dialog = new InputDialog(part.getSite().getShell(), "Rename", "Rename element", element.getElementName(), null);
 							dialog.open();
 							try {

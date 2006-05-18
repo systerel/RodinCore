@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.forms.IManagedForm;
@@ -178,8 +179,8 @@ public class EventMasterSection
 	 * Update the expanded of buttons.
 	 */
 	protected void updateButtons() {
-//		Tree tree = ((TreeViewer) getViewer()).getTree();
-//		TreeItem [] items = tree.getSelection();
+		Tree tree = ((TreeViewer) getViewer()).getTree();
+		TreeItem [] items = tree.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) getViewer().getSelection();
 		boolean hasOneSelection = ssel.size() == 1;
 		boolean initSelected = false;
@@ -205,20 +206,18 @@ public class EventMasterSection
 		}
 
 		if (hasOneSelection) {
-//			TreeItem item = items[0];
-//			IRodinElement element = ((IRodinElement) item.getData());
-//			TreeItem prev = TreeSupports.findPrevItem(tree, item);
-//			if (prev != null) {
-//				Leaf leaf = (Leaf) prev.getData();
-//				if (element.getElementType() == leaf.getElement().getElementType())
-//					canMoveUp = true;
-//			}
-//			TreeItem next = TreeSupports.findNextItem(tree, item);
-//			if (next != null) {
-//				Leaf leaf = (Leaf) next.getData();
-//				if (element.getElementType() == leaf.getElement().getElementType())
-//					canMoveDown = true;
-//			}
+			TreeItem item = items[0];
+			IRodinElement element = ((IRodinElement) item.getData());
+			TreeItem prev = TreeSupports.findPrevItem(tree, item);
+			if (prev != null) {
+				if (element.getElementType() == ((IRodinElement) prev.getData()).getElementType())
+					canMoveUp = true;
+			}
+			TreeItem next = TreeSupports.findNextItem(tree, item);
+			if (next != null) {
+				if (element.getElementType() == ((IRodinElement) next.getData()).getElementType())
+					canMoveDown = true;
+			}
 		}
         setButtonEnabled(
 			UP_INDEX,

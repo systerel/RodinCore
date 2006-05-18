@@ -93,9 +93,7 @@ public class SyntheticContextViewSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
-				
-				if (rodinElement instanceof IVariable) return false;
+				if (element instanceof IVariable) return false;
 				else return true;
 			}
 			
@@ -108,8 +106,7 @@ public class SyntheticContextViewSection
 			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				IRodinElement rodinElement = ((Leaf) element).getElement();
-				if (rodinElement instanceof IGuard) return false;
+				if (element instanceof IGuard) return false;
 				else return true;
 			}
 			
@@ -172,17 +169,15 @@ public class SyntheticContextViewSection
 		
 		if (hasOneSelection) {
 			TreeItem item = items[0];
-			IRodinElement element = ((Leaf) item.getData()).getElement();
+			IRodinElement element = (IRodinElement) item.getData();
 			TreeItem prev = TreeSupports.findPrevItem(tree, item);
 			if (prev != null) {
-				Leaf leaf = (Leaf) prev.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) prev.getData()).getElementType())
 					canMoveUp = true;
 			}
 			TreeItem next = TreeSupports.findNextItem(tree, item);
 			if (next != null) {
-				Leaf leaf = (Leaf) next.getData();
-				if (element.getElementType() == leaf.getElement().getElementType())
+				if (element.getElementType() == ((IRodinElement) next.getData()).getElementType())
 					canMoveDown = true;
 			}
 		}

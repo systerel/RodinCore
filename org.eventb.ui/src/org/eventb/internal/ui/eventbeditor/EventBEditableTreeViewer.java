@@ -284,7 +284,7 @@ public abstract class EventBEditableTreeViewer
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<Object> toRefresh;
 	private Collection<StatusObject> newStatus;
-	protected HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
+//	protected HashMap<IRodinElement, Leaf> elementsMap = new HashMap<IRodinElement, Leaf>();
 
     private class StatusObject {
     	Object object;
@@ -324,7 +324,7 @@ public abstract class EventBEditableTreeViewer
 	
 	private void processMoveRecursive(IRodinElement oldElement, IRodinElement newElement) {
 		try {
-			UIUtils.debug("from: " + oldElement.getElementName() + " content: "); 
+			UIUtils.debug("from: " + oldElement.getElementName() + " expanded " + this.getExpandedState(oldElement)); 
 			UIUtils.debug("to: " + newElement.getElementName() + " content: " + ((IInternalElement) newElement).getContents());
 		}
 		catch (RodinDBException e) {
@@ -516,7 +516,7 @@ public abstract class EventBEditableTreeViewer
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					Object [] objects = viewer.getExpandedElements();
+//					Object [] objects = viewer.getExpandedElements();
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						IRodinElement element = (IRodinElement) iter.next();
 						UIUtils.debug("Refresh element " + element.getElementName());
@@ -525,7 +525,7 @@ public abstract class EventBEditableTreeViewer
 					}
 
 //					ISelection sel = viewer.getSelection();
-					viewer.setExpandedElements(objects);
+//					viewer.setExpandedElements(objects);
 					
 //					EventBEditableTreeViewer.this.setComparer(new ObjectComparer());
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
@@ -581,8 +581,8 @@ public abstract class EventBEditableTreeViewer
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					Leaf leaf = elementsMap.get(element);
-					viewer.refresh(leaf);
+//					Leaf leaf = elementsMap.get(element);
+					viewer.refresh(element);
 				}
 			}
 		}, this.getControl());
