@@ -1,5 +1,16 @@
-package org.eventb.internal.ui.eventbeditor;
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
+package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,57 +31,83 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
 
-public class ElementAtributeInputDialog extends Dialog {
-	private String defaultName;
+/**
+ * @author htson
+ *         <p>
+ *         This class extends the Dialog class and provides an input dialog for
+ *         entering a list of attributes or names
+ */
+public class ElementAttributeInputDialog extends Dialog {
+
+	// The default prefix
+	private String defaultPrefix;
+
 	private Collection<String> attributes;
+
 	private Collection<Text> texts;
+
 	private ScrolledForm scrolledForm;
+
 	private String title;
+
 	private String message;
+
 	private FormToolkit toolkit;
-	
-	public ElementAtributeInputDialog(Shell parentShell, String title, String message, String defaultName) {
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param parentShell
+	 *            The parent shell of the dialog
+	 * @param title
+	 *            The title of the dialog
+	 * @param message
+	 *            The text message of the dialog
+	 * @param defaultPrefix
+	 *            The default prefix of for the attributes
+	 */
+	public ElementAttributeInputDialog(Shell parentShell, String title,
+			String message, String defaultPrefix) {
 		super(parentShell);
 		this.title = title;
 		this.message = message;
-		this.defaultName = defaultName;
+		this.defaultPrefix = defaultPrefix;
 		texts = new ArrayList<Text>();
 		attributes = new ArrayList<String>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
-	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
-	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.YES_ID, "&Add", false);
-		
-		createButton(parent, IDialogConstants.OK_ID,
-                IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.YES_ID, "&Add", false);
 
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+				true);
+
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	@Override
 	protected Control createDialogArea(Composite parent) {
 		// TODO Auto-generated method stub
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -80,7 +117,7 @@ public class ElementAtributeInputDialog extends Dialog {
 
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 10;
@@ -88,75 +125,82 @@ public class ElementAtributeInputDialog extends Dialog {
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
-		
+
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
-		
-		EventBMath text = new EventBMath(toolkit.createText(body, defaultName));
+
+		EventBMath text = new EventBMath(toolkit.createText(body, defaultPrefix));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text.getTextWidget());
-		
+
 		label = toolkit.createLabel(body, message);
-//		label.setLayoutData(new GridData());
-		
+		// label.setLayoutData(new GridData());
+
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text.getTextWidget());
-		
+
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
-//		label.setLayoutData(new GridData());
-		
+		// label.setLayoutData(new GridData());
+
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text.getTextWidget());
-		
+
 		composite.pack();
-		
+
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
 		return body;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
-	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			attributes = new HashSet<String>();
-        }
-		else if (buttonId == IDialogConstants.YES_ID) {
+		} else if (buttonId == IDialogConstants.YES_ID) {
 			Label label = toolkit.createLabel(scrolledForm.getBody(), message);
 			label.setLayoutData(new GridData());
-			
-			EventBMath text = new EventBMath(toolkit.createText(scrolledForm.getBody(), ""));
+
+			EventBMath text = new EventBMath(toolkit.createText(scrolledForm
+					.getBody(), ""));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			text.getTextWidget().setLayoutData(gd);
 			texts.add(text.getTextWidget());
-			
+
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			toolkit.paintBordersFor(scrolledForm.getBody());
 			scrolledForm.reflow(true);
-		}
-		else if (buttonId == IDialogConstants.OK_ID) {
+		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
 			for (Iterator<Text> it = texts.iterator(); it.hasNext();) {
 				Text text = it.next();
-				if (!text.getText().equals("")) attributes.add(text.getText());
+				if (!text.getText().equals(""))
+					attributes.add(text.getText());
 			}
 		}
 		super.buttonPressed(buttonId);
 	}
-	
+
+	/**
+	 * Get the list of attributes or names.
+	 * <p>
+	 * 
+	 * @return The list of the text attributes that the user entered
+	 */
 	public Collection<String> getAttributes() {
 		return attributes;
 	}
-	
+
 }

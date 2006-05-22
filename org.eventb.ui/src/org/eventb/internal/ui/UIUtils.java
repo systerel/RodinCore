@@ -47,7 +47,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.eventbeditor.ElementAtributeInputDialog;
+import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
@@ -522,7 +522,7 @@ public class UIUtils {
 	public static void newVariables(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(
+			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Variables",
 					"Name", "var" + (counter + 1));
 
@@ -731,7 +731,7 @@ public class UIUtils {
 	public static void newCarrierSets(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(
+			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Carrier Sets",
 					"Name", "set" + (counter + 1));
 
@@ -760,7 +760,7 @@ public class UIUtils {
 	public static void newConstants(EventBEditor editor, IRodinFile rodinFile) {
 		try {
 			int counter = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE).length;
-			ElementAtributeInputDialog dialog = new ElementAtributeInputDialog(
+			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Constants",
 					"Name", "cst" + (counter + 1));
 			dialog.open();
