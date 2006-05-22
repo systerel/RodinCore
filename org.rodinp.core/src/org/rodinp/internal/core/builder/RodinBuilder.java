@@ -30,7 +30,7 @@ import org.rodinp.internal.core.util.Util;
  */
 public class RodinBuilder extends IncrementalProjectBuilder {
 	
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 	BuildState state;
 	

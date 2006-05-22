@@ -163,9 +163,11 @@ public class Graph implements Serializable, Iterable<Node> {
 			throw e;
 		} catch (CoreException e) {
 			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
+			node.setDated(false); // do not run defect tools unnecessarily often
 			return;
 		} catch (RuntimeException e) {
 			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
+			node.setDated(false); // do not run defect tools unnecessarily often
 			return;
 		}
 		

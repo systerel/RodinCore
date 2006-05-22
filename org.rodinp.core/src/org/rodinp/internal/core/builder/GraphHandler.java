@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.rodinp.core.RodinCore;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * @author Stefan Hallerstede
@@ -104,18 +105,18 @@ public class GraphHandler {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addToolDependency(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, java.lang.String, boolean)
 	 */
-	public void addToolDependency(IPath source, IPath target, String id,
-			boolean prioritize) throws CoreException {
-		addDependency(null, source, target, id, prioritize, Link.Provider.TOOL);
-	}
+//	public void addToolDependency(IPath source, IPath target, String id,
+//			boolean prioritize) throws CoreException {
+//		addDependency(null, source, target, id, prioritize, Link.Provider.TOOL);
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addUserDependency(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, java.lang.String, boolean)
 	 */
-	public void addUserDependency(IPath origin, IPath source, IPath target,
-			String id, boolean prioritize) throws CoreException {
-		addDependency(origin, source, target, id, prioritize, Link.Provider.USER);
-	}
+//	public void addUserDependency(IPath origin, IPath source, IPath target,
+//			String id, boolean prioritize) throws CoreException {
+//		addDependency(origin, source, target, id, prioritize, Link.Provider.USER);
+//	}
 	
 	protected Node getNodeOrPhantom(IPath path) {
 		Node node = graph.getNode(path);
@@ -129,39 +130,18 @@ public class GraphHandler {
 		return node;
 	}
 
-	private void addDependency(IPath origin, IPath source, IPath target, String id, boolean prioritize, Link.Provider prov) throws CoreException {
-		Node sourceNode = graph.getNode(source);
-		Node targetNode = graph.getNode(target);
-		Node originNode = (origin != null) ? graph.getNode(origin) : null;
-		if(origin != null && originNode == null)
-			throw new CoreException(new Status(IStatus.ERROR,
-					RodinCore.PLUGIN_ID, 
-					Platform.PLUGIN_ERROR, "Unknown node: " + origin.toString(), null)); //$NON-NLS-1$
-		if(sourceNode == null) {
-			sourceNode = new Node();
-			sourceNode.setPath(source);
-			sourceNode.setDated(false);
-			sourceNode.setPhantom(true);
-			graph.addNodeToGraph(sourceNode);
-		}
-		if(targetNode == null) {
-			targetNode = new Node();
-			targetNode.setPath(target);
-			targetNode.setDated(false);
-			targetNode.setPhantom(true);
-			graph.addNodeToGraph(targetNode);
-		}
+	protected void addDependency(Link link, Node target) { //throws CoreException {
 		if(current == null && RodinBuilder.DEBUG)
 			System.out.println("No current node"); //$NON-NLS-1$
-		boolean currentEqualsSource = current.equals(sourceNode);
-		boolean targetIsSuccessor = current.hasSuccessor(targetNode);
+		boolean currentEqualsSource = current.equals(link.source);
+		boolean targetIsSuccessor = current.hasSuccessor(target);
 		if(currentEqualsSource || targetIsSuccessor) {
-			targetNode.addLink(originNode, sourceNode, id, prov, prioritize ? Link.Priority.HIGH : Link.Priority.LOW);
+			target.addLink(link);
 			boolean instable = false;
-			instable |= currentEqualsSource && targetNode.done; // the new target of the present node was already processed
-			instable |= targetIsSuccessor && !sourceNode.done; // the new source in the predecessor list of target has not been processed
-			instable |= prioritize && sourceNode.getSuccPos() > 0; // child nodes already traversed partially (and the new source is first in list)
-			instable |= sourceNode.getSuccPos() > sourceNode.succSize(); // the list of child nodes was already completely traversed
+			instable |= currentEqualsSource && target.done; // the new target of the present node was already processed
+			instable |= targetIsSuccessor && !link.source.done; // the new source in the predecessor list of target has not been processed
+			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccPos() > 0; // child nodes already traversed partially (and the new source is first in list)
+			instable |= link.source.getSuccPos() > link.source.succSize(); // the list of child nodes was already completely traversed
 //			if(currentEqualsSource && targetNode.done)
 //				graph.setInstable();
 //				targetNode.setDated(false);
@@ -174,17 +154,17 @@ public class GraphHandler {
 //				graph.setInstable();
 			if(instable) {
 				graph.setInstable();
-				targetNode.setDated(true);
+				target.setDated(true);
 			}
 		} else
-			throw new CoreException(new Status(IStatus.ERROR,
+			Util.log(new CoreException(new Status(IStatus.ERROR,
 					RodinCore.PLUGIN_ID, 
 					Platform.PLUGIN_ERROR, 
-					"Dependency [" + source.toString() + " / " + target.toString() + "] from " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					current.getName() + " not permitted", null)); //$NON-NLS-1$
+					"Dependency [" + link.source.toString() + " / " + target.toString() + "] from " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					current.getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
 		if(RodinBuilder.DEBUG)
 			System.out.println(getClass().getName() + ": Added dependency: " +  //$NON-NLS-1$
-					targetNode.getName() + " => " + sourceNode.getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
+					target.getName() + " => " + link.source.getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)

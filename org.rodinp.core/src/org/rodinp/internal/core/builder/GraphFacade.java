@@ -94,8 +94,10 @@ public class GraphFacade implements IGraph {
 		
 		// add all links
 		for (int i=0; i<found.length; i++) {
-			if (!found[i]) {
-				targets.get(i).addLink(links.get(i));
+			Link link = links.get(i);
+			if (!found[i] || changedIds.contains(link.id)) {
+				handler.addDependency(link, targets.get(i));
+//				targets.get(i).addLink(links.get(i));
 			}
 		}
 	}
