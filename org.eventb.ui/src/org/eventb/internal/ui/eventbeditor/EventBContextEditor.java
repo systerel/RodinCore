@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -21,22 +22,25 @@ import org.eventb.internal.ui.ExtensionLoader;
 
 /**
  * @author htson
- * <p>
- * Event-B specific form editor for machines.
+ *         <p>
+ *         Event-B specific form editor for machines.
  */
-public class EventBContextEditor
-	extends EventBEditor 
-{	
-	
+public class EventBContextEditor extends EventBEditor {
+
 	/**
-	 * The plug-in identifier of the Event-B Machine Editor (value
-	 * <code>"org.eventb.internal.ui.editors.EventBMachineEditor"</code>).
+	 * The plug-in identifier of the Event-B Context Editor (value
+	 * <code>"org.eventb.internal.ui.editors.EventBContextEditor"</code>).
 	 */
-	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID + ".editors.EventBContextEditor";
-	
+	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".editors.EventBContextEditor";
+
+	// Set of different Mirror Pages
 	private EventBMirrorPage theoremMirrorPage;
+
 	private EventBMirrorPage axiomMirrorPage;
+
 	private EventBMirrorPage carrierSetMirrorPage;
+
 	private EventBMirrorPage constantMirrorPage;
 
 	/**
@@ -46,37 +50,37 @@ public class EventBContextEditor
 		super();
 	}
 
-	/**
-	 * Creates the pages of the multi-page editor.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
 	protected void addPages() {
-		Constructor [] constructors = new Constructor[0];
-		
+		Constructor[] constructors = new Constructor[0];
+
 		constructors = ExtensionLoader.getContextPages();
-				
+
 		try {
 			// Create the pages
 			for (int i = 0; i < constructors.length; i++) {
-				Object [] objects = {this};
+				Object[] objects = { this };
 				addPage((IFormPage) constructors[i].newInstance(objects));
 			}
-		}
-		catch (PartInitException e) {
+		} catch (PartInitException e) {
 			// TODO Handle exception
-			MessageDialog.openError(null,
-					"Event-B Editor",
+			MessageDialog.openError(null, "Event-B Editor",
 					"Error creating pages for Event-B Editor");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// TODO Handle exception
 			e.printStackTrace();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#getAdapter(java.lang.Class)
 	 */
-	@Override
 	public Object getAdapter(Class required) {
 		if (ITheoremMirrorPage.class.equals(required)) {
 			if (theoremMirrorPage == null) {
@@ -105,16 +109,21 @@ public class EventBContextEditor
 		return super.getAdapter(required);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#dispose()
 	 */
-	@Override
 	public void dispose() {
-		if (theoremMirrorPage != null) theoremMirrorPage.dispose();
-		if (axiomMirrorPage != null) axiomMirrorPage.dispose();
-		if (carrierSetMirrorPage != null) carrierSetMirrorPage.dispose();
-		if (constantMirrorPage != null) constantMirrorPage.dispose();
+		if (theoremMirrorPage != null)
+			theoremMirrorPage.dispose();
+		if (axiomMirrorPage != null)
+			axiomMirrorPage.dispose();
+		if (carrierSetMirrorPage != null)
+			carrierSetMirrorPage.dispose();
+		if (constantMirrorPage != null)
+			constantMirrorPage.dispose();
 		super.dispose();
 	}
+
 }

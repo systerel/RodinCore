@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -25,31 +26,43 @@ import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
- * Manages the installation/deinstallation of global actions for multi-page editors.
- * Responsible for the redirection of global actions to the active editor.
- * Multi-page contributor replaces the contributors for the individual editors in the multi-page editor.
+ *         <p>
+ *         Manages the installation/deinstallation of global actions for
+ *         multi-page editors. Responsible for the redirection of global actions
+ *         to the active editor. Multi-page contributor replaces the
+ *         contributors for the individual editors in the multi-page editor.
  */
-public class EventBContextEditorContributor
-	extends EventBEditorContributor
-{
+public class EventBContextEditorContributor extends EventBEditorContributor {
+
+	// Actions associated with Context Editor.
 	private static Action newCarrierSets;
+
 	private static Action newConstants;
+
 	private static Action newTheorems;
+
 	private static Action newAxioms;
-	
+
 	/**
-	 * Creates a multi-page contributor.
+	 * Default constructor: Creates a multi-page contributor.
 	 */
 	public EventBContextEditorContributor() {
 		super();
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditorContributor#createActions()
+	 */
 	protected void createActions() {
 		super.createActions();
-		
+
+		// New Carrier Sets
 		newCarrierSets = new Action() {
 			public void run() {
-				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				IEditorPart part = EventBUIPlugin.getActivePage()
+						.getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
@@ -59,13 +72,16 @@ public class EventBContextEditorContributor
 			}
 		};
 		newCarrierSets.setText("New Carrier Sets");
-		newCarrierSets.setToolTipText("Create new carrier sets for the component");
-		newCarrierSets.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
+		newCarrierSets
+				.setToolTipText("Create new carrier sets for the component");
+		newCarrierSets.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
 
-		
+		// New Constants
 		newConstants = new Action() {
 			public void run() {
-				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				IEditorPart part = EventBUIPlugin.getActivePage()
+						.getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
@@ -76,12 +92,14 @@ public class EventBContextEditorContributor
 		};
 		newConstants.setText("New Constants");
 		newConstants.setToolTipText("Create new cosntants for the component");
-		newConstants.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_CONSTANTS_PATH));
+		newConstants.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_CONSTANTS_PATH));
 
-		
+		// New Theorems.
 		newTheorems = new Action() {
 			public void run() {
-				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				IEditorPart part = EventBUIPlugin.getActivePage()
+						.getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
@@ -92,12 +110,14 @@ public class EventBContextEditorContributor
 		};
 		newTheorems.setText("New Theorems");
 		newTheorems.setToolTipText("Create new theorems for the component");
-		newTheorems.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
+		newTheorems.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
 
-
+		// New Axioms.
 		newAxioms = new Action() {
 			public void run() {
-				IEditorPart part = EventBUIPlugin.getActivePage().getActiveEditor();
+				IEditorPart part = EventBUIPlugin.getActivePage()
+						.getActiveEditor();
 				if (part instanceof EventBEditor) {
 					EventBEditor editor = (EventBEditor) part;
 					IRodinFile rodinFile = editor.getRodinInput();
@@ -108,10 +128,15 @@ public class EventBContextEditorContributor
 		};
 		newAxioms.setText("New Axioms");
 		newAxioms.setToolTipText("Create new axioms for the component");
-		newAxioms.setImageDescriptor(EventBImage.getImageDescriptor(EventBImage.IMG_NEW_AXIOMS_PATH));
+		newAxioms.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_AXIOMS_PATH));
 	}
-	
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
+	 */
 	public void contributeToMenu(IMenuManager manager) {
 		IMenuManager menu = new MenuManager("Event-B");
 		menu.add(newCarrierSets);
@@ -121,6 +146,11 @@ public class EventBContextEditorContributor
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
+	 */
 	public void contributeToToolBar(IToolBarManager manager) {
 		manager.add(new Separator());
 		manager.add(newCarrierSets);
@@ -128,4 +158,5 @@ public class EventBContextEditorContributor
 		manager.add(newTheorems);
 		manager.add(newAxioms);
 	}
+
 }
