@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -59,35 +60,49 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
- * <p>
- * Abstract Event-B specific form editor for machines, contexts.
+ *         <p>
+ *         Abstract Event-B specific form editor for machines, contexts.
  */
-public abstract class EventBEditor
-	extends FormEditor
-	implements IElementChangedListener
-{	
+public abstract class EventBEditor extends FormEditor implements
+		IElementChangedListener {
 
-	private static class FormEditorSelectionProvider
-	implements ISelectionProvider
-	{
+	/**
+	 * @author htson
+	 *         <p>
+	 *         This override the Selection Provider and redirect the provider to
+	 *         the current active page of the editor.
+	 */
+	private static class FormEditorSelectionProvider implements
+			ISelectionProvider {
 		private ISelection globalSelection;
+
 		private ListenerList listeners;
+
 		private FormEditor formEditor;
+
 		/**
-		 * @param multiPageEditor
+		 * Constructor.
+		 * <p>
+		 * 
+		 * @param formEditor
+		 *            the Form Eidtor contains this provider.
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
 			listeners = new ListenerList();
 			this.formEditor = formEditor;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+		 */
 		public ISelection getSelection() {
 			IFormPage activePage = formEditor.getActivePageInstance();
-//			UIUtils.debug("Active Pages " + activePage);
 			if (activePage != null) {
 				if (activePage instanceof EventBFormPage) {
-					ISelectionProvider selectionProvider = ((EventBFormPage) activePage).getPart().getViewer();
-//					UIUtils.debug("Provider: " + selectionProvider);
+					ISelectionProvider selectionProvider = ((EventBFormPage) activePage)
+							.getPart().getViewer();
 					if (selectionProvider != null)
 						if (selectionProvider != this)
 							return selectionProvider.getSelection();
@@ -97,96 +112,137 @@ public abstract class EventBEditor
 		}
 
 		/*
-		 * (non-Javadoc) Method declared on <code> ISelectionProvider </code> .
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 		 */
 		public void setSelection(ISelection selection) {
 			IFormPage activePage = formEditor.getActivePageInstance();
 			if (activePage != null) {
-				ISelectionProvider selectionProvider = activePage.getSite().getSelectionProvider();
+				ISelectionProvider selectionProvider = activePage.getSite()
+						.getSelectionProvider();
 				if (selectionProvider != null) {
 					if (selectionProvider != this)
 						selectionProvider.setSelection(selection);
 				}
-			}
-			else {
+			} else {
 				this.globalSelection = selection;
 				fireSelectionChanged(new SelectionChangedEvent(this,
 						globalSelection));
 			}
 		}
 
-	    /**
-	     * Notifies all registered selection changed listeners that the editor's 
-	     * selection has changed. Only listeners registered at the time this method is
-	     * called are notified.
-	     *
-	     * @param event the selection changed event
-	     */
-	    public void fireSelectionChanged(final SelectionChangedEvent event) {
-	        Object[] listeners = this.listeners.getListeners();
-	        for (int i = 0; i < listeners.length; ++i) {
-	            final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-	            Platform.run(new SafeRunnable() {
-	                public void run() {
-	                    l.selectionChanged(event);
-	                }
-	            });
-	        }
-	    }
+		/**
+		 * Notifies all registered selection changed listeners that the editor's
+		 * selection has changed. Only listeners registered at the time this
+		 * method is called are notified.
+		 * 
+		 * @param event
+		 *            the selection changed event
+		 */
+		public void fireSelectionChanged(final SelectionChangedEvent event) {
+			Object[] listeners = this.listeners.getListeners();
+			for (int i = 0; i < listeners.length; ++i) {
+				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						l.selectionChanged(event);
+					}
+				});
+			}
+		}
 
-	    /* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 		 */
-		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		public void addSelectionChangedListener(
+				ISelectionChangedListener listener) {
 			listeners.add(listener);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 		 */
-		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		public void removeSelectionChangedListener(
+				ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
 	}
 
 	// The outline page
 	private EventBContentOutlinePage fOutlinePage;
-	
+
 	// The associated rodin file handle
 	private IRodinFile rodinFile = null;
-	
-	public static Collection<IElementChangedListener> listeners;
-	
+
+	// List of Element Changed listeners for the editor.
+	private static Collection<IElementChangedListener> listeners;
+
+	// Collection of new elements (unsaved).
 	private Collection<IRodinElement> newElements;
-	
+
+	// List of status changed listener (when elements are saved).
 	private Collection<IStatusChangedListener> statusListeners;
-	
+
+	/**
+	 * Add an element to be new.
+	 * <p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 */
 	public void addNewElement(IRodinElement element) {
 		newElements.add(element);
 		notifyStatusChanged(element);
 	}
-	
+
+	// Notify a status change of an element
 	private void notifyStatusChanged(IRodinElement element) {
 		for (IStatusChangedListener listener : statusListeners) {
 			listener.statusChanged(element);
-		}		
+		}
 	}
-	
+
+	/**
+	 * Add a new status changed listener.
+	 * <p>
+	 * 
+	 * @param listener
+	 *            a status changed listener
+	 */
 	public void addStatusListener(IStatusChangedListener listener) {
 		statusListeners.add(listener);
 	}
-	
+
+	/**
+	 * Remove a status changed listener.
+	 * <p>
+	 * 
+	 * @param listener
+	 *            a status changed listener
+	 */
 	public void removeStatusListener(IStatusChangedListener listener) {
 		statusListeners.remove(listener);
 	}
 
+	/**
+	 * Check if an element is new (unsaved).
+	 * <p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @return <code>true</code> if the element is new (unsaved)
+	 */
 	public boolean isNewElement(IRodinElement element) {
 		return newElements.contains(element);
 	}
-	
-	
+
 	/**
-	 * Default constructor.
+	 * Constructor.
 	 */
 	public EventBEditor() {
 		super();
@@ -196,75 +252,103 @@ public abstract class EventBEditor
 		statusListeners = new HashSet<IStatusChangedListener>();
 	}
 
+	/**
+	 * Add a new element changed listener.
+	 * <p>
+	 * 
+	 * @param listener
+	 *            an element changed listener
+	 */
 	public void addElementChangedListener(IElementChangedListener listener) {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Remove an element changed listener.
+	 * <p>
+	 * 
+	 * @param listener
+	 *            an element changed listener
+	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
 		listeners.remove(listener);
 	}
-	
-	public void notifyElementChangedListeners(IRodinElementDelta delta) {
+
+	/**
+	 * Notified the element changed.
+	 * <p>
+	 * 
+	 * @param delta
+	 *            Rodin Element Delta which is related to the current editting
+	 *            file
+	 */
+	private void notifyElementChangedListeners(IRodinElementDelta delta) {
 		for (IElementChangedListener listener : listeners) {
-			listener.elementChanged(new ElementChangedEvent(delta, ElementChangedEvent.POST_CHANGE));
+			listener.elementChanged(new ElementChangedEvent(delta,
+					ElementChangedEvent.POST_CHANGE));
 		}
 	}
-	
-	/**
-	 * Overrides super to plug in a different selection provider.
+
+	/*
+	 * (non-Javadoc) Overrides super to plug in a different selection provider.
+	 * 
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
+	 *      org.eclipse.ui.IEditorInput)
 	 */
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		IRodinFile rodinFile = this.getRodinInput();
-		
-		this.setPartName(EventBPlugin.getComponentName(rodinFile.getElementName()));
+
+		this.setPartName(EventBPlugin.getComponentName(rodinFile
+				.getElementName()));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
-	@Override
 	public boolean isDirty() {
-//		UIUtils.debug("Checking dirty");
 		try {
 			return this.getRodinInput().hasUnsavedChanges();
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 		return super.isDirty();
 	}
 
-
-	/** The <code>EventBMachineEditor</code> implementation of this 
-	 * <code>AbstractTextEditor</code> method performs any extra 
-	 * disposal actions required by the Event-B editor.
+	/**
+	 * The <code>EventBMachineEditor</code> implementation of this
+	 * <code>AbstractTextEditor</code> method performs any extra disposal
+	 * actions required by the Event-B editor.
 	 */
 	public void dispose() {
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
-		
+
 		try { // Close the associated RodinFile
 			this.getRodinInput().close();
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		
+
 		super.dispose();
-	}	
-			
+	}
+
 	/**
-	 * The <code>EventBMachineEditor</code> implementation of this 
-	 * method performs gets the content outline page if request
-	 * is for a an outline page.
-	 * <p> 
-	 * @param required the required type
+	 * The <code>EventBMachineEditor</code> implementation of this method
+	 * performs gets the content outline page if request is for a an outline
+	 * page.
 	 * <p>
+	 * 
+	 * @param required
+	 *            the required type
+	 *            <p>
 	 * @return an adapter for the required type or <code>null</code>
-	 */ 
+	 */
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
@@ -274,34 +358,39 @@ public abstract class EventBEditor
 			}
 			return fOutlinePage;
 		}
-		
+
 		return super.getAdapter(required);
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorPart.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-
-	/**
-	 * Saves the multi-page editor's document as another file.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
 	public void doSaveAs() {
 		// TODO Do save as
 		MessageDialog.openInformation(null, null, "Saving");
-		//EventBFormPage editor = (EventBFormPage) this.getEditor(0);
-		//editor.doSaveAs();
-		//IEditorPart editor = getEditor(0);
-		//editor.doSaveAs();
-		//setPageText(0, editor.getTitle());
-		//setInput(editor.getEditorInput());
+		// EventBFormPage editor = (EventBFormPage) this.getEditor(0);
+		// editor.doSaveAs();
+		// IEditorPart editor = getEditor(0);
+		// editor.doSaveAs();
+		// setPageText(0, editor.getTitle());
+		// setInput(editor.getEditorInput());
 	}
-	
-	/**
-	 * Saves the multi-page editor's document.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		try {
@@ -322,44 +411,46 @@ public abstract class EventBEditor
 			// Save the file from the database to file
 			IRodinFile inputFile = this.getRodinInput();
 			inputFile.save(monitor, true);
-			
+
 			while (!newElements.isEmpty()) {
 				IRodinElement element = (IRodinElement) newElements.toArray()[0];
 				newElements.remove(element);
 				notifyStatusChanged(element);
 			}
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
 
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	
 	/**
 	 * Set the selection in the editor.
 	 * <p>
-	 * @param ssel the current selecting element
+	 * 
+	 * @param ssel
+	 *            the current selecting element. It can be an IRodinElement or a
+	 *            TreeNode (from the ProjectExplorer).
 	 */
 	public void setSelection(Object ssel) {
 		if (ssel instanceof IRodinElement) {
 			setElementSelection((IRodinElement) ssel);
 			return;
 		}
-		
+
 		if (ssel instanceof TreeNode) {
 			setTreeNodeSelection((TreeNode) ssel);
 			return;
 		}
 		return;
 	}
-	
-	
-	/*
+
+	/**
 	 * Set the selection in the editor if the input is a TreeNode.
-	 * <p> 
-	 * @param node instance of TreeNode
+	 * <p>
+	 * 
+	 * @param node
+	 *            instance of TreeNode
 	 */
 	private void setTreeNodeSelection(TreeNode node) {
 		if (node.isType(IVariable.ELEMENT_TYPE)) {
@@ -392,12 +483,13 @@ public abstract class EventBEditor
 		}
 		return;
 	}
-	
 
-	/*
+	/**
 	 * Set the selection in the editor if the input is a Rodin element.
-	 * <p> 
-	 * @param node instance of IRodinElement
+	 * <p>
+	 * 
+	 * @param node
+	 *            instance of IRodinElement
 	 */
 	private void setElementSelection(IRodinElement element) {
 		if (element instanceof IMachine) {
@@ -414,11 +506,11 @@ public abstract class EventBEditor
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
 		}
-		
+
 		if (element instanceof IAxiom) {
 			this.setActivePage(AxiomPage.PAGE_ID);
 		}
-		
+
 		else if (element instanceof ITheorem) {
 			this.setActivePage(TheoremPage.PAGE_ID);
 		}
@@ -426,85 +518,96 @@ public abstract class EventBEditor
 		else if (element instanceof ICarrierSet) {
 			this.setActivePage(CarrierSetPage.PAGE_ID);
 		}
-		
+
 		else if (element instanceof IConstant)
 			this.setActivePage(ConstantPage.PAGE_ID);
 
 		else if (element instanceof IInvariant)
 			this.setActivePage(InvariantPage.PAGE_ID);
-		
+
 		else if (element instanceof IEvent)
 			this.setActivePage(EventPage.PAGE_ID);
-		
+
 		else if (element instanceof IVariable) {
-			if (element.getParent() instanceof IMachine) 
+			if (element.getParent() instanceof IMachine)
 				this.setActivePage(VariablePage.PAGE_ID);
-			else this.setActivePage(EventPage.PAGE_ID);
+			else
+				this.setActivePage(EventPage.PAGE_ID);
 		}
-		
+
 		else if (element instanceof IGuard) {
 			this.setActivePage(EventPage.PAGE_ID);
 		}
-		
+
 		else if (element instanceof IAction) {
 			this.setActivePage(EventPage.PAGE_ID);
 		}
-		
+
 		else {
 			UIUtils.debug("Unknown element type");
 			return;
 		}
-		
+
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EventBFormPage) {
 			((EventBFormPage) page).setSelection(element);
 		}
-		
+
 	}
-	
-	
+
 	/**
-	 * Getting the RodinFile associated with this editor
+	 * Getting the RodinFile associated with this editor.
 	 * <p>
+	 * 
 	 * @return a handle to a Rodin file
 	 */
 	public IRodinFile getRodinInput() {
 		if (rodinFile == null) {
-			FileEditorInput editorInput = (FileEditorInput) this.getEditorInput();
-			
+			FileEditorInput editorInput = (FileEditorInput) this
+					.getEditorInput();
+
 			IFile inputFile = editorInput.getFile();
-			
+
 			rodinFile = (IRodinFile) RodinCore.create(inputFile);
 		}
 		return rodinFile;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	public void elementChanged(ElementChangedEvent event) {		
+	public void elementChanged(ElementChangedEvent event) {
 		IRodinElementDelta delta = event.getDelta();
-//		UIUtils.debug("Delta: " + delta);
 		processDelta(delta);
 	}
 
+	/**
+	 * Process the delta recursively until finding the delta that is related to
+	 * the Rodin file associated with this editor.
+	 * <p>
+	 * 
+	 * @param delta
+	 *            a Rodin Element Delta
+	 */
 	private void processDelta(IRodinElementDelta delta) {
-		IRodinElement element= delta.getElement();
-		
+		IRodinElement element = delta.getElement();
+
 		if (element instanceof IRodinDB) {
-			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			IRodinElementDelta[] deltas = delta.getAffectedChildren();
 			for (int i = 0; i < deltas.length; i++) {
 				processDelta(deltas[i]);
 			}
-			return;			
+			return;
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) element;
 			if (!this.getRodinInput().getParent().equals(prj)) {
 				return;
 			}
-			IRodinElementDelta [] deltas = delta.getAffectedChildren();
+			IRodinElementDelta[] deltas = delta.getAffectedChildren();
 			for (int i = 0; i < deltas.length; i++) {
 				processDelta(deltas[i]);
 			}
@@ -525,5 +628,5 @@ public abstract class EventBEditor
 			return;
 		}
 	}
-	
+
 }

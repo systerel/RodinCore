@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -47,8 +48,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This class provides the actions that will be used with the tree
- *         viewer for Events (Rodin elements).
+ *         This class provides the actions that will be used with the Editable
+ *         Tree Viewer.
  */
 public class EventBMasterSectionActionGroup extends ActionGroup {
 
@@ -86,17 +87,20 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 	protected Action handleDown;
 
 	/**
-	 * Constructor: Create the actions
+	 * Constructor: Create the actions.
 	 * <p>
 	 * 
-	 * @param eventSection
-	 *            The Event Master section
+	 * @param eventBEditor
+	 *            The Event-B Editor
+	 * @param treeViewer
+	 *            The tree viewer associated with this action group
 	 */
 	public EventBMasterSectionActionGroup(EventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;
 
+		// Add a variable.
 		addVariable = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -134,6 +138,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addVariable.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add an invariant.
 		addInvariant = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -172,6 +177,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addInvariant.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add a theorem.
 		addTheorem = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -210,6 +216,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addTheorem.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add an event.
 		addEvent = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -268,7 +275,8 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 									}
 									viewer.setExpandedState(event, true);
 									viewer.reveal(act);
-									((EventBEditableTreeViewer) viewer).edit(event);
+									((EventBEditableTreeViewer) viewer)
+											.edit(event);
 								} catch (RodinDBException e) {
 									e.printStackTrace();
 								}
@@ -281,6 +289,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addEvent.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add a local variable.
 		addLocalVariable = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -327,6 +336,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addLocalVariable.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add a guard.
 		addGuard = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -375,6 +385,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addGuard.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add an action.
 		addAction = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -391,7 +402,8 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 												.createInternalElement(
 														IAction.ELEMENT_TYPE,
 														null, null, null);
-										act.setContents(EventBUIPlugin.SUB_DEFAULT);
+										act
+												.setContents(EventBUIPlugin.SUB_DEFAULT);
 										editor.addNewElement(act);
 										viewer.setExpandedState(TreeSupports
 												.findItem(viewer.getTree(),
@@ -410,6 +422,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addAction.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add a carrier set.
 		addSet = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -418,16 +431,20 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								IRodinFile rodinFile = editor.getRodinInput();
 								try {
 									int counter = 1;
-									IRodinElement [] vars = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
+									IRodinElement[] vars = rodinFile
+											.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 									for (counter = 1; counter <= vars.length; counter++) {
-										IInternalElement element = rodinFile.getInternalElement(ICarrierSet.ELEMENT_TYPE, "set"+counter);
-										if (!element.exists()) break;
+										IInternalElement element = rodinFile
+												.getInternalElement(
+														ICarrierSet.ELEMENT_TYPE,
+														"set" + counter);
+										if (!element.exists())
+											break;
 									}
 									IRodinElement set = rodinFile
 											.createInternalElement(
 													ICarrierSet.ELEMENT_TYPE,
-													"set" + counter,
-													null, null);
+													"set" + counter, null, null);
 									editor.addNewElement(set);
 									((EventBEditableTreeViewer) viewer)
 											.edit(set);
@@ -443,6 +460,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addSet.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add a constant.
 		addConstant = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -451,16 +469,20 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								IRodinFile rodinFile = editor.getRodinInput();
 								try {
 									int counter = 1;
-									IRodinElement [] vars = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE);
+									IRodinElement[] vars = rodinFile
+											.getChildrenOfType(IConstant.ELEMENT_TYPE);
 									for (counter = 1; counter <= vars.length; counter++) {
-										IInternalElement element = rodinFile.getInternalElement(IConstant.ELEMENT_TYPE, "cst" + counter);
-										if (!element.exists()) break;
+										IInternalElement element = rodinFile
+												.getInternalElement(
+														IConstant.ELEMENT_TYPE,
+														"cst" + counter);
+										if (!element.exists())
+											break;
 									}
 									IInternalElement cst = rodinFile
 											.createInternalElement(
 													IConstant.ELEMENT_TYPE,
-													"cst" + counter,
-													null, null);
+													"cst" + counter, null, null);
 									editor.addNewElement(cst);
 									((EventBEditableTreeViewer) viewer)
 											.edit(cst);
@@ -476,6 +498,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addConstant.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Add an axiom.
 		addAxiom = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -484,16 +507,21 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								IRodinFile rodinFile = editor.getRodinInput();
 								try {
 									int counter = 1;
-									IRodinElement [] vars = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+									IRodinElement[] vars = rodinFile
+											.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 									for (counter = 1; counter <= vars.length; counter++) {
-										IInternalElement element = rodinFile.getInternalElement(IAxiom.ELEMENT_TYPE, "axm" + counter);
-										if (!element.exists()) break;
+										IInternalElement element = rodinFile
+												.getInternalElement(
+														IAxiom.ELEMENT_TYPE,
+														"axm" + counter);
+										if (!element.exists())
+											break;
 									}
 									IInternalElement axm = rodinFile
 											.createInternalElement(
 													IAxiom.ELEMENT_TYPE, "axm"
-															+ counter,
-													null, null);
+															+ counter, null,
+													null);
 									axm.setContents(EventBUIPlugin.AXM_DEFAULT);
 									editor.addNewElement(axm);
 									((EventBEditableTreeViewer) viewer)
@@ -510,6 +538,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		addAxiom.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -539,6 +568,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		delete.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 
+		// Handle the up action.
 		handleUp = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -549,8 +579,10 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								TreeItem item = items[0];
 								TreeItem prev = TreeSupports.findPrevItem(tree,
 										item);
-								IRodinElement currObj = (IRodinElement) item.getData();
-								IRodinElement prevObj = (IRodinElement) prev.getData();
+								IRodinElement currObj = (IRodinElement) item
+										.getData();
+								IRodinElement prevObj = (IRodinElement) prev
+										.getData();
 
 								try {
 									((IInternalElement) currObj).move(currObj
@@ -558,7 +590,8 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 											null);
 									TreeItem newItem = TreeSupports.findItem(
 											tree, currObj);
-									viewer.setSelection(new StructuredSelection(
+									viewer
+											.setSelection(new StructuredSelection(
 													newItem.getData()));
 								} catch (RodinDBException e) {
 									e.printStackTrace();
@@ -572,6 +605,7 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		handleUp.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
+		// Handle the down action.
 		handleDown = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(viewer.getTree().getDisplay(),
@@ -582,8 +616,10 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 								TreeItem item = items[0];
 								TreeItem next = TreeSupports.findNextItem(tree,
 										item);
-								IRodinElement currObj = (IRodinElement) item.getData();
-								IRodinElement nextObj = (IRodinElement) next.getData();
+								IRodinElement currObj = (IRodinElement) item
+										.getData();
+								IRodinElement nextObj = (IRodinElement) next
+										.getData();
 
 								try {
 									((IInternalElement) nextObj).move(nextObj
@@ -642,23 +678,20 @@ public class EventBMasterSectionActionGroup extends ActionGroup {
 		}
 	}
 
+	/**
+	 * Try to select an object in the viewer at a specific column.
+	 * <p>
+	 * @param obj the object
+	 * @param column the column
+	 * @throws RodinDBException a Rodin Exception when selecting the element.
+	 */
 	private void select(Object obj, int column) throws RodinDBException {
-		// UIUtils.debug("Element: " + obj);
-		// if (obj instanceof IAction) {
-		// UIUtils.debug("Action: " + ((IAction) obj).getContents());
-		// }
 		TreeItem item = TreeSupports.findItem(viewer.getTree(),
 				(IRodinElement) obj);
 		viewer.reveal(item.getData());
 
-		((EventBEditableTreeViewer) viewer).selectItem(item, column); // try
-																		// to
-																		// select
-																		// the
-																		// second
-																		// column
-																		// to
-																		// edit
-																		// name
+		// try to select the column to edit element
+		((EventBEditableTreeViewer) viewer).selectItem(item, column);
 	}
+	
 }
