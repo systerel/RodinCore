@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -24,95 +25,104 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
-
 /**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
+ * @author htson
+ *         <p>
+ *         This class is an implementation of a Event Mirror 'page'.
  */
+public class EventMirrorPage extends EventBMirrorPage implements
+		IEventMirrorPage {
 
-public class EventMirrorPage
-	extends EventBMirrorPage
-	implements	IEventMirrorPage
-{
-
+	/**
+	 * Constructor.
+	 * <p>
+	 * @param editor an Event-B Editor
+	 */
 	public EventMirrorPage(EventBEditor editor) {
 		super(editor);
-	}   
-    
-	/**
-	 * Return the form (XML formatted) string that represents the information 
-	 * of the constants.
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#getFormString()
 	 */
 	protected String getFormString() {
 		String formString = "<form>";
-		
+
 		try {
-			IRodinElement [] events = editor.getRodinInput().getChildrenOfType(IEvent.ELEMENT_TYPE);
+			IRodinElement[] events = editor.getRodinInput().getChildrenOfType(
+					IEvent.ELEMENT_TYPE);
 			for (int i = 0; i < events.length; i++) {
-				formString = formString + "<li style=\"bullet\">" + UIUtils.makeHyperlink(events[i].getElementName()) + ":</li>";
-				IRodinElement [] lvars = ((IInternalElement) events[i]).getChildrenOfType(IVariable.ELEMENT_TYPE);
-				IRodinElement [] guards = ((IInternalElement) events[i]).getChildrenOfType(IGuard.ELEMENT_TYPE);
-				IRodinElement [] actions = ((IInternalElement) events[i]).getChildrenOfType(IAction.ELEMENT_TYPE);
-				
+				formString = formString + "<li style=\"bullet\">"
+						+ UIUtils.makeHyperlink(events[i].getElementName())
+						+ ":</li>";
+				IRodinElement[] lvars = ((IInternalElement) events[i])
+						.getChildrenOfType(IVariable.ELEMENT_TYPE);
+				IRodinElement[] guards = ((IInternalElement) events[i])
+						.getChildrenOfType(IGuard.ELEMENT_TYPE);
+				IRodinElement[] actions = ((IInternalElement) events[i])
+						.getChildrenOfType(IAction.ELEMENT_TYPE);
+
 				if (lvars.length != 0) {
-					formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 					formString = formString + "<b>ANY</b> ";
 					for (int j = 0; j < lvars.length; j++) {
-						if (j == 0)	{
-							formString = formString + UIUtils.makeHyperlink(lvars[j].getElementName());
-						}
-						else formString = formString + ", " + UIUtils.makeHyperlink(lvars[j].getElementName());
-					}			
+						if (j == 0) {
+							formString = formString
+									+ UIUtils.makeHyperlink(lvars[j]
+											.getElementName());
+						} else
+							formString = formString
+									+ ", "
+									+ UIUtils.makeHyperlink(lvars[j]
+											.getElementName());
+					}
 					formString = formString + " <b>WHERE</b>";
 					formString = formString + "</li>";
-				}
-				else {
-					if (guards.length !=0) {
-						formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+				} else {
+					if (guards.length != 0) {
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 						formString = formString + "<b>WHEN</b></li>";
-					}
-					else {
-						formString = formString + "<li style=\"text\" value=\"\" bindent = \"20\">";
+					} else {
+						formString = formString
+								+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 						formString = formString + "<b>BEGIN</b></li>";
 					}
-				
+
 				}
 
 				for (int j = 0; j < guards.length; j++) {
-					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + UIUtils.makeHyperlink(guards[j].getElementName()) + ": "
-						+ UIUtils.XMLWrapUp(((IInternalElement) guards[j]).getContents());
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+					formString = formString
+							+ UIUtils.makeHyperlink(guards[j].getElementName())
+							+ ": "
+							+ UIUtils.XMLWrapUp(((IInternalElement) guards[j])
+									.getContents());
 					formString = formString + "</li>";
 				}
-				
+
 				if (guards.length != 0) {
-					formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"20\">";
 					formString = formString + "<b>THEN</b></li>";
 				}
-			
+
 				for (int j = 0; j < actions.length; j++) {
-					formString = formString + "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + UIUtils.makeHyperlink(((IInternalElement) actions[j]).getContents());
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+					formString = formString
+							+ UIUtils
+									.makeHyperlink(((IInternalElement) actions[j])
+											.getContents());
 					formString = formString + "</li>";
 				}
-				formString = formString + "<li style=\"text\" value=\"\" bindent=\"20\">";
+				formString = formString
+						+ "<li style=\"text\" value=\"\" bindent=\"20\">";
 				formString = formString + "<b>END</b></li>";
 			}
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			// TODO Exception handle
 			e.printStackTrace();
 		}
@@ -120,24 +130,27 @@ public class EventMirrorPage
 
 		return formString;
 	}
-	
 
-	/**
-	 * Return the hyperlink listener which enable the navigation on the form. 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#createHyperlinkListener()
 	 */
 	protected HyperlinkAdapter createHyperlinkListener() {
+		// TODO Using name is not enough since local guards can have same name in different event.
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IEvent [] events = ((IMachine) rodinFile).getEvents();
+					IEvent[] events = ((IMachine) rodinFile).getEvents();
 					for (int i = 0; i < events.length; i++) {
 						if (e.getHref().equals(events[i].getElementName())) {
 							editor.setSelection(events[i]);
 						}
-						IRodinElement [] lvars = events[i].getChildrenOfType(IVariable.ELEMENT_TYPE);
-						IRodinElement [] guards = events[i].getChildrenOfType(IGuard.ELEMENT_TYPE);
-						IRodinElement [] actions = events[i].getChildrenOfType(IAction.ELEMENT_TYPE);
+						IRodinElement[] lvars = events[i]
+								.getChildrenOfType(IVariable.ELEMENT_TYPE);
+						IRodinElement[] guards = events[i]
+								.getChildrenOfType(IGuard.ELEMENT_TYPE);
+						IRodinElement[] actions = events[i]
+								.getChildrenOfType(IAction.ELEMENT_TYPE);
 						for (int j = 0; j < lvars.length; j++) {
 							if (e.getHref().equals(lvars[j].getElementName())) {
 								editor.setSelection(lvars[j]);
@@ -149,16 +162,17 @@ public class EventMirrorPage
 							}
 						}
 						for (int j = 0; j < actions.length; j++) {
-							if (e.getHref().equals(((IInternalElement) actions[j]).getContents())) {
+							if (e.getHref().equals(
+									((IInternalElement) actions[j])
+											.getContents())) {
 								editor.setSelection(actions[j]);
 							}
 						}
 					}
-				}
-				catch (RodinDBException exception) {
+				} catch (RodinDBException exception) {
 					// TODO Exception handle
 					exception.printStackTrace();
-				}				
+				}
 			}
 		});
 	}

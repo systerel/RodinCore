@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -41,121 +42,138 @@ import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author htson
- * <p>
- * An implementation of the Event-B Table part with buttons
- * for displaying constants (used as master section in Master-Detail block).
+ *         <p>
+ *         An implementation of the Event-B Tree part with buttons for
+ *         displaying and editting events.
  */
-public class EventMasterSection 
-	extends EventBTreePartWithButtons
-{
+public class EventMasterSection extends EventBTreePartWithButtons {
+
 	// The indexes for different buttons.
 	private static final int ADD_EVT_INDEX = 0;
+
 	private static final int ADD_VAR_INDEX = 1;
+
 	private static final int ADD_GRD_INDEX = 2;
+
 	private static final int ADD_ACT_INDEX = 3;
+
 	private static final int UP_INDEX = 4;
+
 	private static final int DOWN_INDEX = 5;
 
-	private static final String [] buttonLabels =
-		{"Add Event", "Add Var.", "Add Guard", "Add Action", "Up", "Down"};
+	// The labels correspond to the above buttons.
+	private static final String[] buttonLabels = { "Add Event", "Add Var.",
+			"Add Guard", "Add Action", "Up", "Down" };
 
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Events";
+
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
-	
+
+	// A set of filters
 	private ViewerFilter varFilter;
+
 	private ViewerFilter grdFilter;
 
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param managedForm The form to create this master section
-	 * @param parent The composite parent
-	 * @param toolkit The Form Toolkit used to create this master section
-	 * @param style The style
-	 * @param block The master detail block which this master section belong to
+	 * 
+	 * @param managedForm
+	 *            The form to create this master section
+	 * @param parent
+	 *            The composite parent
+	 * @param toolkit
+	 *            The Form Toolkit used to create this master section
+	 * @param style
+	 *            The style
+	 * @param editor
+	 *            an Event-B Editor
 	 */
-	public EventMasterSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit, 
-			int style, EventBEditor editor) {
-		super(managedForm, parent, toolkit, style, editor, buttonLabels, SECTION_TITLE, SECTION_DESCRIPTION);
-		
+	public EventMasterSection(IManagedForm managedForm, Composite parent,
+			FormToolkit toolkit, int style, EventBEditor editor) {
+		super(managedForm, parent, toolkit, style, editor, buttonLabels,
+				SECTION_TITLE, SECTION_DESCRIPTION);
+
 		hookContextMenu();
 		createToolBarActions(managedForm);
 	}
-	
+
 	/**
-	 * Create the Toolbar actions
+	 * Create the Toolbar actions.
+	 * <p>
+	 * 
+	 * @param managedForm
+	 *            The managed form contains the Toolbar.
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
-		final ScrolledForm form = managedForm.getForm();
 		varFilter = new ViewerFilter() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
 			 */
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				IRodinElement rodinElement = ((Leaf) element).getElement();
-				
-				if (element instanceof IVariable) return false;
-				else return true;
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof IVariable)
+					return false;
+				else
+					return true;
 			}
-			
+
 		};
-		
+
 		grdFilter = new ViewerFilter() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
 			 */
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-//				IRodinElement rodinElement = ((Leaf) element).getElement();
-				if (element instanceof IGuard) return false;
-				else return true;
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof IGuard)
+					return false;
+				else
+					return true;
 			}
-			
+
 		};
 
 		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
-				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
-//				Object [] objects = viewer.getExpandedElements();
-				if (isChecked()) viewer.addFilter(varFilter);
-				else viewer.removeFilter(varFilter);
-				// This only work for tree with 2 layers
-//				for (Object object : objects) {
-//					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-//					viewer.setExpandedState(item.getData(), true);
-//				}
+				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
+						.getViewer());
+				if (isChecked())
+					viewer.addFilter(varFilter);
+				else
+					viewer.removeFilter(varFilter);
 			}
 		};
 		filterVarAction.setChecked(false);
 		filterVarAction.setToolTipText("Filter variable elements");
 		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
-				TreeViewer viewer = ((TreeViewer) EventMasterSection.this.getViewer());
-//				Object [] objects = viewer.getExpandedElements();
-//				for (Object object : objects) {
-//				UIUtils.debug("Object: " + object + " type: " + object.getClass());
-//			}
-				if (isChecked()) viewer.addFilter(grdFilter);
-				else viewer.removeFilter(grdFilter);
-				// This only work for tree with 2 layers
-//				for (Object object : objects) {
-//					TreeItem item = TreeSupports.findItem(viewer.getTree(), ((Leaf) object).getElement());
-//					viewer.setExpandedState(item.getData(), true);
-//				}
+				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
+						.getViewer());
+				if (isChecked())
+					viewer.addFilter(grdFilter);
+				else
+					viewer.removeFilter(grdFilter);
 			}
 		};
 		filterGrdAtion.setChecked(false);
 		filterGrdAtion.setToolTipText("Filter guard elements");
+
+		ScrolledForm form = managedForm.getForm();
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAtion);
 		form.updateToolBar();
 	}
-	
-	
+
 	/**
 	 * Hook the actions to the menu
 	 */
@@ -164,7 +182,8 @@ public class EventMasterSection
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(((StructuredViewer) getViewer()).getSelection()));
+				groupActionSet.setContext(new ActionContext(
+						((StructuredViewer) getViewer()).getSelection()));
 				groupActionSet.fillContextMenu(manager);
 				groupActionSet.setContext(null);
 			}
@@ -172,37 +191,40 @@ public class EventMasterSection
 		Viewer viewer = getViewer();
 		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
 		((Viewer) viewer).getControl().setMenu(menu);
-		this.editor.getSite().registerContextMenu(menuMgr, (ISelectionProvider) viewer);
+		this.editor.getSite().registerContextMenu(menuMgr,
+				(ISelectionProvider) viewer);
 	}
-	
-	/**
-	 * Update the expanded of buttons.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
 	protected void updateButtons() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
-		TreeItem [] items = tree.getSelection();
-		IStructuredSelection ssel = (IStructuredSelection) getViewer().getSelection();
+		TreeItem[] items = tree.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) getViewer()
+				.getSelection();
 		boolean hasOneSelection = ssel.size() == 1;
 		boolean initSelected = false;
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
-		
+
 		if (hasOneSelection) {
 			IRodinElement event;
 			if (ssel.getFirstElement() instanceof IRodinElement) {
 				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				if (element instanceof IEvent) {
 					event = (IRodinElement) element;
-				}
-				else if (element instanceof IInternalElement) {
+				} else if (element instanceof IInternalElement) {
 					event = ((IInternalElement) element).getParent();
+				} else { // Should not happen
+					event = null;
 				}
-				else { // Should not happen
-					event = null; 
-				}
-				initSelected = (event.getElementName().equals("INITIALISATION")) ? true : false;
+				initSelected = (event.getElementName().equals("INITIALISATION")) ? true
+						: false;
 			}
-			
+
 		}
 
 		if (hasOneSelection) {
@@ -210,104 +232,112 @@ public class EventMasterSection
 			IRodinElement element = ((IRodinElement) item.getData());
 			TreeItem prev = TreeSupports.findPrevItem(tree, item);
 			if (prev != null) {
-				if (element.getElementType() == ((IRodinElement) prev.getData()).getElementType())
+				if (element.getElementType() == ((IRodinElement) prev.getData())
+						.getElementType())
 					canMoveUp = true;
 			}
 			TreeItem next = TreeSupports.findNextItem(tree, item);
 			if (next != null) {
-				if (element.getElementType() == ((IRodinElement) next.getData()).getElementType())
+				if (element.getElementType() == ((IRodinElement) next.getData())
+						.getElementType())
 					canMoveDown = true;
 			}
 		}
-        setButtonEnabled(
-			UP_INDEX,
-			hasOneSelection && canMoveUp);
-		setButtonEnabled(
-			DOWN_INDEX,
-			hasOneSelection && canMoveDown);
-		
+		setButtonEnabled(UP_INDEX, hasOneSelection && canMoveUp);
+		setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
+
 		setButtonEnabled(ADD_EVT_INDEX, true);
 		setButtonEnabled(ADD_VAR_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_GRD_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_ACT_INDEX, hasOneSelection);
 	}
-	
 
-	/**
-	 * Method to response to button selection.
-	 * <p>
-	 * @param index The index of selected button
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_EVT_INDEX:
-				groupActionSet.addEvent.run();
-				break;
-			case ADD_VAR_INDEX:
-				groupActionSet.addLocalVariable.run();
-				break;
-			case ADD_GRD_INDEX:
-				groupActionSet.addGuard.run();
-				break;
-			case ADD_ACT_INDEX:
-				groupActionSet.addAction.run();
-				break;
-			case UP_INDEX:
-				groupActionSet.handleUp.run();
-				break;
-			case DOWN_INDEX:
-				groupActionSet.handleDown.run();
-				break;
+		case ADD_EVT_INDEX:
+			groupActionSet.addEvent.run();
+			break;
+		case ADD_VAR_INDEX:
+			groupActionSet.addLocalVariable.run();
+			break;
+		case ADD_GRD_INDEX:
+			groupActionSet.addGuard.run();
+			break;
+		case ADD_ACT_INDEX:
+			groupActionSet.addAction.run();
+			break;
+		case UP_INDEX:
+			groupActionSet.handleUp.run();
+			break;
+		case DOWN_INDEX:
+			groupActionSet.handleDown.run();
+			break;
 		}
 	}
-	
+
 	/*
-	 * Create the tree view part.
-	 * <p>
-	 * @param managedForm The Form used to create the viewer.
-	 * @param toolkit The Form Toolkit used to create the viewer
-	 * @param parent The composite parent
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createTreeViewer(org.eclipse.ui.forms.IManagedForm,
+	 *      org.eclipse.ui.forms.widgets.FormToolkit,
+	 *      org.eclipse.swt.widgets.Composite)
 	 */
-	protected EventBEditableTreeViewer createTreeViewer(IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new EventEditableTreeViewer(editor, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+	protected EventBEditableTreeViewer createTreeViewer(
+			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
+		return new EventEditableTreeViewer(editor, parent, SWT.MULTI
+				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(final ElementChangedEvent event) {
-		if (this.getViewer().getControl().isDisposed()) return;
+		if (this.getViewer().getControl().isDisposed())
+			return;
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				((EventBEditableTreeViewer) EventMasterSection.this.getViewer()).elementChanged(event);
-				updateButtons();	
+				((EventBEditableTreeViewer) EventMasterSection.this.getViewer())
+						.elementChanged(event);
+				updateButtons();
 			}
 		});
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
-	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
-		TreeItem item  = TreeSupports.findItem(viewer.getTree(), element);
-		if (element instanceof IUnnamedInternalElement) selectItem(item, 1);
-		else if (element instanceof IVariable) selectItem(item, 0);
-		else if (element instanceof IEvent) selectItem(item, 0);
-		else selectItem(item, 1);
+		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
+		if (element instanceof IUnnamedInternalElement)
+			selectItem(item, 1);
+		else if (element instanceof IVariable)
+			selectItem(item, 0);
+		else if (element instanceof IEvent)
+			selectItem(item, 0);
+		else
+			selectItem(item, 1);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
-	@Override
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
 	}
-	
+
 }
