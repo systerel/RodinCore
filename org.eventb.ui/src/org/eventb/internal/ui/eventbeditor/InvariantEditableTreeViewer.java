@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachine;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -32,51 +31,48 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This sub-class Event-B Editable table viewer for editing axiom
+ *         This sub-class Event-B Editable tree viewer for editing invariant
  *         elements.
  */
 public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 
-
 	/**
-	 * The content provider class. 
+	 * @author htson
+	 *         <p>
+	 *         The content provider class.
 	 */
-	class InvariantContentProvider
-	implements IStructuredContentProvider, ITreeContentProvider
-	{
+	class InvariantContentProvider implements IStructuredContentProvider,
+			ITreeContentProvider {
+		// The invisible root
 		private IMachine invisibleRoot = null;
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
 		public Object getParent(Object child) {
-			if (child instanceof IRodinElement) return ((IRodinElement) child).getParent();
+			if (child instanceof IRodinElement)
+				return ((IRodinElement) child).getParent();
 			return null;
 		}
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
 		public Object[] getChildren(Object parent) {
-//			UIUtils.debug("Get Children: " + parent);
 			if (parent instanceof IMachine) {
-//				ArrayList<Node> list = new ArrayList<Node>();
-//				try {
-//					IRodinElement [] invs =   ((IMachine) parent).getChildrenOfType(IInvariant.ELEMENT_TYPE);
-//					for (IRodinElement inv : invs) {
-////						UIUtils.debug("Event: " + event.getElementName());
-//						Node node = new Node(inv);
-//						elementsMap.put(inv, node);
-//						list.add(node);
-//					}
-//				}
-//				catch (RodinDBException e) {
-//					// TODO Exception handle
-//					e.printStackTrace();
-//				}
-//				return list.toArray();
 				try {
-					return ((IMachine) parent).getChildrenOfType(IInvariant.ELEMENT_TYPE);
+					return ((IMachine) parent)
+							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+
 			if (parent instanceof IParent) {
 				try {
 					return ((IParent) parent).getChildren();
@@ -84,35 +80,25 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				Node node = (Node) parent;
-//				node.removeAllChildren();
-//				try {
-//					IRodinElement element = node.getElement();
-//					
-//					if (element instanceof IParent) {
-//						IRodinElement [] children = ((IParent) element).getChildren();
-//						for (IRodinElement child : children) {
-//							Leaf leaf;
-//							if (child instanceof IParent) leaf = new Node(child);
-//							else leaf = new Leaf(child);
-//							elementsMap.put(child, leaf);
-//							node.addChildren(leaf);
-//						}
-//					}
-//				}
-//				catch (RodinDBException e) {
-//					e.printStackTrace();
-//				}
-//				return node.getChildren();
 			}
-			
+
 			return new Object[0];
 		}
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
@@ -122,53 +108,82 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 			}
 			return getChildren(parent);
 		}
-		
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
-//			elementsMap = new HashMap<IRodinElement, Leaf>();
 		}
 	}
-	
-	public InvariantEditableTreeViewer(EventBEditor editor, Composite parent, int style) {
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            an Event-B Editor
+	 * @param parent
+	 *            the composite parent for this tree viewer
+	 * @param style
+	 *            the style to create the tree viewer
+	 */
+	public InvariantEditableTreeViewer(EventBEditor editor, Composite parent,
+			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new InvariantContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor));
 		this.setSorter(new RodinElementSorter());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
+	 *      int, java.lang.String)
+	 */
 	public void commit(IRodinElement element, int col, String text) {
-		
+
 		switch (col) {
-		case 0:  // Commit name
+		case 0: // Commit name
 			try {
-				UIUtils.debug("Commit : " + element.getElementName() + " to be : " + text);
 				if (!element.getElementName().equals(text)) {
 					((IInternalElement) element).rename(text, false, null);
 				}
-			}
-			catch (RodinDBException e) {
+			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-				
+
 			break;
 
-		case 1:  // Commit content
+		case 1: // Commit content
 			try {
-				UIUtils.debug("Commit content: " + ((IInternalElement) element).getContents() + " to be : " + text);
 				if (!((IInternalElement) element).getContents().equals(text)) {
 					((IInternalElement) element).setContents(text);
 				}
-			}
-			catch (RodinDBException e) {
+			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 			break;
 		}
 	}
-	
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
+	 */
 	protected void createTreeColumns() {
 		numColumn = 2;
 
@@ -182,22 +197,35 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		predicateColumn.setText("Predicates");
 		predicateColumn.setResizable(true);
 		predicateColumn.setWidth(250);
-		
+
 		tree.setHeaderVisible(true);
 	}
-	
-	@Override
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
+	 *      int)
+	 */
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement)) return false;
+		if (!(object instanceof IRodinElement))
+			return false;
 		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object)) return true;
+			if (!editor.isNewElement((IRodinElement) object))
+				return true;
 		}
 		return false;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
+	 */
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
-		TreeItem item  = TreeSupports.findItem(this.getTree(), element);
+		TreeItem item = TreeSupports.findItem(this.getTree(), element);
 		selectItem(item, 1);
 	}
+
 }

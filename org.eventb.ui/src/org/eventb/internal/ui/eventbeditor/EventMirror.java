@@ -35,7 +35,7 @@ public class EventMirror extends EventBMirror {
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.EventMirror";
 
-	private String defaultText = "A mirror of the events is not available";
+	private String defaultText = "Information about events is not available";
 
 	/*
 	 * (non-Javadoc)
