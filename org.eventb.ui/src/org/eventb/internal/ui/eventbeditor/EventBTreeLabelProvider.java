@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -17,22 +29,36 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class EventBTreeLabelProvider
-	implements	ITableLabelProvider,
-				ITableFontProvider,
-				ITableColorProvider
-{
-	private EventBEditor editor;
+/**
+ * @author htson
+ *         <p>
+ *         This class provides the labels, fonts and colors for the Editable
+ *         Tree Viewer.
+ */
+public class EventBTreeLabelProvider implements ITableLabelProvider,
+		ITableFontProvider, ITableColorProvider {
 	
+	// The associated Event-B Editor
+	private EventBEditor editor;
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * @param editor An Event-B Editor
+	 */
 	public EventBTreeLabelProvider(EventBEditor editor) {
 		this.editor = editor;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
+	 *      int)
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
-		if (columnIndex != 0) return null;
+		if (columnIndex != 0)
+			return null;
 		if (element instanceof IRodinElement) {
 			IRodinElement rodinElement = (IRodinElement) element;
 			return UIUtils.getImage(rodinElement);
@@ -40,96 +66,114 @@ public class EventBTreeLabelProvider
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+	 *      int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof IRodinElement) {
 			IRodinElement rodinElement = (IRodinElement) element;
-			
+
 			if (columnIndex == 0) {
-				if (rodinElement instanceof IUnnamedInternalElement) return "";
-				if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getElementName();
+				if (rodinElement instanceof IUnnamedInternalElement)
+					return "";
+				if (rodinElement instanceof IInternalElement)
+					return ((IInternalElement) rodinElement).getElementName();
 				return rodinElement.toString();
 			}
-			
+
 			if (columnIndex == 1) {
 				try {
-					if (rodinElement instanceof IInternalElement) return ((IInternalElement) rodinElement).getContents();
-				}
-				catch (RodinDBException e) {
+					if (rodinElement instanceof IInternalElement)
+						return ((IInternalElement) rodinElement).getContents();
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 				return rodinElement.toString();
 			}
 		}
-		
+
 		return element.toString();
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+	 *      java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
+	 *      int)
 	 */
 	public Color getBackground(Object element, int columnIndex) {
-		 Display display = Display.getCurrent();
-		 if (element instanceof IRodinElement) {
-			 if (editor.isNewElement((IRodinElement) element))
-				 return display.getSystemColor(SWT.COLOR_YELLOW);
-		 }
-         return display.getSystemColor(SWT.COLOR_WHITE);
+		Display display = Display.getCurrent();
+		if (element instanceof IRodinElement) {
+			if (editor.isNewElement((IRodinElement) element))
+				return display.getSystemColor(SWT.COLOR_YELLOW);
+		}
+		return display.getSystemColor(SWT.COLOR_WHITE);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
+	 *      int)
 	 */
 	public Color getForeground(Object element, int columnIndex) {
 		Display display = Display.getCurrent();
 		if (element instanceof IRodinElement) {
 			if (editor.isNewElement((IRodinElement) element))
-				 return display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+				return display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
 		}
-        return display.getSystemColor(SWT.COLOR_BLACK);
-   }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		return display.getSystemColor(SWT.COLOR_BLACK);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
+	 *      int)
 	 */
 	public Font getFont(Object element, int columnIndex) {
-//		UIUtils.debug("Get fonts");
 		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 	}
-		
+
 }
