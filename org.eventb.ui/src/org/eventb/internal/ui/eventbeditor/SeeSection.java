@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
@@ -45,58 +46,66 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
- * <p>
- * An implementation of Section Part for displaying and editting Sees clause.
+ *         <p>
+ *         An implementation of Section Part for displaying and editting Sees
+ *         clause.
  */
-public class SeeSection
-	extends SectionPart
-{
+public class SeeSection extends SectionPart {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Required Contexts";
-	private static final String SECTION_DESCRIPTION = "Select the context that the model sees";	
-	
-	// The Form editor contains this section.
-    private FormEditor editor;
-    
-    // Buttons.
-    private Button nullButton;
-    private Button chooseButton;
-    private Button browseButton;
-    
-    // Text area.
-    private Text contextText;
-    
-    // The seen internal element.
-    private IInternalElement seen;
 
-    
-    /**
-     * Constructor.
-     * <p>
-     * @param editor The Form editor contains this section
-     * @param page The Dependencies page contains this section
-     * @param parent The composite parent
-     */
+	private static final String SECTION_DESCRIPTION = "Select the context that the model sees";
+
+	// The Form editor contains this section.
+	private FormEditor editor;
+
+	// Buttons.
+	private Button nullButton;
+
+	private Button chooseButton;
+
+	private Button browseButton;
+
+	// Text area.
+	private Text contextText;
+
+	// The seen internal element.
+	private IInternalElement seen;
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            The Form editor contains this section
+	 * @param page
+	 *            The Dependencies page contains this section
+	 * @param parent
+	 *            The composite parent
+	 */
 	public SeeSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
-		super(parent, toolkit, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
+		super(parent, toolkit, ExpandableComposite.TITLE_BAR
+				| Section.DESCRIPTION);
 		this.editor = editor;
 		createClient(getSection(), toolkit);
 	}
 
-	
 	/**
 	 * Creat the content of the section.
+	 * <p>
+	 * @param section the parent section
+	 * @param toolkit the FormToolkit used to create the content
 	 */
 	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText(SECTION_TITLE);
-        section.setDescription(SECTION_DESCRIPTION);
+		section.setText(SECTION_TITLE);
+		section.setDescription(SECTION_DESCRIPTION);
 		Composite comp = toolkit.createComposite(section);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        layout.verticalSpacing = 5;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
-        
+
 		nullButton = toolkit.createButton(comp, "None", SWT.RADIO);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -113,14 +122,13 @@ public class SeeSection
 							seen = null;
 							markDirty();
 						}
-					}
-					catch (RodinDBException exception) {
+					} catch (RodinDBException exception) {
 						exception.printStackTrace();
 					}
 				}
 			}
 		});
-		
+
 		chooseButton = toolkit.createButton(comp, "Choose", SWT.RADIO);
 		chooseButton.setLayoutData(new GridData());
 		chooseButton.addSelectionListener(new SelectionAdapter() {
@@ -141,11 +149,12 @@ public class SeeSection
 			public void focusGained(FocusEvent e) {
 				// Do nothing
 			}
-			
+
 			public void focusLost(FocusEvent e) {
 				// Create or change the element
 				if (chooseButton.getSelection()) {
-					if (contextText.getText().equals("")) return;
+					if (contextText.getText().equals(""))
+						return;
 					setSeenContext(contextText.getText());
 				}
 			}
@@ -158,86 +167,84 @@ public class SeeSection
 				handleBrowse();
 			}
 		});
-		
+
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 		try {
-			IRodinElement [] seenContexts = rodinFile.getChildrenOfType(ISees.ELEMENT_TYPE);
+			IRodinElement[] seenContexts = rodinFile
+					.getChildrenOfType(ISees.ELEMENT_TYPE);
 			if (seenContexts.length != 0) {
 				seen = (IInternalElement) seenContexts[0];
 				try {
 					contextText.setText(seen.getContents());
-				}
-				catch (RodinDBException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 				chooseButton.setSelection(true);
-			}
-			else {
+			} else {
 				nullButton.setSelection(true);
 				contextText.setEnabled(false);
 				browseButton.setEnabled(false);
 				seen = null;
 			}
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			// TODO Refesh?
-			
+
 			e.printStackTrace();
-			InputDialog dialog = new InputDialog(null, "Resource out of sync", "Refresh? (Y/N)", "Y", null);
+			InputDialog dialog = new InputDialog(null, "Resource out of sync",
+					"Refresh? (Y/N)", "Y", null);
 			dialog.open();
 			dialog.getValue();
 			EventBMachineEditorContributor.sampleAction.refreshAll();
 		}
 
 		toolkit.paintBordersFor(comp);
-        section.setClient(comp);
-        gd = new GridData(GridData.FILL_BOTH);
+		section.setClient(comp);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.minimumWidth = 250;
 		section.setLayoutData(gd);
 	}
-	
-	
+
 	/**
 	 * Set the seen context with the given name.
 	 * <p>
-	 * @param context name of the context
+	 * 
+	 * @param context
+	 *            name of the context
 	 */
 	private void setSeenContext(String context) {
 		if (seen == null) { // Create new element
 			try {
 				UIUtils.debug("Creat new sees clause");
 				IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-				seen = rodinFile.createInternalElement(ISees.ELEMENT_TYPE, null, null, null);
+				seen = rodinFile.createInternalElement(ISees.ELEMENT_TYPE,
+						null, null, null);
 				seen.setContents(context);
 				markDirty();
-			}
-			catch (RodinDBException exception) {
+			} catch (RodinDBException exception) {
 				exception.printStackTrace();
 				seen = null;
-			} 
-		}
-		else { // Change the element
+			}
+		} else { // Change the element
 			try {
 				UIUtils.debug("Change sees clause");
-//				if (!(seen.getContents().equals(contextText.getText()))) {
-					seen.setContents(context);
-					markDirty();
-//				}
-			}
-			catch (RodinDBException exception) {
+				// if (!(seen.getContents().equals(contextText.getText()))) {
+				seen.setContents(context);
+				markDirty();
+				// }
+			} catch (RodinDBException exception) {
 				exception.printStackTrace();
 				seen = null;
 			}
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Handle the browse action when the corresponding button is clicked.
 	 */
 	public void handleBrowse() {
-		ContextChoosingDialog dialog = new ContextChoosingDialog(null, "Context Name", "Please choose the seen context");
+		ContextChoosingDialog dialog = new ContextChoosingDialog(null,
+				"Context Name", "Please choose the seen context");
 		dialog.open();
 		String name = dialog.getContext();
 		if (name != null) {
@@ -249,110 +256,113 @@ public class SeeSection
 
 		return;
 	}
-	
-	
+
 	/**
-	 * @author htson
-	 * An extension of Dialog for choosing seen context. 
+	 * @author htson An extension of Dialog for choosing seen context.
 	 */
 	private class ContextChoosingDialog extends Dialog {
 		private String message;
+
 		private String context;
+
 		private String title;
-		
+
 		/**
-	     * Ok button widget.
-	     */
-	    private Button okButton;
-	    
-		public ContextChoosingDialog(Shell parentShell, String dialogTitle, String message) {
+		 * Ok button widget.
+		 */
+		private Button okButton;
+
+		public ContextChoosingDialog(Shell parentShell, String dialogTitle,
+				String message) {
 			super(parentShell);
-	        this.title = dialogTitle;
+			this.title = dialogTitle;
 			this.message = message;
 			context = null;
 		}
 
 		/*
-	     * (non-Javadoc)
-	     * 
-	     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	     */
-	    protected void createButtonsForButtonBar(Composite parent) {
-	        // create OK and Cancel buttons by default
-	        okButton = createButton(parent, IDialogConstants.OK_ID,
-	                IDialogConstants.OK_LABEL, true);
-	        if (seen != null) {
-	        	// TODO Should be enable only if the seen is valid?
-	        	okButton.setEnabled(true);
-	        }
-	        else okButton.setEnabled(false);
-	        createButton(parent, IDialogConstants.CANCEL_ID,
-	                IDialogConstants.CANCEL_LABEL, false);
-	    }
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void createButtonsForButtonBar(Composite parent) {
+			// create OK and Cancel buttons by default
+			okButton = createButton(parent, IDialogConstants.OK_ID,
+					IDialogConstants.OK_LABEL, true);
+			if (seen != null) {
+				// TODO Should be enable only if the seen is valid?
+				okButton.setEnabled(true);
+			} else
+				okButton.setEnabled(false);
+			createButton(parent, IDialogConstants.CANCEL_ID,
+					IDialogConstants.CANCEL_LABEL, false);
+		}
 
-	    /*
-	     * (non-Javadoc)
-	     * 
-	     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	     */
-	    protected void configureShell(Shell shell) {
-	        super.configureShell(shell);
-	        if (title != null)
-	            shell.setText(title);
-	    }
-	    
-	    /*
-	     * (non-Javadoc) Method declared on Dialog.
-	     */
-	    protected Control createDialogArea(Composite parent) {
-	        // create composite
-	        Composite composite = (Composite) super.createDialogArea(parent);
-	        // create message
-	        if (message != null) {
-	            Label label = new Label(composite, SWT.WRAP);
-	            label.setText(message);
-	            GridData data = new GridData(GridData.GRAB_HORIZONTAL
-	                    | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
-	                    | GridData.VERTICAL_ALIGN_CENTER);
-	            data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-	            label.setLayoutData(data);
-	            label.setFont(parent.getFont());
-	        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+		 */
+		protected void configureShell(Shell shell) {
+			super.configureShell(shell);
+			if (title != null)
+				shell.setText(title);
+		}
 
-	        IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-	        try {
-	        	IRodinElement [] contexts = ((IParent) rodinFile.getParent()).getChildrenOfType(IContext.ELEMENT_TYPE);
-		        for (int i = 0; i < contexts.length; i++) {
-			        Button button = new Button(composite, SWT.RADIO);
-			        button.setText(EventBPlugin.getComponentName(contexts[i].getElementName()));
-			        button.addSelectionListener(new ButtonSelectionListener(button.getText()));
-			        if (seen != null) {
-			        	try {
-			        		if (seen.getContents().equals(button.getText())) {
-			        			button.setSelection(true);
-			        		}
-			        	}
-			        	catch (RodinDBException e) {
-			        		// TODO Handle Exception
-			        		e.printStackTrace();
-			        	}
-			        }
-		        }
-	        }
-	        catch (RodinDBException e) {
-	        	e.printStackTrace();
-	        }
-	        
-	        applyDialogFont(composite);
-	        return composite;
-	    }
+		/*
+		 * (non-Javadoc) Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite
+			Composite composite = (Composite) super.createDialogArea(parent);
+			// create message
+			if (message != null) {
+				Label label = new Label(composite, SWT.WRAP);
+				label.setText(message);
+				GridData data = new GridData(GridData.GRAB_HORIZONTAL
+						| GridData.GRAB_VERTICAL
+						| GridData.HORIZONTAL_ALIGN_FILL
+						| GridData.VERTICAL_ALIGN_CENTER);
+				data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+				label.setLayoutData(data);
+				label.setFont(parent.getFont());
+			}
 
-	    private class ButtonSelectionListener implements SelectionListener {
-	    	String name;
-	    	
-	    	public ButtonSelectionListener(String name) {
-	    		this.name = name;
-	    	}
+			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+			try {
+				IRodinElement[] contexts = ((IParent) rodinFile.getParent())
+						.getChildrenOfType(IContext.ELEMENT_TYPE);
+				for (int i = 0; i < contexts.length; i++) {
+					Button button = new Button(composite, SWT.RADIO);
+					button.setText(EventBPlugin.getComponentName(contexts[i]
+							.getElementName()));
+					button.addSelectionListener(new ButtonSelectionListener(
+							button.getText()));
+					if (seen != null) {
+						try {
+							if (seen.getContents().equals(button.getText())) {
+								button.setSelection(true);
+							}
+						} catch (RodinDBException e) {
+							// TODO Handle Exception
+							e.printStackTrace();
+						}
+					}
+				}
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+
+			applyDialogFont(composite);
+			return composite;
+		}
+
+		private class ButtonSelectionListener implements SelectionListener {
+			String name;
+
+			public ButtonSelectionListener(String name) {
+				this.name = name;
+			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// Do nothing
@@ -363,11 +373,11 @@ public class SeeSection
 				context = name;
 			}
 		}
-	    
+
 		protected void buttonPressed(int buttonId) {
-	        if (buttonId == IDialogConstants.CANCEL_ID) {
-	            context = null;
-	        }
+			if (buttonId == IDialogConstants.CANCEL_ID) {
+				context = null;
+			}
 			super.buttonPressed(buttonId);
 		}
 

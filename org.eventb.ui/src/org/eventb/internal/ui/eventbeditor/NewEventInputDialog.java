@@ -1,5 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,22 +29,48 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
 
+/**
+ * @author htson
+ *         <p>
+ *         This class extends the Dialog class and provides an input dialog for
+ *         new event with some local varialbes, guards and actions.
+ */
 public class NewEventInputDialog extends Dialog {
 	private String defaultName;
+
 	private String name;
+
 	private Collection<String> varNames;
+
 	private Collection<String> grdNames;
+
 	private Collection<String> grdPredicates;
+
 	private Collection<String> actions;
+
 	private Text nameText;
+
 	private Collection<Text> varNameTexts;
+
 	private Collection<Text> grdNameTexts;
+
 	private Collection<Text> grdPredicateTexts;
+
 	private Collection<Text> actionTexts;
+
 	private ScrolledForm scrolledForm;
+
 	private String title;
-	
-	public NewEventInputDialog(Shell parentShell, String title, String defaultName) {
+
+	/**
+	 * Constructor.
+	 * <p>
+	 * @param parentShell the parent shell of the dialog
+	 * @param title the title of the dialog
+	 * @param defaultName the default name for the event
+	 */
+	public NewEventInputDialog(Shell parentShell, String title,
+			String defaultName) {
 		super(parentShell);
 		this.title = title;
 		this.defaultName = defaultName;
@@ -49,46 +85,44 @@ public class NewEventInputDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
-	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
-	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID,
-                IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+				true);
 
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.setBackground(parent.getBackground());
 		toolkit.setBorderStyle(SWT.BORDER);
-		
+
 		scrolledForm = toolkit.createScrolledForm(composite);
 		Composite body = scrolledForm.getBody();
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 5;
 		layout.verticalSpacing = 10;
@@ -96,22 +130,22 @@ public class NewEventInputDialog extends Dialog {
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
-		
+
 		Label label = toolkit.createLabel(body, "Name", SWT.LEFT);
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		label.setLayoutData(gd);
-		
+
 		Composite separator = toolkit.createComposite(body);
 		gd = new GridData(SWT.NONE, SWT.NONE, false, false);
 		gd.widthHint = 30;
 		gd.heightHint = 20;
 		separator.setLayoutData(gd);
-		
+
 		label = toolkit.createLabel(body, "Variable name(s)", SWT.CENTER);
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
-		
+
 		nameText = toolkit.createText(body, defaultName);
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		nameText.setLayoutData(gd);
@@ -121,47 +155,47 @@ public class NewEventInputDialog extends Dialog {
 		gd.widthHint = 30;
 		gd.heightHint = 20;
 		separator.setLayoutData(gd);
-		
+
 		for (int i = 0; i < 3; i++) {
 			Text text = toolkit.createText(body, "");
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.setLayoutData(gd);
 			varNameTexts.add(text);
 		}
-		
+
 		separator = toolkit.createCompositeSeparator(body);
 		GridData separatorGD = new GridData();
 		separatorGD.heightHint = 5;
 		separatorGD.horizontalSpan = 5;
 		separator.setLayoutData(separatorGD);
-		
+
 		label = toolkit.createLabel(body, "Guard name(s)", SWT.LEFT);
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		label.setLayoutData(gd);
-		
+
 		separator = toolkit.createComposite(body);
 		gd = new GridData(SWT.NONE, SWT.NONE, false, false);
 		gd.widthHint = 30;
 		gd.heightHint = 20;
 		separator.setLayoutData(gd);
-		
+
 		label = toolkit.createLabel(body, "Guard predicate(s)", SWT.LEFT);
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 
 		for (int i = 1; i <= 3; i++) {
-			Text text = toolkit.createText(body, "grd"+i);
+			Text text = toolkit.createText(body, "grd" + i);
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			text.setLayoutData(gd);
 			grdNameTexts.add(text);
-			
+
 			separator = toolkit.createComposite(body);
 			gd = new GridData(SWT.NONE, SWT.NONE, false, false);
 			gd.widthHint = 30;
 			gd.heightHint = 20;
 			separator.setLayoutData(gd);
-			
+
 			text = toolkit.createText(body, "");
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 3;
@@ -170,17 +204,15 @@ public class NewEventInputDialog extends Dialog {
 			grdPredicateTexts.add(text);
 			new EventBMath(text);
 		}
-		
-		
+
 		separator = toolkit.createCompositeSeparator(body);
 		separator.setLayoutData(separatorGD);
-		
+
 		label = toolkit.createLabel(body, "Action(s)", SWT.LEFT);
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 5;
 		label.setLayoutData(gd);
 
-		
 		for (int i = 0; i < 3; i++) {
 			Text text = toolkit.createText(body, "");
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -190,19 +222,19 @@ public class NewEventInputDialog extends Dialog {
 			actionTexts.add(text);
 			new EventBMath(text);
 		}
-		
 
 		composite.pack();
-		
+
 		toolkit.paintBordersFor(body);
 		applyDialogFont(body);
 		return body;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
-	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			name = null;
@@ -210,23 +242,22 @@ public class NewEventInputDialog extends Dialog {
 			grdNames = new HashSet<String>();
 			grdPredicates = new HashSet<String>();
 			actions = new HashSet<String>();
-        }
-		else if (buttonId == IDialogConstants.OK_ID) {
+		} else if (buttonId == IDialogConstants.OK_ID) {
 			name = nameText.getText();
-			
+
 			varNames = new ArrayList<String>();
-			Object [] varNameList = varNameTexts.toArray();
+			Object[] varNameList = varNameTexts.toArray();
 			for (int i = 0; i < varNameList.length; i++) {
 				Text nameText = (Text) varNameList[i];
 				if (!nameText.getText().equals("")) {
 					varNames.add(nameText.getText());
 				}
 			}
-			
+
 			grdNames = new ArrayList<String>();
 			grdPredicates = new ArrayList<String>();
-			Object [] grdNameList = grdNameTexts.toArray();
-			Object [] grdPredicateList = grdPredicateTexts.toArray();
+			Object[] grdNameList = grdNameTexts.toArray();
+			Object[] grdPredicateList = grdPredicateTexts.toArray();
 			for (int i = 0; i < grdNameList.length; i++) {
 				Text predicateText = (Text) grdPredicateList[i];
 				if (!predicateText.getText().equals("")) {
@@ -235,9 +266,9 @@ public class NewEventInputDialog extends Dialog {
 					grdPredicates.add(predicateText.getText());
 				}
 			}
-			
+
 			actions = new ArrayList<String>();
-			Object [] actionList = actionTexts.toArray();
+			Object[] actionList = actionTexts.toArray();
 			for (int i = 0; i < actionList.length; i++) {
 				Text actionText = (Text) actionList[i];
 				if (!actionText.getText().equals("")) {
@@ -247,24 +278,51 @@ public class NewEventInputDialog extends Dialog {
 		}
 		super.buttonPressed(buttonId);
 	}
-	
+
+	/**
+	 * Get the name of the new event.
+	 * <p>
+	 * @return name of the new event as input by user
+	 */
 	public String getName() {
 		return name;
 	}
-	
-	public String [] getVariables() {
-		return (String []) varNames.toArray(new String[varNames.size()]);
+
+	/**
+	 * Get the list of local variables of the new event.
+	 * <p>
+	 * @return the list of new local variables as input by user
+	 */
+	public String[] getVariables() {
+		return (String[]) varNames.toArray(new String[varNames.size()]);
 	}
-	
-	public String [] getGrdNames() {
-		return (String []) grdNames.toArray(new String[grdNames.size()]);
+
+	/**
+	 * Get the list of guard names of the new event.
+	 * <p>
+	 * @return the list of the guard names as input by user
+	 */
+	public String[] getGrdNames() {
+		return (String[]) grdNames.toArray(new String[grdNames.size()]);
 	}
-	
-	public String [] getGrdPredicates() {
-		return (String []) grdPredicates.toArray(new String[grdPredicates.size()]);
+
+	/**
+	 * Get the list of guard predicates of the new event.
+	 * <p>
+	 * @return the list of the guard predicates as input by user
+	 */
+	public String[] getGrdPredicates() {
+		return (String[]) grdPredicates
+				.toArray(new String[grdPredicates.size()]);
 	}
-	
-	public String [] getActions() {
-		return (String []) actions.toArray(new String[actions.size()]);
+
+	/**
+	 * Get the list of action of the new event.
+	 * <p> 
+	 * @return the list the actions as input by user
+	 */
+	public String[] getActions() {
+		return (String[]) actions.toArray(new String[actions.size()]);
 	}
+
 }
