@@ -1,4 +1,4 @@
-<project name="org.eventb.core.ast" default="tom" basedir=".">
+<project name="org.eventb.pp" default="tom" basedir=".">
 	<description>
         Generates derived files in the Predicate Prover.
 	</description>
