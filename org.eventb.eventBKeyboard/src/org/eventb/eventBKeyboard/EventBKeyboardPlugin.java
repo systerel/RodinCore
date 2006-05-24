@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.eventBKeyboard;
-
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -19,17 +19,23 @@ import org.osgi.framework.BundleContext;
 
 /**
  * @author htson
- * The main plugin class to be used in the desktop.
+ *         <p>
+ *         The main plugin class for the Event-B Keyboard.
  */
 public class EventBKeyboardPlugin extends AbstractUIPlugin {
 
+	// Debug flag.
 	public static final boolean debug = true;
-	
+
+	/**
+	 * The identifier of the Event-B Keyboard View (value
+	 * <code>"org.eventb.eventBKeyboard.views.EventBKeyboardView"</code>).
+	 */
 	public static final String EventBKeyboardView_ID = "org.eventb.eventBKeyboard.views.EventBKeyboardView";
-	
-	//The shared instance.
+
+	// The shared instance.
 	private static EventBKeyboardPlugin plugin;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -60,22 +66,36 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eventb.eventBKeyboard", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(
+				"org.eventb.eventBKeyboard", path);
 	}
-	
+
+	/**
+	 * Get the active workbench page.
+	 * <p>
+	 * 
+	 * @return current active workbench page
+	 */
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
-	
+
+	/**
+	 * Getting the current active page from the active workbench window.
+	 * <p>
+	 * 
+	 * @return current active workbench page
+	 */
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
-	
+
 }

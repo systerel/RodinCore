@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.eventBKeyboard;
 
@@ -27,55 +28,71 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @author htson
- * The main class for translating ASCII into mathematical language of Event-B
- * This is done by using all the translators found in the extension registry
+ *         <p>
+ *         The main class for translating ASCII into mathematical language of
+ *         Event-B. This is done by using all the translators found in the
+ *         extension registry.
  */
 public class EventBTextModifyListener implements ModifyListener {
-	
+
+	// The extension identifier.
 	private static final String translatorId = "org.eventb.eventBKeyboard.translators";
+
+	/**
+	 * Collection of translators.
+	 */
 	private Collection<IEventBKeyboardTranslator> translators;
-    
-    /**
-     * Main method for the listener. This is call when the text in the widget has been changed.
-     * This gets all the transator from the extension register and invokes them. 
-     */
-    public void modifyText(ModifyEvent e) {
+
+	/**
+	 * Main method for the listener. This is call when the text in the widget
+	 * has been changed. This gets all the transator from the extension register
+	 * and invokes them.
+	 * <p>
+	 * 
+	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+	 */
+	public void modifyText(ModifyEvent e) {
 		Text widget = (Text) e.widget;
-		
+
 		getTranslators();
 
-		for (Iterator<IEventBKeyboardTranslator> it = translators.iterator(); it.hasNext();) {
+		for (Iterator<IEventBKeyboardTranslator> it = translators.iterator(); it
+				.hasNext();) {
 			IEventBKeyboardTranslator translator = it.next();
 			translator.translate(widget);
 		}
-    }
-    
-    /**
-     * Method to get all translators (as extensions) from extension registry.
-     */
-    private void getTranslators() {
-    	if (translators != null) return;
-    	else {
-    		translators = new ArrayList<IEventBKeyboardTranslator>();
-    		IExtensionRegistry registry = Platform.getExtensionRegistry();
-    		IExtensionPoint extensionPoint = registry.getExtensionPoint(translatorId); 
-    		IExtension [] extensions = extensionPoint.getExtensions();
-    		
-    		for (int i = 0; i < extensions.length; i++) {
-    			IConfigurationElement [] elements = extensions[i].getConfigurationElements();
-    			for (int j = 0; j < elements.length; j++) {
-    				try {
-    					Object translator = elements[j].createExecutableExtension("class");
-    					if (translator instanceof IEventBKeyboardTranslator) {
-    						translators.add((IEventBKeyboardTranslator) translator);
-    					}
-    				}
-    				catch (CoreException e) {
-    					e.printStackTrace();
-    				}
-    			}
-    		}
-    	}
-    }
-    
+	}
+
+	/**
+	 * Method to get all translators (as extensions) from extension registry.
+	 */
+	private void getTranslators() {
+		if (translators != null)
+			return;
+		else {
+			translators = new ArrayList<IEventBKeyboardTranslator>();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extensionPoint = registry
+					.getExtensionPoint(translatorId);
+			IExtension[] extensions = extensionPoint.getExtensions();
+
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					try {
+						Object translator = elements[j]
+								.createExecutableExtension("class");
+						if (translator instanceof IEventBKeyboardTranslator) {
+							translators
+									.add((IEventBKeyboardTranslator) translator);
+						}
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
 }
