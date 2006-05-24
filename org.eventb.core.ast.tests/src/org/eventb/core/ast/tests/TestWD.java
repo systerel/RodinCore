@@ -211,11 +211,17 @@ public class TestWD extends TestCase {
 					"f(x)≔f(x)",
 					"x∈dom(f)∧f\u223c;({x} ◁ f)⊆id(ℤ)"
 			), new TestAssignment(
-					"x :\u2223 x'=min(A∪{x'})",
-					"∀x' \u00b7 A∪{x'}≠∅"
+					"x :\u2223 x'=card(A∪{x'})",
+					"∀x' \u00b7 finite(A∪{x'})"
 			), new TestPredicate(
 					"a = {x∣x≤card(A)}",
 					"finite(A)"
+			), new TestPredicate(
+					"a = min(A)",
+					"A ≠ ∅ ∧ (∃b·∀x·x∈A ⇒ b≤x)"
+			), new TestPredicate(
+					"a = max(A)",
+					"A ≠ ∅ ∧ (∃b·∀x·x∈A ⇒ b≥x)"
 			),
 	};
 	

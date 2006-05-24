@@ -512,6 +512,47 @@ public class UnaryExpression extends Expression {
 		return getWDSimplifyC(formulaFactory, conj0, conj1);
 	}
 
+	private Predicate getWDPredicateKMINMAX(FormulaFactory ff) {
+		Predicate conj0 = child.getWDPredicateRaw(ff);
+		Expression emptyset = ff.makeEmptySet(child.getType(), null);
+		Predicate conj1 = ff.makeRelationalPredicate(NOTEQUAL, child, emptyset, null);
+		Type INT = new IntegerType();
+		Predicate impl = ff.makeBinaryPredicate(LIMP,
+				ff.makeRelationalPredicate(IN,
+						ff.makeBoundIdentifier(0, null, INT),
+						child,
+						null),
+				ff.makeRelationalPredicate(
+						(getTag() == KMIN ? LE : GE),
+						ff.makeBoundIdentifier(1, null, INT),
+						ff.makeBoundIdentifier(0, null, INT),
+						null
+				),
+				null
+		);
+		BoundIdentDecl[] b = new BoundIdentDecl[] {
+				ff.makeBoundIdentDecl("b", null, INT)
+		}; 
+		BoundIdentDecl[] x = new BoundIdentDecl[] {
+				ff.makeBoundIdentDecl("x", null, INT)
+		}; 
+		Predicate conj2 = ff.makeQuantifiedPredicate(EXISTS,
+				b,
+				ff.makeQuantifiedPredicate(FORALL,
+						x,
+						impl,
+						null
+				),
+				null
+		);
+		if (conj0.getTag() == BTRUE) {
+			return ff.makeAssociativePredicate(LAND, 
+					new Predicate[] {conj1, conj2}, null);
+		}
+		return ff.makeAssociativePredicate(LAND, 
+				new Predicate[] {conj0, conj1, conj2}, null);
+	}
+
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
@@ -519,6 +560,7 @@ public class UnaryExpression extends Expression {
 			return getWDPredicateKCARD(formulaFactory);
 		case KMIN:
 		case KMAX:
+			return getWDPredicateKMINMAX(formulaFactory);
 		case KINTER:
 			return getWDPredicateKINTER(formulaFactory);
 		default:
