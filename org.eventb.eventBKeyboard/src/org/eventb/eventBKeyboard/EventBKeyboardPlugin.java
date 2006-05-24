@@ -24,9 +24,6 @@ import org.osgi.framework.BundleContext;
  */
 public class EventBKeyboardPlugin extends AbstractUIPlugin {
 
-	// Debug flag.
-	public static final boolean debug = true;
-
 	/**
 	 * The identifier of the Event-B Keyboard View (value
 	 * <code>"org.eventb.eventBKeyboard.views.EventBKeyboardView"</code>).
