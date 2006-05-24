@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH-Zurich
+ * Copyright (c) 2005 ETH Zurich.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH RODIN Group
- *******************************************************************************/
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
 
 package org.eventb.eventBKeyboard.internal.tests;
 
@@ -23,30 +24,40 @@ import org.eventb.eventBKeyboard.internal.views.EventBKeyboardView;
 
 /**
  * @author htson
- * This class contains some simple test cases for Event-B Keyboard.
- * This test all the symbols separately.
+ *         <p>
+ *         This class contains some simple test cases for Event-B Keyboard. This
+ *         test all the symbols separately.
  */
 public class EventBKeyboardSimpleTestCase extends TestCase {
 
 	private Text formula;
-	private EventBTextModifyListener listener; 
-	
+
+	private EventBTextModifyListener listener;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		IWorkbenchPage page = EventBKeyboardPlugin.getActivePage();
-		
-		EventBKeyboardView view = (EventBKeyboardView) page.findView(EventBKeyboardPlugin.EventBKeyboardView_ID);
-		
-		if (view == null) 
-			view = (EventBKeyboardView) page.showView(EventBKeyboardPlugin.EventBKeyboardView_ID);
-		
+
+		EventBKeyboardView view = (EventBKeyboardView) page
+				.findView(EventBKeyboardPlugin.EventBKeyboardView_ID);
+
+		if (view == null)
+			view = (EventBKeyboardView) page
+					.showView(EventBKeyboardPlugin.EventBKeyboardView_ID);
+
 		formula = view.getFormula();
 		listener = view.getListener();
-		
+
 		// Remove the listener
-		// In order to simulate user's input, we have to manually setup the listener.
-		formula.removeModifyListener(listener); 
+		// In order to simulate user's input, we have to manually setup the
+		// listener.
+		formula.removeModifyListener(listener);
 	}
 
 	protected void tearDown() throws Exception {
@@ -55,17 +66,17 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 	}
 
 	/**
-	 *  We use this method to similate the action of typing a character into the
-	 *  text area
-	 */ 
+	 * We use this method to similate the action of typing a character into the
+	 * text area
+	 */
 	private void insert(String s) {
 		formula.insert(s);
 		Event e = new Event();
 		e.widget = formula;
-		listener.modifyText(new ModifyEvent(e)); // register the listener for modifying
-		formula.removeModifyListener(listener); // then remove it again
+		// Force the listener to modify the text then remove it again
+		listener.modifyText(new ModifyEvent(e));
+		formula.removeModifyListener(listener);
 	}
-	
 
 	public void testNAT() {
 		formula.setText("");
@@ -76,7 +87,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u2115 ";
 		String actual = formula.getText();
 		assertEquals("NAT ", expect, actual);
-	}	
+	}
 
 	public void testNAT1() {
 		formula.setText("");
@@ -89,7 +100,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("NAT1 ", expect, actual);
 	}
-	
+
 	public void testPOW() {
 		formula.setText("");
 		insert("P");
@@ -100,7 +111,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("POW ", expect, actual);
 	}
-	
+
 	public void testPOW1() {
 		formula.setText("");
 		insert("P");
@@ -112,7 +123,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("POW1 ", expect, actual);
 	}
-	
+
 	public void testINT() {
 		formula.setText("");
 		insert("I");
@@ -123,7 +134,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("INT ", expect, actual);
 	}
-	
+
 	public void testLogicalEquivalent() {
 		formula.setText("");
 		insert("<");
@@ -133,7 +144,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<=> ", expect, actual);
 	}
-	
+
 	public void testImply() {
 		formula.setText("");
 		insert("=");
@@ -150,7 +161,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("& ", expect, actual);
 	}
-	
+
 	public void testOr() {
 		formula.setText("");
 		insert("o");
@@ -160,7 +171,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("or ", expect, actual);
 	}
-	
+
 	public void testNot() {
 		formula.setText("");
 		insert("n");
@@ -171,7 +182,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("not ", expect, actual);
 	}
-			
+
 	public void testTrue() {
 		formula.setText("");
 		insert("t");
@@ -183,7 +194,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("true ", expect, actual);
 	}
-	
+
 	public void testFalse() {
 		formula.setText("");
 		insert("f");
@@ -196,15 +207,15 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("false ", expect, actual);
 	}
-	
+
 	public void testForall() {
 		formula.setText("");
 		insert("!");
 		String expect = "\u2200";
 		String actual = formula.getText();
 		assertEquals("! ", expect, actual);
-	}	
-	
+	}
+
 	public void testThereExists() {
 		formula.setText("");
 		insert("#");
@@ -212,7 +223,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("# ", expect, actual);
 	}
-	
+
 	public void testMiddleDot() {
 		formula.setText("");
 		insert(".");
@@ -220,7 +231,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(". ", expect, actual);
 	}
-	
+
 	public void testNotEqual() {
 		formula.setText("");
 		insert("/");
@@ -229,7 +240,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("/= ", expect, actual);
 	}
-	
+
 	public void testLessThanEqual() {
 		formula.setText("");
 		insert("<");
@@ -238,7 +249,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<= ", expect, actual);
 	}
-	
+
 	public void testGreaterThanEqual() {
 		formula.setText("");
 		insert(">");
@@ -247,7 +258,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(">= ", expect, actual);
 	}
-	
+
 	public void testElementOf() {
 		formula.setText("");
 		insert(":");
@@ -255,7 +266,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(": ", expect, actual);
 	}
-	
+
 	public void testNotAnElementOf() {
 		formula.setText("");
 		insert("/");
@@ -264,7 +275,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("/: ", expect, actual);
 	}
-	
+
 	public void testSubsetOf() {
 		formula.setText("");
 		insert("<");
@@ -274,7 +285,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<<: ", expect, actual);
 	}
-	
+
 	public void testNotASubsetOf() {
 		formula.setText("");
 		insert("/");
@@ -285,7 +296,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("/<<: ", expect, actual);
 	}
-	
+
 	public void testSubsetOrEqualTo() {
 		formula.setText("");
 		insert("<");
@@ -294,7 +305,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<: ", expect, actual);
 	}
-	
+
 	public void testNotASubsetOfNorEqualTo() {
 		formula.setText("");
 		insert("/");
@@ -304,7 +315,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("/<: ", expect, actual);
 	}
-	
+
 	public void testRelation() {
 		formula.setText("");
 		insert("<");
@@ -314,7 +325,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<-> ", expect, actual);
 	}
-	
+
 	public void testTotalRelation() {
 		formula.setText("");
 		insert("<");
@@ -325,7 +336,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<<-> ", expect, actual);
 	}
-	
+
 	public void testSurjectiveRelation() {
 		formula.setText("");
 		insert("<");
@@ -336,7 +347,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<->> ", expect, actual);
 	}
-	
+
 	public void testTotalSurjectiveRelation() {
 		formula.setText("");
 		insert("<");
@@ -348,7 +359,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<<->> ", expect, actual);
 	}
-	
+
 	public void testPartialFunction() {
 		formula.setText("");
 		insert("+");
@@ -358,7 +369,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("+-> ", expect, actual);
 	}
-	
+
 	public void testTotalFunction() {
 		formula.setText("");
 		insert("-");
@@ -368,7 +379,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("--> ", expect, actual);
 	}
-	
+
 	public void testPartialInjectiveFunction() {
 		formula.setText("");
 		insert(">");
@@ -378,7 +389,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(">+> ", expect, actual);
 	}
-	
+
 	public void testTotalInjectiveFunction() {
 		formula.setText("");
 		insert(">");
@@ -388,7 +399,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(">-> ", expect, actual);
 	}
-	
+
 	public void testPartialSurjectiveFunction() {
 		formula.setText("");
 		insert("+");
@@ -398,7 +409,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("+>> ", expect, actual);
 	}
-	
+
 	public void testTotalSurjectiveFunction() {
 		formula.setText("");
 		insert("-");
@@ -408,7 +419,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("->> ", expect, actual);
 	}
-	
+
 	public void testBijectiveFunction() {
 		formula.setText("");
 		insert(">");
@@ -419,7 +430,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(">->> ", expect, actual);
 	}
-	
+
 	public void testMaplet() {
 		formula.setText("");
 		insert("|");
@@ -438,8 +449,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("{} ", expect, actual);
 	}
-	
-	
+
 	public void testIntersection() {
 		formula.setText("");
 		insert("/");
@@ -448,7 +458,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("/\\ ", expect, actual);
 	}
-	
+
 	public void testUnion() {
 		formula.setText("");
 		insert("\\");
@@ -474,7 +484,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("** ", expect, actual);
 	}
-	
+
 	public void testRelationOverriding() {
 		formula.setText("");
 		insert("<");
@@ -483,7 +493,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("<+ ", expect, actual);
 	}
-	
+
 	public void testBackwardComposition() {
 		formula.setText("");
 		insert("c");
@@ -495,7 +505,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("circ ", expect, actual);
 	}
-	
+
 	public void testDirectProduct() {
 		formula.setText("");
 		insert(">");
@@ -504,7 +514,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(">< ", expect, actual);
 	}
-	
+
 	public void testParallelProduct() {
 		formula.setText("");
 		insert("|");
@@ -513,7 +523,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("|| ", expect, actual);
 	}
-	
+
 	public void testTildeOperator() {
 		formula.setText("");
 		insert("~");
@@ -521,7 +531,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("~ ", expect, actual);
 	}
-	
+
 	public void testDomainRestriction() {
 		formula.setText("");
 		insert("<");
@@ -529,8 +539,8 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u25c1";
 		String actual = formula.getText();
 		assertEquals("<| ", expect, actual);
-	}	
-	
+	}
+
 	public void testDomainSubstraction() {
 		formula.setText("");
 		insert("<");
@@ -539,8 +549,8 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u2a64";
 		String actual = formula.getText();
 		assertEquals("<<| ", expect, actual);
-	}	
-	
+	}
+
 	public void testRangeRestriction() {
 		formula.setText("");
 		insert("|");
@@ -548,8 +558,8 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u25b7";
 		String actual = formula.getText();
 		assertEquals("|> ", expect, actual);
-	}	
-	
+	}
+
 	public void testRangeSubstraction() {
 		formula.setText("");
 		insert("|");
@@ -558,8 +568,8 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u2a65";
 		String actual = formula.getText();
 		assertEquals("|>> ", expect, actual);
-	}	
-		
+	}
+
 	public void testLambda() {
 		formula.setText("");
 		insert("%");
@@ -567,7 +577,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("% ", expect, actual);
 	}
-	
+
 	public void testINTER() {
 		formula.setText("");
 		insert("I");
@@ -580,7 +590,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("INTER ", expect, actual);
 	}
-	
+
 	public void testUNION() {
 		formula.setText("");
 		insert("U");
@@ -593,7 +603,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals("UNION ", expect, actual);
 	}
-	
+
 	public void testUptoOperator() {
 		formula.setText("");
 		insert(".");
@@ -635,7 +645,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(":= ", expect, actual);
 	}
-	
+
 	public void testBecomesAnElementOf() {
 		formula.setText("");
 		insert(":");
@@ -645,7 +655,6 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		assertEquals(":: ", expect, actual);
 	}
 
-
 	public void testBecomesSuchThat() {
 		formula.setText("");
 		insert(":");
@@ -654,7 +663,6 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String actual = formula.getText();
 		assertEquals(":| ", expect, actual);
 	}
-
 
 	public void testMid() {
 		formula.setText("");
