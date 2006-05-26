@@ -305,6 +305,13 @@ public abstract class BuilderTest extends TestCase {
 		return pp;
 	}
 	
+	protected String getNormalizedPredicate(String input) {
+		Predicate pred = factory.parsePredicate(input).getParsedPredicate();
+		pred.typeCheck(factory.makeTypeEnvironment());
+		assertTrue(pred.isTypeChecked());
+		return pred.toStringWithTypes();
+	}
+	
 	protected Assignment assignmentFromString(String assignment) {
 		Assignment aa = factory.parseAssignment(assignment).getParsedAssignment();
 		return aa;

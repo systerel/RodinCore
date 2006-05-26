@@ -36,7 +36,7 @@ public class TestContextPOG_2 extends BuilderTest {
 		Predicate predicate = getPredicate(formula);
 		ITypeCheckResult tcResult = predicate.typeCheck(factory.makeTypeEnvironment());
 		assert tcResult.isSuccess();
-		return predicate.getWDPredicate(factory).toString();
+		return predicate.getWDPredicate(factory).toStringWithTypes();
 	}
 
 	/**

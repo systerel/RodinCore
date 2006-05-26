@@ -38,7 +38,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		Predicate predicate = result.getParsedPredicate();
 		ITypeCheckResult tcResult = predicate.typeCheck(environment);
 		assert tcResult.isSuccess();
-		return predicate.getWDPredicate(factory).toString();
+		return predicate.getWDPredicate(factory).toStringWithTypes();
 	}
 
 	private String getWDStringForAssignment(String formula, ITypeEnvironment environment) {
@@ -47,7 +47,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		Assignment assignment = result.getParsedAssignment();
 		ITypeCheckResult tcResult = assignment.typeCheck(environment);
 		assert tcResult.isSuccess();
-		return assignment.getWDPredicate(factory).toString();
+		return assignment.getWDPredicate(factory).toStringWithTypes();
 	}
 
 	private String getFISStringForAssignment(String formula, ITypeEnvironment environment) {
@@ -366,7 +366,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard1() throws Exception {
 		
-		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
+		String guard1 = getNormalizedPredicate("∀x·x=1÷x");
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList(), makeList("G1"), makeList(guard1), makeList(), makeList());
@@ -394,10 +394,10 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard2() throws Exception {
 		
-		String invariant1 = predicateFromString("(∀z·z+z>z)").toString();
-		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
-		String guard2 = predicateFromString("(∀x·x=(1÷x)−x)").toString();
-		String dlk1 = predicateFromString("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").toString();
+		String invariant1 = getNormalizedPredicate("(∀z·z+z>z)");
+		String guard1 = getNormalizedPredicate("(∀x·x=1÷x)");
+		String guard2 = getNormalizedPredicate("(∀x·x=(1÷x)−x)");
+		String dlk1 = getNormalizedPredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)");
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
@@ -507,11 +507,11 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testGuard5() throws Exception {
 		
-		String invariant1 = predicateFromString("(∀z·z+z>z)").toString();
-		String theorem1 = predicateFromString("(∃p·∀q·q=p∧p>1)").toString();
-		String guard1 = predicateFromString("(∀x·x=1÷x)").toString();
-		String guard2 = predicateFromString("(∀x·x=(1÷x)−x)").toString();
-		String dlk1 = predicateFromString("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)").toString();
+		String invariant1 = getNormalizedPredicate("(∀z·z+z>z)");
+		String theorem1 = getNormalizedPredicate("(∃p·∀q·q=p∧p>1)");
+		String guard1 = getNormalizedPredicate("(∀x·x=1÷x)");
+		String guard2 = getNormalizedPredicate("(∀x·x=(1÷x)−x)");
+		String dlk1 = getNormalizedPredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)");
 		
 		ISCMachine rodinFile = createSCMachine("test");
 		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
