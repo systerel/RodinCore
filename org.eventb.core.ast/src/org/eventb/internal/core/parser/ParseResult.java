@@ -1,14 +1,10 @@
 package org.eventb.internal.core.parser;
 
-import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProblemKind;
-import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.AbstractResult;
 
@@ -39,22 +35,6 @@ public class ParseResult extends AbstractResult implements IParseResult {
 		this.factory = factory;
 	}
 	
-	/**
-	 * Converts the parsed expression to a type.
-	 */
-	public void convertToType() {
-		assert this.isSuccess();
-		try {
-			type = expression.toType(factory);
-		} catch (InvalidExpressionException e) {
-			addProblem(new ASTProblem(
-					expression.getSourceLocation(), 
-					ProblemKind.InvalidTypeExpression, 
-					ProblemSeverities.Error));
-		}
-		expression = null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedAssignment()
@@ -108,7 +88,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * Sets the parsed assignment.
 	 * 
 	 * @param formula
-	 *            the assignment being parsed
+	 *            the assignment that has been parsed
 	 */
 	public void setParsedAssignment(Assignment formula) {
 		this.assignment = formula;
@@ -118,7 +98,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * Sets the parsed expression.
 	 * 
 	 * @param formula
-	 *            the expression being parsed
+	 *            the expression that has been parsed
 	 */
 	public void setParsedExpression(Expression formula) {
 		this.expression = formula;
@@ -128,10 +108,20 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * Sets the parsed predicate.
 	 * 
 	 * @param formula
-	 *            the formula being parsed
+	 *            the formula that has been parsed
 	 */
 	public void setParsedPredicate(Predicate formula) {
 		this.predicate = formula;
+	}
+
+	/**
+	 * Sets the parsed type.
+	 * 
+	 * @param type
+	 *            the type that has been parsed
+	 */
+	public void setParsedType(Type type) {
+		this.type = type;
 	}
 
 }

@@ -775,12 +775,9 @@ public class FormulaFactory {
 	public IParseResult parseType(String formula) {
 		ParseResult result = new ParseResult(this);
 		Scanner scanner = new Scanner(formula, result);
-		Parser parser = new Parser(Expression.class, scanner, result);
+		Parser parser = new Parser(Type.class, scanner, result);
 		parser.Parse();
-		if (result.isSuccess()) {
-			result.convertToType();
-		}
-		return result;
+		return parser.getResult();
 	}
 
 	/**

@@ -52,9 +52,9 @@ public class Parser {
 	
 	Scanner scanner;
 	
-	// this field configures the parser to parse some subclass of formula,
-	// i.e. Expression, Predicate, Assignment.
-	private Class<? extends Formula> clazz;
+	// this field configures the parser to parse some kind of formula,
+	// viz. Expression, Predicate, Assignment, or Type.
+	private Class clazz;
 	
 	private ParseResult result;
 	private FormulaFactory factory;
@@ -79,13 +79,16 @@ public class Parser {
 	 * @param scanner the scanner to get input tokens from
 	 * @param result the result of scan and parse
 	 */
-	public Parser(Class<? extends Formula> clazz, Scanner scanner, ParseResult result) {
+	public Parser(Class clazz, Scanner scanner, ParseResult result) {
 		this.scanner = scanner;
 		this.factory = result.factory;
 		this.clazz = clazz;
 		this.result = result;
 		
-	    assert clazz == Predicate.class || clazz == Expression.class || clazz == Assignment.class;
+	    assert (clazz == Predicate.class ||
+	    		clazz == Expression.class ||
+	    		clazz == Assignment.class ||
+	    		clazz == Type.class);
 	}
 
 	void Get () {
