@@ -342,7 +342,7 @@ public class QuantifiedExpression extends Expression {
 		case Lambda: 
 			return toStringLambda(parenthesized, newBoundNames, withTypes);
 		case Implicit:
-			if (exprIsClosed) {
+			if (exprIsClosed && ! withTypes) {
 				// Still OK to use implicit form.
 				return toStringImplicit(parenthesized, localNames, newBoundNames, withTypes);
 			}
@@ -362,14 +362,23 @@ public class QuantifiedExpression extends Expression {
 		assert expr.getTag() == MAPSTO;
 		BinaryExpression binExpr = (BinaryExpression) this.expr;
 
-		String leftExprString;
-		String rightExprString;
+		final String leftExprString;
+		final String rightExprString;
 		if (parenthesized) {
 			leftExprString = binExpr.getLeft().toStringFullyParenthesized(boundNames);
 			rightExprString = binExpr.getRight().toStringFullyParenthesized(boundNames);
 		} else {
-			leftExprString = binExpr.getLeft().toString(false, MAPSTO, boundNames, withTypes);
-			rightExprString = binExpr.getRight().toString(true, MAPSTO, boundNames, withTypes);
+			if (withTypes) {
+				StringBuilder builder = new StringBuilder();
+				appendTypedPatternAsString(builder, binExpr.getLeft(),
+						boundNames, quantifiedIdentifiers);
+				leftExprString = builder.toString();
+			} else {
+				leftExprString = binExpr.getLeft().toString(false, MAPSTO,
+						boundNames, withTypes);
+			}
+			rightExprString = binExpr.getRight().toString(true, MAPSTO,
+					boundNames, withTypes);
 		}
 
 		StringBuffer str = new StringBuffer();
@@ -380,6 +389,29 @@ public class QuantifiedExpression extends Expression {
 		str.append(" \u2223 ");
 		str.append(rightExprString);
 		return str.toString();
+	}
+
+	private void appendTypedPatternAsString(StringBuilder builder, Expression pattern,
+			String[] boundNames, BoundIdentDecl[] decls) {
+		
+		if (pattern.getTag() == MAPSTO) {
+			final Expression left = ((BinaryExpression) pattern).getLeft();
+			final Expression right = ((BinaryExpression) pattern).getRight();
+			appendTypedPatternAsString(builder, left, boundNames, decls);
+			builder.append("\u21a6");
+			final boolean needsParen = right.getTag() == MAPSTO;
+			if (needsParen) builder.append("(");
+			appendTypedPatternAsString(builder, right, boundNames, decls);
+			if (needsParen) builder.append(")");
+		} else {
+			assert pattern.getTag() == BOUND_IDENT;
+			final int length = decls.length;
+			final int idx = length - 1 - ((BoundIdentifier) pattern).getBoundIndex();
+			assert 0 <= idx && idx < length;
+			builder.append(boundNames[idx]);
+			builder.append("\u2982");
+			builder.append(decls[idx].getType());
+		}
 	}
 
 	private String toStringImplicit(boolean parenthesized, String[] localNames,
@@ -411,7 +443,8 @@ public class QuantifiedExpression extends Expression {
 		else {
 			str.append(tags[getTag()-firstTag]);
 		}
-		str.append(getBoundIdentifiersString(localNames));
+		str.append(getBoundIdentifiersString(
+				localNames, quantifiedIdentifiers, withTypes));
 		str.append("\u00b7");
 		str.append(getPredString(parenthesized, boundNames, withTypes));
 		str.append(" \u2223 ");

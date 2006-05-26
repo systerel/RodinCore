@@ -142,7 +142,8 @@ public class QuantifiedPredicate extends Predicate {
 		// put parentheses when parent is : Formula.NOT
 		StringBuffer str = new StringBuffer();
 		str.append(tags[getTag()-firstTag]);
-		str.append(getBoundIdentifiersString(localNames));
+		str.append(getBoundIdentifiersString(
+				localNames, quantifiedIdentifiers, withTypes));
 		str.append("\u00b7");
 		str.append(pred.toString(false, getTag(), newBoundNames, withTypes));
 		if (parenthesesMap.get(parentTag)) {
@@ -162,8 +163,12 @@ public class QuantifiedPredicate extends Predicate {
 		
 		// creating output string
 		StringBuffer str = new StringBuffer();
-		str.append(tags[getTag()-firstTag]+getBoundIdentifiersString(localNames));
-		str.append("\u00b7"+"("+pred.toStringFullyParenthesized(newBoundNames)+")");
+		str.append(tags[getTag()-firstTag]);
+		str.append(getBoundIdentifiersString(
+				localNames, quantifiedIdentifiers, false));
+		str.append("\u00b7(");
+		str.append(pred.toStringFullyParenthesized(newBoundNames));
+		str.append(")");
 		return str.toString();
 	}
 

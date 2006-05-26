@@ -970,7 +970,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <p>
 	 * The string representation is the same as that returned by
 	 * {@link #toString()}, but with type information added to generic atomic
-	 * expressions (currently only the empty set).
+	 * expressions (empty sets and bound identifier declarations).
 	 * </p>
 	 * 
 	 * @return Returns the string representation of this formula with type
