@@ -13,7 +13,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
-import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
@@ -23,12 +22,23 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 
 COMPILER Bmath
-    
-    private boolean isIdentList() {
+
+	// Figures out whether we're at the beginning of a list of freeIdentifiers
+	// containing at least two elements.
+    private boolean isFreeIdentList() {
     	scanner.ResetPeek();
-        Token next = scanner.Peek();
-        int kind = next.kind;
-        return kind == _COMMA || kind == _QDOT;
+    	return la.kind == _IDENT && scanner.Peek().kind == _COMMA;
+    }
+
+	// Figures out whether we're at the beginning of a list of bound identifier
+	// declarations.
+    private boolean isIdentDeclList() {
+    	scanner.ResetPeek();
+    	if (la.kind != _IDENT) {
+    		return false;
+    	}
+		final int kind = scanner.Peek().kind;
+        return kind == _COMMA || kind == _QDOT || kind == _TYPING;
     }
 
     // Returns <code>true</code> if the lookahead token is a left parenthesis
@@ -41,29 +51,30 @@ COMPILER Bmath
         	return false;
         }
         
-        Token next = scanner.Peek();
-        if (next.kind == _QUNION || next.kind == _QINTER || next.kind == _LAMBDA) {
-        	// Short circuit: if the parenthesis starts a quantified expression, we now
-        	// for sure that it contains only the whole expression, not a predicate.
+        int kind = scanner.Peek().kind;
+        if (kind == _QUNION || kind == _QINTER || kind == _LAMBDA) {
+        	// Short circuit: if the parenthesis starts a quantified expression,
+        	// we know for sure that it contains only the whole expression, not
+        	// a predicate.
         	return false;
         }
         
         // Skip to the matching right parenthesis
     	int parLvl = 1;
 		while (parLvl != 0) {
-        	if (next.kind == _LPAR) {
+        	if (kind == _LPAR) {
         		++ parLvl;
-        	} else if (next.kind == _RPAR) {
+        	} else if (kind == _RPAR) {
         		-- parLvl;
-        	} else if (next.kind == _EOF) {
+        	} else if (kind == _EOF) {
         		// Unbalanced parenthesis! Just return any value.
         		return false;
         	}
-        	next = scanner.Peek();
+        	kind = scanner.Peek().kind;
 		}
         
         // Now, let's look at the token that follows the right parenthesis
-        switch (next.kind) {
+        switch (kind) {
         	case _EOF:
         	case _MID:
         	case _RPAR:
@@ -81,51 +92,44 @@ COMPILER Bmath
 	// Returns true iff the next two tokens are EMPTYSET and TYPING
 	private boolean isTypedEmptySet() {
 		scanner.ResetPeek();
-		Token next = la;
-		if (next.kind != _EMPTYSET) {
-			return false;
-		}
-		next = scanner.Peek();
-		if (next.kind != _TYPING) {
-			return false;
-		}
-		return true;	
+		return la.kind == _EMPTYSET && scanner.Peek().kind == _TYPING;	
 	}
 
-	private boolean isCSet() {
+	// Figures out if the left brace just read starts a comprehension set.  For
+	// that, we search for a matching MID symbol, taking into account the other
+	// quantified expressions that can appear inside the braces.
+	private boolean isComprehensionSet() {
 		scanner.ResetPeek();
-		Token next = la;
+		int kind = la.kind;
 		int parLvl = 0;
-		Stack<Integer> s = new Stack<Integer>();
+		int innerQuantifiedExpressions = 0;
 		while (true) {
-			if (next.kind == _LBRACE) {
-				parLvl = parLvl + 1;
+			if (kind == _LBRACE || kind == _LPAR) {
+				++ parLvl;
 			}
-			else if (next.kind == _RBRACE) {
-				if (parLvl == 0) {
+			else if (kind == _RBRACE || kind == _RPAR) {
+				-- parLvl;
+				if (parLvl < 0) {
+					// We've gone past the closing brace.
 					return false;
 				}
-				else {
-					parLvl = parLvl - 1;
-				}
 			}
-			else if (next.kind == _LAMBDA || next.kind == _QUNION || next.kind == _QINTER) {
-				s.push(parLvl);
-			}
-			else if (next.kind == _MID) {
-				if (parLvl == 0 && s.isEmpty()) {
-					return true;
+			else if (parLvl == 0) {
+				if (kind == _LAMBDA || kind == _QUNION || kind == _QINTER) {
+					++ innerQuantifiedExpressions;
 				}
-				else if (!s.isEmpty()) {
-					if (s.lastElement() == parLvl) {
-						s.pop();
+				else if (kind == _MID) {
+					-- innerQuantifiedExpressions;
+					if (innerQuantifiedExpressions < 0) {
+						return true;
 					}
 				}
 			}
-			if (next.kind == _EOF) {
+			if (kind == _EOF) {
+				// Unbalanced parentheses.
 				return false;
 			}
-			next = scanner.Peek();
+			kind = scanner.Peek().kind;
 		}
 	}
 
@@ -365,8 +369,11 @@ PRODUCTIONS
         IF (clazz == Expression.class)
         Expression <out Expression inexpr, new Binding()>      (. result.setParsedExpression(inexpr); .)
     |
-        // IF (clazz == Assignment.class)
+        IF (clazz == Assignment.class)
         Assignment <out Assignment assignment, new Binding()>  (. result.setParsedAssignment(assignment); .)
+    |
+        // IF (clazz == Type.class)
+        Type <out Type type>  								   (. result.setParsedType(type); .)
     .
     
     Assignment <out Assignment assignment, 
@@ -374,7 +381,7 @@ PRODUCTIONS
     												        (. final int startPos = t.pos;
     												           assignment = null; .)// TODO remove it
     =
-        IF (isIdentList())
+        IF (isFreeIdentList())
         FreeIdentList <out List<FreeIdentifier> lhsList>
         (
              BECST										  (. List<BoundIdentDecl> primed = makePrimedDecl(lhsList);
@@ -433,7 +440,7 @@ PRODUCTIONS
         LAMBDA                                               (. Expression inlambdaexpr;
                                                                 Predicate inpred;
                                                                 Expression inexpr; .)
-        IdentPattern <out inlambdaexpr>                      (. // LAMBDA implicit quantifier
+        DeclPattern <out inlambdaexpr>                      (. // LAMBDA implicit quantifier
                                                                 List<BoundIdentDecl> freeIdents = new Vector<BoundIdentDecl>();
                                                                 inlambdaexpr = inlambdaexpr.bindAllFreeIdents(freeIdents, factory);
                                                                 binding = new Binding(binding, freeIdents); .)
@@ -446,8 +453,8 @@ PRODUCTIONS
     |
         QUNION
         (
-            IF (isIdentList())
-            IdentList <out List<BoundIdentDecl> inidentlist> (. binding = new Binding(binding, inidentlist); .)
+            IF (isIdentDeclList())
+            DeclList <out List<BoundIdentDecl> inidentlist>  (. binding = new Binding(binding, inidentlist); .)
             QDOT
             Predicate <out Predicate inpred, binding>
             MID
@@ -465,8 +472,8 @@ PRODUCTIONS
     |
         QINTER
         (
-            IF (isIdentList())
-            IdentList <out List<BoundIdentDecl> inidentlist> (. binding = new Binding(binding, inidentlist); .)
+            IF (isIdentDeclList())
+            DeclList <out List<BoundIdentDecl> inidentlist>  (. binding = new Binding(binding, inidentlist); .)
             QDOT
             Predicate <out Predicate inpred, binding>
             MID
@@ -777,21 +784,13 @@ PRODUCTIONS
         (
         	IF (isTypedEmptySet())
 	        EMPTYSET
-        	TYPING
-        	Expression<out Expression typexpr, binding>
-				(.  Type type;
-					try {
-						type = typexpr.toType(factory);
-						if (! (type instanceof PowerSetType)) {
-							result.addProblem(new ASTProblem(
-									typexpr.getSourceLocation(), 
-									ProblemKind.InvalidTypeExpression, 
-									ProblemSeverities.Error));
-							type = null;
-						}
-					} catch (InvalidExpressionException e) {
+        	TYPING										 (. int typeStart = t.pos; .)
+        	Type<out Type type>
+				(.  if (! (type instanceof PowerSetType)) {
+						final SourceLocation loc = 
+								new SourceLocation(typeStart, t.getEnd());
 						result.addProblem(new ASTProblem(
-								typexpr.getSourceLocation(), 
+								loc, 
 								ProblemKind.InvalidTypeExpression, 
 								ProblemSeverities.Error));
 						type = null;
@@ -804,10 +803,10 @@ PRODUCTIONS
     |
         LBRACE
        	(
-    		IF (isCSet())
+    		IF (isComprehensionSet())
       		(
-            	IF (isIdentList())								  // CSET explicit quantifier
-            	IdentList <out List<BoundIdentDecl> inidentlist>
+            	IF (isIdentDeclList())							  // CSET explicit quantifier
+            	DeclList <out List<BoundIdentDecl> inidentlist>
             	                                                  (. binding = new Binding(binding, inidentlist); .)
             	QDOT
             	Predicate <out Predicate inpred, binding>
@@ -869,14 +868,27 @@ PRODUCTIONS
     | KMAX     (. tagpos = new int[]{Formula.KMAX, t.pos}; .)
     .
 
-    IdentList <out List<BoundIdentDecl> idents> 
-    =                             (. idents = new Vector<BoundIdentDecl>(); .)
-        IDENT                     (. idents.add(factory.makeBoundIdentDecl(t.val, new SourceLocation(t.pos, t.getEnd()))); .)
+    DeclList <out List<BoundIdentDecl> idents> 
+    =                          	 (. idents = new Vector<BoundIdentDecl>();
+    								BoundIdentDecl decl; .)
+        IdentDecl<out decl>		 (. idents.add(decl); .)
         {
             COMMA
-            IDENT                 (. idents.add(factory.makeBoundIdentDecl(t.val, new SourceLocation(t.pos, t.getEnd()))); .)
+            IdentDecl<out decl>	 (. idents.add(decl); .)
         }
     .
+
+	IdentDecl <out BoundIdentDecl decl>
+	=							 (. Type type = null; .)
+		IDENT					 (. final int start = t.pos;
+									final String name = t.val; .)
+		[
+			TYPING
+			Type<out type>
+		]						 (. final SourceLocation loc =
+											new SourceLocation(start, t.getEnd());
+									decl = factory.makeBoundIdentDecl(name, loc, type); .)
+	.
 
     FreeIdentList <out List<FreeIdentifier> idents> 
     =                             (. idents = new Vector<FreeIdentifier>(); .)
@@ -887,21 +899,25 @@ PRODUCTIONS
         }
     .
 
-    IdentPattern <out Expression expr> = 
-        IdentPatternAtom <out Expression inexpr> (. int pos = inexpr.getSourceLocation().getStart(); .)
+    DeclPattern <out Expression expr> = 
+        DeclPatternAtom <out Expression inexpr>   (. int pos = inexpr.getSourceLocation().getStart(); .)
                                                   (. expr = inexpr; .)
         {
             MAPSTO
-            IdentPatternAtom <out inexpr>         (. expr = factory.makeBinaryExpression(Formula.MAPSTO, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
+            DeclPatternAtom <out inexpr>          (. expr = factory.makeBinaryExpression(Formula.MAPSTO, expr, inexpr, new SourceLocation(pos, inexpr.getSourceLocation().getEnd())); .)
         }
     .
 
-    IdentPatternAtom <out Expression expr>   (. expr = null; .) =
+    DeclPatternAtom <out Expression expr>     (. expr = null; .)
+    =
         LPAR 
-        IdentPattern <out Expression inexpr> (. expr = inexpr; .)
+        DeclPattern <out Expression inexpr>   (. expr = inexpr; .)
         RPAR
     |
-        IDENT                                 (. expr = factory.makeFreeIdentifier(t.val, new SourceLocation(t.pos, t.getEnd())); .)
+        IdentDecl<out BoundIdentDecl decl>    (. final String name = decl.getName();
+        										 final SourceLocation loc = decl.getSourceLocation();
+        										 final Type type = decl.getType();
+										         expr = factory.makeFreeIdentifier(name, loc, type); .)
         
     .
     
@@ -911,13 +927,13 @@ PRODUCTIONS
                                                            List<BoundIdentDecl> boundIdents; .)
         {
             FORALL                                      (. int startPos = t.pos; .)
-            IdentList <out boundIdents>
+            DeclList <out boundIdents>
                                                         (. binding = new Binding(binding, boundIdents);
                                                            quantStack.push(new Quantifier(Formula.FORALL, boundIdents, startPos)); .)
             QDOT
         |
             EXISTS                                      (. int startPos = t.pos; .)
-            IdentList <out boundIdents>
+            DeclList <out boundIdents>
                                                         (. binding = new Binding(binding, boundIdents);
                                                            quantStack.push(new Quantifier(Formula.EXISTS, boundIdents, startPos)); .)
             QDOT
@@ -1027,5 +1043,37 @@ PRODUCTIONS
     | GE          (. tag = Formula.GE; .)
     .
 
+	Type<out Type type> =
+		NotRelationalType<out type>
+		[
+			REL
+			NotRelationalType<out Type inType>
+					(. type = factory.makeRelationalType(type, inType); .)
+		]
+	.
+	
+	NotRelationalType<out Type type> =
+        TypeFactor<out type>
+		{
+			CPROD
+			TypeFactor<out Type inType>
+			     (. type = factory.makeProductType(type, inType); .)
+		}
+	.
+
+	TypeFactor<out Type type>
+							(. type = null; .)
+	=
+		POW
+		LPAR
+		Type<out type>		(. type = factory.makePowerSetType(type); .)
+		RPAR
+	|	INTEGER				(. type = factory.makeIntegerType(); .)
+	|	BOOL				(. type = factory.makeBooleanType(); .)
+	|	IDENT				(. type = factory.makeGivenType(t.val); .)
+	|	LPAR
+		Type<out type>
+		RPAR
+	.
 
 END Bmath.
