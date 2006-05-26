@@ -39,8 +39,10 @@ import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
@@ -428,6 +430,18 @@ public class TestUnparse extends TestCase {
 					mBinaryExpression(RANRES,
 							mAssociativeExpression(FCOMP, id_f, id_g),
 							id_A 
+					)
+			), new ExprTestPair(
+					"λx0·⊤ ∣ x+x0",
+					mQuantifiedExpression(CSET, Lambda,
+							mList(mBoundIdentDecl("x")),
+							mLiteralPredicate(BTRUE),
+							mMaplet(mBoundIdentifier(0),
+									mAssociativeExpression(PLUS,
+											id_x,
+											mBoundIdentifier(0)
+									)
+							)
 					)
 			),
 	};
