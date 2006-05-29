@@ -30,6 +30,8 @@ import org.eventb.core.ast.Type;
  */
 public abstract class ClassicB {
 	
+	public static boolean DEBUG = false;
+	
 	private static final String ML_SUCCESS = "THEORY Etat IS Proved(0) END";
 	private static final String PP_SUCCESS = "SUCCES";
 	
@@ -79,7 +81,11 @@ public abstract class ClassicB {
 			return;
 		}
 		iName = File.createTempFile("eventbin", null).getCanonicalPath();
+		if (ClassicB.DEBUG)
+			System.out.println("Created temporary input file '" + iName + "'");
 		oName = File.createTempFile("eventbou", null).getCanonicalPath();
+		if (ClassicB.DEBUG)
+			System.out.println("Created temporary output file '" + oName + "'");
 	}
 	
 	public static StringBuffer translateSequent(
@@ -165,8 +171,11 @@ public abstract class ClassicB {
 	public static boolean proveWithPP(StringBuffer input, long delay, IProgressMonitor monitor)
 	throws IOException {
 		
-		if (! ProverShell.areToolsPresent())
+		if (! ProverShell.areToolsPresent()) {
+			if (ClassicB.DEBUG)
+				System.out.println("Some B4free tool is absent.");
 			return false;
+		}
 		try {
 			makeTempFileNames();
 			printPP(input);
@@ -225,8 +234,21 @@ public abstract class ClassicB {
 	
 	private static boolean callProver(String[] cmdArray, long delay, String successMsg, IProgressMonitor monitor) 
 	throws IOException {
+
+		if (ClassicB.DEBUG) {
+			System.out.println("About to launch prover command:");
+			System.out.print("   ");
+			for (String arg: cmdArray) {
+				System.out.print(' ');
+				System.out.print(arg);
+			}
+			System.out.println();
+			System.out.println("    delay: " + delay + "ms");
+			System.out.println("    success is: " + successMsg);
+		}
 		
 		Process process = null;
+		boolean success;
 		try {
 			Timer timer = new Timer();
 			if (delay >0) {
@@ -239,15 +261,22 @@ public abstract class ClassicB {
 			process.waitFor();
 			timer.cancel();
 			// showOutput();
-			return checkResult(successMsg);
+			success = checkResult(successMsg);
 		} catch (InterruptedException e) {
-			return checkResult(successMsg);
+			success = checkResult(successMsg);
 		} finally {
 			// clear interrupted status			
 			Thread.currentThread().isInterrupted();
 			if (process != null)
 				process.destroy();
 		}
+		if (ClassicB.DEBUG) {
+			if (success)
+				System.out.println("    Prover succeeded");
+			else
+				System.out.println("    Prover failed");
+		}
+		return success;
 	}
 	
 	public static boolean proveWithML(StringBuffer input, String forces,

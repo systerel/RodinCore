@@ -13,12 +13,13 @@ import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.core.prover.SequentProver;
 import org.eventb.internal.core.prover.Util;
 import org.osgi.framework.Bundle;
 
 public abstract class ProverShell {
 	
-	private static final String BUNDLE_NAME = "org.eventb.core.seqprover";
+	private static final String BUNDLE_NAME = SequentProver.PLUGIN_ID;
 	
 	private static Bundle bundle;
 	
@@ -46,11 +47,17 @@ public abstract class ProverShell {
 		URL url = Platform.find(getBundle(), relativePath);
 		if (url == null) {
 			// Not found.
+			if (ClassicB.DEBUG)
+				System.out.println("Can't find relative path '" + relativePath
+						+ "' in plugin");
 			return null;
 		}
 		try {
 			url = Platform.asLocalURL(url);
 		} catch (IOException e1) {
+			if (ClassicB.DEBUG)
+				System.out.println("I/O exception while resolving URL '" + url
+						+ "'");
 			return null;
 		}
 		IPath path = new Path(url.getFile());
@@ -69,6 +76,9 @@ public abstract class ProverShell {
 				fileName
 		);
 		String pathString = getLocalPath(relativePath);
+		if (ClassicB.DEBUG)
+			System.out.println("Path of tool " + fileName + " is '" +
+					pathString + "'");
 		return pathString;
 	}
 
@@ -111,11 +121,18 @@ public abstract class ProverShell {
 				"sym/" + 
 				fileName
 		);
-		return getLocalPath(relativePath);
+		final String pathString = getLocalPath(relativePath);
+		if (ClassicB.DEBUG)
+			System.out.println("Path of symbol table " + fileName + " is '" +
+					pathString + "'");
+		return pathString;
 	}
 	
 	private static void computeCache() {
 		if (cached) return;
+		if (ClassicB.DEBUG) {
+			System.out.println("Computing tool path cache");
+		}
 		krtPath = getExecutablePath("krt");
 		pkPath = getExecutablePath("pk");
 		MLKinPath = getToolPath("ML.kin");
@@ -129,6 +146,7 @@ public abstract class ProverShell {
 			PPKinPath != null &&
 			MLSTPath != null &&
 			PPSTPath != null;
+		cached = true;
 	}
 	
 	public static String[] getMLParserCommand(String input) {
