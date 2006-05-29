@@ -35,7 +35,8 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.pm.IPOChangeEvent;
-import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -54,7 +55,7 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofInformationPage extends Page implements
-		IProofInformationPage, IPOChangedListener {
+		IProofInformationPage, IProofStateChangedListener {
 	private ScrolledForm scrolledForm;
 
 	private ProverUI editor;
@@ -70,7 +71,7 @@ public class ProofInformationPage extends Page implements
 	 */
 	public ProofInformationPage(ProverUI editor) {
 		this.editor = editor;
-		editor.getUserSupport().addPOChangedListener(this);
+		editor.getUserSupport().addStateChangedListeners(this);
 	}
 
 	/*
@@ -81,7 +82,7 @@ public class ProofInformationPage extends Page implements
 	@Override
 	public void dispose() {
 		// Deregister with the user support.
-		editor.getUserSupport().removePOChangedListener(this);
+		editor.getUserSupport().removeStateChangedListeners(this);
 		super.dispose();
 	}
 
@@ -279,6 +280,7 @@ public class ProofInformationPage extends Page implements
 	/**
 	 * Passing the focus request to the ScrolledForm.
 	 * <p>
+	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	public void setFocus() {
@@ -305,6 +307,21 @@ public class ProofInformationPage extends Page implements
 	public void poChanged(IPOChangeEvent e) {
 		final IPRSequent prSequent = e.getDelta().getProofState()
 				.getPRSequent();
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (prSequent.exists()) {
+					scrolledForm.setText(prSequent.getName());
+					scrolledForm.reflow(true);
+					setFormText(prSequent);
+				}
+			}
+		});
+	}
+
+	public void proofStateChanged(IProofStateDelta delta) {
+		final IPRSequent prSequent = delta.getProofState().getPRSequent();
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {

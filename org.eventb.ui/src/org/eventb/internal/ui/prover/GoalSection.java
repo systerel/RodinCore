@@ -34,9 +34,8 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.pm.IGoalChangeEvent;
-import org.eventb.core.pm.IGoalChangedListener;
-import org.eventb.core.pm.IGoalDelta;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
@@ -52,7 +51,7 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This class implements the goal section in the Prover UI Editor.
  */
-public class GoalSection extends SectionPart implements IGoalChangedListener {
+public class GoalSection extends SectionPart implements IProofStateChangedListener {
 
 	// Title and description.
 	private static final String SECTION_TITLE = "Goal";
@@ -150,8 +149,7 @@ public class GoalSection extends SectionPart implements IGoalChangedListener {
 		this.page = page;
 		FormToolkit toolkit = page.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
-		((ProverUI) page.getEditor()).getUserSupport().addGoalChangedListener(
-				this);
+		((ProverUI) page.getEditor()).getUserSupport().addStateChangedListeners(this);
 	}
 
 	/**
@@ -334,14 +332,24 @@ public class GoalSection extends SectionPart implements IGoalChangedListener {
 	 * 
 	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
 	 */
-	public void goalChanged(IGoalChangeEvent e) {
-		final IGoalDelta delta = e.getDelta();
+//	public void goalChanged(IGoalChangeEvent e) {
+//		final IGoalDelta delta = e.getDelta();
+//
+//		Display display = EventBUIPlugin.getDefault().getWorkbench()
+//				.getDisplay();
+//		display.syncExec(new Runnable() {
+//			public void run() {
+//				setGoal(delta.getProofTreeNode());
+//			}
+//		});
+//	}
 
+	public void proofStateChanged(final IProofStateDelta delta) {
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				setGoal(delta.getProofTreeNode());
+				setGoal(delta.getGoalDelta().getProofTreeNode());
 			}
 		});
 	}

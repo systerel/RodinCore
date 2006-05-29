@@ -26,8 +26,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.pm.IPOChangeEvent;
-import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -41,7 +41,7 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This implements the Prover UI Editor by extending the FormEditor
  */
-public class ProverUI extends FormEditor implements IPOChangedListener {
+public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 	/**
 	 * The identifier of the Prover UI editor (value
@@ -71,7 +71,7 @@ public class ProverUI extends FormEditor implements IPOChangedListener {
 	public ProverUI() {
 		super();
 		this.userSupport = new UserSupport();
-		userSupport.addPOChangedListener(this);
+		userSupport.addStateChangedListeners(this);
 	}
 
 	/*
@@ -325,22 +325,6 @@ public class ProverUI extends FormEditor implements IPOChangedListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
-	 */
-	public void poChanged(IPOChangeEvent e) {
-		UIUtils.debug("PO Changed");
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				syncObligationExplorer();
-			}
-		});
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
 	@Override
@@ -354,5 +338,16 @@ public class ProverUI extends FormEditor implements IPOChangedListener {
 			e.printStackTrace();
 		}
 		return super.isDirty();
+	}
+
+	public void proofStateChanged(IProofStateDelta delta) {
+		UIUtils.debug("PO Changed");
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				syncObligationExplorer();
+			}
+		});
 	}
 }

@@ -49,9 +49,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
-import org.eventb.core.pm.IGoalChangeEvent;
-import org.eventb.core.pm.IGoalChangedListener;
-import org.eventb.core.pm.IStatusChangedListener;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
@@ -70,7 +69,7 @@ import org.rodinp.core.RodinDBException;
  *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofControlPage extends Page implements IProofControlPage,
-		IGoalChangedListener, IStatusChangedListener {
+		IProofStateChangedListener {
 
 	boolean share;
 
@@ -151,8 +150,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
-		editor.getUserSupport().addGoalChangedListener(this);
-		editor.getUserSupport().addStatusChangedListener(this);
+		editor.getUserSupport().addStateChangedListeners(this);
 	}
 
 	/**
@@ -331,8 +329,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
-		editor.getUserSupport().removeGoalChangedListener(this);
-		editor.getUserSupport().removeStatusChangedListener(this);
+		editor.getUserSupport().removeStateChangedListeners(this);
 		super.dispose();
 	}
 
@@ -659,30 +656,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		return scrolledForm;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
-	 */
-	public void goalChanged(IGoalChangeEvent e) {
-		IProofTreeNode node = e.getDelta().getProofTreeNode();
-		if (node != null && node.isOpen())
-			isOpened = true;
-		else
-			isOpened = false;
-		if (node.getParent() == null)
-			isTop = true;
-		else
-			isTop = false;
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				updateToolItems();
-			}
-		});
-	}
-
 	/**
 	 * Update the status of the toolbar items.
 	 */
@@ -718,16 +691,28 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		return;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IStatusChangedListener#statusChanged(java.lang.Object)
-	 */
-	public void statusChanged(final Object information) {
-		final ProofControlPage page = this;
 
+	public void proofStateChanged(IProofStateDelta delta) {
+		IProofTreeNode node = delta.getGoalDelta().getProofTreeNode();
+		if (node != null && node.isOpen())
+			isOpened = true;
+		else
+			isOpened = false;
+		if (node.getParent() == null)
+			isTop = true;
+		else
+			isTop = false;
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				updateToolItems();
+			}
+		});
+		
+		final ProofControlPage page = this;
+
+		final Object information = delta.getInformation();
 		display.syncExec(new Runnable() {
 			public void run() {
 				if (information != null)
@@ -738,7 +723,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				page.setFocus();
 			}
 		});
-	}
+
+	}	
 
 	/**
 	 * @author htson
@@ -829,4 +815,5 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 	}
 
+	
 }

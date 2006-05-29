@@ -50,8 +50,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
-import org.eventb.core.pm.IPOChangeEvent;
-import org.eventb.core.pm.IPOChangedListener;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTree;
@@ -59,6 +59,7 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -66,7 +67,7 @@ import org.eventb.internal.ui.EventBUIPlugin;
  *         This class is an implementation of a Proof Tree UI 'page'.
  */
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
-		ISelectionChangedListener, IPOChangedListener {
+		ISelectionChangedListener, IProofStateChangedListener {
 
 	// list of Selection Changed listeners.
 	private ListenerList selectionChangedListeners = new ListenerList();
@@ -240,7 +241,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		super();
 		this.userSupport = userSupport;
 		byUserSupport = false;
-		userSupport.addPOChangedListener(this);
+		userSupport.addStateChangedListeners(this);
 	}
 
 	/*
@@ -630,14 +631,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		this.setSelection(new StructuredSelection(root));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
-	 */
-	public void poChanged(IPOChangeEvent e) {
+
+	public void proofStateChanged(IProofStateDelta delta) {
+		UIUtils.debug("Proof Tree UI: State Changed");
 		byUserSupport = true;
-		final ProofState ps = e.getDelta().getProofState();
+		final ProofState ps = delta.getProofState();
 		final ProofTreeUIPage page = this;
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
@@ -648,7 +646,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					page.getViewer().setSelection(
 							new StructuredSelection(ps.getCurrentNode()));
 			}
-		});
+		});		
 	}
 
 }
