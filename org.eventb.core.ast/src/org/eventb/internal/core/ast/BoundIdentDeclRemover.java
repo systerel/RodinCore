@@ -94,6 +94,9 @@ public class BoundIdentDeclRemover extends Substitution {
 		}
 		// Externally bound identifier
 		final int newIndex = index - substitutes.length + newDecls.size();
+		if (newIndex == index) {
+			return ident;
+		}
 		return ff.makeBoundIdentifier(
 				newIndex, 
 				ident.getSourceLocation(),

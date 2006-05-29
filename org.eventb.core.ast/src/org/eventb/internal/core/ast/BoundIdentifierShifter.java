@@ -43,7 +43,7 @@ public class BoundIdentifierShifter extends Substitution {
 	@Override
 	public Expression getReplacement(BoundIdentifier ident) {
 		final int index = ident.getBoundIndex();
-		if (index < nbOfInternallyBound) {
+		if (index < nbOfInternallyBound || offset == 0) {
 			// Internally bound, no change
 			return ident;
 		}
