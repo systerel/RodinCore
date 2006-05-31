@@ -58,6 +58,7 @@ import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.builder.BuildState;
+import org.rodinp.internal.core.builder.Graph;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -92,7 +93,8 @@ public class RodinDBManager implements ISaveParticipant {
 //	private static final String RODINDB_DEBUG = RodinCore.PLUGIN_ID + "/debug/rodindatabse" ; //$NON-NLS-1$
 //	private static final String DELTA_DEBUG =RodinCore.PLUGIN_ID + "/debug/rodindelta" ; //$NON-NLS-1$
 //	private static final String DELTA_DEBUG_VERBOSE =RodinCore.PLUGIN_ID + "/debug/rodindelta/verbose" ; //$NON-NLS-1$
-//	private static final String BUILDER_DEBUG = RodinCore.PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
+	private static final String BUILDER_DEBUG = RodinCore.PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
+	private static final String BUILDER_DEBUG_GRAPH = RodinCore.PLUGIN_ID + "/debug/builder/graph" ; //$NON-NLS-1$
 //	private static final String COMPLETION_DEBUG = RodinCore.PLUGIN_ID + "/debug/completion" ; //$NON-NLS-1$
 //	private static final String RESOLUTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/resolution" ; //$NON-NLS-1$
 //	private static final String SELECTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/selection" ; //$NON-NLS-1$
@@ -259,8 +261,11 @@ public class RodinDBManager implements ISaveParticipant {
 	 */
 	public void configurePluginDebugOptions(){
 		if(RodinCore.getPlugin().isDebugging()){
-//			String option = Platform.getDebugOption(BUILDER_DEBUG);
-//			if(option != null) RodinBuilder.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			String option = Platform.getDebugOption(BUILDER_DEBUG);
+			if(option != null) RodinBuilder.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption(BUILDER_DEBUG_GRAPH);
+			if(option != null) Graph.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 //			
 //			option = Platform.getDebugOption(COMPILER_DEBUG);
 //			if(option != null) Compiler.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$

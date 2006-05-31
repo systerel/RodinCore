@@ -54,9 +54,8 @@ import org.rodinp.internal.core.util.Util;
  */
 public class Graph implements Serializable, Iterable<Node> {
 	
-	/**
-	 * 
-	 */
+	public static boolean DEBUG = false;
+	
 	private static final long serialVersionUID = 7032499313483369519L;
 	private HashMap<String,Node> nodes;
 	private Node active; // begin list with this node if it is a root node otherwise ignore
@@ -131,12 +130,12 @@ public class Graph implements Serializable, Iterable<Node> {
 		IFile file = node.getFile();
 		if (file == null) {// resource is not a file
 			Util.log(null, "Builder resource not a file" + file.getName()); //$NON-NLS-1$
-			if (RodinBuilder.DEBUG)
+			if (Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Builder resource not a file!"); //$NON-NLS-1$
 			return;
 		}
 		if (toolName == null || toolName.equals("")) {
-			if(RodinBuilder.DEBUG)
+			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Root node changed: " + node.getName());
 			node.setDated(false);
 
@@ -148,7 +147,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
 			}
 			return; // no associated tool
-		} else if(RodinBuilder.DEBUG)
+		} else if(Graph.DEBUG)
 			System.out.println(getClass().getName() + ": Running tool: " + toolName + " on node: " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		IAutomaticTool tool = getManager().getTool(toolName);
 		if(tool == null) {
@@ -254,7 +253,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				try {
 					cleanNode(n, monitor);
 				} catch(CoreException e) {
-					if(RodinBuilder.DEBUG)
+					if(Graph.DEBUG)
 						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
 				}
 			}
@@ -351,7 +350,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	 * 		If any problem occurred during build.
 	 */
 	public void buildGraph(IProgressMonitor monitor) throws CoreException {
-		if(RodinBuilder.DEBUG)
+		if(Graph.DEBUG)
 			System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
 //		this.progress = progress;
 //		this.monitor = monitor;
@@ -359,12 +358,12 @@ public class Graph implements Serializable, Iterable<Node> {
 		while(instable) {
 			topSortInit();
 			topSortNodes(nodePreList, true, true, monitor);
-			if(RodinBuilder.DEBUG)
+			if(Graph.DEBUG)
 				System.out.print(getClass().getName() + ": OUT Graph:\n" + printGraph()); //$NON-NLS-1$
-			if(RodinBuilder.DEBUG)
+			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Build Order: " + nodePreList.toString()); //$NON-NLS-1$
 			if(instable) {
-				if(RodinBuilder.DEBUG)
+				if(Graph.DEBUG)
 					System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
 				continue;
 			}
@@ -439,18 +438,18 @@ public class Graph implements Serializable, Iterable<Node> {
 		// for the error and not some plug-in that has introduced a cyclic
 		// dependency.
 		
-		if(RodinBuilder.DEBUG)
+		if(Graph.DEBUG)
 			System.out.print(getClass().getName() + ": Checking:"); //$NON-NLS-1$
 		
 		// first we modify the graph to find out more about the cause of the cycle
 		for(Node node : nodePreList) {
 //				node.setDated(false);
 				node.setCycle(false);
-				if(RodinBuilder.DEBUG)
+				if(Graph.DEBUG)
 					System.out.print(" " + node.getName()); //$NON-NLS-1$
 		}
 		
-		if(RodinBuilder.DEBUG)
+		if(Graph.DEBUG)
 			System.out.println();
 
 		for(Node node : nodePostList) { // node could not be ordered (cycle!)
@@ -467,7 +466,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				IFile file = node.getFile();
 				if(file != null)
 					RodinBuilder.deleteMarkers(file);
-				else if(RodinBuilder.DEBUG)
+				else if(Graph.DEBUG)
 					System.out.println(getClass().getName() + ": File not found: " + node.getPath().toString()); //$NON-NLS-1$
 
 		}

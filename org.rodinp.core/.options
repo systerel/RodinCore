@@ -1,0 +1,3 @@
+org.rodinp.core/debug = false
+org.rodinp.core/debug/builder = false
+org.rodinp.core/debug/builder/graph = false

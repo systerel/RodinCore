@@ -55,7 +55,7 @@ public class GraphHandler {
 //			throw new CoreException(new Status(IStatus.ERROR,
 //					RodinCore.PLUGIN_ID, 
 //					Platform.PLUGIN_ERROR, "Node already exists: " + node.getName(), null)); //$NON-NLS-1$
-		if(RodinBuilder.DEBUG)
+		if(Graph.DEBUG)
 			System.out.println(getClass().getName() + ": Node added: " + node.getName()); //$NON-NLS-1$
 		node.setDated(true);
 	}
@@ -81,10 +81,10 @@ public class GraphHandler {
 			// if this is the case the node was not yet visited and the topsort stack
 			// does not get invalidated, othewise we must restructure
 			graph.setInstable();
-			if(RodinBuilder.DEBUG)
+			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Node removed: " + node.getName()); //$NON-NLS-1$
 		} else {
-			if(RodinBuilder.DEBUG)
+			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Cannot remove node: " + node.getName()); //$NON-NLS-1$
 		
 //			throw new CoreException(new Status(IStatus.ERROR,
@@ -131,7 +131,7 @@ public class GraphHandler {
 	}
 
 	protected void addDependency(Link link, Node target) { //throws CoreException {
-		if(current == null && RodinBuilder.DEBUG)
+		if(current == null && Graph.DEBUG)
 			System.out.println("No current node"); //$NON-NLS-1$
 		boolean currentEqualsSource = current.equals(link.source);
 		boolean targetIsSuccessor = current.hasSuccessor(target);
@@ -162,7 +162,7 @@ public class GraphHandler {
 					Platform.PLUGIN_ERROR, 
 					"Dependency [" + link.source.toString() + " / " + target.toString() + "] from " +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					current.getName() + " not permitted", null)), " while modifying dependency graph"); //$NON-NLS-1$
-		if(RodinBuilder.DEBUG)
+		if(Graph.DEBUG)
 			System.out.println(getClass().getName() + ": Added dependency: " +  //$NON-NLS-1$
 					target.getName() + " => " + link.source.getName() + " instable = " + graph.isInstable()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -192,7 +192,7 @@ public class GraphHandler {
 			for (Node node : graph) {
 				node.removeLinks(id);
 				node.setDated(true);
-				if (RodinBuilder.DEBUG)
+				if (Graph.DEBUG)
 					System.out.println(getClass().getName()
 							+ ": removed dependencies: " + //$NON-NLS-1$
 							node.getName());
@@ -200,7 +200,7 @@ public class GraphHandler {
 		}
 		if (!ids.isEmpty())
 			graph.setInstable();
-		if (RodinBuilder.DEBUG)
+		if (Graph.DEBUG)
 			System.out.println(getClass().getName()
 					+ " instable = " + graph.isInstable()); //$NON-NLS-1$
 	}

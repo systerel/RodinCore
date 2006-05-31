@@ -29,9 +29,6 @@ import org.rodinp.internal.core.ElementTypeManager;
  */
 public class Node implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2715764862822077579L;
 	private String name; // name of the resource (full name in workspace!)
 	private String fileElementTypeId; // the extension of the resource
@@ -290,7 +287,7 @@ public class Node implements Serializable {
 				link.origin.dated = true;
 				if(originFile != null)
 					TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency cycle"); //$NON-NLS-1$
-				else if(RodinBuilder.DEBUG)
+				else if(Graph.DEBUG)
 					System.out.println(getClass().getName() + ": File not found: " + link.origin.getName()); //$NON-NLS-1$
 			}
 		}
