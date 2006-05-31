@@ -68,7 +68,7 @@ public class ExternalMLTests extends LegacyProversTest {
 		final FormulaFactory ff = FormulaFactory.getDefault();
 		final ITypeEnvironment tenv = ff.makeTypeEnvironment();
 		final Type INT = ff.makeIntegerType();
-		for (int i = 0; i < 200; ++i) {
+		for (int i = 0; i < 500; ++i) {
 			String name = "x" + i;
 			tenv.addName(name, INT);
 		}

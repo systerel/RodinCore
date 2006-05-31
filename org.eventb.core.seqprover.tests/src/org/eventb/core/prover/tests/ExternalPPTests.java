@@ -39,7 +39,12 @@ public class ExternalPPTests extends LegacyProversTest {
 	}
 
 	public void testTimeOut() {
-		IProverSequent sequent = TestLib.genSeq("0 ≤ a ∧ 1 < b |- a mod b < b");
+		IProverSequent sequent = TestLib.genSeq(
+				"  0 ≤ a" +
+				"∧ 1 < b" +
+				"∧ x ∈ {0, 1, 2}" +		// noisy hypothesis 
+				"|- a mod b < b"
+		);
 
 		// Very short timeout so that the provers are not launched
 		LegacyProvers.Input input = new ExternalPP.Input(1);
