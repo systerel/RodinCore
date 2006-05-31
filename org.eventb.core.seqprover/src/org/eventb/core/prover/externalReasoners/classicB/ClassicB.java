@@ -10,7 +10,7 @@ package org.eventb.core.prover.externalReasoners.classicB;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,53 +39,58 @@ public abstract class ClassicB {
 	
 	public static final long DEFAULT_PERIOD = 317;
 	
-	private static String iName;
-	private static String oName;
+	private static File iFile;
+	private static File oFile;
 	
 	private static class ProverTimeout extends TimerTask {
 		
-		private final Thread thread;
+		private final Process process;
 		
-		public ProverTimeout(Thread thread) {
-			this.thread = thread;
+		public ProverTimeout(Process process) {
+			this.process = process;
 		}
 		
 		@Override
 		public void run() {
-			thread.interrupt();
+			process.destroy();
+			if (ClassicB.DEBUG)
+				System.out.println("External prover timeout reached.");
 		}
 		
 	}
 	
 	private static class ProverCheckCancelled extends TimerTask {
 		
-		private final Thread thread;
+		private final Process process;
 		private final IProgressMonitor monitor;
 		
-		public ProverCheckCancelled(Thread thread, IProgressMonitor monitor) {
-			this.thread = thread;
+		public ProverCheckCancelled(Process process, IProgressMonitor monitor) {
+			this.process = process;
 			this.monitor = monitor;
 		}
 		
 		@Override
 		public void run() {
-			if(monitor.isCanceled())
-				thread.interrupt();
+			if (monitor.isCanceled()) {
+				process.destroy();
+				if (ClassicB.DEBUG)
+					System.out.println("External prover cancelled by monitor.");
+			}
 		}
 		
 	}
 	
 	private static void makeTempFileNames() throws IOException {
-		if (iName != null) {
+		if (iFile != null) {
 			// already done
 			return;
 		}
-		iName = File.createTempFile("eventbin", null).getCanonicalPath();
+		iFile = File.createTempFile("eventbin", null);
 		if (ClassicB.DEBUG)
-			System.out.println("Created temporary input file '" + iName + "'");
-		oName = File.createTempFile("eventbou", null).getCanonicalPath();
+			System.out.println("Created temporary input file '" + iFile + "'");
+		oFile = File.createTempFile("eventbou", null);
 		if (ClassicB.DEBUG)
-			System.out.println("Created temporary output file '" + oName + "'");
+			System.out.println("Created temporary output file '" + oFile + "'");
 	}
 	
 	public static StringBuffer translateSequent(
@@ -128,8 +133,8 @@ public abstract class ClassicB {
 	}
 	
 	private static void printPP(StringBuffer input) throws IOException {
-		PrintStream stream = new PrintStream(iName);
-		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oName);
+		PrintStream stream = new PrintStream(iFile);
+		stream.printf("Flag(FileOn(\"%s\")) & Set(toto | ", oFile);
 		stream.print(input);
 		stream.println(" )");
 		stream.close();
@@ -138,15 +143,15 @@ public abstract class ClassicB {
 	// Fills the output file with some random characters that can not be
 	// considered as a success.
 	private static void printDefaultOutput() throws IOException {
-		PrintStream stream = new PrintStream(oName);
+		PrintStream stream = new PrintStream(oFile);
 		stream.println("FAILED");
 		stream.close();
 	}
 
 	// Removes temporary files
 	private static void cleanup() {
-		new File(iName).delete();
-		new File(oName).delete();
+		iFile.delete();
+		oFile.delete();
 	}
 	
 	public static boolean callPKforPP(StringBuffer input)
@@ -157,7 +162,7 @@ public abstract class ClassicB {
 		try {
 			makeTempFileNames();
 			printPP(input);
-			return runPK(ProverShell.getPPParserCommand(iName));
+			return runPK(ProverShell.getPPParserCommand(iFile));
 		} finally {
 			cleanup();
 		}
@@ -180,7 +185,7 @@ public abstract class ClassicB {
 			makeTempFileNames();
 			printPP(input);
 			printDefaultOutput();
-			final String[] cmdArray = ProverShell.getPPCommand(iName);
+			final String[] cmdArray = ProverShell.getPPCommand(iFile);
 			return callProver(cmdArray, delay, PP_SUCCESS, monitor);
 		} finally {
 			cleanup();
@@ -188,13 +193,13 @@ public abstract class ClassicB {
 	}
 	
 	private static void printML(String input, String forces) throws IOException {
-		PrintStream stream = new PrintStream(iName);
+		PrintStream stream = new PrintStream(iFile);
 		stream.println("THEORY Lemma;Unproved IS");
 		stream.println(input);
 		stream.print("WHEN Force IS (");
 		stream.print(forces);
 		stream.print(") WHEN FileOut IS \"");
-		stream.print(oName);
+		stream.print(oFile);
 		stream.println("\"");
 		stream.println("WHEN Options IS ? & ? & ? & OK & \"\" & dummy & KO");
 		stream.println("END");
@@ -209,7 +214,7 @@ public abstract class ClassicB {
 		try {
 			makeTempFileNames();
 			printML(patchSequentForML(input.toString()), "0");
-			return runPK(ProverShell.getMLParserCommand(iName));
+			return runPK(ProverShell.getMLParserCommand(iFile));
 		} finally {
 			cleanup();
 		}
@@ -247,35 +252,54 @@ public abstract class ClassicB {
 			System.out.println("    success is: " + successMsg);
 		}
 		
+		ProcessBuilder builder = new ProcessBuilder(cmdArray);
+		builder.redirectErrorStream(true);
 		Process process = null;
-		boolean success;
+		Timer timer = new Timer();
+		StreamPumper pumper;
 		try {
-			Timer timer = new Timer();
+			process = builder.start();
 			if (delay >0) {
-				timer.schedule(new ProverTimeout(Thread.currentThread()), delay);
+				timer.schedule(new ProverTimeout(process), delay);
 			}
 			if (monitor != null) {
-				timer.schedule(new ProverCheckCancelled(Thread.currentThread(), monitor), DEFAULT_PERIOD, DEFAULT_PERIOD);
+				timer.schedule(new ProverCheckCancelled(process, monitor), 
+						0, DEFAULT_PERIOD);
 			}
-			process = Runtime.getRuntime().exec(cmdArray);
-			process.waitFor();
+			process.getOutputStream().close();
+			pumper = new StreamPumper(process.getInputStream(), ClassicB.DEBUG);
+			pumper.start();
+			try {
+				process.waitFor();
+			} catch (InterruptedException e) {
+				process.destroy();
+			}
+			pumper.join();
+			if (ClassicB.DEBUG) {
+				System.out.println("-- Begin dump of process output --");
+				final String output = pumper.getData();
+				if (output.length() == 0 || output.endsWith("\n")) {
+					System.out.print(output);
+				} else {
+					System.out.println(output);
+				}
+				System.out.println("-- End dump of process output --");
+				System.out.println("Result file contains:");
+				showOutput();
+			}
 			timer.cancel();
-			// showOutput();
-			success = checkResult(successMsg);
 		} catch (InterruptedException e) {
-			success = checkResult(successMsg);
+			// just ignore
 		} finally {
 			// clear interrupted status			
-			Thread.currentThread().isInterrupted();
+			Thread.interrupted();
 			if (process != null)
 				process.destroy();
 		}
-		if (ClassicB.DEBUG) {
-			if (success)
-				System.out.println("    Prover succeeded");
-			else
-				System.out.println("    Prover failed");
-		}
+		final boolean success = checkResult(successMsg);
+		if (ClassicB.DEBUG)
+				System.out.println("Prover " +
+						(success ? "succeeded" : "failed"));
 		return success;
 	}
 	
@@ -294,7 +318,7 @@ public abstract class ClassicB {
 			makeTempFileNames();
 			printML(patchSequentForML(input.toString()), forces);
 			printDefaultOutput();
-			final String[] cmdArray = ProverShell.getMLCommand(iName);
+			final String[] cmdArray = ProverShell.getMLCommand(iFile);
 			return callProver(cmdArray, delay, ML_SUCCESS, monitor);
 		} finally {
 			cleanup();
@@ -303,8 +327,7 @@ public abstract class ClassicB {
 	
 	private static boolean checkResult(String expected) throws IOException {
 		final int length = expected.length();
-		final InputStream is = new FileInputStream(oName);
-		final InputStreamReader isr = new InputStreamReader(is);
+		final FileReader isr = new FileReader(oFile);
 		final char[] cbuf = new char[length];
 		final int count = isr.read(cbuf);
 		if (count < length)
@@ -314,14 +337,11 @@ public abstract class ClassicB {
 	}
 	
 	// For debugging purpose
-	@SuppressWarnings("unused")
 	private static void showOutput() throws IOException {
-		InputStream is = new FileInputStream(oName);
-		InputStreamReader isr = new InputStreamReader(is);
-		char[] cbuf = new char[1024];
+		final FileReader isr = new FileReader(oFile);
+		final char[] cbuf = new char[1024];
 		int count = isr.read(cbuf);
-		System.out.println("Read '" + new String(cbuf, 0 , count) + "'");
-		
+		System.out.println(new String(cbuf, 0 , count));
 	}
 	
 }
