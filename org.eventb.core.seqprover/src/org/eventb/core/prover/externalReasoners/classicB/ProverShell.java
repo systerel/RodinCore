@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.prover.externalReasoners.classicB;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -149,7 +150,7 @@ public abstract class ProverShell {
 		cached = true;
 	}
 	
-	public static String[] getMLParserCommand(String input) {
+	public static String[] getMLParserCommand(File input) {
 		computeCache();
 		if (! toolsPresent) return null;
 		return new String[] { 
@@ -157,11 +158,11 @@ public abstract class ProverShell {
 			"-3",
 			"-s",
 			MLSTPath,
-			input,
+			input.getAbsolutePath(),
 		};
 	}
 
-	public static String[] getPPParserCommand(String input) {
+	public static String[] getPPParserCommand(File input) {
 		computeCache();
 		if (! toolsPresent) return null;
 		return new String[] { 
@@ -169,11 +170,11 @@ public abstract class ProverShell {
 			"-3",
 			"-s",
 			PPSTPath,
-			input,
+			input.getAbsolutePath(),
 		};
 	}
 
-	public static String[] getMLCommand(String input) {
+	public static String[] getMLCommand(File input) {
 		computeCache();
 		if (! toolsPresent) return null;
 		return new String[] { 
@@ -184,11 +185,11 @@ public abstract class ProverShell {
 			"rmcomm",
 			"-b",
 			MLKinPath,
-			input,
+			input.getAbsolutePath(),
 		};
 	}
 
-	public static String[] getPPCommand(String input) {
+	public static String[] getPPCommand(File input) {
 		computeCache();
 		if (! toolsPresent) return null;
 		return new String[] { 
@@ -197,7 +198,7 @@ public abstract class ProverShell {
 			"rmcomm",
 			"-b",
 			PPKinPath,
-			input,
+			input.getAbsolutePath(),
 		};
 	}
 
