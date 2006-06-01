@@ -1,43 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.rodinp.platform"
-      label="org.rodinp.platform-feature"
+      label="Rodin Platform"
       version="0.5.5"
-      provider-name="ETH Zürich">
+      provider-name="ETH Zurich"
+      os="linux,win32"
+      ws="gtk,win32"
+      arch="x86">
 
-   <description url="http://www.example.com/description">
+   <description url="http://sourceforge.net/projects/rodin-b-sharp/">
       This feature provides the basic Rodin platform.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
+   <copyright>
       Copyright (c) 2006 ETH Zurich. All rights reserved.
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
       This program and the accompanying materials
 are made available under the terms of the Eclipse Public License
 v1.0 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
    </license>
 
-   <includes
-         id="org.eclipse.rcp"
-         version="3.1.2"/>
-
-   <includes
-         id="org.eclipse.platform"
-         version="3.1.2"/>
-
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.update.configurator"/>
-      <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.update.ui"/>
-      <import plugin="org.eclipse.core.expressions"/>
+      <import feature="org.eclipse.platform" version="3.1.2" match="equivalent"/>
+      <import feature="org.eclipse.rcp" version="3.1.2" match="equivalent"/>
    </requires>
 
    <plugin
@@ -47,12 +35,12 @@ http://www.eclipse.org/legal/epl-v10.html
          version="0.5.5"
          unpack="false"/>
 
-   <plugin
+   <!--plugin
          id="org.eclipse.ui.ide"
          download-size="0"
          install-size="0"
          version="3.1.1"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="org.rodinp.core"
