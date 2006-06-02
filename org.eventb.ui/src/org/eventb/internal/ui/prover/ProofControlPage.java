@@ -387,14 +387,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		comp.setLayout(gl);
 		comp.setLayoutData(new GridData());
 
-		buttonBar = new ToolBar(body, SWT.NONE);
+		buttonBar = new ToolBar(body, SWT.FLAT | SWT.WRAP);
 		buttonBar.setLayoutData(new GridData());
 
-		new ToolItem(buttonBar, SWT.SEPARATOR);
+//		new ToolItem(buttonBar, SWT.SEPARATOR);
 
 		// Create drop-down externalProvers
-		externalProvers = createToolItem(buttonBar, SWT.DROP_DOWN, "p0", null,
-				null, "External Prover: PP restricted to selected hypotheses");
+		externalProvers = createToolItem(buttonBar, SWT.DROP_DOWN, "p0",
+				EventBUIPlugin.getDefault().getImageRegistry().get(
+						EventBImage.IMG_TOOL_P0), null,
+				"External Prover: PP restricted to selected hypotheses");
 		NewDropdownSelectionListener listenerOne = new NewDropdownSelectionListener(
 				externalProvers);
 		listenerOne.add("p0");
@@ -405,77 +407,82 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		listenerOne.add("m3");
 		listenerOne.add("ml");
 		externalProvers.addSelectionListener(listenerOne);
-		Rectangle rec = externalProvers.getBounds();
-		// UIUtils.debug("Width: " + rec.width);
-
-		ToolItem separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
-
-		nm = createToolItem(buttonBar, SWT.PUSH, "nm", null, null,
-				"Normalize tactic");
+		// Rectangle rec = externalProvers.getBounds();
+		//
+		// ToolItem separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
+		 
+		nm = createToolItem(buttonBar, SWT.PUSH, "nm",
+				EventBUIPlugin.getDefault().getImageRegistry().get(
+						EventBImage.IMG_TOOL_NORM), null, "Normalize tactic");
 		nm.addSelectionListener(new ContextButtonListener("nm"));
-		rec = nm.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = nm.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
-		ah = createToolItem(buttonBar, SWT.PUSH, "ah", null, null,
-				"Add hypothesis");
+		ah = createToolItem(buttonBar, SWT.PUSH, "ah", EventBUIPlugin
+				.getDefault().getImageRegistry().get(
+						EventBImage.IMG_TOOL_ADD_HYP), null, "Add hypothesis");
 		ah.addSelectionListener(new ContextButtonListener("ah"));
 		ah.setWidth(defaultWidth);
-		rec = ah.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = ah.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
-		dc = createToolItem(buttonBar, SWT.PUSH, "dc", null, null,
-				"Case distinction");
+		dc = createToolItem(buttonBar, SWT.PUSH, "dc", EventBUIPlugin
+				.getDefault().getImageRegistry().get(
+						EventBImage.IMG_TOOL_DO_CASE), null, "Case distinction");
 		dc.addSelectionListener(new ContextButtonListener("dc"));
 		dc.setWidth(defaultWidth);
-		rec = dc.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = dc.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
-		ct = createToolItem(buttonBar, SWT.PUSH, "ct", null, null,
+		ct = createToolItem(buttonBar, SWT.PUSH, "ct", EventBUIPlugin
+				.getDefault().getImageRegistry().get(
+						EventBImage.IMG_TOOL_CONTRADICTION), null,
 				"Contradiction");
 		ct.addSelectionListener(new ContextButtonListener("ct"));
 		ct.setWidth(defaultWidth);
-		rec = ct.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = ct.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
-		ba = createToolItem(buttonBar, SWT.PUSH, "ba", null, null,
+		ba = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
+				.getSharedImages().getImage(ISharedImages.IMG_TOOL_UNDO), null,
 				"Backtrack from current node");
 		ba.addSelectionListener(new ContextButtonListener("ba"));
 		ba.setWidth(defaultWidth);
-		rec = ba.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = ba.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
-		pn = createToolItem(buttonBar, SWT.PUSH, "pn", null, null,
+		pn = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
+				.getSharedImages().getImage(ISharedImages.IMG_TOOL_CUT), null,
 				"Prune the current subtree");
 		pn.addSelectionListener(new ContextButtonListener("pn"));
 		pn.setWidth(defaultWidth);
-		rec = pn.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = pn.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
 		sh = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin
 				.getDefault().getImageRegistry().get(
-						EventBImage.IMG_SEARCH_BUTTON), null,
-				"Search hypotheses");
+						EventBImage.IMG_TOOL_SEARCH), null, "Search hypotheses");
 		sh.addSelectionListener(new ContextButtonListener("sh"));
 		sh.setWidth(defaultWidth);
-		rec = sh.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = sh.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
 		pv = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
 				.getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
 				"Previous undischarged PO");
 		pv.addSelectionListener(new ContextButtonListener("pv"));
 		pv.setWidth(defaultWidth);
-		rec = pv.getBounds();
-		separator = new ToolItem(buttonBar, SWT.SEPARATOR);
-		separator.setWidth(defaultWidth - rec.width);
+		// rec = pv.getBounds();
+		// separator = new ToolItem(buttonBar, SWT.SEPARATOR);
+		// separator.setWidth(defaultWidth - rec.width);
 
 		ne = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
 				.getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD),
@@ -483,7 +490,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		ne.addSelectionListener(new ContextButtonListener("ne"));
 		ne.setWidth(defaultWidth);
 		// rec = ne.getBounds();
-		new ToolItem(buttonBar, SWT.SEPARATOR);
+		// new ToolItem(buttonBar, SWT.SEPARATOR);
 		// separator.setWidth(defaultWidth - rec.width);
 
 		// A text field
@@ -691,7 +698,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		return;
 	}
 
-
 	public void proofStateChanged(IProofStateDelta delta) {
 		IProofTreeNode node = delta.getGoalDelta().getProofTreeNode();
 		if (node != null && node.isOpen())
@@ -709,7 +715,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				updateToolItems();
 			}
 		});
-		
+
 		final ProofControlPage page = this;
 
 		final Object information = delta.getInformation();
@@ -724,7 +730,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
-	}	
+	}
 
 	/**
 	 * @author htson
@@ -762,27 +768,49 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					MenuItem selected = (MenuItem) event.widget;
 					String label = selected.getText();
 					dropdown.setText(label);
-					if (label.equals("p0"))
+					if (label.equals("p0")) {
 						dropdown
 								.setToolTipText("External Prover: PP restricted to selected hypotheses");
-					else if (label.equals("pp"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_P0));
+					} else if (label.equals("pp")) {
 						dropdown
 								.setToolTipText("External Prover: PP with all hypotheses");
-					else if (label.equals("m0"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_PP));
+					} else if (label.equals("m0")) {
 						dropdown
 								.setToolTipText("External Prover: ML in force 0");
-					else if (label.equals("m1"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_M0));
+					} else if (label.equals("m1")) {
 						dropdown
 								.setToolTipText("External Prover: ML in force 1");
-					else if (label.equals("m2"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_M1));
+					} else if (label.equals("m2")) {
 						dropdown
 								.setToolTipText("External Prover: ML in force 2");
-					else if (label.equals("m3"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_M2));
+					} else if (label.equals("m3")) {
 						dropdown
 								.setToolTipText("External Prover: ML in force 3");
-					else if (label.equals("ml"))
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_M3));
+					} else if (label.equals("ml")) {
 						dropdown
 								.setToolTipText("External Prover: ML in all forces");
+						dropdown.setImage(EventBUIPlugin.getDefault()
+								.getImageRegistry()
+								.get(EventBImage.IMG_TOOL_ML));
+					}
 
 					dropdown.getParent().redraw();
 					scrolledForm.reflow(true);
@@ -815,5 +843,4 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 	}
 
-	
 }

@@ -70,7 +70,29 @@ public class EventBImage {
 
 	public static final String IMG_APPLIED = "Applied";
 
-	public static final String IMG_SEARCH_BUTTON = "Search button";
+	public static final String IMG_TOOL_SEARCH = "Search button";
+
+	public static final String IMG_TOOL_CONTRADICTION = "Contradiction button";
+
+	public static final String IMG_TOOL_DO_CASE = "Do-case button";
+
+	public static final String IMG_TOOL_ADD_HYP = "Add hypothesis button";
+
+	public static final String IMG_TOOL_NORM = "Normalisation button";
+
+	public static final String IMG_TOOL_P0 = "p0 button";
+
+	public static final String IMG_TOOL_PP = "pp button";
+
+	public static final String IMG_TOOL_M0 = "m0 button";
+
+	public static final String IMG_TOOL_M1 = "m1 button";
+
+	public static final String IMG_TOOL_M2 = "m2 button";
+
+	public static final String IMG_TOOL_M3 = "m3 button";
+
+	public static final String IMG_TOOL_ML = "ml button";
 
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
@@ -148,7 +170,18 @@ public class EventBImage {
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
-		registerImage(registry, IMG_SEARCH_BUTTON, "clcl16/searchres.gif");
+		registerImage(registry, IMG_TOOL_SEARCH, "clcl16/searchres.gif");
+		registerImage(registry, IMG_TOOL_CONTRADICTION, "ctool16/ct_prover.gif");
+		registerImage(registry, IMG_TOOL_DO_CASE, "ctool16/dc_prover.gif");
+		registerImage(registry, IMG_TOOL_ADD_HYP, "ctool16/ah_prover.gif");
+		registerImage(registry, IMG_TOOL_NORM, "ctool16/nm_prover.gif");
+		registerImage(registry, IMG_TOOL_P0, "ctool16/p0_prover.gif");
+		registerImage(registry, IMG_TOOL_PP, "ctool16/pp_prover.gif");
+		registerImage(registry, IMG_TOOL_M0, "ctool16/m0_prover.gif");
+		registerImage(registry, IMG_TOOL_M1, "ctool16/m1_prover.gif");
+		registerImage(registry, IMG_TOOL_M2, "ctool16/m2_prover.gif");
+		registerImage(registry, IMG_TOOL_M3, "ctool16/m3_prover.gif");
+		registerImage(registry, IMG_TOOL_ML, "ctool16/ml_prover.gif");
 	}
 
 	/**
