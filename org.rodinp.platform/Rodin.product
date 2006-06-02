@@ -18,19 +18,16 @@
 
    <windowImages small="/org.rodinp.platform/icons/rodin16.gif" large="/org.rodinp.platform/icons/rodin32.gif"/>
 
-
    <launcher name="rodin">
+      <linux icon="/org.rodinp.platform/rodin32.xpm"/>
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
-   <plugins>
-   </plugins>
-
    <features>
-      <feature id="com.b4free.rodin" version="0.5.4"/>
+      <feature id="com.b4free.rodin" version="0.5.5"/>
       <feature id="org.eventb.ide" version="0.5.5"/>
       <feature id="org.rodinp.platform" version="0.5.5"/>
    </features>
