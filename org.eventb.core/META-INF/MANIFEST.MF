@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core; singleton:=true
 Bundle-Version: 0.5.5
 Bundle-Activator: org.eventb.core.EventBPlugin
-Bundle-Vendor: ETH Zurich
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;visibility:=reexport,
