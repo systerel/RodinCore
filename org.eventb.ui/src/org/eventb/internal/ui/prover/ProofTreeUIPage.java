@@ -20,7 +20,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -104,8 +106,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 *         This class provides the labels for elements in the tree viewer.
 	 */
 	class ViewLabelProvider implements ITableLabelProvider, ITableFontProvider,
-			ITableColorProvider {
+			ITableColorProvider, IPropertyChangeListener {
 
+		private Font font = null;
+		
+		public ViewLabelProvider() {
+			// Register as a listener to the font registry
+			JFaceResources.getFontRegistry().addListener(this);
+		}
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -224,7 +232,18 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		 */
 		public Font getFont(Object element, int columnIndex) {
 			// UIUtils.debug("Get fonts");
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			if (font == null) {
+				font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT); 
+			}
+			return font;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			ProofTreeUIPage.this.getViewer().refresh();
 		}
 
 	}
