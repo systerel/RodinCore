@@ -20,7 +20,6 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson

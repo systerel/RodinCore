@@ -200,14 +200,14 @@ public class ProofsPage extends FormPage implements
 		for (Iterator<IHypothesisDelta> it = hypDelta.iterator(); it.hasNext();) {
 			IHypothesisDelta d = it.next();
 			Hypothesis hyp = d.getHypothesis();
-			UIUtils.debug("Hypothesis: " + hyp.getPredicate());
+			UIUtils.debugProverUI("Hypothesis: " + hyp.getPredicate());
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SELECTED) != 0) {
 				addedToSelected.add(hyp);
 				if (cached.contains(hyp))
 					removedFromCached.add(hyp);
 				else if (searched.contains(hyp))
 					removedFromSearched.add(hyp);
-				UIUtils.debug("Add to UI Selected");
+				UIUtils.debugProverUI("Add to UI Selected");
 				selected.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SELECTED) != 0) {
@@ -216,7 +216,7 @@ public class ProofsPage extends FormPage implements
 					addedToCached.add(hyp);
 				else if (searched.contains(hyp))
 					addedToSearched.add(hyp);
-				UIUtils.debug("Remove from UI Selected");
+				UIUtils.debugProverUI("Remove from UI Selected");
 				selected.remove(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_CACHED) != 0) {
@@ -225,7 +225,7 @@ public class ProofsPage extends FormPage implements
 					if (searched.contains(hyp))
 						removedFromSearched.add(hyp);
 				}
-				UIUtils.debug("Add to UI Cached");
+				UIUtils.debugProverUI("Add to UI Cached");
 				cached.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_CACHED) != 0) {
@@ -234,19 +234,19 @@ public class ProofsPage extends FormPage implements
 					if (searched.contains(hyp))
 						addedToSearched.add(hyp);
 				}
-				UIUtils.debug("Remove from UI Cached");
+				UIUtils.debugProverUI("Remove from UI Cached");
 				cached.remove(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SEARCHED) != 0) {
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					addedToSearched.add(hyp);
-				UIUtils.debug("Add to UI Searched");
+				UIUtils.debugProverUI("Add to UI Searched");
 				searched.add(hyp);
 			}
 			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SEARCHED) != 0) {
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					removedFromSearched.add(d.getHypothesis());
-				UIUtils.debug("Remove from UI Searched");
+				UIUtils.debugProverUI("Remove from UI Searched");
 				searched.remove(hyp);
 			}
 

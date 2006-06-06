@@ -257,7 +257,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
 
-		UIUtils.debug("Item " + item);
+		UIUtils.debugEventBEditor("Item " + item);
 
 		// Set the selection of the viewer
 		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
@@ -390,7 +390,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		toRefresh = new HashSet<Object>();
 		newStatus = new HashSet<StatusObject>();
 		moved = new HashMap<IRodinElement, IRodinElement>();
-		UIUtils.debug("--- Table: " + this + "---");
+		UIUtils.debugEventBEditor("--- Table: " + this + "---");
 		// if (this instanceof EventEditableTreeViewer)
 		// UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
@@ -402,10 +402,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	private void processMoveRecursive(IRodinElement oldElement,
 			IRodinElement newElement) {
-		UIUtils.debug("from: " + oldElement.getElementName() + " expanded "
-				+ this.getExpandedState(oldElement));
-		UIUtils.debug("to: " + newElement.getElementName());
-		UIUtils.debug("Expanded elements " + this.getExpandedElements());
+		UIUtils.debugEventBEditor("from: " + oldElement.getElementName()
+				+ " expanded " + this.getExpandedState(oldElement) + "\n to: "
+				+ newElement.getElementName() + "\n Expanded elements "
+				+ this.getExpandedElements());
 
 		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
 		boolean selected = ssel.toList().contains(oldElement);
@@ -440,13 +440,13 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		if (kind == IRodinElementDelta.ADDED) {
 			// Handle move operation
 			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
-				UIUtils.debug("Moved: " + element.getElementName() + " from: "
-						+ delta.getMovedFromElement());
+				UIUtils.debugEventBEditor("Moved: " + element.getElementName()
+						+ " from: " + delta.getMovedFromElement());
 				IRodinElement oldElement = delta.getMovedFromElement();
-				UIUtils.debug("--- Process Move ---");
+				UIUtils.debugEventBEditor("--- Process Move ---");
 				processMoveRecursive(oldElement, element);
 			} else {
-				UIUtils.debug("Added: " + element.getElementName());
+				UIUtils.debugEventBEditor("Added: " + element.getElementName());
 			}
 			Object parent = element.getParent();
 			toRefresh.add(parent);
@@ -456,7 +456,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		if (kind == IRodinElementDelta.REMOVED) {
 			// Ignore the move operation
 			// if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
-			UIUtils.debug("Removed: " + element.getElementName());
+			UIUtils.debugEventBEditor("Removed: " + element.getElementName());
 			Object parent = element.getParent();
 			toRefresh.add(parent);
 			// }
@@ -465,10 +465,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 		if (kind == IRodinElementDelta.CHANGED) {
 			int flags = delta.getFlags();
-			UIUtils.debug("Changed: " + element.getElementName());
+			UIUtils.debugEventBEditor("Changed: " + element.getElementName());
 
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				UIUtils.debug("CHILDREN");
+				UIUtils.debugEventBEditor("CHILDREN");
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
 					processDelta(deltas[i]);
@@ -477,13 +477,13 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				UIUtils.debug("REORDERED");
+				UIUtils.debugEventBEditor("REORDERED");
 				toRefresh.add(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				UIUtils.debug("CONTENT");
+				UIUtils.debugEventBEditor("CONTENT");
 
 				if (!(element instanceof IRodinFile))
 					toRefresh.add(element);
@@ -511,7 +511,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 				if (ctrl != null && !ctrl.isDisposed()) {
 					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debug("Refresh element " + element);
+						UIUtils.debugEventBEditor("Refresh element " + element);
 						viewer.refresh(element, updateLabels);
 					}
 
@@ -519,8 +519,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
 						StatusObject state = (StatusObject) iter.next();
 						Object newElement = state.getObject();
-						UIUtils.debug("Object: " + newElement + " expanded: "
-								+ state.getExpandedStatus());
+						UIUtils.debugEventBEditor("Object: " + newElement
+								+ " expanded: " + state.getExpandedStatus());
 						viewer.setExpandedState(newElement, state
 								.getExpandedStatus());
 						viewer.update(newElement, null);

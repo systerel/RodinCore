@@ -14,6 +14,7 @@ package org.eventb.internal.ui;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -21,6 +22,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -37,6 +42,16 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * <code>"org.eventb.ui"</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eventb.ui";
+
+	private static final String GLOBAL_TRACE = PLUGIN_ID + "/debug";
+
+	private static final String EVENTBEDITOR_TRACE = PLUGIN_ID + "/debug/eventbeditor";
+
+	private static final String PROJECTEXPLORER_TRACE = PLUGIN_ID + "/debug/projectexplorer";
+
+	private static final String OBLIGATIONEXPLORER_TRACE = PLUGIN_ID + "/debug/obligationexplorer";
+	
+	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui";
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -86,6 +101,35 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		configureDebugOptions();
+	}
+
+	/**
+	 * Process debugging/tracing options coming from Eclipse.
+	 */
+	private void configureDebugOptions() {
+//		if (isDebugging()) {
+		String option = Platform.getDebugOption(GLOBAL_TRACE);
+		if (option != null)
+			UIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+		option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
+		if (option != null)
+			EventBEditor.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		
+		option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
+		if (option != null)
+			ObligationExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+		option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
+		if (option != null)
+			ProjectExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+		option = Platform.getDebugOption(PROVERUI_TRACE);
+		if (option != null)
+			ProverUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+//		}
 	}
 
 	/*

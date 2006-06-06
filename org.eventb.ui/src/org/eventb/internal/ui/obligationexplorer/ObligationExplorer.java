@@ -69,6 +69,10 @@ public class ObligationExplorer extends ViewPart implements
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ObligationExplorer";
 
+	
+	// Debug flag
+	public static boolean DEBUG = false;
+	
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
@@ -335,17 +339,17 @@ public class ObligationExplorer extends ViewPart implements
 		if (byExternal)
 			return;
 
-		UIUtils.debug("Selection changed: ");
+		UIUtils.debugObligationExplorer("Selection changed: ");
 		ISelection sel = event.getSelection();
 
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 
 			if (!ssel.isEmpty()) {
-				UIUtils.debug("Activate UI " + ssel.toString());
+				UIUtils.debugObligationExplorer("Activate UI " + ssel.toString());
 				doubleClickAction.run();
 			} else {
-				UIUtils.debug("De-selected");
+				UIUtils.debugObligationExplorer("De-selected");
 				// Do nothing when there is no selection
 				// editor.getUserSupport().selectNode(null);
 			}
@@ -365,7 +369,7 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = true;
 		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(
 				obj)) {
-			UIUtils.debug("Set new Selection");
+			UIUtils.debugObligationExplorer("Set new Selection");
 			viewer.getControl().setRedraw(false);
 			viewer.setSelection(new StructuredSelection(obj));
 			viewer.getControl().setRedraw(true);

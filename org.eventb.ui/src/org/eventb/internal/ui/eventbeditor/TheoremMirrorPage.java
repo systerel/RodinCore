@@ -76,9 +76,9 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					UIUtils.debug("Event: " + e.toString());
-					UIUtils.debug("Data: " + e.data);
-					UIUtils.debug("Here: " + e.getSource());
+//					UIUtils.debug("Event: " + e.toString());
+//					UIUtils.debug("Data: " + e.data);
+//					UIUtils.debug("Here: " + e.getSource());
 					IRodinElement[] theorems = editor.getRodinInput()
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 					for (int i = 0; i < theorems.length; i++) {

@@ -137,7 +137,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 					Object[] slist = ssel.toArray();
 
 					for (int i = 0; i < slist.length; i++) {
-						UIUtils.debug(slist[i].toString() + " : "
+						UIUtils.debugProjectExplorer(slist[i].toString() + " : "
 								+ slist[i].getClass().toString());
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];

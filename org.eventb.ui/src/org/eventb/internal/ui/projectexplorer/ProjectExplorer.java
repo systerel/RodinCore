@@ -64,6 +64,9 @@ public class ProjectExplorer extends ViewPart {
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ProjectExplorer";
 
+	// Debug flag
+	public static boolean DEBUG = false;
+	
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 

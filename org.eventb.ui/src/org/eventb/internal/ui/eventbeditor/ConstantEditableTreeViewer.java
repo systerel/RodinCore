@@ -139,7 +139,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debug("Commit : " + element.getElementName()
+				UIUtils.debugEventBEditor("Commit : " + element.getElementName()
 						+ " to be : " + text);
 				if (!element.getElementName().equals(text)) {
 					((IInternalElement) element).rename(text, false, null);

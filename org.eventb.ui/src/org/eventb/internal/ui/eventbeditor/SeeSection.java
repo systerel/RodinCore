@@ -37,7 +37,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContext;
 import org.eventb.core.ISees;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -113,7 +112,7 @@ public class SeeSection extends SectionPart {
 		nullButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (nullButton.getSelection()) {
-					UIUtils.debug("Null selected");
+//					UIUtils.debug("Null selected");
 					contextText.setEnabled(false);
 					browseButton.setEnabled(false);
 					try {
@@ -134,7 +133,7 @@ public class SeeSection extends SectionPart {
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (chooseButton.getSelection()) {
-					UIUtils.debug("Choose selected");
+//					UIUtils.debug("Choose selected");
 					contextText.setEnabled(true);
 					browseButton.setEnabled(true);
 					contextText.setFocus();
@@ -214,7 +213,7 @@ public class SeeSection extends SectionPart {
 	private void setSeenContext(String context) {
 		if (seen == null) { // Create new element
 			try {
-				UIUtils.debug("Creat new sees clause");
+//				UIUtils.debug("Creat new sees clause");
 				IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 				seen = rodinFile.createInternalElement(ISees.ELEMENT_TYPE,
 						null, null, null);
@@ -226,7 +225,7 @@ public class SeeSection extends SectionPart {
 			}
 		} else { // Change the element
 			try {
-				UIUtils.debug("Change sees clause");
+//				UIUtils.debug("Change sees clause");
 				// if (!(seen.getContents().equals(contextText.getText()))) {
 				seen.setContents(context);
 				markDirty();

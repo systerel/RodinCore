@@ -66,6 +66,8 @@ import org.rodinp.core.RodinDBException;
 public abstract class EventBEditor extends FormEditor implements
 		IElementChangedListener {
 
+	public static boolean DEBUG = false;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -394,14 +396,14 @@ public abstract class EventBEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			UIUtils.debug("Save");
+//			UIUtils.debug("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
 						if (fpage.isDirty()) {
-							UIUtils.debug("Saving " + fpage.toString());
+//							UIUtils.debug("Saving " + fpage.toString());
 							fpage.doSave(monitor);
 						}
 					}
@@ -544,7 +546,7 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 
 		else {
-			UIUtils.debug("Unknown element type");
+			UIUtils.debugEventBEditor("Unknown element type");
 			return;
 		}
 

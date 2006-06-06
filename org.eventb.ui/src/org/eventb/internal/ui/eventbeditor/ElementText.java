@@ -116,7 +116,7 @@ public abstract class ElementText implements ModifyListener,
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
-					UIUtils.debug("TraverseReturn");
+//					UIUtils.debugEventBEditor("TraverseReturn");
 					commit(element, column, contents);
 					text.getParent().dispose();
 					event.doit = false;
@@ -264,7 +264,7 @@ public abstract class ElementText implements ModifyListener,
 	 */
 	public void elementMoved(HashMap<IRodinElement, IRodinElement> moved) {
 		if (moved.containsKey(element)) {
-			UIUtils.debug("Element moved, update from "
+			UIUtils.debugEventBEditor("Element moved, update from "
 					+ element.getElementName() + " to "
 					+ moved.get(element).getElementName());
 			element = moved.get(element);

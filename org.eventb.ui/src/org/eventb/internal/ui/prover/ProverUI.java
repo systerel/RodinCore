@@ -50,6 +50,9 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editors.ProverUI";
 
+	// Debug flag.
+	public static boolean DEBUG = false;
+	
 	// The outline page
 	private ProofTreeUIPage fProofTreeUI;
 
@@ -233,7 +236,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		// Save the file from the database to disk
 		try {
-			UIUtils.debug("Save to disk");
+			UIUtils.debugProverUI("Save to disk");
 			IPRFile prFile = this.getRodinInput();
 			prFile.save(monitor, true);
 		} catch (RodinDBException e) {
@@ -260,7 +263,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	@Override
 	public void setFocus() {
 		super.setFocus();
-		UIUtils.debug("Focus");
+		UIUtils.debugProverUI("Focus");
 		// Find obligationExplorer and sync
 		syncObligationExplorer();
 	}
@@ -270,7 +273,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * obligation.
 	 */
 	private void syncObligationExplorer() {
-		UIUtils.debug("Sync");
+		UIUtils.debugProverUI("Sync");
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
 		if (activePage != null) {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage
@@ -341,7 +344,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	}
 
 	public void proofStateChanged(IProofStateDelta delta) {
-		UIUtils.debug("PO Changed");
+		UIUtils.debugProverUI("PO Changed");
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {

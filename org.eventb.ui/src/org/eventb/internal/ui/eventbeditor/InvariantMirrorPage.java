@@ -76,7 +76,7 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-					UIUtils.debug("Event: " + e.toString());
+//					UIUtils.debug("Event: " + e.toString());
 					IRodinElement[] invariants = editor.getRodinInput()
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 					for (int i = 0; i < invariants.length; i++) {

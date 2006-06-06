@@ -633,7 +633,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 
 	public void proofStateChanged(IProofStateDelta delta) {
-		UIUtils.debug("Proof Tree UI: State Changed");
+		UIUtils.debugProverUI("Proof Tree UI: State Changed");
 		byUserSupport = true;
 		final ProofState ps = delta.getProofState();
 		final ProofTreeUIPage page = this;

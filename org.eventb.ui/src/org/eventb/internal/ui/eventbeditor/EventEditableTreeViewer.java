@@ -160,7 +160,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debug("Commit : " + element.getElementName()
+				UIUtils.debugEventBEditor("Commit : " + element.getElementName()
 						+ " to be : " + text);
 				if (!element.getElementName().equals(text)) {
 					((IInternalElement) element).rename(text, false, null);
@@ -173,7 +173,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				UIUtils.debug("Commit content: "
+				UIUtils.debugEventBEditor("Commit content: "
 						+ ((IInternalElement) element).getContents()
 						+ " to be : " + text);
 				if (!((IInternalElement) element).getContents().equals(text)) {

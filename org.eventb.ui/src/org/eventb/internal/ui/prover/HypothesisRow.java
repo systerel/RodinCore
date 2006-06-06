@@ -223,7 +223,7 @@ public class HypothesisRow {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc
 						.getEnd());
-				UIUtils.debug("Ident: " + image);
+				UIUtils.debugProverUI("Ident: " + image);
 				if (i++ != 0)
 					toolkit.createLabel(hypothesisComposite, ", " + image);
 				else
@@ -242,7 +242,7 @@ public class HypothesisRow {
 			form.getFormText().setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
-			UIUtils.debug("Pred: " + image);
+			UIUtils.debugProverUI("Pred: " + image);
 			form.getFormText().setText(
 					"<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>",
 					true, false);
@@ -267,7 +267,7 @@ public class HypothesisRow {
 		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
-			UIUtils.debug("Create tactic for " + t);
+			UIUtils.debugProverUI("Create tactic for " + t);
 			formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t)
 					+ "\">" + UIUtils.XMLWrapUp(t) + "</a> ";
 		}

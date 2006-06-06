@@ -54,6 +54,8 @@ import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.eventbeditor.IntelligentNewVariableInputDialog;
 import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
@@ -72,7 +74,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class UIUtils {
 
-	public static final boolean DEBUG = false;
+	public static boolean DEBUG = false;
 
 	public static final String CONJI_SYMBOL = "\u2227";
 
@@ -115,6 +117,58 @@ public class UIUtils {
 			System.out.println(message);
 	}
 
+	/**
+	 * Print out the message if the <code>EventBEditor.DEBUG</code> flag is
+	 * <code>true</code>.
+	 * <p>
+	 * 
+	 * @param message
+	 *            the messege to print out
+	 */
+	public static void debugEventBEditor(String message) {
+		if (EventBEditor.DEBUG)
+			System.out.println(message);
+	}
+
+	/**
+	 * Print out the message if the <code>ProjectExplorer.DEBUG</code> flag is
+	 * <code>true</code>.
+	 * <p>
+	 * 
+	 * @param message
+	 *            the messege to print out
+	 */
+	public static void debugProjectExplorer(String message) {
+		if (ProjectExplorer.DEBUG)
+			System.out.println(message);
+	}
+	
+	/**
+	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag is
+	 * <code>true</code>.
+	 * <p>
+	 * 
+	 * @param message
+	 *            the messege to print out
+	 */
+	public static void debugObligationExplorer(String message) {
+		if (ObligationExplorer.DEBUG)
+			System.out.println(message);
+	}
+
+	/**
+	 * Print out the message if the <code>ProverUI.DEBUG</code> flag is
+	 * <code>true</code>.
+	 * <p>
+	 * 
+	 * @param message
+	 *            the messege to print out
+	 */
+	public static void debugProverUI(String message) {
+		if (ProverUI.DEBUG)
+			System.out.println(message);
+	}
+	
 	/**
 	 * Getting the image corresponding to an object.
 	 * <p>
