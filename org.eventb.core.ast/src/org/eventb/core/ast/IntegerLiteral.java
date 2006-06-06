@@ -58,12 +58,24 @@ public class IntegerLiteral extends Expression {
 	@Override
 	protected String toString(boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes) {
-		return literal.toString();
+		return toStringInternal();
 	}
 
 	@Override
 	protected String toStringFullyParenthesized(String[] boundNames) {
-		return literal.toString();
+		return toStringInternal();
+	}
+
+	/**
+	 * Change the minus sign if any, so that it conforms to the mathematical
+	 * language: \u2212 (minus sign) instead of \u002d (hyphen-minus).
+	 */
+	private String toStringInternal() {
+		String result = literal.toString();
+		if (result.charAt(0) == '-') {
+			return '\u2212' + result.substring(1);
+		}
+		return result;
 	}
 
 	@Override

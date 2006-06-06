@@ -41,6 +41,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
@@ -91,11 +92,6 @@ import org.eventb.core.ast.QuantifiedExpression;
 public class TestUnparse extends TestCase {
 
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
 	
 	private static FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	private static FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
@@ -1139,4 +1135,31 @@ public class TestUnparse extends TestCase {
 			pair.parseAndCheck(formulaParenthesized);
 		}
 	}
+
+	/**
+	 * Ensures that negative integer literal are properly pretty-printed. This
+	 * test doesn't fit into the general category, as a negative integer literal
+	 * is initially parsed as a unary minus.
+	 */
+	public void testIntegerLiteral() {
+		Expression input = mIntegerLiteral(-1);
+		
+		final String output = input.toString();
+		parseAndCheckAfterFlatten(input, "\u22121", output);
+		
+		final String outputFullyParenthesized = input.toStringFullyParenthesized();
+		parseAndCheckAfterFlatten(input, "\u22121", outputFullyParenthesized);
+	}
+
+	private void parseAndCheckAfterFlatten(Expression input, String expected,
+			String actual) {
+		
+		assertEquals("Invalid output", expected, actual);
+		IParseResult parserResult = ff.parseExpression(actual);
+		assertTrue("Parse failed", parserResult.isSuccess());
+		Expression parserOutput = parserResult.getParsedExpression();
+		parserOutput = parserOutput.flatten(ff);
+		assertEquals("Unexpected parser result", input, parserOutput);
+	}
+
 }
