@@ -146,7 +146,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new SyntheticContentProvider());
-		this.setLabelProvider(new EventBTreeLabelProvider(editor));
+		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new RodinElementSorter());
 	}
 

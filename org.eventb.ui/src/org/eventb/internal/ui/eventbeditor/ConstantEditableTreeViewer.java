@@ -127,7 +127,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new CarrierSetContentProvider());
-		this.setLabelProvider(new EventBTreeLabelProvider(editor));
+		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new RodinElementSorter());
 	}
 

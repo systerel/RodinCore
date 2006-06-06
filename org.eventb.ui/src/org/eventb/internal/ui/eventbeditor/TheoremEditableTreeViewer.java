@@ -144,7 +144,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new TheoremContentProvider());
-		this.setLabelProvider(new EventBTreeLabelProvider(editor));
+		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new RodinElementSorter());
 	}
 

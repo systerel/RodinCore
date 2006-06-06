@@ -13,10 +13,13 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -36,18 +39,25 @@ import org.rodinp.core.RodinDBException;
  *         Tree Viewer.
  */
 public class EventBTreeLabelProvider implements ITableLabelProvider,
-		ITableFontProvider, ITableColorProvider {
+		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
 	
 	// The associated Event-B Editor
 	private EventBEditor editor;
 
+	// The font used in the tree viewer
+	private Font font = null;
+	
+	private TreeViewer viewer;
+	
 	/**
 	 * Constructor.
 	 * <p>
 	 * @param editor An Event-B Editor
 	 */
-	public EventBTreeLabelProvider(EventBEditor editor) {
+	public EventBTreeLabelProvider(EventBEditor editor, TreeViewer viewer) {
 		this.editor = editor;
+		this.viewer = viewer;
+		JFaceResources.getFontRegistry().addListener(this);
 	}
 
 	/*
@@ -173,7 +183,16 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      int)
 	 */
 	public Font getFont(Object element, int columnIndex) {
-		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		if (font == null) {
+			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT); 
+		}
+		return font;
 	}
 
+	public void propertyChange(PropertyChangeEvent event) {
+		font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		viewer.refresh();
+	}
+
+	
 }
