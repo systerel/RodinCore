@@ -109,27 +109,27 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-//		if (isDebugging()) {
-		String option = Platform.getDebugOption(GLOBAL_TRACE);
-		if (option != null)
-			UIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-		option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
-		if (option != null)
-			EventBEditor.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-		
-		option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
-		if (option != null)
-			ObligationExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-		option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
-		if (option != null)
-			ProjectExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-		option = Platform.getDebugOption(PROVERUI_TRACE);
-		if (option != null)
-			ProverUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-//		}
+		if (isDebugging()) {
+			String option = Platform.getDebugOption(GLOBAL_TRACE);
+			if (option != null)
+				UIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+	
+			option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
+			if (option != null)
+				EventBEditor.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			
+			option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
+			if (option != null)
+				ObligationExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+	
+			option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
+			if (option != null)
+				ProjectExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+	
+			option = Platform.getDebugOption(PROVERUI_TRACE);
+			if (option != null)
+				ProverUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
 	}
 
 	/*

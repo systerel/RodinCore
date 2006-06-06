@@ -1,0 +1,5 @@
+org.eventb.ui/debug = false
+org.eventb.ui/debug/eventbeditor = false
+org.eventb.ui/debug/projectexplorer = false
+org.eventb.ui/debug/obligationexplorer = false
+org.eventb.ui/debug/proverui = false
