@@ -109,7 +109,7 @@ public class Translator extends IdentityTranslator {
 	        }	
 	        /**
 	        * RULE BR6: 	x ∉ s
-	        *	   			�¬(x ∈ s)
+	        *	   			¬(x ∈ s)
 	        */
 	    	NotIn(x, s) -> {
 	    		return ff.makeUnaryPredicate(
