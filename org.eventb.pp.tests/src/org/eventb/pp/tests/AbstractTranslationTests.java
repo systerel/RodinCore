@@ -24,6 +24,7 @@ public abstract class AbstractTranslationTests extends TestCase {
 	protected static final Type INT = ff.makeIntegerType();
 	protected static final Type BOOL = ff.makeBooleanType();
 	protected static final Type INT_SET = POW(INT);
+	protected static final Type ty_S = ff.makeGivenType("S");
 
 	protected static Type POW(Type base) {
 		return ff.makePowerSetType(base);
