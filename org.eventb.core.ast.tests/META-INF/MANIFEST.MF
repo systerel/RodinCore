@@ -7,3 +7,4 @@ Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.core.ast,
  org.junit
+Export-Package: org.eventb.core.ast.tests
