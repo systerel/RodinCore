@@ -6,4 +6,5 @@ Bundle-Version: 0.0.0
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.junit,
- org.eventb.pp
+ org.eventb.pp,
+ org.eventb.core.ast.tests

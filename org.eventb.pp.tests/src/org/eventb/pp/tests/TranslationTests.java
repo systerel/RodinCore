@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.pp.tests;
 
-import static org.eventb.pp.tests.FastFactory.mList;
-import static org.eventb.pp.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;

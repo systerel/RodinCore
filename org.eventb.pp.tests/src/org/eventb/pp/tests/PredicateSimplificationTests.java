@@ -7,11 +7,12 @@
  *******************************************************************************/
 package org.eventb.pp.tests;
 
-import static org.eventb.pp.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.tests.FastFactory;
 import org.eventb.pp.Translator;
 
 public class PredicateSimplificationTests extends AbstractTranslationTests {
