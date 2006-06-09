@@ -39,6 +39,7 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
@@ -249,6 +250,7 @@ public class HypothesisRow {
 		} else {
 			Text hypothesisText = toolkit.createText(hypothesisComposite, hyp
 					.toString(), SWT.READ_ONLY);
+			new EventBMath(hypothesisText);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			hypothesisText.setLayoutData(gd);
 		}
