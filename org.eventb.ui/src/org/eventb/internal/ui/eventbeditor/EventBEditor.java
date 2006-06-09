@@ -14,7 +14,6 @@ package org.eventb.internal.ui.eventbeditor;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,12 +46,10 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -415,19 +412,19 @@ public abstract class EventBEditor extends FormEditor implements
 			}
 
 			// Save the file from the database to file
-			Collection<IRodinElement> originals = new HashSet<IRodinElement>();
-
-			for (Iterator<IRodinElement> it = newElements.iterator(); it
-					.hasNext();) {
-				IRodinElement element = it.next();
-				UIUtils.debugEventBEditor("New element: "
-						+ element.getElementName());
-				if (isOriginal(element)) {
-					originals.add(element);
-					((IInternalElement) element).delete(true, null);
-				}
-			}
-			newElements.removeAll(originals);
+//			Collection<IRodinElement> originals = new HashSet<IRodinElement>();
+//
+//			for (Iterator<IRodinElement> it = newElements.iterator(); it
+//					.hasNext();) {
+//				IRodinElement element = it.next();
+//				UIUtils.debugEventBEditor("New element: "
+//						+ element.getElementName());
+//				if (isOriginal(element)) {
+//					originals.add(element);
+//					((IInternalElement) element).delete(true, null);
+//				}
+//			}
+//			newElements.removeAll(originals);
 
 			IRodinFile inputFile = this.getRodinInput();
 			inputFile.save(monitor, true);
@@ -454,32 +451,32 @@ public abstract class EventBEditor extends FormEditor implements
 	 * @return <code>true</code> if the element has default created values.
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean isOriginal(IRodinElement element) {
-		if (element instanceof IGuard) {
-			try {
-				if (((IGuard) element).getContents().equals(
-						EventBUIPlugin.GRD_DEFAULT)) {
-					return true;
-				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (element instanceof IAction) {
-			try {
-				if (((IAction) element).getContents().equals(
-						EventBUIPlugin.SUB_DEFAULT)) {
-					return true;
-				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
+//	private boolean isOriginal(IRodinElement element) {
+//		if (element instanceof IGuard) {
+//			try {
+//				if (((IGuard) element).getContents().equals(
+//						EventBUIPlugin.GRD_DEFAULT)) {
+//					return true;
+//				}
+//			} catch (RodinDBException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		if (element instanceof IAction) {
+//			try {
+//				if (((IAction) element).getContents().equals(
+//						EventBUIPlugin.SUB_DEFAULT)) {
+//					return true;
+//				}
+//			} catch (RodinDBException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		return false;
+//	}
 
 	/**
 	 * Set the selection in the editor.
