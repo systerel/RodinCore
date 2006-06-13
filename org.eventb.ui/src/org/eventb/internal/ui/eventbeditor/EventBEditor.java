@@ -16,8 +16,10 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -38,7 +40,6 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -46,6 +47,7 @@ import org.eventb.core.IMachine;
 import org.eventb.core.ISees;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.ElementChangedEvent;
@@ -67,6 +69,8 @@ public abstract class EventBEditor extends FormEditor implements
 		IElementChangedListener {
 
 	public static boolean DEBUG = false;
+
+	private String lastActivePageID = null;
 
 	/**
 	 * @author htson
@@ -328,8 +332,11 @@ public abstract class EventBEditor extends FormEditor implements
 	 * actions required by the Event-B editor.
 	 */
 	public void dispose() {
+		UIUtils.debugEventBEditor("Dispose");
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
+
+		saveDefaultPage();
 
 		try { // Close the associated RodinFile
 			this.getRodinInput().close();
@@ -338,6 +345,52 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 
 		super.dispose();
+	}
+
+	/**
+	 * Saving the default page for the next open.
+	 */
+	private void saveDefaultPage() {
+		IRodinFile inputFile = this.getRodinInput();
+		try {
+			UIUtils.debugEventBEditor("Save Page: " + lastActivePageID);
+			if (lastActivePageID != null)
+				inputFile.getResource().setPersistentProperty(
+						new QualifiedName(EventBUIPlugin.PLUGIN_ID,
+								"default-editor-page"), lastActivePageID);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.editor.FormEditor#createPages()
+	 */
+	@Override
+	protected void createPages() {
+		super.createPages();
+		loadDefaultPage();
+	}
+
+	/**
+	 * Load the default page (read from the persistent property
+	 * <code>default-editor-page</code>.
+	 */
+	protected void loadDefaultPage() {
+		IRodinFile inputFile = this.getRodinInput();
+		try {
+			String pageID = inputFile.getResource().getPersistentProperty(
+					new QualifiedName(EventBUIPlugin.PLUGIN_ID,
+							"default-editor-page"));
+			if (pageID != null)
+				this.setActivePage(pageID);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -412,19 +465,20 @@ public abstract class EventBEditor extends FormEditor implements
 			}
 
 			// Save the file from the database to file
-//			Collection<IRodinElement> originals = new HashSet<IRodinElement>();
-//
-//			for (Iterator<IRodinElement> it = newElements.iterator(); it
-//					.hasNext();) {
-//				IRodinElement element = it.next();
-//				UIUtils.debugEventBEditor("New element: "
-//						+ element.getElementName());
-//				if (isOriginal(element)) {
-//					originals.add(element);
-//					((IInternalElement) element).delete(true, null);
-//				}
-//			}
-//			newElements.removeAll(originals);
+			// Collection<IRodinElement> originals = new
+			// HashSet<IRodinElement>();
+			//
+			// for (Iterator<IRodinElement> it = newElements.iterator(); it
+			// .hasNext();) {
+			// IRodinElement element = it.next();
+			// UIUtils.debugEventBEditor("New element: "
+			// + element.getElementName());
+			// if (isOriginal(element)) {
+			// originals.add(element);
+			// ((IInternalElement) element).delete(true, null);
+			// }
+			// }
+			// newElements.removeAll(originals);
 
 			IRodinFile inputFile = this.getRodinInput();
 			inputFile.save(monitor, true);
@@ -451,33 +505,32 @@ public abstract class EventBEditor extends FormEditor implements
 	 * @return <code>true</code> if the element has default created values.
 	 *         <code>false</code> otherwise.
 	 */
-//	private boolean isOriginal(IRodinElement element) {
-//		if (element instanceof IGuard) {
-//			try {
-//				if (((IGuard) element).getContents().equals(
-//						EventBUIPlugin.GRD_DEFAULT)) {
-//					return true;
-//				}
-//			} catch (RodinDBException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		if (element instanceof IAction) {
-//			try {
-//				if (((IAction) element).getContents().equals(
-//						EventBUIPlugin.SUB_DEFAULT)) {
-//					return true;
-//				}
-//			} catch (RodinDBException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		return false;
-//	}
-
+	// private boolean isOriginal(IRodinElement element) {
+	// if (element instanceof IGuard) {
+	// try {
+	// if (((IGuard) element).getContents().equals(
+	// EventBUIPlugin.GRD_DEFAULT)) {
+	// return true;
+	// }
+	// } catch (RodinDBException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// if (element instanceof IAction) {
+	// try {
+	// if (((IAction) element).getContents().equals(
+	// EventBUIPlugin.SUB_DEFAULT)) {
+	// return true;
+	// }
+	// } catch (RodinDBException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// return false;
+	// }
 	/**
 	 * Set the selection in the editor.
 	 * <p>
@@ -546,15 +599,6 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            instance of IRodinElement
 	 */
 	private void setElementSelection(IRodinElement element) {
-		if (element instanceof IMachine) {
-			this.setActivePage(DependenciesPage.PAGE_ID);
-			return;
-		}
-
-		if (element instanceof IContext) {
-			this.setActivePage(CarrierSetPage.PAGE_ID);
-			return;
-		}
 
 		if (element instanceof ISees) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
@@ -595,11 +639,6 @@ public abstract class EventBEditor extends FormEditor implements
 
 		else if (element instanceof IAction) {
 			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else {
-			UIUtils.debugEventBEditor("Unknown element type");
-			return;
 		}
 
 		// select the element within the page
@@ -681,6 +720,19 @@ public abstract class EventBEditor extends FormEditor implements
 			});
 			return;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.editor.FormEditor#pageChange(int)
+	 */
+	@Override
+	protected void pageChange(int newPageIndex) {
+		super.pageChange(newPageIndex);
+		IFormPage page = getActivePageInstance();
+		if (page != null)
+			lastActivePageID = page.getId();
 	}
 
 }
