@@ -29,6 +29,8 @@ public interface IPRSequent extends IPOSequent {
 
 	IProofTree makeProofTree() throws RodinDBException;
 	IProof getProof() throws RodinDBException;
+	
+	// TODO : refactor to updateProof
 	void updateStatus(IProofTree pt) throws RodinDBException;
 
 }

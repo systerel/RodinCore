@@ -1,7 +1,10 @@
 package org.eventb.core.prover;
 
+import java.util.Set;
+
 import org.eventb.core.prover.rules.IProofRule;
 import org.eventb.core.prover.rules.ProofRule;
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -168,5 +171,26 @@ public interface IProofTreeNode {
 	 * @return <code>true</code> iff the operation suceeded. 
 	 */
 	boolean graft(IProofTree tree);
-
+	
+	
+	/**
+	 * Sets the comment field of the current proof tree node.
+	 * 
+	 * @param comment
+	 * 	 The new comment for the current proof tree node
+	 * 
+	 * @see #getComment()
+	 */
+	void setComment(String comment);
+	
+	/**
+	 * Returns the comment field of the current proof tree node.
+	 * 
+	 * @return The comment field of the current proof tree node.
+	 * @see #setComment()
+	 */
+	String getComment();
+	
+	Set<Hypothesis> getUsedHypotheses();
+	
 }

@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.prover.externalReasoners.classicB.ClassicB;
+import org.eventb.core.prover.reasoners.classicB.ClassicB;
 
 public class TestOldProver extends TestCase {
 	

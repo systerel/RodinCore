@@ -54,7 +54,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.externalReasoners.ExternalML;
+import org.eventb.core.prover.reasoners.ExternalML;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBImage;
@@ -671,7 +671,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			isOpened = true;
 		else
 			isOpened = false;
-		if (node.getParent() == null)
+		if (node != null && node.getParent() == null)
 			isTop = true;
 		else
 			isTop = false;

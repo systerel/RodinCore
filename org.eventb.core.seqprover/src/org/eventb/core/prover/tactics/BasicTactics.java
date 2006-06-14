@@ -1,15 +1,12 @@
 package org.eventb.core.prover.tactics;
 
-import org.eventb.core.prover.IExtReasonerInput;
-import org.eventb.core.prover.IExtReasonerOutput;
-import org.eventb.core.prover.IExternalReasoner;
-import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.SuccessfullExtReasonerOutput;
-import org.eventb.core.prover.rules.Collapse;
-import org.eventb.core.prover.rules.PLb;
+import org.eventb.core.prover.Reasoner;
+import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.ReasonerOutput;
+import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.rules.ProofRule;
+import org.eventb.core.prover.rules.ReasoningStep;
 
 public class BasicTactics {
 	
@@ -37,38 +34,16 @@ public class BasicTactics {
 		return new ComposeStrict(tactics);
 	}
 	
-	public static ITactic pluginTac(IExternalReasoner plugin,IExtReasonerInput pluginInput){
-		return new PluginTac(plugin,pluginInput);
+	public static ITactic reasonerTac(Reasoner reasoner,ReasonerInput reasonerInput){
+		return new ReasonerTac(reasoner,reasonerInput);
+	}
+	
+	public static ITactic reasonerTac(ReasonerOutputSucc reasonerOutput){
+		return new ReuseTac(reasonerOutput);
 	}
 	
 	public static ITactic ruleTac(ProofRule rule){
 		return new RuleTac(rule);
-	}
-	
-	public static ITactic encapsulate(String name, ITactic tactic){
-		return new Encapsulate(name,tactic);
-	}
-	
-	private static class Encapsulate implements ITactic {
-		
-		private final ITactic tactic;
-		private final String name;
-		
-		public Encapsulate(String name,ITactic tactic)
-		{
-			this.tactic = tactic;
-			this.name = name;
-		}
-		
-		public Object apply(IProofTreeNode ptn){
-			if (!ptn.isOpen()) return "Root already has children";
-			IProofTree proofTree = SequentProver.makeProofTree(ptn.getSequent());
-			Object tacticOutput = this.tactic.apply(proofTree.getRoot());
-			if (tacticOutput != null) return tacticOutput;
-			if (ptn.applyRule(new Collapse(proofTree,name))) return null;
-			else return "Something seriously wrong";
-			
-		}
 	}
 	
 	private static class Prune implements ITactic {
@@ -99,24 +74,41 @@ public class BasicTactics {
 		}
 	}
 	
-	private static class PluginTac implements ITactic {
+	private static class ReasonerTac implements ITactic {
 		
-		private final IExternalReasoner plugin;
-		private final IExtReasonerInput pluginInput;
+		private final Reasoner reasoner;
+		private final ReasonerInput reasonerInput;
 		
-		public PluginTac(IExternalReasoner plugin,IExtReasonerInput pluginInput)
+		public ReasonerTac(Reasoner reasoner,ReasonerInput reasonerInput)
 		{
-			this.plugin = plugin;
-			this.pluginInput = pluginInput;
+			this.reasoner = reasoner;
+			this.reasonerInput = reasonerInput;
 		}
 		
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
-			IExtReasonerOutput po = this.plugin.apply(pt.getSequent(),pluginInput);
-			if (po == null) return "! Plugin returned null !";
-			if (!(po instanceof SuccessfullExtReasonerOutput)) return po;
-			ProofRule plb = new PLb((SuccessfullExtReasonerOutput) po);
-			ITactic temp = new RuleTac(plb);
+			ReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput);
+			if (reasonerOutput == null) return "! Plugin returned null !";
+			if (!(reasonerOutput instanceof ReasonerOutputSucc)) return reasonerOutput;
+			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
+			ITactic temp = new RuleTac(reasonerStep);
+			return temp.apply(pt);
+		}
+	}
+	
+	private static class ReuseTac implements ITactic {
+		
+		private final ReasonerOutputSucc reasonerOutput;
+		
+		public ReuseTac(ReasonerOutputSucc reasonerOutput)
+		{
+			this.reasonerOutput = reasonerOutput;
+		}
+		
+		public Object apply(IProofTreeNode pt){
+			if (!pt.isOpen()) return "Root already has children";
+			ProofRule reasonerStep = new ReasoningStep(reasonerOutput);
+			ITactic temp = new RuleTac(reasonerStep);
 			return temp.apply(pt);
 		}
 	}
@@ -221,22 +213,5 @@ public class BasicTactics {
 		}
 
 	}
-	
-	
-//	public static class conjE_auto implements Tactic{
-//		
-//		ProverPlugin conjE = new conjE();
-//		
-//		public boolean apply(ProofTree pt){
-//			if (pt.rootHasChildren()) return false;
-//			for (Predicate hyp : pt.getRootSeq().selectedHypotheses()){
-//				if (lib.isConj(hyp)) {
-//					Tactic t = new plugin(conjE,new conjE.Input(hyp));
-//					return t.apply(pt);
-//				}
-//			}
-//			return false;
-//		}
-//	}
 	
 }

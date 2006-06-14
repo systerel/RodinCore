@@ -444,6 +444,7 @@ public final class Lib {
 	}
 	
 	
+	// TODO : rename to typeCheckClosed
 	public static boolean isWellTyped(Formula f, ITypeEnvironment t) {
 		ITypeCheckResult tcr = f.typeCheck(t);
 		// new free variables introduced
@@ -527,6 +528,10 @@ public final class Lib {
 	
 	public static Action deselect(Hypothesis toDeselect){
 		return new Action(ActionType.DESELECT,toDeselect);
+	}
+	
+	public static Action hide(Hypothesis toHide){
+		return new Action(ActionType.HIDE,toHide);
 	}
 
 	public static ITypeEnvironment makeTypeEnvironment() {

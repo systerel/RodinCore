@@ -7,21 +7,32 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.Set;
+
+import org.eventb.core.IPRPredicate;
+import org.eventb.core.IPRPredicateSet;
+import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IProof;
+import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
  *
  */
-public class Proof extends UnnamedInternalElement implements IProof {
+public class Proof extends InternalElement implements IProof {
 
-	public Proof(IRodinElement parent) {
-		super(ELEMENT_TYPE, parent);
+	public Proof(String name, IRodinElement parent) {
+		super(name, parent);
 	}
-
+	
+	@Override
+	public String getElementType() {
+		return ELEMENT_TYPE;
+	}
+	
 	public Status getStatus() throws RodinDBException {
 		if (getContents().compareToIgnoreCase("PENDING") == 0) return Status.PENDING;
 		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Status.DISCHARGED;
@@ -40,6 +51,25 @@ public class Proof extends UnnamedInternalElement implements IProof {
 			break;
 		}
 	}
-	
 
+	public PRProofTreeNode getRootProofTreeNode() throws RodinDBException {
+		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
+		if (proofTreeNodes.length != 1) return null;
+		return (PRProofTreeNode) proofTreeNodes[0];
+	}
+
+	public Set<Predicate> getUsedHypotheses() throws RodinDBException {
+		IRodinElement[] usedHypotheses = getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
+		assert usedHypotheses.length == 1;
+		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
+		return ((IPRPredicateSet)usedHypotheses[0]).getPredicateSet();
+	}
+
+	public Predicate getGoal() throws RodinDBException {
+		IRodinElement[] goal = getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
+		assert goal.length == 1;
+		assert goal[0].getElementName().equals("goal");
+		return ((IPRPredicate)goal[0]).getPredicate();
+	}
+	
 }

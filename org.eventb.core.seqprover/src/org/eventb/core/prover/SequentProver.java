@@ -2,7 +2,7 @@ package org.eventb.core.prover;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.prover.externalReasoners.classicB.ClassicB;
+import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.osgi.framework.BundleContext;

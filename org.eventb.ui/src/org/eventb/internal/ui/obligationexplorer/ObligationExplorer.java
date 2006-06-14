@@ -192,7 +192,7 @@ public class ObligationExplorer extends ViewPart implements
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ObligationLabelProvider());
-		viewer.setSorter(new ProjectsSorter());
+//		viewer.setSorter(new ProjectsSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 
 		// Sync with the current active ProverUI

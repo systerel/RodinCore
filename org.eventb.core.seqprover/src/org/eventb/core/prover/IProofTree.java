@@ -8,6 +8,9 @@
 
 package org.eventb.core.prover;
 
+import java.util.Set;
+
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -84,5 +87,7 @@ public interface IProofTree {
 	 * @see IProofTreeChangedListener
 	 */
 	void removeChangeListener(IProofTreeChangedListener listener);
-
+	
+	Set<Hypothesis> getUsedHypotheses();
+	
 }

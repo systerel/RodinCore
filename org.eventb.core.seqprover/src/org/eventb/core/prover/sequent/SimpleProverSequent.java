@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.Lib;
 
 public class SimpleProverSequent implements IProverSequent{
 	
@@ -125,10 +126,14 @@ public class SimpleProverSequent implements IProverSequent{
 	
 	public SimpleProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment){
 		assert (hyps != null);
+		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
+		for (Hypothesis hyp : hyps) {
+			if (! Lib.isWellTyped(hyp.getPredicate(),typeEnvironment)) return null;
+		}
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.addAll(hyps);
 		return new SimpleProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
-
+		
 //		// Code for incremental type environments	
 //		if (typeEnvironment == null)
 //			return new SimpleProverSequent(this,null,null,newLocalHypotheses,null,null,null);	
@@ -143,6 +148,8 @@ public class SimpleProverSequent implements IProverSequent{
 	
 	public SimpleProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment){
 		assert (hyp != null);
+		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
+		if (! Lib.isWellTyped(hyp.getPredicate(),typeEnvironment)) return null;
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.add(hyp);
 		return new SimpleProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
@@ -161,6 +168,8 @@ public class SimpleProverSequent implements IProverSequent{
 	
 	public SimpleProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment){
 		assert (goal!=null);
+		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
+		if (! Lib.isWellTyped(goal,typeEnvironment)) return null;
 		return new SimpleProverSequent(this,typeEnvironment,null,null,null,null,goal);
 		
 //		// Code for incremental type environments
@@ -174,6 +183,13 @@ public class SimpleProverSequent implements IProverSequent{
 //		}
 //		return new SimpleProverSequent(this,newITypeEnvironment,null,null,null,null,goal);
 	}
+	
+//	public IProverSequent buildOn(ITypeEnvironment addedTypeEnvironment, Set<Predicate> addedHyps, Predicate newGoal) {
+//		assert (goal!=null);
+//		return new SimpleProverSequent(this,)
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	
 	public SimpleProverSequent hideHypotheses(Set<Hypothesis> toHide){
 		// assert hypotheses().containsAll(toHide);

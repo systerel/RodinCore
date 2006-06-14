@@ -37,7 +37,7 @@ import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
 
 /**
- * @author halstefa
+ * @author fmehta
  *
  */
 public class AutoPOM implements IAutomaticTool, IExtractor {
@@ -76,7 +76,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				new IWorkspaceRunnable() {
 					public void run(IProgressMonitor saveMonitor) throws CoreException {
 						Map<String, Status> newStatus = computeNewStatus();
-						createFreshPRFile(newStatus);
+						Map<String, IProof> oldProofs = getOldProofs();
+						createFreshPRFile(newStatus,oldProofs);
 					}
 				}, monitor);
 		
@@ -84,17 +85,21 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		return true;
 	}
 
+	Map<String, IProof> getOldProofs() throws RodinDBException{
+		if (prFile.exists())
+			return PRUtil.readProofs(prFile);
+		return new HashMap<String, IProof>();
+	}
+
+	
 	Map<String, Status> computeNewStatus() throws RodinDBException
 	{
-		IPRFile oldPRFile = prFile;
-		IPOFile newPOFile = poFile;
-		
-		Map<String, IProverSequent> newPOs = POUtil.readPOs(newPOFile);		
+		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
 		Map<String, Status> newStatus = new HashMap<String, Status>();
 		
-		if (oldPRFile.exists()){
-			Map<String, IProverSequent> oldPOs = PRUtil.readPOs(oldPRFile);
-			Map<String, Status> oldStatus = PRUtil.readStatus(oldPRFile);
+		if (prFile.exists()){
+			Map<String, IProverSequent> oldPOs = PRUtil.readPOs(prFile);
+			Map<String, Status> oldStatus = PRUtil.readStatus(prFile);
 			for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
 				String newPOname = newPO.getKey();
 				IProverSequent newPOseq = newPO.getValue();
@@ -133,11 +138,14 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		graph.updateGraph();
 	}
 
-	void createFreshPRFile(Map<String, Status> newStatus) throws CoreException {
+	void createFreshPRFile(Map<String, Status> newStatus, Map<String, IProof> oldProofs) throws CoreException {
 
 		if (prFile.exists()) 
 		{
+			
 			for (IRodinElement child : prFile.getChildren()){
+				// do not delete proofs !
+				if (!(child.getElementType().equals(IProof.ELEMENT_TYPE)))
 				((InternalElement)child).delete(true,null);
 			}
 			
@@ -149,11 +157,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 		
 		copyGlobalInfo();
-		copySequents(newStatus);
+		copySequents(newStatus,oldProofs);
+		
 		prFile.save(monitor, true);
 	}
 	
-	private void copySequents(Map<String, Status> newStatus) throws RodinDBException{
+	private void copySequents(Map<String, Status> newStatus, Map<String, IProof> oldProofs) throws RodinDBException{
 		IPOSequent[] poSequents = poFile.getSequents();
 		
 		for (IPOSequent poSeq : poSequents)
@@ -162,16 +171,25 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				(IPRSequent) prFile.createInternalElement(
 						IPRSequent.ELEMENT_TYPE, poSeq.getName(), null, monitor);
 			IRodinElement[] children = poSeq.getChildren();
-		
+			
 			for (IRodinElement child : children){
 				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
 			}
-			IProof proof =
-				(IProof) prSeq.createInternalElement(
-						IProof.ELEMENT_TYPE, "", null, monitor);
-			proof.setStatus(newStatus.get(prSeq.getName()));
+			
+			IProof oldProof = oldProofs.get(prSeq.getName());
+			if (oldProof == null)
+			{
+				// create a fresh proof
+				IProof proof =
+					(IProof) prFile.createInternalElement(
+							IProof.ELEMENT_TYPE,prSeq.getName(), null, monitor);
+				proof.setStatus(Status.PENDING);
+			}
+			else
+			{
+				prFile.getProof(prSeq.getName()).setStatus(newStatus.get(prSeq.getName()));
+			}
 		}
-		
 	}
 	
 	private void copyGlobalInfo() throws RodinDBException{

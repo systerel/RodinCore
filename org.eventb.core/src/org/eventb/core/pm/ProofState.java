@@ -32,7 +32,8 @@ public class ProofState {
 		current = null;
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
-		ps.updateStatus(pt);
+		// This is not needed. devise another way to check the status.
+		// ps.updateStatus(pt);
 	}
 	
 	public boolean isDischarged() throws RodinDBException {

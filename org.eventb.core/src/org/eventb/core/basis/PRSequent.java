@@ -7,8 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
-
+import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
@@ -47,9 +46,9 @@ public class PRSequent extends POSequent implements IPRSequent {
 	}
 	
 	public IProof getProof() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(Proof.ELEMENT_TYPE);
-		assert list.size() == 1;
-		return (IProof) list.get(0);
+		IProof proof = ((IPRFile)getOpenable()).getProof(getName());
+		assert proof != null;
+		return proof;
 	}
 
 	public IProofTree makeProofTree() throws RodinDBException {

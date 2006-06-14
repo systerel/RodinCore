@@ -1,11 +1,14 @@
 package org.eventb.core.prover.rules;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 public final class ProofTreeNode implements IProofTreeNode {
@@ -18,6 +21,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private ProofTreeNode parent;
 	private ProofRule rule;
 	private final IProverSequent sequent;
+	private String comment;
 	
 	// Tree to which this node belongs. This field is only set for a root node,
 	// so that it's easy to remove a whole subtree from the tree. Always use
@@ -33,6 +37,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.rule = null;
 		this.children = null;
 		this.discharged = false;
+		this.comment = "";
 		this.checkClassInvariant();
 	}
 //	
@@ -57,6 +62,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.rule = null;
 		this.children = null;
 		this.discharged = false;
+		this.comment = "";
 		this.checkClassInvariant();
 	}
 	
@@ -303,13 +309,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 
-	private String rootToString() {
-		String ruleStr;
-		if (this.rule == null) { ruleStr = "-"; }
-		else { ruleStr = this.rule.getName(); };
-		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
-	}
-
 	private void setChildren(ProofTreeNode[] newChildren) {
 		this.children = newChildren;
 		childrenChanged();
@@ -371,10 +370,38 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 		return;
 	}
+
+	private String rootToString() {
+		String ruleStr;
+		if (this.rule == null) { ruleStr = "-"; }
+		else { ruleStr = this.rule.getName(); };
+		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
+	}
 	
 	protected void setProofTree(ProofTree tree) {
 		this.tree = tree;	
 	}
+
+	public void setComment(String comment) {
+		assert comment != null;
+		this.comment = comment;
+	}
+	
+	public String getComment() {
+		return this.comment;
+	}
+	
+	public Set<Hypothesis> getUsedHypotheses(){
+		HashSet<Hypothesis> usedHypotheses = new HashSet<Hypothesis>();
+		if (this.rule == null) return usedHypotheses;
+		for (ProofTreeNode child : this.children) {
+			usedHypotheses.addAll(child.getUsedHypotheses());
+		}
+		usedHypotheses.retainAll(sequent.hypotheses());
+		usedHypotheses.addAll(rule.getNeededHypotheses());
+		return usedHypotheses;
+	}
+	
 	
 	
 }

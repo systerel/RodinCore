@@ -204,7 +204,7 @@
             class="org.eventb.core.basis.Proof"
             id="proof"
             name="%eventBproof"
-            named="false"/>
+            named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PODescription"
             id="poDescription"
@@ -219,6 +219,61 @@
             class="org.eventb.core.basis.POHint"
             id="poHint"
             name="%eventBpoHint"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRProofTreeNode"
+            id="proofTreeNode"
+            name="%eventBprProofTreeNode"
+            named="false"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRProofRule"
+            id="proofRule"
+            name="%eventBprProofRule"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRReasoningStep"
+            id="reasoningStep"
+            name="%eventBprReasoningStep"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Pair"
+            id="pair"
+            name="%eventBpair"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRPredicate"
+            id="prPredicate"
+            name="%eventBprPredicate"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRPredicateSet"
+            id="prPredicateSet"
+            name="%eventBprPredicateSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRReasonerInput"
+            id="prReasonerInput"
+            name="%eventBprReasonerInput"
+            named="false"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRTypeEnvironment"
+            id="prTypeEnv"
+            name="%eventBprTypeEnv"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRReasonerAnticident"
+            id="prReasonerAnticident"
+            name="%eventBprReasonerAnticident"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRExpression"
+            id="prExpression"
+            name="%eventBprExpression"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRHypAction"
+            id="prHypAction"
+            name="%eventBprHypAction"
             named="true"/>
    </extension>
    <extension

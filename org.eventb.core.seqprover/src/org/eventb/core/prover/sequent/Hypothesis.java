@@ -36,6 +36,14 @@ public class Hypothesis{
 		return new HashSet<Hypothesis>(Arrays.asList(hypotheses));
 	}
 	
+	public static Set<Predicate> Predicates(Set<Hypothesis> hypotheses){
+		Set<Predicate> predicates = new HashSet<Predicate>(hypotheses.size());
+		for(Hypothesis hypothesis : hypotheses){
+			predicates.add(hypothesis.getPredicate());
+		}
+		return predicates;
+	}
+	
 	public static Set<Hypothesis> Hypotheses(){
 		return new HashSet<Hypothesis>();
 	}

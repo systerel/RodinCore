@@ -17,9 +17,11 @@ public interface IProverSequent{
 	Set<Hypothesis> hiddenHypotheses();
 	
 	// ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Predicate> hyps,Predicate goal);
-	// ProverSequent addHyps(Set<Predicate> hyps,ITypeEnvironment typeEnvironment);
+	IProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment);
 	IProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment);
 	IProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment);
+	// IProverSequent buildOn(ITypeEnvironment addedTypeEnvironment,Set<Predicate> addedHyps,Predicate newGoal);
+	
 	
 	IProverSequent hideHypotheses(Set<Hypothesis> toHide);
 	IProverSequent showHypotheses(Set<Hypothesis> toShow);

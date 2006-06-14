@@ -8,6 +8,9 @@
 
 package org.eventb.core.prover.rules;
 
+import java.util.Set;
+
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 
@@ -40,4 +43,5 @@ public abstract class ProofRule implements IProofRule {
 	 */
 	public abstract IProverSequent[] apply(IProverSequent sequent);
 	
+	public abstract Set<Hypothesis> getNeededHypotheses();
 }

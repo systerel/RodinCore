@@ -8,8 +8,11 @@
 
 package org.eventb.core.prover.rules;
 
+import java.util.Set;
+
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -66,6 +69,10 @@ public final class ProofTree implements IProofTree {
 
 	public void removeChangeListener(IProofTreeChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
+	}
+
+	public Set<Hypothesis> getUsedHypotheses() {
+		return root.getUsedHypotheses();
 	}
 
 }

@@ -8,6 +8,8 @@
 package org.eventb.core.basis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
@@ -16,6 +18,7 @@ import org.eventb.core.IMachine;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IProof;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -74,5 +77,27 @@ public class PRFile extends POFile implements IPRFile {
 		list.toArray(sequents);
 		return sequents;
 	}
+
+	public Map<String, IProof> getProofs() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IProof.ELEMENT_TYPE);
+		HashMap<String, IProof> proofs = new HashMap<String, IProof>(list.size());
+		for (IRodinElement element : list){
+			// avoid two proofs with the same name
+			assert proofs.containsKey(element.getElementName());
+			proofs.put(element.getElementName(),(IProof)element);
+		}
+		return proofs;
+	}
+
+	public IProof getProof(String name) throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IProof.ELEMENT_TYPE);
+		// RodinElement[] list = getChildren();
+		for (IRodinElement element : list){
+			if (element.getElementName().equals(name)) return (IProof)element;
+		}
+		return null;
+	}
+	
+	
 
 }

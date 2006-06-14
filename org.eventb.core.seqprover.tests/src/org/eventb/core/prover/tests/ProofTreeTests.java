@@ -11,9 +11,8 @@ package org.eventb.core.prover.tests;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.rules.ProofRule;
-import org.eventb.core.prover.rules.RuleFactory;
 import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.core.prover.tactics.Tactics;
 
 /**
  * Unit tests for classes ProofTree and ProofTreeNode: basic manipulations of
@@ -21,9 +20,7 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * 
  * @author Laurent Voisin
  */
-public class ProofTreeTests extends AbstractProofTreeTests {
-
-	RuleFactory rf = new RuleFactory();
+public class ProofTreeTests extends AbstractProofTreeTests {	
 	
 	/**
 	 * Ensures that an initial proof tree is open.
@@ -43,7 +40,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		applyRule(root, rf.impI());
+		Tactics.impI().apply(root);
 		assertNodePending(root);
 		assertNotEmpty(root.getChildren());
 
@@ -51,7 +48,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertSingleton(imp, root.getChildren());
 		assertNodeOpen(imp);
 		
-		applyRule(imp, rf.hyp());
+		Tactics.hyp().apply(imp);
+		// applyRule(imp, rf.hyp());
 		assertNodeDischarged(imp);
 		assertNodeDischarged(root);
 		assertTrue("Tree is not discharged", tree.isDischarged());
@@ -66,7 +64,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		applyRule(root, rf.impI());
+		Tactics.impI().apply(root);
+		// applyRule(root, rf.impI());
 		assertNotEmpty(root.getChildren());
 		IProofTreeNode imp = root.getChildren()[0];
 		assertSingleton(imp, root.getChildren());
@@ -85,14 +84,16 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		applyRule(root, rf.impI());
+		Tactics.impI().apply(root);
+		// applyRule(root, rf.impI());
 		assertNotEmpty(root.getChildren());
 		IProofTreeNode imp = root.getChildren()[0];
 		assertSingleton(imp, root.getChildren());
 		assertNodeOpen(imp);
 		assertNodePending(root);
 
-		applyRule(imp, rf.conjI());
+		Tactics.conjI().apply(imp);
+		// applyRule(imp, rf.conjI());
 		assertEquals(2, imp.getChildren().length);
 		IProofTreeNode left = imp.getChildren()[0];
 		IProofTreeNode right = imp.getChildren()[1];
@@ -101,7 +102,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(imp);
 		assertNodePending(root);
 		
-		applyRule(left, rf.hyp());
+		Tactics.hyp().apply(left);
+		// applyRule(left, rf.hyp());
 		assertEmpty(left.getChildren());
 		assertNodeDischarged(left);
 		assertNodeOpen(right);
@@ -112,18 +114,19 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		checkTree(tree, root, sequent);
 	}
 	
-	/**
-	 * Checks consistency after applying a rule that fails.
-	 */
-	public void testApplyRuleFailure() {
-		IProverSequent sequent = makeSimpleSequent("⊥");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
-		IProofTreeNode root = tree.getRoot();
-
-		boolean applied = root.applyRule((ProofRule) rf.hyp());
-		assertFalse(applied);
-		assertNodeOpen(root);
-	}
+//	/**
+//	 * Checks consistency after applying a rule that fails.
+//	 */
+//	// TODO : rewrite check since rules no longer used so
+//	public void testApplyRuleFailure() {
+//		IProverSequent sequent = makeSimpleSequent("⊥");
+//		IProofTree tree = SequentProver.makeProofTree(sequent);
+//		IProofTreeNode root = tree.getRoot();
+//
+//		boolean applied = root.applyRule((ProofRule) rf.hyp());
+//		assertFalse(applied);
+//		assertNodeOpen(root);
+//	}
 
 	/**
 	 * Checks consistency after pruning a subtree on a pending node.
@@ -133,11 +136,13 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		applyRule(root, rf.impI());
+		Tactics.impI().apply(root);
+		// applyRule(root, rf.impI());
 		assertEquals(1, root.getChildren().length);
 		IProofTreeNode imp = root.getChildren()[0];
 
-		applyRule(imp, rf.conjI());
+		Tactics.conjI().apply(imp);
+		// applyRule(imp, rf.conjI());
 		assertEquals(2, imp.getChildren().length);
 		IProofTreeNode left = imp.getChildren()[0];
 		IProofTreeNode right = imp.getChildren()[1];
@@ -172,17 +177,21 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		applyRule(root, rf.impI());
+		Tactics.impI().apply(root);
+		// applyRule(root, rf.impI());
 		assertEquals(1, root.getChildren().length);
 		IProofTreeNode imp = root.getChildren()[0];
 
-		applyRule(imp, rf.conjI());
+		Tactics.conjI().apply(imp);
+		// applyRule(imp, rf.conjI());
 		assertEquals(2, imp.getChildren().length);
 		IProofTreeNode left = imp.getChildren()[0];
 		IProofTreeNode right = imp.getChildren()[1];
 		
-		applyRule(left, rf.hyp());
-		applyRule(right, rf.hyp());
+		Tactics.hyp().apply(left);
+		Tactics.hyp().apply(right);
+//		applyRule(left, rf.hyp());
+//		applyRule(right, rf.hyp());
 		
 		// the nodes to prune are part of the same proof tree.
 		assertSame(left.getProofTree(),tree);
@@ -219,7 +228,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		sequent = makeSimpleSequent("⊤");
 		IProofTree graft = SequentProver.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
-		applyRule(graftRoot, rf.hyp());
+		
+		Tactics.tautology().apply(graftRoot);
+		// applyRule(graftRoot, rf.hyp());
 		assertNodeDischarged(graftRoot);
 		
 		boolean success = treeRoot.graft(graft);
@@ -245,7 +256,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree graft = SequentProver.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
-		applyRule(graftRoot, rf.conjI());
+		Tactics.conjI().apply(graftRoot);
+		// applyRule(graftRoot, rf.conjI());
 		assertEquals(2, graftRoot.getChildren().length);
 		IProofTreeNode ch1 = graftRoot.getChildren()[0];
 		IProofTreeNode ch2 = graftRoot.getChildren()[1];
@@ -275,12 +287,15 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree graft = SequentProver.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
-		applyRule(graftRoot, rf.conjI());
+		Tactics.conjI().apply(graftRoot);
+		// applyRule(graftRoot, rf.conjI());
 		assertEquals(2, graftRoot.getChildren().length);
 		IProofTreeNode ch1 = graftRoot.getChildren()[0];
 		IProofTreeNode ch2 = graftRoot.getChildren()[1];
-		applyRule(ch1, rf.hyp());
-		applyRule(ch2, rf.hyp());
+		Tactics.tautology().apply(ch1);
+		Tactics.tautology().apply(ch2);
+		// applyRule(ch1, rf.hyp());
+		// applyRule(ch2, rf.hyp());
 		assertNodeDischarged(graftRoot);
 		
 		treeRoot.graft(graft);

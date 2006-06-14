@@ -1,8 +1,0 @@
-package org.eventb.core.prover.externalReasoners.rewriter;
-
-import org.eventb.core.ast.Predicate;
-
-public interface Rewriter {
-	public boolean isApplicable(Predicate p);
-	public Predicate apply(Predicate p);
-}

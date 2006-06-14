@@ -8,6 +8,10 @@
 
 package org.eventb.core;
 
+import java.util.Map;
+
+import org.rodinp.core.RodinDBException;
+
 
 
 /**
@@ -56,5 +60,9 @@ public interface IPRFile extends IPOFile {
 	 * @return a handle to the PO file of this component
 	 */
 	IPOFile getPOFile();
+	
+	Map<String,IProof> getProofs() throws RodinDBException;
+	
+	IProof getProof(String name) throws RodinDBException;
 	
 }

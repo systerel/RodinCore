@@ -1,0 +1,38 @@
+package org.eventb.core.prover.reasoners;
+
+import org.eventb.core.prover.Lib;
+import org.eventb.core.prover.Reasoner;
+import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.ReasonerOutput;
+import org.eventb.core.prover.ReasonerOutputFail;
+import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.sequent.IProverSequent;
+
+public class ImpI implements Reasoner{
+	
+	public String getReasonerID() {
+		return "impI";
+	}
+	
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput input){
+		
+		if (! Lib.isImp(seq.goal()))
+		{
+			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,input);
+			reasonerOutput.error = "Goal is not an implication";
+			return reasonerOutput;
+		}
+		
+		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		reasonerOutput.goal = seq.goal();
+		reasonerOutput.anticidents = new Anticident[1];
+		
+		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[0].addedHypotheses.add(Lib.impLeft(seq.goal()));
+		reasonerOutput.anticidents[0].subGoal = Lib.impRight(seq.goal());
+				
+		return reasonerOutput;
+	}
+
+}

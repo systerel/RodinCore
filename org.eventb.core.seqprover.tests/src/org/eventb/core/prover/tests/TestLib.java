@@ -5,17 +5,12 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IExtReasonerInput;
-import org.eventb.core.prover.IExtReasonerOutput;
-import org.eventb.core.prover.IExternalReasoner;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.SuccessfullExtReasonerOutput;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -24,26 +19,6 @@ import org.eventb.core.prover.sequent.SimpleProverSequent;
 public class TestLib {
 
 	public final static FormulaFactory ff = Lib.ff;
-	
-	public static final Predicate chkProofFormat_getNewGoalPred(IProverSequent goalSeq,IExternalReasoner plugin, IExtReasonerInput I){
-		IExtReasonerOutput O = plugin.apply(goalSeq,I);
-		Assert.assertTrue (O.toString()+goalSeq.toString(),O instanceof SuccessfullExtReasonerOutput);
-		SuccessfullExtReasonerOutput sO = (SuccessfullExtReasonerOutput) O;
-		Predicate proofGoal = sO.proof().ofSequent().goal();
-		Assert.assertTrue (goalSeq.hypotheses().containsAll(sO.proof().ofSequent().hypotheses()));
-		Assert.assertTrue (goalSeq.typeEnvironment().containsAll(sO.proof().ofSequent().typeEnvironment()));
-		// System.out.println(sO.proof());
-		if (Lib.isImp(proofGoal)){
-			Assert.assertTrue (((BinaryPredicate)proofGoal).getRight().equals(goalSeq.goal()));
-			return ((BinaryPredicate)proofGoal).getLeft();
-		}
-		else
-		{
-			Assert.assertTrue (proofGoal.equals(goalSeq.goal()));
-			return Lib.True;
-		}
-		
-	}
 	
 	public static IProverSequent genSeq(String s){
 		String[] hypsStr = (s.split("[|]-")[0]).split(";;");

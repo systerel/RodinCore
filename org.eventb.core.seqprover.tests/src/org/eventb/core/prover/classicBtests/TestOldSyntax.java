@@ -13,7 +13,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.externalReasoners.classicB.SyntaxVisitor;
+import org.eventb.core.prover.reasoners.classicB.SyntaxVisitor;
 
 public class TestOldSyntax extends TestCase {
 	

@@ -17,18 +17,39 @@ import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPRPredicate;
+import org.eventb.core.IPRPredicateSet;
+import org.eventb.core.IPRProofRule;
+import org.eventb.core.IPRProofTreeNode;
+import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.basis.PRProofRule;
+import org.eventb.core.basis.PRProofTreeNode;
+import org.eventb.core.basis.PRReasoningStep;
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
+import org.eventb.core.prover.Reasoner;
+import org.eventb.core.prover.ReasonerOutput;
+import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.SequentProver;
+import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.rules.ProofRule;
+import org.eventb.core.prover.rules.ProofTreeNode;
+import org.eventb.core.prover.rules.ReasoningStep;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
+import org.eventb.core.prover.tactics.BasicTactics;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author halstefa
@@ -60,7 +81,19 @@ public class PRUtil {
 		return result;
 	}
 	
-	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{
+	public static Map<String, IProof> readProofs(IPRFile prFile) throws RodinDBException{
+		IPOSequent[] sequents = prFile.getSequents();
+		Map<String, IProof> result 
+		= new HashMap<String, IProof>(sequents.length);
+		for (IPRSequent prSeq : (IPRSequent[]) sequents){
+			String name = prSeq.getName();
+			IProof proof = prSeq.getProof();
+			result.put(name,proof);
+		}
+		return result;
+	}
+	
+	public static IProverSequent makeSequent(IPRSequent prSeq) throws RodinDBException{
 		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
 		IPRFile prFile = (IPRFile) prSeq.getOpenable();
 		addIdents(prFile.getIdentifiers(), typeEnv);
@@ -70,35 +103,164 @@ public class PRUtil {
 		Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
 		IProverSequent seq = Lib.makeSequent(typeEnv,hypotheses,goal);
 		seq = seq.selectHypotheses(localHypotheses);
-		return SequentProver.makeProofTree(seq);
+		return seq;
+	}
+	
+	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{		
+		IProofTree proofTree = SequentProver.makeProofTree(makeSequent(prSeq));		
+		IProofTreeNode root = proofTree.getRoot();
+		IPRProofTreeNode prRoot = prSeq.getProof().getRootProofTreeNode();
+		ReplayHints replayHints = new ReplayHints();
+		if (prRoot != null) rebuild(root,prRoot,replayHints);
+		return proofTree;
+	}
+	
+	public static void rebuild(IProofTreeNode node,IPRProofTreeNode prNode, ReplayHints replayHints) throws RodinDBException{
+		// System.out.println("trying rebuild"+node.getSequent());
+		node.setComment(prNode.getContents());
+		IPRProofRule prRule = prNode.getRule();
+		// Check if this is an open node
+		if (prRule == null) return;
+		
+		// Try to replay the rule
+		if (prRule.getRuleID().equals("reasoningStep")){
+			IRodinElement[] prReasoningSteps = prRule.getChildrenOfType(IPRReasoningStep.ELEMENT_TYPE);
+			assert prReasoningSteps.length == 1;
+			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
+			
+			ReasonerOutputSucc reuseReasonerOutput = prReasoningStep.getReasonerOutput();
+			Reasoner reasoner = reuseReasonerOutput.generatedBy;
+			// uninstalled reasoner
+			assert reasoner != null;
+			SerializableReasonerInput reasonerInput = (SerializableReasonerInput)reuseReasonerOutput.generatedUsing;
+			
+			// choose between reuse and replay
+			boolean reuseSuccessfull = false;
+			// if there are replay hints do not even try a reuse
+			if (replayHints.isEmpty())
+			{
+				// see if reuse works
+				Object error = BasicTactics.reasonerTac(reuseReasonerOutput).apply(node);
+				reuseSuccessfull = (error == null);
+			}
+			
+			ReasonerOutputSucc replayReasonerOutputSucc = null;
+			
+			if (! reuseSuccessfull)
+			{	// reuse failed
+				// try replay
+				replayHints.applyHints(reasonerInput);
+				ReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput);
+				if ((replayReasonerOutput != null) && 
+						((replayReasonerOutput instanceof ReasonerOutputSucc))){
+					// reasoner successfully generated something
+					// compare replayReasonerOutput and reuseReasonerOutput
+					// and generate hints for continuing the proof
+					replayReasonerOutputSucc =
+						(ReasonerOutputSucc) replayReasonerOutput;
+					BasicTactics.reasonerTac(replayReasonerOutputSucc).apply(node);
+				}
+				
+				// BasicTactics.reasonerTac(reasoner,reasonerInput).apply(node);
+			}	
+		
+		// Check if rebuild for this node was succesfull
+		if (! node.hasChildren()) return;
+		// System.out.println("rebuild successful! ");
+		IPRProofTreeNode[] prChildren = prNode.getChildProofTreeNodes();
+		assert prChildren != null;
+		IProofTreeNode[] children = node.getChildren();
+		assert children != null;
+		
+		// Maybe check if the node has the same number of children as the prNode
+		// it may be smart to replay anyway, but generate a warning.
+		if (children.length != prChildren.length) return;
+		
+		// run recursively for each child
+		for (int i = 0; i < children.length; i++) {
+			ReplayHints newReplayHints = replayHints;
+			if (replayReasonerOutputSucc != null)
+			{
+				newReplayHints = replayHints.clone();
+				newReplayHints.addHints(reuseReasonerOutput.anticidents[i],replayReasonerOutputSucc.anticidents[i]);
+			}
+			rebuild(children[i],prChildren[i],newReplayHints);
+		}
+		}
 	}
 	
 	public static void updateStatus(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
-		IProofTree oldPt = makeProofTree(prSeq);
-		if (! Lib.identical(oldPt.getSequent(), pt.getSequent())) {
+		// IProofTree oldPt = makeProofTree(prSeq);
+		IProverSequent oldProverSeq = makeSequent(prSeq);
+		if (! Lib.identical(oldProverSeq, pt.getSequent())) {
 			// The sequent changed in the file
 			// TODO maybe throw a core exception here
 			return;
 		}
-			
+		
+		// remove the previous proof
+		if (prSeq.getProof().hasChildren())
+		prSeq.getRodinDB().delete(prSeq.getProof().getChildren(),true,null);
+
+		// Write out the goal and used hypotheses for the proof
+		((IPRPredicate)(prSeq.getProof().createInternalElement(
+				IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
+				setPredicate(pt.getSequent().goal());
+		((IPRPredicateSet)(prSeq.getProof().createInternalElement(
+				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
+				setPredicateSet(Hypothesis.Predicates(pt.getUsedHypotheses()));
+		
+		// Write out the proof tree
+		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProof());
+		
+		// Update the status
 		if (pt.isDischarged()){
 			prSeq.getProof().setContents(Status.DISCHARGED.toString());
 		} else {
 			prSeq.getProof().setContents(Status.PENDING.toString());
 		}
-		// IPRFile prFile = (IPRFile) prSeq.getParent();
-		// prFile.save(null, false);
 	}
 	
-//	public static void updateStatus(IPRFile prFile, String poName, Status status) throws RodinDBException{
-//		IPRSequent[] prSeqs = (IPRSequent[]) prFile.getSequents();
-//		for (IPRSequent prSeq : prSeqs){
-//			if (prSeq.getName().equals(poName)){
-//				prSeq.getProof().setContents(status.toString());
-//			}
-//		}
-//		// prFile.save(null, false);
-//	}
+	public static void writeOutRule (ProofRule rule,InternalElement parent) throws RodinDBException{
+		
+		if (rule instanceof ReasoningStep) {
+			InternalElement prRule =
+				parent.createInternalElement(
+					PRProofRule.ELEMENT_TYPE,
+					"reasoningStep",
+					null,null);
+			
+			ReasoningStep reasoningStep = (ReasoningStep) rule;
+			ReasonerOutputSucc reasonerOutput = reasoningStep.reasonerOutput;
+			
+			IPRReasoningStep prReasoningStep = 
+				(IPRReasoningStep)
+				prRule.createInternalElement(
+					IPRReasoningStep.ELEMENT_TYPE,
+					reasonerOutput.generatedBy.getReasonerID(),
+					null,null);		
+			prReasoningStep.setReasonerOutput(reasonerOutput);
+		}
+	}
+	
+	public static void writeOutProofTreeNode (ProofTreeNode proofTreeNode,InternalElement parent) throws RodinDBException{
+		assert (proofTreeNode != null);
+		InternalElement prProofTreeNode = 
+			parent.createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"",null,null);
+		
+		prProofTreeNode.setContents(proofTreeNode.getComment());
+		
+		if (proofTreeNode.isOpen()) return;
+		
+		writeOutRule(proofTreeNode.getRule(),prProofTreeNode);
+		
+		ProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
+		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
+			writeOutProofTreeNode(proofTreeNodeChildren[i],prProofTreeNode);
+		}
+		
+	}
+	
 	
 	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
 		Map<String, Status> result 
@@ -162,6 +324,7 @@ public class PRUtil {
 			typeEnv.addName(name,type);
 		}
 	}
+
 	
 
 }
