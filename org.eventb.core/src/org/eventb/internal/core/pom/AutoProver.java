@@ -4,6 +4,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.reasoners.ExternalML;
+import org.eventb.core.prover.tactics.BasicTactics;
 import org.eventb.core.prover.tactics.Tactics;
 import org.rodinp.core.RodinDBException;
 
@@ -44,7 +45,7 @@ public class AutoProver {
 					run(tree);
 					// update the tree even if there is a partial proof
 					// replaced : if (tree.isDischarged()) {
-					if (tree.getRoot().hasChildren()) {
+					if (tree.isDischarged() || tree.getRoot().hasChildren()) {
 						po.updateStatus(tree);
 						prFile.save(null, false);
 					}
@@ -65,9 +66,9 @@ public class AutoProver {
 		// Then, try with the legacy provers.
 		// pt.getRoot().pruneChildren();
 		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
-		Tactics.externalML(MLforces, timeOutDelay, null).apply(pt.getRoot());
+		BasicTactics.onAllPending(Tactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
 		if (! pt.isDischarged()) {
-			Tactics.externalPP(false, timeOutDelay, null).apply(pt.getRoot());
+			BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
 		}
 	}
 	
