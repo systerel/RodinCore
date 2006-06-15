@@ -27,8 +27,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -69,10 +67,9 @@ public class ObligationExplorer extends ViewPart implements
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ObligationExplorer";
 
-	
 	// Debug flag
 	public static boolean DEBUG = false;
-	
+
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
@@ -100,28 +97,6 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public TreeViewer getTreeViewer() {
 		return viewer;
-	}
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class sorts the projects by name (ignore other elements)
-	 */
-	private class ProjectsSorter extends ViewerSorter {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (e1 instanceof IRodinProject) {
-				return super.compare(viewer, e1, e2);
-			} else {
-				return super.compare(viewer, e1, e2);
-			}
-		}
 	}
 
 	/**
@@ -192,7 +167,7 @@ public class ObligationExplorer extends ViewPart implements
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ObligationLabelProvider());
-//		viewer.setSorter(new ProjectsSorter());
+		// viewer.setSorter(new ProjectsSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 
 		// Sync with the current active ProverUI
@@ -346,7 +321,8 @@ public class ObligationExplorer extends ViewPart implements
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 
 			if (!ssel.isEmpty()) {
-				UIUtils.debugObligationExplorer("Activate UI " + ssel.toString());
+				UIUtils.debugObligationExplorer("Activate UI "
+						+ ssel.toString());
 				doubleClickAction.run();
 			} else {
 				UIUtils.debugObligationExplorer("De-selected");
