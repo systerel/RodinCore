@@ -107,19 +107,19 @@ public class EventBImage {
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
-	public static final String IMG_NEW_VARIABLES_PATH = "icons/ctool16/newvar_edit.gif";
+	public static final String IMG_NEW_VARIABLES_PATH = "icons/full/ctool16/newvar_edit.gif";
 
-	public static final String IMG_NEW_INVARIANTS_PATH = "icons/ctool16/newinv_edit.gif";
+	public static final String IMG_NEW_INVARIANTS_PATH = "icons/full/ctool16/newinv_edit.gif";
 
-	public static final String IMG_NEW_THEOREMS_PATH = "icons/ctool16/newthm_edit.gif";
+	public static final String IMG_NEW_THEOREMS_PATH = "icons/full/ctool16/newthm_edit.gif";
 
-	public static final String IMG_NEW_EVENT_PATH = "icons/ctool16/newevt_edit.gif";
+	public static final String IMG_NEW_EVENT_PATH = "icons/full/ctool16/newevt_edit.gif";
 
-	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/ctool16/newset_edit.gif";
+	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/full/ctool16/newset_edit.gif";
 
-	public static final String IMG_NEW_CONSTANTS_PATH = "icons/ctool16/newcst_edit.gif";
+	public static final String IMG_NEW_CONSTANTS_PATH = "icons/full/ctool16/newcst_edit.gif";
 
-	public static final String IMG_NEW_AXIOMS_PATH = "icons/ctool16/newaxm_edit.gif";
+	public static final String IMG_NEW_AXIOMS_PATH = "icons/full/ctool16/newaxm_edit.gif";
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
@@ -143,45 +143,45 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IMG_PROJECT, "obj16/prj_obj.gif");
-		registerImage(registry, IMG_MACHINE, "obj16/mch_obj.gif");
-		registerImage(registry, IMG_CONTEXT, "obj16/ctx_obj.gif");
-		registerImage(registry, IMG_VARIABLE, "obj16/var_obj.gif");
-		registerImage(registry, IMG_INVARIANT, "obj16/inv_obj.gif");
-		registerImage(registry, IMG_THEOREM, "obj16/thm_obj.gif");
-		registerImage(registry, IMG_EVENT, "obj16/evt_obj.gif");
-		registerImage(registry, IMG_GUARD, "obj16/grd_obj.gif");
-		registerImage(registry, IMG_ACTION, "obj16/act_obj.gif");
-		registerImage(registry, IMG_CARRIER_SET, "obj16/set_obj.gif");
-		registerImage(registry, IMG_CONSTANT, "obj16/cst_obj.gif");
-		registerImage(registry, IMG_AXIOM, "obj16/axm_obj.gif");
-		registerImage(registry, IMG_VARIABLES, "obj16/vars_obj.gif");
-		registerImage(registry, IMG_INVARIANTS, "obj16/invs_obj.gif");
-		registerImage(registry, IMG_THEOREMS, "obj16/thms_obj.gif");
-		registerImage(registry, IMG_EVENTS, "obj16/evts_obj.gif");
-		registerImage(registry, IMG_CARRIER_SETS, "obj16/sets_obj.gif");
-		registerImage(registry, IMG_CONSTANTS, "obj16/csts_obj.gif");
-		registerImage(registry, IMG_AXIOMS, "obj16/axms_obj.gif");
-		registerImage(registry, IMG_NEW_PROJECT, "clcl16/newprj_wiz.gif");
-		registerImage(registry, IMG_NEW_COMPONENT, "clcl16/newcomp_wiz.gif");
+		registerImage(registry, IMG_PROJECT, "full/obj16/prj_obj.gif");
+		registerImage(registry, IMG_MACHINE, "full/obj16/mch_obj.gif");
+		registerImage(registry, IMG_CONTEXT, "full/obj16/ctx_obj.gif");
+		registerImage(registry, IMG_VARIABLE, "full/obj16/var_obj.gif");
+		registerImage(registry, IMG_INVARIANT, "full/obj16/inv_obj.gif");
+		registerImage(registry, IMG_THEOREM, "full/obj16/thm_obj.gif");
+		registerImage(registry, IMG_EVENT, "full/obj16/evt_obj.gif");
+		registerImage(registry, IMG_GUARD, "full/obj16/grd_obj.gif");
+		registerImage(registry, IMG_ACTION, "full/obj16/act_obj.gif");
+		registerImage(registry, IMG_CARRIER_SET, "full/obj16/set_obj.gif");
+		registerImage(registry, IMG_CONSTANT, "full/obj16/cst_obj.gif");
+		registerImage(registry, IMG_AXIOM, "full/obj16/axm_obj.gif");
+		registerImage(registry, IMG_VARIABLES, "full/obj16/vars_obj.gif");
+		registerImage(registry, IMG_INVARIANTS, "full/obj16/invs_obj.gif");
+		registerImage(registry, IMG_THEOREMS, "full/obj16/thms_obj.gif");
+		registerImage(registry, IMG_EVENTS, "full/obj16/evts_obj.gif");
+		registerImage(registry, IMG_CARRIER_SETS, "full/obj16/sets_obj.gif");
+		registerImage(registry, IMG_CONSTANTS, "full/obj16/csts_obj.gif");
+		registerImage(registry, IMG_AXIOMS, "full/obj16/axms_obj.gif");
+		registerImage(registry, IMG_NEW_PROJECT, "full/clcl16/newprj_wiz.gif");
+		registerImage(registry, IMG_NEW_COMPONENT, "full/clcl16/newcomp_wiz.gif");
 
 		registerImage(registry, IMG_PENDING, "pending.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
-		registerImage(registry, IMG_TOOL_SEARCH, "clcl16/searchres.gif");
-		registerImage(registry, IMG_TOOL_CONTRADICTION, "ctool16/ct_prover.gif");
-		registerImage(registry, IMG_TOOL_DO_CASE, "ctool16/dc_prover.gif");
-		registerImage(registry, IMG_TOOL_ADD_HYP, "ctool16/ah_prover.gif");
-		registerImage(registry, IMG_TOOL_NORM, "ctool16/nm_prover.gif");
-		registerImage(registry, IMG_TOOL_P0, "ctool16/p0_prover.gif");
-		registerImage(registry, IMG_TOOL_PP, "ctool16/pp_prover.gif");
-		registerImage(registry, IMG_TOOL_M0, "ctool16/m0_prover.gif");
-		registerImage(registry, IMG_TOOL_M1, "ctool16/m1_prover.gif");
-		registerImage(registry, IMG_TOOL_M2, "ctool16/m2_prover.gif");
-		registerImage(registry, IMG_TOOL_M3, "ctool16/m3_prover.gif");
-		registerImage(registry, IMG_TOOL_ML, "ctool16/ml_prover.gif");
+		registerImage(registry, IMG_TOOL_SEARCH, "full/clcl16/searchres.gif");
+		registerImage(registry, IMG_TOOL_CONTRADICTION, "full/ctool16/ct_prover.gif");
+		registerImage(registry, IMG_TOOL_DO_CASE, "full/ctool16/dc_prover.gif");
+		registerImage(registry, IMG_TOOL_ADD_HYP, "full/ctool16/ah_prover.gif");
+		registerImage(registry, IMG_TOOL_NORM, "full/ctool16/nm_prover.gif");
+		registerImage(registry, IMG_TOOL_P0, "full/ctool16/p0_prover.gif");
+		registerImage(registry, IMG_TOOL_PP, "full/ctool16/pp_prover.gif");
+		registerImage(registry, IMG_TOOL_M0, "full/ctool16/m0_prover.gif");
+		registerImage(registry, IMG_TOOL_M1, "full/ctool16/m1_prover.gif");
+		registerImage(registry, IMG_TOOL_M2, "full/ctool16/m2_prover.gif");
+		registerImage(registry, IMG_TOOL_M3, "full/ctool16/m3_prover.gif");
+		registerImage(registry, IMG_TOOL_ML, "full/ctool16/ml_prover.gif");
 	}
 
 	/**
