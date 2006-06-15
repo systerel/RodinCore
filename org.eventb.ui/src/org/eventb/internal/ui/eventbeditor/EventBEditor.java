@@ -40,6 +40,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
+import org.eventb.core.IContext;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -599,7 +600,9 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            instance of IRodinElement
 	 */
 	private void setElementSelection(IRodinElement element) {
-
+		if (element instanceof IMachine) return;
+		if (element instanceof IContext) return;
+		
 		if (element instanceof ISees) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
