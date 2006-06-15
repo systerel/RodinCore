@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,6 +13,9 @@
 package org.eventb.internal.ui.prover;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -30,15 +33,12 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -54,13 +54,17 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.reasoners.ExternalML;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
+import org.eventb.ui.prover.IGlobalTactic;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -87,59 +91,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private ProverUI editor;
 
-	private ToolItem ba;
+	private Collection<GlobalTacticToolItem> items;
 
-	private ToolItem pn;
-
-	private ToolItem dc;
-
-	private ToolItem nm;
-
-	private ToolItem externalProvers;
-
-	private ToolItem ah;
-
-	private ToolItem ct;
-
-	private ToolItem sh;
-
-	private ToolItem pv;
-
-	private ToolItem ne;
-
-	private boolean isOpened;
-
-	private boolean isTop;
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class extends the SelectionAdapter and response to
-	 *         selections of buttons.
-	 */
-	private class ContextButtonListener extends SelectionAdapter {
-		String label;
-
-		/**
-		 * Constructor.
-		 * <p>
-		 * 
-		 * @param label
-		 *            The label of the button.
-		 */
-		ContextButtonListener(String label) {
-			this.label = label;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
-		public void widgetSelected(SelectionEvent e) {
-			buttonSelectedResponse(label);
-		}
-	}
+	private Collection<GlobalTacticDropdownToolItem> dropdownItems;
 
 	/**
 	 * Constructor
@@ -154,100 +108,25 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	/**
-	 * Method responds to the button selections depends on the label of the
-	 * button.
+	 * Apply a tactic with a progress monitor (providing cancel button).
 	 * <p>
 	 * 
-	 * @param label
-	 *            the label of the button.
+	 * @param op
+	 *            a runnable with progress monitor.
 	 */
-	private void buttonSelectedResponse(String label) {
+	private static void applyTacticWithProgress(IRunnableWithProgress op) {
+		final Shell shell = Display.getDefault().getActiveShell();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
-			if (label.equals("ba")) {
-				editor.getUserSupport().back();
-				return;
-			}
-
-			if (label.equals("pn")) {
-				editor.getUserSupport().prune();
-				return;
-			}
-
-			if (label.equals("ne")) {
-				editor.getUserSupport().nextUndischargedPO();
-				return;
-			}
-
-			if (label.equals("pv")) {
-				editor.getUserSupport().prevUndischargedPO();
-				return;
-			}
-
-			if (label.equals("dc")) {
-				editor.getUserSupport().applyTactic(
-						Tactics.doCase(textInput.getTextWidget().getText()));
-				return;
-			}
-
-			if (label.equals("nm")) {
-				editor.getUserSupport().applyTactic(Tactics.norm());
-				return;
-			}
-
-			if (label.equals("p0")) {
-				runPP(true);
-				return;
-			}
-
-			if (label.equals("pp")) {
-				runPP(false);
-				return;
-			}
-
-			if (label.equals("m0")) {
-				runML(ExternalML.Input.FORCE_0);
-				return;
-			}
-
-			if (label.equals("m1")) {
-				runML(ExternalML.Input.FORCE_1);
-				return;
-			}
-
-			if (label.equals("m2")) {
-				runML(ExternalML.Input.FORCE_2);
-				return;
-			}
-
-			if (label.equals("m3")) {
-				runML(ExternalML.Input.FORCE_3);
-				return;
-			}
-
-			if (label.equals("ml")) {
-				runML(ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1
-						| ExternalML.Input.FORCE_2 | ExternalML.Input.FORCE_3);
-				return;
-			}
-
-			if (label.equals("ah")) {
-				editor.getUserSupport().applyTactic(
-						Tactics.lemma(textInput.getTextWidget().getText()));
-				return;
-			}
-
-			if (label.equals("ct")) {
-				editor.getUserSupport().applyTactic(Tactics.contradictGoal());
-				return;
-			}
-
-			if (label.equals("sh")) {
-				editor.getUserSupport().searchHyps(
-						textInput.getTextWidget().getText());
-				return;
-			}
-		} catch (RodinDBException exception) {
-			exception.printStackTrace();
+			dialog.run(true, true, op);
+		} catch (InterruptedException exception) {
+			return;
+		} catch (InvocationTargetException exception) {
+			final Throwable realException = exception.getTargetException();
+			realException.printStackTrace();
+			final String message = realException.getMessage();
+			MessageDialog.openError(shell, "Unexpected Error", message);
+			return;
 		}
 	}
 
@@ -258,8 +137,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            <code>true</code> is only selected hypotheses should be
 	 *            passed to PP
 	 */
-	private void runPP(final boolean restricted) {
-		final UserSupport userSupport = editor.getUserSupport();
+	public static void runPP(final UserSupport userSupport,
+			final boolean restricted) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
@@ -281,8 +160,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @param forces
 	 *            list of forces to use
 	 */
-	private void runML(final int forces) {
-		final UserSupport userSupport = editor.getUserSupport();
+	public static void runML(final UserSupport userSupport, final int forces) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
@@ -296,29 +174,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		};
 		applyTacticWithProgress(op);
-	}
-
-	/**
-	 * Apply a tactic with a progress monitor (providing cancel button).
-	 * <p>
-	 * 
-	 * @param op
-	 *            a runnable with progress monitor.
-	 */
-	private void applyTacticWithProgress(IRunnableWithProgress op) {
-		final Shell shell = ProofControlPage.this.scrolledForm.getShell();
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-		try {
-			dialog.run(true, true, op);
-		} catch (InterruptedException exception) {
-			return;
-		} catch (InvocationTargetException exception) {
-			final Throwable realException = exception.getTargetException();
-			realException.printStackTrace();
-			final String message = realException.getMessage();
-			MessageDialog.openError(shell, "Unexpected Error", message);
-			return;
-		}
 	}
 
 	/*
@@ -390,75 +245,71 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		buttonBar = new ToolBar(body, SWT.FLAT | SWT.WRAP);
 		buttonBar.setLayoutData(new GridData());
 
-		// Create drop-down externalProvers
-		externalProvers = createToolItem(buttonBar, SWT.DROP_DOWN, "",
-				EventBUIPlugin.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_P0), null,
-				"External Prover: PP restricted to selected hypotheses");
-		NewDropdownSelectionListener listenerOne = new NewDropdownSelectionListener(
-				externalProvers);
-		listenerOne.add("p0");
-		listenerOne.add("pp");
-		listenerOne.add("m0");
-		listenerOne.add("m1");
-		listenerOne.add("m2");
-		listenerOne.add("m3");
-		listenerOne.add("ml");
-		externalProvers.addSelectionListener(listenerOne);
+		dropdownItems = new HashSet<GlobalTacticDropdownToolItem>();
 
-		nm = createToolItem(buttonBar, SWT.PUSH, "",
-				EventBUIPlugin.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_NORM), null, "Normalize tactic");
-		nm.addSelectionListener(new ContextButtonListener("nm"));
+		// Create the dropdown first
+		GlobalTacticDropdownUI[] dropdowns = ExtensionLoader.getGlobalDropdowns();
+		GlobalTacticDropdownToolItem dropdownItem = null;
+		for (GlobalTacticDropdownUI dropdown : dropdowns) {
 
-		ah = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin
-				.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_ADD_HYP), null, "Add hypothesis");
-		ah.addSelectionListener(new ContextButtonListener("ah"));
-		ah.setWidth(defaultWidth);
+			ToolItem item = createToolItem(buttonBar, SWT.DROP_DOWN, "", null,
+					null, "");
+			dropdownItem = new GlobalTacticDropdownToolItem(item, dropdown.getID()) {
 
-		dc = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin
-				.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_DO_CASE), null, "Case distinction");
-		dc.addSelectionListener(new ContextButtonListener("dc"));
-		dc.setWidth(defaultWidth);
+				@Override
+				public void apply(IGlobalTactic tactic) {
+					try {
+						tactic.apply(editor.getUserSupport(), textInput
+								.getTextWidget().getText());
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 
-		ct = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin
-				.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_CONTRADICTION), null,
-				"Contradiction");
-		ct.addSelectionListener(new ContextButtonListener("ct"));
-		ct.setWidth(defaultWidth);
+			};
+			dropdownItems.add(dropdownItem);
+		}
 
-		ba = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
-				.getSharedImages().getImage(ISharedImages.IMG_TOOL_UNDO), null,
-				"Backtrack from current node");
-		ba.addSelectionListener(new ContextButtonListener("ba"));
-		ba.setWidth(defaultWidth);
+		items = new HashSet<GlobalTacticToolItem>();
+		GlobalTacticUI[] tactics = ExtensionLoader.getGlobalTactics();
 
-		pn = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
-				.getSharedImages().getImage(ISharedImages.IMG_TOOL_CUT), null,
-				"Prune the current subtree");
-		pn.addSelectionListener(new ContextButtonListener("pn"));
-		pn.setWidth(defaultWidth);
+		for (final GlobalTacticUI tactic : tactics) {
+			if (tactic.getDropdown() != null) {
+				addDropdown(tactic.getDropdown(), tactic);
+			} else {
+				ToolItem item = createToolItem(buttonBar, SWT.PUSH, "",
+						EventBUIPlugin.getDefault().getImageRegistry().get(
+								tactic.getImage()), null, tactic.getTips());
 
-		sh = createToolItem(buttonBar, SWT.PUSH, "", EventBUIPlugin
-				.getDefault().getImageRegistry().get(
-						EventBImage.IMG_TOOL_SEARCH), null, "Search hypotheses");
-		sh.addSelectionListener(new ContextButtonListener("sh"));
-		sh.setWidth(defaultWidth);
+				IGlobalTactic globalTactic = tactic.getTactic();
 
-		pv = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
-				.getSharedImages().getImage(ISharedImages.IMG_TOOL_BACK), null,
-				"Previous undischarged PO");
-		pv.addSelectionListener(new ContextButtonListener("pv"));
-		pv.setWidth(defaultWidth);
+				final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
+						item, globalTactic);
+				items.add(globalTacticToolItem);
 
-		ne = createToolItem(buttonBar, SWT.PUSH, "", PlatformUI.getWorkbench()
-				.getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD),
-				null, "Next undischarged PO");
-		ne.addSelectionListener(new ContextButtonListener("ne"));
-		ne.setWidth(defaultWidth);
+				item.addSelectionListener(new SelectionAdapter() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+					 */
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						try {
+							globalTacticToolItem.getTactic().apply(
+									editor.getUserSupport(),
+									textInput.getTextWidget().getText());
+						} catch (RodinDBException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
+				item.setWidth(defaultWidth);
+			}
+		}
 
 		// A text field
 		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI
@@ -470,19 +321,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		textInput.getTextWidget().setLayoutData(gd);
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateToolItems();
+				updateToolItems(editor.getUserSupport().getCurrentPO()
+						.getCurrentNode());
 			}
 		});
 
 		ProofState proofState = editor.getUserSupport().getCurrentPO();
 		if (proofState != null) {
-			IProofTreeNode node = proofState.getCurrentNode();
-			isOpened = (node != null && node.isOpen()) ? true : false;
-			isTop = (node != null && node.getParent() == null) ? true : false;
+			updateToolItems(proofState.getCurrentNode());
 		} else {
-			isOpened = false;
+			updateToolItems(null);
 		}
-		updateToolItems();
 
 		formTextInformation = new EventBFormText(toolkit.createFormText(body,
 				true));
@@ -499,6 +348,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+	}
+
+	private void addDropdown(String dropdown, GlobalTacticUI tactic) {
+		for (Iterator<GlobalTacticDropdownToolItem> it = dropdownItems.iterator(); it
+				.hasNext();) {
+			GlobalTacticDropdownToolItem curr = it.next();
+			if (curr.getID().equals(dropdown)) {
+				curr.addTactic(tactic);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -633,53 +493,30 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * Update the status of the toolbar items.
 	 */
-	private void updateToolItems() {
-		if (isOpened) {
-			pn.setEnabled(false);
-			nm.setEnabled(true);
-			if (isTop)
-				ba.setEnabled(false);
-			else
-				ba.setEnabled(true);
-			externalProvers.setEnabled(true);
-			ct.setEnabled(true);
-			if (textInput.getTextWidget().getText().equals(""))
-				dc.setEnabled(false);
-			else
-				dc.setEnabled(true);
-			if (textInput.getTextWidget().getText().equals(""))
-				ah.setEnabled(false);
-			else
-				ah.setEnabled(true);
-			sh.setEnabled(true);
-		} else {
-			pn.setEnabled(true);
-			nm.setEnabled(false);
-			ba.setEnabled(false);
-			externalProvers.setEnabled(false);
-			dc.setEnabled(false);
-			ct.setEnabled(false);
-			ah.setEnabled(false);
-			sh.setEnabled(false);
+	private void updateToolItems(IProofTreeNode node) {
+		for (GlobalTacticDropdownToolItem item : dropdownItems) {
+			item.updateStatus(node, textInput.getTextWidget().getText());
 		}
+
+		for (GlobalTacticToolItem item : items) {
+			item.updateStatus(node, textInput.getTextWidget().getText());
+		}
+
 		return;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
+	 */
 	public void proofStateChanged(IProofStateDelta delta) {
-		IProofTreeNode node = delta.getGoalDelta().getProofTreeNode();
-		if (node != null && node.isOpen())
-			isOpened = true;
-		else
-			isOpened = false;
-		if (node != null && node.getParent() == null)
-			isTop = true;
-		else
-			isTop = false;
+		final IProofTreeNode node = delta.getGoalDelta().getProofTreeNode();
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				updateToolItems();
+				updateToolItems(node);
 			}
 		});
 
@@ -697,118 +534,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
-	}
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class provides the "drop down" functionality for our
-	 *         dropdown tool items.
-	 */
-	class NewDropdownSelectionListener extends SelectionAdapter {
-		private ToolItem dropdown;
-
-		private Menu menu;
-
-		private String active = null;
-		
-		/**
-		 * Constructs a DropdownSelectionListener
-		 * 
-		 * @param dropdown
-		 *            the dropdown this listener belongs to
-		 */
-		public NewDropdownSelectionListener(ToolItem dropdown) {
-			this.dropdown = dropdown;
-			menu = new Menu(dropdown.getParent().getShell());
-			active = "p0";
-		}
-
-		/**
-		 * Adds an item to the dropdown list
-		 * 
-		 * @param item
-		 *            the item to add
-		 */
-		public void add(String item) {
-			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setText(item);
-			menuItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent event) {
-					MenuItem selected = (MenuItem) event.widget;
-					active = selected.getText();
-					if (active.equals("p0")) {
-						dropdown
-								.setToolTipText("External Prover: PP restricted to selected hypotheses");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_P0));
-					} else if (active.equals("pp")) {
-						dropdown
-								.setToolTipText("External Prover: PP with all hypotheses");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_PP));
-					} else if (active.equals("m0")) {
-						dropdown
-								.setToolTipText("External Prover: ML in force 0");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_M0));
-					} else if (active.equals("m1")) {
-						dropdown
-								.setToolTipText("External Prover: ML in force 1");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_M1));
-					} else if (active.equals("m2")) {
-						dropdown
-								.setToolTipText("External Prover: ML in force 2");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_M2));
-					} else if (active.equals("m3")) {
-						dropdown
-								.setToolTipText("External Prover: ML in force 3");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_M3));
-					} else if (active.equals("ml")) {
-						dropdown
-								.setToolTipText("External Prover: ML in all forces");
-						dropdown.setImage(EventBUIPlugin.getDefault()
-								.getImageRegistry()
-								.get(EventBImage.IMG_TOOL_ML));
-					}
-
-					dropdown.getParent().redraw();
-					scrolledForm.reflow(true);
-					buttonSelectedResponse(active);
-				}
-			});
-		}
-
-		/**
-		 * Called when either the button itself or the dropdown arrow is clicked
-		 * 
-		 * @param event
-		 *            the event that trigged this call
-		 */
-		public void widgetSelected(SelectionEvent event) {
-			// If they clicked the arrow, we show the list
-			if (event.detail == SWT.ARROW) {
-				// Determine where to put the dropdown list
-				ToolItem item = (ToolItem) event.widget;
-				Rectangle rect = item.getBounds();
-				Point pt = item.getParent()
-						.toDisplay(new Point(rect.x, rect.y));
-				menu.setLocation(pt.x, pt.y + rect.height);
-				menu.setVisible(true);
-			} else {
-				// They pushed the button; take appropriate action
-				buttonSelectedResponse(active);
-			}
-		}
 	}
 
 }

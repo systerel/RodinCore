@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,15 +20,20 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
+import org.eventb.ui.prover.IGlobalTactic;
 import org.osgi.framework.Bundle;
 
 /**
  * @author htson
  *         <p>
  *         This class is a static utitlity class for loading the extension
- *         classes
+ *         different extensions.
  */
 public class ExtensionLoader {
 
@@ -129,5 +134,102 @@ public class ExtensionLoader {
 	@SuppressWarnings("unchecked")
 	private static Class getSubclass(Class clazz, Class subClass) {
 		return clazz.asSubclass(subClass);
+	}
+
+	// Array of Proof Tactics
+	private static GlobalTacticUI[] tactics = null;
+
+	private static final String GLOBAL_PROOF_TACTIC_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".globalProofTactics";
+
+	/**
+	 * Read the extensions for global tactics.
+	 * <p>
+	 * 
+	 * @return the set of Proof Tactics from the Global tactic extension
+	 */
+	public static GlobalTacticUI[] getGlobalTactics() {
+		if (tactics == null) {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extensionPoint = registry
+					.getExtensionPoint(GLOBAL_PROOF_TACTIC_ID);
+			IExtension[] extensions = extensionPoint.getExtensions();
+
+			ArrayList<GlobalTacticUI> list = new ArrayList<GlobalTacticUI>();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					Bundle bundle = Platform.getBundle(elements[j]
+							.getNamespace());
+					try {
+						String ID = elements[j].getAttribute("id");
+						String icon = elements[j].getAttribute("icon");
+						ImageRegistry imageRegistry = EventBUIPlugin
+								.getDefault().getImageRegistry();
+
+						ImageDescriptor desc = EventBImage
+								.getImageDescriptor(icon);
+						imageRegistry.put(icon, desc);
+
+						String tooltip = elements[j].getAttribute("tooltip");
+
+						Class clazz = bundle.loadClass(elements[j]
+								.getAttribute("class"));
+
+						Class classObject = getSubclass(clazz,
+								IGlobalTactic.class);
+						Constructor constructor = classObject
+								.getConstructor(new Class[0]);
+						String dropdown = elements[j].getAttribute("dropdown");
+
+						GlobalTacticUI tactic = new GlobalTacticUI(ID, icon, tooltip,
+								dropdown, constructor);
+						list.add(tactic);
+					} catch (Exception e) {
+						// TODO Exception handle
+						e.printStackTrace();
+					}
+				}
+			}
+			tactics = (GlobalTacticUI[]) list
+					.toArray(new GlobalTacticUI[list.size()]);
+		}
+		return tactics;
+	}
+
+	// Array of Global dropdown
+	private static GlobalTacticDropdownUI[] dropdowns = null;
+
+	private static final String GLOBAL_PROOF_DROPDOWN_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".globalProofTacticDropdowns";
+
+	/**
+	 * Read the extensions for global dropdown.
+	 * <p>
+	 * 
+	 * @return A set of dropdown from the global dropdown extension
+	 */
+	public static GlobalTacticDropdownUI [] getGlobalDropdowns() {
+		if (dropdowns == null) {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extensionPoint = registry
+					.getExtensionPoint(GLOBAL_PROOF_DROPDOWN_ID);
+			IExtension[] extensions = extensionPoint.getExtensions();
+
+			ArrayList<GlobalTacticDropdownUI> list = new ArrayList<GlobalTacticDropdownUI>();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					String ID = elements[j].getAttribute("id");
+					GlobalTacticDropdownUI dropdown = new GlobalTacticDropdownUI(ID);
+					list.add(dropdown);
+				}
+			}
+			dropdowns = (GlobalTacticDropdownUI[]) list
+					.toArray(new GlobalTacticDropdownUI[list.size()]);
+		}
+		return dropdowns;
 	}
 }
