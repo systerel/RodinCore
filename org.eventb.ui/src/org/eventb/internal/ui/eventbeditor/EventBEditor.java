@@ -108,11 +108,14 @@ public abstract class EventBEditor extends FormEditor implements
 			IFormPage activePage = formEditor.getActivePageInstance();
 			if (activePage != null) {
 				if (activePage instanceof EventBFormPage) {
-					ISelectionProvider selectionProvider = ((EventBFormPage) activePage)
-							.getPart().getViewer();
-					if (selectionProvider != null)
-						if (selectionProvider != this)
-							return selectionProvider.getSelection();
+					EventBPartWithButtons part = ((EventBFormPage) activePage)
+							.getPart();
+					if (part != null) {
+						ISelectionProvider selectionProvider = part.getViewer();
+						if (selectionProvider != null)
+							if (selectionProvider != this)
+								return selectionProvider.getSelection();
+					}
 				}
 			}
 			return globalSelection;
