@@ -70,30 +70,6 @@ public class EventBImage {
 
 	public static final String IMG_APPLIED = "Applied";
 
-	public static final String IMG_TOOL_SEARCH = "Search button";
-
-	public static final String IMG_TOOL_CONTRADICTION = "Contradiction button";
-
-	public static final String IMG_TOOL_DO_CASE = "Do-case button";
-
-	public static final String IMG_TOOL_ADD_HYP = "Add hypothesis button";
-
-	public static final String IMG_TOOL_NORM = "Normalisation button";
-
-	public static final String IMG_TOOL_P0 = "p0 button";
-
-	public static final String IMG_TOOL_PP = "pp button";
-
-	public static final String IMG_TOOL_M0 = "m0 button";
-
-	public static final String IMG_TOOL_M1 = "m1 button";
-
-	public static final String IMG_TOOL_M2 = "m2 button";
-
-	public static final String IMG_TOOL_M3 = "m3 button";
-
-	public static final String IMG_TOOL_ML = "ml button";
-
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
 
@@ -120,6 +96,14 @@ public class EventBImage {
 	public static final String IMG_NEW_CONSTANTS_PATH = "icons/full/ctool16/newcst_edit.gif";
 
 	public static final String IMG_NEW_AXIOMS_PATH = "icons/full/ctool16/newaxm_edit.gif";
+
+	public static final String IMG_NEW_GUARD_PATH = "icons/full/ctool16/newgrd_edit.gif";
+
+	public static final String IMG_NEW_ACTION_PATH = "icons/full/ctool16/newact_edit.gif";
+
+	public static final String IMG_UP_PATH = "icons/full/ctool16/up_edit.gif";
+	
+	public static final String IMG_DOWN_PATH = "icons/full/ctool16/down_edit.gif";	
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
@@ -170,18 +154,6 @@ public class EventBImage {
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
-		registerImage(registry, IMG_TOOL_SEARCH, "full/clcl16/searchres.gif");
-		registerImage(registry, IMG_TOOL_CONTRADICTION, "full/ctool16/ct_prover.gif");
-		registerImage(registry, IMG_TOOL_DO_CASE, "full/ctool16/dc_prover.gif");
-		registerImage(registry, IMG_TOOL_ADD_HYP, "full/ctool16/ah_prover.gif");
-		registerImage(registry, IMG_TOOL_NORM, "full/ctool16/nm_prover.gif");
-		registerImage(registry, IMG_TOOL_P0, "full/ctool16/p0_prover.gif");
-		registerImage(registry, IMG_TOOL_PP, "full/ctool16/pp_prover.gif");
-		registerImage(registry, IMG_TOOL_M0, "full/ctool16/m0_prover.gif");
-		registerImage(registry, IMG_TOOL_M1, "full/ctool16/m1_prover.gif");
-		registerImage(registry, IMG_TOOL_M2, "full/ctool16/m2_prover.gif");
-		registerImage(registry, IMG_TOOL_M3, "full/ctool16/m3_prover.gif");
-		registerImage(registry, IMG_TOOL_ML, "full/ctool16/ml_prover.gif");
 	}
 
 	/**
