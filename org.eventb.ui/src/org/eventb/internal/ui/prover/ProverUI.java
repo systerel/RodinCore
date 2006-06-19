@@ -330,21 +330,24 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
-	@Override
 	public boolean isDirty() {
-
-		try {
-			// UIUtils.debug("Checking dirty state " +
-			// this.getRodinInput().hasUnsavedChanges());
-			return this.getRodinInput().hasUnsavedChanges();
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return super.isDirty();
+		return this.userSupport.hasUnsavedChanges();
+//		try {
+//			// UIUtils.debug("Checking dirty state " +
+//			// this.getRodinInput().hasUnsavedChanges());
+//			return this.getRodinInput().hasUnsavedChanges();
+//		} catch (RodinDBException e) {
+//			e.printStackTrace();
+//		}
+//		return super.isDirty();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
+	 */
 	public void proofStateChanged(IProofStateDelta delta) {
 		UIUtils.debugProverUI("PO Changed");
+		this.editorDirtyStateChanged();
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {

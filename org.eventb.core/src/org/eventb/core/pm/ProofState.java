@@ -137,4 +137,8 @@ public class ProofState {
 		ps.updateStatus(pt);
 	}
 
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
 }

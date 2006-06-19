@@ -333,6 +333,7 @@ public class UserSupport implements IElementChangedListener {
 		saveHypothesisState();
 
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
+		currentPS.setDirty(true);
 		information = t.apply(currentNode);
 		if (!t.equals(Tactics.prune()))
 			Tactics.postProcess().apply(currentNode);
@@ -340,7 +341,7 @@ public class UserSupport implements IElementChangedListener {
 			information = "Tactic applied successfully";
 		}
 
-		currentPS.updateStatus();
+//		currentPS.updateStatus();
 		IProofTreeNode newNode = currentPS.getNextPendingSubgoal(currentNode);
 		if (newNode == null)
 			newNode = currentNode;
@@ -354,8 +355,9 @@ public class UserSupport implements IElementChangedListener {
 		information = Tactics.prune().apply(currentNode);
 		if (information == null) {
 			information = "Tactic applied successfully";
+			currentPS.setDirty(true);
 		}
-		currentPS.updateStatus();
+//		currentPS.updateStatus();
 		IProofTreeNode newNode = currentPS.getNextPendingSubgoal(currentNode);
 		if (newNode == null)
 			newNode = currentNode;
@@ -613,6 +615,13 @@ public class UserSupport implements IElementChangedListener {
 			selectNode(currentPS.getCurrentNode().getParent());
 			prune();
 		}
+	}
+
+	public boolean hasUnsavedChanges() {
+		for (ProofState ps : proofStates) {
+			if (ps.isDirty()) return true;
+		}
+		return false;
 	}
 
 }
