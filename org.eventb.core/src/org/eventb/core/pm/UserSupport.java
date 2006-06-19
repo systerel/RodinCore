@@ -31,8 +31,6 @@ import org.rodinp.core.RodinDBException;
 
 public class UserSupport implements IElementChangedListener {
 
-	// TODO UserSupport needs to listen to the Database
-
 	private IPRFile prFile; // Unique for an instance of UserSupport
 
 	private List<ProofState> proofStates;
@@ -268,7 +266,7 @@ public class UserSupport implements IElementChangedListener {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
 			if (ps.getPRSequent().equals(prSequent)) {
-				setProofState(ps, index);
+				setProofState(ps);
 				// notifyStatusChangedListener(null);
 				return;
 			}
@@ -281,7 +279,7 @@ public class UserSupport implements IElementChangedListener {
 			int index = (counter + i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
-				setProofState(ps, index);
+				setProofState(ps);
 				return;
 			}
 		}
@@ -296,7 +294,7 @@ public class UserSupport implements IElementChangedListener {
 			int index = (counter + proofStates.size() - i) % proofStates.size();
 			ProofState ps = proofStates.get(index);
 			if (!ps.isDischarged()) {
-				setProofState(ps, index);
+				setProofState(ps);
 				return;
 			}
 		}
@@ -306,12 +304,8 @@ public class UserSupport implements IElementChangedListener {
 		fireProofStateDelta();
 	}
 
-	private void setProofState(ProofState ps, int index)
+	private void setProofState(ProofState ps)
 			throws RodinDBException {
-		ps.createProofTree();
-		IProofTreeNode newCurrentNode = ps.getCurrentNode();
-		if (newCurrentNode == null)
-			ps.setCurrentNode(ps.getNextPendingSubgoal());
 		currentPS = ps;
 		fireProofStateDelta();
 		return;
@@ -468,7 +462,7 @@ public class UserSupport implements IElementChangedListener {
 							UserSupportUtils.debug("Updated "
 									+ ((IPRSequent) element).getElementName());
 							if (ps.getProofTree() != null)
-								ps.initProofTree();
+								ps.loadProofTree();
 							if (ps == currentPS)
 								setCurrentPO(ps.getPRSequent());
 						}
