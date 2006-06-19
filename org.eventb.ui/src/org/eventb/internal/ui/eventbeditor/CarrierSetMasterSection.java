@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.ElementChangedEvent;
@@ -88,7 +89,9 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
 	protected void updateButtons() {
@@ -122,10 +125,14 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 		setButtonEnabled(DELETE_INDEX, hasSelection);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
+		CarrierSetMasterSectionActionGroup groupActionSet = (CarrierSetMasterSectionActionGroup) this
+				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
 			groupActionSet.addSet.run();
@@ -170,6 +177,16 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
 		selectItem(item, 0);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new CarrierSetMasterSectionActionGroup(editor, (TreeViewer) this
+				.getViewer());
 	}
 
 }

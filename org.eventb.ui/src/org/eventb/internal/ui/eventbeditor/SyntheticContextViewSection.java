@@ -13,21 +13,17 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -35,6 +31,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IUnnamedInternalElement;
@@ -48,22 +45,8 @@ import org.rodinp.core.IUnnamedInternalElement;
 public class SyntheticContextViewSection extends EventBTreePartWithButtons
 		implements IStatusChangedListener {
 
-	// The indexes for different buttons.
-	private static final int ADD_SET_INDEX = 0;
-
-	private static final int ADD_CST_INDEX = 1;
-
-	private static final int ADD_AXM_INDEX = 2;
-
-	private static final int ADD_THM_INDEX = 3;
-
-	private static final int UP_INDEX = 4;
-
-	private static final int DOWN_INDEX = 5;
-
 	// Labels correspond to the above buttons.
-	private static String[] buttonLabels = { "Add Set.", "Add Cst.",
-			"Add Axm.", "Add Thm.", "Up", "Down" };
+	private static String[] buttonLabels = {};
 
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Synthetics";
@@ -74,6 +57,10 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 	private ViewerFilter varFilter;
 
 	private ViewerFilter grdFilter;
+
+	private Action upAction;
+
+	private Action downAction;
 
 	/**
 	 * Constructor.
@@ -96,14 +83,22 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
-		hookContextMenu();
 		createToolBarActions(managedForm);
+		this.getViewer().addSelectionChangedListener(
+				new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						updateToolbars();
+					}
+				});
+
 	}
 
 	/**
 	 * Create the Toolbar actions.
 	 * <p>
-	 * @param managedForm the managed form contains the Toolbar
+	 * 
+	 * @param managedForm
+	 *            the managed form contains the Toolbar
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
@@ -170,33 +165,49 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAtion);
 		form.updateToolBar();
-	}
 
-	/**
-	 * Hook the actions to the menu
-	 */
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(
-						((StructuredViewer) getViewer()).getSelection()));
-				groupActionSet.fillContextMenu(manager);
-				groupActionSet.setContext(null);
+		final SyntheticContextMasterSectionActionGroup groupActionSet = (SyntheticContextMasterSectionActionGroup) this
+				.getActionGroup();
+
+		upAction = new Action("Up", Action.AS_PUSH_BUTTON) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			@Override
+			public void run() {
+				groupActionSet.handleUp.run();
 			}
-		});
-		Viewer viewer = getViewer();
-		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
-		((Viewer) viewer).getControl().setMenu(menu);
-		this.editor.getSite().registerContextMenu(menuMgr,
-				(ISelectionProvider) viewer);
+		};
+		upAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+		form.getToolBarManager().add(upAction);
+		form.updateToolBar();
+
+		downAction = new Action("Down", Action.AS_PUSH_BUTTON) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			@Override
+			public void run() {
+				groupActionSet.handleDown.run();
+			}
+		};
+		downAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+		form.getToolBarManager().add(downAction);
+		form.updateToolBar();
+
+		updateToolbars();
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
-	 */
-	protected void updateButtons() {
+	protected void updateToolbars() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
 
@@ -220,40 +231,75 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 					canMoveDown = true;
 			}
 		}
-		setButtonEnabled(UP_INDEX, hasOneSelection && canMoveUp);
-		setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
-
-		setButtonEnabled(ADD_SET_INDEX, true);
-		setButtonEnabled(ADD_CST_INDEX, true);
-		setButtonEnabled(ADD_AXM_INDEX, true);
-		setButtonEnabled(ADD_THM_INDEX, true);
-
+		upAction.setEnabled(hasOneSelection && canMoveUp);
+		downAction.setEnabled(hasOneSelection && canMoveDown);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
+	 */
+	protected void updateButtons() {
+		// Tree tree = ((TreeViewer) getViewer()).getTree();
+		// TreeItem[] items = tree.getSelection();
+		//
+		// boolean hasOneSelection = items.length == 1;
+		// boolean canMoveUp = false;
+		// boolean canMoveDown = false;
+		//
+		// if (hasOneSelection) {
+		// TreeItem item = items[0];
+		// IRodinElement element = (IRodinElement) item.getData();
+		// TreeItem prev = TreeSupports.findPrevItem(tree, item);
+		// if (prev != null) {
+		// if (element.getElementType() == ((IRodinElement) prev.getData())
+		// .getElementType())
+		// canMoveUp = true;
+		// }
+		// TreeItem next = TreeSupports.findNextItem(tree, item);
+		// if (next != null) {
+		// if (element.getElementType() == ((IRodinElement) next.getData())
+		// .getElementType())
+		// canMoveDown = true;
+		// }
+		// }
+		// setButtonEnabled(UP_INDEX, hasOneSelection && canMoveUp);
+		// setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
+		//
+		// setButtonEnabled(ADD_SET_INDEX, true);
+		// setButtonEnabled(ADD_CST_INDEX, true);
+		// setButtonEnabled(ADD_AXM_INDEX, true);
+		// setButtonEnabled(ADD_THM_INDEX, true);
+		//
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
-		switch (index) {
-		case ADD_SET_INDEX:
-			groupActionSet.addSet.run();
-			break;
-		case ADD_CST_INDEX:
-			groupActionSet.addConstant.run();
-			break;
-		case ADD_AXM_INDEX:
-			groupActionSet.addAxiom.run();
-			break;
-		case ADD_THM_INDEX:
-			groupActionSet.addTheorem.run();
-			break;
-		case UP_INDEX:
-			groupActionSet.handleUp.run();
-			break;
-		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
-			break;
-		}
+		// switch (index) {
+		// case ADD_SET_INDEX:
+		// groupActionSet.addSet.run();
+		// break;
+		// case ADD_CST_INDEX:
+		// groupActionSet.addConstant.run();
+		// break;
+		// case ADD_AXM_INDEX:
+		// groupActionSet.addAxiom.run();
+		// break;
+		// case ADD_THM_INDEX:
+		// groupActionSet.addTheorem.run();
+		// break;
+		// case UP_INDEX:
+		// groupActionSet.handleUp.run();
+		// break;
+		// case DOWN_INDEX:
+		// groupActionSet.handleDown.run();
+		// break;
+		// }
 	}
 
 	/*
@@ -294,8 +340,12 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 			selectItem(item, 1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createTreeViewer(org.eclipse.ui.forms.IManagedForm, org.eclipse.ui.forms.widgets.FormToolkit, org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createTreeViewer(org.eclipse.ui.forms.IManagedForm,
+	 *      org.eclipse.ui.forms.widgets.FormToolkit,
+	 *      org.eclipse.swt.widgets.Composite)
 	 */
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
@@ -311,6 +361,16 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new SyntheticContextMasterSectionActionGroup(editor,
+				(TreeViewer) this.getViewer());
 	}
 
 }

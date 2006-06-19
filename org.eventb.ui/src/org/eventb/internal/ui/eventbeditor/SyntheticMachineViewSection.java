@@ -13,27 +13,24 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IUnnamedInternalElement;
@@ -46,22 +43,8 @@ import org.rodinp.core.IUnnamedInternalElement;
  */
 public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 
-	// The indexes for different buttons.
-	private static final int ADD_VAR_INDEX = 0;
-
-	private static final int ADD_INV_INDEX = 1;
-
-	private static final int ADD_THM_INDEX = 2;
-
-	private static final int ADD_EVT_INDEX = 3;
-
-	private static final int UP_INDEX = 4;
-
-	private static final int DOWN_INDEX = 5;
-
 	// Labels correspond to the above buttons.
-	private static String[] buttonLabels = { "Add Var.", "Add Inv.",
-			"Add Thm.", "Add Evt.", "Up", "Down" };
+	private static String[] buttonLabels = {};
 
 	// Title and description of the section.
 	private final static String SECTION_TITLE = "Synthetics";
@@ -72,6 +55,10 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	private ViewerFilter varFilter;
 
 	private ViewerFilter grdFilter;
+
+	private Action upAction;
+
+	private Action downAction;
 
 	/**
 	 * Constructor.
@@ -94,8 +81,13 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
-		hookContextMenu();
 		createToolBarActions(managedForm);
+		this.getViewer().addSelectionChangedListener(
+				new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						updateToolbars();
+					}
+				});
 	}
 
 	/**
@@ -169,34 +161,47 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		filterGrdAtion.setToolTipText("Filter guard elements");
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAtion);
-		form.updateToolBar();
-	}
 
-	/**
-	 * Hook the actions to the menu
-	 */
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(
-						((StructuredViewer) getViewer()).getSelection()));
-				groupActionSet.fillContextMenu(manager);
-				groupActionSet.setContext(null);
+		final SyntheticMachineMasterSectionActionGroup groupActionSet = (SyntheticMachineMasterSectionActionGroup) this
+				.getActionGroup();
+		upAction = new Action("Up", Action.AS_PUSH_BUTTON) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			@Override
+			public void run() {
+				groupActionSet.handleUp.run();
 			}
-		});
-		Viewer viewer = getViewer();
-		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
-		((Viewer) viewer).getControl().setMenu(menu);
-		this.editor.getSite().registerContextMenu(menuMgr,
-				(ISelectionProvider) viewer);
+		};
+		upAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+		form.getToolBarManager().add(upAction);
+		form.updateToolBar();
+
+		downAction = new Action("Down", Action.AS_PUSH_BUTTON) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			@Override
+			public void run() {
+				groupActionSet.handleDown.run();
+			}
+		};
+		downAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+		form.getToolBarManager().add(downAction);
+		form.updateToolBar();
+
+		updateToolbars();
 	}
 
-	/**
-	 * Update the expanded of buttons.
-	 */
-	protected void updateButtons() {
+	protected void updateToolbars() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
 
@@ -220,13 +225,44 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 					canMoveDown = true;
 			}
 		}
-		setButtonEnabled(UP_INDEX, hasOneSelection && canMoveUp);
-		setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
+		upAction.setEnabled(hasOneSelection && canMoveUp);
+		downAction.setEnabled(hasOneSelection && canMoveDown);
+	}
 
-		setButtonEnabled(ADD_EVT_INDEX, true);
-		setButtonEnabled(ADD_VAR_INDEX, true);
-		setButtonEnabled(ADD_INV_INDEX, true);
-		setButtonEnabled(ADD_THM_INDEX, true);
+	/**
+	 * Update the expanded of buttons.
+	 */
+	protected void updateButtons() {
+		// Tree tree = ((TreeViewer) getViewer()).getTree();
+		// TreeItem[] items = tree.getSelection();
+		//
+		// boolean hasOneSelection = items.length == 1;
+		// boolean canMoveUp = false;
+		// boolean canMoveDown = false;
+		//
+		// if (hasOneSelection) {
+		// TreeItem item = items[0];
+		// IRodinElement element = (IRodinElement) item.getData();
+		// TreeItem prev = TreeSupports.findPrevItem(tree, item);
+		// if (prev != null) {
+		// if (element.getElementType() == ((IRodinElement) prev.getData())
+		// .getElementType())
+		// canMoveUp = true;
+		// }
+		// TreeItem next = TreeSupports.findNextItem(tree, item);
+		// if (next != null) {
+		// if (element.getElementType() == ((IRodinElement) next.getData())
+		// .getElementType())
+		// canMoveDown = true;
+		// }
+		// }
+		// setButtonEnabled(UP_INDEX, hasOneSelection && canMoveUp);
+		// setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
+
+		// setButtonEnabled(ADD_EVT_INDEX, true);
+		// setButtonEnabled(ADD_VAR_INDEX, true);
+		// setButtonEnabled(ADD_INV_INDEX, true);
+		// setButtonEnabled(ADD_THM_INDEX, true);
 	}
 
 	/**
@@ -237,26 +273,26 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 *            The index of selected button
 	 */
 	protected void buttonSelected(int index) {
-		switch (index) {
-		case ADD_VAR_INDEX:
-			groupActionSet.addVariable.run();
-			break;
-		case ADD_INV_INDEX:
-			groupActionSet.addInvariant.run();
-			break;
-		case ADD_THM_INDEX:
-			groupActionSet.addTheorem.run();
-			break;
-		case ADD_EVT_INDEX:
-			groupActionSet.addEvent.run();
-			break;
-		case UP_INDEX:
-			groupActionSet.handleUp.run();
-			break;
-		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
-			break;
-		}
+		// switch (index) {
+		// case ADD_VAR_INDEX:
+		// groupActionSet.addVariable.run();
+		// break;
+		// case ADD_INV_INDEX:
+		// groupActionSet.addInvariant.run();
+		// break;
+		// case ADD_THM_INDEX:
+		// groupActionSet.addTheorem.run();
+		// break;
+		// case ADD_EVT_INDEX:
+		// groupActionSet.addEvent.run();
+		// break;
+		// case UP_INDEX:
+		// groupActionSet.handleUp.run();
+		// break;
+		// case DOWN_INDEX:
+		// groupActionSet.handleDown.run();
+		// break;
+		// }
 	}
 
 	/*
@@ -317,6 +353,16 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new SyntheticMachineMasterSectionActionGroup(editor,
+				(TreeViewer) this.getViewer());
 	}
 
 }

@@ -12,12 +12,18 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.IRodinElement;
@@ -29,8 +35,8 @@ import org.rodinp.core.IRodinElement;
  */
 public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 		implements IStatusChangedListener {
-	// The group of actions for the tree part.
-	protected EventBMasterSectionActionGroup groupActionSet;
+
+	private ActionGroup groupActionSet;
 
 	/**
 	 * Create a new Tree Viewer
@@ -74,8 +80,27 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 			String description) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, title,
 				description);
-		makeActions();
+		groupActionSet = createActionGroup();
+		hookContextMenu();
 		editor.addStatusListener(this);
+	}
+
+	/**
+	 * Create the action group associated with this part.
+	 * <p>
+	 * 
+	 * @return a new action group
+	 */
+	protected abstract ActionGroup createActionGroup();
+
+	/**
+	 * Return the action group associated with this part.
+	 * <p>
+	 * 
+	 * @return an action group
+	 */
+	protected ActionGroup getActionGroup() {
+		return groupActionSet;
 	}
 
 	/*
@@ -91,14 +116,8 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	}
 
 	/*
-	 * Create the actions that can be used in the tree.
-	 */
-	private void makeActions() {
-		groupActionSet = new EventBMasterSectionActionGroup(editor,
-				(TreeViewer) this.getViewer());
-	}
-
-	/* (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#setSelection(org.rodinp.core.IRodinElement)
 	 */
 	public void setSelection(IRodinElement element) {
@@ -110,8 +129,11 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	/**
 	 * Select an item (TreeItem) at specific column.
 	 * <p>
-	 * @param item A tree item
-	 * @param column a valid column number
+	 * 
+	 * @param item
+	 *            A tree item
+	 * @param column
+	 *            a valid column number
 	 */
 	protected void selectItem(TreeItem item, int column) {
 		((EventBEditableTreeViewer) getViewer()).selectItem(item, column);
@@ -125,6 +147,27 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	public void statusChanged(IRodinElement element) {
 		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
 		updateButtons();
+	}
+
+	/**
+	 * Hook the actions to the menu
+	 */
+	private void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				groupActionSet.setContext(new ActionContext(
+						((StructuredViewer) getViewer()).getSelection()));
+				groupActionSet.fillContextMenu(manager);
+				groupActionSet.setContext(null);
+			}
+		});
+		Viewer viewer = getViewer();
+		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
+		((Viewer) viewer).getControl().setMenu(menu);
+		this.editor.getSite().registerContextMenu(menuMgr,
+				(ISelectionProvider) viewer);
 	}
 
 }

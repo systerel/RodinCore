@@ -13,22 +13,16 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -95,7 +89,6 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
-		hookContextMenu();
 		createToolBarActions(managedForm);
 	}
 
@@ -174,27 +167,6 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		form.updateToolBar();
 	}
 
-	/**
-	 * Hook the actions to the menu
-	 */
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				groupActionSet.setContext(new ActionContext(
-						((StructuredViewer) getViewer()).getSelection()));
-				groupActionSet.fillContextMenu(manager);
-				groupActionSet.setContext(null);
-			}
-		});
-		Viewer viewer = getViewer();
-		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
-		((Viewer) viewer).getControl().setMenu(menu);
-		this.editor.getSite().registerContextMenu(menuMgr,
-				(ISelectionProvider) viewer);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -258,6 +230,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
+		EventMasterSectionActionGroup groupActionSet = (EventMasterSectionActionGroup) this
+				.getActionGroup();
 		switch (index) {
 		case ADD_EVT_INDEX:
 			groupActionSet.addEvent.run();
@@ -338,6 +312,16 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new EventMasterSectionActionGroup(editor, (TreeViewer) this
+				.getViewer());
 	}
 
 }

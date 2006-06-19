@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.ElementChangedEvent;
@@ -84,7 +85,9 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
 	protected void updateButtons() {
@@ -126,6 +129,8 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 *            The index of selected button
 	 */
 	protected void buttonSelected(int index) {
+		AxiomMasterSectionActionGroup groupActionSet = (AxiomMasterSectionActionGroup) this
+				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
 			groupActionSet.addAxiom.run();
@@ -170,6 +175,16 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
 		selectItem(item, 1);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new AxiomMasterSectionActionGroup(editor, (TreeViewer) this
+				.getViewer());
 	}
 
 }

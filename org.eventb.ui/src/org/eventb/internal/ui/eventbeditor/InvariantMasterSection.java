@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.rodinp.core.ElementChangedEvent;
@@ -129,6 +130,8 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
+		final InvariantMasterSectionActionGroup groupActionSet = (InvariantMasterSectionActionGroup) this
+				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
 			groupActionSet.addInvariant.run();
@@ -173,6 +176,16 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
 		selectItem(item, 1);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
+	 */
+	protected ActionGroup createActionGroup() {
+		return new InvariantMasterSectionActionGroup(editor, (TreeViewer) this
+				.getViewer());
 	}
 
 }
