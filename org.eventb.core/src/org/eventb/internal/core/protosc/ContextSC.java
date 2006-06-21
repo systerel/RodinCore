@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
-import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.IContextFile;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
@@ -48,8 +48,8 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	@SuppressWarnings("unused")
 	private IProgressMonitor monitor;
 
-	private IContext context;
-	private ISCContext scContext;
+	private IContextFile context;
+	private ISCContextFile scContext;
 	
 	private ContextRuleBase ruleBase;
 
@@ -62,8 +62,8 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	 * 
 	 */
 	public void init(
-			@SuppressWarnings("hiding") IContext context, 
-			@SuppressWarnings("hiding") ISCContext scContext, 
+			@SuppressWarnings("hiding") IContextFile context, 
+			@SuppressWarnings("hiding") ISCContextFile scContext, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
 		this.monitor = monitor;
 		this.context = context;
@@ -82,8 +82,8 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if(DEBUG)
 			System.out.println(getClass().getName() + " running.");
 		
-		ISCContext newSCContext = (ISCContext) RodinCore.create(file);
-		IContext contextIn = newSCContext.getContext();
+		ISCContextFile newSCContext = (ISCContextFile) RodinCore.create(file);
+		IContextFile contextIn = newSCContext.getContextFile();
 
 		if (! contextIn.exists())
 			ContextSC.makeError("Source context does not exist.");
@@ -105,8 +105,8 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	public void extract(IFile file, IGraph graph) throws CoreException {
 		// the prototype does not have refinements
 
-		IContext contextIn = (IContext) RodinCore.create(file);
-		ISCContext target = contextIn.getSCContext();
+		IContextFile contextIn = (IContextFile) RodinCore.create(file);
+		ISCContextFile target = contextIn.getSCContextFile();
 		
 		IPath inPath = contextIn.getPath();
 		IPath targetPath = target.getPath();
@@ -275,12 +275,13 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		createDeclarations(contextCache.getNewCarrierSets().values(), contextCache.getCarrierSetIdentMap());
 		createDeclarations(contextCache.getOldConstants().values(), contextCache.getConstantIdentMap());
 		createDeclarations(contextCache.getNewConstants().values(), contextCache.getConstantIdentMap());
-		
-		ISCAxiomSet axiomSet = (ISCAxiomSet) scContext.createInternalElement(ISCAxiomSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
-		createFormulas(axiomSet, contextCache.getOldAxioms());
-		
-		ISCTheoremSet theoremSet = (ISCTheoremSet) scContext.createInternalElement(ISCTheoremSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
-		createFormulas(theoremSet, contextCache.getOldTheorems());
+
+// Context extension is not yet implemented. 
+//		ISCAxiomSet axiomSet = (ISCAxiomSet) scContext.createInternalElement(ISCAxiomSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
+//		createFormulas(axiomSet, contextCache.getOldAxioms());
+//		
+//		ISCTheoremSet theoremSet = (ISCTheoremSet) scContext.createInternalElement(ISCTheoremSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
+//		createFormulas(theoremSet, contextCache.getOldTheorems());
 		
 		createFormulas(scContext, contextCache.getNewAxioms());
 		createFormulas(scContext, contextCache.getNewTheorems());
@@ -290,7 +291,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 	
 	private void createFormulas(IInternalParent parent, Collection<? extends IInternalElement> elements) throws RodinDBException {
 		for(IInternalElement element : elements) {
-			IInternalElement newElement = parent.createInternalElement(element.getElementType(), element.getElementName(), null, monitor);
+			IInternalElement newElement = parent.createInternalElement(getCorrespondingElementType(element.getElementType()), element.getElementName(), null, monitor);
 			String newContents = (element.getElementType().equals(IAxiom.ELEMENT_TYPE)) ? 
 					axiomPredicateMap.get(element.getElementName()).toString() :
 					theoremPredicateMap.get(element.getElementName()).toString();
@@ -304,7 +305,11 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 			return ISCConstant.ELEMENT_TYPE;
 		else if(type.equals(ICarrierSet.ELEMENT_TYPE))
 			return ISCCarrierSet.ELEMENT_TYPE;
-		else 
+		else if(type.equals(IAxiom.ELEMENT_TYPE))
+			return ISCAxiom.ELEMENT_TYPE;
+		else if(type.equals(ITheorem.ELEMENT_TYPE))
+			return ISCTheorem.ELEMENT_TYPE;
+		else
 			return "?";
 	}
 	

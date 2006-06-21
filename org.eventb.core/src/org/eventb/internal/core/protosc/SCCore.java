@@ -27,7 +27,7 @@ public class SCCore {
 //	 * @param scContext
 //	 * @throws CoreException
 //	 */
-//	public static void runContextSC(IContext context, ISCContext scContext) throws CoreException {
+//	public static void runContextSC(IContextFile context, ISCContextFile scContext) throws CoreException {
 //		ContextSC staticChecker = new ContextSC();
 //		staticChecker.init(context, scContext, null, null);
 //		staticChecker.runSC();
@@ -40,7 +40,7 @@ public class SCCore {
 //	 * @param scMachine
 //	 * @throws CoreException
 //	 */
-//	public static void runMachineSC(IMachine machine, ISCMachine scMachine) throws CoreException {
+//	public static void runMachineSC(IMachineFile machine, ISCMachineFile scMachine) throws CoreException {
 //		MachineSC staticChecker = new MachineSC();
 //		staticChecker.init(machine, scMachine, null, null);
 //		staticChecker.runSC();

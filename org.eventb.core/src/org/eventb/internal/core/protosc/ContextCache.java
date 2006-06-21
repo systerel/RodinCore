@@ -14,7 +14,7 @@ import java.util.HashSet;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.RodinDBException;
 
@@ -22,7 +22,7 @@ import org.rodinp.core.RodinDBException;
  * @author halstefa
  *
  */
-public class ContextCache extends Cache<IContext> {
+public class ContextCache extends Cache<IContextFile> {
 
 	private HashMap<String, ICarrierSet> oldCarrierSets; // the collection of carrier sets of the abstractions
 	private HashSet<String> carrierSetConflictSet;
@@ -45,7 +45,7 @@ public class ContextCache extends Cache<IContext> {
 	public final ArrayList<IAxiom> newAxioms; // the new axioms of the context
 	public final ArrayList<ITheorem> newTheorems; // the new theorems of the context
 
-	public ContextCache(IContext context, ISCProblemList problemList) throws RodinDBException {
+	public ContextCache(IContextFile context, ISCProblemList problemList) throws RodinDBException {
 		super(context);
 		
 		carrierSetConflictSet = new HashSet<String>(3);

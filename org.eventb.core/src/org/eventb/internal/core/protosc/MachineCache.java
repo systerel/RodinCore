@@ -13,14 +13,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.IParseResult;
@@ -31,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author halstefa
  *
  */
-public class MachineCache extends Cache<IMachine> {
+public class MachineCache extends Cache<IMachineFile> {
 
 	private HashMap<String, IVariable> olderVariables; // variables that were present before the abstraction
 	private HashMap<String, IVariable> oldVariables; // the collection of variables present in the abstraction
@@ -40,13 +42,13 @@ public class MachineCache extends Cache<IMachine> {
 
 	private HashMap<String, ISCCarrierSet> oldCarrierSets; // the collection of carrier sets of the seen contexts
 	private HashMap<String, ISCConstant> oldConstants; // the collection of constants of the seen contexts
-	private ArrayList<IAxiom> oldAxioms; // the axioms of the abstractions
+	private ArrayList<ISCAxiom> oldAxioms; // the axioms of the abstractions
 
-	private ArrayList<IAxiom> oldInvariants; // the axioms of the abstractions
+	private ArrayList<ISCInvariant> oldInvariants; // the invariants of the abstractions
 	private HashSet<String> invariantConflictSet = new HashSet<String>(3);
 	private HashMap<String, String> invariantIdentMap = new HashMap<String, String>(3);
 
-	private ArrayList<ITheorem> oldTheorems; // the theorems of the abstractions and seen contexts
+	private ArrayList<ISCTheorem> oldTheorems; // the theorems of the abstractions and seen contexts
 	private HashSet<String> theoremConflictSet = new HashSet<String>(3);
 	private HashMap<String, String> theoremIdentMap = new HashMap<String, String>(3);
 
@@ -67,7 +69,9 @@ public class MachineCache extends Cache<IMachine> {
 	private final HashMap<String, HashMap<String, IVariable>> newLocalVariables; // the collection of the variables of the event
 	private final HashMap<String, ITypeEnvironment> localTypeEnvironment;
 
-	public MachineCache(IMachine machine, ISCProblemList problemList) throws RodinDBException {
+	private ISCContextFile seenContext;
+
+	public MachineCache(IMachineFile machine, ISCProblemList problemList) throws RodinDBException {
 		super(machine);
 		
 		variableConflictSet = new HashSet<String>(3);
@@ -127,12 +131,12 @@ public class MachineCache extends Cache<IMachine> {
 		
 		oldVariables = new HashMap<String, IVariable>();
 		
-		oldInvariants = new ArrayList<IAxiom>();
+		oldInvariants = new ArrayList<ISCInvariant>();
 		
-		getSeenContext();
+		loadSeenContext();
 	}		
 	
-	private void getOldTypeEnvironment(ISCContext context) throws RodinDBException {
+	private void getOldTypeEnvironment(ISCContextFile context) throws RodinDBException {
 		for(ISCCarrierSet identifier : context.getSCCarrierSets()) {
 			String name = identifier.getElementName();
 			String type = identifier.getContents();
@@ -149,31 +153,38 @@ public class MachineCache extends Cache<IMachine> {
 		}
 	}
 	
-	private void getSeenContext() throws RodinDBException {
+	public ISCContextFile getSeenContext() {
+		return seenContext;
+	}
+
+	private void loadSeenContext() throws RodinDBException {
 		oldCarrierSets = new HashMap<String, ISCCarrierSet>();
 		oldConstants = new HashMap<String, ISCConstant>();
-		oldAxioms = new ArrayList<IAxiom>();
-		oldTheorems = new ArrayList<ITheorem>();
+		oldAxioms = new ArrayList<ISCAxiom>();
+		oldTheorems = new ArrayList<ISCTheorem>();
 		
-		ISCContext[] sees = file.getSeenContexts();
-		if (sees.length == 0)
+		seenContext = MachineSC.getSeenContext(file);
+		if (seenContext == null) {
 			return;
-		ISCContext context = sees[0];
-		if (! context.exists())
+		}
+		if (! seenContext.exists()) {
+			// TODO unexpected failure, seen context should exist.
+			seenContext = null;
 			return;
+		}
 		
-		getOldTypeEnvironment(context);
+		getOldTypeEnvironment(seenContext);
 		
-		for(ISCCarrierSet carrierSet : context.getSCCarrierSets()) {
+		for(ISCCarrierSet carrierSet : seenContext.getSCCarrierSets()) {
 			oldCarrierSets.put(carrierSet.getElementName(), carrierSet);
 		}
 		
-		for(ISCConstant constant : context.getSCConstants()) {
+		for(ISCConstant constant : seenContext.getSCConstants()) {
 			oldConstants.put(constant.getElementName(), constant);
 		}
 		
-		oldAxioms = new ArrayList<IAxiom>(Arrays.asList(context.getAxioms()));
-		oldTheorems = new ArrayList<ITheorem>(Arrays.asList(context.getTheorems()));
+		oldAxioms = new ArrayList<ISCAxiom>(Arrays.asList(seenContext.getSCAxioms()));
+		oldTheorems = new ArrayList<ISCTheorem>(Arrays.asList(seenContext.getSCTheorems()));
 	}
 	
 	private IVariable[] variables = null;
@@ -316,7 +327,7 @@ public class MachineCache extends Cache<IMachine> {
 	/**
 	 * @return Returns the oldAxioms.
 	 */
-	public ArrayList<IAxiom> getOldAxioms() {
+	public ArrayList<ISCAxiom> getOldAxioms() {
 		return oldAxioms;
 	}
 
@@ -330,14 +341,14 @@ public class MachineCache extends Cache<IMachine> {
 	/**
 	 * @return Returns the oldInvariants.
 	 */
-	public ArrayList<IAxiom> getOldInvariants() {
+	public ArrayList<ISCInvariant> getOldInvariants() {
 		return oldInvariants;
 	}
 
 	/**
 	 * @return Returns the oldTheorems.
 	 */
-	public ArrayList<ITheorem> getOldTheorems() {
+	public ArrayList<ISCTheorem> getOldTheorems() {
 		return oldTheorems;
 	}
 

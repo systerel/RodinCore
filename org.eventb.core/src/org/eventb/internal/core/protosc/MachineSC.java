@@ -23,16 +23,19 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
-import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCAction;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCInvariantSet;
-import org.eventb.core.ISCMachine;
-import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
@@ -58,8 +61,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 //	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
-	private IMachine machine;
-	private ISCMachine scMachine;
+	private IMachineFile machine;
+	private ISCMachineFile scMachine;
 	
 	private MachineRuleBase ruleBase;
 	
@@ -70,8 +73,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	private HashMap<String, Assignment> actionSubstititionMap;
 
 	public void init(
-			@SuppressWarnings("hiding") IMachine machine, 
-			@SuppressWarnings("hiding") ISCMachine scMachine, 
+			@SuppressWarnings("hiding") IMachineFile machine, 
+			@SuppressWarnings("hiding") ISCMachineFile scMachine, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws RodinDBException {
 		this.monitor = monitor;
 		this.machine = machine;
@@ -95,8 +98,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		if(DEBUG)
 			System.out.println(getClass().getName() + " running.");
 		
-		ISCMachine newSCMachine = (ISCMachine) RodinCore.create(file);
-		IMachine machineIn = newSCMachine.getMachine();
+		ISCMachineFile newSCMachine = (ISCMachineFile) RodinCore.create(file);
+		IMachineFile machineIn = newSCMachine.getMachineFile();
 		
 		if (! machineIn.exists())
 			MachineSC.makeError("Source machine does not exist.");
@@ -117,13 +120,9 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 	}
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
-		IMachine machineIn = (IMachine) RodinCore.create(file);
-		ISCMachine target = machineIn.getSCMachine();
-		ISCContext seen = null;
-		ISCContext[] sees = machineIn.getSeenContexts();
-		if (sees.length == 1) {
-			seen = sees[0];
-		}
+		IMachineFile machineIn = (IMachineFile) RodinCore.create(file);
+		ISCMachineFile target = machineIn.getSCMachineFile();
+		ISCContextFile seen = getSeenContext(machineIn);
 
 		IPath inPath = machineIn.getPath();
 		IPath targetPath = target.getPath();
@@ -246,7 +245,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 			}
 		}
 		if(!machineCache.getNewEvents().keySet().contains("INITIALISATION"))
-			addProblem(machine, "Machine does not have an initialisation.", SCProblem.SEVERITY_ERROR);
+			addProblem(machine, "MachineFile does not have an initialisation.", SCProblem.SEVERITY_ERROR);
 	}
 	
 	private void commitLocalVariables(IEvent event, HashMap<String, IVariable> committedVariables) throws RodinDBException {
@@ -455,19 +454,26 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IRodinProject project = scMachine.getRodinProject();
 		project.createRodinFile(scMachine.getElementName(), true, null);
 
-		createDeclarations(machineCache.getOldCarrierSets().values(), null);
-		createDeclarations(machineCache.getOldConstants().values(), null);
-		createDeclarations(machineCache.getNewVariables().values(),
+		createDeclarations(scMachine, machineCache.getNewVariables().values(),
 				machineCache.getVariableIdentMap());
 
-		ISCInvariantSet invariantSet = (ISCInvariantSet) scMachine.createInternalElement(ISCInvariantSet.ELEMENT_TYPE, "MODEL", null, monitor);
-		createOldFormulas(invariantSet, machineCache.getOldInvariants());
-		
-		ISCAxiomSet axiomSet = (ISCAxiomSet) scMachine.createInternalElement(ISCAxiomSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
-		createOldFormulas(axiomSet, machineCache.getOldAxioms());
-		
-		ISCTheoremSet theoremSet = (ISCTheoremSet) scMachine.createInternalElement(ISCTheoremSet.ELEMENT_TYPE, "CONTEXT", null, monitor);
-		createOldFormulas(theoremSet, machineCache.getOldTheorems());
+//		ISCInvariantSet invariantSet = (ISCInvariantSet) scMachine.createInternalElement(ISCInvariantSet.ELEMENT_TYPE, "MODEL", null, monitor);
+//		createOldFormulas(invariantSet, machineCache.getOldInvariants());
+
+		ISCContextFile seenContext = machineCache.getSeenContext();
+		if (seenContext != null) {
+			ISCInternalContext internalContext = createInternalContext(seenContext);
+			createDeclarations(
+					internalContext,
+					machineCache.getOldCarrierSets().values(),
+					null);
+			createDeclarations(
+					internalContext,
+					machineCache.getOldConstants().values(),
+					null);
+			createOldFormulas(internalContext, machineCache.getOldAxioms());
+			createOldFormulas(internalContext, machineCache.getOldTheorems());
+		}
 		
 		createNewFormulas(scMachine, machineCache.getNewInvariants());
 		createNewFormulas(scMachine, machineCache.getNewTheorems());
@@ -477,20 +483,53 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		scMachine.save(monitor, true);
 	}
 	
+	private ISCInternalContext createInternalContext(ISCContextFile seenContext)
+			throws RodinDBException {
+		ISCInternalContext result = 
+			(ISCInternalContext) scMachine.createInternalElement(
+				ISCInternalContext.ELEMENT_TYPE,
+				seenContext.getElementName(),
+				null,
+				monitor);
+		result.setContents(seenContext.getHandleIdentifier());
+		return result;
+	}
+
+	static ISCContextFile getSeenContext(IMachineFile machine)
+			throws RodinDBException {
+		ISeesContext[] sees = machine.getSeesClauses();
+		if (sees.length == 0)
+			return null;
+		return sees[0].getSeenSCContext();
+	}
+	
 	String getCorrespondingElementType(String type) {
 		if(type.equals(ISCConstant.ELEMENT_TYPE))
 			return ISCConstant.ELEMENT_TYPE;
 		else if(type.equals(ISCCarrierSet.ELEMENT_TYPE))
 			return ISCCarrierSet.ELEMENT_TYPE;
+		else if(type.equals(ISCTheorem.ELEMENT_TYPE))
+			return ISCTheorem.ELEMENT_TYPE;
 		else if(type.equals(IVariable.ELEMENT_TYPE))
 			return ISCVariable.ELEMENT_TYPE;
+		else if(type.equals(IInvariant.ELEMENT_TYPE))
+			return ISCInvariant.ELEMENT_TYPE;
+		else if(type.equals(ITheorem.ELEMENT_TYPE))
+			return ISCTheorem.ELEMENT_TYPE;
 		else
 			return "?";
 	}
 	
-	private void createDeclarations(Collection<? extends IInternalElement> elements, HashMap<String, String> identMap) throws RodinDBException {
+	private void createDeclarations(
+			IInternalParent parent,
+			Collection<? extends IInternalElement> elements,
+			HashMap<String, String> identMap) throws RodinDBException {
 		for(IInternalElement element : elements) {
-			IInternalElement newElement = scMachine.createInternalElement(getCorrespondingElementType(element.getElementType()), element.getElementName(), null, monitor);
+			IInternalElement newElement = parent.createInternalElement(
+					getCorrespondingElementType(element.getElementType()),
+					element.getElementName(), 
+					null, 
+					monitor);
 			// TODO: set origin attribute of new element
 			newElement.setContents(machineCache.getTypeEnvironment().getType(element.getElementName()).toString());
 //			IPOIdentifier identifier = (IPOIdentifier) scMachine.createInternalElement(IPOIdentifier.ELEMENT_TYPE, element.getElementName(), null, monitor);
@@ -513,7 +552,8 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 
 	private void createNewFormulas(IInternalParent parent, Collection<? extends IInternalElement> elements) throws RodinDBException {
 		for(IInternalElement element : elements) {
-			IInternalElement newElement = parent.createInternalElement(element.getElementType(), element.getElementName(), null, monitor);
+			IInternalElement newElement = parent.createInternalElement(
+					getCorrespondingElementType(element.getElementType()), element.getElementName(), null, monitor);
 			String newContents = (element.getElementType().equals(IInvariant.ELEMENT_TYPE)) ? 
 					invariantPredicateMap.get(element.getElementName()).toString() :
 					theoremPredicateMap.get(element.getElementName()).toString();
@@ -533,12 +573,12 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 //				identifier.setContents(machineCache.getLocalTypeEnvironment().get(event.getElementName()).getType(ident).toString());
 			}
 			for(IGuard guard : machineCache.getNewGuards().get(event.getElementName())) {
-				IGuard newGuard = (IGuard) newEvent.createInternalElement(IGuard.ELEMENT_TYPE, guard.getElementName(), null, monitor);
+				ISCGuard newGuard = (ISCGuard) newEvent.createInternalElement(ISCGuard.ELEMENT_TYPE, guard.getElementName(), null, monitor);
 				Predicate predicate = guardPredicateMap.get(event.getElementName() + "-" + guard.getElementName());
 				newGuard.setContents(predicate.toString());
 			}
 			for(IAction action : machineCache.getNewActions().get(event.getElementName())) {
-				IAction newAction = (IAction) newEvent.createInternalElement(IAction.ELEMENT_TYPE, null, null, monitor);
+				ISCAction newAction = (ISCAction) newEvent.createInternalElement(ISCAction.ELEMENT_TYPE, action.getElementName(), null, monitor);
 				newAction.setContents(actionSubstititionMap.get(event.getElementName() + action.getContents()).toString());
 			}
 		}
