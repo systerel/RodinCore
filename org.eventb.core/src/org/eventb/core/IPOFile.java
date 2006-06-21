@@ -33,7 +33,7 @@ public interface IPOFile extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of the corresponding context
 	 */
-	public ISCContext getSCContext();
+	public ISCContextFile getSCContext();
 
 	/**
 	 * Returns a handle to the checked version of the machine for which this
@@ -44,7 +44,7 @@ public interface IPOFile extends IRodinFile {
 	 * 
 	 * @return a handle to the checked version of the corresponding machine
 	 */
-	public ISCMachine getSCMachine();
+	public ISCMachineFile getSCMachine();
 
 	/**
 	 * Returns a handle to the file containing proofs for this component.
@@ -56,7 +56,25 @@ public interface IPOFile extends IRodinFile {
 	 */
 	public IPRFile getPRFile();
 
+	/**
+	 * Returns a handle to the predicate set with the given name.
+	 * 
+	 * @param name
+	 *            the name of the predicate set
+	 * @return a handle to the predicate set or <code>null</code> there is no
+	 *         predicate set witrh given name
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
 	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException;
+	
+	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	
+	/**
+	 * Returns handles to the proof obligations of this component. 
+	 * 
+	 * @return the array of handles to the proof obligations
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
 	public IPOSequent[] getSequents() throws RodinDBException;
 }

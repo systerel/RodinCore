@@ -8,25 +8,33 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.RodinDBException;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Type;
 
 /**
- * Common protocol for carrier sets in Event-B statically checked (SC) files.
+ * Common protocol for carrier sets in Event-B statically checked (SC) contexts.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
- * Statically checked carrier sets have a name <code>getName()</code>
- * and a type <code>getType()</code>.
+ * An SC carrier set is a carrier set that has been statically checked. An SC
+ * carrier set has a name that is returned by
+ * {@link org.rodinp.core.IRodinElement#getElementName()} and contains a type
+ * that is accessed and manipulated via
+ * {@link org.eventb.core.ISCIdentifierElement}. This interface itself does not
+ * contribute any method.
  * </p>
+ * 
+ * @see org.rodinp.core.IRodinElement#getElementName()
+ * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory)
+ * @see org.eventb.core.ISCIdentifierElement#setType(Type)
+ * 
  * @author Stefan Hallerstede
- *
  */
-public interface ISCCarrierSet extends ICarrierSet {
+public interface ISCCarrierSet extends ISCIdentifierElement {
 
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scCarrierSet"; //$NON-NLS-1$
-	
-	public String getName();
-	public String getType() throws RodinDBException;
+	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scCarrierSet"; //$NON-NLS-1$
+
+	// No additional method
 
 }

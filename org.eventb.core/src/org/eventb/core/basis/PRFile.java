@@ -13,8 +13,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
@@ -49,18 +49,18 @@ public class PRFile extends POFile implements IPRFile {
 		return this;
 	}
 	
-	public IContext getContext() {
+	public IContextFile getContext() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (IContext) project.getRodinFile(scName);
+		return (IContextFile) project.getRodinFile(scName);
 	}
 
-	public IMachine getMachine() {
+	public IMachineFile getMachine() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (IMachine) project.getRodinFile(scName);
+		return (IMachineFile) project.getRodinFile(scName);
 	}
 
 	public IPOFile getPOFile() {

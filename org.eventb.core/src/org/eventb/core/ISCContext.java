@@ -1,57 +1,71 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.core;
 
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-
 /**
- * Common protocol for Event-B statically checked (SC) contexts.
+ * Common protocol for Event-B statically checked (SC) context files.
+ * <p>
+ * There are two kinds of such contexts:
+ * <ul>
+ * <li>{@link org.eventb.core.ISCContextFile} is a statically checked context
+ * that corresponds directly to a context file
+ * {@link org.eventb.core.IContextFile}</li>
+ * <li>{@link org.eventb.core.ISCInternalContext} is a statically checked
+ * context that is stored inside another statically checked context or
+ * statically checked machine. It is usually a copy of an
+ * {@link org.eventb.core.ISCContextFile}.</li>
+ * <ul>
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * <p>
- * A statically checked context is similar to a context but contains
- * some additional types of elements:
- * <ul>
- * <li>it contains one axiom set that conatins all axioms of all abstractions of the context
- *   (ISCAxiomSet)</li>
- * <li>it contains one theorem set that conatins all theorems of all abstractions of the context
- *   (ISCTheoremSet)</li>
- * <li>it cointains type informations for all constants of the context and all its abstractions.
- *   (IPOIdentifier)</li>
- * <li>it conatins constants and sets of all abstraction with an attribute marking their origin.
- *   (IConstant and ICarrierSet)</li>
- * </ul>
- * The rest of the elements are the same as for contexts.
- * Theorems and Axioms of abstractions of a context are refered to as "old".
- * </p>
- * @author Stefan Hallerstede
  * 
+ * @author Stefan Hallerstede
  */
-public interface ISCContext extends IContext {
+public interface ISCContext extends IRodinElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scContext"; //$NON-NLS-1$
-	
 	/**
-	 * Returns a handle to the unchecked version of this context.
-	 * <p>
-	 * This is a handle-only operation.
-	 * </p>
+	 * Returns an array containing all SC carrier sets of this SC context.
 	 * 
-	 * @return a handle to the unchecked version of this context
+	 * @return an array of all SC carrier sets
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
-	public IContext getContext();
-
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC constants of this SC context.
+	 * 
+	 * @return an array of all SC constants
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
 	ISCConstant[] getSCConstants() throws RodinDBException;
-	IAxiom[] getOldAxioms() throws RodinDBException;
-	ITheorem[] getOldTheorems() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC axioms of this SC context.
+	 * 
+	 * @return an array of all SC axioms
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCAxiom[] getSCAxioms() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC theorems of this SC context.
+	 * 
+	 * @return an array of all SC theorems
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCTheorem[] getSCTheorems() throws RodinDBException;
 	
 }

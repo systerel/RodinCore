@@ -7,25 +7,30 @@
  *******************************************************************************/
 package org.eventb.core;
 
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for Event-B witnesses.
  * <p>
- * The name of this element is the identifier of the variable to which this witness applies.
- * The contents is the actual expression of the witness.
+ * A witness has a name that is returned by
+ * {@link org.rodinp.core.IRodinElement#getElementName()} and contains an
+ * expression that is accessed and manipulated via
+ * {@link org.eventb.core.IExpressionElement}. This interface itself does not
+ * contribute any methods.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see org.rodinp.core.IRodinElement#getElementName()
+ * @see org.eventb.core.IExpressionElement#getExpressionString()
+ * @see org.eventb.core.IExpressionElement#setExpressionString(String)
+ * 
  * @author Laurent Voisin
  */
-public interface IWitness extends IInternalElement {
+public interface IWitness extends ILabeledElement, IExpressionElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".witness"; //$NON-NLS-1$
-
-	String getExpression() throws RodinDBException;
 	
+	// No additional method
+
 }
