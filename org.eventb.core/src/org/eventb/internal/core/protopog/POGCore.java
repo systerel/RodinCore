@@ -20,13 +20,13 @@ public class POGCore {
 	
 	public static final String MACHINE_POG_TOOL_ID = EventBPlugin.PLUGIN_ID + ".machinePOG"; //$NON-NLS-1$
 
-//	public static void runContextPOG(ISCContext context, IPOFile poFile) throws CoreException {
+//	public static void runContextPOG(ISCContextFile context, IPOFile poFile) throws CoreException {
 //		ContextPOG pog = new ContextPOG();
 //		pog.init(context, poFile, null, null);
 //		pog.run();
 //	}
 //
-//	public static void runMachinePOG(ISCMachine machine, IPOFile poFile) throws CoreException {
+//	public static void runMachinePOG(ISCMachineFile machine, IPOFile poFile) throws CoreException {
 //		MachinePOG pog = new MachinePOG();
 //		pog.init(machine, poFile, null, null);
 //		pog.run();

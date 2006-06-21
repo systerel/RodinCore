@@ -15,17 +15,17 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IAxiom;
-import org.eventb.core.IInvariant;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCMachine;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ITheorem;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -41,7 +41,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 	
 	private IProgressMonitor monitor;
 
-	private ISCMachine scMachine;
+	private ISCMachineFile scMachine;
 	private IPOFile poFile;
 	
 	private MachineRuleBase ruleBase;
@@ -51,7 +51,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 	private List<ProofObligation> poList;
 
 	public void init(
-			@SuppressWarnings("hiding") ISCMachine scMachine, 
+			@SuppressWarnings("hiding") ISCMachineFile scMachine, 
 			@SuppressWarnings("hiding") IPOFile poFile, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
 		this.monitor = monitor;
@@ -82,7 +82,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
-		ISCMachine machineIn = newPOFile.getSCMachine();
+		ISCMachineFile machineIn = newPOFile.getSCMachine();
 
 		if (! machineIn.exists())
 			MachineSC.makeError("Source SC context does not exist.");
@@ -99,8 +99,8 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 
 	public void extract(IFile file, IGraph graph) throws CoreException {
 		
-		ISCMachine in = (ISCMachine) RodinCore.create(file);
-		IPOFile target = in.getPOFile();
+		ISCMachineFile in = (ISCMachineFile) RodinCore.create(file);
+		IPOFile target = in.getMachineFile().getPOFile();
 		
 		IPath inPath = in.getPath();
 		IPath targetPath = target.getPath();
@@ -126,11 +126,11 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		FormulaFactory factory = FormulaFactory.getDefault();
 		
 		IInternalElement element = poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getOldHypSetName(), null, monitor);
-		for(IAxiom axiom : machineCache.getOldAxioms()) {
+		for(ISCAxiom axiom : machineCache.getOldAxioms()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(axiom.getContents(), monitor);
 		}
-		for(ITheorem theorem : machineCache.getOldTheorems()) {
+		for(ISCTheorem theorem : machineCache.getOldTheorems()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(theorem.getContents(), monitor);
 		}
@@ -138,25 +138,25 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			Predicate pp = factory.makeRelationalPredicate(
 					Formula.NOTEQUAL, 
-					factory.makeFreeIdentifier(carrierSet.getName(), null), 
+					carrierSet.getIdentifier(factory), 
 					factory.makeAtomicExpression(Formula.EMPTYSET, null), 
 					null);
 			predicate.setContents(pp.toString(), monitor);
 		}
 		// TODO: this is actually wrong! there must be a separate hyp set for context hypotheses
 		// The problem doesn't show in the preliminary tool because we don not have refinement! 
-		for(IInvariant invariant : machineCache.getOldInvariants()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
-			predicate.setContents(invariant.getContents(), monitor);
-		}
-		IInvariant[] invariants = machineCache.getNewInvariants();
+//		for(IInvariant invariant : machineCache.getOldInvariants()) {
+//			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+//			predicate.setContents(invariant.getContents(), monitor);
+//		}
+		ISCInvariant[] invariants = machineCache.getNewInvariants();
 		for(int i=0; i<invariants.length-1; i++) {
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getHypSetName(invariants[i+1].getElementName()), null, monitor);
 			predicateSet.setContents(machineCache.getHypSetName(invariants[i].getElementName()), monitor);
 			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(invariants[i].getContents(monitor), monitor);
 		}
-		ITheorem[] theorems = machineCache.getNewTheorems();
+		ISCTheorem[] theorems = machineCache.getNewTheorems();
 		if(invariants.length > 0)
 			if(theorems.length == 0) {
 				IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getNewHypsetName(), null, monitor);

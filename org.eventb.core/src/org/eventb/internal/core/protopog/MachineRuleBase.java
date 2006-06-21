@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eventb.core.IAction;
-import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
+import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ITheorem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -41,7 +41,7 @@ public class MachineRuleBase {
 				// MDL_INV_WD
 				public List<ProofObligation> get(SCMachineCache cache) throws RodinDBException {
 					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewInvariants().length);
-					for(IInvariant invariant : cache.getNewInvariants()) {
+					for(ISCInvariant invariant : cache.getNewInvariants()) {
 						Predicate wdPredicate = cache.getPredicate(invariant.getContents()).getWDPredicate(cache.getFactory());
 						if(!wdPredicate.equals(cache.BTRUE)) {
 							ProofObligation wdObligation = new ProofObligation(
@@ -61,7 +61,7 @@ public class MachineRuleBase {
 				// MDL_THM_WD and MDL_THM
 				public List<ProofObligation> get(SCMachineCache cache) throws RodinDBException {
 					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewTheorems().length * 2);
-					for(ITheorem theorem : cache.getNewTheorems()) {
+					for(ISCTheorem theorem : cache.getNewTheorems()) {
 						Predicate predicate = cache.getPredicate(theorem.getContents());
 						Predicate wdPredicate = predicate.getWDPredicate(cache.getFactory());
 						if(!wdPredicate.equals(cache.BTRUE)) {
@@ -111,7 +111,7 @@ public class MachineRuleBase {
 					
 					for(ISCEvent event : cache.getEvents()) {
 						String evtName = event.getElementName();
-						IGuard[] guards = event.getGuards();
+						ISCGuard[] guards = event.getSCGuards();
 						ITypeEnvironment typeEnvironment = cache.getTypeEnvironment(event.getSCVariables(), true, null);
 						ITypeEnvironment fullTypeEnvironment = cache.getGlobalTypeEnvironment().clone();
 						fullTypeEnvironment.addAll(typeEnvironment);
@@ -126,7 +126,7 @@ public class MachineRuleBase {
 						
 						// MDL_GRD_WD
 						ArrayList<Predicate> precGuards = new ArrayList<Predicate>(guards.length);
-						for(IGuard guard : guards) { // guards is the empty list for the initialisation
+						for(ISCGuard guard : guards) { // guards is the empty list for the initialisation
 							Predicate predicate = cache.getPredicate(guard.getContents(), fullTypeEnvironment);
 							Predicate wdPredicate = predicate.getWDPredicate(cache.getFactory());
 							if(!wdPredicate.equals(btrue)) {
@@ -177,7 +177,7 @@ public class MachineRuleBase {
 						}
 						
 						// MDL_EVT_WD and MDL_EVT_FIS
-						IAction[] actions = event.getActions();
+						ISCAction[] actions = event.getSCActions();
 						
 						// some preparations for MDL_EVT_INV
 						ArrayList<Assignment> precBA = new ArrayList<Assignment>(actions.length);
@@ -186,7 +186,7 @@ public class MachineRuleBase {
 							(cache.getSCCarrierSets().length + cache.getSCConstants().length + cache.getSCVariables().length) * 4 / 3 + 1);
 						int numAssignedVars = 0;
 
-						for(IAction action : actions) {
+						for(ISCAction action : actions) {
 							Assignment assignment = cache.getAssignment(action.getContents(), fullTypeEnvironment);
 							numAssignedVars += assignment.getAssignedIdentifiers().length;
 							if(assignment instanceof BecomesEqualTo)
@@ -236,8 +236,8 @@ public class MachineRuleBase {
 						}
 						
 						// MDL_EVT_INV
-						IInvariant[] invariants = cache.getNewInvariants();
-						for(IInvariant invariant : invariants) {
+						ISCInvariant[] invariants = cache.getNewInvariants();
+						for(ISCInvariant invariant : invariants) {
 							Predicate predicate = cache.getPredicate(invariant.getContents(), fullTypeEnvironment);
 							FreeIdentifier[] freeIdentifiers = predicate.getFreeIdentifiers();
 							HashSet<String> freeNames = new HashSet<String>(freeIdentifiers.length * 4 / 3 + 1);

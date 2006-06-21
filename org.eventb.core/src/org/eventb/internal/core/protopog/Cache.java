@@ -9,9 +9,9 @@
 package org.eventb.internal.core.protopog;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IVariable;
+import org.eventb.core.ISCCarrierSet;
+import org.eventb.core.ISCConstant;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -29,7 +29,7 @@ public class Cache<F extends IRodinFile> {
 	
 	protected final F file;
 	
-	private final FormulaFactory factory;
+	protected final FormulaFactory factory;
 	
 	protected final Predicate BTRUE;
 	protected final Predicate BFALSE;
@@ -64,19 +64,19 @@ public class Cache<F extends IRodinFile> {
 		typeEnvironment.addName(name, result.getParsedType());
 	}
 	
-	protected ITypeEnvironment getTypeEnvironment(ICarrierSet[] identifiers, IProgressMonitor monitor) throws RodinDBException {
+	protected ITypeEnvironment getTypeEnvironment(ISCCarrierSet[] identifiers, IProgressMonitor monitor) throws RodinDBException {
 		return getTypeEnvironmentAll(identifiers, monitor);
 	}
 	
-	protected ITypeEnvironment getTypeEnvironment(IConstant[] identifiers, IProgressMonitor monitor) throws RodinDBException {
+	protected ITypeEnvironment getTypeEnvironment(ISCConstant[] identifiers, IProgressMonitor monitor) throws RodinDBException {
 		return getTypeEnvironmentAll(identifiers, monitor);
 	}
 	
-	protected ITypeEnvironment getTypeEnvironment(IVariable[] identifiers, boolean isLocal, IProgressMonitor monitor) throws RodinDBException {
+	protected ITypeEnvironment getTypeEnvironment(ISCVariable[] identifiers, boolean isLocal, IProgressMonitor monitor) throws RodinDBException {
 		ITypeEnvironment typeEnvironment = getTypeEnvironmentAll(identifiers, monitor);
 		if(isLocal) // local variables do not have (primed) post values, so return here
 			return typeEnvironment;
-		for(IVariable variable : identifiers) {
+		for(ISCVariable variable : identifiers) {
 			String name = variable.getElementName() + "'";
 			String type = variable.getContents(monitor);
 			addToTypeEnvironment(typeEnvironment, name, type);

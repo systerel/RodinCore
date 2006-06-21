@@ -11,11 +11,11 @@ package org.eventb.internal.core.protopog;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IAxiom;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ITheorem;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -26,12 +26,12 @@ import org.rodinp.core.RodinDBException;
  * @author halstefa
  *
  */
-public class SCContextCache extends Cache<ISCContext> {
+public class SCContextCache extends Cache<ISCContextFile> {
 
 	/**
 	 * @param file
 	 */
-	public SCContextCache(ISCContext file, IProgressMonitor monitor) throws RodinDBException {
+	public SCContextCache(ISCContextFile file, IProgressMonitor monitor) throws RodinDBException {
 		super(file);
 		
 		predicateSetMap = new HashMap<String, String>((getNewAxioms().length + getNewTheorems().length) * 4 / 3);
@@ -71,21 +71,21 @@ public class SCContextCache extends Cache<ISCContext> {
 	// global type environment
 	private ITypeEnvironment typeEnvironment;
 	
-	private IAxiom[] oldAxioms = null;
-	public IAxiom[] getOldAxioms() throws RodinDBException {
-		if(oldAxioms == null) {
-			oldAxioms = file.getOldAxioms();
-		}
-		return oldAxioms;
-	}
-
-	private ITheorem[] oldTheorems = null;
-	public ITheorem[] getOldTheorems() throws RodinDBException {
-		if(oldTheorems == null) {
-			oldTheorems = file.getOldTheorems();
-		}
-		return oldTheorems;
-	}
+//	private IAxiom[] oldAxioms = null;
+//	public IAxiom[] getOldAxioms() throws RodinDBException {
+//		if(oldAxioms == null) {
+//			oldAxioms = file.getOldAxioms();
+//		}
+//		return oldAxioms;
+//	}
+//
+//	private ITheorem[] oldTheorems = null;
+//	public ITheorem[] getOldTheorems() throws RodinDBException {
+//		if(oldTheorems == null) {
+//			oldTheorems = file.getOldTheorems();
+//		}
+//		return oldTheorems;
+//	}
 
 	private ISCConstant[] constants = null;
 	public ISCConstant[] getSCConstants() throws RodinDBException {
@@ -103,18 +103,18 @@ public class SCContextCache extends Cache<ISCContext> {
 		return carrierSets;
 	}
 	
-	private IAxiom[] axioms = null;
-	public IAxiom[] getNewAxioms() throws RodinDBException {
+	private ISCAxiom[] axioms = null;
+	public ISCAxiom[] getNewAxioms() throws RodinDBException {
 		if(axioms == null) {
-			axioms = file.getAxioms();
+			axioms = file.getSCAxioms();
 		}
 		return axioms;
 	}
 	
-	private ITheorem[] theorems = null;
-	public ITheorem[] getNewTheorems() throws RodinDBException {
+	private ISCTheorem[] theorems = null;
+	public ISCTheorem[] getNewTheorems() throws RodinDBException {
 		if(theorems == null) {
-			theorems = file.getTheorems();
+			theorems = file.getSCTheorems();
 		}
 		return theorems;
 	}

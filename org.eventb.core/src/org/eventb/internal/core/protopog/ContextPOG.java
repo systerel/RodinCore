@@ -16,15 +16,15 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IAxiom;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ITheorem;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -45,7 +45,7 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 //	private IInterrupt interrupt;
 	private IProgressMonitor monitor;
 
-	private ISCContext scContext;
+	private ISCContextFile scContext;
 	private IPOFile poFile;
 	
 	private ContextRuleBase ruleBase;
@@ -55,7 +55,7 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 	private List<ProofObligation> poList;
 
 	public void init(
-			@SuppressWarnings("hiding") ISCContext scContext, 
+			@SuppressWarnings("hiding") ISCContextFile scContext, 
 			@SuppressWarnings("hiding") IPOFile poFile, 
 			@SuppressWarnings("hiding") IProgressMonitor monitor) {
 //		this.interrupt = interrupt;
@@ -87,7 +87,7 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
 		
 		IPOFile newPOFile = (IPOFile) RodinCore.create(file);
-		ISCContext contextIn = newPOFile.getSCContext();
+		ISCContextFile contextIn = newPOFile.getSCContext();
 		
 		if (! contextIn.exists())
 			ContextSC.makeError("Source SC context does not exist.");
@@ -104,8 +104,8 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 
 	public void extract(IFile file, IGraph graph) throws CoreException {
 		
-		ISCContext in = (ISCContext) RodinCore.create(file);
-		IPOFile target = in.getPOFile();
+		ISCContextFile in = (ISCContextFile) RodinCore.create(file);
+		IPOFile target = in.getContextFile().getPOFile();
 		
 		IPath inPath = in.getPath();
 		IPath targetPath = target.getPath();
@@ -131,31 +131,31 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		FormulaFactory factory = FormulaFactory.getDefault();
 		
 		IInternalElement element = poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, contextCache.getOldHypSetName(), null, monitor);
-		for(IAxiom axiom : contextCache.getOldAxioms()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
-			predicate.setContents(axiom.getContents(), monitor);
-		}
-		for(ITheorem theorem : contextCache.getOldTheorems()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
-			predicate.setContents(theorem.getContents(), monitor);
-		}
+//		for(IAxiom axiom : contextCache.getOldAxioms()) {
+//			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+//			predicate.setContents(axiom.getContents(), monitor);
+//		}
+//		for(ITheorem theorem : contextCache.getOldTheorems()) {
+//			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+//			predicate.setContents(theorem.getContents(), monitor);
+//		}
 		for(ISCCarrierSet carrierSet : contextCache.getSCCarrierSets()) {
 			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			Predicate pp = factory.makeRelationalPredicate(
 					Formula.NOTEQUAL, 
-					factory.makeFreeIdentifier(carrierSet.getName(), null), 
+					carrierSet.getIdentifier(factory), 
 					factory.makeAtomicExpression(Formula.EMPTYSET, null), 
 					null);
 			predicate.setContents(pp.toString(), monitor);
 		}
-		IAxiom[] axioms = contextCache.getNewAxioms();
+		ISCAxiom[] axioms = contextCache.getNewAxioms();
 		for(int i=0; i<axioms.length-1; i++) {
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, contextCache.getHypSetName(axioms[i+1].getElementName()), null, monitor);
 			predicateSet.setContents(contextCache.getHypSetName(axioms[i].getElementName()), monitor);
 			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
 			predicate.setContents(axioms[i].getContents(monitor), monitor);
 		}
-		ITheorem[] theorems = contextCache.getNewTheorems();
+		ISCTheorem[] theorems = contextCache.getNewTheorems();
 		if(axioms.length > 0 && theorems.length > 0) {
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, contextCache.getHypSetName(theorems[0].getElementName()), null, monitor);
 			predicateSet.setContents(contextCache.getHypSetName(axioms[axioms.length-1].getElementName()), monitor);

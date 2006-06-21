@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eventb.core.IAxiom;
-import org.eventb.core.ITheorem;
+import org.eventb.core.ISCAxiom;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.RodinDBException;
 
@@ -28,7 +28,7 @@ public class ContextRuleBase {
 				// CTX_AXM_WD
 				public List<ProofObligation> get(SCContextCache cache) throws RodinDBException {
 					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewAxioms().length);
-					for(IAxiom axiom : cache.getNewAxioms()) {
+					for(ISCAxiom axiom : cache.getNewAxioms()) {
 						Predicate wdPredicate = cache.getPredicate(axiom.getContents()).getWDPredicate(cache.getFactory());
 						if(!wdPredicate.equals(cache.BTRUE)) {
 							ProofObligation wdObligation = new ProofObligation(
@@ -48,7 +48,7 @@ public class ContextRuleBase {
 				// CTX_THM_WD and CTX_THM
 				public List<ProofObligation> get(SCContextCache cache) throws RodinDBException {
 					ArrayList<ProofObligation> poList = new ArrayList<ProofObligation>(cache.getNewTheorems().length * 2);
-					for(ITheorem theorem : cache.getNewTheorems()) {
+					for(ISCTheorem theorem : cache.getNewTheorems()) {
 						Predicate predicate = cache.getPredicate(theorem.getContents());
 						Predicate wdPredicate = predicate.getWDPredicate(cache.getFactory());
 						if(!wdPredicate.equals(cache.BTRUE)) {

@@ -11,14 +11,15 @@ package org.eventb.internal.core.protopog;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IAxiom;
-import org.eventb.core.IInvariant;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachine;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ITheorem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -30,11 +31,14 @@ import org.rodinp.core.RodinDBException;
  * @author halstefa
  *
  */
-public class SCMachineCache extends Cache<ISCMachine> {
+public class SCMachineCache extends Cache<ISCMachineFile> {
+	
+	private final ISCInternalContext internalContext;
+	
 	/**
 	 * @param file
 	 */
-	public SCMachineCache(ISCMachine file, IProgressMonitor monitor) throws RodinDBException {
+	public SCMachineCache(ISCMachineFile file, IProgressMonitor monitor) throws RodinDBException {
 		super(file);
 		
 		predicateSetMap = new HashMap<String, String>((getNewInvariants().length + getNewTheorems().length) * 4 / 3);
@@ -60,8 +64,18 @@ public class SCMachineCache extends Cache<ISCMachine> {
 			predicateSetMap.put(theorems[i].getElementName(), hypsetPrefix + theorems[i-1].getElementName());
 		}
 		
-		typeEnvironment = getTypeEnvironment(file.getSCCarrierSets(), monitor);
-		typeEnvironment.addAll(getTypeEnvironment(file.getSCConstants(), monitor));
+		ISCInternalContext[] internalContexts = file.getSCInternalContexts();
+		if (internalContexts.length == 0) {
+			internalContext = null;
+		} else {
+			internalContext = internalContexts[0];
+		}
+		
+		typeEnvironment = factory.makeTypeEnvironment();
+		if (internalContext != null) {
+			typeEnvironment.addAll(getTypeEnvironment(internalContext.getSCCarrierSets(), monitor));
+			typeEnvironment.addAll(getTypeEnvironment(internalContext.getSCConstants(), monitor));
+		}
 		typeEnvironment.addAll(getTypeEnvironment(file.getSCVariables(), false, monitor));
 	}
 	
@@ -75,43 +89,55 @@ public class SCMachineCache extends Cache<ISCMachine> {
 	private String newHypsetName;
 	private ITypeEnvironment typeEnvironment;
 	
-	private IAxiom[] oldAxioms = null;
-	public IAxiom[] getOldAxioms() throws RodinDBException {
-		if(oldAxioms == null) {
-			oldAxioms = file.getOldAxioms();
-		}
+	private ISCAxiom[] oldAxioms = null;
+	public ISCAxiom[] getOldAxioms() throws RodinDBException {
+		if(oldAxioms == null) 
+			if(internalContext == null) {
+				oldAxioms = new ISCAxiom[0];
+			} else {
+				oldAxioms = internalContext.getSCAxioms();
+			}
 		return oldAxioms;
 	}
 
-	private IInvariant[] oldInvariants = null;
-	public IInvariant[] getOldInvariants() throws RodinDBException {
-		if(oldInvariants == null) {
-			oldInvariants = file.getOldInvariants();
-		}
-		return oldInvariants;
-	}
+//	private IInvariant[] oldInvariants = null;
+//	public IInvariant[] getOldInvariants() throws RodinDBException {
+//		if(oldInvariants == null) {
+//			oldInvariants = file.getOldInvariants();
+//		}
+//		return oldInvariants;
+//	}
 
-	private ITheorem[] oldTheorems = null;
-	public ITheorem[] getOldTheorems() throws RodinDBException {
-		if(oldTheorems == null) {
-			oldTheorems = file.getOldTheorems();
-		}
+	private ISCTheorem[] oldTheorems = null;
+	public ISCTheorem[] getOldTheorems() throws RodinDBException {
+		if(oldTheorems == null)
+			if(internalContext == null) {
+				oldTheorems = new ISCTheorem[0];
+			} else {
+				oldTheorems = internalContext.getSCTheorems();
+			}
 		return oldTheorems;
 	}
 
 	private ISCConstant[] constants = null;
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		if(constants == null) {
-			constants = file.getSCConstants();
-		}
+		if(constants == null)
+			if(internalContext == null) {
+				constants = new ISCConstant[0];
+			} else {
+				constants = internalContext.getSCConstants();
+			}
 		return constants;
 	}
 	
 	private ISCCarrierSet[] carrierSets = null;
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		if(carrierSets == null) {
-			carrierSets = file.getSCCarrierSets();
-		}
+		if(carrierSets == null)
+			if(internalContext == null) {
+				carrierSets = new ISCCarrierSet[0];
+			} else {
+				carrierSets = internalContext.getSCCarrierSets();
+			}
 		return carrierSets;
 	}
 	
@@ -123,18 +149,18 @@ public class SCMachineCache extends Cache<ISCMachine> {
 		return variables;
 	}
 	
-	private IInvariant[] invariants = null;
-	public IInvariant[] getNewInvariants() throws RodinDBException {
+	private ISCInvariant[] invariants = null;
+	public ISCInvariant[] getNewInvariants() throws RodinDBException {
 		if(invariants == null) {
-			invariants = file.getInvariants();
+			invariants = file.getSCInvariants();
 		}
 		return invariants;
 	}
 	
-	private ITheorem[] theorems = null;
-	public ITheorem[] getNewTheorems() throws RodinDBException {
+	private ISCTheorem[] theorems = null;
+	public ISCTheorem[] getNewTheorems() throws RodinDBException {
 		if(theorems == null) {
-			theorems = file.getTheorems();
+			theorems = file.getSCTheorems();
 		}
 		return theorems;
 	}
@@ -142,7 +168,7 @@ public class SCMachineCache extends Cache<ISCMachine> {
 	private ISCEvent[] events = null;
 	public ISCEvent[] getEvents() throws RodinDBException {
 		if(events == null) {
-			events = (ISCEvent[]) file.getEvents();
+			events = file.getSCEvents();
 		}
 		return events;
 	}
