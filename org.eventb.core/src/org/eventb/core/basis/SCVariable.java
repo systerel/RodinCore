@@ -1,14 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC variable as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -20,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class SCVariable extends Variable implements ISCVariable {
+public class SCVariable extends SCIdentifierElement implements ISCVariable {
 
 	public SCVariable(String name, IRodinElement parent) {
 		super(name, parent);
@@ -29,14 +35,6 @@ public class SCVariable extends Variable implements ISCVariable {
 	@Override
 	public String getElementType() {
 		return ISCVariable.ELEMENT_TYPE;
-	}
-
-	public String getName() {
-		return getElementName();
-	}
-	
-	public String getType() throws RodinDBException {
-		return getContents();
 	}
 
 }

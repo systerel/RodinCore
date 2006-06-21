@@ -10,12 +10,11 @@ package org.eventb.core.basis;
 import org.eventb.core.IWitness;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B witnesses as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -26,19 +25,32 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Laurent Voisin
  */
-public class Witness extends InternalElement implements IWitness {
+public class Witness extends ExpressionElement implements IWitness {
 
 	public Witness(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinElement#getElementType()
+	 */
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	public String getExpression() throws RodinDBException {
-		return getContents();
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
+	 */
+	public void setLabel(String label) throws RodinDBException {
+		LabeledElementUtil.setLabel(this, label);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ILabeledElement#getLabel()
+	 */
+	public String getLabel() throws RodinDBException {
+		return LabeledElementUtil.getLabel(this);
 	}
 
 }

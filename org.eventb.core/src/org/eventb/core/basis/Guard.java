@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,12 @@ package org.eventb.core.basis;
 
 import org.eventb.core.IGuard;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B guards as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -25,8 +25,11 @@ import org.rodinp.core.basis.InternalElement;
  *
  * @author Laurent Voisin
  */
-public class Guard extends InternalElement implements IGuard {
+public class Guard extends PredicateElement implements IGuard {
 	
+	/**
+	 *  Constructor used by the Rodin database. 
+	 */
 	public Guard(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -34,6 +37,20 @@ public class Guard extends InternalElement implements IGuard {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
+	 */
+	public void setLabel(String label) throws RodinDBException {
+		LabeledElementUtil.setLabel(this, label);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ILabeledElement#getLabel()
+	 */
+	public String getLabel() throws RodinDBException {
+		return LabeledElementUtil.getLabel(this);
 	}
 
 }

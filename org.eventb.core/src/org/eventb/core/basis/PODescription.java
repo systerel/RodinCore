@@ -20,7 +20,7 @@ import org.rodinp.core.basis.InternalElement;
 /**
  * Implementation of Event-B PO description as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -34,10 +34,16 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class PODescription extends InternalElement implements IPODescription {
 
+	/**
+	 *  Constructor used by the Rodin database. 
+	 */
 	public PODescription(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinElement#getElementType()
+	 */
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;

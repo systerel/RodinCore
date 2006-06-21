@@ -16,8 +16,8 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ISCMachine;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -27,7 +27,7 @@ import org.rodinp.core.basis.RodinFile;
 /**
  * Implementation of Event-B PO file as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -61,6 +61,7 @@ public class POFile extends RodinFile implements IPOFile {
 			return null;
 	}
 	
+	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(POIdentifier.ELEMENT_TYPE);
 		POIdentifier[] identifiers = new POIdentifier[list.size()];
@@ -75,18 +76,18 @@ public class POFile extends RodinFile implements IPOFile {
 		return sequents;
 	}
 
-	public ISCContext getSCContext() {
+	public ISCContextFile getSCContext() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (ISCContext) project.getRodinFile(scName);
+		return (ISCContextFile) project.getRodinFile(scName);
 	}
 
-	public ISCMachine getSCMachine() {
+	public ISCMachineFile getSCMachine() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (ISCMachine) project.getRodinFile(scName);
+		return (ISCMachineFile) project.getRodinFile(scName);
 	}
 
 	public IPRFile getPRFile() {

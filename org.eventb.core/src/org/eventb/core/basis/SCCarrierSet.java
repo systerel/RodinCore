@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@ package org.eventb.core.basis;
 
 import org.eventb.core.ISCCarrierSet;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC carrier set as an extension of the Rodin database.
  * <p>
- * This class is intended to be implemented by clients that want to extend this
+ * This class is intended to be subclassed by clients that want to extend this
  * internal element type.
  * </p>
  * <p>
@@ -27,23 +26,21 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class SCCarrierSet extends CarrierSet implements ISCCarrierSet {
+public class SCCarrierSet extends SCIdentifierElement implements ISCCarrierSet {
 	
+	/**
+	 *  Constructor used by the Rodin database. 
+	 */
 	public SCCarrierSet(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinElement#getElementType()
+	 */
 	@Override
 	public String getElementType() {
 		return ISCCarrierSet.ELEMENT_TYPE;
-	}
-
-	public String getName() {
-		return getElementName();
-	}
-	
-	public String getType() throws RodinDBException {
-		return getContents();
 	}
 
 }
