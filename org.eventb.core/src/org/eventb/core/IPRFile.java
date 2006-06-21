@@ -37,7 +37,7 @@ public interface IPRFile extends IPOFile {
 	 * 
 	 * @return a handle to the unchecked version of the corresponding context
 	 */
-	IContext getContext();
+	IContextFile getContext();
 
 	/**
 	 * Returns a handle to the unchecked version of the machine for which this
@@ -48,7 +48,7 @@ public interface IPRFile extends IPOFile {
 	 * 
 	 * @return a handle to the unchecked version of the corresponding machine
 	 */
-	IMachine getMachine();
+	IMachineFile getMachine();
 
 	/**
 	 * Returns a handle to the file containing proof obligations for this
