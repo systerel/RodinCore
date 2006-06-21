@@ -21,6 +21,7 @@ import org.eventb.core.prover.reasoners.Hyp;
 import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
 import org.eventb.core.prover.reasoners.MngHyp;
+import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
 import org.eventb.core.prover.reasoners.Tautology;
@@ -54,6 +55,7 @@ public class ReasonerRegistry {
 				new RewriteHyp(),
 				new ExternalPP(),
 				new ExternalML(),
+				new Review(),
 				new MngHyp()
 		};
 		

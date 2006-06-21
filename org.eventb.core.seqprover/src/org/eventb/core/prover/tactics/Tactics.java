@@ -29,6 +29,7 @@ import org.eventb.core.prover.reasoners.Hyp;
 import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
 import org.eventb.core.prover.reasoners.MngHyp;
+import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
 import org.eventb.core.prover.reasoners.Tautology;
@@ -92,6 +93,14 @@ public class Tactics {
 //						onPending(2,impI())
 //				));
 //	}
+	
+	public static ITactic review(Set<Hypothesis> hyps,Predicate goal) {
+		return BasicTactics.reasonerTac(new Review(),new Review.Input(hyps,goal));
+	}
+	
+	public static ITactic review() {
+		return BasicTactics.reasonerTac(new Review(),null);
+	}
 	
 	public static ITactic lemma(String lemma) {
 		return BasicTactics.reasonerTac(new Cut(),new Cut.Input(lemma));
