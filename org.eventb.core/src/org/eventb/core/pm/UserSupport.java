@@ -624,4 +624,12 @@ public class UserSupport implements IElementChangedListener {
 		return false;
 	}
 
+	public ProofState [] getUnsavedPOs() {
+		Collection<ProofState> unsaved = new HashSet<ProofState>();
+		for (ProofState ps : proofStates) {
+			if (ps.isDirty()) unsaved.add(ps);
+		}
+		return unsaved.toArray(new ProofState[unsaved.size()]);		
+	}
+
 }

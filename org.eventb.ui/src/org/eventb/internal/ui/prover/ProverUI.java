@@ -15,13 +15,18 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
@@ -52,7 +57,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 	// Debug flag.
 	public static boolean DEBUG = false;
-	
+
 	// The outline page
 	private ProofTreeUIPage fProofTreeUI;
 
@@ -218,22 +223,44 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// try {
 		// TODO Commit the information in the UI to the database
 		// clear the dirty state on all the pages
-		if (this.pages != null) {
-			for (int i = 0; i < pages.size(); i++) {
-				Object page = pages.get(i);
-				// if (UIUtils.DEBUG) System.out.println("Trying to save page "
-				// + i + " : " + page);
-				if (page instanceof IFormPage) {
-					// if (UIUtils.DEBUG) System.out.println("Saving");
-					IFormPage fpage = (IFormPage) page;
+		// if (this.pages != null) {
+		// for (int i = 0; i < pages.size(); i++) {
+		// Object page = pages.get(i);
+		// // if (UIUtils.DEBUG) System.out.println("Trying to save page "
+		// // + i + " : " + page);
+		// if (page instanceof IFormPage) {
+		// // if (UIUtils.DEBUG) System.out.println("Saving");
+		// IFormPage fpage = (IFormPage) page;
+		//
+		// fpage.doSave(monitor);
+		// // if (UIUtils.DEBUG) System.out.println("Dirty? " + i + " "
+		// // + fpage.isDirty());
+		// }
+		// }
+		// }
 
-					fpage.doSave(monitor);
-					// if (UIUtils.DEBUG) System.out.println("Dirty? " + i + " "
-					// + fpage.isDirty());
-				}
+		ProofState [] proofStates = userSupport.getUnsavedPOs();
+
+		ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
+				.getShell(), userSupport, new ProofStateContentProvider(proofStates),
+				new ProofStateLabelProvider(),
+				"Select the proof obligation(s) to save.");
+		
+		ProofState [] initSelection = {userSupport.getCurrentPO()};
+		dlg.setInitialSelections(initSelection);
+		dlg.setTitle("Save Proofs");
+		dlg.open();
+		
+		Object [] results = dlg.getResult();
+		for (Object result : results) {
+			try {
+				UIUtils.debugProverUI("Commit: " + result.toString());
+				((ProofState) result).doSave();
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-
 		// Save the file from the database to disk
 		try {
 			UIUtils.debugProverUI("Save to disk");
@@ -246,6 +273,64 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
+	private class ProofStateContentProvider implements IStructuredContentProvider {
+
+		private ProofState [] proofStates;
+		public ProofStateContentProvider(ProofState [] proofStates) {
+			this.proofStates = proofStates;
+		}
+		
+		public Object[] getElements(Object inputElement) {
+			return proofStates;
+		}
+
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			
+		}
+		
+	}
+	
+	private class ProofStateLabelProvider implements ILabelProvider {
+
+		public Image getImage(Object element) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public String getText(Object element) {
+			if (element instanceof ProofState) {
+				return ((ProofState) element).getPRSequent().getElementName();
+			}
+			return element.toString();
+		}
+
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	/**
 	 * Getting the outline page associated with this editor
 	 * 
@@ -315,6 +400,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	/**
 	 * Get the current PRSequent.
 	 * <p>
+	 * 
 	 * @return the current PRSequent
 	 */
 	public IPRSequent getCurrentProverSequent() {
@@ -332,17 +418,19 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public boolean isDirty() {
 		return this.userSupport.hasUnsavedChanges();
-//		try {
-//			// UIUtils.debug("Checking dirty state " +
-//			// this.getRodinInput().hasUnsavedChanges());
-//			return this.getRodinInput().hasUnsavedChanges();
-//		} catch (RodinDBException e) {
-//			e.printStackTrace();
-//		}
-//		return super.isDirty();
+		// try {
+		// // UIUtils.debug("Checking dirty state " +
+		// // this.getRodinInput().hasUnsavedChanges());
+		// return this.getRodinInput().hasUnsavedChanges();
+		// } catch (RodinDBException e) {
+		// e.printStackTrace();
+		// }
+		// return super.isDirty();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(IProofStateDelta delta) {
