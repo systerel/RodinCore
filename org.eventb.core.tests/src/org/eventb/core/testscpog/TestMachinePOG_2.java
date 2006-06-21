@@ -16,7 +16,8 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ISCMachine;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -88,8 +89,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testInvariant1() throws Exception {
 		String invariant = "(∀x·x≠0⇒1÷x≤1)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, 
 				makeList("I1"), 
 				makeList(invariant));
 		rodinFile.save(null, true);
@@ -117,7 +118,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testInvariant2() throws Exception {
 		String invariant = "∅⊆ℤ";
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addAxioms(rodinFile, 
 				makeList("I1"), 
 				makeList(invariant), null);
@@ -134,8 +135,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	public void testInvariant3() throws Exception {
 		String invariant1 = "(∀x·x≠0⇒x>0)";
 		String invariant2 = "(∀x·x≠0⇒1÷x≤1)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, 
 				makeList("I1", "I2"), 
 				makeList(invariant1, invariant2));
 		rodinFile.save(null, true);
@@ -163,8 +164,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testInvariant4() throws Exception {
 		String invariant = predicateFromString("{1} ⊆ ℤ").toString();;
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, 
 				makeList("I1"), 
 				makeList(invariant));
 		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
@@ -186,8 +187,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testTheorem1() throws Exception {
 		String theorem = "(∀x·x≠0⇒1÷x≤1)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addTheorems(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCTheorems(rodinFile, 
 				makeList("T1"), 
 				makeList(theorem), null);
 		rodinFile.save(null, true);
@@ -221,8 +222,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 */
 	public void testTheorem2() throws Exception {
 		String theorem = "(∀x·x≠0⇒x>0)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addTheorems(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCTheorems(rodinFile, 
 				makeList("T1"), 
 				makeList(theorem), null);
 		rodinFile.save(null, true);
@@ -238,8 +239,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 	public void testTheorem3() throws Exception {
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∀x·x≠0⇒1÷x≤1)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addTheorems(rodinFile, 
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCTheorems(rodinFile, 
 				makeList("T1", "T2"), 
 				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
@@ -277,11 +278,11 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String invariant1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile,
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile,
 				makeList("I1"),
 				makeList(invariant1));
-		addTheorems(rodinFile, 
+		addSCTheorems(rodinFile, 
 				makeList("T1", "T2"), 
 				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
@@ -318,13 +319,14 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String invariant1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		ISCMachine rodinFile = createSCMachine("test");
-		addAxioms(rodinFile, makeList("A1"), makeList(ctxAxiom1), "CONTEXT");
-		addTheorems(rodinFile, makeList("X1"), makeList(ctxTheorem1), "CONTEXT");
-		addInvariants(rodinFile,
+		ISCMachineFile rodinFile = createSCMachine("test");
+		ISCInternalContext internalContext = addInternalContext(rodinFile, "ctx");
+		addSCAxioms(rodinFile, makeList("A1"), makeList(ctxAxiom1), internalContext);
+		addSCTheorems(rodinFile, makeList("X1"), makeList(ctxTheorem1), internalContext);
+		addSCInvariants(rodinFile,
 				makeList("I1"),
 				makeList(invariant1));
-		addTheorems(rodinFile, 
+		addSCTheorems(rodinFile, 
 				makeList("T1", "T2"), 
 				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
@@ -368,7 +370,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		String guard1 = getNormalizedPredicate("∀x·x=1÷x");
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList(), makeList("G1"), makeList(guard1), makeList(), makeList());
 		rodinFile.save(null, true);
 		IPOFile poFile = runPOG(rodinFile);
@@ -399,8 +401,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard2 = getNormalizedPredicate("(∀x·x=(1÷x)−x)");
 		String dlk1 = getNormalizedPredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)");
 		
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, makeList("I1"), makeList(invariant1));
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList("G1", "G2"), 
 				makeList(guard1, guard2), makeList(), makeList());
@@ -440,7 +442,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard2 = predicateFromString("(x=1−x)").toString();
 		String dlk1 = predicateFromString("(∃x·x=1÷x∧x=1−x)").toString();
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList("x"), 
 				makeList("G1", "G2"), 
 				makeList(guard1, guard2), makeList(), makeList("ℤ"));
@@ -481,7 +483,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String dlk1 = predicateFromString("(∃x·x=1∗x∧x=1−x)∨(∃x·x=1+x)").toString();
 		String guard3 = predicateFromString("(x=1+x)").toString();
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E1", makeList("x"), 
 				makeList("G1", "G2"), 
 				makeList(guard1, guard2), makeList(), makeList("ℤ"));
@@ -513,9 +515,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard2 = getNormalizedPredicate("(∀x·x=(1÷x)−x)");
 		String dlk1 = getNormalizedPredicate("(∀x·x=1÷x)∧(∀x·x=(1÷x)−x)");
 		
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, makeList("I1"), makeList(invariant1));
-		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), null);
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, makeList("I1"), makeList(invariant1));
+		addSCTheorems(rodinFile, makeList("T1"), makeList(theorem1), null);
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList("G1", "G2"), 
 				makeList(guard1, guard2), makeList(), makeList());
@@ -561,7 +563,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard1 = predicateFromString("x∈ℕ ∧ y∈ℕ").toString();
 		String dlk1 = predicateFromString("(∃x,y·x∈ℕ ∧ y∈ℕ)").toString();
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
 				makeList("x", "y"), 
 				makeList("G"), 
@@ -585,9 +587,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		String guard1 = predicateFromString("x∈ℕ").toString();
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
-		addInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
+		addSCInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
 		addSCEvent(rodinFile, "E",
 				makeList(), 
 				makeList("G"), 
@@ -615,9 +617,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		String guard1 = predicateFromString("x∈ℕ").toString();
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
-		addInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
+		addSCInvariants(rodinFile, makeList("I"), makeList("x∈ℤ"));
 		addSCEvent(rodinFile, "E",
 				makeList(), 
 				makeList("G"), 
@@ -649,7 +651,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard2 = predicateFromString("x∈BOOL").toString();
 		String dlk1 = predicateFromString("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").toString();	
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
 				makeList("x"), 
 				makeList("G"), 
@@ -683,7 +685,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String guard2 = predicateFromString("x∈BOOL").toString();
 		String dlk1 = predicateFromString("(∃x·x∈ℕ) ∨ (∃x·x∈BOOL)").toString();	
 		
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCEvent(rodinFile, "E",
 				makeList("x"), 
 				makeList("G"), 
@@ -725,8 +727,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
 		String assignment3 = assignmentFromString("z :∣ ∃p·p<z'∧p÷z=1").toString();
 	
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
 		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
@@ -809,11 +811,12 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
 		String assignment3 = assignmentFromString("z:∣∃p·p<z'∧p÷z=1").toString();
 	
-		ISCMachine rodinFile = createSCMachine("test");
-		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
-		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), "CONTEXT");
-		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
-		addTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
+		ISCMachineFile rodinFile = createSCMachine("test");
+		ISCInternalContext internalContext = addInternalContext(rodinFile, "ctx");
+		addSCAxioms(rodinFile, makeList("A1"), makeList(axiom1), internalContext);
+		addSCTheorems(rodinFile, makeList("T1"), makeList(theorem1), internalContext);
+		addSCInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addSCTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
 		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
@@ -863,9 +866,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String inv3 = predicateFromString("x≤y").toString();
 		String asn1 = assignmentFromString("x,y≔0,0").toString();
 
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCVariables(rodinFile, makeList("x", "y"), makeList("ℤ", "ℤ"));
-		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(inv1, inv2, inv3));
+		addSCInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(inv1, inv2, inv3));
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList(), makeList(), makeList(asn1), makeList());
 		rodinFile.save(null, true);
@@ -909,9 +912,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String asn2 = assignmentFromString("x:∣x=2").toString();
 		String fis2 = predicateFromString("x=2").toString();
 
-		ISCMachine rodinFile = createSCMachine("test");
+		ISCMachineFile rodinFile = createSCMachine("test");
 		addSCVariables(rodinFile, makeList("x"), makeList("ℤ"));
-		addInvariants(rodinFile, makeList("I1"), makeList(inv1));
+		addSCInvariants(rodinFile, makeList("I1"), makeList(inv1));
 		addSCEvent(rodinFile, "E1", makeList(), 
 				makeList(), makeList(), makeList(asn1), makeList());
 		addSCEvent(rodinFile, "E2", makeList(), 
@@ -958,11 +961,12 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String assignment2 = assignmentFromString("y:∈{x÷z}").toString();
 		String assignment3 = assignmentFromString("z:∣∃p·p<z'∧p÷z=1").toString();
 	
-		ISCMachine rodinFile = createSCMachine("test");
-		addAxioms(rodinFile, makeList("A1"), makeList(axiom1), "CONTEXT");
-		addTheorems(rodinFile, makeList("T1"), makeList(theorem1), "CONTEXT");
-		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
-		addTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
+		ISCMachineFile rodinFile = createSCMachine("test");
+		ISCInternalContext internalContext = addInternalContext(rodinFile, "ctx");
+		addSCAxioms(rodinFile, makeList("A1"), makeList(axiom1), internalContext);
+		addSCTheorems(rodinFile, makeList("T1"), makeList(theorem1), internalContext);
+		addSCInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		addSCTheorems(rodinFile, makeList("T2"), makeList(theorem2), null);
 		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "ℤ", "ℤ"));
 		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
 				makeList(), makeList(), makeList(assignment1, assignment2, assignment3), makeList());
@@ -1035,8 +1039,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String exp1 = predicateFromString("(∅ ⦂ ℙ(ℤ)) ⊆ ℤ").toStringWithTypes();
 		String exp2 = predicateFromString("(∅ ⦂ ℙ(ℤ)) ⊆ (∅ ⦂ ℙ(ℤ))").toStringWithTypes();
 		
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, makeList("inv1", "inv2"), makeList(inv1, inv2));
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, makeList("inv1", "inv2"), makeList(inv1, inv2));
 		addSCVariables(rodinFile, makeList("x", "y"), makeList("ℙ(ℤ)", "ℙ(ℤ)"));
 		addSCEvent(rodinFile, "INITIALISATION", makeList(), 
 				makeList(), makeList(), makeList(ass1, ass2), makeList());
@@ -1065,8 +1069,8 @@ public class TestMachinePOG_2 extends BuilderTest {
 		String invariant2 = predicateFromString("y∈BOOL").toString();
 		String invariant3 = predicateFromString("z∈{0}×{0}").toString();
 	
-		ISCMachine rodinFile = createSCMachine("test");
-		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
+		ISCMachineFile rodinFile = createSCMachine("test");
+		addSCInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList(invariant1, invariant2, invariant3));
 		addSCVariables(rodinFile, makeList("x", "y", "z"), makeList("ℤ", "BOOL", "ℤ×ℤ"));
 		rodinFile.save(null, true);
 		
@@ -1101,9 +1105,10 @@ public class TestMachinePOG_2 extends BuilderTest {
 	 * Test method for creation of non-empty carrier set hypotheses
 	 */
 	public void testCarrierSet1() throws Exception {
-		ISCMachine rodinFile = createSCMachine("cset1");
-		addSCCarrierSets(rodinFile, makeList("S"), makeList("ℙ(S)"));
-		addTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
+		ISCMachineFile rodinFile = createSCMachine("cset1");
+		ISCInternalContext internalContext = addInternalContext(rodinFile, "ctx");
+		addSCCarrierSets(rodinFile, makeList("S"), makeList("ℙ(S)"), internalContext);
+		addSCTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
 		rodinFile.save(null, true);
 		
 		IPOFile poFile = runPOG(rodinFile);

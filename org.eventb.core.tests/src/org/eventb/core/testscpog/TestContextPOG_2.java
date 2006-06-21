@@ -11,7 +11,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -43,9 +43,9 @@ public class TestContextPOG_2 extends BuilderTest {
 	 * Test method for creation of non-empty carrier set hypotheses
 	 */
 	public void testCarrierSet1() throws Exception {
-		ISCContext rodinFile = createSCContext("cset1");
+		ISCContextFile rodinFile = createSCContext("cset1");
 		addSCCarrierSets(rodinFile, makeList("S"), makeList("ℙ(S)"));
-		addTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
+		addSCTheorems(rodinFile, makeList("T1"), makeList("S ∈ ℙ(S)"), null);
 		rodinFile.save(null, true);
 		
 		IPOFile poFile = runPOG(rodinFile);
@@ -71,8 +71,8 @@ public class TestContextPOG_2 extends BuilderTest {
 	 */
 	public void testAxiom1() throws Exception {
 		String axiom = "(∀x·x≠0⇒1÷x≤1)";
-		ISCContext rodinFile = createSCContext("axiom1");
-		addAxioms(rodinFile, makeList("A1"), makeList(axiom), null);
+		ISCContextFile rodinFile = createSCContext("axiom1");
+		addSCAxioms(rodinFile, makeList("A1"), makeList(axiom), null);
 		rodinFile.save(null, true);
 		
 		IPOFile poFile = runPOG(rodinFile);
@@ -99,7 +99,7 @@ public class TestContextPOG_2 extends BuilderTest {
 	 */
 	public void testAxiom2() throws Exception {
 		String axiom = "(∀x·x≠0⇒x>0)";
-		ISCContext rodinFile = createSCContext("axiom2");
+		ISCContextFile rodinFile = createSCContext("axiom2");
 		addAxioms(rodinFile, 
 				makeList("A1"), 
 				makeList(axiom), null);
@@ -115,8 +115,8 @@ public class TestContextPOG_2 extends BuilderTest {
 	public void testAxiom3() throws Exception {
 		String axiom1 = "(∀x·x≠0⇒x>0)";
 		String axiom2 = "(∀x·x≠0⇒1÷x≤1)";
-		ISCContext rodinFile = createSCContext("axiom3");
-		addAxioms(rodinFile, 
+		ISCContextFile rodinFile = createSCContext("axiom3");
+		addSCAxioms(rodinFile, 
 				makeList("A1", "A2"), 
 				makeList(axiom1, axiom2), null);
 		rodinFile.save(null, true);
@@ -138,8 +138,8 @@ public class TestContextPOG_2 extends BuilderTest {
 	 */
 	public void testTheorem1() throws Exception {
 		String theorem = "(∀x·x≠0⇒1÷x≤1)";
-		ISCContext rodinFile = createSCContext("theorem1");
-		addTheorems(rodinFile, 
+		ISCContextFile rodinFile = createSCContext("theorem1");
+		addSCTheorems(rodinFile, 
 				makeList("T1"), 
 				makeList(theorem), null);
 		rodinFile.save(null, true);
@@ -173,8 +173,8 @@ public class TestContextPOG_2 extends BuilderTest {
 	 */
 	public void testTheorem2() throws Exception {
 		String theorem = "(∀x·x≠0⇒x>0)";
-		ISCContext rodinFile = createSCContext("theorem2");
-		addTheorems(rodinFile, 
+		ISCContextFile rodinFile = createSCContext("theorem2");
+		addSCTheorems(rodinFile, 
 				makeList("T1"), 
 				makeList(theorem), null);
 		rodinFile.save(null, true);
@@ -197,8 +197,8 @@ public class TestContextPOG_2 extends BuilderTest {
 	public void testTheorem3() throws Exception {
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∀x·x≠0⇒1÷x≤1)";
-		ISCContext rodinFile = createSCContext("theorem3");
-		addTheorems(rodinFile, 
+		ISCContextFile rodinFile = createSCContext("theorem3");
+		addSCTheorems(rodinFile, 
 				makeList("T1", "T2"), 
 				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);
@@ -233,11 +233,11 @@ public class TestContextPOG_2 extends BuilderTest {
 		String axiom1 = "(∀y·y>0⇒y+1=0)";
 		String theorem1 = "(∀x·x≠0⇒x>0)";
 		String theorem2 = "(∃z·z∈ℕ∧z>0)";
-		ISCContext rodinFile = createSCContext("theorem3");
-		addAxioms(rodinFile,
+		ISCContextFile rodinFile = createSCContext("theorem3");
+		addSCAxioms(rodinFile,
 				makeList("A1"),
 				makeList(axiom1), null);
-		addTheorems(rodinFile, 
+		addSCTheorems(rodinFile, 
 				makeList("T1", "T2"), 
 				makeList(theorem1, theorem2), null);
 		rodinFile.save(null, true);

@@ -7,10 +7,10 @@
  *******************************************************************************/
 package org.eventb.core.testscpog;
 
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
-import org.eventb.core.ISCContext;
-import org.eventb.core.ISCMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.RodinDBException;
 
 public class TestMachineSC_1 extends BuilderTest {
@@ -21,8 +21,8 @@ public class TestMachineSC_1 extends BuilderTest {
 	 * with the context static checker
 	 */
 	public void testRunWithoutSees() throws Exception {
-		IMachine machine = createMachineOne(false);
-		ISCMachine scMachine = runSC(machine);
+		IMachineFile machine = createMachineOne(false);
+		ISCMachineFile scMachine = runSC(machine);
 		assertTrue("Checked machine not produced", scMachine.exists());
 	}
 	
@@ -32,17 +32,17 @@ public class TestMachineSC_1 extends BuilderTest {
 	 * with the context static checker
 	 */
 	public void testRunWithSees() throws Exception {
-		IContext context = createContextTwo();
-		IMachine machine = createMachineOne(true);
+		IContextFile context = createContextTwo();
+		IMachineFile machine = createMachineOne(true);
 
-		ISCContext scContext = runSC(context);
+		ISCContextFile scContext = runSC(context);
 		assertTrue("Checked context not produced", scContext.exists());
-		ISCMachine scMachine = runSC(machine);
+		ISCMachineFile scMachine = runSC(machine);
 		assertTrue("Checked machine not produced", scMachine.exists());
 	}
 	
-	private IMachine createMachineOne(boolean sees) throws RodinDBException {
-		IMachine rodinFile = createMachine("one");
+	private IMachineFile createMachineOne(boolean sees) throws RodinDBException {
+		IMachineFile rodinFile = createMachine("one");
 		if(sees)
 			addSees(rodinFile, "two");
 		addVariables(rodinFile, makeList("V1", "V2"));
@@ -57,8 +57,8 @@ public class TestMachineSC_1 extends BuilderTest {
 		return rodinFile;
 	}
 
-	private IContext createContextTwo() throws RodinDBException {
-		IContext rodinFile = createContext("two");
+	private IContextFile createContextTwo() throws RodinDBException {
+		IContextFile rodinFile = createContext("two");
 		addCarrierSets(rodinFile, makeList("S1", "S2"));
 		addConstants(rodinFile, makeList("C1", "C2", "C3", "F1"));
 		addAxioms(rodinFile, makeList("A1", "A2", "A3", "A4"), makeList("C1∈S1", "F1∈S1↔S2", "C2∈F1[{C1}]", "C3=1"), null);

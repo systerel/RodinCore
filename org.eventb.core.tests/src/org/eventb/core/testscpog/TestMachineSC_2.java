@@ -10,21 +10,18 @@ package org.eventb.core.testscpog;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.IAction;
-import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
-import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCAction;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachine;
-import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -35,12 +32,12 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of variables
 	 */
 	public void testVariables1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2", "V2", "V3"));
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -57,12 +54,12 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for typing of variables
 	 */
 	public void testVariables2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2", "V3"));
 		addInvariants(rodinFile, makeList("I1", "I3"), makeList("V1∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -75,8 +72,8 @@ public class TestMachineSC_2 extends BuilderTest {
 		assertTrue("names correspond", set.contains("V1") && set.contains("V3"));
 	}
 	
-	private ISCContext makeContext1() throws RodinDBException {
-		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
+	private ISCContextFile makeContext1() throws RodinDBException {
+		ISCContextFile context = (ISCContextFile) rodinProject.createRodinFile("ctx.bcc", true, null);
 		addSCCarrierSets(context, makeList("S1"), makeList("ℙ(S1)"));
 		addSCConstants(context, makeList("C1"), makeList("S1"));
 		context.save(null, true);
@@ -88,15 +85,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testVariables3() throws Exception {
 		makeContext1();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addVariables(rodinFile, makeList("S1", "V2", "V3"));
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("S1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IVariable[] variables = scMachine.getSCVariables();
+		ISCVariable[] variables = scMachine.getSCVariables();
 		
 		assertTrue("2 variables", variables.length == 2);
 		
@@ -112,15 +109,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testVariables4() throws Exception {
 		makeContext1();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addVariables(rodinFile, makeList("C1", "V2", "V3"));
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("C1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IVariable[] variables = scMachine.getSCVariables();
+		ISCVariable[] variables = scMachine.getSCVariables();
 		
 		assertTrue("2 variables", variables.length == 2);
 		
@@ -136,15 +133,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testVariables5() throws Exception {
 		makeContext1();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addVariables(rodinFile, makeList("V1", "V2", "V3"));
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IVariable[] variables = scMachine.getSCVariables();
+		ISCVariable[] variables = scMachine.getSCVariables();
 		
 		assertTrue("3 variables", variables.length == 3);
 		
@@ -157,11 +154,11 @@ public class TestMachineSC_2 extends BuilderTest {
 		
 		set.clear();
 		
-		ISCCarrierSet[] carrierSets = scMachine.getSCCarrierSets();
+		ISCCarrierSet[] carrierSets = scMachine.getSCInternalContexts()[0].getSCCarrierSets();
 		
 		assertTrue("1 carrier set", carrierSets.length == 1 && carrierSets[0].getElementName().equals("S1"));
 		
-		ISCConstant[] constants = scMachine.getSCConstants();
+		ISCConstant[] constants = scMachine.getSCInternalContexts()[0].getSCConstants();
 		
 		assertTrue("1 constant", constants.length == 1 && constants[0].getElementName().equals("C1"));
 	}
@@ -170,12 +167,12 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name names of variables
 	 */
 	public void testVariables6() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList(""));
 		addInvariants(rodinFile, makeList("I1"), makeList("⊤"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -186,13 +183,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariants1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addInvariants(rodinFile, makeList("I1", "I2", "I3"), makeList("⊤", "⊤", "⊤"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IInvariant[] invariants = scMachine.getInvariants();
+		ISCInvariant[] invariants = scMachine.getSCInvariants();
 		
 		assertTrue("3 invariants", invariants.length == 3);
 		
@@ -208,13 +205,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariants2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addInvariants(rodinFile, makeList("I1", "I2", "I2"), makeList("⊤", "⊤", "⊤"));
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IInvariant[] invariants = scMachine.getInvariants();
+		ISCInvariant[] invariants = scMachine.getSCInvariants();
 		
 		assertTrue("1 invariant", invariants.length == 1 && invariants[0].getElementName().equals("I1"));
 	}
@@ -223,13 +220,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name clashes of invariants and (machine) theorems
 	 */
 	public void testTheorems1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		ITheorem[] theorems = scMachine.getTheorems();
+		ISCTheorem[] theorems = scMachine.getSCTheorems();
 		
 		assertTrue("3 theorems", theorems.length == 3);
 		
@@ -245,13 +242,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testTheorems2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addTheorems(rodinFile, makeList("T1", "T2", "T2"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		ITheorem[] theorems = scMachine.getTheorems();
+		ISCTheorem[] theorems = scMachine.getSCTheorems();
 		
 		assertTrue("1 theorem", theorems.length == 1 && theorems[0].getElementName().equals("T1"));
 	}
@@ -260,14 +257,14 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of invariants and (machine) theorems
 	 */
 	public void testInvariantsAndTheorems1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addInvariants(rodinFile, makeList("I1", "I2", "T3"), makeList("⊤", "⊤", "⊤"));
 		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		ITheorem[] theorems = scMachine.getTheorems();
+		ISCTheorem[] theorems = scMachine.getSCTheorems();
 		
 		assertTrue("2 theorems", theorems.length == 2);
 		
@@ -277,7 +274,7 @@ public class TestMachineSC_2 extends BuilderTest {
 		
 		assertTrue("theorem names correspond", set.contains("T1") && set.contains("T2"));
 		
-		IInvariant[] invariants = scMachine.getInvariants();
+		ISCInvariant[] invariants = scMachine.getSCInvariants();
 		
 		assertTrue("2 invariants", invariants.length == 2);
 		
@@ -292,15 +289,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name clashes of events
 	 */
 	public void testEvents1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", makeList(), makeList(), makeList(), makeList());
 		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
 		addEvent(rodinFile, "E3", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("3 events", events.length == 3);
 		
@@ -316,15 +313,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of events
 	 */
 	public void testEvents2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", makeList(), makeList(), makeList(), makeList());
 		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
 		addEvent(rodinFile, "E2", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("1 event", events.length == 1 && events[0].getElementName().equals("E1"));
 	}
@@ -333,7 +330,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of invariants and (machine) theorems and events
 	 */
 	public void testInvariantsAndTheoremsAndEvents1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addInvariants(rodinFile, makeList("I1", "I2", "T3"), makeList("⊤", "⊤", "⊤"));
 		addTheorems(rodinFile, makeList("T1", "T2", "T3"), makeList("⊤", "⊤", "⊤"), null);
 		addEvent(rodinFile, "I1", makeList(), makeList(), makeList(), makeList());
@@ -341,17 +338,17 @@ public class TestMachineSC_2 extends BuilderTest {
 		addEvent(rodinFile, "E3", makeList(), makeList(), makeList(), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		ITheorem[] theorems = scMachine.getTheorems();
+		ISCTheorem[] theorems = scMachine.getSCTheorems();
 		
 		assertTrue("1 theorem", theorems.length == 1 && theorems[0].getElementName().equals("T1"));
 				
-		IInvariant[] invariants = scMachine.getInvariants();
+		ISCInvariant[] invariants = scMachine.getSCInvariants();
 		
 		assertTrue("1 invariant", invariants.length == 1 && invariants[0].getElementName().equals("I2"));
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("1 event", events.length == 1 && events[0].getElementName().equals("E3"));
 	}
@@ -360,13 +357,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name clashes of local variables
 	 */
 	public void testLocalVariables1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2", "L3", "L4"), 
 				makeList("G1"), makeList("L1∈ℕ∧L2∈ℕ∧L3∈ℕ∧L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -389,13 +386,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of local variables
 	 */
 	public void testLocalVariables2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2", "L3", "L3"), 
 				makeList("G1"), makeList("L1∈ℕ∧L2∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -416,7 +413,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of local variables and variables
 	 */
 	public void testLocalVariables3() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "E1", 
@@ -424,7 +421,7 @@ public class TestMachineSC_2 extends BuilderTest {
 				makeList("G1", "G2", "G3"), makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCVariable[] variables = scMachine.getSCVariables();
 		
@@ -456,7 +453,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testLocalVariables4() throws Exception {
 		makeContext1();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
@@ -465,13 +462,13 @@ public class TestMachineSC_2 extends BuilderTest {
 				makeList("G1", "G2", "G3", "G4", "G5"), makeList("L1∈ℕ", "V2∈ℕ", "L3∈ℕ", "S1∈ℕ", "C1∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		ISCCarrierSet[] carrierSets = scMachine.getSCCarrierSets();
+		ISCCarrierSet[] carrierSets = scMachine.getSCInternalContexts()[0].getSCCarrierSets();
 		
 		assertTrue("1 carrier set", carrierSets.length == 1 && carrierSets[0].getElementName().equals("S1"));
 		
-		ISCConstant[] constants = scMachine.getSCConstants();
+		ISCConstant[] constants = scMachine.getSCInternalContexts()[0].getSCConstants();
 		
 		assertTrue("1 carrier set", constants.length == 1 && constants[0].getElementName().equals("C1"));
 		
@@ -504,13 +501,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-empty names of local variables
 	 */
 	public void testLocalVariables5() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList(""), 
 				makeList("G1"), makeList("⊤"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -526,19 +523,19 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for non-name clashes of guards
 	 */
 	public void testGuards1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2", "L3", "L4"), 
 				makeList("G1", "G2", "G3", "G4"), makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("1 event", events.length == 1);
 		
-		IGuard[] guards = events[0].getGuards();
+		ISCGuard[] guards = events[0].getSCGuards();
 		
 		assertTrue("4 guards", guards.length == 4);
 		
@@ -556,19 +553,19 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for name clashes of guards
 	 */
 	public void testGuards2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2", "L3", "L4"), 
 				makeList("G1", "G2", "G2", "G4"), makeList("L1∈ℕ", "L2∈ℕ", "L3∈ℕ", "L4∈ℕ"), makeList());
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("1 event", events.length == 1);
 		
-		IGuard[] guards = events[0].getGuards();
+		ISCGuard[] guards = events[0].getSCGuards();
 		
 		assertTrue("2 guards", guards.length == 2);
 		
@@ -580,10 +577,10 @@ public class TestMachineSC_2 extends BuilderTest {
 
 	}
 	
-	private ISCContext makeContext2() throws RodinDBException {
-		ISCContext context = makeContext1();
-		addAxioms(context, makeList("A1", "A2"), makeList("∀x·x>0", "⊤"), null);
-		addTheorems(context, makeList("T1", "T2"), makeList("⊤", "⊤"), null);
+	private ISCContextFile makeContext2() throws RodinDBException {
+		ISCContextFile context = makeContext1();
+		addSCAxioms(context, makeList("A1", "A2"), makeList("∀x·x>0", "⊤"), null);
+		addSCTheorems(context, makeList("T1", "T2"), makeList("⊤", "⊤"), null);
 		context.save(null, true);
 		return context;
 	}
@@ -601,37 +598,33 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testContextAxiomsAndTheorems1() throws Exception {
 		makeContext2();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("⊤", "⊤"));
 		addTheorems(rodinFile, makeList("T1", "T2"), makeList("⊤", "⊤"), null);
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		Set<String> set;
 		
-		set = setof(scMachine.getInvariants());
+		set = setof(scMachine.getSCInvariants());
 		
 		assertTrue("2 invariants", set.size() == 2 & set.contains("I1") && set.contains("I2"));
 		
-		set = setof(scMachine.getTheorems());
+		set = setof(scMachine.getSCTheorems());
 		
 		assertTrue("2 theorems", set.size() == 2 & set.contains("T1") && set.contains("T2"));
 		
-		ISCAxiomSet[] axiomSets = scMachine.getAxiomSets();
+		ISCInternalContext[] internalContexts = scMachine.getSCInternalContexts();
 		
-		assertTrue("1 axiom set", axiomSets.length == 1);
+		assertTrue("more than one internal context", internalContexts.length == 1);
 		
-		set = setof(axiomSets[0].getAxioms());
+		set = setof(internalContexts[0].getSCAxioms());
 		
 		assertTrue("2 axioms", set.size() == 2 & set.contains("A1") && set.contains("A2"));
 		
-		ISCTheoremSet[] theoremSets = scMachine.getTheoremSets();
-		
-		assertTrue("1 theorem set", theoremSets.length == 1);
-		
-		set = setof(theoremSets[0].getTheorems());
+		set = setof(internalContexts[0].getSCTheorems());
 		
 		assertTrue("2 theorems", set.size() == 2 & set.contains("T1") && set.contains("T2"));
 	}
@@ -640,15 +633,15 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for typing of variables
 	 */
 	public void testTyping1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2=ℕ+1"));
 		
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 	
-		assertTrue("one invariant", scMachine.getInvariants().length == 1 && scMachine.getInvariants()[0].getElementName().equals("I1"));
+		assertTrue("one invariant", scMachine.getSCInvariants().length == 1 && scMachine.getSCInvariants()[0].getElementName().equals("I1"));
 		assertTrue("one variable", scMachine.getSCVariables().length == 1 && scMachine.getSCVariables()[0].getElementName().equals("V1"));
 	}
 
@@ -656,20 +649,20 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for typing of local variables
 	 */
 	public void testTyping2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2"), 
 				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=ℕ+1"), makeList());
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 	
-		assertTrue("one guard", events[0].getGuards().length == 1 && events[0].getGuards()[0].getElementName().equals("G1"));
+		assertTrue("one guard", events[0].getSCGuards().length == 1 && events[0].getSCGuards()[0].getElementName().equals("G1"));
 		assertTrue("one local variable", events[0].getSCVariables().length == 1 && events[0].getSCVariables()[0].getElementName().equals("L1"));
 	}
 	
@@ -677,7 +670,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for typing of local variables across events
 	 */
 	public void testTyping3() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2"), 
 				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=1"), makeList());
@@ -687,7 +680,7 @@ public class TestMachineSC_2 extends BuilderTest {
 
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
@@ -696,10 +689,10 @@ public class TestMachineSC_2 extends BuilderTest {
 		ISCEvent e0 = (events[0].getElementName().equals("E1")) ? events[0] : events[1];
 		ISCEvent e1 = (events[0].getElementName().equals("E2")) ? events[0] : events[1];
 	
-		assertTrue("two guards", e0.getGuards().length == 2);
+		assertTrue("two guards", e0.getSCGuards().length == 2);
 		assertTrue("two local variables", e0.getSCVariables().length == 2);
 		
-		assertTrue("one guard", e1.getGuards().length == 1 && e1.getGuards()[0].getElementName().equals("G1"));
+		assertTrue("one guard", e1.getSCGuards().length == 1 && e1.getSCGuards()[0].getElementName().equals("G1"));
 		assertTrue("one local variable", e1.getSCVariables().length == 1 && e1.getSCVariables()[0].getElementName().equals("L1"));
 	}
 	
@@ -707,7 +700,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "E1", 
@@ -721,13 +714,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 		
-		IAction[] actions = events[0].getActions();
+		ISCAction[] actions = events[0].getSCActions();
 
 		assertTrue("three actions", actions.length == 3);
 		
@@ -740,7 +733,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "E1", 
@@ -752,13 +745,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 	
-		IAction[] actions = events[0].getActions();
+		ISCAction[] actions = events[0].getSCActions();
 
 		assertTrue("one action", actions.length == 1);
 		
@@ -770,7 +763,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for free identifiers of actions
 	 */
 	public void testActions3() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "E1", 
@@ -783,13 +776,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 	
-		IAction[] actions = events[0].getActions();
+		ISCAction[] actions = events[0].getSCActions();
 
 		assertTrue("two actions", actions.length == 2);
 
@@ -801,7 +794,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for faulty initialisation
 	 */
 	public void testInitialisation1() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "INITIALISATION", 
@@ -814,9 +807,9 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("no event", events.length == 0);
 		
@@ -826,7 +819,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for correct initialisation with faulty action
 	 */
 	public void testInitialisation2() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "INITIALISATION", 
@@ -839,9 +832,9 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 		
@@ -851,7 +844,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 * Test method for correct initialisation action
 	 */
 	public void testInitialisation3() throws Exception {
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
 		addEvent(rodinFile, "INITIALISATION", 
@@ -861,18 +854,18 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
-		IEvent[] events = scMachine.getEvents();
+		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 		
-		assertTrue("two actions", events[0].getActions().length == 2);
+		assertTrue("two actions", events[0].getSCActions().length == 2);
 		
 	}
 	
-	private ISCContext makeContext3() throws RodinDBException {
-		ISCContext context = (ISCContext) rodinProject.createRodinFile("ctx.bcc", true, null);
+	private ISCContextFile makeContext3() throws RodinDBException {
+		ISCContextFile context = (ISCContextFile) rodinProject.createRodinFile("ctx.bcc", true, null);
 		addSCConstants(context, makeList("C1", "C2"), makeList("ℤ", "ℙ(ℤ)"));
 //		TestUtil.addIdentifiers(context, TestUtil.makeList("C1", "C2"), TestUtil.makeList("ℤ", "ℙ(ℤ)"));
 		context.save(null, true);
@@ -885,7 +878,7 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testInitialisation4() throws Exception {
 		makeContext3();
-		IMachine rodinFile = createMachine("one");
+		IMachineFile rodinFile = createMachine("one");
 		addSees(rodinFile, "ctx");
 		addVariables(rodinFile, makeList("V1", "V2"));
 		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
@@ -896,13 +889,13 @@ public class TestMachineSC_2 extends BuilderTest {
 	
 		rodinFile.save(null, true);
 		
-		ISCMachine scMachine = runSC(rodinFile);
+		ISCMachineFile scMachine = runSC(rodinFile);
 		
 		ISCEvent[] events = scMachine.getSCEvents();
 		
 		assertTrue("one event", events.length == 1);
 		
-		assertTrue("two actions", events[0].getActions().length == 2);
+		assertTrue("two actions", events[0].getSCActions().length == 2);
 		
 	}
 

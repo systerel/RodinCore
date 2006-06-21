@@ -7,21 +7,21 @@
  *******************************************************************************/
 package org.eventb.core.testscpog;
 
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class TestAutomatic extends BuilderTest {;
 	
-	private IContext createContextOne() throws RodinDBException {
+	private IContextFile createContextOne() throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("one.buc", true, null);
 		addCarrierSets(rodinFile, makeList("S1", "S2"));
 		addConstants(rodinFile, makeList("C1", "C2", "C3", "F1"));
 		addAxioms(rodinFile, makeList("A1", "A2", "A3", "A4"), makeList("C1∈S1", "F1∈S1↔S2", "C2∈F1[{C1}]", "C3=1"), null);
 		addTheorems(rodinFile, makeList("T1"), makeList("C3>0 ⇒ (∃ x · x ∈ ran(F1))"), null);
 		rodinFile.save(null, true);
-		return (IContext) rodinFile;
+		return (IContextFile) rodinFile;
 	}
 
 	public final void testContext1() throws Exception {
@@ -29,7 +29,7 @@ public class TestAutomatic extends BuilderTest {;
 		runBuilder();
 	}
 	
-	private IMachine createMachineOne(boolean sees) throws RodinDBException {
+	private IMachineFile createMachineOne(boolean sees) throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("one.bum", true, null);
 		if(sees)
 			addSees(rodinFile, "two");
@@ -42,17 +42,17 @@ public class TestAutomatic extends BuilderTest {;
 				makeList("V1=V2", "L1>V1"), 
 				makeList("V1≔1", "V2≔V1+L1"));
 		rodinFile.save(null, true);
-		return (IMachine) rodinFile;
+		return (IMachineFile) rodinFile;
 	}
 
-	private IContext createContextTwo() throws RodinDBException {
+	private IContextFile createContextTwo() throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("two.buc", true, null);
 		addCarrierSets(rodinFile, makeList("S1", "S2"));
 		addConstants(rodinFile, makeList("C1", "C2", "C3", "F1"));
 		addAxioms(rodinFile, makeList("A1", "A2", "A3", "A4"), makeList("C1∈S1", "F1∈S1↔S2", "C2∈F1[{C1}]", "C3=1"), null);
 		addTheorems(rodinFile, makeList("T1"), makeList("C3>0 ⇒ (∃ x · x ∈ ran(F1))"), null);
 		rodinFile.save(null, true);
-		return (IContext) rodinFile;
+		return (IContextFile) rodinFile;
 	}
 	public final void testMachine1() throws Exception {
 		createMachineOne(true);

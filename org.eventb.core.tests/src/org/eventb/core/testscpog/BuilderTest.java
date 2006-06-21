@@ -22,23 +22,27 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ISCAxiomSet;
+import org.eventb.core.ISCAction;
+import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachine;
-import org.eventb.core.ISCTheoremSet;
+import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ISCInvariant;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
-import org.eventb.core.ISees;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
@@ -68,13 +72,26 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected FormulaFactory factory = FormulaFactory.getDefault();
 
-	public static void addAxioms(IRodinFile rodinFile, String[] names, String[] axioms, String bag) throws RodinDBException {
-		IInternalParent element = rodinFile;
-		if(bag != null) {
-			element = element.createInternalElement(ISCAxiomSet.ELEMENT_TYPE, bag, null, null);
-		}
+	public static void addAxioms(IRodinFile rodinFile, String[] names, String[] axioms, IInternalParent parent) throws RodinDBException {
+		IInternalParent element = null;
+		if(parent == null) 
+			element = rodinFile;
+		else
+			element = parent;
 		for(int i=0; i<names.length; i++) {
 			IAxiom axiom = (IAxiom) element.createInternalElement(IAxiom.ELEMENT_TYPE, names[i], null, null);
+			axiom.setContents(axioms[i]);
+		}
+	}
+	
+	public static void addSCAxioms(IRodinFile rodinFile, String[] names, String[] axioms, IInternalParent parent) throws RodinDBException {
+		IInternalParent element = null;
+		if(parent == null) 
+			element = rodinFile;
+		else
+			element = parent;
+		for(int i=0; i<names.length; i++) {
+			ISCAxiom axiom = (ISCAxiom) element.createInternalElement(ISCAxiom.ELEMENT_TYPE, names[i], null, null);
 			axiom.setContents(axioms[i]);
 		}
 	}
@@ -124,17 +141,32 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	public static ISCAxiomSet addOldAxioms(IRodinFile file, String name) throws RodinDBException {
-		return (ISCAxiomSet) file.createInternalElement(ISCAxiomSet.ELEMENT_TYPE, name, null, null);
+	public static void addSCInvariants(IRodinFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
+		for(int i=0; i<names.length; i++) {
+			ISCInvariant invariant = (ISCInvariant) rodinFile.createInternalElement(ISCInvariant.ELEMENT_TYPE, names[i], null, null);
+			invariant.setContents(invariants[i]);
+		}
 	}
 
-	public static ISCTheoremSet addOldTheorems(IRodinFile file, String name) throws RodinDBException {
-		return (ISCTheoremSet) file.createInternalElement(ISCTheoremSet.ELEMENT_TYPE, name, null, null);
+	public static ISCInternalContext addInternalContext(IRodinFile file, String name) throws RodinDBException {
+		return (ISCInternalContext) file.createInternalElement(ISCInternalContext.ELEMENT_TYPE, name, null, null);
 	}
 
 	public static void addSCCarrierSets(IRodinFile rodinFile, String[] names, String[] types) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
 			SCCarrierSet identifier = (SCCarrierSet) rodinFile.createInternalElement(ISCCarrierSet.ELEMENT_TYPE, names[i], null, null);
+			identifier.setContents(types[i]);
+		}
+	}
+
+	public static void addSCCarrierSets(IRodinFile rodinFile, String[] names, String[] types, ISCInternalContext internalContext) throws RodinDBException {
+		IInternalParent parent = null;
+		if(internalContext == null)
+			parent = rodinFile;
+		else
+			parent = internalContext;
+		for(int i=0; i<names.length; i++) {
+			SCCarrierSet identifier = (SCCarrierSet) parent.createInternalElement(ISCCarrierSet.ELEMENT_TYPE, names[i], null, null);
 			identifier.setContents(types[i]);
 		}
 	}
@@ -145,6 +177,18 @@ public abstract class BuilderTest extends TestCase {
 				identifier.setContents(types[i]);
 			}
 		}
+
+	public static void addSCConstants(IRodinFile rodinFile, String[] names, String[] types, ISCInternalContext internalContext) throws RodinDBException {
+		IInternalParent parent = null;
+		if(internalContext == null)
+			parent = rodinFile;
+		else
+			parent = internalContext;
+		for(int i=0; i<names.length; i++) {
+			SCConstant identifier = (SCConstant) parent.createInternalElement(ISCConstant.ELEMENT_TYPE, names[i], null, null);
+			identifier.setContents(types[i]);
+		}
+	}
 
 	public static void addSCEvent(IRodinFile rodinFile, 
 				String name,
@@ -160,11 +204,11 @@ public abstract class BuilderTest extends TestCase {
 			variable.setContents(types[i]);
 		}
 		for(int i=0; i<guards.length; i++) {
-			IGuard guard = (IGuard) event.createInternalElement(IGuard.ELEMENT_TYPE, guardNames[i], null, null);
+			ISCGuard guard = (ISCGuard) event.createInternalElement(ISCGuard.ELEMENT_TYPE, guardNames[i], null, null);
 			guard.setContents(guards[i]);
 		}
 		for(int j=0; j<actions.length; j++) {
-			IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, "ACTION", null, null);
+			ISCAction action = (ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, "ACTION", null, null);
 			action.setContents(actions[j]);
 		}
 	}
@@ -199,17 +243,30 @@ public abstract class BuilderTest extends TestCase {
 //}
 //
 	public static void addSees(IRodinFile rodinFile, String name) throws RodinDBException {
-		ISees sees = (ISees) rodinFile.createInternalElement(ISees.ELEMENT_TYPE, null, null, null);
+		ISeesContext sees = (ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, "CONTEXT", null, null);
 		sees.setContents(name);
 	}
 
-	public static void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems, String bag) throws RodinDBException {
-		IInternalParent element = rodinFile;
-		if(bag != null) {
-			element = element.createInternalElement(ISCTheoremSet.ELEMENT_TYPE, bag, null, null);
-		}
+	public static void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems, IInternalParent parent) throws RodinDBException {
+		IInternalParent element = null;
+		if(parent == null) 
+			element = rodinFile;
+		else
+			element = parent;
 		for(int i=0; i<names.length; i++) {
 			ITheorem theorem = (ITheorem) element.createInternalElement(ITheorem.ELEMENT_TYPE, names[i], null, null);
+			theorem.setContents(theorems[i]);
+		}
+	}
+
+	public static void addSCTheorems(IRodinFile rodinFile, String[] names, String[] theorems, IInternalParent parent) throws RodinDBException {
+		IInternalParent element = null;
+		if(parent == null) 
+			element = rodinFile;
+		else
+			element = parent;
+		for(int i=0; i<names.length; i++) {
+			ISCTheorem theorem = (ISCTheorem) element.createInternalElement(ISCTheorem.ELEMENT_TYPE, names[i], null, null);
 			theorem.setContents(theorems[i]);
 		}
 	}
@@ -235,14 +292,14 @@ public abstract class BuilderTest extends TestCase {
 		super(name);
 	}
 	
-	protected IContext createContext(String bareName) throws RodinDBException {
+	protected IContextFile createContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		return (IContext) rodinProject.createRodinFile(fileName, true, null);
+		return (IContextFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-	protected IMachine createMachine(String bareName) throws RodinDBException {
+	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		return (IMachine) rodinProject.createRodinFile(fileName, true, null);
+		return (IMachineFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected IPOFile createPOFile(String bareName) throws RodinDBException {
@@ -250,14 +307,14 @@ public abstract class BuilderTest extends TestCase {
 		return (IPOFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-	protected ISCContext createSCContext(String bareName) throws RodinDBException {
+	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-		return (ISCContext) rodinProject.createRodinFile(fileName, true, null);
+		return (ISCContextFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-	protected ISCMachine createSCMachine(String bareName) throws RodinDBException {
+	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-		return (ISCMachine) rodinProject.createRodinFile(fileName, true, null);
+		return (ISCMachineFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
 	protected String getSourceContents(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
@@ -280,24 +337,24 @@ public abstract class BuilderTest extends TestCase {
 		rodinProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 	}
 	
-	protected IPOFile runPOG(ISCContext context) throws CoreException {
+	protected IPOFile runPOG(ISCContextFile context) throws CoreException {
 		runBuilder();
-		return context.getPOFile();
+		return context.getContextFile().getPOFile();
 	}
 
-	protected IPOFile runPOG(ISCMachine machine) throws CoreException {
+	protected IPOFile runPOG(ISCMachineFile machine) throws CoreException {
 		runBuilder();
-		return machine.getPOFile();
+		return machine.getMachineFile().getPOFile();
 	}
 	
-	protected ISCContext runSC(IContext context) throws CoreException {
+	protected ISCContextFile runSC(IContextFile context) throws CoreException {
 		runBuilder();
-		return context.getSCContext();
+		return context.getSCContextFile();
 	}
 	
-	protected ISCMachine runSC(IMachine machine) throws CoreException {
+	protected ISCMachineFile runSC(IMachineFile machine) throws CoreException {
 		runBuilder();
-		return machine.getSCMachine();
+		return machine.getSCMachineFile();
 	}
 	
 	protected Predicate predicateFromString(String predicate) {

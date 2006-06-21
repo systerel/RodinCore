@@ -8,8 +8,8 @@
 package org.eventb.core.testscpog;
 
 
-import org.eventb.core.IContext;
-import org.eventb.core.ISCContext;
+import org.eventb.core.IContextFile;
+import org.eventb.core.ISCContextFile;
 import org.rodinp.core.RodinDBException;
 
 public class TestContextSC_1 extends BuilderTest {
@@ -20,13 +20,13 @@ public class TestContextSC_1 extends BuilderTest {
 	 * with the context static checker
 	 */
 	public void testRun() throws Exception {
-		IContext context = createContextOne();
-		ISCContext scContext = runSC(context);
+		IContextFile context = createContextOne();
+		ISCContextFile scContext = runSC(context);
 		assertTrue("Checked context not produced", scContext.exists());
 	}
 	
-	private IContext createContextOne() throws RodinDBException {
-		IContext rodinFile = createContext("one");
+	private IContextFile createContextOne() throws RodinDBException {
+		IContextFile rodinFile = createContext("one");
 		addCarrierSets(rodinFile, makeList("S1", "S2"));
 		addConstants(rodinFile, makeList("C1", "C2", "C3", "F1"));
 		addAxioms(rodinFile, makeList("A1", "A2", "A3", "A4"), makeList("C1∈S1", "F1∈S1↔S2", "C2∈F1[{C1}]", "C3=1"), null);

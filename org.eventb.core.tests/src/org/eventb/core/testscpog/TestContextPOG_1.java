@@ -8,7 +8,7 @@
 package org.eventb.core.testscpog;
 
 import org.eventb.core.IPOFile;
-import org.eventb.core.ISCContext;
+import org.eventb.core.ISCContextFile;
 import org.rodinp.core.RodinDBException;
 
 public class TestContextPOG_1 extends BuilderTest {
@@ -17,15 +17,14 @@ public class TestContextPOG_1 extends BuilderTest {
 	 * Test method for 'org.eventb.internal.core.protopog.ContextPOG.run()'
 	 */
 	public final void testRun() throws Exception {
-		ISCContext context = createContextOne();
+		ISCContextFile context = createContextOne();
 		IPOFile poFile = runPOG(context);
 		assertTrue("Proof obligations not produced", poFile.exists());
 	}
 
-	private ISCContext createContextOne() throws RodinDBException {
-		ISCContext rodinFile = createSCContext("one");
-		addOldAxioms(rodinFile, "AXIOMS");
-		addOldTheorems(rodinFile, "THEOREMS");
+	private ISCContextFile createContextOne() throws RodinDBException {
+		ISCContextFile rodinFile = createSCContext("one");
+		addInternalContext(rodinFile, "CONTEXT");
 //		TestUtil.addIdentifiers(rodinFile,
 //				TestUtil.makeList("S1", "S2", "C1", "C2", "C3", "F1"),
 //				TestUtil.makeList("ℙ(S1)", "ℙ(S2)", "S1", "ℙ(S1∗S2)", "S2", "ℕ"));

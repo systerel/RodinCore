@@ -10,8 +10,8 @@ package org.eventb.core.testscpog;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElementDelta;
@@ -73,16 +73,16 @@ public class TestAtomic extends BuilderTest {
 		}
 	}
 	
-	private IContext createContext() throws RodinDBException {
+	private IContextFile createContext() throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("ctx.buc", true, null);
 		addCarrierSets(rodinFile, makeList("S"));
 		addConstants(rodinFile, makeList("c"));
 		addAxioms(rodinFile, makeList("A1"), makeList("c ∈ S"), null);
 		rodinFile.save(null, true);
-		return (IContext) rodinFile;
+		return (IContextFile) rodinFile;
 	}
 
-	private IMachine createMachine(boolean sees) throws RodinDBException {
+	private IMachineFile createMachine(boolean sees) throws RodinDBException {
 		IRodinFile rodinFile = rodinProject.createRodinFile("mch.bum", true, null);
 		if (sees)
 			addSees(rodinFile, "ctx");
@@ -94,7 +94,7 @@ public class TestAtomic extends BuilderTest {
 				makeList(), 
 				makeList("v :∈ ℤ"));
 		rodinFile.save(null, true);
-		return (IMachine) rodinFile;
+		return (IMachineFile) rodinFile;
 	}
 
 	private void runBuilderForDeltas(String expected) throws CoreException {
