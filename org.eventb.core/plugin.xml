@@ -6,26 +6,26 @@
       <content-type
             base-type="org.rodinp.core.rodin"
             file-extensions="bum"
-            id="machine"
-            name="%eventBMachine"
+            id="machineFile"
+            name="%eventBMachineFile"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
             file-extensions="buc"
-            id="context"
-            name="%eventBContext"
+            id="contextFile"
+            name="%eventBContextFile"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
             file-extensions="bcm"
-            id="scMachine"
-            name="%eventBSCMachine"
+            id="scMachineFile"
+            name="%eventBSCMachineFile"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
             file-extensions="bcc"
-            id="scContext"
-            name="%eventBSCContext"
+            id="scContextFile"
+            name="%eventBSCContextFile"
             priority="normal"/>
       <content-type
             base-type="org.rodinp.core.rodin"
@@ -43,25 +43,25 @@
    <extension
          point="org.rodinp.core.fileElementTypes">
       <fileElementType
-            class="org.eventb.core.basis.Machine"
-            content-type-id="org.eventb.core.machine"
-            id="machine"
-            name="%eventBMachine"/>
+            class="org.eventb.core.basis.MachineFile"
+            content-type-id="org.eventb.core.machineFile"
+            id="machineFile"
+            name="%eventBMachineFile"/>
       <fileElementType
-            class="org.eventb.core.basis.Context"
-            content-type-id="org.eventb.core.context"
-            id="context"
-            name="%eventBContext"/>
+            class="org.eventb.core.basis.ContextFile"
+            content-type-id="org.eventb.core.contextFile"
+            id="contextFile"
+            name="%eventBContextFile"/>
       <fileElementType
-            class="org.eventb.core.basis.SCMachine"
-            content-type-id="org.eventb.core.scMachine"
-            id="scMachine"
-            name="%eventBSCMachine"/>
+            class="org.eventb.core.basis.SCMachineFile"
+            content-type-id="org.eventb.core.scMachineFile"
+            id="scMachineFile"
+            name="%eventBSCMachineFile"/>
       <fileElementType
-            class="org.eventb.core.basis.SCContext"
-            content-type-id="org.eventb.core.scContext"
-            id="scContext"
-            name="%eventBSCContext"/>
+            class="org.eventb.core.basis.SCContextFile"
+            content-type-id="org.eventb.core.scContextFile"
+            id="scContextFile"
+            name="%eventBSCContextFile"/>
       <fileElementType
             class="org.eventb.core.basis.POFile"
             content-type-id="org.eventb.core.poFile"
@@ -96,6 +96,11 @@
             name="%eventBTheorem"
             named="true"/>
       <internalElementType
+            class="org.eventb.core.basis.SeesContext"
+            id="seesContext"
+            name="%eventBSeesContext"
+            named="true"/>
+      <internalElementType
             class="org.eventb.core.basis.Variable"
             id="variable"
             name="%eventBVariable"
@@ -111,54 +116,34 @@
             name="%eventBEvent"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.Guard"
-            id="guard"
-            name="%eventBGuard"
+            class="org.eventb.core.basis.RefinesMachine"
+            id="refinesMachine"
+            name="%eventBRefinesMachine"
             named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.Action"
-            id="action"
-            name="%eventBAction"
-            named="false"/>
       <internalElementType
             class="org.eventb.core.basis.SCVariable"
             id="scVariable"
             name="%eventBscVariable"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.SCCarrierSet"
-            id="scCarrierSet"
-            name="%eventBscCarrierSet"
+            class="org.eventb.core.basis.SCAxiom"
+            id="scAxiom"
+            name="%eventBscAxiom"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.SCConstant"
-            id="scConstant"
-            name="%eventBscConstant"
-            named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.SCAxiomSet"
-            id="scAxiomSet"
-            name="%eventBscAxiomSet"
-            named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.SCTheoremSet"
-            id="scTheoremSet"
-            name="%eventBscTheoremSet"
-            named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.SCInvariantSet"
-            id="scInvariantSet"
-            name="%eventBscInvariantSet"
-            named="true"/>
-      <internalElementType
-            class="org.eventb.core.basis.SCEvent"
-            id="scEvent"
-            name="%eventBscEvent"
+            class="org.eventb.core.basis.SCTheorem"
+            id="scTheorem"
+            name="%eventBscTheorem"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.POIdentifier"
             id="poIdentifier"
             name="%eventBpoIdentifier"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCInvariant"
+            id="scInvariant"
+            name="%eventBscInvariant"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.POPredicateSet"
@@ -179,16 +164,6 @@
             class="org.eventb.core.basis.POHypothesis"
             id="poHypothesis"
             name="%eventBpoHypothesis"
-            named="false"/>
-      <internalElementType
-            class="org.eventb.core.basis.Sees"
-            id="sees"
-            name="%eventBSees"
-            named="false"/>
-      <internalElementType
-            class="org.eventb.core.basis.Refines"
-            id="refines"
-            name="%eventBRefines"
             named="false"/>
       <internalElementType
             class="org.eventb.core.basis.Witness"
@@ -219,6 +194,81 @@
             class="org.eventb.core.basis.POHint"
             id="poHint"
             name="%eventBpoHint"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Guard"
+            id="guard"
+            name="%eventBGuard"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Action"
+            id="action"
+            name="%eventBAction"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.RefinesEvent"
+            id="refinesEvent"
+            name="%eventBRefinesEvent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.Variant"
+            id="variant"
+            name="%eventBVariant"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCAction"
+            id="scAction"
+            name="%eventBscAction"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCEvent"
+            id="scEvent"
+            name="%eventBscEvent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCGuard"
+            id="scGuard"
+            name="%eventBscGuard"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCConstant"
+            id="scConstant"
+            name="%eventBscConstant"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCCarrierSet"
+            id="scCarrierSet"
+            name="%eventBscCarrierSet"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCInternalContext"
+            id="scInternalContext"
+            name="%eventBscInternalContext"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCInternalMachine"
+            id="scInternalMachine"
+            name="%eventBscInternalMachine"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCRefinesEvent"
+            id="scRefinesEvent"
+            name="%eventBRefinesEvent"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCRefinesMachine"
+            id="scRefinesMachine"
+            name="%eventBRefinesMachine"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCVariant"
+            id="scVariant"
+            name="%eventBscVariant"
+            named="true"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCWitness"
+            id="scWitness"
+            name="%eventBscWitness"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofTreeNode"
@@ -286,7 +336,7 @@
                class="org.eventb.internal.core.protosc.ContextSC"
                id="contextSC"
                name="%contextSCExtractor">
-            <inputType id="org.eventb.core.context"/>
+            <inputType id="org.eventb.core.contextFile"/>
          </extractor>
       </tool>
       <tool
@@ -297,7 +347,7 @@
                class="org.eventb.internal.core.protosc.MachineSC"
                id="machineSC"
                name="%machineSCExtractor">
-            <inputType id="org.eventb.core.machine"/>
+            <inputType id="org.eventb.core.machineFile"/>
          </extractor>
       </tool>
       <tool
@@ -308,7 +358,7 @@
                class="org.eventb.internal.core.protopog.ContextPOG"
                id="contextPOG"
                name="%contextPOGExtractor">
-            <inputType id="org.eventb.core.scContext"/>
+            <inputType id="org.eventb.core.scContextFile"/>
          </extractor>
       </tool>
       <tool
@@ -319,7 +369,7 @@
                class="org.eventb.internal.core.protopog.MachinePOG"
                id="machinePOG"
                name="%machinePOGExtractor">
-            <inputType id="org.eventb.core.scMachine"/>
+            <inputType id="org.eventb.core.scMachineFile"/>
          </extractor>
       </tool>
       <tool
