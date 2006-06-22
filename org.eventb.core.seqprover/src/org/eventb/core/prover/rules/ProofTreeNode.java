@@ -40,18 +40,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.comment = "";
 		this.checkClassInvariant();
 	}
-//	
-//	//	 Creates a root node of a proof tree
-//	public ProofTreeNode(ProofTree tree, IProofTreeNode node) {
-//		assert tree != null;
-//		this.tree = tree;
-//		this.parent = null;
-//		this.sequent = node.getSequent();
-//		this.rule = node.getRule();
-//		this.children = null;
-//		this.discharged = false;
-//		this.checkClassInvariant();
-//	}
 	
 	// Creates an internal node of a proof tree
 	private ProofTreeNode(ProofTreeNode parent, IProverSequent sequent) {

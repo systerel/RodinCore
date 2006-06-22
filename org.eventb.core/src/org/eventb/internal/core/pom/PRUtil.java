@@ -106,8 +106,13 @@ public class PRUtil {
 		return seq;
 	}
 	
-	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{		
+	public static IProofTree makeInitialProofTree(IPRSequent prSeq) throws RodinDBException{		
 		IProofTree proofTree = SequentProver.makeProofTree(makeSequent(prSeq));		
+		return proofTree;
+	}
+	
+	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{		
+		IProofTree proofTree = makeInitialProofTree(prSeq);		
 		IProofTreeNode root = proofTree.getRoot();
 		IPRProofTreeNode prRoot = prSeq.getProof().getRootProofTreeNode();
 		ReplayHints replayHints = new ReplayHints();
@@ -219,6 +224,9 @@ public class PRUtil {
 		} else {
 			prSeq.getProof().setContents(Status.PENDING.toString());
 		}
+		// set the proof to valid
+		prSeq.setProofBroken(false);
+		
 	}
 	
 	public static void writeOutRule (ProofRule rule,InternalElement parent) throws RodinDBException{

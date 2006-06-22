@@ -55,13 +55,28 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return PRUtil.makeProofTree(this);
 	}
 	
+
+	public IProofTree makeInitialProofTree() throws RodinDBException {
+		return PRUtil.makeInitialProofTree(this);
+	}
+	
 	public void updateStatus(IProofTree pt) throws RodinDBException {
 		PRUtil.updateStatus(this,pt);
 	}
 
 	public boolean isDischarged() throws RodinDBException {
+		if (isProofBroken()) return false;
 		IProof proof = getProof();
 		return (proof.getStatus() == Status.DISCHARGED);
+	}
+
+	public boolean isProofBroken() throws RodinDBException {
+		return getContents().equals("ProofBroken");
+	}
+
+	public void setProofBroken(boolean broken) throws RodinDBException {
+		if (broken) setContents("ProofBroken");
+		else setContents("ProofValid");
 	}
 	
 	

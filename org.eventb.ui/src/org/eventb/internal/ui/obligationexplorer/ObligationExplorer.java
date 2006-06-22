@@ -135,11 +135,18 @@ public class ObligationExplorer extends ViewPart implements
 			if (obj instanceof IPRSequent) {
 				IPRSequent ps = (IPRSequent) obj;
 				try {
-					IProof status = ps.getProof();
-					if (status.getContents().equals("PENDING"))
-						return registry.get(EventBImage.IMG_PENDING);
-					else if (status.getContents().equals("DISCHARGED"))
+//					Replaced check on proof with check on sequent
+//					TODO: synchronize with the proof tree in memory
+					if (ps.isDischarged())
 						return registry.get(EventBImage.IMG_DISCHARGED);
+					else
+						return registry.get(EventBImage.IMG_PENDING);
+//  				Previous code:
+//					IProof status = ps.getProof();
+//					if (status.getContents().equals("PENDING"))
+//						return registry.get(EventBImage.IMG_PENDING);
+//					else if (status.getContents().equals("DISCHARGED"))
+//						return registry.get(EventBImage.IMG_DISCHARGED);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}

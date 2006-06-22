@@ -21,7 +21,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
-import org.eventb.core.IProof.Status;
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
@@ -75,8 +75,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				new IWorkspaceRunnable() {
 					public void run(IProgressMonitor saveMonitor) throws CoreException {
 						Map<String, IProof> oldProofs = getOldProofs();
-						Map<String, Status> newStatus = computeNewStatus(oldProofs);
-						createFreshPRFile(newStatus,oldProofs);
+						Map<String, Boolean> newValidity = computeNewValidity(oldProofs);
+						createFreshPRFile(newValidity,oldProofs);
 					}
 				}, monitor);
 		
@@ -89,61 +89,32 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			return PRUtil.readProofs(prFile);
 		return new HashMap<String, IProof>();
 	}
-
 	
-//	Map<String, Status> computeNewStatus() throws RodinDBException
-//	{
-//		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
-//		Map<String, Status> newStatus = new HashMap<String, Status>();
-//		
-//		if (prFile.exists()){
-//			Map<String, IProverSequent> oldPOs = PRUtil.readPOs(prFile);
-//			Map<String, Status> oldStatus = PRUtil.readStatus(prFile);
-//			for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
-//				String newPOname = newPO.getKey();
-//				IProverSequent newPOseq = newPO.getValue();
-//				IProverSequent oldPOseq = oldPOs.get(newPOname);
-//				if  ((oldPOseq != null) &&
-//						(Lib.sufficient(newPOseq,oldPOseq)))
-//					newStatus.put(newPOname,oldStatus.get(newPOname));
-//				else
-//					newStatus.put(newPOname,Status.PENDING);	
-//			}
-//		}
-//		else
-//		{
-//			for (String name : newPOs.keySet())
-//				newStatus.put(name,Status.PENDING);
-//		}
-//		return newStatus;
-//	}
-	
-	
-	Map<String, Status> computeNewStatus(Map<String, IProof> oldProofs) throws RodinDBException
+	Map<String, Boolean> computeNewValidity(Map<String, IProof> oldProofs) throws RodinDBException
 	{
 		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
-		Map<String, Status> newStatus = new HashMap<String, Status>();
+		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
 		
 		for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
 			String newPOname = newPO.getKey();
 			IProverSequent newPOseq = newPO.getValue();
 			IProof oldProof = oldProofs.get(newPOname);
 			if  (oldProof != null &&
-					oldProof.getGoal().equals(newPOseq.goal()) &&
-					newPOseq.hypotheses().containsAll(oldProof.getUsedHypotheses()))
+					newPOseq.goal().equals(oldProof.getGoal()) &&
+					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())))
 				{
-					newStatus.put(newPOname,oldProof.getStatus());
+					newValidity.put(newPOname,true);
 				}
 			else
 				{
-					newStatus.put(newPOname,Status.PENDING);
+					if (oldProof == null) 
+						newValidity.put(newPOname,true);
+					else
+						newValidity.put(newPOname,false);
 				}
 		}
-		
-		return newStatus;
+		return newValidity;
 	}
-	
-	
 	
 	
 	public void clean(IFile file, 
@@ -164,7 +135,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		graph.updateGraph();
 	}
 
-	void createFreshPRFile(Map<String, Status> newStatus, Map<String, IProof> oldProofs) throws CoreException {
+	void createFreshPRFile(Map<String, Boolean> newValidity, Map<String, IProof> oldProofs) throws CoreException {
 
 		if (prFile.exists()) 
 		{
@@ -183,12 +154,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 		
 		copyGlobalInfo();
-		copySequents(newStatus,oldProofs);
+		copySequents(newValidity,oldProofs);
 		
 		prFile.save(monitor, true);
 	}
 	
-	private void copySequents(Map<String, Status> newStatus, Map<String, IProof> oldProofs) throws RodinDBException{
+	private void copySequents(Map<String, Boolean> newValidity, Map<String, IProof> oldProofs) throws RodinDBException{
 		IPOSequent[] poSequents = poFile.getSequents();
 		
 		for (IPOSequent poSeq : poSequents)
@@ -202,6 +173,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
 			}
 			
+			assert (newValidity.get(poSeq.getName()) != null);
+			prSeq.setProofBroken(! newValidity.get(poSeq.getName()));
+			
 			IProof oldProof = oldProofs.get(prSeq.getName());
 			if (oldProof == null)
 			{
@@ -209,11 +183,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				IProof proof =
 					(IProof) prFile.createInternalElement(
 							IProof.ELEMENT_TYPE,prSeq.getName(), null, monitor);
-				proof.setStatus(Status.PENDING);
-			}
-			else
-			{
-				prFile.getProof(prSeq.getName()).setStatus(newStatus.get(prSeq.getName()));
+				proof.initialize();
 			}
 		}
 	}

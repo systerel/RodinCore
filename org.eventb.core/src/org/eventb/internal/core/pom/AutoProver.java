@@ -39,6 +39,7 @@ public class AutoProver {
 		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
 		for (IPRSequent po : pos) {
 			if (! po.isDischarged()) {
+				// System.out.println("AutoProver tried for "+po);
 				IProofTree tree = po.makeProofTree();
 				// Go ahead if a proof was not previously attempted
 				if (! tree.getRoot().hasChildren()) {

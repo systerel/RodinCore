@@ -39,7 +39,7 @@ public class Proof extends InternalElement implements IProof {
 		return null;
 	}
 
-	public void setStatus(Status status) throws RodinDBException {
+	private void setStatus(Status status) throws RodinDBException {
 		switch (status) {
 		case PENDING:
 			setContents("PENDING");
@@ -60,6 +60,7 @@ public class Proof extends InternalElement implements IProof {
 
 	public Set<Predicate> getUsedHypotheses() throws RodinDBException {
 		IRodinElement[] usedHypotheses = getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
+		if (usedHypotheses.length != 1) return null;
 		assert usedHypotheses.length == 1;
 		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
 		return ((IPRPredicateSet)usedHypotheses[0]).getPredicateSet();
@@ -67,9 +68,17 @@ public class Proof extends InternalElement implements IProof {
 
 	public Predicate getGoal() throws RodinDBException {
 		IRodinElement[] goal = getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
+		if (goal.length != 1) return null;
 		assert goal.length == 1;
 		assert goal[0].getElementName().equals("goal");
 		return ((IPRPredicate)goal[0]).getPredicate();
+	}
+
+	public void initialize() throws RodinDBException {
+		//delete previous children, if any.
+		if (this.getChildren().length != 0)
+			this.getRodinDB().delete(this.getChildren(),true,null);
+		setStatus(Status.PENDING);
 	}
 	
 }
