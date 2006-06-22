@@ -31,6 +31,7 @@ public interface IPRSequent extends IPOSequent {
 	IProofTree makeInitialProofTree() throws RodinDBException;
 	IProof getProof() throws RodinDBException;
 	
+	boolean proofAttempted() throws RodinDBException;
 	boolean isProofBroken() throws RodinDBException;
 	void setProofBroken(boolean broken) throws RodinDBException;
 	

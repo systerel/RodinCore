@@ -80,5 +80,11 @@ public class Proof extends InternalElement implements IProof {
 			this.getRodinDB().delete(this.getChildren(),true,null);
 		setStatus(Status.PENDING);
 	}
+
+	public boolean proofAttempted() throws RodinDBException {
+		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
+		if (proofTreeNodes.length == 0) return false;
+		return true;
+	}
 	
 }

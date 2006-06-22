@@ -78,6 +78,12 @@ public class PRSequent extends POSequent implements IPRSequent {
 		if (broken) setContents("ProofBroken");
 		else setContents("ProofValid");
 	}
+
+	public boolean proofAttempted() throws RodinDBException {
+		IProof proof = getProof();
+		if (proof == null || ! proof.proofAttempted()) return false;
+		return true;
+	}
 	
 	
 	

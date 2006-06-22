@@ -37,22 +37,32 @@ public class AutoProver {
 	
 	public void run(IPRFile prFile) throws RodinDBException {
 		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
+		boolean dirty = false;
 		for (IPRSequent po : pos) {
 			if (! po.isDischarged()) {
+
 				// System.out.println("AutoProver tried for "+po);
-				IProofTree tree = po.makeProofTree();
-				// Go ahead if a proof was not previously attempted
-				if (! tree.getRoot().hasChildren()) {
-					run(tree);
-					// update the tree even if there is a partial proof
-					// replaced : if (tree.isDischarged()) {
-					if (tree.isDischarged() || tree.getRoot().hasChildren()) {
-						po.updateStatus(tree);
-						prFile.save(null, false);
-					}
+				
+				// Go ahead even if a proof was previously attempted
+				IProofTree tree = po.makeInitialProofTree();
+				run(tree);
+				// Update the tree if it was discharged
+				if (tree.isDischarged()) {
+					po.updateStatus(tree);
+					prFile.save(null, false);
+					dirty = false;
+				}
+				// If the auto prover made 'some' progress, and no
+				// proof was previously attempted update the proof
+				else if (tree.getRoot().hasChildren() && !po.proofAttempted())
+				{
+					po.updateStatus(tree);
+					// in this case no need to save immediately.
+					dirty = true;
 				}
 			}
 		}
+		if (dirty) prFile.save(null, false);
 	}
 	
 	private void run(IProofTree pt) {
