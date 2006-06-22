@@ -39,6 +39,28 @@ public interface IEvent extends ILabeledElement, IInternalElement {
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event"; //$NON-NLS-1$
 
 	/**
+	 * Returns whether the event is inherited, that is whether it is
+	 * automatically generated and maintained.
+	 * 
+	 * @return <code>true</code> if the event is inherited.
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean isInherited() throws RodinDBException;
+	
+	/**
+	 * Sets the the event to inherited.
+	 * <p>
+	 * The event must not have any children (guards, actions, ...) if 
+	 * inherited is set to <code>true</code>.
+	 * </p>
+	 * @param inherited the new value specifying whether this event id
+	 * interited or not.
+	 * @throws RodinDBException if there was a problem accessing the database, or
+	 * if the event has already children and it is attempted to specify it as inherited.
+	 */
+	void setInherited(boolean inherited) throws RodinDBException;
+	
+	/**
 	 * Returns an array of all refines clauses of this event.
 	 * 
 	 * @return an array of all refines clauses

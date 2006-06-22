@@ -15,6 +15,8 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.internal.core.Messages;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -109,6 +111,18 @@ public class Event extends InternalElement implements IEvent {
 	 */
 	public String getLabel() throws RodinDBException {
 		return LabeledElementUtil.getLabel(this);
+	}
+
+	public boolean isInherited() throws RodinDBException {
+		return getContents().equals("TRUE");
+	}
+
+	public void setInherited(boolean inherited) throws RodinDBException {
+		if (inherited) {
+			if (hasChildren())
+				throw Util.newRodinDBException(Messages.database_EventSetInheritedFailure, this);
+		}
+		setContents(inherited ? "TRUE" : "FALSE");
 	}
 
 }
