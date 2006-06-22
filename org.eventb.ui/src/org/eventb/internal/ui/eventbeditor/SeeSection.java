@@ -35,8 +35,8 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContext;
-import org.eventb.core.ISees;
+import org.eventb.core.IContextFile;
+import org.eventb.core.ISeesContext;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -170,7 +170,7 @@ public class SeeSection extends SectionPart {
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 		try {
 			IRodinElement[] seenContexts = rodinFile
-					.getChildrenOfType(ISees.ELEMENT_TYPE);
+					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 			if (seenContexts.length != 0) {
 				seen = (IInternalElement) seenContexts[0];
 				try {
@@ -215,7 +215,7 @@ public class SeeSection extends SectionPart {
 			try {
 //				UIUtils.debug("Creat new sees clause");
 				IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-				seen = rodinFile.createInternalElement(ISees.ELEMENT_TYPE,
+				seen = rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE,
 						null, null, null);
 				seen.setContents(context);
 				markDirty();
@@ -330,7 +330,7 @@ public class SeeSection extends SectionPart {
 			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 			try {
 				IRodinElement[] contexts = ((IParent) rodinFile.getParent())
-						.getChildrenOfType(IContext.ELEMENT_TYPE);
+						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 				for (int i = 0; i < contexts.length; i++) {
 					Button button = new Button(composite, SWT.RADIO);
 					button.setText(EventBPlugin.getComponentName(contexts[i]

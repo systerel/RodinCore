@@ -34,14 +34,14 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.ISees;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Predicate;
@@ -198,13 +198,13 @@ public class UIUtils {
 		if (element instanceof IRodinProject)
 			return registry.get(EventBImage.IMG_PROJECT);
 
-		if (element instanceof IMachine)
+		if (element instanceof IMachineFile)
 			return registry.get(EventBImage.IMG_MACHINE);
 
-		if (element instanceof IContext)
+		if (element instanceof IContextFile)
 			return registry.get(EventBImage.IMG_CONTEXT);
 
-		if (element instanceof ISees)
+		if (element instanceof ISeesContext)
 			return registry.get(EventBImage.IMG_CONTEXT);
 
 		if (element instanceof IVariable)
@@ -294,7 +294,7 @@ public class UIUtils {
 	 */
 	public static class ElementLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			if (obj instanceof ISees || obj instanceof IAction) {
+			if (obj instanceof ISeesContext || obj instanceof IAction) {
 				try {
 					return ((IUnnamedInternalElement) obj).getContents();
 				} catch (RodinDBException e) {
@@ -426,9 +426,9 @@ public class UIUtils {
 				IEditorInput fileInput = new FileEditorInput(component
 						.getResource());
 				String editorId = "";
-				if (component instanceof IMachine) {
+				if (component instanceof IMachineFile) {
 					editorId = EventBMachineEditor.EDITOR_ID;
-				} else if (component instanceof IContext) {
+				} else if (component instanceof IContextFile) {
 					editorId = EventBContextEditor.EDITOR_ID;
 				}
 				EventBEditor editor = (EventBEditor) EventBUIPlugin

@@ -15,7 +15,7 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -78,7 +78,7 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IRodinElement[] constants = ((IContext) rodinFile)
+					IRodinElement[] constants = ((IContextFile) rodinFile)
 							.getConstants();
 					for (int i = 0; i < constants.length; i++) {
 						if (e.getHref().equals(constants[i].getElementName())) {

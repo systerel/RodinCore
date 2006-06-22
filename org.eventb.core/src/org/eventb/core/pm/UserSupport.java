@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPRFile;
@@ -506,9 +506,9 @@ public class UserSupport implements IElementChangedListener {
 			// }
 			// }
 			// proofStates.removeAll(remove);
-		} else if (element instanceof IMachine) {
+		} else if (element instanceof IMachineFile) {
 			return;
-		} else if (element instanceof IContext) {
+		} else if (element instanceof IContextFile) {
 			return;
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : delta.getAffectedChildren()) {

@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -44,7 +44,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 	class InvariantContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root
-		private IMachine invisibleRoot = null;
+		private IMachineFile invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -63,9 +63,9 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IMachine) {
+			if (parent instanceof IMachineFile) {
 				try {
-					return ((IMachine) parent)
+					return ((IMachineFile) parent)
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -102,7 +102,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IMachine) parent;
+					invisibleRoot = (IMachineFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

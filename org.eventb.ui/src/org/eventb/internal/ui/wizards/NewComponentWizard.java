@@ -31,7 +31,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinDB;
@@ -149,7 +149,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 
 		final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
 				false, null);
-		if (rodinFile instanceof IMachine) {
+		if (rodinFile instanceof IMachineFile) {
 			rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
 					"INITIALISATION", null, null);
 		}

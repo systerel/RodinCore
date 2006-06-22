@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -45,7 +45,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	class CarrierSetContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root of the tree
-		private IContext invisibleRoot = null;
+		private IContextFile invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -64,9 +64,9 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IContext) {
+			if (parent instanceof IContextFile) {
 				try {
-					return ((IContext) parent)
+					return ((IContextFile) parent)
 							.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -103,7 +103,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IContext) parent;
+					invisibleRoot = (IContextFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

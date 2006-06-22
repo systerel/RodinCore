@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContext;
-import org.eventb.core.IMachine;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
@@ -309,7 +309,7 @@ public class NewComponentWizardPage extends WizardPage {
 		try {
 			IRodinElement[] elements = rodinProject.getChildren();
 			for (IRodinElement elem : elements) {
-				if (elem instanceof IMachine || elem instanceof IContext) {
+				if (elem instanceof IMachineFile || elem instanceof IContextFile) {
 					if (EventBPlugin.getComponentName(
 							((IRodinFile) elem).getElementName()).equals(
 							componentName)) {

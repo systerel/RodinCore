@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
@@ -140,7 +140,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IEvent[] events = ((IMachine) rodinFile).getEvents();
+					IEvent[] events = ((IMachineFile) rodinFile).getEvents();
 					for (int i = 0; i < events.length; i++) {
 						if (e.getHref().equals(events[i].getElementName())) {
 							editor.setSelection(events[i]);

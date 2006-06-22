@@ -15,7 +15,7 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -78,7 +78,7 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					ICarrierSet[] carrierSets = ((IContext) rodinFile)
+					ICarrierSet[] carrierSets = ((IContextFile) rodinFile)
 							.getCarrierSets();
 					for (int i = 0; i < carrierSets.length; i++) {
 						if (e.getHref().equals(carrierSets[i].getElementName())) {

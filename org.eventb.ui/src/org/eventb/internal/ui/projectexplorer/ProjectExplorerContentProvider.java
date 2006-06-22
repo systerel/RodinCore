@@ -27,10 +27,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -227,8 +227,8 @@ public class ProjectExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof IMachine) {
-			IMachine mch = (IMachine) parent;
+		if (parent instanceof IMachineFile) {
+			IMachineFile mch = (IMachineFile) parent;
 			if (elementsMap.containsKey(mch)) {
 				// if (UIUtils.DEBUG) System.out.println("Already explored");
 				return (Object[]) elementsMap.get(mch);
@@ -247,8 +247,8 @@ public class ProjectExplorerContentProvider implements
 			}
 		}
 
-		if (parent instanceof IContext) {
-			IContext ctx = (IContext) parent;
+		if (parent instanceof IContextFile) {
+			IContextFile ctx = (IContextFile) parent;
 
 			if (elementsMap.containsKey(ctx)) {
 				return (Object[]) elementsMap.get(ctx);
@@ -271,9 +271,9 @@ public class ProjectExplorerContentProvider implements
 			IRodinProject prj = (IRodinProject) parent;
 			try {
 				IRodinElement[] machines = prj
-						.getChildrenOfType(IMachine.ELEMENT_TYPE);
+						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
 				IRodinElement[] contexts = prj
-						.getChildrenOfType(IContext.ELEMENT_TYPE);
+						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 
 				IRodinElement[] results = new IRodinElement[machines.length
 						+ contexts.length];

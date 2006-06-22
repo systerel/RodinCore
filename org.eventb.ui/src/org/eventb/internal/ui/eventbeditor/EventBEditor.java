@@ -40,12 +40,12 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContext;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachine;
-import org.eventb.core.ISees;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -603,10 +603,11 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            instance of IRodinElement
 	 */
 	private void setElementSelection(IRodinElement element) {
-		if (element instanceof IMachine) return;
-		if (element instanceof IContext) return;
+		if (element instanceof IMachineFile) return;
 		
-		if (element instanceof ISees) {
+		if (element instanceof IContextFile) return;
+		
+		if (element instanceof ISeesContext) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
 		}
@@ -633,7 +634,7 @@ public abstract class EventBEditor extends FormEditor implements
 			this.setActivePage(EventPage.PAGE_ID);
 
 		else if (element instanceof IVariable) {
-			if (element.getParent() instanceof IMachine)
+			if (element.getParent() instanceof IMachineFile)
 				this.setActivePage(VariablePage.PAGE_ID);
 			else
 				this.setActivePage(EventPage.PAGE_ID);

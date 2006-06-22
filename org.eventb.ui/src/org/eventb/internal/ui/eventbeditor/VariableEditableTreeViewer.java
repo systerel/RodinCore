@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
-import org.eventb.core.basis.Machine;
+import org.eventb.core.basis.MachineFile;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
@@ -46,7 +46,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	class VariableContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root
-		private IMachine invisibleRoot = null;
+		private IMachineFile invisibleRoot = null;
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
@@ -61,9 +61,9 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IMachine) {
+			if (parent instanceof IMachineFile) {
 				try {
-					return ((IMachine) parent)
+					return ((IMachineFile) parent)
 							.getChildrenOfType(IVariable.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -96,7 +96,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (Machine) parent;
+					invisibleRoot = (MachineFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

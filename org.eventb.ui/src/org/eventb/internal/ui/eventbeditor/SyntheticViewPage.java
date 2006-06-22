@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.IMachine;
+import org.eventb.core.IMachineFile;
 
 /**
  * @author htson
@@ -56,7 +56,7 @@ public class SyntheticViewPage extends EventBFormPage {
 			IManagedForm managedForm, Composite parent, int style,
 			EventBEditor editor) {
 		EventBPartWithButtons part;
-		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachine)
+		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachineFile)
 			part = new SyntheticMachineViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
 					(EventBEditor) this.getEditor());
