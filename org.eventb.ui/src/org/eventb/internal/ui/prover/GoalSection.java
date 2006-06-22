@@ -152,6 +152,12 @@ public class GoalSection extends SectionPart implements IProofStateChangedListen
 		((ProverUI) page.getEditor()).getUserSupport().addStateChangedListeners(this);
 	}
 
+	@Override
+	public void dispose() {
+		((ProverUI) page.getEditor()).getUserSupport().removeStateChangedListeners(this);
+		super.dispose();
+	}
+
 	/**
 	 * Creating the client of the section.
 	 * <p>
