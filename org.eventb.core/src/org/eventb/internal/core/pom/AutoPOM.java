@@ -22,7 +22,6 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
-import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
@@ -75,8 +74,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		RodinCore.run(
 				new IWorkspaceRunnable() {
 					public void run(IProgressMonitor saveMonitor) throws CoreException {
-						Map<String, Status> newStatus = computeNewStatus();
 						Map<String, IProof> oldProofs = getOldProofs();
+						Map<String, Status> newStatus = computeNewStatus(oldProofs);
 						createFreshPRFile(newStatus,oldProofs);
 					}
 				}, monitor);
@@ -92,32 +91,59 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 
 	
-	Map<String, Status> computeNewStatus() throws RodinDBException
+//	Map<String, Status> computeNewStatus() throws RodinDBException
+//	{
+//		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
+//		Map<String, Status> newStatus = new HashMap<String, Status>();
+//		
+//		if (prFile.exists()){
+//			Map<String, IProverSequent> oldPOs = PRUtil.readPOs(prFile);
+//			Map<String, Status> oldStatus = PRUtil.readStatus(prFile);
+//			for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
+//				String newPOname = newPO.getKey();
+//				IProverSequent newPOseq = newPO.getValue();
+//				IProverSequent oldPOseq = oldPOs.get(newPOname);
+//				if  ((oldPOseq != null) &&
+//						(Lib.sufficient(newPOseq,oldPOseq)))
+//					newStatus.put(newPOname,oldStatus.get(newPOname));
+//				else
+//					newStatus.put(newPOname,Status.PENDING);	
+//			}
+//		}
+//		else
+//		{
+//			for (String name : newPOs.keySet())
+//				newStatus.put(name,Status.PENDING);
+//		}
+//		return newStatus;
+//	}
+	
+	
+	Map<String, Status> computeNewStatus(Map<String, IProof> oldProofs) throws RodinDBException
 	{
 		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
 		Map<String, Status> newStatus = new HashMap<String, Status>();
 		
-		if (prFile.exists()){
-			Map<String, IProverSequent> oldPOs = PRUtil.readPOs(prFile);
-			Map<String, Status> oldStatus = PRUtil.readStatus(prFile);
-			for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
-				String newPOname = newPO.getKey();
-				IProverSequent newPOseq = newPO.getValue();
-				IProverSequent oldPOseq = oldPOs.get(newPOname);
-				if  ((oldPOseq != null) &&
-						(Lib.sufficient(newPOseq,oldPOseq)))
-					newStatus.put(newPOname,oldStatus.get(newPOname));
-				else
-					newStatus.put(newPOname,Status.PENDING);	
-			}
+		for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
+			String newPOname = newPO.getKey();
+			IProverSequent newPOseq = newPO.getValue();
+			IProof oldProof = oldProofs.get(newPOname);
+			if  (oldProof != null &&
+					oldProof.getGoal().equals(newPOseq.goal()) &&
+					newPOseq.hypotheses().containsAll(oldProof.getUsedHypotheses()))
+				{
+					newStatus.put(newPOname,oldProof.getStatus());
+				}
+			else
+				{
+					newStatus.put(newPOname,Status.PENDING);
+				}
 		}
-		else
-		{
-			for (String name : newPOs.keySet())
-				newStatus.put(name,Status.PENDING);
-		}
+		
 		return newStatus;
 	}
+	
+	
 	
 	
 	public void clean(IFile file, 
