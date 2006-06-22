@@ -56,8 +56,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 
 	/**
 	 * Returns a handle to a child internal element with the given type and
-	 * name. This is a handle-only method. The child element may or may not be
-	 * present.
+	 * name. The name is empty if it is an unnamed element. This is a
+	 * handle-only method. The child element may or may not be present.
 	 * 
 	 * @param childType
 	 *            type of the child element
