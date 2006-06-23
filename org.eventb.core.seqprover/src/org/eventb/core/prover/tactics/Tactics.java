@@ -48,8 +48,6 @@ public class Tactics {
 	
 	public static ITactic externalPP(boolean restricted,
 			IProgressMonitor monitor) {
-//		final org.eventb.core.prover.reasoner.LegacyProvers.Input input = 
-//			new ;
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
 				new ExternalPP.Input(restricted, monitor));
@@ -57,8 +55,6 @@ public class Tactics {
 	
 	public static ITactic externalPP(boolean restricted, long timeOutDelay,
 			IProgressMonitor monitor) {
-//		final LegacyProvers.Input input = 
-//			new ExternalPP.Input(restricted, timeOutDelay, monitor);
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
 				new ExternalPP.Input(restricted, timeOutDelay, monitor));
@@ -66,9 +62,6 @@ public class Tactics {
 	
 	public static ITactic externalML(int forces,
 			IProgressMonitor monitor) {
-//		final LegacyProvers.Input input = 
-//			new ExternalML.Input(forces, monitor);
-//		return pluginTac(new ExternalML(), input);
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
 				new ExternalML.Input(forces, monitor));
@@ -76,23 +69,11 @@ public class Tactics {
 	
 	public static ITactic externalML(int forces, long timeOutDelay,
 			IProgressMonitor monitor) {
-//		final LegacyProvers.Input input = 
-//			new ExternalML.Input(forces, timeOutDelay, monitor);
-//		return pluginTac(new ExternalML(), input);
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
 				new ExternalML.Input(forces, timeOutDelay, monitor));
 	}
 	
-//	public static ITactic lemma(String strLemma){
-//		return 
-//		encapsulate("add hyp "+strLemma,
-//				composeStrict(
-//						pluginTac(new Cut(),new Cut.Input(strLemma)),
-//						onPending(0,conjI()),
-//						onPending(2,impI())
-//				));
-//	}
 	
 	public static ITactic review(Set<Hypothesis> hyps,Predicate goal) {
 		return BasicTactics.reasonerTac(new Review(),new Review.Input(hyps,goal));
@@ -112,33 +93,10 @@ public class Tactics {
 		return repeat(onAllPending(T));
 	}
 	
-//	public static ITactic doCase(String kase){	
-//		String lemma = "("+ kase +") \u2228\u00ac("+ kase +")";
-//		return 
-//		encapsulate("do case "+ kase ,
-//				composeStrict(
-//						pluginTac(new org.eventb.core.prover.externalReasoners.Cut(),new org.eventb.core.prover.externalReasoners.Cut.Input(lemma)),
-//						onPending(0,conjI()),
-//						onPending(2,pluginTac(new org.eventb.core.prover.externalReasoners.DisjE(),null)),
-//						onPending(2,norm()),
-//						// onPending(0,externalPP(true,null))
-//						onPending(0,excludedMiddle())
-//				));
-//		
-//	}
-	
 	public static ITactic doCase(String trueCase){	
 		return BasicTactics.reasonerTac(new DoCase(),new DoCase.Input(trueCase));
 	}
 	
-//	public static ITactic contradictGoal(){
-//		return 
-//		encapsulate("contradict goal",
-//		composeStrict(
-//				pluginTac(new Contr(),new Contr.Input()),
-//				onPending(0,impI())
-//		));
-//	}
 	
 	public static ITactic contradictGoal(){
 		return BasicTactics.reasonerTac(new Contr(),new Contr.Input());
@@ -147,9 +105,6 @@ public class Tactics {
 
 	// Tactics applicable on the goal
 	
-//	public static ITactic impI() {
-//		return new ITactic.RuleTac(new ImpI());
-//	}
 	
 	public static ITactic impI() {
 		return BasicTactics.reasonerTac(new ImpI(),new Reasoner.DefaultInput());
@@ -158,10 +113,6 @@ public class Tactics {
 	public static boolean impI_applicable(Predicate goal){
 		return Lib.isImp(goal);
 	}
-	
-//	public static ITactic conjI() {
-//		return new ITactic.RuleTac(new ConjI());
-//	}
 	
 	public static ITactic conjI() {
 		return BasicTactics.reasonerTac(new ConjI(),new Reasoner.DefaultInput());
@@ -179,15 +130,6 @@ public class Tactics {
 		return Lib.isUnivQuant(goal);
 	}
 	
-//	public static ITactic exI(String... witnesses){
-//		return 
-//		encapsulate("provide witnesses",
-//		composeStrict(
-//				pluginTac(new ExI(),new ExI.Input(witnesses)),
-//						onPending(0,conjI())
-//				));
-//	}
-	
 	public static ITactic exI(String... witnesses) {
 		return BasicTactics.reasonerTac(new ExI(),new ExI.Input(witnesses));
 	}
@@ -196,10 +138,6 @@ public class Tactics {
 		return Lib.isExQuant(goal);
 	}
 	
-//	public static ITactic removeNegGoal(){
-//		return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new RemoveNegation()));
-//	}
-	
 	public static ITactic removeNegGoal(){
 		return BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new RemoveNegation()));
 	}
@@ -207,10 +145,6 @@ public class Tactics {
 	public static boolean removeNegGoal_applicable(Predicate goal){
 		return (new RemoveNegation()).isApplicable(goal);
 	}
-	
-//	public static ITactic disjToImpGoal(){
-//		return pluginTac(new RewriteGoal(),new RewriteGoal.Input(new DisjToImpl()));
-//	}
 	
 	public static ITactic disjToImpGoal(){
 		return BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new DisjToImpl()));
@@ -223,16 +157,6 @@ public class Tactics {
 	
 	// Tactics applicable on a hypothesis
 	
-//	public static ITactic allF(Hypothesis univHyp, String... instantiations){
-//		return 
-//		encapsulate("instantiate ∀hyp "+ univHyp.toString(),
-//		composeStrict(
-//				pluginTac(new AllF(),new AllF.Input(instantiations,univHyp)),
-//				onPending(0,conjI()),
-//				onPending(1,impI())
-//		));
-//	}
-	
 	// TODO : rename to allD , change order of input in one of the two places
 	public static ITactic allF(Hypothesis univHyp, String... instantiations){
 		return BasicTactics.reasonerTac(new AllD(),new AllD.Input(instantiations,univHyp));
@@ -241,15 +165,6 @@ public class Tactics {
 	public static boolean allF_applicable(Hypothesis hyp){
 		return Lib.isUnivQuant(hyp.getPredicate());
 	}
-	
-//	public static ITactic conjD(Hypothesis conjHyp){
-//		return 
-//		encapsulate("remove ∧hyp "+conjHyp.toString(),
-//		composeStrict(
-//				pluginTac(new ConjD(),new ConjD.Input(conjHyp)),
-//				onPending(0,impI())
-//		));
-//	}
 	
 	public static ITactic conjD(Hypothesis conjHyp){
 		return BasicTactics.reasonerTac(new ConjE(),new ConjE.Input(conjHyp));
@@ -270,16 +185,6 @@ public class Tactics {
 		return Lib.isImp(hyp.getPredicate());
 	}
 	
-//	public static ITactic disjE(Hypothesis disjHyp){
-//		return 
-//		encapsulate("remove ∨hyp "+disjHyp.toString(),
-//				composeStrict(
-//						pluginTac(new DisjE(),new DisjE.Input(disjHyp)),
-//						onPending(0,conjI()),
-//						onAllPending(impI())
-//				));
-//	}
-	
 	public static ITactic disjE(Hypothesis disjHyp){
 		return BasicTactics.reasonerTac(new DisjE(),new DisjE.Input(disjHyp));
 	}
@@ -287,15 +192,6 @@ public class Tactics {
 	public static boolean disjE_applicable(Hypothesis hyp){
 		return Lib.isDisj(hyp.getPredicate());
 	}
-	
-//	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
-//		return 
-//		encapsulate("use = hyp "+ eqHyp.toString(),
-//		composeStrict(
-//				pluginTac(new Eq(),new Eq.Input(eqHyp,useReflexive)),
-//				onPending(0,impI())
-//		));
-//	}
 
 	// TODO : remove use reflexive
 	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
@@ -306,16 +202,6 @@ public class Tactics {
 		return Lib.isEq(hyp.getPredicate());
 	}
 	
-//	public static ITactic exF(Hypothesis exHyp){
-//		return 
-//		encapsulate("remove ∃hyp "+exHyp.toString(),
-//		composeStrict(
-//				pluginTac(new ExF(),new ExF.Input(exHyp)),
-//				onPending(0,allI()),
-//				onPending(0,impI())
-//		));
-//	}
-	
 	// TODO : rename to exE
 	public static ITactic exF(Hypothesis exHyp){
 		return BasicTactics.reasonerTac(new ExE(),new ExE.Input(exHyp));
@@ -325,16 +211,7 @@ public class Tactics {
 		return Lib.isExQuant(hyp.getPredicate());
 	}
 	
-//	public static ITactic removeNegHyp(Hypothesis hyp){
-//		return 
-//		encapsulate("remove ¬ hyp "+hyp.toString(),
-//				composeStrict(
-//						pluginTac(new RewriteHyp(),new RewriteHyp.Input(hyp,new RemoveNegation())),
-//						onPending(0,mngHyp(ActionType.DESELECT,hyp)),
-//						onPending(0,impI())
-//				));
-//	}
-//	
+
 	public static ITactic removeNegHyp(Hypothesis hyp){
 		return  BasicTactics.reasonerTac(new RewriteHyp(),new RewriteHyp.Input(new RemoveNegation(),hyp));
 	}
@@ -344,15 +221,6 @@ public class Tactics {
 	}
 	
     // Tactics applicable on every hypothesis
-	
-//	public static ITactic falsifyHyp(Hypothesis hyp){
-//		return 
-//		encapsulate("falsify hyp: "+hyp.toString(),
-//				composeStrict(
-//						pluginTac(new Contr(),new Contr.Input(hyp)),
-//						onPending(0,impI())
-//				));
-//	}
 	
 	public static ITactic falsifyHyp(Hypothesis hyp){
 		return BasicTactics.reasonerTac(new Contr(),new Contr.Input(hyp));
@@ -380,13 +248,6 @@ public class Tactics {
 		);
 	}
 	
-//	public static ITactic trivialGoalRewrite() {
-//		return compose(
-//				pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites())),
-//				pluginTac(new RewriteGoal(),new RewriteGoal.Input(new TypeExpRewrites()))
-//		);
-//	}
-	
 	public static ITactic trivialGoalRewrite() {
 		return compose(
 				BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites())),
@@ -397,10 +258,6 @@ public class Tactics {
 	public static ITactic prune() {
 		return BasicTactics.prune();
 	}
-	
-//	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
-//		return new ITactic.RuleTac(new MngHyp(new HypothesesManagement.Action(type,hypotheses)));
-//	}
 	
 	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
 		return BasicTactics.reasonerTac(
@@ -421,12 +278,5 @@ public class Tactics {
 						);
 				
 	}
-	
-//	private static ITactic excludedMiddle() {
-//		return compose(
-//				disjToImpGoal(),
-//				norm()
-//				);
-//	}
 	
 }
