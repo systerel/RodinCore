@@ -258,12 +258,12 @@
       <internalElementType
             class="org.eventb.core.basis.SCRefinesEvent"
             id="scRefinesEvent"
-            name="%eventBRefinesEvent"
+            name="%eventBscRefinesEvent"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.SCRefinesMachine"
             id="scRefinesMachine"
-            name="%eventBRefinesMachine"
+            name="%eventBscRefinesMachine"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.SCVariant"
