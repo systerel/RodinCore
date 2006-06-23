@@ -81,18 +81,6 @@ public class PRUtil {
 		return result;
 	}
 	
-	public static Map<String, IProof> readProofs(IPRFile prFile) throws RodinDBException{
-		IPOSequent[] sequents = prFile.getSequents();
-		Map<String, IProof> result 
-		= new HashMap<String, IProof>(sequents.length);
-		for (IPRSequent prSeq : (IPRSequent[]) sequents){
-			String name = prSeq.getName();
-			IProof proof = prSeq.getProof();
-			result.put(name,proof);
-		}
-		return result;
-	}
-	
 	public static IProverSequent makeSequent(IPRSequent prSeq) throws RodinDBException{
 		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
 		IPRFile prFile = (IPRFile) prSeq.getOpenable();

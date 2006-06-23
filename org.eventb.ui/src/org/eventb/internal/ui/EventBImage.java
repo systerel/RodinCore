@@ -65,10 +65,18 @@ public class EventBImage {
 	public static final String IMG_AXIOMS = "Axioms";
 
 	public static final String IMG_DISCHARGED = "Discharged";
+	
+	public static final String IMG_DISCHARGED_BROKEN = "Discharged Broken";
 
 	public static final String IMG_PENDING = "Pending";
 
+	public static final String IMG_PENDING_BROKEN = "Pending Broken";
+	
 	public static final String IMG_APPLIED = "Applied";
+	
+	public static final String IMG_UNATTEMPTED = "Unattempted";
+	
+	public static final String IMG_DEFAULT = "Default";
 
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
@@ -150,9 +158,13 @@ public class EventBImage {
 		registerImage(registry, IMG_NEW_COMPONENT, "full/clcl16/newcomp_wiz.gif");
 
 		registerImage(registry, IMG_PENDING, "pending.gif");
+		registerImage(registry, IMG_PENDING_BROKEN, "pending_broken.gif");
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
-
+		registerImage(registry, IMG_DISCHARGED_BROKEN, "discharged_broken.gif");
+		registerImage(registry, IMG_UNATTEMPTED, "unattempted.gif");
+		registerImage(registry, IMG_DEFAULT, "sample.gif");
+		
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
 	}
 

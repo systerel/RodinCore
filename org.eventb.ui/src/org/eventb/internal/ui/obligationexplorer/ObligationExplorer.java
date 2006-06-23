@@ -40,6 +40,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
+import org.eventb.core.IProof.Status;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -137,10 +138,29 @@ public class ObligationExplorer extends ViewPart implements
 				try {
 //					Replaced check on proof with check on sequent
 //					TODO: synchronize with the proof tree in memory
-					if (ps.isDischarged())
-						return registry.get(EventBImage.IMG_DISCHARGED);
+					
+					if (! ps.proofAttempted())
+						return registry.get(EventBImage.IMG_UNATTEMPTED);
+					
+					if (ps.isProofBroken())
+					{
+						Status proofStatus = ps.getProof().getStatus();
+						if (proofStatus.equals(Status.DISCHARGED))
+							return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
+						if (proofStatus.equals(Status.DISCHARGED))
+							return registry.get(EventBImage.IMG_PENDING_BROKEN);
+						return registry.get(EventBImage.IMG_DEFAULT);
+					}
 					else
-						return registry.get(EventBImage.IMG_PENDING);
+					{
+						if (ps.isDischarged())
+							return registry.get(EventBImage.IMG_DISCHARGED);
+						else
+							return registry.get(EventBImage.IMG_PENDING);
+					}
+					
+					// return registry.get(EventBImage.IMG_DEFAULT);
+					
 //  				Previous code:
 //					IProof status = ps.getProof();
 //					if (status.getContents().equals("PENDING"))

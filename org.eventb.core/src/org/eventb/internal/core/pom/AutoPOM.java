@@ -86,7 +86,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	Map<String, IProof> getOldProofs() throws RodinDBException{
 		if (prFile.exists())
-			return PRUtil.readProofs(prFile);
+			return prFile.getProofs();
 		return new HashMap<String, IProof>();
 	}
 	

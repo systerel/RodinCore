@@ -238,7 +238,7 @@
             tooltip="External prover: Mono-lemma prover in all force"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Review"
-            icon="icons/full/ctool16/ml_prover.gif"
+            icon="icons/full/ctool16/rv_prover.gif"
             id="org.eventb.ui.review"
             tooltip="Review goal with selected hypotheses"/>
    </extension>

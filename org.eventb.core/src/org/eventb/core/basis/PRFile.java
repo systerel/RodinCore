@@ -83,7 +83,7 @@ public class PRFile extends POFile implements IPRFile {
 		HashMap<String, IProof> proofs = new HashMap<String, IProof>(list.size());
 		for (IRodinElement element : list){
 			// avoid two proofs with the same name
-			assert proofs.containsKey(element.getElementName());
+			assert (! proofs.containsKey(element.getElementName()));
 			proofs.put(element.getElementName(),(IProof)element);
 		}
 		return proofs;
