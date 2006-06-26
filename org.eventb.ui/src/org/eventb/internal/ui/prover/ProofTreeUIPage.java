@@ -54,6 +54,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
@@ -650,6 +651,18 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 								new StructuredSelection(currentNode));
 				}
 			});
+		}
+		else {
+			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
+			UIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
+			if (proofTreeDelta != null) {
+				viewer.refresh();
+			}
+			
+			IProofTreeNode node = delta.getNewProofTreeNode();
+			if (node != null) {
+				viewer.setSelection(new StructuredSelection(node), true);
+			}
 		}
 	}
 

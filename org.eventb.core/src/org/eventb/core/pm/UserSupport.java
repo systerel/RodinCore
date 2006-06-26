@@ -12,6 +12,8 @@ import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.prover.IProofTreeChangedListener;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.ITactic;
@@ -27,7 +29,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class UserSupport implements IElementChangedListener {
+public class UserSupport implements IElementChangedListener, IProofTreeChangedListener {
 
 	private IPRFile prFile; // Unique for an instance of UserSupport
 
@@ -36,8 +38,6 @@ public class UserSupport implements IElementChangedListener {
 	protected ProofState currentPS;
 
 	private boolean fireDelta;
-
-	private boolean saveHypState;
 
 	private Object information;
 
@@ -53,7 +53,6 @@ public class UserSupport implements IElementChangedListener {
 		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
-		saveHypState = true;
 	}
 
 	// private void saveHypothesisState() {
@@ -107,6 +106,7 @@ public class UserSupport implements IElementChangedListener {
 
 	private void notifyPendingDelta() {
 		if (fireDelta) {
+			UserSupportUtils.debug("Notified: " + delta);
 			notifyStateChangedListeners(delta);
 			// IProofStateDelta delta;
 			// Collection<IHypothesisDelta> hypDelta = calculateHypDelta();
@@ -118,17 +118,55 @@ public class UserSupport implements IElementChangedListener {
 			// currentPS);
 			// notifyStateChangedListeners(delta);
 			// saveHypState = true;
+			delta = new ProofStateDelta(); // Clear delta
 		}
 	}
 
 	public void fireProofStateDelta(IProofStateDelta newDelta) {
+		UserSupportUtils.debug("Fire Delta: " + newDelta);
 		delta = mergeDelta(delta, newDelta);
 		notifyPendingDelta();
 	}
 
 	private IProofStateDelta mergeDelta(IProofStateDelta oldDelta,
 			IProofStateDelta newDelta) {
-		return newDelta;
+		ProofStateDelta mergedDelta = new ProofStateDelta();
+		
+		ProofState newProofState = newDelta.getNewProofState();
+		if (newProofState != null) {
+			mergedDelta.setNewProofState(newProofState);
+			return mergedDelta;
+		}
+		else {
+			ProofState oldProofState = oldDelta.getNewProofState();
+			if (oldProofState != null) {
+				mergedDelta.setNewProofState(oldProofState);
+				return mergedDelta;
+			}
+			else {
+				// Proof Tree Delta
+				IProofTreeDelta newProofTreeDelta = newDelta.getProofTreeDelta();
+				IProofTreeDelta oldProofTreeDelta = oldDelta.getProofTreeDelta();
+				if (newProofTreeDelta != null) {
+					mergedDelta.setProofTreeDelta(newProofTreeDelta);
+				}
+				else if (oldProofTreeDelta != null) {
+					mergedDelta.setProofTreeDelta(oldProofTreeDelta);
+				}
+				
+				// Current Node
+				IProofTreeNode newCurrentNode = newDelta.getNewProofTreeNode();
+				IProofTreeNode oldCurrentNode = oldDelta.getNewProofTreeNode();
+				if (newCurrentNode != null) {
+					mergedDelta.setNewCurrentNode(newCurrentNode);
+				}
+				else if (oldCurrentNode != null) {
+					mergedDelta.setNewCurrentNode(oldCurrentNode);
+				}
+				
+				return mergedDelta;
+			}
+		}
 	}
 
 	public void batchOperation(Runnable op) {
@@ -321,8 +359,10 @@ public class UserSupport implements IElementChangedListener {
 
 	private void setProofState(ProofState ps) throws RodinDBException {
 		if (currentPS != ps) {
+			if (currentPS != null) currentPS.getProofTree().removeChangeListener(this);
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
 			currentPS = ps;
+			ps.getProofTree().addChangeListener(this);
 			ProofStateDelta newDelta = new ProofStateDelta();
 			newDelta.setNewProofState(ps);
 			fireProofStateDelta(newDelta);
@@ -689,4 +729,12 @@ public class UserSupport implements IElementChangedListener {
 		return unsaved.toArray(new ProofState[unsaved.size()]);
 	}
 
+	public void proofTreeChanged(IProofTreeDelta proofTreeDelta) {
+		UserSupportUtils.debug("UserSupport - Proof Tree Changed: " + proofTreeDelta);
+		ProofStateDelta newDelta = new ProofStateDelta();
+		newDelta.setProofTreeDelta(proofTreeDelta);
+		fireProofStateDelta(newDelta);		
+	}
+
+	
 }

@@ -61,7 +61,7 @@ public class ProofState {
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
 		current = getNextPendingSubgoal();
-		UserSupportUtils.debug("Next Pending Subgoal: " + current);
+//		UserSupportUtils.debug("Next Pending Subgoal: " + current);
 		if (current == null) {
 			current = pt.getRoot();
 		}

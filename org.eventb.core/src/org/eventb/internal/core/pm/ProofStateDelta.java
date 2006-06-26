@@ -6,6 +6,7 @@ import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 
@@ -20,6 +21,8 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	private ProofState ps;
 
+	private IProofTreeDelta proofTreeDelta;
+	
 	private IProofTreeNode node;
 
 
@@ -41,6 +44,8 @@ public class ProofStateDelta implements IProofStateDelta {
 		removedFromSearched = null;
 		newSearch = false;
 		ps = null;
+		node = null;
+		proofTreeDelta = null;
 	}
 
 	public ProofStateDelta(IGoalDelta goalDelta,
@@ -90,6 +95,27 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	public void setNewSearch() {
 		newSearch = true;
+	}
+
+	public void setProofTreeDelta(IProofTreeDelta proofTreeDelta) {
+		this.proofTreeDelta = proofTreeDelta;
+	}
+
+	public IProofTreeDelta getProofTreeDelta() {
+		return proofTreeDelta;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String result = "\n***************************";
+		result = result + "\n" + "Proof State: " + ps;
+		result = result + "\n" + "ProofTreeDelta: " + proofTreeDelta;
+		result = result + "\n" + "Current Node: " + node;
+		result = result + "\n***************************";
+		return result;
 	}
 
 }
