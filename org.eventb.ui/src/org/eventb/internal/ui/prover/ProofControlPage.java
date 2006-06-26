@@ -511,16 +511,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(IProofStateDelta delta) {
-		final IProofTreeNode node = delta.getGoalDelta().getProofTreeNode();
+		
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				updateToolItems(node);
-			}
-		});
-
-		final ProofControlPage page = this;
+		.getDisplay();
+		final ProofState ps = delta.getNewProofState();
+		IProofTreeNode node = null;
+		if (ps != null) {
+			node = ps.getCurrentNode();
+		}
+		else {
+			node = delta.getNewProofTreeNode();
+		}
+		if (node != null) {
+			final IProofTreeNode newNode = node;
+			display.syncExec(new Runnable() {
+				public void run() {
+					updateToolItems(newNode);
+				}	
+			});				
+		}
+		
+//		final ProofControlPage page = this;
 
 		final Object information = delta.getInformation();
 		display.syncExec(new Runnable() {
@@ -530,7 +541,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				else
 					setFormTextInformation("");
 				scrolledForm.reflow(true);
-				page.setFocus();
+//				page.setFocus();
 			}
 		});
 

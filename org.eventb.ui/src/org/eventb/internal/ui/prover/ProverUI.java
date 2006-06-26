@@ -350,7 +350,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		super.setFocus();
 		UIUtils.debugProverUI("Focus");
 		// Find obligationExplorer and sync
-		syncObligationExplorer();
+//		syncObligationExplorer();
 	}
 
 	/**
@@ -436,12 +436,16 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	public void proofStateChanged(IProofStateDelta delta) {
 		UIUtils.debugProverUI("PO Changed");
 		this.editorDirtyStateChanged();
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				syncObligationExplorer();
-			}
-		});
+		
+		ProofState ps = delta.getNewProofState();
+		if (ps != null) {
+			Display display = EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+//					syncObligationExplorer();
+				}
+			});
+		}
 	}
 }

@@ -321,18 +321,22 @@ public class ProofInformationPage extends Page implements
 	}
 
 	public void proofStateChanged(IProofStateDelta delta) {
-		final IPRSequent prSequent = delta.getProofState().getPRSequent();
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (prSequent.exists()) {
-					scrolledForm.setText(prSequent.getName());
-					scrolledForm.reflow(true);
-					setFormText(prSequent);
+		ProofState ps = delta.getNewProofState();
+		if (ps != null) {
+			final IPRSequent prSequent = ps.getPRSequent();
+			Display display = EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					if (prSequent.exists()) {
+						scrolledForm.setText(prSequent.getName());
+						scrolledForm.reflow(true);
+						setFormText(prSequent);
+					}
 				}
-			}
-		});
+			});			
+		}
+		
 	}
 
 }

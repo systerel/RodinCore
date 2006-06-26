@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
@@ -35,7 +34,6 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -177,91 +175,106 @@ public class ProofsPage extends FormPage implements
 	}
 
 	public void proofStateChanged(IProofStateDelta delta) {
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+		.getDisplay();
+		final ProofState ps = delta.getNewProofState();
+		if (ps != null) { // Reload everything
+			display.syncExec(new Runnable() {
+				public void run() {
+					selected = ps.getCurrentNode().getSequent().selectedHypotheses();
+					selectedSection.refresh(selected);
+					cached = ps.getCached();
+					cachedSection.refresh(cached);
+					searched = ps.getSearched();
+					searchedSection.refresh(searched);
+				}
+			});
+		}
+		else { // Update the hypotheses sections
+			
+		}
 		// final PenguinDanceDialog dialog = new
 		// PenguinDanceDialog(EventBUIPlugin.getActiveWorkbenchShell());
 		//		
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				ProofsPage.this.getEditor().editorDirtyStateChanged();
-			}
-		});
+//		display.syncExec(new Runnable() {
+//			public void run() {
+//				ProofsPage.this.getEditor().editorDirtyStateChanged();
+//			}
+//		});
 		
-		Collection<IHypothesisDelta> hypDelta = delta.getHypothesesDelta();
-
-		final Collection<Hypothesis> addedToSelected = new HashSet<Hypothesis>();
-		final Collection<Hypothesis> removedFromSelected = new HashSet<Hypothesis>();
-		final Collection<Hypothesis> addedToCached = new HashSet<Hypothesis>();
-		final Collection<Hypothesis> removedFromCached = new HashSet<Hypothesis>();
-		final Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
-		final Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
-
-		for (Iterator<IHypothesisDelta> it = hypDelta.iterator(); it.hasNext();) {
-			IHypothesisDelta d = it.next();
-			Hypothesis hyp = d.getHypothesis();
-			UIUtils.debugProverUI("Hypothesis: " + hyp.getPredicate());
-			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SELECTED) != 0) {
-				addedToSelected.add(hyp);
-				if (cached.contains(hyp))
-					removedFromCached.add(hyp);
-				else if (searched.contains(hyp))
-					removedFromSearched.add(hyp);
-				UIUtils.debugProverUI("Add to UI Selected");
-				selected.add(hyp);
-			}
-			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SELECTED) != 0) {
-				removedFromSelected.add(hyp);
-				if (cached.contains(hyp))
-					addedToCached.add(hyp);
-				else if (searched.contains(hyp))
-					addedToSearched.add(hyp);
-				UIUtils.debugProverUI("Remove from UI Selected");
-				selected.remove(hyp);
-			}
-			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_CACHED) != 0) {
-				if (!selected.contains(hyp)) {
-					addedToCached.add(hyp);
-					if (searched.contains(hyp))
-						removedFromSearched.add(hyp);
-				}
-				UIUtils.debugProverUI("Add to UI Cached");
-				cached.add(hyp);
-			}
-			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_CACHED) != 0) {
-				if (!selected.contains(hyp)) {
-					removedFromCached.add(hyp);
-					if (searched.contains(hyp))
-						addedToSearched.add(hyp);
-				}
-				UIUtils.debugProverUI("Remove from UI Cached");
-				cached.remove(hyp);
-			}
-			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SEARCHED) != 0) {
-				if (!selected.contains(hyp) && !cached.contains(hyp))
-					addedToSearched.add(hyp);
-				UIUtils.debugProverUI("Add to UI Searched");
-				searched.add(hyp);
-			}
-			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SEARCHED) != 0) {
-				if (!selected.contains(hyp) && !cached.contains(hyp))
-					removedFromSearched.add(d.getHypothesis());
-				UIUtils.debugProverUI("Remove from UI Searched");
-				searched.remove(hyp);
-			}
-
-		}
-
-		// if (UIUtils.DEBUG) System.out.println("Update selectedSection");
-//		Display display = EventBUIPlugin.getDefault().getWorkbench()
-//				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				selectedSection.update(addedToSelected, removedFromSelected);
-				cachedSection.update(addedToCached, removedFromCached);
-				searchedSection.update(addedToSearched, removedFromSearched);
-			}
-		});
+//		Collection<IHypothesisDelta> hypDelta = delta.getHypothesesDelta();
+//
+//		final Collection<Hypothesis> addedToSelected = new HashSet<Hypothesis>();
+//		final Collection<Hypothesis> removedFromSelected = new HashSet<Hypothesis>();
+//		final Collection<Hypothesis> addedToCached = new HashSet<Hypothesis>();
+//		final Collection<Hypothesis> removedFromCached = new HashSet<Hypothesis>();
+//		final Collection<Hypothesis> addedToSearched = new HashSet<Hypothesis>();
+//		final Collection<Hypothesis> removedFromSearched = new HashSet<Hypothesis>();
+//
+//		for (Iterator<IHypothesisDelta> it = hypDelta.iterator(); it.hasNext();) {
+//			IHypothesisDelta d = it.next();
+//			Hypothesis hyp = d.getHypothesis();
+//			UIUtils.debugProverUI("Hypothesis: " + hyp.getPredicate());
+//			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SELECTED) != 0) {
+//				addedToSelected.add(hyp);
+//				if (cached.contains(hyp))
+//					removedFromCached.add(hyp);
+//				else if (searched.contains(hyp))
+//					removedFromSearched.add(hyp);
+//				UIUtils.debugProverUI("Add to UI Selected");
+//				selected.add(hyp);
+//			}
+//			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SELECTED) != 0) {
+//				removedFromSelected.add(hyp);
+//				if (cached.contains(hyp))
+//					addedToCached.add(hyp);
+//				else if (searched.contains(hyp))
+//					addedToSearched.add(hyp);
+//				UIUtils.debugProverUI("Remove from UI Selected");
+//				selected.remove(hyp);
+//			}
+//			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_CACHED) != 0) {
+//				if (!selected.contains(hyp)) {
+//					addedToCached.add(hyp);
+//					if (searched.contains(hyp))
+//						removedFromSearched.add(hyp);
+//				}
+//				UIUtils.debugProverUI("Add to UI Cached");
+//				cached.add(hyp);
+//			}
+//			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_CACHED) != 0) {
+//				if (!selected.contains(hyp)) {
+//					removedFromCached.add(hyp);
+//					if (searched.contains(hyp))
+//						addedToSearched.add(hyp);
+//				}
+//				UIUtils.debugProverUI("Remove from UI Cached");
+//				cached.remove(hyp);
+//			}
+//			if ((d.getFlags() & IHypothesisDelta.F_ADDED_TO_SEARCHED) != 0) {
+//				if (!selected.contains(hyp) && !cached.contains(hyp))
+//					addedToSearched.add(hyp);
+//				UIUtils.debugProverUI("Add to UI Searched");
+//				searched.add(hyp);
+//			}
+//			if ((d.getFlags() & IHypothesisDelta.F_REMOVED_FROM_SEARCHED) != 0) {
+//				if (!selected.contains(hyp) && !cached.contains(hyp))
+//					removedFromSearched.add(d.getHypothesis());
+//				UIUtils.debugProverUI("Remove from UI Searched");
+//				searched.remove(hyp);
+//			}
+//		}
+//
+//		// if (UIUtils.DEBUG) System.out.println("Update selectedSection");
+////		Display display = EventBUIPlugin.getDefault().getWorkbench()
+////				.getDisplay();
+//		display.syncExec(new Runnable() {
+//			public void run() {
+//				selectedSection.update(addedToSelected, removedFromSelected);
+//				cachedSection.update(addedToCached, removedFromCached);
+//				searchedSection.update(addedToSearched, removedFromSearched);
+//			}
+//		});
 	}
 
 }

@@ -156,15 +156,31 @@ public abstract class HypothesesSection extends SectionPart {
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
-		final SectionPart part = this;
+//		final SectionPart part = this;
 		display.syncExec(new Runnable() {
 			public void run() {
 				if (!scrolledForm.isDisposed()) {
 					scrolledForm.reflow(true); // Important for refresh
-					part.refresh();
+//					part.refresh();
 				}
 			}
 		});
-
 	}
+
+	public void refresh(Collection<Hypothesis> hyps) {
+		// Remove everything
+		for (HypothesisRow row : rows) {
+			row.dispose();
+		}
+		rows.clear();
+		
+		// Add new hyps
+		for (Hypothesis hyp : hyps) {
+			HypothesisRow row = new HypothesisRow(this.getManagedForm()
+					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
+					.getUserSupport());
+			rows.add(row);
+		}
+	}
+
 }
