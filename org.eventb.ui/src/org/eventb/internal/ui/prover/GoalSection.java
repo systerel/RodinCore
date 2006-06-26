@@ -36,6 +36,8 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.tactics.Tactics;
@@ -51,7 +53,8 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This class implements the goal section in the Prover UI Editor.
  */
-public class GoalSection extends SectionPart implements IProofStateChangedListener {
+public class GoalSection extends SectionPart implements
+		IProofStateChangedListener {
 
 	// Title and description.
 	private static final String SECTION_TITLE = "Goal";
@@ -149,7 +152,8 @@ public class GoalSection extends SectionPart implements IProofStateChangedListen
 		this.page = page;
 		FormToolkit toolkit = page.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
-		((ProverUI) page.getEditor()).getUserSupport().addStateChangedListeners(this);
+		((ProverUI) page.getEditor()).getUserSupport()
+				.addStateChangedListeners(this);
 	}
 
 	@Override
@@ -188,6 +192,13 @@ public class GoalSection extends SectionPart implements IProofStateChangedListen
 		gd.widthHint = 145;
 		ft.setLayoutData(gd);
 		toolkit.paintBordersFor(comp);
+
+		UserSupport userSupport = ((ProverUI) ((ProofsPage) this.page)
+				.getEditor()).getUserSupport();
+		ProofState ps = userSupport.getCurrentPO();
+		if (ps != null) {
+			setGoal(ps.getCurrentNode());
+		}
 	}
 
 	/*
@@ -232,7 +243,7 @@ public class GoalSection extends SectionPart implements IProofStateChangedListen
 	 * @param pt
 	 *            the current proof tree node.
 	 */
-	public void setGoal(IProofTreeNode pt) {
+	private void setGoal(IProofTreeNode pt) {
 		if (composite != null)
 			composite.dispose();
 		composite = toolkit.createComposite(scrolledForm.getBody());
@@ -338,26 +349,40 @@ public class GoalSection extends SectionPart implements IProofStateChangedListen
 	 * 
 	 * @see org.eventb.core.pm.IGoalChangedListener#goalChanged(org.eventb.core.pm.IGoalChangeEvent)
 	 */
-//	public void goalChanged(IGoalChangeEvent e) {
-//		final IGoalDelta delta = e.getDelta();
-//
-//		Display display = EventBUIPlugin.getDefault().getWorkbench()
-//				.getDisplay();
-//		display.syncExec(new Runnable() {
-//			public void run() {
-//				setGoal(delta.getProofTreeNode());
-//			}
-//		});
-//	}
-
+	// public void goalChanged(IGoalChangeEvent e) {
+	// final IGoalDelta delta = e.getDelta();
+	//
+	// Display display = EventBUIPlugin.getDefault().getWorkbench()
+	// .getDisplay();
+	// display.syncExec(new Runnable() {
+	// public void run() {
+	// setGoal(delta.getProofTreeNode());
+	// }
+	// });
+	// }
+	
 	public void proofStateChanged(final IProofStateDelta delta) {
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-		.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				setGoal(delta.getGoalDelta().getProofTreeNode());
+		final ProofState ps = delta.getNewProofState();
+		if (ps != null) { // Change PO
+			Display display = EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					setGoal(ps.getCurrentNode());
+				}
+			});
+		} else {
+			final IProofTreeNode node = delta.getNewProofTreeNode();
+			if (node != null) {
+				Display display = EventBUIPlugin.getDefault().getWorkbench()
+						.getDisplay();
+				display.syncExec(new Runnable() {
+					public void run() {
+						setGoal(node);
+					}
+				});
 			}
-		});
+		}
 	}
 
 }
