@@ -59,17 +59,17 @@ public class GlobalTacticUI {
 	 * @throws InvocationTargetException
 	 *             exception when creating the new instance of the tactic
 	 */
-	public GlobalTacticUI(String ID, String image, String tips, String dropdown,
-			Constructor constructor) throws IllegalArgumentException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
-		if (ProverUI.DEBUG) {
-			System.out.println("ID: " + ID);
-			System.out.println("Image: " + image);
-			System.out.println("Tips: " + tips);
-			System.out.println("Constructor: " + constructor);
-			System.out.println("Dropdown: " + dropdown);
-		}
+	public GlobalTacticUI(String ID, String image, String tips,
+			String dropdown, Constructor constructor)
+			throws IllegalArgumentException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
+//		if (ProverUI.DEBUG) {
+//			System.out.println("ID: " + ID);
+//			System.out.println("Image: " + image);
+//			System.out.println("Tips: " + tips);
+//			System.out.println("Constructor: " + constructor);
+//			System.out.println("Dropdown: " + dropdown);
+//		}
 		this.ID = ID;
 		this.image = image;
 		this.tips = tips;
@@ -116,6 +116,16 @@ public class GlobalTacticUI {
 	 */
 	public String getDropdown() {
 		return dropdown;
+	}
+
+	/**
+	 * Get the ID of the tactic.
+	 * <p>
+	 * 
+	 * @return the string represents the tactic's ID.
+	 */
+	public String getID() {
+		return ID;
 	}
 
 }
