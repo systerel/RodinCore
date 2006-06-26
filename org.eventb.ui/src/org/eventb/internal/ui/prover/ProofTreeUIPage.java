@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.prover;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -21,9 +20,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -71,9 +68,6 @@ import org.eventb.internal.ui.UIUtils;
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelectionChangedListener, IProofStateChangedListener {
 
-	// list of Selection Changed listeners.
-	private ListenerList selectionChangedListeners = new ListenerList();
-
 	// The contained tree viewer.
 	private TreeViewer viewer;
 
@@ -85,7 +79,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// TODO Change to Rule class?
 	private Object[] filters = { "allI" }; // Default filters
 
-	private boolean byUserSupport;
+//	private boolean byUserSupport;
 
 	private TreeColumn elementColumn;
 
@@ -109,11 +103,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 			ITableColorProvider, IPropertyChangeListener {
 
 		private Font font = null;
-		
+
 		public ViewLabelProvider() {
 			// Register as a listener to the font registry
 			JFaceResources.getFontRegistry().addListener(this);
 		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -233,12 +228,15 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		public Font getFont(Object element, int columnIndex) {
 			// UIUtils.debug("Get fonts");
 			if (font == null) {
-				font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT); 
+				font = JFaceResources
+						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 			}
 			return font;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
@@ -259,7 +257,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	public ProofTreeUIPage(UserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
-		byUserSupport = false;
+//		byUserSupport = false;
 		userSupport.addStateChangedListeners(this);
 	}
 
@@ -305,9 +303,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		//			
 		// });
 		if (fInput != null)
-			viewer.setInput(fInput);
-		if (root != null)
-			viewer.setSelection(new StructuredSelection(root));
+			update();
+
+		// if (root != null)
+		// viewer.setSelection(new StructuredSelection(root));
 		elementColumn.pack();
 
 		makeActions();
@@ -345,6 +344,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				elementColumn.pack();
 				// UIUtils.debug("Width: " + elementColumn.getWidth());
 				viewer.refresh();
+				viewer.setSelection(new StructuredSelection(userSupport
+						.getCurrentPO().getCurrentNode()));
 				control.setRedraw(true);
 			}
 		}
@@ -485,29 +486,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		this.filters = filters;
 	}
 
-	/**
-	 * Fires a selection changed event.
-	 * 
-	 * @param selection
-	 *            the new selection
-	 */
-	protected void fireSelectionChanged(ISelection selection) {
-		// create an event
-		final SelectionChangedEvent event = new SelectionChangedEvent(this,
-				selection);
-
-		// fire the event
-		Object[] listeners = selectionChangedListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-			Platform.run(new SafeRunnable() {
-				public void run() {
-					l.selectionChanged(event);
-				}
-			});
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -526,7 +504,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionChangedListeners.add(listener);
+		viewer.addSelectionChangedListener(listener);
 	}
 
 	/*
@@ -547,7 +525,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 */
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
-		selectionChangedListeners.remove(listener);
+		viewer.removeSelectionChangedListener(listener);
 	}
 
 	/*
@@ -571,16 +549,17 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
+		UIUtils.debugProverUI("Selection Changed: " + event);
 		ISelection sel = event.getSelection();
 
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
-				if (byUserSupport) { // Do nothing if the selection is from
-					// UserSupport
-					byUserSupport = false;
-					return;
-				}
+//				if (byUserSupport) { // Do nothing if the selection is from
+//					// UserSupport
+//					byUserSupport = false;
+//					return;
+//				}
 
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
@@ -637,6 +616,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	/**
 	 * Return the associated UserSupport.
+	 * 
 	 * @return the associated UserSupport
 	 */
 	public UserSupport getUserSupport() {
@@ -644,28 +624,33 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	/**
-	 * Select the root of the tree viewer. 
+	 * Select the root of the tree viewer.
 	 */
 	public void selectRoot() {
 		this.setSelection(new StructuredSelection(root));
 	}
 
-
 	public void proofStateChanged(IProofStateDelta delta) {
-		UIUtils.debugProverUI("Proof Tree UI: State Changed");
-		byUserSupport = true;
-		final ProofState ps = delta.getProofState();
-		final ProofTreeUIPage page = this;
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				page.setInput(ps.getProofTree());
-				if (ps.getCurrentNode() != null)
-					page.getViewer().setSelection(
-							new StructuredSelection(ps.getCurrentNode()));
-			}
-		});		
+//		byUserSupport = true;
+		final ProofState ps = delta.getNewProofState();
+		UIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
+		if (ps != null) { // Change only when change the PO
+			final ProofTreeUIPage page = this;
+			Display display = EventBUIPlugin.getDefault().getWorkbench()
+					.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					page.setInput(ps.getProofTree());
+					IProofTreeNode currentNode = ps.getCurrentNode();
+					UIUtils.debugProverUI("Current node: "
+							+ currentNode.getSequent());
+					page.getViewer().expandAll();
+					if (currentNode != null)
+						page.getViewer().setSelection(
+								new StructuredSelection(currentNode));
+				}
+			});
+		}
 	}
 
 }
