@@ -6,20 +6,56 @@ import org.eventb.core.pm.IGoalDelta;
 import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.sequent.Hypothesis;
 
+/**
+ * @author htson
+ *         <p>
+ *         This class contains the delta which used to pass the information to
+ *         the User Interface.
+ * 
+ */
 public class ProofStateDelta implements IProofStateDelta {
-	private IGoalDelta goalDelta;
-	private Collection<IHypothesisDelta> hypothesesDelta;
-	private Object information;
-	private ProofState proofState;
+
+	private ProofState ps;
+
+	private IProofTreeNode node;
+
+
 	
-	public ProofStateDelta(IGoalDelta goalDelta, Collection<IHypothesisDelta> hypothesesDelta, Object information, ProofState proofState) {
+	private IGoalDelta goalDelta;
+
+	private Collection<IHypothesisDelta> hypothesesDelta;
+
+	private Object information;
+
+	private boolean newSearch;
+
+	private Collection<Hypothesis> removedFromCached;
+
+	private Collection<Hypothesis> removedFromSearched;
+
+	public ProofStateDelta() {
+		removedFromCached = null;
+		removedFromSearched = null;
+		newSearch = false;
+		ps = null;
+	}
+
+	public ProofStateDelta(IGoalDelta goalDelta,
+			Collection<IHypothesisDelta> hypothesesDelta, Object information,
+			ProofState proofState) {
 		this.goalDelta = goalDelta;
 		this.hypothesesDelta = hypothesesDelta;
 		this.information = information;
-		this.proofState = proofState;
+		this.ps = proofState;
 	}
-	
+
+	public void setNewCurrentNode(IProofTreeNode node) {
+		this.node = node;
+	}
+
 	public IGoalDelta getGoalDelta() {
 		return goalDelta;
 	}
@@ -27,12 +63,33 @@ public class ProofStateDelta implements IProofStateDelta {
 	public Collection<IHypothesisDelta> getHypothesesDelta() {
 		return hypothesesDelta;
 	}
-	
+
 	public Object getInformation() {
 		return information;
 	}
 
-	public ProofState getProofState() {
-		return proofState;
+	public void setNewProofState(ProofState ps) {
+		this.ps = ps;
 	}
+
+	public ProofState getNewProofState() {
+		return ps;
+	}
+
+	public IProofTreeNode getNewProofTreeNode() {
+		return node;
+	}
+
+	public void setRemoveFromCached(Collection<Hypothesis> hyps) {
+		removedFromCached = hyps;
+	}
+
+	public void setRemoveFromSearched(Collection<Hypothesis> hyps) {
+		removedFromSearched = hyps;
+	}
+
+	public void setNewSearch() {
+		newSearch = true;
+	}
+
 }
