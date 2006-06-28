@@ -212,26 +212,21 @@ public class RefinesSection extends SectionPart implements
 	private void setRefinedMachine(String machine) {
 		if (refined == null) { // Create new element
 			try {
-				// UIUtils.debug("Creat new sees clause");
 				IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 				refined = rodinFile.createInternalElement(
 						IRefinesMachine.ELEMENT_TYPE, machine, null, null);
 				refined.setContents(machine);
-				// markDirty();
 			} catch (RodinDBException exception) {
 				exception.printStackTrace();
 				refined = null;
 			}
 		} else { // Change the element
 			try {
-				// UIUtils.debug("Change sees clause");
-				// if (!(refined.getContents().equals(contextText.getText()))) {
-				refined.setContents(machine);
-				// markDirty();
-				// }
+				 if (!(refined.getContents().equals(machine))) {
+					 refined.setContents(machine);
+				 }
 			} catch (RodinDBException exception) {
 				exception.printStackTrace();
-				refined = null;
 			}
 		}
 
