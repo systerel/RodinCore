@@ -61,7 +61,7 @@ public class DependenciesPage extends FormPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		managedForm.addPart(new SeeSection(this.getEditor(), this
+		managedForm.addPart(new SeesSection(this.getEditor(), this
 				.getManagedForm().getToolkit(), body));
 	}
 

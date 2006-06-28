@@ -296,7 +296,7 @@ public class UIUtils {
 		public String getText(Object obj) {
 			if (obj instanceof ISeesContext || obj instanceof IAction) {
 				try {
-					return ((IUnnamedInternalElement) obj).getContents();
+					return ((IInternalElement) obj).getContents();
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 					return "";
