@@ -256,14 +256,7 @@ public class RefinesSection extends SectionPart implements
 				e.printStackTrace();
 			}
 		}
-		try {
-			refined = rodinFile.createInternalElement(
-					IRefinesMachine.ELEMENT_TYPE, machine, null, null);
-			refined.setContents(machine);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setRefinedMachine(machine);
 
 		UIUtils.linkToEventBEditor(machineFile);
 
