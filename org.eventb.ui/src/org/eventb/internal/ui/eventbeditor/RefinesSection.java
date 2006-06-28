@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -222,9 +223,9 @@ public class RefinesSection extends SectionPart implements
 			}
 		} else { // Change the element
 			try {
-				 if (!(refined.getContents().equals(machine))) {
-					 refined.setContents(machine);
-				 }
+				if (!(refined.getContents().equals(machine))) {
+					refined.setContents(machine);
+				}
 			} catch (RodinDBException exception) {
 				exception.printStackTrace();
 			}
@@ -237,21 +238,31 @@ public class RefinesSection extends SectionPart implements
 	 */
 	public void handleOpenOrCreate() {
 		String machine = machineCombo.getText();
+		setRefinedMachine(machine);
+
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 
 		IRodinProject project = (IRodinProject) rodinFile.getParent();
-		IRodinFile machineFile = project.getRodinFile(EventBPlugin
-				.getMachineFileName(machine));
+		String machineFileName = EventBPlugin.getMachineFileName(machine);
+		IRodinFile machineFile = project.getRodinFile(machineFileName);
 		if (!machineFile.exists()) {
 			try {
-				machineFile = project.createRodinFile(EventBPlugin
-						.getMachineFileName(machine), true, null);
+				boolean answer = MessageDialog
+						.openQuestion(
+								this.getSection().getShell(),
+								"Create Machine",
+								"Machine "
+										+ machineFileName
+										+ " does not exist. Do you want to create new refined machine?");
+				if (!answer)
+					return;
+				machineFile = project.createRodinFile(machineFileName, true,
+						null);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		setRefinedMachine(machine);
 
 		UIUtils.linkToEventBEditor(machineFile);
 
@@ -267,9 +278,9 @@ public class RefinesSection extends SectionPart implements
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				 updateCombo();
+				updateCombo();
 			}
-			
+
 		});
 	}
 
