@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -66,14 +65,17 @@ public class DependenciesPage extends FormPage {
 
 		SectionPart part = new SeesSection(this.getEditor(), this
 				.getManagedForm().getToolkit(), body);
-		part.getSection().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.minimumWidth = 250;
+		
+		part.getSection().setLayoutData(gd);
 		managedForm.addPart(part);
 		
 		part = new RefinesSection(this.getEditor(), this
 				.getManagedForm().getToolkit(), body);
-		part.getSection().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.minimumWidth = 150;
+		part.getSection().setLayoutData(gd);
 		managedForm.addPart(part);
 	}
 
