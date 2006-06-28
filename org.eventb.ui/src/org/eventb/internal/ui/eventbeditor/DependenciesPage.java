@@ -12,9 +12,12 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -55,14 +58,23 @@ public class DependenciesPage extends FormPage {
 		form.setText(PAGE_TITLE); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		managedForm.addPart(new SeesSection(this.getEditor(), this
-				.getManagedForm().getToolkit(), body));
+		SectionPart part = new SeesSection(this.getEditor(), this
+				.getManagedForm().getToolkit(), body);
+		part.getSection().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		managedForm.addPart(part);
+		
+		part = new RefinesSection(this.getEditor(), this
+				.getManagedForm().getToolkit(), body);
+		part.getSection().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
+		managedForm.addPart(part);
 	}
 
 }

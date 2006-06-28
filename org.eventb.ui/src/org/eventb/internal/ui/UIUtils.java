@@ -41,6 +41,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -142,10 +143,10 @@ public class UIUtils {
 		if (ProjectExplorer.DEBUG)
 			System.out.println(message);
 	}
-	
+
 	/**
-	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag is
-	 * <code>true</code>.
+	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag
+	 * is <code>true</code>.
 	 * <p>
 	 * 
 	 * @param message
@@ -168,7 +169,7 @@ public class UIUtils {
 		if (ProverUI.DEBUG)
 			System.out.println(message);
 	}
-	
+
 	/**
 	 * Getting the image corresponding to an object.
 	 * <p>
@@ -206,6 +207,9 @@ public class UIUtils {
 
 		if (element instanceof ISeesContext)
 			return registry.get(EventBImage.IMG_CONTEXT);
+
+		if (element instanceof IRefinesMachine)
+			return registry.get(EventBImage.IMG_MACHINE);
 
 		if (element instanceof IVariable)
 			return registry.get(EventBImage.IMG_VARIABLE);
@@ -294,7 +298,8 @@ public class UIUtils {
 	 */
 	public static class ElementLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			if (obj instanceof ISeesContext || obj instanceof IAction) {
+			if (obj instanceof ISeesContext || obj instanceof IAction
+					|| obj instanceof IRefinesMachine) {
 				try {
 					return ((IInternalElement) obj).getContents();
 				} catch (RodinDBException e) {
