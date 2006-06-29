@@ -14,4 +14,6 @@ public interface IProofStateDelta {
 	public ProofState getNewProofState();
 	public IProofTreeNode getNewProofTreeNode();
 	public IProofTreeDelta getProofTreeDelta();
+	public boolean getNewSearch();
+	public boolean getNewCache();
 }

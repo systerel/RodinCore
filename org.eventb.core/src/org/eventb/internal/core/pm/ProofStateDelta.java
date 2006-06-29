@@ -8,7 +8,6 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.sequent.Hypothesis;
 
 /**
  * @author htson
@@ -34,15 +33,12 @@ public class ProofStateDelta implements IProofStateDelta {
 	private Object information;
 
 	private boolean newSearch;
-
-	private Collection<Hypothesis> removedFromCached;
-
-	private Collection<Hypothesis> removedFromSearched;
+	
+	private boolean newCache;
 
 	public ProofStateDelta() {
-		removedFromCached = null;
-		removedFromSearched = null;
 		newSearch = false;
+		newCache = false;
 		ps = null;
 		node = null;
 		proofTreeDelta = null;
@@ -85,14 +81,6 @@ public class ProofStateDelta implements IProofStateDelta {
 		return node;
 	}
 
-	public void setRemoveFromCached(Collection<Hypothesis> hyps) {
-		removedFromCached = hyps;
-	}
-
-	public void setRemoveFromSearched(Collection<Hypothesis> hyps) {
-		removedFromSearched = hyps;
-	}
-
 	public void setNewSearch() {
 		newSearch = true;
 	}
@@ -116,6 +104,18 @@ public class ProofStateDelta implements IProofStateDelta {
 		result = result + "\n" + "Current Node: " + node;
 		result = result + "\n***************************";
 		return result;
+	}
+
+	public void setNewCache() {
+		newCache = true;
+	}
+
+	public boolean getNewSearch() {
+		return newSearch;
+	}
+
+	public boolean getNewCache() {
+		return newCache;
 	}
 
 }

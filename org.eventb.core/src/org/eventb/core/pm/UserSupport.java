@@ -2,7 +2,6 @@ package org.eventb.core.pm;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -18,7 +17,6 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.core.pm.HypothesisDelta;
 import org.eventb.internal.core.pm.ProofStateDelta;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -29,7 +27,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class UserSupport implements IElementChangedListener, IProofTreeChangedListener {
+public class UserSupport implements IElementChangedListener,
+		IProofTreeChangedListener {
 
 	private IPRFile prFile; // Unique for an instance of UserSupport
 
@@ -41,52 +40,14 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 
 	private Object information;
 
-	private Collection<Hypothesis> oldSelected;
-
-	private Collection<Hypothesis> oldCached;
-
-	private Collection<Hypothesis> oldSearched;
-
 	private IProofStateDelta delta = null; // The current delta
 
 	public UserSupport() {
 		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
+		delta = new ProofStateDelta(); // Clear delta
 	}
-
-	// private void saveHypothesisState() {
-	// if (!saveHypState)
-	// return; // Already save
-	//
-	// IProofTreeNode currentNode = null;
-	// if (currentPS != null) {
-	// currentNode = currentPS.getCurrentNode();
-	// }
-	// oldSelected = new HashSet<Hypothesis>();
-	// if (currentNode != null)
-	// for (Iterator<Hypothesis> i = currentNode.getSequent()
-	// .selectedHypotheses().iterator(); i.hasNext();) {
-	// oldSelected.add(i.next());
-	// }
-	//
-	// // Need to copy the old hypotheses
-	// oldCached = new HashSet<Hypothesis>();
-	// if (currentPS != null)
-	// for (Iterator<Hypothesis> i = currentPS.getCached().iterator(); i
-	// .hasNext();) {
-	// oldCached.add(i.next());
-	// }
-	//
-	// oldSearched = new HashSet<Hypothesis>();
-	// if (currentPS != null)
-	// for (Iterator<Hypothesis> i = currentPS.getSearched().iterator(); i
-	// .hasNext();) {
-	// oldSearched.add(i.next());
-	// }
-	//
-	// saveHypState = false;
-	// }
 
 	Collection<IProofStateChangedListener> proofStateChangedListeners;
 
@@ -108,16 +69,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 		if (fireDelta) {
 			UserSupportUtils.debug("Notified: " + delta);
 			notifyStateChangedListeners(delta);
-			// IProofStateDelta delta;
-			// Collection<IHypothesisDelta> hypDelta = calculateHypDelta();
-			// IProofTreeNode currentNode = null;
-			// if (currentPS != null)
-			// currentNode = currentPS.getCurrentNode();
-			// IGoalDelta goalDelta = new GoalDelta(currentNode);
-			// delta = new ProofStateDelta(goalDelta, hypDelta, information,
-			// currentPS);
-			// notifyStateChangedListeners(delta);
-			// saveHypState = true;
 			delta = new ProofStateDelta(); // Clear delta
 		}
 	}
@@ -131,39 +82,50 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 	private IProofStateDelta mergeDelta(IProofStateDelta oldDelta,
 			IProofStateDelta newDelta) {
 		ProofStateDelta mergedDelta = new ProofStateDelta();
-		
+
 		ProofState newProofState = newDelta.getNewProofState();
 		if (newProofState != null) {
 			mergedDelta.setNewProofState(newProofState);
 			return mergedDelta;
-		}
-		else {
+		} else {
 			ProofState oldProofState = oldDelta.getNewProofState();
 			if (oldProofState != null) {
 				mergedDelta.setNewProofState(oldProofState);
 				return mergedDelta;
-			}
-			else {
+			} else {
 				// Proof Tree Delta
-				IProofTreeDelta newProofTreeDelta = newDelta.getProofTreeDelta();
-				IProofTreeDelta oldProofTreeDelta = oldDelta.getProofTreeDelta();
+				IProofTreeDelta newProofTreeDelta = newDelta
+						.getProofTreeDelta();
 				if (newProofTreeDelta != null) {
 					mergedDelta.setProofTreeDelta(newProofTreeDelta);
+				} else {
+					IProofTreeDelta oldProofTreeDelta = oldDelta
+							.getProofTreeDelta();
+					if (oldProofTreeDelta != null) {
+						mergedDelta.setProofTreeDelta(oldProofTreeDelta);
+					}
 				}
-				else if (oldProofTreeDelta != null) {
-					mergedDelta.setProofTreeDelta(oldProofTreeDelta);
-				}
-				
+
 				// Current Node
 				IProofTreeNode newCurrentNode = newDelta.getNewProofTreeNode();
-				IProofTreeNode oldCurrentNode = oldDelta.getNewProofTreeNode();
 				if (newCurrentNode != null) {
 					mergedDelta.setNewCurrentNode(newCurrentNode);
+				} else {
+					IProofTreeNode oldCurrentNode = oldDelta.getNewProofTreeNode();
+					if (oldCurrentNode != null) {
+						mergedDelta.setNewCurrentNode(oldCurrentNode);
+					}
+					else {
+						if (newDelta.getNewSearch() || oldDelta.getNewSearch()) {
+							mergedDelta.setNewSearch();
+						}
+						if (newDelta.getNewCache() || oldDelta.getNewCache()) {
+							mergedDelta.setNewCache();
+						}
+						return mergedDelta;
+					}
 				}
-				else if (oldCurrentNode != null) {
-					mergedDelta.setNewCurrentNode(oldCurrentNode);
-				}
-				
+
 				return mergedDelta;
 			}
 		}
@@ -177,106 +139,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 			fireDelta = true;
 		}
 		notifyPendingDelta();
-	}
-
-	private Collection<IHypothesisDelta> calculateHypDelta() {
-		IProofTreeNode newNode = null;
-		if (currentPS != null)
-			newNode = currentPS.getCurrentNode();
-
-		Collection<IHypothesisDelta> delta = new HashSet<IHypothesisDelta>();
-
-		Collection<Hypothesis> newSelected;
-		if (newNode == null)
-			newSelected = new HashSet<Hypothesis>();
-		else
-			newSelected = newNode.getSequent().selectedHypotheses();
-		for (Iterator<Hypothesis> it = oldSelected.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			if (!newSelected.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setRemovedFromSelected();
-				// UserSupportUtils.debug("Remove from Selected: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-		for (Iterator<Hypothesis> it = newSelected.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			if (!oldSelected.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setAddedToSelected();
-				// UserSupportUtils.debug("Add to Selected: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-
-		Collection<Hypothesis> newCached;
-		if (currentPS == null)
-			newCached = new HashSet<Hypothesis>();
-		else
-			newCached = currentPS.getCached();
-		for (Iterator<Hypothesis> it = oldCached.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			// UserSupportUtils.debug("Testing in old Cached: " +
-			// hp.getPredicate());
-			if (!isValid(hp, newNode) || !newCached.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setRemovedFromCached();
-				// UserSupportUtils.debug("Removed from Cached: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-		for (Iterator<Hypothesis> it = newCached.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			// UserSupportUtils.debug("Testing in new Cached: " +
-			// hp.getPredicate());
-			if (isValid(hp, newNode) && !oldCached.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setAddedToCached();
-				// UserSupportUtils.debug("Add to Cached: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-
-		Collection<Hypothesis> newSearched;
-		if (currentPS == null)
-			newSearched = new HashSet<Hypothesis>();
-		else
-			newSearched = currentPS.getSearched();
-		for (Iterator<Hypothesis> it = oldSearched.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			// UserSupportUtils.debug("Testing in old Searched: " +
-			// hp.getPredicate());
-			if (!isValid(hp, newNode) || !newSearched.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setRemovedFromSearched();
-				// UserSupportUtils.debug("Remove from Searched: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-		for (Iterator<Hypothesis> it = newSearched.iterator(); it.hasNext();) {
-			Hypothesis hp = it.next();
-			if (isValid(hp, newNode) && !oldSearched.contains(hp)) {
-				HypothesisDelta d = new HypothesisDelta(hp);
-				d.setAddedToSearched();
-				// UserSupportUtils.debug("Add to Searched: " +
-				// hp.getPredicate());
-				delta.add(d);
-			}
-		}
-
-		return delta;
-	}
-
-	private boolean isValid(Hypothesis hyp, IProofTreeNode pt) {
-		// UserSupportUtils.debug("Is Valid? " + (pt != null &&
-		// pt.getSequent().hypotheses().contains(hyp)));
-		return (pt != null && pt.getSequent().hypotheses().contains(hyp));
 	}
 
 	/**
@@ -320,8 +182,7 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 		int index;
 		if (currentPS == null) {
 			index = -1;
-		}
-		else {
+		} else {
 			index = proofStates.indexOf(currentPS);
 		}
 		for (int i = 1; i <= proofStates.size(); i++) {
@@ -359,7 +220,8 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 
 	private void setProofState(ProofState ps) throws RodinDBException {
 		if (currentPS != ps) {
-			if (currentPS != null) currentPS.getProofTree().removeChangeListener(this);
+			if (currentPS != null)
+				currentPS.getProofTree().removeChangeListener(this);
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
 			currentPS = ps;
 			ps.getProofTree().addChangeListener(this);
@@ -375,8 +237,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 	 * current Proof Tree.
 	 */
 	public void selectNode(IProofTreeNode pt) {
-		// saveHypothesisState();
-		// current node change
 		if (currentPS.getCurrentNode() != pt) {
 			currentPS.setCurrentNode(pt);
 			ProofStateDelta newDelta = new ProofStateDelta();
@@ -387,12 +247,29 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 		return;
 	}
 
-	public void applyTacticToHypotheses(ITactic t, Set<Hypothesis> hyps)
-			throws RodinDBException {
-		// saveHypothesisState();
-		// Changed cached hypotheses.
+	public void applyTacticToHypotheses(final ITactic t,
+			final Set<Hypothesis> hyps) throws RodinDBException {
+
+		batchOperation(new Runnable() {
+
+			public void run() {
+				addAllToCached(hyps);
+				try {
+					applyTactic(t);
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+	}
+
+	protected void addAllToCached(Set<Hypothesis> hyps) {
 		currentPS.addAllToCached(hyps);
-		applyTactic(t);
+		ProofStateDelta newDelta = new ProofStateDelta();
+		newDelta.setNewCache();
+		fireProofStateDelta(newDelta);
 	}
 
 	public void applyTactic(final ITactic t) throws RodinDBException {
@@ -435,8 +312,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 	}
 
 	public void prune() throws RodinDBException {
-		// saveHypothesisState();
-		// No delta??
 		batchOperation(new Runnable() {
 			public void run() {
 				internalPrune();
@@ -452,30 +327,24 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 	}
 
 	public void removeCachedHypotheses(Collection<Hypothesis> hyps) {
-		// TODO Removed cached hypotheses.
-		// saveHypothesisState();
 		currentPS.removeAllFromCached(hyps);
-		information = "Hypotheses removed from cached";
 		ProofStateDelta newDelta = new ProofStateDelta();
-		newDelta.setRemoveFromCached(hyps);
+		newDelta.setNewCache();
 		fireProofStateDelta(newDelta);
 		return;
 	}
 
 	public void removeSearchedHypotheses(Collection<Hypothesis> hyps) {
-		// TODO Removed searched hypotheses.
-		// saveHypothesisState();
 		currentPS.removeAllFromSearched(hyps);
 		information = "Hypotheses removed from searched";
+
 		ProofStateDelta newDelta = new ProofStateDelta();
-		newDelta.setRemoveFromSearched(hyps);
+		newDelta.setNewSearch();
 		fireProofStateDelta(newDelta);
 		return;
 	}
 
 	public void searchHyps(String token) {
-		// TODO New searched hypotheses.
-		// saveHypothesisState();
 		// Trim off white space from token.
 		token = token.trim();
 
@@ -524,19 +393,7 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 					processDelta(d);
 				}
 			}
-		}
-		// else if (element instanceof IProof) {
-		// IPRSequent prSequent = (IPRSequent) element.getParent();
-		// UserSupportUtils.debug("Change status " + prSequent.toString());
-		// //
-		// // for (ProofState ps : proofStates) {
-		// // if (ps.getPRSequent().equals(element)) {
-		// // if (ps.equals())
-		// // }
-		// // }
-		//
-		// }
-		else if (element instanceof IPRSequent) {
+		} else if (element instanceof IPRSequent) {
 
 			if (kind == IRodinElementDelta.ADDED) { // No rename
 				UserSupportUtils.debug("Added "
@@ -580,29 +437,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 				}
 				proofStates.remove(toBeRemoved);
 			}
-			// UserSupportUtils.debug("IPRSequent changed " + kind + " for " +
-			// ((IPRSequent) element).getElementName());
-			// Collection<ProofState> remove = new HashSet<ProofState>();
-			// for (ProofState ps : proofStates) {
-			// if (ps.getPRSequent().equals(element)) {
-			// if (kind == IRodinElementDelta.ADDED) {
-			// UserSupportUtils.debug("Updated " + ((IPRSequent)
-			// element).getElementName());
-			// ps.initProofTree();
-			// if (ps == currentPS) setCurrentPO(ps.getPRSequent());
-			// }
-			// else if (kind == IRodinElementDelta.REMOVED) {
-			// UserSupportUtils.debug("Removed " + ((IPRSequent)
-			// element).getElementName());
-			// remove.add(ps);
-			// }
-			// else { // CHANGED
-			// UserSupportUtils.debug("Changed " + ((IPRSequent)
-			// element).getElementName());
-			// }
-			// }
-			// }
-			// proofStates.removeAll(remove);
 		} else if (element instanceof IMachineFile) {
 			return;
 		} else if (element instanceof IContextFile) {
@@ -613,96 +447,6 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 			}
 		}
 	}
-
-	// public void addHypothesisChangedListener(IHypothesisChangedListener
-	// listener) {
-	// hypChangedListeners.add(listener);
-	// }
-	//	
-	// public void removeHypothesisChangedListener(IHypothesisChangedListener
-	// listener) {
-	// hypChangedListeners.remove(listener);
-	// }
-	//	
-	// private void notifyHypothesisChangedListener(IHypothesisChangeEvent e) {
-	// for (Iterator<IHypothesisChangedListener> i =
-	// hypChangedListeners.iterator(); i.hasNext();) {
-	// IHypothesisChangedListener listener = i.next();
-	// listener.hypothesisChanged(e);
-	// }
-	// return;
-	// }
-	//	
-	// public void addGoalChangedListener(IGoalChangedListener listener) {
-	// goalChangedListeners.add(listener);
-	// }
-	//	
-	// public void removeGoalChangedListener(IGoalChangedListener listener) {
-	// goalChangedListeners.remove(listener);
-	// }
-	//	
-	// private void notifyGoalChangedListener(IGoalChangeEvent e) {
-	// for (Iterator<IGoalChangedListener> i = goalChangedListeners.iterator();
-	// i.hasNext();) {
-	// IGoalChangedListener listener = i.next();
-	// listener.goalChanged(e);
-	// }
-	// return;
-	// }
-	//
-	// public void addPOChangedListener(IPOChangedListener listener) {
-	// poChangedListeners.add(listener);
-	// }
-	//	
-	// public void removePOChangedListener(IPOChangedListener listener) {
-	// poChangedListeners.remove(listener);
-	// }
-	//	
-	// private void notifyPOChangedListener(IPOChangeEvent e) {
-	// for (Iterator<IPOChangedListener> i = poChangedListeners.iterator();
-	// i.hasNext();) {
-	// IPOChangedListener listener = i.next();
-	// listener.poChanged(e);
-	// }
-	// return;
-	// }
-	//
-	// public void addProofStatusChangedListener(IProofStatusChangedListener
-	// listener) {
-	// proofStatusChangedListeners.add(listener);
-	// }
-	//	
-	// public void removeProofStatusChangedListener(IProofStatusChangedListener
-	// listener) {
-	// proofStatusChangedListeners.remove(listener);
-	// }
-	//
-	// private void notifyProofStatusChangedListener(boolean complete) {
-	// for (Iterator<IProofStatusChangedListener> i =
-	// proofStatusChangedListeners.iterator(); i.hasNext();) {
-	// IProofStatusChangedListener listener = i.next();
-	// listener.proofStatusChanged(complete);
-	// }
-	// return;
-	// }
-	//	
-	// public void addStatusChangedListener(IStatusChangedListener listener) {
-	// statusChangedListeners.add(listener);
-	// }
-	//	
-	// public void removeStatusChangedListener(IStatusChangedListener listener)
-	// {
-	// statusChangedListeners.remove(listener);
-	// }
-	//
-	// private void notifyStatusChangedListener(Object information) {
-	// for (Iterator<IStatusChangedListener> i =
-	// statusChangedListeners.iterator(); i.hasNext();) {
-	// IStatusChangedListener listener = i.next();
-	// listener.statusChanged(information);
-	// }
-	// return;
-	// }
 
 	public void back() throws RodinDBException {
 		// TODO Batch operation.
@@ -730,11 +474,11 @@ public class UserSupport implements IElementChangedListener, IProofTreeChangedLi
 	}
 
 	public void proofTreeChanged(IProofTreeDelta proofTreeDelta) {
-		UserSupportUtils.debug("UserSupport - Proof Tree Changed: " + proofTreeDelta);
+		UserSupportUtils.debug("UserSupport - Proof Tree Changed: "
+				+ proofTreeDelta);
 		ProofStateDelta newDelta = new ProofStateDelta();
 		newDelta.setProofTreeDelta(proofTreeDelta);
-		fireProofStateDelta(newDelta);		
+		fireProofStateDelta(newDelta);
 	}
 
-	
 }
