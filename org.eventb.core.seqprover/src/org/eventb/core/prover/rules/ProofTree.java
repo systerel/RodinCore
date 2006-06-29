@@ -10,6 +10,7 @@ package org.eventb.core.prover.rules;
 
 import java.util.Set;
 
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.sequent.Hypothesis;
@@ -73,6 +74,10 @@ public final class ProofTree implements IProofTree {
 
 	public Set<Hypothesis> getUsedHypotheses() {
 		return root.getUsedHypotheses();
+	}
+
+	public Set<FreeIdentifier> getUsedFreeIdents() {
+		return root.getUsedFreeIdents();
 	}
 
 }

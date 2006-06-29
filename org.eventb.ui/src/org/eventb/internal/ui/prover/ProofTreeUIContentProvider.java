@@ -149,7 +149,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 			if (!pt.isOpen()) {
 				int j;
 				for (j = 0; j < filters.length; j++) {
-					if (filters[j].equals(pt.getRule().getName())) {
+					if (filters[j].equals(pt.getRule().getDisplayName())) {
 						// TODO enquire effect of new contract for
 						// pt.getChildren()
 						Object[] list = getChildrenOfList(pt.getChildren());

@@ -101,7 +101,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			IProof oldProof = oldProofs.get(newPOname);
 			if  (oldProof != null &&
 					newPOseq.goal().equals(oldProof.getGoal()) &&
-					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())))
+					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())) &&
+					newPOseq.typeEnvironment().containsAll(oldProof.getUsedTypeEnvironment()))
 				{
 					newValidity.put(newPOname,true);
 				}

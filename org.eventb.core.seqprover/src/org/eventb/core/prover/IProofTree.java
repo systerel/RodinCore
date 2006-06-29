@@ -10,6 +10,7 @@ package org.eventb.core.prover;
 
 import java.util.Set;
 
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -89,5 +90,6 @@ public interface IProofTree {
 	void removeChangeListener(IProofTreeChangedListener listener);
 	
 	Set<Hypothesis> getUsedHypotheses();
+	Set<FreeIdentifier> getUsedFreeIdents();
 	
 }

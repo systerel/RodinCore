@@ -69,7 +69,7 @@ public class BasicTactics {
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
 			if (pt.applyRule(this.rule)) return null;
-			else return "Rule "+this.rule.getName()+" is not applicable";
+			else return "Rule "+this.rule.getDisplayName()+" is not applicable";
 			
 		}
 	}

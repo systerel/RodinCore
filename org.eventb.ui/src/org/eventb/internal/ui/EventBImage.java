@@ -72,6 +72,10 @@ public class EventBImage {
 
 	public static final String IMG_PENDING_BROKEN = "Pending Broken";
 	
+	public static final String IMG_REVIEWED = "REVIEWED";
+
+	public static final String IMG_REVIEWED_BROKEN = "Reviewed Broken";
+	
 	public static final String IMG_APPLIED = "Applied";
 	
 	public static final String IMG_UNATTEMPTED = "Unattempted";
@@ -162,6 +166,8 @@ public class EventBImage {
 		registerImage(registry, IMG_APPLIED, "applied.gif");
 		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
 		registerImage(registry, IMG_DISCHARGED_BROKEN, "discharged_broken.gif");
+		registerImage(registry, IMG_REVIEWED, "reviewed.png");
+		registerImage(registry, IMG_REVIEWED_BROKEN, "reviewed_broken.png");
 		registerImage(registry, IMG_UNATTEMPTED, "unattempted.gif");
 		registerImage(registry, IMG_DEFAULT, "sample.gif");
 		

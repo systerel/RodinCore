@@ -8,8 +8,11 @@
 
 package org.eventb.core.prover.rules;
 
+import java.util.Collection;
 import java.util.Set;
 
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -21,18 +24,32 @@ import org.eventb.core.prover.sequent.IProverSequent;
  */
 public abstract class ProofRule implements IProofRule {
 
-	private final String name;
+	private final String displayName;
+	private final String ruleID;
 	
-	public ProofRule(String name) {
-		this.name = name;
+	public ProofRule(String displayName,String ruleID) {
+		this.displayName = displayName;
+		this.ruleID = ruleID;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.rules.IProofRule#getName()
+	 * @see org.eventb.core.prover.rules.IProofRule#getDisplayName()
 	 */
-	public final String getName() {
-		return name;
+	public final String getDisplayName() {
+		return displayName;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.rules.IProofRule#getRuleID()
+	 */
+	public final String getRuleID() {
+		return ruleID;
+	}
+	
+	public int getRuleConfidence() {
+		return IProofRule.CONFIDENCE_DISCHARGED;
+	}
+	
 
 	/**
 	 * Applies this rule to the given proof sequent.
@@ -44,4 +61,5 @@ public abstract class ProofRule implements IProofRule {
 	public abstract IProverSequent[] apply(IProverSequent sequent);
 	
 	public abstract Set<Hypothesis> getNeededHypotheses();
+	public abstract Set<FreeIdentifier> getNeededFreeIdents();
 }

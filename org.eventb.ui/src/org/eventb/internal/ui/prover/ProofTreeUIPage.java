@@ -147,7 +147,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				IProofTreeNode proofTree = (IProofTreeNode) element;
 
 				if (!proofTree.isOpen()) {
-					return proofTree.getRule().getName() + " : "
+					return proofTree.getRule().getDisplayName() + " : "
 							+ proofTree.getSequent().goal();
 				} else {
 					return proofTree.getSequent().goal().toString();

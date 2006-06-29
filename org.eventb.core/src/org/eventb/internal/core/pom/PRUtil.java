@@ -8,6 +8,9 @@
 
 package org.eventb.internal.core.pom;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,8 +28,10 @@ import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -195,13 +200,19 @@ public class PRUtil {
 		if (prSeq.getProof().hasChildren())
 		prSeq.getRodinDB().delete(prSeq.getProof().getChildren(),true,null);
 
-		// Write out the goal and used hypotheses for the proof
+		// Write out the goal, used hypotheses, and used free identifiers for the proof
 		((IPRPredicate)(prSeq.getProof().createInternalElement(
 				IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
 				setPredicate(pt.getSequent().goal());
 		((IPRPredicateSet)(prSeq.getProof().createInternalElement(
 				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 				setPredicateSet(Hypothesis.Predicates(pt.getUsedHypotheses()));
+		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
+				IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
+				setTypeEnvironment(
+						pt.getUsedFreeIdents().toArray(
+								new FreeIdentifier[pt.getUsedFreeIdents().size()]));
+		
 		
 		// Write out the proof tree
 		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProof());

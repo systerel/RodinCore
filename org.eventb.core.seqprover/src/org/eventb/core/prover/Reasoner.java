@@ -4,9 +4,9 @@ import org.eventb.core.prover.sequent.IProverSequent;
 
 public interface Reasoner {
 	
-	public String getReasonerID();
+	String getReasonerID();
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput input);
+	ReasonerOutput apply(IProverSequent seq,ReasonerInput input);
 	
 	public static class DefaultInput implements ReasonerInput{
 

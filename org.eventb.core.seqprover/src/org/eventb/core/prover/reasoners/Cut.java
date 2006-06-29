@@ -32,11 +32,14 @@ public class Cut implements Reasoner{
 			if (lemma == null) 
 				return new ReasonerOutputFail(this,input,
 						"Parse error for lemma: "+ input.lemma);
-			if (! Lib.isWellTyped(lemma,seq.typeEnvironment()))
-				return new ReasonerOutputFail(this,input,
-						"Type check failed for lemma: "+input.lemma);
 			input.lemmaPred = lemma;
 		}
+		
+		// This check may be redone for replay since the type environment
+		// may have shrunk, making the previous predicate with dangling free vars.
+		if (! Lib.isWellTyped(input.lemmaPred,seq.typeEnvironment()))
+			return new ReasonerOutputFail(this,input,
+					"Type check failed for lemma: "+input.lemma);
 		
 		// We can now assume that lemma has been properly parsed and typed.
 		

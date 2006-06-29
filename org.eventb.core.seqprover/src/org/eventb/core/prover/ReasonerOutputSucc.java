@@ -1,6 +1,8 @@
 package org.eventb.core.prover;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +65,18 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 			result = HypothesesManagement.perform(hypAction,result);
 			return result;
 		}
+
+		public Set<FreeIdentifier> getNeededFreeIdents() {
+			Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
+			assert subGoal != null;
+			neededFreeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
+			for(Predicate hyp: addedHypotheses){
+				neededFreeIdents.addAll(
+						Arrays.asList(hyp.getFreeIdentifiers()));
+			}
+			neededFreeIdents.removeAll(Arrays.asList(addedFreeIdentifiers));
+			return neededFreeIdents;
+		}
 		
 	}
 	
@@ -71,12 +85,28 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 	public Set<Hypothesis> neededHypotheses;
 	public Predicate goal;
 	
+//	public int reasoner_confidence;
+	
 	public ReasonerOutputSucc(Reasoner generatedBy, ReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
 		anticidents = null;
 		neededHypotheses = new HashSet<Hypothesis>();
 		goal = null;
+	}
+
+	public Set<FreeIdentifier> getNeededFreeIdents() {
+		Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
+		for(Anticident anticident : anticidents){
+			neededFreeIdents.addAll(anticident.getNeededFreeIdents());
+		}
+		
+		neededFreeIdents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		for(Hypothesis hyp: neededHypotheses){
+			neededFreeIdents.addAll(
+					Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+		}
+		return neededFreeIdents;
 	}
 
 }

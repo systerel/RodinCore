@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
@@ -362,7 +363,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private String rootToString() {
 		String ruleStr;
 		if (this.rule == null) { ruleStr = "-"; }
-		else { ruleStr = this.rule.getName(); };
+		else { ruleStr = this.rule.getDisplayName(); };
 		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
 	}
 	
@@ -388,6 +389,22 @@ public final class ProofTreeNode implements IProofTreeNode {
 		usedHypotheses.retainAll(sequent.hypotheses());
 		usedHypotheses.addAll(rule.getNeededHypotheses());
 		return usedHypotheses;
+	}
+
+	public Set<FreeIdentifier> getUsedFreeIdents() {
+		HashSet<FreeIdentifier> usedFreeIdents = new HashSet<FreeIdentifier>();
+		if (this.rule == null) return usedFreeIdents;
+		for (ProofTreeNode child : this.children) {
+			usedFreeIdents.addAll(child.getUsedFreeIdents());
+		}
+		// retain all free identifiers in the curent type environment
+		for (FreeIdentifier ident : usedFreeIdents)
+		{
+			if (! sequent.typeEnvironment().contains(ident.getName()))
+				usedFreeIdents.remove(ident);
+		}
+		usedFreeIdents.addAll(rule.getNeededFreeIdents());
+		return usedFreeIdents;
 	}
 	
 	
