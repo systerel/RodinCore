@@ -12,7 +12,18 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.dialogs.InputDialog;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -33,11 +44,14 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -46,7 +60,8 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editting Sees
  *         clause.
  */
-public class SeesSection extends SectionPart {
+public class SeesSection extends SectionPart implements
+		IElementChangedListener, ISelectionChangedListener {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Required Contexts";
@@ -57,19 +72,21 @@ public class SeesSection extends SectionPart {
 	private FormEditor editor;
 
 	// Buttons.
-	private Button nullButton;
+	private Button deleteButton;
 
-	private Button chooseButton;
+	// private Button chooseButton;
 
-	private Button button;
+	private Button addButton;
 
-	// Text area.
-	// private Text contextText;
+	// The table viewer
+	private TableViewer viewer;
 
 	private Combo contextCombo;
 
 	// The seen internal element.
-	private IInternalElement seen;
+	// private IInternalElement seen;
+
+	private IRodinFile rodinFile;
 
 	/**
 	 * Constructor.
@@ -86,7 +103,32 @@ public class SeesSection extends SectionPart {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
+		rodinFile = ((EventBEditor) editor).getRodinInput();
+
 		createClient(getSection(), toolkit);
+		RodinCore.addElementChangedListener(this);
+	}
+
+	private class SeenContextContentProvider implements
+			IStructuredContentProvider {
+
+		public Object[] getElements(Object inputElement) {
+			try {
+				return rodinFile.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+			return new Object[0];
+		}
+
+		public void dispose() {
+
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+		}
+
 	}
 
 	/**
@@ -103,75 +145,68 @@ public class SeesSection extends SectionPart {
 		section.setDescription(SECTION_DESCRIPTION);
 		Composite comp = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
 
-		nullButton = toolkit.createButton(comp, "None", SWT.RADIO);
+		deleteButton = toolkit.createButton(comp, "Delete", SWT.PUSH);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		nullButton.setLayoutData(gd);
-		nullButton.addSelectionListener(new SelectionAdapter() {
+		gd.horizontalSpan = 2;
+		deleteButton.setLayoutData(gd);
+
+		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (nullButton.getSelection()) {
-					// UIUtils.debug("Null selected");
-					contextCombo.setEnabled(false);
-					// contextText.setEnabled(false);
-					button.setEnabled(false);
+				UIUtils.debugEventBEditor("Here");
+				ISelection sel = viewer.getSelection();
+				if (sel instanceof IStructuredSelection) {
+					final IStructuredSelection ssel = (IStructuredSelection) sel;
 					try {
-						if (seen != null) {
-							seen.delete(true, null);
-							seen = null;
-//							markDirty();
-						}
-					} catch (RodinDBException exception) {
-						exception.printStackTrace();
+						RodinCore.run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor)
+									throws CoreException {
+								for (Iterator it = ssel.iterator(); it
+										.hasNext();) {
+									Object obj = it.next();
+									UIUtils
+											.debugEventBEditor("Sees Section: Deleting "
+													+ obj);
+									if (obj instanceof IInternalElement) {
+										((IInternalElement) obj).delete(true,
+												null);
+									}
+								}
+							}
+
+						}, null);
+					} catch (CoreException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 				}
 			}
 		});
 
-		chooseButton = toolkit.createButton(comp, "Choose", SWT.RADIO);
-		chooseButton.setLayoutData(new GridData());
-		chooseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (chooseButton.getSelection()) {
-					// UIUtils.debug("Choose selected");
-					contextCombo.setEnabled(true);
-					// contextText.setEnabled(true);
-					button.setEnabled(!contextCombo.getText().equals(""));
-					contextCombo.setFocus();
-					// contextText.setFocus();
-				}
-			}
-		});
+		viewer = new TableViewer(comp);
+		viewer.setContentProvider(new SeenContextContentProvider());
+		viewer.setLabelProvider(new UIUtils.ElementLabelProvider());
+		viewer.setInput(rodinFile);
+		viewer.addSelectionChangedListener(this);
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		gd.heightHint = 150;
+		viewer.getTable().setLayoutData(gd);
 
 		contextCombo = new Combo(comp, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		contextCombo.setLayoutData(gd);
-
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-
-		IRodinElement[] contexts;
-		try {
-			contexts = ((IParent) rodinFile.getParent())
-					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-
-			for (IRodinElement context : contexts) {
-				contextCombo.add(EventBPlugin.getComponentName(context
-						.getElementName()));
-			}
-		} catch (RodinDBException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
 		contextCombo.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
 				int index = contextCombo.getSelectionIndex();
 				if (index != -1) {
-					setSeenContext(contextCombo.getItems()[index]);
+					addSeenContext(contextCombo.getItems()[index]);
 				}
 			}
 
@@ -184,74 +219,56 @@ public class SeesSection extends SectionPart {
 		contextCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				button.setEnabled(!contextCombo.getText().equals(""));
+				addButton.setEnabled(!contextCombo.getText().equals(""));
 			}
-			
-		});
-		// TODO To have a list (table of seen context) 
-		
-		// contextText = new Text(comp, SWT.BORDER | SWT.SINGLE);
-		// gd = new GridData(GridData.FILL_HORIZONTAL);
-		// contextText.setLayoutData(gd);
-		// contextText.addFocusListener(new FocusListener() {
-		// public void focusGained(FocusEvent e) {
-		// // Do nothing
-		// }
-		//
-		// public void focusLost(FocusEvent e) {
-		// // Create or change the element
-		// if (chooseButton.getSelection()) {
-		// if (contextText.getText().equals(""))
-		// return;
-		// setSeenContext(contextText.getText());
-		// }
-		// }
-		// });
 
-		button = new Button(comp, SWT.PUSH);
-		button.setText("Open/Create");
-		button.addSelectionListener(new SelectionAdapter() {
+		});
+
+		addButton = new Button(comp, SWT.PUSH);
+		addButton.setText("Add/Create");
+		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleOpenOrCreate();
+				handleAddOrCreate();
 			}
 		});
 
-		// IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-		try {
-			IRodinElement[] seenContexts = rodinFile
-					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-			if (seenContexts.length != 0) {
-				seen = (IInternalElement) seenContexts[0];
-				try {
-					contextCombo.setText(seen.getContents());
-					// contextText.setText(seen.getContents());
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				chooseButton.setSelection(true);
-			} else {
-				nullButton.setSelection(true);
-				contextCombo.setEnabled(false);
-				// contextText.setEnabled(false);
-				button.setEnabled(false);
-				seen = null;
-			}
-		} catch (RodinDBException e) {
-			// TODO Refesh?
-
-			e.printStackTrace();
-			InputDialog dialog = new InputDialog(null, "Resource out of sync",
-					"Refresh? (Y/N)", "Y", null);
-			dialog.open();
-			dialog.getValue();
-			EventBMachineEditorContributor.sampleAction.refreshAll();
-		}
+		// try {
+		// IRodinElement[] seenContexts = rodinFile
+		// .getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+		// if (seenContexts.length != 0) {
+		// seen = (IInternalElement) seenContexts[0];
+		// try {
+		// contextCombo.setText(seen.getContents());
+		// // contextText.setText(seen.getContents());
+		// } catch (RodinDBException e) {
+		// e.printStackTrace();
+		// }
+		// // chooseButton.setSelection(true);
+		// } else {
+		// deleteButton.setSelection(true);
+		// contextCombo.setEnabled(false);
+		// // contextText.setEnabled(false);
+		// addButton.setEnabled(false);
+		// seen = null;
+		// }
+		// } catch (RodinDBException e) {
+		// // TODO Refesh?
+		//
+		// e.printStackTrace();
+		// InputDialog dialog = new InputDialog(null, "Resource out of sync",
+		// "Refresh? (Y/N)", "Y", null);
+		// dialog.open();
+		// dialog.getValue();
+		// EventBMachineEditorContributor.sampleAction.refreshAll();
+		// }
 
 		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.minimumWidth = 250;
-		section.setLayoutData(gd);
+		// gd = new GridData(GridData.FILL_BOTH);
+		// gd.minimumWidth = 250;
+		// section.setLayoutData(gd);
+		initContextCombo();
+		updateButtons();
 	}
 
 	/**
@@ -261,38 +278,22 @@ public class SeesSection extends SectionPart {
 	 * @param context
 	 *            name of the context
 	 */
-	private void setSeenContext(String context) {
-		if (seen == null) { // Create new element
-			try {
-				// UIUtils.debug("Creat new sees clause");
-				IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-				seen = rodinFile.createInternalElement(
-						ISeesContext.ELEMENT_TYPE, context, null, null);
-				seen.setContents(context);
-//				markDirty();
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
-				seen = null;
-			}
-		} else { // Change the element
-			try {
-				// UIUtils.debug("Change sees clause");
-				// if (!(seen.getContents().equals(contextText.getText()))) {
-				seen.setContents(context);
-//				markDirty();
-				// }
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
-				seen = null;
-			}
+	private void addSeenContext(String context) {
+		try {
+			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+			IInternalElement seen = rodinFile.createInternalElement(
+					ISeesContext.ELEMENT_TYPE, context, null, null);
+			seen.setContents(context);
+			// markDirty();
+		} catch (RodinDBException exception) {
+			exception.printStackTrace();
 		}
-
 	}
 
 	/**
-	 * Handle the browse action when the corresponding button is clicked.
+	 * Handle the browse action when the corresponding addButton is clicked.
 	 */
-	public void handleOpenOrCreate() {
+	public void handleAddOrCreate() {
 		String context = contextCombo.getText();
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 
@@ -309,7 +310,7 @@ public class SeesSection extends SectionPart {
 			}
 		}
 		try {
-			seen = rodinFile.createInternalElement(
+			IInternalElement seen = rodinFile.createInternalElement(
 					ISeesContext.ELEMENT_TYPE, context, null, null);
 			seen.setContents(context);
 		} catch (RodinDBException e) {
@@ -319,148 +320,73 @@ public class SeesSection extends SectionPart {
 
 		UIUtils.linkToEventBEditor(contextFile);
 
-//		ContextChoosingDialog dialog = new ContextChoosingDialog(null,
-//				"Context Name", "Please choose the seen context");
-//		dialog.open();
-//		String name = dialog.getContext();
-//		if (name != null) {
-//			setSeenContext(name);
-//
-//			// contextText.setText(name);
-//			// contextText.setFocus();
-//		}
-//		dialog.close();
-//
+		// ContextChoosingDialog dialog = new ContextChoosingDialog(null,
+		// "Context Name", "Please choose the seen context");
+		// dialog.open();
+		// String name = dialog.getContext();
+		// if (name != null) {
+		// setSeenContext(name);
+		//
+		// // contextText.setText(name);
+		// // contextText.setFocus();
+		// }
+		// dialog.close();
+		//
 		return;
 	}
 
-	/**
-	 * @author htson An extension of Dialog for choosing seen context.
-	 */
-//	private class ContextChoosingDialog extends Dialog {
-//		private String message;
-//
-//		private String context;
-//
-//		private String title;
-//
-//		/**
-//		 * Ok button widget.
-//		 */
-//		private Button okButton;
-//
-//		public ContextChoosingDialog(Shell parentShell, String dialogTitle,
-//				String message) {
-//			super(parentShell);
-//			this.title = dialogTitle;
-//			this.message = message;
-//			context = null;
-//		}
-//
-//		/*
-//		 * (non-Javadoc)
-//		 * 
-//		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-//		 */
-//		protected void createButtonsForButtonBar(Composite parent) {
-//			// create OK and Cancel buttons by default
-//			okButton = createButton(parent, IDialogConstants.OK_ID,
-//					IDialogConstants.OK_LABEL, true);
-//			if (seen != null) {
-//				// TODO Should be enable only if the seen is valid?
-//				okButton.setEnabled(true);
-//			} else
-//				okButton.setEnabled(false);
-//			createButton(parent, IDialogConstants.CANCEL_ID,
-//					IDialogConstants.CANCEL_LABEL, false);
-//		}
-//
-//		/*
-//		 * (non-Javadoc)
-//		 * 
-//		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-//		 */
-//		protected void configureShell(Shell shell) {
-//			super.configureShell(shell);
-//			if (title != null)
-//				shell.setText(title);
-//		}
-//
-//		/*
-//		 * (non-Javadoc) Method declared on Dialog.
-//		 */
-//		protected Control createDialogArea(Composite parent) {
-//			// create composite
-//			Composite composite = (Composite) super.createDialogArea(parent);
-//			// create message
-//			if (message != null) {
-//				Label label = new Label(composite, SWT.WRAP);
-//				label.setText(message);
-//				GridData data = new GridData(GridData.GRAB_HORIZONTAL
-//						| GridData.GRAB_VERTICAL
-//						| GridData.HORIZONTAL_ALIGN_FILL
-//						| GridData.VERTICAL_ALIGN_CENTER);
-//				data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-//				label.setLayoutData(data);
-//				label.setFont(parent.getFont());
-//			}
-//
-//			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-//			try {
-//				IRodinElement[] contexts = ((IParent) rodinFile.getParent())
-//						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-//				for (int i = 0; i < contexts.length; i++) {
-//					Button button = new Button(composite, SWT.RADIO);
-//					button.setText(EventBPlugin.getComponentName(contexts[i]
-//							.getElementName()));
-//					button.addSelectionListener(new ButtonSelectionListener(
-//							button.getText()));
-//					if (seen != null) {
-//						try {
-//							if (seen.getContents().equals(button.getText())) {
-//								button.setSelection(true);
-//							}
-//						} catch (RodinDBException e) {
-//							// TODO Handle Exception
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			} catch (RodinDBException e) {
-//				e.printStackTrace();
-//			}
-//
-//			applyDialogFont(composite);
-//			return composite;
-//		}
-//
-//		private class ButtonSelectionListener implements SelectionListener {
-//			String name;
-//
-//			public ButtonSelectionListener(String name) {
-//				this.name = name;
-//			}
-//
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//				// Do nothing
-//			}
-//
-//			public void widgetSelected(SelectionEvent e) {
-//				okButton.setEnabled(true);
-//				context = name;
-//			}
-//		}
-//
-//		protected void buttonPressed(int buttonId) {
-//			if (buttonId == IDialogConstants.CANCEL_ID) {
-//				context = null;
-//			}
-//			super.buttonPressed(buttonId);
-//		}
-//
-//		public String getContext() {
-//			return context;
-//		}
-//	}
+	public void elementChanged(ElementChangedEvent event) {
+		viewer.setInput(rodinFile);
+		initContextCombo();
+		updateButtons();
+	}
+
+	private void initContextCombo() {
+		contextCombo.removeAll();
+		try {
+			IRodinElement[] contexts = ((IParent) rodinFile.getParent())
+					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+			IRodinElement[] seenContexts = rodinFile
+					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+
+			for (IRodinElement context : contexts) {
+				UIUtils.debugEventBEditor("Sees Section -- Context: "
+						+ context.getElementName());
+				boolean found = false;
+				for (IRodinElement seenContext : seenContexts) {
+					if (EventBPlugin.getComponentName(context.getElementName())
+							.equals(
+									((IInternalElement) seenContext)
+											.getContents())) {
+						found = true;
+						break;
+					}
+				}
+				UIUtils.debugEventBEditor("Sees Section -- Found: " + found);
+				if (!found)
+					contextCombo.add(EventBPlugin.getComponentName(context
+							.getElementName()));
+			}
+		} catch (RodinDBException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	private void updateButtons() {
+		deleteButton.setEnabled(!viewer.getSelection().isEmpty());
+		addButton.setEnabled(!contextCombo.getText().equals(""));
+	}
+
+	@Override
+	public void dispose() {
+		RodinCore.removeElementChangedListener(this);
+		viewer.removeSelectionChangedListener(this);
+		super.dispose();
+	}
+
+	public void selectionChanged(SelectionChangedEvent event) {
+		updateButtons();
+	}
 
 }
