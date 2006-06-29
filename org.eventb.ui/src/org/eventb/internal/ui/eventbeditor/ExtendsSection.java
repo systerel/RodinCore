@@ -43,7 +43,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
-import org.eventb.core.ISeesContext;
+import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -61,13 +61,13 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editting Sees
  *         clause.
  */
-public class SeesSection extends SectionPart implements
+public class ExtendsSection extends SectionPart implements
 		IElementChangedListener, ISelectionChangedListener {
 
 	// Title and description of the section.
-	private static final String SECTION_TITLE = "Required Contexts";
+	private static final String SECTION_TITLE = "Extended Contexts";
 
-	private static final String SECTION_DESCRIPTION = "Select the contexts that this machine sees";
+	private static final String SECTION_DESCRIPTION = "Select contexts that this context extends";
 
 	// The Form editor contains this section.
 	private FormEditor editor;
@@ -100,7 +100,8 @@ public class SeesSection extends SectionPart implements
 	 * @param parent
 	 *            The composite parent
 	 */
-	public SeesSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
+	public ExtendsSection(FormEditor editor, FormToolkit toolkit,
+			Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
@@ -110,12 +111,13 @@ public class SeesSection extends SectionPart implements
 		RodinCore.addElementChangedListener(this);
 	}
 
-	private class SeenContextContentProvider implements
+	private class ExtendedContextContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
 			try {
-				return rodinFile.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+				return rodinFile
+						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -168,9 +170,6 @@ public class SeesSection extends SectionPart implements
 								for (Iterator it = ssel.iterator(); it
 										.hasNext();) {
 									Object obj = it.next();
-									UIUtils
-											.debugEventBEditor("Sees Section: Deleting "
-													+ obj);
 									if (obj instanceof IInternalElement) {
 										((IInternalElement) obj).delete(true,
 												null);
@@ -188,7 +187,7 @@ public class SeesSection extends SectionPart implements
 		});
 
 		viewer = new TableViewer(comp);
-		viewer.setContentProvider(new SeenContextContentProvider());
+		viewer.setContentProvider(new ExtendedContextContentProvider());
 		viewer.setLabelProvider(new UIUtils.ElementLabelProvider());
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
@@ -207,7 +206,7 @@ public class SeesSection extends SectionPart implements
 			public void widgetSelected(SelectionEvent e) {
 				int index = contextCombo.getSelectionIndex();
 				if (index != -1) {
-					addSeenContext(contextCombo.getItems()[index]);
+					addExtendedContext(contextCombo.getItems()[index]);
 				}
 			}
 
@@ -233,41 +232,9 @@ public class SeesSection extends SectionPart implements
 			}
 		});
 
-		// try {
-		// IRodinElement[] seenContexts = rodinFile
-		// .getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-		// if (seenContexts.length != 0) {
-		// seen = (IInternalElement) seenContexts[0];
-		// try {
-		// contextCombo.setText(seen.getContents());
-		// // contextText.setText(seen.getContents());
-		// } catch (RodinDBException e) {
-		// e.printStackTrace();
-		// }
-		// // chooseButton.setSelection(true);
-		// } else {
-		// deleteButton.setSelection(true);
-		// contextCombo.setEnabled(false);
-		// // contextText.setEnabled(false);
-		// addButton.setEnabled(false);
-		// seen = null;
-		// }
-		// } catch (RodinDBException e) {
-		// // TODO Refesh?
-		//
-		// e.printStackTrace();
-		// InputDialog dialog = new InputDialog(null, "Resource out of sync",
-		// "Refresh? (Y/N)", "Y", null);
-		// dialog.open();
-		// dialog.getValue();
-		// EventBMachineEditorContributor.sampleAction.refreshAll();
-		// }
-
 		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
-		// gd = new GridData(GridData.FILL_BOTH);
-		// gd.minimumWidth = 250;
-		// section.setLayoutData(gd);
+
 		initContextCombo();
 		updateButtons();
 	}
@@ -279,12 +246,12 @@ public class SeesSection extends SectionPart implements
 	 * @param context
 	 *            name of the context
 	 */
-	private void addSeenContext(String context) {
+	private void addExtendedContext(String context) {
 		try {
 			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-			IInternalElement seen = rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, context, null, null);
-			seen.setContents(context);
+			IInternalElement extended = rodinFile.createInternalElement(
+					IExtendsContext.ELEMENT_TYPE, context, null, null);
+			extended.setContents(context);
 			// markDirty();
 		} catch (RodinDBException exception) {
 			exception.printStackTrace();
@@ -297,9 +264,9 @@ public class SeesSection extends SectionPart implements
 	public void handleAddOrCreate() {
 		String context = contextCombo.getText();
 		try {
-			IInternalElement seen = rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, context, null, null);
-			seen.setContents(context);
+			IInternalElement extended = rodinFile.createInternalElement(
+					IExtendsContext.ELEMENT_TYPE, context, null, null);
+			extended.setContents(context);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -312,10 +279,10 @@ public class SeesSection extends SectionPart implements
 			boolean answer = MessageDialog
 					.openQuestion(
 							this.getSection().getShell(),
-							"Create Machine",
-							"Machine "
+							"Create Context",
+							"Context "
 									+ contextFileName
-									+ " does not exist. Do you want to create new refined machine?");
+									+ " does not exist. Do you want to create new extended context?");
 
 			if (!answer)
 				return;
@@ -331,18 +298,6 @@ public class SeesSection extends SectionPart implements
 
 		UIUtils.linkToEventBEditor(contextFile);
 
-		// ContextChoosingDialog dialog = new ContextChoosingDialog(null,
-		// "Context Name", "Please choose the seen context");
-		// dialog.open();
-		// String name = dialog.getContext();
-		// if (name != null) {
-		// setSeenContext(name);
-		//
-		// // contextText.setText(name);
-		// // contextText.setFocus();
-		// }
-		// dialog.close();
-		//
 		return;
 	}
 
@@ -357,23 +312,24 @@ public class SeesSection extends SectionPart implements
 		try {
 			IRodinElement[] contexts = ((IParent) rodinFile.getParent())
 					.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-			IRodinElement[] seenContexts = rodinFile
-					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+			IRodinElement[] extendedContexts = rodinFile
+					.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 
 			for (IRodinElement context : contexts) {
-				UIUtils.debugEventBEditor("Sees Section -- Context: "
-						+ context.getElementName());
+
+				if (context.equals(rodinFile))
+					continue;
 				boolean found = false;
-				for (IRodinElement seenContext : seenContexts) {
+				for (IRodinElement extendContext : extendedContexts) {
 					if (EventBPlugin.getComponentName(context.getElementName())
 							.equals(
-									((IInternalElement) seenContext)
+									((IInternalElement) extendContext)
 											.getContents())) {
 						found = true;
 						break;
 					}
 				}
-				UIUtils.debugEventBEditor("Sees Section -- Found: " + found);
+
 				if (!found)
 					contextCombo.add(EventBPlugin.getComponentName(context
 							.getElementName()));
@@ -389,13 +345,14 @@ public class SeesSection extends SectionPart implements
 		String text = contextCombo.getText();
 		if (text.equals("")) {
 			addButton.setEnabled(false);
+		} else if (text.equals(EventBPlugin.getComponentName(rodinFile
+				.getElementName()))) {
+			addButton.setEnabled(false);
 		} else {
-			IRodinElement[] seenContexts;
-
 			try {
-				seenContexts = rodinFile
-						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-				for (IRodinElement seenContext : seenContexts) {
+				IRodinElement[] extendedContexts = rodinFile
+						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
+				for (IRodinElement seenContext : extendedContexts) {
 					if (((IInternalElement) seenContext).getContents().equals(
 							text)) {
 						addButton.setEnabled(false);

@@ -20,6 +20,9 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -63,20 +66,33 @@ public class DependenciesPage extends FormPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		SectionPart part = new SeesSection(this.getEditor(), this
-				.getManagedForm().getToolkit(), body);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.minimumWidth = 250;
+		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput(); 
 		
-		part.getSection().setLayoutData(gd);
-		managedForm.addPart(part);
-		
-		part = new RefinesSection(this.getEditor(), this
-				.getManagedForm().getToolkit(), body);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.minimumWidth = 150;
-		part.getSection().setLayoutData(gd);
-		managedForm.addPart(part);
+		if (rodinFile instanceof IMachineFile) {
+			SectionPart part = new SeesSection(this.getEditor(), this
+					.getManagedForm().getToolkit(), body);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.minimumWidth = 250;
+			
+			part.getSection().setLayoutData(gd);
+			managedForm.addPart(part);
+			
+			part = new RefinesSection(this.getEditor(), this
+					.getManagedForm().getToolkit(), body);
+			gd = new GridData(GridData.FILL_BOTH);
+			gd.minimumWidth = 150;
+			part.getSection().setLayoutData(gd);
+			managedForm.addPart(part);
+		}
+		else if (rodinFile instanceof IContextFile) {
+			SectionPart part = new ExtendsSection(this.getEditor(), this
+					.getManagedForm().getToolkit(), body);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.minimumWidth = 250;
+			
+			part.getSection().setLayoutData(gd);
+			managedForm.addPart(part);
+		}
 	}
 
 }

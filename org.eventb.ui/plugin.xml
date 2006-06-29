@@ -130,6 +130,7 @@
    </extension>
    <extension
          point="org.eventb.ui.contextPages">
+      <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.ConstantPage"/>
       <page class="org.eventb.internal.ui.eventbeditor.AxiomPage"/>

@@ -19,8 +19,11 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
@@ -52,22 +55,39 @@ public class RodinElementSorter extends ViewerSorter {
 	public int category(Object obj) {
 		if (obj instanceof IRodinElement) {
 			IRodinElement rodinElement = (IRodinElement) obj;
+			if (rodinElement instanceof ISeesContext)
+				return -2;
+
+			if (rodinElement instanceof IRefinesMachine)
+				return -1;
+
+			if (rodinElement instanceof IExtendsContext)
+				return 0;
+
 			if (rodinElement instanceof IVariable)
 				return 1;
+
 			if (rodinElement instanceof IInvariant)
 				return 2;
+
 			if (rodinElement instanceof ITheorem)
 				return 4;
+
 			if (rodinElement instanceof IEvent)
 				return 5;
+
 			if (rodinElement instanceof IGuard)
 				return 2;
+
 			if (rodinElement instanceof IAction)
 				return 3;
+
 			if (rodinElement instanceof ICarrierSet)
 				return 1;
+
 			if (rodinElement instanceof IConstant)
 				return 2;
+
 			if (rodinElement instanceof IAxiom)
 				return 3;
 		}

@@ -36,6 +36,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
@@ -211,6 +212,9 @@ public class UIUtils {
 		if (element instanceof IRefinesMachine)
 			return registry.get(EventBImage.IMG_MACHINE);
 
+		if (element instanceof IExtendsContext)
+			return registry.get(EventBImage.IMG_CONTEXT);
+
 		if (element instanceof IVariable)
 			return registry.get(EventBImage.IMG_VARIABLE);
 
@@ -299,7 +303,7 @@ public class UIUtils {
 	public static class ElementLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof ISeesContext || obj instanceof IAction
-					|| obj instanceof IRefinesMachine) {
+					|| obj instanceof IRefinesMachine || obj instanceof IExtendsContext) {
 				try {
 					return ((IInternalElement) obj).getContents();
 				} catch (RodinDBException e) {
