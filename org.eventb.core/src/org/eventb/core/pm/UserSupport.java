@@ -116,12 +116,14 @@ public class UserSupport implements IElementChangedListener,
 						mergedDelta.setNewCurrentNode(oldCurrentNode);
 					}
 					else {
-						if (newDelta.getNewSearch() || oldDelta.getNewSearch()) {
-							mergedDelta.setNewSearch();
-						}
 						if (newDelta.getNewCache() || oldDelta.getNewCache()) {
 							mergedDelta.setNewCache();
 						}
+						
+						if (newDelta.getNewSearch() || oldDelta.getNewSearch()) {
+							mergedDelta.setNewSearch();
+						}
+
 						return mergedDelta;
 					}
 				}
@@ -304,10 +306,15 @@ public class UserSupport implements IElementChangedListener,
 
 	protected void internalPrune() {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
+		UserSupportUtils.debug("Internal Prune");
 		information = Tactics.prune().apply(currentNode);
+		UserSupportUtils.debug("Information: " + information);
 		if (information == null) {
 			information = "Tactic applied successfully";
 			currentPS.setDirty(true);
+			ProofStateDelta newDelta = new ProofStateDelta();
+			newDelta.setNewCurrentNode(currentNode);
+			fireProofStateDelta(newDelta);
 		}
 	}
 
@@ -355,7 +362,6 @@ public class UserSupport implements IElementChangedListener,
 
 		ProofStateDelta newDelta = new ProofStateDelta();
 		newDelta.setNewSearch();
-
 		fireProofStateDelta(newDelta);
 		return;
 	}

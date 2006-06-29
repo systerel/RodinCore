@@ -14,19 +14,17 @@ package org.eventb.internal.ui.prover;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -129,58 +127,61 @@ public abstract class HypothesesSection extends SectionPart {
 	 * @param removed
 	 *            set of removed hypotheses
 	 */
-	protected void update(Collection<Hypothesis> added,
-			Collection<Hypothesis> removed) {
-		if (removed != null) {
-			Collection<HypothesisRow> deletedRows = new HashSet<HypothesisRow>();
-
-			for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
-				HypothesisRow hr = it.next();
-				if (removed.contains(hr.getHypothesis())) {
-					deletedRows.add(hr);
-					hr.dispose();
-				}
-			}
-			rows.removeAll(deletedRows);
-		}
-
-		if (added != null) {
-			for (Iterator<Hypothesis> it = added.iterator(); it.hasNext();) {
-				Hypothesis hp = it.next();
-				HypothesisRow row = new HypothesisRow(this.getManagedForm()
-						.getToolkit(), comp, hp, ((ProverUI) page.getEditor())
-						.getUserSupport());
-				rows.add(row);
-			}
-		}
-
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-//		final SectionPart part = this;
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (!scrolledForm.isDisposed()) {
-					scrolledForm.reflow(true); // Important for refresh
-//					part.refresh();
-				}
-			}
-		});
-	}
-
-	public void refresh(Collection<Hypothesis> hyps) {
+	// protected void update(Collection<Hypothesis> added,
+	// Collection<Hypothesis> removed) {
+	// if (removed != null) {
+	// Collection<HypothesisRow> deletedRows = new HashSet<HypothesisRow>();
+	//
+	// for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
+	// HypothesisRow hr = it.next();
+	// if (removed.contains(hr.getHypothesis())) {
+	// deletedRows.add(hr);
+	// hr.dispose();
+	// }
+	// }
+	// rows.removeAll(deletedRows);
+	// }
+	//
+	// if (added != null) {
+	// for (Iterator<Hypothesis> it = added.iterator(); it.hasNext();) {
+	// Hypothesis hp = it.next();
+	// HypothesisRow row = new HypothesisRow(this.getManagedForm()
+	// .getToolkit(), comp, hp, ((ProverUI) page.getEditor())
+	// .getUserSupport());
+	// rows.add(row);
+	// }
+	// }
+	//
+	// Display display = EventBUIPlugin.getDefault().getWorkbench()
+	// .getDisplay();
+	// // final SectionPart part = this;
+	// display.syncExec(new Runnable() {
+	// public void run() {
+	// if (!scrolledForm.isDisposed()) {
+	// scrolledForm.reflow(true); // Important for refresh
+	// // part.refresh();
+	// }
+	// }
+	// });
+	// }
+	public void init(Collection<Hypothesis> hyps) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
 		}
 		rows.clear();
-		
+
 		// Add new hyps
 		for (Hypothesis hyp : hyps) {
+			UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
+					+ hyp.getPredicate());
 			HypothesisRow row = new HypothesisRow(this.getManagedForm()
 					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
 					.getUserSupport());
 			rows.add(row);
 		}
+		
+		scrolledForm.reflow(true);
 	}
 
 }

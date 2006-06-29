@@ -102,6 +102,8 @@ public class ProofStateDelta implements IProofStateDelta {
 		result = result + "\n" + "Proof State: " + ps;
 		result = result + "\n" + "ProofTreeDelta: " + proofTreeDelta;
 		result = result + "\n" + "Current Node: " + node;
+		result = result + "\n" + "New Cache: " + newCache;
+		result = result + "\n" + "New Search: " + newSearch;
 		result = result + "\n***************************";
 		return result;
 	}
