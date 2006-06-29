@@ -172,6 +172,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
 				Hypothesis hyp = i.next();
+				if (node != null) 
+					if (!node.getSequent().hypotheses().contains(hyp))
+						continue;
 				if (!selected.contains(hyp))
 					cached.add(hyp);
 			}
@@ -179,6 +182,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
 					.hasNext();) {
 				Hypothesis hyp = i.next();
+				if (node != null) 
+					if (!node.getSequent().hypotheses().contains(hyp))
+						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					searched.add(hyp);
 			}
@@ -245,6 +251,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
 				Hypothesis hyp = i.next();
+				if (node != null) 
+					if (!node.getSequent().hypotheses().contains(hyp))
+						continue;
 				if (!selected.contains(hyp))
 					cached.add(hyp);
 			}
@@ -253,6 +262,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
 					.hasNext();) {
 				Hypothesis hyp = i.next();
+				if (node != null) 
+					if (!node.getSequent().hypotheses().contains(hyp))
+						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
 					searched.add(hyp);
 			}
