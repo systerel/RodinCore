@@ -65,7 +65,6 @@ import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -643,22 +642,35 @@ public class UIUtils {
 				IRodinElement[] events = rodinFile
 						.getChildrenOfType(IEvent.ELEMENT_TYPE);
 				for (IRodinElement event : events) {
+					IInternalElement element = (IInternalElement) event;
 					if (event.getElementName().equals("INITIALISATION")) {
 						newInit = false;
-						IUnnamedInternalElement act = (IUnnamedInternalElement) ((IInternalElement) event)
-								.createInternalElement(IAction.ELEMENT_TYPE,
-										"", null, null);
+						int j = 1;
+						IRodinElement[] acts = element
+								.getChildrenOfType(IAction.ELEMENT_TYPE);
+						for (j = 1; j <= acts.length; j++) {
+							IInternalElement tmp = element
+									.getInternalElement(IAction.ELEMENT_TYPE,
+											"act" + j);
+							if (!tmp.exists())
+								break;
+						}
+						IInternalElement act = element.createInternalElement(
+								IAction.ELEMENT_TYPE, "act" + j, null,
+								null);
 						act.setContents(init);
+						
 						editor.addNewElement(act);
 					}
 				}
 				if (newInit) {
 					IInternalElement event = rodinFile.createInternalElement(
 							IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
-					IUnnamedInternalElement action = (IUnnamedInternalElement) event
-							.createInternalElement(IAction.ELEMENT_TYPE, null,
+					IInternalElement act = (IInternalElement) event
+							.createInternalElement(IAction.ELEMENT_TYPE, "act1",
 									null, null);
-					action.setContents(init);
+					act.setContents(init);
+					editor.addNewElement(act);
 				}
 			}
 
@@ -771,9 +783,21 @@ public class UIUtils {
 				}
 
 				for (String action : actions) {
+					int j = 1;
+					IRodinElement[] acts = evt
+							.getChildrenOfType(IAction.ELEMENT_TYPE);
+					for (j = 1; j <= acts.length; j++) {
+						IInternalElement tmp = evt
+								.getInternalElement(IAction.ELEMENT_TYPE,
+										"act" + j);
+						if (!tmp.exists())
+							break;
+					}
 					IInternalElement act = evt.createInternalElement(
-							IAction.ELEMENT_TYPE, null, null, null);
+							IAction.ELEMENT_TYPE, "act" + j, null,
+							null);
 					act.setContents(action);
+
 					editor.addNewElement(act);
 				}
 			}

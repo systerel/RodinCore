@@ -144,8 +144,19 @@ public class EventBEditorUtils {
 					if (ssel.size() == 1) {
 						Object obj = ssel.getFirstElement();
 						IInternalElement event = TreeSupports.getEvent(obj);
+						int counter = 1;
+						IRodinElement[] acts = event
+								.getChildrenOfType(IAction.ELEMENT_TYPE);
+						for (counter = 1; counter <= acts.length; counter++) {
+							IInternalElement element = event
+									.getInternalElement(IAction.ELEMENT_TYPE,
+											"act" + counter);
+							if (!element.exists())
+								break;
+						}
 						IInternalElement act = event.createInternalElement(
-								IAction.ELEMENT_TYPE, null, null, null);
+								IAction.ELEMENT_TYPE, "act" + counter, null,
+								null);
 						act.setContents(EventBUIPlugin.SUB_DEFAULT);
 						editor.addNewElement(act);
 						viewer.setExpandedState(TreeSupports.findItem(
@@ -176,9 +187,9 @@ public class EventBEditorUtils {
 						Object obj = ssel.getFirstElement();
 						IInternalElement event = TreeSupports.getEvent(obj);
 						int counter = 1;
-						IRodinElement[] vars = event
+						IRodinElement[] grds = event
 								.getChildrenOfType(IGuard.ELEMENT_TYPE);
-						for (counter = 1; counter <= vars.length; counter++) {
+						for (counter = 1; counter <= grds.length; counter++) {
 							IInternalElement element = event
 									.getInternalElement(IGuard.ELEMENT_TYPE,
 											"grd" + counter);
@@ -390,8 +401,8 @@ public class EventBEditorUtils {
 					IInternalElement act = null;
 					for (String action : actions) {
 						act = event.createInternalElement(IAction.ELEMENT_TYPE,
-								null, null, null);
-						act.setContents(action);
+								action, null, null);
+						act.setContents(EventBUIPlugin.SUB_DEFAULT);
 						editor.addNewElement(act);
 					}
 					viewer.setExpandedState(event, true);
