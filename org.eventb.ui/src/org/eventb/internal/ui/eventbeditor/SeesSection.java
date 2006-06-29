@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -219,7 +220,7 @@ public class SeesSection extends SectionPart implements
 		contextCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				addButton.setEnabled(!contextCombo.getText().equals(""));
+				updateButtons();
 			}
 
 		});
@@ -291,24 +292,10 @@ public class SeesSection extends SectionPart implements
 	}
 
 	/**
-	 * Handle the browse action when the corresponding addButton is clicked.
+	 * Handle the Add/Create action when the corresponding button is clicked.
 	 */
 	public void handleAddOrCreate() {
 		String context = contextCombo.getText();
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-
-		IRodinProject project = (IRodinProject) rodinFile.getParent();
-		IRodinFile contextFile = project.getRodinFile(EventBPlugin
-				.getContextFileName(context));
-		if (!contextFile.exists()) {
-			try {
-				contextFile = project.createRodinFile(EventBPlugin
-						.getContextFileName(context), true, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		try {
 			IInternalElement seen = rodinFile.createInternalElement(
 					ISeesContext.ELEMENT_TYPE, context, null, null);
@@ -316,6 +303,30 @@ public class SeesSection extends SectionPart implements
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+		IRodinProject project = (IRodinProject) rodinFile.getParent();
+		String contextFileName = EventBPlugin.getContextFileName(context);
+		IRodinFile contextFile = project.getRodinFile(contextFileName);
+		if (!contextFile.exists()) {
+			boolean answer = MessageDialog
+					.openQuestion(
+							this.getSection().getShell(),
+							"Create Machine",
+							"Machine "
+									+ contextFileName
+									+ " does not exist. Do you want to create new refined machine?");
+
+			if (!answer)
+				return;
+
+			try {
+				contextFile = project.createRodinFile(contextFileName, true,
+						null);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		UIUtils.linkToEventBEditor(contextFile);
@@ -375,7 +386,28 @@ public class SeesSection extends SectionPart implements
 
 	private void updateButtons() {
 		deleteButton.setEnabled(!viewer.getSelection().isEmpty());
-		addButton.setEnabled(!contextCombo.getText().equals(""));
+		String text = contextCombo.getText();
+		if (text.equals("")) {
+			addButton.setEnabled(false);
+		} else {
+			IRodinElement[] seenContexts;
+
+			try {
+				seenContexts = rodinFile
+						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+				for (IRodinElement seenContext : seenContexts) {
+					if (((IInternalElement) seenContext).getContents().equals(
+							text)) {
+						addButton.setEnabled(false);
+						return;
+					}
+				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			addButton.setEnabled(true);
+		}
 	}
 
 	@Override
