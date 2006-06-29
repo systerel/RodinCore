@@ -29,7 +29,6 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -87,8 +86,6 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 			IRodinElement rodinElement = (IRodinElement) element;
 
 			if (columnIndex == 0) {
-				if (rodinElement instanceof IUnnamedInternalElement)
-					return "";
 				if (rodinElement instanceof IInternalElement)
 					return ((IInternalElement) rodinElement).getElementName();
 				return rodinElement.toString();

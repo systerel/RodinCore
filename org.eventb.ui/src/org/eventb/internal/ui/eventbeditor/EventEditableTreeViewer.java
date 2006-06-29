@@ -28,7 +28,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -222,10 +221,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			if (!editor.isNewElement(element))
 				return true;
 		}
-		if (column == 0) {
-			if (element instanceof IUnnamedInternalElement)
-				return true;
-		} else if (column == 1) {
+		if (column == 1) {
 			if (element instanceof IVariable)
 				return true;
 			if (element instanceof IEvent)
@@ -242,9 +238,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-		if (element instanceof IUnnamedInternalElement)
-			selectItem(item, 1);
-		else if (element instanceof IVariable)
+		if (element instanceof IVariable)
 			selectItem(item, 0);
 		else if (element instanceof IEvent)
 			selectItem(item, 0);

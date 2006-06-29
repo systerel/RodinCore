@@ -32,7 +32,6 @@ import org.eventb.core.IVariable;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author htson
@@ -294,9 +293,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
-		if (element instanceof IUnnamedInternalElement)
-			selectItem(item, 1);
-		else if (element instanceof IVariable)
+		if (element instanceof IVariable)
 			selectItem(item, 0);
 		else if (element instanceof IEvent)
 			selectItem(item, 0);
