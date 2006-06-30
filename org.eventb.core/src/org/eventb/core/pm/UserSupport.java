@@ -301,6 +301,9 @@ public class UserSupport implements IElementChangedListener,
 		if (information == null) {
 			information = "Tactic applied successfully";
 			currentPS.setDirty(true);
+			ProofStateDelta newDelta = new ProofStateDelta();
+			newDelta.setNewCurrentNode(currentNode);
+			fireProofStateDelta(newDelta);
 		}
 	}
 
@@ -484,6 +487,15 @@ public class UserSupport implements IElementChangedListener,
 				+ proofTreeDelta);
 		ProofStateDelta newDelta = new ProofStateDelta();
 		newDelta.setProofTreeDelta(proofTreeDelta);
+		fireProofStateDelta(newDelta);
+	}
+
+	public void setComment(String text) {
+		IProofTreeNode currentNode = currentPS.getCurrentNode();
+		currentNode.setComment(text);
+		currentPS.setDirty(true);
+		ProofStateDelta newDelta = new ProofStateDelta();
+		newDelta.setNewCurrentNode(currentNode);
 		fireProofStateDelta(newDelta);
 	}
 
