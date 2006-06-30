@@ -80,4 +80,8 @@ public final class ProofTree implements IProofTree {
 		return root.getUsedFreeIdents();
 	}
 
+	public int getConfidence() {
+		return getRoot().getConfidence();
+	}
+
 }

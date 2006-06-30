@@ -145,23 +145,27 @@ public class ObligationExplorer extends ViewPart implements
 					if (ps.isProofBroken())
 					{
 						Status proofStatus = ps.getProof().getStatus();
-						if (proofStatus.equals(Status.DISCHARGED))
-							return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
 						if (proofStatus.equals(Status.PENDING))
 							return registry.get(EventBImage.IMG_PENDING_BROKEN);
-						return registry.get(EventBImage.IMG_DEFAULT);
+						if (proofStatus.equals(Status.REVIEWED))
+							return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
+						if (proofStatus.equals(Status.DISCHARGED))
+							return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
+						
 					}
 					else
 					{
 						Status proofStatus = ps.getProof().getStatus();
-						if (proofStatus.equals(Status.DISCHARGED))
-							return registry.get(EventBImage.IMG_DISCHARGED);
 						if (proofStatus.equals(Status.PENDING))
 							return registry.get(EventBImage.IMG_PENDING);
-						return registry.get(EventBImage.IMG_DEFAULT);
+						if (proofStatus.equals(Status.REVIEWED))
+							return registry.get(EventBImage.IMG_REVIEWED);
+						if (proofStatus.equals(Status.DISCHARGED))
+							return registry.get(EventBImage.IMG_DISCHARGED);
+						
 					}
-					
-					// return registry.get(EventBImage.IMG_DEFAULT);
+
+					return registry.get(EventBImage.IMG_DEFAULT);
 					
 //  				Previous code:
 //					IProof status = ps.getProof();

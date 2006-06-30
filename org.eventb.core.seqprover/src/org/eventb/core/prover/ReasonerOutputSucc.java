@@ -84,8 +84,7 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 	public Anticident[] anticidents;
 	public Set<Hypothesis> neededHypotheses;
 	public Predicate goal;
-	
-//	public int reasoner_confidence;
+	public int reasonerConfidence;
 	
 	public ReasonerOutputSucc(Reasoner generatedBy, ReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
@@ -93,6 +92,7 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 		anticidents = null;
 		neededHypotheses = new HashSet<Hypothesis>();
 		goal = null;
+		reasonerConfidence = IProofRule.CONFIDENCE_DISCHARGED;
 	}
 
 	public Set<FreeIdentifier> getNeededFreeIdents() {

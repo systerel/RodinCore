@@ -92,4 +92,5 @@ public interface IProofTree {
 	Set<Hypothesis> getUsedHypotheses();
 	Set<FreeIdentifier> getUsedFreeIdents();
 	
+	int getConfidence();
 }

@@ -53,6 +53,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
@@ -126,8 +127,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					return registry.get(EventBImage.IMG_PENDING);
 				if (!pt.isDischarged())
 					return registry.get(EventBImage.IMG_APPLIED);
-				else
+				int confidence = pt.getConfidence();
+				if (confidence <= IProofRule.CONFIDENCE_REVIEWED)
+					return registry.get(EventBImage.IMG_REVIEWED);
+				if (confidence <= IProofRule.CONFIDENCE_DISCHARGED)
 					return registry.get(EventBImage.IMG_DISCHARGED);
+				return registry.get(EventBImage.IMG_DEFAULT);
 			}
 
 			// TODO Removed?

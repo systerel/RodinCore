@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
@@ -405,6 +406,17 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 		usedFreeIdents.addAll(rule.getNeededFreeIdents());
 		return usedFreeIdents;
+	}
+
+	public int getConfidence() {
+		if (rule == null) return IProofRule.CONFIDENCE_PENDING;
+		int minConfidence = rule.getRuleConfidence();
+		for (ProofTreeNode child : children) {
+			int childConfidence = child.getConfidence();
+			if (childConfidence < minConfidence)
+				minConfidence = childConfidence;
+		}
+		return minConfidence;
 	}
 	
 	

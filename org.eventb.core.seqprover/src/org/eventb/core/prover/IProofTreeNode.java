@@ -194,4 +194,6 @@ public interface IProofTreeNode {
 	Set<Hypothesis> getUsedHypotheses();
 	Set<FreeIdentifier> getUsedFreeIdents();
 	
+	int getConfidence();
+	
 }

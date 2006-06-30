@@ -101,11 +101,16 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 			reasonerOutput.anticidents[i] = ((IPRReasonerAnticident)rodinElements[i]).getAnticident();
 		}
 		
-		rodinElements = this.getChildrenOfType(IPair.ELEMENT_TYPE);
-		assert rodinElements.length == 1;
-		assert rodinElements[0].getElementName().equals("display");
-		reasonerOutput.display = ((IPair)rodinElements[0]).getContents()+"*";
-		
+		reasonerOutput.display = 
+			this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
+		reasonerOutput.reasonerConfidence = 
+			Integer.parseInt(this.getInternalElement(IPair.ELEMENT_TYPE,"confidence").getContents());
+
+//		rodinElements = this.getChildrenOfType(IPair.ELEMENT_TYPE);
+//		assert rodinElements.length == 1;
+//		assert rodinElements[0].getElementName().equals("display");
+//		reasonerOutput.display = ((IPair)rodinElements[0]).getContents()+"*";
+	
 		return reasonerOutput;
 	}
 
@@ -129,6 +134,10 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		// write out display
 		((IPair)(this.createInternalElement(IPair.ELEMENT_TYPE,"display",null,null)))
 		.setContents(reasonerOutput.display);
+		
+		// write out confidence level
+		((IPair)(this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null)))
+		.setContents(Integer.toString(reasonerOutput.reasonerConfidence));
 		
 		// write out the reasoner input
 		if (reasonerOutput.generatedUsing != null)

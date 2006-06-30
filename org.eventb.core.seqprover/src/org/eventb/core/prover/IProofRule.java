@@ -18,8 +18,8 @@ public interface IProofRule {
 	String getRuleID();
 	
 	final int CONFIDENCE_PENDING = 0;
-	final int CONFIDENCE_REVIEWED = 1;
-	final int CONFIDENCE_DISCHARGED = 2;
+	final int CONFIDENCE_REVIEWED = 500;
+	final int CONFIDENCE_DISCHARGED = 1000;
 	
 	int getRuleConfidence();
 	

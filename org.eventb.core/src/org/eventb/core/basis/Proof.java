@@ -38,6 +38,7 @@ public class Proof extends InternalElement implements IProof {
 	
 	public Status getStatus() throws RodinDBException {
 		if (getContents().compareToIgnoreCase("PENDING") == 0) return Status.PENDING;
+		if (getContents().compareToIgnoreCase("REVIEWED") == 0) return Status.REVIEWED;
 		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Status.DISCHARGED;
 		return null;
 	}
@@ -47,6 +48,9 @@ public class Proof extends InternalElement implements IProof {
 		case PENDING:
 			setContents("PENDING");
 			break;
+		case REVIEWED:
+			setContents("REVIEWED");
+			break;	
 		case DISCHARGED:
 			setContents("DISCHARGED");
 			break;

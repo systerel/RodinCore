@@ -46,10 +46,6 @@ public abstract class ProofRule implements IProofRule {
 		return ruleID;
 	}
 	
-	public int getRuleConfidence() {
-		return IProofRule.CONFIDENCE_DISCHARGED;
-	}
-	
 
 	/**
 	 * Applies this rule to the given proof sequent.

@@ -38,6 +38,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.basis.PRProofRule;
 import org.eventb.core.basis.PRProofTreeNode;
 import org.eventb.core.basis.PRReasoningStep;
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
@@ -218,11 +219,13 @@ public class PRUtil {
 		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProof());
 		
 		// Update the status
-		if (pt.isDischarged()){
-			prSeq.getProof().setContents(Status.DISCHARGED.toString());
-		} else {
+		int confidence = pt.getConfidence();
+		if (confidence <= IProofRule.CONFIDENCE_PENDING)
 			prSeq.getProof().setContents(Status.PENDING.toString());
-		}
+		else if (confidence <= IProofRule.CONFIDENCE_REVIEWED)
+			prSeq.getProof().setContents(Status.REVIEWED.toString());
+		else prSeq.getProof().setContents(Status.DISCHARGED.toString());
+			
 		// set the proof to valid
 		prSeq.setProofBroken(false);
 		
