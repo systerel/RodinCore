@@ -12,7 +12,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IRodinElement;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public class SCProblem {
