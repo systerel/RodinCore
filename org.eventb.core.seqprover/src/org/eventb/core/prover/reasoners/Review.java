@@ -31,8 +31,8 @@ public class Review implements Reasoner{
 		} 
 		else input = (Input) reasonerInput;
 		
-		if (input == null){
-			input = new Input(seq.selectedHypotheses(),seq.goal());
+		if (input.goal == null || input.hyps == null){
+			input = new Input(seq.selectedHypotheses(),seq.goal(),input.reviewerConfidence);
 		}
 		
 		if ((! (seq.goal().equals(input.goal))) ||
@@ -46,8 +46,10 @@ public class Review implements Reasoner{
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.neededHypotheses = input.hyps;
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "reviewed";
-		reasonerOutput.reasonerConfidence = IProofRule.CONFIDENCE_REVIEWED;
+		reasonerOutput.display = "reviewed (confidence "+input.reviewerConfidence+")";
+		assert input.reviewerConfidence > 0;
+		assert input.reviewerConfidence <= IProofRule.CONFIDENCE_REVIEWED;
+		reasonerOutput.reasonerConfidence = input.reviewerConfidence;
 		
 		reasonerOutput.anticidents = new Anticident[0];
 		
@@ -57,15 +59,31 @@ public class Review implements Reasoner{
 	public static class Input implements ReasonerInput{
 		public final Set<Hypothesis> hyps;
 		public final Predicate goal;
+		// A reviewer confidence in the range 1 (lowest) to 5 (highest)
+		public final int reviewerConfidence;
 		
-		public Input(Set<Hypothesis> hyps,Predicate goal){
+		public Input(Set<Hypothesis> hyps,Predicate goal, int reviewerConfidence){
 			this.hyps = hyps;
 			this.goal = goal;
+			assert reviewerConfidence >= 1;
+			assert reviewerConfidence <= 5;
+			this.reviewerConfidence = reviewerConfidence;
+		}
+		
+		public Input(int reviewerConfidence){
+			this.hyps = null;
+			this.goal = null;
+			assert reviewerConfidence >= 1;
+			assert reviewerConfidence <= 5;
+			this.reviewerConfidence = reviewerConfidence;
 		}
 		
 		public Input(SerializableReasonerInput serializableReasonerInput) {
 			this.hyps = serializableReasonerInput.hypAction.getHyps();
 			this.goal = serializableReasonerInput.getPredicate("goal");
+			this.reviewerConfidence =  
+				Integer.parseInt(serializableReasonerInput.getString("reviewerConfidence"));
+			
 		}
 		
 		public SerializableReasonerInput genSerializable() {
@@ -77,6 +95,7 @@ public class Review implements Reasoner{
 			serializableReasonerInput.hypAction =
 				new HypothesesManagement.Action(ActionType.SELECT,this.hyps);
 			serializableReasonerInput.putPredicate("goal",goal);
+			serializableReasonerInput.putString("reviewerConfidence",String.valueOf(reviewerConfidence));
 			return serializableReasonerInput;
 		}
 		

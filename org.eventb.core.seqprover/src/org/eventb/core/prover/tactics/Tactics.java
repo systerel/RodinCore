@@ -75,12 +75,16 @@ public class Tactics {
 	}
 	
 	
-	public static ITactic review(Set<Hypothesis> hyps,Predicate goal) {
-		return BasicTactics.reasonerTac(new Review(),new Review.Input(hyps,goal));
-	}
+//	public static ITactic review(Set<Hypothesis> hyps,Predicate goal) {
+//		return BasicTactics.reasonerTac(new Review(),new Review.Input(hyps,goal));
+//	}
 	
 	public static ITactic review() {
-		return BasicTactics.reasonerTac(new Review(),null);
+		return BasicTactics.reasonerTac(new Review(),new Review.Input(1));
+	}
+	
+	public static ITactic review(int reviewerConfidence) {
+		return BasicTactics.reasonerTac(new Review(),new Review.Input(reviewerConfidence));
 	}
 	
 	public static ITactic lemma(String lemma) {
