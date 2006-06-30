@@ -15,7 +15,6 @@ package org.eventb.internal.ui.prover.globaltactics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.prover.IGlobalTactic;
 
 /**
@@ -63,13 +62,6 @@ public class GlobalTacticUI {
 			String dropdown, Constructor constructor)
 			throws IllegalArgumentException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
-//		if (ProverUI.DEBUG) {
-//			System.out.println("ID: " + ID);
-//			System.out.println("Image: " + image);
-//			System.out.println("Tips: " + tips);
-//			System.out.println("Constructor: " + constructor);
-//			System.out.println("Dropdown: " + dropdown);
-//		}
 		this.ID = ID;
 		this.image = image;
 		this.tips = tips;

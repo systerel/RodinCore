@@ -39,7 +39,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;

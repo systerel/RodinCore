@@ -34,13 +34,18 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
@@ -73,6 +78,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// The contained tree viewer.
 	private TreeViewer viewer;
 
+	private Text comments;
+
 	// The invisible root of the tree.
 	private IProofTree invisibleRoot = null;
 
@@ -81,15 +88,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// TODO Change to Rule class?
 	private Object[] filters = { "allI" }; // Default filters
 
-//	private boolean byUserSupport;
-
 	private TreeColumn elementColumn;
 
 	// The current editting element.
 	private Object fInput;
 
-	// The current associated editor.
-	// private ProverUI editor;
+//	private Combo confidentLevel;
 
 	private UserSupport userSupport;
 
@@ -101,12 +105,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 *         <p>
 	 *         This class provides the labels for elements in the tree viewer.
 	 */
-	class ViewLabelProvider implements ITableLabelProvider, ITableFontProvider,
-			ITableColorProvider, IPropertyChangeListener {
+	class ProofTreeLabelProvider implements ITableLabelProvider,
+			ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
 
 		private Font font = null;
 
-		public ViewLabelProvider() {
+		public ProofTreeLabelProvider() {
 			// Register as a listener to the font registry
 			JFaceResources.getFontRegistry().addListener(this);
 		}
@@ -263,7 +267,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	public ProofTreeUIPage(UserSupport userSupport) {
 		super();
 		this.userSupport = userSupport;
-//		byUserSupport = false;
+		// byUserSupport = false;
 		userSupport.addStateChangedListeners(this);
 	}
 
@@ -278,13 +282,21 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	public void createControl(Composite parent) {
+		GridLayout gl = new GridLayout();
+		gl.numColumns = 2;
+		parent.setLayout(gl);
+
 		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
-		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer.setLabelProvider(new ProofTreeLabelProvider());
 		viewer.addSelectionChangedListener(this);
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		tree.setLayoutData(gd);
+
 		elementColumn = new TreeColumn(tree, SWT.LEFT);
 		// elementColumn.setResizable(true);
 		// TODO Implement using ViewerFilter????
@@ -308,17 +320,61 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		// }
 		//			
 		// });
-		if (fInput != null)
-			update();
+//		Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
+//		label.setText("Confident Level: ");
+//		gd = new GridData();
+////		gd.heightHint = 50;
+////		gd.widthHint = 100;
+//		gd.horizontalAlignment = SWT.CENTER;
+//		label.setLayoutData(gd);
+//		label.pack();
+		
+//		confidentLevel = new Combo(parent, SWT.DEFAULT);
+//		for (int i = 0; i <= 10; i++)
+//			confidentLevel.add(i+"");
+//		gd = new GridData();
+//		confidentLevel.setLayoutData(gd);
 
-		// if (root != null)
-		// viewer.setSelection(new StructuredSelection(root));
-		elementColumn.pack();
+		comments = new Text(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 150;
+		gd.horizontalSpan = 2;
+		comments.setLayoutData(gd);
 
+		comments.addFocusListener(new FocusListener() {
+
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void focusLost(FocusEvent e) {
+				ISelection sel = viewer.getSelection();
+				UIUtils.debugProverUI("Selection: " + sel);
+				if (sel instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ssel.size() == 1) {
+						IProofTreeNode node = (IProofTreeNode) ssel
+								.getFirstElement();
+						UIUtils.debugProverUI("Node: "
+								+ node.getSequent().toString());
+						userSupport.setComment(comments.getText());
+					}
+				}
+			}
+
+		});
+
+		
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+
+		if (fInput != null)
+			update();
+		elementColumn.pack();
+
 	}
 
 	/**
@@ -561,15 +617,20 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (!ssel.isEmpty()) {
-//				if (byUserSupport) { // Do nothing if the selection is from
-//					// UserSupport
-//					byUserSupport = false;
-//					return;
-//				}
+				// if (byUserSupport) { // Do nothing if the selection is from
+				// // UserSupport
+				// byUserSupport = false;
+				// return;
+				// }
 
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof IProofTreeNode) {
 					userSupport.selectNode((IProofTreeNode) obj);
+				}
+				if (ssel.size() == 1) {
+					IProofTreeNode node = (IProofTreeNode) ssel
+							.getFirstElement();
+					comments.setText(node.getComment());
 				}
 			} else { // Do nothing when there is no selection
 				// editor.getUserSupport().selectNode(null);
@@ -637,7 +698,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	public void proofStateChanged(IProofStateDelta delta) {
-//		byUserSupport = true;
+		// byUserSupport = true;
 		final ProofState ps = delta.getNewProofState();
 		UIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
 		if (ps != null) { // Change only when change the PO
@@ -656,14 +717,13 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 								new StructuredSelection(currentNode));
 				}
 			});
-		}
-		else {
+		} else {
 			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 			UIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
 			if (proofTreeDelta != null) {
 				viewer.refresh();
 			}
-			
+
 			IProofTreeNode node = delta.getNewProofTreeNode();
 			if (node != null) {
 				viewer.setSelection(new StructuredSelection(node), true);
