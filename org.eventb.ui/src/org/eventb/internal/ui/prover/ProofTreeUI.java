@@ -64,7 +64,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		// Try to get an obligation list page.
+		// Try to get an ProofTree UI Page list page.
 		Object obj = part.getAdapter(IProofTreeUIPage.class);
 		if (obj instanceof IProofTreeUIPage) {
 			IProofTreeUIPage page = (IProofTreeUIPage) obj;
