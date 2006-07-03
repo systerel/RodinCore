@@ -36,6 +36,13 @@ import org.rodinp.core.basis.InternalElement;
 public abstract class SCIdentifierElement extends InternalElement
 		implements ISCIdentifierElement {
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ISCIdentifierElement#getIdentifierName()
+	 */
+	public String getIdentifierName() throws RodinDBException {
+		return getElementName();
+	}
+
 	public SCIdentifierElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}

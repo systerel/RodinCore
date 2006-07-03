@@ -59,6 +59,14 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException;
+	
+	/**
+	 * Returns the name of the identifier as a character string.
+	 * 
+	 * @return name of the identifier as a character string
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	String getIdentifierName() throws RodinDBException;
 
 // TODO restore this method when identifiers are stored through an indirection.
 //	/**
