@@ -16,19 +16,17 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -67,12 +65,13 @@ public class RefinesSection extends SectionPart implements
 	// The Form editor contains this section.
 	private FormEditor editor;
 
+	private final static String NULL_VALUE = "--- None ---";
 	// Buttons.
-	private Button nullButton;
+//	private Button nullButton;
+//
+//	private Button chooseButton;
 
-	private Button chooseButton;
-
-	private Button openOrCreateButton;
+//	private Button openOrCreateButton;
 
 	// The combo box
 	private Combo machineCombo;
@@ -128,66 +127,69 @@ public class RefinesSection extends SectionPart implements
 		section.setDescription(SECTION_DESCRIPTION);
 		Composite comp = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
 
 		// Create the "Null" button.
-		nullButton = toolkit.createButton(comp, "None", SWT.RADIO);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		nullButton.setLayoutData(gd);
-		nullButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (nullButton.getSelection()) {
-					machineCombo.setEnabled(false);
-					openOrCreateButton.setEnabled(false);
-					try {
-						if (refined != null) {
-							refined.delete(true, null);
-							refined = null;
-						}
-					} catch (RodinDBException exception) {
-						exception.printStackTrace();
-					}
-				}
-			}
-		});
+//		nullButton = toolkit.createButton(comp, "None", SWT.RADIO);
+//		GridData gd = new GridData();
+//		gd.horizontalSpan = 3;
+//		nullButton.setLayoutData(gd);
+//		nullButton.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				if (nullButton.getSelection()) {
+//					machineCombo.setEnabled(false);
+//					openOrCreateButton.setEnabled(false);
+//					try {
+//						if (refined != null) {
+//							refined.delete(true, null);
+//							refined = null;
+//						}
+//					} catch (RodinDBException exception) {
+//						exception.printStackTrace();
+//					}
+//				}
+//			}
+//		});
 
 		// Create the "Choose" button
-		chooseButton = toolkit.createButton(comp, "Choose", SWT.RADIO);
-		chooseButton.setLayoutData(new GridData());
-		chooseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (chooseButton.getSelection()) {
-					// UIUtils.debug("Choose selected");
-					final IRodinFile rodinFile = ((EventBEditor) editor)
-							.getRodinInput();
-					IRodinElement[] refinedMachines;
-					try {
-						refinedMachines = rodinFile
-								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-						if (refinedMachines.length != 0) {
-							refined = (IInternalElement) refinedMachines[0];
-							machineCombo.setText(refined.getContents());
-						} else {
-							machineCombo.setText("");
-						}
-					} catch (RodinDBException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					machineCombo.setEnabled(true);
-					openOrCreateButton.setEnabled(!machineCombo.getText()
-							.equals(""));
-					machineCombo.setFocus();
-				}
-			}
-		});
+//		chooseButton = toolkit.createButton(comp, "Choose", SWT.RADIO);
+//		chooseButton.setLayoutData(new GridData());
+//		chooseButton.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				if (chooseButton.getSelection()) {
+//					// UIUtils.debug("Choose selected");
+//					final IRodinFile rodinFile = ((EventBEditor) editor)
+//							.getRodinInput();
+//					IRodinElement[] refinedMachines;
+//					try {
+//						refinedMachines = rodinFile
+//								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+//						if (refinedMachines.length != 0) {
+//							refined = (IInternalElement) refinedMachines[0];
+//							machineCombo.setText(refined.getContents());
+//						} else {
+//							machineCombo.setText("");
+//						}
+//					} catch (RodinDBException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//					machineCombo.setEnabled(true);
+//					openOrCreateButton.setEnabled(!machineCombo.getText()
+//							.equals(""));
+//					machineCombo.setFocus();
+//				}
+//			}
+//		});
 
+		Label label = toolkit.createLabel(comp, "Abstract machine: ");
+		label.setLayoutData(new GridData());		
+		
 		// Create the combo box
-		machineCombo = new Combo(comp, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		machineCombo = new Combo(comp, SWT.DROP_DOWN);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		machineCombo.setLayoutData(gd);
 		machineCombo.addSelectionListener(new SelectionListener() {
 
@@ -197,10 +199,7 @@ public class RefinesSection extends SectionPart implements
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				int index = machineCombo.getSelectionIndex();
-				if (index != -1) {
-					setRefinedMachine(machineCombo.getItems()[index]);
-				}
+				setRefinedMachine(machineCombo.getText());
 			}
 
 			/*
@@ -209,40 +208,78 @@ public class RefinesSection extends SectionPart implements
 			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
+				setRefinedMachine(machineCombo.getText());
 			}
 
 		});
 
-		machineCombo.addModifyListener(new ModifyListener() {
+//		machineCombo.addListener(SWT.Traverse, new Listener() {
+//
+//			public void handleEvent(Event event) {
+//				switch (event.type) {
+//				case SWT.Traverse:
+//					switch (event.detail) {
+//					case SWT.TRAVERSE_ESCAPE:
+//						machineCombo.setText(NULL_VALUE);
+//						break;
+//					}
+//				}
+//			}
+//			
+//		});
+		machineCombo.addFocusListener(new FocusListener() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-			 */
-			public void modifyText(ModifyEvent e) {
-				openOrCreateButton.setEnabled(!machineCombo.getText()
-						.equals(""));
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 
+			public void focusLost(FocusEvent e) {
+				setRefinedMachine(machineCombo.getText());
+			}
+			
 		});
+		
+//		machineCombo.addVerifyListener(new VerifyListener() {
+//
+//			public void verifyText(VerifyEvent e) {
+//				int index = machineCombo.getSelectionIndex();
+//				if (index != -1) {
+//					setRefinedMachine(machineCombo.getItems()[index]);
+//				}
+//			}
+//			
+//		});
+		
+		//		machineCombo.addModifyListener(new ModifyListener() {
+//
+//			/*
+//			 * (non-Javadoc)
+//			 * 
+//			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+//			 */
+//			public void modifyText(ModifyEvent e) {
+//				openOrCreateButton.setEnabled(!machineCombo.getText()
+//						.equals(""));
+//			}
+//
+//		});
 
 		// Create the "Open/Create" button.
-		openOrCreateButton = new Button(comp, SWT.PUSH);
-		openOrCreateButton.setText("Open/Create");
-		openOrCreateButton.addSelectionListener(new SelectionAdapter() {
+//		openOrCreateButton = new Button(comp, SWT.PUSH);
+//		openOrCreateButton.setText("Open/Create");
+//		openOrCreateButton.addSelectionListener(new SelectionAdapter() {
 
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
-			public void widgetSelected(SelectionEvent e) {
-				handleOpenOrCreate();
-			}
-
-		});
+//			public void widgetSelected(SelectionEvent e) {
+//				handleOpenOrCreate();
+//			}
+//
+//		});
 
 		// Initialise the value of the combo box
 		initCombo();
@@ -260,76 +297,87 @@ public class RefinesSection extends SectionPart implements
 	 *            name of the machine
 	 */
 	private void setRefinedMachine(final String machine) {
-		if (refined == null) { // Create new element
+		if (machine.equals(NULL_VALUE)) {
 			try {
-				final IRodinFile rodinFile = ((EventBEditor) editor)
-						.getRodinInput();
-				RodinCore.run(new IWorkspaceRunnable() { // Batch the
-							// creation
-							public void run(IProgressMonitor monitor)
-									throws CoreException {
-								refined = rodinFile.createInternalElement(
-										IRefinesMachine.ELEMENT_TYPE, machine,
-										null, null);
-								refined.setContents(machine);
-							}
-						}, null);
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
-				refined = null;
-			} catch (CoreException e) {
-				e.printStackTrace();
-				refined = null;
-			}
-		} else { // Change the element
-			try {
-				if (!(refined.getContents().equals(machine))) {
-					refined.setContents(machine);
+				if (refined != null) {
+					refined.delete(true, null);
+					refined = null;
 				}
 			} catch (RodinDBException exception) {
 				exception.printStackTrace();
 			}
 		}
-
+		else {
+			if (refined == null) { // Create new element
+				try {
+					final IRodinFile rodinFile = ((EventBEditor) editor)
+							.getRodinInput();
+					RodinCore.run(new IWorkspaceRunnable() { // Batch the
+								// creation
+								public void run(IProgressMonitor monitor)
+										throws CoreException {
+									refined = rodinFile.createInternalElement(
+											IRefinesMachine.ELEMENT_TYPE, machine,
+											null, null);
+									refined.setContents(machine);
+								}
+							}, null);
+				} catch (RodinDBException exception) {
+					exception.printStackTrace();
+					refined = null;
+				} catch (CoreException e) {
+					e.printStackTrace();
+					refined = null;
+				}
+			} else { // Change the element
+				try {
+					if (!(refined.getContents().equals(machine))) {
+						refined.setContents(machine);
+					}
+				} catch (RodinDBException exception) {
+					exception.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
 	 * Handle the open/create action when the corresponding openOrCreateButton
 	 * is clicked.
 	 */
-	public void handleOpenOrCreate() {
-		String machine = machineCombo.getText();
-		setRefinedMachine(machine);
-
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-
-		IRodinProject project = (IRodinProject) rodinFile.getParent();
-		String machineFileName = EventBPlugin.getMachineFileName(machine);
-		IRodinFile machineFile = project.getRodinFile(machineFileName);
-		if (!machineFile.exists()) {
-			boolean answer = MessageDialog
-					.openQuestion(
-							this.getSection().getShell(),
-							"Create Machine",
-							"Machine "
-									+ machineFileName
-									+ " does not exist. Do you want to create new refined machine?");
-
-			if (!answer)
-				return;
-			
-			try {
-				machineFile = project.createRodinFile(machineFileName, true,
-						null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		UIUtils.linkToEventBEditor(machineFile);
-
-		return;
-	}
+//	private void handleOpenOrCreate() {
+//		String machine = machineCombo.getText();
+//		setRefinedMachine(machine);
+//
+//		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+//
+//		IRodinProject project = (IRodinProject) rodinFile.getParent();
+//		String machineFileName = EventBPlugin.getMachineFileName(machine);
+//		IRodinFile machineFile = project.getRodinFile(machineFileName);
+//		if (!machineFile.exists()) {
+//			boolean answer = MessageDialog
+//					.openQuestion(
+//							this.getSection().getShell(),
+//							"Create Machine",
+//							"Machine "
+//									+ machineFileName
+//									+ " does not exist. Do you want to create new refined machine?");
+//
+//			if (!answer)
+//				return;
+//			
+//			try {
+//				machineFile = project.createRodinFile(machineFileName, true,
+//						null);
+//			} catch (RodinDBException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		UIUtils.linkToEventBEditor(machineFile);
+//
+//		return;
+//	}
 
 	public void elementChanged(ElementChangedEvent event) {
 		UIUtils.debugEventBEditor("Refine Section: Element change");
@@ -348,7 +396,7 @@ public class RefinesSection extends SectionPart implements
 
 	private void initCombo() {
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-
+		machineCombo.add(NULL_VALUE);
 		try {
 			IRodinElement[] machines = ((IParent) rodinFile.getParent())
 					.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
@@ -381,13 +429,13 @@ public class RefinesSection extends SectionPart implements
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				chooseButton.setSelection(true);
+//				chooseButton.setSelection(true);
 			} else {
-				nullButton.setSelection(true);
-				chooseButton.setSelection(false);
-				machineCombo.setEnabled(false);
+//				nullButton.setSelection(true);
+//				chooseButton.setSelection(false);
+				machineCombo.setText(NULL_VALUE);
 				// contextText.setEnabled(false);
-				openOrCreateButton.setEnabled(false);
+//				openOrCreateButton.setEnabled(false);
 				refined = null;
 			}
 		} catch (RodinDBException e) {
@@ -472,12 +520,12 @@ public class RefinesSection extends SectionPart implements
 			int kind = delta.getKind();
 			if ((kind & IRodinElementDelta.REMOVED) != 0) {
 				if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
-					nullButton.setSelection(true);
-					chooseButton.setSelection(false);
+//					nullButton.setSelection(true);
+//					chooseButton.setSelection(false);
 				}
 			} else if ((kind & IRodinElementDelta.ADDED) != 0) {
-				chooseButton.setSelection(true);
-				nullButton.setSelection(false);
+//				chooseButton.setSelection(true);
+//				nullButton.setSelection(false);
 				try {
 					machineCombo.setText(((IRefinesMachine) element)
 							.getContents());

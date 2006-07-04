@@ -60,7 +60,7 @@ public class DependenciesPage extends FormPage {
 		form.setText(PAGE_TITLE); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.marginWidth = 10;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
@@ -69,20 +69,21 @@ public class DependenciesPage extends FormPage {
 		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput(); 
 		
 		if (rodinFile instanceof IMachineFile) {
-			SectionPart part = new SeesSection(this.getEditor(), this
+			SectionPart part = new RefinesSection(this.getEditor(), this
 					.getManagedForm().getToolkit(), body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.minimumWidth = 150;
+			part.getSection().setLayoutData(gd);
+			managedForm.addPart(part);
+
+			part = new SeesSection(this.getEditor(), this
+					.getManagedForm().getToolkit(), body);
+			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 			
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 			
-			part = new RefinesSection(this.getEditor(), this
-					.getManagedForm().getToolkit(), body);
-			gd = new GridData(GridData.FILL_BOTH);
-			gd.minimumWidth = 150;
-			part.getSection().setLayoutData(gd);
-			managedForm.addPart(part);
 		}
 		else if (rodinFile instanceof IContextFile) {
 			SectionPart part = new ExtendsSection(this.getEditor(), this
