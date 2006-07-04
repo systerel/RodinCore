@@ -195,10 +195,10 @@ public class UserSupport implements IElementChangedListener,
 			}
 		}
 		information = "No Un-discharged Proof Obligation Found";
-		currentPS = null;
-		ProofStateDelta newDelta = new ProofStateDelta();
-		newDelta.setNewProofState(null);
-		fireProofStateDelta(newDelta);
+//		currentPS = null;
+//		ProofStateDelta newDelta = new ProofStateDelta();
+//		newDelta.setNewProofState(null);
+//		fireProofStateDelta(newDelta);
 	}
 
 	public void prevUndischargedPO() throws RodinDBException {
@@ -214,10 +214,10 @@ public class UserSupport implements IElementChangedListener,
 		}
 		// currentPS = null;
 		information = "No Un-discharged Proof Obligation Found";
-		currentPS = null;
-		ProofStateDelta newDelta = new ProofStateDelta();
-		newDelta.setNewProofState(null);
-		fireProofStateDelta(newDelta);
+//		currentPS = null;
+//		ProofStateDelta newDelta = new ProofStateDelta();
+//		newDelta.setNewProofState(null);
+//		fireProofStateDelta(newDelta);
 	}
 
 	private void setProofState(ProofState ps) throws RodinDBException {
@@ -490,12 +490,11 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	public void setComment(String text) {
-		IProofTreeNode currentNode = currentPS.getCurrentNode();
+	public void setComment(String text, IProofTreeNode currentNode) {
 		currentNode.setComment(text);
 		currentPS.setDirty(true);
 		ProofStateDelta newDelta = new ProofStateDelta();
-		newDelta.setNewCurrentNode(currentNode);
+		newDelta.setNewCurrentNode(currentPS.getCurrentNode());
 		fireProofStateDelta(newDelta);
 	}
 
