@@ -2,10 +2,10 @@ package org.eventb.internal.ui.prover;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
@@ -17,7 +17,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -26,6 +28,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.UIUtils;
 
 public class ProofTreeUIToolTip {
 	private Shell parentShell;
@@ -43,6 +46,8 @@ public class ProofTreeUIToolTip {
 	protected Point widgetPosition; // the position hovered over in the Widget;
 
 	private UserSupport userSupport;
+	
+	private Shell helpShell;
 	
 	/**
 	 * Creates a new tooltip handler
@@ -81,16 +86,15 @@ public class ProofTreeUIToolTip {
 							node = (IProofTreeNode) obj;
 						}
 					}
-//					String help = getToolTipHelp(tipWidget);
 					if (tipShell.isVisible()) {
 						tipShell.setVisible(false);
 						final Display display = parentShell.getDisplay();
-						final Shell helpShell = new Shell(parentShell, SWT.NONE);
+						helpShell = new Shell(parentShell, SWT.NONE);
 						helpShell.setLayout(new FillLayout());
 						helpShell.setSize(300, 100);
 						final Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP
 								| SWT.V_SCROLL);
-//						text.setText((String) help);
+
 						text.setText(node.getComment());
 						text.setSize(200, 100);
 						text.setForeground(display
@@ -100,19 +104,12 @@ public class ProofTreeUIToolTip {
 						text.setLayoutData(new GridData(
 								GridData.FILL_HORIZONTAL
 										| GridData.VERTICAL_ALIGN_CENTER));
-						text.addFocusListener(new FocusListener() {
+						
+						TextListener listener = new TextListener(text, node);
+						text.addListener(SWT.FocusOut, listener);
+						text.addListener(SWT.Traverse, listener);
+						text.addModifyListener(listener);
 
-							public void focusGained(FocusEvent e) {
-								// Do nothing
-							}
-
-							public void focusLost(FocusEvent e) {
-								// It should be current node
-								userSupport.setComment(text.getText());
-								helpShell.dispose();
-							}
-
-						});
 						setHoverLocation(helpShell, tipPosition);
 						helpShell.open();
 					}
@@ -157,6 +154,80 @@ public class ProofTreeUIToolTip {
 
 	}
 
+	/**
+	 * @author htson
+	 *         <p>
+	 *         This class handles the different changes to the Text.
+	 */
+	private class TextListener implements Listener, ModifyListener {
+
+		private IProofTreeNode node;
+		private Text text;
+		String original;
+		private int lastModify;
+		
+		/**
+		 * @author htson
+		 *         <p>
+		 *         This class implements the auto commit behaviour of the text.
+		 */
+		private class TimeRunnable implements Runnable {
+			private int time;
+
+			TimeRunnable(int time) {
+				this.time = time;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				// TODO Auto-generated method stub
+				if (lastModify == time) {
+					if (!text.isDisposed()) {
+						userSupport.setComment(text.getText(), node);
+					}
+				}
+			}
+		}
+
+		public TextListener(Text text, IProofTreeNode node) {
+			this.text = text;
+			this.node = node;
+			original = node.getComment();
+		}
+
+
+		public void handleEvent(Event event) {
+			// TODO Auto-generated method stub
+			switch (event.type) {
+			case SWT.FocusOut:
+				// It should be current node
+				UIUtils.debugProverUI("Focus Lost");
+				userSupport.setComment(text.getText(), node);
+				helpShell.dispose();
+				break;
+			case SWT.Traverse:
+				switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					UIUtils.debugProverUI("Escape");
+					userSupport.setComment(original, node);
+					helpShell.dispose();
+					break;
+				}
+			}
+		}
+
+
+		public void modifyText(ModifyEvent e) {
+			lastModify = e.time;
+			text.getDisplay().timerExec(1000, new TimeRunnable(e.time));
+		}
+	}
+	
+	
 //	protected String getToolTipText(Object object) {
 //		return object.toString();
 //	}
