@@ -184,6 +184,9 @@ public abstract class ClassicB {
 		try {
 			makeTempFileNames();
 			printPP(input);
+			if (ClassicB.DEBUG) {
+				System.out.println("Launching PP with input:\n" + input);
+			}
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getPPCommand(iFile);
 			return callProver(cmdArray, delay, PP_SUCCESS, monitor);
@@ -317,6 +320,9 @@ public abstract class ClassicB {
 		try {
 			makeTempFileNames();
 			printML(patchSequentForML(input.toString()), forces);
+			if (ClassicB.DEBUG) {
+				System.out.println("Launching ML with input:\n" + input);
+			}
 			printDefaultOutput();
 			final String[] cmdArray = ProverShell.getMLCommand(iFile);
 			return callProver(cmdArray, delay, ML_SUCCESS, monitor);
