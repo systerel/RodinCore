@@ -701,16 +701,18 @@ public class TestMachineSC_2 extends BuilderTest {
 	 */
 	public void testActions1() throws Exception {
 		IMachineFile rodinFile = createMachine("one");
-		addVariables(rodinFile, makeList("V1", "V2"));
-		addInvariants(rodinFile, makeList("I1", "I2"), makeList("V1∈ℕ", "V2∈ℕ"));
+		addVariables(rodinFile, makeList("V1", "V2", "V3"));
+		addInvariants(rodinFile,
+				makeList("I1", "I2", "I3"), 
+				makeList("V1∈ℕ", "V2∈ℕ", "V3∈ℕ"));
 		addEvent(rodinFile, "E1", 
 				makeList(), 
 				makeList(), makeList(), 
-				makeList("V1≔V2", "V1:∈ℕ", "V1:∣V1'=V1+1"));
+				makeList("V1≔V2", "V2:∈ℕ", "V3:∣V3'=V3+1"));
 		
 		String a0 = FormulaFactory.getDefault().parseAssignment("V1≔V2").getParsedAssignment().toString();
-		String a1 = FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
-		String a2 = FormulaFactory.getDefault().parseAssignment("V1:∣V1'=V1+1").getParsedAssignment().toString();
+		String a1 = FormulaFactory.getDefault().parseAssignment("V2:∈ℕ").getParsedAssignment().toString();
+		String a2 = FormulaFactory.getDefault().parseAssignment("V3:∣V3'=V3+1").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
@@ -769,10 +771,10 @@ public class TestMachineSC_2 extends BuilderTest {
 		addEvent(rodinFile, "E1", 
 				makeList("L1", "L2"), 
 				makeList("G1", "G2"), makeList("L1∈ℕ", "L2=ℕ+1"), 
-				makeList("L1≔V2", "V1:∈ℕ", "V1:∣V1'=L1+1"));
+				makeList("L1≔V2", "V1:∈ℕ", "V2:∣V2'=L1+1"));
 	
 		String a1 = FormulaFactory.getDefault().parseAssignment("V1:∈ℕ").getParsedAssignment().toString();
-		String a2 = FormulaFactory.getDefault().parseAssignment("V1:∣V1'=L1+1").getParsedAssignment().toString();
+		String a2 = FormulaFactory.getDefault().parseAssignment("V2:∣V2'=L1+1").getParsedAssignment().toString();
 	
 		rodinFile.save(null, true);
 		
