@@ -20,6 +20,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,6 +39,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -70,6 +73,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 	public static Action deleteAction;
 
 	public static Action proveAction;
+
+	public static Action refineAction;
 
 	public static RefreshAction refreshAction;
 
@@ -137,8 +142,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 					Object[] slist = ssel.toArray();
 
 					for (int i = 0; i < slist.length; i++) {
-						UIUtils.debugProjectExplorer(slist[i].toString() + " : "
-								+ slist[i].getClass().toString());
+						UIUtils.debugProjectExplorer(slist[i].toString()
+								+ " : " + slist[i].getClass().toString());
 						if (slist[i] instanceof IRodinProject) {
 							IRodinProject rodinProject = (IRodinProject) slist[i];
 							// Confirmation dialog
@@ -237,6 +242,67 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
+		refineAction = new Action() {
+			public void run() {
+				ISelection selection = explorer.getTreeViewer().getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) selection;
+					if (ssel.size() == 1) {
+						Object obj = ssel.getFirstElement();
+						if (!(obj instanceof IMachineFile))
+							return;
+						IMachineFile machine = (IMachineFile) obj;
+						IRodinProject prj = machine.getRodinProject();
+
+						InputDialog dialog = new InputDialog(explorer.getSite()
+								.getShell(), "New REFINES Clause",
+								"Please enter the name of the new machine",
+								"m0", new MachineInputValidator(prj));
+
+						dialog.open();
+
+						String bareName = dialog.getValue();
+
+						try {
+							IRodinFile newFile = prj.createRodinFile(
+									EventBPlugin.getMachineFileName(bareName),
+									false, null);
+							UIUtils.linkToEventBEditor(newFile);
+						} catch (RodinDBException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+					}
+				}
+			}
+		};
+		refineAction.setText("Refines");
+		refineAction.setToolTipText("Refines the machine");
+		refineAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_OBJS_INFO_TSK));
+
+	}
+
+	private class MachineInputValidator implements IInputValidator {
+
+		IRodinProject prj;
+
+		MachineInputValidator(IRodinProject prj) {
+			this.prj = prj;
+		}
+
+		public String isValid(String newText) {
+			if (newText.equals(""))
+				return "Name must not be empty.";
+			IRodinFile file = prj.getRodinFile(EventBPlugin
+					.getMachineFileName(newText));
+			if (file.exists())
+				return "Machine " + newText + " already exists.";
+			return null;
+		}
+
 	}
 
 	/**
@@ -286,6 +352,10 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				newMenu.add(newComponentAction);
 			}
 			newMenu.add(new Separator());
+
+			if ((ssel.size() == 1)
+					&& (ssel.getFirstElement() instanceof IMachineFile))
+				menu.add(refineAction);
 
 			menu.add(newMenu);
 			menu.add(deleteAction);
