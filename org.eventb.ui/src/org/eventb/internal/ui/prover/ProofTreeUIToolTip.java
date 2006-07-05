@@ -150,7 +150,7 @@ public class ProofTreeUIToolTip {
 						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		labelF2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_CENTER));
-		labelF2.setText("Press F2 to focus.");
+		labelF2.setText("Press 'F2' to edit.");
 
 	}
 
