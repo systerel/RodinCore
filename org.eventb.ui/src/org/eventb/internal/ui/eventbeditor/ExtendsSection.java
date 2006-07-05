@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -300,9 +301,16 @@ public class ExtendsSection extends SectionPart implements
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
-		viewer.setInput(rodinFile);
-		initContextCombo();
-		updateButtons();
+		Display display = viewer.getControl().getDisplay();
+		display.syncExec(new Runnable() {
+
+			public void run() {
+				viewer.setInput(rodinFile);
+				initContextCombo();
+				updateButtons();				
+			}
+			
+		});
 	}
 
 	private void initContextCombo() {
