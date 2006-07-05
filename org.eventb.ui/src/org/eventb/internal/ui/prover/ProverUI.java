@@ -435,7 +435,6 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public void proofStateChanged(IProofStateDelta delta) {
 		UIUtils.debugProverUI("PO Changed");
-		this.editorDirtyStateChanged();
 		
 		ProofState ps = delta.getNewProofState();
 		if (ps != null) {
@@ -443,6 +442,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 					.getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
+					ProverUI.this.editorDirtyStateChanged();
 //					syncObligationExplorer();
 				}
 			});
