@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +38,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
@@ -132,7 +134,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 * @throws CoreException
 	 *             a core exception when creating the new file
 	 */
-	private void doFinish(String projectName, String fileName,
+	private void doFinish(String projectName, final String fileName,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + fileName, 2);
@@ -145,21 +147,29 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 
 		IRodinDB db = EventBUIPlugin.getRodinDatabase();
 		// Creating a project handle
-		IRodinProject rodinProject = db.getRodinProject(projectName);
+		final IRodinProject rodinProject = db.getRodinProject(projectName);
 
-		final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
-				false, null);
-		if (rodinFile instanceof IMachineFile) {
-			rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
-					"INITIALISATION", null, null);
-		}
+		RodinCore.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
+						false, null);
+				if (rodinFile instanceof IMachineFile) {
+					rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
+							"INITIALISATION", null, null);
+				}
+				rodinFile.save(null, true);
+			}
+			
+		}, null);
+		
 
 		monitor.worked(1);
-
+		
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				UIUtils.linkToEventBEditor(rodinFile);
+				UIUtils.linkToEventBEditor(rodinProject.getRodinFile(fileName));
 			}
 		});
 		monitor.worked(1);
