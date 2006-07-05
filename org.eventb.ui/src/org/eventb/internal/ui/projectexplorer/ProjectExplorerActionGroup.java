@@ -43,6 +43,7 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
@@ -297,6 +298,15 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 											IVariable.ELEMENT_TYPE);
 									copyChildrenOfType(newFile, machine,
 											IEvent.ELEMENT_TYPE);
+									
+									IRodinElement[] elements = machine.getChildrenOfType(IEvent.ELEMENT_TYPE);
+
+									for (IRodinElement element : elements) {
+										String name = element.getElementName();
+										IInternalElement newElement = newFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
+										IInternalElement refineEvent = newElement.createInternalElement(IRefinesEvent.ELEMENT_TYPE, name, null, null);
+										refineEvent.setContents(name);
+									}
 									newFile.save(null, true);
 									UIUtils.linkToEventBEditor(newFile);
 
@@ -325,7 +335,6 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		IRodinElement[] elements = original.getChildrenOfType(type);
 
 		for (IRodinElement element : elements) {
-			UIUtils.debugProjectExplorer("Copy element " + element);
 			((IInternalElement) element).copy(destination, null, null, false, null);
 		}
 	}
