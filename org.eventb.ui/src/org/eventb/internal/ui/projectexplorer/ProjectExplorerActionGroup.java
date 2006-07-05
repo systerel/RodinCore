@@ -14,7 +14,9 @@ package org.eventb.internal.ui.projectexplorer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -39,7 +41,11 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
+import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -47,9 +53,11 @@ import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -251,8 +259,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 						Object obj = ssel.getFirstElement();
 						if (!(obj instanceof IMachineFile))
 							return;
-						IMachineFile machine = (IMachineFile) obj;
-						IRodinProject prj = machine.getRodinProject();
+						final IMachineFile machine = (IMachineFile) obj;
+						final IRodinProject prj = machine.getRodinProject();
 
 						InputDialog dialog = new InputDialog(explorer.getSite()
 								.getShell(), "New REFINES Clause",
@@ -261,16 +269,43 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 
 						dialog.open();
 
-						String bareName = dialog.getValue();
+						final String abstractMachineName = EventBPlugin
+								.getComponentName(machine.getElementName());
+						final String bareName = dialog.getValue();
 
 						try {
-							IRodinFile newFile = prj.createRodinFile(
-									EventBPlugin.getMachineFileName(bareName),
-									false, null);
-							UIUtils.linkToEventBEditor(newFile);
-						} catch (RodinDBException e1) {
+							RodinCore.run(new IWorkspaceRunnable() {
+
+								public void run(IProgressMonitor monitor)
+										throws CoreException {
+									IRodinFile newFile = prj
+											.createRodinFile(
+													EventBPlugin
+															.getMachineFileName(bareName),
+													false, null);
+									
+									IInternalElement refined = newFile
+											.createInternalElement(
+													IRefinesMachine.ELEMENT_TYPE,
+													abstractMachineName, null,
+													null);
+									refined.setContents(abstractMachineName);
+
+									copyChildrenOfType(newFile, machine,
+											ISeesContext.ELEMENT_TYPE);
+									copyChildrenOfType(newFile, machine,
+											IVariable.ELEMENT_TYPE);
+									copyChildrenOfType(newFile, machine,
+											IEvent.ELEMENT_TYPE);
+									newFile.save(null, true);
+									UIUtils.linkToEventBEditor(newFile);
+
+								}
+
+							}, null);
+						} catch (CoreException e) {
 							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							e.printStackTrace();
 						}
 
 					}
@@ -283,6 +318,16 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
+	}
+
+	private void copyChildrenOfType(IRodinFile destination,
+			IRodinFile original, String type) throws RodinDBException {
+		IRodinElement[] elements = original.getChildrenOfType(type);
+
+		for (IRodinElement element : elements) {
+			UIUtils.debugProjectExplorer("Copy element " + element);
+			((IInternalElement) element).copy(destination, null, null, false, null);
+		}
 	}
 
 	private class MachineInputValidator implements IInputValidator {
