@@ -17,7 +17,6 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -51,7 +50,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -65,15 +63,15 @@ public class ExtendsSection extends SectionPart implements
 		IElementChangedListener, ISelectionChangedListener {
 
 	// Title and description of the section.
-	private static final String SECTION_TITLE = "Extended Contexts";
+	private static final String SECTION_TITLE = "Abstract Contexts";
 
-	private static final String SECTION_DESCRIPTION = "Select contexts that this context extends";
+	private static final String SECTION_DESCRIPTION = "Select abstract contexts of this context";
 
 	// The Form editor contains this section.
 	private FormEditor editor;
 
 	// Buttons.
-	private Button deleteButton;
+	private Button removeButton;
 
 	// private Button chooseButton;
 
@@ -152,12 +150,12 @@ public class ExtendsSection extends SectionPart implements
 		layout.verticalSpacing = 5;
 		comp.setLayout(layout);
 
-		deleteButton = toolkit.createButton(comp, "Delete", SWT.PUSH);
+		removeButton = toolkit.createButton(comp, "Remove", SWT.PUSH);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		deleteButton.setLayoutData(gd);
+		removeButton.setLayoutData(gd);
 
-		deleteButton.addSelectionListener(new SelectionAdapter() {
+		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				UIUtils.debugEventBEditor("Here");
 				ISelection sel = viewer.getSelection();
@@ -211,7 +209,7 @@ public class ExtendsSection extends SectionPart implements
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
+				addExtendedContext(contextCombo.getText());
 			}
 
 		});
@@ -225,10 +223,10 @@ public class ExtendsSection extends SectionPart implements
 		});
 
 		addButton = new Button(comp, SWT.PUSH);
-		addButton.setText("Add/Create");
+		addButton.setText("Add");
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleAddOrCreate();
+				handleAdd();
 			}
 		});
 
@@ -261,7 +259,7 @@ public class ExtendsSection extends SectionPart implements
 	/**
 	 * Handle the Add/Create action when the corresponding button is clicked.
 	 */
-	public void handleAddOrCreate() {
+	public void handleAdd() {
 		String context = contextCombo.getText();
 		try {
 			IInternalElement extended = rodinFile.createInternalElement(
@@ -272,31 +270,31 @@ public class ExtendsSection extends SectionPart implements
 			e.printStackTrace();
 		}
 
-		IRodinProject project = (IRodinProject) rodinFile.getParent();
-		String contextFileName = EventBPlugin.getContextFileName(context);
-		IRodinFile contextFile = project.getRodinFile(contextFileName);
-		if (!contextFile.exists()) {
-			boolean answer = MessageDialog
-					.openQuestion(
-							this.getSection().getShell(),
-							"Create Context",
-							"Context "
-									+ contextFileName
-									+ " does not exist. Do you want to create new extended context?");
-
-			if (!answer)
-				return;
-
-			try {
-				contextFile = project.createRodinFile(contextFileName, true,
-						null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		UIUtils.linkToEventBEditor(contextFile);
+//		IRodinProject project = (IRodinProject) rodinFile.getParent();
+//		String contextFileName = EventBPlugin.getContextFileName(context);
+//		IRodinFile contextFile = project.getRodinFile(contextFileName);
+//		if (!contextFile.exists()) {
+//			boolean answer = MessageDialog
+//					.openQuestion(
+//							this.getSection().getShell(),
+//							"Create Context",
+//							"Context "
+//									+ contextFileName
+//									+ " does not exist. Do you want to create new extended context?");
+//
+//			if (!answer)
+//				return;
+//
+//			try {
+//				contextFile = project.createRodinFile(contextFileName, true,
+//						null);
+//			} catch (RodinDBException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		UIUtils.linkToEventBEditor(contextFile);
 
 		return;
 	}
@@ -341,7 +339,7 @@ public class ExtendsSection extends SectionPart implements
 	}
 
 	private void updateButtons() {
-		deleteButton.setEnabled(!viewer.getSelection().isEmpty());
+		removeButton.setEnabled(!viewer.getSelection().isEmpty());
 		String text = contextCombo.getText();
 		if (text.equals("")) {
 			addButton.setEnabled(false);
