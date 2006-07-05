@@ -11,6 +11,7 @@ import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -528,6 +529,27 @@ public class TestSubstituteFormula extends TestCase {
 		assertTrue("Formula " + actualPred + " should be typechecked.",
 				actualPred.isTypeChecked());
 		assertEquals(expPred, actualPred);
+	}
+	
+	/**
+	 * Simple examples of a parallel assignment that gives a result that can not
+	 * be achieved by a sequence of assignments.
+	 */
+	public void testApplyAssignments() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		Expression expr = plus(id_x, id_y);
+		typeCheck(expr, te);
+		
+		BecomesEqualTo[] assignments = new BecomesEqualTo[] {
+				ff.makeBecomesEqualTo(id_x, id_y, null),
+				ff.makeBecomesEqualTo(id_y, id_x, null)
+		};
+		
+		Expression expected = plus(id_y, id_x);
+		typeCheck(expected, te); 
+
+		Expression actual = expr.applyAssignments(Arrays.asList(assignments), ff);
+		assertEquals("Wrong result of substitution", expected, actual);
 	}
 	
 	static class ShiftTestItem extends TestItem {
