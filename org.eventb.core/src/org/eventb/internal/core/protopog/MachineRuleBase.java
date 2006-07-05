@@ -275,9 +275,7 @@ public class MachineRuleBase {
 										post.add(subst);
 									}
 								}
-								for(int i=post.size()-1; i>=0; i--) {
-									predicate = predicate.applyAssignment(post.get(i), cache.getFactory());
-								}
+								predicate = predicate.applyAssignments(post, cache.getFactory());
 								HashMap<String, String> sources = new HashMap<String, String>(2);
 								sources.put("invariant", invariant.getHandleIdentifier());
 								sources.put("event", event.getHandleIdentifier());
