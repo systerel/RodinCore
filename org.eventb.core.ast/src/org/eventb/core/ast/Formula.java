@@ -1453,17 +1453,59 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param ff
 	 *            factory to use for building the result
 	 * @return this formula with the given assignment applied to it
+	 * @see #applyAssignments(Iterable, FormulaFactory)
 	 */
 	public final T applyAssignment(BecomesEqualTo assignment, FormulaFactory ff) {
-		FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
-		Expression[] exprs = assignment.getExpressions();
-		final int length = idents.length;
 		Map<FreeIdentifier, Expression> map =
-			new HashMap<FreeIdentifier, Expression>(length * 4/3 + 1);
-		for (int i = 0; i < length; i++) {
-			map.put(idents[i], exprs[i]);
+			new HashMap<FreeIdentifier, Expression>();
+		addAssignmentToMap(map, assignment);
+		return substituteFreeIdents(map, ff);
+	}
+	
+	/**
+	 * Applies in parallel the given assignments to this formula.
+	 * <p>
+	 * This method builds a new formula where each occurrence of a free
+	 * identifier which is assigned to, is replaced by the corresponding
+	 * expression in the assignment. All substitutions are done in parallel.
+	 * </p>
+	 * <p>
+	 * The assignments given as input must not assign twice the same identifier:
+	 * their left-hand sides must be pairwise disjoint.
+	 * </p>
+	 * <p>
+	 * This operation is not supported by assignments.
+	 * </p>
+	 * 
+	 * @param assignments
+	 *            the assignments to apply
+	 * @param ff
+	 *            factory to use for building the result
+	 * @return this formula with the given assignments applied to it
+	 * @see #applyAssignment(BecomesEqualTo, FormulaFactory)
+	 */
+	public final T applyAssignments(Iterable<BecomesEqualTo> assignments,
+			FormulaFactory ff) {
+		
+		Map<FreeIdentifier, Expression> map =
+			new HashMap<FreeIdentifier, Expression>();
+		for (BecomesEqualTo assignment: assignments) {
+			addAssignmentToMap(map, assignment);
 		}
 		return substituteFreeIdents(map, ff);
+	}
+	
+	private static void addAssignmentToMap(Map<FreeIdentifier, Expression> map,
+			BecomesEqualTo assignment) {
+		
+		final FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
+		final Expression[] exprs = assignment.getExpressions();
+		final int length = idents.length;
+		for (int i = 0; i < length; i++) {
+			final FreeIdentifier ident = idents[i];
+			assert ! map.containsKey(ident);
+			map.put(ident, exprs[i]);
+		}
 	}
 	
 	/**
