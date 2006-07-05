@@ -38,7 +38,9 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IGuard;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -106,6 +108,21 @@ public class ProjectExplorer extends ViewPart {
 		 *      java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 instanceof IMachineFile && e2 instanceof IMachineFile) {
+				IMachineFile m1 = (IMachineFile) e1;
+				IMachineFile m2 = (IMachineFile) e2;
+				String name1 = EventBPlugin.getComponentName(m1.getElementName());
+				String name2 = EventBPlugin.getComponentName(m2.getElementName());
+				return name1.compareTo(name2);
+			}
+			if (e1 instanceof IContextFile && e2 instanceof IContextFile) {
+				IContextFile m1 = (IContextFile) e1;
+				IContextFile m2 = (IContextFile) e2;
+				String name1 = EventBPlugin.getComponentName(m1.getElementName());
+				String name2 = EventBPlugin.getComponentName(m2.getElementName());
+				return name1.compareTo(name2);
+			}
+			
 			if (e1 instanceof IRodinProject) {
 				return super.compare(viewer, e1, e2);
 			} else {
