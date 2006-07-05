@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.UIUtils;
 
 public class ProofTreeUIToolTip {
 	private Shell parentShell;
@@ -40,15 +39,19 @@ public class ProofTreeUIToolTip {
 	private Label labelF2;
 
 	private Widget tipWidget; // widget this tooltip is hovering over
-	
+
 	protected Point tipPosition; // the position being hovered over on the
 
 	protected Point widgetPosition; // the position hovered over in the Widget;
 
 	private UserSupport userSupport;
-	
+
 	private Shell helpShell;
+
+	private final static int MAX_WIDTH = 300;
 	
+	private final static int MAX_HEIGHT = 120;
+
 	/**
 	 * Creates a new tooltip handler
 	 * 
@@ -59,7 +62,7 @@ public class ProofTreeUIToolTip {
 		final Display display = parent.getDisplay();
 		this.parentShell = parent;
 		this.userSupport = US;
-		
+
 		// Tip shell
 		tipShell = new Shell(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
@@ -92,8 +95,8 @@ public class ProofTreeUIToolTip {
 						helpShell = new Shell(parentShell, SWT.NONE);
 						helpShell.setLayout(new FillLayout());
 						helpShell.setSize(300, 100);
-						final Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP
-								| SWT.V_SCROLL);
+						final Text text = new Text(helpShell, SWT.MULTI
+								| SWT.WRAP | SWT.V_SCROLL);
 
 						text.setText(node.getComment());
 						text.setSize(200, 100);
@@ -104,7 +107,7 @@ public class ProofTreeUIToolTip {
 						text.setLayoutData(new GridData(
 								GridData.FILL_HORIZONTAL
 										| GridData.VERTICAL_ALIGN_CENTER));
-						
+
 						TextListener listener = new TextListener(text, node);
 						text.addListener(SWT.FocusOut, listener);
 						text.addListener(SWT.Traverse, listener);
@@ -120,12 +123,12 @@ public class ProofTreeUIToolTip {
 		});
 
 		// Tip label
-		tipLabel = new Label(tipShell, SWT.LEFT);
+		tipLabel = new Label(tipShell, SWT.LEFT | SWT.WRAP);
 		tipLabel.setForeground(display
 				.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		tipLabel.setBackground(display
 				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		tipLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+		tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
 				| GridData.VERTICAL_ALIGN_CENTER));
 
 		// Create a new font for this label
@@ -162,10 +165,13 @@ public class ProofTreeUIToolTip {
 	private class TextListener implements Listener, ModifyListener {
 
 		private IProofTreeNode node;
+
 		private Text text;
+
 		String original;
+
 		private int lastModify;
-		
+
 		/**
 		 * @author htson
 		 *         <p>
@@ -199,20 +205,16 @@ public class ProofTreeUIToolTip {
 			original = node.getComment();
 		}
 
-
 		public void handleEvent(Event event) {
 			// TODO Auto-generated method stub
 			switch (event.type) {
 			case SWT.FocusOut:
-				// It should be current node
-				UIUtils.debugProverUI("Focus Lost");
 				userSupport.setComment(text.getText(), node);
 				helpShell.dispose();
 				break;
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
-					UIUtils.debugProverUI("Escape");
 					userSupport.setComment(original, node);
 					helpShell.dispose();
 					break;
@@ -220,28 +222,44 @@ public class ProofTreeUIToolTip {
 			}
 		}
 
-
 		public void modifyText(ModifyEvent e) {
 			lastModify = e.time;
 			text.getDisplay().timerExec(1000, new TimeRunnable(e.time));
 		}
 	}
-	
-	
-//	protected String getToolTipText(Object object) {
-//		return object.toString();
-//	}
 
-	// protected Image getToolTipImage(Object object) {
+	protected String getToolTipText(IProofTreeNode node) {
+		String comments = node.getComment();
+		int i = comments.indexOf('.');
+		int j = comments.indexOf('\n');
+		if (i == -1) {
+			if (j == -1)
+				return comments; // One line comments
+			else {
+				return comments.substring(0, j); // Return the first line
+			}
+		} else {
+			i++;
+			if (j == -1)
+				return comments.substring(0, i); // Return the first
+			// sentence
+			else {
+				int k = i < j ? i : j; // k is the minimum
+				return comments.substring(0, k);
+			}
+		}
+
+	} // protected Image getToolTipImage(Object object) {
+
 	// if (object instanceof Control) {
 	// return (Image) ((Control) object).getData("TIP_IMAGE");
 	// }
 	// return null;
 	// }
 
-//	protected String getToolTipHelp(Object object) {
-//		return "Long help for " + object.toString();
-//	}
+	// protected String getToolTipHelp(Object object) {
+	// return "Long help for " + object.toString();
+	// }
 
 	/**
 	 * Enables customized hover help for a specified control
@@ -273,14 +291,14 @@ public class ProofTreeUIToolTip {
 			public void mouseHover(MouseEvent event) {
 				widgetPosition = new Point(event.x, event.y);
 				Widget widget = event.widget;
-//				if (widget instanceof ToolBar) {
-//					ToolBar w = (ToolBar) widget;
-//					widget = w.getItem(widgetPosition);
-//				}
-//				if (widget instanceof Table) {
-//					Table w = (Table) widget;
-//					widget = w.getItem(widgetPosition);
-//				}
+				// if (widget instanceof ToolBar) {
+				// ToolBar w = (ToolBar) widget;
+				// widget = w.getItem(widgetPosition);
+				// }
+				// if (widget instanceof Table) {
+				// Table w = (Table) widget;
+				// widget = w.getItem(widgetPosition);
+				// }
 				if (widget instanceof Tree) {
 					Tree w = (Tree) widget;
 					widget = w.getItem(widgetPosition);
@@ -297,14 +315,19 @@ public class ProofTreeUIToolTip {
 					Object obj = tipWidget.getData();
 					if (obj instanceof IProofTreeNode) {
 						IProofTreeNode node = (IProofTreeNode) obj;
-						tipLabel.setText(node.getComment());
+						String text = getToolTipText(node);
+						tipLabel.setText(text);
 					}
 				}
 				tipPosition = control.toDisplay(widgetPosition);
-//				String text = getToolTipText(widget);
-				tipLabel.pack();
-				labelF2.pack();
 				tipShell.pack();
+				Point shellSize = tipShell.getSize();
+				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH
+						: shellSize.x;
+				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
+				tipLabel.setSize(width, 40);
+				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
+				tipShell.setSize(width, height);
 				setHoverLocation(tipShell, tipPosition);
 				tipShell.setVisible(true);
 				tipShell.setFocus(); // Focus on the shell
