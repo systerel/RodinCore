@@ -42,6 +42,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
@@ -224,6 +225,9 @@ public class UIUtils {
 			return registry.get(EventBImage.IMG_THEOREM);
 
 		if (element instanceof IEvent)
+			return registry.get(EventBImage.IMG_EVENT);
+
+		if (element instanceof IRefinesEvent)
 			return registry.get(EventBImage.IMG_EVENT);
 
 		if (element instanceof IGuard)

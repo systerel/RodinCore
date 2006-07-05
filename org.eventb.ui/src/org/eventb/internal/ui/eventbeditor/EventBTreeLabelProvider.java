@@ -25,6 +25,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
@@ -39,6 +42,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBTreeLabelProvider implements ITableLabelProvider,
 		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
+	
+	// TODO: This class should be extensible
 	
 	// The associated Event-B Editor
 	private EventBEditor editor;
@@ -84,8 +89,12 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof IRodinElement) {
 			IRodinElement rodinElement = (IRodinElement) element;
-
+			
 			if (columnIndex == 0) {
+				if (rodinElement instanceof ISeesContext) return "";
+				if (rodinElement instanceof IRefinesMachine) return "";
+				if (rodinElement instanceof IRefinesEvent) return "";
+				
 				if (rodinElement instanceof IInternalElement)
 					return ((IInternalElement) rodinElement).getElementName();
 				return rodinElement.toString();
