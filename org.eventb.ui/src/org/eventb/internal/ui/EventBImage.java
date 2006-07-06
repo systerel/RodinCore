@@ -12,8 +12,12 @@
 
 package org.eventb.internal.ui;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -117,6 +121,14 @@ public class EventBImage {
 	
 	public static final String IMG_DOWN_PATH = "icons/full/ctool16/down_edit.gif";	
 
+	public static final String IMG_MACHINE_PATH = "icons/full/obj16/mch_obj.gif";
+	
+	public static final String IMG_REFINES_OVERLAY_PATH = "icons/full/ovr16/ref_ovr.gif";
+
+	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
+
+	private static Collection<Image> images = new HashSet<Image>();
+	
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path.
@@ -191,4 +203,23 @@ public class EventBImage {
 		ImageDescriptor desc = getImageDescriptor("icons/" + fileName);
 		registry.put(key, desc);
 	}
+
+	public static Image getOverlayIcon(String name) {
+		if (name.equals("IMG_REFINES_MACHINE")) {
+			OverlayIcon icon = new OverlayIcon(getImageDescriptor(IMG_MACHINE_PATH));
+			icon.addTopRight(getImageDescriptor(IMG_REFINES_OVERLAY_PATH));
+			icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
+			Image image = icon.createImage();
+			images.add(image);
+			return image;
+		}
+		return null;
+	}
+	
+	public static void disposeImages() {
+		for (Image image : images) {
+			image.dispose();
+		}
+	}
+
 }

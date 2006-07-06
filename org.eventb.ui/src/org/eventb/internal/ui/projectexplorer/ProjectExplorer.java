@@ -155,6 +155,7 @@ public class ProjectExplorer extends ViewPart {
 	 *         Providing the label for object in the tree.
 	 */
 	private class ViewLabelProvider extends LabelProvider {
+		
 		public String getText(Object obj) {
 			if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();

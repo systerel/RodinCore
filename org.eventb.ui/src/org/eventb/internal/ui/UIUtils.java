@@ -210,7 +210,7 @@ public class UIUtils {
 			return registry.get(EventBImage.IMG_CONTEXT);
 
 		if (element instanceof IRefinesMachine)
-			return registry.get(EventBImage.IMG_MACHINE);
+			return EventBImage.getOverlayIcon("IMG_REFINES_MACHINE");
 
 		if (element instanceof IExtendsContext)
 			return registry.get(EventBImage.IMG_CONTEXT);
