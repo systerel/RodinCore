@@ -18,6 +18,7 @@ import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.core.pm.ProofStateDelta;
+import org.eventb.internal.core.pm.UserSupportUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;

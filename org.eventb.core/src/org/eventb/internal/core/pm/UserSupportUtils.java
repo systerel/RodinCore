@@ -1,4 +1,4 @@
-package org.eventb.core.pm;
+package org.eventb.internal.core.pm;
 
 
 public class UserSupportUtils {
