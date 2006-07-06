@@ -34,7 +34,6 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.core.pm.IPOChangeEvent;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
@@ -302,24 +301,8 @@ public class ProofInformationPage extends Page implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.core.pm.IPOChangedListener#poChanged(org.eventb.core.pm.IPOChangeEvent)
+	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void poChanged(IPOChangeEvent e) {
-		final IPRSequent prSequent = e.getDelta().getProofState()
-				.getPRSequent();
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (prSequent.exists()) {
-					scrolledForm.setText(prSequent.getName());
-					scrolledForm.reflow(true);
-					setFormText(prSequent);
-				}
-			}
-		});
-	}
-
 	public void proofStateChanged(IProofStateDelta delta) {
 		ProofState ps = delta.getNewProofState();
 		if (ps != null) {
@@ -334,9 +317,9 @@ public class ProofInformationPage extends Page implements
 						setFormText(prSequent);
 					}
 				}
-			});			
+			});
 		}
-		
+
 	}
 
 }

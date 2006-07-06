@@ -1,9 +1,5 @@
 package org.eventb.internal.core.pm;
 
-import java.util.Collection;
-
-import org.eventb.core.pm.IGoalDelta;
-import org.eventb.core.pm.IHypothesisDelta;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeDelta;
@@ -24,12 +20,6 @@ public class ProofStateDelta implements IProofStateDelta {
 	
 	private IProofTreeNode node;
 
-
-	
-	private IGoalDelta goalDelta;
-
-	private Collection<IHypothesisDelta> hypothesesDelta;
-
 	private Object information;
 
 	private boolean newSearch;
@@ -44,25 +34,8 @@ public class ProofStateDelta implements IProofStateDelta {
 		proofTreeDelta = null;
 	}
 
-	public ProofStateDelta(IGoalDelta goalDelta,
-			Collection<IHypothesisDelta> hypothesesDelta, Object information,
-			ProofState proofState) {
-		this.goalDelta = goalDelta;
-		this.hypothesesDelta = hypothesesDelta;
-		this.information = information;
-		this.ps = proofState;
-	}
-
 	public void setNewCurrentNode(IProofTreeNode node) {
 		this.node = node;
-	}
-
-	public IGoalDelta getGoalDelta() {
-		return goalDelta;
-	}
-
-	public Collection<IHypothesisDelta> getHypothesesDelta() {
-		return hypothesesDelta;
 	}
 
 	public Object getInformation() {
