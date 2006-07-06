@@ -705,14 +705,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		this.setSelection(new StructuredSelection(root));
 	}
 
-	public void proofStateChanged(IProofStateDelta delta) {
+	public void proofStateChanged(final IProofStateDelta delta) {
 		// byUserSupport = true;
 		final ProofState ps = delta.getNewProofState();
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+		.getDisplay();
 		UIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
 		if (ps != null) { // Change only when change the PO
 			final ProofTreeUIPage page = this;
-			Display display = EventBUIPlugin.getDefault().getWorkbench()
-					.getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					page.setInput(ps.getProofTree());
@@ -729,13 +729,21 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 			UIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
 			if (proofTreeDelta != null) {
-				viewer.refresh();
+				display.syncExec(new Runnable() {
+
+					public void run() {
+						viewer.refresh();
+
+						IProofTreeNode node = delta.getNewProofTreeNode();
+						if (node != null) {
+							viewer.setSelection(new StructuredSelection(node), true);
+						}
+					}
+					
+				});
+				
 			}
 
-			IProofTreeNode node = delta.getNewProofTreeNode();
-			if (node != null) {
-				viewer.setSelection(new StructuredSelection(node), true);
-			}
 		}
 	}
 

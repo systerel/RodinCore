@@ -434,10 +434,10 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(IProofStateDelta delta) {
-		UIUtils.debugProverUI("PO Changed");
-		
-		ProofState ps = delta.getNewProofState();
-		if (ps != null) {
+//		UIUtils.debugProverUI("PO Changed");
+//		
+//		ProofState ps = delta.getNewProofState();
+//		if (ps != null) {
 			Display display = EventBUIPlugin.getDefault().getWorkbench()
 					.getDisplay();
 			display.syncExec(new Runnable() {
@@ -446,6 +446,6 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 //					syncObligationExplorer();
 				}
 			});
-		}
+//		}
 	}
 }
