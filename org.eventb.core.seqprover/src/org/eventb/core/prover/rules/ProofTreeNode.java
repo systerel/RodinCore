@@ -399,7 +399,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 			usedFreeIdents.addAll(child.getUsedFreeIdents());
 		}
 		// retain all free identifiers in the curent type environment
-		for (FreeIdentifier ident : usedFreeIdents)
+		
+		HashSet<FreeIdentifier> usedFreeIdentsIterCopy = (HashSet<FreeIdentifier>) usedFreeIdents.clone();
+		for (FreeIdentifier ident : usedFreeIdentsIterCopy)
 		{
 			if (! sequent.typeEnvironment().contains(ident.getName()))
 				usedFreeIdents.remove(ident);
