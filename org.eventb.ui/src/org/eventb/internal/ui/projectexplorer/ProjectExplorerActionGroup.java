@@ -41,7 +41,9 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -84,6 +86,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 	public static Action proveAction;
 
 	public static Action refineAction;
+	
+	public static Action extendAction;
 
 	public static RefreshAction refreshAction;
 
@@ -328,6 +332,84 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJS_INFO_TSK));
 
+		extendAction = new Action() {
+			public void run() {
+				ISelection selection = explorer.getTreeViewer().getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) selection;
+					if (ssel.size() == 1) {
+						Object obj = ssel.getFirstElement();
+						if (!(obj instanceof IContextFile))
+							return;
+						final IContextFile context = (IContextFile) obj;
+						final IRodinProject prj = context.getRodinProject();
+
+						InputDialog dialog = new InputDialog(explorer.getSite()
+								.getShell(), "New EXTENDS Clause",
+								"Please enter the name of the new context",
+								"c0", new ContextInputValidator(prj));
+
+						dialog.open();
+
+						final String abstractContextName = EventBPlugin
+								.getComponentName(context.getElementName());
+						final String bareName = dialog.getValue();
+
+						try {
+							RodinCore.run(new IWorkspaceRunnable() {
+
+								public void run(IProgressMonitor monitor)
+										throws CoreException {
+									IRodinFile newFile = prj
+											.createRodinFile(
+													EventBPlugin
+															.getContextFileName(bareName),
+													false, null);
+									
+									IInternalElement refined = newFile
+											.createInternalElement(
+													IExtendsContext.ELEMENT_TYPE,
+													abstractContextName, null,
+													null);
+									refined.setContents(abstractContextName);
+//
+//									copyChildrenOfType(newFile, context,
+//											ISeesContext.ELEMENT_TYPE);
+//									copyChildrenOfType(newFile, context,
+//											IVariable.ELEMENT_TYPE);
+//									copyChildrenOfType(newFile, context,
+//											IEvent.ELEMENT_TYPE);
+//									
+//									IRodinElement[] elements = context.getChildrenOfType(IEvent.ELEMENT_TYPE);
+//
+//									for (IRodinElement element : elements) {
+//										String name = element.getElementName();
+//										IInternalElement newElement = newFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
+//										IInternalElement refineEvent = newElement.createInternalElement(IRefinesEvent.ELEMENT_TYPE, name, null, null);
+//										refineEvent.setContents(name);
+//									}
+									newFile.save(null, true);
+									UIUtils.linkToEventBEditor(newFile);
+
+								}
+
+							}, null);
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+				}
+			}
+		};
+		extendAction.setText("Extends");
+		extendAction.setToolTipText("Extends the context");
+		extendAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_OBJS_INFO_TSK));
+
+
 	}
 
 	private void copyChildrenOfType(IRodinFile destination,
@@ -354,6 +436,26 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 					.getMachineFileName(newText));
 			if (file.exists())
 				return "Machine " + newText + " already exists.";
+			return null;
+		}
+
+	}
+
+	private class ContextInputValidator implements IInputValidator {
+
+		IRodinProject prj;
+
+		ContextInputValidator(IRodinProject prj) {
+			this.prj = prj;
+		}
+
+		public String isValid(String newText) {
+			if (newText.equals(""))
+				return "Name must not be empty.";
+			IRodinFile file = prj.getRodinFile(EventBPlugin
+					.getContextFileName(newText));
+			if (file.exists())
+				return "Context " + newText + " already exists.";
 			return null;
 		}
 
@@ -410,7 +512,11 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 			if ((ssel.size() == 1)
 					&& (ssel.getFirstElement() instanceof IMachineFile))
 				menu.add(refineAction);
-
+			
+			if ((ssel.size() == 1)
+					&& (ssel.getFirstElement() instanceof IContextFile))
+				menu.add(extendAction);
+			
 			menu.add(newMenu);
 			menu.add(deleteAction);
 			menu.add(refreshAction);
