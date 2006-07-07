@@ -408,7 +408,6 @@ public class ObligationExplorer extends ViewPart implements
 		UIUtils.linkToProverUI(ps);
 		UIUtils.activateView(ProofControl.VIEW_ID);
 		UIUtils.activateView(ProofTreeUI.VIEW_ID);
-
 	}
 
 	/**
@@ -450,16 +449,11 @@ public class ObligationExplorer extends ViewPart implements
 		Display display = viewer.getControl().getDisplay();
 
 		if (ps != null) {
-			IStructuredSelection ssel = (IStructuredSelection) viewer
-					.getSelection();
-			if (!ssel.toList().contains(ps.getPRSequent())) {
-				display.syncExec(new Runnable() {
-					public void run() {
-						viewer.setSelection(new StructuredSelection(ps
-								.getPRSequent()));
-					}
-				});
-			}
+			display.syncExec(new Runnable() {
+				public void run() {
+					externalSetSelection(ps.getPRSequent());
+				}
+			});
 
 		} else {
 			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
@@ -481,14 +475,13 @@ public class ObligationExplorer extends ViewPart implements
 
 	@Override
 	public void dispose() {
-		Collection<UserSupport> userSupports = UserSupportManager.getUserSupports();
+		Collection<UserSupport> userSupports = UserSupportManager
+				.getUserSupports();
 		for (UserSupport userSupport : userSupports) {
 			userSupport.removeStateChangedListeners(this);
 		}
 		UserSupportManager.removeUSManagerListener(this);
 		super.dispose();
 	}
-	
-	
-	
+
 }
