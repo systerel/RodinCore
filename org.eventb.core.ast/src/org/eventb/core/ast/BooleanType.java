@@ -21,7 +21,7 @@ public class BooleanType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	public BooleanType() {
+	protected BooleanType() {
 		super(true);
 	}
 
