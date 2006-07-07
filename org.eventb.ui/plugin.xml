@@ -268,7 +268,7 @@
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create a new variable for the machine"/>
+               tooltip="Create a new event for the machine"/>
          <action
                actionID="org.eventb.ui.actions.newTheorems"
                class="org.eventb.internal.ui.eventbeditor.actions.NewTheorems"
@@ -278,7 +278,7 @@
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new invariants for the machine"/>
+               tooltip="Create new theorems for the machine"/>
          <action
                actionID="org.eventb.ui.actions.newVariable"
                class="org.eventb.internal.ui.eventbeditor.actions.NewVariable"
@@ -288,7 +288,7 @@
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new theorems for the machine"/>
+               tooltip="Create a new variable for the machine"/>
          <action
                actionID="org.eventb.ui.actions.newInvariants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewInvariants"
@@ -298,7 +298,7 @@
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create a new event for the machine"/>
+               tooltip="Create new invariants for the machine"/>
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
