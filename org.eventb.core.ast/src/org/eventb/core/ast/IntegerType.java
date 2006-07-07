@@ -21,7 +21,7 @@ public class IntegerType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	public IntegerType() {
+	protected IntegerType() {
 		super(true);
 	}
 

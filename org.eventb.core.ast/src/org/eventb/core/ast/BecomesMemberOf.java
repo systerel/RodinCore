@@ -26,7 +26,7 @@ public class BecomesMemberOf extends Assignment {
 
 	private final Expression setExpr;
 	
-	public BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
+	protected BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(), assignedIdent);
 		this.setExpr = setExpr;

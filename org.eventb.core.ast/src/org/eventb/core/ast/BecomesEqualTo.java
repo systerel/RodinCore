@@ -27,7 +27,7 @@ public class BecomesEqualTo extends Assignment {
 
 	private final Expression[] values;
 	
-	public BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,
+	protected BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, value.hashCode(), assignedIdent);
 		this.values = new Expression[] {value};
@@ -35,7 +35,7 @@ public class BecomesEqualTo extends Assignment {
 		synthesizeType(ff);
 	}
 
-	public BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
+	protected BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = new Expression[values.length];
@@ -44,7 +44,7 @@ public class BecomesEqualTo extends Assignment {
 		synthesizeType(ff);
 	}
 
-	public BecomesEqualTo(List<FreeIdentifier> assignedIdents, List<Expression> values,
+	protected BecomesEqualTo(List<FreeIdentifier> assignedIdents, List<Expression> values,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.toArray(new Expression[values.size()]);

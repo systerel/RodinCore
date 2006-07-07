@@ -24,7 +24,7 @@ public class ProductType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	public ProductType(Type left, Type right) {
+	protected ProductType(Type left, Type right) {
 		super(left.isSolved() && right.isSolved());
 		this.left = left;
 		this.right = right;

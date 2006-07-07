@@ -21,7 +21,7 @@ public class PowerSetType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	public PowerSetType(Type base) {
+	protected PowerSetType(Type base) {
 		super(base.isSolved());
 		this.base = base;
 	}

@@ -22,7 +22,7 @@ public class GivenType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	public GivenType(String name) {
+	protected GivenType(String name) {
 		super(true);
 		this.name = name;
 	}
