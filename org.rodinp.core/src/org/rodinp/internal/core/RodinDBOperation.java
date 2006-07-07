@@ -82,6 +82,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * A HashMap of attributes that can be used by operations
 	 */
 	// TODO check if can be made less generic (when all operations are implemented).
+	// In fact, this is currently used only for the modified resource attribute. 
 	protected HashMap<Object, Object> attributes;
 
 	public static final String HAS_MODIFIED_RESOURCE_ATTR = "hasModifiedResource"; //$NON-NLS-1$
@@ -394,8 +395,8 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	}
 	
 	/**
-	 * Returns the compilation unit the given element is contained in,
-	 * or the element itself (if it is a compilation unit),
+	 * Returns the Rodin file the given element is contained in,
+	 * or the element itself (if it is a Rodin file),
 	 * otherwise <code>null</code>.
 	 */
 	protected RodinFile getRodinFileFor(IRodinElement element) {
