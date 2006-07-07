@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -115,8 +116,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		try {
 			ProofState proofState = userSupport.getCurrentPO();
 			if (proofState != null)
-				if (!proofState.getPRSequent()
-						.equals(prSequent))
+				if (!proofState.getPRSequent().equals(prSequent))
 					userSupport.setCurrentPO(prSequent);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
@@ -158,6 +158,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		UserSupportManager.disposeUserSupport(userSupport);
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
 		super.dispose();
@@ -258,10 +259,10 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		Object[] results = dlg.getResult();
 		for (Object result : results) {
+			UIUtils.debugProverUI("Commit: " + result.toString());
 			try {
-				UIUtils.debugProverUI("Commit: " + result.toString());
 				((ProofState) result).doSave();
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -354,11 +355,22 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	@Override
 	public void setFocus() {
-//		this.getUserSupport().isBroken();
-		super.setFocus();
-		UIUtils.debugProverUI("Focus");
-		// Find obligationExplorer and sync
+		if (userSupport.isOutOfDate()) {
+			MessageDialog
+					.openInformation(this.getActivePageInstance().getSite()
+							.getShell(), "Out of Date",
+							"The Proof Obligation is Out of Date and need to be reloeaded.");
+			try {
+				userSupport.setInput(this.getRodinInput());
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		syncObligationExplorer();
+		super.setFocus();
+		// UIUtils.debugProverUI("Focus");
+		// Find obligationExplorer and sync
 	}
 
 	/**
@@ -446,6 +458,22 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		//		
 		// ProofState ps = delta.getNewProofState();
 		// if (ps != null) {
+
+		if (userSupport.isOutOfDate()) {
+
+			MessageDialog
+					.openInformation(this.getActivePageInstance().getSite()
+							.getShell(), "Out of Date",
+							"The Proof Obligation is Out of Date and need to be reloeaded.");
+			try {
+				userSupport.setInput(this.getRodinInput());
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {
