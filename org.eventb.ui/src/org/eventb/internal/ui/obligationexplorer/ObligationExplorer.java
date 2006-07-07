@@ -478,4 +478,17 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 	}
+
+	@Override
+	public void dispose() {
+		Collection<UserSupport> userSupports = UserSupportManager.getUserSupports();
+		for (UserSupport userSupport : userSupports) {
+			userSupport.removeStateChangedListeners(this);
+		}
+		UserSupportManager.removeUSManagerListener(this);
+		super.dispose();
+	}
+	
+	
+	
 }
