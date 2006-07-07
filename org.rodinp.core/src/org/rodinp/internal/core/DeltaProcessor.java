@@ -53,7 +53,7 @@ public class DeltaProcessor {
 	/*
 	 * The global state of delta processing.
 	 */
-	private DeltaProcessingState state;
+	private final DeltaProcessingState state;
 	
 	/*
 	 * The Rodin database
