@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category
+            id="org.eventb.ide.cheatsheet.projectCreation"
+            name="Event-B Project creation"/>
+      <cheatsheet
+            category="org.eventb.ide.cheatsheet.projectCreation"
+            contentFile="cheatSheets/simpleCounterProject.xml"
+            id="org.eventb.ide.cheatsheet.projectCreation.simpleCounterProject"
+            name="Simple Counter Project"/>
+   </extension>
+
+</plugin>
