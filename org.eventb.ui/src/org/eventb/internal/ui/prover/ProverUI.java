@@ -35,6 +35,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
@@ -78,7 +79,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public ProverUI() {
 		super();
-		this.userSupport = new UserSupport();
+		this.userSupport = UserSupportManager.newUserSupport();
 		userSupport.addStateChangedListeners(this);
 	}
 

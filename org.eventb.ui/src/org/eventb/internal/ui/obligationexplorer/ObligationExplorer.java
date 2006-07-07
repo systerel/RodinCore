@@ -12,13 +12,14 @@
 
 package org.eventb.internal.ui.obligationexplorer;
 
+import java.util.Collection;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -40,6 +42,14 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof.Status;
+import org.eventb.core.pm.IProofStateChangedListener;
+import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.IUSManagerListener;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
+import org.eventb.core.pm.UserSupportManager;
+import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -58,7 +68,8 @@ import org.rodinp.core.RodinDBException;
  *         model using a content provider.
  */
 public class ObligationExplorer extends ViewPart implements
-		ISelectionChangedListener {
+		ISelectionChangedListener, IUSManagerListener,
+		IProofStateChangedListener {
 
 	/**
 	 * The plug-in identifier of the Obligation Explorer (value
@@ -87,6 +98,16 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public ObligationExplorer() {
 		byExternal = false;
+		UserSupportManager.addUSManagerListener(this);
+		registerUserSupports();
+	}
+
+	private void registerUserSupports() {
+		Collection<UserSupport> userSupports = UserSupportManager
+				.getUserSupports();
+		for (UserSupport userSupport : userSupports) {
+			userSupport.addStateChangedListeners(this);
+		}
 	}
 
 	/**
@@ -118,8 +139,24 @@ public class ObligationExplorer extends ViewPart implements
 				String name = ((IRodinFile) obj).getElementName();
 				return EventBPlugin.getComponentName(name);
 			}
-			if (obj instanceof IPRSequent)
+			if (obj instanceof IPRSequent) {
+				UIUtils.debugObligationExplorer("Label for: " + obj);
+				Collection<UserSupport> userSupports = UserSupportManager
+						.getUserSupports();
+				for (UserSupport userSupport : userSupports) {
+					UIUtils.debugObligationExplorer("Get US: " + userSupport);
+					Collection<ProofState> proofStates = userSupport.getPOs();
+					for (ProofState proofState : proofStates) {
+						if (proofState.getPRSequent().equals(obj)) {
+							if (proofState.isDirty())
+								return "> " + ((IPRSequent) obj).getName();
+							else
+								return ((IPRSequent) obj).getName();
+						}
+					}
+				}
 				return ((IPRSequent) obj).getName();
+			}
 
 			return obj.toString();
 		}
@@ -133,45 +170,63 @@ public class ObligationExplorer extends ViewPart implements
 			ImageRegistry registry = EventBUIPlugin.getDefault()
 					.getImageRegistry();
 			if (obj instanceof IPRSequent) {
-				IPRSequent ps = (IPRSequent) obj;
+				IPRSequent prSequent = (IPRSequent) obj;
 				try {
-//					Replaced check on proof with check on sequent
-//					TODO: synchronize with the proof tree in memory
-					
-					if (! ps.proofAttempted())
+					// Replaced check on proof with check on sequent
+					// TODO: synchronize with the proof tree in memory
+					Collection<UserSupport> userSupports = UserSupportManager
+							.getUserSupports();
+					for (UserSupport userSupport : userSupports) {
+						UIUtils.debugObligationExplorer("Get US: "
+								+ userSupport);
+						Collection<ProofState> proofStates = userSupport
+								.getPOs();
+						for (ProofState proofState : proofStates) {
+							if (proofState.getPRSequent().equals(obj)) {
+								IProofTree tree = proofState.getProofTree();
+								if (tree.isDischarged()) {
+									return registry
+											.get(EventBImage.IMG_DISCHARGED);
+								} else {
+									return registry
+											.get(EventBImage.IMG_PENDING);
+								}
+							}
+						}
+					}
+					if (!prSequent.proofAttempted())
 						return registry.get(EventBImage.IMG_UNATTEMPTED);
-					
-					if (ps.isProofBroken())
-					{
-						Status proofStatus = ps.getProof().getStatus();
+
+					if (prSequent.isProofBroken()) {
+						Status proofStatus = prSequent.getProof().getStatus();
 						if (proofStatus.equals(Status.PENDING))
 							return registry.get(EventBImage.IMG_PENDING_BROKEN);
 						if (proofStatus.equals(Status.REVIEWED))
-							return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
+							return registry
+									.get(EventBImage.IMG_REVIEWED_BROKEN);
 						if (proofStatus.equals(Status.DISCHARGED))
-							return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
-						
-					}
-					else
-					{
-						Status proofStatus = ps.getProof().getStatus();
+							return registry
+									.get(EventBImage.IMG_DISCHARGED_BROKEN);
+
+					} else {
+						Status proofStatus = prSequent.getProof().getStatus();
 						if (proofStatus.equals(Status.PENDING))
 							return registry.get(EventBImage.IMG_PENDING);
 						if (proofStatus.equals(Status.REVIEWED))
 							return registry.get(EventBImage.IMG_REVIEWED);
 						if (proofStatus.equals(Status.DISCHARGED))
 							return registry.get(EventBImage.IMG_DISCHARGED);
-						
+
 					}
 
 					return registry.get(EventBImage.IMG_DEFAULT);
-					
-//  				Previous code:
-//					IProof status = ps.getProof();
-//					if (status.getContents().equals("PENDING"))
-//						return registry.get(EventBImage.IMG_PENDING);
-//					else if (status.getContents().equals("DISCHARGED"))
-//						return registry.get(EventBImage.IMG_DISCHARGED);
+
+					// Previous code:
+					// IProof status = ps.getProof();
+					// if (status.getContents().equals("PENDING"))
+					// return registry.get(EventBImage.IMG_PENDING);
+					// else if (status.getContents().equals("DISCHARGED"))
+					// return registry.get(EventBImage.IMG_DISCHARGED);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
@@ -295,26 +350,11 @@ public class ObligationExplorer extends ViewPart implements
 
 				if (obj instanceof IPRSequent) {
 					IPRSequent ps = (IPRSequent) obj;
-					try {
-						if (!ps.isDischarged()) {
-							UIUtils.linkToProverUI(ps);
-							UIUtils.activateView(ProofControl.VIEW_ID);
-							UIUtils.activateView(ProofTreeUI.VIEW_ID);
-						} else {
-							boolean answer = MessageDialog
-									.openQuestion(viewer.getControl()
-											.getShell(),
-											"Re-prove the obligation",
-											"The obligation has been proved. Do you want to re-prove?");
-							if (answer) {
-								UIUtils.linkToProverUI(ps);
-								UIUtils.activateView(ProofControl.VIEW_ID);
-								UIUtils.activateView(ProofTreeUI.VIEW_ID);
-							}
-						}
-					} catch (RodinDBException e) {
-						e.printStackTrace();
-					}
+
+					UIUtils.linkToProverUI(ps);
+					UIUtils.activateView(ProofControl.VIEW_ID);
+					UIUtils.activateView(ProofTreeUI.VIEW_ID);
+
 				}
 			}
 		};
@@ -383,6 +423,52 @@ public class ObligationExplorer extends ViewPart implements
 			viewer.getControl().setRedraw(true);
 		}
 		byExternal = false;
+	}
+
+	public void USManagerChanged(UserSupport userSupport, boolean added) {
+		UIUtils.debugObligationExplorer("Obligation Explorer: "
+				+ userSupport.getCurrentPO() + " : " + added);
+		if (added) {
+			userSupport.addStateChangedListeners(this);
+		} else {
+			userSupport.removeStateChangedListeners(this);
+		}
+
+	}
+
+	public void proofStateChanged(IProofStateDelta delta) {
+		UIUtils.debugObligationExplorer("Obligation Exprlorer: Proof Changed "
+				+ delta);
+		final ProofState ps = delta.getNewProofState();
+		Display display = viewer.getControl().getDisplay();
+
+		if (ps != null) {
+			display.syncExec(new Runnable() {
+
+				public void run() {
+					viewer.setSelection(new StructuredSelection(ps
+							.getPRSequent()));
+				}
+
+			});
+
+		} else {
+			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
+			if (proofTreeDelta != null) {
+				UserSupport userSupport = delta.getSource();
+				ProofState state = userSupport.getCurrentPO();
+				final IPRSequent prSequent = state.getPRSequent();
+				display.syncExec(new Runnable() {
+
+					public void run() {
+						viewer.refresh(prSequent, true);
+					}
+
+				});
+			}
+			// Refresh the PRSequent
+		}
+
 	}
 
 }
