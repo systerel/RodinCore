@@ -113,7 +113,11 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public void setCurrentPO(IPRSequent prSequent) {
 		try {
-			userSupport.setCurrentPO(prSequent);
+			ProofState proofState = userSupport.getCurrentPO();
+			if (proofState != null)
+				if (!proofState.getPRSequent()
+						.equals(prSequent))
+					userSupport.setCurrentPO(prSequent);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -240,19 +244,19 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// }
 		// }
 
-		ProofState [] proofStates = userSupport.getUnsavedPOs();
+		ProofState[] proofStates = userSupport.getUnsavedPOs();
 
 		ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
-				.getShell(), userSupport, new ProofStateContentProvider(proofStates),
-				new ProofStateLabelProvider(),
+				.getShell(), userSupport, new ProofStateContentProvider(
+				proofStates), new ProofStateLabelProvider(),
 				"Select the proof obligation(s) to save.");
-		
-		ProofState [] initSelection = {userSupport.getCurrentPO()};
+
+		ProofState[] initSelection = { userSupport.getCurrentPO() };
 		dlg.setInitialSelections(initSelection);
 		dlg.setTitle("Save Proofs");
 		dlg.open();
-		
-		Object [] results = dlg.getResult();
+
+		Object[] results = dlg.getResult();
 		for (Object result : results) {
 			try {
 				UIUtils.debugProverUI("Commit: " + result.toString());
@@ -274,28 +278,30 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	private class ProofStateContentProvider implements IStructuredContentProvider {
+	private class ProofStateContentProvider implements
+			IStructuredContentProvider {
 
-		private ProofState [] proofStates;
-		public ProofStateContentProvider(ProofState [] proofStates) {
+		private ProofState[] proofStates;
+
+		public ProofStateContentProvider(ProofState[] proofStates) {
 			this.proofStates = proofStates;
 		}
-		
+
 		public Object[] getElements(Object inputElement) {
 			return proofStates;
 		}
 
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			
+
 		}
-		
+
 	}
-	
+
 	private class ProofStateLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
@@ -312,12 +318,12 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		public void addListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void dispose() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -327,11 +333,11 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		public void removeListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Getting the outline page associated with this editor
 	 * 
@@ -351,7 +357,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		super.setFocus();
 		UIUtils.debugProverUI("Focus");
 		// Find obligationExplorer and sync
-//		syncObligationExplorer();
+		// syncObligationExplorer();
 	}
 
 	/**
@@ -435,18 +441,18 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(IProofStateDelta delta) {
-//		UIUtils.debugProverUI("PO Changed");
-//		
-//		ProofState ps = delta.getNewProofState();
-//		if (ps != null) {
-			Display display = EventBUIPlugin.getDefault().getWorkbench()
-					.getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					ProverUI.this.editorDirtyStateChanged();
-//					syncObligationExplorer();
-				}
-			});
-//		}
+		// UIUtils.debugProverUI("PO Changed");
+		//		
+		// ProofState ps = delta.getNewProofState();
+		// if (ps != null) {
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				ProverUI.this.editorDirtyStateChanged();
+				// syncObligationExplorer();
+			}
+		});
+		// }
 	}
 }

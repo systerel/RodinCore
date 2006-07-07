@@ -14,7 +14,6 @@ package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.Collection;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -84,9 +83,6 @@ public class ObligationExplorer extends ViewPart implements
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
-	// Action when double clicking.
-	private Action doubleClickAction;
-
 	// Group of action that is used.
 	private ObligationExplorerActionGroup groupActionSet;
 
@@ -140,11 +136,14 @@ public class ObligationExplorer extends ViewPart implements
 				return EventBPlugin.getComponentName(name);
 			}
 			if (obj instanceof IPRSequent) {
-				UIUtils.debugObligationExplorer("Label for: " + obj);
+				// UIUtils.debugObligationExplorer("Label for: " + obj);
+
+				// Find the label in the list of UserSupport.
 				Collection<UserSupport> userSupports = UserSupportManager
 						.getUserSupports();
 				for (UserSupport userSupport : userSupports) {
-					UIUtils.debugObligationExplorer("Get US: " + userSupport);
+					// UIUtils.debugObligationExplorer("Get US: " +
+					// userSupport);
 					Collection<ProofState> proofStates = userSupport.getPOs();
 					for (ProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
@@ -172,28 +171,38 @@ public class ObligationExplorer extends ViewPart implements
 			if (obj instanceof IPRSequent) {
 				IPRSequent prSequent = (IPRSequent) obj;
 				try {
-					// Replaced check on proof with check on sequent
-					// TODO: synchronize with the proof tree in memory
+					// Try to synchronize with the proof tree in memory
 					Collection<UserSupport> userSupports = UserSupportManager
 							.getUserSupports();
 					for (UserSupport userSupport : userSupports) {
-						UIUtils.debugObligationExplorer("Get US: "
-								+ userSupport);
+						// UIUtils.debugObligationExplorer("Get US: "
+						// + userSupport);
 						Collection<ProofState> proofStates = userSupport
 								.getPOs();
 						for (ProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
 								if (tree.isDischarged()) {
-									return registry
-											.get(EventBImage.IMG_DISCHARGED);
+									if (prSequent.isProofBroken())
+										return registry
+												.get(EventBImage.IMG_DISCHARGED_BROKEN);
+									else
+										return registry
+												.get(EventBImage.IMG_DISCHARGED);
 								} else {
-									return registry
-											.get(EventBImage.IMG_PENDING);
+									if (prSequent.isProofBroken())
+										return registry
+												.get(EventBImage.IMG_PENDING_BROKEN);
+									else
+										return registry
+												.get(EventBImage.IMG_PENDING);
+
 								}
 							}
 						}
 					}
+
+					// Otherwise, setting the label accordingly.
 					if (!prSequent.proofAttempted())
 						return registry.get(EventBImage.IMG_UNATTEMPTED);
 
@@ -340,24 +349,6 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	private void makeActions() {
 		groupActionSet = new ObligationExplorerActionGroup(this);
-
-		// Double click to link with editor
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IPRSequent) {
-					IPRSequent ps = (IPRSequent) obj;
-
-					UIUtils.linkToProverUI(ps);
-					UIUtils.activateView(ProofControl.VIEW_ID);
-					UIUtils.activateView(ProofTreeUI.VIEW_ID);
-
-				}
-			}
-		};
 	}
 
 	/**
@@ -393,15 +384,30 @@ public class ObligationExplorer extends ViewPart implements
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 
 			if (!ssel.isEmpty()) {
-				UIUtils.debugObligationExplorer("Activate UI "
-						+ ssel.toString());
-				doubleClickAction.run();
+				// UIUtils.debugObligationExplorer("Activate UI "
+				// + ssel.toString());
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection)
+						.getFirstElement();
+
+				if (obj instanceof IPRSequent) {
+					IPRSequent ps = (IPRSequent) obj;
+
+					selectPO(ps);
+				}
 			} else {
 				UIUtils.debugObligationExplorer("De-selected");
 				// Do nothing when there is no selection
 				// editor.getUserSupport().selectNode(null);
 			}
 		}
+
+	}
+
+	private void selectPO(IPRSequent ps) {
+		UIUtils.linkToProverUI(ps);
+		UIUtils.activateView(ProofControl.VIEW_ID);
+		UIUtils.activateView(ProofTreeUI.VIEW_ID);
 
 	}
 
@@ -426,10 +432,11 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void USManagerChanged(UserSupport userSupport, boolean added) {
-		UIUtils.debugObligationExplorer("Obligation Explorer: "
-				+ userSupport.getCurrentPO() + " : " + added);
+		UIUtils.debugObligationExplorer("Obligation Explorer: " + userSupport
+				+ " : " + added);
 		if (added) {
 			userSupport.addStateChangedListeners(this);
+			viewer.refresh(userSupport.getInput());
 		} else {
 			userSupport.removeStateChangedListeners(this);
 		}
@@ -443,14 +450,16 @@ public class ObligationExplorer extends ViewPart implements
 		Display display = viewer.getControl().getDisplay();
 
 		if (ps != null) {
-			display.syncExec(new Runnable() {
-
-				public void run() {
-					viewer.setSelection(new StructuredSelection(ps
-							.getPRSequent()));
-				}
-
-			});
+			IStructuredSelection ssel = (IStructuredSelection) viewer
+					.getSelection();
+			if (!ssel.toList().contains(ps.getPRSequent())) {
+				display.syncExec(new Runnable() {
+					public void run() {
+						viewer.setSelection(new StructuredSelection(ps
+								.getPRSequent()));
+					}
+				});
+			}
 
 		} else {
 			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
@@ -466,9 +475,7 @@ public class ObligationExplorer extends ViewPart implements
 
 				});
 			}
-			// Refresh the PRSequent
 		}
 
 	}
-
 }

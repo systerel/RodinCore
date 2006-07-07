@@ -48,6 +48,7 @@ public class UserSupport implements IElementChangedListener,
 		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
+		proofStates = new LinkedList<ProofState>();
 		delta = new ProofStateDelta(this); // Clear delta
 	}
 
@@ -502,6 +503,10 @@ public class UserSupport implements IElementChangedListener,
 
 	public Collection<ProofState> getPOs() {
 		return proofStates;
+	}
+
+	public IPRFile getInput() {
+		return prFile;
 	}
 
 }
