@@ -1,3 +1,6 @@
-org.rodinp.core/debug = false
+org.rodinp.core/debug = true
+org.rodinp.core/debug/rodindatabase = false
 org.rodinp.core/debug/builder = false
 org.rodinp.core/debug/builder/graph = false
+org.rodinp.core/debug/rodindelta = false
+org.rodinp.core/debug/rodindelta/verbose = false

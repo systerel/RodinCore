@@ -90,9 +90,9 @@ public class RodinDBManager implements ISaveParticipant {
 	
 //	private static final String INDEX_MANAGER_DEBUG = RodinCore.PLUGIN_ID + "/debug/indexmanager" ; //$NON-NLS-1$
 //	private static final String COMPILER_DEBUG = RodinCore.PLUGIN_ID + "/debug/compiler" ; //$NON-NLS-1$
-//	private static final String RODINDB_DEBUG = RodinCore.PLUGIN_ID + "/debug/rodindatabse" ; //$NON-NLS-1$
-//	private static final String DELTA_DEBUG =RodinCore.PLUGIN_ID + "/debug/rodindelta" ; //$NON-NLS-1$
-//	private static final String DELTA_DEBUG_VERBOSE =RodinCore.PLUGIN_ID + "/debug/rodindelta/verbose" ; //$NON-NLS-1$
+	private static final String RODINDB_DEBUG = RodinCore.PLUGIN_ID + "/debug/rodindatabase" ; //$NON-NLS-1$
+	private static final String DELTA_DEBUG =RodinCore.PLUGIN_ID + "/debug/rodindelta" ; //$NON-NLS-1$
+	private static final String DELTA_DEBUG_VERBOSE =RodinCore.PLUGIN_ID + "/debug/rodindelta/verbose" ; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG = RodinCore.PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG_GRAPH = RodinCore.PLUGIN_ID + "/debug/builder/graph" ; //$NON-NLS-1$
 //	private static final String COMPLETION_DEBUG = RodinCore.PLUGIN_ID + "/debug/completion" ; //$NON-NLS-1$
@@ -276,21 +276,21 @@ public class RodinDBManager implements ISaveParticipant {
 //			option = Platform.getDebugOption(CP_RESOLVE_DEBUG);
 //			if(option != null) RodinDBManager.CP_RESOLVE_VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 //
-//			option = Platform.getDebugOption(DELTA_DEBUG);
-//			if(option != null) DeltaProcessor.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-//
-//			option = Platform.getDebugOption(DELTA_DEBUG_VERBOSE);
-//			if(option != null) DeltaProcessor.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			option = Platform.getDebugOption(DELTA_DEBUG);
+			if(option != null) DeltaProcessor.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption(DELTA_DEBUG_VERBOSE);
+			if(option != null) DeltaProcessor.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 //
 //			option = Platform.getDebugOption(HIERARCHY_DEBUG);
 //			if(option != null) TypeHierarchy.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 //
 //			option = Platform.getDebugOption(INDEX_MANAGER_DEBUG);
 //			if(option != null) JobManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-//			
-//			option = Platform.getDebugOption(JAVAMODEL_DEBUG);
-//			if(option != null) RodinDBManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-//
+			
+			option = Platform.getDebugOption(RODINDB_DEBUG);
+			if(option != null) RodinDBManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
 //			option = Platform.getDebugOption(POST_ACTION_DEBUG);
 //			if(option != null) RodinDBOperation.POST_ACTION_VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 //
