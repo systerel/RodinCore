@@ -354,10 +354,11 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	@Override
 	public void setFocus() {
+//		this.getUserSupport().isBroken();
 		super.setFocus();
 		UIUtils.debugProverUI("Focus");
 		// Find obligationExplorer and sync
-		// syncObligationExplorer();
+		syncObligationExplorer();
 	}
 
 	/**
