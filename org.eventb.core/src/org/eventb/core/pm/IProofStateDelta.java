@@ -12,4 +12,6 @@ public interface IProofStateDelta {
 	public IProofTreeDelta getProofTreeDelta();
 	public boolean getNewSearch();
 	public boolean getNewCache();
+	
+	public UserSupport getSource();
 }

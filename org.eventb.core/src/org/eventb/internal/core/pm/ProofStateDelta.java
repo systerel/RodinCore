@@ -2,6 +2,7 @@ package org.eventb.internal.core.pm;
 
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
+import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
 
@@ -26,7 +27,10 @@ public class ProofStateDelta implements IProofStateDelta {
 	
 	private boolean newCache;
 
-	public ProofStateDelta() {
+	private UserSupport userSupport;
+	
+	public ProofStateDelta(UserSupport userSupport) {
+		this.userSupport = userSupport;
 		newSearch = false;
 		newCache = false;
 		ps = null;
@@ -91,6 +95,10 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	public boolean getNewCache() {
 		return newCache;
+	}
+
+	public UserSupport getSource() {
+		return userSupport;
 	}
 
 }
