@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IProof;
@@ -14,6 +17,7 @@ import org.eventb.core.IProof.Status;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -60,8 +64,13 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return PRUtil.makeInitialProofTree(this);
 	}
 	
-	public void updateStatus(IProofTree pt) throws RodinDBException {
-		PRUtil.updateStatus(this,pt);
+	public void updateStatus(final IProofTree pt) throws CoreException {
+		RodinCore.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				PRUtil.updateStatus(PRSequent.this, pt);
+			}
+
+		}, null);
 	}
 
 	public boolean isDischarged() throws RodinDBException {
