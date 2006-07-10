@@ -15,6 +15,7 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
@@ -61,7 +62,6 @@ public class ProofState {
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
 		current = getNextPendingSubgoal();
-//		UserSupportUtils.debug("Next Pending Subgoal: " + current);
 		if (current == null) {
 			current = pt.getRoot();
 		}
@@ -130,13 +130,9 @@ public class ProofState {
 		return dirty;
 	}
 
-	public void doSave() throws RodinDBException {
+	public void doSave() throws CoreException {
 		ps.updateStatus(pt);
 		dirty = false;
-	}
-
-	public void updateStatus() throws RodinDBException {
-		ps.updateStatus(pt);
 	}
 
 	public void setDirty(boolean dirty) {

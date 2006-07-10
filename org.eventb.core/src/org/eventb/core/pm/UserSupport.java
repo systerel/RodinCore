@@ -5,10 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOHypothesis;
-import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeChangedListener;
@@ -43,6 +39,8 @@ public class UserSupport implements IElementChangedListener,
 
 	private IProofStateDelta delta = null; // The current delta
 
+	private boolean outOfDate;
+	private int c = 0;
 	/* Creation should be done using UserSupportManager */
 	public UserSupport() {
 		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
@@ -50,6 +48,7 @@ public class UserSupport implements IElementChangedListener,
 		fireDelta = true;
 		proofStates = new LinkedList<ProofState>();
 		delta = new ProofStateDelta(this); // Clear delta
+		outOfDate = false;
 	}
 
 	Collection<IProofStateChangedListener> proofStateChangedListeners;
@@ -70,14 +69,14 @@ public class UserSupport implements IElementChangedListener,
 
 	private void notifyPendingDelta() {
 		if (fireDelta) {
-			UserSupportUtils.debug("Notified: " + delta);
+//			UserSupportUtils.debug("Notified: " + delta);
 			notifyStateChangedListeners(delta);
 			delta = new ProofStateDelta(this); // Clear delta
 		}
 	}
 
 	public void fireProofStateDelta(IProofStateDelta newDelta) {
-		UserSupportUtils.debug("Fire Delta: " + newDelta);
+//		UserSupportUtils.debug("Fire Delta: " + newDelta);
 		delta = mergeDelta(delta, newDelta);
 		notifyPendingDelta();
 	}
@@ -169,6 +168,7 @@ public class UserSupport implements IElementChangedListener,
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
+		outOfDate = false;
 		nextUndischargedPO();
 	}
 
@@ -378,83 +378,55 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		// UserSupportUtils.debug("Element changed");
+		c++;
+		UserSupportUtils.debug("Element changed " + c + " : ");
+		UserSupportUtils.debug("***********************************************");
+		UserSupportUtils.debug("Delta " + event.getDelta());
 		try {
 			processDelta(event.getDelta());
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
+		if (outOfDate) {
+			ProofStateDelta newDelta = new ProofStateDelta(this);
+			fireProofStateDelta(newDelta);
+		}
 	}
 
-	private void processDelta(IRodinElementDelta delta) throws RodinDBException {
-		int kind = delta.getKind();
-		IRodinElement element = delta.getElement();
+	private void processDelta(IRodinElementDelta elementChangedDelta) throws RodinDBException {
+		IRodinElement element = elementChangedDelta.getElement();
 		// UserSupportUtils.debug("Process Delta " + element);
 		if (element instanceof IRodinProject) {
 			// UserSupportUtils.debug("Project changed " + kind + " for " +
 			// ((IRodinProject) element).getElementName());
-			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+			for (IRodinElementDelta d : elementChangedDelta.getAffectedChildren()) {
 				processDelta(d);
 			}
 		} else if (element instanceof IPRFile) {
 			// UserSupportUtils.debug("PRFile changed " + kind + " for " +
 			// ((IPRFile) element).getElementName());
 			if (prFile.equals(element)) {
+				
+				// Notify
+				
 				// setInput((IPRFile) element);
-				for (IRodinElementDelta d : delta.getAffectedChildren()) {
+				for (IRodinElementDelta d : elementChangedDelta.getAffectedChildren()) {
 					processDelta(d);
 				}
 			}
 		} else if (element instanceof IPRSequent) {
-
-			if (kind == IRodinElementDelta.ADDED) { // No rename
-				UserSupportUtils.debug("Added "
-						+ ((IPRSequent) element).getElementName());
-				ProofState ps = new ProofState((IPRSequent) element);
-				proofStates.add(ps);
+			int kind = elementChangedDelta.getKind();
+			UserSupportUtils.debug("IPRSequent changed");
+		
+			if (kind == IRodinElementDelta.ADDED) {
+				outOfDate = true;
+			} else if (kind == IRodinElementDelta.REMOVED) {
+				outOfDate = true;			
 			} else if (kind == IRodinElementDelta.CHANGED) {
-				UserSupportUtils.debug("Changed "
-						+ ((IPRSequent) element).getElementName());
-				boolean refresh = false;
-				for (IRodinElementDelta d : delta.getAffectedChildren()) {
-					processDelta(d);
-					IRodinElement child = d.getElement();
-					if (child instanceof IPOHypothesis
-							|| child instanceof IPOPredicate) {
-						refresh = true;
-					}
-				}
-				if (refresh) {
-					for (ProofState ps : proofStates) {
-						if (ps.getPRSequent().equals(element)) {
-							UserSupportUtils.debug("Updated "
-									+ ((IPRSequent) element).getElementName());
-							if (ps.getProofTree() != null)
-								ps.loadProofTree();
-							if (ps == currentPS)
-								setCurrentPO(ps.getPRSequent());
-						}
-					}
-				}
-			} else {
-				ProofState toBeRemoved = null;
-				for (ProofState ps : proofStates) {
-					if (ps.getPRSequent().equals(element)) {
-						if (kind == IRodinElementDelta.REMOVED) {
-							UserSupportUtils.debug("Removed "
-									+ ((IPRSequent) element).getElementName());
-							toBeRemoved = ps;
-						}
-					}
-				}
-				proofStates.remove(toBeRemoved);
+//				outOfDate = true;
 			}
-		} else if (element instanceof IMachineFile) {
-			return;
-		} else if (element instanceof IContextFile) {
-			return;
 		} else if (element instanceof IParent) {
-			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+			for (IRodinElementDelta d : elementChangedDelta.getAffectedChildren()) {
 				processDelta(d);
 			}
 		}
@@ -509,4 +481,13 @@ public class UserSupport implements IElementChangedListener,
 		return prFile;
 	}
 
+	public boolean isOutOfDate() {
+		return outOfDate;
+	}
+
+	public void dispose() {
+		RodinCore.removeElementChangedListener(this);
+		if (currentPS != null)
+			currentPS.getProofTree().removeChangeListener(this);
+	}
 }
