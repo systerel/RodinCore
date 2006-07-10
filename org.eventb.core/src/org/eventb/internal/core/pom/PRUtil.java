@@ -8,9 +8,6 @@
 
 package org.eventb.internal.core.pom;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,7 +17,6 @@ import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
@@ -29,7 +25,6 @@ import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IProof;
 import org.eventb.core.IProof.Status;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;

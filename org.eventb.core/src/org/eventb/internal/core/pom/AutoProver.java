@@ -1,12 +1,12 @@
 package org.eventb.internal.core.pom;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.reasoners.ExternalML;
 import org.eventb.core.prover.tactics.BasicTactics;
 import org.eventb.core.prover.tactics.Tactics;
-import org.rodinp.core.RodinDBException;
 
 public class AutoProver {
 	
@@ -35,7 +35,7 @@ public class AutoProver {
 		// Nothing to do.
 	}
 	
-	public void run(IPRFile prFile) throws RodinDBException {
+	public void run(IPRFile prFile) throws CoreException {
 		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
 		boolean dirty = false;
 		for (IPRSequent po : pos) {
