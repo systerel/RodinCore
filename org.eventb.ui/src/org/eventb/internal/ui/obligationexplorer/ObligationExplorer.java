@@ -448,6 +448,15 @@ public class ObligationExplorer extends ViewPart implements
 		final ProofState ps = delta.getNewProofState();
 		Display display = viewer.getControl().getDisplay();
 
+		final UserSupport userSupport = delta.getSource();
+		if (userSupport.isOutOfDate()) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh(userSupport.getInput(), true);
+				}
+			});
+			return;
+		}
 		if (ps != null) {
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -458,7 +467,6 @@ public class ObligationExplorer extends ViewPart implements
 		} else {
 			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 			if (proofTreeDelta != null) {
-				UserSupport userSupport = delta.getSource();
 				ProofState state = userSupport.getCurrentPO();
 				final IPRSequent prSequent = state.getPRSequent();
 				display.syncExec(new Runnable() {
