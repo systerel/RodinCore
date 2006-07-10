@@ -25,8 +25,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
@@ -413,19 +411,19 @@ public class UIUtils {
 			
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
-			IEditorReference [] editors = EventBUIPlugin.getActivePage().getEditorReferences();
-			for (IEditorReference editor : editors) {
-				if (editor.getEditorInput().equals(fileInput)) {
-					IEditorPart part = editor.getEditor(true);
-					if (part instanceof ProverUI) {
-						if (obj instanceof IPRSequent) {
-							((ProverUI) part).setCurrentPO((IPRSequent) obj);
-							return;
-						}
-					}
-				}
-				
-			}
+//			IEditorReference [] editors = EventBUIPlugin.getActivePage().getEditorReferences();
+//			for (IEditorReference editor : editors) {
+//				if (editor.getEditorInput().equals(fileInput)) {
+//					IEditorPart part = editor.getEditor(true);
+//					if (part instanceof ProverUI) {
+//						if (obj instanceof IPRSequent) {
+//							((ProverUI) part).setCurrentPO((IPRSequent) obj);
+//							return;
+//						}
+//					}
+//				}
+//				
+//			}
 			
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
