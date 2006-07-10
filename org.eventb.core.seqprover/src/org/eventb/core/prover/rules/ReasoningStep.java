@@ -3,7 +3,6 @@ package org.eventb.core.prover.rules;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;

@@ -8,7 +8,6 @@
 
 package org.eventb.core.prover.rules;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
