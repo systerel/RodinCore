@@ -9,6 +9,7 @@
 package org.eventb.core;
 
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.prover.IProofTree;
 import org.rodinp.core.RodinDBException;
 
@@ -36,6 +37,6 @@ public interface IPRSequent extends IPOSequent {
 	void setProofBroken(boolean broken) throws RodinDBException;
 	
 	// TODO : refactor to updateProof
-	void updateStatus(IProofTree pt) throws RodinDBException;
+	void updateStatus(IProofTree pt) throws RodinDBException, CoreException;
 
 }
