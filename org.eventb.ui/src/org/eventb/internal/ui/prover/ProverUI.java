@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -159,6 +160,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public void dispose() {
 		UserSupportManager.disposeUserSupport(userSupport);
+		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
 		super.dispose();
@@ -247,7 +249,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		ProofState[] proofStates = userSupport.getUnsavedPOs();
 
-		ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
+		final ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
 				.getShell(), userSupport, new ProofStateContentProvider(
 				proofStates), new ProofStateLabelProvider(),
 				"Select the proof obligation(s) to save.");
@@ -257,22 +259,23 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		dlg.setTitle("Save Proofs");
 		dlg.open();
 
-		Object[] results = dlg.getResult();
-		for (Object result : results) {
-			UIUtils.debugProverUI("Commit: " + result.toString());
-			try {
-				((ProofState) result).doSave();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		// Save the file from the database to disk
+		final IPRFile prFile = this.getRodinInput();
+
 		try {
-			UIUtils.debugProverUI("Save to disk");
-			IPRFile prFile = this.getRodinInput();
-			prFile.save(monitor, true);
-		} catch (RodinDBException e) {
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					Object[] results = dlg.getResult();
+					for (Object result : results) {
+						((ProofState) result).doSave();
+					}
+					// Save the file from the database to disk
+					prFile.save(monitor, true);
+				}
+
+			}, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
