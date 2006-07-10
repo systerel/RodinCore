@@ -171,7 +171,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
-		selectItem(item, 1);
+		selectItem(item, 0);
 	}
 
 	/*
