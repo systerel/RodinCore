@@ -28,7 +28,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
@@ -149,7 +148,6 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 		});
 
 		editor.addElementChangedListener(this);
-		RodinCore.addElementChangedListener(this);
 	}
 
 	/**
@@ -265,12 +263,6 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		return layout;
-	}
-
-	@Override
-	public void dispose() {
-		RodinCore.removeElementChangedListener(this);
-		super.dispose();
 	}
 
 }
