@@ -12,7 +12,6 @@
 package org.rodinp.internal.core;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -27,12 +26,12 @@ import org.rodinp.core.basis.RodinFile;
  */
 public class DBUpdater {
 
-	HashSet<IRodinElement> projectsToUpdate = new HashSet<IRodinElement>();
+	HashSet<RodinProject> projectsToUpdate = new HashSet<RodinProject>();
 
 	/**
 	 * Adds the given child handle to its parent's cache of children. 
 	 */
-	protected void addToParentInfo(Openable child) {
+	private static void addToParentInfo(Openable child) {
 
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
@@ -48,7 +47,7 @@ public class DBUpdater {
 	/**
 	 * Closes the given element, which removes it from the cache of open elements.
 	 */
-	protected static void close(Openable element) {
+	private static void close(Openable element) {
 
 		try {
 			element.close();
@@ -66,14 +65,14 @@ public class DBUpdater {
 	 * <code>basicElementAdded</code>.
 	 * </ul>
 	 */
-	protected void elementAdded(Openable element) {
+	private void elementAdded(Openable element) {
 
 		String elementType = element.getElementType();
 		if (elementType == IRodinElement.RODIN_PROJECT) {
 			// project add is handled by RodinProject.configure() because
-			// when a project is created, it does not yet have a java nature
+			// when a project is created, it does not yet have a Rodin nature
 			addToParentInfo(element);
-			this.projectsToUpdate.add(element);
+			this.projectsToUpdate.add((RodinProject) element);
 		} else {
 			addToParentInfo(element);
 
@@ -96,7 +95,7 @@ public class DBUpdater {
 	 * the element reflecting its new structure.
 	 * </ul>
 	 */
-	protected void elementChanged(Openable element) {
+	private static void elementChanged(Openable element) {
 
 		close(element);
 	}
@@ -108,7 +107,7 @@ public class DBUpdater {
 	 * <li>Add a REMOVED entry in the delta
 	 * </ul>
 	 */
-	protected void elementRemoved(Openable element) {
+	private void elementRemoved(Openable element) {
 
 		if (element.isOpen()) {
 			close(element);
@@ -136,21 +135,19 @@ public class DBUpdater {
 	 */
 	public void processRodinDelta(IRodinElementDelta delta) {
 
-//		if (DeltaProcessor.VERBOSE){
-//			System.out.println("UPDATING Model with Delta: ["+Thread.currentThread()+":" + delta + "]:");//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-//		}
+		if (DeltaProcessor.VERBOSE) {
+			System.out.println("UPDATING Model with Delta: ["+Thread.currentThread()+":" + delta + "]:");//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		try {
 			this.traverseDelta(delta, null); // traverse delta
 
 			// update package fragment roots of projects that were affected
-			Iterator iterator = this.projectsToUpdate.iterator();
-			while (iterator.hasNext()) {
-				RodinProject project = (RodinProject) iterator.next();
+			for (RodinProject project: this.projectsToUpdate) {
 				project.updateChildren();
 			}
 		} finally {
-			this.projectsToUpdate = new HashSet<IRodinElement>();
+			this.projectsToUpdate.clear();
 		}
 	}
 
@@ -159,7 +156,7 @@ public class DBUpdater {
 	 * element does not have a parent, or the parent is not currently open,
 	 * this has no effect. 
 	 */
-	protected void removeFromParentInfo(Openable child) {
+	private static void removeFromParentInfo(Openable child) {
 
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
@@ -176,7 +173,7 @@ public class DBUpdater {
 	 * Converts an <code>IResourceDelta</code> and its children into
 	 * the corresponding <code>IRodinElementDelta</code>s.
 	 */
-	protected void traverseDelta(IRodinElementDelta delta, IRodinProject project) {
+	private void traverseDelta(IRodinElementDelta delta, IRodinProject project) {
 
 		boolean processChildren = true;
 
@@ -202,9 +199,7 @@ public class DBUpdater {
 			break;
 		}
 		if (processChildren) {
-			IRodinElementDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; i++) {
-				IRodinElementDelta childDelta = children[i];
+			for (IRodinElementDelta childDelta: delta.getAffectedChildren()) {
 				this.traverseDelta(childDelta, project);
 			}
 		}
