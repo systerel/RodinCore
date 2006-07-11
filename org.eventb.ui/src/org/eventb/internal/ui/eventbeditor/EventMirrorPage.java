@@ -143,7 +143,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 					IEvent[] events = ((IMachineFile) rodinFile).getEvents();
 					for (int i = 0; i < events.length; i++) {
 						if (e.getHref().equals(events[i].getElementName())) {
-							editor.setSelection(events[i]);
+							editor.edit(events[i]);
 						}
 						IRodinElement[] lvars = events[i]
 								.getChildrenOfType(IVariable.ELEMENT_TYPE);
@@ -153,19 +153,19 @@ public class EventMirrorPage extends EventBMirrorPage implements
 								.getChildrenOfType(IAction.ELEMENT_TYPE);
 						for (int j = 0; j < lvars.length; j++) {
 							if (e.getHref().equals(lvars[j].getElementName())) {
-								editor.setSelection(lvars[j]);
+								editor.edit(lvars[j]);
 							}
 						}
 						for (int j = 0; j < guards.length; j++) {
 							if (e.getHref().equals(guards[j].getElementName())) {
-								editor.setSelection(guards[j]);
+								editor.edit(guards[j]);
 							}
 						}
 						for (int j = 0; j < actions.length; j++) {
 							if (e.getHref().equals(
 									((IInternalElement) actions[j])
 											.getContents())) {
-								editor.setSelection(actions[j]);
+								editor.edit(actions[j]);
 							}
 						}
 					}

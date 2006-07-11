@@ -82,7 +82,7 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 							.getConstants();
 					for (int i = 0; i < constants.length; i++) {
 						if (e.getHref().equals(constants[i].getElementName())) {
-							editor.setSelection(constants[i]);
+							editor.edit(constants[i]);
 						}
 					}
 				} catch (RodinDBException exception) {

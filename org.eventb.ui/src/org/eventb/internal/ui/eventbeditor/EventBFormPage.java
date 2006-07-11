@@ -116,8 +116,8 @@ public abstract class EventBFormPage extends FormPage {
 	 * @param element
 	 *            A Rodin Element
 	 */
-	public void setSelection(IRodinElement element) {
-		part.setSelection(element);
+	public void edit(IRodinElement element) {
+		part.edit(element);
 	}
 
 	/**
@@ -128,6 +128,10 @@ public abstract class EventBFormPage extends FormPage {
 	 */
 	public EventBPartWithButtons getPart() {
 		return part;
+	}
+
+	public void selectElement(IRodinElement element) {
+		part.setSelection(element);
 	}
 	
 }

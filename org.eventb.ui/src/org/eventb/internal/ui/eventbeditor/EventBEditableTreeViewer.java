@@ -63,7 +63,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	private Collection<IElementMovedListener> elementMovedListeners;
 
 	// List of elements need to be refresh (when processing Delta of changes).
-	private Collection<Object> toRefresh;
+	private Collection<IRodinElement> toRefresh;
 
 	private Collection<StatusObject> newStatus;
 
@@ -387,10 +387,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		toRefresh = new HashSet<Object>();
+		toRefresh = new HashSet<IRodinElement>();
 		newStatus = new HashSet<StatusObject>();
 		moved = new HashMap<IRodinElement, IRodinElement>();
 		UIUtils.debugEventBEditor("--- Table: " + this + "---");
+		UIUtils.debugEventBEditor(event.getDelta().toString());
+		UIUtils.debugEventBEditor("------------------------------------------");
 		// if (this instanceof EventEditableTreeViewer)
 		// UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
@@ -448,7 +450,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			} else {
 				UIUtils.debugEventBEditor("Added: " + element.getElementName());
 			}
-			Object parent = element.getParent();
+			IRodinElement parent = element.getParent();
 			toRefresh.add(parent);
 			return;
 		}
@@ -457,7 +459,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			// Ignore the move operation
 			// if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
 			UIUtils.debugEventBEditor("Removed: " + element.getElementName());
-			Object parent = element.getParent();
+			IRodinElement parent = element.getParent();
 			toRefresh.add(parent);
 			// }
 			return;
@@ -502,18 +504,20 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final Collection toRefresh,
+	private void postRefresh(final Collection<IRodinElement> toRefresh,
 			final boolean updateLabels) {
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
-						IRodinElement element = (IRodinElement) iter.next();
-						UIUtils.debugEventBEditor("Refresh element " + element);
-						viewer.refresh(element, updateLabels);
-					}
+					refreshViewer(toRefresh);
+//					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
+//						IRodinElement element = (IRodinElement) iter.next();
+//						UIUtils.debugEventBEditor("Refresh element " + element);
+//						
+//						viewer.refresh(element, updateLabels);
+//					}
 
 					// Processing the Moved elements
 					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
@@ -548,9 +552,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 				}
 			}
+
 		}, this.getControl());
 	}
 
+	protected abstract void refreshViewer(Collection<IRodinElement> elements);
+	
 	/*
 	 * (non-Javadoc)
 	 * 

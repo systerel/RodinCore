@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -248,6 +250,13 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			selectItem(item, 0);
 		else
 			selectItem(item, 1);
+	}
+
+	@Override
+	protected void refreshViewer(Collection<IRodinElement> elements) {
+		for (IRodinElement element : elements) {
+			this.refresh(element);
+		}
 	}
 
 }

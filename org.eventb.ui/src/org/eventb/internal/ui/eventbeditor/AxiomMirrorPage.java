@@ -80,7 +80,7 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 							.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 					for (int i = 0; i < axioms.length; i++) {
 						if (e.getHref().equals(axioms[i].getElementName())) {
-							editor.setSelection(axioms[i]);
+							editor.edit(axioms[i]);
 							break;
 						}
 					}

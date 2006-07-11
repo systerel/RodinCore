@@ -81,7 +81,7 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 					for (int i = 0; i < invariants.length; i++) {
 						if (e.getHref().equals(invariants[i].getElementName())) {
-							editor.setSelection(invariants[i]);
+							editor.edit(invariants[i]);
 							return;
 						}
 					}

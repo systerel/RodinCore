@@ -82,7 +82,7 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 							.getCarrierSets();
 					for (int i = 0; i < carrierSets.length; i++) {
 						if (e.getHref().equals(carrierSets[i].getElementName())) {
-							editor.setSelection(carrierSets[i]);
+							editor.edit(carrierSets[i]);
 						}
 					}
 				} catch (RodinDBException exception) {

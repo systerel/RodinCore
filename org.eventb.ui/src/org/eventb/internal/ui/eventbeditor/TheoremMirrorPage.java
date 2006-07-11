@@ -83,7 +83,7 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 					for (int i = 0; i < theorems.length; i++) {
 						if (e.getHref().equals(theorems[i].getElementName())) {
-							editor.setSelection(theorems[i]);
+							editor.edit(theorems[i]);
 							return;
 						}
 					}

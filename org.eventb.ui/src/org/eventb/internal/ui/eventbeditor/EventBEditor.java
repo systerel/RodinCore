@@ -53,6 +53,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -543,13 +544,13 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            the current selecting element. It can be an IRodinElement or a
 	 *            TreeNode (from the ProjectExplorer).
 	 */
-	public void setSelection(Object ssel) {
+	public void edit(Object ssel) {
 		if (ssel instanceof IRodinElement) {
-			setElementSelection((IRodinElement) ssel);
+			elementEdit((IRodinElement) ssel);
 			return;
 		}
 
-		if (ssel instanceof TreeNode) {
+		if (ssel instanceof TreeNode) { // For tree node, just select the node.
 			setTreeNodeSelection((TreeNode) ssel);
 			return;
 		}
@@ -602,7 +603,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * @param node
 	 *            instance of IRodinElement
 	 */
-	private void setElementSelection(IRodinElement element) {
+	private void elementEdit(IRodinElement element) {
 		if (element instanceof IMachineFile) return;
 		
 		if (element instanceof IContextFile) return;
@@ -651,7 +652,7 @@ public abstract class EventBEditor extends FormEditor implements
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EventBFormPage) {
-			((EventBFormPage) page).setSelection(element);
+			((EventBFormPage) page).edit(element);
 		}
 
 	}
@@ -740,6 +741,67 @@ public abstract class EventBEditor extends FormEditor implements
 		IFormPage page = getActivePageInstance();
 		if (page != null)
 			lastActivePageID = page.getId();
+	}
+
+	public void setSelection(IInternalElement element) {
+		if (element instanceof IRodinElement) {
+			elementSelect((IRodinElement) element);
+			return;
+		}
+	}
+
+	private void elementSelect(IRodinElement element) {
+		if (element instanceof IMachineFile) return;
+		
+		if (element instanceof IContextFile) return;
+		
+		if (element instanceof ISeesContext) {
+			this.setActivePage(DependenciesPage.PAGE_ID);
+			return;
+		}
+
+		if (element instanceof IAxiom) {
+			this.setActivePage(AxiomPage.PAGE_ID);
+		}
+
+		else if (element instanceof ITheorem) {
+			this.setActivePage(TheoremPage.PAGE_ID);
+		}
+
+		else if (element instanceof ICarrierSet) {
+			this.setActivePage(CarrierSetPage.PAGE_ID);
+		}
+
+		else if (element instanceof IConstant)
+			this.setActivePage(ConstantPage.PAGE_ID);
+
+		else if (element instanceof IInvariant)
+			this.setActivePage(InvariantPage.PAGE_ID);
+
+		else if (element instanceof IEvent)
+			this.setActivePage(EventPage.PAGE_ID);
+
+		else if (element instanceof IVariable) {
+			if (element.getParent() instanceof IMachineFile)
+				this.setActivePage(VariablePage.PAGE_ID);
+			else
+				this.setActivePage(EventPage.PAGE_ID);
+		}
+
+		else if (element instanceof IGuard) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+
+		else if (element instanceof IAction) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+
+		// select the element within the page
+		IFormPage page = this.getActivePageInstance();
+		if (page instanceof EventBFormPage) {
+			((EventBFormPage) page).selectElement(element);
+		}
+		
 	}
 
 }

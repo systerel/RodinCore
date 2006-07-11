@@ -461,7 +461,7 @@ public class UIUtils {
 				}
 				EventBEditor editor = (EventBEditor) EventBUIPlugin
 						.getActivePage().openEditor(fileInput, editorId);
-				editor.setSelection(obj);
+				editor.edit(obj);
 			} catch (PartInitException e) {
 				MessageDialog.openError(null, null,
 						"Error open the Event-B Editor");
