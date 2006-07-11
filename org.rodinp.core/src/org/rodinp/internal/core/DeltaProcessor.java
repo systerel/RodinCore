@@ -33,6 +33,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.internal.core.builder.RodinBuilder;
+import org.rodinp.internal.core.util.DebugUtil;
 import org.rodinp.internal.core.util.Util;
 
 
@@ -771,6 +772,16 @@ public class DeltaProcessor {
 			int eventType = this.overridenEventType == -1 ? event.getType() : this.overridenEventType;
 			IResource resource = event.getResource();
 			IResourceDelta delta = event.getDelta();
+			
+			if (VERBOSE) {
+				System.out.println("-----------------------------------------------------------------------------------------------------------------------");//$NON-NLS-1$
+				System.out.println("PROCESSING Resource Changed Event ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+				DebugUtil.printEvent(event);
+				if (this.overridenEventType != -1) {
+					System.out.println("  Event type is overriden to:" + //$NON-NLS-1$
+							DebugUtil.eventTypeAsString(eventType));
+				}
+			}
 			
 			switch(eventType){
 				case IResourceChangeEvent.PRE_DELETE :
