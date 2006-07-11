@@ -252,7 +252,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		ISelection selection = event.getSelection();
 		if (!(selection.isEmpty())) {
 			Object ssel = ((IStructuredSelection) selection).getFirstElement();
-			fEditor.setSelection(ssel);
+			fEditor.edit(ssel);
 		}
 
 		super.selectionChanged(event);

@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -48,7 +50,9 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		// The invisible root
 		private IMachineFile invisibleRoot = null;
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object child) {
@@ -57,14 +61,21 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 			return null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IMachineFile) {
 				try {
-					return ((IMachineFile) parent)
+					IRodinElement[] elements = ((IMachineFile) parent)
 							.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					for (IRodinElement element : elements) {
+						UIUtils.debugEventBEditor("Variable: "
+								+ element.getElementName());
+					}
+					return elements;
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -83,14 +94,18 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
@@ -103,14 +118,19 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 			return getChildren(parent);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
@@ -131,8 +151,8 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debugEventBEditor("Commit : " + element.getElementName()
-						+ " to be : " + text);
+				UIUtils.debugEventBEditor("Commit : "
+						+ element.getElementName() + " to be : " + text);
 				if (!element.getElementName().equals(text)) {
 					((IInternalElement) element).rename(text, false, null);
 				}
@@ -172,4 +192,68 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);
 		selectItem(item, 0);
 	}
+
+	// public void selectionChanged(SelectionChangedEvent event) {
+	// UIUtils.debugEventBEditor("Selection changed: ");
+	// IMachineFile file = (IMachineFile) this.editor.getRodinInput();
+	// try {
+	// IRodinElement[] refines = file
+	// .getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+	// if (refines.length == 1) {
+	// IRodinElement refine = refines[0];
+	// String name = ((IInternalElement) refine).getContents();
+	// IRodinProject prj = file.getRodinProject();
+	// IMachineFile refinedFile = (IMachineFile) prj
+	// .getRodinFile(EventBPlugin.getMachineFileName(name));
+	// UIUtils.debugEventBEditor("Refined: "
+	// + refinedFile.getElementName());
+	// if (refinedFile.exists()) {
+	// IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+	// IEditorReference[] editors = activePage
+	// .getEditorReferences();
+	// for (IEditorReference editor : editors) {
+	// IEditorPart part = editor.getEditor(true);
+	// if (part instanceof EventBMachineEditor) {
+	// IRodinFile rodinInput = ((EventBMachineEditor) part)
+	// .getRodinInput();
+	// UIUtils.debugEventBEditor("Trying: "
+	// + rodinInput.getElementName());
+	// if (rodinInput.equals(refinedFile)) {
+	// UIUtils.debugEventBEditor("Focus");
+	// if (activePage.isPartVisible(part)) {
+	// IStructuredSelection ssel = (IStructuredSelection) event
+	// .getSelection();
+	// if (ssel.size() == 1) {
+	// IInternalElement obj = (IInternalElement) ssel
+	// .getFirstElement();
+	// IInternalElement element = refinedFile
+	// .getInternalElement(obj
+	// .getElementType(), obj
+	// .getElementName());
+	// if (element != null)
+	// ((EventBEditor) part)
+	// .setSelection(element);
+	// }
+	// }
+	// }
+	// }
+	// }
+	//					
+	// editor.setFocus();
+	// }
+	// }
+	// } catch (RodinDBException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	//
+	// }
+
+	@Override
+	protected void refreshViewer(Collection<IRodinElement> elements) {
+		for (IRodinElement element : elements) {
+			this.refresh(element);
+		}
+	}
+
 }
