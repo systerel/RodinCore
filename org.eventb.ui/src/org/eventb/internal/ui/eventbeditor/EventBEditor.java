@@ -190,7 +190,7 @@ public abstract class EventBEditor extends FormEditor implements
 	private IRodinFile rodinFile = null;
 
 	// List of Element Changed listeners for the editor.
-	private static Collection<IElementChangedListener> listeners;
+	private Collection<IElementChangedListener> listeners;
 
 	// Collection of new elements (unsaved).
 	private Collection<IRodinElement> newElements;
