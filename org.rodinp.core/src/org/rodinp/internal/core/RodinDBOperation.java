@@ -384,10 +384,8 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Returns null if no such attribute is found.
 	 */
 	protected Object getAttribute(Object key) {
-		Stack<RodinDBOperation> stack = this.getCurrentOperationStack();
-		if (stack.isEmpty()) return null;
-		RodinDBOperation topLevelOp = stack.peek();
-		if (topLevelOp.attributes == null) {
+		RodinDBOperation topLevelOp = getTopLevelOperation();
+		if (topLevelOp == null || topLevelOp.attributes == null) {
 			return null;
 		} else {
 			return topLevelOp.attributes.get(key);
@@ -502,6 +500,18 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return sub;
 	}
 
+	/*
+	 * Returns the top-level operation in this thread or <code>null</code> if
+	 * the stack of current operations is empty.
+	 */
+	protected RodinDBOperation getTopLevelOperation() {
+		Stack<RodinDBOperation> stack = operationStacks.get();
+		if (stack == null || stack.isEmpty()) {
+			return null;
+		}
+		return stack.firstElement();
+	}
+	
 	/**
 	 * Returns whether this operation has performed any resource modifications.
 	 * Returns false if this operation has not been executed yet.
@@ -538,8 +548,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Returns whether this operation is the first operation to run in the current thread.
 	 */
 	protected boolean isTopLevelOperation() {
-		Stack<RodinDBOperation> stack = this.getCurrentOperationStack();
-		return ! stack.isEmpty() && stack.firstElement() == this;
+		return getTopLevelOperation() == this;
 	}
 	
 	/*
@@ -585,8 +594,8 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Returns the popped operation or null if the stack was empty.
 	 */
 	protected RodinDBOperation popOperation() {
-		Stack<RodinDBOperation> stack = getCurrentOperationStack();
-		if (! stack.isEmpty()) {
+		Stack<RodinDBOperation> stack = operationStacks.get();
+		if (stack != null) {
 			if (stack.size() == 1) { // last top level operation 
 				operationStacks.set(null); // release reference
 			}
@@ -619,7 +628,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 			}
 		}
 		
-		RodinDBOperation topLevelOp = getCurrentOperationStack().peek();
+		RodinDBOperation topLevelOp = getTopLevelOperation();
 		IPostAction[] postActions = topLevelOp.actions;
 		if (postActions == null) {
 			topLevelOp.actions = postActions = new IPostAction[1];
@@ -677,7 +686,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 			System.out.println("(" + Thread.currentThread() + ") [RodinDBOperation.removeAllPostAction(String)] Removing actions " + actionID); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		RodinDBOperation topLevelOp = getCurrentOperationStack().peek();
+		RodinDBOperation topLevelOp = getTopLevelOperation();
 		IPostAction[] postActions = topLevelOp.actions;
 		if (postActions == null) return;
 		int index = this.actionsStart-1;
@@ -790,7 +799,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Registers the given attribute at the given key with the top level operation.
 	 */
 	protected void setAttribute(Object key, Object attribute) {
-		RodinDBOperation topLevelOp = this.getCurrentOperationStack().peek();
+		RodinDBOperation topLevelOp = getTopLevelOperation();
 		if (topLevelOp.attributes == null) {
 			topLevelOp.attributes = new HashMap<Object, Object>();
 		}
