@@ -179,50 +179,54 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 											.getMachineFileName(name));
 							UIUtils.debugEventBEditor("Refined: "
 									+ refinedFile.getElementName());
-							IInternalElement abs_evt = refinedFile.getInternalElement(event.getElementType(), event.getElementName());
+							IInternalElement abs_evt = refinedFile
+									.getInternalElement(event.getElementType(),
+											event.getElementName());
 							UIUtils.linkToEventBEditor(abs_evt);
-							
-// if (refinedFile.exists()) {
-// IWorkbenchPage activePage = EventBUIPlugin
-// .getActivePage();
-// IEditorReference[] editors = activePage
-// .getEditorReferences();
-//
-// for (IEditorReference editor : editors) {
-// IEditorPart part = editor.getEditor(true);
-// if (activePage.isPartVisible(part)) {
-// if (part instanceof EventBMachineEditor) {
-// activePage.openEditor();
-// }
-// }
-//								
-// IRodinFile rodinInput = ((EventBMachineEditor) part)
-// .getRodinInput();
-// UIUtils.debugEventBEditor("Trying: "
-// + rodinInput.getElementName());
-// if (rodinInput.equals(refinedFile)) {
-// UIUtils.debugEventBEditor("Focus");
-// if (activePage.isPartVisible(part)) {
-// IStructuredSelection ssel = (IStructuredSelection) event
-// .getSelection();
-// if (ssel.size() == 1) {
-// IInternalElement obj = (IInternalElement) ssel
-// .getFirstElement();
-// IInternalElement element = refinedFile
-// .getInternalElement(
-// obj
-// .getElementType(),
-// obj
-// .getElementName());
-// if (element != null)
-// ((EventBEditor) part)
-// .setSelection(element);
-// }
-// }
-// }
-// }
-// }
-//							}
+
+							// if (refinedFile.exists()) {
+							// IWorkbenchPage activePage = EventBUIPlugin
+							// .getActivePage();
+							// IEditorReference[] editors = activePage
+							// .getEditorReferences();
+							//
+							// for (IEditorReference editor : editors) {
+							// IEditorPart part = editor.getEditor(true);
+							// if (activePage.isPartVisible(part)) {
+							// if (part instanceof EventBMachineEditor) {
+							// activePage.openEditor();
+							// }
+							// }
+							//								
+							// IRodinFile rodinInput = ((EventBMachineEditor)
+							// part)
+							// .getRodinInput();
+							// UIUtils.debugEventBEditor("Trying: "
+							// + rodinInput.getElementName());
+							// if (rodinInput.equals(refinedFile)) {
+							// UIUtils.debugEventBEditor("Focus");
+							// if (activePage.isPartVisible(part)) {
+							// IStructuredSelection ssel =
+							// (IStructuredSelection) event
+							// .getSelection();
+							// if (ssel.size() == 1) {
+							// IInternalElement obj = (IInternalElement) ssel
+							// .getFirstElement();
+							// IInternalElement element = refinedFile
+							// .getInternalElement(
+							// obj
+							// .getElementType(),
+							// obj
+							// .getElementName());
+							// if (element != null)
+							// ((EventBEditor) part)
+							// .setSelection(element);
+							// }
+							// }
+							// }
+							// }
+							// }
+							// }
 						}
 					} catch (RodinDBException e) {
 						e.printStackTrace();
@@ -263,13 +267,27 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 					menu.add(new Separator());
 				}
 			}
-		}
-		menu.add(addEvent);
-		menu.add(new Separator());
-		menu.add(showAbstraction);
-		if (!sel.isEmpty()) {
+
+			menu.add(addEvent);
 			menu.add(new Separator());
-			menu.add(delete);
+			IMachineFile file = (IMachineFile) editor.getRodinInput();
+			if (ssel.size() == 1) {
+				IRodinElement[] refines;
+
+				try {
+					refines = file
+							.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+					if (refines.length == 1)
+						menu.add(showAbstraction);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (!sel.isEmpty()) {
+				menu.add(new Separator());
+				menu.add(delete);
+			}
 		}
 		// menu.add(deleteAction);
 		// menu.add(new Separator());
