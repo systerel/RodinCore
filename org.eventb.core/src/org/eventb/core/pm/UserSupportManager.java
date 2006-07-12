@@ -15,22 +15,31 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eventb.core.IPRFile;
+import org.rodinp.core.RodinDBException;
+
 public class UserSupportManager {
 
 	private static Collection<IUSManagerListener> listeners = new HashSet<IUSManagerListener>();
 
 	private static Collection<UserSupport> userSupports = new HashSet<UserSupport>();
 
+	public static int REMOVED = 0x1;
+	
+	public static int ADDED = 0x2;
+	
+	public static int CHANGED = 0x4;
+	
 	public static UserSupport newUserSupport() {
 		UserSupport userSupport = new UserSupport();
 		userSupports.add(userSupport);
-		notifyUSManagerListener(userSupport, true);
+		notifyUSManagerListener(userSupport, ADDED);
 		return userSupport;
 	}
 
 	public static void disposeUserSupport(UserSupport userSupport) {
 		userSupports.remove(userSupport);
-		notifyUSManagerListener(userSupport, false);
+		notifyUSManagerListener(userSupport, REMOVED);
 	}
 
 	public static Collection<UserSupport> getUserSupports() {
@@ -46,10 +55,14 @@ public class UserSupportManager {
 	}
 
 	private static void notifyUSManagerListener(UserSupport userSupport,
-			boolean added) {
+			int status) {
 		for (IUSManagerListener listener : listeners) {
-			listener.USManagerChanged(userSupport, added);
+			listener.USManagerChanged(userSupport, status);
 		}
 	}
 
+	public static void setInput(UserSupport userSupport, IPRFile prFile) throws RodinDBException {
+		userSupport.setInput(prFile);
+		notifyUSManagerListener(userSupport, CHANGED);
+	}
 }

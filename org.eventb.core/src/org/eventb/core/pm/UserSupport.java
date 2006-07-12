@@ -41,6 +41,7 @@ public class UserSupport implements IElementChangedListener,
 
 	private boolean outOfDate;
 	private int c = 0;
+	
 	/* Creation should be done using UserSupportManager */
 	public UserSupport() {
 		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
@@ -157,6 +158,7 @@ public class UserSupport implements IElementChangedListener,
 		return currentPS;
 	}
 
+	// Should be called by the UserSupportManager?
 	public void setInput(IPRFile prFile) throws RodinDBException {
 		this.prFile = prFile;
 		proofStates = new LinkedList<ProofState>();
@@ -423,7 +425,9 @@ public class UserSupport implements IElementChangedListener,
 			} else if (kind == IRodinElementDelta.REMOVED) {
 				outOfDate = true;			
 			} else if (kind == IRodinElementDelta.CHANGED) {
-//				outOfDate = true;
+				IPRSequent prSequent = (IPRSequent) element;
+				if (prSequent.isProofBroken())
+					outOfDate = true;
 			}
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta.getAffectedChildren()) {

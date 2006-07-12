@@ -96,7 +96,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPRFile) RodinCore.create(inputFile);
 			try {
-				userSupport.setInput(prFile);
+				UserSupportManager.setInput(userSupport, prFile);
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -364,7 +364,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 							.getShell(), "Out of Date",
 							"The Proof Obligation is Out of Date and need to be reloeaded.");
 			try {
-				userSupport.setInput(this.getRodinInput());
+				UserSupportManager.setInput(userSupport, this.getRodinInput());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -469,7 +469,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 							.getShell(), "Out of Date",
 							"The Proof Obligation is Out of Date and need to be reloeaded.");
 			try {
-				userSupport.setInput(this.getRodinInput());
+				UserSupportManager.setInput(userSupport, this.getRodinInput());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

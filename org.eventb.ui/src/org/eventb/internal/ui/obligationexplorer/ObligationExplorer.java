@@ -462,16 +462,15 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = false;
 	}
 
-	public void USManagerChanged(UserSupport userSupport, boolean added) {
+	public void USManagerChanged(UserSupport userSupport, int status) {
 		UIUtils.debugObligationExplorer("Obligation Explorer: " + userSupport
-				+ " : " + added);
-		if (added) {
+				+ " : " + status);
+		if (status == UserSupportManager.ADDED) {
 			userSupport.addStateChangedListeners(this);
-			viewer.refresh(userSupport.getInput());
-		} else {
+		} if (status == UserSupportManager.REMOVED) {
 			userSupport.removeStateChangedListeners(this);
 		}
-
+		viewer.refresh(userSupport.getInput());
 	}
 
 	public void proofStateChanged(IProofStateDelta delta) {
