@@ -190,11 +190,14 @@ public class PRUtil {
 	public static void updateStatus(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
 		// IProofTree oldPt = makeProofTree(prSeq);
 		IProverSequent oldProverSeq = makeSequent(prSeq);
+		boolean broken;
 		if (! Lib.identical(oldProverSeq, pt.getSequent())) {
 			// The sequent changed in the file
 			// TODO maybe throw a core exception here
-			return;
+			broken = true;
+			System.out.println("Warning: Proof and Proof Obligation do not match");
 		}
+		else broken = false;
 		
 		// remove the previous proof
 		if (prSeq.getProof().hasChildren())
@@ -225,8 +228,8 @@ public class PRUtil {
 			prSeq.getProof().setContents(Status.REVIEWED.toString());
 		else prSeq.getProof().setContents(Status.DISCHARGED.toString());
 			
-		// set the proof to valid
-		prSeq.setProofBroken(false);
+		// set proof validity
+		prSeq.setProofBroken(broken);
 		
 	}
 	
