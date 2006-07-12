@@ -18,6 +18,8 @@ package org.eventb.core.prover;
  * The list below summarizes each flag (as returned by <code>getFlags</code>)
  * and its meaning (see individual constants for a more detailed description):
  * <ul>
+ * <li><code>CONTENTS</code> - The node described by the delta has changed
+ * contents (it its comment or rule has changed). 
  * <li><code>STATUS</code> - The node described by the delta has changed
  * status (it became opened of closed).
  * <li><code>CHILDREN</code> - The children of the node described by the
@@ -40,6 +42,16 @@ package org.eventb.core.prover;
 public interface IProofTreeDelta {
 
 	/**
+	 * Flag indicating that the proof node has changed contents: its comment or 
+	 * rule has changed.
+	 * <p>
+	 * The new contents of the node can be read directly from the proof tree node
+	 * described by this delta.
+	 * </p>
+	 */
+	int CONTENTS = 0x1;
+	
+	/**
 	 * Flag indicating that the proof node has changed status: it became
 	 * opened while it was closed or vice-versa.
 	 * <p>
@@ -47,7 +59,7 @@ public interface IProofTreeDelta {
 	 * described by this delta.
 	 * </p>
 	 */
-	int STATUS = 0x1;
+	int STATUS = 0x2;
 
 	/**
 	 * Flag indicating that the element has changed its list of children.
@@ -57,7 +69,7 @@ public interface IProofTreeDelta {
 	 * read directly from the proof tree node described by this delta.
 	 * </p>
 	 */
-	int CHILDREN = 0x2;
+	int CHILDREN = 0x4;
 
 	/**
 	 * Returns the node that this delta describes a change to.
@@ -78,7 +90,7 @@ public interface IProofTreeDelta {
 	 * Returns deltas for the children which have changed.
 	 * <p>
 	 * Note that this method returns an empty array if this delta has flag
-	 * <code>CHILDREN</code> set.
+	 * <code>CHILDREN</code> or <code>CONTENTS</code> set.
 	 * </p>
 	 * 
 	 * @return deltas for the children which have changed

@@ -1,5 +1,6 @@
 package org.eventb.core.prover.rules;
 
+import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,12 +78,13 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule != null) return false;
 		IProverSequent[] anticidents = rule.apply(this.sequent);
 		if (anticidents == null) return false;
-		this.rule = rule;
+		// this.rule = rule;
 		final int length = anticidents.length;
 		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
 			newChildren[i] = new ProofTreeNode(this, anticidents[i]);
 		}
+		setRule(rule);
 		setChildren(newChildren);
 		if (length == 0)
 			this.setDischarged();
@@ -102,7 +104,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		boolean treeDischarged = treeRoot.isDischarged();
 		
 		// Disconnect treeChildren from treeRoot
-		treeRoot.rule = null;
+		treeRoot.setRule(null);
 		treeRoot.setChildren(null);
 		treeRoot.reopen();
 		treeRoot.checkClassInvariant();
@@ -111,7 +113,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		// Connect treeChildren to this node
 		for (ProofTreeNode treeChild : treeChildren)
 			treeChild.parent = this;
-		this.rule = treeRule;
+		// this.rule = treeRule;
+		this.setRule(treeRule);
 		this.setChildren(treeChildren);
 		if (treeDischarged)
 			this.setDischarged();
@@ -273,7 +276,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public ProofTree[] pruneChildren() {
 		if (isOpen())
 			return null;
-		this.rule = null;
+		// this.rule = null;
+		this.setRule(null);
 		
 		ProofTree[] prunedChildSubtrees = new ProofTree[this.children.length];
 		// Detach all children from this proof tree.
@@ -303,6 +307,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.children = newChildren;
 		childrenChanged();
 	}
+	
+	private void setRule(ProofRule newRule) {
+		this.rule = newRule;
+		contentsChanged();
+	}
 
 	// This node has just been discharged. Update its status, as well as its
 	// ancestors'.
@@ -322,6 +331,14 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
 			tree.deltaProcessor.statusChanged(this);
+		}
+	}
+	
+	//	 Report contents change to delta processor.
+	private void contentsChanged() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.contentsChanged(this);
 		}
 	}
 
@@ -375,6 +392,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public void setComment(String comment) {
 		assert comment != null;
 		this.comment = comment;
+		this.contentsChanged();
+		this.fireDeltas();
 	}
 	
 	public String getComment() {

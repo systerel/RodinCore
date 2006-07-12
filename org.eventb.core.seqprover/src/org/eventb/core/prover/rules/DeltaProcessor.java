@@ -101,6 +101,12 @@ public class DeltaProcessor {
 		return parentDelta.addChild(node);
 	}
 	
+	void contentsChanged(IProofTreeNode node) {
+		ProofTreeDelta delta = getDeltaForNode(node);
+		if (delta != null)
+			delta.setContentsChanged();
+	}
+	
 	void childrenChanged(IProofTreeNode node) {
 		ProofTreeDelta delta = getDeltaForNode(node);
 		if (delta != null)

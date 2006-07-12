@@ -77,6 +77,10 @@ public class ProofTreeDelta implements IProofTreeDelta {
 	public void setStatusChanged() {
 		flags |= STATUS;
 	}
+	
+	public void setContentsChanged() {
+		flags |= CONTENTS;
+	}
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -88,7 +92,8 @@ public class ProofTreeDelta implements IProofTreeDelta {
 		builder.append(indent);
 		builder.append(node.getSequent().goal());
 		builder.append(" [");
-		boolean sep = toStringFlag(builder, STATUS, "STATUS", false);
+		boolean sep = toStringFlag(builder, CONTENTS, "CONTENTS", false);
+		sep = toStringFlag(builder, STATUS, "STATUS", sep);
 		toStringFlag(builder, CHILDREN, "CHILDREN", sep);
 		builder.append("]");
 		String childIndent = indent + "  ";
@@ -106,7 +111,7 @@ public class ProofTreeDelta implements IProofTreeDelta {
 			builder.append(flagName);
 			return true;
 		}
-		return false;
+		return sep;
 	}
 	
 }

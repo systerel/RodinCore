@@ -24,7 +24,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	// RuleFactory rf = new RuleFactory();
 	
 	/**
-	 * Ensures that applying a rule to an open node fires a CHILDREN delta.
+	 * Ensures that applying a rule to an open node fires a CONTENTS & CHILDREN delta.
 	 */
 	public void testApply() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -34,7 +34,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		startDeltas(tree);
 		Tactics.impI().apply(root);
 		// applyRule(root, rf.impI());
-		assertDeltas("⊤⇒⊤ [CHILDREN]");
+		assertDeltas("⊤⇒⊤ [CONTENTS|CHILDREN]");
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	}
 
 	/**
-	 * Ensures that pruning a node fires a CHILDREN delta.
+	 * Ensures that pruning a non-open node fires a CONTENTS & CHILDREN delta.
 	 */
 	public void testPrune() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -63,11 +63,11 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
 		startDeltas(tree);
 		root.pruneChildren();
-		assertDeltas("⊤⇒⊤ [CHILDREN]");
+		assertDeltas("⊤⇒⊤ [CONTENTS|CHILDREN]");
 	}
 
 	/**
-	 * Ensures that pruning a discharged node fires a CHILDREN delta.
+	 * Ensures that pruning a discharged node fires a CONTENTS & CHILDREN delta.
 	 */
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -84,7 +84,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		imp.pruneChildren();
 		assertDeltas(
 				"⊤⇒⊤ [STATUS]\n" +
-				"  ⊤ [STATUS|CHILDREN]"
+				"  ⊤ [CONTENTS|STATUS|CHILDREN]"
 		);
 	}
 
@@ -105,7 +105,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		// applyRule(imp, rf.hyp());
 		assertDeltas(
 				"⊤⇒⊤ [STATUS]\n" +
-				"  ⊤ [STATUS|CHILDREN]"
+				"  ⊤ [CONTENTS|STATUS|CHILDREN]"
 		);
 	}
 
@@ -133,7 +133,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		assertDeltas(
 				"⊤⇒⊤∧⊥ []\n" +
 				"  ⊤∧⊥ []\n" +
-				"    ⊤ [STATUS|CHILDREN]"
+				"    ⊤ [CONTENTS|STATUS|CHILDREN]"
 		);
 	}
 
@@ -162,8 +162,22 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		assertDeltas(
 				"⊤⇒⊤∧⊥ []\n" +
 				"  ⊤∧⊥ []\n" +
-				"    ⊤ [STATUS|CHILDREN]"
+				"    ⊤ [CONTENTS|STATUS|CHILDREN]"
 		);
 	}
+	
+	
+	/**
+	 * Ensures that setting a comment of a node produces a CONTENTS delta.
+	 */
+	public void testSetComment() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode root = tree.getRoot();
+
+		startDeltas(tree);
+		root.setComment("Test Comment");
+		assertDeltas("⊤⇒⊤ [CONTENTS]");
+	}	
 
 }
