@@ -238,7 +238,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		showAbstraction.setText("Abstraction");
 		showAbstraction.setToolTipText("Show the corresponding abstract event");
 		showAbstraction.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+				EventBImage.IMG_REFINES));
 	}
 
 	/**

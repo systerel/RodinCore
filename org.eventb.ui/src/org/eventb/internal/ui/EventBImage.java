@@ -86,6 +86,8 @@ public class EventBImage {
 	
 	public static final String IMG_DEFAULT = "Default";
 
+	public static final String IMG_REFINES = "Refines";
+
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
 
@@ -116,7 +118,7 @@ public class EventBImage {
 	public static final String IMG_NEW_GUARD_PATH = "icons/full/ctool16/newgrd_edit.gif";
 
 	public static final String IMG_NEW_ACTION_PATH = "icons/full/ctool16/newact_edit.gif";
-
+	
 	public static final String IMG_UP_PATH = "icons/full/ctool16/up_edit.gif";
 	
 	public static final String IMG_DOWN_PATH = "icons/full/ctool16/down_edit.gif";	
@@ -182,6 +184,7 @@ public class EventBImage {
 		registerImage(registry, IMG_REVIEWED_BROKEN, "reviewed_broken.png");
 		registerImage(registry, IMG_UNATTEMPTED, "unattempted.gif");
 		registerImage(registry, IMG_DEFAULT, "sample.gif");
+		registerImage(registry, IMG_REFINES, "full/ctool16/refines.gif");
 		
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
 	}
