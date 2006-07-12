@@ -188,7 +188,7 @@ public class ObligationExplorer extends ViewPart implements
 								
 								if (confidence <= IProofRule.CONFIDENCE_PENDING) 
 								{
-									if (prSequent.isProofBroken())
+									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_PENDING_BROKEN);
 									else
@@ -197,7 +197,7 @@ public class ObligationExplorer extends ViewPart implements
 								}
 								if (confidence <= IProofRule.CONFIDENCE_REVIEWED) 
 								{
-									if (prSequent.isProofBroken())
+									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_REVIEWED_BROKEN);
 									else
@@ -206,7 +206,7 @@ public class ObligationExplorer extends ViewPart implements
 								}
 								if  (confidence <= IProofRule.CONFIDENCE_DISCHARGED) 
 								{
-									if (prSequent.isProofBroken())
+									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_DISCHARGED_BROKEN);
 									else

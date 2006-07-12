@@ -76,11 +76,14 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	// The associated rodin file handle
 	private IPRFile prFile = null;
 
+	private boolean saving;
+
 	/**
 	 * Constructor: Create a new UserSupport.
 	 */
 	public ProverUI() {
 		super();
+		saving = false;
 		this.userSupport = UserSupportManager.newUserSupport();
 		userSupport.addStateChangedListeners(this);
 	}
@@ -114,11 +117,11 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 *            current pr Sequent
 	 */
 	public void setCurrentPO(IPRSequent prSequent) {
+		ProofState proofState = userSupport.getCurrentPO();
+		if (proofState != null && proofState.getPRSequent().equals(prSequent))
+			return;
 		try {
-			ProofState proofState = userSupport.getCurrentPO();
-			if (proofState != null)
-				if (!proofState.getPRSequent().equals(prSequent))
-					userSupport.setCurrentPO(prSequent);
+			userSupport.setCurrentPO(prSequent);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -246,7 +249,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// }
 		// }
 		// }
-
+		saving = true;
 		ProofState[] proofStates = userSupport.getUnsavedPOs();
 
 		final ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
@@ -258,27 +261,31 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		dlg.setInitialSelections(initSelection);
 		dlg.setTitle("Save Proofs");
 		dlg.open();
+		final Object[] results = dlg.getResult();
 
-		final IPRFile prFile = this.getRodinInput();
+		if (results != null && results.length != 0) {
 
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
+			final IPRFile prFile = this.getRodinInput();
 
-				public void run(IProgressMonitor monitor) throws CoreException {
-					Object[] results = dlg.getResult();
-					for (Object result : results) {
-						((ProofState) result).doSave();
+			try {
+				RodinCore.run(new IWorkspaceRunnable() {
+
+					public void run(IProgressMonitor monitor)
+							throws CoreException {
+						for (Object result : results) {
+							((ProofState) result).doSave();
+						}
+						// Save the file from the database to disk
+						prFile.save(monitor, true);
 					}
-					// Save the file from the database to disk
-					prFile.save(monitor, true);
-				}
 
-			}, null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				}, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-
+		saving = false;
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
@@ -359,16 +366,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	@Override
 	public void setFocus() {
 		if (userSupport.isOutOfDate()) {
-			MessageDialog
-					.openInformation(this.getActivePageInstance().getSite()
-							.getShell(), "Out of Date",
-							"The Proof Obligation is Out of Date and need to be reloeaded.");
-			try {
-				UserSupportManager.setInput(userSupport, this.getRodinInput());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUserSupport();
 		}
 		syncObligationExplorer();
 		super.setFocus();
@@ -461,30 +459,40 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		//		
 		// ProofState ps = delta.getNewProofState();
 		// if (ps != null) {
-
-		if (userSupport.isOutOfDate()) {
-
-			MessageDialog
-					.openInformation(this.getActivePageInstance().getSite()
-							.getShell(), "Out of Date",
-							"The Proof Obligation is Out of Date and need to be reloeaded.");
-			try {
-				UserSupportManager.setInput(userSupport, this.getRodinInput());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return;
-		}
-
+		if (saving)
+			return; // Ignore delta while saving
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
+
 		display.syncExec(new Runnable() {
 			public void run() {
+				if (userSupport.isOutOfDate()) {
+					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+					if (activePage.isPartVisible(ProverUI.this))
+						updateUserSupport();
+				}
+
 				ProverUI.this.editorDirtyStateChanged();
 				// syncObligationExplorer();
 			}
 		});
 		// }
 	}
+
+	private void updateUserSupport() {
+		MessageDialog
+				.openInformation(this.getActivePageInstance().getSite()
+						.getShell(), "Out of Date",
+						"The Proof Obligation is Out of Date and need to be reloeaded.");
+		try {
+			doSave(null);
+			UserSupportManager.setInput(userSupport, this.getRodinInput());
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
+
+	}
+
 }
