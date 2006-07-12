@@ -109,6 +109,9 @@ public class PRUtil {
 		return proofTree;
 	}
 	
+	// TODO:
+	// Return value true if there may be a change in the proof tree node from the
+	// stored DB version
 	public static void rebuild(IProofTreeNode node,IPRProofTreeNode prNode, ReplayHints replayHints) throws RodinDBException{
 		// System.out.println("trying rebuild"+node.getSequent());
 		node.setComment(prNode.getContents());

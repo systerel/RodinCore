@@ -66,7 +66,9 @@ public class ProofState {
 			current = pt.getRoot();
 		}
 		
-		dirty = false;
+		// if the proof tree was previously broken then the rebuild would 
+		// fix the proof, making it dirty.
+		dirty = ps.isProofBroken();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}

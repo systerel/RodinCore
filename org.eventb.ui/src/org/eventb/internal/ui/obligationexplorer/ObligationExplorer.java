@@ -47,6 +47,7 @@ import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.internal.ui.EventBImage;
@@ -182,22 +183,53 @@ public class ObligationExplorer extends ViewPart implements
 						for (ProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
-								if (tree.isDischarged()) {
-									if (prSequent.isProofBroken())
-										return registry
-												.get(EventBImage.IMG_DISCHARGED_BROKEN);
-									else
-										return registry
-												.get(EventBImage.IMG_DISCHARGED);
-								} else {
+								int confidence = tree.getConfidence();
+								
+								
+								if (confidence <= IProofRule.CONFIDENCE_PENDING) 
+								{
 									if (prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_PENDING_BROKEN);
 									else
 										return registry
 												.get(EventBImage.IMG_PENDING);
-
 								}
+								if (confidence <= IProofRule.CONFIDENCE_REVIEWED) 
+								{
+									if (prSequent.isProofBroken())
+										return registry
+												.get(EventBImage.IMG_REVIEWED_BROKEN);
+									else
+										return registry
+												.get(EventBImage.IMG_REVIEWED);
+								}
+								if  (confidence <= IProofRule.CONFIDENCE_DISCHARGED) 
+								{
+									if (prSequent.isProofBroken())
+										return registry
+												.get(EventBImage.IMG_DISCHARGED_BROKEN);
+									else
+										return registry
+												.get(EventBImage.IMG_DISCHARGED);
+								}
+								return registry.get(EventBImage.IMG_DEFAULT);
+//								if (tree.isDischarged()) {
+//									if (prSequent.isProofBroken())
+//										return registry
+//												.get(EventBImage.IMG_DISCHARGED_BROKEN);
+//									else
+//										return registry
+//												.get(EventBImage.IMG_DISCHARGED);
+//								} else {
+//									if (prSequent.isProofBroken())
+//										return registry
+//												.get(EventBImage.IMG_PENDING_BROKEN);
+//									else
+//										return registry
+//												.get(EventBImage.IMG_PENDING);
+//
+//								}
 							}
 						}
 					}
