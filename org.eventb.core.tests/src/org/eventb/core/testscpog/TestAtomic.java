@@ -109,15 +109,6 @@ public class TestAtomic extends BuilderTest {
 		runBuilderForDeltas(
 				"P[*]: {CHILDREN}\n" +
 				"	ctx.bcc[+]: {}\n" +
-				"\n" +
-				"P[*]: {CHILDREN}\n" +
-				"	ctx.bpo[+]: {}\n" +
-				"\n" +
-				"P[*]: {CHILDREN}\n" +
-				"	ctx.bpr[+]: {}\n" +
-				"\n" +
-				"P[*]: {CHILDREN}\n" +
-				"	ctx.bcc[+]: {}\n" +
 				"	ctx.bpo[+]: {}\n" +
 				"	ctx.bpr[+]: {}"
 		);
@@ -126,15 +117,6 @@ public class TestAtomic extends BuilderTest {
 	public void testMachineSC() throws Exception {
 		createMachine(false);
 		runBuilderForDeltas(
-				"P[*]: {CHILDREN}\n" +
-				"	mch.bcm[+]: {}\n" +
-				"\n" +
-				"P[*]: {CHILDREN}\n" +
-				"	mch.bpo[+]: {}\n" +
-				"\n" +
-				"P[*]: {CHILDREN}\n" +
-				"	mch.bpr[+]: {}\n" +
-				"\n" +
 				"P[*]: {CHILDREN}\n" +
 				"	mch.bcm[+]: {}\n" +
 				"	mch.bpo[+]: {}\n" +
