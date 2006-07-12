@@ -123,6 +123,14 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		} finally {
 			if (file != null) {
 				setReadOnly(file, false);
+				// For Mac OS X, we also need to reset the read-only flag on the
+				// target file, otherwise the OS doesn't allow us to delete the
+				// target project.
+				try {
+					setReadOnly(getFile("/P2/X.test"), false);
+				} catch (CoreException ce) {
+					ce.printStackTrace();
+				}
 			}
 		}
 	}
