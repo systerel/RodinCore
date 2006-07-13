@@ -417,7 +417,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void dispose() {
-		// comments.dispose();
+		userSupport.removeStateChangedListeners(this);
 		super.dispose();
 	}
 

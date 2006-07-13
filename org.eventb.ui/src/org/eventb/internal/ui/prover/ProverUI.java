@@ -162,6 +162,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		userSupport.removeStateChangedListeners(this);
 		UserSupportManager.disposeUserSupport(userSupport);
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);

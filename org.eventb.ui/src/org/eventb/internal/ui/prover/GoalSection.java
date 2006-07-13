@@ -69,6 +69,7 @@ public class GoalSection extends SectionPart {
 
 	private List<IEventBInputText> textBoxes;
 
+	private IEventBInputText textInput;
 	/**
 	 * @author htson
 	 *         <p>
@@ -218,10 +219,10 @@ public class GoalSection extends SectionPart {
 	 */
 	private void createSimpleText(String text) {
 		composite.setLayout(new GridLayout());
-		EventBMath textWidget = new EventBMath(toolkit.createText(composite,
+		textInput = new EventBMath(toolkit.createText(composite,
 				text, SWT.READ_ONLY));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		textWidget.getTextWidget().setLayoutData(gd);
+		textInput.getTextWidget().setLayoutData(gd);
 	}
 
 	/**
@@ -335,6 +336,7 @@ public class GoalSection extends SectionPart {
 	@Override
 	public void dispose() {
 		formText.dispose();
+		if (textInput != null) textInput.dispose();
 		for (IEventBInputText text : textBoxes) text.dispose();
 		super.dispose();
 	}
