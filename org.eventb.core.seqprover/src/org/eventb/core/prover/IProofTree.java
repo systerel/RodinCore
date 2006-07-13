@@ -21,7 +21,7 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * nodes are instances of {@link IProofTreeNode}.
  * </p>
  * <p>
- * A proof tree is discharged if, and only if, its root node is discharged.
+ * A proof tree is closed if, and only if, its root node is closed.
  * </p>
  * <p>
  * The proof tree implements the observer design pattern and clients can
@@ -46,14 +46,14 @@ public interface IProofTree {
 	IProverSequent getSequent();
 
 	/**
-	 * Returns whether this proof tree has been discharged.
+	 * Returns whether this proof tree is closed.
 	 * <p>
-	 * This is a shortcut for <code>getRoot().isDischarged()</code>.
+	 * This is a shortcut for <code>getRoot().isClosed()</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this proof tree has been discharged
 	 */
-	boolean isDischarged();
+	boolean isClosed();
 
 	/**
 	 * Returns the root node of this proof tree.
@@ -92,5 +92,10 @@ public interface IProofTree {
 	Set<Hypothesis> getUsedHypotheses();
 	Set<FreeIdentifier> getUsedFreeIdents();
 	
+	/**
+	 * Returns the confidence of this proof tree.
+	 * 
+	 * @return the confidence of this proof tree (see {@see IConfidence})
+	 */
 	int getConfidence();
 }

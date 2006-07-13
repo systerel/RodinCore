@@ -52,7 +52,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// applyRule(imp, rf.hyp());
 		assertNodeDischarged(imp);
 		assertNodeDischarged(root);
-		assertTrue("Tree is not discharged", tree.isDischarged());
+		assertTrue("Tree is not discharged", tree.isClosed());
 		checkTree(tree, root, sequent);
 	}
 
@@ -72,7 +72,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodeOpen(imp);
 		assertNodePending(root);
 		
-		assertFalse("Tree is discharged", tree.isDischarged());
+		assertFalse("Tree is discharged", tree.isClosed());
 		checkTree(tree, root, sequent);
 	}
 
@@ -110,7 +110,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(imp);
 		assertNodePending(root);
 		
-		assertFalse("Tree is discharged", tree.isDischarged());
+		assertFalse("Tree is discharged", tree.isClosed());
 		checkTree(tree, root, sequent);
 	}
 	

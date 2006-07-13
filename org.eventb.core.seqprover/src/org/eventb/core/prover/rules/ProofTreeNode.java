@@ -1,13 +1,12 @@
 package org.eventb.core.prover.rules;
 
-import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.prover.IProofRule;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
@@ -19,8 +18,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private static final ProofTreeNode[] NO_NODE = new ProofTreeNode[0];
 	
 	private ProofTreeNode[] children;
-	// Cache of discharged status
-	private boolean discharged;
+	// Cache of closed status
+	private boolean closed;
+	// Cache of confidence level
+	// (also caches closed status)
+	private int confidence;
 	private ProofTreeNode parent;
 	private ProofRule rule;
 	private final IProverSequent sequent;
@@ -39,7 +41,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
-		this.discharged = false;
+		this.closed = false;
+		this.confidence = IConfidence.PENDING;
 		this.comment = "";
 		this.checkClassInvariant();
 	}
@@ -52,7 +55,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
-		this.discharged = false;
+		this.closed = false;
+		this.confidence = IConfidence.PENDING;
 		this.comment = "";
 		this.checkClassInvariant();
 	}
@@ -87,7 +91,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		setRule(rule);
 		setChildren(newChildren);
 		if (length == 0)
-			this.setDischarged();
+			this.setClosed();
 		this.checkClassInvariant();
 		fireDeltas();
 		return true;
@@ -101,7 +105,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ProofTreeNode treeRoot = (ProofTreeNode)tree.getRoot();
 		ProofTreeNode[] treeChildren = treeRoot.getChildren();
 		ProofRule treeRule = treeRoot.getRule();
-		boolean treeDischarged = treeRoot.isDischarged();
+		boolean treeClosed = treeRoot.isClosed();
 		
 		// Disconnect treeChildren from treeRoot
 		treeRoot.setRule(null);
@@ -116,21 +120,34 @@ public final class ProofTreeNode implements IProofTreeNode {
 		// this.rule = treeRule;
 		this.setRule(treeRule);
 		this.setChildren(treeChildren);
-		if (treeDischarged)
-			this.setDischarged();
+		if (treeClosed)
+			this.setClosed();
 		this.checkClassInvariant();
 		fireDeltas();
 		return true;
 	}
 	
-	private boolean areAllChildrenDischarged() {
+	private boolean areAllChildrenClosed() {
 		if (children == null)
 			return false;
 		for (ProofTreeNode child: children) {
-			if (! child.discharged)
+			if (! child.closed)
 				return false;
 		}
 		return true;
+	}
+	
+	private int minChildConf() {
+		if (children == null)
+			return IConfidence.PENDING;
+		int minChildConf = IConfidence.DISCHARGED_MAX;
+		for (ProofTreeNode child: children) {
+			if (Lib.isPending(child.confidence))
+				return IConfidence.PENDING;
+			if (child.confidence < minChildConf)
+				minChildConf = child.confidence;
+		}
+		return minChildConf;
 	}
 	
 	private void checkClassInvariant() {
@@ -151,7 +168,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 				this.children[i].checkClassInvariant();
 			}
 		}
-		assert this.discharged == (getOpenDescendants().length == 0);
+		assert this.closed == (getOpenDescendants().length == 0);
 		assert (this.parent == null) ? (this.tree != null) : true;
 		assert (this.tree == null) ? (this.parent != null) : true;
 	}
@@ -186,7 +203,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 	
 	public IProofTreeNode getFirstOpenDescendant() {
-		if (isDischarged())
+		if (isClosed())
 			return null;
 		if (isOpen())
 			return this;
@@ -202,7 +219,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * @see org.eventb.core.prover.IProofTreeNode#getOpenDescendants()
 	 */
 	public IProofTreeNode[] getOpenDescendants() {
-		if (isDischarged())
+		if (isClosed())
 			return NO_NODE;
 		if (isOpen())
 			return new IProofTreeNode[] { this };
@@ -257,10 +274,10 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#isDischarged()
+	 * @see org.eventb.core.prover.IProofTreeNode#isClosed()
 	 */
-	public boolean isDischarged() {
-		return discharged;
+	public boolean isClosed() {
+		return closed;
 	}
 
 	/* (non-Javadoc)
@@ -293,12 +310,13 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return prunedChildSubtrees;
 	}
 	
-	// Reopen this node, setting the status of all ancestors to non-discharged
+	// Reopen this node, setting the status of all ancestors to pending
 	private void reopen() {
 		ProofTreeNode node = this;
-		while (node != null && node.discharged) {
-			node.discharged = false;
-			node.statusChanged();
+		while (node != null && ! Lib.isPending(node.confidence)) {
+			node.closed = false;
+			node.confidence = IConfidence.PENDING;
+			node.confidenceChanged();
 			node = node.parent;
 		}
 	}
@@ -310,35 +328,75 @@ public final class ProofTreeNode implements IProofTreeNode {
 	
 	private void setRule(ProofRule newRule) {
 		this.rule = newRule;
-		contentsChanged();
+		ruleChanged();
 	}
 
-	// This node has just been discharged. Update its status, as well as its
+	// This node has just been closed. Update its status, as well as its
 	// ancestors'.
-	private void setDischarged() {
-		this.discharged = true;
-		statusChanged();
+	private void setClosed() {
+		this.closed = true;
+		this.confidence = this.rule.getRuleConfidence();
+		assert (Lib.isValid(this.confidence) && (! Lib.isPending(this.confidence)));
+		confidenceChanged();
 		ProofTreeNode node = this.parent;
-		while (node != null && node.areAllChildrenDischarged()) {
-			node.discharged = true;
-			node.statusChanged();
-			node = node.parent;
-		}
-	}	
-
-	// Report status change to delta processor.
-	private void statusChanged() {
-		ProofTree tree = getProofTree();
-		if (tree != null) {
-			tree.deltaProcessor.statusChanged(this);
+		if (node == null) return;
+		int nodeMinChildrenConf = node.minChildConf();
+		while (! Lib.isPending(nodeMinChildrenConf))
+		{
+				node.closed = true;
+				node.confidence = node.rule.getRuleConfidence();
+				if (node.confidence > nodeMinChildrenConf)
+					node.confidence = nodeMinChildrenConf;
+				node.confidenceChanged();
+				node = node.parent;
+				if (node == null) return;
+				nodeMinChildrenConf = node.minChildConf();
 		}
 	}
 	
-	//	 Report contents change to delta processor.
-	private void contentsChanged() {
+	
+//	private void setDischarged() {
+//		this.discharged = true;
+//		this.confidence = this.rule.getRuleConfidence();
+//		assert this.confidence > IProofRule.CONFIDENCE_PENDING;
+//		confidenceChanged();
+//		ProofTreeNode node = this.parent;
+//		int nodeMinChildConfidence = node
+//		while (node != null) {
+//			int nodeMinChildConfidence = node.minChildrenConfidence();
+//			if (nodeMinChildConfidence > IProofRule.CONFIDENCE_PENDING)
+//			{
+//				node.discharged = true;
+//				node.confidence = node.rule.getRuleConfidence();
+//				if (node.confidence > nodeMinChildConfidence)
+//					node.confidence = nodeMinChildConfidence;
+//				node.confidenceChanged();
+//				node = node.parent;
+//			}
+//		}
+//	}
+//	
+	//	 Report a rule change to delta processor.
+	private void ruleChanged() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
-			tree.deltaProcessor.contentsChanged(this);
+			tree.deltaProcessor.ruleChanged(this);
+		}
+	}
+	
+	//	 Report a confidence level change to delta processor.
+	private void confidenceChanged() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.confidenceChanged(this);
+		}
+	}
+	
+	//	 Report change of comment to the delta processor.
+	private void commentChanged() {
+		ProofTree tree = getProofTree();
+		if (tree != null) {
+			tree.deltaProcessor.commentChanged(this);
 		}
 	}
 
@@ -347,7 +405,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		StringBuilder str = new StringBuilder();
 		toStringHelper("", false, str);
 		str.append("\n");
-		if (this.isDischarged()) {
+		if (this.isClosed()) {
 			str.append("No pending subgoals!\n");
 		} else {
 			str.append(this.getOpenDescendants().length);
@@ -392,7 +450,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public void setComment(String comment) {
 		assert comment != null;
 		this.comment = comment;
-		this.contentsChanged();
+		this.commentChanged();
 		this.fireDeltas();
 	}
 	
@@ -429,8 +487,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return usedFreeIdents;
 	}
 
-	public int getConfidence() {
-		if (rule == null) return IProofRule.CONFIDENCE_PENDING;
+	private int getConfidenceComp() {
+		if (rule == null) return IConfidence.PENDING;
 		int minConfidence = rule.getRuleConfidence();
 		for (ProofTreeNode child : children) {
 			int childConfidence = child.getConfidence();
@@ -438,6 +496,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 				minConfidence = childConfidence;
 		}
 		return minConfidence;
+	}
+
+	public int getConfidence() {
+		assert this.confidence == this.getConfidenceComp();
+		return this.confidence;
 	}
 	
 	

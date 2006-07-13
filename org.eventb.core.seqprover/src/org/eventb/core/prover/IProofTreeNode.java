@@ -9,23 +9,39 @@ import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
  * Common protocol for a proof tree node.
+ * 
  * <p>
- * Each node bears a proof sequent (see {@link IProofSequent}) and can be in
- * one of the following states:
+ * Each proof tree node contains a proof sequent (see {@link IProofSequent}). A node has 
+ * children proof tree nodes iff a rule has been applied to it. Nodes that have no 
+ * rule applied to them are termed "open". Note that there is a difference between a 
+ * proof tree node having no children (no rule applied, open), and a proof tree node 
+ * having 0 children (rule with 0 anticidents applied, closed).
+ * 
+ * Proof Nodes are either "pending" or "closed" :
  * <ul>
- * <li>open - no rule has been applied to this node and the validity of its
- * associated sequent is unknown.</li>
- * <li>pending - a rule has been applied to this node, but some of its children
- * have not been discharged yet. This corresponds to a proof attempt which is
- * not yet finished.</li>
- * <li>discharged - a rule has been applied to this node and all its children
- * have been discharged. The associated sequent has been proved valid.</li>
+ * <li>Pending - This node is either open, or has at least one open descendent. The 
+ * proof attempt for its sequent is not yet complete</li>
+ * <li>Closed - This node has no open descendents. The proof attempt for its sequent 
+ * is complete.
  * </ul>
+ * </p>
+ * <p>
+ * Each node in addition has a confidence level associated to it 
+ * (see {@see org.eventb.core.prover.IConfidence}):
+ * <ul>
+ * <li>Pending nodes have their confidence levels set to PENDING, which is the 
+ * minimum confidence level and is reserved for this purpose. </li>
+ * <li>The confidence level for a closed node is the minimum of the confidence level 
+ * of the rule associated to it, and the confidence levels of its children.
+ * </li>
+ * <ul>
+ * 
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @author Farhad Mehta
  * @author Laurent Voisin
  */
 public interface IProofTreeNode {
@@ -139,11 +155,11 @@ public interface IProofTreeNode {
 	boolean hasChildren();
 
 	/**
-	 * Tells whether this node is discharged.
+	 * Tells whether this node is closed.
 	 * 
-	 * @return <code>true</code> iff this node is discharged
+	 * @return <code>true</code> iff this node is closed
 	 */
-	boolean isDischarged();
+	boolean isClosed();
 
 	/**
 	 * Tells whether this node is open.
@@ -194,6 +210,12 @@ public interface IProofTreeNode {
 	Set<Hypothesis> getUsedHypotheses();
 	Set<FreeIdentifier> getUsedFreeIdents();
 	
+	
+	/**
+	 * Returns the confidence of this proof tree node.
+	 * 
+	 * @return the confidence of this proof tree node (see {@see IConfidence})
+	 */
 	int getConfidence();
 	
 }

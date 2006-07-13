@@ -18,12 +18,13 @@ package org.eventb.core.prover;
  * The list below summarizes each flag (as returned by <code>getFlags</code>)
  * and its meaning (see individual constants for a more detailed description):
  * <ul>
- * <li><code>CONTENTS</code> - The node described by the delta has changed
- * contents (it its comment or rule has changed). 
- * <li><code>STATUS</code> - The node described by the delta has changed
- * status (it became opened of closed).
+ * <li><code>COMMENT</code> - The comment of the node described by the delta 
+ * has a changed. 
+ * <li><code>CONFIDENCE</code> - The node described by the delta has changed
+ * confidence level.
  * <li><code>CHILDREN</code> - The children of the node described by the
  * delta have changed. </li>
+ * <li><code>RULE</code> - The rule associated to this node has changed. </li>
  * </ul>
  * </p>
  * <p>
@@ -42,25 +43,14 @@ package org.eventb.core.prover;
 public interface IProofTreeDelta {
 
 	/**
-	 * Flag indicating that the proof node has changed contents: its comment or 
-	 * rule has changed.
+	 * Flag indicating that the rule associated with the proof node has changed
 	 * <p>
-	 * The new contents of the node can be read directly from the proof tree node
+	 * The new rule of the node can be read directly from the proof tree node
 	 * described by this delta.
 	 * </p>
 	 */
-	int CONTENTS = 0x1;
+	int RULE = 0x1;
 	
-	/**
-	 * Flag indicating that the proof node has changed status: it became
-	 * opened while it was closed or vice-versa.
-	 * <p>
-	 * The new status of the node can be read directly from the proof tree node
-	 * described by this delta.
-	 * </p>
-	 */
-	int STATUS = 0x2;
-
 	/**
 	 * Flag indicating that the element has changed its list of children.
 	 * <p>
@@ -69,15 +59,35 @@ public interface IProofTreeDelta {
 	 * read directly from the proof tree node described by this delta.
 	 * </p>
 	 */
-	int CHILDREN = 0x4;
+	int CHILDREN = 0x2;
 
+	/**
+	 * Flag indicating that the proof node has a changed confidence level.
+	 * <p>
+	 * The new confidence level of the node can be read directly from the proof tree 
+	 * node described by this delta.
+	 * </p>
+	 */
+	int CONFIDENCE = 0x4;
+	
+	
+	/**
+	 * Flag indicating that the comment associated with the proof node has changed
+	 * <p>
+	 * The new comment of the node can be read directly from the proof tree node
+	 * described by this delta.
+	 * </p>
+	 */
+	int COMMENT = 0x8;
+	
+	
 	/**
 	 * Returns the node that this delta describes a change to.
 	 * 
 	 * @return the node that this delta describes a change to
 	 */
 	IProofTreeNode getProofTreeNode();
-
+	
 	/**
 	 * Returns the flags of this delta: a combination of <code>STATUS</code>
 	 * and <code>CHILDREN</code>.

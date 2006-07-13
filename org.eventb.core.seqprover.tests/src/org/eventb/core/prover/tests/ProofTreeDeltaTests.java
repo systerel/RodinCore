@@ -24,7 +24,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	// RuleFactory rf = new RuleFactory();
 	
 	/**
-	 * Ensures that applying a rule to an open node fires a CONTENTS & CHILDREN delta.
+	 * Ensures that applying a rule to an open node fires a RULE & CHILDREN delta.
 	 */
 	public void testApply() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -34,7 +34,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		startDeltas(tree);
 		Tactics.impI().apply(root);
 		// applyRule(root, rf.impI());
-		assertDeltas("⊤⇒⊤ [CONTENTS|CHILDREN]");
+		assertDeltas("⊤⇒⊤ [RULE|CHILDREN]");
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	}
 
 	/**
-	 * Ensures that pruning a non-open node fires a CONTENTS & CHILDREN delta.
+	 * Ensures that pruning a non-open node fires a RULE & CHILDREN delta.
 	 */
 	public void testPrune() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -63,11 +63,11 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
 		startDeltas(tree);
 		root.pruneChildren();
-		assertDeltas("⊤⇒⊤ [CONTENTS|CHILDREN]");
+		assertDeltas("⊤⇒⊤ [RULE|CHILDREN]");
 	}
 
 	/**
-	 * Ensures that pruning a discharged node fires a CONTENTS & CHILDREN delta.
+	 * Ensures that pruning a discharged node fires a RULE & CHILDREN delta.
 	 */
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -83,13 +83,13 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		startDeltas(tree);
 		imp.pruneChildren();
 		assertDeltas(
-				"⊤⇒⊤ [STATUS]\n" +
-				"  ⊤ [CONTENTS|STATUS|CHILDREN]"
+				"⊤⇒⊤ [CONFIDENCE]\n" +
+				"  ⊤ [RULE|CHILDREN|CONFIDENCE]"
 		);
 	}
 
 	/**
-	 * Ensures that discharging a node fires a STATUS delta for its parent.
+	 * Ensures that discharging a node fires a CONFIDENCE delta for its parent.
 	 */
 	public void testDischargeParent() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -104,13 +104,13 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		Tactics.hyp().apply(imp);
 		// applyRule(imp, rf.hyp());
 		assertDeltas(
-				"⊤⇒⊤ [STATUS]\n" +
-				"  ⊤ [CONTENTS|STATUS|CHILDREN]"
+				"⊤⇒⊤ [CONFIDENCE]\n" +
+				"  ⊤ [RULE|CHILDREN|CONFIDENCE]"
 		);
 	}
 
 	/**
-	 * Ensures that no STATUS delta is fired for an ancestor which doesn't get
+	 * Ensures that no CONFIDENCE delta is fired for an ancestor which doesn't get
 	 * discharged, when discharging a node.
 	 */
 	public void testNoDischargeAncestor() {
@@ -133,12 +133,12 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		assertDeltas(
 				"⊤⇒⊤∧⊥ []\n" +
 				"  ⊤∧⊥ []\n" +
-				"    ⊤ [CONTENTS|STATUS|CHILDREN]"
+				"    ⊤ [RULE|CHILDREN|CONFIDENCE]"
 		);
 	}
 
 	/**
-	 * Ensures that no STATUS delta is fired for an ancestor which wasn't yet
+	 * Ensures that no CONFIDENCE delta is fired for an ancestor which wasn't yet
 	 * discharged, when pruning a node.
 	 */
 	public void testDischargeBranch() {
@@ -162,13 +162,13 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		assertDeltas(
 				"⊤⇒⊤∧⊥ []\n" +
 				"  ⊤∧⊥ []\n" +
-				"    ⊤ [CONTENTS|STATUS|CHILDREN]"
+				"    ⊤ [RULE|CHILDREN|CONFIDENCE]"
 		);
 	}
 	
 	
 	/**
-	 * Ensures that setting a comment of a node produces a CONTENTS delta.
+	 * Ensures that setting a comment of a node produces a COMMENT delta.
 	 */
 	public void testSetComment() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
@@ -177,7 +177,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
 		startDeltas(tree);
 		root.setComment("Test Comment");
-		assertDeltas("⊤⇒⊤ [CONTENTS]");
+		assertDeltas("⊤⇒⊤ [COMMENT]");
 	}	
 
 }

@@ -47,7 +47,7 @@ public class AutoProver {
 				IProofTree tree = po.makeInitialProofTree();
 				run(tree);
 				// Update the tree if it was discharged
-				if (tree.isDischarged()) {
+				if (tree.isClosed()) {
 					po.updateStatus(tree);
 					prFile.save(null, false);
 					dirty = false;
@@ -71,14 +71,14 @@ public class AutoProver {
 		
 		// First try applying an internal tactic
 		Tactics.norm().apply(pt.getRoot());
-		if (pt.isDischarged())
+		if (pt.isClosed())
 			return;
 		
 		// Then, try with the legacy provers.
 		// pt.getRoot().pruneChildren();
 		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
 		BasicTactics.onAllPending(Tactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
-		if (! pt.isDischarged()) {
+		if (! pt.isClosed()) {
 			BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
 		}
 	}

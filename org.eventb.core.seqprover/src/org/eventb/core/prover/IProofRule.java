@@ -17,10 +17,12 @@ public interface IProofRule {
 	 */
 	String getRuleID();
 	
-	final int CONFIDENCE_PENDING = 0;
-	final int CONFIDENCE_REVIEWED = 500;
-	final int CONFIDENCE_DISCHARGED = 1000;
 	
+	/**
+	 * Returns the confidence of this proof rule.
+	 * 
+	 * @return the confidence of this proof rule (see {@see IConfidence})
+	 */
 	int getRuleConfidence();
 	
 

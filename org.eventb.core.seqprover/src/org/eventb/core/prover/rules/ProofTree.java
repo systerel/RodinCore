@@ -64,8 +64,8 @@ public final class ProofTree implements IProofTree {
 		return getRoot().getSequent();
 	}
 
-	public boolean isDischarged() {
-		return getRoot().isDischarged();
+	public boolean isClosed() {
+		return getRoot().isClosed();
 	}
 
 	public void removeChangeListener(IProofTreeChangedListener listener) {

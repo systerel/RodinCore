@@ -91,7 +91,7 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 		anticidents = null;
 		neededHypotheses = new HashSet<Hypothesis>();
 		goal = null;
-		reasonerConfidence = IProofRule.CONFIDENCE_DISCHARGED;
+		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 
 	public Set<FreeIdentifier> getNeededFreeIdents() {

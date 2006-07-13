@@ -3,7 +3,7 @@ package org.eventb.core.prover.reasoners;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IProofRule;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
@@ -48,7 +48,7 @@ public class Review implements Reasoner{
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.display = "reviewed (confidence "+input.reviewerConfidence+")";
 		assert input.reviewerConfidence > 0;
-		assert input.reviewerConfidence <= IProofRule.CONFIDENCE_REVIEWED;
+		assert input.reviewerConfidence <= IConfidence.REVIEWED_MAX;
 		reasonerOutput.reasonerConfidence = input.reviewerConfidence;
 		
 		reasonerOutput.anticidents = new Anticident[0];

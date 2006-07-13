@@ -74,7 +74,7 @@ public class ProofState {
 	}
 
 	public boolean isDischarged() throws RodinDBException {
-		return pt.isDischarged();
+		return pt.isClosed();
 	}
 
 	public IPRSequent getPRSequent() {

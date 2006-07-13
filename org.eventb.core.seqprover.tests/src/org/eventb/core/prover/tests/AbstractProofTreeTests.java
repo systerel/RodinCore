@@ -119,7 +119,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		assertEmpty(node.getOpenDescendants());
 		assertNotNull(node.getRule());
 		// node.hasChildren() is irrelevent
-		assertTrue(node.isDischarged());
+		assertTrue(node.isClosed());
 		assertFalse(node.isOpen());
 	}
 
@@ -135,7 +135,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		assertSingleton(node, node.getOpenDescendants());
 		assertNull(node.getRule());
 		assertFalse(node.hasChildren());
-		assertFalse(node.isDischarged());
+		assertFalse(node.isClosed());
 		assertTrue(node.isOpen());
 	}
 
@@ -152,7 +152,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		assertNotEmpty(node.getOpenDescendants());
 		assertNotNull(node.getRule());
 		assertTrue(node.hasChildren());
-		assertFalse(node.isDischarged());
+		assertFalse(node.isClosed());
 		assertFalse(node.isOpen());
 	}
 
@@ -223,8 +223,8 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		assertSame("Wrong tree sequent", root.getSequent(), tree.getSequent());
 
 		// Discharge information is consistent
-		assertEquals("Inconsistency in discharged info", tree.isDischarged(),
-				root.isDischarged());
+		assertEquals("Inconsistency in discharged info", tree.isClosed(),
+				root.isClosed());
 	}
 
 	/**

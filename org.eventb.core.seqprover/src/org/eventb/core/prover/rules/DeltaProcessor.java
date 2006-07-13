@@ -101,10 +101,10 @@ public class DeltaProcessor {
 		return parentDelta.addChild(node);
 	}
 	
-	void contentsChanged(IProofTreeNode node) {
+	void ruleChanged(IProofTreeNode node) {
 		ProofTreeDelta delta = getDeltaForNode(node);
 		if (delta != null)
-			delta.setContentsChanged();
+			delta.setRuleChanged();
 	}
 	
 	void childrenChanged(IProofTreeNode node) {
@@ -113,10 +113,16 @@ public class DeltaProcessor {
 			delta.setChildrenChanged();
 	}
 	
-	void statusChanged(IProofTreeNode node) {
+	void confidenceChanged(IProofTreeNode node) {
 		ProofTreeDelta delta = getDeltaForNode(node);
 		if (delta != null)
-			delta.setStatusChanged();
+			delta.setConfidenceChanged();
+	}
+	
+	void commentChanged(IProofTreeNode node) {
+		ProofTreeDelta delta = getDeltaForNode(node);
+		if (delta != null)
+			delta.setCommentChanged();
 	}
 	
 	private void notifyListener(

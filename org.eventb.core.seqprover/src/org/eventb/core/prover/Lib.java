@@ -33,6 +33,18 @@ import org.eventb.core.prover.sequent.SimpleProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 
+
+
+/**
+ * This is a collection of static constante and methods that are used often in relation
+ * to the sequent prover.
+ * <p>
+ * Note that they are public but not published and are subject to change. They are to be
+ * used at one own's risk.
+ * </p>
+ * @author fmehta
+ *
+ */
 public final class Lib {
 
 	public final static FormulaFactory ff = FormulaFactory.getDefault();
@@ -537,5 +549,29 @@ public final class Lib {
 	public static ITypeEnvironment makeTypeEnvironment() {
 		return ff.makeTypeEnvironment();
 	}
+	
+	public static boolean isValid(int confidence){
+		return 
+		(confidence <= IConfidence.PENDING) && 
+		(confidence <= IConfidence.REVIEWED_MAX);	
+	}
+	
+	public static boolean isPending(int confidence){
+		return (confidence == IConfidence.PENDING);
+	}
+	
+	public static boolean isReviewed(int confidence){
+		return 
+		(confidence > IConfidence.PENDING) && 
+		(confidence <= IConfidence.REVIEWED_MAX);		
+	}
+	
+	public static boolean isDischarged(int confidence){
+		return 
+		(confidence > IConfidence.REVIEWED_MAX) && 
+		(confidence <= IConfidence.DISCHARGED_MAX);		
+	}
+	
+	
 	
 }
