@@ -520,6 +520,7 @@ public class ObligationExplorer extends ViewPart implements
 			userSupport.removeStateChangedListeners(this);
 		}
 		UserSupportManager.removeUSManagerListener(this);
+		viewer.removeSelectionChangedListener(this);
 		super.dispose();
 	}
 
