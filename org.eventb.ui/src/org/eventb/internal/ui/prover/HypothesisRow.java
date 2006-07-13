@@ -42,6 +42,7 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -60,8 +61,10 @@ public class HypothesisRow {
 
 	private Composite hypothesisComposite;
 
-	private List<Text> textBoxes;
+	private List<IEventBInputText> textBoxes;
 
+	private IEventBInputText hypothesisText; 
+	
 	// The UserSupport associated with this instance of the editor.
 	private UserSupport userSupport;
 
@@ -92,8 +95,8 @@ public class HypothesisRow {
 				if (e.getHref().equals(UIUtils.ALLF_SYMBOL)) {
 					String[] inputs = new String[textBoxes.size()];
 					int i = 0;
-					for (Text text : textBoxes) {
-						inputs[i++] = text.getText();
+					for (IEventBInputText text : textBoxes) {
+						inputs[i++] = text.getTextWidget().getText();
 					}
 					userSupport.applyTacticToHypotheses(Tactics.allF(hyp,
 							inputs), hypSet);
@@ -223,7 +226,7 @@ public class HypothesisRow {
 			toolkit.createLabel(hypothesisComposite, "\u2200 ");
 
 			int i = 0;
-			textBoxes = new ArrayList<Text>();
+			textBoxes = new ArrayList<IEventBInputText>();
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc
@@ -238,7 +241,7 @@ public class HypothesisRow {
 				gd.widthHint = 15;
 				box.setLayoutData(gd);
 				toolkit.paintBordersFor(hypothesisComposite);
-				textBoxes.add(box);
+				textBoxes.add(new EventBMath(box));
 			}
 
 			form = new EventBFormText(toolkit.createFormText(
@@ -252,11 +255,11 @@ public class HypothesisRow {
 					"<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>",
 					true, false);
 		} else {
-			Text hypothesisText = toolkit.createText(hypothesisComposite, hyp
-					.toString(), SWT.READ_ONLY);
-			new EventBMath(hypothesisText);
+			hypothesisText = new EventBMath(toolkit.createText(hypothesisComposite, hyp
+					.toString(), SWT.READ_ONLY));
+			
 			gd = new GridData(GridData.FILL_HORIZONTAL);
-			hypothesisText.setLayoutData(gd);
+			hypothesisText.getTextWidget().setLayoutData(gd);
 		}
 	}
 
@@ -292,6 +295,8 @@ public class HypothesisRow {
 	public void dispose() {
 		formText.dispose();
 		if (form != null) form.dispose();
+		for (IEventBInputText text : textBoxes) text.dispose();
+		hypothesisText.dispose();
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();

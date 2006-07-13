@@ -282,7 +282,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			composite.setBackground(black);
 		final Text text = new Text(composite, SWT.NONE);
 
-		new ElementText(this, text, treeEditor, item, (IRodinElement) itemData,
+		new ElementText(this, new EventBMath(text), treeEditor, item, (IRodinElement) itemData,
 				column) {
 			/*
 			 * (non-Javadoc)
@@ -364,8 +364,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 
 		};
-
-		new EventBMath(text); // Set the font to be the Event-B Math fonts
 
 		final int inset = isCarbon ? 0 : 1;
 		composite.addListener(SWT.Resize, new Listener() {

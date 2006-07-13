@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,10 +25,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 
 /**
  * @author htson
@@ -44,7 +43,7 @@ public class ElementAttributeInputDialog extends Dialog {
 
 	private Collection<String> attributes;
 
-	private Collection<Text> texts;
+	private Collection<IEventBInputText> texts;
 
 	private ScrolledForm scrolledForm;
 
@@ -73,7 +72,7 @@ public class ElementAttributeInputDialog extends Dialog {
 		this.title = title;
 		this.message = message;
 		this.defaultPrefix = defaultPrefix;
-		texts = new ArrayList<Text>();
+		texts = new ArrayList<IEventBInputText>();
 		attributes = new ArrayList<String>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
@@ -133,7 +132,7 @@ public class ElementAttributeInputDialog extends Dialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
-		texts.add(text.getTextWidget());
+		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
 		// label.setLayoutData(new GridData());
@@ -142,7 +141,7 @@ public class ElementAttributeInputDialog extends Dialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
-		texts.add(text.getTextWidget());
+		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
@@ -152,7 +151,7 @@ public class ElementAttributeInputDialog extends Dialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getTextWidget().setLayoutData(gd);
-		texts.add(text.getTextWidget());
+		texts.add(text);
 
 		composite.pack();
 
@@ -177,17 +176,17 @@ public class ElementAttributeInputDialog extends Dialog {
 					.getBody(), ""));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			text.getTextWidget().setLayoutData(gd);
-			texts.add(text.getTextWidget());
+			texts.add(text);
 
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			toolkit.paintBordersFor(scrolledForm.getBody());
 			scrolledForm.reflow(true);
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
-			for (Iterator<Text> it = texts.iterator(); it.hasNext();) {
-				Text text = it.next();
-				if (!text.getText().equals(""))
-					attributes.add(text.getText());
+			for (IEventBInputText text : texts) {
+				String inputText = text.getTextWidget().getText();
+				if (!inputText.equals(""))
+					attributes.add(inputText);
 			}
 		}
 		super.buttonPressed(buttonId);
@@ -201,6 +200,12 @@ public class ElementAttributeInputDialog extends Dialog {
 	 */
 	public Collection<String> getAttributes() {
 		return attributes;
+	}
+
+	@Override
+	public boolean close() {
+		for (IEventBInputText text : texts) text.dispose();
+		return super.close();
 	}
 
 }

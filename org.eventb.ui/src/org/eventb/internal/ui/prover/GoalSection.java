@@ -41,6 +41,7 @@ import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBFormText;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -66,7 +67,7 @@ public class GoalSection extends SectionPart {
 
 	private Composite composite;
 
-	private List<EventBMath> textBoxes;
+	private List<IEventBInputText> textBoxes;
 
 	/**
 	 * @author htson
@@ -103,7 +104,7 @@ public class GoalSection extends SectionPart {
 				if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
 					String[] inputs = new String[textBoxes.size()];
 					int i = 0;
-					for (EventBMath text : textBoxes) {
+					for (IEventBInputText text : textBoxes) {
 						inputs[i++] = text.getTextWidget().getText();
 					}
 					((ProverUI) GoalSection.this.page.getEditor())
@@ -265,7 +266,7 @@ public class GoalSection extends SectionPart {
 				toolkit.createLabel(composite, "\u2203 ");
 
 				int i = 0;
-				textBoxes = new ArrayList<EventBMath>();
+				textBoxes = new ArrayList<IEventBInputText>();
 				for (BoundIdentDecl ident : idents) {
 					SourceLocation loc = ident.getSourceLocation();
 					String image = goalString.substring(loc.getStart(), loc
@@ -334,6 +335,7 @@ public class GoalSection extends SectionPart {
 	@Override
 	public void dispose() {
 		formText.dispose();
+		for (IEventBInputText text : textBoxes) text.dispose();
 		super.dispose();
 	}
 

@@ -42,5 +42,7 @@ public interface IEventBInputText extends IPropertyChangeListener {
 	 * Setting the focus to the contained Text.
 	 */
 	public void setFocus();
+	
+	public void dispose();
 
 }

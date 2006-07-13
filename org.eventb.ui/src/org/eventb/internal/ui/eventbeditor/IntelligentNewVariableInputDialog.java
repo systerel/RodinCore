@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 
 /**
  * @author htson
@@ -50,9 +51,9 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 
 	private Text invariantNameText;
 
-	private EventBMath invariantPredicateText;
+	private IEventBInputText invariantPredicateText;
 
-	private EventBMath initText;
+	private IEventBInputText initText;
 
 	private ScrolledForm scrolledForm;
 
@@ -213,4 +214,11 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		return init;
 	}
 
+	@Override
+	public boolean close() {
+		invariantPredicateText.dispose();
+		initText.dispose();
+		return super.close();
+	}
+	
 }

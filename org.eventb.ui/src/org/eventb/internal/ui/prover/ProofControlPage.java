@@ -60,6 +60,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
@@ -79,7 +80,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private Action switchLayout;
 
-	private EventBMath textInput;
+	private IEventBInputText textInput;
 
 	private IEventBFormText formTextInformation;
 
@@ -186,6 +187,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		// Deregister with the UserSupport
 		editor.getUserSupport().removeStateChangedListeners(this);
 		formTextInformation.dispose();
+		textInput.dispose();
 		super.dispose();
 	}
 

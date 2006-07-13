@@ -25,10 +25,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.IEventBInputText;
 
 /**
  * @author htson
@@ -43,9 +44,9 @@ public class ElementNameContentInputDialog extends Dialog {
 
 	private Collection<String> contents;
 
-	private Collection<Text> nameTexts;
+	private Collection<IEventBInputText> nameTexts;
 
-	private Collection<Text> contentTexts;
+	private Collection<IEventBInputText> contentTexts;
 
 	private ScrolledForm scrolledForm;
 
@@ -80,9 +81,9 @@ public class ElementNameContentInputDialog extends Dialog {
 		this.defaultNamePrefix = defaultNamePrefix;
 		this.counter = counter;
 		names = new ArrayList<String>();
-		nameTexts = new ArrayList<Text>();
+		nameTexts = new ArrayList<IEventBInputText>();
 		contents = new ArrayList<String>();
-		contentTexts = new ArrayList<Text>();
+		contentTexts = new ArrayList<IEventBInputText>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -134,47 +135,50 @@ public class ElementNameContentInputDialog extends Dialog {
 		Label label = toolkit.createLabel(body, message);
 		label.setLayoutData(new GridData());
 
-		Text text = toolkit.createText(body, defaultNamePrefix + (counter++));
+		IEventBInputText text = new EventBText(toolkit.createText(body,
+				defaultNamePrefix + (counter++)));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		text.setLayoutData(gd);
+		text.getTextWidget().setLayoutData(gd);
 		nameTexts.add(text);
 
 		EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
 		textMath.getTextWidget().setLayoutData(gd);
-		contentTexts.add(textMath.getTextWidget());
+		contentTexts.add(textMath);
 		textMath.getTextWidget().setFocus();
 
 		label = toolkit.createLabel(body, message);
 
-		text = text = toolkit.createText(body, defaultNamePrefix + (counter++));
+		text = new EventBText(toolkit.createText(body, defaultNamePrefix
+				+ (counter++)));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		text.setLayoutData(gd);
+		text.getTextWidget().setLayoutData(gd);
 		nameTexts.add(text);
 
 		textMath = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
 		textMath.getTextWidget().setLayoutData(gd);
-		contentTexts.add(textMath.getTextWidget());
+		contentTexts.add(textMath);
 
 		label = toolkit.createLabel(body, message);
 		label.setText(message);
 
-		text = text = toolkit.createText(body, defaultNamePrefix + (counter++));
+		text = new EventBText(toolkit.createText(body, defaultNamePrefix
+				+ (counter++)));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		text.setLayoutData(gd);
+		text.getTextWidget().setLayoutData(gd);
 		nameTexts.add(text);
 
 		textMath = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
 		textMath.getTextWidget().setLayoutData(gd);
-		contentTexts.add(textMath.getTextWidget());
+		contentTexts.add(textMath);
 
 		composite.pack();
 
@@ -196,14 +200,15 @@ public class ElementNameContentInputDialog extends Dialog {
 			Label label = toolkit.createLabel(scrolledForm.getBody(), message);
 			label.setLayoutData(new GridData());
 
-			Text text = toolkit.createText(scrolledForm.getBody(),
-					defaultNamePrefix + (counter++));
+			IEventBInputText text = new EventBText(toolkit.createText(
+					scrolledForm.getBody(), defaultNamePrefix + (counter++)));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-			text.setLayoutData(gd);
+			text.getTextWidget().setLayoutData(gd);
 			nameTexts.add(text);
 
-			text = toolkit.createText(scrolledForm.getBody(), "");
-			text.setLayoutData(gd);
+			text = new EventBText(toolkit
+					.createText(scrolledForm.getBody(), ""));
+			text.getTextWidget().setLayoutData(gd);
 			contentTexts.add(text);
 
 			toolkit.paintBordersFor(scrolledForm.getBody());
@@ -214,11 +219,12 @@ public class ElementNameContentInputDialog extends Dialog {
 			Object[] namesList = nameTexts.toArray();
 			Object[] contentsList = contentTexts.toArray();
 			for (int i = 0; i < namesList.length; i++) {
-				Text contentText = (Text) contentsList[i];
-				if (!contentText.getText().equals("")) {
-					Text nameText = (Text) namesList[i];
-					names.add(nameText.getText());
-					contents.add(contentText.getText());
+				IEventBInputText contentText = (IEventBInputText) contentsList[i];
+				String text = contentText.getTextWidget().getText();
+				if (!text.equals("")) {
+					IEventBInputText nameText = (IEventBInputText) namesList[i];
+					names.add(nameText.getTextWidget().getText());
+					contents.add(text);
 				}
 			}
 		}
@@ -245,4 +251,13 @@ public class ElementNameContentInputDialog extends Dialog {
 		return (String[]) contents.toArray(new String[contents.size()]);
 	}
 
+	@Override
+	public boolean close() {
+		for (IEventBInputText text : nameTexts) text.dispose();
+		for (IEventBInputText text : contentTexts) text.dispose();
+		return super.close();
+	}
+
+	
+	
 }

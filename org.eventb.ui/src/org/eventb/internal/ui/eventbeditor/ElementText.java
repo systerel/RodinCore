@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 
@@ -61,8 +62,9 @@ public abstract class ElementText implements ModifyListener,
 		public void run() {
 			// TODO Auto-generated method stub
 			if (lastModify == time) {
-				if (!text.isDisposed())
-					commit(element, column, text.getText());
+				Text textWidget = text.getTextWidget();
+				if (!textWidget.isDisposed())
+					commit(element, column, textWidget.getText());
 			}
 		}
 	}
@@ -79,23 +81,25 @@ public abstract class ElementText implements ModifyListener,
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
 		public void handleEvent(Event event) {
-			final String contents = text.getText();
+			Text textWidget = text.getTextWidget();
+			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
 				// UIUtils.debug("FocusOut");
 				commit(element, column, contents);
-				text.getParent().dispose();
+				textWidget.getParent().dispose();
+				text.dispose();
 				break;
 			case SWT.Verify:
 				// UIUtils.debug("Verify");
-				String newText = text.getText();
+				String newText = textWidget.getText();
 				String leftText = newText.substring(0, event.start);
 				String rightText = newText.substring(event.end, newText
 						.length());
-				GC gc = new GC(text);
+				GC gc = new GC(textWidget);
 				Point size = gc.textExtent(leftText + event.text + rightText);
 				gc.dispose();
-				size = text.computeSize(size.x, SWT.DEFAULT);
+				size = textWidget.computeSize(size.x, SWT.DEFAULT);
 				editor.horizontalAlignment = SWT.LEFT;
 				Rectangle itemRect = item.getBounds(),
 				rect = tree.getClientArea();
@@ -118,23 +122,27 @@ public abstract class ElementText implements ModifyListener,
 				case SWT.TRAVERSE_RETURN:
 //					UIUtils.debugEventBEditor("TraverseReturn");
 					commit(element, column, contents);
-					text.getParent().dispose();
+					textWidget.getParent().dispose();
+					text.dispose();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_ESCAPE:
 					commit(element, column, original);
-					text.getParent().dispose();
+					textWidget.getParent().dispose();
+					text.dispose();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
 					commit(element, column, contents);
-					text.getParent().dispose();
+					textWidget.getParent().dispose();
+					text.dispose();
 					nextEditableCell();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_PREVIOUS:
 					commit(element, column, contents);
-					text.getParent().dispose();
+					textWidget.getParent().dispose();
+					text.dispose();
 					prevEditableCell();
 					event.doit = false;
 					break;
@@ -173,7 +181,7 @@ public abstract class ElementText implements ModifyListener,
 
 	private TreeEditor editor;
 
-	private Text text;
+	private IEventBInputText text;
 
 	private TreeItem item;
 
@@ -218,7 +226,7 @@ public abstract class ElementText implements ModifyListener,
 	 */
 	public void modifyText(ModifyEvent e) {
 		lastModify = e.time;
-		text.getDisplay().timerExec(1000, new TimeRunnable(e.time));
+		text.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
 	}
 
 	/**
@@ -238,7 +246,7 @@ public abstract class ElementText implements ModifyListener,
 	 * @param column
 	 *            The column in the Editable Tree Viewer of the Text Widget.
 	 */
-	public ElementText(EventBEditableTreeViewer viewer, Text text,
+	public ElementText(EventBEditableTreeViewer viewer, IEventBInputText text,
 			TreeEditor editor, TreeItem item, IRodinElement element, int column) {
 		this.text = text;
 		this.element = element;
@@ -251,10 +259,11 @@ public abstract class ElementText implements ModifyListener,
 		inset = isCarbon ? 0 : 1;
 		viewer.addElementMovedListener(this);
 		Listener textListener = new ElementTextListener();
-		text.addListener(SWT.FocusOut, textListener);
-		text.addListener(SWT.Traverse, textListener);
-		text.addListener(SWT.Verify, textListener);
-		text.addModifyListener(this);
+		Text textWidget = text.getTextWidget();
+		textWidget.addListener(SWT.FocusOut, textListener);
+		textWidget.addListener(SWT.Traverse, textListener);
+		textWidget.addListener(SWT.Verify, textListener);
+		textWidget.addModifyListener(this);
 	}
 
 	/*

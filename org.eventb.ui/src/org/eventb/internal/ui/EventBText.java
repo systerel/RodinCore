@@ -81,4 +81,9 @@ public class EventBText implements IEventBInputText {
 		return text;
 	}
 
+	public void dispose() {
+		JFaceResources.getFontRegistry().removeListener(this);
+		text.dispose();
+	}
+	
 }

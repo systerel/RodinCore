@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 
 /**
  * @author htson
@@ -54,9 +55,9 @@ public class NewEventInputDialog extends Dialog {
 
 	private Collection<Text> grdNameTexts;
 
-	private Collection<Text> grdPredicateTexts;
+	private Collection<IEventBInputText> grdPredicateTexts;
 
-	private Collection<Text> actionTexts;
+	private Collection<IEventBInputText> actionTexts;
 
 	private ScrolledForm scrolledForm;
 
@@ -65,9 +66,13 @@ public class NewEventInputDialog extends Dialog {
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param parentShell the parent shell of the dialog
-	 * @param title the title of the dialog
-	 * @param defaultName the default name for the event
+	 * 
+	 * @param parentShell
+	 *            the parent shell of the dialog
+	 * @param title
+	 *            the title of the dialog
+	 * @param defaultName
+	 *            the default name for the event
 	 */
 	public NewEventInputDialog(Shell parentShell, String title,
 			String defaultName) {
@@ -80,8 +85,8 @@ public class NewEventInputDialog extends Dialog {
 		actions = new HashSet<String>();
 		varNameTexts = new ArrayList<Text>();
 		grdNameTexts = new ArrayList<Text>();
-		grdPredicateTexts = new ArrayList<Text>();
-		actionTexts = new ArrayList<Text>();
+		grdPredicateTexts = new ArrayList<IEventBInputText>();
+		actionTexts = new ArrayList<IEventBInputText>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -201,8 +206,7 @@ public class NewEventInputDialog extends Dialog {
 			gd.horizontalSpan = 3;
 			gd.widthHint = 200;
 			text.setLayoutData(gd);
-			grdPredicateTexts.add(text);
-			new EventBMath(text);
+			grdPredicateTexts.add(new EventBMath(text));
 		}
 
 		separator = toolkit.createCompositeSeparator(body);
@@ -219,8 +223,7 @@ public class NewEventInputDialog extends Dialog {
 			gd.horizontalSpan = 5;
 			gd.widthHint = 250;
 			text.setLayoutData(gd);
-			actionTexts.add(text);
-			new EventBMath(text);
+			actionTexts.add(new EventBMath(text));
 		}
 
 		composite.pack();
@@ -282,6 +285,7 @@ public class NewEventInputDialog extends Dialog {
 	/**
 	 * Get the name of the new event.
 	 * <p>
+	 * 
 	 * @return name of the new event as input by user
 	 */
 	public String getName() {
@@ -291,6 +295,7 @@ public class NewEventInputDialog extends Dialog {
 	/**
 	 * Get the list of local variables of the new event.
 	 * <p>
+	 * 
 	 * @return the list of new local variables as input by user
 	 */
 	public String[] getVariables() {
@@ -300,6 +305,7 @@ public class NewEventInputDialog extends Dialog {
 	/**
 	 * Get the list of guard names of the new event.
 	 * <p>
+	 * 
 	 * @return the list of the guard names as input by user
 	 */
 	public String[] getGrdNames() {
@@ -309,6 +315,7 @@ public class NewEventInputDialog extends Dialog {
 	/**
 	 * Get the list of guard predicates of the new event.
 	 * <p>
+	 * 
 	 * @return the list of the guard predicates as input by user
 	 */
 	public String[] getGrdPredicates() {
@@ -318,11 +325,21 @@ public class NewEventInputDialog extends Dialog {
 
 	/**
 	 * Get the list of action of the new event.
-	 * <p> 
+	 * <p>
+	 * 
 	 * @return the list the actions as input by user
 	 */
 	public String[] getActions() {
 		return (String[]) actions.toArray(new String[actions.size()]);
+	}
+
+	@Override
+	public boolean close() {
+		for (IEventBInputText text : grdPredicateTexts)
+			text.dispose();
+		for (IEventBInputText text : actionTexts)
+			text.dispose();
+		return super.close();
 	}
 
 }
