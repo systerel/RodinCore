@@ -348,7 +348,7 @@ public abstract class EventBEditor extends FormEditor implements
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-
+		RodinCore.removeElementChangedListener(this);
 		super.dispose();
 	}
 

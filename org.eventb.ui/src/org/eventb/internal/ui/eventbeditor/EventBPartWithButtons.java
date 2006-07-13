@@ -150,6 +150,12 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 		editor.addElementChangedListener(this);
 	}
 
+	@Override
+	public void dispose() {
+		editor.removeElementChangedListener(this);
+		super.dispose();
+	}
+
 	/**
 	 * @return The viewer contains in this section part.
 	 */

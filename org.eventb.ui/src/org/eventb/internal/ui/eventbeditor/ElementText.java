@@ -89,6 +89,7 @@ public abstract class ElementText implements ModifyListener,
 				commit(element, column, contents);
 				textWidget.getParent().dispose();
 				text.dispose();
+				viewer.removeElementMovedListener(ElementText.this);
 				break;
 			case SWT.Verify:
 				// UIUtils.debug("Verify");
@@ -124,18 +125,21 @@ public abstract class ElementText implements ModifyListener,
 					commit(element, column, contents);
 					textWidget.getParent().dispose();
 					text.dispose();
+					viewer.removeElementMovedListener(ElementText.this);
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_ESCAPE:
 					commit(element, column, original);
 					textWidget.getParent().dispose();
 					text.dispose();
+					viewer.removeElementMovedListener(ElementText.this);
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
 					commit(element, column, contents);
 					textWidget.getParent().dispose();
 					text.dispose();
+					viewer.removeElementMovedListener(ElementText.this);
 					nextEditableCell();
 					event.doit = false;
 					break;
@@ -143,6 +147,7 @@ public abstract class ElementText implements ModifyListener,
 					commit(element, column, contents);
 					textWidget.getParent().dispose();
 					text.dispose();
+					viewer.removeElementMovedListener(ElementText.this);
 					prevEditableCell();
 					event.doit = false;
 					break;
@@ -174,6 +179,8 @@ public abstract class ElementText implements ModifyListener,
 			}
 		}
 	}
+	
+	private EventBEditableTreeViewer viewer;
 
 	private IRodinElement element;
 
@@ -257,6 +264,7 @@ public abstract class ElementText implements ModifyListener,
 		this.original = item.getText(column);
 		boolean isCarbon = SWT.getPlatform().equals("carbon");
 		inset = isCarbon ? 0 : 1;
+		this.viewer = viewer;
 		viewer.addElementMovedListener(this);
 		Listener textListener = new ElementTextListener();
 		Text textWidget = text.getTextWidget();

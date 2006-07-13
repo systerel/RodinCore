@@ -170,4 +170,10 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 				(ISelectionProvider) viewer);
 	}
 
+	@Override
+	public void dispose() {
+		editor.removeStatusListener(this);
+		super.dispose();
+	}
+	
 }

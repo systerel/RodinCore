@@ -155,11 +155,11 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(final ElementChangedEvent event) {
-		if (this.getViewer().getControl().isDisposed())
-			return;
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
+				if (CarrierSetMasterSection.this.getViewer().getControl().isDisposed())
+					return;
 				((EventBEditableTreeViewer) CarrierSetMasterSection.this
 						.getViewer()).elementChanged(event);
 				updateButtons();

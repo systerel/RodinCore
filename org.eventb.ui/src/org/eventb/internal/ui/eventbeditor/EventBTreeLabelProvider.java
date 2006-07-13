@@ -42,21 +42,25 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBTreeLabelProvider implements ITableLabelProvider,
 		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
-	
+
 	// TODO: This class should be extensible
+	// TODO: The font should associated with the viewer that used this label
+	// provider.
 	
 	// The associated Event-B Editor
 	private EventBEditor editor;
 
 	// The font used in the tree viewer
 	private Font font = null;
-	
+
 	private TreeViewer viewer;
-	
+
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param editor An Event-B Editor
+	 * 
+	 * @param editor
+	 *            An Event-B Editor
 	 */
 	public EventBTreeLabelProvider(EventBEditor editor, TreeViewer viewer) {
 		this.editor = editor;
@@ -89,12 +93,15 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof IRodinElement) {
 			IRodinElement rodinElement = (IRodinElement) element;
-			
+
 			if (columnIndex == 0) {
-				if (rodinElement instanceof ISeesContext) return "";
-				if (rodinElement instanceof IRefinesMachine) return "";
-				if (rodinElement instanceof IRefinesEvent) return "";
-				
+				if (rodinElement instanceof ISeesContext)
+					return "";
+				if (rodinElement instanceof IRefinesMachine)
+					return "";
+				if (rodinElement instanceof IRefinesEvent)
+					return "";
+
 				if (rodinElement instanceof IInternalElement)
 					return ((IInternalElement) rodinElement).getElementName();
 				return rodinElement.toString();
@@ -190,7 +197,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 */
 	public Font getFont(Object element, int columnIndex) {
 		if (font == null) {
-			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT); 
+			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		}
 		return font;
 	}
@@ -200,5 +207,4 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		viewer.refresh();
 	}
 
-	
 }

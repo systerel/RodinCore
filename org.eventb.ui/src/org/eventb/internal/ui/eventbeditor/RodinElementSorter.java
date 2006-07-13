@@ -35,6 +35,8 @@ import org.rodinp.core.IRodinElement;
  */
 public class RodinElementSorter extends ViewerSorter {
 
+	// TODO This class should be extensible
+	
 	/*
 	 * (non-Javadoc)
 	 * 

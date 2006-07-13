@@ -120,17 +120,16 @@ public abstract class EventBMirrorPage extends Page implements
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	public void elementChanged(ElementChangedEvent event) {
-		IRodinElementDelta delta = event.getDelta();
-		if (delta.getElement() instanceof IRodinFile
-				&& delta.getKind() != IRodinElementDelta.REMOVED) {
-			Display.getCurrent().syncExec(new Runnable() {
-				public void run() {
+	public void elementChanged(final ElementChangedEvent event) {
+		Display.getCurrent().syncExec(new Runnable() {
+			public void run() {
+				IRodinElementDelta delta = event.getDelta();
+				if (delta.getElement() instanceof IRodinFile
+						&& delta.getKind() != IRodinElementDelta.REMOVED) {
 					refresh();
 				}
-			});
-
-		}
+			}
+		});
 	}
 
 	/*
