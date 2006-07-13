@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 
 /**
@@ -48,6 +49,8 @@ public abstract class HypothesesSection extends SectionPart {
 
 	protected Collection<HypothesisRow> rows;
 
+	protected IEventBFormText formText;
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -184,4 +187,12 @@ public abstract class HypothesesSection extends SectionPart {
 		scrolledForm.reflow(true);
 	}
 
+	@Override
+	public void dispose() {
+		formText.dispose();
+		super.dispose();
+	}
+
+	
+	
 }

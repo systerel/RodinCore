@@ -67,6 +67,10 @@ public class HypothesisRow {
 
 	// The hypothesis contains in this row.
 	private Hypothesis hyp;
+	
+	private IEventBFormText formText;
+	
+	private IEventBFormText form;
 
 	/**
 	 * @author htson
@@ -175,7 +179,7 @@ public class HypothesisRow {
 		buttonComposite.setLayout(new GridLayout());
 		gd = new GridData();
 
-		IEventBFormText formText = new EventBFormText(toolkit.createFormText(
+		formText = new EventBFormText(toolkit.createFormText(
 				buttonComposite, true));
 		gd = new GridData();
 		gd.widthHint = 25;
@@ -237,7 +241,7 @@ public class HypothesisRow {
 				textBoxes.add(box);
 			}
 
-			IEventBFormText form = new EventBFormText(toolkit.createFormText(
+			form = new EventBFormText(toolkit.createFormText(
 					hypothesisComposite, false));
 			gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 			form.getFormText().setLayoutData(gd);
@@ -286,6 +290,8 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
+		formText.dispose();
+		if (form != null) form.dispose();
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();

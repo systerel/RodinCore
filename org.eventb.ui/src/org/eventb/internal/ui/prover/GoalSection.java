@@ -331,6 +331,12 @@ public class GoalSection extends SectionPart {
 		return;
 	}
 
+	@Override
+	public void dispose() {
+		formText.dispose();
+		super.dispose();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -371,4 +377,6 @@ public class GoalSection extends SectionPart {
 	// }
 	// }
 	// }
+	
+	
 }

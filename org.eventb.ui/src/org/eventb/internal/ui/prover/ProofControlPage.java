@@ -185,6 +185,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public void dispose() {
 		// Deregister with the UserSupport
 		editor.getUserSupport().removeStateChangedListeners(this);
+		formTextInformation.dispose();
 		super.dispose();
 	}
 

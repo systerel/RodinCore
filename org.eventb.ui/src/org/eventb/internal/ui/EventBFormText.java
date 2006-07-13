@@ -80,4 +80,9 @@ public class EventBFormText implements IEventBFormText {
 		return formText;
 	}
 
+	public void dispose() {
+		JFaceResources.getFontRegistry().removeListener(this);
+		formText.dispose();
+	}
+	
 }

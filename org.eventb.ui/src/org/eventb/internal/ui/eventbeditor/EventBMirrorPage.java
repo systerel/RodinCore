@@ -139,6 +139,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * @see org.eclipse.ui.part.Page#dispose()
 	 */
 	public void dispose() {
+		formText.dispose();
 		editor.removeElementChangedListener(this);
 		super.dispose();
 	}

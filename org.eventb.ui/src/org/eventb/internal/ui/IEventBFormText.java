@@ -29,4 +29,6 @@ public interface IEventBFormText extends IPropertyChangeListener {
 	 * @return the FormText contains in this Event-B FormText
 	 */
 	public FormText getFormText();
+	
+	public void dispose();
 }

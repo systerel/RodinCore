@@ -82,6 +82,7 @@ public class ProofInformationPage extends Page implements
 	public void dispose() {
 		// Deregister with the user support.
 		editor.getUserSupport().removeStateChangedListeners(this);
+		formText.dispose();
 		super.dispose();
 	}
 
