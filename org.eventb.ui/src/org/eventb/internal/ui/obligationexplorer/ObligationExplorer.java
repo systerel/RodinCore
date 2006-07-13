@@ -184,10 +184,8 @@ public class ObligationExplorer extends ViewPart implements
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
 								int confidence = tree.getConfidence();
-								
-								
-								if (confidence <= IProofRule.CONFIDENCE_PENDING) 
-								{
+
+								if (confidence <= IProofRule.CONFIDENCE_PENDING) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_PENDING_BROKEN);
@@ -195,8 +193,7 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_PENDING);
 								}
-								if (confidence <= IProofRule.CONFIDENCE_REVIEWED) 
-								{
+								if (confidence <= IProofRule.CONFIDENCE_REVIEWED) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_REVIEWED_BROKEN);
@@ -204,8 +201,7 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_REVIEWED);
 								}
-								if  (confidence <= IProofRule.CONFIDENCE_DISCHARGED) 
-								{
+								if (confidence <= IProofRule.CONFIDENCE_DISCHARGED) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_DISCHARGED_BROKEN);
@@ -214,22 +210,22 @@ public class ObligationExplorer extends ViewPart implements
 												.get(EventBImage.IMG_DISCHARGED);
 								}
 								return registry.get(EventBImage.IMG_DEFAULT);
-//								if (tree.isDischarged()) {
-//									if (prSequent.isProofBroken())
-//										return registry
-//												.get(EventBImage.IMG_DISCHARGED_BROKEN);
-//									else
-//										return registry
-//												.get(EventBImage.IMG_DISCHARGED);
-//								} else {
-//									if (prSequent.isProofBroken())
-//										return registry
-//												.get(EventBImage.IMG_PENDING_BROKEN);
-//									else
-//										return registry
-//												.get(EventBImage.IMG_PENDING);
-//
-//								}
+								// if (tree.isDischarged()) {
+								// if (prSequent.isProofBroken())
+								// return registry
+								// .get(EventBImage.IMG_DISCHARGED_BROKEN);
+								// else
+								// return registry
+								// .get(EventBImage.IMG_DISCHARGED);
+								// } else {
+								// if (prSequent.isProofBroken())
+								// return registry
+								// .get(EventBImage.IMG_PENDING_BROKEN);
+								// else
+								// return registry
+								// .get(EventBImage.IMG_PENDING);
+								//
+								// }
 							}
 						}
 					}
@@ -462,54 +458,51 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = false;
 	}
 
-	public void USManagerChanged(UserSupport userSupport, int status) {
-		UIUtils.debugObligationExplorer("Obligation Explorer: " + userSupport
-				+ " : " + status);
-		if (status == UserSupportManager.ADDED) {
-			userSupport.addStateChangedListeners(this);
-		} if (status == UserSupportManager.REMOVED) {
-			userSupport.removeStateChangedListeners(this);
-		}
-		viewer.refresh(userSupport.getInput());
+	public void USManagerChanged(final UserSupport userSupport, final int status) {
+		Display display = viewer.getControl().getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				UIUtils.debugObligationExplorer("Obligation Explorer: "
+						+ userSupport + " : " + status);
+				if (status == UserSupportManager.ADDED) {
+					userSupport
+							.addStateChangedListeners(ObligationExplorer.this);
+				}
+				if (status == UserSupportManager.REMOVED) {
+					userSupport
+							.removeStateChangedListeners(ObligationExplorer.this);
+				}
+				viewer.refresh(userSupport.getInput());
+			}
+		});
 	}
 
-	public void proofStateChanged(IProofStateDelta delta) {
-		UIUtils.debugObligationExplorer("Obligation Exprlorer: Proof Changed "
-				+ delta);
-		final ProofState ps = delta.getNewProofState();
+	public void proofStateChanged(final IProofStateDelta delta) {
 		Display display = viewer.getControl().getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				UIUtils
+						.debugObligationExplorer("Obligation Exprlorer: Proof Changed "
+								+ delta);
+				final ProofState ps = delta.getNewProofState();
 
-		final UserSupport userSupport = delta.getSource();
-		if (userSupport.isOutOfDate()) {
-			display.syncExec(new Runnable() {
-				public void run() {
+				final UserSupport userSupport = delta.getSource();
+				if (userSupport.isOutOfDate()) {
 					viewer.refresh(userSupport.getInput(), true);
+					return;
 				}
-			});
-			return;
-		}
-		if (ps != null) {
-			display.syncExec(new Runnable() {
-				public void run() {
+				if (ps != null) {
 					externalSetSelection(ps.getPRSequent());
-				}
-			});
-
-		} else {
-			IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-			if (proofTreeDelta != null) {
-				ProofState state = userSupport.getCurrentPO();
-				final IPRSequent prSequent = state.getPRSequent();
-				display.syncExec(new Runnable() {
-
-					public void run() {
+				} else {
+					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
+					if (proofTreeDelta != null) {
+						ProofState state = userSupport.getCurrentPO();
+						final IPRSequent prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
 					}
-
-				});
+				}
 			}
-		}
-
+		});
 	}
 
 	@Override
