@@ -54,7 +54,7 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
-import org.eventb.core.prover.IProofRule;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
@@ -125,12 +125,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				IProofTreeNode pt = (IProofTreeNode) element;
 				if (pt.isOpen())
 					return registry.get(EventBImage.IMG_PENDING);
-				if (!pt.isDischarged())
+				if (!pt.isClosed())
 					return registry.get(EventBImage.IMG_APPLIED);
 				int confidence = pt.getConfidence();
-				if (confidence <= IProofRule.CONFIDENCE_REVIEWED)
+				if (confidence <= IConfidence.REVIEWED_MAX)
 					return registry.get(EventBImage.IMG_REVIEWED);
-				if (confidence <= IProofRule.CONFIDENCE_DISCHARGED)
+				if (confidence <= IConfidence.DISCHARGED_MAX)
 					return registry.get(EventBImage.IMG_DISCHARGED);
 				return registry.get(EventBImage.IMG_DEFAULT);
 			}
@@ -417,7 +417,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void dispose() {
-		userSupport.removeStateChangedListeners(this);
+		// comments.dispose();
 		super.dispose();
 	}
 

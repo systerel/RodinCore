@@ -160,7 +160,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.norm().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -195,7 +195,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.conjI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -232,7 +232,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.hyp().apply(proofTree);
 						ProofTreeUIActionGroup.this.proofTreeUI
 								.refresh(proofTree);
@@ -267,7 +267,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.allI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -303,7 +303,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.impI().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node
@@ -339,7 +339,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					if (!proofTree.isDischarged()) {
+					if (!proofTree.isClosed()) {
 						Tactics.trivial().apply(proofTree);
 						viewer.refresh(proofTree);
 						// Expand the node

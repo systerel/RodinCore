@@ -47,7 +47,7 @@ import org.eventb.core.pm.IUSManagerListener;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
-import org.eventb.core.prover.IProofRule;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.internal.ui.EventBImage;
@@ -184,8 +184,10 @@ public class ObligationExplorer extends ViewPart implements
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
 								int confidence = tree.getConfidence();
-
-								if (confidence <= IProofRule.CONFIDENCE_PENDING) {
+								
+								
+								if (confidence == IConfidence.PENDING) 
+								{
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_PENDING_BROKEN);
@@ -193,7 +195,8 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_PENDING);
 								}
-								if (confidence <= IProofRule.CONFIDENCE_REVIEWED) {
+								if (confidence <= IConfidence.REVIEWED_MAX) 
+								{
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_REVIEWED_BROKEN);
@@ -201,7 +204,8 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_REVIEWED);
 								}
-								if (confidence <= IProofRule.CONFIDENCE_DISCHARGED) {
+								if  (confidence <= IConfidence.DISCHARGED_MAX) 
+								{
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_DISCHARGED_BROKEN);
@@ -210,22 +214,22 @@ public class ObligationExplorer extends ViewPart implements
 												.get(EventBImage.IMG_DISCHARGED);
 								}
 								return registry.get(EventBImage.IMG_DEFAULT);
-								// if (tree.isDischarged()) {
-								// if (prSequent.isProofBroken())
-								// return registry
-								// .get(EventBImage.IMG_DISCHARGED_BROKEN);
-								// else
-								// return registry
-								// .get(EventBImage.IMG_DISCHARGED);
-								// } else {
-								// if (prSequent.isProofBroken())
-								// return registry
-								// .get(EventBImage.IMG_PENDING_BROKEN);
-								// else
-								// return registry
-								// .get(EventBImage.IMG_PENDING);
-								//
-								// }
+//								if (tree.isDischarged()) {
+//									if (prSequent.isProofBroken())
+//										return registry
+//												.get(EventBImage.IMG_DISCHARGED_BROKEN);
+//									else
+//										return registry
+//												.get(EventBImage.IMG_DISCHARGED);
+//								} else {
+//									if (prSequent.isProofBroken())
+//										return registry
+//												.get(EventBImage.IMG_PENDING_BROKEN);
+//									else
+//										return registry
+//												.get(EventBImage.IMG_PENDING);
+//
+//								}
 							}
 						}
 					}

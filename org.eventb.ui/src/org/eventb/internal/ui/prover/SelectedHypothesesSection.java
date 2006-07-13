@@ -88,7 +88,7 @@ public class SelectedHypothesesSection extends HypothesesSection {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) obj;
-				if (!proofTree.isDischarged()) {
+				if (!proofTree.isClosed()) {
 					// ITactic t =
 					// Tactics.mngHyp(HypothesesManagement.ActionType.DESELECT,
 					// deselected);
