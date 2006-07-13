@@ -156,7 +156,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		handleDown.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
 
-		// Handle the down action.
+		// Handle Show Abstraction action.
 		showAbstraction = new Action() {
 			public void run() {
 				IStructuredSelection ssel = (IStructuredSelection) viewer

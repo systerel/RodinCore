@@ -22,9 +22,20 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -60,6 +71,8 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 	protected Action handleUp;
 
 	protected Action handleDown;
+
+	protected Action showAbstraction;
 
 	/**
 	 * Constructor: Create the actions.
@@ -184,6 +197,90 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		handleDown.setToolTipText("Move the element down");
 		handleDown.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
+
+		// Handle ShowAbstraction action.
+		showAbstraction = new Action() {
+			public void run() {
+				IStructuredSelection ssel = (IStructuredSelection) viewer
+						.getSelection();
+				if (ssel.size() == 1) {
+					Object obj = ssel.getFirstElement();
+					IInternalElement event = TreeSupports.getEvent(obj);
+
+					IMachineFile file = (IMachineFile) editor.getRodinInput();
+					try {
+						IRodinElement[] refines = file
+								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+						if (refines.length == 1) {
+							IRodinElement refine = refines[0];
+							String name = ((IInternalElement) refine)
+									.getContents();
+							IRodinProject prj = file.getRodinProject();
+							IMachineFile refinedFile = (IMachineFile) prj
+									.getRodinFile(EventBPlugin
+											.getMachineFileName(name));
+							UIUtils.debugEventBEditor("Refined: "
+									+ refinedFile.getElementName());
+							IInternalElement abs_evt = refinedFile
+									.getInternalElement(event.getElementType(),
+											event.getElementName());
+							UIUtils.linkToEventBEditor(abs_evt);
+
+							// if (refinedFile.exists()) {
+							// IWorkbenchPage activePage = EventBUIPlugin
+							// .getActivePage();
+							// IEditorReference[] editors = activePage
+							// .getEditorReferences();
+							//
+							// for (IEditorReference editor : editors) {
+							// IEditorPart part = editor.getEditor(true);
+							// if (activePage.isPartVisible(part)) {
+							// if (part instanceof EventBMachineEditor) {
+							// activePage.openEditor();
+							// }
+							// }
+							//								
+							// IRodinFile rodinInput = ((EventBMachineEditor)
+							// part)
+							// .getRodinInput();
+							// UIUtils.debugEventBEditor("Trying: "
+							// + rodinInput.getElementName());
+							// if (rodinInput.equals(refinedFile)) {
+							// UIUtils.debugEventBEditor("Focus");
+							// if (activePage.isPartVisible(part)) {
+							// IStructuredSelection ssel =
+							// (IStructuredSelection) event
+							// .getSelection();
+							// if (ssel.size() == 1) {
+							// IInternalElement obj = (IInternalElement) ssel
+							// .getFirstElement();
+							// IInternalElement element = refinedFile
+							// .getInternalElement(
+							// obj
+							// .getElementType(),
+							// obj
+							// .getElementName());
+							// if (element != null)
+							// ((EventBEditor) part)
+							// .setSelection(element);
+							// }
+							// }
+							// }
+							// }
+							// }
+							// }
+						}
+					} catch (RodinDBException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		};
+		showAbstraction.setText("Abstraction");
+		showAbstraction.setToolTipText("Show the corresponding abstract event");
+		showAbstraction.setImageDescriptor(new EventBImageDescriptor(
+				EventBImage.IMG_REFINES));
 	}
 
 	/**
@@ -206,15 +303,36 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 					menu.add(addAction);
 				}
 			}
-		}
-		menu.add(new Separator());
-		menu.add(addVariable);
-		menu.add(addInvariant);
-		menu.add(addTheorem);
-		menu.add(addEvent);
-		if (!sel.isEmpty()) {
+
 			menu.add(new Separator());
-			menu.add(delete);
+			menu.add(addVariable);
+			menu.add(addInvariant);
+			menu.add(addTheorem);
+			menu.add(addEvent);
+			if (ssel.size() == 1) {
+				Object obj = ssel.getFirstElement();
+				if ((obj instanceof IEvent) || (obj instanceof IGuard)
+						|| (obj instanceof IAction)
+						|| (obj instanceof IVariable)
+						&& ((IVariable) obj).getParent() instanceof IEvent) {
+
+					IRodinElement[] refines;
+					IMachineFile file = (IMachineFile) editor.getRodinInput();
+					try {
+						refines = file
+								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+						if (refines.length == 1)
+							menu.add(showAbstraction);
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			if (!sel.isEmpty()) {
+				menu.add(new Separator());
+				menu.add(delete);
+			}
 		}
 		// Other plug-ins can contribute there actions here
 		// These actions are added by extending the extension point
