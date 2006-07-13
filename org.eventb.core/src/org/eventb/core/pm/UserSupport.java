@@ -497,9 +497,12 @@ public class UserSupport implements IElementChangedListener,
 		return outOfDate;
 	}
 
+	
+	// Should be used by the UserSupportManager only
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
 		if (currentPS != null)
 			currentPS.getProofTree().removeChangeListener(this);
 	}
+	
 }

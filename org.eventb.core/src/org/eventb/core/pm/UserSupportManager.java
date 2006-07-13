@@ -38,6 +38,7 @@ public class UserSupportManager {
 	}
 
 	public static void disposeUserSupport(UserSupport userSupport) {
+		userSupport.dispose();
 		userSupports.remove(userSupport);
 		notifyUSManagerListener(userSupport, REMOVED);
 	}

@@ -163,7 +163,6 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	public void dispose() {
 		UserSupportManager.disposeUserSupport(userSupport);
-		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
 		super.dispose();
