@@ -146,7 +146,7 @@ public class ObligationExplorerContentProvider implements
 	 *            <code>true</code> if the label need to be updated as well
 	 */
 	private void postRefresh(final List toRefresh, final boolean updateLabels) {
-		UIUtils.asyncPostRunnable(new Runnable() {
+		UIUtils.syncPostRunnable(new Runnable() {
 			public void run() {
 				TreeViewer viewer = explorer.getTreeViewer();
 				Control ctrl = viewer.getControl();

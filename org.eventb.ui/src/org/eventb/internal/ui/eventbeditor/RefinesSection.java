@@ -378,15 +378,16 @@ public class RefinesSection extends SectionPart implements
 	//
 	// return;
 	// }
-	public void elementChanged(ElementChangedEvent event) {
-		UIUtils.debugEventBEditor("Refine Section: Element change");
-		IRodinElementDelta delta = event.getDelta();
-		UIUtils.debugEventBEditor("Refines Section - Process Delta: " + delta);
-		processDelta(delta);
+	public void elementChanged(final ElementChangedEvent event) {
 		Display display = this.getManagedForm().getForm().getDisplay();
 		display.syncExec(new Runnable() {
 
 			public void run() {
+				UIUtils.debugEventBEditor("Refine Section: Element change");
+				IRodinElementDelta delta = event.getDelta();
+				UIUtils.debugEventBEditor("Refines Section - Process Delta: "
+						+ delta);
+				processDelta(delta);
 				updateCombo();
 			}
 
