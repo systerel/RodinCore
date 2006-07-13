@@ -304,23 +304,22 @@ public class ProofInformationPage extends Page implements
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void proofStateChanged(IProofStateDelta delta) {
-		ProofState ps = delta.getNewProofState();
-		if (ps != null) {
-			final IPRSequent prSequent = ps.getPRSequent();
-			Display display = EventBUIPlugin.getDefault().getWorkbench()
-					.getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
+	public void proofStateChanged(final IProofStateDelta delta) {
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				ProofState ps = delta.getNewProofState();
+				if (ps != null) {
+					IPRSequent prSequent = ps.getPRSequent();
 					if (prSequent.exists()) {
 						scrolledForm.setText(prSequent.getName());
 						scrolledForm.reflow(true);
 						setFormText(prSequent);
 					}
 				}
-			});
-		}
+			}
+		});
 
 	}
-
 }

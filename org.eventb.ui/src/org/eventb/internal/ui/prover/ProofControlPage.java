@@ -251,13 +251,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		dropdownItems = new HashSet<GlobalTacticDropdownToolItem>();
 
 		// Create the dropdown first
-		GlobalTacticDropdownUI[] dropdowns = ExtensionLoader.getGlobalDropdowns();
+		GlobalTacticDropdownUI[] dropdowns = ExtensionLoader
+				.getGlobalDropdowns();
 		GlobalTacticDropdownToolItem dropdownItem = null;
 		for (GlobalTacticDropdownUI dropdown : dropdowns) {
 
 			ToolItem item = createToolItem(buttonBar, SWT.DROP_DOWN, "", null,
 					null, "");
-			dropdownItem = new GlobalTacticDropdownToolItem(item, dropdown.getID()) {
+			dropdownItem = new GlobalTacticDropdownToolItem(item, dropdown
+					.getID()) {
 
 				@Override
 				public void apply(IGlobalTactic tactic) {
@@ -354,8 +356,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	private void addDropdown(String dropdown, GlobalTacticUI tactic) {
-		for (Iterator<GlobalTacticDropdownToolItem> it = dropdownItems.iterator(); it
-				.hasNext();) {
+		for (Iterator<GlobalTacticDropdownToolItem> it = dropdownItems
+				.iterator(); it.hasNext();) {
 			GlobalTacticDropdownToolItem curr = it.next();
 			if (curr.getID().equals(dropdown)) {
 				curr.addTactic(tactic);
@@ -513,38 +515,31 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
-	public void proofStateChanged(IProofStateDelta delta) {
-		
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-		.getDisplay();
-		final ProofState ps = delta.getNewProofState();
-		IProofTreeNode node = null;
-		if (ps != null) {
-			node = ps.getCurrentNode();
-		}
-		else {
-			node = delta.getNewProofTreeNode();
-		}
-		if (node != null) {
-			final IProofTreeNode newNode = node;
-			display.syncExec(new Runnable() {
-				public void run() {
-					updateToolItems(newNode);
-				}	
-			});				
-		}
-		
-//		final ProofControlPage page = this;
+	public void proofStateChanged(final IProofStateDelta delta) {
 
-		final Object information = delta.getInformation();
+		Display display = EventBUIPlugin.getDefault().getWorkbench()
+				.getDisplay();
+
 		display.syncExec(new Runnable() {
 			public void run() {
+				ProofState ps = delta.getNewProofState();
+				IProofTreeNode node = null;
+				if (ps != null) {
+					node = ps.getCurrentNode();
+				} else {
+					node = delta.getNewProofTreeNode();
+				}
+				if (node != null) {
+					final IProofTreeNode newNode = node;
+					updateToolItems(newNode);
+				}
+				Object information = delta.getInformation();
 				if (information != null)
 					setFormTextInformation(information.toString());
 				else
 					setFormTextInformation("");
 				scrolledForm.reflow(true);
-//				page.setFocus();
+
 			}
 		});
 

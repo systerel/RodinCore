@@ -81,16 +81,12 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		// cached = new HashSet<Hypothesis>();
 		// searched = new HashSet<Hypothesis>();
 	}
-	
-	
 
 	@Override
 	public void dispose() {
 		userSupport.removeStateChangedListeners(this);
 		super.dispose();
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -172,7 +168,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
 				Hypothesis hyp = i.next();
-				if (node != null) 
+				if (node != null)
 					if (!node.getSequent().hypotheses().contains(hyp))
 						continue;
 				if (!selected.contains(hyp))
@@ -182,7 +178,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
 					.hasNext();) {
 				Hypothesis hyp = i.next();
-				if (node != null) 
+				if (node != null)
 					if (!node.getSequent().hypotheses().contains(hyp))
 						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
@@ -199,42 +195,30 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		Display display = this.getEditorSite().getWorkbenchWindow()
 				.getWorkbench().getDisplay();
 
-		final ProofState ps = delta.getNewProofState();
-		boolean refresh = false;
-		if (ps != null) { // Reload everything
-			refresh = true;
-			display.syncExec(new Runnable() {
-				public void run() {
+		display.syncExec(new Runnable() {
+			public void run() {
+				ProofState ps = delta.getNewProofState();
+				boolean refresh = false;
+				if (ps != null) { // Reload everything
+					refresh = true;
 					goalSection.setGoal(ps.getCurrentNode());
-				}
-			});
-		} else {
-			final IProofTreeNode node = delta.getNewProofTreeNode();
-			if (node != null) {
-				refresh = true;
-				display.syncExec(new Runnable() {
-					public void run() {
+				} else {
+					IProofTreeNode node = delta.getNewProofTreeNode();
+					if (node != null) {
+						refresh = true;
 						goalSection.setGoal(node);
-					}
-				});
-			} else {
-				display.syncExec(new Runnable() {
-					public void run() {
+					} else {
 						if (delta.getNewCache() || delta.getNewSearch()) {
 							initCacheAndSearch();
 						}
 					}
-				});
-			}
-		}
+				}
 
-		if (refresh) {
-			display.syncExec(new Runnable() {
-				public void run() {
+				if (refresh) {
 					initHypothesisSections();
 				}
-			});
-		}
+			}
+		});
 	}
 
 	private void initCacheAndSearch() {
@@ -251,18 +235,18 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
 				Hypothesis hyp = i.next();
-				if (node != null) 
+				if (node != null)
 					if (!node.getSequent().hypotheses().contains(hyp))
 						continue;
 				if (!selected.contains(hyp))
 					cached.add(hyp);
 			}
-			
+
 			Collection<Hypothesis> currentSearched = ps.getSearched();
 			for (Iterator<Hypothesis> i = currentSearched.iterator(); i
 					.hasNext();) {
 				Hypothesis hyp = i.next();
-				if (node != null) 
+				if (node != null)
 					if (!node.getSequent().hypotheses().contains(hyp))
 						continue;
 				if (!selected.contains(hyp) && !cached.contains(hyp))
