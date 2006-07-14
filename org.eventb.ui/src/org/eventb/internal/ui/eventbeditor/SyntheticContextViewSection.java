@@ -41,8 +41,7 @@ import org.rodinp.core.IRodinElement;
  *         An implementation of the Event-B Tree part with buttons for
  *         displaying and editting elements of Context construct.
  */
-public class SyntheticContextViewSection extends EventBTreePartWithButtons
-		implements IStatusChangedListener {
+public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 
 	// Labels correspond to the above buttons.
 	private static String[] buttonLabels = {};
@@ -310,7 +309,8 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (SyntheticContextViewSection.this.getViewer().getControl().isDisposed())
+				if (SyntheticContextViewSection.this.getViewer().getControl()
+						.isDisposed())
 					return;
 				((EventBEditableTreeViewer) SyntheticContextViewSection.this
 						.getViewer()).elementChanged(event);
@@ -348,16 +348,6 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new SyntheticEditableTreeViewer(editor, parent, SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
-	public void dispose() {
-		editor.removeStatusListener(this);
-		super.dispose();
 	}
 
 	/*

@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
@@ -144,9 +145,16 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
 	 */
-	public void statusChanged(IRodinElement element) {
-		((EventBEditableTreeViewer) this.getViewer()).statusChanged(element);
-		updateButtons();
+	public void statusChanged(final IRodinElement element) {
+		Display display = this.getViewer().getControl().getDisplay();
+		display.syncExec(new Runnable() {
+
+			public void run() {
+				((EventBEditableTreeViewer) EventBTreePartWithButtons.this.getViewer()).statusChanged(element);
+				updateButtons();
+			}
+			
+		});
 	}
 
 	/**
