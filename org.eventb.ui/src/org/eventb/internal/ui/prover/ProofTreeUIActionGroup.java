@@ -28,6 +28,7 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -42,6 +43,10 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	private ProofTreeUIPage proofTreeUI;
 
 	// Different actions.
+	private Action copy;
+
+	private Action paste;
+
 	protected Action prevPOAction;
 
 	protected Action nextPOAction;
@@ -74,6 +79,50 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	public ProofTreeUIActionGroup(ProofTreeUIPage proofTreeUI) {
 		this.proofTreeUI = proofTreeUI;
 		drillDownAdapter = new DrillDownAdapter(proofTreeUI.getViewer());
+
+		copy = new Action() {
+			public void run() {
+				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
+						.getSelection();
+				if (sel instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ssel.size() == 1) {
+						ProofTreeUI.buffer = ssel.getFirstElement();
+					}
+				}
+			}
+		};
+		copy.setText("&Copy");
+		copy.setToolTipText("Copy the proof tree");
+		copy.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
+
+		paste = new Action() {
+			public void run() {
+				ISelection sel = ProofTreeUIActionGroup.this.proofTreeUI
+						.getSelection();
+				if (sel instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ssel.size() == 1
+							&& ssel.getFirstElement() instanceof IProofTreeNode) {
+
+						IProofTreeNode node = (IProofTreeNode) ssel
+								.getFirstElement();
+						if (ProofTreeUI.buffer instanceof IProofTreeNode) {
+							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
+							// TODO Apply the tactics here (Should be through the userSupport
+							// userSupport.applyTactic(Tactic(copyNode));
+							UIUtils.debugProverUI("Node: " + node);
+							UIUtils.debugProverUI("Copy: " + copyNode);
+						}
+					}
+				}
+			}
+		};
+		paste.setText("&Paste");
+		paste.setToolTipText("Paste the proof tree");
+		paste.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT));
 
 		filterAction = new Action() {
 			public void run() {
@@ -382,13 +431,11 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 
 				// TODO Prechecking for displaying here
 				if (!pt.isOpen()) {
+					menu.add(copy);
+					menu.add(new Separator());
 					menu.add(pruneAction);
 				} else {
-					menu.add(conjIAction);
-					menu.add(hypAction);
-					menu.add(allIAction);
-					menu.add(impIAction);
-					menu.add(trivialAction);
+					if (ProofTreeUI.buffer != null) menu.add(paste);					
 					menu.add(new Separator());
 				}
 			} else {

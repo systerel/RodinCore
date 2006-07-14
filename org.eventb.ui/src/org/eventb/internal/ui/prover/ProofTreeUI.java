@@ -43,6 +43,8 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	// A default text when not available (depends on the current editor).
 	private String defaultText = "A proof tree is not available";
 
+	public static Object buffer;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
