@@ -216,13 +216,16 @@ public class SimpleProverSequent implements IProverSequent{
 	public SimpleProverSequent selectHypotheses(Collection<Hypothesis> toSelect){
 		// assert hypotheses().containsAll(toSelect);
 		Set<Hypothesis> newSelectedHypotheses = new HashSet<Hypothesis>(this.selectedHypotheses);
+		Set<Hypothesis> newHiddenHypotheses = new HashSet<Hypothesis>(this.hiddenHypotheses);
+		
 		// newSelectedHypotheses.addAll(toSelect);
 		for (Hypothesis h:toSelect){
 			if (hypotheses().contains(h)){
 				newSelectedHypotheses.add(h);
 			}
 		}
-		return new SimpleProverSequent(this,null,null,null,null,newSelectedHypotheses,null);
+		newHiddenHypotheses.removeAll(toSelect);
+		return new SimpleProverSequent(this,null,null,null,newHiddenHypotheses,newSelectedHypotheses,null);
 	}
 	
 	public SimpleProverSequent deselectHypotheses(Set<Hypothesis> toDeselect){

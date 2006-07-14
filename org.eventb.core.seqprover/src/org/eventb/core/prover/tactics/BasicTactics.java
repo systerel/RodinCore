@@ -1,5 +1,6 @@
 package org.eventb.core.prover.tactics;
 
+import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
@@ -44,6 +45,10 @@ public class BasicTactics {
 	
 	public static ITactic ruleTac(ProofRule rule){
 		return new RuleTac(rule);
+	}
+	
+	public static ITactic pasteTac(IProofTreeNode toPaste){
+		return new PasteTac(toPaste);
 	}
 	
 	private static class Prune implements ITactic {
@@ -110,6 +115,38 @@ public class BasicTactics {
 			ProofRule reasonerStep = new ReasoningStep(reasonerOutput);
 			ITactic temp = new RuleTac(reasonerStep);
 			return temp.apply(pt);
+		}
+	}
+	
+	private static class PasteTac implements ITactic {
+		
+		private final IProofTreeNode toPaste;
+		
+		public PasteTac(IProofTreeNode proofTreeNode)
+		{
+			this.toPaste = proofTreeNode;
+		}
+		
+		public Object apply(IProofTreeNode pt){
+			if (!pt.isOpen()) return "Root already has children";
+			ProofRule rule = (ProofRule)toPaste.getRule();
+			if (rule == null) return null;
+			Boolean successfull = pt.applyRule(rule);
+			if (successfull)
+			{
+				IProofTreeNode[] ptChildren = pt.getChildren();
+				IProofTreeNode[] toPasteChildren = toPaste.getChildren();
+				if (ptChildren.length != toPasteChildren.length) 
+					return "Paste unsuccessful";
+				Object error = null;
+				for (int i = 0; i < toPasteChildren.length; i++) {
+					if
+					(pasteTac(toPasteChildren[i]).apply(ptChildren[i]) != null)
+						error = "Paste unsuccessful";
+				}
+				return error;
+			}
+			else return "Paste unsuccessful";
 		}
 	}
 		

@@ -27,6 +27,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.tactics.BasicTactics;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
@@ -40,7 +41,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofTreeUIActionGroup extends ActionGroup {
 
 	// The associated Proof Tree UI page.
-	private ProofTreeUIPage proofTreeUI;
+	private final ProofTreeUIPage proofTreeUI;
 
 	// Different actions.
 	private Action copy;
@@ -76,7 +77,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 	 * @param proofTreeUI
 	 *            the associated Proof Tree UI page.
 	 */
-	public ProofTreeUIActionGroup(ProofTreeUIPage proofTreeUI) {
+	public ProofTreeUIActionGroup(final ProofTreeUIPage proofTreeUI) {
 		this.proofTreeUI = proofTreeUI;
 		drillDownAdapter = new DrillDownAdapter(proofTreeUI.getViewer());
 
@@ -88,6 +89,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 					IStructuredSelection ssel = (IStructuredSelection) sel;
 					if (ssel.size() == 1) {
 						ProofTreeUI.buffer = ssel.getFirstElement();
+						System.out.println("Copied : " + ProofTreeUI.buffer);
 					}
 				}
 			}
@@ -112,6 +114,12 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
 							// TODO Apply the tactics here (Should be through the userSupport
 							// userSupport.applyTactic(Tactic(copyNode));
+							try {
+								proofTreeUI.getUserSupport().applyTactic(BasicTactics.pasteTac(copyNode));
+							} catch (RodinDBException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							UIUtils.debugProverUI("Node: " + node);
 							UIUtils.debugProverUI("Copy: " + copyNode);
 						}
