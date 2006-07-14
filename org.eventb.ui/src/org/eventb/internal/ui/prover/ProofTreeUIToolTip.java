@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 
 public class ProofTreeUIToolTip {
 	private Shell parentShell;
@@ -91,11 +93,11 @@ public class ProofTreeUIToolTip {
 					}
 					if (tipShell.isVisible()) {
 						tipShell.setVisible(false);
-						final Display display = parentShell.getDisplay();
+						Display display = parentShell.getDisplay();
 						helpShell = new Shell(parentShell, SWT.NONE);
 						helpShell.setLayout(new FillLayout());
 						helpShell.setSize(300, 100);
-						final Text text = new Text(helpShell, SWT.MULTI
+						Text text = new Text(helpShell, SWT.MULTI
 								| SWT.WRAP | SWT.V_SCROLL);
 
 						text.setText(node.getComment());
@@ -108,7 +110,7 @@ public class ProofTreeUIToolTip {
 								GridData.FILL_HORIZONTAL
 										| GridData.VERTICAL_ALIGN_CENTER));
 
-						TextListener listener = new TextListener(text, node);
+						TextListener listener = new TextListener(new EventBMath(text), node);
 						text.addListener(SWT.FocusOut, listener);
 						text.addListener(SWT.Traverse, listener);
 						text.addModifyListener(listener);
@@ -166,7 +168,7 @@ public class ProofTreeUIToolTip {
 
 		private IProofTreeNode node;
 
-		private Text text;
+		private IEventBInputText text;
 
 		String original;
 
@@ -190,16 +192,16 @@ public class ProofTreeUIToolTip {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				// TODO Auto-generated method stub
 				if (lastModify == time) {
-					if (!text.isDisposed()) {
-						userSupport.setComment(text.getText(), node);
+					Text textWidget = text.getTextWidget();
+					if (!textWidget.isDisposed()) {
+						userSupport.setComment(textWidget.getText(), node);
 					}
 				}
 			}
 		}
 
-		public TextListener(Text text, IProofTreeNode node) {
+		public TextListener(IEventBInputText text, IProofTreeNode node) {
 			this.text = text;
 			this.node = node;
 			original = node.getComment();
@@ -209,13 +211,15 @@ public class ProofTreeUIToolTip {
 			// TODO Auto-generated method stub
 			switch (event.type) {
 			case SWT.FocusOut:
-				userSupport.setComment(text.getText(), node);
+				userSupport.setComment(text.getTextWidget().getText(), node);
+				text.dispose();
 				helpShell.dispose();
 				break;
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
 					userSupport.setComment(original, node);
+					text.dispose();
 					helpShell.dispose();
 					break;
 				}
@@ -224,7 +228,7 @@ public class ProofTreeUIToolTip {
 
 		public void modifyText(ModifyEvent e) {
 			lastModify = e.time;
-			text.getDisplay().timerExec(1000, new TimeRunnable(e.time));
+			text.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
 		}
 	}
 
