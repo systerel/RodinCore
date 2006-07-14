@@ -270,13 +270,14 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 						InputDialog dialog = new InputDialog(explorer.getSite()
 								.getShell(), "New REFINES Clause",
 								"Please enter the name of the new machine",
-								"m0", new MachineInputValidator(prj));
+								"m0", new RodinFileInputValidator(prj));
 
 						dialog.open();
 
 						final String abstractMachineName = EventBPlugin
 								.getComponentName(machine.getElementName());
 						final String bareName = dialog.getValue();
+						if (bareName == null) return;
 
 						try {
 							RodinCore.run(new IWorkspaceRunnable() {
@@ -347,14 +348,14 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 						InputDialog dialog = new InputDialog(explorer.getSite()
 								.getShell(), "New EXTENDS Clause",
 								"Please enter the name of the new context",
-								"c0", new ContextInputValidator(prj));
+								"c0", new RodinFileInputValidator(prj));
 
 						dialog.open();
 
 						final String abstractContextName = EventBPlugin
 								.getComponentName(context.getElementName());
 						final String bareName = dialog.getValue();
-
+						if (bareName == null) return;
 						try {
 							RodinCore.run(new IWorkspaceRunnable() {
 
@@ -421,11 +422,11 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		}
 	}
 
-	private class MachineInputValidator implements IInputValidator {
+	private class RodinFileInputValidator implements IInputValidator {
 
 		IRodinProject prj;
 
-		MachineInputValidator(IRodinProject prj) {
+		RodinFileInputValidator(IRodinProject prj) {
 			this.prj = prj;
 		}
 
@@ -435,27 +436,11 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 			IRodinFile file = prj.getRodinFile(EventBPlugin
 					.getMachineFileName(newText));
 			if (file.exists())
-				return "Machine " + newText + " already exists.";
-			return null;
-		}
-
-	}
-
-	private class ContextInputValidator implements IInputValidator {
-
-		IRodinProject prj;
-
-		ContextInputValidator(IRodinProject prj) {
-			this.prj = prj;
-		}
-
-		public String isValid(String newText) {
-			if (newText.equals(""))
-				return "Name must not be empty.";
-			IRodinFile file = prj.getRodinFile(EventBPlugin
+				return "File name " + newText + " already exists.";
+			file = prj.getRodinFile(EventBPlugin
 					.getContextFileName(newText));
 			if (file.exists())
-				return "Context " + newText + " already exists.";
+				return "File name " + newText + " already exists.";
 			return null;
 		}
 
