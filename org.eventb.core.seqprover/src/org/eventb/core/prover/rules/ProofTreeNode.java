@@ -336,6 +336,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	private void setClosed() {
 		this.closed = true;
 		this.confidence = this.rule.getRuleConfidence();
+		// System.out.println(Lib.isValid(this.confidence));
+		// System.out.println(! Lib.isPending(this.confidence));
 		assert (Lib.isValid(this.confidence) && (! Lib.isPending(this.confidence)));
 		confidenceChanged();
 		ProofTreeNode node = this.parent;

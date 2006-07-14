@@ -293,10 +293,11 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
-		formText.dispose();
+		if (formText != null) formText.dispose();
 		if (form != null) form.dispose();
-		for (IEventBInputText text : textBoxes) text.dispose();
-		hypothesisText.dispose();
+		if (textBoxes != null) 
+			for (IEventBInputText text : textBoxes) text.dispose();
+		if (hypothesisText != null) hypothesisText.dispose();
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();

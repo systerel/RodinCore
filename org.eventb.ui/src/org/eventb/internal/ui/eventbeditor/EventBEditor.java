@@ -257,7 +257,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 */
 	public EventBEditor() {
 		super();
-		RodinCore.addElementChangedListener(this);
+		
 		listeners = new HashSet<IElementChangedListener>();
 		newElements = new HashSet<IRodinElement>();
 		statusListeners = new HashSet<IStatusChangedListener>();
@@ -310,6 +310,7 @@ public abstract class EventBEditor extends FormEditor implements
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
+		RodinCore.addElementChangedListener(this);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		IRodinFile rodinFile = this.getRodinInput();
 

@@ -125,7 +125,7 @@ public class PRUtil {
 			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
 			
 			ReasonerOutputSucc reuseReasonerOutput = prReasoningStep.getReasonerOutput();
-			reuseReasonerOutput.display = reuseReasonerOutput.display + "*";
+			reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
 			Reasoner reasoner = reuseReasonerOutput.generatedBy;
 			// uninstalled reasoner
 			assert reasoner != null;

@@ -189,7 +189,7 @@ public abstract class HypothesesSection extends SectionPart {
 
 	@Override
 	public void dispose() {
-		formText.dispose();
+		if (formText != null) formText.dispose();
 		super.dispose();
 	}
 

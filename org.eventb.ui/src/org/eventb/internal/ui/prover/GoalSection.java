@@ -17,9 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -217,12 +220,14 @@ public class GoalSection extends SectionPart {
 	 * @param text
 	 *            the string to create the widget
 	 */
-	private void createSimpleText(String text) {
+	private void createSimpleText(String text, Color color) {
 		composite.setLayout(new GridLayout());
 		textInput = new EventBMath(toolkit.createText(composite,
 				text, SWT.READ_ONLY));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		textInput.getTextWidget().setLayoutData(gd);
+		Text textWidget = textInput.getTextWidget();
+		textWidget.setLayoutData(gd);
+		textWidget.setBackground(color);
 	}
 
 	/**
@@ -241,11 +246,14 @@ public class GoalSection extends SectionPart {
 
 		if (pt == null) {
 			clearFormText();
-			createSimpleText("No current goal");
+			Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+			createSimpleText("No current goal", color);
 			scrolledForm.reflow(true);
 		} else if (!pt.isOpen()) {
 			clearFormText();
-			createSimpleText("Tactic applied");
+			Predicate goal = pt.getSequent().goal();
+			Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+			createSimpleText(goal.toString(), color);
 			scrolledForm.reflow(true);
 		} else {
 			Predicate goal = pt.getSequent().goal();
@@ -294,7 +302,8 @@ public class GoalSection extends SectionPart {
 				text.getTextWidget().setLayoutData(gd);
 				scrolledForm.reflow(true);
 			} else {
-				createSimpleText(goal.toString());
+				Color color = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+				createSimpleText(goal.toString(), color);
 			}
 		}
 		scrolledForm.reflow(true);
@@ -335,9 +344,9 @@ public class GoalSection extends SectionPart {
 
 	@Override
 	public void dispose() {
-		formText.dispose();
+		if (formText != null) formText.dispose();
 		if (textInput != null) textInput.dispose();
-		for (IEventBInputText text : textBoxes) text.dispose();
+		if (textBoxes != null) for (IEventBInputText text : textBoxes) text.dispose();
 		super.dispose();
 	}
 

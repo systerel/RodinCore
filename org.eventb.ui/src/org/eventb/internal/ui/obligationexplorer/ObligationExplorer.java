@@ -149,7 +149,7 @@ public class ObligationExplorer extends ViewPart implements
 					for (ProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
 							if (proofState.isDirty())
-								return "> " + ((IPRSequent) obj).getName();
+								return "* " + ((IPRSequent) obj).getName();
 							else
 								return ((IPRSequent) obj).getName();
 						}

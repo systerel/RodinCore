@@ -552,8 +552,8 @@ public final class Lib {
 	
 	public static boolean isValid(int confidence){
 		return 
-		(confidence <= IConfidence.PENDING) && 
-		(confidence <= IConfidence.REVIEWED_MAX);	
+		(confidence >= IConfidence.PENDING) && 
+		(confidence <= IConfidence.DISCHARGED_MAX);	
 	}
 	
 	public static boolean isPending(int confidence){
