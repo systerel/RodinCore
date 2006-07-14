@@ -23,6 +23,7 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.rules.ProofRule;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -108,12 +109,12 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	}
 
 	/**
-	 * Checks that the given node is discharged, using all available methods.
+	 * Checks that the given node is closed, using all available methods.
 	 * 
 	 * @param node
 	 *            the node to test
 	 */
-	public void assertNodeDischarged(IProofTreeNode node) {
+	public void assertNodeClosed(IProofTreeNode node) {
 		// node.getChildren() is irrelevent
 		assertNull(node.getFirstOpenDescendant());
 		assertEmpty(node.getOpenDescendants());
@@ -121,6 +122,28 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		// node.hasChildren() is irrelevent
 		assertTrue(node.isClosed());
 		assertFalse(node.isOpen());
+	}
+	
+	/**
+	 * Checks that the given node is reviewed, using all available methods.
+	 * 
+	 * @param node
+	 *            the node to test
+	 */
+	public void assertNodeReviewed(IProofTreeNode node) {
+		assertNodeClosed(node);
+		assertTrue(Lib.isReviewed(node.getConfidence()));
+	}
+	
+	/**
+	 * Checks that the given node is discharged, using all available methods.
+	 * 
+	 * @param node
+	 *            the node to test
+	 */
+	public void assertNodeDischarged(IProofTreeNode node) {
+		assertNodeClosed(node);
+		assertTrue(Lib.isDischarged(node.getConfidence()));
 	}
 
 	/**

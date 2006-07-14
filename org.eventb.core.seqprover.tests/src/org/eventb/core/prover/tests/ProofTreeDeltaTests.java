@@ -21,7 +21,6 @@ import org.eventb.core.prover.tactics.Tactics;
  */
 public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
-	// RuleFactory rf = new RuleFactory();
 	
 	/**
 	 * Ensures that applying a rule to an open node fires a RULE & CHILDREN delta.
@@ -33,7 +32,6 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
 		startDeltas(tree);
 		Tactics.impI().apply(root);
-		// applyRule(root, rf.impI());
 		assertDeltas("⊤⇒⊤ [RULE|CHILDREN]");
 	}
 
@@ -47,7 +45,6 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 
 		startDeltas(tree);
 		Tactics.conjI().apply(root);
-		// root.applyRule((ProofRule) rf.conjI());
 		assertDeltas("");
 	}
 
@@ -59,7 +56,6 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
-		// applyRule(root, rf.impI());
 
 		startDeltas(tree);
 		root.pruneChildren();
@@ -74,11 +70,9 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
-		//applyRule(root, rf.impI());
 		assertEquals(1, root.getChildren().length);
 		IProofTreeNode imp = root.getChildren()[0];
 		Tactics.hyp().apply(imp);
-		// applyRule(imp, rf.hyp());
 
 		startDeltas(tree);
 		imp.pruneChildren();
@@ -96,13 +90,11 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTree tree = SequentProver.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
-		// applyRule(root, rf.impI());
 		assertEquals(1, root.getChildren().length);
 		IProofTreeNode imp = root.getChildren()[0];
 
 		startDeltas(tree);
 		Tactics.hyp().apply(imp);
-		// applyRule(imp, rf.hyp());
 		assertDeltas(
 				"⊤⇒⊤ [CONFIDENCE]\n" +
 				"  ⊤ [RULE|CHILDREN|CONFIDENCE]"
@@ -119,17 +111,14 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		// applyRule(root, rf.impI());
 		assertNotEmpty(root.getChildren());
 		IProofTreeNode imp = root.getChildren()[0];
 		Tactics.conjI().apply(imp);
-		// applyRule(imp, rf.conjI());
 		assertEquals(2, imp.getChildren().length);
 		IProofTreeNode left = imp.getChildren()[0];
 
 		startDeltas(tree);
 		Tactics.hyp().apply(left);
-		// applyRule(left, rf.hyp());
 		assertDeltas(
 				"⊤⇒⊤∧⊥ []\n" +
 				"  ⊤∧⊥ []\n" +
@@ -147,15 +136,12 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		// applyRule(root, rf.impI());
 		assertNotEmpty(root.getChildren());
 		IProofTreeNode imp = root.getChildren()[0];
 		Tactics.conjI().apply(imp);
-		// applyRule(imp, rf.conjI());
 		assertEquals(2, imp.getChildren().length);
 		IProofTreeNode left = imp.getChildren()[0];
 		Tactics.hyp().apply(left);
-		// applyRule(left, rf.hyp());
 
 		startDeltas(tree);
 		left.pruneChildren();
