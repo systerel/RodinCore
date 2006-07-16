@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +35,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -58,6 +60,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	private HypothesesSection searchedSection;
 
+	private SashForm sashForm;
+	
 	// private Collection<Hypothesis> selected;
 	//
 	// private Collection<Hypothesis> cached;
@@ -108,50 +112,56 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		body.setLayoutData(gd);
 
-		searchedSection = new SearchHypothesesSection(this, body,
+		sashForm = new SashForm(body, SWT.VERTICAL);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		sashForm.setLayoutData(gd);
+
+		searchedSection = new SearchHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.COMPACT);
 		managedForm.addPart(searchedSection);
 
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		// gd.heightHint = 0;
 		gd.widthHint = 200;
+		gd.minimumHeight = 30;
 		searchedSection.getSection().setLayoutData(gd);
-
-		cachedSection = new CacheHypothesesSection(this, body,
+		
+		cachedSection = new CacheHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
 		managedForm.addPart(cachedSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 100;
-		gd.minimumHeight = 100;
+		gd.minimumHeight = 30;
 		gd.widthHint = 200;
 		cachedSection.getSection().setLayoutData(gd);
 
-		selectedSection = new SelectedHypothesesSection(this, body,
+		selectedSection = new SelectedHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
 		managedForm.addPart(selectedSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 150;
-		gd.minimumHeight = 100;
+		gd.minimumHeight = 30;
 		gd.widthHint = 200;
 		selectedSection.getSection().setLayoutData(gd);
 
 		initHypothesisSections();
 
-		goalSection = new GoalSection(this, body, ExpandableComposite.TITLE_BAR
+		goalSection = new GoalSection(this, sashForm, ExpandableComposite.TITLE_BAR
 				| ExpandableComposite.TWISTIE | Section.EXPANDED);
 		managedForm.addPart(goalSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 75;
-		gd.minimumHeight = 50;
+		gd.minimumHeight = 30;
 		gd.widthHint = 200;
 		goalSection.getSection().setLayoutData(gd);
-
+		int [] weights = {2, 10, 10, 8};	
+		sashForm.setWeights(weights);
 	}
 
 	private void initHypothesisSections() {
@@ -257,4 +267,30 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		searchedSection.init(searched);
 
 	}
+	
+	public void layout() {
+		int [] weights = new int[4];
+		
+		if (searchedSection.isCompact()) weights[0] = 2;
+		else weights[0] = 10;
+		
+		if (cachedSection.isCompact()) weights[1] = 2;
+		else weights[1] = 10;
+		
+		if (selectedSection.isCompact()) weights[2] = 2;
+		else weights[2] = 10;
+		
+		weights[3] = 6;
+		
+		int sum = 0;
+		for (int i = 0; i < 4; i++) {
+			UIUtils.debugProverUI("weights[" + i + "] = " + weights[i]);
+			sum += weights[i];
+		}
+		sashForm.setWeights(weights);
+//		sashForm.layout();
+//		sashForm.pack();
+	
+	}
+
 }

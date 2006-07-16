@@ -44,7 +44,6 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -63,16 +62,16 @@ public class HypothesisRow {
 
 	private List<IEventBInputText> textBoxes;
 
-	private IEventBInputText hypothesisText; 
-	
+	private IEventBInputText hypothesisText;
+
 	// The UserSupport associated with this instance of the editor.
 	private UserSupport userSupport;
 
 	// The hypothesis contains in this row.
 	private Hypothesis hyp;
-	
+
 	private IEventBFormText formText;
-	
+
 	private IEventBFormText form;
 
 	/**
@@ -89,66 +88,59 @@ public class HypothesisRow {
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
 		public void linkActivated(HyperlinkEvent e) {
-			try {
-				Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
-				hypSet.add(hyp);
-				if (e.getHref().equals(UIUtils.ALLF_SYMBOL)) {
-					String[] inputs = new String[textBoxes.size()];
-					int i = 0;
-					for (IEventBInputText text : textBoxes) {
-						inputs[i++] = text.getTextWidget().getText();
-					}
-					userSupport.applyTacticToHypotheses(Tactics.allF(hyp,
-							inputs), hypSet);
-					return;
+			Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
+			hypSet.add(hyp);
+			if (e.getHref().equals(UIUtils.ALLF_SYMBOL)) {
+				String[] inputs = new String[textBoxes.size()];
+				int i = 0;
+				for (IEventBInputText text : textBoxes) {
+					inputs[i++] = text.getTextWidget().getText();
 				}
-				if (e.getHref().equals(UIUtils.CONJD_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics.conjD(hyp),
-							hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.IMPD1_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics
-							.impD(hyp, false), hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.IMPD2_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(
-							Tactics.impD(hyp, true), hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics.disjE(hyp),
-							hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.EXF_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics.exF(hyp),
-							hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.EQE1_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(
-							Tactics.eqE(hyp, false), hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.EQE2_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics.eqE(hyp, true),
-							hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.FALSIFY_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(
-							Tactics.falsifyHyp(hyp), hypSet);
-					return;
-				}
-				if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
-					userSupport.applyTacticToHypotheses(Tactics
-							.removeNegHyp(hyp), hypSet);
-					return;
-				}
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
+				userSupport.applyTacticToHypotheses(Tactics.allF(hyp, inputs),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.CONJD_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.conjD(hyp), hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.IMPD1_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.impD(hyp, false),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.IMPD2_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.impD(hyp, true),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.disjE(hyp), hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.EXF_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.exF(hyp), hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.EQE1_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.eqE(hyp, false),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.EQE2_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.eqE(hyp, true),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.FALSIFY_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp),
+						hypSet);
+				return;
+			}
+			if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
+				userSupport.applyTacticToHypotheses(Tactics.removeNegHyp(hyp),
+						hypSet);
+				return;
 			}
 		}
 
@@ -182,8 +174,8 @@ public class HypothesisRow {
 		buttonComposite.setLayout(new GridLayout());
 		gd = new GridData();
 
-		formText = new EventBFormText(toolkit.createFormText(
-				buttonComposite, true));
+		formText = new EventBFormText(toolkit.createFormText(buttonComposite,
+				true));
 		gd = new GridData();
 		gd.widthHint = 25;
 		gd.horizontalAlignment = SWT.CENTER;
@@ -255,9 +247,9 @@ public class HypothesisRow {
 					"<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>",
 					true, false);
 		} else {
-			hypothesisText = new EventBMath(toolkit.createText(hypothesisComposite, hyp
-					.toString(), SWT.READ_ONLY));
-			
+			hypothesisText = new EventBMath(toolkit.createText(
+					hypothesisComposite, hyp.toString(), SWT.READ_ONLY));
+
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			hypothesisText.getTextWidget().setLayoutData(gd);
 		}
@@ -293,11 +285,15 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
-		if (formText != null) formText.dispose();
-		if (form != null) form.dispose();
-		if (textBoxes != null) 
-			for (IEventBInputText text : textBoxes) text.dispose();
-		if (hypothesisText != null) hypothesisText.dispose();
+		if (formText != null)
+			formText.dispose();
+		if (form != null)
+			form.dispose();
+		if (textBoxes != null)
+			for (IEventBInputText text : textBoxes)
+				text.dispose();
+		if (hypothesisText != null)
+			hypothesisText.dispose();
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();

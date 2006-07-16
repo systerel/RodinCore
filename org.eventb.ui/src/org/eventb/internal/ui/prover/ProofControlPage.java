@@ -143,13 +143,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
-				try {
-					userSupport.applyTactic(Tactics.externalPP(restricted,
-							monitor));
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-					throw new InvocationTargetException(e);
-				}
+				userSupport
+						.applyTactic(Tactics.externalPP(restricted, monitor));
 			}
 		};
 		applyTacticWithProgress(op);
@@ -165,13 +160,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
-				try {
-					userSupport
-							.applyTactic(Tactics.externalML(forces, monitor));
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-					throw new InvocationTargetException(e);
-				}
+				userSupport.applyTactic(Tactics.externalML(forces, monitor));
 			}
 		};
 		applyTacticWithProgress(op);

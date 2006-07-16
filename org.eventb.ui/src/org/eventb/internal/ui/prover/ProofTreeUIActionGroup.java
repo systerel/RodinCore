@@ -112,14 +112,8 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 								.getFirstElement();
 						if (ProofTreeUI.buffer instanceof IProofTreeNode) {
 							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
-							// TODO Apply the tactics here (Should be through the userSupport
-							// userSupport.applyTactic(Tactic(copyNode));
-							try {
-								proofTreeUI.getUserSupport().applyTactic(BasicTactics.pasteTac(copyNode));
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							proofTreeUI.getUserSupport().applyTactic(
+									BasicTactics.pasteTac(copyNode));
 							UIUtils.debugProverUI("Node: " + node);
 							UIUtils.debugProverUI("Copy: " + copyNode);
 						}
@@ -443,7 +437,8 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 					menu.add(new Separator());
 					menu.add(pruneAction);
 				} else {
-					if (ProofTreeUI.buffer != null) menu.add(paste);					
+					if (ProofTreeUI.buffer != null)
+						menu.add(paste);
 					menu.add(new Separator());
 				}
 			} else {

@@ -256,17 +256,13 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void applyTacticToHypotheses(final ITactic t,
-			final Set<Hypothesis> hyps) throws RodinDBException {
+			final Set<Hypothesis> hyps) {
 
 		batchOperation(new Runnable() {
 
 			public void run() {
 				addAllToCached(hyps);
-				try {
-					applyTactic(t);
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
+				applyTactic(t);
 			}
 
 		});
@@ -280,7 +276,7 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	public void applyTactic(final ITactic t) throws RodinDBException {
+	public void applyTactic(final ITactic t) {
 		// saveHypothesisState();
 
 		batchOperation(new Runnable() {
