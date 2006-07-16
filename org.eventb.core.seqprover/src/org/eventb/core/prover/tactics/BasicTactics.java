@@ -1,6 +1,5 @@
 package org.eventb.core.prover.tactics;
 
-import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
