@@ -1,0 +1,3 @@
+org.eventb.eventBKeyboard/debug = false
+org.eventb.eventBKeyboard/debug/text = false
+org.eventb.eventBKeyboard/debug/math = false

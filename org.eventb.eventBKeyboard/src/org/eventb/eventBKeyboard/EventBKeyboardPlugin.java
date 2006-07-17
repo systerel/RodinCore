@@ -12,9 +12,11 @@
 
 package org.eventb.eventBKeyboard;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,6 +31,12 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 	 * <code>"org.eventb.eventBKeyboard.views.EventBKeyboardView"</code>).
 	 */
 	public static final String EventBKeyboardView_ID = "org.eventb.eventBKeyboard.views.EventBKeyboardView";
+
+	public static final String PLUGIN_ID = "org.eventb.eventBKeyboard";
+	
+	private static final String MATH_TRACE = PLUGIN_ID + "/debug/text";
+
+	private static final String TEXT_TRACE = PLUGIN_ID + "/debug/math";
 
 	// The shared instance.
 	private static EventBKeyboardPlugin plugin;
@@ -45,6 +53,23 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		configureDebugOptions();
+	}
+
+	/**
+	 * Process debugging/tracing options coming from Eclipse.
+	 */
+	private void configureDebugOptions() {
+		if (isDebugging()) {
+			String option = Platform.getDebugOption(TEXT_TRACE);
+			if (option != null)
+				KeyboardUtils.TEXT_DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(MATH_TRACE);
+			if (option != null)
+				KeyboardUtils.MATH_DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+		}
 	}
 
 	/**
