@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -61,6 +62,7 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
@@ -511,6 +513,20 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		display.syncExec(new Runnable() {
 			public void run() {
+				List<Object> information = delta.getInformation();
+				
+				UIUtils.debugProverUI("********** MESSAGE *********");
+				for (Object info : information) {
+					UIUtils.debugProverUI(info.toString());
+				}
+				UIUtils.debugProverUI("****************************");
+				
+				int size = information.size();
+				if (size != 0)
+					setFormTextInformation(information.get(size - 1).toString());
+				else
+					setFormTextInformation("");
+				
 				ProofState ps = delta.getNewProofState();
 				IProofTreeNode node = null;
 				if (ps != null) {
@@ -522,11 +538,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					final IProofTreeNode newNode = node;
 					updateToolItems(newNode);
 				}
-				Object information = delta.getInformation();
-				if (information != null)
-					setFormTextInformation(information.toString());
-				else
-					setFormTextInformation("");
 				scrolledForm.reflow(true);
 
 			}

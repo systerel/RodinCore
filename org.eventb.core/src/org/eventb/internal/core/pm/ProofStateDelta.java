@@ -1,5 +1,8 @@
 package org.eventb.internal.core.pm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
@@ -21,7 +24,7 @@ public class ProofStateDelta implements IProofStateDelta {
 	
 	private IProofTreeNode node;
 
-	private Object information;
+	private List<Object> information;
 
 	private boolean newSearch;
 	
@@ -36,13 +39,14 @@ public class ProofStateDelta implements IProofStateDelta {
 		ps = null;
 		node = null;
 		proofTreeDelta = null;
+		information = new ArrayList<Object>();
 	}
 
 	public void setNewCurrentNode(IProofTreeNode node) {
 		this.node = node;
 	}
 
-	public Object getInformation() {
+	public List<Object> getInformation() {
 		return information;
 	}
 
@@ -81,6 +85,10 @@ public class ProofStateDelta implements IProofStateDelta {
 		result = result + "\n" + "Current Node: " + node;
 		result = result + "\n" + "New Cache: " + newCache;
 		result = result + "\n" + "New Search: " + newSearch;
+		result = result + "\n" + "Information:";
+		for (Object info : information) {
+			result = result + info;
+		}
 		result = result + "\n***************************";
 		return result;
 	}
@@ -101,4 +109,11 @@ public class ProofStateDelta implements IProofStateDelta {
 		return userSupport;
 	}
 
+	public void addInformation(Object info) {
+		this.information.add(info);
+	}
+	
+	public void addAllInformation(List<Object> infos) {
+		information.addAll(infos);
+	}
 }

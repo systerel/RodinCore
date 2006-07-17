@@ -3,6 +3,7 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.IPRFile;
@@ -34,8 +35,6 @@ public class UserSupport implements IElementChangedListener,
 	protected ProofState currentPS;
 
 	private boolean fireDelta;
-
-	private Object information;
 
 	private IProofStateDelta delta = null; // The current delta
 
@@ -87,6 +86,12 @@ public class UserSupport implements IElementChangedListener,
 			IProofStateDelta newDelta) {
 		ProofStateDelta mergedDelta = new ProofStateDelta(this);
 
+		List<Object> oldInformation = oldDelta.getInformation();
+		List<Object> newInformation = newDelta.getInformation();
+		
+		mergedDelta.addAllInformation(oldInformation);
+		mergedDelta.addAllInformation(newInformation);
+		
 		ProofState newProofState = newDelta.getNewProofState();
 		if (newProofState != null) {
 			mergedDelta.setNewProofState(newProofState);
@@ -200,15 +205,14 @@ public class UserSupport implements IElementChangedListener,
 				return;
 			}
 		}
-		information = "No Un-discharged Proof Obligation Found";
-		// currentPS = null;
+		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewProofState(null);
+		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
 
 	public void prevUndischargedPO() throws RodinDBException {
-		// saveHypothesisState();
 		int index = proofStates.indexOf(currentPS);
 		for (int i = 1; i < proofStates.size(); i++) {
 			ProofState ps = proofStates.get((proofStates.size() + index - i)
@@ -218,11 +222,10 @@ public class UserSupport implements IElementChangedListener,
 				return;
 			}
 		}
-		// currentPS = null;
-		information = "No Un-discharged Proof Obligation Found";
-		// currentPS = null;
+		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewProofState(null);
+		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
 
@@ -235,6 +238,7 @@ public class UserSupport implements IElementChangedListener,
 			ps.getProofTree().addChangeListener(this);
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewProofState(ps);
+			newDelta.addInformation("Select a new proof obligation");
 			fireProofStateDelta(newDelta);
 		}
 		return;
@@ -297,14 +301,15 @@ public class UserSupport implements IElementChangedListener,
 
 	protected void internalApplyTactic(ITactic t) {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
-		information = t.apply(currentNode);
+		Object info = t.apply(currentNode);
 		if (!t.equals(Tactics.prune()))
 			Tactics.postProcess().apply(currentNode);
-		if (information == null) {
-			information = "Tactic applied successfully";
+		if (info == null) {
+			info = "Tactic applied successfully";
 			currentPS.setDirty(true);
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewCurrentNode(currentNode);
+			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
 		}
 	}
@@ -312,13 +317,14 @@ public class UserSupport implements IElementChangedListener,
 	protected void internalPrune() {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		UserSupportUtils.debug("Internal Prune");
-		information = Tactics.prune().apply(currentNode);
-		UserSupportUtils.debug("Information: " + information);
-		if (information == null) {
-			information = "Tactic applied successfully";
+		Object info = Tactics.prune().apply(currentNode);
+		UserSupportUtils.debug("Information: " + info);
+		if (info == null) {
+			info = "Tactic applied successfully";
 			currentPS.setDirty(true);
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewCurrentNode(currentNode);
+			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
 		}
 	}
@@ -342,16 +348,18 @@ public class UserSupport implements IElementChangedListener,
 		currentPS.removeAllFromCached(hyps);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewCache();
+		newDelta.addInformation("Hypotheses removed from cache");
 		fireProofStateDelta(newDelta);
 		return;
 	}
 
 	public void removeSearchedHypotheses(Collection<Hypothesis> hyps) {
 		currentPS.removeAllFromSearched(hyps);
-		information = "Hypotheses removed from searched";
+		Object info = "Hypotheses removed from searched";
 
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewSearch();
+		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 		return;
 	}
@@ -367,6 +375,7 @@ public class UserSupport implements IElementChangedListener,
 
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewSearch();
+		newDelta.addInformation("Search hypotheses");
 		fireProofStateDelta(newDelta);
 		return;
 	}
@@ -386,6 +395,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 		if (outOfDate) {
 			ProofStateDelta newDelta = new ProofStateDelta(this);
+			newDelta.addInformation("Underlying model has changed");
 			fireProofStateDelta(newDelta);
 		}
 	}
@@ -470,6 +480,7 @@ public class UserSupport implements IElementChangedListener,
 				+ proofTreeDelta);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setProofTreeDelta(proofTreeDelta);
+		newDelta.addInformation("Proof Tree Changed");
 		fireProofStateDelta(newDelta);
 	}
 
@@ -478,6 +489,7 @@ public class UserSupport implements IElementChangedListener,
 		currentPS.setDirty(true);
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.setNewCurrentNode(currentPS.getCurrentNode());
+		newDelta.addInformation("Comment has been set");
 		fireProofStateDelta(newDelta);
 	}
 
