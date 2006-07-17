@@ -209,11 +209,21 @@ public class PRUtil {
 		((IPRPredicateSet)(prSeq.getProof().createInternalElement(
 				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 				setPredicateSet(Hypothesis.Predicates(pt.getUsedHypotheses()));
+		
+		Set<FreeIdentifier> usedFreeIdents = new HashSet<FreeIdentifier>();
+		Set<FreeIdentifier> introducedFreeIdents = new HashSet<FreeIdentifier>();
+		pt.getFreeIdentDeps(usedFreeIdents,introducedFreeIdents);
+		
 		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
 				setTypeEnvironment(
-						pt.getUsedFreeIdents().toArray(
-								new FreeIdentifier[pt.getUsedFreeIdents().size()]));
+						usedFreeIdents.toArray(
+								new FreeIdentifier[usedFreeIdents.size()]));
+		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
+				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
+				setTypeEnvironment(
+						introducedFreeIdents.toArray(
+								new FreeIdentifier[introducedFreeIdents.size()]));
 		
 		
 		// Write out the proof tree

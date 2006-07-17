@@ -110,23 +110,22 @@ public final class ProofTree implements IProofTree {
 		
 	}
 	
-	// TODO : return both used and introduced idents somehow
-	public Set<FreeIdentifier> getUsedFreeIdents() {
+	//	 TODO : maybe find a better way to return both used and introduced idents
+	public void getFreeIdentDeps(Set<FreeIdentifier> usedIdents,Set<FreeIdentifier> introducedIdents) {
 		Set<FreeIdentifier> freeIdents = getFreeIdents();
-		Set<FreeIdentifier> usedIdents = new HashSet<FreeIdentifier>();
-		Set<FreeIdentifier> introducedIdents = new HashSet<FreeIdentifier>();
 		ITypeEnvironment typeEnv = root.getSequent().typeEnvironment();
 		for (FreeIdentifier freeIdent : freeIdents) {
 			// Check if the type environment contains the freeIdent
 			if (typeEnv.contains(freeIdent.getName()) && 
 					typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType()))
+				// It contains the freeIdent : it is used
 				usedIdents.add(freeIdent);
 			else 
 			{
+				// It does not contain the free Ident : it is introduced
 				introducedIdents.add(freeIdent);
 			}
 		}
-		return usedIdents;
 	}
 
 	/* (non-Javadoc)

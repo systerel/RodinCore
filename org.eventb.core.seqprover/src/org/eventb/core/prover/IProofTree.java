@@ -102,7 +102,8 @@ public interface IProofTree {
 	void removeChangeListener(IProofTreeChangedListener listener);
 	
 	Set<Hypothesis> getUsedHypotheses();
-	Set<FreeIdentifier> getUsedFreeIdents();
+	
+	void getFreeIdentDeps(Set<FreeIdentifier> usedIdents,Set<FreeIdentifier> introducedIdents);
 	
 	/**
 	 * Returns the confidence of this proof tree.

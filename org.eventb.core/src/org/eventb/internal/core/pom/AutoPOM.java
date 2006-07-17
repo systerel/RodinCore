@@ -8,6 +8,7 @@
 
 package org.eventb.internal.core.pom;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,7 +103,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			if  (oldProof != null &&
 					newPOseq.goal().equals(oldProof.getGoal()) &&
 					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())) &&
-					newPOseq.typeEnvironment().containsAll(oldProof.getUsedTypeEnvironment()))
+					newPOseq.typeEnvironment().containsAll(oldProof.getUsedTypeEnvironment())&&
+					Collections.disjoint(
+							newPOseq.typeEnvironment().getNames(),
+							oldProof.getIntroducedTypeEnvironment().getNames()))
 				{
 					newValidity.put(newPOname,true);
 				}

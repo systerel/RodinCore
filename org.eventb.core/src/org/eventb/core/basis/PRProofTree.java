@@ -11,10 +11,9 @@ import java.util.Set;
 
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IPRProofTree;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IRodinElement;
@@ -74,31 +73,33 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
 		return ((IPRPredicateSet)usedHypotheses[0]).getPredicateSet();
 	}
-	
-	public FreeIdentifier[] getUsedFreeIdents() throws RodinDBException {
-		IRodinElement[] usedFreeIdents = getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
-		if (usedFreeIdents.length != 1) return null;
-		assert usedFreeIdents.length == 1;
-		assert usedFreeIdents[0].getElementName().equals("usedFreeIdentifiers");
-		return ((IPRTypeEnvironment)usedFreeIdents[0]).getFreeIdentifiers();
-	}
+
+//	public FreeIdentifier[] getUsedFreeIdents() throws RodinDBException {
+//		IRodinElement[] usedFreeIdents = getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
+//		if (usedFreeIdents.length != 1) return null;
+//		assert usedFreeIdents.length == 1;
+//		assert usedFreeIdents[0].getElementName().equals("usedFreeIdentifiers");
+//		return ((IPRTypeEnvironment)usedFreeIdents[0]).getFreeIdentifiers();
+//	}
 
 	public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException {
-		IRodinElement[] usedFreeIdents = getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
-		if (usedFreeIdents.length != 1) return null;
-		assert usedFreeIdents.length == 1;
-		assert usedFreeIdents[0].getElementName().equals("usedFreeIdentifiers");
-		return ((IPRTypeEnvironment)usedFreeIdents[0]).getTypeEnvironment();
+		InternalElement usedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers");
+		if (usedFreeIdents == null) return null;
+		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment();
+	}
+	
+	public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException {
+		InternalElement introducedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers");
+		if (introducedFreeIdents == null) return null;
+		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment();
 	}
 	
 	public Predicate getGoal() throws RodinDBException {
-		IRodinElement[] goal = getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
-		if (goal.length != 1) return null;
-		assert goal.length == 1;
-		assert goal[0].getElementName().equals("goal");
-		return ((IPRPredicate)goal[0]).getPredicate();
+		InternalElement goal = getInternalElement(IPRPredicate.ELEMENT_TYPE,"goal");
+		if (goal == null) return null;
+		return ((IPRPredicate)goal).getPredicate();
 	}
-
+	
 	public void initialize() throws RodinDBException {
 		//delete previous children, if any.
 		if (this.getChildren().length != 0)

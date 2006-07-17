@@ -33,6 +33,8 @@ public interface IPRProofTree extends IInternalElement {
 
 		public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException;
 		
+		public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException;
+		
 		// TODO Reove this eventually
 		// public void setStatus(Status status) throws RodinDBException;
 }
