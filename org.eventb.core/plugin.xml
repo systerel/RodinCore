@@ -181,9 +181,9 @@
             name="%eventBprSequent"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.Proof"
-            id="proof"
-            name="%eventBproof"
+            class="org.eventb.core.basis.PRProofTree"
+            id="prProofTree"
+            name="%eventBprProofTree"
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PODescription"
@@ -277,7 +277,7 @@
             named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofTreeNode"
-            id="proofTreeNode"
+            id="prProofTreeNode"
             name="%eventBprProofTreeNode"
             named="false"/>
       <internalElementType

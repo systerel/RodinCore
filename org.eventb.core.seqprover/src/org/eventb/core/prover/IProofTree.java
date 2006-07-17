@@ -46,7 +46,7 @@ public interface IProofTree {
 	IProverSequent getSequent();
 
 	/**
-	 * Returns whether this proof tree is closed.
+	 * Returns whether or not this proof tree is closed.
 	 * <p>
 	 * This is a shortcut for <code>getRoot().isClosed()</code>.
 	 * </p>
@@ -54,6 +54,18 @@ public interface IProofTree {
 	 * @return <code>true</code> iff this proof tree has been discharged
 	 */
 	boolean isClosed();
+	
+	/**
+	 * Returns whether or not a proof has been attempted.
+	 * <p>
+	 * A proof is said to be attempted iff the root node of the proof tree is not open,
+	 * or contains a user specified comment on it.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff a proof has been attempted.
+	 */
+	boolean proofAttempted();
+
 
 	/**
 	 * Returns the root node of this proof tree.

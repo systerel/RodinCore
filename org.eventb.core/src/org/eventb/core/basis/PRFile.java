@@ -18,7 +18,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IProof;
+import org.eventb.core.IPRProofTree;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -78,22 +78,22 @@ public class PRFile extends POFile implements IPRFile {
 		return sequents;
 	}
 
-	public Map<String, IProof> getProofs() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IProof.ELEMENT_TYPE);
-		HashMap<String, IProof> proofs = new HashMap<String, IProof>(list.size());
+	public Map<String, IPRProofTree> getProofs() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProofTree.ELEMENT_TYPE);
+		HashMap<String, IPRProofTree> proofs = new HashMap<String, IPRProofTree>(list.size());
 		for (IRodinElement element : list){
 			// avoid two proofs with the same name
 			assert (! proofs.containsKey(element.getElementName()));
-			proofs.put(element.getElementName(),(IProof)element);
+			proofs.put(element.getElementName(),(IPRProofTree)element);
 		}
 		return proofs;
 	}
 
-	public IProof getProof(String name) throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IProof.ELEMENT_TYPE);
+	public IPRProofTree getProof(String name) throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProofTree.ELEMENT_TYPE);
 		// RodinElement[] list = getChildren();
 		for (IRodinElement element : list){
-			if (element.getElementName().equals(name)) return (IProof)element;
+			if (element.getElementName().equals(name)) return (IPRProofTree)element;
 		}
 		return null;
 	}

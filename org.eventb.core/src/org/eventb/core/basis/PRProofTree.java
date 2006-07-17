@@ -13,7 +13,7 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IProof;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -24,10 +24,12 @@ import org.rodinp.core.basis.InternalElement;
 /**
  * @author Farhad Mehta
  *
+ * TODO : remane to PRProofTree, resembel ProofTree
+ *
  */
-public class Proof extends InternalElement implements IProof {
+public class PRProofTree extends InternalElement implements IPRProofTree {
 
-	public Proof(String name, IRodinElement parent) {
+	public PRProofTree(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 	
@@ -107,7 +109,9 @@ public class Proof extends InternalElement implements IProof {
 	public boolean proofAttempted() throws RodinDBException {
 		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		if (proofTreeNodes.length == 0) return false;
-		return true;
+		
+		PRProofTreeNode rootProofTreeNode = getRootProofTreeNode();
+		return !(rootProofTreeNode.getRule()==null && rootProofTreeNode.getComment().length() == 0);
 	}
 	
 }

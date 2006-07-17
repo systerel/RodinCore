@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IProof;
-import org.eventb.core.IProof.Status;
+import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProofTree.Status;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
@@ -49,22 +49,22 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return IPRSequent.ELEMENT_TYPE;
 	}
 	
-	public IProof getProof() throws RodinDBException {
-		IProof proof = ((IPRFile)getOpenable()).getProof(getName());
+	public IPRProofTree getProof() throws RodinDBException {
+		IPRProofTree proof = ((IPRFile)getOpenable()).getProof(getName());
 		assert proof != null;
 		return proof;
 	}
 
-	public IProofTree makeProofTree() throws RodinDBException {
+	public IProofTree rebuildProofTree() throws RodinDBException {
 		return PRUtil.makeProofTree(this);
 	}
 	
 
-	public IProofTree makeInitialProofTree() throws RodinDBException {
+	public IProofTree makeFreshProofTree() throws RodinDBException {
 		return PRUtil.makeInitialProofTree(this);
 	}
 	
-	public void updateStatus(final IProofTree pt) throws CoreException {
+	public void updateProofTree(final IProofTree pt) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				PRUtil.updateStatus(PRSequent.this, pt);
@@ -75,7 +75,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 
 	public boolean isDischarged() throws RodinDBException {
 		if (isProofBroken()) return false;
-		IProof proof = getProof();
+		IPRProofTree proof = getProof();
 		return (proof.getStatus() == Status.DISCHARGED);
 	}
 
@@ -89,7 +89,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 	}
 
 	public boolean proofAttempted() throws RodinDBException {
-		IProof proof = getProof();
+		IPRProofTree proof = getProof();
 		if (proof == null || ! proof.proofAttempted()) return false;
 		return true;
 	}

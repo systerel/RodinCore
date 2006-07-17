@@ -40,7 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IProof.Status;
+import org.eventb.core.IPRProofTree.Status;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
@@ -183,8 +183,11 @@ public class ObligationExplorer extends ViewPart implements
 						for (ProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
-								int confidence = tree.getConfidence();
 								
+								if (!tree.proofAttempted())
+									return registry.get(EventBImage.IMG_UNATTEMPTED);
+								
+								int confidence = tree.getConfidence();
 								
 								if (confidence == IConfidence.PENDING) 
 								{
@@ -214,22 +217,6 @@ public class ObligationExplorer extends ViewPart implements
 												.get(EventBImage.IMG_DISCHARGED);
 								}
 								return registry.get(EventBImage.IMG_DEFAULT);
-//								if (tree.isDischarged()) {
-//									if (prSequent.isProofBroken())
-//										return registry
-//												.get(EventBImage.IMG_DISCHARGED_BROKEN);
-//									else
-//										return registry
-//												.get(EventBImage.IMG_DISCHARGED);
-//								} else {
-//									if (prSequent.isProofBroken())
-//										return registry
-//												.get(EventBImage.IMG_PENDING_BROKEN);
-//									else
-//										return registry
-//												.get(EventBImage.IMG_PENDING);
-//
-//								}
 							}
 						}
 					}

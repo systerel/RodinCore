@@ -25,7 +25,7 @@ import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IProof.Status;
+import org.eventb.core.IPRProofTree.Status;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -113,7 +113,7 @@ public class PRUtil {
 	// stored DB version
 	public static void rebuild(IProofTreeNode node,IPRProofTreeNode prNode, ReplayHints replayHints) throws RodinDBException{
 		// System.out.println("trying rebuild"+node.getSequent());
-		node.setComment(prNode.getContents());
+		node.setComment(prNode.getComment());
 		IPRProofRule prRule = prNode.getRule();
 		// Check if this is an open node
 		if (prRule == null) return;
@@ -232,10 +232,10 @@ public class PRUtil {
 		
 	}
 	
-	public static void writeOutRule (ProofRule rule,InternalElement parent) throws RodinDBException{
+	public static void writeOutRule (ProofRule rule,IPRProofTreeNode parent) throws RodinDBException{
 		
 		if (rule instanceof ReasoningStep) {
-			InternalElement prRule =
+			IPRProofRule prRule = (IPRProofRule)
 				parent.createInternalElement(
 					PRProofRule.ELEMENT_TYPE,
 					"reasoningStep",
@@ -256,10 +256,10 @@ public class PRUtil {
 	
 	public static void writeOutProofTreeNode (ProofTreeNode proofTreeNode,InternalElement parent) throws RodinDBException{
 		assert (proofTreeNode != null);
-		InternalElement prProofTreeNode = 
+		IPRProofTreeNode prProofTreeNode = (IPRProofTreeNode)
 			parent.createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"",null,null);
 		
-		prProofTreeNode.setContents(proofTreeNode.getComment());
+		prProofTreeNode.setComment(proofTreeNode.getComment());
 		
 		if (proofTreeNode.isOpen()) return;
 		
@@ -267,7 +267,7 @@ public class PRUtil {
 		
 		ProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
 		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
-			writeOutProofTreeNode(proofTreeNodeChildren[i],prProofTreeNode);
+			writeOutProofTreeNode(proofTreeNodeChildren[i],(InternalElement) prProofTreeNode);
 		}
 		
 	}

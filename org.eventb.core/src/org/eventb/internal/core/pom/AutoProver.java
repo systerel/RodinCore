@@ -44,11 +44,11 @@ public class AutoProver {
 				// System.out.println("AutoProver tried for "+po);
 				
 				// Go ahead even if a proof was previously attempted
-				IProofTree tree = po.makeInitialProofTree();
+				IProofTree tree = po.makeFreshProofTree();
 				run(tree);
 				// Update the tree if it was discharged
 				if (tree.isClosed()) {
-					po.updateStatus(tree);
+					po.updateProofTree(tree);
 					prFile.save(null, false);
 					dirty = false;
 				}
@@ -56,7 +56,7 @@ public class AutoProver {
 				// proof was previously attempted update the proof
 				else if (tree.getRoot().hasChildren() && !po.proofAttempted())
 				{
-					po.updateStatus(tree);
+					po.updateProofTree(tree);
 					// in this case no need to save immediately.
 					dirty = true;
 				}

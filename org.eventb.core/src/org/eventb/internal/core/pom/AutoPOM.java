@@ -20,7 +20,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IProof;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
@@ -74,7 +74,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		RodinCore.run(
 				new IWorkspaceRunnable() {
 					public void run(IProgressMonitor saveMonitor) throws CoreException {
-						Map<String, IProof> oldProofs = getOldProofs();
+						Map<String, IPRProofTree> oldProofs = getOldProofs();
 						Map<String, Boolean> newValidity = computeNewValidity(oldProofs);
 						createFreshPRFile(newValidity,oldProofs);
 					}
@@ -84,13 +84,13 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		return true;
 	}
 
-	Map<String, IProof> getOldProofs() throws RodinDBException{
+	Map<String, IPRProofTree> getOldProofs() throws RodinDBException{
 		if (prFile.exists())
 			return prFile.getProofs();
-		return new HashMap<String, IProof>();
+		return new HashMap<String, IPRProofTree>();
 	}
 	
-	Map<String, Boolean> computeNewValidity(Map<String, IProof> oldProofs) throws RodinDBException
+	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs) throws RodinDBException
 	{
 		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
 		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
@@ -98,7 +98,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
 			String newPOname = newPO.getKey();
 			IProverSequent newPOseq = newPO.getValue();
-			IProof oldProof = oldProofs.get(newPOname);
+			IPRProofTree oldProof = oldProofs.get(newPOname);
 			if  (oldProof != null &&
 					newPOseq.goal().equals(oldProof.getGoal()) &&
 					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())) &&
@@ -136,14 +136,14 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		graph.updateGraph();
 	}
 
-	void createFreshPRFile(Map<String, Boolean> newValidity, Map<String, IProof> oldProofs) throws CoreException {
+	void createFreshPRFile(Map<String, Boolean> newValidity, Map<String, IPRProofTree> oldProofs) throws CoreException {
 
 		if (prFile.exists()) 
 		{
 			
 			for (IRodinElement child : prFile.getChildren()){
 				// do not delete proofs !
-				if (!(child.getElementType().equals(IProof.ELEMENT_TYPE)))
+				if (!(child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)))
 				((InternalElement)child).delete(true,null);
 			}
 			
@@ -160,7 +160,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		prFile.save(monitor, true);
 	}
 	
-	private void copySequents(Map<String, Boolean> newValidity, Map<String, IProof> oldProofs) throws RodinDBException{
+	private void copySequents(Map<String, Boolean> newValidity, Map<String, IPRProofTree> oldProofs) throws RodinDBException{
 		IPOSequent[] poSequents = poFile.getSequents();
 		
 		for (IPOSequent poSeq : poSequents)
@@ -177,13 +177,13 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			assert (newValidity.get(poSeq.getName()) != null);
 			prSeq.setProofBroken(! newValidity.get(poSeq.getName()));
 			
-			IProof oldProof = oldProofs.get(prSeq.getName());
+			IPRProofTree oldProof = oldProofs.get(prSeq.getName());
 			if (oldProof == null)
 			{
 				// create a fresh proof
-				IProof proof =
-					(IProof) prFile.createInternalElement(
-							IProof.ELEMENT_TYPE,prSeq.getName(), null, monitor);
+				IPRProofTree proof =
+					(IPRProofTree) prFile.createInternalElement(
+							IPRProofTree.ELEMENT_TYPE,prSeq.getName(), null, monitor);
 				proof.initialize();
 			}
 		}

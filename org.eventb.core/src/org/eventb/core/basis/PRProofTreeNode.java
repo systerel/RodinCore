@@ -40,5 +40,13 @@ public class PRProofTreeNode extends UnnamedInternalElement implements IPRProofT
 		}
 		return proofTreeNodes;
 	}
-
+	
+	public String getComment() throws RodinDBException {
+		return getContents();
+	}
+	
+	public void setComment(String comment) throws RodinDBException {
+		setContents(comment);
+	}
+	
 }

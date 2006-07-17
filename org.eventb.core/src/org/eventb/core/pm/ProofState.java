@@ -57,7 +57,7 @@ public class ProofState {
 	}
 
 	public void loadProofTree() throws RodinDBException {
-		pt = ps.makeProofTree(); // Construct the proof tree from the file.
+		pt = ps.rebuildProofTree(); // Construct the proof tree from the file.
 
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
@@ -133,7 +133,7 @@ public class ProofState {
 	}
 
 	public void doSave() throws CoreException {
-		ps.updateStatus(pt);
+		ps.updateProofTree(pt);
 		dirty = false;
 	}
 

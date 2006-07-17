@@ -10,9 +10,15 @@ import org.rodinp.core.RodinDBException;
  */
 
 public interface IPRProofTreeNode extends IUnnamedInternalElement {
-		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".proofTreeNode"; //$NON-NLS-1$
+		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prProofTreeNode"; //$NON-NLS-1$
 	
+		// TODO : Make this and ProofTreeNode resemble each other.
+		
 		public IPRProofTreeNode[] getChildProofTreeNodes() throws RodinDBException;
 		
 		public IPRProofRule getRule() throws RodinDBException;
+		
+		public void setComment(String comment) throws RodinDBException;
+		
+		public String getComment() throws RodinDBException;
 }

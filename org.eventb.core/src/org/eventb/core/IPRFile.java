@@ -61,8 +61,8 @@ public interface IPRFile extends IPOFile {
 	 */
 	IPOFile getPOFile();
 	
-	Map<String,IProof> getProofs() throws RodinDBException;
+	Map<String,IPRProofTree> getProofs() throws RodinDBException;
 	
-	IProof getProof(String name) throws RodinDBException;
+	IPRProofTree getProof(String name) throws RodinDBException;
 	
 }

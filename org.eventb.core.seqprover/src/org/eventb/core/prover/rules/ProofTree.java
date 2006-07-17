@@ -80,8 +80,19 @@ public final class ProofTree implements IProofTree {
 		return root.getUsedFreeIdents();
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTree#getConfidence()
+	 */
 	public int getConfidence() {
 		return getRoot().getConfidence();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTree#proofAttempted()
+	 */
+	public boolean proofAttempted() {
+		return !(root.isOpen() && root.getComment().length() == 0);
 	}
 
 }
