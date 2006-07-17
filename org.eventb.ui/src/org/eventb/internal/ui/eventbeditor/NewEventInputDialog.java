@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 
 /**
@@ -51,15 +52,15 @@ public class NewEventInputDialog extends Dialog {
 
 	private Collection<String> actSubstitutions;
 
-	private Text nameText;
+	private IEventBInputText nameText;
 
-	private Collection<Text> varNameTexts;
+	private Collection<IEventBInputText> varNameTexts;
 
-	private Collection<Text> grdNameTexts;
+	private Collection<IEventBInputText> grdNameTexts;
 
 	private Collection<IEventBInputText> grdPredicateTexts;
 
-	private Collection<Text> actNameTexts;
+	private Collection<IEventBInputText> actNameTexts;
 
 	private Collection<IEventBInputText> actSubstitutionTexts;
 
@@ -88,10 +89,10 @@ public class NewEventInputDialog extends Dialog {
 		grdPredicates = new HashSet<String>();
 		actNames = new HashSet<String>();
 		actSubstitutions = new HashSet<String>();
-		varNameTexts = new ArrayList<Text>();
-		grdNameTexts = new ArrayList<Text>();
+		varNameTexts = new ArrayList<IEventBInputText>();
+		grdNameTexts = new ArrayList<IEventBInputText>();
 		grdPredicateTexts = new ArrayList<IEventBInputText>();
-		actNameTexts = new ArrayList<Text>();
+		actNameTexts = new ArrayList<IEventBInputText>();
 		actSubstitutionTexts = new ArrayList<IEventBInputText>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
@@ -157,9 +158,9 @@ public class NewEventInputDialog extends Dialog {
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 
-		nameText = toolkit.createText(body, defaultName);
+		nameText = new EventBText(toolkit.createText(body, defaultName));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-		nameText.setLayoutData(gd);
+		nameText.getTextWidget().setLayoutData(gd);
 
 		separator = toolkit.createComposite(body);
 		gd = new GridData(SWT.NONE, SWT.NONE, false, false);
@@ -168,9 +169,9 @@ public class NewEventInputDialog extends Dialog {
 		separator.setLayoutData(gd);
 
 		for (int i = 0; i < 3; i++) {
-			Text text = toolkit.createText(body, "");
+			IEventBInputText text = new EventBText(toolkit.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			text.setLayoutData(gd);
+			text.getTextWidget().setLayoutData(gd);
 			varNameTexts.add(text);
 		}
 
@@ -196,9 +197,10 @@ public class NewEventInputDialog extends Dialog {
 		label.setLayoutData(gd);
 
 		for (int i = 1; i <= 3; i++) {
-			Text text = toolkit.createText(body, "grd" + i);
+			IEventBInputText text = new EventBText(toolkit.createText(body,
+					"grd" + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-			text.setLayoutData(gd);
+			text.getTextWidget().setLayoutData(gd);
 			grdNameTexts.add(text);
 
 			separator = toolkit.createComposite(body);
@@ -207,12 +209,12 @@ public class NewEventInputDialog extends Dialog {
 			gd.heightHint = 20;
 			separator.setLayoutData(gd);
 
-			text = toolkit.createText(body, "");
+			text = new EventBMath(toolkit.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 3;
 			gd.widthHint = 200;
-			text.setLayoutData(gd);
-			grdPredicateTexts.add(new EventBMath(text));
+			text.getTextWidget().setLayoutData(gd);
+			grdPredicateTexts.add(text);
 		}
 
 		separator = toolkit.createCompositeSeparator(body);
@@ -224,9 +226,10 @@ public class NewEventInputDialog extends Dialog {
 		label.setLayoutData(gd);
 
 		for (int i = 0; i < 3; i++) {
-			Text text = toolkit.createText(body, "act" + i);
+			IEventBInputText text = new EventBText(toolkit.createText(body,
+					"act" + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-			text.setLayoutData(gd);
+			text.getTextWidget().setLayoutData(gd);
 			actNameTexts.add(text);
 
 			separator = toolkit.createComposite(body);
@@ -235,12 +238,12 @@ public class NewEventInputDialog extends Dialog {
 			gd.heightHint = 20;
 			separator.setLayoutData(gd);
 
-			text = toolkit.createText(body, "");
+			text = new EventBMath(toolkit.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 3;
 			gd.widthHint = 200;
-			text.setLayoutData(gd);
-			actSubstitutionTexts.add(new EventBMath(text));
+			text.getTextWidget().setLayoutData(gd);
+			actSubstitutionTexts.add(text);
 		}
 
 		composite.pack();
@@ -264,12 +267,13 @@ public class NewEventInputDialog extends Dialog {
 			actNames = new HashSet<String>();
 			actSubstitutions = new HashSet<String>();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			name = nameText.getText();
+			name = nameText.getTextWidget().getText();
 
 			varNames = new ArrayList<String>();
 			Object[] varNameList = varNameTexts.toArray();
 			for (int i = 0; i < varNameList.length; i++) {
-				Text nameText = (Text) varNameList[i];
+				Text nameText = ((IEventBInputText) varNameList[i])
+						.getTextWidget();
 				if (!nameText.getText().equals("")) {
 					varNames.add(nameText.getText());
 				}
@@ -283,7 +287,8 @@ public class NewEventInputDialog extends Dialog {
 				Text predicateText = ((IEventBInputText) grdPredicateList[i])
 						.getTextWidget();
 				if (!predicateText.getText().equals("")) {
-					Text nameText = (Text) grdNameList[i];
+					Text nameText = ((IEventBInputText) grdNameList[i])
+							.getTextWidget();
 					grdNames.add(nameText.getText());
 					grdPredicates.add(predicateText.getText());
 				}
@@ -297,7 +302,8 @@ public class NewEventInputDialog extends Dialog {
 				Text actSubstitutionText = ((IEventBInputText) actSubtitutionList[i])
 						.getTextWidget();
 				if (!actSubstitutionText.getText().equals("")) {
-					Text nameText = (Text) actNameList[i];
+					Text nameText = ((IEventBInputText) actNameList[i])
+							.getTextWidget();
 					actNames.add(nameText.getText());
 					actSubstitutions.add(actSubstitutionText.getText());
 				}
@@ -370,8 +376,16 @@ public class NewEventInputDialog extends Dialog {
 
 	@Override
 	public boolean close() {
+		nameText.dispose();
+		for (IEventBInputText text : grdNameTexts)
+			text.dispose();
+
 		for (IEventBInputText text : grdPredicateTexts)
 			text.dispose();
+
+		for (IEventBInputText text : actNameTexts)
+			text.dispose();
+
 		for (IEventBInputText text : actSubstitutionTexts)
 			text.dispose();
 		return super.close();

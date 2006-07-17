@@ -20,10 +20,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 
 /**
@@ -47,9 +47,9 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 
 	private String init;
 
-	private Text nameText;
+	private IEventBInputText nameText;
 
-	private Text invariantNameText;
+	private IEventBInputText invariantNameText;
 
 	private IEventBInputText invariantPredicateText;
 
@@ -62,10 +62,15 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param parentShell the parent shell of the dialog
-	 * @param title the title of the dialog
-	 * @param defaultName the default variable name
-	 * @param defaultInvariantName the default invariant name
+	 * 
+	 * @param parentShell
+	 *            the parent shell of the dialog
+	 * @param title
+	 *            the title of the dialog
+	 * @param defaultName
+	 *            the default variable name
+	 * @param defaultInvariantName
+	 *            the default invariant name
 	 */
 	public IntelligentNewVariableInputDialog(Shell parentShell, String title,
 			String defaultName, String defaultInvariantName) {
@@ -124,18 +129,19 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 
 		toolkit.createLabel(body, "Name");
 
-		nameText = toolkit.createText(body, defaultName);
+		nameText = new EventBText(toolkit.createText(body, defaultName));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		nameText.setLayoutData(gd);
+		nameText.getTextWidget().setLayoutData(gd);
 
 		toolkit.createLabel(body, "Invariant");
 
-		invariantNameText = toolkit.createText(body, defaultInvariantName);
+		invariantNameText = new EventBText(toolkit.createText(body,
+				defaultInvariantName));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		invariantNameText.setLayoutData(gd);
+		invariantNameText.getTextWidget().setLayoutData(gd);
 
 		invariantPredicateText = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -169,8 +175,8 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 			invariantPredicate = null;
 			init = null;
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			name = nameText.getText();
-			invariantName = invariantNameText.getText();
+			name = nameText.getTextWidget().getText();
+			invariantName = invariantNameText.getTextWidget().getText();
 			invariantPredicate = invariantPredicateText.getTextWidget()
 					.getText();
 			init = initText.getTextWidget().getText();
@@ -181,6 +187,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	/**
 	 * Get the variable name.
 	 * <p>
+	 * 
 	 * @return the variable name as input by the user
 	 */
 	public String getName() {
@@ -190,6 +197,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	/**
 	 * Get the invariant name.
 	 * <p>
+	 * 
 	 * @return the invariant name as input by the user
 	 */
 	public String getInvariantName() {
@@ -199,6 +207,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	/**
 	 * Get the invariant predicate.
 	 * <p>
+	 * 
 	 * @return the invariant predicate as input by the user
 	 */
 	public String getInvariantPredicate() {
@@ -208,6 +217,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	/**
 	 * Get the initialisation action.
 	 * <p>
+	 * 
 	 * @return the initialisation action as input by the user
 	 */
 	public String getInit() {
@@ -216,9 +226,11 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 
 	@Override
 	public boolean close() {
+		nameText.dispose();
+		invariantNameText.dispose();
 		invariantPredicateText.dispose();
 		initText.dispose();
 		return super.close();
 	}
-	
+
 }
