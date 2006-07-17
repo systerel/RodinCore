@@ -10,7 +10,7 @@ package org.eventb.core.prover;
 
 import java.util.Set;
 
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -103,7 +103,7 @@ public interface IProofTree {
 	
 	Set<Hypothesis> getUsedHypotheses();
 	
-	void getFreeIdentDeps(Set<FreeIdentifier> usedIdents,Set<FreeIdentifier> introducedIdents);
+	void getFreeIdentDeps(ITypeEnvironment usedIdents,ITypeEnvironment introducedIdents);
 	
 	/**
 	 * Returns the confidence of this proof tree.

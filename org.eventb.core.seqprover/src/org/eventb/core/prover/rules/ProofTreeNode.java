@@ -1,13 +1,11 @@
 package org.eventb.core.prover.rules;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
@@ -466,8 +464,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 //		return usedHypotheses;
 //	}
 
-	public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
-		if (this.rule != null) rule.addFreeIdents(freeIdents);
+	public void addFreeIdents(ITypeEnvironment typEnv) {
+		if (this.rule != null) rule.addFreeIdents(typEnv);
 	}
 
 	/* (non-Javadoc)

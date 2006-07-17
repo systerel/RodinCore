@@ -1,7 +1,6 @@
 package org.eventb.core.prover;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,15 +64,15 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 			return result;
 		}
 
-		public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
+		public void addFreeIdents(ITypeEnvironment typeEnv) {
 			assert subGoal != null;
-			freeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
+			typeEnv.addAll(subGoal.getFreeIdentifiers());
 			for(Predicate hyp: addedHypotheses){
-				freeIdents.addAll(
-						Arrays.asList(hyp.getFreeIdentifiers()));
+				typeEnv.addAll(
+						hyp.getFreeIdentifiers());
 			}
 			// This is not strictly needed. Just to be safe..
-			freeIdents.addAll(Arrays.asList(addedFreeIdentifiers));
+			typeEnv.addAll(addedFreeIdentifiers);
 		}
 		
 //		public Set<FreeIdentifier> getNeededFreeIdents() {
@@ -105,15 +104,15 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 
-	public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
+	public void addFreeIdents(ITypeEnvironment typeEnv) {
 		for(Anticident anticident : anticidents){
-			anticident.addFreeIdents(freeIdents);
+			anticident.addFreeIdents(typeEnv);
 		}
 		
-		freeIdents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		typeEnv.addAll(goal.getFreeIdentifiers());
 		for(Hypothesis hyp: neededHypotheses){
-			freeIdents.addAll(
-					Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+			typeEnv.addAll(
+					hyp.getPredicate().getFreeIdentifiers());
 		}
 	}
 

@@ -92,6 +92,18 @@ public interface ITypeEnvironment {
 	void addAll(ITypeEnvironment other);
 
 	/**
+	 * Adds all given free identifiers to this environment.
+	 * <p>
+	 * All names that are common to this type environment and the given free identifiers
+	 * must be associated with the same type.
+	 * </p>
+	 * 
+	 * @param freeIdents
+	 *            array of free identifiers
+	 */
+	void addAll(FreeIdentifier[] freeIdents);
+	
+	/**
 	 * Adds a given set to this environment.
 	 * <p>
 	 * The given name will be assigned its power set as type.

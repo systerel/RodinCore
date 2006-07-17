@@ -11,11 +11,12 @@ package org.eventb.core.prover.rules;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -93,37 +94,41 @@ public final class ProofTree implements IProofTree {
 		}
 	}
 
-	public Set<FreeIdentifier> getFreeIdents() {
-		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
-		collectFreeIdentifiers(freeIdents,root);
-		return freeIdents;
+	public ITypeEnvironment getFreeIdents() {
+		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
+		collectFreeIdentifiers(typeEnv,root);
+		return typeEnv;
 	}
 
 	
-	private static void collectFreeIdentifiers(Set<FreeIdentifier> freeIdents, IProofTreeNode node) {
-		node.addFreeIdents(freeIdents);
+	private static void collectFreeIdentifiers(ITypeEnvironment typeEnv, IProofTreeNode node) {
+		node.addFreeIdents(typeEnv);
 		IProofTreeNode[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			children[i].addFreeIdents(freeIdents);
-			collectFreeIdentifiers(freeIdents,children[i]);
+			children[i].addFreeIdents(typeEnv);
+			collectFreeIdentifiers(typeEnv,children[i]);
 		}
 		
 	}
 	
 	//	 TODO : maybe find a better way to return both used and introduced idents
-	public void getFreeIdentDeps(Set<FreeIdentifier> usedIdents,Set<FreeIdentifier> introducedIdents) {
-		Set<FreeIdentifier> freeIdents = getFreeIdents();
+	public void getFreeIdentDeps(ITypeEnvironment usedIdents,ITypeEnvironment introducedIdents) {
+		ITypeEnvironment freeIdents = getFreeIdents();
 		ITypeEnvironment typeEnv = root.getSequent().typeEnvironment();
-		for (FreeIdentifier freeIdent : freeIdents) {
-			// Check if the type environment contains the freeIdent
-			if (typeEnv.contains(freeIdent.getName()) && 
-					typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType()))
+		
+		ITypeEnvironment.IIterator iterator = freeIdents.getIterator();
+		while (iterator.hasNext()){
+			iterator.advance();
+			String name = iterator.getName();
+			Type type = iterator.getType();
+			if (typeEnv.contains(name) && 
+					typeEnv.getType(name).equals(type))
 				// It contains the freeIdent : it is used
-				usedIdents.add(freeIdent);
+				usedIdents.addName(name,type);
 			else 
 			{
 				// It does not contain the free Ident : it is introduced
-				introducedIdents.add(freeIdent);
+				introducedIdents.addName(name,type);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
@@ -88,6 +89,17 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		// Use addName() to check for duplicates.
 		for (Entry<String, Type> entry: otherMap.entrySet()) {
 			addName(entry.getKey(), entry.getValue());
+		}
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.FreeIdentifier[])
+	 */
+	public void addAll(FreeIdentifier[] freeIdents) {
+		// Use addName() to check for duplicates.
+		for (FreeIdentifier freeIdent: freeIdents) {
+			addName(freeIdent.getName(), freeIdent.getType());
 		}
 	}
 

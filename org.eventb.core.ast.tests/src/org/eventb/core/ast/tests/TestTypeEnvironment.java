@@ -50,6 +50,8 @@ public class TestTypeEnvironment extends TestCase {
 		te1.addName("y", INT);
 		assertEquals(te1, te2);
 	}
+	
+	// TODO : Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])'
 
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addGivenSet(String)'

@@ -10,7 +10,7 @@ package org.eventb.core.prover.rules;
 
 import java.util.Set;
 
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.IProofRule;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -56,5 +56,5 @@ public abstract class ProofRule implements IProofRule {
 	public abstract IProverSequent[] apply(IProverSequent sequent);
 	
 	public abstract Set<Hypothesis> getNeededHypotheses();
-	public abstract void addFreeIdents(Set<FreeIdentifier> freeIdents);
+	public abstract void addFreeIdents(ITypeEnvironment typeEnv);
 }

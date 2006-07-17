@@ -2,7 +2,7 @@ package org.eventb.core.prover;
 
 import java.util.Set;
 
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.rules.ProofRule;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -218,7 +218,7 @@ public interface IProofTreeNode {
 	//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
 	
 	// Perhaps make public but not published
-	void addFreeIdents(Set<FreeIdentifier> freeIdents);
+	void addFreeIdents(ITypeEnvironment typEnv);
 	
 	
 	/**

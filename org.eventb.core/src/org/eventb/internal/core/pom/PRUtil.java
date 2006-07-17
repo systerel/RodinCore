@@ -26,7 +26,6 @@ import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IPRProofTree.Status;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -210,21 +209,16 @@ public class PRUtil {
 				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 				setPredicateSet(Hypothesis.Predicates(pt.getUsedHypotheses()));
 		
-		Set<FreeIdentifier> usedFreeIdents = new HashSet<FreeIdentifier>();
-		Set<FreeIdentifier> introducedFreeIdents = new HashSet<FreeIdentifier>();
+		ITypeEnvironment usedFreeIdents = Lib.makeTypeEnvironment();
+		ITypeEnvironment introducedFreeIdents = Lib.makeTypeEnvironment();
 		pt.getFreeIdentDeps(usedFreeIdents,introducedFreeIdents);
 		
 		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
-				setTypeEnvironment(
-						usedFreeIdents.toArray(
-								new FreeIdentifier[usedFreeIdents.size()]));
+				setTypeEnvironment(usedFreeIdents);
 		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
-				setTypeEnvironment(
-						introducedFreeIdents.toArray(
-								new FreeIdentifier[introducedFreeIdents.size()]));
-		
+				setTypeEnvironment(introducedFreeIdents);
 		
 		// Write out the proof tree
 		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProof());
