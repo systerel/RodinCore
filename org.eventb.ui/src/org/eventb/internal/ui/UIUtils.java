@@ -784,7 +784,8 @@ public class UIUtils {
 				String[] varNames = dialog.getVariables();
 				String[] grdNames = dialog.getGrdNames();
 				String[] grdPredicates = dialog.getGrdPredicates();
-				String[] actions = dialog.getActions();
+				String[] actNames = dialog.getActNames();
+				String[] actSubstitutions = dialog.getActSubstitutions();
 
 				IInternalElement evt = rodinFile.createInternalElement(
 						IEvent.ELEMENT_TYPE, name, null, null);
@@ -802,24 +803,13 @@ public class UIUtils {
 					editor.addNewElement(grd);
 				}
 
-				for (String action : actions) {
-					int j = 1;
-					IRodinElement[] acts = evt
-							.getChildrenOfType(IAction.ELEMENT_TYPE);
-					for (j = 1; j <= acts.length; j++) {
-						IInternalElement tmp = evt
-								.getInternalElement(IAction.ELEMENT_TYPE,
-										"act" + j);
-						if (!tmp.exists())
-							break;
-					}
+				for (int i = 0; i < actNames.length; i++) {
 					IInternalElement act = evt.createInternalElement(
-							IAction.ELEMENT_TYPE, "act" + j, null,
-							null);
-					act.setContents(action);
-
+							IAction.ELEMENT_TYPE, actNames[i], null, null);
+					act.setContents(actSubstitutions[i]);
 					editor.addNewElement(act);
 				}
+
 			}
 		} catch (RodinDBException e) {
 			e.printStackTrace();

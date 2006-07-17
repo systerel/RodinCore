@@ -34,7 +34,7 @@ import org.eventb.internal.ui.IEventBInputText;
  * @author htson
  *         <p>
  *         This class extends the Dialog class and provides an input dialog for
- *         new event with some local varialbes, guards and actions.
+ *         new event with some local varialbes, guards and actSubstitutions.
  */
 public class NewEventInputDialog extends Dialog {
 	private String defaultName;
@@ -47,7 +47,9 @@ public class NewEventInputDialog extends Dialog {
 
 	private Collection<String> grdPredicates;
 
-	private Collection<String> actions;
+	private Collection<String> actNames;
+
+	private Collection<String> actSubstitutions;
 
 	private Text nameText;
 
@@ -57,7 +59,9 @@ public class NewEventInputDialog extends Dialog {
 
 	private Collection<IEventBInputText> grdPredicateTexts;
 
-	private Collection<IEventBInputText> actionTexts;
+	private Collection<Text> actNameTexts;
+
+	private Collection<IEventBInputText> actSubstitutionTexts;
 
 	private ScrolledForm scrolledForm;
 
@@ -82,11 +86,13 @@ public class NewEventInputDialog extends Dialog {
 		varNames = new HashSet<String>();
 		grdNames = new HashSet<String>();
 		grdPredicates = new HashSet<String>();
-		actions = new HashSet<String>();
+		actNames = new HashSet<String>();
+		actSubstitutions = new HashSet<String>();
 		varNameTexts = new ArrayList<Text>();
 		grdNameTexts = new ArrayList<Text>();
 		grdPredicateTexts = new ArrayList<IEventBInputText>();
-		actionTexts = new ArrayList<IEventBInputText>();
+		actNameTexts = new ArrayList<Text>();
+		actSubstitutionTexts = new ArrayList<IEventBInputText>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -218,12 +224,23 @@ public class NewEventInputDialog extends Dialog {
 		label.setLayoutData(gd);
 
 		for (int i = 0; i < 3; i++) {
-			Text text = toolkit.createText(body, "");
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			gd.horizontalSpan = 5;
-			gd.widthHint = 250;
+			Text text = toolkit.createText(body, "act" + i);
+			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			text.setLayoutData(gd);
-			actionTexts.add(new EventBMath(text));
+			actNameTexts.add(text);
+
+			separator = toolkit.createComposite(body);
+			gd = new GridData(SWT.NONE, SWT.NONE, false, false);
+			gd.widthHint = 30;
+			gd.heightHint = 20;
+			separator.setLayoutData(gd);
+
+			text = toolkit.createText(body, "");
+			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd.horizontalSpan = 3;
+			gd.widthHint = 200;
+			text.setLayoutData(gd);
+			actSubstitutionTexts.add(new EventBMath(text));
 		}
 
 		composite.pack();
@@ -244,7 +261,8 @@ public class NewEventInputDialog extends Dialog {
 			varNames = new HashSet<String>();
 			grdNames = new HashSet<String>();
 			grdPredicates = new HashSet<String>();
-			actions = new HashSet<String>();
+			actNames = new HashSet<String>();
+			actSubstitutions = new HashSet<String>();
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			name = nameText.getText();
 
@@ -271,13 +289,17 @@ public class NewEventInputDialog extends Dialog {
 				}
 			}
 
-			actions = new ArrayList<String>();
-			Object[] actionList = actionTexts.toArray();
-			for (int i = 0; i < actionList.length; i++) {
-				Text actionText = ((IEventBInputText) actionList[i])
+			actNames = new ArrayList<String>();
+			actSubstitutions = new ArrayList<String>();
+			Object[] actNameList = actNameTexts.toArray();
+			Object[] actSubtitutionList = actSubstitutionTexts.toArray();
+			for (int i = 0; i < actSubtitutionList.length; i++) {
+				Text actSubstitutionText = ((IEventBInputText) actSubtitutionList[i])
 						.getTextWidget();
-				if (!actionText.getText().equals("")) {
-					actions.add(actionText.getText());
+				if (!actSubstitutionText.getText().equals("")) {
+					Text nameText = (Text) actNameList[i];
+					actNames.add(nameText.getText());
+					actSubstitutions.add(actSubstitutionText.getText());
 				}
 			}
 		}
@@ -326,20 +348,31 @@ public class NewEventInputDialog extends Dialog {
 	}
 
 	/**
+	 * Get the list of guard names of the new event.
+	 * <p>
+	 * 
+	 * @return the list of the guard names as input by user
+	 */
+	public String[] getActNames() {
+		return (String[]) actNames.toArray(new String[actNames.size()]);
+	}
+
+	/**
 	 * Get the list of action of the new event.
 	 * <p>
 	 * 
-	 * @return the list the actions as input by user
+	 * @return the list the actSubstitutions as input by user
 	 */
-	public String[] getActions() {
-		return (String[]) actions.toArray(new String[actions.size()]);
+	public String[] getActSubstitutions() {
+		return (String[]) actSubstitutions.toArray(new String[actSubstitutions
+				.size()]);
 	}
 
 	@Override
 	public boolean close() {
 		for (IEventBInputText text : grdPredicateTexts)
 			text.dispose();
-		for (IEventBInputText text : actionTexts)
+		for (IEventBInputText text : actSubstitutionTexts)
 			text.dispose();
 		return super.close();
 	}
