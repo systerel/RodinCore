@@ -262,7 +262,8 @@ public class NewEventInputDialog extends Dialog {
 			Object[] grdNameList = grdNameTexts.toArray();
 			Object[] grdPredicateList = grdPredicateTexts.toArray();
 			for (int i = 0; i < grdNameList.length; i++) {
-				Text predicateText = (Text) grdPredicateList[i];
+				Text predicateText = ((IEventBInputText) grdPredicateList[i])
+						.getTextWidget();
 				if (!predicateText.getText().equals("")) {
 					Text nameText = (Text) grdNameList[i];
 					grdNames.add(nameText.getText());
@@ -273,7 +274,8 @@ public class NewEventInputDialog extends Dialog {
 			actions = new ArrayList<String>();
 			Object[] actionList = actionTexts.toArray();
 			for (int i = 0; i < actionList.length; i++) {
-				Text actionText = (Text) actionList[i];
+				Text actionText = ((IEventBInputText) actionList[i])
+						.getTextWidget();
 				if (!actionText.getText().equals("")) {
 					actions.add(actionText.getText());
 				}
