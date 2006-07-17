@@ -35,7 +35,6 @@ import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -77,12 +76,7 @@ public class CacheHypothesesSection extends HypothesesSection {
 
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				try {
-					editor.getUserSupport()
-							.applyTacticToHypotheses(t, selected);
-				} catch (RodinDBException exception) {
-					exception.printStackTrace();
-				}
+				editor.getUserSupport().applyTacticToHypotheses(t, selected);
 
 				// TODO, this should be done as the consequences of
 				// IProofTreeDelta
@@ -141,20 +135,20 @@ public class CacheHypothesesSection extends HypothesesSection {
 	 * 
 	 * @see org.eclipse.ui.forms.SectionPart#expansionStateChanging(boolean)
 	 */
-	protected void expansionStateChanging(boolean expanding) {
-		if (expanding) {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 100;
-			gd.minimumHeight = 75;
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		} else {
-			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		}
-		super.expansionStateChanging(expanding);
-	}
+//	protected void expansionStateChanging(boolean expanding) {
+//		if (expanding) {
+//			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//			gd.heightHint = 100;
+//			gd.minimumHeight = 75;
+//			gd.widthHint = 200;
+//			this.getSection().setLayoutData(gd);
+//		} else {
+//			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+//			gd.widthHint = 200;
+//			this.getSection().setLayoutData(gd);
+//		}
+//		super.expansionStateChanging(expanding);
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -164,8 +158,7 @@ public class CacheHypothesesSection extends HypothesesSection {
 	 */
 	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
 		GridData gd;
-		formText = new EventBFormText(toolkit.createFormText(
-				comp, true));
+		formText = new EventBFormText(toolkit.createFormText(comp, true));
 		gd = new GridData();
 		gd.widthHint = 50;
 		gd.horizontalAlignment = SWT.LEFT;

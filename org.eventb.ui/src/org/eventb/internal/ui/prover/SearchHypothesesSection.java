@@ -35,7 +35,6 @@ import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -77,13 +76,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				try {
-					editor.getUserSupport()
-							.applyTacticToHypotheses(t, selected);
-				} catch (RodinDBException exception) {
-					exception.printStackTrace();
-				}
-
+				editor.getUserSupport().applyTacticToHypotheses(t, selected);
 				TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
@@ -140,21 +133,21 @@ public class SearchHypothesesSection extends HypothesesSection {
 	 * 
 	 * @see org.eclipse.ui.forms.SectionPart#expansionStateChanging(boolean)
 	 */
-	@Override
-	protected void expansionStateChanging(boolean expanding) {
-		if (expanding) {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 200;
-			gd.minimumHeight = 100;
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		} else {
-			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		}
-		super.expansionStateChanging(expanding);
-	}
+//	@Override
+//	protected void expansionStateChanging(boolean expanding) {
+//		if (expanding) {
+//			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+//			gd.heightHint = 200;
+//			gd.minimumHeight = 100;
+//			gd.widthHint = 200;
+//			this.getSection().setLayoutData(gd);
+//		} else {
+//			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+//			gd.widthHint = 200;
+//			this.getSection().setLayoutData(gd);
+//		}
+//		super.expansionStateChanging(expanding);
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -164,8 +157,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 	@Override
 	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
 		GridData gd;
-		formText = new EventBFormText(toolkit.createFormText(
-				comp, true));
+		formText = new EventBFormText(toolkit.createFormText(comp, true));
 		gd = new GridData();
 		gd.widthHint = 50;
 		gd.horizontalAlignment = SWT.LEFT;

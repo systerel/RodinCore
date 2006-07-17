@@ -51,6 +51,8 @@ public abstract class HypothesesSection extends SectionPart {
 
 	protected IEventBFormText formText;
 	
+	private boolean compact;
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -69,6 +71,7 @@ public abstract class HypothesesSection extends SectionPart {
 	public HypothesesSection(ProofsPage page, Composite parent, int style,
 			String title, String description) {
 		super(parent, page.getManagedForm().getToolkit(), style);
+		compact = (style & Section.COMPACT) != 0 ? true : false;
 		this.page = page;
 		this.title = title;
 		this.description = description;
@@ -193,6 +196,13 @@ public abstract class HypothesesSection extends SectionPart {
 		super.dispose();
 	}
 
-	
+	@Override
+	protected void expansionStateChanging(boolean expanding) {
+		if (expanding) compact = false;
+		else compact = true;
+		page.layout();
+	}
+
+	public boolean isCompact() {return compact;}
 	
 }

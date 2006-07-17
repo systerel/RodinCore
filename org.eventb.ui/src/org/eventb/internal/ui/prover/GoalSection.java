@@ -46,7 +46,6 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -73,6 +72,7 @@ public class GoalSection extends SectionPart {
 	private List<IEventBInputText> textBoxes;
 
 	private IEventBInputText textInput;
+
 	/**
 	 * @author htson
 	 *         <p>
@@ -87,50 +87,44 @@ public class GoalSection extends SectionPart {
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
 		public void linkActivated(HyperlinkEvent e) {
-			try {
-				if (e.getHref().equals(UIUtils.CONJI_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(Tactics.conjI());
-					return;
-				}
-				if (e.getHref().equals(UIUtils.IMPI_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(Tactics.impI());
-					return;
-				}
+			if (e.getHref().equals(UIUtils.CONJI_SYMBOL)) {
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.conjI());
+				return;
+			}
+			if (e.getHref().equals(UIUtils.IMPI_SYMBOL)) {
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.impI());
+				return;
+			}
 
-				if (e.getHref().equals(UIUtils.ALLI_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(Tactics.allI());
-					return;
-				}
+			if (e.getHref().equals(UIUtils.ALLI_SYMBOL)) {
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.allI());
+				return;
+			}
 
-				if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
-					String[] inputs = new String[textBoxes.size()];
-					int i = 0;
-					for (IEventBInputText text : textBoxes) {
-						inputs[i++] = text.getTextWidget().getText();
-					}
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(Tactics.exI(inputs));
-					return;
+			if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
+				String[] inputs = new String[textBoxes.size()];
+				int i = 0;
+				for (IEventBInputText text : textBoxes) {
+					inputs[i++] = text.getTextWidget().getText();
 				}
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.exI(inputs));
+				return;
+			}
 
-				if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(
-									Tactics.removeNegGoal());
-					return;
-				}
+			if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.removeNegGoal());
+				return;
+			}
 
-				if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
-					((ProverUI) GoalSection.this.page.getEditor())
-							.getUserSupport().applyTactic(
-									Tactics.disjToImpGoal());
-					return;
-				}
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
+			if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
+				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
+						.applyTactic(Tactics.disjToImpGoal());
+				return;
 			}
 		}
 
@@ -222,9 +216,9 @@ public class GoalSection extends SectionPart {
 	 */
 	private void createSimpleText(String text, Color color) {
 		composite.setLayout(new GridLayout());
-		textInput = new EventBMath(toolkit.createText(composite,
-				text, SWT.READ_ONLY));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		textInput = new EventBMath(toolkit.createText(composite, text,
+				SWT.READ_ONLY));
+		GridData gd = new GridData();
 		Text textWidget = textInput.getTextWidget();
 		textWidget.setLayoutData(gd);
 		textWidget.setBackground(color);
@@ -254,6 +248,10 @@ public class GoalSection extends SectionPart {
 			Predicate goal = pt.getSequent().goal();
 			Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 			createSimpleText(goal.toString(), color);
+			// Label label = toolkit.createLabel(composite, goal.toString(),
+			// SWT.LEFT | SWT.SHADOW_IN);
+			// label.setLayoutData(new GridData());
+			// label.pack();
 			scrolledForm.reflow(true);
 		} else {
 			Predicate goal = pt.getSequent().goal();
@@ -302,7 +300,8 @@ public class GoalSection extends SectionPart {
 				text.getTextWidget().setLayoutData(gd);
 				scrolledForm.reflow(true);
 			} else {
-				Color color = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+				Color color = Display.getCurrent().getSystemColor(
+						SWT.COLOR_WHITE);
 				createSimpleText(goal.toString(), color);
 			}
 		}
@@ -344,9 +343,13 @@ public class GoalSection extends SectionPart {
 
 	@Override
 	public void dispose() {
-		if (formText != null) formText.dispose();
-		if (textInput != null) textInput.dispose();
-		if (textBoxes != null) for (IEventBInputText text : textBoxes) text.dispose();
+		if (formText != null)
+			formText.dispose();
+		if (textInput != null)
+			textInput.dispose();
+		if (textBoxes != null)
+			for (IEventBInputText text : textBoxes)
+				text.dispose();
 		super.dispose();
 	}
 
@@ -390,6 +393,5 @@ public class GoalSection extends SectionPart {
 	// }
 	// }
 	// }
-	
-	
+
 }

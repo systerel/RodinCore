@@ -61,7 +61,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	private HypothesesSection searchedSection;
 
 	private SashForm sashForm;
-	
+
 	// private Collection<Hypothesis> selected;
 	//
 	// private Collection<Hypothesis> cached;
@@ -126,7 +126,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		gd.widthHint = 200;
 		gd.minimumHeight = 30;
 		searchedSection.getSection().setLayoutData(gd);
-		
+
 		cachedSection = new CacheHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
@@ -151,8 +151,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		initHypothesisSections();
 
-		goalSection = new GoalSection(this, sashForm, ExpandableComposite.TITLE_BAR
-				| ExpandableComposite.TWISTIE | Section.EXPANDED);
+		goalSection = new GoalSection(this, sashForm,
+				ExpandableComposite.TITLE_BAR);
 		managedForm.addPart(goalSection);
 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -160,8 +160,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		gd.minimumHeight = 30;
 		gd.widthHint = 200;
 		goalSection.getSection().setLayoutData(gd);
-		int [] weights = {2, 10, 10, 8};	
-		sashForm.setWeights(weights);
+		layout();
 	}
 
 	private void initHypothesisSections() {
@@ -267,30 +266,48 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		searchedSection.init(searched);
 
 	}
-	
+
 	public void layout() {
-		int [] weights = new int[4];
+		int[] weights = new int[4];
+
+		int compact = 0;
+		if (searchedSection.isCompact()) compact++;
+		if (cachedSection.isCompact()) compact++;
+		if (selectedSection.isCompact()) compact++;
 		
-		if (searchedSection.isCompact()) weights[0] = 2;
-		else weights[0] = 10;
+		int compactWeight = 2;
+		int expandedWeight = 2;
+		int goalWeight;
+		UIUtils.debugProverUI("Compact: " + compact);
+		if (compact == 3) goalWeight = 30 - 3 * compactWeight;
+		else {
+			goalWeight = 6;
+			expandedWeight = (30 - goalWeight - compact * 2) / (3 - compact);
+			UIUtils.debugProverUI("Expanded Weight: " + expandedWeight);
+		}
 		
-		if (cachedSection.isCompact()) weights[1] = 2;
-		else weights[1] = 10;
+		if (searchedSection.isCompact()) {
+			weights[0] = compactWeight;
+		}
+		else weights[0] = expandedWeight;
 		
-		if (selectedSection.isCompact()) weights[2] = 2;
-		else weights[2] = 10;
+		if (cachedSection.isCompact()) {
+			weights[1] = compactWeight;
+		}
+		else weights[1] = expandedWeight;
 		
-		weights[3] = 6;
+		if (selectedSection.isCompact()) {
+			weights[2] = compactWeight;
+		}
+		else weights[2] = expandedWeight;
 		
-		int sum = 0;
+		weights[3] = goalWeight;
+
+		
 		for (int i = 0; i < 4; i++) {
 			UIUtils.debugProverUI("weights[" + i + "] = " + weights[i]);
-			sum += weights[i];
 		}
 		sashForm.setWeights(weights);
-//		sashForm.layout();
-//		sashForm.pack();
-	
 	}
 
 }
