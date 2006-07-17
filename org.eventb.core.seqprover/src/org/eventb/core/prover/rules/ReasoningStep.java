@@ -58,9 +58,9 @@ public class ReasoningStep extends ProofRule {
 		return reasonerOutput.neededHypotheses;
 	}
 
-	@Override
-	public Set<FreeIdentifier> getNeededFreeIdents() {
-		return reasonerOutput.getNeededFreeIdents();
+	
+	public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
+		reasonerOutput.addFreeIdents(freeIdents);
 	}
 	
 	

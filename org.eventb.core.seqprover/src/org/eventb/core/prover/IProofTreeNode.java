@@ -207,8 +207,18 @@ public interface IProofTreeNode {
 	 */
 	String getComment();
 	
-	Set<Hypothesis> getUsedHypotheses();
-	Set<FreeIdentifier> getUsedFreeIdents();
+	/**
+	 * Returns the hypotheses needed by rule applied at this node.
+	 * 
+	 * @return the hypotheses needed by rule applied at this node.
+	 */
+	Set<Hypothesis> getNeededHypotheses();
+	
+	// TODO : Replace getNeededHypotheses() with a more sophisticated 
+	//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
+	
+	// Perhaps make public but not published
+	void addFreeIdents(Set<FreeIdentifier> freeIdents);
 	
 	
 	/**

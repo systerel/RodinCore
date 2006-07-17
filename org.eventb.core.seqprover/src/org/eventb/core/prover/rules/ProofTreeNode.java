@@ -1,6 +1,8 @@
 package org.eventb.core.prover.rules;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,27 +15,75 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
+/**
+ * @author fmehta
+ *
+ */
+/**
+ * @author fmehta
+ *
+ */
 public final class ProofTreeNode implements IProofTreeNode {
 	
 	private static final ProofTreeNode[] NO_NODE = new ProofTreeNode[0];
 	
-	private ProofTreeNode[] children;
-	// Cache of closed status
-	private boolean closed;
-	// Cache of confidence level
-	// (also caches closed status)
-	private int confidence;
-	private ProofTreeNode parent;
-	private ProofRule rule;
+	
+	/**
+	 * Sequent associated to this proof tree node.
+	 * 
+	 * This field is immutable and always non-null.
+	 */
 	private final IProverSequent sequent;
+
+	/**
+	 * Children nodes of this proof tree node.
+	 * 
+	 * This field may be changed in a controlled way using methods in this class.
+	 * This field is equal to <code>null</code> iff <code>rule</code> equals 
+	 * <code>null</code>.
+	 */
+	private ProofTreeNode[] children;
+
+	/**
+	 * Rule applied to this proof tree node.
+	 * 
+	 * This field may be changed in a controlled way using methods in this class.
+	 * This field is equal to null iff <code>children</code> equals <code>null</code>.
+	 */
+	private ProofRule rule;
+
+	/**
+	 * Comment associated to this proof tree node.
+	 */
 	private String comment;
 	
-	// Tree to which this node belongs. This field is only set for a root node,
-	// so that it's easy to remove a whole subtree from the tree. Always use
-	// #getProofTree() to access this information.
+	/**
+	 * Parent node of this proof tree node.
+	 */
+	private ProofTreeNode parent;
+	
+	/**
+	 * Confidence level (see @see IConfidence) for this proof tree node.
+	 * 
+	 * Although it is possible to calculate the confidence for a node, this 
+	 * information is cached here for greater efficiency.
+	 */
+	private int confidence;
+	
+	
+	/**
+	 * Proof tree to which this node belongs. This field is only set for a root node,
+	 * so that it's easy to remove a whole subtree from the tree. Always use
+	 * #getProofTree() to access this information.
+	 */
 	private ProofTree tree;
 
-	// Creates a root node of a proof tree
+	/**
+	 * Creates a root node of a proof tree.
+	 * 
+	 * @param tree The proof tree to associate to 
+	 * @param sequent The sequent used to construct the proof tree node
+	 */
 	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
 		assert tree != null;
 		this.tree = tree;
@@ -41,13 +91,17 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
-		this.closed = false;
 		this.confidence = IConfidence.PENDING;
 		this.comment = "";
-		this.checkClassInvariant();
+		this.assertClassInvariant();
 	}
 	
-	// Creates an internal node of a proof tree
+	/**
+	 * Creates an internal node of a proof tree.
+	 * 
+	 * @param parent The parent node for the proof tree node to construct
+	 * @param sequent The sequent used to construct the proof tree node
+	 */
 	private ProofTreeNode(ProofTreeNode parent, IProverSequent sequent) {
 		assert parent != null;
 		this.tree = null;
@@ -55,13 +109,16 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.sequent = sequent;
 		this.rule = null;
 		this.children = null;
-		this.closed = false;
 		this.confidence = IConfidence.PENDING;
 		this.comment = "";
-		this.checkClassInvariant();
+		this.assertClassInvariant();
 	}
 	
-	// Append the open descendant of this node to the given list.
+	/**
+	 * Append the open descendants of this node to the given list.
+	 * 
+	 * @param list The list of open decendants to append to
+	 */
 	private void appendOpenDescendants(List<IProofTreeNode> list) {
 		if (isOpen()) {
 			list.add(this);
@@ -82,7 +139,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule != null) return false;
 		IProverSequent[] anticidents = rule.apply(this.sequent);
 		if (anticidents == null) return false;
-		// this.rule = rule;
 		final int length = anticidents.length;
 		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
@@ -92,11 +148,14 @@ public final class ProofTreeNode implements IProofTreeNode {
 		setChildren(newChildren);
 		if (length == 0)
 			this.setClosed();
-		this.checkClassInvariant();
+		this.assertClassInvariant();
 		fireDeltas();
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#graft(org.eventb.core.prover.IProofTree)
+	 */
 	public boolean graft(IProofTree tree) {
 		//	force pruning to avoid losing child proofs
 		if (this.children != null) return false;
@@ -111,38 +170,32 @@ public final class ProofTreeNode implements IProofTreeNode {
 		treeRoot.setRule(null);
 		treeRoot.setChildren(null);
 		treeRoot.reopen();
-		treeRoot.checkClassInvariant();
+		treeRoot.assertClassInvariant();
 		treeRoot.fireDeltas();
 		
 		// Connect treeChildren to this node
 		for (ProofTreeNode treeChild : treeChildren)
 			treeChild.parent = this;
-		// this.rule = treeRule;
 		this.setRule(treeRule);
 		this.setChildren(treeChildren);
 		if (treeClosed)
 			this.setClosed();
-		this.checkClassInvariant();
+		this.assertClassInvariant();
 		fireDeltas();
 		return true;
 	}
 	
-	private boolean areAllChildrenClosed() {
-		if (children == null)
-			return false;
-		for (ProofTreeNode child: children) {
-			if (! child.closed)
-				return false;
-		}
-		return true;
-	}
-	
+	/**
+	 * Calculates the minimum confidence value of all of this node's children
+	 * 
+	 * @return The minimum confidence value of all of this node's children
+	 */
 	private int minChildConf() {
 		if (children == null)
 			return IConfidence.PENDING;
 		int minChildConf = IConfidence.DISCHARGED_MAX;
 		for (ProofTreeNode child: children) {
-			if (Lib.isPending(child.confidence))
+			if (child.confidence == IConfidence.PENDING)
 				return IConfidence.PENDING;
 			if (child.confidence < minChildConf)
 				minChildConf = child.confidence;
@@ -150,30 +203,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return minChildConf;
 	}
 	
-	private void checkClassInvariant() {
-		assert (this.sequent != null);
-		assert ((this.rule == null) & (this.children == null)) |
-				((this.rule != null) & (this.children != null));
-		if (this.rule != null) {
-			// assert rule.isApplicable(this.sequent);
-			IProverSequent[] anticidents = rule.apply(this.sequent);
-			assert (anticidents != null);
-			assert (this.children.length == anticidents.length);
-			for (int i=0;i<anticidents.length;i++)
-			{
-				// System.out.println(this.children[i].root);
-				// System.out.println(anticidents[i]);
-				assert (Lib.identical (this.children[i].sequent,anticidents[i]));
-				assert this.children[i].parent == this;
-				this.children[i].checkClassInvariant();
-			}
-		}
-		assert this.closed == (getOpenDescendants().length == 0);
-		assert (this.parent == null) ? (this.tree != null) : true;
-		assert (this.tree == null) ? (this.parent != null) : true;
-	}
-	
-	// Report children change to delta processor.
+	/**
+	 * Report children change to delta processor.
+	 */
 	private void childrenChanged() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
@@ -181,6 +213,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 	
+	/**
+	 * Fire deltas for the associated proof tree.
+	 */
 	private void fireDeltas() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
@@ -202,6 +237,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#getFirstOpenDescendant()
+	 */
 	public IProofTreeNode getFirstOpenDescendant() {
 		if (isClosed())
 			return null;
@@ -277,7 +315,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * @see org.eventb.core.prover.IProofTreeNode#isClosed()
 	 */
 	public boolean isClosed() {
-		return closed;
+		return confidence != IConfidence.PENDING;
 	}
 
 	/* (non-Javadoc)
@@ -293,7 +331,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public ProofTree[] pruneChildren() {
 		if (isOpen())
 			return null;
-		// this.rule = null;
 		this.setRule(null);
 		
 		ProofTree[] prunedChildSubtrees = new ProofTree[this.children.length];
@@ -305,16 +342,17 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 		setChildren(null);
 		reopen();
-		checkClassInvariant();
+		assertClassInvariant();
 		fireDeltas();
 		return prunedChildSubtrees;
 	}
 	
-	// Reopen this node, setting the status of all ancestors to pending
+	/**
+	 * Reopen this node, setting the status of all ancestors to pending
+	 */
 	private void reopen() {
 		ProofTreeNode node = this;
 		while (node != null && ! Lib.isPending(node.confidence)) {
-			node.closed = false;
 			node.confidence = IConfidence.PENDING;
 			node.confidenceChanged();
 			node = node.parent;
@@ -331,13 +369,16 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ruleChanged();
 	}
 
-	// This node has just been closed. Update its status, as well as its
-	// ancestors'.
+	protected void setProofTree(ProofTree tree) {
+		this.tree = tree;	
+	}
+	
+	/**
+	 * This node has just been closed. Update its status, as well as its
+	 * ancestors'.
+	 */
 	private void setClosed() {
-		this.closed = true;
 		this.confidence = this.rule.getRuleConfidence();
-		// System.out.println(Lib.isValid(this.confidence));
-		// System.out.println(! Lib.isPending(this.confidence));
 		assert (Lib.isValid(this.confidence) && (! Lib.isPending(this.confidence)));
 		confidenceChanged();
 		ProofTreeNode node = this.parent;
@@ -345,7 +386,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		int nodeMinChildrenConf = node.minChildConf();
 		while (! Lib.isPending(nodeMinChildrenConf))
 		{
-				node.closed = true;
 				node.confidence = node.rule.getRuleConfidence();
 				if (node.confidence > nodeMinChildrenConf)
 					node.confidence = nodeMinChildrenConf;
@@ -356,29 +396,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 	
-	
-//	private void setDischarged() {
-//		this.discharged = true;
-//		this.confidence = this.rule.getRuleConfidence();
-//		assert this.confidence > IProofRule.CONFIDENCE_PENDING;
-//		confidenceChanged();
-//		ProofTreeNode node = this.parent;
-//		int nodeMinChildConfidence = node
-//		while (node != null) {
-//			int nodeMinChildConfidence = node.minChildrenConfidence();
-//			if (nodeMinChildConfidence > IProofRule.CONFIDENCE_PENDING)
-//			{
-//				node.discharged = true;
-//				node.confidence = node.rule.getRuleConfidence();
-//				if (node.confidence > nodeMinChildConfidence)
-//					node.confidence = nodeMinChildConfidence;
-//				node.confidenceChanged();
-//				node = node.parent;
-//			}
-//		}
-//	}
-//	
-	//	 Report a rule change to delta processor.
+	/**
+	 * Report a rule change to delta processor.
+	 */
 	private void ruleChanged() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
@@ -386,7 +406,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 	
-	//	 Report a confidence level change to delta processor.
+	/**
+	 *  Report a confidence level change to delta processor.
+	 */
 	private void confidenceChanged() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
@@ -394,12 +416,112 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 	
-	//	 Report change of comment to the delta processor.
+	/**
+	 * Report a comment change to the delta processor.
+	 */
 	private void commentChanged() {
 		ProofTree tree = getProofTree();
 		if (tree != null) {
 			tree.deltaProcessor.commentChanged(this);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#setComment(java.lang.String)
+	 */
+	public void setComment(String comment) {
+		assert comment != null;
+		this.comment = comment;
+		this.commentChanged();
+		this.fireDeltas();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#getComment()
+	 */
+	public String getComment() {
+		return this.comment;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#getUsedHypotheses()
+	 */
+	public Set<Hypothesis> getNeededHypotheses(){
+		if (this.rule == null) return new HashSet<Hypothesis>();
+		return rule.getNeededHypotheses();
+	}
+	
+	
+//	TODO : Replace getNeededHypotheses() with a more sophisticated 
+//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
+	
+//	public Set<Hypothesis> getUsedHypotheses(){
+//	HashSet<Hypothesis> usedHypotheses = new HashSet<Hypothesis>();
+//		if (this.rule == null) return usedHypotheses;
+//		for (ProofTreeNode child : this.children) {
+//			usedHypotheses.addAll(child.getUsedHypotheses());
+//		}
+//		usedHypotheses.retainAll(sequent.hypotheses());
+//		usedHypotheses.addAll(rule.getNeededHypotheses());
+//		return usedHypotheses;
+//	}
+
+	public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
+		if (this.rule != null) rule.addFreeIdents(freeIdents);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.prover.IProofTreeNode#getConfidence()
+	 */
+	public int getConfidence() {
+		return this.confidence;
+	}
+	
+	
+	/**
+	 * Runtime assertion check for the proof tree node
+	 */
+	private void assertClassInvariant() {
+		assert (this.sequent != null);
+		assert ((this.rule == null) & (this.children == null)) |
+				((this.rule != null) & (this.children != null));
+		if (this.rule != null) {
+			IProverSequent[] anticidents = rule.apply(this.sequent);
+			assert (anticidents != null);
+			assert (this.children.length == anticidents.length);
+			for (int i=0;i<anticidents.length;i++)
+			{
+				assert (Lib.identical (this.children[i].sequent,anticidents[i]));
+				assert this.children[i].parent == this;
+				this.children[i].assertClassInvariant();
+			}
+		}
+		assert this.isClosed() == (getOpenDescendants().length == 0);
+		assert (this.parent == null) ? (this.tree != null) : true;
+		assert (this.tree == null) ? (this.parent != null) : true;
+		assert this.confidence == this.computeConfidence();
+	}
+	
+
+	/**
+	 * Computes the confidence level of the proof tree node recursively.
+	 * 
+	 * <p>
+	 * Used in the assertion check to check if the actual and cached confidence level
+	 * are the same.
+	 * </p>
+	 * 
+	 * @return The computed confidence level
+	 */
+	private int computeConfidence() {
+		if (rule == null) return IConfidence.PENDING;
+		int minConfidence = rule.getRuleConfidence();
+		for (ProofTreeNode child : children) {
+			int childConfidence = child.getConfidence();
+			if (childConfidence < minConfidence)
+				minConfidence = childConfidence;
+		}
+		return minConfidence;
 	}
 
 	@Override
@@ -444,67 +566,5 @@ public final class ProofTreeNode implements IProofTreeNode {
 		else { ruleStr = this.rule.getDisplayName(); };
 		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
 	}
-	
-	protected void setProofTree(ProofTree tree) {
-		this.tree = tree;	
-	}
-
-	public void setComment(String comment) {
-		assert comment != null;
-		this.comment = comment;
-		this.commentChanged();
-		this.fireDeltas();
-	}
-	
-	public String getComment() {
-		return this.comment;
-	}
-	
-	public Set<Hypothesis> getUsedHypotheses(){
-		HashSet<Hypothesis> usedHypotheses = new HashSet<Hypothesis>();
-		if (this.rule == null) return usedHypotheses;
-		for (ProofTreeNode child : this.children) {
-			usedHypotheses.addAll(child.getUsedHypotheses());
-		}
-		usedHypotheses.retainAll(sequent.hypotheses());
-		usedHypotheses.addAll(rule.getNeededHypotheses());
-		return usedHypotheses;
-	}
-
-	public Set<FreeIdentifier> getUsedFreeIdents() {
-		HashSet<FreeIdentifier> usedFreeIdents = new HashSet<FreeIdentifier>();
-		if (this.rule == null) return usedFreeIdents;
-		for (ProofTreeNode child : this.children) {
-			usedFreeIdents.addAll(child.getUsedFreeIdents());
-		}
-		// retain all free identifiers in the curent type environment
-		
-		HashSet<FreeIdentifier> usedFreeIdentsIterCopy = (HashSet<FreeIdentifier>) usedFreeIdents.clone();
-		for (FreeIdentifier ident : usedFreeIdentsIterCopy)
-		{
-			if (! sequent.typeEnvironment().contains(ident.getName()))
-				usedFreeIdents.remove(ident);
-		}
-		usedFreeIdents.addAll(rule.getNeededFreeIdents());
-		return usedFreeIdents;
-	}
-
-	private int getConfidenceComp() {
-		if (rule == null) return IConfidence.PENDING;
-		int minConfidence = rule.getRuleConfidence();
-		for (ProofTreeNode child : children) {
-			int childConfidence = child.getConfidence();
-			if (childConfidence < minConfidence)
-				minConfidence = childConfidence;
-		}
-		return minConfidence;
-	}
-
-	public int getConfidence() {
-		assert this.confidence == this.getConfidenceComp();
-		return this.confidence;
-	}
-	
-	
 	
 }

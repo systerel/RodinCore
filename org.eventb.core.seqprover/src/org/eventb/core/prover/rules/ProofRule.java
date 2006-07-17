@@ -56,5 +56,5 @@ public abstract class ProofRule implements IProofRule {
 	public abstract IProverSequent[] apply(IProverSequent sequent);
 	
 	public abstract Set<Hypothesis> getNeededHypotheses();
-	public abstract Set<FreeIdentifier> getNeededFreeIdents();
+	public abstract void addFreeIdents(Set<FreeIdentifier> freeIdents);
 }

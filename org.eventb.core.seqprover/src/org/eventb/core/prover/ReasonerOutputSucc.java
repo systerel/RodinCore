@@ -65,17 +65,28 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 			return result;
 		}
 
-		public Set<FreeIdentifier> getNeededFreeIdents() {
-			Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
+		public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
 			assert subGoal != null;
-			neededFreeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
+			freeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
 			for(Predicate hyp: addedHypotheses){
-				neededFreeIdents.addAll(
+				freeIdents.addAll(
 						Arrays.asList(hyp.getFreeIdentifiers()));
 			}
-			neededFreeIdents.removeAll(Arrays.asList(addedFreeIdentifiers));
-			return neededFreeIdents;
+			// This is not strictly needed. Just to be safe..
+			freeIdents.addAll(Arrays.asList(addedFreeIdentifiers));
 		}
+		
+//		public Set<FreeIdentifier> getNeededFreeIdents() {
+//			Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
+//			assert subGoal != null;
+//			neededFreeIdents.addAll(Arrays.asList(subGoal.getFreeIdentifiers()));
+//			for(Predicate hyp: addedHypotheses){
+//				neededFreeIdents.addAll(
+//						Arrays.asList(hyp.getFreeIdentifiers()));
+//			}
+//			neededFreeIdents.removeAll(Arrays.asList(addedFreeIdentifiers));
+//			return neededFreeIdents;
+//		}
 		
 	}
 	
@@ -94,18 +105,16 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 
-	public Set<FreeIdentifier> getNeededFreeIdents() {
-		Set<FreeIdentifier> neededFreeIdents = new HashSet<FreeIdentifier>();
+	public void addFreeIdents(Set<FreeIdentifier> freeIdents) {
 		for(Anticident anticident : anticidents){
-			neededFreeIdents.addAll(anticident.getNeededFreeIdents());
+			anticident.addFreeIdents(freeIdents);
 		}
 		
-		neededFreeIdents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		freeIdents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
 		for(Hypothesis hyp: neededHypotheses){
-			neededFreeIdents.addAll(
+			freeIdents.addAll(
 					Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
 		}
-		return neededFreeIdents;
 	}
 
 }

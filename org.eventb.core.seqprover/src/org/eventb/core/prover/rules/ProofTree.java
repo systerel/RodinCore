@@ -8,11 +8,14 @@
 
 package org.eventb.core.prover.rules;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -72,15 +75,60 @@ public final class ProofTree implements IProofTree {
 		deltaProcessor.removeChangeListener(listener);
 	}
 
+	//	TODO : Replace with a more sophisticated implementation
+	//  once Rule and ReasoningStep have been merged.
 	public Set<Hypothesis> getUsedHypotheses() {
-		return root.getUsedHypotheses();
+		Set<Hypothesis> usedHyps = new HashSet<Hypothesis>();
+		collectNeededHypotheses(usedHyps,root);
+		usedHyps.retainAll(getSequent().hypotheses());
+		return usedHyps;
+	}
+	
+	private static void collectNeededHypotheses(Set<Hypothesis> neededHyps,IProofTreeNode node){
+		neededHyps.addAll(node.getNeededHypotheses());
+		IProofTreeNode[] children = node.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			neededHyps.addAll(children[i].getNeededHypotheses());
+			collectNeededHypotheses(neededHyps,children[i]);
+		}
 	}
 
-	public Set<FreeIdentifier> getUsedFreeIdents() {
-		return root.getUsedFreeIdents();
+	public Set<FreeIdentifier> getFreeIdents() {
+		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+		collectFreeIdentifiers(freeIdents,root);
+		return freeIdents;
 	}
 
 	
+	private static void collectFreeIdentifiers(Set<FreeIdentifier> freeIdents, IProofTreeNode node) {
+		node.addFreeIdents(freeIdents);
+		IProofTreeNode[] children = node.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].addFreeIdents(freeIdents);
+			collectFreeIdentifiers(freeIdents,children[i]);
+		}
+		
+	}
+	
+	// TODO : return both used and introduced idents somehow
+	public Set<FreeIdentifier> getUsedFreeIdents() {
+		Set<FreeIdentifier> freeIdents = getFreeIdents();
+		Set<FreeIdentifier> usedIdents = new HashSet<FreeIdentifier>();
+		Set<FreeIdentifier> introducedIdents = new HashSet<FreeIdentifier>();
+		ITypeEnvironment typeEnv = root.getSequent().typeEnvironment();
+		for (FreeIdentifier freeIdent : freeIdents) {
+			// Check if the type environment contains the freeIdent
+			if (typeEnv.contains(freeIdent.getName()) && 
+					typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType()))
+				usedIdents.add(freeIdent);
+			else 
+			{
+				introducedIdents.add(freeIdent);
+			}
+		}
+		return usedIdents;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTree#getConfidence()
 	 */
