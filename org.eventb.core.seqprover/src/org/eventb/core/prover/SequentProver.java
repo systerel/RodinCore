@@ -15,10 +15,13 @@ public class SequentProver extends Plugin {
 	public static final String PLUGIN_ID = "org.eventb.core.seqprover"; //$NON-NLS-1$
 	
 	private static final String B4FREE_TRACE = PLUGIN_ID + "/debug/b4free"; //$NON-NLS-1$
+	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
 
 	
 	//The shared instance.
 	private static SequentProver plugin;
+
+	private static boolean DEBUG;
 	
 	/**
 	 * Creates the Sequent Prover plug-in.
@@ -46,9 +49,13 @@ public class SequentProver extends Plugin {
 	 */
 	private void configureDebugOptions() {
 		if (isDebugging()) {
-			String option = Platform.getDebugOption(B4FREE_TRACE);
+			String option;
+			option = Platform.getDebugOption(B4FREE_TRACE);
 			if (option != null)
 				ClassicB.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(SEQPROVER_TRACE);
+			if (option != null)
+				SequentProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
@@ -76,6 +83,11 @@ public class SequentProver extends Plugin {
 	 */
 	public static IProofTree makeProofTree(IProverSequent sequent) {
 		return new ProofTree(sequent);
+	}
+	
+	public static void debugOut(String message){
+		if (DEBUG)
+			System.out.println(message);
 	}
 	
 }
