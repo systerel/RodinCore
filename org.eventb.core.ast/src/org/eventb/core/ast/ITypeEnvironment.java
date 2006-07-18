@@ -94,6 +94,7 @@ public interface ITypeEnvironment {
 	/**
 	 * Adds all given free identifiers to this environment.
 	 * <p>
+	 * All given free identifiers must already be typed checked.
 	 * All names that are common to this type environment and the given free identifiers
 	 * must be associated with the same type.
 	 * </p>

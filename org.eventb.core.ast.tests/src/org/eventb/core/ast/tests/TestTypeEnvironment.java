@@ -7,6 +7,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
@@ -25,7 +26,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(ITypeEnvironment)'
 	 */
-	public void testAddAll() {
+	public void testAddAllTypeEnv() {
 		ITypeEnvironment te1 = ff.makeTypeEnvironment();
 		ITypeEnvironment te2 = ff.makeTypeEnvironment();
 		ITypeEnvironment empty = ff.makeTypeEnvironment();
@@ -51,8 +52,33 @@ public class TestTypeEnvironment extends TestCase {
 		assertEquals(te1, te2);
 	}
 	
-	// TODO : Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])'
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])'
+	 */
+	public void testAddAllFreeIdent() {
+		ITypeEnvironment te1 = ff.makeTypeEnvironment();
+		ITypeEnvironment te2 = ff.makeTypeEnvironment();
+		ITypeEnvironment empty_te = ff.makeTypeEnvironment();
+		
+		FreeIdentifier x_INT = ff.makeFreeIdentifier("x",null,INT);
+		FreeIdentifier y_S = ff.makeFreeIdentifier("y",null,t_S);
 
+		FreeIdentifier[] empty_fi = {};
+		
+		te1.addAll(empty_fi);
+		assertEquals(te1, empty_te);
+		
+		te2.addName("x",INT);
+		te1.addAll(new FreeIdentifier[] {x_INT,y_S});
+		te2.addName("y",t_S);
+		assertEquals(te1, te2);
+		
+		// Adding the same again has no effect
+		te1.addAll(new FreeIdentifier[] {x_INT,y_S});
+		assertEquals(te1, te2);
+		
+	}
+	
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addGivenSet(String)'
 	 */
