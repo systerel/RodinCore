@@ -14,16 +14,12 @@ package org.eventb.internal.ui.projectexplorer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,14 +37,6 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEvent;
-import org.eventb.core.IExtendsContext;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISeesContext;
-import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -56,11 +44,9 @@ import org.eventb.internal.ui.ProvingPerspective;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -84,10 +70,6 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 	public static Action deleteAction;
 
 	public static Action proveAction;
-
-	public static Action refineAction;
-	
-	public static Action extendAction;
 
 	public static RefreshAction refreshAction;
 
@@ -254,197 +236,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		proveAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		refineAction = new Action() {
-			public void run() {
-				ISelection selection = explorer.getTreeViewer().getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ssel = (IStructuredSelection) selection;
-					if (ssel.size() == 1) {
-						Object obj = ssel.getFirstElement();
-						if (!(obj instanceof IMachineFile))
-							return;
-						final IMachineFile machine = (IMachineFile) obj;
-						final IRodinProject prj = machine.getRodinProject();
-
-						InputDialog dialog = new InputDialog(explorer.getSite()
-								.getShell(), "New REFINES Clause",
-								"Please enter the name of the new machine",
-								"m0", new RodinFileInputValidator(prj));
-
-						dialog.open();
-
-						final String abstractMachineName = EventBPlugin
-								.getComponentName(machine.getElementName());
-						final String bareName = dialog.getValue();
-						if (bareName == null) return;
-
-						try {
-							RodinCore.run(new IWorkspaceRunnable() {
-
-								public void run(IProgressMonitor monitor)
-										throws CoreException {
-									IRodinFile newFile = prj
-											.createRodinFile(
-													EventBPlugin
-															.getMachineFileName(bareName),
-													false, null);
-									
-									IInternalElement refined = newFile
-											.createInternalElement(
-													IRefinesMachine.ELEMENT_TYPE,
-													abstractMachineName, null,
-													null);
-									refined.setContents(abstractMachineName);
-
-									copyChildrenOfType(newFile, machine,
-											ISeesContext.ELEMENT_TYPE);
-									copyChildrenOfType(newFile, machine,
-											IVariable.ELEMENT_TYPE);
-									copyChildrenOfType(newFile, machine,
-											IEvent.ELEMENT_TYPE);
-									
-									IRodinElement[] elements = machine.getChildrenOfType(IEvent.ELEMENT_TYPE);
-
-									for (IRodinElement element : elements) {
-										String name = element.getElementName();
-										IInternalElement newElement = newFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
-										IInternalElement refineEvent = newElement.createInternalElement(IRefinesEvent.ELEMENT_TYPE, name, null, null);
-										refineEvent.setContents(name);
-									}
-									newFile.save(null, true);
-									UIUtils.linkToEventBEditor(newFile);
-
-								}
-
-							}, null);
-						} catch (CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-				}
-			}
-		};
-		refineAction.setText("Refines");
-		refineAction.setToolTipText("Refines the machine");
-		refineAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-		extendAction = new Action() {
-			public void run() {
-				ISelection selection = explorer.getTreeViewer().getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ssel = (IStructuredSelection) selection;
-					if (ssel.size() == 1) {
-						Object obj = ssel.getFirstElement();
-						if (!(obj instanceof IContextFile))
-							return;
-						final IContextFile context = (IContextFile) obj;
-						final IRodinProject prj = context.getRodinProject();
-
-						InputDialog dialog = new InputDialog(explorer.getSite()
-								.getShell(), "New EXTENDS Clause",
-								"Please enter the name of the new context",
-								"c0", new RodinFileInputValidator(prj));
-
-						dialog.open();
-
-						final String abstractContextName = EventBPlugin
-								.getComponentName(context.getElementName());
-						final String bareName = dialog.getValue();
-						if (bareName == null) return;
-						try {
-							RodinCore.run(new IWorkspaceRunnable() {
-
-								public void run(IProgressMonitor monitor)
-										throws CoreException {
-									IRodinFile newFile = prj
-											.createRodinFile(
-													EventBPlugin
-															.getContextFileName(bareName),
-													false, null);
-									
-									IInternalElement refined = newFile
-											.createInternalElement(
-													IExtendsContext.ELEMENT_TYPE,
-													abstractContextName, null,
-													null);
-									refined.setContents(abstractContextName);
-//
-//									copyChildrenOfType(newFile, context,
-//											ISeesContext.ELEMENT_TYPE);
-//									copyChildrenOfType(newFile, context,
-//											IVariable.ELEMENT_TYPE);
-//									copyChildrenOfType(newFile, context,
-//											IEvent.ELEMENT_TYPE);
-//									
-//									IRodinElement[] elements = context.getChildrenOfType(IEvent.ELEMENT_TYPE);
-//
-//									for (IRodinElement element : elements) {
-//										String name = element.getElementName();
-//										IInternalElement newElement = newFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
-//										IInternalElement refineEvent = newElement.createInternalElement(IRefinesEvent.ELEMENT_TYPE, name, null, null);
-//										refineEvent.setContents(name);
-//									}
-									newFile.save(null, true);
-									UIUtils.linkToEventBEditor(newFile);
-
-								}
-
-							}, null);
-						} catch (CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-				}
-			}
-		};
-		extendAction.setText("Extends");
-		extendAction.setToolTipText("Extends the context");
-		extendAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
-
-
 	}
 
-	private void copyChildrenOfType(IRodinFile destination,
-			IRodinFile original, String type) throws RodinDBException {
-		IRodinElement[] elements = original.getChildrenOfType(type);
-
-		for (IRodinElement element : elements) {
-			((IInternalElement) element).copy(destination, null, null, false, null);
-		}
-	}
-
-	private class RodinFileInputValidator implements IInputValidator {
-
-		IRodinProject prj;
-
-		RodinFileInputValidator(IRodinProject prj) {
-			this.prj = prj;
-		}
-
-		public String isValid(String newText) {
-			if (newText.equals(""))
-				return "Name must not be empty.";
-			IRodinFile file = prj.getRodinFile(EventBPlugin
-					.getMachineFileName(newText));
-			if (file.exists())
-				return "File name " + newText + " already exists.";
-			file = prj.getRodinFile(EventBPlugin
-					.getContextFileName(newText));
-			if (file.exists())
-				return "File name " + newText + " already exists.";
-			return null;
-		}
-
-	}
 
 	/**
 	 * Close the open editor for a particular Rodin File
@@ -493,16 +286,10 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 				newMenu.add(newComponentAction);
 			}
 			newMenu.add(new Separator());
-
-			if ((ssel.size() == 1)
-					&& (ssel.getFirstElement() instanceof IMachineFile))
-				menu.add(refineAction);
-			
-			if ((ssel.size() == 1)
-					&& (ssel.getFirstElement() instanceof IContextFile))
-				menu.add(extendAction);
-			
 			menu.add(newMenu);
+			menu.add(new Separator("modelling"));
+			menu.add(new Separator("proving"));
+			menu.add(new Separator());
 			menu.add(deleteAction);
 			menu.add(refreshAction);
 			if ((ssel.size() == 1)
@@ -512,6 +299,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 			drillDownAdapter.addNavigationActions(menu);
 
 			// Other plug-ins can contribute there actions here
+			
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);
 		}

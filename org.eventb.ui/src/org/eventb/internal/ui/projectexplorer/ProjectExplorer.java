@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -55,7 +56,7 @@ import org.rodinp.core.IRodinProject;
  *         models from the RodinDB. The view is connected to the model using a
  *         content provider.
  */
-public class ProjectExplorer extends ViewPart {
+public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 	/**
 	 * The plug-in identifier of the Project Explorer (value
@@ -360,6 +361,22 @@ public class ProjectExplorer extends ViewPart {
 	 */
 	public IRodinProject getCurrentProject() {
 		return currentProject;
+	}
+
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		viewer.addSelectionChangedListener(listener);
+	}
+
+	public ISelection getSelection() {
+		return viewer.getSelection();
+	}
+
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		viewer.removeSelectionChangedListener(listener);
+	}
+
+	public void setSelection(ISelection selection) {
+		viewer.setSelection(selection);
 	}
 
 }
