@@ -12,42 +12,23 @@
 
 package org.eventb.internal.ui.projectexplorer;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.ProvingPerspective;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -66,10 +47,6 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 	public static Action newProjectAction;
 
 	public static Action newComponentAction;
-
-	public static Action deleteAction;
-
-	public static Action proveAction;
 
 	public static RefreshAction refreshAction;
 
@@ -129,138 +106,9 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		newComponentAction.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_COMPONENT));
 
-		deleteAction = new Action() {
-			public void run() {
-				ISelection selection = explorer.getTreeViewer().getSelection();
-				if (!(selection.isEmpty())) {
-					IStructuredSelection ssel = (IStructuredSelection) selection;
-					Object[] slist = ssel.toArray();
-
-					for (int i = 0; i < slist.length; i++) {
-						UIUtils.debugProjectExplorer(slist[i].toString()
-								+ " : " + slist[i].getClass().toString());
-						if (slist[i] instanceof IRodinProject) {
-							IRodinProject rodinProject = (IRodinProject) slist[i];
-							// Confirmation dialog
-							boolean answer = MessageDialog.openQuestion(
-									explorer.getSite().getShell(),
-									"Confirm Project Delete",
-									"Are you sure you want to delete project '"
-											+ rodinProject.getElementName()
-											+ "' ?");
-							if (answer) {
-								IProject project = rodinProject.getProject();
-
-								try {
-									IRodinElement[] files = rodinProject
-											.getChildren();
-									for (int j = 0; j < files.length; j++) {
-										if (files[j] instanceof IRodinFile)
-											closeOpenedEditor((IRodinFile) files[j]);
-									}
-
-									project.delete(true, true, null);
-								} catch (PartInitException e) {
-									e.printStackTrace();
-								} catch (RodinDBException e) {
-									e.printStackTrace();
-								} catch (CoreException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-
-						else if (slist[i] instanceof IRodinFile) {
-							boolean answer = MessageDialog.openQuestion(
-									explorer.getSite().getShell(),
-									"Confirm File Delete",
-									"Are you sure you want to delete file '"
-											+ ((IRodinFile) slist[i])
-													.getElementName() + "' ?");
-							if (answer) {
-								try {
-									closeOpenedEditor((IRodinFile) slist[i]);
-									((IRodinFile) slist[i]).delete(true,
-											new NullProgressMonitor());
-								} catch (PartInitException e) {
-									e.printStackTrace();
-								} catch (RodinDBException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-					// viewer.refresh();
-				}
-			}
-		};
-		deleteAction.setText("Delete");
-		deleteAction.setToolTipText("Delete selected elements");
-		deleteAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_DELETE));
-
-		proveAction = new Action() {
-			public void run() {
-				ISelection selection = explorer.getTreeViewer().getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ssel = (IStructuredSelection) selection;
-					if (ssel.size() == 1) {
-						Object obj = ssel.getFirstElement();
-						if (!(obj instanceof IRodinFile))
-							return;
-						IRodinFile component = (IRodinFile) obj;
-						IRodinProject prj = component.getRodinProject();
-						String bareName = EventBPlugin
-								.getComponentName(component.getElementName());
-						IRodinFile prFile = prj.getRodinFile(EventBPlugin
-								.getPRFileName(bareName));
-						UIUtils.linkToProverUI(prFile);
-						try {
-							EventBUIPlugin
-									.getActiveWorkbenchWindow()
-									.getWorkbench()
-									.showPerspective(
-											ProvingPerspective.PERSPECTIVE_ID,
-											EventBUIPlugin
-													.getActiveWorkbenchWindow());
-						} catch (WorkbenchException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		};
-		proveAction.setText("Prove");
-		proveAction.setToolTipText("Start the prover");
-		proveAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
+		
 	}
 
-
-	/**
-	 * Close the open editor for a particular Rodin File
-	 * 
-	 * @param file
-	 *            A Rodin File
-	 * @throws PartInitException
-	 *             Exception when closing the editor
-	 */
-	private void closeOpenedEditor(IRodinFile file) throws PartInitException {
-		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage()
-				.getEditorReferences();
-		for (int j = 0; j < editorReferences.length; j++) {
-			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
-					.getAdapter(IFile.class);
-
-			if (file.getResource().equals(inputFile)) {
-				IEditorPart editor = editorReferences[j].getEditor(true);
-				IWorkbenchPage page = EventBUIPlugin.getActivePage();
-				page.closeEditor(editor, false);
-			}
-		}
-	}
 
 	/**
 	 * Dynamically fill the context menu (depends on the selection).
@@ -285,16 +133,13 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 			} else {
 				newMenu.add(newComponentAction);
 			}
-			newMenu.add(new Separator());
+			newMenu.add(new Separator("new"));
 			menu.add(newMenu);
 			menu.add(new Separator("modelling"));
 			menu.add(new Separator("proving"));
 			menu.add(new Separator());
-			menu.add(deleteAction);
-			menu.add(refreshAction);
-			if ((ssel.size() == 1)
-					&& (ssel.getFirstElement() instanceof IRodinFile))
-				menu.add(proveAction);
+//			menu.add(refreshAction);
+			
 			menu.add(new Separator());
 			drillDownAdapter.addNavigationActions(menu);
 

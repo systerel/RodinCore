@@ -1,4 +1,4 @@
-package org.eventb.ui.internal.projectexplorer.actions;
+package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;

@@ -264,7 +264,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 		newMenu.add(ProjectExplorerActionGroup.newComponentAction);
 		manager.add(newMenu);
 		manager.add(new Separator());
-		manager.add(ProjectExplorerActionGroup.deleteAction);
+//		manager.add(ProjectExplorerActionGroup.deleteAction);
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 		manager.add(ProjectExplorerActionGroup.newProjectAction);
 		manager.add(ProjectExplorerActionGroup.newComponentAction);
-		manager.add(ProjectExplorerActionGroup.deleteAction);
+//		manager.add(ProjectExplorerActionGroup.deleteAction);
 		manager.add(new Separator());
 		ProjectExplorerActionGroup.drillDownAdapter
 				.addNavigationActions(manager);

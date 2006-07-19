@@ -1,4 +1,4 @@
-package org.eventb.ui.internal.projectexplorer.actions;
+package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eventb.core.EventBPlugin;
