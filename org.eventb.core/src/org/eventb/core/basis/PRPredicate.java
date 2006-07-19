@@ -45,7 +45,8 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		// TODO : refactor code with PRTypeEnv
 		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
 		// this.getChildrenOfType(IPair.ELEMENT_TYPE);
-		for (IRodinElement pair : this.getChildrenOfType(IPair.ELEMENT_TYPE)) {
+		IRodinElement[] pairs = this.getChildrenOfType(IPair.ELEMENT_TYPE);
+		for (IRodinElement pair : pairs) {
 			Type type = Lib.parseType(((IPair)pair).getContents());
 			assert type != null;
 			typEnv.addName(pair.getElementName(),type);

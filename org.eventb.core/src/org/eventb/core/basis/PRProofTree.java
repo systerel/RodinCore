@@ -84,21 +84,25 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 
 	public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException {
 		InternalElement usedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers");
-		if (usedFreeIdents == null) return null;
+		assert usedFreeIdents != null;
+		if (! usedFreeIdents.exists()) return null;
 		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment();
 	}
 	
 	public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException {
 		InternalElement introducedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers");
-		if (introducedFreeIdents == null) return null;
+		assert introducedFreeIdents != null;
+		if (! introducedFreeIdents.exists()) return null;
 		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment();
 	}
 	
 	public Predicate getGoal() throws RodinDBException {
 		InternalElement goal = getInternalElement(IPRPredicate.ELEMENT_TYPE,"goal");
-		if (goal == null) return null;
+		assert goal != null;
+		if (! goal.exists()) return null;
 		return ((IPRPredicate)goal).getPredicate();
 	}
+	
 	
 	public void initialize() throws RodinDBException {
 		//delete previous children, if any.
