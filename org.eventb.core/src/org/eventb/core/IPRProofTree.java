@@ -1,9 +1,6 @@
 package org.eventb.core;
 
-import java.util.Set;
-
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IProofDependencies;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -16,25 +13,32 @@ import org.rodinp.core.RodinDBException;
 
 public interface IPRProofTree extends IInternalElement {
 		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prProofTree"; //$NON-NLS-1$
-
-		public enum Status {PENDING, REVIEWED, DISCHARGED};
 		
-		public Status getStatus() throws RodinDBException;
 		
-		public IPRProofTreeNode getRootProofTreeNode() throws RodinDBException;
-		
-		public Set<Predicate> getUsedHypotheses() throws RodinDBException;
-		
-		public Predicate getGoal() throws RodinDBException;
+		public IPRProofTreeNode getRoot() throws RodinDBException;
 		
 		public void initialize() throws RodinDBException;
 
 		public boolean proofAttempted() throws RodinDBException;
 
-		public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException;
+		/**
+		 * Returns the dependency information for this proof tree.
+		 * (see {@link IProofDependencies})
+		 * 
+		 * @return the dependency information for this proof tree.
+		 * 
+		 * @throws RodinDBException
+		 */
+		IProofDependencies getProofDependencies() throws RodinDBException;
 		
-		public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException;
+		/**
+		 * Returns the confidence of this proof tree.
+		 * 
+		 * @return the confidence of this proof tree 
+		 * 			(see {@link org.eventb.core.prover.IConfidence})
+		 * @throws RodinDBException 
+		 */
+		int getConfidence() throws RodinDBException;
 		
-		// TODO Reove this eventually
-		// public void setStatus(Status status) throws RodinDBException;
+		
 }

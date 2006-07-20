@@ -135,7 +135,7 @@ public final class ProofTree implements IProofTree {
 			introducedFreeIdents = Lib.makeTypeEnvironment();
 			getFreeIdentDeps(usedFreeIdents,introducedFreeIdents);
 			// Assert that the proof of the same sequent is replayable.
-			assert Lib.proofReplayable(this,getSequent());
+			assert Lib.proofReusable(this,getSequent());
 		}
 		
 		public Predicate getGoal() {

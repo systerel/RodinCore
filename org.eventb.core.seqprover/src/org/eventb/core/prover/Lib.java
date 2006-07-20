@@ -572,7 +572,7 @@ public final class Lib {
 		(confidence <= IConfidence.DISCHARGED_MAX);		
 	}
 	
-	public static boolean proofReplayable(IProofDependencies proofDependencies,IProverSequent sequent){
+	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
 		if (! sequent.goal().equals(proofDependencies.getGoal())) return false;
 		if (! sequent.hypotheses().containsAll(proofDependencies.getUsedHypotheses())) return false;
 		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;

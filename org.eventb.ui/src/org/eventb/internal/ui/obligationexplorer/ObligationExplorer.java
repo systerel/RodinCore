@@ -40,7 +40,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IPRProofTree.Status;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
@@ -225,24 +224,25 @@ public class ObligationExplorer extends ViewPart implements
 					if (!prSequent.proofAttempted())
 						return registry.get(EventBImage.IMG_UNATTEMPTED);
 
+					int confidence = prSequent.getProofTree().getConfidence();
 					if (prSequent.isProofBroken()) {
-						Status proofStatus = prSequent.getProof().getStatus();
-						if (proofStatus.equals(Status.PENDING))
+						
+						if (confidence == IConfidence.PENDING)
 							return registry.get(EventBImage.IMG_PENDING_BROKEN);
-						if (proofStatus.equals(Status.REVIEWED))
+						if (confidence <= IConfidence.REVIEWED_MAX)
 							return registry
 									.get(EventBImage.IMG_REVIEWED_BROKEN);
-						if (proofStatus.equals(Status.DISCHARGED))
+						if (confidence <= IConfidence.DISCHARGED_MAX)
 							return registry
 									.get(EventBImage.IMG_DISCHARGED_BROKEN);
 
 					} else {
-						Status proofStatus = prSequent.getProof().getStatus();
-						if (proofStatus.equals(Status.PENDING))
+				
+						if (confidence == IConfidence.PENDING)
 							return registry.get(EventBImage.IMG_PENDING);
-						if (proofStatus.equals(Status.REVIEWED))
+						if (confidence <= IConfidence.REVIEWED_MAX)
 							return registry.get(EventBImage.IMG_REVIEWED);
-						if (proofStatus.equals(Status.DISCHARGED))
+						if (confidence <= IConfidence.DISCHARGED_MAX)
 							return registry.get(EventBImage.IMG_DISCHARGED);
 
 					}

@@ -317,7 +317,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = SequentProver.makeProofTree(sequent);
 		Tactics.hyp().apply(proofTree.getRoot());
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
@@ -329,7 +329,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.impI().apply(proofTree.getRoot());
 		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant());
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1 ⇒ x=1")));
 		// TODO : uncomment next line once usedHyps better implemented
 		// assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
@@ -343,7 +343,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = SequentProver.makeProofTree(sequent);
 		Tactics.lemma("y=2").apply(proofTree.getRoot());
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y","ℤ")));
@@ -354,7 +354,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = SequentProver.makeProofTree(sequent);
 		Tactics.allI().apply(proofTree.getRoot());
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("∀ x· x∈ℤ")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));

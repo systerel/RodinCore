@@ -25,11 +25,11 @@ import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IPRProofTree.Status;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.basis.PRProofRule;
+import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.basis.PRProofTreeNode;
 import org.eventb.core.basis.PRReasoningStep;
 import org.eventb.core.prover.IProofDependencies;
@@ -102,7 +102,7 @@ public class PRUtil {
 	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{		
 		IProofTree proofTree = makeInitialProofTree(prSeq);		
 		IProofTreeNode root = proofTree.getRoot();
-		IPRProofTreeNode prRoot = prSeq.getProof().getRootProofTreeNode();
+		IPRProofTreeNode prRoot = prSeq.getProofTree().getRoot();
 		ReplayHints replayHints = new ReplayHints();
 		if (prRoot != null) rebuild(root,prRoot,replayHints);
 		return proofTree;
@@ -199,35 +199,31 @@ public class PRUtil {
 		else broken = false;
 		
 		// remove the previous proof
-		if (prSeq.getProof().hasChildren())
-		prSeq.getRodinDB().delete(prSeq.getProof().getChildren(),true,null);
+		if (prSeq.getProofTree().hasChildren())
+		prSeq.getRodinDB().delete(prSeq.getProofTree().getChildren(),true,null);
 
 		// Write out the proof tree dependencies
 		IProofDependencies proofDependencies = pt.getProofDependencies();
 		
-		((IPRPredicate)(prSeq.getProof().createInternalElement(
+		((IPRPredicate)(prSeq.getProofTree().createInternalElement(
 				IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
 				setPredicate(proofDependencies.getGoal());
-		((IPRPredicateSet)(prSeq.getProof().createInternalElement(
+		((IPRPredicateSet)(prSeq.getProofTree().createInternalElement(
 				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 				setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()));
-		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
+		((IPRTypeEnvironment)(prSeq.getProofTree().createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
 				setTypeEnvironment(proofDependencies.getUsedFreeIdents());
-		((IPRTypeEnvironment)(prSeq.getProof().createInternalElement(
+		((IPRTypeEnvironment)(prSeq.getProofTree().createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
 				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
 		
 		// Write out the proof tree
-		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProof());
+		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProofTree());
 		
 		// Update the status
 		int confidence = pt.getConfidence();
-		if (Lib.isPending(confidence))
-			prSeq.getProof().setContents(Status.PENDING.toString());
-		else if (Lib.isReviewed(confidence))
-			prSeq.getProof().setContents(Status.REVIEWED.toString());
-		else prSeq.getProof().setContents(Status.DISCHARGED.toString());
+		((PRProofTree)prSeq.getProofTree()).setConfidence(confidence);
 			
 		// set proof validity
 		prSeq.setProofBroken(broken);
@@ -274,16 +270,26 @@ public class PRUtil {
 		
 	}
 	
+//	
+//	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
+//		Map<String, Status> result 
+//		= new HashMap<String, Status>(prFile.getSequents().length);
+//		
+//		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
+//			result.put(prSeq.getName(),prSeq.getProofTree().getStatus());
+//		}
+//		return result;
+//	}
 	
-	public static Map<String, Status> readStatus(IPRFile prFile) throws RodinDBException {
-		Map<String, Status> result 
-		= new HashMap<String, Status>(prFile.getSequents().length);
-		
-		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
-			result.put(prSeq.getName(),prSeq.getProof().getStatus());
-		}
-		return result;
-	}
+//	public static Map<String, Integer> readConfidence(IPRFile prFile) throws RodinDBException {
+//		Map<String, Integer> result 
+//		= new HashMap<String, Integer>(prFile.getSequents().length);
+//		
+//		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
+//			result.put(prSeq.getName(),prSeq.getProofTree().getConfidence());
+//		}
+//		return result;
+//	}
 
 	
 	private static Set<Hypothesis> readHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {

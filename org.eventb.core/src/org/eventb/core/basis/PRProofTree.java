@@ -14,8 +14,12 @@ import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.IPair;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IConfidence;
+import org.eventb.core.prover.IProofDependencies;
+import org.eventb.core.prover.sequent.Hypothesis;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -36,31 +40,8 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
-	
-	public Status getStatus() throws RodinDBException {
-		if (getContents().compareToIgnoreCase("PENDING") == 0) return Status.PENDING;
-		if (getContents().compareToIgnoreCase("REVIEWED") == 0) return Status.REVIEWED;
-		if (getContents().compareToIgnoreCase("DISCHARGED") == 0) return Status.DISCHARGED;
-		return null;
-	}
 
-	private void setStatus(Status status) throws RodinDBException {
-		switch (status) {
-		case PENDING:
-			setContents("PENDING");
-			break;
-		case REVIEWED:
-			setContents("REVIEWED");
-			break;	
-		case DISCHARGED:
-			setContents("DISCHARGED");
-			break;
-		default:
-			break;
-		}
-	}
-
-	public PRProofTreeNode getRootProofTreeNode() throws RodinDBException {
+	public PRProofTreeNode getRoot() throws RodinDBException {
 		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		if (proofTreeNodes.length != 1) return null;
 		return (PRProofTreeNode) proofTreeNodes[0];
@@ -72,6 +53,14 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		assert usedHypotheses.length == 1;
 		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
 		return ((IPRPredicateSet)usedHypotheses[0]).getPredicateSet();
+	}
+	
+	public Set<Hypothesis> getUsedHypotheses_() throws RodinDBException {
+		IRodinElement[] usedHypotheses = getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
+		if (usedHypotheses.length != 1) return null;
+		assert usedHypotheses.length == 1;
+		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
+		return Hypothesis.Hypotheses(((IPRPredicateSet)usedHypotheses[0]).getPredicateSet());
 	}
 
 //	public FreeIdentifier[] getUsedFreeIdents() throws RodinDBException {
@@ -108,15 +97,94 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		//delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
-		setStatus(Status.PENDING);
+		setConfidence(IConfidence.PENDING);
 	}
 
 	public boolean proofAttempted() throws RodinDBException {
 		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		if (proofTreeNodes.length == 0) return false;
 		
-		PRProofTreeNode rootProofTreeNode = getRootProofTreeNode();
+		PRProofTreeNode rootProofTreeNode = getRoot();
 		return !(rootProofTreeNode.getRule()==null && rootProofTreeNode.getComment().length() == 0);
+	}
+
+	public IProofDependencies getProofDependencies() throws RodinDBException{
+		ProofDependencies proofDependencies = new ProofDependencies();
+		if (proofDependencies.valid == false)
+			{
+				System.out.println("*** Proof Deps invalid for "+this+" ***");
+				System.out.println("*** Proof attempted "+this.proofAttempted()+" ***");
+				return null;
+			}
+		return proofDependencies;
+	}
+
+	public int getConfidence() throws RodinDBException {
+		InternalElement confidence = getInternalElement(IPair.ELEMENT_TYPE,"confidence");
+		assert confidence != null;
+		if (! confidence.exists()) throw confidence.newNotPresentException();
+		return Integer.parseInt(confidence.getContents());
+	}
+	
+	public void setConfidence(int confidence) throws RodinDBException{
+		this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null).
+		setContents(Integer.toString(confidence));
+	}
+	
+	private class ProofDependencies implements IProofDependencies{
+
+		final Predicate goal;
+		final Set<Hypothesis> usedHypotheses;
+		final ITypeEnvironment usedFreeIdents;
+		final ITypeEnvironment introducedFreeIdents;
+		final boolean valid;
+		
+		/**
+		 * 
+		 */
+		public ProofDependencies() throws RodinDBException{
+			goal = PRProofTree.this.getGoal();
+			usedHypotheses = PRProofTree.this.getUsedHypotheses_();
+			usedFreeIdents = PRProofTree.this.getUsedTypeEnvironment();
+			introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment();
+			valid = (goal != null && 
+					usedHypotheses != null && 
+					usedFreeIdents != null &&
+					introducedFreeIdents != null);
+		}
+
+		/**
+		 * @return Returns the goal.
+		 */
+		public Predicate getGoal() {
+			return goal;
+		}
+
+		/**
+		 * @return Returns the introducedFreeIdents.
+		 */
+		public ITypeEnvironment getIntroducedFreeIdents() {
+			return introducedFreeIdents;
+		}
+
+
+
+		/**
+		 * @return Returns the usedFreeIdents.
+		 */
+		public ITypeEnvironment getUsedFreeIdents() {
+			return usedFreeIdents;
+		}
+
+
+
+		/**
+		 * @return Returns the usedHypotheses.
+		 */
+		public Set<Hypothesis> getUsedHypotheses() {
+			return usedHypotheses;
+		}
+		
 	}
 	
 }

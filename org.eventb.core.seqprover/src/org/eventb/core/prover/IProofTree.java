@@ -102,7 +102,11 @@ public interface IProofTree {
 	/**
 	 * Returns the dependency information for this proof tree.
 	 * (see {@see IProofDependencies})
-	 * 
+	 * <p>
+	 * Note that dependencies may change after proof tree modification.
+	 * To get accurate information this method needs to be re-called after 
+	 * any modification of the proof tree.
+	 * </p>
 	 * @return the dependency information for this proof tree.
 	 */
 	IProofDependencies getProofDependencies();

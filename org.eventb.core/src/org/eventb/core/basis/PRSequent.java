@@ -11,9 +11,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRProofTree.Status;
+import org.eventb.core.IPRSequent;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
@@ -49,7 +49,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return IPRSequent.ELEMENT_TYPE;
 	}
 	
-	public IPRProofTree getProof() throws RodinDBException {
+	public IPRProofTree getProofTree() throws RodinDBException {
 		IPRProofTree proof = ((IPRFile)getOpenable()).getProof(getName());
 		assert proof != null;
 		return proof;
@@ -73,10 +73,10 @@ public class PRSequent extends POSequent implements IPRSequent {
 		}, null);
 	}
 
-	public boolean isDischarged() throws RodinDBException {
+	public boolean isClosed() throws RodinDBException {
 		if (isProofBroken()) return false;
-		IPRProofTree proof = getProof();
-		return (proof.getStatus() == Status.DISCHARGED);
+		IPRProofTree proof = getProofTree();
+		return (proof.getConfidence() != IConfidence.PENDING);
 	}
 
 	public boolean isProofBroken() throws RodinDBException {
@@ -89,7 +89,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 	}
 
 	public boolean proofAttempted() throws RodinDBException {
-		IPRProofTree proof = getProof();
+		IPRProofTree proof = getProofTree();
 		if (proof == null || ! proof.proofAttempted()) return false;
 		return true;
 	}

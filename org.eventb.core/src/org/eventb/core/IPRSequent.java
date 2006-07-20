@@ -14,11 +14,11 @@ import org.eventb.core.prover.IProofTree;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for proof obligations and their status in Event-B Prover (PR) files.
+ * Common protocol for proof obligations in Event-B Prover (PR) files.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @author Stefan Hallerstede
+ * 
  * @author Farhad Mehta
  *
  */
@@ -26,14 +26,30 @@ public interface IPRSequent extends IPOSequent {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
 	
-	boolean isDischarged() throws RodinDBException;
+	@ Deprecated
+	boolean isClosed() throws RodinDBException;
 
+	/**
+	 * Returns the proof tree associated to this proof obligation from the
+	 * RODIN database.
+	 * 
+	 * @return the proof tree associated to this proof obligation from the
+	 * RODIN database, or <code>null</code> if no proof tree is associated to
+	 * this proof obligation.
+	 * 
+	 * @throws RodinDBException
+	 */
+	IPRProofTree getProofTree() throws RodinDBException;
+	
 	IProofTree rebuildProofTree() throws RodinDBException;
 	IProofTree makeFreshProofTree() throws RodinDBException;
-	IPRProofTree getProof() throws RodinDBException;
 	
+	
+	@ Deprecated
 	boolean proofAttempted() throws RodinDBException;
 	boolean isProofBroken() throws RodinDBException;
+	
+	@ Deprecated
 	void setProofBroken(boolean broken) throws RodinDBException;
 	
 	void updateProofTree(IProofTree pt) throws RodinDBException, CoreException;

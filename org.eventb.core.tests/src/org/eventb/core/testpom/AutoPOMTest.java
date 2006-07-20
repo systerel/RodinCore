@@ -6,6 +6,8 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRProofTree;
+import org.eventb.core.prover.IConfidence;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POUtil;
@@ -121,17 +123,17 @@ public class AutoPOMTest extends BuilderTest {
 	}
 
 	private void assertDischarged(IPRSequent prSequent) throws RodinDBException {
-		IPRProofTree status = prSequent.getProof();
-		assertEquals("PO " + prSequent.getName() + " should be discharged",
-				IPRProofTree.Status.DISCHARGED,
-				status.getStatus());
+		IPRProofTree proofTree = prSequent.getProofTree();
+		assertTrue("PO " + prSequent.getName() + " should be closed",
+				IConfidence.PENDING !=
+				proofTree.getConfidence());
 	}
 
 	private void assertNotDischarged(IPRSequent prSequent) throws RodinDBException {
-		IPRProofTree status = prSequent.getProof();
+		IPRProofTree proofTree = prSequent.getProofTree();
 		assertEquals("PO " + prSequent.getName() + " should not be discharged",
-				IPRProofTree.Status.PENDING,
-				status.getStatus());
+				IConfidence.PENDING,
+				proofTree.getConfidence());
 	}
 	
 	public static String[] mp(String... strings) {

@@ -8,7 +8,6 @@
 
 package org.eventb.internal.core.pom;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +19,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.IPRSequent;
+import org.eventb.core.prover.IProofDependencies;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
@@ -100,13 +100,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			String newPOname = newPO.getKey();
 			IProverSequent newPOseq = newPO.getValue();
 			IPRProofTree oldProof = oldProofs.get(newPOname);
+			IProofDependencies oldProofDependencies = null;
+			if 	(oldProof != null) oldProofDependencies = oldProof.getProofDependencies();
 			if  (oldProof != null &&
-					newPOseq.goal().equals(oldProof.getGoal()) &&
-					newPOseq.hypotheses().containsAll(Hypothesis.Hypotheses(oldProof.getUsedHypotheses())) &&
-					newPOseq.typeEnvironment().containsAll(oldProof.getUsedTypeEnvironment())&&
-					Collections.disjoint(
-							newPOseq.typeEnvironment().getNames(),
-							oldProof.getIntroducedTypeEnvironment().getNames()))
+					oldProofDependencies != null &&
+					Lib.proofReusable(oldProofDependencies,newPOseq))
 				{
 					newValidity.put(newPOname,true);
 				}

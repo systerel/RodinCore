@@ -39,7 +39,7 @@ public class AutoProver {
 		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
 		boolean dirty = false;
 		for (IPRSequent po : pos) {
-			if (! po.isDischarged()) {
+			if (! po.isClosed()) {
 
 				// System.out.println("AutoProver tried for "+po);
 				
