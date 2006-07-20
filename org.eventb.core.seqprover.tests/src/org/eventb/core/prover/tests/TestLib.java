@@ -15,7 +15,7 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.rules.ProofTree;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.SimpleProverSequent;
+import org.eventb.core.prover.sequent.ProverSequent;
 
 public class TestLib {
 
@@ -61,7 +61,7 @@ public class TestLib {
 			// new HashSet<Predicate>(Arrays.asList(hyps));
 		
 		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
-		IProverSequent Seq = new SimpleProverSequent(typeEnvironment,Hyps,goal);
+		IProverSequent Seq = new ProverSequent(typeEnvironment,Hyps,goal);
 		return Seq.selectHypotheses(Hyps);
 	}
 	

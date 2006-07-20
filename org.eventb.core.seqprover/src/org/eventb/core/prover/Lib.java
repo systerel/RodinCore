@@ -29,7 +29,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.SimpleProverSequent;
+import org.eventb.core.prover.sequent.ProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 
@@ -501,7 +501,7 @@ public final class Lib {
 	}
 	
 	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){
-		return new SimpleProverSequent(typeEnvironment,hyps,goal);
+		return new ProverSequent(typeEnvironment,hyps,goal);
 	}
 	
 	public static boolean identical(IProverSequent S1,IProverSequent S2){

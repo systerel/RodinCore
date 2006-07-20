@@ -13,7 +13,6 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.rules.ProofTree.ProofDependencies;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactics;
 

@@ -9,7 +9,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
 
-public class SimpleProverSequent implements IProverSequent{
+public class ProverSequent implements IProverSequent{
 	
 	private final ITypeEnvironment typeEnvironment;
 	
@@ -57,7 +57,7 @@ public class SimpleProverSequent implements IProverSequent{
 		return hiddenHypotheses;
 	}
 	
-	public SimpleProverSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
+	public ProverSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
 		this.typeEnvironment = typeEnvironment.clone();
 		this.globalHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>(globalHypotheses));
 		this.localHypotheses = Collections.unmodifiableSet(new HashSet<Hypothesis>());
@@ -70,7 +70,7 @@ public class SimpleProverSequent implements IProverSequent{
 		// assert this.invariant();
 	}
 	
-	private SimpleProverSequent(SimpleProverSequent pS){
+	private ProverSequent(ProverSequent pS){
 		this.typeEnvironment = pS.typeEnvironment;
 		this.globalHypotheses = pS.globalHypotheses;
 		this.localHypotheses = pS.localHypotheses;
@@ -79,7 +79,7 @@ public class SimpleProverSequent implements IProverSequent{
 		this.goal = pS.goal;
 	}
 	
-	private SimpleProverSequent(SimpleProverSequent pS, ITypeEnvironment typeEnvironment, Set<Hypothesis> globalHypotheses,
+	private ProverSequent(ProverSequent pS, ITypeEnvironment typeEnvironment, Set<Hypothesis> globalHypotheses,
 			Set<Hypothesis> localHypotheses, Set<Hypothesis> hiddenHypotheses, Set<Hypothesis> selectedHypotheses,
 			Predicate goal){
 		
@@ -116,15 +116,15 @@ public class SimpleProverSequent implements IProverSequent{
 	
 	
 	@Override
-	public SimpleProverSequent clone(){
-		return new SimpleProverSequent(this);
+	public ProverSequent clone(){
+		return new ProverSequent(this);
 	}
 	
-	public SimpleProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
-		return new SimpleProverSequent(typeEnvironment,globalHypotheses,goal);
+	public ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
+		return new ProverSequent(typeEnvironment,globalHypotheses,goal);
 	}
 	
-	public SimpleProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment){
+	public ProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment){
 		assert (hyps != null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
 		for (Hypothesis hyp : hyps) {
@@ -132,7 +132,7 @@ public class SimpleProverSequent implements IProverSequent{
 		}
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.addAll(hyps);
-		return new SimpleProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
+		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
 		
 //		// Code for incremental type environments	
 //		if (typeEnvironment == null)
@@ -146,13 +146,13 @@ public class SimpleProverSequent implements IProverSequent{
 //		return new SimpleProverSequent(this,newITypeEnvironment,null,newLocalHypotheses,null,null,null);
 	}
 	
-	public SimpleProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment){
+	public ProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment){
 		assert (hyp != null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
 		if (! Lib.isWellTyped(hyp.getPredicate(),typeEnvironment)) return null;
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.add(hyp);
-		return new SimpleProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
+		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
 		
 //		// Code for incremental type environments
 //		if (typeEnvironment == null)
@@ -166,11 +166,11 @@ public class SimpleProverSequent implements IProverSequent{
 //		return new SimpleProverSequent(this,newITypeEnvironment,null,newLocalHypotheses,null,null,null);
 	}
 	
-	public SimpleProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment){
+	public ProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment){
 		assert (goal!=null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
 		if (! Lib.isWellTyped(goal,typeEnvironment)) return null;
-		return new SimpleProverSequent(this,typeEnvironment,null,null,null,null,goal);
+		return new ProverSequent(this,typeEnvironment,null,null,null,null,goal);
 		
 //		// Code for incremental type environments
 //		if (typeEnvironment == null)
@@ -191,7 +191,7 @@ public class SimpleProverSequent implements IProverSequent{
 //		return null;
 //	}
 	
-	public SimpleProverSequent hideHypotheses(Set<Hypothesis> toHide){
+	public ProverSequent hideHypotheses(Set<Hypothesis> toHide){
 		// assert hypotheses().containsAll(toHide);
 		// assert ! hiddenHypotheses.containsAll(toHide);
 		Set<Hypothesis> newHiddenHypotheses = new HashSet<Hypothesis>(this.hiddenHypotheses);
@@ -203,17 +203,17 @@ public class SimpleProverSequent implements IProverSequent{
 				newSelectedHypotheses.remove(h);
 			}
 		}
-		return new SimpleProverSequent(this,null,null,null,newHiddenHypotheses,newSelectedHypotheses,null);
+		return new ProverSequent(this,null,null,null,newHiddenHypotheses,newSelectedHypotheses,null);
 	}
 	
-	public SimpleProverSequent showHypotheses(Set<Hypothesis> toShow){
+	public ProverSequent showHypotheses(Set<Hypothesis> toShow){
 		// assert hiddenHypotheses.containsAll(toShow);
 		Set<Hypothesis> newHiddenHypotheses = new HashSet<Hypothesis>(this.hiddenHypotheses);
 		newHiddenHypotheses.removeAll(toShow);
-		return new SimpleProverSequent(this,null,null,null,newHiddenHypotheses,null,null);
+		return new ProverSequent(this,null,null,null,newHiddenHypotheses,null,null);
 	}
 	
-	public SimpleProverSequent selectHypotheses(Collection<Hypothesis> toSelect){
+	public ProverSequent selectHypotheses(Collection<Hypothesis> toSelect){
 		// assert hypotheses().containsAll(toSelect);
 		Set<Hypothesis> newSelectedHypotheses = new HashSet<Hypothesis>(this.selectedHypotheses);
 		Set<Hypothesis> newHiddenHypotheses = new HashSet<Hypothesis>(this.hiddenHypotheses);
@@ -225,14 +225,14 @@ public class SimpleProverSequent implements IProverSequent{
 			}
 		}
 		newHiddenHypotheses.removeAll(toSelect);
-		return new SimpleProverSequent(this,null,null,null,newHiddenHypotheses,newSelectedHypotheses,null);
+		return new ProverSequent(this,null,null,null,newHiddenHypotheses,newSelectedHypotheses,null);
 	}
 	
-	public SimpleProverSequent deselectHypotheses(Set<Hypothesis> toDeselect){
+	public ProverSequent deselectHypotheses(Set<Hypothesis> toDeselect){
 		// assert selectedHypotheses.containsAll(toDeselect);
 		Set<Hypothesis> newSelectedHypotheses = new HashSet<Hypothesis>(this.selectedHypotheses);
 		newSelectedHypotheses.removeAll(toDeselect);
-		return new SimpleProverSequent(this,null,null,null,null,newSelectedHypotheses,null);
+		return new ProverSequent(this,null,null,null,null,newSelectedHypotheses,null);
 	}
 	
 	@Override
