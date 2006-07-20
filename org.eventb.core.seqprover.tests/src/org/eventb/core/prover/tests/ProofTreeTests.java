@@ -8,9 +8,12 @@
 
 package org.eventb.core.prover.tests;
 
+import org.eventb.core.prover.IProofDependencies;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.SequentProver;
+import org.eventb.core.prover.rules.ProofTree.ProofDependencies;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.tactics.Tactics;
 
@@ -300,9 +303,63 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertSame(ch1.getProofTree(),tree);
 		assertSame(ch2.getProofTree(),tree);
 		assertNodeClosed(treeRoot);
-
-		
 	}
-
+	
+	/**
+	 * Checks that proof dependency information has been properly generated.
+	 */
+	public void testProofDependencies() {
+		IProverSequent sequent;
+		IProofTree proofTree;
+		IProofDependencies proofDependencies;
+		
+		// test getUsedHypotheses
+		sequent = TestLib.genSeq("y=2;; x=1 |- x=1");
+		proofTree = SequentProver.makeProofTree(sequent);
+		Tactics.hyp().apply(proofTree.getRoot());
+		proofDependencies = proofTree.getProofDependencies();
+		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		
+		// test getUsedHypotheses
+		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
+		proofTree = SequentProver.makeProofTree(sequent);
+		Tactics.impI().apply(proofTree.getRoot());
+		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant());
+		proofDependencies = proofTree.getProofDependencies();
+		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1 ⇒ x=1")));
+		// TODO : uncomment next line once usedHyps better implemented
+		// assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps("x=1")));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		
+		
+		// test getUsedFreeIdents
+		sequent = TestLib.genSeq("y=2;; 1=1 |- 1=1");
+		proofTree = SequentProver.makeProofTree(sequent);
+		Tactics.lemma("y=2").apply(proofTree.getRoot());
+		proofDependencies = proofTree.getProofDependencies();
+		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y","ℤ")));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv()));
+		
+		//	 test getIntroducedFreeIdents
+		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
+		proofTree = SequentProver.makeProofTree(sequent);
+		Tactics.allI().apply(proofTree.getRoot());
+		proofDependencies = proofTree.getProofDependencies();
+		assertTrue(Lib.proofReplayable(proofDependencies,sequent));
+		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("∀ x· x∈ℤ")));
+		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genHyps()));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));
+		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+	}
 
 }

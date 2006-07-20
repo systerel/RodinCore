@@ -14,13 +14,20 @@ public class SequentProver extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eventb.core.seqprover"; //$NON-NLS-1$
 	
+	/**
+	 * debugging/tracing option names
+	 */
 	private static final String B4FREE_TRACE = PLUGIN_ID + "/debug/b4free"; //$NON-NLS-1$
-	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
+	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$	
 
-	
-	//The shared instance.
+	/**
+	 * The shared instance.
+	 */
 	private static SequentProver plugin;
 
+	/**
+	 * Debug flag for <code>SEQPROVER_TRACE</code>
+	 */
 	private static boolean DEBUG;
 	
 	/**

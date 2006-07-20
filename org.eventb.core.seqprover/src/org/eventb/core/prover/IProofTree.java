@@ -8,10 +8,7 @@
 
 package org.eventb.core.prover;
 
-import java.util.Set;
 
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 /**
@@ -31,6 +28,7 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @author Farhad Mehta
  * @author Laurent Voisin
  */
 public interface IProofTree {
@@ -101,9 +99,13 @@ public interface IProofTree {
 	 */
 	void removeChangeListener(IProofTreeChangedListener listener);
 	
-	Set<Hypothesis> getUsedHypotheses();
-	
-	void getFreeIdentDeps(ITypeEnvironment usedIdents,ITypeEnvironment introducedIdents);
+	/**
+	 * Returns the dependency information for this proof tree.
+	 * (see {@see IProofDependencies})
+	 * 
+	 * @return the dependency information for this proof tree.
+	 */
+	IProofDependencies getProofDependencies();
 	
 	/**
 	 * Returns the confidence of this proof tree.

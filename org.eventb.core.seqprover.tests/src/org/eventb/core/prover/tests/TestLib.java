@@ -9,6 +9,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.rules.ProofTree;
@@ -79,6 +80,17 @@ public class TestLib {
 		for (String s : strs) 
 			hyps.add(genHyp(s));
 		return hyps;
+	}
+	
+	public static ITypeEnvironment genTypeEnv(String... strs){
+		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
+		assert strs.length % 2 == 1;
+		for (int i = 0; i+1 < strs.length; i=i+2) {
+			Type type = Lib.parseType(strs[i+1]);
+			assert type != null;
+			typeEnv.addName(strs[i],type);
+		}
+		return typeEnv;
 	}
 	
 	public static Predicate genPredicate(String str){

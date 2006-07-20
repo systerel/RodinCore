@@ -13,12 +13,12 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
+
 /**
- * @author fmehta
- *
- */
-/**
- * @author fmehta
+ * Implementation of {@link org.eventb.core.prover.IProofTreeNode}
+ * 
+ * 
+ * @author Farhad Mehta
  *
  */
 public final class ProofTreeNode implements IProofTreeNode {
@@ -91,7 +91,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.children = null;
 		this.confidence = IConfidence.PENDING;
 		this.comment = "";
-		this.assertClassInvariant();
+		assert classInvariant();
+		// this.assertClassInvariant();
 	}
 	
 	/**
@@ -109,7 +110,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.children = null;
 		this.confidence = IConfidence.PENDING;
 		this.comment = "";
-		this.assertClassInvariant();
+		assert classInvariant();
 	}
 	
 	/**
@@ -146,7 +147,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		setChildren(newChildren);
 		if (length == 0)
 			this.setClosed();
-		this.assertClassInvariant();
+		assert classInvariant();
 		fireDeltas();
 		return true;
 	}
@@ -168,9 +169,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 		treeRoot.setRule(null);
 		treeRoot.setChildren(null);
 		treeRoot.reopen();
-		treeRoot.assertClassInvariant();
+		// treeRoot.assertClassInvariant();
+		assert classInvariant();
 		treeRoot.fireDeltas();
-		
 		// Connect treeChildren to this node
 		for (ProofTreeNode treeChild : treeChildren)
 			treeChild.parent = this;
@@ -178,7 +179,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.setChildren(treeChildren);
 		if (treeClosed)
 			this.setClosed();
-		this.assertClassInvariant();
+		assert classInvariant();
 		fireDeltas();
 		return true;
 	}
@@ -340,7 +341,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 		setChildren(null);
 		reopen();
-		assertClassInvariant();
+		assert classInvariant();
 		fireDeltas();
 		return prunedChildSubtrees;
 	}
@@ -475,29 +476,33 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return this.confidence;
 	}
 	
-	
 	/**
-	 * Runtime assertion check for the proof tree node
+	 * Checks that the class invariant for the proof tree node and its children holds.
+	 * 
+	 * Used for runtime assertion check for the proof tree data structure.
+	 * 
+	 * @return <code>true</code> iff the the class invariant for the proof tree node 
+	 * 			and its children holds.
 	 */
-	private void assertClassInvariant() {
-		assert (this.sequent != null);
-		assert ((this.rule == null) & (this.children == null)) |
-				((this.rule != null) & (this.children != null));
-		if (this.rule != null) {
-			IProverSequent[] anticidents = rule.apply(this.sequent);
-			assert (anticidents != null);
-			assert (this.children.length == anticidents.length);
+	private boolean classInvariant() {
+		if (sequent == null) return false;
+		if ((rule == null) && (children != null)) return false;
+		if (rule != null) {
+			if (children == null) return false;
+			IProverSequent[] anticidents = rule.apply(sequent);
+			if (anticidents == null) return false;
+			if (children.length != anticidents.length) return false;
 			for (int i=0;i<anticidents.length;i++)
 			{
-				assert (Lib.identical (this.children[i].sequent,anticidents[i]));
-				assert this.children[i].parent == this;
-				this.children[i].assertClassInvariant();
+				if  (! Lib.identical (this.children[i].sequent,anticidents[i])) return false;
+				if (children[i].parent != this) return false;
+				if (! children[i].classInvariant()) return false;
 			}
 		}
-		assert this.isClosed() == (getOpenDescendants().length == 0);
-		assert (this.parent == null) ? (this.tree != null) : true;
-		assert (this.tree == null) ? (this.parent != null) : true;
-		assert this.confidence == this.computeConfidence();
+		if (isClosed() != (getOpenDescendants().length == 0)) return false;
+		if ((parent == null) == (tree == null)) return false;
+		if (confidence != computedConfidence()) return false;
+		return true;
 	}
 	
 
@@ -511,7 +516,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * 
 	 * @return The computed confidence level
 	 */
-	private int computeConfidence() {
+	private int computedConfidence() {
 		if (rule == null) return IConfidence.PENDING;
 		int minConfidence = rule.getRuleConfidence();
 		for (ProofTreeNode child : children) {
