@@ -219,7 +219,7 @@ public class PRUtil {
 				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
 		
 		// Write out the proof tree
-		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),(InternalElement) prSeq.getProofTree());
+		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),0,(InternalElement) prSeq.getProofTree());
 		
 		// Update the status
 		int confidence = pt.getConfidence();
@@ -252,10 +252,10 @@ public class PRUtil {
 		}
 	}
 	
-	public static void writeOutProofTreeNode (ProofTreeNode proofTreeNode,InternalElement parent) throws RodinDBException{
+	public static void writeOutProofTreeNode (ProofTreeNode proofTreeNode,int childNumber,InternalElement parent) throws RodinDBException{
 		assert (proofTreeNode != null);
 		IPRProofTreeNode prProofTreeNode = (IPRProofTreeNode)
-			parent.createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"",null,null);
+			parent.createInternalElement(PRProofTreeNode.ELEMENT_TYPE,Integer.toString(childNumber),null,null);
 		
 		prProofTreeNode.setComment(proofTreeNode.getComment());
 		
@@ -265,7 +265,7 @@ public class PRUtil {
 		
 		ProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
 		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
-			writeOutProofTreeNode(proofTreeNodeChildren[i],(InternalElement) prProofTreeNode);
+			writeOutProofTreeNode(proofTreeNodeChildren[i],i,(InternalElement) prProofTreeNode);
 		}
 		
 	}

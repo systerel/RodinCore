@@ -55,8 +55,9 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
 		// write out each predicate in the predicate set
+		int i = 0;
 		for (Predicate predicate : predSet) {
-			((IPRPredicate)this.createInternalElement(IPRPredicate.ELEMENT_TYPE,"",null,null))
+			((IPRPredicate)this.createInternalElement(IPRPredicate.ELEMENT_TYPE,Integer.toString(i),null,null))
 			.setPredicate(predicate);
 		}
 		return;

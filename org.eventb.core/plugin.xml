@@ -279,7 +279,7 @@
             class="org.eventb.core.basis.PRProofTreeNode"
             id="prProofTreeNode"
             name="%eventBprProofTreeNode"
-            named="false"/>
+            named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofRule"
             id="proofRule"
@@ -309,7 +309,7 @@
             class="org.eventb.core.basis.PRReasonerInput"
             id="prReasonerInput"
             name="%eventBprReasonerInput"
-            named="false"/>
+            named="true"/>
       <internalElementType
             class="org.eventb.core.basis.PRTypeEnvironment"
             id="prTypeEnv"

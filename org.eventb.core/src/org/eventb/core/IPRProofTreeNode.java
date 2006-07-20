@@ -1,6 +1,6 @@
 package org.eventb.core;
 
-import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 
@@ -9,7 +9,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 
-public interface IPRProofTreeNode extends IUnnamedInternalElement {
+public interface IPRProofTreeNode extends IInternalElement {
 		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prProofTreeNode"; //$NON-NLS-1$
 	
 		// TODO : Make this and ProofTreeNode resemble each other.

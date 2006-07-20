@@ -148,7 +148,7 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 			InternalElement prReasonerInput = 
 				this.createInternalElement(
 					PRReasonerInput.ELEMENT_TYPE,
-					null,
+					"",
 					null,null);
 			
 			for (Map.Entry<String,String> pair : reasonerInput.properties.entrySet()) {

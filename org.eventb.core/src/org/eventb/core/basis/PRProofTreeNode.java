@@ -11,16 +11,21 @@ import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
  *
  */
-public class PRProofTreeNode extends UnnamedInternalElement implements IPRProofTreeNode {
+public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode {
 
-	public PRProofTreeNode(IRodinElement parent) {
-		super(ELEMENT_TYPE, parent);
+	public PRProofTreeNode(String name,IRodinElement parent) {
+		super(name, parent);
+	}
+	
+	@Override
+	public String getElementType() {
+		return ELEMENT_TYPE;
 	}
 	
 	public IPRProofRule getRule() throws RodinDBException {
