@@ -39,6 +39,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -60,6 +61,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		formula.removeModifyListener(listener);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		formula.addModifyListener(listener);
