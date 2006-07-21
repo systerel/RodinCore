@@ -44,7 +44,7 @@ public class TextTest extends TestCase {
 		single.insert("a");
 		assertEquals("Modify Event (SINGLE): ", 1, pos);
 
-		assertEquals("After inserting (SINGLE): ", 1, multi.getCaretPosition());
+		assertEquals("After inserting (SINGLE): ", 1, single.getCaretPosition());
 	}
 
 	public void testMULTI() {
