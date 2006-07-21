@@ -14,6 +14,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,12 +26,14 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -64,6 +67,42 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 	protected Action handleDown;
 
 	protected Action showAbstraction;
+
+	private class ShowAbstraction extends Action {
+		IRodinFile abstractFile;
+
+		IRodinElement concreteElement;
+
+		ShowAbstraction(IRodinFile abstractFile, IRodinElement concreteElement) {
+			this.abstractFile = abstractFile;
+			this.concreteElement = concreteElement;
+			this.setText(EventBPlugin.getComponentName(abstractFile
+					.getElementName()));
+			this.setToolTipText("Show the corresponding abstract event");
+			this.setImageDescriptor(new EventBImageDescriptor(
+					EventBImage.IMG_REFINES));
+		}
+
+		public void run() {
+			try {
+				IInternalElement event = TreeSupports.getEvent(concreteElement);
+				IRodinElement abs_evt = getAbstractElement(event);
+
+				while (abs_evt != null && abs_evt.exists()
+						&& !abs_evt.getOpenable().equals(abstractFile)) {
+					abs_evt = getAbstractElement(abs_evt);
+				}
+				if (abs_evt != null && abs_evt.exists()) {
+					UIUtils.linkToEventBEditor(abs_evt);
+				} else
+					UIUtils.linkToEventBEditor(abstractFile);
+
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
 
 	/**
 	 * Constructor: Create the actions.
@@ -179,10 +218,24 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 											.getMachineFileName(name));
 							UIUtils.debugEventBEditor("Refined: "
 									+ refinedFile.getElementName());
-							IInternalElement abs_evt = refinedFile
-									.getInternalElement(event.getElementType(),
-											event.getElementName());
-							UIUtils.linkToEventBEditor(abs_evt);
+
+							IInternalElement abs_evt = null;
+							IRodinElement[] abs_evts = event
+									.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
+							if (abs_evts.length == 0) {
+								abs_evt = refinedFile.getInternalElement(event
+										.getElementType(), event
+										.getElementName());
+							} else {
+								abs_evt = refinedFile.getInternalElement(event
+										.getElementType(),
+										((IInternalElement) abs_evts[0])
+												.getContents());
+							}
+							if (abs_evt.exists())
+								UIUtils.linkToEventBEditor(abs_evt);
+							else
+								UIUtils.linkToEventBEditor(refinedFile);
 
 							// if (refinedFile.exists()) {
 							// IWorkbenchPage activePage = EventBUIPlugin
@@ -270,15 +323,27 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 
 			menu.add(addEvent);
 			menu.add(new Separator());
-			IMachineFile file = (IMachineFile) editor.getRodinInput();
+			IRodinFile file = (IRodinFile) editor.getRodinInput();
 			if (ssel.size() == 1) {
-				IRodinElement[] refines;
 
 				try {
-					refines = file
-							.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-					if (refines.length == 1)
-						menu.add(showAbstraction);
+					IRodinFile abstractFile = getAbstractFile(file);
+					if (abstractFile != null && abstractFile.exists()) {
+						MenuManager abstractionMenu = new MenuManager(
+								"&Abstraction");
+						menu.add(abstractionMenu);
+						abstractionMenu.add(new ShowAbstraction(abstractFile,
+								(IRodinElement) ssel.getFirstElement()));
+
+						abstractFile = getAbstractFile(abstractFile);
+						while (abstractFile != null && abstractFile.exists()) {
+							abstractionMenu.add(new ShowAbstraction(
+									abstractFile, (IRodinElement) ssel
+											.getFirstElement()));
+							abstractFile = getAbstractFile(abstractFile);
+						}
+					}
+
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -295,6 +360,45 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 
 		// Other plug-ins can contribute there actions here
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	public IRodinFile getAbstractFile(IRodinFile concreteFile)
+			throws RodinDBException {
+		IRodinElement[] refines = concreteFile
+				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+		if (refines.length == 1) {
+			IRodinElement refine = refines[0];
+			String name = ((IInternalElement) refine).getContents();
+			IRodinProject prj = concreteFile.getRodinProject();
+			return prj.getRodinFile(EventBPlugin.getMachineFileName(name));
+		}
+		return null;
+	}
+
+	public IRodinElement getAbstractElement(IRodinElement concreteElement)
+			throws RodinDBException {
+		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
+		IRodinFile abstractFile = getAbstractFile(rodinFile);
+		if (abstractFile == null)
+			return null;
+		if (!abstractFile.exists())
+			return null;
+
+		IRodinElement abstractElement = null;
+		if (concreteElement instanceof IEvent) {
+			IRodinElement[] abs_evts = ((IEvent) concreteElement)
+					.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
+			if (abs_evts.length == 0) {
+				abstractElement = abstractFile.getInternalElement(
+						IEvent.ELEMENT_TYPE, ((IEvent) concreteElement)
+								.getElementName());
+			} else {
+				abstractElement = abstractFile.getInternalElement(
+						IEvent.ELEMENT_TYPE, ((IInternalElement) abs_evts[0])
+								.getContents());
+			}
+		}
+		return abstractElement;
 	}
 
 }
