@@ -180,7 +180,7 @@ public class ElementAttributeInputDialog extends Dialog {
 
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			toolkit.paintBordersFor(scrolledForm.getBody());
-			scrolledForm.reflow(true);
+			this.getContents().getParent().pack(true);
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
 			for (IEventBInputText text : texts) {
