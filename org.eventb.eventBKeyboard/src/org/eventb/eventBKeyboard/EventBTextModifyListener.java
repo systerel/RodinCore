@@ -56,11 +56,13 @@ public class EventBTextModifyListener implements ModifyListener {
 
 		getTranslators();
 
+		widget.removeModifyListener(this); // Disable the listener
 		for (Iterator<IEventBKeyboardTranslator> it = translators.iterator(); it
 				.hasNext();) {
 			IEventBKeyboardTranslator translator = it.next();
 			translator.translate(widget);
 		}
+		widget.addModifyListener(this); // Enable the listener
 	}
 
 	/**

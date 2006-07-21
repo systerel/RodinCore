@@ -12,8 +12,12 @@
 
 package org.eventb.eventBKeyboard.internal.translators;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.eclipse.swt.widgets.Text;
 import org.eventb.eventBKeyboard.IEventBKeyboardTranslator;
+import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
 /**
  * @author htson
@@ -21,16 +25,6 @@ import org.eventb.eventBKeyboard.IEventBKeyboardTranslator;
  *         The translator for text symbols
  */
 public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
-
-	// Combos input which are "text".
-	private static final String[] textCombo = { "NAT1", "NAT", "POW1", "POW",
-			"INTER", "INT", "UNION", "or", "not", "true", "false", "\u2124ER",
-			"circ" };
-
-	// Translation of the above "text" combos.
-	private static final String[] textComboTranslation = { "\u2115\u0031",
-			"\u2115", "\u2119\u0031", "\u2119", "\u22c2", "\u2124", "\u22c3",
-			"\u2228", "\u00ac", "\u22a4", "\u22a5", "\u22c2", "\u2218" };
 
 	/**
 	 * Testing if a character is a text character
@@ -66,62 +60,10 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 	 * @return true if there is a string which is translated into mathematical
 	 *         expression false otherwise
 	 */
-	private boolean translateTextCombo(Text widget) {
-		boolean isTranslated = false;
-		String text = widget.getText();
-		int currentPos = widget.getCaretPosition();
 
-		for (int i = 0; i < textCombo.length; i++) {
-			String test = textCombo[i];
+	private static HashMap<String, Collection<Symbol>> symbols = null;
 
-			// Only consider the related sub-string
-			int beginIndex = (currentPos - (test.length() + 2) < 0) ? 0
-					: currentPos - (test.length() + 2);
-			int endIndex = (currentPos + (test.length() + 2) > text.length()) ? text
-					.length()
-					: currentPos + (test.length() + 2);
-
-			String subString = text.substring(beginIndex, endIndex);
-
-			int index = subString.indexOf(test);
-
-			if (index != -1) {
-				if ((index + test.length()) < subString.length()) {
-					if (!isTextCharacter(subString
-							.charAt(index + test.length()))) {
-						if (index != 0) {
-							if (!isTextCharacter(subString.charAt(index - 1))) {
-								widget.setSelection(beginIndex + index,
-										beginIndex + index + test.length());
-								widget.insert(textComboTranslation[i]);
-								isTranslated = true;
-							}
-						} else {
-							if (beginIndex == 0) {
-								widget.setSelection(beginIndex + index,
-										beginIndex + index + test.length());
-								widget.insert(textComboTranslation[i]);
-								isTranslated = true;
-							}
-						}
-					}
-				}
-			}
-
-			if (isTranslated) {
-				if (currentPos <= beginIndex + index) {
-					widget.setSelection(currentPos);
-				}
-
-				else if (beginIndex + index + test.length() < currentPos)
-					widget.setSelection(beginIndex + index
-							+ textComboTranslation[i].length() + 1);
-				return true;
-			}
-
-		}
-		return false;
-	}
+	private static int maxSize = 0;
 
 	/**
 	 * Translate the content of the text widget. Because of the "space", it
@@ -131,11 +73,104 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 	 * @see org.eventb.eventBKeyboard.IEventBKeyboardTranslator#translate(org.eclipse.swt.widgets.Text)
 	 */
 	public void translate(Text widget) {
-		boolean isTranslated;
+		if (symbols == null) {
+			TextSymbols textSymbol = new TextSymbols();
+			symbols = textSymbol.getSymbols();
+			maxSize = textSymbol.getMaxSize();
+		}
+		String text = widget.getText();
+		translate(widget, 0, text.length());
+	}
 
-		isTranslated = translateTextCombo(widget);
-		if (isTranslated)
-			translateTextCombo(widget);
+	private void translate(Text widget, int beginIndex, int endIndex) {
+		KeyboardUtils.debugText("***************************************");
+		KeyboardUtils.debugText("Begin: " + beginIndex);
+		KeyboardUtils.debugText("End: " + endIndex);
+		if (beginIndex == endIndex)
+			return;
+		String text = widget.getText();
+		int currentPos = widget.getCaretPosition();
+		String subString = text.substring(beginIndex, endIndex);
+
+		KeyboardUtils.debugText("Process: \"" + text + "\"");
+		KeyboardUtils.debugText("Pos: " + currentPos);
+		KeyboardUtils.debugText("Substring: \"" + subString + "\"");
+
+		int realIndex = 0;
+		String test = null;
+		String result = null;
+		String key = "";
+		int i = 0;
+		for (i = maxSize; i > 0; i--) {
+			boolean translated = false;
+			key = AbstractSymbols.generateKey(i);
+
+			Collection<Symbol> collection = symbols.get(key);
+			if (collection != null) {
+				for (Symbol symbol : collection) {
+					test = symbol.getCombo();
+					int index = subString.indexOf(test);
+
+					if (index != -1) {
+						result = symbol.getTranslation();
+
+						realIndex = beginIndex + index;
+
+						if (index != 0) {
+							if (isTextCharacter(text.charAt(index - 1))) {
+								break;
+							}
+						}
+
+						if (realIndex + test.length() != endIndex) {
+							if (isTextCharacter(text.charAt(realIndex
+									+ test.length()))) {
+								break;
+							}
+						} else {
+							if (endIndex == text.length()) {
+								break;
+							}
+						}
+
+						widget.setSelection(realIndex, realIndex
+								+ test.length());
+						KeyboardUtils.debugText("Replace at pos " + realIndex
+								+ " from \"" + test + "\" by \"" + result
+								+ "\"");
+						widget.insert(result);
+
+						if (currentPos <= realIndex) { // Translate after
+							// current pos
+							widget.setSelection(currentPos);
+						}
+						// Transate before current pos
+						else if (realIndex + test.length() < currentPos)
+							widget.setSelection(currentPos - test.length()
+									+ result.length());
+						// Translate within the current pos
+						else {
+							widget.setSelection(realIndex + result.length());
+						}
+						translated = true;
+						break;
+					}
+				}
+				if (translated)
+					break;
+			}
+
+		}
+
+		if (i == 0)
+			return;
+
+		else {
+			translate(widget, realIndex + result.length(), endIndex
+					- test.length() + result.length());
+			translate(widget, beginIndex, realIndex);
+		}
+		return;
 	}
 
 }
