@@ -200,7 +200,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 		for (int i = 1; i <= proofStates.size(); i++) {
 			ProofState ps = proofStates.get((index + i) % proofStates.size());
-			if (!ps.isDischarged()) {
+			if (!ps.isClosed()) {
 				setProofState(ps);
 				return;
 			}
@@ -217,7 +217,7 @@ public class UserSupport implements IElementChangedListener,
 		for (int i = 1; i < proofStates.size(); i++) {
 			ProofState ps = proofStates.get((proofStates.size() + index - i)
 					% proofStates.size());
-			if (!ps.isDischarged()) {
+			if (!ps.isClosed()) {
 				setProofState(ps);
 				return;
 			}

@@ -17,6 +17,11 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for Event-B Prover (PR) files.
  * <p>
+ * The structure of the PR file is identical to that if the proof obligation (PO)
+ * file, but will additional proof trees included. 
+ * </p>
+ * 
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  *
@@ -61,8 +66,32 @@ public interface IPRFile extends IPOFile {
 	 */
 	IPOFile getPOFile();
 	
-	Map<String,IPRProofTree> getProofs() throws RodinDBException;
+	/**
+	 * Returns all the proof trees contained in this PR file, indexed according 
+	 * to their name.
+	 * <p>
+	 * The name of a proof tree is identical to the proof obligation (IPRSequent)
+	 * associated to it. In addition
+	 * </p>
+	 * 
+	 * @return map containing all proof trees in this PR file, indexed by name.
+	 * 
+	 * @throws RodinDBException
+	 */
+	Map<String,IPRProofTree> getProofTrees() throws RodinDBException;
 	
-	IPRProofTree getProof(String name) throws RodinDBException;
+	
+	/**
+	 * Returns the proof tree with the given name from the PR file.
+	 * 
+	 * @param name
+	 * Name of the proof tree to return.
+	 * 
+	 * @return the proof tree with the correcponging name, or <code>null</code> if not
+	 * present.
+	 * 
+	 * @throws RodinDBException
+	 */
+	IPRProofTree getProofTree(String name) throws RodinDBException;
 	
 }

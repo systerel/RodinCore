@@ -49,7 +49,7 @@ public interface IProofTree {
 	 * This is a shortcut for <code>getRoot().isClosed()</code>.
 	 * </p>
 	 * 
-	 * @return <code>true</code> iff this proof tree has been discharged
+	 * @return <code>true</code> iff this proof tree is closed
 	 */
 	boolean isClosed();
 	

@@ -73,7 +73,7 @@ public class ProofState {
 		searched = new HashSet<Hypothesis>();
 	}
 
-	public boolean isDischarged() throws RodinDBException {
+	public boolean isClosed() throws RodinDBException {
 		return pt.isClosed();
 	}
 

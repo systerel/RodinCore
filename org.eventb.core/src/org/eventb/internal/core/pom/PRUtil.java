@@ -99,7 +99,7 @@ public class PRUtil {
 		return proofTree;
 	}
 	
-	public static IProofTree makeProofTree(IPRSequent prSeq) throws RodinDBException{		
+	public static IProofTree rebiuldProofTree(IPRSequent prSeq) throws RodinDBException{		
 		IProofTree proofTree = makeInitialProofTree(prSeq);		
 		IProofTreeNode root = proofTree.getRoot();
 		IPRProofTreeNode prRoot = prSeq.getProofTree().getRoot();
@@ -186,7 +186,7 @@ public class PRUtil {
 		}
 	}
 	
-	public static void updateStatus(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
+	public static void updateProofTree(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
 		// IProofTree oldPt = makeProofTree(prSeq);
 		IProverSequent oldProverSeq = makeSequent(prSeq);
 		boolean broken;

@@ -50,13 +50,13 @@ public class PRSequent extends POSequent implements IPRSequent {
 	}
 	
 	public IPRProofTree getProofTree() throws RodinDBException {
-		IPRProofTree proof = ((IPRFile)getOpenable()).getProof(getName());
+		IPRProofTree proof = ((IPRFile)getOpenable()).getProofTree(getName());
 		assert proof != null;
 		return proof;
 	}
 
 	public IProofTree rebuildProofTree() throws RodinDBException {
-		return PRUtil.makeProofTree(this);
+		return PRUtil.rebiuldProofTree(this);
 	}
 	
 
@@ -67,7 +67,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 	public void updateProofTree(final IProofTree pt) throws CoreException {
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				PRUtil.updateStatus(PRSequent.this, pt);
+				PRUtil.updateProofTree(PRSequent.this, pt);
 			}
 
 		}, null);
