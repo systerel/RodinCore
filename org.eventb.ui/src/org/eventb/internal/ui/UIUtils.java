@@ -55,7 +55,6 @@ import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
-import org.eventb.internal.ui.eventbeditor.IntelligentNewVariableInputDialog;
 import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
@@ -306,7 +305,8 @@ public class UIUtils {
 	public static class ElementLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof ISeesContext || obj instanceof IAction
-					|| obj instanceof IRefinesMachine || obj instanceof IExtendsContext) {
+					|| obj instanceof IRefinesMachine
+					|| obj instanceof IExtendsContext) {
 				try {
 					return ((IInternalElement) obj).getContents();
 				} catch (RodinDBException e) {
@@ -408,23 +408,24 @@ public class UIUtils {
 						"component must be initialised by now");
 		try {
 			UIUtils.debugObligationExplorer("Link to : " + obj);
-			
+
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
-//			IEditorReference [] editors = EventBUIPlugin.getActivePage().getEditorReferences();
-//			for (IEditorReference editor : editors) {
-//				if (editor.getEditorInput().equals(fileInput)) {
-//					IEditorPart part = editor.getEditor(true);
-//					if (part instanceof ProverUI) {
-//						if (obj instanceof IPRSequent) {
-//							((ProverUI) part).setCurrentPO((IPRSequent) obj);
-//							return;
-//						}
-//					}
-//				}
-//				
-//			}
-			
+			// IEditorReference [] editors =
+			// EventBUIPlugin.getActivePage().getEditorReferences();
+			// for (IEditorReference editor : editors) {
+			// if (editor.getEditorInput().equals(fileInput)) {
+			// IEditorPart part = editor.getEditor(true);
+			// if (part instanceof ProverUI) {
+			// if (obj instanceof IPRSequent) {
+			// ((ProverUI) part).setCurrentPO((IPRSequent) obj);
+			// return;
+			// }
+			// }
+			// }
+			//				
+			// }
+
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (!(obj instanceof IPRFile))
@@ -621,83 +622,6 @@ public class UIUtils {
 		}
 	}
 
-	/**
-	 * Utility method to create a variable with its type invariant and
-	 * initialisation using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the variable and its invariant,
-	 *            initialisation will be created in
-	 */
-	public static void intelligentNewVariables(EventBEditor editor,
-			IRodinFile rodinFile) {
-		try {
-			final int counter = rodinFile
-					.getChildrenOfType(IVariable.ELEMENT_TYPE).length;
-			final int invCounter = rodinFile
-					.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
-			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
-					Display.getCurrent().getActiveShell(), "New Variable",
-					"var" + (counter + 1), "inv" + (invCounter + 1));
-
-			dialog.open();
-			String name = dialog.getName();
-			String invariantName = dialog.getInvariantName();
-			String init = dialog.getInit();
-			boolean newInit = true;
-
-			if (name != null) {
-				IInternalElement var = rodinFile.createInternalElement(
-						IVariable.ELEMENT_TYPE, name, null, null);
-				editor.addNewElement(var);
-
-				IInternalElement inv = rodinFile.createInternalElement(
-						IInvariant.ELEMENT_TYPE, invariantName, null, null);
-				inv.setContents(dialog.getInvariantPredicate());
-				editor.addNewElement(inv);
-
-				IRodinElement[] events = rodinFile
-						.getChildrenOfType(IEvent.ELEMENT_TYPE);
-				for (IRodinElement event : events) {
-					IInternalElement element = (IInternalElement) event;
-					if (event.getElementName().equals("INITIALISATION")) {
-						newInit = false;
-						int j = 1;
-						IRodinElement[] acts = element
-								.getChildrenOfType(IAction.ELEMENT_TYPE);
-						for (j = 1; j <= acts.length; j++) {
-							IInternalElement tmp = element
-									.getInternalElement(IAction.ELEMENT_TYPE,
-											"act" + j);
-							if (!tmp.exists())
-								break;
-						}
-						IInternalElement act = element.createInternalElement(
-								IAction.ELEMENT_TYPE, "act" + j, null,
-								null);
-						act.setContents(init);
-						
-						editor.addNewElement(act);
-					}
-				}
-				if (newInit) {
-					IInternalElement event = rodinFile.createInternalElement(
-							IEvent.ELEMENT_TYPE, "INITIALISATION", null, null);
-					IInternalElement act = (IInternalElement) event
-							.createInternalElement(IAction.ELEMENT_TYPE, "act1",
-									null, null);
-					act.setContents(init);
-					editor.addNewElement(act);
-				}
-			}
-
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Utility method to create new invariants using a modal dialog.

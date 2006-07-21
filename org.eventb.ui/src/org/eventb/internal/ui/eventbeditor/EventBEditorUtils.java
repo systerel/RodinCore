@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAction;
@@ -73,7 +74,9 @@ public class EventBEditorUtils {
 	/**
 	 * Handle the "up" action in a tree viewer.
 	 * <p>
-	 * @param viewer The current tree viewer in the Event-B Editor.
+	 * 
+	 * @param viewer
+	 *            The current tree viewer in the Event-B Editor.
 	 */
 	public static void handleUp(final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
@@ -102,7 +105,9 @@ public class EventBEditorUtils {
 	/**
 	 * Handle the "down" action in a tree viewer.
 	 * <p>
-	 * @param viewer The current tree viewer in the Event-B Editor
+	 * 
+	 * @param viewer
+	 *            The current tree viewer in the Event-B Editor
 	 */
 	public static void handleDown(final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
@@ -131,8 +136,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new action.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addAction(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -173,8 +181,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new guard.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addGuard(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -215,8 +226,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new local variable.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addLocalVariable(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -256,8 +270,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new variable.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addVariable(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -290,8 +307,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new invariant.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addInvariant(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -325,8 +345,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new theorem.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addTheorem(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -359,8 +382,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new event.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addEvent(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -418,8 +444,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new axiom.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addAxiom(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -452,8 +481,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new constant.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addConstant(final EventBEditor editor,
 			final TreeViewer viewer) {
@@ -486,8 +518,11 @@ public class EventBEditorUtils {
 	/**
 	 * Add a new carriet set.
 	 * <p>
-	 * @param editor The current Event-B Editor
-	 * @param viewer The current Tree Viewer in the Event-B Editor
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
 	 */
 	public static void addSet(final EventBEditor editor, final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
@@ -536,4 +571,137 @@ public class EventBEditorUtils {
 		// try to select the column to edit element
 		viewer.selectItem(item, column);
 	}
+
+	/**
+	 * Utility method to create a variable with its type invariant and
+	 * initialisation using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the variable and its invariant,
+	 *            initialisation will be created in
+	 */
+	public static void intelligentNewVariables(EventBEditor editor,
+			IRodinFile rodinFile) {
+		try {
+
+			int counter = 1;
+			IRodinElement[] vars = rodinFile
+					.getChildrenOfType(IVariable.ELEMENT_TYPE);
+			for (counter = 1; counter <= vars.length; counter++) {
+				IInternalElement element = rodinFile.getInternalElement(
+						IVariable.ELEMENT_TYPE, "var" + counter);
+				if (!element.exists())
+					break;
+			}
+			int invCounter = 1;
+
+			IRodinElement[] invs = rodinFile
+					.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+			for (invCounter = 1; invCounter <= invs.length; invCounter++) {
+				IInternalElement element = rodinFile.getInternalElement(
+						IInvariant.ELEMENT_TYPE, "inv" + invCounter);
+				if (!element.exists())
+					break;
+			}
+
+			IInternalElement initialisation = getInitialisation(rodinFile);
+
+			String defaultInitName = "";
+			if (initialisation == null)
+				defaultInitName = "act1";
+			else {
+				IRodinElement[] acts = initialisation
+						.getChildrenOfType(IAction.ELEMENT_TYPE);
+				int i;
+				for (i = 1; i <= acts.length; i++) {
+					IInternalElement element = initialisation
+							.getInternalElement(IAction.ELEMENT_TYPE, "act" + i);
+					if (!element.exists())
+						break;
+				}
+				defaultInitName = "act" + i;
+			}
+			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
+					Display.getCurrent().getActiveShell(), "New Variable",
+					"var" + counter, "inv" + invCounter, defaultInitName);
+
+			dialog.open();
+			String name = dialog.getName();
+			String invariantName = dialog.getInvariantName();
+			String init = dialog.getInitSubstitution();
+			boolean newInit = true;
+
+			if (name != null) {
+				IInternalElement var = rodinFile.createInternalElement(
+						IVariable.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(var);
+
+				if (dialog.getInvariantPredicate() != null) {
+					IInternalElement inv = rodinFile.createInternalElement(
+
+					IInvariant.ELEMENT_TYPE, invariantName, null, null);
+					inv.setContents(dialog.getInvariantPredicate());
+					editor.addNewElement(inv);
+				}
+
+				if (init != null) {
+					IRodinElement[] events = rodinFile
+							.getChildrenOfType(IEvent.ELEMENT_TYPE);
+					for (IRodinElement event : events) {
+						IInternalElement element = (IInternalElement) event;
+						if (event.getElementName().equals("INITIALISATION")) {
+							newInit = false;
+							int j = 1;
+							IRodinElement[] acts = element
+									.getChildrenOfType(IAction.ELEMENT_TYPE);
+							for (j = 1; j <= acts.length; j++) {
+								IInternalElement tmp = element
+										.getInternalElement(
+												IAction.ELEMENT_TYPE, "act" + j);
+								if (!tmp.exists())
+									break;
+							}
+							IInternalElement act = element
+									.createInternalElement(
+											IAction.ELEMENT_TYPE, "act" + j,
+											null, null);
+							act.setContents(init);
+
+							editor.addNewElement(act);
+						}
+					}
+					if (newInit) {
+						IInternalElement event = rodinFile
+								.createInternalElement(IEvent.ELEMENT_TYPE,
+										"INITIALISATION", null, null);
+						IInternalElement act = (IInternalElement) event
+								.createInternalElement(IAction.ELEMENT_TYPE,
+										"act1", null, null);
+						act.setContents(init);
+						editor.addNewElement(act);
+					}
+				}
+			}
+
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static IInternalElement getInitialisation(IRodinFile rodinFile)
+			throws RodinDBException {
+		IRodinElement[] events = rodinFile
+				.getChildrenOfType(IEvent.ELEMENT_TYPE);
+		for (IRodinElement event : events) {
+			IInternalElement element = (IInternalElement) event;
+			if (event.getElementName().equals("INITIALISATION")) {
+				return element;
+			}
+		}
+		return null;
+	}
+
 }
