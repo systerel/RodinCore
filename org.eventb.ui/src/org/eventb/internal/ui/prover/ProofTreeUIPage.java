@@ -720,6 +720,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					UIUtils.debugProverUI("Current node: "
 							+ currentNode.getSequent());
 					page.getViewer().expandAll();
+					elementColumn.pack();
 					if (currentNode != null)
 						page.getViewer().setSelection(
 								new StructuredSelection(currentNode));
@@ -729,6 +730,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					UIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
+						elementColumn.pack();
 						IProofTreeNode node = delta.getNewProofTreeNode();
 						if (node != null) {
 							viewer.setSelection(new StructuredSelection(node),
