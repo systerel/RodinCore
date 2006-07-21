@@ -128,6 +128,7 @@ public class ElementNameContentInputDialog extends Dialog {
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
+		
 		body.setLayout(layout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
@@ -212,7 +213,7 @@ public class ElementNameContentInputDialog extends Dialog {
 			contentTexts.add(text);
 
 			toolkit.paintBordersFor(scrolledForm.getBody());
-			scrolledForm.reflow(true);
+			this.getContents().getParent().pack(true);		
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			names = new ArrayList<String>();
 			contents = new ArrayList<String>();
