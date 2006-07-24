@@ -299,6 +299,17 @@
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="Create new invariants for the machine"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
+               id="org.eventb.ui.actions.autoInvNaming"
+               label="Automatic Invariant Naming"
+               menubarPath="org.eventb.ui.refactoring/Machine"
+               style="push"/>
+         <menu
+               id="org.eventb.ui.refactoring"
+               label="Refactoring">
+            <groupMarker name="Machine"/>
+         </menu>
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
