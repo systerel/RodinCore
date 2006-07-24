@@ -303,18 +303,18 @@
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="Automatic Invariant Naming"
-               menubarPath="org.eventb.ui.refactoring/Machine"
+               menubarPath="org.eventb.ui.refactoring/AutoNaming"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
                label="Automatic Theorem Naming"
-               menubarPath="org.eventb.ui.refactoring/Machine"
+               menubarPath="org.eventb.ui.refactoring/AutoNaming"
                style="push"/>
          <menu
                id="org.eventb.ui.refactoring"
                label="Refactoring">
-            <groupMarker name="Machine"/>
+            <groupMarker name="AutoNaming"/>
          </menu>
       </editorContribution>
       <editorContribution
@@ -365,6 +365,23 @@
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="Create new theorems for the context"/>
+         <menu
+               id="org.eventb.ui.refactoring"
+               label="Refactoring">
+            <groupMarker name="AutoNaming"/>
+         </menu>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
+               id="org.eventb.ui.actions.autoThmNaming"
+               label="Automatic Theorem Naming"
+               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
+               id="org.eventb.ui.actions.autoAxmNaming"
+               label="Automatic Axiom Naming"
+               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               style="push"/>
       </editorContribution>
    </extension>
    <extension
