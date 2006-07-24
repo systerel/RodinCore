@@ -305,6 +305,12 @@
                label="Automatic Invariant Naming"
                menubarPath="org.eventb.ui.refactoring/Machine"
                style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
+               id="org.eventb.ui.actions.autoThmNaming"
+               label="Automatic Theorem Naming"
+               menubarPath="org.eventb.ui.refactoring/Machine"
+               style="push"/>
          <menu
                id="org.eventb.ui.refactoring"
                label="Refactoring">
