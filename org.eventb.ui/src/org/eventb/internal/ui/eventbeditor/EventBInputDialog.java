@@ -116,6 +116,27 @@ public abstract class EventBInputDialog extends Dialog {
 
 	}
 
+	protected class ActionListener implements ModifyListener {
+
+		Text actText;
+
+		public ActionListener(Text actText) {
+			this.actText = actText;
+		}
+
+		public void modifyText(ModifyEvent e) {
+			Text varText = (Text) e.widget;
+			if (!dirtyTexts.contains(actText)) {
+				String text = varText.getText();
+				if (text.equals(""))
+					actText.setText("");
+				else
+					actText.setText(text + " \u2254 ");
+			}
+		}
+
+	}
+	
 	protected class DirtyStateListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {

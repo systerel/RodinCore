@@ -16,17 +16,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 
@@ -36,7 +32,7 @@ import org.eventb.internal.ui.IEventBInputText;
  *         This class extends the Dialog class and provides an input dialog for
  *         entering a list of attributes or names
  */
-public class ElementAttributeInputDialog extends Dialog {
+public class ElementAttributeInputDialog extends EventBInputDialog {
 
 	// The default prefix
 	private String defaultPrefix;
@@ -45,13 +41,7 @@ public class ElementAttributeInputDialog extends Dialog {
 
 	private Collection<IEventBInputText> texts;
 
-	private ScrolledForm scrolledForm;
-
-	private String title;
-
 	private String message;
-
-	private FormToolkit toolkit;
 
 	/**
 	 * Constructor.
@@ -68,24 +58,13 @@ public class ElementAttributeInputDialog extends Dialog {
 	 */
 	public ElementAttributeInputDialog(Shell parentShell, String title,
 			String message, String defaultPrefix) {
-		super(parentShell);
-		this.title = title;
+		super(parentShell, title);
 		this.message = message;
 		this.defaultPrefix = defaultPrefix;
 		texts = new ArrayList<IEventBInputText>();
 		attributes = new ArrayList<String>();
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(title);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -93,7 +72,7 @@ public class ElementAttributeInputDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.YES_ID, "&Add", false);
+		createButton(parent, IDialogConstants.YES_ID, "&More", false);
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
@@ -107,14 +86,7 @@ public class ElementAttributeInputDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createDialogArea(Composite parent) {
-		// TODO Auto-generated method stub
-		Composite composite = (Composite) super.createDialogArea(parent);
-		toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.setBackground(parent.getBackground());
-		toolkit.setBorderStyle(SWT.BORDER);
-
-		scrolledForm = toolkit.createScrolledForm(composite);
+	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
 		GridLayout layout = new GridLayout();
@@ -153,11 +125,6 @@ public class ElementAttributeInputDialog extends Dialog {
 		text.getTextWidget().setLayoutData(gd);
 		texts.add(text);
 
-		composite.pack();
-
-		toolkit.paintBordersFor(body);
-		applyDialogFont(body);
-		return body;
 	}
 
 	/*

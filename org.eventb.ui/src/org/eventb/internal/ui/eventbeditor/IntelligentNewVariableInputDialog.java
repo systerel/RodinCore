@@ -12,18 +12,16 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.dialogs.Dialog;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -35,19 +33,17 @@ import org.eventb.internal.ui.IEventBInputText;
  *         creating a new variable along with its type invariant and
  *         initilisation.
  */
-public class IntelligentNewVariableInputDialog extends Dialog {
+public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private String defaultName;
 
-	private String defaultInvariantName;
+	private int invCount;
 
 	private String defaultInitName;
 
 	private String name;
 
-	private String invariantName;
-
-	private String invariantPredicate;
+	private Collection<Pair> invariants;
 
 	private String initName;
 
@@ -55,22 +51,12 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 
 	private IEventBInputText nameText;
 
-	private IEventBInputText invariantNameText;
-
-	private IEventBInputText invariantPredicateText;
+	private Collection<Pair> invariantPairTexts;
 
 	private IEventBInputText initNameText;
 
 	private IEventBInputText initSubstitutionText;
-
-	private ScrolledForm scrolledForm;
-
-	private String title;
-
-	private boolean newInit;
-
-	private boolean newInv;
-
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -85,26 +71,13 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	 *            the default invariant name
 	 */
 	public IntelligentNewVariableInputDialog(Shell parentShell, String title,
-			String defaultName, String defaultInvariantName,
+			String defaultName, int invCount,
 			String defaultInitName) {
-		super(parentShell);
-		this.title = title;
+		super(parentShell, title);
 		this.defaultName = defaultName;
-		this.defaultInvariantName = defaultInvariantName;
+		this.invCount = invCount;
 		this.defaultInitName = defaultInitName;
-		setShellStyle(getShellStyle() | SWT.RESIZE);
-		newInit = true;
-		newInv = true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(title);
+		invariantPairTexts = new ArrayList<Pair>();
 	}
 
 	/*
@@ -113,6 +86,9 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.YES_ID, "&More Inv.",
+				true);
+
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
 
@@ -125,14 +101,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
-
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.setBackground(parent.getBackground());
-		toolkit.setBorderStyle(SWT.BORDER);
-
-		scrolledForm = toolkit.createScrolledForm(composite);
+	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
 		GridLayout layout = new GridLayout();
@@ -150,74 +119,46 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
 		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				String var = nameText.getTextWidget().getText();
-				if (newInv) {
-					invariantPredicateText.getTextWidget().setText(
-							var + " \u2208 ");
-				}
-				if (newInit) {
-					initSubstitutionText.getTextWidget().setText(
-							var + " \u2254 ");
-				}
-			}
-
-		});
-
-		toolkit.createLabel(body, "Invariant");
-
-		invariantNameText = new EventBText(toolkit.createText(body,
-				defaultInvariantName));
-		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-		gd.widthHint = 50;
-		invariantNameText.getTextWidget().setLayoutData(gd);
-
-		invariantPredicateText = new EventBMath(toolkit.createText(body, ""));
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.widthHint = 150;
-		invariantPredicateText.getTextWidget().setLayoutData(gd);
-		invariantPredicateText.getTextWidget().addModifyListener(
-				new ModifyListener() {
-
-					public void modifyText(ModifyEvent e) {
-						if (invariantPredicateText.getTextWidget()
-								.isFocusControl())
-							newInv = false;
-					}
-
-				});
 
 		toolkit.createLabel(body, "Initialisation");
 
-		initNameText = new EventBText(toolkit.createText(body,
-				defaultInitName));
+		initNameText = new EventBText(toolkit.createText(body, defaultInitName));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
 		initNameText.getTextWidget().setLayoutData(gd);
 
 		initSubstitutionText = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.horizontalSpan = 1;
 		gd.widthHint = 150;
 		initSubstitutionText.getTextWidget().setLayoutData(gd);
 		initSubstitutionText.getTextWidget().addModifyListener(
-				new ModifyListener() {
+				new DirtyStateListener());
+		nameText.getTextWidget().addModifyListener(
+				new ActionListener(initSubstitutionText.getTextWidget()));
 
-					public void modifyText(ModifyEvent e) {
-						if (initSubstitutionText.getTextWidget()
-								.isFocusControl())
-							newInit = false;
-					}
+		toolkit.createLabel(body, "Invariant");
+				
+		IEventBInputText invariantNameText = new EventBText(toolkit.createText(
+				body, "inv" + (invCount++)));
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd.widthHint = 50;
+		invariantNameText.getTextWidget().setLayoutData(gd);
 
-				});
+
+		IEventBInputText invariantPredicateText = new EventBMath(toolkit
+				.createText(body, ""));
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		invariantPredicateText.getTextWidget().setLayoutData(gd);
+		invariantPredicateText.getTextWidget().addModifyListener(
+				new DirtyStateListener());
+		nameText.getTextWidget().addModifyListener(
+				new GuardListener(invariantPredicateText.getTextWidget()));
+
+		invariantPairTexts.add(new Pair(invariantNameText, invariantPredicateText));
+
 		nameText.getTextWidget().setText(defaultName);
-		composite.pack();
 
-		toolkit.paintBordersFor(body);
-		applyDialogFont(body);
-		return body;
 	}
 
 	/*
@@ -228,28 +169,50 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			name = null;
-			invariantName = null;
-			invariantPredicate = null;
+			invariants = null;
 			initName = null;
 			initSubstitution = null;
+		} else if (buttonId == IDialogConstants.YES_ID) {
+			Composite body = scrolledForm.getBody();
+			Label label = toolkit.createLabel(body, "Invariant");
+			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			label.setLayoutData(gd);
+			
+			IEventBInputText invariantNameText = new EventBText(toolkit.createText(
+					body, "inv" + (invCount++)));
+			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			invariantNameText.getTextWidget().setLayoutData(gd);
+
+			IEventBInputText invariantPredicateText = new EventBMath(toolkit
+					.createText(body, ""));
+			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			invariantPredicateText.getTextWidget().setLayoutData(gd);
+			invariantPredicateText.getTextWidget().addModifyListener(
+					new DirtyStateListener());
+
+			invariantPairTexts.add(new Pair(invariantNameText, invariantPredicateText));	
+			this.getContents().getParent().pack(true);
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			name = nameText.getTextWidget().getText();
-			if (newInv) {
-				invariantName = null;
-				invariantPredicate = null;
+			invariants = new ArrayList<Pair>();
+			for (Pair pair : invariantPairTexts)
+			{
+				IEventBInputText invariantPredicateText = (IEventBInputText) pair.getSecond();
+				IEventBInputText invariantNameText = (IEventBInputText) pair.getFirst();
+				if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
+					String name = invariantNameText.getTextWidget().getText();
+					String pred = invariantPredicateText.getTextWidget()
+							.getText();
+					invariants.add(new Pair(name, pred));
+				}
 			}
-			else {
-				invariantName = invariantNameText.getTextWidget().getText();
-				invariantPredicate = invariantPredicateText.getTextWidget()
-				.getText();
-			}
-			if (newInit) {
+			if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
+				initName = initNameText.getTextWidget().getText();
+				initSubstitution = initSubstitutionText.getTextWidget()
+						.getText();
+			} else {
 				initName = null;
 				initSubstitution = null;
-			}
-			else {
-				initName = initNameText.getTextWidget().getText();
-				initSubstitution = initSubstitutionText.getTextWidget().getText();
 			}
 		}
 		super.buttonPressed(buttonId);
@@ -271,18 +234,8 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	 * 
 	 * @return the invariant name as input by the user
 	 */
-	public String getInvariantName() {
-		return invariantName;
-	}
-
-	/**
-	 * Get the invariant predicate.
-	 * <p>
-	 * 
-	 * @return the invariant predicate as input by the user
-	 */
-	public String getInvariantPredicate() {
-		return invariantPredicate;
+	public Collection<Pair> getInvariants() {
+		return invariants;
 	}
 
 	/**
@@ -294,7 +247,7 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	public String getInitSubstitution() {
 		return initSubstitution;
 	}
-	
+
 	public String getInitName() {
 		return initName;
 	}
@@ -302,8 +255,13 @@ public class IntelligentNewVariableInputDialog extends Dialog {
 	@Override
 	public boolean close() {
 		nameText.dispose();
-		invariantNameText.dispose();
-		invariantPredicateText.dispose();
+		for (Pair pair : invariantPairTexts)
+		{
+			IEventBInputText invariantPredicateText = (IEventBInputText) pair.getSecond();
+			IEventBInputText invariantNameText = (IEventBInputText) pair.getFirst();
+			invariantNameText.dispose();
+			invariantPredicateText.dispose();
+		}
 		initSubstitutionText.dispose();
 		return super.close();
 	}

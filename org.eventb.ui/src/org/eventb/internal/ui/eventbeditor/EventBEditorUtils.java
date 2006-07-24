@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -626,11 +627,10 @@ public class EventBEditorUtils {
 			}
 			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
 					Display.getCurrent().getActiveShell(), "New Variable",
-					"var" + counter, "inv" + invCounter, defaultInitName);
+					"var" + counter, invCounter, defaultInitName);
 
 			dialog.open();
 			String name = dialog.getName();
-			String invariantName = dialog.getInvariantName();
 			String init = dialog.getInitSubstitution();
 			boolean newInit = true;
 
@@ -639,12 +639,15 @@ public class EventBEditorUtils {
 						IVariable.ELEMENT_TYPE, name, null, null);
 				editor.addNewElement(var);
 
-				if (dialog.getInvariantPredicate() != null) {
-					IInternalElement inv = rodinFile.createInternalElement(
+				Collection<Pair> invariants = dialog.getInvariants();
+				if (invariants != null) {
+					for (Pair pair : invariants) {
+						IInternalElement inv = rodinFile.createInternalElement(
 
-					IInvariant.ELEMENT_TYPE, invariantName, null, null);
-					inv.setContents(dialog.getInvariantPredicate());
-					editor.addNewElement(inv);
+						IInvariant.ELEMENT_TYPE, (String) pair.getFirst(), null, null);
+						inv.setContents((String) pair.getSecond());
+						editor.addNewElement(inv);
+					}
 				}
 
 				if (init != null) {
