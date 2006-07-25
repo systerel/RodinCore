@@ -27,11 +27,24 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -40,6 +53,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.basis.PRSequent;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUSManagerListener;
@@ -51,6 +65,7 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeDelta;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProofControl;
 import org.eventb.internal.ui.prover.ProofTreeUI;
@@ -88,6 +103,153 @@ public class ObligationExplorer extends ViewPart implements
 
 	// A flag to indicate if the selection is made externally.
 	private boolean byExternal;
+
+	private ToolItem exclude;
+	
+	private ToolItem discharge;
+
+	private Text filterText;
+
+	private static int NULL = 0;
+	
+	private static int UNATTEMPTED = 1;
+	
+	private static int PENDING_BROKEN = 2;
+	
+	private static int PENDING = 3;
+	
+	private static int REVIEWED_BROKEN = 4;
+	
+	private static int REVIEWED = 5;
+	
+	private static int DISCHARGED_BROKEN = 6;
+	
+	private static int DISCHARGED;
+	
+	private class ObligationTextFilter extends ViewerFilter {
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+
+			boolean selection = exclude.getSelection();
+			if (element instanceof PRSequent) {
+				PRSequent sequent = (PRSequent) element;
+				
+				if (sequent.getName().indexOf(filterText.getText()) == -1)
+					return selection;
+				else
+					return !selection;
+			} else {
+				return true;
+			}
+		}
+
+	}
+
+	private class DischargedFilter extends ViewerFilter {
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			boolean selection = discharge.getSelection();
+			if (element instanceof IPRSequent) {
+				IPRSequent sequent = (IPRSequent) element;
+				int status = NULL;
+				try {
+					status = getStatus(sequent);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				if (status == DISCHARGED)
+					return !selection;
+				else
+					return true;
+			} else {
+				return true;
+			}
+			
+		}
+		
+	}
+	
+	private int getStatus(IPRSequent sequent) throws RodinDBException {
+		// Try to synchronize with the proof tree in memory
+		Collection<UserSupport> userSupports = UserSupportManager
+				.getUserSupports();
+		for (UserSupport userSupport : userSupports) {
+			// UIUtils.debugObligationExplorer("Get US: "
+			// + userSupport);
+			Collection<ProofState> proofStates = userSupport
+					.getPOs();
+			for (ProofState proofState : proofStates) {
+				if (proofState.getPRSequent().equals(sequent)) {
+					IProofTree tree = proofState.getProofTree();
+
+					if (!tree.proofAttempted())
+						return UNATTEMPTED;
+
+					int confidence = tree.getConfidence();
+
+					if (confidence == IConfidence.PENDING) {
+						if (false && sequent.isProofBroken())
+							return PENDING_BROKEN;
+						else
+							return PENDING;
+					}
+					if (confidence <= IConfidence.REVIEWED_MAX) {
+						if (false && sequent.isProofBroken())
+							return REVIEWED_BROKEN;
+						else
+							return REVIEWED;
+					}
+					if (confidence <= IConfidence.DISCHARGED_MAX) {
+						if (false && sequent.isProofBroken())
+							return DISCHARGED_BROKEN;
+						else
+							return DISCHARGED;
+					}
+					return NULL;
+				}
+			}
+		}
+
+		// Otherwise, setting the label accordingly.
+		if (!sequent.proofAttempted())
+			return UNATTEMPTED;
+
+		int confidence = sequent.getProofTree().getConfidence();
+		if (sequent.isProofBroken()) {
+			
+			if (confidence == IConfidence.PENDING)
+				return PENDING_BROKEN;
+			if (confidence <= IConfidence.REVIEWED_MAX)
+				return REVIEWED_BROKEN;
+			if (confidence <= IConfidence.DISCHARGED_MAX)
+				return DISCHARGED_BROKEN;
+
+		} else {
+	
+			if (confidence == IConfidence.PENDING)
+				return PENDING;
+			if (confidence <= IConfidence.REVIEWED_MAX)
+				return REVIEWED;
+			if (confidence <= IConfidence.DISCHARGED_MAX)
+				return DISCHARGED;
+
+		}
+
+		return NULL;
+
+		// Previous code:
+		// IProof status = ps.getProof();
+		// if (status.getContents().equals("PENDING"))
+		// return registry.get(EventBImage.IMG_PENDING);
+		// else if (status.getContents().equals("DISCHARGED"))
+		// return registry.get(EventBImage.IMG_DISCHARGED);
+	}
 
 	/**
 	 * The constructor.
@@ -171,6 +333,7 @@ public class ObligationExplorer extends ViewPart implements
 			if (obj instanceof IPRSequent) {
 				IPRSequent prSequent = (IPRSequent) obj;
 				try {
+					
 					// Try to synchronize with the proof tree in memory
 					Collection<UserSupport> userSupports = UserSupportManager
 							.getUserSupports();
@@ -182,14 +345,14 @@ public class ObligationExplorer extends ViewPart implements
 						for (ProofState proofState : proofStates) {
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
-								
+
 								if (!tree.proofAttempted())
-									return registry.get(EventBImage.IMG_UNATTEMPTED);
-								
+									return registry
+											.get(EventBImage.IMG_UNATTEMPTED);
+
 								int confidence = tree.getConfidence();
-								
-								if (confidence == IConfidence.PENDING) 
-								{
+
+								if (confidence == IConfidence.PENDING) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_PENDING_BROKEN);
@@ -197,8 +360,7 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_PENDING);
 								}
-								if (confidence <= IConfidence.REVIEWED_MAX) 
-								{
+								if (confidence <= IConfidence.REVIEWED_MAX) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_REVIEWED_BROKEN);
@@ -206,8 +368,7 @@ public class ObligationExplorer extends ViewPart implements
 										return registry
 												.get(EventBImage.IMG_REVIEWED);
 								}
-								if  (confidence <= IConfidence.DISCHARGED_MAX) 
-								{
+								if (confidence <= IConfidence.DISCHARGED_MAX) {
 									if (false && prSequent.isProofBroken())
 										return registry
 												.get(EventBImage.IMG_DISCHARGED_BROKEN);
@@ -270,6 +431,70 @@ public class ObligationExplorer extends ViewPart implements
 		}
 	}
 
+	CoolItem createToolItem(CoolBar coolBar) {
+		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
+		discharge = new ToolItem(toolBar, SWT.CHECK);
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		discharge.setImage(registry.get(EventBImage.IMG_DISCHARGED));
+		discharge.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				UIUtils.debugObligationExplorer("Event " + e);
+				UIUtils.debugObligationExplorer("Status "
+						+ exclude.getSelection());
+				viewer.refresh();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}			
+		});
+		
+		exclude = new ToolItem(toolBar, SWT.CHECK);
+		exclude.setText("ex");
+		exclude.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				UIUtils.debugObligationExplorer("Event " + e);
+				UIUtils.debugObligationExplorer("Status "
+						+ exclude.getSelection());
+				viewer.refresh();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+
+		});
+
+		toolBar.pack();
+		Point size = toolBar.getSize();
+		CoolItem item = new CoolItem(coolBar, SWT.NONE);
+		item.setControl(toolBar);
+		Point preferred = item.computeSize(size.x, size.y);
+		item.setPreferredSize(preferred);
+		return item;
+	}
+
+	CoolItem createText(CoolBar coolBar) {
+		filterText = new Text(coolBar, SWT.SINGLE | SWT.BORDER);
+		new TimerText(filterText, 1000) {
+
+			@Override
+			protected void response() {
+				viewer.refresh();
+			}
+
+		};
+		filterText.pack();
+		Point size = filterText.getSize();
+		CoolItem item = new CoolItem(coolBar, SWT.NONE);
+		item.setControl(filterText);
+		Point preferred = item.computeSize(size.x, size.y);
+		item.setPreferredSize(preferred);
+		return item;
+	}
+
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
@@ -278,12 +503,32 @@ public class ObligationExplorer extends ViewPart implements
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		FormLayout layout = new FormLayout();
+		parent.setLayout(layout);
+		CoolBar coolBar = new CoolBar(parent, SWT.FLAT);
+		FormData coolData = new FormData();
+		coolData.left = new FormAttachment(0);
+		coolData.right = new FormAttachment(100);
+		coolData.top = new FormAttachment(0);
+		coolBar.setLayoutData(coolData);
+
+		createToolItem(coolBar);
+		createText(coolBar);
+
 		viewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ObligationLabelProvider());
 		// viewer.setSorter(new ProjectsSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
+		viewer.addFilter(new ObligationTextFilter());
+		viewer.addFilter(new DischargedFilter());
+		FormData textData = new FormData();
+		textData.left = new FormAttachment(0);
+		textData.right = new FormAttachment(100);
+		textData.top = new FormAttachment(coolBar);
+		textData.bottom = new FormAttachment(100);
+		viewer.getControl().setLayoutData(textData);
 
 		// Sync with the current active ProverUI
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
