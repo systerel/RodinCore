@@ -163,7 +163,8 @@ public class NewEventInputDialog extends EventBInputDialog {
 		nameText = new EventBText(toolkit.createText(comp, defaultName));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		nameText.getTextWidget().setLayoutData(gd);
-
+		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		
 		separator = toolkit.createComposite(body);
 		gd = new GridData(SWT.NONE, SWT.NONE, false, false);
 		gd.widthHint = 30;
@@ -229,12 +230,14 @@ public class NewEventInputDialog extends EventBInputDialog {
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 30;
 			varText.getTextWidget().setLayoutData(gd);
+			varText.getTextWidget().addModifyListener(new DirtyStateListener());
 			varNameTexts.add(varText);
 
 			IEventBInputText text = new EventBText(toolkit.createText(
 					grdNameComposite, "grd" + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			grdNameTexts.add(text);
 
 			separator = toolkit.createComposite(body);
@@ -296,6 +299,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 					actNameComposite, "act" + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			actNameTexts.add(text);
 
 			separator = toolkit.createComposite(body);
@@ -335,12 +339,14 @@ public class NewEventInputDialog extends EventBInputDialog {
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 30;
 			varText.getTextWidget().setLayoutData(gd);
+			varText.getTextWidget().addModifyListener(new DirtyStateListener());
 			varNameTexts.add(varText);
 
 			IEventBInputText text = new EventBText(toolkit.createText(
 					grdNameComposite, "grd" + ++grdCount));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			grdNameTexts.add(text);
 
 			Composite separator = toolkit.createComposite(body);
@@ -374,6 +380,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 					grdNameComposite, "grd" + ++grdCount));
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			grdNameTexts.add(text);
 
 			Composite separator = toolkit.createComposite(body);
@@ -397,6 +404,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 					actNameComposite, "act" + ++actCount));
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			actNameTexts.add(text);
 
 			Composite separator = toolkit.createComposite(body);

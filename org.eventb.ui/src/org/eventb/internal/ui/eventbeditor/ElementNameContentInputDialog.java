@@ -120,6 +120,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
@@ -150,6 +151,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
 			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			text = new EventBMath(toolkit

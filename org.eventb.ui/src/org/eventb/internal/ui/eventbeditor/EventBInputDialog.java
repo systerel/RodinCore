@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -140,12 +141,17 @@ public abstract class EventBInputDialog extends Dialog {
 	protected class DirtyStateListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
+			Display display = Display.getCurrent();
 			Text text = (Text) e.widget;
 			UIUtils.debugEventBEditor("Modified: " + text.getText());
-			if (text.getText().equals(""))
+			if (text.getText().equals("")) {
 				dirtyTexts.remove(text);
-			else if (text.isFocusControl())
+				text.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+			}
+			else if (text.isFocusControl()) {
 				dirtyTexts.add(text);
+				text.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+			}
 
 		}
 
