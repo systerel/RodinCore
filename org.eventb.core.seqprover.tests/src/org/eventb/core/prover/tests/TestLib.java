@@ -84,7 +84,7 @@ public class TestLib {
 	
 	public static ITypeEnvironment genTypeEnv(String... strs){
 		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
-		assert strs.length % 2 == 1;
+		assert strs.length % 2 == 0;
 		for (int i = 0; i+1 < strs.length; i=i+2) {
 			Type type = Lib.parseType(strs[i+1]);
 			assert type != null;
