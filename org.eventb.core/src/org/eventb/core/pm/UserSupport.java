@@ -1,11 +1,14 @@
 package org.eventb.core.pm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeChangedListener;
@@ -42,9 +45,11 @@ public class UserSupport implements IElementChangedListener,
 
 	private int c = 0;
 
+	private Collection<IProofStateChangedListener> proofStateChangedListeners;
+
 	/* Creation should be done using UserSupportManager */
 	public UserSupport() {
-		proofStateChangedListeners = new HashSet<IProofStateChangedListener>();
+		proofStateChangedListeners = new ArrayList<IProofStateChangedListener>();
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
 		proofStates = new LinkedList<ProofState>();
@@ -52,19 +57,39 @@ public class UserSupport implements IElementChangedListener,
 		outOfDate = false;
 	}
 
-	Collection<IProofStateChangedListener> proofStateChangedListeners;
-
 	public void addStateChangedListeners(IProofStateChangedListener listener) {
-		proofStateChangedListeners.add(listener);
+		synchronized (proofStateChangedListeners) {
+			if (!proofStateChangedListeners.contains(listener)) {
+				proofStateChangedListeners.add(listener);
+			}
+		}
 	}
 
 	public void removeStateChangedListeners(IProofStateChangedListener listener) {
-		proofStateChangedListeners.remove(listener);
+		synchronized (proofStateChangedListeners) {
+			if (proofStateChangedListeners.contains(listener)) {
+				proofStateChangedListeners.remove(listener);
+			}
+		}
 	}
 
-	public void notifyStateChangedListeners(IProofStateDelta mergeDelta) {
-		for (IProofStateChangedListener listener : proofStateChangedListeners) {
-			listener.proofStateChanged(mergeDelta);
+	public void notifyStateChangedListeners(final IProofStateDelta mergeDelta) {
+		IProofStateChangedListener[] safeCopy;
+		synchronized (proofStateChangedListeners) {
+			safeCopy = proofStateChangedListeners
+					.toArray(new IProofStateChangedListener[proofStateChangedListeners
+							.size()]);
+		}
+		for (final IProofStateChangedListener listener : safeCopy) {
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// do nothing, will be logged by the platform
+				}
+
+				public void run() throws Exception {
+					listener.proofStateChanged(mergeDelta);
+				}
+			});
 		}
 	}
 
@@ -88,10 +113,10 @@ public class UserSupport implements IElementChangedListener,
 
 		List<Object> oldInformation = oldDelta.getInformation();
 		List<Object> newInformation = newDelta.getInformation();
-		
+
 		mergedDelta.addAllInformation(oldInformation);
 		mergedDelta.addAllInformation(newInformation);
-		
+
 		ProofState newProofState = newDelta.getNewProofState();
 		if (newProofState != null) {
 			mergedDelta.setNewProofState(newProofState);
@@ -505,12 +530,11 @@ public class UserSupport implements IElementChangedListener,
 		return outOfDate;
 	}
 
-	
 	// Should be used by the UserSupportManager only
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
 		if (currentPS != null)
 			currentPS.getProofTree().removeChangeListener(this);
 	}
-	
+
 }
