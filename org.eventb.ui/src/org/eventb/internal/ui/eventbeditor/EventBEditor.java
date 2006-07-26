@@ -12,12 +12,14 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -257,8 +259,8 @@ public abstract class EventBEditor extends FormEditor implements
 	 */
 	public EventBEditor() {
 		super();
-		
-		listeners = new HashSet<IElementChangedListener>();
+
+		listeners = new ArrayList<IElementChangedListener>();
 		newElements = new HashSet<IRodinElement>();
 		statusListeners = new HashSet<IStatusChangedListener>();
 	}
@@ -271,7 +273,10 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            an element changed listener
 	 */
 	public void addElementChangedListener(IElementChangedListener listener) {
-		listeners.add(listener);
+		synchronized (listeners) {
+			if (!listeners.contains(listener))
+				listeners.add(listener);
+		}
 	}
 
 	/**
@@ -282,7 +287,10 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            an element changed listener
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
-		listeners.remove(listener);
+		synchronized (listeners) {
+			if (listeners.contains(listener))
+				listeners.remove(listener);
+		}
 	}
 
 	/**
@@ -293,10 +301,23 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            Rodin Element Delta which is related to the current editting
 	 *            file
 	 */
-	private void notifyElementChangedListeners(IRodinElementDelta delta) {
-		for (IElementChangedListener listener : listeners) {
-			listener.elementChanged(new ElementChangedEvent(delta,
-					ElementChangedEvent.POST_CHANGE));
+	private void notifyElementChangedListeners(final IRodinElementDelta delta) {
+		IElementChangedListener[] safeCopy;
+		synchronized (listeners) {
+			safeCopy = listeners.toArray(new IElementChangedListener[listeners
+					.size()]);
+		}
+		for (final IElementChangedListener listener : safeCopy) {
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// do nothing, will be logged by the platform
+				}
+
+				public void run() throws Exception {
+					listener.elementChanged(new ElementChangedEvent(delta,
+							ElementChangedEvent.POST_CHANGE));
+				}
+			});
 		}
 	}
 
@@ -605,10 +626,12 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            instance of IRodinElement
 	 */
 	private void elementEdit(IRodinElement element) {
-		if (element instanceof IMachineFile) return;
-		
-		if (element instanceof IContextFile) return;
-		
+		if (element instanceof IMachineFile)
+			return;
+
+		if (element instanceof IContextFile)
+			return;
+
 		if (element instanceof ISeesContext) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
@@ -752,10 +775,12 @@ public abstract class EventBEditor extends FormEditor implements
 	}
 
 	private void elementSelect(IRodinElement element) {
-		if (element instanceof IMachineFile) return;
-		
-		if (element instanceof IContextFile) return;
-		
+		if (element instanceof IMachineFile)
+			return;
+
+		if (element instanceof IContextFile)
+			return;
+
 		if (element instanceof ISeesContext) {
 			this.setActivePage(DependenciesPage.PAGE_ID);
 			return;
@@ -802,7 +827,7 @@ public abstract class EventBEditor extends FormEditor implements
 		if (page instanceof EventBFormPage) {
 			((EventBFormPage) page).selectElement(element);
 		}
-		
+
 	}
 
 }
