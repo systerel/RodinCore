@@ -200,6 +200,7 @@ public class TestOldSyntax extends TestCase {
 			new TestOKE("BOOL", "BOOL"),
 			new TestOKE("bool(⊤)", "bool(btrue)"),
 			new TestOKE("f(x)", "x0(x1)"),
+			new TestOKE("f[A]", "(x0[x1])"),
 			new TestOKE("prj1(f)", "prj1(x0)"),
 			new TestOKE("prj2(f)", "prj2(x0)"),
 			new TestOKE("f∼", "(x0)~"),

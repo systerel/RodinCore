@@ -401,7 +401,7 @@ public class SyntaxVisitor extends DefaultVisitor {
 	public boolean exitRELIMAGE(BinaryExpression expr) {
 		String rr = syntaxStack.pop();
 		String ll = syntaxStack.pop();
-		syntaxStack.push(rr + "[" + ll + "]");
+		syntaxStack.push("(" + ll + "[" + rr + "]" + ")");
 		return true;
 	}
 
