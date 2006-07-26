@@ -303,18 +303,31 @@
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="Automatic Invariant Naming"
-               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               menubarPath="org.eventb.ui.refactoring/InvName"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixInvName"
+               id="org.eventb.ui.actions.PrefixInvNaming"
+               label="Set Prefix Invariant Name"
+               menubarPath="org.eventb.ui.refactoring/InvName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
                label="Automatic Theorem Naming"
-               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               menubarPath="org.eventb.ui.refactoring/ThmName"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
+               id="org.eventb.ui.actions.PrefixThmNaming"
+               label="Set Prefix Theorem Name"
+               menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
          <menu
                id="org.eventb.ui.refactoring"
                label="Refactoring">
-            <groupMarker name="AutoNaming"/>
+            <groupMarker name="InvName"/>
+            <groupMarker name="ThmName"/>
          </menu>
       </editorContribution>
       <editorContribution
@@ -368,19 +381,32 @@
          <menu
                id="org.eventb.ui.refactoring"
                label="Refactoring">
-            <groupMarker name="AutoNaming"/>
+            <groupMarker name="AxmName"/>
+            <groupMarker name="ThmName"/>
          </menu>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
                label="Automatic Theorem Naming"
-               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               menubarPath="org.eventb.ui.refactoring/ThmName"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
+               id="org.eventb.ui.actions.PrefixThmNaming"
+               label="Set Prefix Theorem Name"
+               menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
                id="org.eventb.ui.actions.autoAxmNaming"
                label="Automatic Axiom Naming"
-               menubarPath="org.eventb.ui.refactoring/AutoNaming"
+               menubarPath="org.eventb.ui.refactoring/AxmName"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName"
+               id="org.eventb.ui.actions.PrefixAxmNaming"
+               label="Set Prefix Axiom Name"
+               menubarPath="org.eventb.ui.refactoring/AxmName"
                style="push"/>
       </editorContribution>
    </extension>
