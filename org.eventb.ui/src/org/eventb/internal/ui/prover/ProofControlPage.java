@@ -33,14 +33,17 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -56,6 +59,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
@@ -98,6 +102,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private Collection<GlobalTacticDropdownToolItem> dropdownItems;
 
+	private Combo historyCombo;
+	
+	private EventBControl history;
+	
 	/**
 	 * Constructor
 	 * <p>
@@ -179,6 +187,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		editor.getUserSupport().removeStateChangedListeners(this);
 		formTextInformation.dispose();
 		textInput.dispose();
+		history.dispose();
 		super.dispose();
 	}
 
@@ -255,9 +264,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				@Override
 				public void apply(IGlobalTactic tactic) {
 					try {
-						tactic.apply(editor.getUserSupport(), textInput
-								.getTextWidget().getText());
-						textInput.getTextWidget().setText("");
+						Text textWidget = textInput.getTextWidget();
+						String text = textWidget.getText();
+						tactic.apply(editor.getUserSupport(), text);
+						if (!text.equals("")) {
+							historyCombo.add(text, 0);
+							textWidget.setText("");
+						}
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -295,9 +308,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						try {
+							Text textWidget = textInput.getTextWidget();
+							String text = textWidget.getText();
 							globalTacticToolItem.getTactic().apply(
 									editor.getUserSupport(),
-									textInput.getTextWidget().getText());
+									text);
+							if (!text.equals("")) {
+								historyCombo.add(text, 0);
+								textWidget.setText("");
+							}
 							textInput.getTextWidget().setText("");
 						} catch (RodinDBException e1) {
 							// TODO Auto-generated catch block
@@ -324,6 +343,22 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		});
 
+		historyCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+		historyCombo.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				textInput.getTextWidget().setText(historyCombo.getText());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+			
+		});
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		historyCombo.setLayoutData(gd);
+		history = new EventBControl(historyCombo);
+		
 		ProofState proofState = editor.getUserSupport().getCurrentPO();
 		if (proofState != null) {
 			updateToolItems(proofState.getCurrentNode());
