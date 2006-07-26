@@ -34,6 +34,7 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -102,28 +103,38 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			}
 		};
 		filterVarAction.setChecked(false);
-		filterVarAction.setToolTipText("Filter variable elements");
+		filterVarAction.setToolTipText("Filter global variable elements");
 
-		final Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+		final Action filterGrdAction = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
 				viewer.refresh();
 			}
 		};
-		filterGrdAtion.setChecked(false);
-		filterGrdAtion.setToolTipText("Filter invariant elements");
+		filterGrdAction.setChecked(false);
+		filterGrdAction.setToolTipText("Filter guard elements");
 
-		final Action filterInvAtion = new Action("inv", Action.AS_CHECK_BOX) {
+		final Action filterInvAction = new Action("inv", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
 				viewer.refresh();
 			}
 		};
-		filterInvAtion.setChecked(false);
-		filterInvAtion.setToolTipText("Filter invariant elements");
-		
+		filterInvAction.setChecked(false);
+		filterInvAction.setToolTipText("Filter invariant elements");
+
+		final Action filterLVarAction = new Action("lvar", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterLVarAction.setChecked(false);
+		filterInvAction.setToolTipText("Filter local variable elements");
+
 		ViewerFilter elementFilter = new ViewerFilter() {
 
 			/*
@@ -135,16 +146,25 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IVariable) {
-					if (filterVarAction.isChecked()) return false;
-					else return true;
-				}
-				else if (element instanceof IGuard) {
-					if (filterGrdAtion.isChecked()) return false;
-					else return true;
-				}
-				else if (element instanceof IInvariant) {
-					if (filterInvAtion.isChecked()) return false;
-					else return true;
+					IVariable var = (IVariable) element;
+					if (var.getParent() instanceof IRodinFile
+							&& filterVarAction.isChecked())
+						return false;
+					else if (var.getParent() instanceof IEvent
+							&& filterLVarAction.isChecked())
+						return false;
+					else
+						return true;
+				} else if (element instanceof IGuard) {
+					if (filterGrdAction.isChecked())
+						return false;
+					else
+						return true;
+				} else if (element instanceof IInvariant) {
+					if (filterInvAction.isChecked())
+						return false;
+					else
+						return true;
 				}
 				return true;
 			}
@@ -152,8 +172,9 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		};
 		((TreeViewer) this.getViewer()).addFilter(elementFilter);
 		form.getToolBarManager().add(filterVarAction);
-		form.getToolBarManager().add(filterGrdAtion);
-		form.getToolBarManager().add(filterInvAtion);
+		form.getToolBarManager().add(filterGrdAction);
+		form.getToolBarManager().add(filterInvAction);
+		form.getToolBarManager().add(filterLVarAction);
 
 		final SyntheticMachineMasterSectionActionGroup groupActionSet = (SyntheticMachineMasterSectionActionGroup) this
 				.getActionGroup();
@@ -297,7 +318,8 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (SyntheticMachineViewSection.this.getViewer().getControl().isDisposed())
+				if (SyntheticMachineViewSection.this.getViewer().getControl()
+						.isDisposed())
 					return;
 				((EventBEditableTreeViewer) SyntheticMachineViewSection.this
 						.getViewer()).elementChanged(event);
