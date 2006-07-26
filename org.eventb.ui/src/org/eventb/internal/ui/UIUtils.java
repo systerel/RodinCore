@@ -51,7 +51,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
-import org.eventb.internal.ui.eventbeditor.ElementNameContentInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
@@ -623,67 +622,7 @@ public class UIUtils {
 	}
 
 
-	/**
-	 * Utility method to create new invariants using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the new invariants will be created in
-	 */
-	public static void newInvariants(EventBEditor editor, IRodinFile rodinFile) {
-		try {
-			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
-					Display.getCurrent().getActiveShell(), "New Invariants",
-					"Name and predicate", "inv", counter + 1);
-			dialog.open();
-			String[] names = dialog.getNewNames();
-			String[] contents = dialog.getNewContents();
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				String content = contents[i];
-				IInternalElement inv = rodinFile.createInternalElement(
-						IInvariant.ELEMENT_TYPE, name, null, null);
-				inv.setContents(content);
-				editor.addNewElement(inv);
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
 
-	/**
-	 * Utility method to create new theorems using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the new theorems will be created in
-	 */
-	public static void newTheorems(EventBEditor editor, IRodinFile rodinFile) {
-		try {
-			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
-					Display.getCurrent().getActiveShell(), "New Theorems",
-					"Name and predicate", "thm", counter + 1);
-			dialog.open();
-			String[] names = dialog.getNewNames();
-			String[] contents = dialog.getNewContents();
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				String content = contents[i];
-				IInternalElement thm = rodinFile.createInternalElement(
-						ITheorem.ELEMENT_TYPE, name, null, null);
-				thm.setContents(content);
-				editor.addNewElement(thm);
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Utility method to create a event with its local variables, guards and
@@ -791,37 +730,6 @@ public class UIUtils {
 				IInternalElement cst = rodinFile.createInternalElement(
 						IConstant.ELEMENT_TYPE, name, null, null);
 				editor.addNewElement(cst);
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Utility method to create new axioms using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the new axioms will be created in
-	 */
-	public static void newAxioms(EventBEditor editor, IRodinFile rodinFile) {
-		try {
-			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
-			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
-					Display.getCurrent().getActiveShell(), "New Axioms",
-					"Name and predicate", "axm", counter + 1);
-			dialog.open();
-			String[] names = dialog.getNewNames();
-			String[] contents = dialog.getNewContents();
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				String content = contents[i];
-				IInternalElement axm = rodinFile.createInternalElement(
-						IAxiom.ELEMENT_TYPE, name, null, null);
-				axm.setContents(content);
-				editor.addNewElement(axm);
 			}
 		} catch (RodinDBException e) {
 			e.printStackTrace();

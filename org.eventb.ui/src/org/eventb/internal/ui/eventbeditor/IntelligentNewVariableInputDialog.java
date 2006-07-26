@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixInvName;
 
 /**
  * @author htson
@@ -57,6 +58,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private IEventBInputText initSubstitutionText;
 
+	private EventBEditor editor;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -70,9 +73,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * @param defaultInvariantName
 	 *            the default invariant name
 	 */
-	public IntelligentNewVariableInputDialog(Shell parentShell, String title,
-			String defaultName, int invCount, String defaultInitName) {
+	public IntelligentNewVariableInputDialog(EventBEditor editor,
+			Shell parentShell, String title, String defaultName, int invCount,
+			String defaultInitName) {
 		super(parentShell, title);
+		this.editor = editor;
 		this.defaultName = defaultName;
 		this.invCount = invCount;
 		this.defaultInitName = defaultInitName;
@@ -139,8 +144,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 		toolkit.createLabel(body, "Invariant");
 
+		String invPrefix = EventBEditorUtils.getPrefix(editor,
+				PrefixInvName.QUALIFIED_NAME, PrefixInvName.DEFAULT_PREFIX);
 		IEventBInputText invariantNameText = new EventBText(toolkit.createText(
-				body, "inv" + (invCount++)));
+				body, invPrefix + (invCount++)));
+
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
 		invariantNameText.getTextWidget().setLayoutData(gd);
@@ -180,9 +188,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			Label label = toolkit.createLabel(body, "Invariant");
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			label.setLayoutData(gd);
-
+			
+			String invPrefix = EventBEditorUtils.getPrefix(editor,
+					PrefixInvName.QUALIFIED_NAME, PrefixInvName.DEFAULT_PREFIX);
 			IEventBInputText invariantNameText = new EventBText(toolkit
-					.createText(body, "inv" + (invCount++)));
+					.createText(body, invPrefix + (invCount++)));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			invariantNameText.getTextWidget().setLayoutData(gd);
 			invariantNameText.getTextWidget().addModifyListener(
@@ -201,7 +211,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			if (dirtyTexts.contains(nameText.getTextWidget()))
 				name = nameText.getTextWidget().getText();
-			else 
+			else
 				name = null;
 			invariants = new ArrayList<Pair>();
 			for (Pair pair : invariantPairTexts) {

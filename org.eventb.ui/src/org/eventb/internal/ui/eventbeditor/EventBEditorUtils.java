@@ -15,6 +15,8 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -32,6 +34,9 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixInvName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -323,15 +328,18 @@ public class EventBEditorUtils {
 					int counter = 1;
 					IRodinElement[] invs = rodinFile
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+					String invPrefix = getPrefix(editor,
+							PrefixInvName.QUALIFIED_NAME,
+							PrefixInvName.DEFAULT_PREFIX);
 					for (counter = 1; counter <= invs.length; counter++) {
 						IInternalElement element = rodinFile
 								.getInternalElement(IInvariant.ELEMENT_TYPE,
-										"inv" + counter);
+										invPrefix + counter);
 						if (!element.exists())
 							break;
 					}
 					IInternalElement inv = rodinFile.createInternalElement(
-							IInvariant.ELEMENT_TYPE, "inv" + counter, null,
+							IInvariant.ELEMENT_TYPE, invPrefix + counter, null,
 							null);
 					inv.setContents(EventBUIPlugin.INV_DEFAULT);
 					editor.addNewElement(inv);
@@ -361,15 +369,19 @@ public class EventBEditorUtils {
 					int counter = 1;
 					IRodinElement[] thms = rodinFile
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+					String thmPrefix = getPrefix(editor,
+							PrefixThmName.QUALIFIED_NAME,
+							PrefixThmName.DEFAULT_PREFIX);
 					for (counter = 1; counter <= thms.length; counter++) {
 						IInternalElement element = rodinFile
 								.getInternalElement(ITheorem.ELEMENT_TYPE,
-										"thm" + counter);
+										thmPrefix + counter);
 						if (!element.exists())
 							break;
 					}
 					IInternalElement thm = rodinFile.createInternalElement(
-							ITheorem.ELEMENT_TYPE, "thm" + counter, null, null);
+							ITheorem.ELEMENT_TYPE, thmPrefix + counter, null,
+							null);
 					thm.setContents(EventBUIPlugin.THM_DEFAULT);
 					editor.addNewElement(thm);
 					((EventBEditableTreeViewer) viewer).edit(thm);
@@ -460,15 +472,19 @@ public class EventBEditorUtils {
 					int counter = 1;
 					IRodinElement[] vars = rodinFile
 							.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+					String axmPrefix = getPrefix(editor,
+							PrefixAxmName.QUALIFIED_NAME,
+							PrefixAxmName.DEFAULT_PREFIX);
 					for (counter = 1; counter <= vars.length; counter++) {
 						IInternalElement element = rodinFile
-								.getInternalElement(IAxiom.ELEMENT_TYPE, "axm"
-										+ counter);
+								.getInternalElement(IAxiom.ELEMENT_TYPE,
+										axmPrefix + counter);
 						if (!element.exists())
 							break;
 					}
 					IInternalElement axm = rodinFile.createInternalElement(
-							IAxiom.ELEMENT_TYPE, "axm" + counter, null, null);
+							IAxiom.ELEMENT_TYPE, axmPrefix + counter, null,
+							null);
 					axm.setContents(EventBUIPlugin.AXM_DEFAULT);
 					editor.addNewElement(axm);
 					((EventBEditableTreeViewer) viewer).edit(axm);
@@ -601,9 +617,11 @@ public class EventBEditorUtils {
 
 			IRodinElement[] invs = rodinFile
 					.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+			String invPrefix = getPrefix(editor, PrefixInvName.QUALIFIED_NAME,
+					PrefixInvName.DEFAULT_PREFIX);
 			for (invCounter = 1; invCounter <= invs.length; invCounter++) {
 				IInternalElement element = rodinFile.getInternalElement(
-						IInvariant.ELEMENT_TYPE, "inv" + invCounter);
+						IInvariant.ELEMENT_TYPE, invPrefix + invCounter);
 				if (!element.exists())
 					break;
 			}
@@ -626,8 +644,9 @@ public class EventBEditorUtils {
 				defaultInitName = "act" + i;
 			}
 			IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
-					Display.getCurrent().getActiveShell(), "New Variable",
-					"var" + counter, invCounter, defaultInitName);
+					editor, Display.getCurrent().getActiveShell(),
+					"New Variable", "var" + counter, invCounter,
+					defaultInitName);
 
 			dialog.open();
 			String name = dialog.getName();
@@ -644,7 +663,8 @@ public class EventBEditorUtils {
 					for (Pair pair : invariants) {
 						IInternalElement inv = rodinFile.createInternalElement(
 
-						IInvariant.ELEMENT_TYPE, (String) pair.getFirst(), null, null);
+						IInvariant.ELEMENT_TYPE, (String) pair.getFirst(),
+								null, null);
 						inv.setContents((String) pair.getSecond());
 						editor.addNewElement(inv);
 					}
@@ -707,4 +727,119 @@ public class EventBEditorUtils {
 		return null;
 	}
 
+	public static String getPrefix(EventBEditor editor,
+			QualifiedName qualifiedName, String defaultPrefix) {
+		IRodinFile inputFile = editor.getRodinInput();
+		String prefix = null;
+		try {
+			prefix = inputFile.getResource().getPersistentProperty(
+					qualifiedName);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (prefix == null)
+			prefix = defaultPrefix;
+		return prefix;
+	}
+
+	/**
+	 * Utility method to create new invariants using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the new invariants will be created in
+	 */
+	public static void newInvariants(EventBEditor editor, IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE).length;
+			String invPrefix = getPrefix(editor, PrefixInvName.QUALIFIED_NAME,
+					PrefixInvName.DEFAULT_PREFIX);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
+					Display.getCurrent().getActiveShell(), "New Invariants",
+					"Name and predicate", invPrefix, counter + 1);
+			dialog.open();
+			String[] names = dialog.getNewNames();
+			String[] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement inv = rodinFile.createInternalElement(
+						IInvariant.ELEMENT_TYPE, name, null, null);
+				inv.setContents(content);
+				editor.addNewElement(inv);
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Utility method to create new theorems using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the new theorems will be created in
+	 */
+	public static void newTheorems(EventBEditor editor, IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE).length;
+			String thmPrefix = getPrefix(editor, PrefixThmName.QUALIFIED_NAME,
+					PrefixThmName.DEFAULT_PREFIX);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
+					Display.getCurrent().getActiveShell(), "New Theorems",
+					"Name and predicate", thmPrefix, counter + 1);
+			dialog.open();
+			String[] names = dialog.getNewNames();
+			String[] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement thm = rodinFile.createInternalElement(
+						ITheorem.ELEMENT_TYPE, name, null, null);
+				thm.setContents(content);
+				editor.addNewElement(thm);
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Utility method to create new axioms using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the new axioms will be created in
+	 */
+	public static void newAxioms(EventBEditor editor, IRodinFile rodinFile) {
+		try {
+			int counter = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE).length;
+			String axmPrefix = getPrefix(editor, PrefixAxmName.QUALIFIED_NAME,
+					PrefixAxmName.DEFAULT_PREFIX);
+			ElementNameContentInputDialog dialog = new ElementNameContentInputDialog(
+					Display.getCurrent().getActiveShell(), "New Axioms",
+					"Name and predicate", axmPrefix, counter + 1);
+			dialog.open();
+			String[] names = dialog.getNewNames();
+			String[] contents = dialog.getNewContents();
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+				String content = contents[i];
+				IInternalElement axm = rodinFile.createInternalElement(
+						IAxiom.ELEMENT_TYPE, name, null, null);
+				axm.setContents(content);
+				editor.addNewElement(axm);
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
 }
