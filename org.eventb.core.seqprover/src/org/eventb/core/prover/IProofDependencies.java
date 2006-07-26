@@ -12,10 +12,10 @@ import org.eventb.core.prover.sequent.Hypothesis;
  * 
  * A proof is reusable for another sequent if:
  * <ul>
- * <li> The goal is identical to the goal of the sequent </li>
- * <li> All used hypotheses are contained in the hypotheses of the sequent</li>
+ * <li> The goal is identical to the goal of the sequent and</li>
+ * <li> All used hypotheses are contained in the hypotheses of the sequent and</li>
  * <li> All used free identifiers (with identical types) are contained in the 
- * type environment of the sequent</li>
+ * type environment of the sequent and</li>
  * <li> No introduced free identifiers (ignoring their types) are present in the
  * type environment of the sequent</li>
  * </ul>

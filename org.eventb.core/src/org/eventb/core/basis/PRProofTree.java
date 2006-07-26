@@ -9,10 +9,12 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
+import org.eventb.core.IPRFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -20,14 +22,13 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofDependencies;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Farhad Mehta
- *
- * TODO : remane to PRProofTree, resembel ProofTree
  *
  */
 public class PRProofTree extends InternalElement implements IPRProofTree {
@@ -41,12 +42,31 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		return ELEMENT_TYPE;
 	}
 
+	public void initialize() throws RodinDBException {
+		//delete previous children, if any.
+		if (this.getChildren().length != 0)
+			this.getRodinDB().delete(this.getChildren(),true,null);
+		setConfidence(IConfidence.PENDING);
+	}
+	
+	public IPRSequent getSequent() {
+		IInternalElement prSequent = ((IPRFile)getOpenable()).getInternalElement(IPRSequent.ELEMENT_TYPE,this.getElementName());
+		assert prSequent != null;
+		if (! prSequent.exists()) return null;
+		return ((IPRSequent)prSequent);
+	}
+	
+	public boolean isClosed() throws RodinDBException {
+		return getConfidence() != IConfidence.PENDING;
+	}
+	
 	public PRProofTreeNode getRoot() throws RodinDBException {
 		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		if (proofTreeNodes.length != 1) return null;
 		return (PRProofTreeNode) proofTreeNodes[0];
 	}
 
+	// TODO : eventually remove
 	public Set<Predicate> getUsedHypotheses() throws RodinDBException {
 		IRodinElement[] usedHypotheses = getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
 		if (usedHypotheses.length != 1) return null;
@@ -56,20 +76,11 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 	}
 	
 	public Set<Hypothesis> getUsedHypotheses_() throws RodinDBException {
-		IRodinElement[] usedHypotheses = getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
-		if (usedHypotheses.length != 1) return null;
-		assert usedHypotheses.length == 1;
-		assert usedHypotheses[0].getElementName().equals("usedHypotheses");
-		return Hypothesis.Hypotheses(((IPRPredicateSet)usedHypotheses[0]).getPredicateSet());
+		InternalElement usedFreeIdents = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses");
+		assert usedFreeIdents != null;
+		if (! usedFreeIdents.exists()) return null;
+		return Hypothesis.Hypotheses(((IPRPredicateSet)usedFreeIdents).getPredicateSet());
 	}
-
-//	public FreeIdentifier[] getUsedFreeIdents() throws RodinDBException {
-//		IRodinElement[] usedFreeIdents = getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
-//		if (usedFreeIdents.length != 1) return null;
-//		assert usedFreeIdents.length == 1;
-//		assert usedFreeIdents[0].getElementName().equals("usedFreeIdentifiers");
-//		return ((IPRTypeEnvironment)usedFreeIdents[0]).getFreeIdentifiers();
-//	}
 
 	public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException {
 		InternalElement usedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers");
@@ -90,14 +101,6 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		assert goal != null;
 		if (! goal.exists()) return null;
 		return ((IPRPredicate)goal).getPredicate();
-	}
-	
-	
-	public void initialize() throws RodinDBException {
-		//delete previous children, if any.
-		if (this.getChildren().length != 0)
-			this.getRodinDB().delete(this.getChildren(),true,null);
-		setConfidence(IConfidence.PENDING);
 	}
 
 	public boolean proofAttempted() throws RodinDBException {

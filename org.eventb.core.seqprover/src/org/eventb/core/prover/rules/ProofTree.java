@@ -14,6 +14,7 @@ import java.util.Set;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.prover.IConfidence;
 import org.eventb.core.prover.IProofDependencies;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
@@ -88,7 +89,7 @@ public final class ProofTree implements IProofTree {
 	 * @see org.eventb.core.prover.IProofTree#isClosed()
 	 */
 	public boolean isClosed() {
-		return getRoot().isClosed();
+		return getConfidence() != IConfidence.PENDING;
 	}
 
 	/* (non-Javadoc)

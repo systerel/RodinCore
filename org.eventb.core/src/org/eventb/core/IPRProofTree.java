@@ -39,7 +39,18 @@ public interface IPRProofTree extends IInternalElement {
 		 * @return the PR sequent associated with this proof tree, or <code>null</code>
 		 * if no such PR sequent present
 		 */
-		// IPRSequent getSequent();
+		IPRSequent getSequent();
+		
+		/**
+		 * Returns whether or not this proof tree is closed.
+		 * <p>
+		 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
+		 * </p>
+		 * 
+		 * @return <code>true</code> iff this proof tree is closed
+		 * @throws RodinDBException 
+		 */
+		boolean isClosed() throws RodinDBException;
 		
 		/**
 		 * Returns the root node of this proof tree.

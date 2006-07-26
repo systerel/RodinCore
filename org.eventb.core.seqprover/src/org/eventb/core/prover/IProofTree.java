@@ -46,7 +46,7 @@ public interface IProofTree {
 	/**
 	 * Returns whether or not this proof tree is closed.
 	 * <p>
-	 * This is a shortcut for <code>getRoot().isClosed()</code>.
+	 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this proof tree is closed
