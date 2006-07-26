@@ -27,10 +27,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IGuard;
-import org.eventb.core.IVariable;
+import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
@@ -50,11 +50,6 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	private final static String SECTION_TITLE = "Synthetics";
 
 	private final static String SECTION_DESCRIPTION = "Synthetics View";
-
-	// A set of different filter
-	private ViewerFilter varFilter;
-
-	private ViewerFilter grdFilter;
 
 	private Action upAction;
 
@@ -100,7 +95,47 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		varFilter = new ViewerFilter() {
+		final Action filterSetAtion = new Action("set", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterSetAtion.setChecked(false);
+		filterSetAtion.setToolTipText("Filter set elements");
+
+		final Action filterCstAction = new Action("cst", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterCstAction.setChecked(false);
+		filterCstAction.setToolTipText("Filter constant elements");
+
+		final Action filterAxmAtion = new Action("axm", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterAxmAtion.setChecked(false);
+		filterAxmAtion.setToolTipText("Filter axiom elements");
+		
+		final Action filterThmAtion = new Action("thm", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterThmAtion.setChecked(false);
+		filterThmAtion.setToolTipText("Filter theorem elements");
+
+		ViewerFilter elementFilter = new ViewerFilter() {
 
 			/*
 			 * (non-Javadoc)
@@ -110,58 +145,31 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 			 */
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof IVariable)
-					return false;
-				else
-					return true;
+				if (element instanceof IConstant) {
+					if (filterCstAction.isChecked()) return false;
+					else return true;
+				}
+				else if (element instanceof ICarrierSet) {
+					if (filterSetAtion.isChecked()) return false;
+					else return true;
+				}
+				else if (element instanceof IAxiom) {
+					if (filterAxmAtion.isChecked()) return false;
+					else return true;
+				}
+				else if (element instanceof ITheorem) {
+					if (filterThmAtion.isChecked()) return false;
+					else return true;
+				}
+				return true;
 			}
 
 		};
-
-		grdFilter = new ViewerFilter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IGuard)
-					return false;
-				else
-					return true;
-			}
-
-		};
-
-		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
-			public void run() {
-				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
-						.getViewer());
-				if (isChecked())
-					viewer.addFilter(varFilter);
-				else
-					viewer.removeFilter(varFilter);
-			}
-		};
-		filterVarAction.setChecked(false);
-		filterVarAction.setToolTipText("Filter variable elements");
-		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
-			public void run() {
-				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
-						.getViewer());
-				if (isChecked())
-					viewer.addFilter(grdFilter);
-				else
-					viewer.removeFilter(grdFilter);
-			}
-		};
-		filterGrdAtion.setChecked(false);
-		filterGrdAtion.setToolTipText("Filter guard elements");
-		form.getToolBarManager().add(filterVarAction);
-		form.getToolBarManager().add(filterGrdAtion);
+		((TreeViewer) this.getViewer()).addFilter(elementFilter);
+		form.getToolBarManager().add(filterSetAtion);
+		form.getToolBarManager().add(filterCstAction);
+		form.getToolBarManager().add(filterAxmAtion);
+		form.getToolBarManager().add(filterThmAtion);
 		form.updateToolBar();
 
 		final SyntheticContextMasterSectionActionGroup groupActionSet = (SyntheticContextMasterSectionActionGroup) this

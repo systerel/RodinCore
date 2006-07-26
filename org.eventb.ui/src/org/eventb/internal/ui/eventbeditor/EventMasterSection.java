@@ -63,11 +63,6 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 
 	private final static String SECTION_DESCRIPTION = "The list contains events from the model whose details are editable on the right";
 
-	// A set of filters
-	private ViewerFilter varFilter;
-
-	private ViewerFilter grdFilter;
-
 	/**
 	 * Constructor.
 	 * <p>
@@ -99,70 +94,57 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 *            The managed form contains the Toolbar.
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
-		varFilter = new ViewerFilter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IVariable)
-					return false;
-				else
-					return true;
-			}
-
-		};
-
-		grdFilter = new ViewerFilter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IGuard)
-					return false;
-				else
-					return true;
-			}
-
-		};
-
-		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+		final Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
 						.getViewer());
-				if (isChecked())
-					viewer.addFilter(varFilter);
-				else
-					viewer.removeFilter(varFilter);
+				viewer.refresh();
 			}
 		};
 		filterVarAction.setChecked(false);
 		filterVarAction.setToolTipText("Filter variable elements");
-		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+
+		final Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
 						.getViewer());
-				if (isChecked())
-					viewer.addFilter(grdFilter);
-				else
-					viewer.removeFilter(grdFilter);
+				viewer.refresh();
 			}
 		};
 		filterGrdAtion.setChecked(false);
-		filterGrdAtion.setToolTipText("Filter guard elements");
+		filterGrdAtion.setToolTipText("Filter invariant elements");
 
+		ViewerFilter elementFilter = new ViewerFilter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof IVariable) {
+					if (filterVarAction.isChecked())
+						return false;
+					else
+						return true;
+				} else if (element instanceof IGuard) {
+					if (filterGrdAtion.isChecked())
+						return false;
+					else
+						return true;
+				}
+				return true;
+			}
+
+		};
+		((TreeViewer) this.getViewer()).addFilter(elementFilter);
 		ScrolledForm form = managedForm.getForm();
+
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAtion);
+
 		form.updateToolBar();
 	}
 
@@ -275,7 +257,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (EventMasterSection.this.getViewer().getControl().isDisposed())
+				if (EventMasterSection.this.getViewer().getControl()
+						.isDisposed())
 					return;
 				((EventBEditableTreeViewer) EventMasterSection.this.getViewer())
 						.elementChanged(event);

@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.ElementChangedEvent;
@@ -49,11 +50,6 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	private final static String SECTION_TITLE = "Synthetics";
 
 	private final static String SECTION_DESCRIPTION = "Synthetics View";
-
-	// A set of filters.
-	private ViewerFilter varFilter;
-
-	private ViewerFilter grdFilter;
 
 	private Action upAction;
 
@@ -98,68 +94,66 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		varFilter = new ViewerFilter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IVariable)
-					return false;
-				else
-					return true;
-			}
-
-		};
-
-		grdFilter = new ViewerFilter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IGuard)
-					return false;
-				else
-					return true;
-			}
-
-		};
-
-		Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+		final Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
-				if (isChecked())
-					viewer.addFilter(varFilter);
-				else
-					viewer.removeFilter(varFilter);
+				viewer.refresh();
 			}
 		};
 		filterVarAction.setChecked(false);
 		filterVarAction.setToolTipText("Filter variable elements");
-		Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+
+		final Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
-				if (isChecked())
-					viewer.addFilter(grdFilter);
-				else
-					viewer.removeFilter(grdFilter);
+				viewer.refresh();
 			}
 		};
 		filterGrdAtion.setChecked(false);
-		filterGrdAtion.setToolTipText("Filter guard elements");
+		filterGrdAtion.setToolTipText("Filter invariant elements");
+
+		final Action filterInvAtion = new Action("inv", Action.AS_CHECK_BOX) {
+			public void run() {
+				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
+						.getViewer());
+				viewer.refresh();
+			}
+		};
+		filterInvAtion.setChecked(false);
+		filterInvAtion.setToolTipText("Filter invariant elements");
+		
+		ViewerFilter elementFilter = new ViewerFilter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				if (element instanceof IVariable) {
+					if (filterVarAction.isChecked()) return false;
+					else return true;
+				}
+				else if (element instanceof IGuard) {
+					if (filterGrdAtion.isChecked()) return false;
+					else return true;
+				}
+				else if (element instanceof IInvariant) {
+					if (filterInvAtion.isChecked()) return false;
+					else return true;
+				}
+				return true;
+			}
+
+		};
+		((TreeViewer) this.getViewer()).addFilter(elementFilter);
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAtion);
+		form.getToolBarManager().add(filterInvAtion);
 
 		final SyntheticMachineMasterSectionActionGroup groupActionSet = (SyntheticMachineMasterSectionActionGroup) this
 				.getActionGroup();
