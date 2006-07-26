@@ -257,6 +257,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					try {
 						tactic.apply(editor.getUserSupport(), textInput
 								.getTextWidget().getText());
+						textInput.getTextWidget().setText("");
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -297,6 +298,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							globalTacticToolItem.getTactic().apply(
 									editor.getUserSupport(),
 									textInput.getTextWidget().getText());
+							textInput.getTextWidget().setText("");
 						} catch (RodinDBException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
