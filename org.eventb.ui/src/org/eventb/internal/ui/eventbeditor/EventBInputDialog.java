@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -137,7 +138,7 @@ public abstract class EventBInputDialog extends Dialog {
 		}
 
 	}
-	
+
 	protected class DirtyStateListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
@@ -147,14 +148,26 @@ public abstract class EventBInputDialog extends Dialog {
 			if (text.getText().equals("")) {
 				dirtyTexts.remove(text);
 				text.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-			}
-			else if (text.isFocusControl()) {
+			} else if (text.isFocusControl()) {
 				dirtyTexts.add(text);
 				text.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
 			}
 
 		}
+	}
 
+	protected void updateSize() {
+		Point curr = this.getContents().getParent().getSize();
+		Point pt = this.getContents().getParent().computeSize(SWT.DEFAULT,
+				SWT.DEFAULT);
+
+		if (curr.x < pt.x || curr.y < pt.y) {
+			int x = curr.x < pt.x ? pt.x : curr.x;
+			int y = curr.y < pt.y ? pt.y : curr.y;
+			this.getContents().getParent().setSize(x, y);
+		} else {
+			scrolledForm.reflow(true);
+		}
 	}
 
 }

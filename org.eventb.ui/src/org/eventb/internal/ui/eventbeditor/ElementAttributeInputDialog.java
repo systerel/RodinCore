@@ -149,7 +149,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 			toolkit.paintBordersFor(scrolledForm.getBody());
-			this.getContents().getParent().pack(true);
+			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
 			for (IEventBInputText text : texts) {

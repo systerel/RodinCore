@@ -373,8 +373,8 @@ public class NewEventInputDialog extends EventBInputDialog {
 			varComposite.setLayout(layout);
 			gd = (GridData) varComposite.getLayoutData();
 			gd.widthHint = 50 * varCount + 10 * (varCount - 1);
-			varComposite.pack(true);
-			this.getContents().getParent().pack(true);
+			updateSize();
+			
 		} else if (buttonId == IDialogConstants.NO_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
 					grdNameComposite, "grd" + ++grdCount));
@@ -397,7 +397,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			grdText.getTextWidget().setLayoutData(gd);
 			grdPredicateTexts.add(grdText);
 			grdText.getTextWidget().addModifyListener(new DirtyStateListener());
-			this.getContents().getParent().pack(true);
+			updateSize();
 
 		} else if (buttonId == IDialogConstants.YES_TO_ALL_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
@@ -420,7 +420,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			text.getTextWidget().setLayoutData(gd);
 			actSubstitutionTexts.add(text);
 			text.getTextWidget().addModifyListener(new DirtyStateListener());
-			this.getContents().getParent().pack(true);
+			updateSize();
 
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			name = nameText.getTextWidget().getText();

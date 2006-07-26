@@ -162,7 +162,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			contentTexts.add(text);
 			
-			this.getContents().getParent().pack(true);		
+			updateSize();		
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			names = new ArrayList<String>();
 			contents = new ArrayList<String>();
