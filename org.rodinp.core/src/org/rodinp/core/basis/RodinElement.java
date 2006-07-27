@@ -88,6 +88,9 @@ public abstract class RodinElement extends PlatformObject implements
 		} else {
 			child = (RodinElement) parent.getInternalElement(childType, "");
 		}
+		if (child == null) {
+			return null;
+		}
 		return child.getHandleFromMemento(memento);
 	}
 	

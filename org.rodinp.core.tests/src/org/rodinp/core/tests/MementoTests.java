@@ -60,7 +60,7 @@ public class MementoTests extends ModifyingResourceTests {
 
 	/**
 	 * Ensures that a Rodin element is returned for an invalid memento.
-	 * (regression test for bug 81762 [model] AIOOB in breakpoints view)
+	 * (regression test for JDT bug 81762 [model] AIOOB in breakpoints view)
 	 */
 	public void testInvalidMemento() {
 		IRodinElement element = RodinCore.create("/P/");
@@ -78,8 +78,8 @@ public class MementoTests extends ModifyingResourceTests {
 
 	/**
 	 * Tests that a project with special chararcters in its name can be
-	 * persisted and restored using its memento. (regression test for bug 47815
-	 * Refactoring doesn't work with some project names [refactoring])
+	 * persisted and restored using its memento. (regression test for JDT bug
+	 * 47815 Refactoring doesn't work with some project names [refactoring])
 	 */
 	public void testProjectMemento2() {
 		IRodinProject project = getRodinProject("P |!#");
@@ -91,6 +91,31 @@ public class MementoTests extends ModifyingResourceTests {
 	 */
 	public void testRestoreBogusMemento() {
 		IRodinElement restored = RodinCore.create("bogus");
+		assertNull("should not be able to restore a bogus memento", restored);
+	}
+
+	/**
+	 * Tests that a memento containing an unknown internal type doesn't raise a
+	 * NullPointerException.  Regression test for bug 1529854.
+	 */
+	public void testRestoreWrongInternalType() {
+		String bogusType = "org.rodinp.core.tests.bogus";
+		IRodinElement restored = RodinCore.create(
+				"/P/X.test|"
+				+ bogusType
+				+ "#foo"
+		);
+		assertNull("should not be able to restore a bogus memento", restored);
+	}
+
+	/**
+	 * Tests that a memento containing an unknown Rodin file type doesn't raise a
+	 * NullPointerException.  Regression test for bug 1529854.
+	 */
+	public void testRestoreWrongFileType() {
+		IRodinElement restored = RodinCore.create(
+				"/P/X.bogus"
+		);
 		assertNull("should not be able to restore a bogus memento", restored);
 	}
 

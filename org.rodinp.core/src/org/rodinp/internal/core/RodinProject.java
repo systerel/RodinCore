@@ -296,6 +296,9 @@ public class RodinProject
 					return this;
 				String fileName = memento.nextToken();
 				RodinElement file = getRodinFile(fileName);
+				if (file == null) {
+					return null;
+				}
 				return file.getHandleFromMemento(memento);
 		}
 		return null;

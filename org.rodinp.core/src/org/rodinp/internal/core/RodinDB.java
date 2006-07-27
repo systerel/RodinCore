@@ -181,6 +181,9 @@ public class RodinDB extends Openable implements IRodinDB {
 				return this;
 			String projectName = memento.nextToken();
 			RodinElement project = (RodinElement) getRodinProject(projectName);
+			if (project == null) {
+				return null;
+			}
 			return project.getHandleFromMemento(memento);
 		}
 		return null;
