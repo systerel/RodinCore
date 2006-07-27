@@ -322,7 +322,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	@Override
-	public Object toStringInfo(int tab, StringBuilder buffer) {
+	public RodinElementInfo toStringInfo(int tab, StringBuilder buffer) {
 		RodinElementInfo info = null;
 		try {
 			RodinFile rf = getOpenableParent();
