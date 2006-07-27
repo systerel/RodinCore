@@ -151,40 +151,45 @@
    <extension
          point="org.eventb.ui.globalProofTactics">
       <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Review"
+            icon="icons/full/ctool16/rv_prover.gif"
+            id="org.eventb.ui.review"
+            tooltip="Review goal with selected hypotheses"/>
+      <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Normalise"
             id="org.eventb.ui.normalise"
             icon="icons/full/ctool16/nm_prover.gif"
             tooltip="Normalise tactic"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.AddHypothesis"
-            id="org.eventb.ui.addHypothesis"
-            icon="icons/full/ctool16/ah_prover.gif"
-            tooltip="Add hypothesis"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Contradiction"
             id="org.eventb.ui.contradiction"
             icon="icons/full/ctool16/ct_prover.gif"
             tooltip="Contradiction"/>
       <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Prune"
-            id="org.eventb.ui.prune"
-            icon="icons/full/ctool16/pn_prover.gif"
-            tooltip="Prune from the current node"/>
-      <tactic
             class="org.eventb.internal.ui.prover.globaltactics.DoCase"
             id="org.eventb.ui.doCase"
             icon="icons/full/ctool16/dc_prover.gif"
             tooltip="Case distinction"/>
       <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.SearchHypotheses"
-            id="org.eventb.ui.searchHypotheses"
-            icon="icons/full/ctool16/sh_prover.gif"
-            tooltip="Search hypotheses"/>
+            class="org.eventb.internal.ui.prover.globaltactics.AddHypothesis"
+            id="org.eventb.ui.addHypothesis"
+            icon="icons/full/ctool16/ah_prover.gif"
+            tooltip="Add hypothesis"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Backtrack"
             id="org.eventb.ui.backtrack"
             icon="icons/full/ctool16/bk_prover.gif"
             tooltip="Backtrack from the current node"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Prune"
+            id="org.eventb.ui.prune"
+            icon="icons/full/ctool16/pn_prover.gif"
+            tooltip="Prune from the current node"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.SearchHypotheses"
+            id="org.eventb.ui.searchHypotheses"
+            icon="icons/full/ctool16/sh_prover.gif"
+            tooltip="Search hypotheses"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Previous"
             id="org.eventb.ui.previous"
@@ -237,11 +242,6 @@
             id="org.eventb.ui.ml"
             icon="icons/full/ctool16/ml_prover.gif"
             tooltip="External prover: Mono-lemma prover in all force"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Review"
-            icon="icons/full/ctool16/rv_prover.gif"
-            id="org.eventb.ui.review"
-            tooltip="Review goal with selected hypotheses"/>
    </extension>
    <extension
          point="org.eventb.ui.globalProofTacticDropdowns">
