@@ -130,19 +130,31 @@ public class ProofInformationPage extends Page implements
 			IPOSource[] sources = desc.getSources();
 			for (IPOSource source : sources) {
 				String role = source.getSourceRole();
-				// UIUtils.debug("Role " + role);
+				UIUtils.debugProverUI("Role " + role);
 				formString = formString + "<li style=\"bullet\">" + role
 						+ "</li>";
 
 				String id = source.getSourceHandleIdentifier();
 
+				UIUtils.debugProverUI("ID before: " + id);
 				// TODO Dirty fix to get the uncheck element handle identifier
-				id = id.replaceFirst("bcm", "bum");
-				id = id.replaceFirst("bcc", "buc");
-				id = id.replaceFirst("scEvent", "event");
+				id = id.replaceFirst("\\.bcm\\|", "\\.bum\\|");
+				id = id.replaceFirst("\\.bcc\\|", "\\.buc\\|");
+				id = id.replaceAll("org.eventb.core.scInvariant",
+						"org.eventb.core.invariant");
+				id = id.replaceAll("org.eventb.core.scTheorem",
+						"org.eventb.core.theorem");
+				id = id.replaceAll("org.eventb.core.scAxiom",
+						"org.eventb.core.axiom");
+				id = id.replaceAll("org.eventb.core.scGuard",
+						"org.eventb.core.guard");
+				id = id.replaceAll("org.eventb.core.scEvent",
+						"org.eventb.core.event");
 				// UIUtils.debug("ID unchecked model " + id);
 
 				IRodinElement element = RodinCore.create(id);
+				UIUtils.debugProverUI("id: " + id);
+				UIUtils.debugProverUI("Find: " + element);
 				if (element instanceof ITheorem) {
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
