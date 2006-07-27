@@ -701,9 +701,9 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Runs this operation and registers any deltas created.
 	 *
 	 * @see IWorkspaceRunnable
-	 * @exception CoreException if the operation fails
+	 * @exception RodinDBException if the operation fails
 	 */
-	public void run(IProgressMonitor monitor) throws CoreException {
+	public void run(IProgressMonitor monitor) throws RodinDBException {
 		RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		DeltaProcessor deltaProcessor = manager.getDeltaProcessor();
 		int previousDeltaCount = deltaProcessor.rodinDBDeltas.size();
