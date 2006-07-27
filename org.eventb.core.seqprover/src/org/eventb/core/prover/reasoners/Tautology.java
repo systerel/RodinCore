@@ -26,7 +26,7 @@ public class Tautology implements Reasoner{
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "tautology";
+		reasonerOutput.display = "⊤ goal";
 		
 		reasonerOutput.anticidents = new Anticident[0];
 		

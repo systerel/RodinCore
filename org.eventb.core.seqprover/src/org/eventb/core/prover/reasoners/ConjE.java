@@ -41,7 +41,7 @@ public class ConjE implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "remove ∧ hyp ("+input.conjHyp+")";
+		reasonerOutput.display = "∧ hyp ("+input.conjHyp+")";
 		reasonerOutput.neededHypotheses.add(conjHyp);
 		reasonerOutput.goal = seq.goal();
 

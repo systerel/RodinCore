@@ -39,7 +39,7 @@ public class DisjE implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "case distinction ("+input.disjHyp+")";
+		reasonerOutput.display = "∨ hyp ("+input.disjHyp+")";
 		reasonerOutput.neededHypotheses.add(disjHyp);
 		reasonerOutput.goal = seq.goal();
 

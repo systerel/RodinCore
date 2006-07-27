@@ -71,7 +71,7 @@ public class Eq implements Reasoner{
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		
-		reasonerOutput.display = "apply = ("+input.eqHyp+")";
+		reasonerOutput.display = "eh ("+input.eqHyp+")";
 		reasonerOutput.neededHypotheses.add(eqHyp);
 		reasonerOutput.neededHypotheses.addAll(toDeselect);
 		reasonerOutput.goal = seq.goal();

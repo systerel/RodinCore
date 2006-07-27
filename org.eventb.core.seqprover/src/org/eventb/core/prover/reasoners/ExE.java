@@ -64,7 +64,7 @@ public class ExE implements Reasoner{
 		assert boundIdentDecls.length == freeIdents.length;
 		Predicate instantiatedEx = ExQ.instantiate(freeIdents,Lib.ff);
 		assert instantiatedEx.isTypeChecked();
-		reasonerOutput.display = "∃ elim (frees "+displayFreeIdents(freeIdents)+")";
+		reasonerOutput.display = "∃ hyp (frees "+displayFreeIdents(freeIdents)+")";
 		reasonerOutput.anticidents[0].addedHypotheses.add(instantiatedEx);
 		reasonerOutput.anticidents[0].addedFreeIdentifiers = freeIdents;
 		reasonerOutput.anticidents[0].hypAction.add(Lib.deselect(exHyp));

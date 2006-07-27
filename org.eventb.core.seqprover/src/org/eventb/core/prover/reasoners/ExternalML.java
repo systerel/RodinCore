@@ -90,6 +90,7 @@ public class ExternalML extends LegacyProvers {
 			reasonerOutput.goal = sequent.goal();
 			reasonerOutput.neededHypotheses.addAll(hypotheses);
 			reasonerOutput.anticidents = new Anticident[0];
+			reasonerOutput.display = "ml";
 			
 			return reasonerOutput;
 

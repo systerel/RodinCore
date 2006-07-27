@@ -28,7 +28,7 @@ public class Contradiction implements Reasoner{
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.neededHypotheses.add(new Hypothesis(Lib.False));
-		reasonerOutput.display = "false hypothesis";
+		reasonerOutput.display = "⊥ hyp";
 		
 		reasonerOutput.anticidents = new Anticident[0];
 		

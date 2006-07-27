@@ -102,8 +102,9 @@ public class UIUtils {
 
 	public static final String EQE2_SYMBOL = "he";
 
-	public static final String FALSIFY_SYMBOL = "\u22a5";
-
+	// public static final String FALSIFY_SYMBOL = "\u22a5";
+	public static final String FALSIFY_SYMBOL = "ct";
+	
 	/**
 	 * Print out the message if the <code>DEBUG</code> flag is
 	 * <code>true</code>.

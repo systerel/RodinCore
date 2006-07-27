@@ -48,7 +48,7 @@ public class Cut implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "add hyp ("+input.lemmaPred.toString()+")";
+		reasonerOutput.display = "ah ("+input.lemmaPred.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents

@@ -91,7 +91,7 @@ public class ExI implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "∃ inst ("+displayWitnesses(input.witnessesExpr)+")";
+		reasonerOutput.display = "∃ goal (inst "+displayWitnesses(input.witnessesExpr)+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents

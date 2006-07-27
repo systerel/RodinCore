@@ -37,11 +37,11 @@ public class Contr implements Reasoner{
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		if (falseHypPred.equals(Lib.True))
 		{
-			reasonerOutput.display = "contradict goal";
+			reasonerOutput.display = "ct goal";
 		}
 		else 
 		{
-			reasonerOutput.display = "contradict hyp ("+input.falseHyp+")";
+			reasonerOutput.display = "ct hyp ("+input.falseHyp+")";
 			reasonerOutput.neededHypotheses.add(falseHyp);
 		}
 		reasonerOutput.goal = seq.goal();

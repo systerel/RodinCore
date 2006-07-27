@@ -43,7 +43,7 @@ public class AllI implements Reasoner{
 		ITypeEnvironment newITypeEnvironment = seq.typeEnvironment().clone();
 		FreeIdentifier[] freeIdents = (Lib.ff).makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
 		assert boundIdentDecls.length == freeIdents.length;
-		reasonerOutput.display = "∀ intro (frees "+displayFreeIdents(freeIdents)+")";
+		reasonerOutput.display = "∀ goal (frees "+displayFreeIdents(freeIdents)+")";
 		
 		reasonerOutput.anticidents[0].subGoal = UnivQ.instantiate(freeIdents,Lib.ff);
 		reasonerOutput.anticidents[0].addedFreeIdentifiers = freeIdents;

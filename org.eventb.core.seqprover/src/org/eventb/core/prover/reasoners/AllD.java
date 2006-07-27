@@ -98,7 +98,7 @@ public class AllD implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "∀ inst ("+displayInstantiations(input.instantiationsExpr)+")";
+		reasonerOutput.display = "∀ hyp (inst "+displayInstantiations(input.instantiationsExpr)+")";
 		reasonerOutput.neededHypotheses.add(univHyp);
 		reasonerOutput.goal = seq.goal();
 

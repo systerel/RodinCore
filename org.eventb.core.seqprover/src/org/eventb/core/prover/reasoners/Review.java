@@ -46,7 +46,7 @@ public class Review implements Reasoner{
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.neededHypotheses = input.hyps;
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "reviewed (confidence "+input.reviewerConfidence+")";
+		reasonerOutput.display = "rv (confidence "+input.reviewerConfidence+")";
 		assert input.reviewerConfidence > 0;
 		assert input.reviewerConfidence <= IConfidence.REVIEWED_MAX;
 		reasonerOutput.reasonerConfidence = input.reviewerConfidence;

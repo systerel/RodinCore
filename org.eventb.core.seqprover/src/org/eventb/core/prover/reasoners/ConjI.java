@@ -31,6 +31,7 @@ public class ConjI implements Reasoner{
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
+		reasonerOutput.display = "∧ goal";
 		reasonerOutput.anticidents = new Anticident[conjuncts.length];
 		for (int i = 0; i < reasonerOutput.anticidents.length; i++) {
 			// Generate one anticident per conjunct

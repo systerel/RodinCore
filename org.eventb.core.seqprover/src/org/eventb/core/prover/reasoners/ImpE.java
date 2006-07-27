@@ -39,7 +39,7 @@ public class ImpE implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "remove ⇒ hyp ("+input.impHyp+")";
+		reasonerOutput.display = "⇒ hyp ("+input.impHyp+")";
 		reasonerOutput.neededHypotheses.add(impHyp);
 		reasonerOutput.goal = seq.goal();
 

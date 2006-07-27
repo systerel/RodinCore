@@ -47,7 +47,7 @@ public class DoCase implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "do case ("+input.trueCasePred.toString()+")";
+		reasonerOutput.display = "dc ("+input.trueCasePred.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents

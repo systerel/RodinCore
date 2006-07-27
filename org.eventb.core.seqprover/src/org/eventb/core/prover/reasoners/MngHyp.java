@@ -29,7 +29,7 @@ public class MngHyp implements Reasoner{
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "manage hyps";
+		reasonerOutput.display = "sl/ds";
 		reasonerOutput.anticidents = new Anticident[1];
 		
 		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();

@@ -27,7 +27,7 @@ public class Hyp implements Reasoner{
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.neededHypotheses.add(new Hypothesis(seq.goal()));
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "in hypotheses";
+		reasonerOutput.display = "hyp";
 		
 		reasonerOutput.anticidents = new Anticident[0];
 		
