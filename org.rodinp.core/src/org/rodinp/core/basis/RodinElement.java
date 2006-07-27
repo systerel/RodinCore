@@ -198,9 +198,14 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @see IParent
 	 */
 	public RodinElement[] getChildren() throws RodinDBException {
-		Object elementInfo = getElementInfo();
-		if (elementInfo instanceof RodinElementInfo) {
-			return ((RodinElementInfo) elementInfo).getChildren();
+		RodinElementInfo elementInfo = getElementInfo();
+		if (elementInfo != null) {
+			final RodinElement[] children = elementInfo.getChildren();
+			// Must make a copy as we don't want to expose the internal array
+			final int length = children.length;
+			final RodinElement[] result = new RodinElement[length];
+			System.arraycopy(children, 0, result, 0, length);
+			return result;
 		} else {
 			return NO_ELEMENTS;
 		}
@@ -580,7 +585,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Debugging purposes
 	 */
 	protected void toString(int tab, StringBuilder buffer) {
-		Object info = this.toStringInfo(tab, buffer);
+		RodinElementInfo info = this.toStringInfo(tab, buffer);
 		if (tab == 0) {
 			this.toStringAncestors(buffer);
 		}
@@ -613,20 +618,21 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	protected void toStringChildren(int tab, StringBuilder buffer, Object info) {
-		if (info == null || !(info instanceof RodinElementInfo))
+	protected void toStringChildren(int tab, StringBuilder buffer,
+			RodinElementInfo info) {
+
+		if (info == null)
 			return;
-		IRodinElement[] children = ((RodinElementInfo) info).getChildren();
-		for (int i = 0; i < children.length; i++) {
+		for (RodinElement child: info.getChildren()) {
 			buffer.append("\n"); //$NON-NLS-1$
-			((RodinElement) children[i]).toString(tab + 1, buffer);
+			child.toString(tab + 1, buffer);
 		}
 	}
 
 	/**
 	 * Debugging purposes
 	 */
-	public Object toStringInfo(int tab, StringBuilder buffer) {
+	public RodinElementInfo toStringInfo(int tab, StringBuilder buffer) {
 		RodinElementInfo info = RodinDBManager.getRodinDBManager().peekAtInfo(this);
 		this.toStringInfo(tab, buffer, info);
 		return info;
