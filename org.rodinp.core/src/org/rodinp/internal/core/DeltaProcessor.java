@@ -1007,13 +1007,12 @@ public class DeltaProcessor {
 	}
 	
 	/*
-	 * Update Rodin Model given some delta
+	 * Update the Rodin database given some delta
 	 */
 	public void updateRodinDB(IRodinElementDelta customDelta) {
 
-		if (customDelta == null){
-			for (int i = 0, length = this.rodinDBDeltas.size(); i < length; i++){
-				IRodinElementDelta delta = this.rodinDBDeltas.get(i);
+		if (customDelta == null) {
+			for (IRodinElementDelta delta: this.rodinDBDeltas) {
 				this.dbUpdater.processRodinDelta(delta);
 			}
 		} else {
