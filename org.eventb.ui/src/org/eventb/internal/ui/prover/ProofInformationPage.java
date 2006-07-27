@@ -240,8 +240,11 @@ public class ProofInformationPage extends Page implements
 								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 						formString = formString
 								+ UIUtils.makeHyperlink(actions[j]
-										.getHandleIdentifier(),
-										((IInternalElement) actions[j])
+										.getHandleIdentifier(), actions[j]
+										.getElementName())
+								+ ": "
+								+ UIUtils
+										.XMLWrapUp(((IInternalElement) actions[j])
 												.getContents());
 						formString = formString + "</li>";
 					}
