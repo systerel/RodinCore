@@ -89,8 +89,8 @@ public abstract class HypothesesSection extends SectionPart {
 	 * @param comp
 	 *            the composite parent of the FormText
 	 */
-	protected abstract void createTopFormText(FormToolkit toolkit,
-			Composite comp);
+//	protected abstract void createTopFormText(FormToolkit toolkit,
+//			Composite comp);
 
 	/**
 	 * Create the client of the section.
@@ -109,7 +109,7 @@ public abstract class HypothesesSection extends SectionPart {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		composite.setLayout(layout);
-		createTopFormText(toolkit, composite);
+//		createTopFormText(toolkit, composite);
 
 		scrolledForm = toolkit.createScrolledForm(composite);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -122,54 +122,15 @@ public abstract class HypothesesSection extends SectionPart {
 		comp.setLayout(layout);
 
 		section.setClient(composite);
+		
+		createTextClient(section, toolkit);
 	}
 
-	/**
-	 * Update the section according the set of added and removed hypotheses.
-	 * <p>
-	 * 
-	 * @param added
-	 *            set of added hypotheses
-	 * @param removed
-	 *            set of removed hypotheses
-	 */
-	// protected void update(Collection<Hypothesis> added,
-	// Collection<Hypothesis> removed) {
-	// if (removed != null) {
-	// Collection<HypothesisRow> deletedRows = new HashSet<HypothesisRow>();
-	//
-	// for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
-	// HypothesisRow hr = it.next();
-	// if (removed.contains(hr.getHypothesis())) {
-	// deletedRows.add(hr);
-	// hr.dispose();
-	// }
-	// }
-	// rows.removeAll(deletedRows);
-	// }
-	//
-	// if (added != null) {
-	// for (Iterator<Hypothesis> it = added.iterator(); it.hasNext();) {
-	// Hypothesis hp = it.next();
-	// HypothesisRow row = new HypothesisRow(this.getManagedForm()
-	// .getToolkit(), comp, hp, ((ProverUI) page.getEditor())
-	// .getUserSupport());
-	// rows.add(row);
-	// }
-	// }
-	//
-	// Display display = EventBUIPlugin.getDefault().getWorkbench()
-	// .getDisplay();
-	// // final SectionPart part = this;
-	// display.syncExec(new Runnable() {
-	// public void run() {
-	// if (!scrolledForm.isDisposed()) {
-	// scrolledForm.reflow(true); // Important for refresh
-	// // part.refresh();
-	// }
-	// }
-	// });
-	// }
+	protected void createTextClient(Section section, FormToolkit toolkit) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void init(Collection<Hypothesis> hyps) {
 		// Remove everything
 		for (HypothesisRow row : rows) {

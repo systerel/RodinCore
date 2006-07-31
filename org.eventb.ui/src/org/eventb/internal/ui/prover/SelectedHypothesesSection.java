@@ -16,25 +16,29 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -148,18 +152,43 @@ public class SelectedHypothesesSection extends HypothesesSection {
 	 * 
 	 * @see org.eventb.internal.ui.prover.HypothesesSection#createTopFormText()
 	 */
-	@Override
-	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
-		GridData gd;
-		formText = new EventBFormText(toolkit.createFormText(comp, true));
-		gd = new GridData();
-		gd.widthHint = 50;
-		gd.horizontalAlignment = SWT.LEFT;
-		FormText ft = formText.getFormText();
-		ft.setLayoutData(gd);
-		ft.addHyperlinkListener(new SelectedHyperlinkAdapter());
-		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"ds\">ds</a></li></form>";
-		ft.setText(string, true, false);
+//	@Override
+//	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
+//		GridData gd;
+//		formText = new EventBFormText(toolkit.createFormText(comp, true));
+//		gd = new GridData();
+//		gd.widthHint = 50;
+//		gd.horizontalAlignment = SWT.LEFT;
+//		FormText ft = formText.getFormText();
+//		ft.setLayoutData(gd);
+//		ft.addHyperlinkListener(new SelectedHyperlinkAdapter());
+//		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"ds\">ds</a></li></form>";
+//		ft.setText(string, true, false);
+//	}
+	
+	protected void createTextClient(Section section, FormToolkit toolkit) {
+		UIUtils.debugProverUI("Text Client");
+		Composite composite = new Composite(section, SWT.NONE);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		composite.setLayout(layout);
+		
+		toolkit.adapt(composite, true, true);
+		composite.setBackground(section.getTitleBarGradientBackground());
+
+		ImageHyperlink info = new ImageHyperlink(composite, SWT.CENTER);
+		toolkit.adapt(info, true, true);
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		info.setImage(registry.get(EventBImage.IMG_PENDING));
+		info.addHyperlinkListener(new SelectedHyperlinkAdapter());
+		info.setBackground(section.getTitleBarGradientBackground());
+		info.setToolTipText("Deselect checked hypotheses");
+		composite.pack();
+		
+		section.setTextClient(composite);
 	}
 
 }

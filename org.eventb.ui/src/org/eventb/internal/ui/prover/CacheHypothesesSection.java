@@ -16,25 +16,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -49,6 +54,9 @@ public class CacheHypothesesSection extends HypothesesSection {
 
 	private static final String SECTION_DESCRIPTION = "The set of cached hypotheses";
 
+	private ImageHyperlink ds;
+	
+	private ImageHyperlink sl;
 	/**
 	 * @author htson
 	 *         <p>
@@ -63,7 +71,8 @@ public class CacheHypothesesSection extends HypothesesSection {
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
 		public void linkActivated(HyperlinkEvent e) {
-			if (e.getLabel().equals("sl")) {
+			Widget widget = e.widget;
+			if (widget.equals(sl)) {
 				Set<Hypothesis> selected = new HashSet<Hypothesis>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();
@@ -98,7 +107,7 @@ public class CacheHypothesesSection extends HypothesesSection {
 				}
 			}
 
-			else if (e.getLabel().equals("ds")) {
+			else if (widget.equals(ds)) {
 				Set<Hypothesis> deselected = new HashSet<Hypothesis>();
 				for (Iterator<HypothesisRow> it = rows.iterator(); it.hasNext();) {
 					HypothesisRow hr = it.next();
@@ -156,17 +165,48 @@ public class CacheHypothesesSection extends HypothesesSection {
 	 * @see org.eventb.internal.ui.prover.HypothesesSection#createTopFormText(org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
-		GridData gd;
-		formText = new EventBFormText(toolkit.createFormText(comp, true));
-		gd = new GridData();
-		gd.widthHint = 50;
-		gd.horizontalAlignment = SWT.LEFT;
-		FormText ft = formText.getFormText();
-		ft.setLayoutData(gd);
-		ft.addHyperlinkListener(new CachedHyperlinkAdapter());
-		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>";
-		ft.setText(string, true, false);
+//	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
+//		GridData gd;
+//		formText = new EventBFormText(toolkit.createFormText(comp, true));
+//		gd = new GridData();
+//		gd.widthHint = 50;
+//		gd.horizontalAlignment = SWT.LEFT;
+//		FormText ft = formText.getFormText();
+//		ft.setLayoutData(gd);
+//		ft.addHyperlinkListener(new CachedHyperlinkAdapter());
+//		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>";
+//		ft.setText(string, true, false);
+//	}
+
+	protected void createTextClient(Section section, FormToolkit toolkit) {
+		UIUtils.debugProverUI("Text Client");
+		Composite composite = new Composite(section, SWT.NONE);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		composite.setLayout(layout);
+		
+		toolkit.adapt(composite, true, true);
+		composite.setBackground(section.getTitleBarGradientBackground());
+
+		ds = new ImageHyperlink(composite, SWT.CENTER);
+		toolkit.adapt(ds, true, true);
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		ds.setImage(registry.get(EventBImage.IMG_PENDING));
+		ds.addHyperlinkListener(new CachedHyperlinkAdapter());
+		ds.setBackground(section.getTitleBarGradientBackground());
+		ds.setToolTipText("Deselect checked hypotheses");
+		sl = new ImageHyperlink(composite, SWT.CENTER);
+		toolkit.adapt(sl, true, true);
+		sl.setImage(registry.get(EventBImage.IMG_DISCHARGED));
+		sl.addHyperlinkListener(new CachedHyperlinkAdapter());
+		sl.setBackground(section.getTitleBarGradientBackground());
+		sl.setToolTipText("Select checked hypotheses");
+		composite.pack();
+		
+		section.setTextClient(composite);
 	}
 
 }

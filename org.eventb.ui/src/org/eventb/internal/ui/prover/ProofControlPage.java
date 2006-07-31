@@ -277,7 +277,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		FormLayout layout = new FormLayout();
 		parent.setLayout(layout);
 
-		CoolBar coolBar = new CoolBar(parent, SWT.FLAT);
+		final CoolBar coolBar = new CoolBar(parent, SWT.FLAT);
 		FormData coolData = new FormData();
 		coolData.left = new FormAttachment(0);
 		coolData.right = new FormAttachment(100);
@@ -285,7 +285,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		coolBar.setLayoutData(coolData);
 		coolBar.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
-				parent.layout();
+				coolBar.layout();
 			}
 		});
 
