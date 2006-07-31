@@ -34,6 +34,8 @@ public class GlobalTacticUI {
 	private String dropdown;
 
 	private IGlobalTactic tactic;
+	
+	private String toolbar;
 
 	/**
 	 * Constructor.
@@ -59,13 +61,14 @@ public class GlobalTacticUI {
 	 *             exception when creating the new instance of the tactic
 	 */
 	public GlobalTacticUI(String ID, String image, String tips,
-			String dropdown, Constructor constructor)
+			String dropdown, String toolbar, Constructor constructor)
 			throws IllegalArgumentException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		this.ID = ID;
 		this.image = image;
 		this.tips = tips;
 		this.dropdown = dropdown;
+		this.toolbar = toolbar;
 		tactic = (IGlobalTactic) constructor.newInstance(new Object[0]);
 	}
 
@@ -118,6 +121,10 @@ public class GlobalTacticUI {
 	 */
 	public String getID() {
 		return ID;
+	}
+	
+	public String getToolbar() {
+		return toolbar;
 	}
 
 }

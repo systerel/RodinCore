@@ -17,12 +17,10 @@ package org.eventb.internal.ui.prover.globaltactics;
  *         <p>
  *         This class represent the proof tactic dropdown.
  */
-public class GlobalTacticDropdownUI {
+public class GlobalTacticToolbar {
 
 	String ID;
 	
-	String toolbar;
-
 	/**
 	 * Constructor.
 	 * <p>
@@ -30,9 +28,8 @@ public class GlobalTacticDropdownUI {
 	 * @param ID
 	 *            The string ID
 	 */
-	public GlobalTacticDropdownUI(String ID, String toolbar) {
+	public GlobalTacticToolbar(String ID) {
 		this.ID = ID;
-		this.toolbar = toolbar;
 	}
 
 	/**
@@ -45,7 +42,4 @@ public class GlobalTacticDropdownUI {
 		return ID;
 	}
 
-	public String getToolbar() {
-		return toolbar;
-	}
 }

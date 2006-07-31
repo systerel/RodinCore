@@ -25,6 +25,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbar;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
 import org.eventb.ui.prover.IGlobalTactic;
 import org.osgi.framework.Bundle;
@@ -136,35 +137,39 @@ public class ExtensionLoader {
 		return clazz.asSubclass(subClass);
 	}
 
-	// Array of Proof Tactics
-	private static GlobalTacticUI[] tactics = null;
-
 	private static final String GLOBAL_PROOF_TACTIC_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".globalProofTactics";
+	+ ".globalProofTactics";
 
-	/**
-	 * Read the extensions for global tactics.
-	 * <p>
-	 * 
-	 * @return the set of Proof Tactics from the Global tactic extension
-	 */
-	public static GlobalTacticUI[] getGlobalTactics() {
-		if (tactics == null) {
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extensionPoint = registry
-					.getExtensionPoint(GLOBAL_PROOF_TACTIC_ID);
-			IExtension[] extensions = extensionPoint.getExtensions();
+	// Array of Proof Tactics
+	private static ArrayList<GlobalTacticUI> tactics = null;
 
-			ArrayList<GlobalTacticUI> list = new ArrayList<GlobalTacticUI>();
-			for (int i = 0; i < extensions.length; i++) {
-				IConfigurationElement[] elements = extensions[i]
-						.getConfigurationElements();
-				for (int j = 0; j < elements.length; j++) {
-					Bundle bundle = Platform.getBundle(elements[j]
+	// Array of Global dropdown
+	private static ArrayList<GlobalTacticDropdownUI> dropdowns = null;
+
+	// Array of Toolbar
+	private static ArrayList<GlobalTacticToolbar> toolbars = null;
+	
+	private static void internalGetGlobalTactics() {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint extensionPoint = registry
+				.getExtensionPoint(GLOBAL_PROOF_TACTIC_ID);
+		IExtension[] extensions = extensionPoint.getExtensions();
+
+		tactics = new ArrayList<GlobalTacticUI>();
+		dropdowns = new ArrayList<GlobalTacticDropdownUI>();
+		toolbars = new ArrayList<GlobalTacticToolbar>();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension
+					.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				String name = element.getName();
+
+				if (name.equals("tactic")) {
+					Bundle bundle = Platform.getBundle(element
 							.getNamespace());
 					try {
-						String ID = elements[j].getAttribute("id");
-						String icon = elements[j].getAttribute("icon");
+						String ID = element.getAttribute("id");
+						String icon = element.getAttribute("icon");
 						ImageRegistry imageRegistry = EventBUIPlugin
 								.getDefault().getImageRegistry();
 
@@ -172,37 +177,56 @@ public class ExtensionLoader {
 								.getImageDescriptor(icon);
 						imageRegistry.put(icon, desc);
 
-						String tooltip = elements[j].getAttribute("tooltip");
+						String tooltip = element.getAttribute("tooltip");
 
-						Class clazz = bundle.loadClass(elements[j]
+						Class clazz = bundle.loadClass(element
 								.getAttribute("class"));
 
 						Class classObject = getSubclass(clazz,
 								IGlobalTactic.class);
 						Constructor constructor = classObject
 								.getConstructor(new Class[0]);
-						String dropdown = elements[j].getAttribute("dropdown");
+						String dropdown = element.getAttribute("dropdown");
+						String toolbar = element.getAttribute("toolbar");
+						GlobalTacticUI tactic = new GlobalTacticUI(ID,
+								icon, tooltip, dropdown, toolbar, constructor);
+						tactics.add(tactic);
 
-						GlobalTacticUI tactic = new GlobalTacticUI(ID, icon, tooltip,
-								dropdown, constructor);
-						list.add(tactic);
 					} catch (Exception e) {
 						// TODO Exception handle
 						e.printStackTrace();
 					}
 				}
+				else if (name.equals("dropdown")) {
+					String ID = element.getAttribute("id");
+					String toolbar = element.getAttribute("toolbar");
+					GlobalTacticDropdownUI dropdown = new GlobalTacticDropdownUI(
+							ID, toolbar);
+					dropdowns.add(dropdown);
+				}
+				else if (name.equals("toolbar")) {
+					String id = element.getAttribute("id");
+					GlobalTacticToolbar toolbar = new GlobalTacticToolbar(id);
+					toolbars.add(toolbar);
+				}
 			}
-			tactics = (GlobalTacticUI[]) list
-					.toArray(new GlobalTacticUI[list.size()]);
+		}
+
+	}
+	
+	/**
+	 * Read the extensions for global tactics.
+	 * <p>
+	 * 
+	 * @return the set of Proof Tactics from the Global tactic extension
+	 */
+	public static ArrayList<GlobalTacticUI> getGlobalTactics() {
+		if (tactics == null) {
+			internalGetGlobalTactics();
 		}
 		return tactics;
 	}
 
-	// Array of Global dropdown
-	private static GlobalTacticDropdownUI[] dropdowns = null;
-
-	private static final String GLOBAL_PROOF_DROPDOWN_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".globalProofTacticDropdowns";
 
 	/**
 	 * Read the extensions for global dropdown.
@@ -210,26 +234,17 @@ public class ExtensionLoader {
 	 * 
 	 * @return A set of dropdown from the global dropdown extension
 	 */
-	public static GlobalTacticDropdownUI [] getGlobalDropdowns() {
+	public static ArrayList<GlobalTacticDropdownUI> getGlobalDropdowns() {
 		if (dropdowns == null) {
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extensionPoint = registry
-					.getExtensionPoint(GLOBAL_PROOF_DROPDOWN_ID);
-			IExtension[] extensions = extensionPoint.getExtensions();
-
-			ArrayList<GlobalTacticDropdownUI> list = new ArrayList<GlobalTacticDropdownUI>();
-			for (int i = 0; i < extensions.length; i++) {
-				IConfigurationElement[] elements = extensions[i]
-						.getConfigurationElements();
-				for (int j = 0; j < elements.length; j++) {
-					String ID = elements[j].getAttribute("id");
-					GlobalTacticDropdownUI dropdown = new GlobalTacticDropdownUI(ID);
-					list.add(dropdown);
-				}
-			}
-			dropdowns = (GlobalTacticDropdownUI[]) list
-					.toArray(new GlobalTacticDropdownUI[list.size()]);
+			internalGetGlobalTactics();
 		}
 		return dropdowns;
+	}
+
+	public static ArrayList<GlobalTacticToolbar> getGlobalToolbar() {
+		if (toolbars == null) {
+			internalGetGlobalTactics();
+		}
+		return toolbars;
 	}
 }

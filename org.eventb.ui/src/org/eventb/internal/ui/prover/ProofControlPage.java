@@ -13,13 +13,12 @@
 package org.eventb.internal.ui.prover;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -35,21 +34,27 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
@@ -70,6 +75,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbar;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
 import org.eventb.ui.prover.IGlobalTactic;
 import org.rodinp.core.RodinDBException;
@@ -84,28 +90,26 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	boolean share;
 
-	private Action switchLayout;
+	// private Action switchLayout;
 
 	private IEventBInputText textInput;
+
+	private ProverUI editor;
 
 	private IEventBFormText formTextInformation;
 
 	private ScrolledForm scrolledForm;
 
-	private ToolBar buttonBar;
+	private HashMap<String, CoolItem> coolItems;
 
-	private boolean isHorizontal;
+	private HashMap<String, GlobalTacticDropdownToolItem> dropdownItems;
 
-	private ProverUI editor;
-
-	private Collection<GlobalTacticToolItem> items;
-
-	private Collection<GlobalTacticDropdownToolItem> dropdownItems;
+	private Collection<GlobalTacticToolItem> toolItems;
 
 	private Combo historyCombo;
-	
+
 	private EventBControl history;
-	
+
 	/**
 	 * Constructor
 	 * <p>
@@ -208,59 +212,209 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the tool tip text for the tool item
 	 * @return ToolItem
 	 */
-	private ToolItem createToolItem(ToolBar parent, int type, String text,
-			Image image, Image hotImage, String toolTipText) {
-		ToolItem item = new ToolItem(parent, type);
-		item.setText(text);
-		item.setImage(image);
-		item.setHotImage(hotImage);
-		item.setToolTipText(toolTipText);
+	// private ToolItem createToolItem(ToolBar parent, int type, String text,
+	// Image image, Image hotImage, String toolTipText) {
+	// ToolItem item = new ToolItem(parent, type);
+	// item.setText(text);
+	// item.setImage(image);
+	// item.setHotImage(hotImage);
+	// item.setToolTipText(toolTipText);
+	// return item;
+	// }
+	CoolItem createCoolItem(CoolBar coolBar) {
+		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
+		CoolItem item = new CoolItem(coolBar, SWT.NONE);
+		item.setControl(toolBar);
+		return item;
+
+	}
+
+	// This variable is for fixing the spacing problem with dropdown menu.
+	private int dropdownCount;
+
+	private static final int dropdownSize = 20;
+
+	private ToolItem createToolItem(CoolItem coolItem, String text,
+			Image image, int style) {
+		UIUtils.debugProverUI("Create Tool Item ");
+		ToolBar toolBar = (ToolBar) coolItem.getControl();
+		ToolItem item = new ToolItem(toolBar, style);
+		if (image != null)
+			item.setImage(image);
+		if (text != null)
+			item.setText(text);
+
+		toolBar.pack();
+		Point size = toolBar.getSize();
+		Point preferred = coolItem.computeSize(size.x + dropdownCount
+				* dropdownSize, size.y);
+		coolItem.setPreferredSize(preferred);
 		return item;
 	}
+
+	// CoolItem createText(CoolBar coolBar) {
+	// Text filterText = new Text(coolBar, SWT.SINGLE | SWT.BORDER);
+	// filterText.pack();
+	// Point size = filterText.getSize();
+	// CoolItem item = new CoolItem(coolBar, SWT.NONE);
+	// item.setControl(filterText);
+	// Point preferred = item.computeSize(size.x, size.y);
+	// item.setPreferredSize(preferred);
+	// return item;
+	// }
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 * <p>
 	 * 
+	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public void createControl(Composite parent) {
+	public void createControl(final Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		int defaultWidth = 40;
 
-		isHorizontal = false;
+		FormLayout layout = new FormLayout();
+		parent.setLayout(layout);
 
-		scrolledForm = toolkit.createScrolledForm(parent);
-		Composite body = scrolledForm.getBody();
-		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		GridLayout gl = new GridLayout();
-		gl.numColumns = 1;
-		body.setLayout(gl);
+		CoolBar coolBar = new CoolBar(parent, SWT.FLAT);
+		FormData coolData = new FormData();
+		coolData.left = new FormAttachment(0);
+		coolData.right = new FormAttachment(100);
+		coolData.top = new FormAttachment(0);
+		coolBar.setLayoutData(coolData);
+		coolBar.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				parent.layout();
+			}
+		});
 
-		// Composite of toolbars
-		Composite comp = toolkit.createComposite(body);
-		gl = new GridLayout();
-		gl.numColumns = 1;
-		comp.setLayout(gl);
-		comp.setLayoutData(new GridData());
+		// Create toolbars
+		coolItems = new HashMap<String, CoolItem>();
+		dropdownItems = new HashMap<String, GlobalTacticDropdownToolItem>();
+		toolItems = new ArrayList<GlobalTacticToolItem>();
 
-		buttonBar = new ToolBar(body, SWT.FLAT | SWT.WRAP);
-		buttonBar.setLayoutData(new GridData());
-
-		dropdownItems = new HashSet<GlobalTacticDropdownToolItem>();
-
-		// Create the dropdown first
-		GlobalTacticDropdownUI[] dropdowns = ExtensionLoader
+		ArrayList<GlobalTacticToolbar> toolbars = ExtensionLoader
+				.getGlobalToolbar();
+		ArrayList<GlobalTacticUI> tactics = ExtensionLoader.getGlobalTactics();
+		ArrayList<GlobalTacticDropdownUI> dropdowns = ExtensionLoader
 				.getGlobalDropdowns();
-		GlobalTacticDropdownToolItem dropdownItem = null;
+
+		for (GlobalTacticToolbar toolbar : toolbars) {
+
+			CoolItem coolItem = createCoolItem(coolBar);
+			coolItems.put(toolbar.getID(), coolItem);
+
+			// Create dropdown
+			int i = 0;
+			dropdownCount = 0;
+			while (i < dropdowns.size()) {
+				GlobalTacticDropdownUI dropdown = dropdowns.get(i);
+				String toolBarID = dropdown.getToolbar();
+				if (toolBarID.equals(toolbar.getID())) {
+					dropdownCount++;
+					ToolItem item = createToolItem(coolItem, null, null,
+							SWT.DROP_DOWN);
+					UIUtils.debugProverUI("Create dropdown: "
+							+ dropdown.getID() + " at " + toolbar);
+					GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
+							item, dropdown.getID()) {
+						@Override
+						public void apply(IGlobalTactic tactic) {
+							try {
+								Text textWidget = textInput.getTextWidget();
+								String text = textWidget.getText();
+								tactic.apply(editor.getUserSupport(), text);
+								if (!text.equals("")) {
+									historyCombo.add(text, 0);
+									textWidget.setText("");
+								}
+							} catch (RodinDBException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+
+					};
+					dropdownItems.put(dropdown.getID(), dropdownItem);
+					dropdowns.remove(dropdown);
+				} else {
+					i++;
+				}
+			}
+
+			i = 0;
+			while (i < tactics.size()) {
+				GlobalTacticUI tactic = tactics.get(i);
+				if (tactic.getDropdown() == null) {
+					if (tactic.getToolbar() != null
+							&& tactic.getToolbar().equals(toolbar.getID())) {
+
+						// CoolItem coolItem =
+						// coolItems.get(tactic.getToolbar());
+						// if (coolItem == null) coolItem = extraCoolItem;
+
+						UIUtils.debugProverUI("Create item " + tactic.getID()
+								+ " at " + tactic.getToolbar());
+
+						ToolItem item = createToolItem(coolItem, null,
+								EventBUIPlugin.getDefault().getImageRegistry()
+										.get(tactic.getImage()), SWT.PUSH);
+						IGlobalTactic globalTactic = tactic.getTactic();
+
+						final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
+								item, globalTactic);
+						// items.add(globalTacticToolItem);
+
+						item.addSelectionListener(new SelectionAdapter() {
+
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+							 */
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								try {
+									Text textWidget = textInput.getTextWidget();
+									String text = textWidget.getText();
+									globalTacticToolItem.getTactic().apply(
+											editor.getUserSupport(), text);
+									if (!text.equals("")) {
+										historyCombo.add(text, 0);
+										textWidget.setText("");
+									}
+									textInput.getTextWidget().setText("");
+								} catch (RodinDBException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
+						});
+						// item.setWidth(defaultWidth);
+						tactics.remove(tactic);
+						toolItems.add(globalTacticToolItem);
+					} else {
+						i++;
+					}
+				} else {
+					i++;
+				}
+			}
+
+		}
+		CoolItem extraCoolItem = createCoolItem(coolBar);
+
+		// Create dropdowns for extraCoolItem
 		for (GlobalTacticDropdownUI dropdown : dropdowns) {
 
-			ToolItem item = createToolItem(buttonBar, SWT.DROP_DOWN, "", null,
-					null, "");
-			dropdownItem = new GlobalTacticDropdownToolItem(item, dropdown
-					.getID()) {
+			CoolItem coolItem = extraCoolItem;
 
+			ToolItem item = createToolItem(coolItem, null, null, SWT.DROP_DOWN);
+			UIUtils.debugProverUI("Create dropdown: " + dropdown.getID()
+					+ " at extra ");
+			GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
+					item, dropdown.getID()) {
 				@Override
 				public void apply(IGlobalTactic tactic) {
 					try {
@@ -278,25 +432,82 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				}
 
 			};
-			dropdownItems.add(dropdownItem);
+			dropdownItems.put(dropdown.getID(), dropdownItem);
 		}
 
-		items = new HashSet<GlobalTacticToolItem>();
-		GlobalTacticUI[] tactics = ExtensionLoader.getGlobalTactics();
-
-		for (final GlobalTacticUI tactic : tactics) {
+		// Add tactics
+		for (GlobalTacticUI tactic : tactics) {
 			if (tactic.getDropdown() != null) {
-				addDropdown(tactic.getDropdown(), tactic);
-			} else {
-				ToolItem item = createToolItem(buttonBar, SWT.PUSH, "",
-						EventBUIPlugin.getDefault().getImageRegistry().get(
-								tactic.getImage()), null, tactic.getTips());
 
+				GlobalTacticDropdownToolItem curr = dropdownItems.get(tactic
+						.getDropdown());
+				if (curr != null) {
+					UIUtils.debugProverUI("Add tactic " + tactic.getID()
+							+ " to dropdown " + tactic.getDropdown());
+
+					curr.addTactic(tactic);
+				}
+
+				else {
+					UIUtils.debugProverUI("Create item " + tactic.getID()
+							+ " at " + tactic.getToolbar());
+
+					ToolItem item = createToolItem(extraCoolItem, null,
+							EventBUIPlugin.getDefault().getImageRegistry().get(
+									tactic.getImage()), SWT.PUSH);
+					IGlobalTactic globalTactic = tactic.getTactic();
+
+					final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
+							item, globalTactic);
+					// items.add(globalTacticToolItem);
+
+					item.addSelectionListener(new SelectionAdapter() {
+
+						/*
+						 * (non-Javadoc)
+						 * 
+						 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+						 */
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							try {
+								Text textWidget = textInput.getTextWidget();
+								String text = textWidget.getText();
+								globalTacticToolItem.getTactic().apply(
+										editor.getUserSupport(), text);
+								if (!text.equals("")) {
+									historyCombo.add(text, 0);
+									textWidget.setText("");
+								}
+								textInput.getTextWidget().setText("");
+							} catch (RodinDBException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					});
+					toolItems.add(globalTacticToolItem);
+
+				}
+				// addDropdown(tactic.getDropdown(), tactic);
+
+				// GlobalTacticDropdownToolItem dropdownTool = dropdownItems
+				// .get(tactic.getDropdown());
+
+				// dropdownTool.addTactic(tactic);
+
+			} else {
+				UIUtils.debugProverUI("Create item " + tactic.getID() + " at "
+						+ tactic.getToolbar());
+
+				ToolItem item = createToolItem(extraCoolItem, null,
+						EventBUIPlugin.getDefault().getImageRegistry().get(
+								tactic.getImage()), SWT.PUSH);
 				IGlobalTactic globalTactic = tactic.getTactic();
 
 				final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
 						item, globalTactic);
-				items.add(globalTacticToolItem);
+				// items.add(globalTacticToolItem);
 
 				item.addSelectionListener(new SelectionAdapter() {
 
@@ -311,8 +522,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							Text textWidget = textInput.getTextWidget();
 							String text = textWidget.getText();
 							globalTacticToolItem.getTactic().apply(
-									editor.getUserSupport(),
-									text);
+									editor.getUserSupport(), text);
 							if (!text.equals("")) {
 								historyCombo.add(text, 0);
 								textWidget.setText("");
@@ -324,13 +534,26 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						}
 					}
 				});
-				item.setWidth(defaultWidth);
+				toolItems.add(globalTacticToolItem);
+
 			}
 		}
 
+		scrolledForm = toolkit.createScrolledForm(parent);
+		FormData scrolledData = new FormData();
+		scrolledData.left = new FormAttachment(0);
+		scrolledData.right = new FormAttachment(100);
+		scrolledData.top = new FormAttachment(coolBar);
+		scrolledData.bottom = new FormAttachment(100);
+		scrolledForm.setLayoutData(scrolledData);
+
+		Composite body = scrolledForm.getBody();
+		// body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridLayout gl = new GridLayout();
+		gl.numColumns = 1;
+		body.setLayout(gl);
 		// A text field
-		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI
-				| SWT.H_SCROLL | SWT.V_SCROLL));
+		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI));
 
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 50;
@@ -353,12 +576,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
-			
+
 		});
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		historyCombo.setLayoutData(gd);
 		history = new EventBControl(historyCombo);
-		
+
 		ProofState proofState = editor.getUserSupport().getCurrentPO();
 		if (proofState != null) {
 			updateToolItems(proofState.getCurrentNode());
@@ -381,17 +604,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-	}
-
-	private void addDropdown(String dropdown, GlobalTacticUI tactic) {
-		for (Iterator<GlobalTacticDropdownToolItem> it = dropdownItems
-				.iterator(); it.hasNext();) {
-			GlobalTacticDropdownToolItem curr = it.next();
-			if (curr.getID().equals(dropdown)) {
-				curr.addTactic(tactic);
-				return;
-			}
-		}
 	}
 
 	/**
@@ -437,8 +649,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(switchLayout);
-		manager.add(new Separator());
+		// manager.add(switchLayout);
+		// manager.add(new Separator());
 	}
 
 	/**
@@ -449,7 +661,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(switchLayout);
+		// manager.add(switchLayout);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -462,42 +674,43 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(switchLayout);
+		// manager.add(switchLayout);
 	}
 
 	/**
 	 * Creat the actions used in this page.
 	 */
 	private void makeActions() {
-		switchLayout = new Action() {
-			public void run() {
-				isHorizontal = isHorizontal ? false : true;
-				if (isHorizontal) {
-					GridLayout gl = new GridLayout();
-					gl.numColumns = 2;
-					scrolledForm.getBody().setLayout(gl);
-					gl = new GridLayout();
-					gl.numColumns = 7; // Total number of buttons?
-					gl.makeColumnsEqualWidth = true;
-					buttonBar.setLayout(gl);
-				} else {
-					GridLayout gl = new GridLayout();
-					gl.numColumns = 1;
-					scrolledForm.getBody().setLayout(gl);
-					gl = new GridLayout();
-					gl.numColumns = 9; // TODO Should be the number of buttons
-					gl.makeColumnsEqualWidth = true;
-					buttonBar.setLayout(gl);
-				}
-				scrolledForm.reflow(true);
-			}
-		};
-		switchLayout.setText("Switch Layout");
-		switchLayout
-				.setToolTipText("Switch between horizontal and vertical layout of the buttons");
-		switchLayout.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_OBJS_INFO_TSK));
+		// switchLayout = new Action() {
+		// public void run() {
+		// isHorizontal = isHorizontal ? false : true;
+		// if (isHorizontal) {
+		// GridLayout gl = new GridLayout();
+		// gl.numColumns = 2;
+		// scrolledForm.getBody().setLayout(gl);
+		// gl = new GridLayout();
+		// gl.numColumns = 7; // Total number of buttons?
+		// gl.makeColumnsEqualWidth = true;
+		// buttonBar.setLayout(gl);
+		// } else {
+		// GridLayout gl = new GridLayout();
+		// gl.numColumns = 1;
+		// scrolledForm.getBody().setLayout(gl);
+		// gl = new GridLayout();
+		// gl.numColumns = 9; // TODO Should be the number of buttons
+		// gl.makeColumnsEqualWidth = true;
+		// buttonBar.setLayout(gl);
+		// }
+		// scrolledForm.reflow(true);
+		// }
+		// };
+		// switchLayout.setText("Switch Layout");
+		// switchLayout
+		// .setToolTipText("Switch between horizontal and vertical layout of the
+		// buttons");
+		// switchLayout.setImageDescriptor(PlatformUI.getWorkbench()
+		// .getSharedImages().getImageDescriptor(
+		// ISharedImages.IMG_OBJS_INFO_TSK));
 
 	}
 
@@ -508,7 +721,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	public void setFocus() {
-		buttonBar.setFocus();
+		textInput.setFocus();
+		// buttonBar.setFocus();
 	}
 
 	/*
@@ -527,11 +741,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * Update the status of the toolbar items.
 	 */
 	private void updateToolItems(IProofTreeNode node) {
-		for (GlobalTacticDropdownToolItem item : dropdownItems) {
+		for (GlobalTacticDropdownToolItem item : dropdownItems.values()) {
 			item.updateStatus(node, textInput.getTextWidget().getText());
 		}
 
-		for (GlobalTacticToolItem item : items) {
+		for (GlobalTacticToolItem item : toolItems) {
 			item.updateStatus(node, textInput.getTextWidget().getText());
 		}
 
@@ -551,19 +765,19 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		display.syncExec(new Runnable() {
 			public void run() {
 				List<Object> information = delta.getInformation();
-				
+
 				UIUtils.debugProverUI("********** MESSAGE *********");
 				for (Object info : information) {
 					UIUtils.debugProverUI(info.toString());
 				}
 				UIUtils.debugProverUI("****************************");
-				
+
 				int size = information.size();
 				if (size != 0)
 					setFormTextInformation(information.get(size - 1).toString());
 				else
 					setFormTextInformation("");
-				
+
 				ProofState ps = delta.getNewProofState();
 				IProofTreeNode node = null;
 				if (ps != null) {
