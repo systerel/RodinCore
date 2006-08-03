@@ -128,7 +128,7 @@ public class ProverSequent implements IProverSequent{
 		assert (hyps != null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
 		for (Hypothesis hyp : hyps) {
-			if (! Lib.isWellTyped(hyp.getPredicate(),typeEnvironment)) return null;
+			if (! Lib.typeCheckClosed(hyp.getPredicate(),typeEnvironment)) return null;
 		}
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.addAll(hyps);
@@ -149,7 +149,7 @@ public class ProverSequent implements IProverSequent{
 	public ProverSequent addHyp(Hypothesis hyp,ITypeEnvironment typeEnvironment){
 		assert (hyp != null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
-		if (! Lib.isWellTyped(hyp.getPredicate(),typeEnvironment)) return null;
+		if (! Lib.typeCheckClosed(hyp.getPredicate(),typeEnvironment)) return null;
 		Set<Hypothesis> newLocalHypotheses = new HashSet<Hypothesis>(this.localHypotheses);
 		newLocalHypotheses.add(hyp);
 		return new ProverSequent(this,typeEnvironment,null,newLocalHypotheses,null,null,null);
@@ -169,7 +169,7 @@ public class ProverSequent implements IProverSequent{
 	public ProverSequent replaceGoal(Predicate goal,ITypeEnvironment typeEnvironment){
 		assert (goal!=null);
 		if (typeEnvironment == null) typeEnvironment = this.typeEnvironment;
-		if (! Lib.isWellTyped(goal,typeEnvironment)) return null;
+		if (! Lib.typeCheckClosed(goal,typeEnvironment)) return null;
 		return new ProverSequent(this,typeEnvironment,null,null,null,null,goal);
 		
 //		// Code for incremental type environments

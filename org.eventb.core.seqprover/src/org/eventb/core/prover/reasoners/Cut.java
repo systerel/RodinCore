@@ -37,7 +37,7 @@ public class Cut implements Reasoner{
 		
 		// This check may be redone for replay since the type environment
 		// may have shrunk, making the previous predicate with dangling free vars.
-		if (! Lib.isWellTyped(input.lemmaPred,seq.typeEnvironment()))
+		if (! Lib.typeCheckClosed(input.lemmaPred,seq.typeEnvironment()))
 			return new ReasonerOutputFail(this,input,
 					"Type check failed for lemma: "+input.lemma);
 		

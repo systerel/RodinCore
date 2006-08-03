@@ -53,7 +53,7 @@ public class PRExpression extends InternalElement implements IPRExpression {
 		Expression expr = Lib.parseExpression(this.getContents());
 		assert expr != null;
 		// attn : wellTyped does type checking!
-		boolean wellTyped = Lib.isWellTyped(expr,typEnv);
+		boolean wellTyped = Lib.typeCheckClosed(expr,typEnv);
 		assert wellTyped;
 		return expr;
 	}

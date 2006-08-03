@@ -33,7 +33,7 @@ public class DoCase implements Reasoner{
 			if (trueCasePred == null) 
 				return new ReasonerOutputFail(this,input,
 						"Parse error for case: "+ input.trueCase);
-			if (! Lib.isWellTyped(trueCasePred,seq.typeEnvironment()))
+			if (! Lib.typeCheckClosed(trueCasePred,seq.typeEnvironment()))
 				return new ReasonerOutputFail(this,input,
 						"Type check failed for case: "+input.trueCase);
 			input.trueCasePred = trueCasePred;

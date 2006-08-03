@@ -457,7 +457,7 @@ public final class Lib {
 	
 	
 	// TODO : rename to typeCheckClosed
-	public static boolean isWellTyped(Formula f, ITypeEnvironment t) {
+	public static boolean typeCheckClosed(Formula f, ITypeEnvironment t) {
 		ITypeCheckResult tcr = f.typeCheck(t);
 		// new free variables introduced
 		if (tcr.isSuccess()) {

@@ -98,7 +98,7 @@ public class POUtil {
 			Predicate pred =  Lib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
-			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
+			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
 			// if (!wellTyped) System.out.println("Pred : " + poPred.getContents() +" NOT WELL TYPED");
 			assert wellTyped;
 			return pred;

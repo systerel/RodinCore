@@ -329,7 +329,7 @@ public class PRUtil {
 			Predicate pred =  Lib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
-			boolean wellTyped = Lib.isWellTyped(pred,typeEnv);
+			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
 			assert wellTyped;
 			return pred;
 	}

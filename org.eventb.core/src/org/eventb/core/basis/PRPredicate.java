@@ -54,7 +54,7 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		Predicate pred = Lib.parsePredicate(this.getContents());
 		assert pred != null;
 		// attn : wellTyped does type checking!
-		boolean wellTyped = Lib.isWellTyped(pred,typEnv);
+		boolean wellTyped = Lib.typeCheckClosed(pred,typEnv);
 		assert wellTyped;
 		return pred;
 	}
