@@ -118,6 +118,7 @@
    <extension-point id="machinePages" name="Event-B Machine Form Page" schema="schema/machinePages.exsd"/>
    <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>
    <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
+   <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
    <extension
          point="org.eventb.ui.machinePages">
       <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
@@ -488,6 +489,58 @@
                menubarPath="modelling"
                tooltip="Delete element(s)"/>
       </viewerContribution>
+   </extension>
+   <extension
+         point="org.eventb.ui.hypothesisProofTactics">
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.Falsify"
+            hint="Contradiction"
+            icon="icons/full/ctool16/falsify_prover.gif"
+            id="Falsify"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.ImpE1"
+            hint="Implication elemination from left to right"
+            icon="icons/full/ctool16/impE1_prover.gif"
+            id="Implication Elemination 1"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.ImpE2"
+            hint="Implication elemination from right to left"
+            icon="icons/full/ctool16/impE2_prover.gif"
+            id="Implication Elemination 2"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.ConjE"
+            hint="Conjuntion elemination"
+            icon="icons/full/ctool16/conjE_prover.gif"
+            id="Conjunction Elemination"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.DisjE"
+            hint="Disjunction elemination"
+            icon="icons/full/ctool16/disjE_prover.gif"
+            id="Disjunction Elemination"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.NegE"
+            icon="icons/full/ctool16/negE_prover.gif"
+            id="Remove Negation"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.AllD"
+            hint="Instantiate &quot;for all&quot; clause"
+            icon="icons/full/ctool16/allD_prover.gif"
+            id="Forall Instantiation"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.ExE"
+            hint="Instantiate &quot;there exists&quot; clause"
+            icon="icons/full/ctool16/exE_prover.gif"
+            id="Exists Instantiation"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.Eq1"
+            hint="Equality from left to right"
+            icon="icons/full/ctool16/eq1_prover.gif"
+            id="Equality 1"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.hypothesisTactics.Eq2"
+            hint="Equality from right to left"
+            icon="icons/full/ctool16/eq2_prover.gif"
+            id="Equality 2"/>
    </extension>
 
 </plugin>
