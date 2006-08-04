@@ -214,12 +214,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 					} else {
 						if (delta.getNewCache() || delta.getNewSearch()) {
 							initCacheAndSearch();
+							ProofsPage.this.getManagedForm().getForm().reflow(true);
 						}
 					}
 				}
 
 				if (refresh) {
 					initHypothesisSections();
+					ProofsPage.this.getManagedForm().getForm().reflow(true);
 				}
 			}
 		});
