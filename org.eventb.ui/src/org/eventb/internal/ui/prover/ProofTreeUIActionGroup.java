@@ -29,7 +29,6 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.BasicTactics;
 import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -108,14 +107,11 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 					if (ssel.size() == 1
 							&& ssel.getFirstElement() instanceof IProofTreeNode) {
 
-						IProofTreeNode node = (IProofTreeNode) ssel
-								.getFirstElement();
 						if (ProofTreeUI.buffer instanceof IProofTreeNode) {
 							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
 							proofTreeUI.getUserSupport().applyTactic(
 									BasicTactics.pasteTac(copyNode));
-							UIUtils.debugProverUI("Node: " + node);
-							UIUtils.debugProverUI("Copy: " + copyNode);
+//							ProverUIUtils.debugProverUI("Copy: " + copyNode);
 						}
 					}
 				}

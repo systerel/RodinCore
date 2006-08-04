@@ -162,7 +162,7 @@ public class GoalSection extends SectionPart {
 		section.setText(SECTION_TITLE);
 		section.setDescription(SECTION_DESCRIPTION);
 		scrolledForm = toolkit.createScrolledForm(section);
-
+		
 		Composite comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -185,26 +185,6 @@ public class GoalSection extends SectionPart {
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.SectionPart#expansionStateChanging(boolean)
-	 */
-	protected void expansionStateChanging(boolean expanding) {
-		if (expanding) {
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.heightHint = 75;
-			gd.minimumHeight = 50;
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		} else {
-			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-			gd.widthHint = 200;
-			this.getSection().setLayoutData(gd);
-		}
-		super.expansionStateChanging(expanding);
 	}
 
 	/**
@@ -393,5 +373,4 @@ public class GoalSection extends SectionPart {
 	// }
 	// }
 	// }
-
 }

@@ -18,17 +18,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
@@ -39,6 +43,7 @@ import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
@@ -70,7 +75,7 @@ public class HypothesisRow {
 	// The hypothesis contains in this row.
 	private Hypothesis hyp;
 
-	private IEventBFormText formText;
+	// private IEventBFormText formText;
 
 	private IEventBFormText form;
 
@@ -162,43 +167,36 @@ public class HypothesisRow {
 	 * @param style
 	 *            The style
 	 */
-	public HypothesisRow(FormToolkit toolkit, Composite parent, Hypothesis hyp,
-			UserSupport userSupport) {
+	public HypothesisRow(SectionPart part, Composite parent, Hypothesis hyp,
+			UserSupport userSupport, boolean odd) {
 		GridData gd;
 		this.hyp = hyp;
 		this.userSupport = userSupport;
 
-		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
+		FormToolkit toolkit = part.getManagedForm().getToolkit();
+		Color background;
+		if (odd)
+			background = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+		else
+			background = part.getSection().getTitleBarGradientBackground();
 
 		buttonComposite = toolkit.createComposite(parent);
-		buttonComposite.setLayout(new GridLayout());
-		gd = new GridData();
+		GridLayout layout = new GridLayout();
+		layout.makeColumnsEqualWidth = true;
+		layout.numColumns = 5;
 
-		formText = new EventBFormText(toolkit.createFormText(buttonComposite,
+		buttonComposite.setLayout(layout);
+		buttonComposite.setBackground(background);
+		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				true));
-		gd = new GridData();
-		gd.widthHint = 25;
-		gd.horizontalAlignment = SWT.CENTER;
-		FormText ft = formText.getFormText();
-		ft.setLayoutData(gd);
-		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(
-				EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench()
-						.getDisplay());
-		hyperlinkSettings
-				.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
-		ft.setHyperlinkSettings(hyperlinkSettings);
-		ft.addHyperlinkListener(new HypothesisITacticHyperlinkAdapter());
-		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-		gd.widthHint = 100;
-		ft.setLayoutData(gd);
-		toolkit.paintBordersFor(buttonComposite);
-		createHyperlinks(ft);
+		createHyperlinks(toolkit, buttonComposite, background);
 
 		if (hypothesisComposite == null) {
 			hypothesisComposite = toolkit.createComposite(parent);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd = new GridData(GridData.FILL_BOTH);
 			hypothesisComposite.setLayoutData(gd);
 			hypothesisComposite.setLayout(new GridLayout());
+			hypothesisComposite.setBackground(background);
 		}
 
 		if (Lib.isUnivQuant(hyp.getPredicate())) {
@@ -215,7 +213,8 @@ public class HypothesisRow {
 			gl.numColumns = idents.length * 2 + 2;
 			hypothesisComposite.setLayout(gl);
 
-			toolkit.createLabel(hypothesisComposite, "\u2200 ");
+			Label label = toolkit.createLabel(hypothesisComposite, "\u2200 ");
+			label.setBackground(background);
 
 			int i = 0;
 			textBoxes = new ArrayList<IEventBInputText>();
@@ -223,15 +222,20 @@ public class HypothesisRow {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc
 						.getEnd());
-				UIUtils.debugProverUI("Ident: " + image);
-				if (i++ != 0)
-					toolkit.createLabel(hypothesisComposite, ", " + image);
-				else
-					toolkit.createLabel(hypothesisComposite, image);
+				ProverUIUtils.debugProverUI("Ident: " + image);
+				if (i++ != 0) {
+					label = toolkit.createLabel(hypothesisComposite, ", "
+							+ image);
+					label.setBackground(background);
+				} else {
+					label = toolkit.createLabel(hypothesisComposite, image);
+					label.setBackground(background);
+				}
 				Text box = toolkit.createText(hypothesisComposite, "");
 				gd = new GridData();
 				gd.widthHint = 15;
 				box.setLayoutData(gd);
+				box.setBackground(background);
 				toolkit.paintBordersFor(hypothesisComposite);
 				textBoxes.add(new EventBMath(box));
 			}
@@ -242,17 +246,23 @@ public class HypothesisRow {
 			form.getFormText().setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String image = goalString.substring(loc.getStart(), loc.getEnd());
-			UIUtils.debugProverUI("Pred: " + image);
+			ProverUIUtils.debugProverUI("Pred: " + image);
 			form.getFormText().setText(
 					"<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>",
 					true, false);
+			form.getFormText().setBackground(background);
 		} else {
 			hypothesisText = new EventBMath(toolkit.createText(
 					hypothesisComposite, hyp.toString(), SWT.READ_ONLY));
 
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			hypothesisText.getTextWidget().setLayoutData(gd);
+			hypothesisText.getTextWidget().setBackground(background);
 		}
+
+		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
+		checkBox.setBackground(background);
+		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 	}
 
 	/**
@@ -262,21 +272,37 @@ public class HypothesisRow {
 	 * @param formText
 	 *            the formText parent of these hyperlinks
 	 */
-	private void createHyperlinks(FormText formText) {
-		String formString = "<form><li style=\"text\" value=\"\">";
-
+	private void createHyperlinks(FormToolkit toolkit, Composite parent,
+			Color background) {
 		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
+
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();
-			UIUtils.debugProverUI("Create tactic for " + t);
-			formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t)
-					+ "\">" + UIUtils.XMLWrapUp(t) + "</a> ";
+			ImageHyperlink ds = new ImageHyperlink(buttonComposite, SWT.CENTER);
+			ds.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			toolkit.adapt(ds, true, true);
+			ImageRegistry registry = EventBUIPlugin.getDefault()
+					.getImageRegistry();
+			ds.setImage(registry.get(EventBImage.IMG_PENDING));
+			// ds.addHyperlinkListener(new CachedHyperlinkAdapter());
+			ds.setBackground(background);
+			ds.setToolTipText("Deselect checked hypotheses");
 		}
 
-		formString = formString + "</li></form>";
-		formText.setText(formString, true, false);
-		formText.redraw();
-		buttonComposite.pack(true);
+		// String formString = "<form><li style=\"text\" value=\"\">";
+		//
+		// List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
+		// for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
+		// String t = it.next();
+		// UIUtils.debugProverUI("Create tactic for " + t);
+		// formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t)
+		// + "\">" + UIUtils.XMLWrapUp(t) + "</a> ";
+		// }
+		//
+		// formString = formString + "</li></form>";
+		// formText.setText(formString, true, false);
+		// formText.redraw();
+		// formText.pack(true);
 
 		return;
 	}
@@ -285,8 +311,8 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
-		if (formText != null)
-			formText.dispose();
+		// if (formText != null)
+		// formText.dispose();
 		if (form != null)
 			form.dispose();
 		if (textBoxes != null)

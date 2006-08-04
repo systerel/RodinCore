@@ -61,7 +61,6 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -620,7 +619,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		UIUtils.debugProverUI("Selection Changed: " + event);
+		ProverUIUtils.debugProverUI("Selection Changed: " + event);
 		ISelection sel = event.getSelection();
 
 		if (sel instanceof IStructuredSelection) {
@@ -713,12 +712,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		display.syncExec(new Runnable() {
 			public void run() {
 				final ProofState ps = delta.getNewProofState();
-				UIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
+				ProverUIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
 				if (ps != null) { // Change only when change the PO
 					ProofTreeUIPage page = ProofTreeUIPage.this;
 					page.setInput(ps.getProofTree());
 					IProofTreeNode currentNode = ps.getCurrentNode();
-					UIUtils.debugProverUI("Current node: "
+					ProverUIUtils.debugProverUI("Current node: "
 							+ currentNode.getSequent());
 					page.getViewer().expandAll();
 					elementColumn.pack();
@@ -728,7 +727,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					UIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
+					ProverUIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();

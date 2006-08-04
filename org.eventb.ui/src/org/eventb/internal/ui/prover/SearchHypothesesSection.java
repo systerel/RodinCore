@@ -39,7 +39,6 @@ import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -138,48 +137,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 		super(page, parent, style, SECTION_TITLE, SECTION_DESCRIPTION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.SectionPart#expansionStateChanging(boolean)
-	 */
-//	@Override
-//	protected void expansionStateChanging(boolean expanding) {
-//		if (expanding) {
-//			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-//			gd.heightHint = 200;
-//			gd.minimumHeight = 100;
-//			gd.widthHint = 200;
-//			this.getSection().setLayoutData(gd);
-//		} else {
-//			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-//			gd.widthHint = 200;
-//			this.getSection().setLayoutData(gd);
-//		}
-//		super.expansionStateChanging(expanding);
-//	}
-
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see org.eventb.internal.ui.prover.HypothesesSection#createTopFormText()
-//	 */
-//	@Override
-//	protected void createTopFormText(FormToolkit toolkit, Composite comp) {
-//		GridData gd;
-//		formText = new EventBFormText(toolkit.createFormText(comp, true));
-//		gd = new GridData();
-//		gd.widthHint = 50;
-//		gd.horizontalAlignment = SWT.LEFT;
-//		FormText ft = formText.getFormText();
-//		ft.setLayoutData(gd);
-//		ft.addHyperlinkListener(new CachedHyperlinkAdapter());
-//		String string = "<form><li style=\"text\" value=\"\" bindent=\"-20\"><a href=\"sl\">sl</a> <a href=\"ds\">ds</a></li></form>";
-//		ft.setText(string, true, false);
-//	}
-
 	protected void createTextClient(Section section, FormToolkit toolkit) {
-		UIUtils.debugProverUI("Text Client");
 		Composite composite = new Composite(section, SWT.NONE);
 		
 		GridLayout layout = new GridLayout();

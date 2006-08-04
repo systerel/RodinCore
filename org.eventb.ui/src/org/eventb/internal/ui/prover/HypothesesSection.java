@@ -50,9 +50,9 @@ public abstract class HypothesesSection extends SectionPart {
 	protected Collection<HypothesisRow> rows;
 
 	protected IEventBFormText formText;
-	
+
 	private boolean compact;
-	
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -81,18 +81,6 @@ public abstract class HypothesesSection extends SectionPart {
 	}
 
 	/**
-	 * Create the top FormText (such as ds,sl hyperlinks).
-	 * <p>
-	 * 
-	 * @param toolkit
-	 *            FormToolkit used to create the FormText
-	 * @param comp
-	 *            the composite parent of the FormText
-	 */
-//	protected abstract void createTopFormText(FormToolkit toolkit,
-//			Composite comp);
-
-	/**
 	 * Create the client of the section.
 	 * <p>
 	 * 
@@ -104,32 +92,26 @@ public abstract class HypothesesSection extends SectionPart {
 	public void createClient(Section section, FormToolkit toolkit) {
 		section.setText(title);
 		section.setDescription(description);
-
-		Composite composite = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		composite.setLayout(layout);
-//		createTopFormText(toolkit, composite);
-
-		scrolledForm = toolkit.createScrolledForm(composite);
+		
+		scrolledForm = toolkit.createScrolledForm(section);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
+//		scrolledForm.setBackground(Display.getCurrent().getSystemColor(
+//				SWT.COLOR_CYAN));
 
 		comp = scrolledForm.getBody();
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.verticalSpacing = 5;
+		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
 
-		section.setClient(composite);
-		
+		section.setClient(scrolledForm);
+
 		createTextClient(section, toolkit);
 	}
 
-	protected void createTextClient(Section section, FormToolkit toolkit) {
-		// TODO Auto-generated method stub
-		
-	}
+	protected abstract void createTextClient(Section section,
+			FormToolkit toolkit);
 
 	public void init(Collection<Hypothesis> hyps) {
 		// Remove everything
@@ -139,31 +121,40 @@ public abstract class HypothesesSection extends SectionPart {
 		rows.clear();
 
 		// Add new hyps
+		int i = 0;
 		for (Hypothesis hyp : hyps) {
 			UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
 					+ hyp.getPredicate());
-			HypothesisRow row = new HypothesisRow(this.getManagedForm()
-					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
-					.getUserSupport());
+			HypothesisRow row = new HypothesisRow(this, comp, hyp, ((ProverUI) page.getEditor())
+					.getUserSupport(), (i % 2) == 0);
 			rows.add(row);
+			i++;
 		}
-		
+
 		scrolledForm.reflow(true);
 	}
 
 	@Override
 	public void dispose() {
-		if (formText != null) formText.dispose();
+		if (formText != null)
+			formText.dispose();
 		super.dispose();
 	}
 
 	@Override
-	protected void expansionStateChanging(boolean expanding) {
-		if (expanding) compact = false;
-		else compact = true;
+	protected void expansionStateChanged(boolean expanding) {
+		if (expanding)
+			compact = false;
+		else
+			compact = true;
 		page.layout();
 	}
 
-	public boolean isCompact() {return compact;}
-	
+	public boolean isCompact() {
+		return compact;
+	}
+
+	public ScrolledForm getScrolledForm() {
+		return scrolledForm;
+	}
 }

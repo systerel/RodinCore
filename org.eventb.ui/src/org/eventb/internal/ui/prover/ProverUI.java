@@ -39,7 +39,6 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -379,7 +378,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * obligation.
 	 */
 	private void syncObligationExplorer() {
-		UIUtils.debugProverUI("Sync");
+		ProverUIUtils.debugProverUI("Sync");
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
 		if (activePage != null) {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage

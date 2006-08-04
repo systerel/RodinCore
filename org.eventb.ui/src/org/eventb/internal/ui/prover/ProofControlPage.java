@@ -71,7 +71,6 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
@@ -236,7 +235,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private ToolItem createToolItem(CoolItem coolItem, String text,
 			Image image, int style) {
-		UIUtils.debugProverUI("Create Tool Item ");
 		ToolBar toolBar = (ToolBar) coolItem.getControl();
 		ToolItem item = new ToolItem(toolBar, style);
 		if (image != null)
@@ -315,8 +313,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					dropdownCount++;
 					ToolItem item = createToolItem(coolItem, null, null,
 							SWT.DROP_DOWN);
-					UIUtils.debugProverUI("Create dropdown: "
-							+ dropdown.getID() + " at " + toolbar);
 					GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 							item, dropdown.getID()) {
 						@Override
@@ -353,9 +349,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// CoolItem coolItem =
 						// coolItems.get(tactic.getToolbar());
 						// if (coolItem == null) coolItem = extraCoolItem;
-
-						UIUtils.debugProverUI("Create item " + tactic.getID()
-								+ " at " + tactic.getToolbar());
 
 						ToolItem item = createToolItem(coolItem, null,
 								EventBUIPlugin.getDefault().getImageRegistry()
@@ -411,8 +404,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			CoolItem coolItem = extraCoolItem;
 
 			ToolItem item = createToolItem(coolItem, null, null, SWT.DROP_DOWN);
-			UIUtils.debugProverUI("Create dropdown: " + dropdown.getID()
-					+ " at extra ");
 			GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 					item, dropdown.getID()) {
 				@Override
@@ -442,16 +433,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				GlobalTacticDropdownToolItem curr = dropdownItems.get(tactic
 						.getDropdown());
 				if (curr != null) {
-					UIUtils.debugProverUI("Add tactic " + tactic.getID()
-							+ " to dropdown " + tactic.getDropdown());
-
 					curr.addTactic(tactic);
 				}
 
 				else {
-					UIUtils.debugProverUI("Create item " + tactic.getID()
-							+ " at " + tactic.getToolbar());
-
 					ToolItem item = createToolItem(extraCoolItem, null,
 							EventBUIPlugin.getDefault().getImageRegistry().get(
 									tactic.getImage()), SWT.PUSH);
@@ -497,9 +482,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				// dropdownTool.addTactic(tactic);
 
 			} else {
-				UIUtils.debugProverUI("Create item " + tactic.getID() + " at "
-						+ tactic.getToolbar());
-
 				ToolItem item = createToolItem(extraCoolItem, null,
 						EventBUIPlugin.getDefault().getImageRegistry().get(
 								tactic.getImage()), SWT.PUSH);
@@ -766,11 +748,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			public void run() {
 				List<Object> information = delta.getInformation();
 
-				UIUtils.debugProverUI("********** MESSAGE *********");
+				ProverUIUtils.debugProverUI("********** MESSAGE *********");
 				for (Object info : information) {
-					UIUtils.debugProverUI(info.toString());
+					ProverUIUtils.debugProverUI(info.toString());
 				}
-				UIUtils.debugProverUI("****************************");
+				ProverUIUtils.debugProverUI("****************************");
 
 				int size = information.size();
 				if (size != 0)

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IGlobalTactic;
 
 /**
@@ -71,13 +70,11 @@ public abstract class GlobalTacticDropdownToolItem {
 		 */
 		public void add(GlobalTacticUI tactic) {
 			if (menu.getItemCount() == 0) { // First Item becomes default item
-				UIUtils.debugProverUI("First item: " + tactic.getClass());
 				active = tactic;
 				dropdown.setToolTipText(active.getTips());
 				dropdown.setImage(EventBUIPlugin.getDefault()
 						.getImageRegistry().get(active.getImage()));
 			}
-			UIUtils.debugProverUI("Item: " + tactic.getClass());
 			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
 			menuItem.setImage(EventBUIPlugin.getDefault().getImageRegistry()
 					.get(tactic.getImage()));

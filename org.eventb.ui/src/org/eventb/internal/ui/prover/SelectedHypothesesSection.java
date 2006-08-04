@@ -38,7 +38,6 @@ import org.eventb.core.prover.tactics.ITactic;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -167,7 +166,7 @@ public class SelectedHypothesesSection extends HypothesesSection {
 //	}
 	
 	protected void createTextClient(Section section, FormToolkit toolkit) {
-		UIUtils.debugProverUI("Text Client");
+		ProverUIUtils.debugProverUI("Text Client");
 		Composite composite = new Composite(section, SWT.NONE);
 		
 		GridLayout layout = new GridLayout();
