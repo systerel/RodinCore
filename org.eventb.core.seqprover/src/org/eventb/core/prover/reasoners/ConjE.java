@@ -22,14 +22,14 @@ public class ConjE implements Reasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
+		else input = (SinglePredInput) reasonerInput;
 		
-		Hypothesis conjHyp = input.conjHyp;
-		Predicate conjHypPred = input.conjHyp.getPredicate();
+		Predicate conjHypPred = input.getPredicate();
+		Hypothesis conjHyp = new Hypothesis(conjHypPred);
 		
 		
 		if (! seq.hypotheses().contains(conjHyp))
@@ -41,7 +41,7 @@ public class ConjE implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "∧ hyp ("+input.conjHyp+")";
+		reasonerOutput.display = "∧ hyp ("+conjHyp+")";
 		reasonerOutput.neededHypotheses.add(conjHyp);
 		reasonerOutput.goal = seq.goal();
 
@@ -57,25 +57,25 @@ public class ConjE implements Reasoner{
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		Hypothesis conjHyp;
-		
-		public Input(Hypothesis conjHyp){
-			this.conjHyp = conjHyp;
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.conjHyp = new Hypothesis(serializableReasonerInput.getPredicate("conjHyp"));
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putPredicate("conjHyp",conjHyp.getPredicate());
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Hypothesis conjHyp;
+//		
+//		public Input(Hypothesis conjHyp){
+//			this.conjHyp = conjHyp;
+//		}
+//		
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.conjHyp = new Hypothesis(serializableReasonerInput.getPredicate("conjHyp"));
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			serializableReasonerInput.putPredicate("conjHyp",conjHyp.getPredicate());
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

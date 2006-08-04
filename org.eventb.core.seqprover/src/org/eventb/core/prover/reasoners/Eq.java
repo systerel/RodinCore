@@ -25,16 +25,14 @@ public class Eq implements Reasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
-		
-		Hypothesis eqHyp = input.eqHyp;
-		Predicate eqHypPred = input.eqHyp.getPredicate();
-		
-		
+		else input = (SinglePredInput) reasonerInput;
+
+		Predicate eqHypPred = input.getPredicate();
+		Hypothesis eqHyp = new Hypothesis(eqHypPred);
 		
 		if (! seq.hypotheses().contains(eqHyp))
 		return new ReasonerOutputFail(this,input,
@@ -71,7 +69,7 @@ public class Eq implements Reasoner{
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		
-		reasonerOutput.display = "eh ("+input.eqHyp+")";
+		reasonerOutput.display = "eh ("+eqHyp+")";
 		reasonerOutput.neededHypotheses.add(eqHyp);
 		reasonerOutput.neededHypotheses.addAll(toDeselect);
 		reasonerOutput.goal = seq.goal();
@@ -86,25 +84,25 @@ public class Eq implements Reasoner{
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		Hypothesis eqHyp;
-		
-		public Input(Hypothesis eqHyp){
-			this.eqHyp = eqHyp;
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.eqHyp = new Hypothesis(serializableReasonerInput.getPredicate("eqHyp"));
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putPredicate("eqHyp",eqHyp.getPredicate());
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Hypothesis eqHyp;
+//		
+//		public Input(Hypothesis eqHyp){
+//			this.eqHyp = eqHyp;
+//		}
+//		
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.eqHyp = new Hypothesis(serializableReasonerInput.getPredicate("eqHyp"));
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			serializableReasonerInput.putPredicate("eqHyp",eqHyp.getPredicate());
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

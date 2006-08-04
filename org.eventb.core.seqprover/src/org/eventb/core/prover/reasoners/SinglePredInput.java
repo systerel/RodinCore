@@ -5,6 +5,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.sequent.Hypothesis;
 
 public class SinglePredInput implements ReasonerInput{
 	
@@ -31,6 +32,10 @@ public class SinglePredInput implements ReasonerInput{
 		this.error = null;
 	}
 
+	public SinglePredInput(Hypothesis hypothesis) {
+		predicate = hypothesis.getPredicate();
+	}
+	
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -56,7 +61,7 @@ public class SinglePredInput implements ReasonerInput{
 			return;
 		}
 	}
-	
+
 	public SerializableReasonerInput genSerializable(){
 		SerializableReasonerInput serializableReasonerInput 
 		= new SerializableReasonerInput();

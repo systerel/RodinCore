@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
 import org.eventb.core.prover.reasoners.ConjE;
@@ -21,6 +20,7 @@ import org.eventb.core.prover.reasoners.Contradiction;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
+import org.eventb.core.prover.reasoners.EmptyInput;
 import org.eventb.core.prover.reasoners.Eq;
 import org.eventb.core.prover.reasoners.ExE;
 import org.eventb.core.prover.reasoners.ExI;
@@ -113,7 +113,7 @@ public class Tactics {
 	
 	
 	public static ITactic impI() {
-		return BasicTactics.reasonerTac(new ImpI(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new ImpI(),new EmptyInput());
 	}
 	
 	public static boolean impI_applicable(Predicate goal){
@@ -121,7 +121,7 @@ public class Tactics {
 	}
 	
 	public static ITactic conjI() {
-		return BasicTactics.reasonerTac(new ConjI(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new ConjI(),new EmptyInput());
 	}
 	
 	public static boolean conjI_applicable(Predicate goal){
@@ -129,7 +129,7 @@ public class Tactics {
 	}
 	
 	public static ITactic allI() {
-		return BasicTactics.reasonerTac(new AllI(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new AllI(),new EmptyInput());
 	}
 	
 	public static boolean allI_applicable(Predicate goal){
@@ -173,7 +173,7 @@ public class Tactics {
 	}
 	
 	public static ITactic conjD(Hypothesis conjHyp){
-		return BasicTactics.reasonerTac(new ConjE(),new ConjE.Input(conjHyp));
+		return BasicTactics.reasonerTac(new ConjE(),new SinglePredInput(conjHyp));
 	}
 	
 	
@@ -184,7 +184,7 @@ public class Tactics {
 	
 	// TODO : rename to impE.. remove use contrapositive
 	public static ITactic impD(Hypothesis impHyp, boolean useContrapositive){
-		return BasicTactics.reasonerTac(new ImpE(),new ImpE.Input(impHyp));
+		return BasicTactics.reasonerTac(new ImpE(),new SinglePredInput(impHyp));
 	}
 	
 	public static boolean impD_applicable(Hypothesis hyp){
@@ -192,7 +192,7 @@ public class Tactics {
 	}
 	
 	public static ITactic disjE(Hypothesis disjHyp){
-		return BasicTactics.reasonerTac(new DisjE(),new DisjE.Input(disjHyp));
+		return BasicTactics.reasonerTac(new DisjE(),new SinglePredInput(disjHyp));
 	}
 	
 	public static boolean disjE_applicable(Hypothesis hyp){
@@ -201,7 +201,7 @@ public class Tactics {
 
 	// TODO : remove use reflexive
 	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
-		return BasicTactics.reasonerTac(new Eq(),new Eq.Input(eqHyp));
+		return BasicTactics.reasonerTac(new Eq(),new SinglePredInput(eqHyp));
 	}
 	
 	public static boolean eqE_applicable(Hypothesis hyp){
@@ -210,7 +210,7 @@ public class Tactics {
 	
 	// TODO : rename to exE
 	public static ITactic exF(Hypothesis exHyp){
-		return BasicTactics.reasonerTac(new ExE(),new ExE.Input(exHyp));
+		return BasicTactics.reasonerTac(new ExE(),new SinglePredInput(exHyp));
 	}
 	
 	public static boolean exF_applicable(Hypothesis hyp){
@@ -235,15 +235,15 @@ public class Tactics {
 	// Misc tactics
 	
 	public static ITactic hyp() {
-		return BasicTactics.reasonerTac(new Hyp(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new Hyp(),new EmptyInput());
 	}
 	
 	public static ITactic tautology() {
-		return BasicTactics.reasonerTac(new Tautology(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new Tautology(),new EmptyInput());
 	}
 	
 	public static ITactic contradiction() {
-		return BasicTactics.reasonerTac(new Contradiction(),new Reasoner.DefaultInput());
+		return BasicTactics.reasonerTac(new Contradiction(),new EmptyInput());
 	}
 	
 	public static ITactic trivial() {

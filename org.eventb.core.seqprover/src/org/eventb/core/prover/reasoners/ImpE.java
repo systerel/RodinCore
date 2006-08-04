@@ -20,14 +20,14 @@ public class ImpE implements Reasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
+		else input = (SinglePredInput) reasonerInput;
 		
-		Hypothesis impHyp = input.impHyp;
-		Predicate impHypPred = input.impHyp.getPredicate();
+		Predicate impHypPred = input.getPredicate();
+		Hypothesis impHyp = new Hypothesis(impHypPred);
 		
 		
 		if (! seq.hypotheses().contains(impHyp))
@@ -39,7 +39,7 @@ public class ImpE implements Reasoner{
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "⇒ hyp ("+input.impHyp+")";
+		reasonerOutput.display = "⇒ hyp ("+impHyp+")";
 		reasonerOutput.neededHypotheses.add(impHyp);
 		reasonerOutput.goal = seq.goal();
 
@@ -61,25 +61,25 @@ public class ImpE implements Reasoner{
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		Hypothesis impHyp;
-		
-		public Input(Hypothesis impHyp){
-			this.impHyp = impHyp;
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.impHyp = new Hypothesis(serializableReasonerInput.getPredicate("impHyp"));
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putPredicate("impHyp",impHyp.getPredicate());
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Hypothesis impHyp;
+//		
+//		public Input(Hypothesis impHyp){
+//			this.impHyp = impHyp;
+//		}
+//		
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.impHyp = new Hypothesis(serializableReasonerInput.getPredicate("impHyp"));
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			serializableReasonerInput.putPredicate("impHyp",impHyp.getPredicate());
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

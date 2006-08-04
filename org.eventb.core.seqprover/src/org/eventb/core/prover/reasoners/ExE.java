@@ -24,14 +24,14 @@ public class ExE implements Reasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
-		
-		Hypothesis exHyp = input.exHyp;
-		Predicate exHypPred = input.exHyp.getPredicate();
+		else input = (SinglePredInput) reasonerInput;
+
+		Predicate exHypPred = input.getPredicate();
+		Hypothesis exHyp = new Hypothesis(exHypPred);
 		
 		
 		if (! seq.hypotheses().contains(exHyp))
@@ -82,25 +82,25 @@ public class ExE implements Reasoner{
 		return str.toString();
 	}
 
-	public static class Input implements ReasonerInput{
-		
-		Hypothesis exHyp;
-		
-		public Input(Hypothesis exHyp){
-			this.exHyp = exHyp;
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.exHyp = new Hypothesis(serializableReasonerInput.getPredicate("exHyp"));
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putPredicate("exHyp",exHyp.getPredicate());
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Hypothesis exHyp;
+//		
+//		public Input(Hypothesis exHyp){
+//			this.exHyp = exHyp;
+//		}
+//		
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.exHyp = new Hypothesis(serializableReasonerInput.getPredicate("exHyp"));
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			serializableReasonerInput.putPredicate("exHyp",exHyp.getPredicate());
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }
