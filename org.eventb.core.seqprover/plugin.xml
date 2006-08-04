@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="reasoner" name="Reasoner" schema="schema/reasoner.exsd"/>
+   <extension
+         point="org.eventb.core.seqprover.reasoner">
+      <reasoner
+            class="org.eventb.core.prover.reasoners.Cut"
+            reasonerID="cut"/>
+      <reasoner
+            class="org.eventb.core.prover.reasoners.ConjI"
+            reasonerID="conjI"/>
+   </extension>
+
+</plugin>

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.Reasoner;
@@ -32,6 +33,7 @@ import org.eventb.core.prover.reasoners.MngHyp;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
+import org.eventb.core.prover.reasoners.SinglePredInput;
 import org.eventb.core.prover.reasoners.Tautology;
 import org.eventb.core.prover.reasoners.rewriter.DisjToImpl;
 import org.eventb.core.prover.reasoners.rewriter.RemoveNegation;
@@ -87,8 +89,8 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new Review(),new Review.Input(reviewerConfidence));
 	}
 	
-	public static ITactic lemma(String lemma) {
-		return BasicTactics.reasonerTac(new Cut(),new Cut.Input(lemma));
+	public static ITactic lemma(String lemma,ITypeEnvironment typeEnv) {
+		return BasicTactics.reasonerTac(new Cut(),new SinglePredInput(lemma,typeEnv));
 	}
 	
 	public static ITactic norm(){
@@ -97,8 +99,8 @@ public class Tactics {
 		return repeat(onAllPending(T));
 	}
 	
-	public static ITactic doCase(String trueCase){	
-		return BasicTactics.reasonerTac(new DoCase(),new DoCase.Input(trueCase));
+	public static ITactic doCase(String trueCase,ITypeEnvironment typeEnv){	
+		return BasicTactics.reasonerTac(new DoCase(),new SinglePredInput(trueCase,typeEnv));
 	}
 	
 	

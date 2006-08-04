@@ -20,34 +20,37 @@ public class DoCase implements Reasoner{
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
 		// Organize Input
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
+		else input = (SinglePredInput) reasonerInput;
 		
-		// Parse and write into input 
-		if (input.trueCasePred == null)
+		if (input.hasError())
 		{
-			Predicate trueCasePred = Lib.parsePredicate(input.trueCase);
-			if (trueCasePred == null) 
-				return new ReasonerOutputFail(this,input,
-						"Parse error for case: "+ input.trueCase);
-			if (! Lib.typeCheckClosed(trueCasePred,seq.typeEnvironment()))
-				return new ReasonerOutputFail(this,input,
-						"Type check failed for case: "+input.trueCase);
-			input.trueCasePred = trueCasePred;
+			return new ReasonerOutputFail(this,input,input.getError());
 		}
+
+		Predicate trueCase = input.getPredicate();
+		// This check may be redone for replay since the type environment
+		// may have shrunk, making the previous predicate with dangling free vars.
+		
+		// This check now done when constructing the sequent.. 
+		// so the reasoner is successful, but the rule fails.
+		
+		//		if (! Lib.typeCheckClosed(trueCase,seq.typeEnvironment()))
+		//			return new ReasonerOutputFail(this,input,
+		//					"Type check failed for predicate: "+trueCase);
 		
 		
 		// We can now assume that the true case has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the true case
-		Predicate trueCaseWD = Lib.WD(input.trueCasePred);
+		Predicate trueCaseWD = Lib.WD(trueCase);
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "dc ("+input.trueCasePred.toString()+")";
+		reasonerOutput.display = "dc ("+trueCase.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents
@@ -59,42 +62,42 @@ public class DoCase implements Reasoner{
 		
 		// The goal with the true case
 		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[1].addedHypotheses.add(input.trueCasePred);
+		reasonerOutput.anticidents[1].addedHypotheses.add(trueCase);
 		reasonerOutput.anticidents[1].subGoal = seq.goal();
 		
 		// The goal with the false case
 		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[2].addedHypotheses.add(Lib.makeNeg(input.trueCasePred));
+		reasonerOutput.anticidents[2].addedHypotheses.add(Lib.makeNeg(trueCase));
 		reasonerOutput.anticidents[2].subGoal = seq.goal();	
 				
 		return reasonerOutput;
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		String trueCase;
-		Predicate trueCasePred;
-		
-		public Input(String trueCase){
-			this.trueCase = trueCase;
-			this.trueCasePred = null;
-		}
-
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.trueCase = null;
-			this.trueCasePred = serializableReasonerInput.getPredicate("trueCasePred");
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-//			serializableReasonerInput.putString("lemma",lemma);
-			assert trueCasePred != null;
-			serializableReasonerInput.putPredicate("trueCasePred",trueCasePred);
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		String trueCase;
+//		Predicate trueCasePred;
+//		
+//		public Input(String trueCase){
+//			this.trueCase = trueCase;
+//			this.trueCasePred = null;
+//		}
+//
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.trueCase = null;
+//			this.trueCasePred = serializableReasonerInput.getPredicate("trueCasePred");
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+////			serializableReasonerInput.putString("lemma",lemma);
+//			assert trueCasePred != null;
+//			serializableReasonerInput.putPredicate("trueCasePred",trueCasePred);
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

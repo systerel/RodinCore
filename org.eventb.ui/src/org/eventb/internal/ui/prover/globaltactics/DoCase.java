@@ -43,6 +43,13 @@ public class DoCase implements IGlobalTactic {
 	 */
 	public void apply(UserSupport userSupport, String input)
 			throws RodinDBException {
-		userSupport.applyTactic(Tactics.doCase(input));
+		userSupport.applyTactic(Tactics.doCase(
+				input,
+				userSupport.
+				getCurrentPO().
+				getCurrentNode().
+				getSequent().
+				typeEnvironment()
+				));
 	}
 }

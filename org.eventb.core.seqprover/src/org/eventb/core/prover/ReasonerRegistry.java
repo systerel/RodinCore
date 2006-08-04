@@ -1,8 +1,17 @@
 package org.eventb.core.prover;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
 import org.eventb.core.prover.reasoners.ConjE;
@@ -25,6 +34,7 @@ import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
 import org.eventb.core.prover.reasoners.Tautology;
+import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
 	
@@ -67,6 +77,49 @@ public class ReasonerRegistry {
 			// System.out.println("Registered "+reasoner.getReasonerID()+" as "+reasoner);
 		}
 		
+		
+		String REASONER_EXTENTION_POINT_ID = SequentProver.PLUGIN_ID+ ".reasoner";
+		
+		IExtension[] extensions = 
+			Platform.getExtensionRegistry().
+			getExtensionPoint(REASONER_EXTENTION_POINT_ID).
+			getExtensions();
+		
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension
+			.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				String name = element.getName();
+				
+				if (name.equals("reasoner")) {
+					Bundle bundle = Platform.getBundle(element
+							.getNamespace());
+					try {
+						String reasonerID = element.getAttribute("reasonerID");
+						Reasoner reasoner = loadReasoner(
+								bundle,
+								element.getAttribute("class"));
+						
+						assert reasonerID.equals(reasoner.getReasonerID());
+						
+						registry.put(reasonerID,reasoner);
+						System.out.println("Added reasoner:"+reasoner.getReasonerID());
+					} catch (Exception e) {
+						// TODO Exception handle
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Reasoner loadReasoner(Bundle bundle, String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
+		Class classObject = bundle.loadClass(className).asSubclass(Reasoner.class);
+		Constructor constructor = classObject.getConstructor(new Class[0]);
+		Reasoner reasoner = (Reasoner) constructor.newInstance(new Object[0]);
+		return reasoner;
 	}
 	
 	public static Reasoner getReasoner(String reasonerID){

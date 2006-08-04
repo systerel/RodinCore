@@ -44,6 +44,13 @@ public class AddHypothesis implements IGlobalTactic {
 	 */
 	public void apply(UserSupport userSupport, String input)
 			throws RodinDBException {
-		userSupport.applyTactic(Tactics.lemma(input));
+		userSupport.applyTactic(
+				Tactics.lemma(
+						input,
+						userSupport.
+						getCurrentPO().
+						getCurrentNode().
+						getSequent().
+						typeEnvironment()));
 	}
 }

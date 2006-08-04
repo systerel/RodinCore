@@ -20,35 +20,37 @@ public class Cut implements Reasoner{
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
 		// Organize Input
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
+		else input = (SinglePredInput) reasonerInput;
 		
-		if (input.lemmaPred == null)
+		if (input.hasError())
 		{
-			Predicate lemma = Lib.parsePredicate(input.lemma);
-			if (lemma == null) 
-				return new ReasonerOutputFail(this,input,
-						"Parse error for lemma: "+ input.lemma);
-			input.lemmaPred = lemma;
+			return new ReasonerOutputFail(this,input,input.getError());
 		}
+
+		Predicate lemma = input.getPredicate();
 		
 		// This check may be redone for replay since the type environment
 		// may have shrunk, making the previous predicate with dangling free vars.
-		if (! Lib.typeCheckClosed(input.lemmaPred,seq.typeEnvironment()))
-			return new ReasonerOutputFail(this,input,
-					"Type check failed for lemma: "+input.lemma);
+
+		// This check now done when constructing the sequent.. 
+		// so the reasoner is successful, but the rule fails.
+		
+		//		if (! Lib.typeCheckClosed(lemma,seq.typeEnvironment()))
+		//			return new ReasonerOutputFail(this,input,
+		//					"Type check failed for predicate: "+lemma);
 		
 		// We can now assume that lemma has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the lemma
-		Predicate lemmaWD = Lib.WD(input.lemmaPred);
+		Predicate lemmaWD = Lib.WD(lemma);
 		
 		// Generate the successful reasoner output
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
-		reasonerOutput.display = "ah ("+input.lemmaPred.toString()+")";
+		reasonerOutput.display = "ah ("+lemma.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents
@@ -60,42 +62,49 @@ public class Cut implements Reasoner{
 		
 		// The lemma to be proven
 		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[1].subGoal = input.lemmaPred;
+		reasonerOutput.anticidents[1].subGoal = lemma;
 		
 		// Proving the original goal with the help of the lemma
 		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[2].addedHypotheses.add(input.lemmaPred);
+		reasonerOutput.anticidents[2].addedHypotheses.add(lemma);
 		reasonerOutput.anticidents[2].subGoal = seq.goal();
 				
 		return reasonerOutput;
-		
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		String lemma;
-		Predicate lemmaPred;
-		
-		public Input(String lemma){
-			this.lemma = lemma;
-			this.lemmaPred = null;
-		}
-
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.lemma = null;
-			this.lemmaPred = serializableReasonerInput.getPredicate("lemmaPred");
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-//			serializableReasonerInput.putString("lemma",lemma);
-			assert lemmaPred != null;
-			serializableReasonerInput.putPredicate("lemmaPred",lemmaPred);
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Predicate lemmaPred;
+//		String error;
+//		
+//		public Input(String lemma, ITypeEnvironment typeEnv){
+//			
+//			lemmaPred = Lib.parsePredicate(lemma);
+//			if (lemma == null)
+//			{
+//				error = "Parse error for predicate: "+ lemma;
+//				return;
+//			}
+//			if (! Lib.typeCheckClosed(lemmaPred,typeEnv)){
+//				error = "Type check failed for Predicate: "+lemmaPred;
+//				lemmaPred = null;
+//				return;
+//			}		
+//		}
+//
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.lemmaPred = serializableReasonerInput.getPredicate("lemmaPred");
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			assert lemmaPred != null;
+//			serializableReasonerInput.putPredicate("lemmaPred",lemmaPred);
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

@@ -341,7 +341,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// test getUsedFreeIdents
 		sequent = TestLib.genSeq("y=2;; 1=1 |- 1=1");
 		proofTree = SequentProver.makeProofTree(sequent);
-		Tactics.lemma("y=2").apply(proofTree.getRoot());
+		Tactics.lemma("y=2",sequent.typeEnvironment()).apply(proofTree.getRoot());
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
