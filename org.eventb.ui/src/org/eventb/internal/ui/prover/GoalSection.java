@@ -45,7 +45,6 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -87,24 +86,24 @@ public class GoalSection extends SectionPart {
 		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 		 */
 		public void linkActivated(HyperlinkEvent e) {
-			if (e.getHref().equals(UIUtils.CONJI_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.CONJI_SYMBOL)) {
 				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
 						.applyTactic(Tactics.conjI());
 				return;
 			}
-			if (e.getHref().equals(UIUtils.IMPI_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.IMPI_SYMBOL)) {
 				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
 						.applyTactic(Tactics.impI());
 				return;
 			}
 
-			if (e.getHref().equals(UIUtils.ALLI_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.ALLI_SYMBOL)) {
 				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
 						.applyTactic(Tactics.allI());
 				return;
 			}
 
-			if (e.getHref().equals(UIUtils.EXI_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.EXI_SYMBOL)) {
 				String[] inputs = new String[textBoxes.size()];
 				int i = 0;
 				for (IEventBInputText text : textBoxes) {
@@ -115,13 +114,13 @@ public class GoalSection extends SectionPart {
 				return;
 			}
 
-			if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.NEG_SYMBOL)) {
 				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
 						.applyTactic(Tactics.removeNegGoal());
 				return;
 			}
 
-			if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
+			if (e.getHref().equals(ProverUIUtils.DISJE_SYMBOL)) {
 				((ProverUI) GoalSection.this.page.getEditor()).getUserSupport()
 						.applyTactic(Tactics.disjToImpGoal());
 				return;
@@ -307,7 +306,7 @@ public class GoalSection extends SectionPart {
 	 */
 	private void setFormText(Predicate goal) {
 		String formString = "<form><li style=\"text\" value=\"\">";
-		List<String> tactics = UIUtils.getApplicableToGoal(goal);
+		List<String> tactics = ProverUIUtils.getApplicableToGoal(goal);
 
 		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 			String t = it.next();

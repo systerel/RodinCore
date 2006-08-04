@@ -38,10 +38,17 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
+import org.eventb.core.prover.IProofTree;
+import org.eventb.core.prover.Lib;
+import org.eventb.core.prover.tactics.BasicTactics;
+import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.internal.core.pom.POUtil;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+
+import com.sun.corba.se.spi.ior.MakeImmutable;
 
 /**
  * @author htson
@@ -475,6 +482,23 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	}
 
 	private void updateUserSupport() {
+		// For each changed POs, check if the proof tree in the memory is replayable
+		// if YES, then replay
+		IPRSequent sequent = null;
+		IProofTree tree = null;
+		IProofTree newTree;
+		try {
+			newTree = sequent.makeFreshProofTree();
+			if (Lib.proofReusable(tree.getProofDependencies(), newTree.getRoot().getSequent())) {
+				
+				(BasicTactics.pasteTac(tree.getRoot())).apply(newTree.getRoot());
+			}
+		} catch (RodinDBException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+			
+		
 		MessageDialog
 				.openInformation(this.getActivePageInstance().getSite()
 						.getShell(), "Out of Date",

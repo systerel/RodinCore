@@ -12,10 +12,8 @@
 
 package org.eventb.internal.ui;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -47,9 +45,6 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
@@ -76,35 +71,6 @@ public class UIUtils {
 
 	public static boolean DEBUG = false;
 
-	public static final String CONJI_SYMBOL = "\u2227";
-
-	public static final String IMPI_SYMBOL = "\u21d2";
-
-	public static final String ALLI_SYMBOL = "\u2200";
-
-	public static final String EXI_SYMBOL = "\u2203";
-
-	public static final String NEG_SYMBOL = "\u00ac";
-
-	public static final String ALLF_SYMBOL = "\u2200";
-
-	public static final String CONJD_SYMBOL = "\u2227";
-
-	public static final String IMPD1_SYMBOL = "\u21d2";
-
-	public static final String IMPD2_SYMBOL = "ip1";
-
-	public static final String DISJE_SYMBOL = "\u22c1";
-
-	public static final String EXF_SYMBOL = "\u2203";
-
-	public static final String EQE1_SYMBOL = "eh";
-
-	public static final String EQE2_SYMBOL = "he";
-
-	// public static final String FALSIFY_SYMBOL = "\u22a5";
-	public static final String FALSIFY_SYMBOL = "ct";
-	
 	/**
 	 * Print out the message if the <code>DEBUG</code> flag is
 	 * <code>true</code>.
@@ -311,68 +277,6 @@ public class UIUtils {
 		public Image getImage(Object obj) {
 			return UIUtils.getImage(obj);
 		}
-	}
-
-	/**
-	 * Getting the list of tactics that are applicable to the current goal.
-	 * <p>
-	 * 
-	 * @param goal
-	 *            the current goal
-	 * @return a list of tactic symbols (strings)
-	 */
-	public static List<String> getApplicableToGoal(Predicate goal) {
-		List<String> names = new ArrayList<String>();
-
-		if (Tactics.impI_applicable(goal))
-			names.add(IMPI_SYMBOL);
-		if (Tactics.conjI_applicable(goal))
-			names.add(CONJI_SYMBOL);
-		if (Tactics.allI_applicable(goal))
-			names.add(ALLI_SYMBOL);
-		if (Tactics.exI_applicable(goal))
-			names.add(EXI_SYMBOL);
-		if (Tactics.removeNegGoal_applicable(goal))
-			names.add(NEG_SYMBOL);
-		if (Tactics.disjToImpGoal_applicable(goal))
-			names.add(DISJE_SYMBOL);
-		// Extra tactics applicable to goal should be added here.
-		return names;
-	}
-
-	/**
-	 * Getting the list of tactics that are applicable to a hypothesis.
-	 * <p>
-	 * 
-	 * @param hyp
-	 *            a hypothesis
-	 * @return a list of tactic symbols (strings)
-	 */
-	public static List<String> getApplicableToHypothesis(Hypothesis hyp) {
-		List<String> names = new ArrayList<String>();
-
-		names.add(FALSIFY_SYMBOL);
-		if (Tactics.allF_applicable(hyp))
-			names.add(ALLF_SYMBOL);
-		if (Tactics.conjD_applicable(hyp))
-			names.add(CONJD_SYMBOL);
-		if (Tactics.impD_applicable(hyp)) {
-			names.add(IMPD1_SYMBOL);
-			names.add(IMPD2_SYMBOL);
-		}
-		if (Tactics.exF_applicable(hyp))
-			names.add(EXF_SYMBOL);
-		if (Tactics.disjE_applicable(hyp))
-			names.add(DISJE_SYMBOL);
-		if (Tactics.eqE_applicable(hyp)) {
-			names.add(EQE1_SYMBOL);
-			names.add(EQE2_SYMBOL);
-		}
-		if (Tactics.removeNegHyp_applicable(hyp))
-			names.add(NEG_SYMBOL);
-
-		// Extra tactics applicable to hypothesis should be added here.
-		return names;
 	}
 
 	/**

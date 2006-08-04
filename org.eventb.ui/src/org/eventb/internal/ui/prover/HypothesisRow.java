@@ -13,12 +13,11 @@
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -29,8 +28,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -39,16 +38,15 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.UserSupport;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBFormText;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 
 /**
  * @author htson
@@ -85,72 +83,6 @@ public class HypothesisRow {
 	 *         This class extends HyperlinkAdapter and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	private class HypothesisITacticHyperlinkAdapter extends HyperlinkAdapter {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-		 */
-		public void linkActivated(HyperlinkEvent e) {
-			Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
-			hypSet.add(hyp);
-			if (e.getHref().equals(UIUtils.ALLF_SYMBOL)) {
-				String[] inputs = new String[textBoxes.size()];
-				int i = 0;
-				for (IEventBInputText text : textBoxes) {
-					inputs[i++] = text.getTextWidget().getText();
-				}
-				userSupport.applyTacticToHypotheses(Tactics.allF(hyp, inputs),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.CONJD_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.conjD(hyp), hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.IMPD1_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.impD(hyp, false),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.IMPD2_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.impD(hyp, true),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.DISJE_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.disjE(hyp), hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.EXF_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.exF(hyp), hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.EQE1_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.eqE(hyp, false),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.EQE2_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.eqE(hyp, true),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.FALSIFY_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp),
-						hypSet);
-				return;
-			}
-			if (e.getHref().equals(UIUtils.NEG_SYMBOL)) {
-				userSupport.applyTacticToHypotheses(Tactics.removeNegHyp(hyp),
-						hypSet);
-				return;
-			}
-		}
-
-	}
-
 	/**
 	 * Constructor.
 	 * 
@@ -252,6 +184,8 @@ public class HypothesisRow {
 					true, false);
 			form.getFormText().setBackground(background);
 		} else {
+			textBoxes = new ArrayList<IEventBInputText>();
+
 			hypothesisText = new EventBMath(toolkit.createText(
 					hypothesisComposite, hyp.toString(), SWT.READ_ONLY));
 
@@ -274,35 +208,55 @@ public class HypothesisRow {
 	 */
 	private void createHyperlinks(FormToolkit toolkit, Composite parent,
 			Color background) {
-		List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
+		final IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
+		Collection<HypothesisTacticUI> tactics = ProverUIUtils
+				.getApplicableToHypothesis(node, hyp);
 
-		for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
-			String t = it.next();
+		for (final HypothesisTacticUI tactic : tactics) {
 			ImageHyperlink ds = new ImageHyperlink(buttonComposite, SWT.CENTER);
 			ds.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			toolkit.adapt(ds, true, true);
-			ImageRegistry registry = EventBUIPlugin.getDefault()
-					.getImageRegistry();
-			ds.setImage(registry.get(EventBImage.IMG_PENDING));
-			// ds.addHyperlinkListener(new CachedHyperlinkAdapter());
+			ds.setImage(tactic.getImage());
+			ds.addHyperlinkListener(new IHyperlinkListener() {
+
+				public void linkEntered(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkExited(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkActivated(HyperlinkEvent e) {
+					Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
+					hypSet.add(hyp);
+					String[] inputs = new String[textBoxes.size()];
+					int i = 0;
+					for (IEventBInputText text : textBoxes) {
+						inputs[i++] = text.getTextWidget().getText();
+					}
+					userSupport.applyTacticToHypotheses(tactic
+							.getTactic(node, hyp, inputs), hypSet);
+
+				}
+
+			});
 			ds.setBackground(background);
-			ds.setToolTipText("Deselect checked hypotheses");
+			ds.setToolTipText(tactic.getHint());
 		}
 
-		// String formString = "<form><li style=\"text\" value=\"\">";
-		//
-		// List<String> tactics = UIUtils.getApplicableToHypothesis(hyp);
 		// for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
 		// String t = it.next();
-		// UIUtils.debugProverUI("Create tactic for " + t);
-		// formString = formString + "<a href=\"" + UIUtils.XMLWrapUp(t)
-		// + "\">" + UIUtils.XMLWrapUp(t) + "</a> ";
+		// ImageHyperlink ds = new ImageHyperlink(buttonComposite, SWT.CENTER);
+		// ds.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		// toolkit.adapt(ds, true, true);
+		// ImageRegistry registry = EventBUIPlugin.getDefault()
+		// .getImageRegistry();
+		// ds.setImage(registry.get(EventBImage.IMG_PENDING));
+		// // ds.addHyperlinkListener(new CachedHyperlinkAdapter());
+		// ds.setBackground(background);
+		// ds.setToolTipText("Deselect checked hypotheses");
 		// }
-		//
-		// formString = formString + "</li></form>";
-		// formText.setText(formString, true, false);
-		// formText.redraw();
-		// formText.pack(true);
 
 		return;
 	}
