@@ -118,7 +118,6 @@
    <extension-point id="machinePages" name="Event-B Machine Form Page" schema="schema/machinePages.exsd"/>
    <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>
    <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
-   <extension-point id="globalProofTacticDropdowns" name="Proof Tactic Dropdown" schema="schema/globalProofTacticDropdowns.exsd"/>
    <extension
          point="org.eventb.ui.machinePages">
       <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
