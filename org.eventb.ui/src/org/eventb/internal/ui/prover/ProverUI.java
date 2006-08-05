@@ -484,19 +484,19 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	private void updateUserSupport() {
 		// For each changed POs, check if the proof tree in the memory is replayable
 		// if YES, then replay
-		IPRSequent sequent = null;
-		IProofTree tree = null;
-		IProofTree newTree;
-		try {
-			newTree = sequent.makeFreshProofTree();
-			if (Lib.proofReusable(tree.getProofDependencies(), newTree.getRoot().getSequent())) {
-				
-				(BasicTactics.pasteTac(tree.getRoot())).apply(newTree.getRoot());
-			}
-		} catch (RodinDBException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		IPRSequent sequent = null;
+//		IProofTree tree = null;
+//		IProofTree newTree;
+//		try {
+//			newTree = sequent.makeFreshProofTree();
+//			if (Lib.proofReusable(tree.getProofDependencies(), newTree.getRoot().getSequent())) {
+//				
+//				(BasicTactics.pasteTac(tree.getRoot())).apply(newTree.getRoot());
+//			}
+//		} catch (RodinDBException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 			
 		
 		MessageDialog
