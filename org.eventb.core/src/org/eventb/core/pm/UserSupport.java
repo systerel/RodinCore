@@ -206,7 +206,6 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
-		// saveHypothesisState();
 		for (ProofState ps : proofStates) {
 			if (ps.getPRSequent().equals(prSequent)) {
 				setProofState(ps);
@@ -216,7 +215,6 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void nextUndischargedPO() throws RodinDBException {
-		// saveHypothesisState();
 		int index;
 		if (currentPS == null) {
 			index = -1;
@@ -260,7 +258,11 @@ public class UserSupport implements IElementChangedListener,
 				currentPS.getProofTree().removeChangeListener(this);
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
 			currentPS = ps;
-			ps.getProofTree().addChangeListener(this);
+			if (ps.getProofTree() == null) {
+				ps.loadProofTree();
+				ps.getProofTree().addChangeListener(this); 
+			}
+			
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewProofState(ps);
 			newDelta.addInformation("Select a new proof obligation");
@@ -286,14 +288,11 @@ public class UserSupport implements IElementChangedListener,
 
 	public void applyTacticToHypotheses(final ITactic t,
 			final Set<Hypothesis> hyps) {
-
 		batchOperation(new Runnable() {
-
 			public void run() {
 				addAllToCached(hyps);
 				applyTactic(t);
 			}
-
 		});
 
 	}
@@ -306,8 +305,6 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void applyTactic(final ITactic t) {
-		// saveHypothesisState();
-
 		batchOperation(new Runnable() {
 			public void run() {
 				internalApplyTactic(t);
@@ -321,7 +318,6 @@ public class UserSupport implements IElementChangedListener,
 
 		});
 
-		// Node change, selected hypotheses changed
 	}
 
 	protected void internalApplyTactic(ITactic t) {

@@ -197,30 +197,32 @@ public class ObligationExplorer extends ViewPart implements
 				if (proofState.getPRSequent().equals(sequent)) {
 					IProofTree tree = proofState.getProofTree();
 
-					if (!tree.proofAttempted())
-						return UNATTEMPTED;
+					if (tree != null) {
+						if (!tree.proofAttempted())
+							return UNATTEMPTED;
 
-					int confidence = tree.getConfidence();
+						int confidence = tree.getConfidence();
 
-					if (confidence == IConfidence.PENDING) {
-						if (false && sequent.isProofBroken())
-							return PENDING_BROKEN;
-						else
-							return PENDING;
+						if (confidence == IConfidence.PENDING) {
+							if (false && sequent.isProofBroken())
+								return PENDING_BROKEN;
+							else
+								return PENDING;
+						}
+						if (confidence <= IConfidence.REVIEWED_MAX) {
+							if (false && sequent.isProofBroken())
+								return REVIEWED_BROKEN;
+							else
+								return REVIEWED;
+						}
+						if (confidence <= IConfidence.DISCHARGED_MAX) {
+							if (false && sequent.isProofBroken())
+								return DISCHARGED_BROKEN;
+							else
+								return DISCHARGED;
+						}
+						return NULL;
 					}
-					if (confidence <= IConfidence.REVIEWED_MAX) {
-						if (false && sequent.isProofBroken())
-							return REVIEWED_BROKEN;
-						else
-							return REVIEWED;
-					}
-					if (confidence <= IConfidence.DISCHARGED_MAX) {
-						if (false && sequent.isProofBroken())
-							return DISCHARGED_BROKEN;
-						else
-							return DISCHARGED;
-					}
-					return NULL;
 				}
 			}
 		}
@@ -314,37 +316,40 @@ public class ObligationExplorer extends ViewPart implements
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
 
-								if (!tree.proofAttempted())
+								if (tree != null) {
+									if (!tree.proofAttempted())
+										return registry
+												.get(EventBImage.IMG_UNATTEMPTED);
+
+									int confidence = tree.getConfidence();
+
+									if (confidence == IConfidence.PENDING) {
+										if (false && prSequent.isProofBroken())
+											return registry
+													.get(EventBImage.IMG_PENDING_BROKEN);
+										else
+											return registry
+													.get(EventBImage.IMG_PENDING);
+									}
+									if (confidence <= IConfidence.REVIEWED_MAX) {
+										if (false && prSequent.isProofBroken())
+											return registry
+													.get(EventBImage.IMG_REVIEWED_BROKEN);
+										else
+											return registry
+													.get(EventBImage.IMG_REVIEWED);
+									}
+									if (confidence <= IConfidence.DISCHARGED_MAX) {
+										if (false && prSequent.isProofBroken())
+											return registry
+													.get(EventBImage.IMG_DISCHARGED_BROKEN);
+										else
+											return registry
+													.get(EventBImage.IMG_DISCHARGED);
+									}
 									return registry
-											.get(EventBImage.IMG_UNATTEMPTED);
-
-								int confidence = tree.getConfidence();
-
-								if (confidence == IConfidence.PENDING) {
-									if (false && prSequent.isProofBroken())
-										return registry
-												.get(EventBImage.IMG_PENDING_BROKEN);
-									else
-										return registry
-												.get(EventBImage.IMG_PENDING);
+											.get(EventBImage.IMG_DEFAULT);
 								}
-								if (confidence <= IConfidence.REVIEWED_MAX) {
-									if (false && prSequent.isProofBroken())
-										return registry
-												.get(EventBImage.IMG_REVIEWED_BROKEN);
-									else
-										return registry
-												.get(EventBImage.IMG_REVIEWED);
-								}
-								if (confidence <= IConfidence.DISCHARGED_MAX) {
-									if (false && prSequent.isProofBroken())
-										return registry
-												.get(EventBImage.IMG_DISCHARGED_BROKEN);
-									else
-										return registry
-												.get(EventBImage.IMG_DISCHARGED);
-								}
-								return registry.get(EventBImage.IMG_DEFAULT);
 							}
 						}
 					}
@@ -399,8 +404,8 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		public String getColumnText(Object obj, int columnIndex) {
-			 UIUtils.debugObligationExplorer("Label for: " + obj);
-			 if (obj instanceof IRodinProject) {
+			UIUtils.debugObligationExplorer("Label for: " + obj);
+			if (obj instanceof IRodinProject) {
 				UIUtils.debugObligationExplorer("Project: "
 						+ ((IRodinProject) obj).getElementName());
 				return ((IRodinProject) obj).getElementName();
@@ -408,7 +413,6 @@ public class ObligationExplorer extends ViewPart implements
 				String name = ((IRodinFile) obj).getElementName();
 				return EventBPlugin.getComponentName(name);
 			} else if (obj instanceof IPRSequent) {
-
 
 				// Find the label in the list of UserSupport.
 				Collection<UserSupport> userSupports = UserSupportManager
@@ -592,7 +596,7 @@ public class ObligationExplorer extends ViewPart implements
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ObligationLabelProvider());
-//		viewer.setSorter(new ProjectsSorter());
+		// viewer.setSorter(new ProjectsSorter());
 		viewer.addFilter(new ObligationTextFilter());
 		viewer.addFilter(new DischargedFilter());
 		FormData textData = new FormData();

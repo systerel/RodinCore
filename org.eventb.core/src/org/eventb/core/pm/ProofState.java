@@ -32,13 +32,13 @@ import org.rodinp.core.RodinDBException;
 public class ProofState {
 
 	// The PR sequent associated with this proof obligation.
-	private IPRSequent ps;
+	private IPRSequent prSequent;
 
 	// The current proof tree, this might be different from the proof tree in
-	// the disk, must be not null.
+	// the disk, can be null when it is not initialised.
 	private IProofTree pt;
 
-	// The current proof node (must be non-null).
+	// The current proof node, can be null when the proof tree is uninitialised.
 	private IProofTreeNode current;
 
 	// The set of cached hypotheses.
@@ -52,12 +52,12 @@ public class ProofState {
 	private boolean dirty;
 
 	public ProofState(IPRSequent ps) throws RodinDBException {
-		this.ps = ps;
-		loadProofTree();
+		this.prSequent = ps;
+//		loadProofTree();
 	}
 
 	public void loadProofTree() throws RodinDBException {
-		pt = ps.rebuildProofTree(); // Construct the proof tree from the file.
+		pt = prSequent.rebuildProofTree(); // Construct the proof tree from the file.
 
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
@@ -68,17 +68,18 @@ public class ProofState {
 		
 		// if the proof tree was previously broken then the rebuild would 
 		// fix the proof, making it dirty.
-		dirty = ps.isProofBroken();
+		dirty = prSequent.isProofBroken();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
 
 	public boolean isClosed() throws RodinDBException {
-		return pt.isClosed();
+		if (pt != null) return pt.isClosed();
+		else return prSequent.isClosed();
 	}
 
 	public IPRSequent getPRSequent() {
-		return ps;
+		return prSequent;
 	}
 
 	public IProofTree getProofTree() {
@@ -133,7 +134,7 @@ public class ProofState {
 	}
 
 	public void doSave() throws CoreException {
-		ps.updateProofTree(pt);
+		prSequent.updateProofTree(pt);
 		dirty = false;
 	}
 

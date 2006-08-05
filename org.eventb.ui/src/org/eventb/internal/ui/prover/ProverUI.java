@@ -38,17 +38,10 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.tactics.BasicTactics;
-import org.eventb.core.prover.tactics.Tactics;
-import org.eventb.internal.core.pom.POUtil;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 /**
  * @author htson
