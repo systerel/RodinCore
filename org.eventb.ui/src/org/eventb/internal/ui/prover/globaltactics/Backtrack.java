@@ -31,7 +31,7 @@ public class Backtrack implements IGlobalTactic {
 	 * @see org.eventb.internal.ui.prover.IGlobalTactic#isEnable(org.eventb.core.prover.IProofTreeNode,
 	 *      java.lang.String)
 	 */
-	public boolean isEnable(IProofTreeNode node, String input) {
+	public boolean isApplicable(IProofTreeNode node, String input) {
 		return (node != null) && (node.isOpen()) && (node.getParent() != null);
 	}
 

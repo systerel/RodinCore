@@ -165,7 +165,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 *            the (optional) string input
 	 */
 	public void updateStatus(IProofTreeNode node, String input) {
-		item.setEnabled(active.getTactic().isEnable(node, input));
+		item.setEnabled(active.getTactic().isApplicable(node, input));
 	}
 
 	/**

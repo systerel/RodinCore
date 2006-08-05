@@ -64,7 +64,7 @@ public class GlobalTacticToolItem {
 	 *            the (optional) string input
 	 */
 	public void updateStatus(IProofTreeNode node, String input) {
-		item.setEnabled(tactic.isEnable(node, input));
+		item.setEnabled(tactic.isApplicable(node, input));
 	}
 
 	/**

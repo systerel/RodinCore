@@ -34,7 +34,7 @@ public interface IGlobalTactic {
 	 * @return <code>true</code> if the tactic is applicable and
 	 *         <code>false</code> otherwise
 	 */
-	public boolean isEnable(IProofTreeNode node, String input);
+	public boolean isApplicable(IProofTreeNode node, String input);
 
 	/**
 	 * Apply the tactic.
