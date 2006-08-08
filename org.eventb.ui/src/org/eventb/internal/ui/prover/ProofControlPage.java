@@ -596,6 +596,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the string (information from the UserSupport).
 	 */
 	private void setFormTextInformation(String information) {
+		if (formTextInformation.getFormText().isDisposed()) return;
 		formTextInformation.getFormText().setText(information, false, false);
 	}
 
@@ -760,13 +761,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				else
 					setFormTextInformation("");
 
-				ProofState ps = delta.getNewProofState();
+				ProofState ps = delta.getProofState();
 				IProofTreeNode node = null;
-				if (ps != null) {
-					node = ps.getCurrentNode();
+				if (delta.isNewProofState()) {
+					if (ps != null) node = ps.getCurrentNode();
+					else updateToolItems(null);
+				} else if (delta.isDeleted()) {
+					// Do nothing.
 				} else {
 					node = delta.getNewProofTreeNode();
 				}
+				
 				if (node != null) {
 					final IProofTreeNode newNode = node;
 					updateToolItems(newNode);

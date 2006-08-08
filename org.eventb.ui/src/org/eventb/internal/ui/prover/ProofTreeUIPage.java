@@ -152,8 +152,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 				if (!proofTree.isOpen()) {
 					return proofTree.getRule().getDisplayName();
-						// TODO : maybe make this an option.
-						//	+ proofTree.getSequent().goal();
+					// TODO : maybe make this an option.
+					// + proofTree.getSequent().goal();
 				} else {
 					return proofTree.getSequent().goal().toString();
 				}
@@ -711,23 +711,32 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				final ProofState ps = delta.getNewProofState();
-				ProverUIUtils.debugProverUI("Proof Tree UI: State Changed: " + ps);
-				if (ps != null) { // Change only when change the PO
-					ProofTreeUIPage page = ProofTreeUIPage.this;
-					page.setInput(ps.getProofTree());
-					IProofTreeNode currentNode = ps.getCurrentNode();
-					ProverUIUtils.debugProverUI("Current node: "
-							+ currentNode.getSequent());
-					page.getViewer().expandAll();
-					elementColumn.pack();
-					if (currentNode != null)
-						page.getViewer().setSelection(
-								new StructuredSelection(currentNode));
-
+				final ProofState ps = delta.getProofState();
+				ProverUIUtils.debugProverUI("Proof Tree UI: State Changed: "
+						+ ps);
+				if (delta.isNewProofState()) {
+					if (ps != null) { // Change only when change the PO
+						ProofTreeUIPage page = ProofTreeUIPage.this;
+						page.setInput(ps.getProofTree());
+						IProofTreeNode currentNode = ps.getCurrentNode();
+						ProverUIUtils.debugProverUI("Current node: "
+								+ currentNode.getSequent());
+						page.getViewer().expandAll();
+						elementColumn.pack();
+						if (currentNode != null)
+							page.getViewer().setSelection(
+									new StructuredSelection(currentNode));
+					} else {
+						ProofTreeUIPage page = ProofTreeUIPage.this;
+						page.setInput(null);
+						elementColumn.pack();
+					}
+				} else if (ps != null && delta.isDeleted()) {
+					// Do nothing
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					ProverUIUtils.debugProverUI("Proof Tree UI: " + proofTreeDelta);
+					ProverUIUtils.debugProverUI("Proof Tree UI: "
+							+ proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();

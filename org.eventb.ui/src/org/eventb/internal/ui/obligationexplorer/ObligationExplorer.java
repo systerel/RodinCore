@@ -802,21 +802,24 @@ public class ObligationExplorer extends ViewPart implements
 				UIUtils
 						.debugObligationExplorer("Obligation Exprlorer: Proof Changed "
 								+ delta);
-				final ProofState ps = delta.getNewProofState();
+				final ProofState ps = delta.getProofState();
 
 				final UserSupport userSupport = delta.getSource();
-				if (userSupport.isOutOfDate()) {
-					viewer.refresh(userSupport.getInput(), true);
-					column.pack();
-					return;
-				}
-				if (ps != null) {
-					externalSetSelection(ps.getPRSequent());
+				viewer.refresh(userSupport.getInput(), true);
+				column.pack();
+				if (delta.isNewProofState()) {
+					IPRSequent prSequent = ps.getPRSequent();
+					if (prSequent != null) externalSetSelection(prSequent);
+					else { // Empty selection
+						clearSelection();
+					}
+				} else if (delta.isDeleted()) {
+					// Do nothing
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
 					if (proofTreeDelta != null) {
 						ProofState state = userSupport.getCurrentPO();
-						final IPRSequent prSequent = state.getPRSequent();
+						IPRSequent prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
 						column.pack();
 					}
@@ -835,6 +838,12 @@ public class ObligationExplorer extends ViewPart implements
 		UserSupportManager.removeUSManagerListener(this);
 		viewer.removeSelectionChangedListener(this);
 		super.dispose();
+	}
+
+	private void clearSelection() {
+		viewer.getControl().setRedraw(false);
+		viewer.setSelection(new StructuredSelection()); 
+		viewer.getControl().setRedraw(true);
 	}
 
 }

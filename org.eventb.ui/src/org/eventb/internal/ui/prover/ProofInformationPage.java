@@ -151,8 +151,8 @@ public class ProofInformationPage extends Page implements
 				// UIUtils.debug("ID unchecked model " + id);
 
 				IRodinElement element = RodinCore.create(id);
-//				ProverUIUtils.debugProverUI("id: " + id);
-//				ProverUIUtils.debugProverUI("Find: " + element);
+				// ProverUIUtils.debugProverUI("id: " + id);
+				// ProverUIUtils.debugProverUI("Find: " + element);
 				if (element instanceof ITheorem) {
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
@@ -322,17 +322,28 @@ public class ProofInformationPage extends Page implements
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				ProofState ps = delta.getNewProofState();
-				if (ps != null) {
-					IPRSequent prSequent = ps.getPRSequent();
-					if (prSequent.exists()) {
-						scrolledForm.setText(prSequent.getName());
-						scrolledForm.reflow(true);
-						setFormText(prSequent);
+				ProofState ps = delta.getProofState();
+				if (delta.isNewProofState()) {
+					if (ps != null) {
+						IPRSequent prSequent = ps.getPRSequent();
+						if (prSequent.exists()) {
+							scrolledForm.setText(prSequent.getName());
+							setFormText(prSequent);
+							scrolledForm.reflow(true);
+						}
+					}
+					else {
+						clearFormText();
 					}
 				}
 			}
 		});
 
+	}
+
+	protected void clearFormText() {
+		scrolledForm.setText("");
+		formText.getFormText().setText("<form></form>", true, false);
+		scrolledForm.reflow(true);
 	}
 }

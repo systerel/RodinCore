@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
@@ -38,6 +39,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -118,13 +120,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
 		managedForm.addPart(cachedSection);
-		
+
 		selectedSection = new SelectedHypothesesSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| Section.EXPANDED);
 		managedForm.addPart(selectedSection);
-
-		initHypothesisSections();
+		
+		ProofState ps = userSupport.getCurrentPO();
+		initHypothesisSections(ps);
 
 		goalSection = new GoalSection(this, sashForm,
 				ExpandableComposite.TITLE_BAR);
@@ -132,7 +135,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		body.setLayout(new ProofPageLayout());
 
-//		layout();
+		// layout();
 	}
 
 	private class ProofPageLayout extends Layout {
@@ -158,11 +161,11 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	}
 
-	private void initHypothesisSections() {
-		ProofState ps = userSupport.getCurrentPO();
-		Set<Hypothesis> selected = new HashSet<Hypothesis>();
-		ArrayList<Hypothesis> cached = new ArrayList<Hypothesis>();
-		ArrayList<Hypothesis> searched = new ArrayList<Hypothesis>();
+	private void initHypothesisSections(ProofState ps) {
+		
+		Collection<Hypothesis> selected = new ArrayList<Hypothesis>();
+		Collection<Hypothesis> cached = new ArrayList<Hypothesis>();
+		Collection<Hypothesis> searched = new ArrayList<Hypothesis>();
 
 		if (ps != null) {
 			IProofTreeNode node = ps.getCurrentNode();
@@ -201,28 +204,46 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		display.syncExec(new Runnable() {
 			public void run() {
-				ProofState ps = delta.getNewProofState();
-				boolean refresh = false;
-				if (ps != null) { // Reload everything
-					refresh = true;
-					goalSection.setGoal(ps.getCurrentNode());
-				} else {
+				ProofState ps = delta.getProofState();
+				if (delta.isDeleted()) {
+					if (ps != null) {
+						try {
+							MessageDialog
+									.openInformation(ProofsPage.this.getSite()
+											.getShell(), "Out of Date",
+											"The Proof Obligation is deleted.");
+							userSupport.nextUndischargedPO(true);
+						} catch (RodinDBException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				} else if (delta.isNewProofState()) {
+					if (ps != null) { // Reload everything
+						initHypothesisSections(ps);
+						goalSection.setGoal(ps.getCurrentNode());
+						ProofsPage.this.getManagedForm().getForm().reflow(true);
+					}
+					else {
+						initHypothesisSections(null);
+						goalSection.setGoal(null);
+						ProofsPage.this.getManagedForm().getForm().reflow(true);
+					}
+				} else { 
 					IProofTreeNode node = delta.getNewProofTreeNode();
 					if (node != null) {
-						refresh = true;
+						initHypothesisSections(userSupport.getCurrentPO());
 						goalSection.setGoal(node);
+						ProofsPage.this.getManagedForm().getForm().reflow(true);
 					} else {
 						if (delta.getNewCache() || delta.getNewSearch()) {
 							initCacheAndSearch();
-							ProofsPage.this.getManagedForm().getForm().reflow(true);
+							ProofsPage.this.getManagedForm().getForm().reflow(
+									true);
 						}
 					}
 				}
 
-				if (refresh) {
-					initHypothesisSections();
-					ProofsPage.this.getManagedForm().getForm().reflow(true);
-				}
 			}
 		});
 	}
@@ -309,12 +330,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				SWT.DEFAULT).y;
 
 		for (int i = 0; i < 5; i++) {
-			ProverUIUtils.debugProverUI("Before Height (" + i + "): " + weights[i]);
+			ProverUIUtils.debugProverUI("Before Height (" + i + "): "
+					+ weights[i]);
 		}
 
 		if (totalHeight < 1) { // Not initialised yet
 			weights[0] = 0;
-//			UIUtils.debugProverUI("Client area: " + sashForm.getClientArea());
+			// UIUtils.debugProverUI("Client area: " +
+			// sashForm.getClientArea());
 			sashForm.setWeights(weights);
 			form.reflow(true);
 		} else {

@@ -43,7 +43,7 @@ public class Next implements IGlobalTactic {
 	 */
 	public void apply(UserSupport userSupport, String input)
 			throws RodinDBException {
-		userSupport.nextUndischargedPO();
+		userSupport.nextUndischargedPO(false);
 	}
 
 }
