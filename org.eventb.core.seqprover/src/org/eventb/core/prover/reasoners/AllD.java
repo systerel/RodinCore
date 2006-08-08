@@ -111,7 +111,7 @@ public class AllD implements Reasoner{
 		
 		// The instantiated goal
 		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[1].addedHypotheses.add(instantiatedPred);
+		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(instantiatedPred);
 		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(univHyp));
 		reasonerOutput.anticidents[1].subGoal = seq.goal();
 				

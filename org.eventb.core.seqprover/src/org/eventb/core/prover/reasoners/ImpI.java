@@ -30,7 +30,7 @@ public class ImpI implements Reasoner{
 		reasonerOutput.anticidents = new Anticident[1];
 		
 		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[0].addedHypotheses.add(Lib.impLeft(seq.goal()));
+		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(Lib.impLeft(seq.goal()));
 		reasonerOutput.anticidents[0].subGoal = Lib.impRight(seq.goal());
 				
 		return reasonerOutput;

@@ -52,8 +52,8 @@ public class ImpE implements Reasoner{
 		reasonerOutput.anticidents[0].subGoal = toShow;
 		
 		reasonerOutput.anticidents[1] = new Anticident();
-		reasonerOutput.anticidents[1].addedHypotheses.add(toShow);
-		reasonerOutput.anticidents[1].addedHypotheses.add(toAssume);
+		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(toShow);
+		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(toAssume);
 		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(impHyp));
 		reasonerOutput.anticidents[1].subGoal = seq.goal();
 		

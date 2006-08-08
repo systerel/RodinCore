@@ -87,6 +87,13 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 //			return neededFreeIdents;
 //		}
 		
+		public void addConjunctsToAddedHyps(Predicate pred){
+			addedHypotheses.addAll(Lib.breakConjuncts(pred));
+		}
+		
+		public void addToAddedHyps(Predicate pred){
+			addedHypotheses.add(pred);
+		}
 	}
 	
 	public String display;

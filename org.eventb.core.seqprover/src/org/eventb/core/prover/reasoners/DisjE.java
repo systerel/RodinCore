@@ -49,7 +49,7 @@ public class DisjE implements Reasoner{
 		
 		for (int i = 0; i < disjuncts.length; i++) {
 			reasonerOutput.anticidents[i] = new Anticident();
-			reasonerOutput.anticidents[i].addedHypotheses.add(disjuncts[i]);
+			reasonerOutput.anticidents[i].addConjunctsToAddedHyps(disjuncts[i]);
 			reasonerOutput.anticidents[i].hypAction.add(Lib.deselect(disjHyp));
 			reasonerOutput.anticidents[i].subGoal = seq.goal();
 		}

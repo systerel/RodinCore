@@ -66,7 +66,7 @@ public class Cut implements Reasoner{
 		
 		// Proving the original goal with the help of the lemma
 		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[2].addedHypotheses.add(lemma);
+		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
 		reasonerOutput.anticidents[2].subGoal = seq.goal();
 				
 		return reasonerOutput;

@@ -46,10 +46,10 @@ public class ConjE implements Reasoner{
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticident
-		Predicate[] conjuncts = Lib.conjuncts(conjHypPred);
+		// Predicate[] conjuncts = Lib.conjuncts(conjHypPred);
 		reasonerOutput.anticidents = new Anticident[1];
 		reasonerOutput.anticidents[0] = new Anticident();
-		reasonerOutput.anticidents[0].addedHypotheses.addAll(Arrays.asList(conjuncts));
+		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(conjHypPred);
 		reasonerOutput.anticidents[0].hypAction.add(Lib.hide(conjHyp));
 		reasonerOutput.anticidents[0].subGoal = seq.goal();
 		

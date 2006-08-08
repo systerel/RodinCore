@@ -62,12 +62,12 @@ public class DoCase implements Reasoner{
 		
 		// The goal with the true case
 		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[1].addedHypotheses.add(trueCase);
+		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(trueCase);
 		reasonerOutput.anticidents[1].subGoal = seq.goal();
 		
 		// The goal with the false case
 		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
-		reasonerOutput.anticidents[2].addedHypotheses.add(Lib.makeNeg(trueCase));
+		reasonerOutput.anticidents[2].addToAddedHyps(Lib.makeNeg(trueCase));
 		reasonerOutput.anticidents[2].subGoal = seq.goal();	
 				
 		return reasonerOutput;

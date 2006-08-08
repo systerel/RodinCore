@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -128,6 +129,12 @@ public final class Lib {
 	public static Predicate[] conjuncts(Predicate P){
 		if (! isConj(P)) return null;
 		return ((AssociativePredicate)P).getChildren();
+	}
+	
+	public static List<Predicate> breakConjuncts(Predicate P){
+		if (! isConj(P)) return Collections.singletonList(P);
+		return Arrays.asList(
+				((AssociativePredicate)P).getChildren());
 	}
 	
 	public static Predicate[] disjuncts(Predicate P){

@@ -4,10 +4,13 @@ import static org.eventb.core.prover.tactics.BasicTactics.compose;
 import static org.eventb.core.prover.tactics.BasicTactics.onAllPending;
 import static org.eventb.core.prover.tactics.BasicTactics.repeat;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
@@ -41,6 +44,7 @@ import org.eventb.core.prover.reasoners.rewriter.TrivialRewrites;
 import org.eventb.core.prover.reasoners.rewriter.TypeExpRewrites;
 import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 
 
@@ -107,6 +111,18 @@ public class Tactics {
 	public static ITactic contradictGoal(){
 		return BasicTactics.reasonerTac(new Contr(),new Contr.Input());
 	}
+	
+//	public static ITactic lasoo(IProverSequent seq){
+//		
+//		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+//		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
+//		for (Hyp)
+//		
+//		Set<Hypothesis> hyps;
+//		
+//		
+//		return mngHyp(ActionType.SELECT,hyps);
+//	}
 	
 
 	// Tactics applicable on the goal
