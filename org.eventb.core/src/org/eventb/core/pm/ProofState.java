@@ -19,7 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.tactics.BasicTactics;
+import org.eventb.internal.core.pm.UserSupportUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -50,8 +53,8 @@ public class ProofState {
 	// The dirty flag to indicate if there are some unsaved changes with this
 	// proof obligation.
 	private boolean dirty;
-
-	public ProofState(IPRSequent ps) throws RodinDBException {
+	
+	public ProofState(IPRSequent ps) {
 		this.prSequent = ps;
 //		loadProofTree();
 	}
@@ -134,6 +137,7 @@ public class ProofState {
 	}
 
 	public void doSave() throws CoreException {
+		UserSupportUtils.debug("Saving: " + prSequent.getElementName());
 		prSequent.updateProofTree(pt);
 		dirty = false;
 	}
@@ -142,4 +146,37 @@ public class ProofState {
 		this.dirty = dirty;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ProofState)) return false;
+		else {
+			ProofState proofState = (ProofState) obj;
+			return proofState.getPRSequent().equals(prSequent);
+		}
+		
+	}
+
+	// Pre: Must be initalised and not currently saving.
+	public boolean proofReusable() throws RodinDBException {
+//		if (isSavingOrUninitialised()) return false;
+//		if (pt == null) return false; // No proof tree, no reusable.
+		IProofTree newTree = prSequent.makeFreshProofTree();
+
+		if (Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot().getSequent())) {
+			 (BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot());
+			 pt = newTree;
+			 dirty = true;
+			 return true;
+		}
+		// If NOT, then mark the Proof State as dirty. Send delta to the
+		// user
+		pt = newTree;
+		dirty = false;
+		return false;
+	}
+
+	
+	public boolean isUninitialised() {return (pt == null);}
+	
+	
 }

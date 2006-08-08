@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.prover.IProofTreeChangedListener;
@@ -27,6 +28,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.RodinElementDelta;
 
 public class UserSupport implements IElementChangedListener,
 		IProofTreeChangedListener {
@@ -39,9 +41,12 @@ public class UserSupport implements IElementChangedListener,
 
 	private boolean fireDelta;
 
-	private IProofStateDelta delta = null; // The current delta
+	/*
+	 * The delta for the current thread.
+	 */
+	ThreadLocal<IProofStateDelta> delta;
 
-	private boolean outOfDate;
+	// private boolean outOfDate;
 
 	private int c = 0;
 
@@ -53,8 +58,17 @@ public class UserSupport implements IElementChangedListener,
 		RodinCore.addElementChangedListener(this);
 		fireDelta = true;
 		proofStates = new LinkedList<ProofState>();
-		delta = new ProofStateDelta(this); // Clear delta
-		outOfDate = false;
+		delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
+		// outOfDate = false;
+	}
+
+	IProofStateDelta getDelta() {
+		IProofStateDelta localDelta = delta.get();
+		if (localDelta == null) {
+			localDelta = new ProofStateDelta(this);
+			delta.set(localDelta);
+		}
+		return localDelta;
 	}
 
 	public void addStateChangedListeners(IProofStateChangedListener listener) {
@@ -73,7 +87,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	public void notifyStateChangedListeners(final IProofStateDelta mergeDelta) {
+	public void notifyStateChangedListeners() {
 		IProofStateChangedListener[] safeCopy;
 		synchronized (proofStateChangedListeners) {
 			safeCopy = proofStateChangedListeners
@@ -87,7 +101,7 @@ public class UserSupport implements IElementChangedListener,
 				}
 
 				public void run() throws Exception {
-					listener.proofStateChanged(mergeDelta);
+					listener.proofStateChanged(getDelta());
 				}
 			});
 		}
@@ -95,15 +109,15 @@ public class UserSupport implements IElementChangedListener,
 
 	private void notifyPendingDelta() {
 		if (fireDelta) {
-			// UserSupportUtils.debug("Notified: " + delta);
-			notifyStateChangedListeners(delta);
-			delta = new ProofStateDelta(this); // Clear delta
+			UserSupportUtils.debug("Notified: " + getDelta());
+			notifyStateChangedListeners();
+			delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
 		}
 	}
 
 	public void fireProofStateDelta(IProofStateDelta newDelta) {
 		// UserSupportUtils.debug("Fire Delta: " + newDelta);
-		delta = mergeDelta(delta, newDelta);
+		delta.set(mergeDelta(getDelta(), newDelta));
 		notifyPendingDelta();
 	}
 
@@ -117,16 +131,23 @@ public class UserSupport implements IElementChangedListener,
 		mergedDelta.addAllInformation(oldInformation);
 		mergedDelta.addAllInformation(newInformation);
 
-		ProofState newProofState = newDelta.getNewProofState();
-		if (newProofState != null) {
+		ProofState newProofState = newDelta.getProofState();
+		if (newDelta.isDeleted()) {
+			mergedDelta.setDeletedProofState(newProofState);
+			return mergedDelta;
+		} else if (newDelta.isNewProofState()) {
 			mergedDelta.setNewProofState(newProofState);
 			return mergedDelta;
 		} else {
-			ProofState oldProofState = oldDelta.getNewProofState();
-			if (oldProofState != null) {
+			ProofState oldProofState = oldDelta.getProofState();
+			if (oldDelta.isDeleted()) {
+				mergedDelta.setDeletedProofState(oldProofState);
+				return mergedDelta;
+			} else if (oldDelta.isNewProofState()) {
 				mergedDelta.setNewProofState(oldProofState);
 				return mergedDelta;
 			} else {
+			
 				// Proof Tree Delta
 				IProofTreeDelta newProofTreeDelta = newDelta
 						.getProofTreeDelta();
@@ -201,8 +222,8 @@ public class UserSupport implements IElementChangedListener,
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		outOfDate = false;
-		nextUndischargedPO();
+		// outOfDate = false;
+		nextUndischargedPO(true);
 	}
 
 	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
@@ -214,7 +235,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	public void nextUndischargedPO() throws RodinDBException {
+	public void nextUndischargedPO(boolean force) throws RodinDBException {
 		int index;
 		if (currentPS == null) {
 			index = -1;
@@ -228,9 +249,10 @@ public class UserSupport implements IElementChangedListener,
 				return;
 			}
 		}
+
 		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
-		newDelta.setNewProofState(null);
+		if (force) newDelta.setNewProofState(null);
 		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
@@ -260,9 +282,9 @@ public class UserSupport implements IElementChangedListener,
 			currentPS = ps;
 			if (ps.getProofTree() == null) {
 				ps.loadProofTree();
-				ps.getProofTree().addChangeListener(this); 
+				ps.getProofTree().addChangeListener(this);
 			}
-			
+
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewProofState(ps);
 			newDelta.addInformation("Select a new proof obligation");
@@ -401,27 +423,109 @@ public class UserSupport implements IElementChangedListener,
 		return;
 	}
 
+	boolean reload;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
-	public void elementChanged(ElementChangedEvent event) {
+	public void elementChanged(final ElementChangedEvent event) {
 		c++;
-		UserSupportUtils.debug("Element changed " + c + " : ");
+		UserSupportUtils.debug("Element changed " + c + " : "
+				+ event.getDelta());
+		reload = false;
+		deleted = new ArrayList<IPRSequent>();
+		batchOperation(new Runnable() {
+
+			public void run() {
+				try {
+					processDelta(event.getDelta());
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+				if (reload) {
+					debugProofState();
+					reloadPRSequent();
+					UserSupportUtils.debug("****** After ******");
+					debugProofState();
+				}
+
+				if (currentPS != null) {
+					UserSupportUtils.debug("CurrentPS: "
+							+ currentPS.getPRSequent().getElementName());
+					for (IPRSequent sequent : deleted) {
+						UserSupportUtils.debug("Deleted: "
+								+ sequent.getElementName());
+					}
+					if (deleted.contains(currentPS.getPRSequent())) {
+						ProofStateDelta newDelta = new ProofStateDelta(
+								UserSupport.this);
+
+						newDelta.setDeletedProofState(currentPS);
+						newDelta.addInformation("Current PO has been deleted");
+						fireProofStateDelta(newDelta);
+					}
+				}
+				// if (outOfDate) {
+				// ProofStateDelta newDelta = new ProofStateDelta(this);
+				// newDelta.addInformation("Underlying model has changed");
+				// fireProofStateDelta(newDelta);
+				// }
+			}
+
+		});
+	}
+
+	void debugProofState() {
+		UserSupportUtils.debug("******** Proof States **********");
+		for (ProofState state : proofStates) {
+			UserSupportUtils.debug("Goal: "
+					+ state.getPRSequent().getElementName());
+		}
+		UserSupportUtils.debug("******************************");
+	}
+
+	Collection<IPRSequent> deleted;
+
+	private ProofState getProofState(int index) {
+		ProofState proofState = null;
+		if (index < proofStates.size())
+			proofState = proofStates.get(index);
+		return proofState;
+	}
+
+	void reloadPRSequent() {
+		// Remove the deleted ones first
+		for (IPRSequent prSequent : deleted) {
+			ProofState state = new ProofState(prSequent);
+			proofStates.remove(state);
+		}
+
 		try {
-			processDelta(event.getDelta());
+			int index = 0;
+			ProofState proofState = getProofState(index);
+			for (IPOSequent prSequent : prFile.getSequents()) {
+				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
+				UserSupportUtils.debug("Index: " + index);
+				if (proofState != null) {
+					if (prSequent.equals(proofState.getPRSequent())) {
+						index++;
+						proofState = getProofState(index);
+						continue;
+					}
+				}
+				ProofState state = new ProofState((IPRSequent) prSequent);
+				UserSupportUtils.debug("Added at position " + index);
+				proofStates.add(index++, state);
+			}
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		if (outOfDate) {
-			ProofStateDelta newDelta = new ProofStateDelta(this);
-			newDelta.addInformation("Underlying model has changed");
-			fireProofStateDelta(newDelta);
-		}
+
 	}
 
-	private void processDelta(IRodinElementDelta elementChangedDelta)
+	protected void processDelta(IRodinElementDelta elementChangedDelta)
 			throws RodinDBException {
 		IRodinElement element = elementChangedDelta.getElement();
 		// UserSupportUtils.debug("Process Delta " + element);
@@ -450,18 +554,62 @@ public class UserSupport implements IElementChangedListener,
 			if (kind == IRodinElementDelta.ADDED) {
 				UserSupportUtils.debug("IPRSequent changed: "
 						+ element.getElementName() + " is added");
-				outOfDate = true;
+
+				reload = true;
 			} else if (kind == IRodinElementDelta.REMOVED) {
 				UserSupportUtils.debug("IPRSequent changed: "
 						+ element.getElementName() + " is removed");
-				outOfDate = true;
+				deleted.add((IPRSequent) element);
+				reload = true;
 			} else if (kind == IRodinElementDelta.CHANGED) {
-				IPRSequent prSequent = (IPRSequent) element;
-				if (prSequent.isProofBroken()) {
-					UserSupportUtils.debug("IPRSequent changed: "
-							+ element.getElementName() + " is broken");
-					outOfDate = true;
+
+				int flag = elementChangedDelta.getFlags();
+				UserSupportUtils.debug("Flag: " + flag);
+
+				// Trying to reuse only if the children of the PRSequent has
+				// changed or if the prsequent has been replaced.
+				if ((flag & RodinElementDelta.F_CHILDREN) != 0
+						|| (flag & RodinElementDelta.F_REPLACED) != 0) {
+					IPRSequent prSequent = (IPRSequent) element;
+
+					ProofState state = getProofState(prSequent);
+
+					UserSupportUtils.debug("Testing: "
+							+ state.getPRSequent().getElementName());
+
+					if (state.isUninitialised())
+						return;
+
+					if (state.proofReusable()) {
+						UserSupportUtils.debug("Can be reused");
+
+						if (state == currentPS) {
+							UserSupportUtils.debug("Is the current node");
+							ProofStateDelta newDelta = new ProofStateDelta(
+									UserSupport.this);
+							newDelta.setNewProofState(currentPS);
+							newDelta
+									.addInformation("Current proof has been reused");
+							fireProofStateDelta(newDelta);
+						}
+
+						// Otherwise reuse "silently"
+					} else {
+						UserSupportUtils.debug("Cannot be reused");
+						if (state == currentPS) {
+							UserSupportUtils.debug("Is the current node");
+							ProofStateDelta newDelta = new ProofStateDelta(
+									UserSupport.this);
+							newDelta.setNewProofState(currentPS);
+
+							newDelta
+									.addInformation("Current proof cannot be reused");
+							fireProofStateDelta(newDelta);
+						}
+					}
+
 				}
+
 			}
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
@@ -469,6 +617,14 @@ public class UserSupport implements IElementChangedListener,
 				processDelta(d);
 			}
 		}
+	}
+
+	private ProofState getProofState(IPRSequent prSequent) {
+		for (ProofState state : proofStates) {
+			if (state.getPRSequent().equals(prSequent))
+				return state;
+		}
+		return null;
 	}
 
 	public void back() throws RodinDBException {
@@ -522,9 +678,10 @@ public class UserSupport implements IElementChangedListener,
 		return prFile;
 	}
 
-	public boolean isOutOfDate() {
-		return outOfDate;
-	}
+	//
+	// public boolean isOutOfDate() {
+	// return outOfDate;
+	// }
 
 	// Should be used by the UserSupportManager only
 	public void dispose() {

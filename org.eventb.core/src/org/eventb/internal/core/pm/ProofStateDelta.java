@@ -21,17 +21,21 @@ public class ProofStateDelta implements IProofStateDelta {
 	private ProofState ps;
 
 	private IProofTreeDelta proofTreeDelta;
-	
+
 	private IProofTreeNode node;
 
 	private List<Object> information;
 
 	private boolean newSearch;
-	
+
 	private boolean newCache;
 
 	private UserSupport userSupport;
-	
+
+	private boolean isDeleted;
+
+	private boolean newProofState;
+
 	public ProofStateDelta(UserSupport userSupport) {
 		this.userSupport = userSupport;
 		newSearch = false;
@@ -39,6 +43,8 @@ public class ProofStateDelta implements IProofStateDelta {
 		ps = null;
 		node = null;
 		proofTreeDelta = null;
+		isDeleted = false;
+		newProofState = false;
 		information = new ArrayList<Object>();
 	}
 
@@ -52,9 +58,15 @@ public class ProofStateDelta implements IProofStateDelta {
 
 	public void setNewProofState(ProofState ps) {
 		this.ps = ps;
+		newProofState = true;
 	}
 
-	public ProofState getNewProofState() {
+	public void setDeletedProofState(ProofState ps) {
+		this.ps = ps;
+		isDeleted = true;
+	}
+
+	public ProofState getProofState() {
 		return ps;
 	}
 
@@ -74,13 +86,17 @@ public class ProofStateDelta implements IProofStateDelta {
 		return proofTreeDelta;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		String result = "\n***************************";
 		result = result + "\n" + "Proof State: " + ps;
+		result = result + "\n" + "is deleted: " + isDeleted;
+		result = result + "\n" + "is new: " + newProofState;
 		result = result + "\n" + "ProofTreeDelta: " + proofTreeDelta;
 		result = result + "\n" + "Current Node: " + node;
 		result = result + "\n" + "New Cache: " + newCache;
@@ -112,8 +128,17 @@ public class ProofStateDelta implements IProofStateDelta {
 	public void addInformation(Object info) {
 		this.information.add(info);
 	}
-	
+
 	public void addAllInformation(List<Object> infos) {
 		information.addAll(infos);
 	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public boolean isNewProofState() {
+		return newProofState;
+	}
+
 }
