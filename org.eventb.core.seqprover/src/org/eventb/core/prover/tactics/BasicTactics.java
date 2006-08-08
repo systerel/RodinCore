@@ -50,6 +50,10 @@ public class BasicTactics {
 		return new PasteTac(toPaste);
 	}
 	
+	public static ITactic failTac(String message){
+		return new FailTac(message);
+	}
+	
 	private static class Prune implements ITactic {
 	
 		public Prune(){}
@@ -58,6 +62,19 @@ public class BasicTactics {
 			if (pt.isOpen()) return "Root is already open";
 			pt.pruneChildren();
 			return null;
+		}
+	}
+	
+	private static class FailTac implements ITactic {
+		
+		private final String message;
+		
+		public FailTac(String message){
+			this.message = message;
+		}
+		
+		public Object apply(IProofTreeNode pt){
+			return message;
 		}
 	}
 	

@@ -112,17 +112,21 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new Contr(),new Contr.Input());
 	}
 	
-//	public static ITactic lasoo(IProverSequent seq){
-//		
-//		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
-//		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
-//		for (Hyp)
-//		
-//		Set<Hypothesis> hyps;
-//		
-//		
-//		return mngHyp(ActionType.SELECT,hyps);
-//	}
+	public static ITactic lasoo(IProverSequent seq){
+		
+		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
+		for (Hypothesis hyp : seq.selectedHypotheses()){
+			freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+		}
+		
+		Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
+		hypsToSelect.removeAll(seq.selectedHypotheses());
+		if (hypsToSelect.isEmpty())
+			return BasicTactics.failTac("No more Hyps found");
+
+		return mngHyp(ActionType.SELECT,hypsToSelect);
+	}
 	
 
 	// Tactics applicable on the goal

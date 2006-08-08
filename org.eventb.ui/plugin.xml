@@ -262,6 +262,11 @@
       <dropdown
             id="reviews"
             toolbar="sequent"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
+            icon="icons/full/ctool16/sh_prover.gif"
+            id="org.eventb.ui.lasoo"
+            tooltip="Lasoo"/>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
