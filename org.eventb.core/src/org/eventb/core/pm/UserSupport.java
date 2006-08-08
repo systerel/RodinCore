@@ -324,7 +324,7 @@ public class UserSupport implements IElementChangedListener,
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object info = t.apply(currentNode);
 		if (!t.equals(Tactics.prune()))
-			Tactics.postProcess().apply(currentNode);
+			Tactics.postProcessBeginner().apply(currentNode);
 		if (info == null) {
 			info = "Tactic applied successfully";
 			currentPS.setDirty(true);

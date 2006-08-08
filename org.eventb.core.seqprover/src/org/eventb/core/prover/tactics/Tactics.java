@@ -275,12 +275,19 @@ public class Tactics {
 		return mngHyp(type,Collections.singleton(hypothesis));
 	}
 	
-	public static ITactic postProcess() {
+	public static ITactic postProcessBeginner() {
 		return onAllPending(
 				compose(
 						tautology(),
 						hyp(),
 						impI())
+						);
+				
+	}
+	
+	public static ITactic postProcessExpert() {
+		return onAllPending(
+				norm()
 						);
 				
 	}

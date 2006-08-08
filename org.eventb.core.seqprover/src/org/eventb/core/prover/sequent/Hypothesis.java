@@ -1,9 +1,13 @@
 package org.eventb.core.prover.sequent;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 
 public class Hypothesis{
@@ -57,6 +61,31 @@ public class Hypothesis{
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
 		for (Hypothesis hypothesis:hypotheses){
 			if (hypothesis.getPredicate().toString().contains(str)) result.add(hypothesis);
+		}
+		return result;
+	}
+	
+	// TODO : make more efficient
+	public static Set<Hypothesis> freeIdentsSearch(Set<Hypothesis> hypotheses,FreeIdentifier[] freeIdents){
+		Set<Hypothesis> result = new HashSet<Hypothesis>();
+		final List<FreeIdentifier> freeIdentsAsList = Arrays.asList(freeIdents);
+		for (Hypothesis hypothesis:hypotheses){
+			if (! Collections.disjoint(
+					Arrays.asList(hypothesis.getPredicate().getFreeIdentifiers()),
+					freeIdentsAsList))				
+				result.add(hypothesis);
+		}
+		return result;
+	}
+	
+//	 TODO : make more efficient
+	public static Set<Hypothesis> freeIdentsSearch(Set<Hypothesis> hypotheses,Set<FreeIdentifier> freeIdents){
+		Set<Hypothesis> result = new HashSet<Hypothesis>();
+		for (Hypothesis hypothesis:hypotheses){
+			if (! Collections.disjoint(
+					Arrays.asList(hypothesis.getPredicate().getFreeIdentifiers()),
+					freeIdents))				
+				result.add(hypothesis);
 		}
 		return result;
 	}
