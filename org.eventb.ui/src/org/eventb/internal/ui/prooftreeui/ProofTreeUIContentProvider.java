@@ -173,7 +173,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 */
 	public void proofTreeChanged(IProofTreeDelta delta) {
 		// TODO Auto-generated method stub
-//		UIUtils.debug("Proof Tree Changed");
+//		ProofTreeUI.debug("Proof Tree Changed");
 	}
 
 }

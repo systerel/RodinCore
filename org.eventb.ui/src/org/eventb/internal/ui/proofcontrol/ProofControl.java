@@ -47,7 +47,7 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 	public static boolean DEBUG = false;
 	
 	public static void debug(String message) {
-		if (DEBUG) System.out.println(message);
+		if (DEBUG) System.out.println("***ProofControl*** " + message);
 	}
 	
 	/*

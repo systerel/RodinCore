@@ -4,3 +4,4 @@ org.eventb.ui/debug/projectexplorer = false
 org.eventb.ui/debug/obligationexplorer = false
 org.eventb.ui/debug/proverui = false
 org.eventb.ui/debug/proofcontrol = false
+org.eventb.ui/debug/prooftreeui = false

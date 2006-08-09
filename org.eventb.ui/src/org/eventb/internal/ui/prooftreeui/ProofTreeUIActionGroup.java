@@ -111,7 +111,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
 							proofTreeUI.getUserSupport().applyTactic(
 									BasicTactics.pasteTac(copyNode));
-//							ProverUIUtils.debugProverUI("Copy: " + copyNode);
+							ProofTreeUI.debug("Copy: " + copyNode);
 						}
 					}
 				}

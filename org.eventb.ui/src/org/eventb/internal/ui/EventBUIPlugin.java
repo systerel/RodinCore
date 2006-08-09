@@ -26,6 +26,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
+import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
@@ -46,16 +47,23 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String GLOBAL_TRACE = PLUGIN_ID + "/debug";
 
-	private static final String EVENTBEDITOR_TRACE = PLUGIN_ID + "/debug/eventbeditor";
+	private static final String EVENTBEDITOR_TRACE = PLUGIN_ID
+			+ "/debug/eventbeditor";
 
-	private static final String PROJECTEXPLORER_TRACE = PLUGIN_ID + "/debug/projectexplorer";
+	private static final String PROJECTEXPLORER_TRACE = PLUGIN_ID
+			+ "/debug/projectexplorer";
 
-	private static final String OBLIGATIONEXPLORER_TRACE = PLUGIN_ID + "/debug/obligationexplorer";
-	
+	private static final String OBLIGATIONEXPLORER_TRACE = PLUGIN_ID
+			+ "/debug/obligationexplorer";
+
 	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui";
 
-	private static final String PROOFCONTROL_TRACE = PLUGIN_ID + "/debug/proofcontrol";
-	
+	private static final String PROOFCONTROL_TRACE = PLUGIN_ID
+			+ "/debug/proofcontrol";
+
+	private static final String PROOFTREEUI_TRACE = PLUGIN_ID
+			+ "/debug/prooftreeui";
+
 	/**
 	 * Default values for creating RODIN Elements
 	 */
@@ -104,7 +112,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		configureDebugOptions();
 	}
 
@@ -116,26 +124,30 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			String option = Platform.getDebugOption(GLOBAL_TRACE);
 			if (option != null)
 				UIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-	
+
 			option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
 			if (option != null)
 				EventBEditor.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			
+
 			option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
 			if (option != null)
 				ObligationExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-	
+
 			option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
 			if (option != null)
 				ProjectExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-	
+
 			option = Platform.getDebugOption(PROVERUI_TRACE);
 			if (option != null)
 				ProverUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			
+
 			option = Platform.getDebugOption(PROOFCONTROL_TRACE);
 			if (option != null)
 				ProofControl.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(PROOFTREEUI_TRACE);
+			if (option != null)
+				ProofTreeUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
