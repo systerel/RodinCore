@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.proofcontrol;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -73,6 +73,7 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
@@ -674,7 +675,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private void makeActions() {
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
 			public void run() {
-				ProverUIUtils.debugProverUI("Switch");
+				ProofControl.debug("Switch");
 			}
 		};
 		expertMode.setToolTipText("Expert mode switch");
@@ -732,17 +733,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 
-		if (this.getControl().isDisposed()) return;
+		if (scrolledForm.isDisposed()) return;
 		
 		display.syncExec(new Runnable() {
 			public void run() {
 				List<Object> information = delta.getInformation();
 
-				ProverUIUtils.debugProverUI("********** MESSAGE *********");
+				ProofControl.debug("********** MESSAGE *********");
 				for (Object info : information) {
-					ProverUIUtils.debugProverUI(info.toString());
+					ProofControl.debug(info.toString());
 				}
-				ProverUIUtils.debugProverUI("****************************");
+				ProofControl.debug("****************************");
 
 				int size = information.size();
 				if (size != 0)
@@ -768,7 +769,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					updateToolItems(newNode);
 				}
 				scrolledForm.reflow(true);
-
 			}
 		});
 

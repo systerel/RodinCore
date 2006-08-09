@@ -76,7 +76,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.ProofControl;
+import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.prover.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IRodinFile;

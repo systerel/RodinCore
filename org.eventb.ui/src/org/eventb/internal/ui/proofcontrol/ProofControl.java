@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.proofcontrol;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,6 +24,7 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * @author htson
@@ -43,6 +44,12 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 	// The default text when it is not available (depend on the current editor)
 	private String defaultText = "Proof Control is not available";
 
+	public static boolean DEBUG = false;
+	
+	public static void debug(String message) {
+		if (DEBUG) System.out.println(message);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

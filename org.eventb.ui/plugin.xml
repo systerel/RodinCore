@@ -14,7 +14,7 @@
             name="Obligation Explorer"/>
       <view
             category="org.eventb.ui"
-            class="org.eventb.internal.ui.prover.ProofControl"
+            class="org.eventb.internal.ui.proofcontrol.ProofControl"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofControl"
             name="Proof Control"/>

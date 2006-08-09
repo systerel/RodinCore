@@ -40,6 +40,8 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.pm.UserSupportManager;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
+import org.eventb.internal.ui.proofcontrol.IProofControlPage;
+import org.eventb.internal.ui.proofcontrol.ProofControlPage;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
