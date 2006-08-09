@@ -158,12 +158,6 @@
             toolbar="sequent"
             tooltip="Review goal with selected hypotheses"/>
       <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Normalise"
-            icon="icons/full/ctool16/nm_prover.gif"
-            id="org.eventb.ui.normalise"
-            toolbar="sequent"
-            tooltip="Normalise tactic"/>
-      <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Contradiction"
             icon="icons/full/ctool16/ct_prover.gif"
             id="org.eventb.ui.contradiction"
@@ -181,6 +175,18 @@
             id="org.eventb.ui.addHypothesis"
             toolbar="sequent"
             tooltip="Add hypothesis"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Normalise"
+            icon="icons/full/ctool16/broom_prover.gif"
+            id="org.eventb.ui.normalise"
+            toolbar="sequent"
+            tooltip="Normalise tactic"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
+            icon="icons/full/ctool16/lasoo_prover.gif"
+            id="org.eventb.ui.lasoo"
+            toolbar="sequent"
+            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Backtrack"
             icon="icons/full/ctool16/bk_prover.gif"
@@ -262,12 +268,6 @@
       <dropdown
             id="reviews"
             toolbar="sequent"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
-            icon="icons/full/ctool16/lasoo_prover.gif"
-            id="org.eventb.ui.lasoo"
-            toolbar="navigation"
-            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
