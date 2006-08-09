@@ -135,7 +135,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		body.setLayout(new ProofPageLayout());
 
-		// layout();
+		body.layout();
 	}
 
 	private class ProofPageLayout extends Layout {
