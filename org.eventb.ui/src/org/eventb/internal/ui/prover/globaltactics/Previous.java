@@ -37,7 +37,7 @@ public class Previous implements IGlobalTactic {
 	 */
 	public void apply(UserSupport userSupport, String input)
 			throws RodinDBException {
-		userSupport.prevUndischargedPO();
+		userSupport.prevUndischargedPO(false);
 	}
 
 }

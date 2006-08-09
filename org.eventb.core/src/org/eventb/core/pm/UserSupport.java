@@ -257,7 +257,7 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	public void prevUndischargedPO() throws RodinDBException {
+	public void prevUndischargedPO(boolean force) throws RodinDBException {
 		int index = proofStates.indexOf(currentPS);
 		for (int i = 1; i < proofStates.size(); i++) {
 			ProofState ps = proofStates.get((proofStates.size() + index - i)
@@ -269,7 +269,7 @@ public class UserSupport implements IElementChangedListener,
 		}
 		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
-		newDelta.setNewProofState(null);
+		if (force) newDelta.setNewProofState(null);
 		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
@@ -301,7 +301,6 @@ public class UserSupport implements IElementChangedListener,
 		if (currentPS.getCurrentNode() != pt) {
 			currentPS.setCurrentNode(pt);
 			ProofStateDelta newDelta = new ProofStateDelta(this);
-			newDelta.setNewProofState(null);
 			newDelta.setNewCurrentNode(pt);
 			fireProofStateDelta(newDelta);
 		}

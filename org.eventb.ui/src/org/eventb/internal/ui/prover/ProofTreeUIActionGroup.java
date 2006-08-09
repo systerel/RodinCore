@@ -161,7 +161,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			public void run() {
 				try {
 					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
-							.prevUndischargedPO();
+							.prevUndischargedPO(false);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
