@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,6 +24,7 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * @author htson

@@ -17,11 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -31,8 +26,6 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.pm.ProofState;
-import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 import org.eventb.core.prover.tactics.ITactic;
@@ -86,22 +79,22 @@ public class SearchHypothesesSection extends HypothesesSection {
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
 				editor.getUserSupport().applyTacticToHypotheses(t, selected);
-				TreeViewer viewer = editor.getProofTreeUI().getViewer();
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-				if (obj instanceof IProofTreeNode) {
-					IProofTreeNode proofTree = (IProofTreeNode) obj;
-					editor.getProofTreeUI().refresh(proofTree);
-					// Expand the node
-					viewer.expandToLevel(proofTree,
-							AbstractTreeViewer.ALL_LEVELS);
-					ProofState ps = editor.getUserSupport().getCurrentPO();
-					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-					if (pt != null)
-						editor.getProofTreeUI().getViewer().setSelection(
-								new StructuredSelection(pt));
-				}
+//				TreeViewer viewer = editor.getProofTreeUI().getViewer();
+//				ISelection selection = viewer.getSelection();
+//				Object obj = ((IStructuredSelection) selection)
+//						.getFirstElement();
+//				if (obj instanceof IProofTreeNode) {
+//					IProofTreeNode proofTree = (IProofTreeNode) obj;
+//					editor.getProofTreeUI().refresh(proofTree);
+//					// Expand the node
+//					viewer.expandToLevel(proofTree,
+//							AbstractTreeViewer.ALL_LEVELS);
+//					ProofState ps = editor.getUserSupport().getCurrentPO();
+//					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
+//					if (pt != null)
+//						editor.getProofTreeUI().getViewer().setSelection(
+//								new StructuredSelection(pt));
+//				}
 			}
 
 			else if (widget.equals(sl)) {

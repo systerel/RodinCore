@@ -42,6 +42,8 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
+import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
+import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 

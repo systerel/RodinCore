@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.prooftreeui;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -32,7 +32,7 @@
             name="Project Explorer"/>
       <view
             category="org.eventb.ui"
-            class="org.eventb.internal.ui.prover.ProofTreeUI"
+            class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofTreeUI"
             name="Proof Tree UI"/>

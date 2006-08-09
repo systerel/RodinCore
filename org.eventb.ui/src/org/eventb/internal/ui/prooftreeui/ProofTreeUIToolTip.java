@@ -1,4 +1,4 @@
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;

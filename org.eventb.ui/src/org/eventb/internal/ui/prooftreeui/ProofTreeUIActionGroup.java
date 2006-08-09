@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
