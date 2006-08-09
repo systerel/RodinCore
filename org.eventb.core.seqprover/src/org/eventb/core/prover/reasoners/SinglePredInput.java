@@ -24,7 +24,8 @@ public class SinglePredInput implements ReasonerInput{
 			error = "Type check failed for Predicate: "+predicate;
 			predicate = null;
 			return;
-		}		
+		}
+		error = null;
 	}
 	
 	public SinglePredInput(Predicate predicate){

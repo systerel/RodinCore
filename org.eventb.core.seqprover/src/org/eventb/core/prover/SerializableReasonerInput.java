@@ -22,7 +22,7 @@ public class SerializableReasonerInput implements ReasonerInput {
 	}
 	
 	public void putString(String key,String value){
-		properties.put(key,value);
+		if (value != null) properties.put(key,value);
 	}
 	
 	public String getString(String key){
@@ -30,7 +30,7 @@ public class SerializableReasonerInput implements ReasonerInput {
 	}
 	
 	public void putPredicate(String key,Predicate value){
-		predicates.put(key,value);
+		if (value != null) predicates.put(key,value);
 	}
 	
 	public Predicate getPredicate(String key){
@@ -38,7 +38,7 @@ public class SerializableReasonerInput implements ReasonerInput {
 	}
 
 	public void putExpression(String key,Expression value){
-		expressions.put(key,value);
+		if (value != null) expressions.put(key,value);
 	}
 	
 	public Expression getExpression(String key){

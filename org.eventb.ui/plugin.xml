@@ -529,12 +529,12 @@
             id="Remove Negation"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.AllD"
-            hint="Instantiate &quot;for all&quot; clause"
+            hint="Instantiate universally quantified variables"
             icon="icons/full/ctool16/allD_prover.gif"
             id="Forall Instantiation"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ExE"
-            hint="Instantiate &quot;there exists&quot; clause"
+            hint="Free existential variables"
             icon="icons/full/ctool16/exE_prover.gif"
             id="Exists Instantiation"/>
       <tactic

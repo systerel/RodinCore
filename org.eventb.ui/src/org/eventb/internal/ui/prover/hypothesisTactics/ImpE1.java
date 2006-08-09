@@ -9,12 +9,12 @@ import org.eventb.ui.prover.IHypothesisTactic;
 public class ImpE1 implements IHypothesisTactic {
 
 	public ITactic getTactic(IProofTreeNode node, Hypothesis hyp, String[] inputs) {
-		return Tactics.impD(hyp, false);
+		return Tactics.impE(hyp, false);
 				
 	}
 
 	public boolean isApplicable(IProofTreeNode node, Hypothesis hyp) {
-		return Tactics.impD_applicable(hyp);
+		return Tactics.impE_applicable(hyp);
 	}
 
 }

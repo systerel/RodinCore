@@ -9,11 +9,11 @@ import org.eventb.ui.prover.IHypothesisTactic;
 public class ExE implements IHypothesisTactic {
 
 	public ITactic getTactic(IProofTreeNode node, Hypothesis hyp, String[] inputs) {
-		return Tactics.exF(hyp);
+		return Tactics.exE(hyp);
 	}
 
 	public boolean isApplicable(IProofTreeNode node, Hypothesis hyp) {
-		return Tactics.exF_applicable(hyp);
+		return Tactics.exE_applicable(hyp);
 	}
 
 }

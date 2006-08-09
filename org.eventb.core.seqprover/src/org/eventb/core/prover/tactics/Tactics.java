@@ -10,9 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
@@ -33,6 +35,7 @@ import org.eventb.core.prover.reasoners.Hyp;
 import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
 import org.eventb.core.prover.reasoners.MngHyp;
+import org.eventb.core.prover.reasoners.MultipleExprInput;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
@@ -93,8 +96,24 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new Review(),new Review.Input(reviewerConfidence));
 	}
 	
-	public static ITactic lemma(String lemma,ITypeEnvironment typeEnv) {
-		return BasicTactics.reasonerTac(new Cut(),new SinglePredInput(lemma,typeEnv));
+//	public static ITactic lemma1(String lemma,ITypeEnvironment typeEnv) {
+//		return BasicTactics.reasonerTac(new Cut(),new SinglePredInput(lemma,typeEnv));
+//	}
+
+	public static ITactic lemma(final String lemma) {
+		
+		return new ITactic(){
+			
+			public Object apply(IProofTreeNode pt) {
+				return (BasicTactics.reasonerTac(
+						new Cut(),
+						new SinglePredInput(
+								lemma,
+								pt.getSequent().typeEnvironment())))
+								.apply(pt);
+			}
+			
+		};
 	}
 	
 	public static ITactic norm(){
@@ -103,29 +122,68 @@ public class Tactics {
 		return repeat(onAllPending(T));
 	}
 	
-	public static ITactic doCase(String trueCase,ITypeEnvironment typeEnv){	
+	public static ITactic doCase1(String trueCase,ITypeEnvironment typeEnv){	
 		return BasicTactics.reasonerTac(new DoCase(),new SinglePredInput(trueCase,typeEnv));
 	}
+	
+	public static ITactic doCase(final String trueCase) {
+		
+		return new ITactic(){
+			
+			public Object apply(IProofTreeNode pt) {
+				return (BasicTactics.reasonerTac(
+						new DoCase(),
+						new SinglePredInput(
+								trueCase,
+								pt.getSequent().typeEnvironment())))
+								.apply(pt);
+			}
+			
+		};
+	}
+	
 	
 	
 	public static ITactic contradictGoal(){
 		return BasicTactics.reasonerTac(new Contr(),new Contr.Input());
 	}
 	
+//	public static ITactic lasoo1(IProverSequent seq){
+//		
+//		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+//		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
+//		for (Hypothesis hyp : seq.selectedHypotheses()){
+//			freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+//		}
+//		
+//		Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
+//		hypsToSelect.removeAll(seq.selectedHypotheses());
+//		if (hypsToSelect.isEmpty())
+//			return BasicTactics.failTac("No more Hyps found");
+//
+//		return mngHyp(ActionType.SELECT,hypsToSelect);
+//	}
+	
 	public static ITactic lasoo(IProverSequent seq){
 		
-		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
-		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
-		for (Hypothesis hyp : seq.selectedHypotheses()){
-			freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
-		}
-		
-		Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
-		hypsToSelect.removeAll(seq.selectedHypotheses());
-		if (hypsToSelect.isEmpty())
-			return BasicTactics.failTac("No more Hyps found");
+		return new ITactic(){
 
-		return mngHyp(ActionType.SELECT,hypsToSelect);
+			public Object apply(IProofTreeNode pt) {
+				IProverSequent seq = pt.getSequent();
+				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+				freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
+				for (Hypothesis hyp : seq.selectedHypotheses()){
+					freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+				}
+				
+				Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
+				hypsToSelect.removeAll(seq.selectedHypotheses());
+				if (hypsToSelect.isEmpty())
+					return "No more hypotheses found";
+				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt);
+			}
+			
+		};
 	}
 	
 
@@ -156,8 +214,27 @@ public class Tactics {
 		return Lib.isUnivQuant(goal);
 	}
 	
-	public static ITactic exI(String... witnesses) {
-		return BasicTactics.reasonerTac(new ExI(),new ExI.Input(witnesses));
+//	public static ITactic exI(String... witnesses) {
+//		return BasicTactics.reasonerTac(new ExI(),new ExI.Input(witnesses));
+//	}
+	
+	public static ITactic exI(final String... witnesses) {
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode pt) {
+				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
+				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pt.getSequent().goal());
+				return (
+						BasicTactics.reasonerTac(
+								new ExI(),
+								new MultipleExprInput(
+										witnesses,
+										boundIdentDecls,
+										typeEnv)
+								)).apply(pt);
+			}
+			
+		};
 	}
 	
 	public static boolean exI_applicable(Predicate goal){
@@ -183,12 +260,12 @@ public class Tactics {
 	
 	// Tactics applicable on a hypothesis
 	
-	// TODO : rename to allD , change order of input in one of the two places
-	public static ITactic allF(Hypothesis univHyp, String... instantiations){
+	// TODO : change order of input in one of the two places
+	public static ITactic allD(Hypothesis univHyp, String... instantiations){
 		return BasicTactics.reasonerTac(new AllD(),new AllD.Input(instantiations,univHyp));
 	}
 	
-	public static boolean allF_applicable(Hypothesis hyp){
+	public static boolean allD_applicable(Hypothesis hyp){
 		return Lib.isUnivQuant(hyp.getPredicate());
 	}
 	
@@ -202,12 +279,12 @@ public class Tactics {
 	}
 	
 	
-	// TODO : rename to impE.. remove use contrapositive
-	public static ITactic impD(Hypothesis impHyp, boolean useContrapositive){
+	// TODO : remove use contrapositive
+	public static ITactic impE(Hypothesis impHyp, boolean useContrapositive){
 		return BasicTactics.reasonerTac(new ImpE(),new SinglePredInput(impHyp));
 	}
 	
-	public static boolean impD_applicable(Hypothesis hyp){
+	public static boolean impE_applicable(Hypothesis hyp){
 		return Lib.isImp(hyp.getPredicate());
 	}
 	
@@ -229,11 +306,11 @@ public class Tactics {
 	}
 	
 	// TODO : rename to exE
-	public static ITactic exF(Hypothesis exHyp){
+	public static ITactic exE(Hypothesis exHyp){
 		return BasicTactics.reasonerTac(new ExE(),new SinglePredInput(exHyp));
 	}
 	
-	public static boolean exF_applicable(Hypothesis hyp){
+	public static boolean exE_applicable(Hypothesis hyp){
 		return Lib.isExQuant(hyp.getPredicate());
 	}
 	
