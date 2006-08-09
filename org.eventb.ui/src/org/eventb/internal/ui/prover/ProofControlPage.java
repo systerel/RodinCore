@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -66,6 +67,7 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.tactics.Tactics;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBFormText;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
@@ -89,7 +91,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	boolean share;
 
-	// private Action switchLayout;
+	private Action expertMode;
 
 	private IEventBInputText textInput;
 
@@ -596,7 +598,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the string (information from the UserSupport).
 	 */
 	private void setFormTextInformation(String information) {
-		if (formTextInformation.getFormText().isDisposed()) return;
+		if (formTextInformation.getFormText().isDisposed())
+			return;
 		formTextInformation.getFormText().setText(information, false, false);
 	}
 
@@ -632,8 +635,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
-		// manager.add(switchLayout);
-		// manager.add(new Separator());
+		manager.add(expertMode);
+		manager.add(new Separator());
 	}
 
 	/**
@@ -644,7 +647,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	private void fillContextMenu(IMenuManager manager) {
-		// manager.add(switchLayout);
+		manager.add(expertMode);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -657,43 +660,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the toolbar manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		// manager.add(switchLayout);
+		if (UserSupport.isExpertMode()) {
+			expertMode.setChecked(true);
+		} else {
+			expertMode.setChecked(false);
+		}
+		manager.add(expertMode);
 	}
 
 	/**
 	 * Creat the actions used in this page.
 	 */
 	private void makeActions() {
-		// switchLayout = new Action() {
-		// public void run() {
-		// isHorizontal = isHorizontal ? false : true;
-		// if (isHorizontal) {
-		// GridLayout gl = new GridLayout();
-		// gl.numColumns = 2;
-		// scrolledForm.getBody().setLayout(gl);
-		// gl = new GridLayout();
-		// gl.numColumns = 7; // Total number of buttons?
-		// gl.makeColumnsEqualWidth = true;
-		// buttonBar.setLayout(gl);
-		// } else {
-		// GridLayout gl = new GridLayout();
-		// gl.numColumns = 1;
-		// scrolledForm.getBody().setLayout(gl);
-		// gl = new GridLayout();
-		// gl.numColumns = 9; // TODO Should be the number of buttons
-		// gl.makeColumnsEqualWidth = true;
-		// buttonBar.setLayout(gl);
-		// }
-		// scrolledForm.reflow(true);
-		// }
-		// };
-		// switchLayout.setText("Switch Layout");
-		// switchLayout
-		// .setToolTipText("Switch between horizontal and vertical layout of the
-		// buttons");
-		// switchLayout.setImageDescriptor(PlatformUI.getWorkbench()
-		// .getSharedImages().getImageDescriptor(
-		// ISharedImages.IMG_OBJS_INFO_TSK));
+		expertMode = new Action("Expert mode switch", SWT.CHECK) {
+			public void run() {
+				ProverUIUtils.debugProverUI("Switch");
+			}
+		};
+		expertMode.setToolTipText("Expert mode switch");
+
+		expertMode.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_EXPERT_MODE_PATH));
 
 	}
 
@@ -745,6 +732,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 
+		if (this.getControl().isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				List<Object> information = delta.getInformation();
@@ -764,14 +753,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				ProofState ps = delta.getProofState();
 				IProofTreeNode node = null;
 				if (delta.isNewProofState()) {
-					if (ps != null) node = ps.getCurrentNode();
-					else updateToolItems(null);
+					if (ps != null)
+						node = ps.getCurrentNode();
+					else
+						updateToolItems(null);
 				} else if (delta.isDeleted()) {
 					// Do nothing.
 				} else {
 					node = delta.getNewProofTreeNode();
 				}
-				
+
 				if (node != null) {
 					final IProofTreeNode newNode = node;
 					updateToolItems(newNode);

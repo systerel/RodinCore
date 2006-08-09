@@ -296,7 +296,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		ScrolledForm form = this.getManagedForm().getForm();
 		Rectangle original = form.getBody().getBounds();
-		ProverUIUtils.debugProverUI("Original bound " + original);
+//		ProverUIUtils.debugProverUI("Original bound " + original);
 
 		// -1 in totalHeight to avoid the vertical scrollbar in the beginning???
 		int totalHeight = form.getClientArea().height - original.y - 1;
@@ -307,16 +307,16 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 		if (horizontal != null && horizontal.isVisible()) {
 			totalHeight += horizontal.getSize().y;
-			ProverUIUtils.debugProverUI("Horizontal " + horizontal.getSize());
+//			ProverUIUtils.debugProverUI("Horizontal " + horizontal.getSize());
 		}
 
 		if (vertical != null && vertical.isVisible()) {
 			totalWidth += vertical.getSize().x;
-			ProverUIUtils.debugProverUI("Vertical " + vertical.getSize());
+//			ProverUIUtils.debugProverUI("Vertical " + vertical.getSize());
 		}
 
-		ProverUIUtils.debugProverUI("Total Height: " + totalHeight);
-		ProverUIUtils.debugProverUI("Total Width: " + totalWidth);
+//		ProverUIUtils.debugProverUI("Total Height: " + totalHeight);
+//		ProverUIUtils.debugProverUI("Total Width: " + totalWidth);
 
 		weights[1] = searchedSection.getSection().computeSize(SWT.DEFAULT,
 				SWT.DEFAULT).y;
@@ -329,10 +329,10 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		weights[4] = goalSection.getSection().computeSize(SWT.DEFAULT,
 				SWT.DEFAULT).y;
 
-		for (int i = 0; i < 5; i++) {
-			ProverUIUtils.debugProverUI("Before Height (" + i + "): "
-					+ weights[i]);
-		}
+//		for (int i = 0; i < 5; i++) {
+//			ProverUIUtils.debugProverUI("Before Height (" + i + "): "
+//					+ weights[i]);
+//		}
 
 		if (totalHeight < 1) { // Not initialised yet
 			weights[0] = 0;
@@ -348,8 +348,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 			if (sum < totalHeight) {
 				weights[0] = totalHeight - sum;
-				ProverUIUtils.debugProverUI("Client area: "
-						+ sashForm.getClientArea());
+//				ProverUIUtils.debugProverUI("Client area: "
+//						+ sashForm.getClientArea());
 				Rectangle rect = sashForm.computeTrim(0, 0, totalWidth,
 						totalHeight);
 				sashForm.setBounds(rect);
@@ -364,12 +364,12 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 						totalHeight);
 				sashForm.setBounds(rect);
 
-				ProverUIUtils.debugProverUI("Client area: "
-						+ sashForm.getClientArea());
+//				ProverUIUtils.debugProverUI("Client area: "
+//						+ sashForm.getClientArea());
 				sashForm.setWeights(weights);
 
-				ProverUIUtils.debugProverUI("form Client area "
-						+ form.getClientArea());
+//				ProverUIUtils.debugProverUI("form Client area "
+//						+ form.getClientArea());
 				form.reflow(true);
 			}
 		}

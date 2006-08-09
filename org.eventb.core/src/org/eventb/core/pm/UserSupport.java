@@ -41,6 +41,8 @@ public class UserSupport implements IElementChangedListener,
 
 	private boolean fireDelta;
 
+	private static boolean expertMode;
+
 	/*
 	 * The delta for the current thread.
 	 */
@@ -60,6 +62,8 @@ public class UserSupport implements IElementChangedListener,
 		proofStates = new LinkedList<ProofState>();
 		delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
 		// outOfDate = false;
+		// TODO Set expertMode from the Preferences?
+		expertMode = false;
 	}
 
 	IProofStateDelta getDelta() {
@@ -147,7 +151,7 @@ public class UserSupport implements IElementChangedListener,
 				mergedDelta.setNewProofState(oldProofState);
 				return mergedDelta;
 			} else {
-			
+
 				// Proof Tree Delta
 				IProofTreeDelta newProofTreeDelta = newDelta
 						.getProofTreeDelta();
@@ -252,7 +256,8 @@ public class UserSupport implements IElementChangedListener,
 
 		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
-		if (force) newDelta.setNewProofState(null);
+		if (force)
+			newDelta.setNewProofState(null);
 		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
@@ -269,7 +274,8 @@ public class UserSupport implements IElementChangedListener,
 		}
 		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
-		if (force) newDelta.setNewProofState(null);
+		if (force)
+			newDelta.setNewProofState(null);
 		newDelta.addInformation(info);
 		fireProofStateDelta(newDelta);
 	}
@@ -344,8 +350,13 @@ public class UserSupport implements IElementChangedListener,
 	protected void internalApplyTactic(ITactic t) {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		Object info = t.apply(currentNode);
-		if (!t.equals(Tactics.prune()))
-			Tactics.postProcessBeginner().apply(currentNode);
+		if (!t.equals(Tactics.prune())) {
+			if (expertMode) {
+				Tactics.postProcessExpert().apply(currentNode);
+			} else {
+				Tactics.postProcessBeginner().apply(currentNode);
+			}
+		}
 		if (info == null) {
 			info = "Tactic applied successfully";
 			currentPS.setDirty(true);
@@ -689,4 +700,11 @@ public class UserSupport implements IElementChangedListener,
 			currentPS.getProofTree().removeChangeListener(this);
 	}
 
+	public static boolean isExpertMode() {
+		return expertMode;
+	}
+
+	public static void setExpertMode(boolean mode) {
+		expertMode = mode;
+	}
 }
