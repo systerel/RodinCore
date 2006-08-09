@@ -373,6 +373,7 @@ public class Tactics {
 	}
 	
 	public static ITactic postProcessBeginner() {
+		System.out.println("* Beginner Mode *");
 		return onAllPending(
 				compose(
 						tautology(),
@@ -383,9 +384,8 @@ public class Tactics {
 	}
 	
 	public static ITactic postProcessExpert() {
-		return onAllPending(
-				norm()
-						);
+		System.out.println("* Expert Mode *");
+		return norm();
 				
 	}
 	
