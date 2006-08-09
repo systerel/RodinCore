@@ -264,9 +264,10 @@
             toolbar="sequent"/>
       <tactic
             class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
-            icon="icons/full/ctool16/sh_prover.gif"
+            icon="icons/full/ctool16/lasoo_prover.gif"
             id="org.eventb.ui.lasoo"
-            tooltip="Lasoo"/>
+            toolbar="navigation"
+            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
