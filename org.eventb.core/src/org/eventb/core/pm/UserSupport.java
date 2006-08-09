@@ -365,6 +365,11 @@ public class UserSupport implements IElementChangedListener,
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
 		}
+		else {
+			ProofStateDelta newDelta = new ProofStateDelta(this);
+			newDelta.addInformation(info);
+			fireProofStateDelta(newDelta);
+		}
 	}
 
 	protected void internalPrune() {
@@ -377,6 +382,11 @@ public class UserSupport implements IElementChangedListener,
 			currentPS.setDirty(true);
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.setNewCurrentNode(currentNode);
+			newDelta.addInformation(info);
+			fireProofStateDelta(newDelta);
+		}
+		else {
+			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
 		}
