@@ -237,7 +237,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private static final int dropdownSize = 20;
 
 	private ToolItem createToolItem(CoolItem coolItem, String text,
-			Image image, int style) {
+			Image image, int style, String toolTipText) {
 		ToolBar toolBar = (ToolBar) coolItem.getControl();
 		ToolItem item = new ToolItem(toolBar, style);
 		if (image != null)
@@ -245,6 +245,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		if (text != null)
 			item.setText(text);
 
+		item.setToolTipText(toolTipText);
 		toolBar.pack();
 		Point size = toolBar.getSize();
 		Point preferred = coolItem.computeSize(size.x + dropdownCount
@@ -315,7 +316,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				if (toolBarID.equals(toolbar.getID())) {
 					dropdownCount++;
 					ToolItem item = createToolItem(coolItem, null, null,
-							SWT.DROP_DOWN);
+							SWT.DROP_DOWN, null);
 					GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 							item, dropdown.getID()) {
 						@Override
@@ -355,7 +356,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 						ToolItem item = createToolItem(coolItem, null,
 								EventBUIPlugin.getDefault().getImageRegistry()
-										.get(tactic.getImage()), SWT.PUSH);
+										.get(tactic.getImage()), SWT.PUSH, tactic.getTips());
 						IGlobalTactic globalTactic = tactic.getTactic();
 
 						final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
@@ -406,7 +407,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 			CoolItem coolItem = extraCoolItem;
 
-			ToolItem item = createToolItem(coolItem, null, null, SWT.DROP_DOWN);
+			ToolItem item = createToolItem(coolItem, null, null, SWT.DROP_DOWN, null);
 			GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 					item, dropdown.getID()) {
 				@Override
@@ -442,7 +443,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				else {
 					ToolItem item = createToolItem(extraCoolItem, null,
 							EventBUIPlugin.getDefault().getImageRegistry().get(
-									tactic.getImage()), SWT.PUSH);
+									tactic.getImage()), SWT.PUSH, tactic.getTips());
 					IGlobalTactic globalTactic = tactic.getTactic();
 
 					final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
@@ -487,7 +488,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			} else {
 				ToolItem item = createToolItem(extraCoolItem, null,
 						EventBUIPlugin.getDefault().getImageRegistry().get(
-								tactic.getImage()), SWT.PUSH);
+								tactic.getImage()), SWT.PUSH, tactic.getTips());
 				IGlobalTactic globalTactic = tactic.getTactic();
 
 				final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
