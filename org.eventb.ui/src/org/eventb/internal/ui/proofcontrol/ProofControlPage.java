@@ -675,7 +675,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private void makeActions() {
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
 			public void run() {
-				ProofControl.debug("Switch");
+				if (expertMode.isChecked())
+					UserSupport.setExpertMode(true);
+				else
+					UserSupport.setExpertMode(false);
 			}
 		};
 		expertMode.setToolTipText("Expert mode switch");
@@ -733,8 +736,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 
-		if (scrolledForm.isDisposed()) return;
-		
+		if (scrolledForm.isDisposed())
+			return;
+
 		display.syncExec(new Runnable() {
 			public void run() {
 				List<Object> information = delta.getInformation();

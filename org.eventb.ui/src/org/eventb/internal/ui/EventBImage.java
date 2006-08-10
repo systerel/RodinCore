@@ -129,7 +129,7 @@ public class EventBImage {
 
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
 
-	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/ep_prover.gif";
+	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
 
 	private static Collection<Image> images = new HashSet<Image>();
 	
