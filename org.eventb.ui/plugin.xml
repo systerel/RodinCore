@@ -20,7 +20,7 @@
             name="Proof Control"/>
       <view
             category="org.eventb.ui"
-            class="org.eventb.internal.ui.prover.ProofInformation"
+            class="org.eventb.internal.ui.proofinformation.ProofInformation"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofInformation"
             name="Proof Information"/>

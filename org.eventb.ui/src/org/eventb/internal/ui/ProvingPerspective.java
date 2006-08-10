@@ -18,8 +18,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
+import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
-import org.eventb.internal.ui.prover.ProofInformation;
 
 /**
  * @author htson

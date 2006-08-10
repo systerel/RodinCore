@@ -26,6 +26,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
+import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.osgi.framework.BundleContext;
@@ -63,6 +64,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String PROOFTREEUI_TRACE = PLUGIN_ID
 			+ "/debug/prooftreeui";
+
+	private static final String PROOFINFORMATION_TRACE = PLUGIN_ID
+			+ "/debug/proofinformation";
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -148,6 +152,10 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(PROOFTREEUI_TRACE);
 			if (option != null)
 				ProofTreeUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(PROOFINFORMATION_TRACE);
+			if (option != null)
+				ProofInformation.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

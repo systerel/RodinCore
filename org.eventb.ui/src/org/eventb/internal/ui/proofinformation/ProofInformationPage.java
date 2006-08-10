@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.proofinformation;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -42,6 +42,7 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -148,11 +149,11 @@ public class ProofInformationPage extends Page implements
 						"org.eventb.core.guard");
 				id = id.replaceAll("org.eventb.core.scEvent",
 						"org.eventb.core.event");
-				// UIUtils.debug("ID unchecked model " + id);
+				ProofInformation.debug("ID unchecked model " + id);
 
 				IRodinElement element = RodinCore.create(id);
-				// ProverUIUtils.debugProverUI("id: " + id);
-				// ProverUIUtils.debugProverUI("Find: " + element);
+				ProofInformation.debug("id: " + id);
+				ProofInformation.debug("Find: " + element);
 				if (element instanceof ITheorem) {
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"

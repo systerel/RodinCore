@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.proofinformation;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -24,6 +24,7 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * @author htson
@@ -42,6 +43,13 @@ public class ProofInformation extends PageBookView implements
 
 	// The default text when not available (depend on the current editor)
 	private String defaultText = "Proof Information is not available";
+
+	public static boolean DEBUG = false;
+
+	public static void debug(String message) {
+		if (DEBUG)
+			System.out.println("***ProofInformation *** " + message);
+	}
 
 	/*
 	 * (non-Javadoc)
