@@ -15,6 +15,9 @@ package org.eventb.internal.ui;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
@@ -48,8 +51,11 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
+import org.eventb.internal.ui.eventbeditor.NewEnumeratedSetInputDialog;
 import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
@@ -59,6 +65,7 @@ import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -122,8 +129,6 @@ public class UIUtils {
 		if (ObligationExplorer.DEBUG)
 			System.out.println(message);
 	}
-
-
 
 	/**
 	 * Getting the image corresponding to an object.
@@ -515,9 +520,6 @@ public class UIUtils {
 		}
 	}
 
-
-
-
 	/**
 	 * Utility method to create a event with its local variables, guards and
 	 * actions using a modal dialog.
@@ -600,6 +602,105 @@ public class UIUtils {
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Utility method to create new carrier sets using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the new carrier sets will be created in
+	 */
+	public static void newEnumeratedSet(final EventBEditor editor,
+			final IRodinFile rodinFile) {
+
+		try {
+			int counter = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE).length;
+			final NewEnumeratedSetInputDialog dialog = new NewEnumeratedSetInputDialog(
+					Display.getCurrent().getActiveShell(), "New Enumerated Set",
+					"set" + (counter + 1));
+
+			dialog.open();
+			final String name = dialog.getName();
+			if (name == null)
+				return;
+
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					Collection<String> elements = dialog.getElements();
+
+					IInternalElement set = rodinFile.createInternalElement(
+							ICarrierSet.ELEMENT_TYPE, name, null, null);
+					editor.addNewElement(set);
+
+					if (elements.size() == 0) return;
+
+					String thmName = getFreeTheoremName(editor);
+					IInternalElement newThm = rodinFile.createInternalElement(
+							ITheorem.ELEMENT_TYPE, thmName, null, null);
+					String thmContent = name + " = {";
+
+					int counter = 0;
+					for (String element : elements) {
+						IInternalElement cst = rodinFile.createInternalElement(
+								IConstant.ELEMENT_TYPE, element, null, null);
+						editor.addNewElement(cst);
+						thmName = getFreeTheoremName(editor);
+						IInternalElement thm = rodinFile.createInternalElement(
+								ITheorem.ELEMENT_TYPE, thmName, null, null);
+						thm.setContents(element + " \u2208 " + name);
+						thmContent += element;
+						counter++;
+						if (counter != elements.size())
+							thmContent += ", ";
+					}
+					thmContent += "}";
+					newThm.setContents(thmContent);
+
+					counter = 0;
+					String[] elementsArray = elements.toArray(new String[elements
+							.size()]);
+					for (String element : elements) {
+						counter++;
+						for (int i = counter; i < elements.size(); i++) {
+							String element2 = elementsArray[i];
+							thmName = getFreeTheoremName(editor);
+							IInternalElement thm = rodinFile.createInternalElement(
+									ITheorem.ELEMENT_TYPE, thmName, null, null);
+							thm.setContents(element + " \u2260 " + element2);
+						}
+					}
+
+				}
+
+			}, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static String getFreeTheoremName(EventBEditor editor)
+			throws RodinDBException {
+		String thmPrefix = EventBEditorUtils.getPrefix(editor,
+				PrefixThmName.QUALIFIED_NAME, PrefixThmName.DEFAULT_PREFIX);
+		IRodinFile rodinFile = editor.getRodinInput();
+		IRodinElement[] thms = rodinFile
+				.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+
+		int i;
+		for (i = 1; i <= thms.length; i++) {
+			IInternalElement element = rodinFile.getInternalElement(
+					ITheorem.ELEMENT_TYPE, thmPrefix + i);
+			if (!element.exists()) {
+				break;
+			}
+		}
+		UIUtils.debugEventBEditor("Theorem name: " + thmPrefix + i);
+		return (thmPrefix + i);
 	}
 
 	/**

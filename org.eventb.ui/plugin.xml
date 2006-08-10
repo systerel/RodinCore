@@ -371,6 +371,16 @@
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="Create new carrier sets for the context"/>
          <action
+               actionID="org.eventb.ui.actions.newEnumeratedSet"
+               class="org.eventb.internal.ui.eventbeditor.actions.NewEnumeratedSet"
+               icon="icons/full/ctool16/newenuset_edit.gif"
+               id="org.eventb.ui.actions.newcarriersets"
+               label="New Enumerated Set"
+               menubarPath="org.eventb.ui.eventBMenu/New"
+               style="push"
+               toolbarPath="org.eventb.ui.eventBEditor"
+               tooltip="Create a new enumerated set for the context"/>
+         <action
                actionID="org.eventb.ui.actions.newConstants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewConstants"
                icon="icons/full/ctool16/newcst_edit.gif"
