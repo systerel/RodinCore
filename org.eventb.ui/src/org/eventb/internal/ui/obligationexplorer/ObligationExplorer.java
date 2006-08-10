@@ -808,9 +808,11 @@ public class ObligationExplorer extends ViewPart implements
 				viewer.refresh(userSupport.getInput(), true);
 				column.pack();
 				if (delta.isNewProofState()) {
-					IPRSequent prSequent = ps.getPRSequent();
-					if (prSequent != null) externalSetSelection(prSequent);
-					else { // Empty selection
+
+					if (ps != null) {
+						IPRSequent prSequent = ps.getPRSequent();
+						externalSetSelection(prSequent);
+					} else { // Empty selection
 						clearSelection();
 					}
 				} else if (delta.isDeleted()) {
@@ -842,7 +844,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	private void clearSelection() {
 		viewer.getControl().setRedraw(false);
-		viewer.setSelection(new StructuredSelection()); 
+		viewer.setSelection(new StructuredSelection());
 		viewer.getControl().setRedraw(true);
 	}
 
