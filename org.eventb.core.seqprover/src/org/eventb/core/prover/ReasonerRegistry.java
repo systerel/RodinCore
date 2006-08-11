@@ -2,23 +2,18 @@ package org.eventb.core.prover;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
 import org.eventb.core.prover.reasoners.ConjE;
 import org.eventb.core.prover.reasoners.ConjI;
 import org.eventb.core.prover.reasoners.Contr;
-import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
@@ -34,7 +29,6 @@ import org.eventb.core.prover.reasoners.MngHyp;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
-import org.eventb.core.prover.reasoners.TrueGoal;
 import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
@@ -47,8 +41,8 @@ public class ReasonerRegistry {
 		{
 				// Add new reasoners here.
 				new Hyp(),
-				new TrueGoal(),
-				new FalseHyp(),
+//				new TrueGoal(),
+//				new FalseHyp(),
 				new ConjI(),
 				new Cut(),
 				new DoCase(),
