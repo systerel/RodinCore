@@ -55,7 +55,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.eventbeditor.NewEnumeratedSetInputDialog;
 import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
@@ -101,7 +101,7 @@ public class UIUtils {
 	 */
 	public static void debugEventBEditor(String message) {
 		if (EventBEditor.DEBUG)
-			System.out.println(message);
+			System.out.println("*** EventBEditor *** " + message);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class UIUtils {
 	 */
 	public static void debugProjectExplorer(String message) {
 		if (ProjectExplorer.DEBUG)
-			System.out.println(message);
+			System.out.println("*** Project Explorer *** " + message);
 	}
 
 	/**
@@ -638,27 +638,27 @@ public class UIUtils {
 
 					if (elements.size() == 0) return;
 
-					String thmName = getFreeTheoremName(editor);
-					IInternalElement newThm = rodinFile.createInternalElement(
-							ITheorem.ELEMENT_TYPE, thmName, null, null);
-					String thmContent = name + " = {";
+					String axmName = getFreeAxiomName(editor);
+					IInternalElement newAxm = rodinFile.createInternalElement(
+							IAxiom.ELEMENT_TYPE, axmName, null, null);
+					String axmContent = name + " = {";
 
 					int counter = 0;
 					for (String element : elements) {
 						IInternalElement cst = rodinFile.createInternalElement(
 								IConstant.ELEMENT_TYPE, element, null, null);
 						editor.addNewElement(cst);
-						thmName = getFreeTheoremName(editor);
-						IInternalElement thm = rodinFile.createInternalElement(
-								ITheorem.ELEMENT_TYPE, thmName, null, null);
-						thm.setContents(element + " \u2208 " + name);
-						thmContent += element;
+						axmName = getFreeAxiomName(editor);
+						IInternalElement axm = rodinFile.createInternalElement(
+								IAxiom.ELEMENT_TYPE, axmName, null, null);
+						axm.setContents(element + " \u2208 " + name);
+						axmContent += element;
 						counter++;
 						if (counter != elements.size())
-							thmContent += ", ";
+							axmContent += ", ";
 					}
-					thmContent += "}";
-					newThm.setContents(thmContent);
+					axmContent += "}";
+					newAxm.setContents(axmContent);
 
 					counter = 0;
 					String[] elementsArray = elements.toArray(new String[elements
@@ -667,10 +667,10 @@ public class UIUtils {
 						counter++;
 						for (int i = counter; i < elements.size(); i++) {
 							String element2 = elementsArray[i];
-							thmName = getFreeTheoremName(editor);
-							IInternalElement thm = rodinFile.createInternalElement(
-									ITheorem.ELEMENT_TYPE, thmName, null, null);
-							thm.setContents(element + " \u2260 " + element2);
+							axmName = getFreeAxiomName(editor);
+							IInternalElement axm = rodinFile.createInternalElement(
+									IAxiom.ELEMENT_TYPE, axmName, null, null);
+							axm.setContents(element + " \u2260 " + element2);
 						}
 					}
 
@@ -683,24 +683,24 @@ public class UIUtils {
 		}
 	}
 
-	private static String getFreeTheoremName(EventBEditor editor)
+	private static String getFreeAxiomName(EventBEditor editor)
 			throws RodinDBException {
-		String thmPrefix = EventBEditorUtils.getPrefix(editor,
-				PrefixThmName.QUALIFIED_NAME, PrefixThmName.DEFAULT_PREFIX);
+		String axmPrefix = EventBEditorUtils.getPrefix(editor,
+				PrefixAxmName.QUALIFIED_NAME, PrefixAxmName.DEFAULT_PREFIX);
 		IRodinFile rodinFile = editor.getRodinInput();
-		IRodinElement[] thms = rodinFile
-				.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+		IRodinElement[] axms = rodinFile
+				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 
 		int i;
-		for (i = 1; i <= thms.length; i++) {
+		for (i = 1; i <= axms.length; i++) {
 			IInternalElement element = rodinFile.getInternalElement(
-					ITheorem.ELEMENT_TYPE, thmPrefix + i);
+					IAxiom.ELEMENT_TYPE, axmPrefix + i);
 			if (!element.exists()) {
 				break;
 			}
 		}
-		UIUtils.debugEventBEditor("Theorem name: " + thmPrefix + i);
-		return (thmPrefix + i);
+//		UIUtils.debugEventBEditor("Theorem name: " + axmPrefix + i);
+		return (axmPrefix + i);
 	}
 
 	/**
