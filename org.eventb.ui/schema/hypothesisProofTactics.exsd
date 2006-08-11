@@ -72,7 +72,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IHypothesisTactic"/>
                </appInfo>
             </annotation>
          </attribute>
