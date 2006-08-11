@@ -479,21 +479,21 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			}
 		});
 	}
-
-	private void updateUserSupport() {		
-		MessageDialog
-				.openInformation(this.getActivePageInstance().getSite()
-						.getShell(), "Out of Date",
-						"The Proof Obligation is Out of Date and need to be reloeaded.");
-		try {
-			doSave(null);
-			UserSupportManager.setInput(userSupport, this.getRodinInput());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return;
-
-	}
+//
+//	private void updateUserSupport() {		
+//		MessageDialog
+//				.openInformation(this.getActivePageInstance().getSite()
+//						.getShell(), "Out of Date",
+//						"The Proof Obligation is Out of Date and need to be reloeaded.");
+//		try {
+//			doSave(null);
+//			UserSupportManager.setInput(userSupport, this.getRodinInput());
+//		} catch (RodinDBException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return;
+//
+//	}
 
 }
