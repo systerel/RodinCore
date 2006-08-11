@@ -396,12 +396,6 @@
             toolbar="sequent"
             tooltip="Review goal with selected hypotheses"/>
       <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Contradiction"
-            icon="icons/full/ctool16/ct_prover.gif"
-            id="org.eventb.ui.contradiction"
-            toolbar="sequent"
-            tooltip="Contradiction"/>
-      <tactic
             class="org.eventb.internal.ui.prover.globaltactics.DoCase"
             icon="icons/full/ctool16/dc_prover.gif"
             id="org.eventb.ui.doCase"
