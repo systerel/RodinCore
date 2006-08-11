@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -17,7 +18,7 @@ import org.eventb.core.prover.reasoners.AllI;
 import org.eventb.core.prover.reasoners.ConjE;
 import org.eventb.core.prover.reasoners.ConjI;
 import org.eventb.core.prover.reasoners.Contr;
-import org.eventb.core.prover.reasoners.Contradiction;
+import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
@@ -33,7 +34,7 @@ import org.eventb.core.prover.reasoners.MngHyp;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
-import org.eventb.core.prover.reasoners.Tautology;
+import org.eventb.core.prover.reasoners.TrueGoal;
 import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
@@ -46,8 +47,8 @@ public class ReasonerRegistry {
 		{
 				// Add new reasoners here.
 				new Hyp(),
-				new Tautology(),
-				new Contradiction(),
+				new TrueGoal(),
+				new FalseHyp(),
 				new ConjI(),
 				new Cut(),
 				new DoCase(),
@@ -124,5 +125,10 @@ public class ReasonerRegistry {
 	
 	public static Reasoner getReasoner(String reasonerID){
 		return registry.get(reasonerID);
+	}
+	
+	
+	public static Set<String> installedReasoners(){
+		return registry.keySet();
 	}
 }
