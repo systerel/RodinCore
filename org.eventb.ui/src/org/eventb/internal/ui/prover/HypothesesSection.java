@@ -23,6 +23,8 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.pm.ProofState;
+import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
@@ -51,7 +53,7 @@ public abstract class HypothesesSection extends SectionPart {
 
 	protected IEventBFormText formText;
 
-	private boolean compact;
+//	private boolean compact;
 
 	/**
 	 * Constructor.
@@ -71,7 +73,7 @@ public abstract class HypothesesSection extends SectionPart {
 	public HypothesesSection(ProofsPage page, Composite parent, int style,
 			String title, String description) {
 		super(parent, page.getManagedForm().getToolkit(), style);
-		compact = (style & Section.COMPACT) != 0 ? true : false;
+//		compact = (style & Section.COMPACT) != 0 ? true : false;
 		this.page = page;
 		this.title = title;
 		this.description = description;
@@ -92,12 +94,10 @@ public abstract class HypothesesSection extends SectionPart {
 	public void createClient(Section section, FormToolkit toolkit) {
 		section.setText(title);
 		section.setDescription(description);
-		
+
 		scrolledForm = toolkit.createScrolledForm(section);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
-//		scrolledForm.setBackground(Display.getCurrent().getSystemColor(
-//				SWT.COLOR_CYAN));
 
 		comp = scrolledForm.getBody();
 		GridLayout layout = new GridLayout();
@@ -108,12 +108,29 @@ public abstract class HypothesesSection extends SectionPart {
 		section.setClient(scrolledForm);
 
 		createTextClient(section, toolkit);
+		updateTextClientStatus();
 	}
+
+	private void updateTextClientStatus() {
+		ProofState ps = ((ProverUI) page.getEditor()).getUserSupport()
+				.getCurrentPO();
+
+		boolean enable = false;
+		if (ps != null) {
+			IProofTreeNode node = ps.getCurrentNode();
+			if (node != null && node.isOpen())
+				enable = true;
+		}
+
+		updateTextClientStatus(enable);
+	}
+
+	protected abstract void updateTextClientStatus(boolean enable);
 
 	protected abstract void createTextClient(Section section,
 			FormToolkit toolkit);
 
-	public void init(Collection<Hypothesis> hyps) {
+	public void init(Collection<Hypothesis> hyps, boolean enable) {
 		// Remove everything
 		for (HypothesisRow row : rows) {
 			row.dispose();
@@ -125,12 +142,14 @@ public abstract class HypothesesSection extends SectionPart {
 		for (Hypothesis hyp : hyps) {
 			UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
 					+ hyp.getPredicate());
-			HypothesisRow row = new HypothesisRow(this, comp, hyp, ((ProverUI) page.getEditor())
-					.getUserSupport(), (i % 2) == 0);
+			HypothesisRow row = new HypothesisRow(this, comp, hyp,
+					((ProverUI) page.getEditor()).getUserSupport(),
+					(i % 2) == 0, enable);
 			rows.add(row);
 			i++;
 		}
 
+		updateTextClientStatus();
 		scrolledForm.reflow(true);
 	}
 
@@ -141,18 +160,18 @@ public abstract class HypothesesSection extends SectionPart {
 		super.dispose();
 	}
 
-	@Override
-	protected void expansionStateChanged(boolean expanding) {
-		if (expanding)
-			compact = false;
-		else
-			compact = true;
-		page.layout();
-	}
+	
+//	protected void expansionStateChanged(boolean expanding) {
+//		if (expanding)
+//			compact = false;
+//		else
+//			compact = true;
+//		page.layout();
+//	}
 
-	public boolean isCompact() {
-		return compact;
-	}
+//	public boolean isCompact() {
+//		return compact;
+//	}
 
 	public ScrolledForm getScrolledForm() {
 		return scrolledForm;

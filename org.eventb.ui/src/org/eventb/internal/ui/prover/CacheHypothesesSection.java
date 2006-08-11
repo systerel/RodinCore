@@ -47,8 +47,9 @@ public class CacheHypothesesSection extends HypothesesSection {
 	private static final String SECTION_DESCRIPTION = "The set of cached hypotheses";
 
 	private ImageHyperlink ds;
-	
+
 	private ImageHyperlink sl;
+
 	/**
 	 * @author htson
 	 *         <p>
@@ -81,22 +82,22 @@ public class CacheHypothesesSection extends HypothesesSection {
 
 				// TODO, this should be done as the consequences of
 				// IProofTreeDelta
-//				TreeViewer viewer = editor.getProofTreeUI().getViewer();
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection) selection)
-//						.getFirstElement();
-//				if (obj instanceof IProofTreeNode) {
-//					IProofTreeNode proofTree = (IProofTreeNode) obj;
-//					editor.getProofTreeUI().refresh(proofTree);
-//					// Expand the node
-//					viewer.expandToLevel(proofTree,
-//							AbstractTreeViewer.ALL_LEVELS);
-//					ProofState ps = editor.getUserSupport().getCurrentPO();
-//					IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-//					if (pt != null)
-//						editor.getProofTreeUI().getViewer().setSelection(
-//								new StructuredSelection(pt));
-//				}
+				// TreeViewer viewer = editor.getProofTreeUI().getViewer();
+				// ISelection selection = viewer.getSelection();
+				// Object obj = ((IStructuredSelection) selection)
+				// .getFirstElement();
+				// if (obj instanceof IProofTreeNode) {
+				// IProofTreeNode proofTree = (IProofTreeNode) obj;
+				// editor.getProofTreeUI().refresh(proofTree);
+				// // Expand the node
+				// viewer.expandToLevel(proofTree,
+				// AbstractTreeViewer.ALL_LEVELS);
+				// ProofState ps = editor.getUserSupport().getCurrentPO();
+				// IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
+				// if (pt != null)
+				// editor.getProofTreeUI().getViewer().setSelection(
+				// new StructuredSelection(pt));
+				// }
 			}
 
 			else if (widget.equals(ds)) {
@@ -133,13 +134,13 @@ public class CacheHypothesesSection extends HypothesesSection {
 
 	protected void createTextClient(Section section, FormToolkit toolkit) {
 		Composite composite = new Composite(section, SWT.NONE);
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
-		
+
 		toolkit.adapt(composite, true, true);
 		composite.setBackground(section.getTitleBarGradientBackground());
 
@@ -150,6 +151,7 @@ public class CacheHypothesesSection extends HypothesesSection {
 		ds.addHyperlinkListener(new CachedHyperlinkAdapter());
 		ds.setBackground(section.getTitleBarGradientBackground());
 		ds.setToolTipText("Deselect checked hypotheses");
+		
 		sl = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(sl, true, true);
 		sl.setImage(registry.get(EventBImage.IMG_DISCHARGED));
@@ -157,8 +159,14 @@ public class CacheHypothesesSection extends HypothesesSection {
 		sl.setBackground(section.getTitleBarGradientBackground());
 		sl.setToolTipText("Select checked hypotheses");
 		composite.pack();
-		
+
 		section.setTextClient(composite);
+	}
+
+	@Override
+	protected void updateTextClientStatus(boolean enable) {
+		ds.setEnabled(enable);
+		sl.setEnabled(enable);
 	}
 
 }

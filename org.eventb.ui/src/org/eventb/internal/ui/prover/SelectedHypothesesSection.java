@@ -44,6 +44,8 @@ public class SelectedHypothesesSection extends HypothesesSection {
 	private static final String SECTION_TITLE = "Selected Hypotheses";
 
 	private static final String SECTION_DESCRIPTION = "The set of selected hypotheses";
+	
+	private static ImageHyperlink ds;
 
 	/**
 	 * @author htson
@@ -171,16 +173,21 @@ public class SelectedHypothesesSection extends HypothesesSection {
 		toolkit.adapt(composite, true, true);
 		composite.setBackground(section.getTitleBarGradientBackground());
 
-		ImageHyperlink info = new ImageHyperlink(composite, SWT.CENTER);
-		toolkit.adapt(info, true, true);
+		ds = new ImageHyperlink(composite, SWT.CENTER);
+		toolkit.adapt(ds, true, true);
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		info.setImage(registry.get(EventBImage.IMG_PENDING));
-		info.addHyperlinkListener(new SelectedHyperlinkAdapter());
-		info.setBackground(section.getTitleBarGradientBackground());
-		info.setToolTipText("Deselect checked hypotheses");
+		ds.setImage(registry.get(EventBImage.IMG_PENDING));
+		ds.addHyperlinkListener(new SelectedHyperlinkAdapter());
+		ds.setBackground(section.getTitleBarGradientBackground());
+		ds.setToolTipText("Deselect checked hypotheses");
 		composite.pack();
 		
 		section.setTextClient(composite);
+	}
+
+	@Override
+	protected void updateTextClientStatus(boolean enable) {
+		ds.setEnabled(enable);
 	}
 
 }

@@ -231,6 +231,7 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
+		if (prSequent == null) setProofState(null);
 		for (ProofState ps : proofStates) {
 			if (ps.getPRSequent().equals(prSequent)) {
 				setProofState(ps);
@@ -256,10 +257,10 @@ public class UserSupport implements IElementChangedListener,
 
 		Object info = "No Un-discharged Proof Obligation Found";
 		ProofStateDelta newDelta = new ProofStateDelta(this);
-		if (force)
-			newDelta.setNewProofState(null);
 		newDelta.addInformation(info);
-		fireProofStateDelta(newDelta);
+		if (force) {
+			setCurrentPO(null);
+		}
 	}
 
 	public void prevUndischargedPO(boolean force) throws RodinDBException {
@@ -284,17 +285,30 @@ public class UserSupport implements IElementChangedListener,
 		if (currentPS != ps) {
 			if (currentPS != null)
 				currentPS.getProofTree().removeChangeListener(this);
+			
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
-			currentPS = ps;
-			if (ps.getProofTree() == null) {
-				ps.loadProofTree();
-				ps.getProofTree().addChangeListener(this);
-			}
+			if (ps == null) {
+				currentPS = null;
 
-			ProofStateDelta newDelta = new ProofStateDelta(this);
-			newDelta.setNewProofState(ps);
-			newDelta.addInformation("Select a new proof obligation");
-			fireProofStateDelta(newDelta);
+				ProofStateDelta newDelta = new ProofStateDelta(this);
+				newDelta.setNewProofState(null);
+//				newDelta.addInformation("Select a new proof obligation");
+				fireProofStateDelta(newDelta);
+				
+			}
+			else {
+				currentPS = ps;
+				if (ps.getProofTree() == null) {
+					ps.loadProofTree();
+					ps.getProofTree().addChangeListener(this);
+				}
+
+				ProofStateDelta newDelta = new ProofStateDelta(this);
+				newDelta.setNewProofState(ps);
+				newDelta.addInformation("Select a new proof obligation");
+				fireProofStateDelta(newDelta);
+				
+			}
 		}
 		return;
 	}

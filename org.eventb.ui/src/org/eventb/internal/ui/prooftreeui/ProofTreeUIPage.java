@@ -61,7 +61,6 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.prover.ProverUIUtils;
 
 /**
  * @author htson
@@ -405,12 +404,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				Object[] elements = viewer.getExpandedElements();
 				viewer.setInput(fInput);
 				// viewer.refresh();
-				viewer.setExpandedElements(elements);
-				elementColumn.pack();
-				// UIUtils.debug("Width: " + elementColumn.getWidth());
-				viewer.refresh();
-				viewer.setSelection(new StructuredSelection(userSupport
-						.getCurrentPO().getCurrentNode()));
+				if (fInput != null) {
+					viewer.setExpandedElements(elements);
+					elementColumn.pack();
+					// UIUtils.debug("Width: " + elementColumn.getWidth());
+					viewer.refresh();
+					viewer.setSelection(new StructuredSelection(userSupport
+							.getCurrentPO().getCurrentNode()));
+				}
 				control.setRedraw(true);
 			}
 		}
@@ -713,8 +714,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		display.syncExec(new Runnable() {
 			public void run() {
 				final ProofState ps = delta.getProofState();
-				ProofTreeUI.debug("Proof Tree UI: State Changed: "
-						+ ps);
+				ProofTreeUI.debug("Proof Tree UI: State Changed: " + ps);
 				if (delta.isNewProofState()) {
 					if (ps != null) { // Change only when change the PO
 						ProofTreeUIPage page = ProofTreeUIPage.this;
@@ -736,8 +736,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// Do nothing
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					ProofTreeUI.debug("Proof Tree UI: "
-							+ proofTreeDelta);
+					ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();

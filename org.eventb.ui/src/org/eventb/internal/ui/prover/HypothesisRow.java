@@ -100,7 +100,7 @@ public class HypothesisRow {
 	 *            The style
 	 */
 	public HypothesisRow(SectionPart part, Composite parent, Hypothesis hyp,
-			UserSupport userSupport, boolean odd) {
+			UserSupport userSupport, boolean odd, boolean enable) {
 		GridData gd;
 		this.hyp = hyp;
 		this.userSupport = userSupport;
@@ -121,7 +121,7 @@ public class HypothesisRow {
 		buttonComposite.setBackground(background);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				true));
-		createHyperlinks(toolkit, buttonComposite, background);
+		createHyperlinks(toolkit, buttonComposite, background, enable);
 
 		if (hypothesisComposite == null) {
 			hypothesisComposite = toolkit.createComposite(parent);
@@ -131,6 +131,7 @@ public class HypothesisRow {
 			hypothesisComposite.setBackground(background);
 		}
 
+		textBoxes = new ArrayList<IEventBInputText>();
 		if (Lib.isUnivQuant(hyp.getPredicate())) {
 			Predicate pred = hyp.getPredicate();
 			String goalString = pred.toString();
@@ -149,7 +150,6 @@ public class HypothesisRow {
 			label.setBackground(background);
 
 			int i = 0;
-			textBoxes = new ArrayList<IEventBInputText>();
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = goalString.substring(loc.getStart(), loc
@@ -184,8 +184,6 @@ public class HypothesisRow {
 					true, false);
 			form.getFormText().setBackground(background);
 		} else {
-			textBoxes = new ArrayList<IEventBInputText>();
-
 			hypothesisText = new EventBMath(toolkit.createText(
 					hypothesisComposite, hyp.toString(), SWT.READ_ONLY));
 
@@ -197,6 +195,7 @@ public class HypothesisRow {
 		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
 		checkBox.setBackground(background);
 		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		checkBox.setEnabled(enable);
 	}
 
 	/**
@@ -207,7 +206,7 @@ public class HypothesisRow {
 	 *            the formText parent of these hyperlinks
 	 */
 	private void createHyperlinks(FormToolkit toolkit, Composite parent,
-			Color background) {
+			Color background, boolean enable) {
 		final IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
 		Collection<HypothesisTacticUI> tactics = ProverUIUtils
 				.getApplicableToHypothesis(node, hyp);
@@ -243,6 +242,7 @@ public class HypothesisRow {
 			});
 			ds.setBackground(background);
 			ds.setToolTipText(tactic.getHint());
+			ds.setEnabled(enable);
 		}
 
 		// for (Iterator<String> it = tactics.iterator(); it.hasNext();) {
