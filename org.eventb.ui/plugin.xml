@@ -119,6 +119,7 @@
    <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>
    <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
    <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
+   <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
    <extension
          point="org.eventb.ui.machinePages">
       <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
@@ -147,127 +148,6 @@
             class="org.eventb.internal.ui.ProvingPerspective"
             id="org.eventb.ui.perspective.Proving"
             name="Proving"/>
-   </extension>
-   <extension
-         point="org.eventb.ui.globalProofTactics">
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Review"
-            dropdown="reviews"
-            icon="icons/full/ctool16/rv_prover.gif"
-            id="org.eventb.ui.review"
-            toolbar="sequent"
-            tooltip="Review goal with selected hypotheses"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Contradiction"
-            icon="icons/full/ctool16/ct_prover.gif"
-            id="org.eventb.ui.contradiction"
-            toolbar="sequent"
-            tooltip="Contradiction"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.DoCase"
-            icon="icons/full/ctool16/dc_prover.gif"
-            id="org.eventb.ui.doCase"
-            toolbar="sequent"
-            tooltip="Case distinction"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.AddHypothesis"
-            icon="icons/full/ctool16/ah_prover.gif"
-            id="org.eventb.ui.addHypothesis"
-            toolbar="sequent"
-            tooltip="Add hypothesis"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Normalise"
-            icon="icons/full/ctool16/broom_prover.gif"
-            id="org.eventb.ui.normalise"
-            toolbar="sequent"
-            tooltip="Normalise tactic"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
-            icon="icons/full/ctool16/lasoo_prover.gif"
-            id="org.eventb.ui.lasoo"
-            toolbar="sequent"
-            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Backtrack"
-            icon="icons/full/ctool16/bk_prover.gif"
-            id="org.eventb.ui.backtrack"
-            toolbar="backtrack"
-            tooltip="Backtrack from the current node"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Prune"
-            icon="icons/full/ctool16/pn_prover.gif"
-            id="org.eventb.ui.prune"
-            toolbar="backtrack"
-            tooltip="Prune from the current node"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.SearchHypotheses"
-            icon="icons/full/ctool16/sh_prover.gif"
-            id="org.eventb.ui.searchHypotheses"
-            toolbar="navigation"
-            tooltip="Search hypotheses"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Previous"
-            icon="icons/full/ctool16/prev_prover.gif"
-            id="org.eventb.ui.previous"
-            toolbar="navigation"
-            tooltip="Previous undischarged PO"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.Next"
-            icon="icons/full/ctool16/next_prover.gif"
-            id="org.eventb.ui.next"
-            toolbar="navigation"
-            tooltip="Next undischarged PO"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.P0"
-            dropdown="externalProvers"
-            id="org.eventb.ui.p0"
-            icon="icons/full/ctool16/p0_prover.gif"
-            tooltip="External prover: Predicate prover on selected hypotheses"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.PP"
-            dropdown="externalProvers"
-            id="org.eventb.ui.pp"
-            icon="icons/full/ctool16/pp_prover.gif"
-            tooltip="External prover: Predicate prover on all hypotheses"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.M0"
-            dropdown="externalProvers"
-            id="org.eventb.ui.m0"
-            icon="icons/full/ctool16/m0_prover.gif"
-            tooltip="External prover: Mono-Lemma prover in force 0"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.M1"
-            dropdown="externalProvers"
-            id="org.eventb.ui.m1"
-            icon="icons/full/ctool16/m1_prover.gif"
-            tooltip="External prover: Mono-lemma prover in force 1"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.M2"
-            dropdown="externalProvers"
-            id="org.eventb.ui.m2"
-            icon="icons/full/ctool16/m2_prover.gif"
-            tooltip="External prover: Mono-lemma prover in force 2"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.M3"
-            dropdown="externalProvers"
-            id="org.eventb.ui.m3"
-            icon="icons/full/ctool16/m3_prover.gif"
-            tooltip="External prover: Mono-lemma prover in force 3"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.globaltactics.ML"
-            dropdown="externalProvers"
-            id="org.eventb.ui.ml"
-            icon="icons/full/ctool16/ml_prover.gif"
-            tooltip="External prover: Mono-lemma prover in all force"/>
-      <toolbar id="sequent"/>
-      <toolbar id="backtrack"/>
-      <toolbar id="navigation"/>
-      <dropdown
-            id="externalProvers"
-            toolbar="sequent"/>
-      <dropdown
-            id="reviews"
-            toolbar="sequent"/>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
@@ -507,6 +387,127 @@
       </viewerContribution>
    </extension>
    <extension
+         point="org.eventb.ui.globalProofTactics">
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Review"
+            dropdown="reviews"
+            icon="icons/full/ctool16/rv_prover.gif"
+            id="org.eventb.ui.review"
+            toolbar="sequent"
+            tooltip="Review goal with selected hypotheses"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Contradiction"
+            icon="icons/full/ctool16/ct_prover.gif"
+            id="org.eventb.ui.contradiction"
+            toolbar="sequent"
+            tooltip="Contradiction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.DoCase"
+            icon="icons/full/ctool16/dc_prover.gif"
+            id="org.eventb.ui.doCase"
+            toolbar="sequent"
+            tooltip="Case distinction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.AddHypothesis"
+            icon="icons/full/ctool16/ah_prover.gif"
+            id="org.eventb.ui.addHypothesis"
+            toolbar="sequent"
+            tooltip="Add hypothesis"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Normalise"
+            icon="icons/full/ctool16/broom_prover.gif"
+            id="org.eventb.ui.normalise"
+            toolbar="sequent"
+            tooltip="Normalise tactic"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Lasoo"
+            icon="icons/full/ctool16/lasoo_prover.gif"
+            id="org.eventb.ui.lasoo"
+            toolbar="sequent"
+            tooltip="Lasoo : Select hypotheses with free identifiers common to the goal or the selected hypotheses"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Backtrack"
+            icon="icons/full/ctool16/bk_prover.gif"
+            id="org.eventb.ui.backtrack"
+            toolbar="backtrack"
+            tooltip="Backtrack from the current node"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Prune"
+            icon="icons/full/ctool16/pn_prover.gif"
+            id="org.eventb.ui.prune"
+            toolbar="backtrack"
+            tooltip="Prune from the current node"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.SearchHypotheses"
+            icon="icons/full/ctool16/sh_prover.gif"
+            id="org.eventb.ui.searchHypotheses"
+            toolbar="navigation"
+            tooltip="Search hypotheses"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Previous"
+            icon="icons/full/ctool16/prev_prover.gif"
+            id="org.eventb.ui.previous"
+            toolbar="navigation"
+            tooltip="Previous undischarged PO"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.Next"
+            icon="icons/full/ctool16/next_prover.gif"
+            id="org.eventb.ui.next"
+            toolbar="navigation"
+            tooltip="Next undischarged PO"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.P0"
+            dropdown="externalProvers"
+            id="org.eventb.ui.p0"
+            icon="icons/full/ctool16/p0_prover.gif"
+            tooltip="External prover: Predicate prover on selected hypotheses"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.PP"
+            dropdown="externalProvers"
+            id="org.eventb.ui.pp"
+            icon="icons/full/ctool16/pp_prover.gif"
+            tooltip="External prover: Predicate prover on all hypotheses"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.M0"
+            dropdown="externalProvers"
+            id="org.eventb.ui.m0"
+            icon="icons/full/ctool16/m0_prover.gif"
+            tooltip="External prover: Mono-Lemma prover in force 0"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.M1"
+            dropdown="externalProvers"
+            id="org.eventb.ui.m1"
+            icon="icons/full/ctool16/m1_prover.gif"
+            tooltip="External prover: Mono-lemma prover in force 1"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.M2"
+            dropdown="externalProvers"
+            id="org.eventb.ui.m2"
+            icon="icons/full/ctool16/m2_prover.gif"
+            tooltip="External prover: Mono-lemma prover in force 2"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.M3"
+            dropdown="externalProvers"
+            id="org.eventb.ui.m3"
+            icon="icons/full/ctool16/m3_prover.gif"
+            tooltip="External prover: Mono-lemma prover in force 3"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.globaltactics.ML"
+            dropdown="externalProvers"
+            id="org.eventb.ui.ml"
+            icon="icons/full/ctool16/ml_prover.gif"
+            tooltip="External prover: Mono-lemma prover in all force"/>
+      <toolbar id="sequent"/>
+      <toolbar id="backtrack"/>
+      <toolbar id="navigation"/>
+      <dropdown
+            id="externalProvers"
+            toolbar="sequent"/>
+      <dropdown
+            id="reviews"
+            toolbar="sequent"/>
+   </extension>
+   <extension
          point="org.eventb.ui.hypothesisProofTactics">
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.Falsify"
@@ -557,6 +558,44 @@
             hint="Equality from right to left"
             icon="icons/full/ctool16/eq2_prover.gif"
             id="Equality 2"/>
+   </extension>
+   <extension
+         point="org.eventb.ui.goalProofTactics">
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.Contradiction"
+            hint="Contradict goal"
+            icon="icons/full/ctool16/falsify_prover.gif"
+            id="Contradiction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.Deduction"
+            hint="Deduction"
+            icon="icons/full/ctool16/impI_prover.gif"
+            id="Deduction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.Disjunction"
+            hint="Disjunction"
+            icon="icons/full/ctool16/disjI_prover.gif"
+            id="Disjunction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.Conjunction"
+            hint="Conjunction introduction"
+            icon="icons/full/ctool16/conjI_prover.gif"
+            id="Conjunction Introduction"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.Negation"
+            hint="Remove negation"
+            icon="icons/full/ctool16/negI_prover.gif"
+            id="Remove Negation"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.AllI"
+            hint="Forall instantiation"
+            icon="icons/full/ctool16/allI_prover.gif"
+            id="Forall Instantiation"/>
+      <tactic
+            class="org.eventb.internal.ui.prover.goaltactics.ExI"
+            hint="Exists Instantiation"
+            icon="icons/full/ctool16/exI_prover.gif"
+            id="Exists Instantiation"/>
    </extension>
 
 </plugin>
