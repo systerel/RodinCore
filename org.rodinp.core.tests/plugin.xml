@@ -31,7 +31,7 @@
    <extension
          point="org.rodinp.core.fileElementTypes">
       <fileElementType
-            class="org.rodinp.core.tests.RodinTestFile"
+            class="org.rodinp.core.tests.basis.RodinTestFile"
             content-type-id="org.rodinp.core.tests.content-type-test"
             id="test"
             name="org.rodinp.core.tests.test"/>
@@ -54,20 +54,10 @@
    <extension
          point="org.rodinp.core.internalElementTypes">
       <internalElementType
-            class="org.rodinp.core.tests.NamedElement"
+            class="org.rodinp.core.tests.basis.NamedElement"
             id="namedElement"
             name="org.rodinp.core.tests.namedElement"
             named="true"/>
-      <internalElementType
-            class="org.rodinp.core.tests.UnnamedElement"
-            id="unnamedElement"
-            name="org.rodinp.core.tests.unnamedElement"
-            named="false"/>
-      <internalElementType
-            class="org.rodinp.core.tests.UnnamedElement2"
-            id="unnamedElement2"
-            name="org.rodinp.core.tests.unnamedElement2"
-            named="false"/>
       <internalElementType
             class="org.rodinp.core.tests.builder.basis.Dependency"
             id="dependency"
@@ -77,7 +67,7 @@
             class="org.rodinp.core.tests.builder.basis.Data"
             id="data"
             name="Arbitrary data"
-            named="false"/>
+            named="true"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
