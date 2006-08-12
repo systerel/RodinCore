@@ -169,10 +169,9 @@ public class RodinCore extends Plugin {
 	 * element.
 	 * 
 	 * <p>
-	 * The file must be a Rodin file.
-	 * <p>
 	 * Creating a Rodin element has the side effect of creating and opening all
 	 * of the element's parents if they are not yet open.
+	 * </p>
 	 * 
 	 * @param file
 	 *            the given file
