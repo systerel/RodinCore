@@ -33,6 +33,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.Util;
 
 /*
@@ -92,26 +93,6 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return (NamedElement) parent.createInternalElement(
 				NamedElement.ELEMENT_TYPE,
 				name,
-				nextSibling,
-				null);
-	}
-	
-	protected UnnamedElement createUnnamedElement(IInternalParent parent,
-			IInternalElement nextSibling) throws RodinDBException {
-		
-		return (UnnamedElement) parent.createInternalElement(
-				UnnamedElement.ELEMENT_TYPE,
-				"",
-				nextSibling,
-				null);
-	}
-	
-	protected UnnamedElement2 createUnnamedElement2(IInternalParent parent,
-			IInternalElement nextSibling) throws RodinDBException {
-		
-		return (UnnamedElement2) parent.createInternalElement(
-				UnnamedElement2.ELEMENT_TYPE,
-				"",
 				nextSibling,
 				null);
 	}
