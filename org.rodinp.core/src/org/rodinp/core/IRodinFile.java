@@ -10,13 +10,14 @@ import org.eclipse.core.resources.IFile;
  *
  * @author Laurent Voisin
  */
-public interface IRodinFile extends IOpenable, IInternalParent, IElementManipulation {
+public interface IRodinFile extends IOpenable, IInternalParent,
+		IElementManipulation {
 
 	/**
 	 * Finds the elements in this file that correspond to the given element. An
 	 * element A corresponds to an element B if:
 	 * <ul>
-	 * <li>A has the same element name as B.
+	 * <li>A has the same element type and name as B.
 	 * <li>The parent of A corresponds to the parent of B recursively up to
 	 * their respective files.
 	 * <li>A exists.
@@ -31,9 +32,6 @@ public interface IRodinFile extends IOpenable, IInternalParent, IElementManipula
 	 */
 	public IRodinElement[] findElements(IRodinElement element);
 
-	/** 
-	 * @see org.rodinp.core.IRodinElement#getResource()
-	 */
 	public IFile getResource();
 
 }
