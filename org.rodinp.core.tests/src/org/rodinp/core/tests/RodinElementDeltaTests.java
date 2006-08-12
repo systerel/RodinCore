@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.tests.basis.NamedElement;
 
 /**
  * These test ensure that modifications in Rodin projects are correctly reported as
