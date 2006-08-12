@@ -41,7 +41,8 @@ public class SCTool implements IExtractor, IAutomaticTool {
 		IRodinElement[] datas = ctx.getChildrenOfType(IData.ELEMENT_TYPE);
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
-			IData copy = (IData) target.createInternalElement(IData.ELEMENT_TYPE, null, null, null);
+			IData copy = (IData) target.createInternalElement(
+					IData.ELEMENT_TYPE, "foo", null, null);
 			copy.setContents(data.getContents());
 		}
 		if (DEBUG)
