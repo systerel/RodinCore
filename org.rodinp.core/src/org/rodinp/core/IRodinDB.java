@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Represent the root Rodin element corresponding to the workspace. Since there
+ * Represents the root Rodin element corresponding to the workspace. Since there
  * is only one such root element, it is commonly referred to as <em>the</em>
  * Rodin database element. The Rodin database element needs to be opened before
  * it can be navigated or manipulated. The Rodin database element has no parent
