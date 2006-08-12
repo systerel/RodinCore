@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * Strongly inspired by org.eclipse.jdt.core.IJavaProject.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -18,12 +18,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A Rodin project represents a view of a project resource in terms of Rodin
- * elements such as models, invariants, and events. A project may contain
- * several Rodin files.
+ * elements. A project may contain several Rodin files.
  * <p>
  * Rodin project elements need to be opened before they can be navigated or
  * manipulated. The children of a Rodin project are the Rodin files that are
  * contained in this project.
+ * </p>
+ * <p>
+ * Note that a resource project which is closed in the workspace (using for
+ * instance {@link IProject#close(IProgressMonitor)}) doesn't correspond
+ * anymore to a Rodin project, even if it has the Rodin nature. It is therefore
+ * considered as a non-Rodin resource project and not part of the database.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients. An instance of
@@ -48,7 +53,9 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 * @return the <code>IRodinElement</code> corresponding to the given
 	 *         relative path, or <code>null</code> if no such
 	 *         <code>IRodinElement</code> is found
+	 * @deprecated There doesn't seem to be any use for it.
 	 */
+	@Deprecated
 	IRodinElement findElement(IPath path) throws RodinDBException;
 
 	/**
@@ -118,22 +125,27 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	IProject getProject();
 
 	/**
-	 * Returns the Rodin file with the specified name
-	 * in this project (for example, <code>"Toto.mdl"</code>).
-	 * The name has to be a valid Rodin file name.
-	 * This is a handle-only method.  The Rodin file may or may not be present.
+	 * Returns a handle to the primary copy of the Rodin file with the specified
+	 * name in this project (for example, <code>"toto.mdl"</code>). The name
+	 * must be a valid Rodin file name, or <code>null</code> will be returned.
+	 * <p>
+	 * This is a handle-only method. The Rodin file may or may not be present.
+	 * </p>
 	 * 
-	 * @param name the given name
-	 * @return the Rodin file with the specified name in this project
+	 * @param fileName
+	 *            the name of the Rodin file
+	 * @return the Rodin file with the specified name in this project or
+	 *         <code>null</code> if the given file name doesn't correspond to
+	 *         a Rodin file name (for instance, wrong extension).
 	 */
-	IRodinFile getRodinFile(String name);
+	IRodinFile getRodinFile(String fileName);
 	
 	/**
 	 * Returns whether this project has been built at least once and thus
 	 * whether it has a build state.
 	 * 
-	 * @return true if this project has been built at least once, false
-	 *         otherwise
+	 * @return <code>true</code> if this project has been built at least once,
+	 *         <code>false</code> otherwise
 	 */
 	boolean hasBuildState();
 
@@ -205,7 +217,8 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *                </ul>
 	 * @return a Rodin file in this project with the specified name
 	 */
-	IRodinFile createRodinFile(String name, boolean force, IProgressMonitor monitor) throws RodinDBException;
+	IRodinFile createRodinFile(String name, boolean force,
+			IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns all the Rodin files in this project.
