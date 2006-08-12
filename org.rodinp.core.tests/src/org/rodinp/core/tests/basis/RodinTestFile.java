@@ -1,4 +1,4 @@
-package org.rodinp.core.tests;
+package org.rodinp.core.tests.basis;
 
 import org.eclipse.core.resources.IFile;
 import org.rodinp.core.IRodinElement;

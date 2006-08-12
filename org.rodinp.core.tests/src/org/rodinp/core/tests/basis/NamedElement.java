@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.rodinp.core.tests;
+package org.rodinp.core.tests.basis;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
