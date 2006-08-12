@@ -15,6 +15,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.Util;
 
 public class MementoTests extends ModifyingResourceTests {
@@ -120,79 +121,28 @@ public class MementoTests extends ModifyingResourceTests {
 	}
 
 	/**
-	 * Tests that a named top-level internal element can be persisted and
+	 * Tests that a top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
-	public void testNamedTopMemento() {
+	public void testTopMemento() {
 		final String type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 		NamedElement ne = (NamedElement) rf.getInternalElement(type, "foo");
 		assertMemento("/P/X.test|" + type + "#foo", ne);
-
-		ne = (NamedElement) rf.getInternalElement(type, "foo", 3);
-		assertMemento("/P/X.test|" + type + "#foo!3", ne);
 	}
 
 	/**
-	 * Tests that an unnamed top-level internal element can be persisted and
+	 * Tests that a non top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
-	public void testUnnamedTopMemento() {
-		final String type = UnnamedElement.ELEMENT_TYPE;
-		IRodinFile rf = getRodinFile("/P/X.test");
-		UnnamedElement ue = (UnnamedElement) rf.getInternalElement(type, "");
-		assertMemento("/P/X.test|" + type + "#", ue);
-
-		ue = (UnnamedElement) rf.getInternalElement(type, "", 2);
-		assertMemento("/P/X.test|" + type + "#!2", ue);
-	}
-
-	/**
-	 * Tests that a named non top-level internal element can be persisted and
-	 * restored using its memento.
-	 */
-	public void testNamedNonTopMemento() {
+	public void testNonTopMemento() {
 		final String nType = NamedElement.ELEMENT_TYPE;
-		final String uType = UnnamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 
 		IInternalElement top = rf.getInternalElement(nType, "foo");
 		String prefix = "/P/X.test|" + nType + "#foo";
 		IInternalElement ne = top.getInternalElement(nType, "bar");
 		assertMemento(prefix + "|" + nType + "#bar", ne);
-		ne = top.getInternalElement(nType, "bar", 2);
-		assertMemento(prefix + "|" + nType + "#bar!2", ne);
-		
-		top = rf.getInternalElement(uType, "");
-		prefix = "/P/X.test|" + uType + "#";
-		ne = top.getInternalElement(nType, "bar");
-		assertMemento(prefix + "|" + nType + "#bar", ne);
-		ne = top.getInternalElement(nType, "bar", 2);
-		assertMemento(prefix + "|" + nType + "#bar!2", ne);
 	}
 
-	/**
-	 * Tests that an unnamed non top-level internal element can be persisted and
-	 * restored using its memento.
-	 */
-	public void testUnnamedNonTopMemento() {
-		final String nType = NamedElement.ELEMENT_TYPE;
-		final String uType = UnnamedElement.ELEMENT_TYPE;
-		IRodinFile rf = getRodinFile("/P/X.test");
-
-		IInternalElement top = rf.getInternalElement(nType, "foo");
-		String prefix = "/P/X.test|" + nType + "#foo";
-		IInternalElement ue = top.getInternalElement(uType, "");
-		assertMemento(prefix + "|" + uType + "#", ue);
-		ue = top.getInternalElement(uType, "", 2);
-		assertMemento(prefix + "|" + uType + "#!2", ue);
-		
-		top = rf.getInternalElement(uType, "");
-		prefix = "/P/X.test|" + uType + "#";
-		ue = top.getInternalElement(uType, "");
-		assertMemento(prefix + "|" + uType + "#", ue);
-		ue = top.getInternalElement(uType, "", 2);
-		assertMemento(prefix + "|" + uType + "#!2", ue);
-	}
-	
 }
