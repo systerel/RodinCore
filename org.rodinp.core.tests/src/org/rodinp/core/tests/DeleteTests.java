@@ -21,6 +21,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.tests.basis.NamedElement;
 
 /*
  * Tests for delete(...) methods on elements

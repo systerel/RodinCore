@@ -17,6 +17,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.tests.basis.NamedElement;
 
 public class CopyMoveResourcesTests extends CopyMoveTests {
 
