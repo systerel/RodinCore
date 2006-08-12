@@ -59,7 +59,7 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	protected IData createData(IRodinFile parent, String contents) throws RodinDBException {
 		IData data = (IData) parent.createInternalElement(
 				IData.ELEMENT_TYPE,
-				null,
+				"foo",
 				null,
 				null);
 		data.setContents(contents);
