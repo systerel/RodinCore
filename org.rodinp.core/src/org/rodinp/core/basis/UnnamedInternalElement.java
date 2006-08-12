@@ -20,7 +20,9 @@ import org.rodinp.core.IUnnamedInternalElement;
  * </p>
  * 
  * @see IUnnamedInternalElement
+ * @deprecated Don't inherit from this class anymore.
  */
+@Deprecated
 public class UnnamedInternalElement extends InternalElement implements IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
