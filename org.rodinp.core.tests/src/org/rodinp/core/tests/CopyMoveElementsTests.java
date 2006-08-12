@@ -18,6 +18,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.tests.basis.NamedElement;
 
 public class CopyMoveElementsTests extends CopyMoveTests {
 
@@ -134,7 +135,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
             IRodinFile rfSource = createRodinFile("P/X.test");
             NamedElement neParent = createNamedElement(rfSource, "parent", null);
             NamedElement neSource = createNamedElement(neParent, "foo", null);
-            createUnnamedElement(neSource, null);
+            createNamedElement(neSource, "bar", null);
 
             IRodinFile rfDest = createRodinFile("P/Y.test");
             NamedElement neDest = createNamedElement(rfDest, "target", null);
@@ -561,22 +562,6 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		} finally {
 			deleteProject("P2");
 		}
-	}
-
-	/**
-	 * Ensures that an unnamed internal element can be copied to a different
-	 * file, when the destination contains an unnamed element of a different
-	 * type.
-	 */
-	public void testCopyUnnamed() throws CoreException {
-		IRodinFile rfSource = createRodinFile("P/X.test");
-		UnnamedElement neSource = createUnnamedElement(rfSource, null);
-		
-		IRodinFile rfDest = createRodinFile("P/Y.test");
-		createUnnamedElement2(rfDest, null);
-		
-		copyPositive(neSource, rfDest, null, null, false);
-		assertEquals("node not copied", 2, rfDest.getChildren().length);
 	}
 
 	/**
@@ -1262,22 +1247,22 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that renaming a top element with unnamed children does indeed
 	 * move the children.
 	 */
-	public void testRenameTopWithUnnamedChildren() throws CoreException {
+	public void testRenameTopWithChildren() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		NamedElement neSource = createNamedElement(rfSource, "foo", null);
-		createUnnamedElement(neSource, null).setContents("child1");
-		createUnnamedElement(neSource, null).setContents("child2");
+		createNamedElement(neSource, "1", null).setContents("child1");
+		createNamedElement(neSource, "2", null).setContents("child2");
 
 		renamePositive(neSource, "baz", false);
 		NamedElement neDest = getNamedElement(rfSource, "baz");
 		assertElementDescendants("Unexpected children",
 				"baz[org.rodinp.core.tests.namedElement]1\n" +
-				"  [org.rodinp.core.tests.unnamedElement]1\n" +
-				"  [org.rodinp.core.tests.unnamedElement]2",
+				"  1[org.rodinp.core.tests.namedElement]1\n" +
+				"  2[org.rodinp.core.tests.namedElement]1",
 				neDest
 		);
 		IRodinElement[] children = 
-			neDest.getChildrenOfType(UnnamedElement.ELEMENT_TYPE);
+			neDest.getChildrenOfType(NamedElement.ELEMENT_TYPE);
 		assertEquals("Destination should have two children", 2, children.length);
 		assertContents("Wrong contents for first child", "child1", 
 				(IInternalElement) children[0]);
