@@ -52,6 +52,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.Util;
 
 public abstract class AbstractRodinDBTests extends TestCase {
