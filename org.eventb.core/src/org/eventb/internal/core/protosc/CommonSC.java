@@ -26,7 +26,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * @author halstefa
@@ -65,10 +64,8 @@ public class CommonSC implements ISCProblemList {
 		String elementType = element.getElementType();
 		String result = elementType.substring(elementType.lastIndexOf('.')+1);
 		IRodinElement parent = element.getParent();
-		if(element instanceof IUnnamedInternalElement)
-			result = result + " in " + printElement(parent);
-		else if(parent instanceof IInternalElement)
-			result = result + " " + ((IInternalElement) element).getElementName() + " in " + printElement(parent);
+		if(parent instanceof IInternalElement)
+			result = result + " " + element.getElementName() + " in " + printElement(parent);
 		else
 			result = result + " " + element.getElementName(); 
 		return result;
