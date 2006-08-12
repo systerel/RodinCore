@@ -15,8 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Common protocol for Rodin elements that must be opened before they can be
- * navigated or modified. Opening a file element (such as a model) involves
- * loading its contents.
+ * navigated or modified. Opening a file element involves loading its contents.
  * <p>
  * To reduce complexity in clients, elements are automatically opened by the
  * Rodin database as element children are accessed. The Rodin database maintains
@@ -32,9 +31,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * database automatically opens parent elements, as it automatically opens
  * elements. Opening an element may provide access to direct children and other
  * descendants, but does not automatically open any descendents which are
- * themselves {@link IOpenable}. For example, opening a model provides access
- * to all its constituent elements, but opening a project does not open all
- * models in the project.
+ * themselves {@link IOpenable}. For example, opening a file provides access to
+ * all its constituent elements, but opening a project does not open all files
+ * in the project.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -81,8 +80,8 @@ public interface IOpenable {
 	 * 
 	 * <p>
 	 * NOTE: Child consistency is not considered. For example, a project
-	 * responds <code>true</code> when it knows about all of its models
-	 * present in its underlying folder. However, one or more of the models
+	 * responds <code>true</code> when it knows about all of its files
+	 * present in its underlying folder. However, one or more of the files
 	 * could be inconsistent.
 	 * </p>
 	 * 
@@ -128,6 +127,7 @@ public interface IOpenable {
 	 * Note: although {@link #open} is exposed in the API, clients are not
 	 * expected to open and close elements - the Rodin database does this
 	 * automatically as elements are accessed.
+	 * </p>
 	 * 
 	 * @param progress
 	 *            the given progress monitor
@@ -176,4 +176,5 @@ public interface IOpenable {
 	 */
 	public void save(IProgressMonitor progress, boolean force)
 			throws RodinDBException;
+
 }
