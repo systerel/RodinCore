@@ -18,6 +18,7 @@ package org.rodinp.core;
  * </p>
  */
 public interface IParent {
+
 	/**
 	 * Returns the immediate children of this element. Unless otherwise
 	 * specified by the implementing element, the children are 
@@ -45,14 +46,22 @@ public interface IParent {
 	IRodinElement[] getChildrenOfType(String type) throws RodinDBException;
 
 	/**
-	 * Returns whether this element has one or more immediate children. This is
-	 * a convenience method, and may be more efficient than testing whether
-	 * <code>getChildren</code> is an empty array.
+	 * Returns whether this element <b>may</b> have one or more immediate
+	 * children. This is a convenience method, and may be more efficient than
+	 * testing whether <code>getChildren</code> is an empty array.
+	 * <p>
+	 * If this method returns <code>false</code>, one can be sure that this
+	 * element doesn't have any child. On the contrary, if <code>true</code>
+	 * is returned, this means that the answer is not known (this element may or
+	 * may not have children).
+	 * </p>
 	 * 
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
-	 * @return <code>true</code> if this element has immediate children, false otherwise
+	 * @return <code>true</code> if this element may have immediate children,
+	 *         <code>false</code> otherwise
 	 */
 	boolean hasChildren() throws RodinDBException;
+
 }
