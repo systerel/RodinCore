@@ -45,7 +45,7 @@ public class SelectedHypothesesSection extends HypothesesSection {
 
 	private static final String SECTION_DESCRIPTION = "The set of selected hypotheses";
 	
-	private static ImageHyperlink ds;
+	private ImageHyperlink ds;
 
 	/**
 	 * @author htson
