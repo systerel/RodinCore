@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeChangedListener;
 import org.eventb.core.prover.IProofTreeDelta;
@@ -149,13 +150,14 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 			if (!pt.isOpen()) {
 				int j;
 				for (j = 0; j < filters.length; j++) {
-					if (filters[j].equals(pt.getRule().getDisplayName())) {
-						// TODO enquire effect of new contract for
-						// pt.getChildren()
-						Object[] list = getChildrenOfList(pt.getChildren());
-						for (int k = 0; k < list.length; k++)
-							children.add(list[k]);
-						break;
+					if (filters[j] instanceof ViewerFilter) { 
+						ViewerFilter filter = (ViewerFilter) filters[j];
+						if (!filter.select(page.getViewer(), pt.getParent(), pt)) {
+							Object[] list = getChildrenOfList(pt.getChildren());
+							for (int k = 0; k < list.length; k++)
+								children.add(list[k]);
+							break;
+						}
 					}
 				}
 				if (j == filters.length)

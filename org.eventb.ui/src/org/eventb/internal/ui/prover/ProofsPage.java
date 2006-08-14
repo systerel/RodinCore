@@ -174,7 +174,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				selected = node.getSequent().selectedHypotheses();
-				if (node.isOpen()) enable = true;
+				if (node.isOpen())
+					enable = true;
 			}
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {
@@ -196,7 +197,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 					searched.add(hyp);
 			}
 		}
-		
+
 		selectedSection.init(selected, enable);
 		cachedSection.init(cached, enable);
 		searchedSection.init(searched, enable);
@@ -207,6 +208,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		Display display = this.getEditorSite().getWorkbenchWindow()
 				.getWorkbench().getDisplay();
 
+		ProverUIUtils.debugProverUI("Proof State Change "
+				+ ((ProverUI) getEditor()).getRodinInput().getElementName());
 		display.syncExec(new Runnable() {
 			public void run() {
 				ProofState ps = delta.getProofState();
@@ -274,7 +277,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				selected = node.getSequent().selectedHypotheses();
-				if (node.isOpen()) enable = true;
+				if (node.isOpen())
+					enable = true;
 			}
 			Collection<Hypothesis> currentCached = ps.getCached();
 			for (Iterator<Hypothesis> i = currentCached.iterator(); i.hasNext();) {

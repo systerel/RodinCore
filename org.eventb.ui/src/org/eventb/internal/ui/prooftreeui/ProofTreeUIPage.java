@@ -81,7 +81,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	private IProofTreeNode root = null;
 
 	// TODO Change to Rule class?
-	private Object[] filters = { "allI" }; // Default filters
+	private Object[] filters = {}; // Default filters
 
 	private TreeColumn elementColumn;
 
@@ -538,24 +538,23 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	/**
-	 * Get the list of filters.
-	 * <p>
-	 * 
-	 * @return List of current filters.
-	 */
-	protected Object[] getFilters() {
-		return filters;
-	}
-
-	/**
 	 * Set the list of filters.
 	 * <p>
 	 * 
 	 * @param filters
 	 *            a list of filters
 	 */
-	protected void setFilters(Object[] filters) {
-		this.filters = filters;
+	protected void setFilters(Object[] newFilters) {
+		// if (filters != null)
+		// for (Object filter : filters)
+		// viewer.removeFilter((ViewerFilter) filter);
+		// for (Object filter : newFilters) {
+		// ProofTreeUI.debug("Add filter " + filter);
+		// viewer.addFilter((ViewerFilter) filter);
+		// }
+		this.filters = newFilters;
+		viewer.refresh();
+		viewer.expandAll();
 	}
 
 	/*
@@ -709,19 +708,20 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	public void proofStateChanged(final IProofStateDelta delta) {
 		// byUserSupport = true;
+		ProofTreeUI.debug("Proof Tree UI for "
+				+ ProofTreeUIPage.this.userSupport.getInput().getElementName() + ": State Changed: "
+				+ delta.toString());
+
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
 				final ProofState ps = delta.getProofState();
-				ProofTreeUI.debug("Proof Tree UI: State Changed: " + ps);
 				if (delta.isNewProofState()) {
 					if (ps != null) { // Change only when change the PO
 						ProofTreeUIPage page = ProofTreeUIPage.this;
 						page.setInput(ps.getProofTree());
 						IProofTreeNode currentNode = ps.getCurrentNode();
-						ProofTreeUI.debug("Current node: "
-								+ currentNode.getSequent());
 						page.getViewer().expandAll();
 						elementColumn.pack();
 						if (currentNode != null)
@@ -736,7 +736,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// Do nothing
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-					ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
+//					ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();
@@ -750,6 +750,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				}
 			}
 		});
+	}
+
+	public Object[] getFilters() {
+		return filters;
 	}
 
 }

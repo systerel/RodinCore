@@ -128,11 +128,11 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						null, ProofTreeUIActionGroup.this.proofTreeUI);
 				dialog.open();
 				Object[] results = dialog.getResult();
-				if (results != null)
+				if (results != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setFilters(results);
-
+				}
+				
 				ProofTreeUIActionGroup.this.proofTreeUI.refresh();
-				ProofTreeUIActionGroup.this.proofTreeUI.getViewer().expandAll();
 			}
 		};
 		filterAction.setText("Filter");
