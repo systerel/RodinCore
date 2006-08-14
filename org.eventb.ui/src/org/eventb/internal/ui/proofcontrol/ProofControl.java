@@ -16,13 +16,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.prover.ProverUI;
 
@@ -45,11 +48,12 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 	private String defaultText = "Proof Control is not available";
 
 	public static boolean DEBUG = false;
-	
+
 	public static void debug(String message) {
-		if (DEBUG) System.out.println("***ProofControl*** " + message);
+		if (DEBUG)
+			System.out.println("***ProofControl*** " + message);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,7 +75,7 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		// Try to get an obligation list page.
+		// Try to get a Proof Control Page.
 		Object obj = part.getAdapter(IProofControlPage.class);
 		if (obj instanceof IProofControlPage) {
 			IProofControlPage page = (IProofControlPage) obj;
@@ -105,9 +109,11 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		IWorkbenchPage page = getSite().getPage();
-		if (page != null)
-			if (page.getActiveEditor() instanceof ProverUI)
-				return page.getActiveEditor();
+		if (page != null) {
+			IEditorPart activeEditor = page.getActiveEditor();
+			if (activeEditor instanceof ProverUI)
+				return activeEditor;
+		}
 
 		return null;
 	}
@@ -170,4 +176,28 @@ public class ProofControl extends PageBookView implements ISelectionProvider,
 		getSelectionProvider().selectionChanged(event);
 	}
 
+
+    /* (non-Javadoc)
+     * Method declared on IViewPart.
+     * Treat this the same as part activation.
+     */
+    public void partBroughtToTop(IWorkbenchPart part) {
+        partActivated(part);
+    }
+    
+    /**
+     * The <code>ContentOutline</code> implementation of this <code>PageBookView</code> method
+     * extends the behavior of its parent to use the current page as a selection provider.
+     * 
+     * @param pageRec the page record containing the page to show
+     */
+    protected void showPageRec(PageRec pageRec) {
+        IPageSite pageSite = getPageSite(pageRec.page);
+        ISelectionProvider provider = pageSite.getSelectionProvider();
+        if (provider == null && (pageRec.page instanceof IContentOutlinePage))
+            // This means that the page did not set a provider during its initialization 
+            // so for backward compatibility we will set the page itself as the provider.
+            pageSite.setSelectionProvider((IContentOutlinePage) pageRec.page);
+        super.showPageRec(pageRec);
+    }
 }

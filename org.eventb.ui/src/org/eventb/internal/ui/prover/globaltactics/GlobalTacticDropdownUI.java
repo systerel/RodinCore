@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
+import java.util.ArrayList;
+
 /**
  * @author htson
  *         <p>
@@ -22,6 +24,8 @@ public class GlobalTacticDropdownUI {
 	String ID;
 	
 	String toolbar;
+	
+	ArrayList<GlobalTacticUI> children;
 
 	/**
 	 * Constructor.
@@ -33,6 +37,7 @@ public class GlobalTacticDropdownUI {
 	public GlobalTacticDropdownUI(String ID, String toolbar) {
 		this.ID = ID;
 		this.toolbar = toolbar;
+		children = new ArrayList<GlobalTacticUI>();
 	}
 
 	/**
@@ -48,4 +53,13 @@ public class GlobalTacticDropdownUI {
 	public String getToolbar() {
 		return toolbar;
 	}
+	
+	public void addChildren(GlobalTacticUI tactic) {
+		children.add(tactic);
+	}
+	
+	public ArrayList<GlobalTacticUI> getChildren() {
+		return children;
+	}
+	
 }

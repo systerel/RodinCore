@@ -12,14 +12,18 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
+import java.util.ArrayList;
+
 /**
  * @author htson
  *         <p>
  *         This class represent the proof tactic dropdown.
  */
-public class GlobalTacticToolbar {
+public class GlobalTacticToolbarUI {
 
 	String ID;
+	
+	ArrayList<Object> children;
 	
 	/**
 	 * Constructor.
@@ -28,8 +32,9 @@ public class GlobalTacticToolbar {
 	 * @param ID
 	 *            The string ID
 	 */
-	public GlobalTacticToolbar(String ID) {
+	public GlobalTacticToolbarUI(String ID) {
 		this.ID = ID;
+		children = new ArrayList<Object>();
 	}
 
 	/**
@@ -42,4 +47,11 @@ public class GlobalTacticToolbar {
 		return ID;
 	}
 
+	public void addChildren(Object obj) {
+		children.add(obj);
+	}
+	
+	public ArrayList<Object> getChildren() {
+		return children;
+	}
 }

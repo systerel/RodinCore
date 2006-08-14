@@ -14,6 +14,7 @@ package org.eventb.internal.ui;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -25,7 +26,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
-import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbar;
+import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
 import org.eventb.ui.prover.IGlobalTactic;
 import org.osgi.framework.Bundle;
@@ -138,26 +139,31 @@ public class ExtensionLoader {
 	}
 
 	private static final String GLOBAL_PROOF_TACTIC_ID = EventBUIPlugin.PLUGIN_ID
-	+ ".globalProofTactics";
+			+ ".globalProofTactics";
 
 	// Array of Proof Tactics
-	private static ArrayList<GlobalTacticUI> tactics = null;
+	// private static ArrayList<GlobalTacticUI> tactics = null;
 
 	// Array of Global dropdown
-	private static ArrayList<GlobalTacticDropdownUI> dropdowns = null;
-
+	// private static ArrayList<GlobalTacticDropdownUI> dropdowns = null;
+	//
 	// Array of Toolbar
-	private static ArrayList<GlobalTacticToolbar> toolbars = null;
-	
+	private static ArrayList<GlobalTacticToolbarUI> toolbars = null;
+
 	private static void internalGetGlobalTactics() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry
 				.getExtensionPoint(GLOBAL_PROOF_TACTIC_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
 
-		tactics = new ArrayList<GlobalTacticUI>();
-		dropdowns = new ArrayList<GlobalTacticDropdownUI>();
-		toolbars = new ArrayList<GlobalTacticToolbar>();
+		ArrayList<GlobalTacticUI> tactics = new ArrayList<GlobalTacticUI>();
+		ArrayList<GlobalTacticDropdownUI> dropdowns = new ArrayList<GlobalTacticDropdownUI>();
+		toolbars = new ArrayList<GlobalTacticToolbarUI>();
+
+		GlobalTacticToolbarUI defaultToolbar = new GlobalTacticToolbarUI(
+				"default");
+		HashMap<String, GlobalTacticToolbarUI> toolbarMap = new HashMap<String, GlobalTacticToolbarUI>();
+		HashMap<String, GlobalTacticDropdownUI> dropdownMap = new HashMap<String, GlobalTacticDropdownUI>();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension
 					.getConfigurationElements();
@@ -165,8 +171,7 @@ public class ExtensionLoader {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					Bundle bundle = Platform.getBundle(element
-							.getNamespace());
+					Bundle bundle = Platform.getBundle(element.getNamespace());
 					try {
 						String ID = element.getAttribute("id");
 						String icon = element.getAttribute("icon");
@@ -188,60 +193,92 @@ public class ExtensionLoader {
 								.getConstructor(new Class[0]);
 						String dropdown = element.getAttribute("dropdown");
 						String toolbar = element.getAttribute("toolbar");
-						GlobalTacticUI tactic = new GlobalTacticUI(ID,
-								icon, tooltip, dropdown, toolbar, constructor);
+						GlobalTacticUI tactic = new GlobalTacticUI(ID, icon,
+								tooltip, dropdown, toolbar, constructor);
 						tactics.add(tactic);
 
 					} catch (Exception e) {
 						// TODO Exception handle
 						e.printStackTrace();
 					}
-				}
-				else if (name.equals("dropdown")) {
+				} else if (name.equals("dropdown")) {
 					String ID = element.getAttribute("id");
 					String toolbar = element.getAttribute("toolbar");
 					GlobalTacticDropdownUI dropdown = new GlobalTacticDropdownUI(
 							ID, toolbar);
 					dropdowns.add(dropdown);
-				}
-				else if (name.equals("toolbar")) {
+					dropdownMap.put(ID, dropdown);
+				} else if (name.equals("toolbar")) {
 					String id = element.getAttribute("id");
-					GlobalTacticToolbar toolbar = new GlobalTacticToolbar(id);
+					GlobalTacticToolbarUI toolbar = new GlobalTacticToolbarUI(
+							id);
 					toolbars.add(toolbar);
+					toolbarMap.put(id, toolbar);
 				}
+
+
+			}
+		}
+
+		toolbars.add(defaultToolbar);
+
+		for (GlobalTacticDropdownUI dropdown : dropdowns) {
+			String toolbarID = dropdown.getToolbar();
+			GlobalTacticToolbarUI toolbar = toolbarMap.get(toolbarID);
+			if (toolbar == null) {
+				defaultToolbar.addChildren(dropdown);
+			} else {
+				toolbar.addChildren(dropdown);
+			}
+		}
+
+		for (GlobalTacticUI tactic : tactics) {
+			String dropdownID = tactic.getDropdown();
+			String toolbarID = tactic.getToolbar();
+			GlobalTacticDropdownUI dropdown = dropdownMap
+					.get(dropdownID);
+
+			if (dropdown == null) {
+				GlobalTacticToolbarUI toolbar = toolbarMap.get(toolbarID);
+				if (toolbar == null) {
+					defaultToolbar.addChildren(tactic);
+				}
+				else {
+					toolbar.addChildren(tactic);
+				}
+			} else {
+				dropdown.addChildren(tactic);
 			}
 		}
 
 	}
-	
+
 	/**
 	 * Read the extensions for global tactics.
 	 * <p>
 	 * 
 	 * @return the set of Proof Tactics from the Global tactic extension
 	 */
-	public static ArrayList<GlobalTacticUI> getGlobalTactics() {
-		if (tactics == null) {
-			internalGetGlobalTactics();
-		}
-		return tactics;
-	}
-
-
+	// public static ArrayList<GlobalTacticUI> getGlobalTactics() {
+	// if (tactics == null) {
+	// internalGetGlobalTactics();
+	// }
+	// return tactics;
+	// }
 	/**
 	 * Read the extensions for global dropdown.
 	 * <p>
 	 * 
 	 * @return A set of dropdown from the global dropdown extension
 	 */
-	public static ArrayList<GlobalTacticDropdownUI> getGlobalDropdowns() {
-		if (dropdowns == null) {
-			internalGetGlobalTactics();
-		}
-		return dropdowns;
-	}
-
-	public static ArrayList<GlobalTacticToolbar> getGlobalToolbar() {
+	// public static ArrayList<GlobalTacticDropdownUI> getGlobalDropdowns() {
+	// if (dropdowns == null) {
+	// internalGetGlobalTactics();
+	// }
+	// return dropdowns;
+	// }
+	//
+	public static ArrayList<GlobalTacticToolbarUI> getGlobalToolbar() {
 		if (toolbars == null) {
 			internalGetGlobalTactics();
 		}
