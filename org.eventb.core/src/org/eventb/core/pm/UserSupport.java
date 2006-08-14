@@ -113,7 +113,8 @@ public class UserSupport implements IElementChangedListener,
 
 	private void notifyPendingDelta() {
 		if (fireDelta) {
-			UserSupportUtils.debug("Notified: " + getDelta());
+			UserSupportUtils.debug("Notified "
+					+ this.getInput().getElementName() + getDelta());
 			notifyStateChangedListeners();
 			delta = new ThreadLocal<IProofStateDelta>(); // Clear delta
 		}
@@ -231,7 +232,8 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
-		if (prSequent == null) setProofState(null);
+		if (prSequent == null)
+			setProofState(null);
 		for (ProofState ps : proofStates) {
 			if (ps.getPRSequent().equals(prSequent)) {
 				setProofState(ps);
@@ -264,7 +266,13 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void prevUndischargedPO(boolean force) throws RodinDBException {
-		int index = proofStates.indexOf(currentPS);
+		int index;
+		if (currentPS == null) {
+			index = -1;
+		} else {
+			index = proofStates.indexOf(currentPS);
+		}
+
 		for (int i = 1; i < proofStates.size(); i++) {
 			ProofState ps = proofStates.get((proofStates.size() + index - i)
 					% proofStates.size());
@@ -285,29 +293,28 @@ public class UserSupport implements IElementChangedListener,
 		if (currentPS != ps) {
 			if (currentPS != null)
 				currentPS.getProofTree().removeChangeListener(this);
-			
+
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
 			if (ps == null) {
 				currentPS = null;
 
 				ProofStateDelta newDelta = new ProofStateDelta(this);
 				newDelta.setNewProofState(null);
-//				newDelta.addInformation("Select a new proof obligation");
+				// newDelta.addInformation("Select a new proof obligation");
 				fireProofStateDelta(newDelta);
-				
-			}
-			else {
+
+			} else {
 				currentPS = ps;
 				if (ps.getProofTree() == null) {
 					ps.loadProofTree();
-					ps.getProofTree().addChangeListener(this);
 				}
+				ps.getProofTree().addChangeListener(this);
 
 				ProofStateDelta newDelta = new ProofStateDelta(this);
 				newDelta.setNewProofState(ps);
 				newDelta.addInformation("Select a new proof obligation");
 				fireProofStateDelta(newDelta);
-				
+
 			}
 		}
 		return;
@@ -378,8 +385,7 @@ public class UserSupport implements IElementChangedListener,
 			newDelta.setNewCurrentNode(currentNode);
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
-		}
-		else {
+		} else {
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
@@ -398,8 +404,7 @@ public class UserSupport implements IElementChangedListener,
 			newDelta.setNewCurrentNode(currentNode);
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);
-		}
-		else {
+		} else {
 			ProofStateDelta newDelta = new ProofStateDelta(this);
 			newDelta.addInformation(info);
 			fireProofStateDelta(newDelta);

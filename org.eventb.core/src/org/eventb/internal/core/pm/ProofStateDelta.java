@@ -103,7 +103,7 @@ public class ProofStateDelta implements IProofStateDelta {
 		result = result + "\n" + "New Search: " + newSearch;
 		result = result + "\n" + "Information:";
 		for (Object info : information) {
-			result = result + info;
+			result = result + "\n   " + info;
 		}
 		result = result + "\n***************************";
 		return result;
