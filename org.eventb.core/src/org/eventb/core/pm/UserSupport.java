@@ -618,10 +618,26 @@ public class UserSupport implements IElementChangedListener,
 
 					if (state.isUninitialised())
 						return;
+					
+					if (state.proofDischarged()) {
+						UserSupportUtils.debug("Proof Discharged in file");
+						state.getProofTree().removeChangeListener(this);
+						state.loadProofTree();
+						state.getProofTree().addChangeListener(this);
+						if (state == currentPS) {
+							UserSupportUtils.debug("Is the current node");
+							ProofStateDelta newDelta = new ProofStateDelta(
+									UserSupport.this);
+							newDelta.setNewProofState(currentPS);
+							newDelta
+									.addInformation("Current proof has been reused");
+							fireProofStateDelta(newDelta);
+						}
+					}
 
 					if (state.proofReusable()) {
 						UserSupportUtils.debug("Can be reused");
-
+						state.getProofTree().addChangeListener(this);
 						if (state == currentPS) {
 							UserSupportUtils.debug("Is the current node");
 							ProofStateDelta newDelta = new ProofStateDelta(

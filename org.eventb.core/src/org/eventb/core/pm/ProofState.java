@@ -156,6 +156,8 @@ public class ProofState {
 		
 	}
 
+	
+	
 	// Pre: Must be initalised and not currently saving.
 	public boolean proofReusable() throws RodinDBException {
 //		if (isSavingOrUninitialised()) return false;
@@ -177,6 +179,10 @@ public class ProofState {
 
 	
 	public boolean isUninitialised() {return (pt == null);}
+
+	public boolean proofDischarged() throws RodinDBException {
+		return prSequent.isClosed();
+	}
 	
 	
 }
