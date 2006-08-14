@@ -37,4 +37,9 @@ public class GoalTacticUI {
 	public String getHint() {
 		return hint;
 	}
+	
+	public String getID() {
+		return ID;
+	}
+	
 }
