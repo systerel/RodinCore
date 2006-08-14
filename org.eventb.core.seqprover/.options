@@ -1,3 +1,3 @@
-org.eventb.core.seqprover/debug = false
+org.eventb.core.seqprover/debug = true
 org.eventb.core.seqprover/debug/b4free = false
 org.eventb.core.seqprover/debug/seqProver = false
