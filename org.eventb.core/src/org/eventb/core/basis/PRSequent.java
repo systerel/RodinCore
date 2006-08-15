@@ -73,6 +73,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 		}, null);
 	}
 
+	@Deprecated
 	public boolean isClosed() throws RodinDBException {
 		if (isProofBroken()) return false;
 		IPRProofTree proof = getProofTree();
@@ -83,11 +84,13 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return getContents().equals("ProofBroken");
 	}
 
+	@Deprecated
 	public void setProofBroken(boolean broken) throws RodinDBException {
 		if (broken) setContents("ProofBroken");
 		else setContents("ProofValid");
 	}
 
+	@Deprecated
 	public boolean proofAttempted() throws RodinDBException {
 		IPRProofTree proof = getProofTree();
 		if (proof == null || ! proof.proofAttempted()) return false;
