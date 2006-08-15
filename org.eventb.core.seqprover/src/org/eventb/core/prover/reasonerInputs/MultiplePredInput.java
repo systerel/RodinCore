@@ -1,4 +1,4 @@
-package org.eventb.core.prover.reasoners;
+package org.eventb.core.prover.reasonerInputs;
 
 import java.util.Set;
 

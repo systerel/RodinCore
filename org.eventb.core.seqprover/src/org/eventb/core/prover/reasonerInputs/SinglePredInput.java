@@ -1,4 +1,4 @@
-package org.eventb.core.prover.reasoners;
+package org.eventb.core.prover.reasonerInputs;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;

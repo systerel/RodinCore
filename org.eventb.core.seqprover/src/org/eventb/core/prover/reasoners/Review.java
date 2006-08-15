@@ -13,6 +13,10 @@ import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasonerInputs.CombiInput;
+import org.eventb.core.prover.reasonerInputs.MultiplePredInput;
+import org.eventb.core.prover.reasonerInputs.SinglePredInput;
+import org.eventb.core.prover.reasonerInputs.SingleStringInput;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -63,49 +67,4 @@ public class Review implements IReasoner{
 		return reasonerOutput;
 	}
 	
-//	public static class Input implements ReasonerInput{
-//		public final Set<Hypothesis> hyps;
-//		public final Predicate goal;
-//		// A reviewer confidence in the range 1 (lowest) to 5 (highest)
-//		public final int reviewerConfidence;
-//		
-//		public Input(Set<Hypothesis> hyps,Predicate goal, int reviewerConfidence){
-//			this.hyps = hyps;
-//			this.goal = goal;
-//			assert reviewerConfidence >= 1;
-//			assert reviewerConfidence <= 5;
-//			this.reviewerConfidence = reviewerConfidence;
-//		}
-//		
-//		public Input(int reviewerConfidence){
-//			this.hyps = null;
-//			this.goal = null;
-//			assert reviewerConfidence >= 1;
-//			assert reviewerConfidence <= 5;
-//			this.reviewerConfidence = reviewerConfidence;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.hyps = serializableReasonerInput.hypAction.getHyps();
-//			this.goal = serializableReasonerInput.getPredicate("goal");
-//			this.reviewerConfidence =  
-//				Integer.parseInt(serializableReasonerInput.getString("reviewerConfidence"));
-//			
-//		}
-//		
-//		public SerializableReasonerInput genSerializable() {
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			// the action type is irrelevant : just reusing code to store hypSets
-//			// inside hypActions.
-//			// TODO : maybe fix later
-//			serializableReasonerInput.hypAction =
-//				new HypothesesManagement.Action(ActionType.SELECT,this.hyps);
-//			serializableReasonerInput.putPredicate("goal",goal);
-//			serializableReasonerInput.putString("reviewerConfidence",String.valueOf(reviewerConfidence));
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
-
 }

@@ -13,6 +13,7 @@ import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 public class ExI implements IReasoner{

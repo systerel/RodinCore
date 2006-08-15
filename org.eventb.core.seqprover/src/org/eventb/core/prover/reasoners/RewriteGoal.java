@@ -7,6 +7,8 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasonerInputs.SinglePredInputReasoner;
+import org.eventb.core.prover.reasonerInputs.SingleStringInput;
 import org.eventb.core.prover.reasoners.rewriter.Rewriter;
 import org.eventb.core.prover.reasoners.rewriter.RewriterRegistry;
 import org.eventb.core.prover.sequent.IProverSequent;

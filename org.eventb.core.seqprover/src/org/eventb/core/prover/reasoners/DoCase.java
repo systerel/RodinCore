@@ -8,6 +8,8 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasonerInputs.SinglePredInput;
+import org.eventb.core.prover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 public class DoCase extends SinglePredInputReasoner{

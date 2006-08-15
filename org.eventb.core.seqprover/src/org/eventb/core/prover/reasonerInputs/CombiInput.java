@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.eventb.core.prover.reasoners;
+package org.eventb.core.prover.reasonerInputs;
 
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.IReasonerInput;
