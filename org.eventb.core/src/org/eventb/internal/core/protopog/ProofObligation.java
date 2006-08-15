@@ -42,8 +42,8 @@ public class ProofObligation {
 	public final HashMap<String, String> hints;
 	public final HashMap<String, String> sources;
 	
-	private void putPredicate(IInternalParent element, Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicate poPredicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+	private void putPredicate(String predName, IInternalParent element, Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
+		IPOPredicate poPredicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, predName, null, monitor);
 		poPredicate.setContents(predicate.toStringWithTypes(), monitor);
 	}
 	
@@ -53,12 +53,13 @@ public class ProofObligation {
 		putTypeEnvironment(sequent, monitor);
 		IPOHypothesis hypothesis = 
 			(IPOHypothesis) sequent.createInternalElement(
-					IPOHypothesis.ELEMENT_TYPE, null, null, monitor);
+					IPOHypothesis.ELEMENT_TYPE, "global-hyps", null, monitor);
 		hypothesis.setContents(globalHypothesis, monitor);
+		int idx = 1;
 		for (Predicate predicate : localHypothesis) {
-			putPredicate(hypothesis, predicate, monitor);
+			putPredicate("l" + idx++, hypothesis, predicate, monitor);
 		}
-		putPredicate(sequent, goal, monitor);
+		putPredicate("goal", sequent, goal, monitor);
 		IPODescription description = (IPODescription) sequent.createInternalElement(IPODescription.ELEMENT_TYPE, desc, null, monitor);
 		for(Entry<String, String> entry : sources.entrySet()) {
 			String role = entry.getKey();

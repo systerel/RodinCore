@@ -126,16 +126,20 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		FormulaFactory factory = FormulaFactory.getDefault();
 		
 		IInternalElement element = poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getOldHypSetName(), null, monitor);
+		int nameIdx = 0;
 		for(ISCAxiom axiom : machineCache.getOldAxioms()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			final String name = "p" + nameIdx++;
+			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			predicate.setContents(axiom.getContents(), monitor);
 		}
 		for(ISCTheorem theorem : machineCache.getOldTheorems()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			final String name = "p" + nameIdx++;
+			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			predicate.setContents(theorem.getContents(), monitor);
 		}
 		for(ISCCarrierSet carrierSet : machineCache.getSCCarrierSets()) {
-			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			final String name = "p" + nameIdx++;
+			IPOPredicate predicate = (IPOPredicate) element.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			Predicate pp = factory.makeRelationalPredicate(
 					Formula.NOTEQUAL, 
 					carrierSet.getIdentifier(factory), 
@@ -151,34 +155,39 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 //		}
 		ISCInvariant[] invariants = machineCache.getNewInvariants();
 		for(int i=0; i<invariants.length-1; i++) {
+			final String name = invariants[i].getElementName();
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getHypSetName(invariants[i+1].getElementName()), null, monitor);
-			predicateSet.setContents(machineCache.getHypSetName(invariants[i].getElementName()), monitor);
-			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			predicateSet.setContents(machineCache.getHypSetName(name), monitor);
+			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			predicate.setContents(invariants[i].getContents(monitor), monitor);
 		}
 		ISCTheorem[] theorems = machineCache.getNewTheorems();
-		if(invariants.length > 0)
+		if(invariants.length > 0) {
+			final String name = invariants[invariants.length-1].getElementName();
 			if(theorems.length == 0) {
 				IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getNewHypsetName(), null, monitor);
-				predicateSet.setContents(machineCache.getHypSetName(invariants[invariants.length-1].getElementName()), monitor);
-				IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+				predicateSet.setContents(machineCache.getHypSetName(name), monitor);
+				IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 				predicate.setContents(invariants[invariants.length-1].getContents(monitor), monitor);
 			} else if(theorems.length > 0) {
 				IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getHypSetName(theorems[0].getElementName()), null, monitor);
-				predicateSet.setContents(machineCache.getHypSetName(invariants[invariants.length-1].getElementName()), monitor);
-				IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+				predicateSet.setContents(machineCache.getHypSetName(name), monitor);
+				IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 				predicate.setContents(invariants[invariants.length-1].getContents(monitor), monitor);
 			}
+		}
 		for(int i=0; i<theorems.length-1; i++) {
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getHypSetName(theorems[i+1].getElementName()), null, monitor);
-			predicateSet.setContents(machineCache.getHypSetName(theorems[i].getElementName()), monitor);
-			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			final String name = theorems[i].getElementName();
+			predicateSet.setContents(machineCache.getHypSetName(name), monitor);
+			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			predicate.setContents(theorems[i].getContents(monitor), monitor);
 		}
 		if(theorems.length > 0) {
 			IPOPredicateSet predicateSet = (IPOPredicateSet) poFile.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, machineCache.getNewHypsetName(), null, monitor);
-			predicateSet.setContents(machineCache.getHypSetName(theorems[theorems.length-1].getElementName()), monitor);
-			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, monitor);
+			final String name = theorems[theorems.length-1].getElementName();
+			predicateSet.setContents(machineCache.getHypSetName(name), monitor);
+			IPOPredicate predicate = (IPOPredicate) predicateSet.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, monitor);
 			predicate.setContents(theorems[theorems.length-1].getContents(monitor), monitor);
 		}
 	}
