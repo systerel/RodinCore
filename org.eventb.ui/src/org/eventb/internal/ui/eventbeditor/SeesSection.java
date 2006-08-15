@@ -343,7 +343,7 @@ public class SeesSection extends SectionPart implements
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
-		Display display = Display.getCurrent();
+		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
 				viewer.setInput(rodinFile);

@@ -379,7 +379,7 @@ public class RefinesSection extends SectionPart implements
 	// return;
 	// }
 	public void elementChanged(final ElementChangedEvent event) {
-		Display display = Display.getCurrent();
+		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 
 			public void run() {
