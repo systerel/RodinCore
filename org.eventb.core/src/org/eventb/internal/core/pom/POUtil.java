@@ -128,8 +128,10 @@ public class POUtil {
 		IPOPredicateSet parent = (IPOPredicateSet) file.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, name, null, null);
 		if(parentSet != null)
 			parent.setContents(parentSet);
+		int idx = 1;
 		for(int i=0; i<predicates.length; i++) {
-			IInternalElement element = parent.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, null);
+			name = "p" + idx++;
+			IInternalElement element = parent.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, null);
 			element.setContents(predicates[i]);
 		}
 	}
@@ -144,21 +146,22 @@ public class POUtil {
 		IPOSequent sequent = (IPOSequent) file.createInternalElement(IPOSequent.ELEMENT_TYPE, poName, null, null);
 		addTypes(sequent, localNames, localTypes);
 		addHypothesis(sequent, globalHypothesis, localHypothesis);
-		addPredicate(sequent,goal);
+		addPredicate("goal", sequent,goal);
 	}
 	
 	private static void addHypothesis(IPOSequent sequent, 
 			String globalHypothesis, 
 			String[] localHypothesis) throws RodinDBException {
-		IPOHypothesis hypothesis = (IPOHypothesis) sequent.createInternalElement(IPOHypothesis.ELEMENT_TYPE, null, null, null);
+		IPOHypothesis hypothesis = (IPOHypothesis) sequent.createInternalElement(IPOHypothesis.ELEMENT_TYPE, "glob-hyp", null, null);
 		hypothesis.setContents(globalHypothesis);
+		int idx = 1;
 		for(int i=0; i<localHypothesis.length; i++) {
-			addPredicate(hypothesis, localHypothesis[i]);
+			addPredicate("p" + idx++, hypothesis, localHypothesis[i]);
 		}
 	}
 	
-	private static void addPredicate(IInternalParent internalParent, String predicate) throws RodinDBException {
-		IInternalElement element = internalParent.createInternalElement(IPOPredicate.ELEMENT_TYPE, null, null, null);
+	private static void addPredicate(String name, IInternalParent internalParent, String predicate) throws RodinDBException {
+		IInternalElement element = internalParent.createInternalElement(IPOPredicate.ELEMENT_TYPE, name, null, null);
 		element.setContents(predicate);
 	}
 
