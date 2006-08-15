@@ -7,27 +7,19 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.Map;
-
-import org.eventb.core.IPRExpression;
-import org.eventb.core.IPRHypAction;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPair;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerRegistry;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasoners.ConjE;
-import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;

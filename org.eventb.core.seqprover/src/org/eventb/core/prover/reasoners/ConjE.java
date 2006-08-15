@@ -1,15 +1,11 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
-import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -22,11 +18,7 @@ public class ConjE extends SinglePredInputReasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		Predicate conjHypPred = input.getPredicate();
 		Hypothesis conjHyp = new Hypothesis(conjHypPred);
@@ -55,27 +47,5 @@ public class ConjE extends SinglePredInputReasoner{
 		
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		Hypothesis conjHyp;
-//		
-//		public Input(Hypothesis conjHyp){
-//			this.conjHyp = conjHyp;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.conjHyp = new Hypothesis(serializableReasonerInput.getPredicate("conjHyp"));
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			serializableReasonerInput.putPredicate("conjHyp",conjHyp.getPredicate());
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

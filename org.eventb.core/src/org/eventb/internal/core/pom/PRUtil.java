@@ -42,7 +42,6 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.rules.ProofRule;
 import org.eventb.core.prover.rules.ProofTreeNode;
 import org.eventb.core.prover.rules.ReasoningStep;

@@ -12,7 +12,6 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReplayHints;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
@@ -64,11 +63,7 @@ public class ExternalPP extends LegacyProvers {
 	public ReasonerOutput apply(IProverSequent sequent,
 			ReasonerInput reasonerInput) {
 		
-		Input myInput;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			myInput = new Input((SerializableReasonerInput)reasonerInput);
-		} 
-		else myInput = (Input) reasonerInput;
+		Input myInput = (Input) reasonerInput;
 		
 		final long timeOutDelay = myInput.timeOutDelay;
 		if (timeOutDelay < 0) {
@@ -146,18 +141,6 @@ public class ExternalPP extends LegacyProvers {
 		public Input(boolean restricted, long timeOutDelay, IProgressMonitor monitor) {
 			super(timeOutDelay, monitor);
 			this.restricted = restricted;
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			super(serializableReasonerInput);
-			this.restricted = Boolean.parseBoolean(serializableReasonerInput.getString("restricted"));
-		}
-
-		public SerializableReasonerInput genSerializable() {
-			SerializableReasonerInput serializableReasonerInput =
-				super.genSerializable();
-			serializableReasonerInput.putString("restricted",String.valueOf(this.restricted));
-			return serializableReasonerInput;
 		}
 
 		public boolean hasError() {

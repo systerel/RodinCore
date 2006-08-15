@@ -6,7 +6,6 @@ import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -19,11 +18,7 @@ public class Cut extends SinglePredInputReasoner{
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
 		// Organize Input
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
 		{
@@ -70,40 +65,5 @@ public class Cut extends SinglePredInputReasoner{
 				
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		Predicate lemmaPred;
-//		String error;
-//		
-//		public Input(String lemma, ITypeEnvironment typeEnv){
-//			
-//			lemmaPred = Lib.parsePredicate(lemma);
-//			if (lemma == null)
-//			{
-//				error = "Parse error for predicate: "+ lemma;
-//				return;
-//			}
-//			if (! Lib.typeCheckClosed(lemmaPred,typeEnv)){
-//				error = "Type check failed for Predicate: "+lemmaPred;
-//				lemmaPred = null;
-//				return;
-//			}		
-//		}
-//
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.lemmaPred = serializableReasonerInput.getPredicate("lemmaPred");
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			assert lemmaPred != null;
-//			serializableReasonerInput.putPredicate("lemmaPred",lemmaPred);
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

@@ -12,10 +12,8 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReplayHints;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
-import org.eventb.core.prover.reasoners.ExternalPP.Input;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -67,11 +65,7 @@ public class ExternalML extends LegacyProvers {
 	public ReasonerOutput apply(IProverSequent sequent,
 			ReasonerInput reasonerInput) {
 		
-		Input myInput;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			myInput = new Input((SerializableReasonerInput)reasonerInput);
-		} 
-		else myInput = (Input) reasonerInput;
+		Input myInput = (Input) reasonerInput;
 		
 		final long timeOutDelay = myInput.timeOutDelay;
 		if (timeOutDelay < 0) {
@@ -178,18 +172,6 @@ public class ExternalML extends LegacyProvers {
 			}			
 		}
 		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			super(serializableReasonerInput);
-			this.forces = Integer.parseInt(serializableReasonerInput.getString("forces"));
-		}
-
-		public SerializableReasonerInput genSerializable() {
-			SerializableReasonerInput serializableReasonerInput =
-				super.genSerializable();
-			serializableReasonerInput.putString("forces",String.valueOf(this.forces));
-			return serializableReasonerInput;
-		}
-
 		public boolean hasError() {
 			// TODO Auto-generated method stub
 			return false;

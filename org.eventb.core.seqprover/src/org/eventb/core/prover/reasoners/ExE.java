@@ -10,7 +10,6 @@ import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -23,11 +22,7 @@ public class ExE extends SinglePredInputReasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 
 		Predicate exHypPred = input.getPredicate();
 		Hypothesis exHyp = new Hypothesis(exHypPred);

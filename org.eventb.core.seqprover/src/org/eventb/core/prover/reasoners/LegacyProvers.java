@@ -1,11 +1,8 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
-import org.eventb.core.prover.SerializableReasonerInput;
-import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
 /**
  * Common implementation for running a external automated provers.
@@ -46,31 +43,6 @@ public abstract class LegacyProvers implements Reasoner {
 			this.monitor = monitor;
 		}
 		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.timeOutDelay = Long.parseLong(serializableReasonerInput.getString("timeOutDelay"));
-			this.monitor = null;
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putString("timeOutDelay",String.valueOf(this.timeOutDelay));
-			return serializableReasonerInput;
-		}
-		
-//		public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-//			reasonerInputSerializer.putString("timeOutDelay",Long.toString(timeOutDelay));		
-//		}
-//
-//		public boolean hasError() {
-//			// TODO Auto-generated method stub
-//			return false;
-//		}
-//
-//		public String getError() {
-//			// TODO Auto-generated method stub
-//			return null;
-//		}
 	}
 
 }

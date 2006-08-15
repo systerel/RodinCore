@@ -1,12 +1,10 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasoners.rewriter.Rewriter;
 import org.eventb.core.prover.reasoners.rewriter.RewriterRegistry;

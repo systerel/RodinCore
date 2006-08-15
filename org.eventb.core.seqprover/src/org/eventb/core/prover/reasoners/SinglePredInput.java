@@ -6,7 +6,6 @@ import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReplayHints;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.sequent.Hypothesis;
 
@@ -56,22 +55,6 @@ public class SinglePredInput implements ReasonerInput{
 	 */
 	public final Predicate getPredicate() {
 		return predicate;
-	}
-
-	public SinglePredInput(SerializableReasonerInput serializableReasonerInput) {
-		predicate = serializableReasonerInput.getPredicate("predicate");
-		if (predicate == null){
-			error = "Invalid or nonexistent Predicate";
-			return;
-		}
-	}
-
-	public SerializableReasonerInput genSerializable(){
-		SerializableReasonerInput serializableReasonerInput 
-		= new SerializableReasonerInput();
-		assert predicate != null;
-		serializableReasonerInput.putPredicate("predicate",predicate);
-		return serializableReasonerInput;
 	}
 
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {

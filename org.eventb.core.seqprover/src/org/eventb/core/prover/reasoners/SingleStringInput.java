@@ -3,7 +3,6 @@ package org.eventb.core.prover.reasoners;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReplayHints;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
 public class SingleStringInput implements ReasonerInput{
@@ -32,22 +31,6 @@ public class SingleStringInput implements ReasonerInput{
 	 */
 	public final String getString() {
 		return string;
-	}
-
-	public SingleStringInput(SerializableReasonerInput serializableReasonerInput) {
-		string = serializableReasonerInput.getString("string");
-		if (string == null){
-			error = "Invalid or nonexistent String";
-			return;
-		}
-	}
-
-	public SerializableReasonerInput genSerializable(){
-		SerializableReasonerInput serializableReasonerInput 
-		= new SerializableReasonerInput();
-		assert string != null;
-		serializableReasonerInput.putString("string",string);
-		return serializableReasonerInput;
 	}
 
 	public SingleStringInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {

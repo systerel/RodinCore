@@ -6,7 +6,6 @@ import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.IProverSequent;
 
@@ -19,11 +18,7 @@ public class DoCase extends SinglePredInputReasoner{
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
 		// Organize Input
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
 		{
@@ -71,32 +66,5 @@ public class DoCase extends SinglePredInputReasoner{
 				
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		String trueCase;
-//		Predicate trueCasePred;
-//		
-//		public Input(String trueCase){
-//			this.trueCase = trueCase;
-//			this.trueCasePred = null;
-//		}
-//
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.trueCase = null;
-//			this.trueCasePred = serializableReasonerInput.getPredicate("trueCasePred");
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-////			serializableReasonerInput.putString("lemma",lemma);
-//			assert trueCasePred != null;
-//			serializableReasonerInput.putPredicate("trueCasePred",trueCasePred);
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

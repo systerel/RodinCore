@@ -6,7 +6,6 @@ import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -19,11 +18,7 @@ public class DisjE extends SinglePredInputReasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		Predicate disjHypPred = input.getPredicate();
 		Hypothesis disjHyp = new Hypothesis(disjHypPred);
@@ -55,27 +50,5 @@ public class DisjE extends SinglePredInputReasoner{
 		
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		Hypothesis disjHyp;
-//		
-//		public Input(Hypothesis disjHyp){
-//			this.disjHyp = disjHyp;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.disjHyp = new Hypothesis(serializableReasonerInput.getPredicate("disjHyp"));
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			serializableReasonerInput.putPredicate("disjHyp",disjHyp.getPredicate());
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

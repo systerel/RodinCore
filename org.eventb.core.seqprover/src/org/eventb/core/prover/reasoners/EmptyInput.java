@@ -3,7 +3,6 @@ package org.eventb.core.prover.reasoners;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReplayHints;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
 public class EmptyInput implements ReasonerInput{
@@ -11,10 +10,6 @@ public class EmptyInput implements ReasonerInput{
 	public EmptyInput()
 	{};
 	
-	public SerializableReasonerInput genSerializable() {
-		return new SerializableReasonerInput();
-	}
-
 	public boolean hasError() {
 		return false;
 	}

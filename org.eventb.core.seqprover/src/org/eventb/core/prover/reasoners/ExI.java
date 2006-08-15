@@ -10,7 +10,6 @@ import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -35,11 +34,7 @@ public class ExI implements Reasoner{
 		}
 		
 		// Organize Input
-		MultipleExprInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new MultipleExprInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (MultipleExprInput) reasonerInput;
+		MultipleExprInput input = (MultipleExprInput) reasonerInput;
 		
 		if (input.hasError())
 		{

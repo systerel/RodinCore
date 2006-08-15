@@ -7,7 +7,6 @@ import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
@@ -55,26 +54,5 @@ public class MngHyp implements Reasoner{
 				
 		return reasonerOutput;
 	}
-	
-//	public static class Input implements ReasonerInput{
-//		public final Action action;
-//		
-//		public Input(Action action){
-//			this.action = action;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.action = serializableReasonerInput.hypAction;
-//		}
-//		
-//		public SerializableReasonerInput genSerializable() {
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			assert action != null;
-//			serializableReasonerInput.hypAction = action;
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

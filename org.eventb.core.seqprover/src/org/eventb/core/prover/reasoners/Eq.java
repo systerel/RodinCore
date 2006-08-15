@@ -7,12 +7,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
-import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -25,11 +23,7 @@ public class Eq extends SinglePredInputReasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		SinglePredInput input;
-		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
-		} 
-		else input = (SinglePredInput) reasonerInput;
+		SinglePredInput input = (SinglePredInput) reasonerInput;
 
 		Predicate eqHypPred = input.getPredicate();
 		Hypothesis eqHyp = new Hypothesis(eqHypPred);
@@ -82,27 +76,5 @@ public class Eq extends SinglePredInputReasoner{
 		reasonerOutput.anticidents[0].subGoal = rewrittenGoal;
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		Hypothesis eqHyp;
-//		
-//		public Input(Hypothesis eqHyp){
-//			this.eqHyp = eqHyp;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.eqHyp = new Hypothesis(serializableReasonerInput.getPredicate("eqHyp"));
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			serializableReasonerInput.putPredicate("eqHyp",eqHyp.getPredicate());
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }
