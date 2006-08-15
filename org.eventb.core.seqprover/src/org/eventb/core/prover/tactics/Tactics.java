@@ -61,14 +61,14 @@ public class Tactics {
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
-				new ExternalPP.Input(restricted,monitor),monitor);
+				new ExternalPP.Input(restricted),monitor);
 	}
 	
 	public static ITactic externalPP(boolean restricted, long timeOutDelay,
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
-				new ExternalPP.Input(restricted, timeOutDelay, monitor),
+				new ExternalPP.Input(restricted, timeOutDelay),
 				monitor);
 	}
 	
@@ -76,7 +76,7 @@ public class Tactics {
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
-				new ExternalML.Input(forces, monitor),
+				new ExternalML.Input(forces),
 				monitor);
 	}
 	
@@ -84,7 +84,7 @@ public class Tactics {
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
-				new ExternalML.Input(forces, timeOutDelay, monitor),
+				new ExternalML.Input(forces, timeOutDelay),
 				monitor);
 	}
 	

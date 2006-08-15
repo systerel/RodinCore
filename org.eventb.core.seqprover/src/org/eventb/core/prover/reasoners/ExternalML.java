@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
+import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
@@ -23,8 +24,9 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * Implementation of a call to the Mono-Lemma Prover provided by B4free.
  * 
  * @author Laurent Voisin
+ * @author Farhad Mehta
  */
-public class ExternalML extends LegacyProvers {
+public class ExternalML implements Reasoner {
 	
 
 	public String getReasonerID() {
@@ -33,7 +35,7 @@ public class ExternalML extends LegacyProvers {
 	
 	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		return new Input(
-				Integer.parseInt(reasonerInputSerializer.getString("forces")),
+				reasonerInputSerializer.getString("forces"),
 				Long.parseLong(reasonerInputSerializer.getString("timeOutDelay"))
 				);
 	}
@@ -65,24 +67,14 @@ public class ExternalML extends LegacyProvers {
 	public ReasonerOutput apply(IProverSequent sequent,
 			ReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
-		Input myInput = (Input) reasonerInput;
+		Input input = (Input) reasonerInput;
 		
-		final long timeOutDelay = myInput.timeOutDelay;
-		if (timeOutDelay < 0) {
-			return new ReasonerOutputFail(
-					this,
-					reasonerInput,
-					"Invalid time out delay"
-			);
-		}
-		final String forces = myInput.getForces();
-		if (forces.length() == 0) {
-			return new ReasonerOutputFail(
-					this,
-					reasonerInput,
-					"Invalid forces"
-			);
-		}
+		if (input.hasError())
+			return new ReasonerOutputFail(this,input,input.getError());
+		
+		final long timeOutDelay = input.timeOutDelay;
+		final String forces = input.forces;
+		
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final Set<Hypothesis> hypotheses = sequent.visibleHypotheses();
 		final Predicate goal = sequent.goal();
@@ -107,11 +99,7 @@ public class ExternalML extends LegacyProvers {
 		);
 	}
 	
-	public ReasonerInput defaultInput(){
-		return new Input();
-	}
-	
-	public static class Input extends LegacyProvers.Input {
+	public static class Input implements ReasonerInput {
 		
 		public static int FORCE_0 = 0x1;
 		public static int FORCE_1 = 0x2;
@@ -121,50 +109,49 @@ public class ExternalML extends LegacyProvers {
 		public static int DEFAULT_FORCES = FORCE_0 | FORCE_1;
 
 		// Forces to use in the mono-lemma prover
-		final int forces;
+		final String forces;
+		final long timeOutDelay;
+		final String error;
 		
-		public Input() {
-			this(DEFAULT_DELAY, null);
-		}
-
-		public Input(long timeOutDelay) {
-			this(timeOutDelay, null);
+		private static final long DEFAULT_DELAY = 30 * 1000;
+		
+		private Input(String forces, long timeOutDelay) {
+			if (timeOutDelay < 0) {
+				this.forces = null;
+				this.timeOutDelay = -1;
+				this.error = "Invalid time out delay";
+				return;
+			}
+			if (forces.length() == 0){
+				this.forces = null;
+				this.timeOutDelay = -1;
+				this.error = "Invalid forces";
+				return;
+			}
+			
+			this.timeOutDelay = timeOutDelay;
+			this.forces = forces;
+			this.error = null;
 		}
 		
-		public Input(IProgressMonitor monitor) {
-			this(DEFAULT_DELAY, monitor);
-		}
-
-		public Input(long timeOutDelay, IProgressMonitor monitor) {
-			super(timeOutDelay, monitor);
-			this.forces = DEFAULT_FORCES;
-		}
-
 		public Input(int forces, long timeOutDelay) {
-			super(timeOutDelay, null);
-			this.forces = forces;
-		}
-
-		public Input(int forces, IProgressMonitor monitor) {
-			super(DEFAULT_DELAY, monitor);
-			this.forces = forces;
-		}
-
-		public Input(int forces, long timeOutDelay, IProgressMonitor monitor) {
-			super(timeOutDelay, monitor);
-			this.forces = forces;
+			this(forcesToString(forces),timeOutDelay);
 		}
 		
-		public String getForces() {
+		public Input(int forces) {
+			this(forces,DEFAULT_DELAY);
+		}
+
+		public static String forcesToString(int forces) {
 			StringBuilder builder = new StringBuilder();
-			addForce(builder, FORCE_0, '0');
-			addForce(builder, FORCE_1, '1');
-			addForce(builder, FORCE_2, '2');
-			addForce(builder, FORCE_3, '3');
+			addForce(builder, FORCE_0, '0', forces);
+			addForce(builder, FORCE_1, '1', forces);
+			addForce(builder, FORCE_2, '2', forces);
+			addForce(builder, FORCE_3, '3', forces);
 			return builder.toString();
 		}
 
-		private void addForce(StringBuilder builder, int force, char image) {
+		private static void addForce(StringBuilder builder, int force, char image, int forces) {
 			if ((forces & force) != 0) {
 				if (builder.length() != 0) builder.append(';');
 				builder.append(image);
@@ -172,23 +159,19 @@ public class ExternalML extends LegacyProvers {
 		}
 		
 		public boolean hasError() {
-			// TODO Auto-generated method stub
-			return false;
+			return error != null;
 		}
 
 		public String getError() {
-			// TODO Auto-generated method stub
-			return null;
+			return error;
 		}
 		
 		public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 			reasonerInputSerializer.putString("timeOutDelay",Long.toString(timeOutDelay));		
-			reasonerInputSerializer.putString("forces",Integer.toString(forces));
+			reasonerInputSerializer.putString("forces",forces);
 		}
 
 		public void applyHints(ReplayHints hints) {
-			// TODO Auto-generated method stub
-			
 		}
 		
 	}

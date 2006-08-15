@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
+import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
@@ -23,8 +24,9 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * Implementation of a call to the Predicate Prover provided by B4free.
  * 
  * @author Laurent Voisin
+ * @author Farhad Mehta
  */
-public class ExternalPP extends LegacyProvers {
+public class ExternalPP implements Reasoner {
 	
 	public String getReasonerID() {
 		return "PP(ext)";
@@ -63,19 +65,16 @@ public class ExternalPP extends LegacyProvers {
 	public ReasonerOutput apply(IProverSequent sequent,
 			ReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
-		Input myInput = (Input) reasonerInput;
+		Input input = (Input) reasonerInput;
 		
-		final long timeOutDelay = myInput.timeOutDelay;
-		if (timeOutDelay < 0) {
-			return new ReasonerOutputFail(
-					this,
-					reasonerInput,
-					"Invalid time out delay"
-			);
-		}
+		if (input.hasError())
+			return new ReasonerOutputFail(this,input,input.getError());
+		
+		final long timeOutDelay = input.timeOutDelay;
+	
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final Set<Hypothesis> hypotheses;
-		if (myInput.restricted) {
+		if (input.restricted) {
 			hypotheses = sequent.selectedHypotheses();
 		} else {
 			hypotheses = sequent.visibleHypotheses();
@@ -100,56 +99,37 @@ public class ExternalPP extends LegacyProvers {
 		);
 	}
 	
-	public ReasonerInput defaultInput(){
-		return new Input();
-	}
-	
-	public static class Input extends LegacyProvers.Input {
+	public static class Input implements ReasonerInput {
 		
 		// True if only selected hypotheses are passed to PP
 		final boolean restricted;
+		final long timeOutDelay;
+		final String error;
 		
+		private static final long DEFAULT_DELAY = 30 * 1000;
 		
-		public Input() {
-			this(DEFAULT_DELAY, null);
-		}
-
-		public Input(long timeOutDelay) {
-			this(timeOutDelay, null);
-		}
-		
-		public Input(IProgressMonitor monitor) {
-			this(DEFAULT_DELAY, monitor);
-		}
-
-		public Input(long timeOutDelay, IProgressMonitor monitor) {
-			super(timeOutDelay, monitor);
-			this.restricted = false;
-		}
-
 		public Input(boolean restricted, long timeOutDelay) {
-			super(timeOutDelay, null);
+			if (timeOutDelay < 0) {
+				this.restricted = false;
+				this.timeOutDelay = -1;
+				this.error = "Invalid time out delay";
+				return;
+			}
 			this.restricted = restricted;
+			this.timeOutDelay = timeOutDelay;
+			this.error = null;
 		}
-
-		public Input(boolean restricted, IProgressMonitor monitor) {
-			super(DEFAULT_DELAY, monitor);
-			this.restricted = restricted;
-		}
-
-		public Input(boolean restricted, long timeOutDelay, IProgressMonitor monitor) {
-			super(timeOutDelay, monitor);
-			this.restricted = restricted;
+		
+		public Input(boolean restricted) {
+			this(restricted,DEFAULT_DELAY);
 		}
 
 		public boolean hasError() {
-			// TODO Auto-generated method stub
-			return false;
+			return error != null;
 		}
 
 		public String getError() {
-			// TODO Auto-generated method stub
-			return null;
+			return error;
 		}
 
 		public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
@@ -158,8 +138,6 @@ public class ExternalPP extends LegacyProvers {
 		}
 
 		public void applyHints(ReplayHints hints) {
-			// TODO Auto-generated method stub
-			
 		}
 	}
 }
