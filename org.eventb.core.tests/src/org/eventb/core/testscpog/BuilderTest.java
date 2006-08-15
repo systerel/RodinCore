@@ -122,7 +122,7 @@ public abstract class BuilderTest extends TestCase {
 			guard.setContents(guards[i]);
 		}
 		for(int j=0; j<actions.length; j++) {
-			IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, "", null, null);
+			IAction action = (IAction) event.createInternalElement(IAction.ELEMENT_TYPE, "act" + j, null, null);
 			action.setContents(actions[j]);
 		}
 	}
@@ -208,7 +208,7 @@ public abstract class BuilderTest extends TestCase {
 			guard.setContents(guards[i]);
 		}
 		for(int j=0; j<actions.length; j++) {
-			ISCAction action = (ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, "ACTION", null, null);
+			ISCAction action = (ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, "act" + j, null, null);
 			action.setContents(actions[j]);
 		}
 	}
