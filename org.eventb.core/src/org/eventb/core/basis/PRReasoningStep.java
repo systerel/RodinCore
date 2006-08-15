@@ -125,10 +125,11 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		((PRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"neededHypotheses",null,null)))
 		.setHypSet(reasonerOutput.neededHypotheses);
 		// write out the anticidents (next subgoals)
+		int idx = 1;
 		for (Anticident anticident : reasonerOutput.anticidents){
 			((IPRReasonerAnticident)this.createInternalElement(
 					IPRReasonerAnticident.ELEMENT_TYPE,
-					"anticident",null,null)).setAnticident(anticident);
+					"anticident" + idx++,null,null)).setAnticident(anticident);
 		}
 		
 		// write out display
