@@ -16,7 +16,7 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.UnnamedInternalElement;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PO hypothesis as an extension of the Rodin database.
@@ -33,32 +33,39 @@ import org.rodinp.core.basis.UnnamedInternalElement;
  * @author Stefan Hallerstede
  * 
  */
-public class POHypothesis extends UnnamedInternalElement implements IPOHypothesis {
+public class POHypothesis extends InternalElement implements IPOHypothesis {
 
 	/**
 	 * Creates a new PO hypothesis handle.
 	 * 
+	 * @param name
+	 *            name of this element
 	 * @param parent
-	 *            parent of this node
+	 *            parent of this element
 	 */
-	public POHypothesis(IRodinElement parent) {
-		super(ELEMENT_TYPE, parent);
+	public POHypothesis(String name, IRodinElement parent) {
+		super(name, parent);
 	}
 
+	@Override
+	public String getElementType() {
+		return ELEMENT_TYPE;
+	}
+	
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException {
 		
-		IPOPredicateSet gobalHypothesis = null;
+		IPOPredicateSet globalHypothesis = null;
 		
 		if (getOpenable() instanceof IPOFile) {
-			gobalHypothesis = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+			globalHypothesis = ((IPOFile) getOpenable()).getPredicateSet(getContents());
 		}
 		if (getOpenable() instanceof IPRFile) {
-			gobalHypothesis = ((IPRFile) getOpenable()).getPredicateSet(getContents());
+			globalHypothesis = ((IPRFile) getOpenable()).getPredicateSet(getContents());
 		}
 		
-		assert gobalHypothesis != null;
+		assert globalHypothesis != null;
 		
-		return gobalHypothesis;
+		return globalHypothesis;
 	}
 	
 	public IPOPredicate[] getLocalHypothesis() throws RodinDBException {

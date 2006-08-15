@@ -8,7 +8,7 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IUnnamedInternalElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -27,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IPOHypothesis extends IUnnamedInternalElement {
+public interface IPOHypothesis extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poHypothesis"; //$NON-NLS-1$
 	
 	public IPOPredicateSet getGlobalHypothesis() throws RodinDBException;
