@@ -341,7 +341,7 @@
                enablesFor="1"
                icon="icons/full/ctool16/refines.gif"
                id="org.eventb.ui.refines"
-               label="&amp;Refines"
+               label="&amp;Refine"
                menubarPath="modelling"
                tooltip="Refine the machine"/>
          <action
@@ -349,7 +349,7 @@
                enablesFor="1"
                icon="icons/discharged.gif"
                id="org.eventb.ui.proveMachine"
-               label="&amp;Proves"
+               label="&amp;Prove"
                menubarPath="proving"
                tooltip="Prove the obligations related to this machine"/>
       </objectContribution>
@@ -361,7 +361,7 @@
                enablesFor="1"
                icon="icons/full/ctool16/refines.gif"
                id="org.eventb.ui.extends"
-               label="&amp;Extends"
+               label="&amp;Extend"
                menubarPath="modelling"
                tooltip="Extends the context"/>
          <action
@@ -369,7 +369,7 @@
                enablesFor="1"
                icon="icons/discharged.gif"
                id="org.eventb.ui.proveContext"
-               label="&amp;Proves"
+               label="&amp;Prove"
                menubarPath="proving"
                tooltip="Prove the obligations related to this context"/>
       </objectContribution>
