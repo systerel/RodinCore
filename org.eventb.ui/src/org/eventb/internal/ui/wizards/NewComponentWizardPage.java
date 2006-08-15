@@ -12,7 +12,7 @@
 
 package org.eventb.internal.ui.wizards;
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -213,7 +213,7 @@ public class NewComponentWizardPage extends WizardPage {
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
-		IRodinProject project;
+		final IRodinProject project;
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -241,18 +241,8 @@ public class NewComponentWizardPage extends WizardPage {
 
 		UIUtils.debug("Project " + project);
 		if (project != null) {
-			try {
-				IResource obj = project.getCorrespondingResource();
-
-				IContainer container;
-				if (obj instanceof IContainer)
-					container = (IContainer) obj;
-				else
-					container = ((IResource) obj).getParent();
-				containerText.setText(container.getFullPath().toString());
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
+			final IProject container = project.getProject();
+			containerText.setText(container.getFullPath().toString());
 		}
 		componentText.setFocus();
 		componentText.selectAll();
