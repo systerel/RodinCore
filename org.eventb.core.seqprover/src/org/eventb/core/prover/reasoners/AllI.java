@@ -13,7 +13,7 @@ import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class AllI implements Reasoner{
+public class AllI extends EmptyInputReasoner{
 	
 	public String getReasonerID() {
 		return "allI";

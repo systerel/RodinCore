@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 
 public class SerializableReasonerInput implements ReasonerInput {
@@ -47,5 +48,30 @@ public class SerializableReasonerInput implements ReasonerInput {
 	
 	public SerializableReasonerInput genSerializable() {
 		return this;
+	}
+
+	public boolean hasError() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String getError() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void applyHints(ReplayHints hints) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public ReasonerInput[] getChildren() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

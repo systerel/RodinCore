@@ -14,7 +14,7 @@ public class Falsify implements IHypothesisTactic {
 	}
 
 	public boolean isApplicable(IProofTreeNode node, Hypothesis hyp) {
-		return true;
+		return Tactics.falsifyHyp_applicable(hyp,node.getSequent());
 	}
 
 }

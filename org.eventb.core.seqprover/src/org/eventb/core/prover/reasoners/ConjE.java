@@ -1,8 +1,7 @@
 package org.eventb.core.prover.reasoners;
 
-import java.util.Arrays;
-
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
@@ -10,11 +9,12 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class ConjE implements Reasoner{
+public class ConjE extends SinglePredInputReasoner{
 	
 	public String getReasonerID() {
 		return "conjE";

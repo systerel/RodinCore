@@ -18,10 +18,11 @@ import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
+import org.eventb.core.prover.reasoners.CombiInput;
 import org.eventb.core.prover.reasoners.ConjE;
 import org.eventb.core.prover.reasoners.ConjI;
 import org.eventb.core.prover.reasoners.Contr;
-import org.eventb.core.prover.reasoners.Contradiction;
+import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
@@ -36,11 +37,13 @@ import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
 import org.eventb.core.prover.reasoners.MngHyp;
 import org.eventb.core.prover.reasoners.MultipleExprInput;
+import org.eventb.core.prover.reasoners.MultiplePredInput;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
 import org.eventb.core.prover.reasoners.SinglePredInput;
-import org.eventb.core.prover.reasoners.Tautology;
+import org.eventb.core.prover.reasoners.SingleStringInput;
+import org.eventb.core.prover.reasoners.TrueGoal;
 import org.eventb.core.prover.reasoners.rewriter.DisjToImpl;
 import org.eventb.core.prover.reasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.reasoners.rewriter.TrivialRewrites;
@@ -89,11 +92,23 @@ public class Tactics {
 //	}
 	
 	public static ITactic review() {
-		return BasicTactics.reasonerTac(new Review(),new Review.Input(1));
+		return review(1);
 	}
 	
-	public static ITactic review(int reviewerConfidence) {
-		return BasicTactics.reasonerTac(new Review(),new Review.Input(reviewerConfidence));
+	public static ITactic review(final int reviewerConfidence) {
+		return new ITactic(){
+			
+			public Object apply(IProofTreeNode pt) {
+				return (BasicTactics.reasonerTac(
+						new Review(),
+						new CombiInput(
+								new MultiplePredInput(Hypothesis.Predicates(pt.getSequent().selectedHypotheses())),
+								new SinglePredInput(pt.getSequent().goal()),
+								new SingleStringInput(Integer.toString(reviewerConfidence)))))
+								.apply(pt);
+			}
+			
+		};
 	}
 	
 //	public static ITactic lemma1(String lemma,ITypeEnvironment typeEnv) {
@@ -142,12 +157,6 @@ public class Tactics {
 		};
 	}
 	
-	
-	
-	public static ITactic contradictGoal(){
-		return BasicTactics.reasonerTac(new Contr(),new Contr.Input());
-	}
-	
 //	public static ITactic lasoo1(IProverSequent seq){
 //		
 //		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
@@ -189,6 +198,14 @@ public class Tactics {
 
 	// Tactics applicable on the goal
 	
+
+	public static ITactic contradictGoal(){
+		return BasicTactics.reasonerTac(new Contr(),new SinglePredInput(Lib.True));
+	}
+	
+	public static boolean contradictGoal_applicable(Predicate goal){
+		return (! Lib.isFalse(goal));
+	}
 	
 	public static ITactic impI() {
 		return BasicTactics.reasonerTac(new ImpI(),new EmptyInput());
@@ -242,7 +259,7 @@ public class Tactics {
 	}
 	
 	public static ITactic removeNegGoal(){
-		return BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new RemoveNegation()));
+		return BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new RemoveNegation().getRewriterID()));
 	}
 	
 	public static boolean removeNegGoal_applicable(Predicate goal){
@@ -250,7 +267,7 @@ public class Tactics {
 	}
 	
 	public static ITactic disjToImpGoal(){
-		return BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new DisjToImpl()));
+		return BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new DisjToImpl().getRewriterID()));
 	}
 	
 	public static boolean disjToImpGoal_applicable(Predicate goal){
@@ -261,8 +278,25 @@ public class Tactics {
 	// Tactics applicable on a hypothesis
 	
 	// TODO : change order of input in one of the two places
-	public static ITactic allD(Hypothesis univHyp, String... instantiations){
-		return BasicTactics.reasonerTac(new AllD(),new AllD.Input(instantiations,univHyp));
+	public static ITactic allD(final Hypothesis univHyp, final String... instantiations){
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode pt) {
+				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
+				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp.getPredicate());
+				return (
+						BasicTactics.reasonerTac(
+								new AllD(),
+								new CombiInput(
+										new MultipleExprInput(
+												instantiations,
+												boundIdentDecls,
+												typeEnv),
+												new SinglePredInput(univHyp))
+				)).apply(pt);
+			}
+			
+		};
 	}
 	
 	public static boolean allD_applicable(Hypothesis hyp){
@@ -316,18 +350,26 @@ public class Tactics {
 	
 
 	public static ITactic removeNegHyp(Hypothesis hyp){
-		return  BasicTactics.reasonerTac(new RewriteHyp(),new RewriteHyp.Input(new RemoveNegation(),hyp));
+		return  BasicTactics.reasonerTac(new RewriteHyp(),
+				new CombiInput(
+						new SinglePredInput(hyp),
+						new SingleStringInput(new RemoveNegation().getRewriterID())));
 	}
 	
 	public static boolean removeNegHyp_applicable(Hypothesis hyp){
 		return (new RemoveNegation()).isApplicable(hyp.getPredicate());
 	}
 	
+	public static ITactic falsifyHyp(Hypothesis hyp){
+		return BasicTactics.reasonerTac(new Contr(),new SinglePredInput(hyp));
+	}
+	
+	public static boolean falsifyHyp_applicable(Hypothesis hyp, IProverSequent seq){
+		return (!seq.goal().equals(Lib.makeNeg(hyp.getPredicate())));
+	}
+	
     // Tactics applicable on every hypothesis
 	
-	public static ITactic falsifyHyp(Hypothesis hyp){
-		return BasicTactics.reasonerTac(new Contr(),new Contr.Input(hyp));
-	}
 	
 	// Misc tactics
 	
@@ -336,11 +378,11 @@ public class Tactics {
 	}
 	
 	public static ITactic tautology() {
-		return BasicTactics.reasonerTac(new Tautology(),new EmptyInput());
+		return BasicTactics.reasonerTac(new TrueGoal(),new EmptyInput());
 	}
 	
 	public static ITactic contradiction() {
-		return BasicTactics.reasonerTac(new Contradiction(),new EmptyInput());
+		return BasicTactics.reasonerTac(new FalseHyp(),new EmptyInput());
 	}
 	
 	public static ITactic trivial() {
@@ -353,8 +395,8 @@ public class Tactics {
 	
 	public static ITactic trivialGoalRewrite() {
 		return compose(
-				BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new TrivialRewrites())),
-				BasicTactics.reasonerTac(new RewriteGoal(),new RewriteGoal.Input(new TypeExpRewrites()))
+				BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new TrivialRewrites().getRewriterID())),
+				BasicTactics.reasonerTac(new RewriteGoal(),new SingleStringInput(new TypeExpRewrites().getRewriterID()))
 		);
 	}
 	
@@ -365,7 +407,9 @@ public class Tactics {
 	public static ITactic mngHyp(ActionType type,Set<Hypothesis> hypotheses){
 		return BasicTactics.reasonerTac(
 				new MngHyp(),
-				new MngHyp.Input(new HypothesesManagement.Action(type,hypotheses)));
+				new CombiInput(
+						new SingleStringInput(type.toString()),
+						new MultiplePredInput(Hypothesis.Predicates(hypotheses))));
 	}
 
 	public static ITactic mngHyp(ActionType type,Hypothesis hypothesis){

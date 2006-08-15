@@ -1,7 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
@@ -9,7 +8,7 @@ import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class ImpI implements Reasoner{
+public class ImpI extends EmptyInputReasoner{
 	
 	public String getReasonerID() {
 		return "impI";

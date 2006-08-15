@@ -6,12 +6,16 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasoners.ExternalPP.Input;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
@@ -28,6 +32,14 @@ public class ExternalML extends LegacyProvers {
 	public String getReasonerID() {
 		return "ML (ext)";
 	}
+	
+	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		return new Input(
+				Integer.parseInt(reasonerInputSerializer.getString("forces")),
+				Long.parseLong(reasonerInputSerializer.getString("timeOutDelay"))
+				);
+	}
+
 	
 	private boolean runML(
 			ITypeEnvironment typeEnvironment,
@@ -176,6 +188,26 @@ public class ExternalML extends LegacyProvers {
 				super.genSerializable();
 			serializableReasonerInput.putString("forces",String.valueOf(this.forces));
 			return serializableReasonerInput;
+		}
+
+		public boolean hasError() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String getError() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+			reasonerInputSerializer.putString("timeOutDelay",Long.toString(timeOutDelay));		
+			reasonerInputSerializer.putString("forces",Integer.toString(forces));
+		}
+
+		public void applyHints(ReplayHints hints) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

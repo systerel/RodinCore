@@ -14,7 +14,6 @@ import org.eventb.core.prover.reasoners.AllI;
 import org.eventb.core.prover.reasoners.ConjE;
 import org.eventb.core.prover.reasoners.ConjI;
 import org.eventb.core.prover.reasoners.Contr;
-import org.eventb.core.prover.reasoners.Contradiction;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
@@ -23,6 +22,7 @@ import org.eventb.core.prover.reasoners.ExE;
 import org.eventb.core.prover.reasoners.ExI;
 import org.eventb.core.prover.reasoners.ExternalML;
 import org.eventb.core.prover.reasoners.ExternalPP;
+import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Hyp;
 import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
@@ -30,7 +30,7 @@ import org.eventb.core.prover.reasoners.MngHyp;
 import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
-import org.eventb.core.prover.reasoners.Tautology;
+import org.eventb.core.prover.reasoners.TrueGoal;
 import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
@@ -43,10 +43,10 @@ public class ReasonerRegistry {
 		{
 				// Add new reasoners here.
 				new Hyp(),
-//				new TrueGoal(),
-//				new FalseHyp(),
-				new Tautology(),
-				new Contradiction(),
+				new TrueGoal(),
+				new FalseHyp(),
+//				new Tautology(),
+//				new Contradiction(),
 				new ConjI(),
 				new Cut(),
 				new DoCase(),

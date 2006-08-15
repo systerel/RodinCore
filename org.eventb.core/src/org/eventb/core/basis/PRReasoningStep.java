@@ -20,10 +20,14 @@ import org.eventb.core.IPair;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Reasoner;
+import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerRegistry;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.prover.reasoners.ConjE;
+import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -55,31 +59,32 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		return reasoner;
 	} 
 	
-	public SerializableReasonerInput getReasonerInput() throws RodinDBException {
-		SerializableReasonerInput reasonerInput = new SerializableReasonerInput();
+	public ReasonerInput getReasonerInput() throws RodinDBException {
+
 		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
 		if (prReasonerInput.length == 0) return null;
 		assert prReasonerInput.length == 1;
-		IRodinElement[] properties = ((PRReasonerInput)prReasonerInput[0]).getChildrenOfType(IPair.ELEMENT_TYPE);
-		for (IRodinElement property : properties)
-			reasonerInput.putString(property.getElementName(),((IPair)property).getContents());
 		
-		IRodinElement[] predicates = ((PRReasonerInput)prReasonerInput[0]).getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
-		for (IRodinElement predicate : predicates)
-			reasonerInput.putPredicate(predicate.getElementName(),((IPRPredicate)predicate).getPredicate());
-		
-		IRodinElement[] expressions = ((PRReasonerInput)prReasonerInput[0]).getChildrenOfType(IPRExpression.ELEMENT_TYPE);
-		for (IRodinElement expression : expressions)
-			reasonerInput.putExpression(expression.getElementName(),((IPRExpression)expression).getExpression());
-		
-		IRodinElement[] hypActions = ((PRReasonerInput)prReasonerInput[0]).getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
-		if (hypActions.length != 0)
-		{
-			assert hypActions.length == 1;
-			reasonerInput.hypAction = ((IPRHypAction)hypActions[0]).getAction();
+		// if (getReasoner() instanceof ConjE)
+		try {
+			return (getReasoner()).deserializeInput((PRReasonerInput)prReasonerInput[0]);
+		} catch (SerializeException e) {
+			throw (RodinDBException) e.getNextedException();
 		}
+		// return ((PRReasonerInput)prReasonerInput[0]).getReasonerInput();
+	}
+	
+	public ReasonerInput getReasonerInput1() throws RodinDBException {
+
+		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
+		if (prReasonerInput.length == 0) return null;
+		assert prReasonerInput.length == 1;
 		
-		return reasonerInput;
+		try {
+			return ((ConjE)getReasoner()).deserializeInput((PRReasonerInput)prReasonerInput[0]);
+		} catch (SerializeException e) {
+			throw (RodinDBException) e.getNextedException();
+		}
 	}
 	
 	public ReasonerOutputSucc getReasonerOutput()throws RodinDBException {
@@ -143,48 +148,35 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		// write out the reasoner input
 		if (reasonerOutput.generatedUsing != null)
 		{
-			SerializableReasonerInput reasonerInput =
-				reasonerOutput.generatedUsing.genSerializable();
+//			SerializableReasonerInput reasonerInput =
+//				reasonerOutput.generatedUsing.genSerializable();
+//			
+//			PRReasonerInput prReasonerInput =
+//				(PRReasonerInput)
+//				this.createInternalElement(
+//					PRReasonerInput.ELEMENT_TYPE,
+//					"",
+//					null,null);
+//			
+//			prReasonerInput.setReasonerInput(reasonerInput);
 			
-			InternalElement prReasonerInput = 
+			PRReasonerInput prReasonerInput =
+				(PRReasonerInput)
 				this.createInternalElement(
 					PRReasonerInput.ELEMENT_TYPE,
 					"",
 					null,null);
-			
-			for (Map.Entry<String,String> pair : reasonerInput.properties.entrySet()) {
-				prReasonerInput.createInternalElement(
-						Pair.ELEMENT_TYPE,
-						pair.getKey(),
-						null,null)
-						.setContents(pair.getValue());
-			}
-			for (Map.Entry<String,Predicate> pair : reasonerInput.predicates.entrySet()) {
-				((IPRPredicate)(prReasonerInput.createInternalElement(
-						IPRPredicate.ELEMENT_TYPE,
-						pair.getKey(),
-						null,null)))
-						.setPredicate(pair.getValue());
-			}
-			
-			for (Map.Entry<String,Expression> pair : reasonerInput.expressions.entrySet()) {
-				((IPRExpression)(prReasonerInput.createInternalElement(
-						IPRExpression.ELEMENT_TYPE,
-						pair.getKey(),
-						null,null)))
-						.setExpression(pair.getValue());
-			}
-			if (reasonerInput.hypAction != null){
-				((IPRHypAction)(prReasonerInput.createInternalElement(
-						IPRHypAction.ELEMENT_TYPE,
-						"hypAction",
-						null,null)))
-						.setAction(reasonerInput.hypAction);
+			try {
+				reasonerOutput.generatedUsing.serialize(prReasonerInput);
+			} catch (SerializeException e) {
+				throw (RodinDBException)e.getNextedException();
 			}
 			
 		}
 		
 	}
+
+	
 	
 	
 	

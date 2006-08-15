@@ -2,7 +2,6 @@ package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
@@ -12,7 +11,7 @@ import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class Contr implements Reasoner{
+public class Contr extends SinglePredInputReasoner{
 	
 	public String getReasonerID() {
 		return "contr";
@@ -20,14 +19,21 @@ public class Contr implements Reasoner{
 	
 	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
 		
-		Input input;
+		SinglePredInput input;
 		if (reasonerInput instanceof SerializableReasonerInput){
-			input = new Input((SerializableReasonerInput)reasonerInput);
+			input = new SinglePredInput((SerializableReasonerInput)reasonerInput);
 		} 
-		else input = (Input) reasonerInput;
+		else input = (SinglePredInput) reasonerInput;
 		
-		Hypothesis falseHyp = input.falseHyp;
-		Predicate falseHypPred = input.falseHyp.getPredicate();
+		if (input.hasError())
+		{
+			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
+			reasonerOutput.error = input.getError();
+			return reasonerOutput;
+		}
+		
+		Predicate falseHypPred = input.getPredicate();
+		Hypothesis falseHyp = new Hypothesis(falseHypPred);
 		
 		if ((!falseHypPred.equals(Lib.True)) && (! seq.hypotheses().contains(falseHyp)))
 		return new ReasonerOutputFail(this,input,
@@ -41,14 +47,14 @@ public class Contr implements Reasoner{
 		}
 		else 
 		{
-			reasonerOutput.display = "ct hyp ("+input.falseHyp+")";
+			reasonerOutput.display = "ct hyp ("+falseHyp+")";
 			reasonerOutput.neededHypotheses.add(falseHyp);
 		}
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticident
 		reasonerOutput.anticidents = new Anticident[1];
-		reasonerOutput.anticidents[0] = new Anticident();
+		reasonerOutput.anticidents[0] = new Anticident();		
 		reasonerOutput.anticidents[0].addedHypotheses.add(Lib.makeNeg(seq.goal()));
 		if (falseHypPred.equals(Lib.True))
 			reasonerOutput.anticidents[0].subGoal = Lib.False;
@@ -58,29 +64,29 @@ public class Contr implements Reasoner{
 	}
 	
 	
-	public static class Input implements ReasonerInput{
-		
-		Hypothesis falseHyp;
-		
-		public Input(Hypothesis falseHyp){
-			this.falseHyp = falseHyp;
-		}
-		
-		public Input(){
-			this.falseHyp = new Hypothesis(Lib.True);
-		}
-		
-		public Input(SerializableReasonerInput serializableReasonerInput) {
-			this.falseHyp = new Hypothesis(serializableReasonerInput.getPredicate("falseHyp"));
-		}
-		
-		public SerializableReasonerInput genSerializable(){
-			SerializableReasonerInput serializableReasonerInput 
-			= new SerializableReasonerInput();
-			serializableReasonerInput.putPredicate("falseHyp",falseHyp.getPredicate());
-			return serializableReasonerInput;
-		}
-		
-	}
+//	public static class Input implements ReasonerInput{
+//		
+//		Hypothesis falseHyp;
+//		
+//		public Input(Hypothesis falseHyp){
+//			this.falseHyp = falseHyp;
+//		}
+//		
+//		public Input(){
+//			this.falseHyp = new Hypothesis(Lib.True);
+//		}
+//		
+//		public Input(SerializableReasonerInput serializableReasonerInput) {
+//			this.falseHyp = new Hypothesis(serializableReasonerInput.getPredicate("falseHyp"));
+//		}
+//		
+//		public SerializableReasonerInput genSerializable(){
+//			SerializableReasonerInput serializableReasonerInput 
+//			= new SerializableReasonerInput();
+//			serializableReasonerInput.putPredicate("falseHyp",falseHyp.getPredicate());
+//			return serializableReasonerInput;
+//		}
+//		
+//	}
 
 }

@@ -17,7 +17,7 @@ import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class Eq implements Reasoner{
+public class Eq extends SinglePredInputReasoner{
 	
 	public String getReasonerID() {
 		return "applyEq";

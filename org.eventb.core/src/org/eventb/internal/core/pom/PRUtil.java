@@ -37,8 +37,10 @@ import org.eventb.core.prover.IProofTree;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.Reasoner;
+import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.SerializableReasonerInput;
 import org.eventb.core.prover.rules.ProofRule;
@@ -129,7 +131,7 @@ public class PRUtil {
 			Reasoner reasoner = reuseReasonerOutput.generatedBy;
 			// uninstalled reasoner
 			assert reasoner != null;
-			SerializableReasonerInput reasonerInput = (SerializableReasonerInput)reuseReasonerOutput.generatedUsing;
+			ReasonerInput reasonerInput = reuseReasonerOutput.generatedUsing;
 			
 			// choose between reuse and replay
 			boolean reuseSuccessfull = false;

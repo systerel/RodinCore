@@ -7,28 +7,26 @@ import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
-import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class Contradiction implements Reasoner{
+public class TrueGoal extends EmptyInputReasoner{
 	
 	public String getReasonerID() {
-		return "contradiction";
+		return "trueGoal";
 	}
 	
 	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input){
 	
-		if (! (Hypothesis.containsPredicate(seq.hypotheses(),Lib.False)))
+		if (! (seq.goal().equals(Lib.True)))
 		{
 			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,input);
-			reasonerOutput.error = "no false hypothesis";
+			reasonerOutput.error = "Goal is not a tautology";
 			return reasonerOutput;
 		}
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
-		reasonerOutput.neededHypotheses.add(new Hypothesis(Lib.False));
-		reasonerOutput.display = "⊥ hyp";
+		reasonerOutput.display = "⊤ goal";
 		
 		reasonerOutput.anticidents = new Anticident[0];
 		

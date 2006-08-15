@@ -6,11 +6,14 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.prover.sequent.Hypothesis;
@@ -27,6 +30,14 @@ public class ExternalPP extends LegacyProvers {
 	public String getReasonerID() {
 		return "PP(ext)";
 	}
+	
+	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		return new Input(
+				Boolean.parseBoolean(reasonerInputSerializer.getString("restricted")),
+				Long.parseLong(reasonerInputSerializer.getString("timeOutDelay"))
+				);
+	}
+
 	
 	private boolean runPP(
 			ITypeEnvironment typeEnvironment,
@@ -104,6 +115,7 @@ public class ExternalPP extends LegacyProvers {
 		// True if only selected hypotheses are passed to PP
 		final boolean restricted;
 		
+		
 		public Input() {
 			this(DEFAULT_DELAY, null);
 		}
@@ -147,6 +159,25 @@ public class ExternalPP extends LegacyProvers {
 			serializableReasonerInput.putString("restricted",String.valueOf(this.restricted));
 			return serializableReasonerInput;
 		}
-	}
 
+		public boolean hasError() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String getError() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+			reasonerInputSerializer.putString("timeOutDelay",Long.toString(timeOutDelay));		
+			reasonerInputSerializer.putString("restricted",Boolean.toString(restricted));
+		}
+
+		public void applyHints(ReplayHints hints) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
 }

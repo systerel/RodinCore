@@ -2,9 +2,12 @@ package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SerializableReasonerInput;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.prover.sequent.Hypothesis;
 
 public class SinglePredInput implements ReasonerInput{
@@ -69,6 +72,21 @@ public class SinglePredInput implements ReasonerInput{
 		assert predicate != null;
 		serializableReasonerInput.putPredicate("predicate",predicate);
 		return serializableReasonerInput;
+	}
+
+	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		assert ! hasError();
+		assert predicate != null;
+		reasonerInputSerializer.putPredicate("singlePredicate",predicate);
+	}
+	
+	public SinglePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+			this(reasonerInputSerializer.getPredicate("singlePredicate"));
+	}
+
+	public void applyHints(ReplayHints hints) {
+		predicate = hints.applyHints(predicate);
+		
 	}
 
 }

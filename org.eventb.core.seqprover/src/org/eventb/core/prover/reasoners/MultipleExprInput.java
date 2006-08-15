@@ -3,11 +3,12 @@ package org.eventb.core.prover.reasoners;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.SerializableReasonerInput;
-import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
 public class MultipleExprInput implements ReasonerInput{
 	
@@ -106,4 +107,30 @@ public class MultipleExprInput implements ReasonerInput{
 		return serializableReasonerInput;
 	}
 
+	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		assert ! hasError();
+		assert expressions != null;
+		reasonerInputSerializer.putString("length",String.valueOf(expressions.length));
+		for (int i = 0; i < expressions.length; i++) {
+			// null value taken care of in putExpression.
+			reasonerInputSerializer.putExpression(String.valueOf(i),expressions[i]);
+		}
+	}
+
+	public MultipleExprInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		int length = Integer.parseInt(reasonerInputSerializer.getString("length"));
+		expressions = new Expression[length];
+		for (int i = 0; i < length; i++) {
+			// null value taken care of in getExpression.
+			expressions[i] = reasonerInputSerializer.getExpression(String.valueOf(i));
+		}
+		error = null;
+	}
+
+	public void applyHints(ReplayHints hints) {
+		for (int i = 0; i < expressions.length; i++) {
+			expressions[i] = hints.applyHints(expressions[i]);
+		}
+		
+	}
 }

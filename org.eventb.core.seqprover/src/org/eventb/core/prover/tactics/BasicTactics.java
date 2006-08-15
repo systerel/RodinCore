@@ -1,5 +1,6 @@
 package org.eventb.core.prover.tactics;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.prover.IProofTreeNode;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
@@ -99,11 +100,20 @@ public class BasicTactics {
 		
 		private final Reasoner reasoner;
 		private final ReasonerInput reasonerInput;
+		private final IProgressMonitor progressMonitor;
 		
 		public ReasonerTac(Reasoner reasoner,ReasonerInput reasonerInput)
 		{
 			this.reasoner = reasoner;
 			this.reasonerInput = reasonerInput;
+			this.progressMonitor = null;
+		}
+		
+		public ReasonerTac(Reasoner reasoner,ReasonerInput reasonerInput,IProgressMonitor progressMonitor)
+		{
+			this.reasoner = reasoner;
+			this.reasonerInput = reasonerInput;
+			this.progressMonitor = progressMonitor;
 		}
 		
 		public Object apply(IProofTreeNode pt){
