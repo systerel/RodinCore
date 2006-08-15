@@ -619,7 +619,7 @@ public class UserSupport implements IElementChangedListener,
 					if (state.isUninitialised())
 						return;
 					
-					if (state.proofDischarged()) {
+					else if (state.isSequentDischarged()) {
 						UserSupportUtils.debug("Proof Discharged in file");
 						state.getProofTree().removeChangeListener(this);
 						state.loadProofTree();
@@ -635,8 +635,9 @@ public class UserSupport implements IElementChangedListener,
 						}
 					}
 
-					if (state.proofReusable()) {
-						UserSupportUtils.debug("Can be reused");
+					else if (state.isProofReusable()) {
+						state.getProofTree().removeChangeListener(this);
+						state.proofReuse();
 						state.getProofTree().addChangeListener(this);
 						if (state == currentPS) {
 							UserSupportUtils.debug("Is the current node");
@@ -647,10 +648,13 @@ public class UserSupport implements IElementChangedListener,
 									.addInformation("Current proof has been reused");
 							fireProofStateDelta(newDelta);
 						}
-
-						// Otherwise reuse "silently"
+						
+					
 					} else {
 						UserSupportUtils.debug("Cannot be reused");
+						state.getProofTree().removeChangeListener(this);
+						state.reloadProofTree();
+						state.getProofTree().addChangeListener(this);
 						if (state == currentPS) {
 							UserSupportUtils.debug("Is the current node");
 							ProofStateDelta newDelta = new ProofStateDelta(

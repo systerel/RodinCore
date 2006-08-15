@@ -53,14 +53,15 @@ public class ProofState {
 	// The dirty flag to indicate if there are some unsaved changes with this
 	// proof obligation.
 	private boolean dirty;
-	
+
 	public ProofState(IPRSequent ps) {
 		this.prSequent = ps;
-//		loadProofTree();
+		// loadProofTree();
 	}
 
 	public void loadProofTree() throws RodinDBException {
-		pt = prSequent.rebuildProofTree(); // Construct the proof tree from the file.
+		pt = prSequent.rebuildProofTree(); // Construct the proof tree from the
+											// file.
 
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
@@ -68,8 +69,8 @@ public class ProofState {
 		if (current == null) {
 			current = pt.getRoot();
 		}
-		
-		// if the proof tree was previously broken then the rebuild would 
+
+		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
 		dirty = prSequent.isProofBroken();
 		cached = new HashSet<Hypothesis>();
@@ -77,8 +78,10 @@ public class ProofState {
 	}
 
 	public boolean isClosed() throws RodinDBException {
-		if (pt != null) return pt.isClosed();
-		else return prSequent.isClosed();
+		if (pt != null)
+			return pt.isClosed();
+		else
+			return prSequent.isClosed();
 	}
 
 	public IPRSequent getPRSequent() {
@@ -148,41 +151,65 @@ public class ProofState {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ProofState)) return false;
+		if (!(obj instanceof ProofState))
+			return false;
 		else {
 			ProofState proofState = (ProofState) obj;
 			return proofState.getPRSequent().equals(prSequent);
 		}
-		
+
 	}
 
-	
-	
 	// Pre: Must be initalised and not currently saving.
-	public boolean proofReusable() throws RodinDBException {
-//		if (isSavingOrUninitialised()) return false;
-//		if (pt == null) return false; // No proof tree, no reusable.
+	public void proofReuse() throws RodinDBException {
+		// if (isSavingOrUninitialised()) return false;
+		// if (pt == null) return false; // No proof tree, no reusable.
 		IProofTree newTree = prSequent.makeFreshProofTree();
 
-		if (Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot().getSequent())) {
-			 (BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot());
-			 pt = newTree;
-			 dirty = true;
-			 return true;
+		if (Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot()
+				.getSequent())) {
+			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot());
+			pt = newTree;
+			current = getNextPendingSubgoal();
+			if (current == null) {
+				current = pt.getRoot();
+			}
+			dirty = true;
+			return;
 		}
 		// If NOT, then mark the Proof State as dirty. Send delta to the
 		// user
-		pt = newTree;
-		dirty = false;
-		return false;
 	}
 
-	
-	public boolean isUninitialised() {return (pt == null);}
+	public boolean isUninitialised() {
+		return (pt == null);
+	}
 
-	public boolean proofDischarged() throws RodinDBException {
+	public boolean isSequentDischarged() throws RodinDBException {
 		return prSequent.isClosed();
 	}
-	
-	
+
+	public boolean isProofReusable() throws RodinDBException {
+		IProofTree newTree = prSequent.makeFreshProofTree();
+
+		return Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot()
+				.getSequent());
+	}
+
+	public void reloadProofTree() throws RodinDBException {
+		pt = prSequent.makeFreshProofTree(); // Construct the proof tree from
+												// the file.
+
+		// Current node is the next pending subgoal or the root of the proof
+		// tree if there are no pending subgoal.
+		current = getNextPendingSubgoal();
+		if (current == null) {
+			current = pt.getRoot();
+		}
+
+		// if the proof tree was previously broken then the rebuild would
+		// fix the proof, making it dirty.
+		dirty = prSequent.isProofBroken();
+	}
+
 }
