@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 import org.eventb.core.IPRReasonerInput;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
  * @author Farhad Mehta
