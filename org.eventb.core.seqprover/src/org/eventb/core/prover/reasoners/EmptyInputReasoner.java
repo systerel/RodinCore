@@ -1,14 +1,14 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 
-public abstract class EmptyInputReasoner implements Reasoner {
+public abstract class EmptyInputReasoner implements IReasoner {
 
 	private static EmptyInput emptyReasonerInput = new EmptyInput();
 
-	public ReasonerInput deserializeInput(
+	public IReasonerInput deserializeInput(
 			IReasonerInputSerializer reasonerInputSerializer) {
 		return emptyReasonerInput;
 	}

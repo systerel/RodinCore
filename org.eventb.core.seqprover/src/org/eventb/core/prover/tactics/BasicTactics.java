@@ -2,8 +2,8 @@ package org.eventb.core.prover.tactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.rules.ProofRule;
@@ -35,11 +35,11 @@ public class BasicTactics {
 		return new ComposeStrict(tactics);
 	}
 	
-	public static ITactic reasonerTac(Reasoner reasoner,ReasonerInput reasonerInput){
+	public static ITactic reasonerTac(IReasoner reasoner,IReasonerInput reasonerInput){
 		return new ReasonerTac(reasoner,reasonerInput);
 	}
 	
-	public static ITactic reasonerTac(Reasoner reasoner,ReasonerInput reasonerInput, IProgressMonitor monitor){
+	public static ITactic reasonerTac(IReasoner reasoner,IReasonerInput reasonerInput, IProgressMonitor monitor){
 		return new ReasonerTac(reasoner,reasonerInput,monitor);
 	}
 	
@@ -102,18 +102,18 @@ public class BasicTactics {
 	
 	private static class ReasonerTac implements ITactic {
 		
-		private final Reasoner reasoner;
-		private final ReasonerInput reasonerInput;
+		private final IReasoner reasoner;
+		private final IReasonerInput reasonerInput;
 		private final IProgressMonitor progressMonitor;
 		
-		public ReasonerTac(Reasoner reasoner,ReasonerInput reasonerInput)
+		public ReasonerTac(IReasoner reasoner,IReasonerInput reasonerInput)
 		{
 			this.reasoner = reasoner;
 			this.reasonerInput = reasonerInput;
 			this.progressMonitor = null;
 		}
 		
-		public ReasonerTac(Reasoner reasoner,ReasonerInput reasonerInput,IProgressMonitor progressMonitor)
+		public ReasonerTac(IReasoner reasoner,IReasonerInput reasonerInput,IProgressMonitor progressMonitor)
 		{
 			this.reasoner = reasoner;
 			this.reasonerInput = reasonerInput;

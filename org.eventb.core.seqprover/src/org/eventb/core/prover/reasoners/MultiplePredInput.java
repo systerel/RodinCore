@@ -4,11 +4,11 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
-public class MultiplePredInput implements ReasonerInput{
+public class MultiplePredInput implements IReasonerInput{
 	
 	private Predicate[] predicates;
 	private String error;

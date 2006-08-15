@@ -6,8 +6,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -16,13 +16,13 @@ import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class AllD implements Reasoner{
+public class AllD implements IReasoner{
 	
 	public String getReasonerID() {
 		return "allD";
 	}
 	
-	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		final MultipleExprInput multipleExprInput = new MultipleExprInput(reasonerInputSerializers[0]);
 		final SinglePredInput singlePredInput = new SinglePredInput(reasonerInputSerializers[1]);
@@ -32,7 +32,7 @@ public class AllD implements Reasoner{
 		return combiInput;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		// Organize Input
 		CombiInput input;

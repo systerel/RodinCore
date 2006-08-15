@@ -7,8 +7,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -26,14 +26,14 @@ import org.eventb.core.prover.sequent.IProverSequent;
  * @author Laurent Voisin
  * @author Farhad Mehta
  */
-public class ExternalML implements Reasoner {
+public class ExternalML implements IReasoner {
 	
 
 	public String getReasonerID() {
 		return "ML (ext)";
 	}
 	
-	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		return new Input(
 				reasonerInputSerializer.getString("forces"),
 				Long.parseLong(reasonerInputSerializer.getString("timeOutDelay"))
@@ -65,7 +65,7 @@ public class ExternalML implements Reasoner {
 	}
 	
 	public ReasonerOutput apply(IProverSequent sequent,
-			ReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
+			IReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
 		Input input = (Input) reasonerInput;
 		
@@ -99,7 +99,7 @@ public class ExternalML implements Reasoner {
 		);
 	}
 	
-	public static class Input implements ReasonerInput {
+	public static class Input implements IReasonerInput {
 		
 		public static int FORCE_0 = 0x1;
 		public static int FORCE_1 = 0x2;

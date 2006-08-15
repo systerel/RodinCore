@@ -1,7 +1,7 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -15,7 +15,7 @@ public class Hyp extends EmptyInputReasoner{
 		return "hyp";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! (Hypothesis.containsPredicate(seq.hypotheses(),seq.goal())))
 		{

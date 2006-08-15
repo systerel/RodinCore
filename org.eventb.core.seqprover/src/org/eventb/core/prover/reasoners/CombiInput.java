@@ -4,15 +4,15 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
-public class CombiInput implements ReasonerInput{
+public class CombiInput implements IReasonerInput{
 	
-	ReasonerInput[] reasonerInputs;
+	IReasonerInput[] reasonerInputs;
 
-	public CombiInput(ReasonerInput ...reasonerInputs){
+	public CombiInput(IReasonerInput ...reasonerInputs){
 		assert reasonerInputs != null;
 		this.reasonerInputs = reasonerInputs;
 	}
@@ -21,12 +21,12 @@ public class CombiInput implements ReasonerInput{
 	/**
 	 * @return Returns the reasonerInputs.
 	 */
-	public final ReasonerInput[] getReasonerInputs() {
+	public final IReasonerInput[] getReasonerInputs() {
 		return reasonerInputs;
 	}
 
 	public boolean hasError() {
-		for (ReasonerInput reasonerInput : reasonerInputs){
+		for (IReasonerInput reasonerInput : reasonerInputs){
 			if (reasonerInput.hasError()) return true;
 		}
 		return false;
@@ -34,7 +34,7 @@ public class CombiInput implements ReasonerInput{
 
 	public String getError() {
 		StringBuilder str = new StringBuilder();
-		for (ReasonerInput reasonerInput : reasonerInputs){
+		for (IReasonerInput reasonerInput : reasonerInputs){
 			if (reasonerInput.getError()!= null)
 				str.append(reasonerInput.getError() + " ");
 		}

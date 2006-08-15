@@ -45,7 +45,7 @@ public class ReplayHints {
 	}
 	
 
-	public void applyHints(ReasonerInput reasonerInput) {
+	public void applyHints(IReasonerInput reasonerInput) {
 		reasonerInput.applyHints(this);
 		
 	}

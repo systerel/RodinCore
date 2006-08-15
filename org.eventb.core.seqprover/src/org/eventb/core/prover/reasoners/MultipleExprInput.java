@@ -5,11 +5,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
-public class MultipleExprInput implements ReasonerInput{
+public class MultipleExprInput implements IReasonerInput{
 	
 	private Expression[] expressions;
 	private String error;

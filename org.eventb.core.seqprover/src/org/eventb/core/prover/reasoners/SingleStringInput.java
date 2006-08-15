@@ -1,11 +1,11 @@
 package org.eventb.core.prover.reasoners;
 
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReplayHints;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
-public class SingleStringInput implements ReasonerInput{
+public class SingleStringInput implements IReasonerInput{
 	
 	private String string;
 	private String error;

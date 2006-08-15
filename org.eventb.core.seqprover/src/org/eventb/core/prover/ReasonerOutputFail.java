@@ -5,11 +5,11 @@ public class ReasonerOutputFail extends ReasonerOutput{
 	
 	public String error;
 	
-	public ReasonerOutputFail(Reasoner generatedBy, ReasonerInput generatedUsing){
+	public ReasonerOutputFail(IReasoner generatedBy, IReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
 	}
 	
-	public ReasonerOutputFail(Reasoner generatedBy, ReasonerInput generatedUsing, String error){
+	public ReasonerOutputFail(IReasoner generatedBy, IReasonerInput generatedUsing, String error){
 		super(generatedBy,generatedUsing);
 		this.error = error;
 	}

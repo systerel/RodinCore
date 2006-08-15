@@ -4,9 +4,7 @@ import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
 
 
 
-public interface ReasonerInput {
-	
-	// public SerializableReasonerInput genSerializable();
+public interface IReasonerInput {
 	
 	public boolean hasError();
 	

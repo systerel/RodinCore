@@ -102,7 +102,7 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 	public Predicate goal;
 	public int reasonerConfidence;
 	
-	public ReasonerOutputSucc(Reasoner generatedBy, ReasonerInput generatedUsing){
+	public ReasonerOutputSucc(IReasoner generatedBy, IReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
 		anticidents = null;

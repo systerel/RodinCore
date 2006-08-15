@@ -13,8 +13,8 @@ import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPair;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.ReasonerRegistry;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
@@ -44,14 +44,14 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		return getElementName();
 	}
 	
-	public Reasoner getReasoner()throws RodinDBException {
-		Reasoner reasoner = ReasonerRegistry.getReasoner(this.getReasonerID());
+	public IReasoner getReasoner()throws RodinDBException {
+		IReasoner reasoner = ReasonerRegistry.getReasoner(this.getReasonerID());
 		// Uninstalled reasoner
 		if (reasoner == null) return null;
 		return reasoner;
 	} 
 	
-	public ReasonerInput getReasonerInput() throws RodinDBException {
+	public IReasonerInput getReasonerInput() throws RodinDBException {
 
 		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
 		if (prReasonerInput.length == 0) return null;
@@ -66,7 +66,7 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		// return ((PRReasonerInput)prReasonerInput[0]).getReasonerInput();
 	}
 	
-	public ReasonerInput getReasonerInput1() throws RodinDBException {
+	public IReasonerInput getReasonerInput1() throws RodinDBException {
 
 		IRodinElement[] prReasonerInput = getChildrenOfType(IPRReasonerInput.ELEMENT_TYPE);
 		if (prReasonerInput.length == 0) return null;

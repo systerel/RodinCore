@@ -3,7 +3,7 @@ package org.eventb.core.prover.reasoners;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -17,7 +17,7 @@ public class ConjI extends EmptyInputReasoner{
 	}
 	
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isConj(seq.goal()))
 		{

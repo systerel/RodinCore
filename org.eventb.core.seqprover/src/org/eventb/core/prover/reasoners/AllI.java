@@ -6,7 +6,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -19,7 +19,7 @@ public class AllI extends EmptyInputReasoner{
 		return "allI";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput input, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq,IReasonerInput input, IProgressMonitor progressMonitor){
 		
 		if (! Lib.isUnivQuant(seq.goal()))
 		{

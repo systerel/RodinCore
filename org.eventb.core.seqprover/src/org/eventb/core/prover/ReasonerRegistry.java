@@ -35,11 +35,11 @@ import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
 	
-	private static Map<String,Reasoner> registry = new HashMap<String,Reasoner>();
+	private static Map<String,IReasoner> registry = new HashMap<String,IReasoner>();
 	
 	// Static initialization block for registry 
 	static {
-		Reasoner[] installedReasoners =	
+		IReasoner[] installedReasoners =	
 		{
 				// Add new reasoners here.
 				new Hyp(),
@@ -68,7 +68,7 @@ public class ReasonerRegistry {
 				new MngHyp()
 		};
 		
-		for (Reasoner reasoner : installedReasoners)
+		for (IReasoner reasoner : installedReasoners)
 		{
 			// no duplicate ids
 			assert ! registry.containsKey(reasoner.getReasonerID());
@@ -95,7 +95,7 @@ public class ReasonerRegistry {
 							.getNamespace());
 					try {
 						String reasonerID = element.getAttribute("reasonerID");
-						Reasoner reasoner = loadReasoner(
+						IReasoner reasoner = loadReasoner(
 								bundle,
 								element.getAttribute("class"));
 						
@@ -114,14 +114,14 @@ public class ReasonerRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Reasoner loadReasoner(Bundle bundle, String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
-		Class classObject = bundle.loadClass(className).asSubclass(Reasoner.class);
+	private static IReasoner loadReasoner(Bundle bundle, String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
+		Class classObject = bundle.loadClass(className).asSubclass(IReasoner.class);
 		Constructor constructor = classObject.getConstructor(new Class[0]);
-		Reasoner reasoner = (Reasoner) constructor.newInstance(new Object[0]);
+		IReasoner reasoner = (IReasoner) constructor.newInstance(new Object[0]);
 		return reasoner;
 	}
 	
-	public static Reasoner getReasoner(String reasonerID){
+	public static IReasoner getReasoner(String reasonerID){
 		return registry.get(reasonerID);
 	}
 	

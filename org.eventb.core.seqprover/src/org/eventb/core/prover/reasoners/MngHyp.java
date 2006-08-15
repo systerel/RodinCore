@@ -4,8 +4,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.prover.IReasonerInputSerializer;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputSucc;
 import org.eventb.core.prover.IReasonerInputSerializer.SerializeException;
@@ -15,13 +15,13 @@ import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.Action;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
 
-public class MngHyp implements Reasoner{
+public class MngHyp implements IReasoner{
 	
 	public String getReasonerID() {
 		return "mngHyp";
 	}
 	
-	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		return new CombiInput(
 				new SingleStringInput(reasonerInputSerializers[0]),
@@ -29,7 +29,7 @@ public class MngHyp implements Reasoner{
 		);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		//	 Organize Input
 		CombiInput input = (CombiInput) reasonerInput;

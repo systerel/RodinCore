@@ -4,8 +4,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
-import org.eventb.core.prover.ReasonerInput;
+import org.eventb.core.prover.IReasoner;
+import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
@@ -16,13 +16,13 @@ import org.eventb.core.prover.reasoners.rewriter.RewriterRegistry;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class RewriteHyp implements Reasoner{
+public class RewriteHyp implements IReasoner{
 	
 	public String getReasonerID() {
 		return "rewriteHyp";
 	}
 	
-	public ReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+	public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		IReasonerInputSerializer[] reasonerInputSerializers = reasonerInputSerializer.getSubInputSerializers();		
 		return new CombiInput(
 				new SinglePredInput(reasonerInputSerializers[0]),
@@ -30,7 +30,7 @@ public class RewriteHyp implements Reasoner{
 		);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		CombiInput input = (CombiInput)reasonerInput;
 		
