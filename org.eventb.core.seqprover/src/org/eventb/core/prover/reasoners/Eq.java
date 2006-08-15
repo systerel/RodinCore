@@ -3,6 +3,7 @@ package org.eventb.core.prover.reasoners;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
@@ -21,7 +22,7 @@ public class Eq extends SinglePredInputReasoner{
 		return "applyEq";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 

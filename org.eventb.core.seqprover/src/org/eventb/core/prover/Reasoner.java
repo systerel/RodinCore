@@ -12,6 +12,6 @@ public interface Reasoner {
 	
 	// ReasonerOutput apply(IProverSequent seq,ReasonerInput input, IProgressMonitor progressMonitor);
 
-	ReasonerOutput apply(IProverSequent seq,ReasonerInput input);
+	ReasonerOutput apply(IProverSequent seq,ReasonerInput input, IProgressMonitor progressMonitor);
 
 }

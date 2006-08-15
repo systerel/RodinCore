@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
@@ -31,7 +32,7 @@ public class AllD implements Reasoner{
 		return combiInput;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq, ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		// Organize Input
 		CombiInput input;

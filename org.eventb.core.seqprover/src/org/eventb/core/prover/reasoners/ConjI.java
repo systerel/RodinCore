@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
@@ -16,7 +17,7 @@ public class ConjI extends EmptyInputReasoner{
 	}
 	
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input){
+	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isConj(seq.goal()))
 		{

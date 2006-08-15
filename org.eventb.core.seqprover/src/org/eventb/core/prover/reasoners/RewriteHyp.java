@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Lib;
@@ -29,7 +30,7 @@ public class RewriteHyp implements Reasoner{
 		);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		CombiInput input = (CombiInput)reasonerInput;
 		

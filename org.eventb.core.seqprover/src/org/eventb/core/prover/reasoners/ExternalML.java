@@ -63,7 +63,7 @@ public class ExternalML extends LegacyProvers {
 	}
 	
 	public ReasonerOutput apply(IProverSequent sequent,
-			ReasonerInput reasonerInput) {
+			ReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
 		Input myInput = (Input) reasonerInput;
 		
@@ -83,13 +83,12 @@ public class ExternalML extends LegacyProvers {
 					"Invalid forces"
 			);
 		}
-		final IProgressMonitor monitor = myInput.monitor;
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final Set<Hypothesis> hypotheses = sequent.visibleHypotheses();
 		final Predicate goal = sequent.goal();
 		
 		final boolean success =
-			runML(typeEnvironment, hypotheses, goal, forces, timeOutDelay, monitor);
+			runML(typeEnvironment, hypotheses, goal, forces, timeOutDelay, progressMonitor);
 		if (success) {
 			
 			ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,reasonerInput);

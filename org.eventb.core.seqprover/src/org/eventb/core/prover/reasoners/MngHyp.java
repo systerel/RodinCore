@@ -2,6 +2,7 @@ package org.eventb.core.prover.reasoners;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.prover.IReasonerInputSerializer;
 import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
@@ -28,7 +29,7 @@ public class MngHyp implements Reasoner{
 		);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		//	 Organize Input
 		CombiInput input = (CombiInput) reasonerInput;

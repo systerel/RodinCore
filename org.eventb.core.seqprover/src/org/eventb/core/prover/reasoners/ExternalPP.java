@@ -61,7 +61,7 @@ public class ExternalPP extends LegacyProvers {
 	}
 	
 	public ReasonerOutput apply(IProverSequent sequent,
-			ReasonerInput reasonerInput) {
+			ReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
 		Input myInput = (Input) reasonerInput;
 		
@@ -73,7 +73,6 @@ public class ExternalPP extends LegacyProvers {
 					"Invalid time out delay"
 			);
 		}
-		final IProgressMonitor monitor = myInput.monitor;
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final Set<Hypothesis> hypotheses;
 		if (myInput.restricted) {
@@ -84,7 +83,7 @@ public class ExternalPP extends LegacyProvers {
 		final Predicate goal = sequent.goal();
 		
 		final boolean success =
-			runPP(typeEnvironment, hypotheses, goal, timeOutDelay, monitor);
+			runPP(typeEnvironment, hypotheses, goal, timeOutDelay, progressMonitor);
 		if (success) {		
 			ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,reasonerInput);
 			reasonerOutput.goal = sequent.goal();

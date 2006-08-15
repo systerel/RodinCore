@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
@@ -24,7 +25,7 @@ public class ExI implements Reasoner{
 		return new MultipleExprInput(reasonerInputSerializer);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq, ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isExQuant(seq.goal()))
 		{

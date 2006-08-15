@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
@@ -16,7 +17,7 @@ public class RewriteGoal extends SinglePredInputReasoner{
 		return "rewriteGoal";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput){
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SingleStringInput input;
 		input = (SingleStringInput) reasonerInput;

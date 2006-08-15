@@ -1,11 +1,11 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.Reasoner;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
@@ -19,7 +19,7 @@ public class AllI extends EmptyInputReasoner{
 		return "allI";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,ReasonerInput input){
+	public ReasonerOutput apply(IProverSequent seq,ReasonerInput input, IProgressMonitor progressMonitor){
 		
 		if (! Lib.isUnivQuant(seq.goal()))
 		{

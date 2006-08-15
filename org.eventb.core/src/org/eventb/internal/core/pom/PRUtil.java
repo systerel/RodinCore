@@ -148,7 +148,7 @@ public class PRUtil {
 			{	// reuse failed
 				// try replay
 				replayHints.applyHints(reasonerInput);
-				ReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput);
+				ReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
 				if ((replayReasonerOutput != null) && 
 						((replayReasonerOutput instanceof ReasonerOutputSucc))){
 					// reasoner successfully generated something

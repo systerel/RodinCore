@@ -39,6 +39,10 @@ public class BasicTactics {
 		return new ReasonerTac(reasoner,reasonerInput);
 	}
 	
+	public static ITactic reasonerTac(Reasoner reasoner,ReasonerInput reasonerInput, IProgressMonitor monitor){
+		return new ReasonerTac(reasoner,reasonerInput,monitor);
+	}
+	
 	public static ITactic reasonerTac(ReasonerOutputSucc reasonerOutput){
 		return new ReuseTac(reasonerOutput);
 	}
@@ -118,7 +122,7 @@ public class BasicTactics {
 		
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
-			ReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput);
+			ReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof ReasonerOutputSucc)) return reasonerOutput;
 			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);

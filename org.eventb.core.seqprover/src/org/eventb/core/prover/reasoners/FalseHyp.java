@@ -1,5 +1,6 @@
 package org.eventb.core.prover.reasoners;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.prover.Lib;
 import org.eventb.core.prover.ReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
@@ -15,7 +16,7 @@ public class FalseHyp extends EmptyInputReasoner{
 		return "falseHyp";
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input){
+	public ReasonerOutput apply(IProverSequent seq, ReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! (Hypothesis.containsPredicate(seq.hypotheses(),Lib.False)))
 		{

@@ -22,7 +22,6 @@ import org.eventb.core.prover.reasoners.CombiInput;
 import org.eventb.core.prover.reasoners.ConjE;
 import org.eventb.core.prover.reasoners.ConjI;
 import org.eventb.core.prover.reasoners.Contr;
-import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Cut;
 import org.eventb.core.prover.reasoners.DisjE;
 import org.eventb.core.prover.reasoners.DoCase;
@@ -32,6 +31,7 @@ import org.eventb.core.prover.reasoners.ExE;
 import org.eventb.core.prover.reasoners.ExI;
 import org.eventb.core.prover.reasoners.ExternalML;
 import org.eventb.core.prover.reasoners.ExternalPP;
+import org.eventb.core.prover.reasoners.FalseHyp;
 import org.eventb.core.prover.reasoners.Hyp;
 import org.eventb.core.prover.reasoners.ImpE;
 import org.eventb.core.prover.reasoners.ImpI;
@@ -48,7 +48,6 @@ import org.eventb.core.prover.reasoners.rewriter.DisjToImpl;
 import org.eventb.core.prover.reasoners.rewriter.RemoveNegation;
 import org.eventb.core.prover.reasoners.rewriter.TrivialRewrites;
 import org.eventb.core.prover.reasoners.rewriter.TypeExpRewrites;
-import org.eventb.core.prover.sequent.HypothesesManagement;
 import org.eventb.core.prover.sequent.Hypothesis;
 import org.eventb.core.prover.sequent.IProverSequent;
 import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
@@ -62,28 +61,31 @@ public class Tactics {
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
-				new ExternalPP.Input(restricted, monitor));
+				new ExternalPP.Input(restricted,monitor),monitor);
 	}
 	
 	public static ITactic externalPP(boolean restricted, long timeOutDelay,
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalPP(),
-				new ExternalPP.Input(restricted, timeOutDelay, monitor));
+				new ExternalPP.Input(restricted, timeOutDelay, monitor),
+				monitor);
 	}
 	
 	public static ITactic externalML(int forces,
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
-				new ExternalML.Input(forces, monitor));
+				new ExternalML.Input(forces, monitor),
+				monitor);
 	}
 	
 	public static ITactic externalML(int forces, long timeOutDelay,
 			IProgressMonitor monitor) {
 		return BasicTactics.reasonerTac(
 				new ExternalML(),
-				new ExternalML.Input(forces, timeOutDelay, monitor));
+				new ExternalML.Input(forces, timeOutDelay, monitor),
+				monitor);
 	}
 	
 	
