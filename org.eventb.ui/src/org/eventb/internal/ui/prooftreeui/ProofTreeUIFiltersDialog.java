@@ -91,7 +91,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	private void getFilters() {
 		ProofTreeUI.debug("Get initial filter list");
-		Collection<String> reasoners = ReasonerRegistry.installedReasoners();
+		final ReasonerRegistry reasonerRegistry = ReasonerRegistry.getReasonerRegistry();
+		Collection<String> reasoners = reasonerRegistry.installedReasoners();
 		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.size());
 		
 		for (String reasoner : reasoners) {

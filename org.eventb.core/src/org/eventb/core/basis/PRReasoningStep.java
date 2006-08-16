@@ -45,7 +45,8 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 	}
 	
 	public IReasoner getReasoner()throws RodinDBException {
-		IReasoner reasoner = ReasonerRegistry.getReasoner(this.getReasonerID());
+		final ReasonerRegistry reasonerRegistry = ReasonerRegistry.getReasonerRegistry();
+		IReasoner reasoner = reasonerRegistry.getReasoner(this.getReasonerID());
 		// Uninstalled reasoner
 		if (reasoner == null) return null;
 		return reasoner;
