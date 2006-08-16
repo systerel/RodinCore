@@ -393,8 +393,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" + 
 					"	A.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement]1[+]: {}\n" + 
-					"		bar[org.rodinp.core.tests.namedElement]1[+]: {}"
+					"		foo[org.rodinp.core.tests.namedElement][+]: {}\n" + 
+					"		bar[org.rodinp.core.tests.namedElement][+]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -722,7 +722,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement]1[*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
 			);
 		} finally {
 			stopDeltas();
@@ -743,7 +743,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement]1[*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
 			);
 		} finally {
 			stopDeltas();
@@ -764,7 +764,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement]1[*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
 			);
 		} finally {
 			stopDeltas();
