@@ -1,20 +1,25 @@
 package org.rodinp.core.tests;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.tests.basis.NamedElement;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
 
@@ -104,11 +109,21 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(e1, e12);
 		
 		IInternalElement e11 = createNamedElement(e1, "e11", e12);
-		assertTrue(e12.exists());
+		assertTrue(e11.exists());
 		checkChildren(rodinFile, e0, e1, e2, e3);
 		checkEmpty(e0, e2, e3);
 		checkEmptyChildren(e1, e11, e12);
 
+		assertEquals("Unexpected file contents",
+				"toto.test [in foo]\n"
+				+ "  e0[org.rodinp.core.tests.namedElement]\n"
+				+ "  e1[org.rodinp.core.tests.namedElement]\n"
+				+ "    e11[org.rodinp.core.tests.namedElement]\n"
+				+ "    e12[org.rodinp.core.tests.namedElement]\n"
+				+ "  e2[org.rodinp.core.tests.namedElement]\n"
+				+ "  e3[org.rodinp.core.tests.namedElement]",
+				rodinFile.toString());
+		
 		// rodinFile.save(null, true);
 		// showFile(rodinFile.getResource());
 		
@@ -125,37 +140,113 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkChildren(rodinFile);
 	}
 
-	// Test creation of duplicate internal elements
-	public void testCreateDuplicate() throws Exception {
+	/**
+	 * Ensures that attempting to create a new top-level internal element with
+	 * the same type and name as an existing one fails.
+	 */
+	public void testCreateTopDuplicate() throws Exception {
 		// File exists and is empty
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
-
-		IInternalElement e1 = createNamedElement(rodinFile, "e", null);
+		
+		NamedElement e1 = createNamedElement(rodinFile, "foo", null);
 		checkEmptyChildren(rodinFile, e1);
 
-		IInternalElement e2 = createNamedElement(rodinFile, "e", null);
-		checkEmptyChildren(rodinFile, e1, e2);
-		assertFalse(e1.equals(e2));
-		assertFalse(e2.equals(e1));
-
-		IInternalElement e11 = createNamedElement(e1, "e", null);
-		checkChildren(rodinFile, e1, e2);
-		checkChildren(e1, e11);
-		checkEmpty(e11, e2);
+		// Attempt to create a duplicate element
+		NamedElement e2 = createNamedElement(rodinFile, "foo", null);
+		assertNull("Creation should have failed", e2);
 		
-		IInternalElement e12 = createNamedElement(e1, "e", null);
-		checkChildren(rodinFile, e1, e2);
-		checkChildren(e1, e11, e12);
-		checkEmpty(e11, e12, e2);
-		assertFalse(e11.equals(e12));
-		assertFalse(e12.equals(e11));
-
-		// Cleanup
-		rodinFile.getResource().delete(true, null);
-		rodinFile = rodinProject.createRodinFile("toto.test", true, null);
-		checkChildren(rodinFile);
+		// File has not changed
+		checkEmptyChildren(rodinFile, e1);
 	}
+
+	/**
+	 * Ensures that attempting to create a new non top-level internal element
+	 * with the same type and name as an existing one fails.
+	 */
+	public void testCreateNonTopDuplicate() throws Exception {
+		// File exists and is empty
+		assertTrue(rodinFile.exists());
+		checkEmptyChildren(rodinFile);
+		
+		NamedElement e1 = createNamedElement(rodinFile, "foo", null);
+		NamedElement e11 = createNamedElement(e1, "bar", null);
+		checkChildren(rodinFile, e1);
+		checkEmptyChildren(e1, e11);
+
+		// Attempt to create a duplicate element
+		NamedElement e12 = createNamedElement(e1, "bar", null);
+		assertNull("Creation should have failed", e12);
+		
+		// File has not changed
+		checkChildren(rodinFile, e1);
+		checkEmptyChildren(e1, e11);
+	}
+
+	// Test creation of a Rodin file and an internal element as an atomic action
+	public void testCreateInternalElementAtomic() throws Exception {
+		
+		// Start with a fresh file
+		final String fileName = "titi.test";
+		final IRodinFile rf = rodinProject.getRodinFile(fileName);
+		assertFalse("Target file should not exist", rf.exists());
+		
+		try {
+			RodinCore.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					rodinProject.createRodinFile(fileName, false, null);
+					IInternalElement e1 = createNamedElement(rf, "e1", null);
+					assertTrue("New file should exist", rf.exists());
+					checkEmptyChildren(rf, e1);
+				}
+			}, null);
+
+			assertTrue("New file should exist", rf.exists());
+
+			IInternalElement e1 =
+				rf.getInternalElement(NamedElement.ELEMENT_TYPE, "e1");
+			checkEmptyChildren(rf, e1);
+		} finally {
+			// Ensure the new Rodin file is destroyed.
+			rf.delete(true, null);
+		}
+	}
+
+	// Test deletion of an internal element bypassing the Rodin database
+	public void testDeleteInternalElementBypass() throws Exception {
+
+		// First create an internal element
+		final IInternalElement e1 = createNamedElement(rodinFile, "e1", null);
+		checkEmptyChildren(rodinFile, e1);
+
+		startDeltas();
+		
+		// Then, inside a workable, empty the Rodin file bypassing the database
+		// The database is not updated!
+		RodinCore.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = rodinFile.getResource();
+				file.setContents(new ByteArrayInputStream(emptyBytes),
+						false, true, null);
+				
+				// Inside the runnable, the Rodin database doesn't get the
+				// resource change delta, so the element is still considered to
+				// exist.
+				assertTrue("Internal element should exist", e1.exists());
+				checkEmptyChildren(rodinFile, e1);
+			}
+		}, null);
+
+		assertDeltas("Should report an unknown change to the file",
+				"foo[*]: {CHILDREN}\n" + 
+				"	toto.test[*]: {CONTENT}"
+		);
+
+		// Once the workable is finished, the database gets the resource delta
+		checkEmptyChildren(rodinFile);
+		assertFalse("Internal element should not exist", e1.exists());
+	}
+
 	
 	// Test creation of some internal elements with contents
 	public void testInternalElementWithContents() throws Exception {
