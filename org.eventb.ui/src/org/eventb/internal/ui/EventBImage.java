@@ -142,10 +142,10 @@ public class EventBImage {
 	 *            relative path of the image
 	 * @return the image descriptor
 	 */
-	 public static ImageDescriptor getImageDescriptor(String path) {
-	 return getImageDescriptor(EventBUIPlugin.PLUGIN_ID, path);
-	 }
-	 
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return getImageDescriptor(EventBUIPlugin.PLUGIN_ID, path);
+	}
+
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path.
@@ -168,41 +168,45 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IMG_PROJECT, "full/obj16/prj_obj.gif");
-		registerImage(registry, IMG_MACHINE, "full/obj16/mch_obj.gif");
-		registerImage(registry, IMG_CONTEXT, "full/obj16/ctx_obj.gif");
-		registerImage(registry, IMG_VARIABLE, "full/obj16/var_obj.gif");
-		registerImage(registry, IMG_INVARIANT, "full/obj16/inv_obj.gif");
-		registerImage(registry, IMG_THEOREM, "full/obj16/thm_obj.gif");
-		registerImage(registry, IMG_EVENT, "full/obj16/evt_obj.gif");
-		registerImage(registry, IMG_GUARD, "full/obj16/grd_obj.gif");
-		registerImage(registry, IMG_ACTION, "full/obj16/act_obj.gif");
-		registerImage(registry, IMG_CARRIER_SET, "full/obj16/set_obj.gif");
-		registerImage(registry, IMG_CONSTANT, "full/obj16/cst_obj.gif");
-		registerImage(registry, IMG_AXIOM, "full/obj16/axm_obj.gif");
-		registerImage(registry, IMG_VARIABLES, "full/obj16/vars_obj.gif");
-		registerImage(registry, IMG_INVARIANTS, "full/obj16/invs_obj.gif");
-		registerImage(registry, IMG_THEOREMS, "full/obj16/thms_obj.gif");
-		registerImage(registry, IMG_EVENTS, "full/obj16/evts_obj.gif");
-		registerImage(registry, IMG_CARRIER_SETS, "full/obj16/sets_obj.gif");
-		registerImage(registry, IMG_CONSTANTS, "full/obj16/csts_obj.gif");
-		registerImage(registry, IMG_AXIOMS, "full/obj16/axms_obj.gif");
-		registerImage(registry, IMG_NEW_PROJECT, "full/clcl16/newprj_wiz.gif");
+		registerImage(registry, IMG_PROJECT, "icons/full/obj16/prj_obj.gif");
+		registerImage(registry, IMG_MACHINE, "icons/full/obj16/mch_obj.gif");
+		registerImage(registry, IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
+		registerImage(registry, IMG_VARIABLE, "icons/full/obj16/var_obj.gif");
+		registerImage(registry, IMG_INVARIANT, "icons/full/obj16/inv_obj.gif");
+		registerImage(registry, IMG_THEOREM, "icons/full/obj16/thm_obj.gif");
+		registerImage(registry, IMG_EVENT, "icons/full/obj16/evt_obj.gif");
+		registerImage(registry, IMG_GUARD, "icons/full/obj16/grd_obj.gif");
+		registerImage(registry, IMG_ACTION, "icons/full/obj16/act_obj.gif");
+		registerImage(registry, IMG_CARRIER_SET, "icons/full/obj16/set_obj.gif");
+		registerImage(registry, IMG_CONSTANT, "icons/full/obj16/cst_obj.gif");
+		registerImage(registry, IMG_AXIOM, "icons/full/obj16/axm_obj.gif");
+		registerImage(registry, IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
+		registerImage(registry, IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
+		registerImage(registry, IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
+		registerImage(registry, IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
+		registerImage(registry, IMG_CARRIER_SETS,
+				"icons/full/obj16/sets_obj.gif");
+		registerImage(registry, IMG_CONSTANTS, "icons/full/obj16/csts_obj.gif");
+		registerImage(registry, IMG_AXIOMS, "icons/full/obj16/axms_obj.gif");
+		registerImage(registry, IMG_NEW_PROJECT,
+				"icons/full/clcl16/newprj_wiz.gif");
 		registerImage(registry, IMG_NEW_COMPONENT,
-				"full/clcl16/newcomp_wiz.gif");
+				"icons/full/clcl16/newcomp_wiz.gif");
 
-		registerImage(registry, IMG_PENDING, "pending.gif");
-		registerImage(registry, IMG_PENDING_BROKEN, "pending_broken.gif");
-		registerImage(registry, IMG_APPLIED, "applied.gif");
-		registerImage(registry, IMG_DISCHARGED, "discharged.gif");
-		registerImage(registry, IMG_DISCHARGED_BROKEN, "discharged_broken.gif");
-		registerImage(registry, IMG_REVIEWED, "reviewed.png");
-		registerImage(registry, IMG_REVIEWED_BROKEN, "reviewed_broken.png");
-		registerImage(registry, IMG_UNATTEMPTED, "unattempted.gif");
-		registerImage(registry, IMG_DEFAULT, "sample.gif");
-		registerImage(registry, IMG_REFINES, "full/ctool16/refines.gif");
+		registerImage(registry, IMG_PENDING, "icons/pending.gif");
+		registerImage(registry, IMG_PENDING_BROKEN, "icons/pending_broken.gif");
+		registerImage(registry, IMG_APPLIED, "icons/applied.gif");
+		registerImage(registry, IMG_DISCHARGED, "icons/discharged.gif");
+		registerImage(registry, IMG_DISCHARGED_BROKEN,
+				"icons/discharged_broken.gif");
+		registerImage(registry, IMG_REVIEWED, "icons/reviewed.png");
+		registerImage(registry, IMG_REVIEWED_BROKEN,
+				"icons/reviewed_broken.png");
+		registerImage(registry, IMG_UNATTEMPTED, "icons/unattempted.gif");
+		registerImage(registry, IMG_DEFAULT, "icons/sample.gif");
+		registerImage(registry, IMG_REFINES, "icons/full/ctool16/refines.gif");
 
-		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
+		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 	}
 
 	/**
@@ -219,13 +223,13 @@ public class EventBImage {
 	 */
 	public static void registerImage(ImageRegistry registry, String key,
 			String fileName) {
-		ImageDescriptor desc = getImageDescriptor("icons/" + fileName);
+		ImageDescriptor desc = getImageDescriptor(fileName);
 		registry.put(key, desc);
 	}
 
 	public static void registerImage(ImageRegistry registry, String key,
 			String pluginID, String fileName) {
-		ImageDescriptor desc = getImageDescriptor(pluginID, "icons/" + fileName);
+		ImageDescriptor desc = getImageDescriptor(pluginID, fileName);
 		registry.put(key, desc);
 	}
 
