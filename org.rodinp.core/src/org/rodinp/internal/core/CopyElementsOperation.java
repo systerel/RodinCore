@@ -32,8 +32,7 @@ import org.rodinp.internal.core.util.Messages;
  *    <li>The elements are inserted in the new container in the order given.</li>
  *
  *    <li>The elements can be positioned in the new container.
- *    By default, the elements are inserted based on the default positions as
- *    specified in the creation operation for that element type.</li>
+ *    By default, the elements are appended at the end of the new container.</li>
  *
  *    <li>This operation can be used to copy and rename elements within
  *    the same container.</li>
