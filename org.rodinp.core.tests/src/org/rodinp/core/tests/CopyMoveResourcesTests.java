@@ -117,10 +117,16 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 			file = rfSource.getResource();
 			setReadOnly(file, true);
 			assertTrue("can't set file as read only", file.isReadOnly());
+			assertTrue("Rodin file element should be read only", 
+					rfSource.isReadOnly());
 			
 			copyPositive(rfSource, getRodinProject("P2"), null, null, false);
 			
-			assertTrue("Destination file should be read-only", getFile("/P2/X.test").isReadOnly());
+			assertTrue("Destination file should be read-only", 
+					getFile("/P2/X.test").isReadOnly());
+			assertTrue("Destination rodin file element should be read only",
+					getRodinFile("/P2/X.test").isReadOnly());
+			
 		} finally {
 			if (file != null) {
 				setReadOnly(file, false);
