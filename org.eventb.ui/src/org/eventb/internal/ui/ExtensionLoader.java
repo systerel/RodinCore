@@ -171,7 +171,9 @@ public class ExtensionLoader {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					Bundle bundle = Platform.getBundle(element.getNamespace());
+					// TODO Is this the same as Plugin ID?
+					String namespace = element.getNamespace();
+					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
 						String icon = element.getAttribute("icon");
@@ -179,7 +181,7 @@ public class ExtensionLoader {
 								.getDefault().getImageRegistry();
 
 						ImageDescriptor desc = EventBImage
-								.getImageDescriptor(icon);
+								.getImageDescriptor(namespace, icon);
 						imageRegistry.put(icon, desc);
 
 						String tooltip = element.getAttribute("tooltip");

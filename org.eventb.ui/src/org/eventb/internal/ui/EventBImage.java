@@ -69,21 +69,21 @@ public class EventBImage {
 	public static final String IMG_AXIOMS = "Axioms";
 
 	public static final String IMG_DISCHARGED = "Discharged";
-	
+
 	public static final String IMG_DISCHARGED_BROKEN = "Discharged Broken";
 
 	public static final String IMG_PENDING = "Pending";
 
 	public static final String IMG_PENDING_BROKEN = "Pending Broken";
-	
+
 	public static final String IMG_REVIEWED = "REVIEWED";
 
 	public static final String IMG_REVIEWED_BROKEN = "Reviewed Broken";
-	
+
 	public static final String IMG_APPLIED = "Applied";
-	
+
 	public static final String IMG_UNATTEMPTED = "Unattempted";
-	
+
 	public static final String IMG_DEFAULT = "Default";
 
 	public static final String IMG_REFINES = "Refines";
@@ -118,13 +118,13 @@ public class EventBImage {
 	public static final String IMG_NEW_GUARD_PATH = "icons/full/ctool16/newgrd_edit.gif";
 
 	public static final String IMG_NEW_ACTION_PATH = "icons/full/ctool16/newact_edit.gif";
-	
+
 	public static final String IMG_UP_PATH = "icons/full/ctool16/up_edit.gif";
-	
-	public static final String IMG_DOWN_PATH = "icons/full/ctool16/down_edit.gif";	
+
+	public static final String IMG_DOWN_PATH = "icons/full/ctool16/down_edit.gif";
 
 	public static final String IMG_MACHINE_PATH = "icons/full/obj16/mch_obj.gif";
-	
+
 	public static final String IMG_REFINES_OVERLAY_PATH = "icons/full/ovr16/ref_ovr.gif";
 
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
@@ -132,7 +132,7 @@ public class EventBImage {
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
 
 	private static Collection<Image> images = new HashSet<Image>();
-	
+
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path.
@@ -142,9 +142,22 @@ public class EventBImage {
 	 *            relative path of the image
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(
-				EventBUIPlugin.PLUGIN_ID, path);
+	 public static ImageDescriptor getImageDescriptor(String path) {
+	 return getImageDescriptor(EventBUIPlugin.PLUGIN_ID, path);
+	 }
+	 
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * <p>
+	 * 
+	 * @param path
+	 *            relative path of the image
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String pluginID,
+			String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(pluginID, path);
 	}
 
 	/**
@@ -175,7 +188,8 @@ public class EventBImage {
 		registerImage(registry, IMG_CONSTANTS, "full/obj16/csts_obj.gif");
 		registerImage(registry, IMG_AXIOMS, "full/obj16/axms_obj.gif");
 		registerImage(registry, IMG_NEW_PROJECT, "full/clcl16/newprj_wiz.gif");
-		registerImage(registry, IMG_NEW_COMPONENT, "full/clcl16/newcomp_wiz.gif");
+		registerImage(registry, IMG_NEW_COMPONENT,
+				"full/clcl16/newcomp_wiz.gif");
 
 		registerImage(registry, IMG_PENDING, "pending.gif");
 		registerImage(registry, IMG_PENDING_BROKEN, "pending_broken.gif");
@@ -187,7 +201,7 @@ public class EventBImage {
 		registerImage(registry, IMG_UNATTEMPTED, "unattempted.gif");
 		registerImage(registry, IMG_DEFAULT, "sample.gif");
 		registerImage(registry, IMG_REFINES, "full/ctool16/refines.gif");
-		
+
 		registerImage(registry, IMG_PENGUIN, "penguins-dancing.gif");
 	}
 
@@ -203,15 +217,22 @@ public class EventBImage {
 	 * @param fileName
 	 *            the name of the image file in folder "icons"
 	 */
-	private static void registerImage(ImageRegistry registry, String key,
+	public static void registerImage(ImageRegistry registry, String key,
 			String fileName) {
 		ImageDescriptor desc = getImageDescriptor("icons/" + fileName);
 		registry.put(key, desc);
 	}
 
+	public static void registerImage(ImageRegistry registry, String key,
+			String pluginID, String fileName) {
+		ImageDescriptor desc = getImageDescriptor(pluginID, "icons/" + fileName);
+		registry.put(key, desc);
+	}
+
 	public static Image getOverlayIcon(String name) {
 		if (name.equals("IMG_REFINES_MACHINE")) {
-			OverlayIcon icon = new OverlayIcon(getImageDescriptor(IMG_MACHINE_PATH));
+			OverlayIcon icon = new OverlayIcon(
+					getImageDescriptor(IMG_MACHINE_PATH));
 			icon.addTopRight(getImageDescriptor(IMG_REFINES_OVERLAY_PATH));
 			icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
 			Image image = icon.createImage();
@@ -220,7 +241,7 @@ public class EventBImage {
 		}
 		return null;
 	}
-	
+
 	public static void disposeImages() {
 		for (Image image : images) {
 			image.dispose();

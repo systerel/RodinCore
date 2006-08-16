@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.prover.IProofTreeNode;
@@ -82,20 +81,22 @@ public class ProverUIUtils {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					Bundle bundle = Platform.getBundle(element.getNamespace());
+					String namespace = element.getNamespace();
+					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
 						String icon = element.getAttribute("icon");
+
+						String key = namespace + ":" + icon;
 						ImageRegistry imageRegistry = EventBUIPlugin
 								.getDefault().getImageRegistry();
 
-						Image image = imageRegistry.get(icon);
+						Image image = imageRegistry.get(key);
 
 						if (image == null) {
-							ImageDescriptor desc = EventBImage
-							.getImageDescriptor(icon);
-							imageRegistry.put(icon, desc);
-							image = imageRegistry.get(icon);
+							EventBImage.registerImage(imageRegistry, key,
+									namespace, icon);
+							image = imageRegistry.get(key);
 						}
 
 						Class clazz = bundle.loadClass(element
@@ -160,21 +161,22 @@ public class ProverUIUtils {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					Bundle bundle = Platform.getBundle(element.getNamespace());
+					String namespace = element.getNamespace();
+					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
 						String icon = element.getAttribute("icon");
+						String key = namespace + ":" + icon;
+
 						ImageRegistry imageRegistry = EventBUIPlugin
 								.getDefault().getImageRegistry();
 
-
-						Image image = imageRegistry.get(icon);
+						Image image = imageRegistry.get(key);
 
 						if (image == null) {
-							ImageDescriptor desc = EventBImage
-							.getImageDescriptor(icon);
-							imageRegistry.put(icon, desc);
-							image = imageRegistry.get(icon);
+							EventBImage.registerImage(imageRegistry, key,
+									namespace, icon);
+							image = imageRegistry.get(key);
 						}
 
 						Class clazz = bundle.loadClass(element
