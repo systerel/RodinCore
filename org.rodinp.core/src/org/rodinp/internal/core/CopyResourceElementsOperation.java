@@ -160,6 +160,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 					if (this.force) {
 						// we can remove it
 						deleteResource(destFile, IResource.KEEP_HISTORY);
+						getDeltaFor(destRF.getRodinProject()).removed(destRF);
 						destRF.close(); // ensure the in-memory buffer for the dest RF is closed
 					} else {
 						// abort
@@ -284,5 +285,10 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 		if (this.renamings != null) {
 			verifyRenaming(element);
 		}
+	}
+
+	@Override
+	public boolean modifiesResources() {
+		return true;
 	}
 }
