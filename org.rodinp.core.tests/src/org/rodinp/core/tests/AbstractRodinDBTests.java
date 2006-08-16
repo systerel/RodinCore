@@ -93,7 +93,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Delta listener
 	 */
-	protected class DeltaListener implements IElementChangedListener {
+	protected static class DeltaListener implements IElementChangedListener {
 		/**
 		 * Deltas received from the Rodin database. See 
 		 * <code>#startDeltas</code> and
