@@ -8,7 +8,6 @@
 package org.rodinp.core.basis;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IUnnamedInternalElement;
 
 /**
  * This abstract class is intended to be implemented by clients that contribute
@@ -19,11 +18,12 @@ import org.rodinp.core.IUnnamedInternalElement;
  * but rather use its associated interface <code>IUnnamedInternalElement</code>.
  * </p>
  * 
- * @see IUnnamedInternalElement
+ * @see org.rodinp.core.IUnnamedInternalElement
  * @deprecated Don't inherit from this class anymore.
  */
 @Deprecated
-public class UnnamedInternalElement extends InternalElement implements IUnnamedInternalElement {
+public class UnnamedInternalElement extends InternalElement implements
+		org.rodinp.core.IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
 	private String type;
