@@ -600,7 +600,7 @@ public class EventBEditorUtils {
 	 *            the Rodin file that the variable and its invariant,
 	 *            initialisation will be created in
 	 */
-	public static void intelligentNewVariables(EventBEditor editor,
+	public static void intelligentNewVariable(EventBEditor editor,
 			IRodinFile rodinFile) {
 		try {
 
@@ -707,6 +707,74 @@ public class EventBEditorUtils {
 						editor.addNewElement(act);
 					}
 				}
+			}
+
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Utility method to create a variable with its type invariant and
+	 * initialisation using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the variable and its invariant,
+	 *            initialisation will be created in
+	 */
+	public static void intelligentNewConstant(EventBEditor editor,
+			IRodinFile rodinFile) {
+		try {
+
+			int counter = 1;
+			IRodinElement[] csts = rodinFile
+					.getChildrenOfType(IConstant.ELEMENT_TYPE);
+			for (counter = 1; counter <= csts.length; counter++) {
+				IInternalElement element = rodinFile.getInternalElement(
+						IConstant.ELEMENT_TYPE, "cst" + counter);
+				if (!element.exists())
+					break;
+			}
+			int axmCounter = 1;
+
+			IRodinElement[] axms = rodinFile
+					.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+			String axmPrefix = getPrefix(editor, PrefixAxmName.QUALIFIED_NAME,
+					PrefixAxmName.DEFAULT_PREFIX);
+			for (axmCounter = 1; axmCounter <= axms.length; axmCounter++) {
+				IInternalElement element = rodinFile.getInternalElement(
+						IAxiom.ELEMENT_TYPE, axmPrefix + axmCounter);
+				if (!element.exists())
+					break;
+			}
+
+			IntelligentNewConstantInputDialog dialog = new IntelligentNewConstantInputDialog(
+					editor, Display.getCurrent().getActiveShell(),
+					"New Constant", "cst" + counter, axmCounter);
+
+			dialog.open();
+			String name = dialog.getName();
+
+			if (name != null) {
+				IInternalElement cst = rodinFile.createInternalElement(
+						IConstant.ELEMENT_TYPE, name, null, null);
+				editor.addNewElement(cst);
+
+				Collection<Pair> axioms = dialog.getAxioms();
+				if (axioms != null) {
+					for (Pair pair : axioms) {
+						IInternalElement axm = rodinFile.createInternalElement(
+
+						IInvariant.ELEMENT_TYPE, (String) pair.getFirst(),
+								null, null);
+						axm.setContents((String) pair.getSecond());
+						editor.addNewElement(axm);
+					}
+				}
+
 			}
 
 		} catch (RodinDBException e) {

@@ -19,7 +19,7 @@ public class NewVariable implements IEditorActionDelegate {
 
 	public void run(IAction action) {
 		IRodinFile rodinFile = editor.getRodinInput();
-		EventBEditorUtils.intelligentNewVariables(editor, rodinFile);
+		EventBEditorUtils.intelligentNewVariable(editor, rodinFile);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
