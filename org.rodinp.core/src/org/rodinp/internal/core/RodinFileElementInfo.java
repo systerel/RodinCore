@@ -7,341 +7,444 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
-import org.rodinp.core.basis.UnnamedInternalElement;
-import org.rodinp.internal.core.util.Util;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class RodinFileElementInfo extends OpenableElementInfo {
 
-	private static RodinDBException newMalformedError(IRodinElement rodinElement) {
-		IRodinDBStatus status = new RodinDBStatus(
-				IRodinDBStatusConstants.MALFORMED_FILE_ERROR, 
-				rodinElement);
-		return new RodinDBException(status);
+	private static RodinDBException newNameCollisionException(InternalElement element) {
+		return element.newRodinDBException(
+				new RodinDBStatus(IRodinDBStatusConstants.NAME_COLLISION, element)		
+		);
 	}
 	
-	private static class XMLErrorHandler implements ErrorHandler {
-
-		public void warning(SAXParseException exception) throws SAXException {
-			// ignore warnings
-		}
-
-		public void error(SAXParseException exception) throws SAXException {
-			throw exception;
-		}
-
-		public void fatalError(SAXParseException exception) throws SAXException {
-			throw exception;
-		}
-		
-	}
+	// Buffer associated to this Rodin file
+	private Buffer buffer;
 	
-	// True iff the file has been changed since it was last parsed.
-	private boolean changed = false;
-
 	// Map of internal elements inside this file (at any depth)
 	// All accesses to this field must be synchronized.
-	private Map<InternalElement, InternalElementInfo> internalElements;
+	private Map<InternalElement, Element> internalElements;
+	
+	// Local cache of internal element informations
+	private Map<InternalElement, InternalElementInfo> internalCache;
 
 	public RodinFileElementInfo() {
 		super();
-		this.internalElements = new HashMap<InternalElement, InternalElementInfo>();
+		this.internalElements = new HashMap<InternalElement, Element>();
+		this.internalCache = new HashMap<InternalElement, InternalElementInfo>();
 	}
 
-	private void addToMap(InternalElement element, InternalElementInfo elementInfo) {
-		// Make the occurrence count unique
-		while (internalElements.containsKey(element)) {
-			++ element.occurrenceCount;
+	private void addToMap(InternalElement element, Element domElement) {
+		internalElements.put(element, domElement);
+		internalCache.remove(element.getParent());
+	}
+
+	public synchronized void changeDescendantContents(
+			InternalElement element, String newContents) throws RodinDBException {
+
+		Element domElement = getDOMElement(element);
+		if (domElement == null) {
+			throw element.newNotPresentException();
 		}
-		internalElements.put(element, elementInfo);
-	}
-
-	public synchronized void changeDescendantContents(InternalElement descendant, String newContents) {
-		InternalElementInfo info = getElementInfo(descendant);
-		info.setContents(newContents);
-		changed = true;
+		buffer.setElementContents(domElement, newContents);
 	}
 
 	// dest must be an element of the Rodin file associated to this info.
 	// TODO check for sourceInfo parameter removal
-	public synchronized void copy(IInternalElement source,
+	public synchronized void copy(InternalElement source,
 			InternalElementInfo sourceInfo, InternalElement dest,
-			InternalElement nextSibling) {
+			InternalElement nextSibling) throws RodinDBException {
 		
-		getParentInfo(dest).addChildBefore(dest, nextSibling);
-		copyToMap(source, sourceInfo, dest);
-		changed = true;
+		assert source.getElementType() == dest.getElementType();
+		
+		// TODO fix big mess below.  Should synchronize properly
+		// and distinguish betweem two cases.
+		RodinFile rfSource = source.getOpenableParent();
+		RodinFileElementInfo rfSourceInfo = 
+			(RodinFileElementInfo) rfSource.getElementInfo(null);
+
+		final Element domSource = rfSourceInfo.getDOMElement(source);
+		final Element domDestParent = getDOMParent(dest);
+		if (domDestParent == null) {
+			throw dest.getParent().newNotPresentException();
+		}
+		Element domDest = getDOMElement(dest);
+		if (domDest != null) {
+			throw newNameCollisionException(dest);
+		}
+		final Element domNextSibling;
+		if (nextSibling != null) {
+			domNextSibling = getDOMElement(nextSibling);
+			if (domNextSibling == null) {
+				throw nextSibling.newNotPresentException();
+			}
+		} else {
+			domNextSibling = null;
+		}
+		final String newName = dest.getElementName();
+		final Element newDOMNode = 
+			buffer.importNode(domSource, domDestParent, domNextSibling, newName);
+		addToMap(dest, newDOMNode);
 	}
 
-	// Clones deeply the source element.
-	private void copyToMap(IInternalElement source,
-			InternalElementInfo sourceInfo, InternalElement dest) {
-
-		InternalElementInfo destInfo = dest.createElementInfo();
-		addToMap(dest, destInfo);
+	private void computeChildren(IInternalParent element,
+			Element domElement, RodinElementInfo info) {
 		
-		destInfo.setContents(sourceInfo.getContents());
-		// TODO Copy attributes
+		LinkedHashMap<InternalElement, Element> childrenMap = 
+			buffer.getChildren(element, domElement);
+		internalElements.putAll(childrenMap);
+		info.setChildren(childrenMap.keySet());
+	}
 
-		// Copy children
-		RodinElement[] sourceChildren = sourceInfo.getChildren();
-		int length = sourceChildren.length;
-		RodinElement[] destChildren = new RodinElement[length];
-		for (int i = 0; i < length; ++ i) {
-			InternalElement sourceChild = (InternalElement) sourceChildren[i];
-			InternalElement destChild = getChildSimilarTo(dest, sourceChild);
-			destChildren[i] = destChild;
+	public synchronized void create(InternalElement newElement,
+			InternalElement nextSibling) throws RodinDBException {
+		
+		Element domParent = getDOMParent(newElement);
+		if (domParent == null) {
+			throw newElement.getParent().newNotPresentException();
+		}
+		Element domElement = getDOMElement(newElement);
+		if (domElement != null) {
+			throw newNameCollisionException(newElement);
+		}
+		Element domNextSibling = null;
+		if (nextSibling != null) {
+			domNextSibling = getDOMElement(nextSibling);
+			if (domNextSibling == null) {
+				throw nextSibling.newNotPresentException();
+			}
+		}		
+		final String type = newElement.getElementType();
+		final String name = newElement.getElementName();
+		Element domNewElement =
+			buffer.createElement(type, name, domParent, domNextSibling);
+		addToMap(newElement, domNewElement);
+	}
 
-			try {
-				InternalElementInfo sourceChildInfo = sourceChild.getElementInfo(null);
-				copyToMap(sourceChild, sourceChildInfo, destChild);
-			} catch (RodinDBException e) {
-				Util.log(e, "when cloning an internal element sub-tree");
+	public synchronized void delete(InternalElement element)
+			throws RodinDBException {
+		
+		final Element domElement = getDOMElement(element);
+		if (domElement == null) {
+			throw element.newNotPresentException();
+		}
+		removeFromMap(element);
+		buffer.deleteElement(domElement);
+	}
+
+	/**
+	 * Returns the DOM element corresponding to the given Rodin internal element,
+	 * searching for a child of the given DOM element.
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @param domParent
+	 *            the DOM element corresponding to the parent of the given
+	 *            element
+	 * @return the DOM element corresponding to the given element or
+	 *         <code>null</code> if not found.
+	 */
+	private Element findDOMChildElement(InternalElement element, Element domParent) {
+		final String elementType = element.getElementType();
+		final String elementName = element.getElementName();
+		for (Node domChild = domParent.getFirstChild(); domChild != null;
+				domChild = domChild.getNextSibling()) {
+			if (domChild.getNodeType() == Node.ELEMENT_NODE
+					&& elementType.equals(domChild.getNodeName())) {
+				Element domElement = (Element) domChild;
+				String domElementName = domElement.getAttributeNS(null, "name");
+				if (elementName.equals(domElementName)) {
+					return domElement;
+				}
 			}
 		}
-		destInfo.setChildren(destChildren);
+		return null;
 	}
 
-	// Returns a new handle for a child of <code>dest</code> with the same name
-	// and type as <code>sourceChild</code>.
-	private InternalElement getChildSimilarTo(InternalElement dest, InternalElement sourceChild) {
-		return dest.getInternalElement(
-				sourceChild.getElementType(),
-				sourceChild.getElementName(),
-				sourceChild.getOccurrenceCount());
-	}
-
-	public synchronized void create(InternalElement newElement, InternalElement nextSibling) {
-		addToMap(newElement, newElement.createElementInfo());
-		getParentInfo(newElement).addChildBefore(newElement, nextSibling);
-		changed = true;
+	/**
+	 * Returns the DOM element corresponding to the given Rodin element.
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @return the corresponding DOM element or <code>null</code> if
+	 *         inexistent
+	 */
+	private Element getDOMElement(InternalElement element) {
+		Element result = internalElements.get(element);
+		if (result != null) {
+			if (result.getParentNode() != null) {
+				// The cached DOM element still exists
+				return result;
+			}
+			// Clean up the cached DOM element
+			removeFromMap(element);
+		}
+		
+		Element domParent = getDOMParent(element);
+		if (domParent == null) {
+			return null;
+		}
+		result = findDOMChildElement(element, domParent);
+		if (result == null) {
+			return null;
+		}
+		addToMap(element, result);
+		return result;
 	}
 	
-	public synchronized void delete(InternalElement element) {
-		// First remove the element from its parent.
-		getParentInfo(element).removeChild(element);
+	/**
+	 * Returns the children of this file.
+	 * 
+	 * @param rodinFile
+	 *            handle to this file
+	 * @return the children of this file element
+	 */
+	public synchronized RodinElement[] getChildren(RodinFile rodinFile) {
 
-		// Then, remove the element and all its descendants from this file.
-		removeFromMap(element);
-		changed = true;
+		Element domElement = buffer.getDocumentElement();
+		computeChildren(rodinFile, domElement, this);
+		return getChildren();
 	}
 
-	public synchronized InternalElementInfo getElementInfo(IInternalElement element) {
-		return internalElements.get(element);
-	}
+	/**
+	 * Returns the contents of an internal element in this file.
+	 * 
+	 * @param element
+	 *            the internal element to look up
+	 * @return the contents of this element (never <code>null</code>)
+	 * @throws RodinDBException 
+	 */
+	public synchronized String getDescendantContents(InternalElement element)
+			throws RodinDBException {
 
-	// Returns the element info associated to an element of this file.
-	private RodinElementInfo getParentInfo(IRodinElement element) {
-		IRodinElement parent = element.getParent();
-		if (parent instanceof InternalElement) {
-			return getElementInfo((InternalElement) parent);
-		} else {
-			return this;
+		Element domElement = getDOMElement(element);
+		if (domElement == null) {
+			throw element.newNotPresentException();
 		}
+		return buffer.getElementContents(domElement);
 	}
+
+	/**
+	 * Returns the DOM element corresponding to the parent of the given Rodin
+	 * element.
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @return the DOM element corresponding to the parent or <code>null</code>
+	 *         if inexistent
+	 */
+	private Element getDOMParent(InternalElement element) {
+		RodinElement parent = element.getParent();
+		if (parent instanceof RodinFile) {
+			return buffer.getDocumentElement();
+		}
+		assert parent instanceof InternalElement;
+		return getDOMElement((InternalElement) parent);
+	}
+		
+	public synchronized InternalElementInfo getElementInfo(
+			InternalElement element) {
+		
+		InternalElementInfo info = internalCache.get(element);
+		if (info != null) {
+			return info;
+		}
+		Element domElement = getDOMElement(element);
+		if (domElement == null) {
+			return null;
+		}
+		info = new InternalElementInfo();
+		computeChildren(element, domElement, info);
+		return info;
+	}
+
+//	// Returns the element info associated to an element of this file.
+//	private RodinElementInfo getParentInfo(IRodinElement element) {
+//		IRodinElement parent = element.getParent();
+//		if (parent instanceof InternalElement) {
+//			return getElementInfo((InternalElement) parent);
+//		} else {
+//			return this;
+//		}
+//	}
 
 	public synchronized boolean hasUnsavedChanges() {
-		return changed;
+		return buffer.hasUnsavedChanges();
 	}
 
 	// Returns true if parse was successful
-	public synchronized boolean parseFile(IProgressMonitor pm, RodinFile rodinFile) throws RodinDBException {
-		RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		DocumentBuilder builder = manager.getDocumentBuilder();
-		builder.setErrorHandler(new XMLErrorHandler());
-		try {
-			Document document = builder.parse(rodinFile.getResource().getContents());
-			Element root = document.getDocumentElement();
-			parserAddChildren(root, rodinFile, this);
-		} catch (SAXException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.XML_PARSE_ERROR);
-		} catch (IOException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.IO_EXCEPTION);
-		} catch (RodinDBException e) {
-			throw e;
-		} catch (CoreException e) {
-			throw new RodinDBException(e);
-		}
-		this.changed = false;
+	public synchronized boolean parseFile(IProgressMonitor pm,
+			RodinFile rodinFile) throws RodinDBException {
+		
+		buffer = new Buffer(rodinFile);
+		buffer.load(pm);
 		return true;
 	}
 
-	private void parserAddChildren(
-			Element parent, 
-			IInternalParent rodinParent,
-			RodinElementInfo parentInfo) throws RodinDBException {
-		
-		NodeList list = parent.getChildNodes();
-		int length = list.getLength();
-		if (length == 0) return;
+//	private void parserAddChildren(
+//			Element parent, 
+//			IInternalParent rodinParent,
+//			RodinElementInfo parentInfo) throws RodinDBException {
+//		
+//		NodeList list = parent.getChildNodes();
+//		int length = list.getLength();
+//		if (length == 0) return;
+//
+//		RodinElement[] rodinChildren = new RodinElement[length];
+//		int rodinChildIndex = 0;
+//		boolean textNodeProcessed = false;
+//
+//		for (int i = 0; i < length; ++i) {
+//			Node child = list.item(i);
+//			switch (child.getNodeType()) {
+//			case Node.ELEMENT_NODE:
+//				InternalElement rodinChild = parserCreate((Element) child, rodinParent);
+//				InternalElementInfo childInfo = new InternalElementInfo();
+//				addToMap(rodinChild, childInfo);
+//				parserAddChildren((Element) child, rodinChild, childInfo);
+//				rodinChildren[rodinChildIndex ++] = rodinChild;
+//				break;
+//			case Node.TEXT_NODE:
+//				String contents = child.getNodeValue();
+//				contents = Util.trimSpaceChars(contents);
+//				if (contents.length() != 0) {
+//					// True text node
+//					if (textNodeProcessed || ! (parentInfo instanceof InternalElementInfo)) {
+//						// Two text nodes for the same parent
+//						throw newMalformedError(rodinParent);
+//					}
+//					textNodeProcessed = true;
+//					((InternalElementInfo) parentInfo).setContents(contents);
+//				}
+//				break;
+//			default:
+//				// Ignore other children.
+//				break;
+//			}
+//		}
+//		
+//		// Adjust children array
+//		if (rodinChildIndex == 0) {
+//			rodinChildren = RodinElement.NO_ELEMENTS;
+//		} else if (rodinChildIndex != length) {
+//			RodinElement[] newArray = new RodinElement[rodinChildIndex];
+//			System.arraycopy(rodinChildren, 0, newArray, 0, rodinChildIndex);
+//			rodinChildren = newArray;
+//		}		
+//		parentInfo.setChildren(rodinChildren);
+//	}
 
-		RodinElement[] rodinChildren = new RodinElement[length];
-		int rodinChildIndex = 0;
-		boolean textNodeProcessed = false;
+//	private InternalElement parserCreate(Element element, IInternalParent rodinParent) {
+//		String rodinType = element.getTagName();
+//		String name = element.getAttribute("name");
+//		return (InternalElement) rodinParent.getInternalElement(rodinType, name);
+//	}
 
-		for (int i = 0; i < length; ++i) {
-			Node child = list.item(i);
-			switch (child.getNodeType()) {
-			case Node.ELEMENT_NODE:
-				InternalElement rodinChild = parserCreate((Element) child, rodinParent);
-				InternalElementInfo childInfo = new InternalElementInfo();
-				addToMap(rodinChild, childInfo);
-				parserAddChildren((Element) child, rodinChild, childInfo);
-				rodinChildren[rodinChildIndex ++] = rodinChild;
-				break;
-			case Node.TEXT_NODE:
-				String contents = child.getNodeValue();
-				contents = Util.trimSpaceChars(contents);
-				if (contents.length() != 0) {
-					// True text node
-					if (textNodeProcessed || ! (parentInfo instanceof InternalElementInfo)) {
-						// Two text nodes for the same parent
-						throw newMalformedError(rodinParent);
-					}
-					textNodeProcessed = true;
-					((InternalElementInfo) parentInfo).setContents(contents);
-				}
-				break;
-			default:
-				// Ignore other children.
-				break;
-			}
+//	private void printerAppendElement(StringBuilder result, InternalElement element, String tabs) {
+//		String childTabs = tabs + "\t";
+//		String elementType = element.getElementType();
+//		result.append("<");
+//		result.append(elementType);
+//		if (! (element instanceof UnnamedInternalElement)) {
+//			result.append(childTabs);
+//			result.append("name=\"");
+//			printerAppendEscapedString(result, element.getElementName());
+//			result.append("\"");
+//		}
+//
+//		// TODO save attributes here
+//		
+//		RodinElement[] children = RodinElement.NO_ELEMENTS;
+//		String contents = "";
+//		try {
+//			children = element.getChildren();
+//			contents = element.getContents();
+//		} catch (RodinDBException e) {
+//			Util.log(e, "Unexpected exception while saving a Rodin file.");
+//			assert false;
+//		}
+//		if (children.length == 0 && contents.length() == 0) {
+//			result.append(tabs);
+//			result.append("/>");
+//		} else {
+//			result.append(childTabs);
+//			result.append(">");
+//			for (RodinElement child: children) {
+//				printerAppendElement(result, (InternalElement) child, childTabs);
+//			}
+//			printerAppendEscapedString(result, contents);
+//			result.append("</");
+//			result.append(elementType);
+//			result.append(tabs);
+//			result.append(">");
+//		}
+//	}
+
+//	private void printerAppendEscapedString(StringBuilder result, String name) {
+//		for (char car: name.toCharArray()) {
+//			switch (car) {
+//			case '<':
+//				result.append("&lt;");
+//				break;
+//			case '>':
+//				result.append("&gt;");
+//				break;
+//			case '&':
+//				result.append("&amp;");
+//				break;
+//			case '"':
+//				result.append("&quot;");
+//				break;
+//			default:
+//				result.append(car);
+//			}
+//		}
+//	}
+
+//	private String printerGetFileContents(RodinFile rodinFile) {
+//		StringBuilder result = new StringBuilder();
+//		String elementType = rodinFile.getElementType();
+//		result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//		result.append("<");
+//		result.append(elementType);
+//		RodinElement[] children = this.getChildren();
+//		if (children.length == 0) {
+//			result.append("/>");
+//		} else {
+//			result.append("\n>");
+//			for (RodinElement child: children) {
+//				printerAppendElement(result, (InternalElement) child, "\n");
+//			}
+//			result.append("</");
+//			result.append(elementType);
+//			result.append(">\n");
+//		}
+//		return result.toString();
+//	}
+
+	// Removes an element and all its descendants from the cache map.
+	private void removeFromMap(InternalElement element) {
+		// Remove all descendants
+		InternalElementInfo info = getElementInfo(element);
+		for (IRodinElement child: info.getChildren()) {
+			removeFromMap((InternalElement) child);
 		}
-		
-		// Adjust children array
-		if (rodinChildIndex == 0) {
-			rodinChildren = RodinElement.NO_ELEMENTS;
-		} else if (rodinChildIndex != length) {
-			RodinElement[] newArray = new RodinElement[rodinChildIndex];
-			System.arraycopy(rodinChildren, 0, newArray, 0, rodinChildIndex);
-			rodinChildren = newArray;
-		}		
-		parentInfo.setChildren(rodinChildren);
-	}
 
-	private InternalElement parserCreate(Element element, IInternalParent rodinParent) {
-		String rodinType = element.getTagName();
-		String name = element.getAttribute("name");
-		return (InternalElement) rodinParent.getInternalElement(rodinType, name);
-	}
-
-	private void printerAppendElement(StringBuilder result, InternalElement element, String tabs) {
-		String childTabs = tabs + "\t";
-		String elementType = element.getElementType();
-		result.append("<");
-		result.append(elementType);
-		if (! (element instanceof UnnamedInternalElement)) {
-			result.append(childTabs);
-			result.append("name=\"");
-			printerAppendEscapedString(result, element.getElementName());
-			result.append("\"");
-		}
-
-		// TODO save attributes here
-		
-		RodinElement[] children = RodinElement.NO_ELEMENTS;
-		String contents = "";
-		try {
-			children = element.getChildren();
-			contents = element.getContents();
-		} catch (RodinDBException e) {
-			Util.log(e, "Unexpected exception while saving a Rodin file.");
-			assert false;
-		}
-		if (children.length == 0 && contents.length() == 0) {
-			result.append(tabs);
-			result.append("/>");
-		} else {
-			result.append(childTabs);
-			result.append(">");
-			for (RodinElement child: children) {
-				printerAppendElement(result, (InternalElement) child, childTabs);
-			}
-			printerAppendEscapedString(result, contents);
-			result.append("</");
-			result.append(elementType);
-			result.append(tabs);
-			result.append(">");
-		}
-	}
-
-	private void printerAppendEscapedString(StringBuilder result, String name) {
-		for (char car: name.toCharArray()) {
-			switch (car) {
-			case '<':
-				result.append("&lt;");
-				break;
-			case '>':
-				result.append("&gt;");
-				break;
-			case '&':
-				result.append("&amp;");
-				break;
-			case '"':
-				result.append("&quot;");
-				break;
-			default:
-				result.append(car);
-			}
-		}
-	}
-
-	private String printerGetFileContents(RodinFile rodinFile) {
-		StringBuilder result = new StringBuilder();
-		String elementType = rodinFile.getElementType();
-		result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		result.append("<");
-		result.append(elementType);
-		RodinElement[] children = this.getChildren();
-		if (children.length == 0) {
-			result.append("/>");
-		} else {
-			result.append("\n>");
-			for (RodinElement child: children) {
-				printerAppendElement(result, (InternalElement) child, "\n");
-			}
-			result.append("</");
-			result.append(elementType);
-			result.append(">\n");
-		}
-		return result.toString();
-	}
-
-	// Removes an element and all its descendants from this file.
-	private void removeFromMap(IInternalElement element) {
-		InternalElementInfo info = internalElements.get(element);
+		// Remove the given element
 		internalElements.remove(element);
-		if (info != null) {
-			for (RodinElement child: info.getChildren()) {
-				removeFromMap((IInternalElement) child);
-			}
-		}
+		internalCache.remove(element.getParent());
 	}
 
 	/**
@@ -351,67 +454,59 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	 *            the source element
 	 * @param dest
 	 *            the destination element
+	 * @throws RodinDBException 
 	 */
-	public synchronized void rename(InternalElement source, InternalElement dest) {
+	public synchronized void rename(InternalElement source,
+			InternalElement dest) throws RodinDBException {
+
 		assert source.getParent().equals(dest.getParent());
 		assert source.getClass() == dest.getClass();
-		assert ! (source instanceof UnnamedInternalElement);
 		
-		getParentInfo(source).replaceChild(source, dest);
-			
-		// Change handles for descendants.
-		renameInMap(source, dest);
-		changed = true;
-	}
-
-	private void renameInMap(InternalElement source, InternalElement dest) {
-		InternalElementInfo info = getElementInfo(source);
-		internalElements.remove(source);
-		internalElements.put(dest, info);
-		
-		// Change children handles
-		RodinElement[] children = info.getChildren();
-		for (int i = 0; i < children.length; ++ i) {
-			InternalElement sourceChild = (InternalElement) children[i];
-			InternalElement destChild = getChildSimilarTo(dest, sourceChild);
-			renameInMap(sourceChild, destChild);
-			children[i] = destChild;
+		Element domElement = getDOMElement(source);
+		if (domElement == null) {
+			throw source.newNotPresentException();
 		}
+		Element domDest = getDOMElement(dest);
+		if (domDest != null) {
+			throw newNameCollisionException(dest);
+		}
+		removeFromMap(source);
+		buffer.renameElement(domElement, dest.getElementName());
+		addToMap(dest, domElement);
 	}
 
 	// Returns true iff a change was made to the order of the parent children.
-	public synchronized boolean reorder(InternalElement source, InternalElement nextSibling) {
-		boolean didChange = getParentInfo(source).reorderBefore(source, nextSibling);
-		changed |= didChange;
-		return didChange;
-	}
-
-	public synchronized void saveToFile(RodinFile rodinFile, boolean force, IProgressMonitor pm) throws RodinDBException {
-		IFile file = rodinFile.getResource();
+	public synchronized boolean reorder(InternalElement source,
+			InternalElement nextSibling) throws RodinDBException {
 		
-		// use a platform operation to update the resource contents
-		try {
-			String stringContents = this.printerGetFileContents(rodinFile);
-			if (stringContents == null) return;
-			byte[] bytes = stringContents.getBytes("UTF-8");
-			ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-
-			if (file.exists()) {
-				file.setContents(
-					stream, 
-					force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
-					pm);
-			} else {
-				file.create(stream, force, pm);
-			}	
-		} catch (IOException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.IO_EXCEPTION);
-		} catch (CoreException e) {
-			throw new RodinDBException(e);
+		assert nextSibling == null
+				|| source.getParent().equals(nextSibling.getParent());
+		
+		Element domSource = getDOMElement(source);
+		if (domSource == null) {
+			throw source.newNotPresentException();
 		}
 
-		// the resource no longer has unsaved changes
-		this.changed = false;
+		Element domNextSibling = null;
+		if (nextSibling != null) {
+			domNextSibling = getDOMElement(nextSibling);
+			if (domNextSibling == null) {
+				throw nextSibling.newNotPresentException();
+			}
+			assert domNextSibling.getParentNode().isSameNode(
+					domSource.getParentNode());
+		}
+		boolean changed = buffer.reorderElement(domSource, domNextSibling);
+		if (changed) {
+			internalCache.remove(source.getParent());
+		}
+		return changed;
+	}
+	
+	public synchronized void saveToFile(RodinFile rodinFile, boolean force,
+			IProgressMonitor pm) throws RodinDBException {
+		
+		buffer.save(force, pm);
 	}
 
 }
