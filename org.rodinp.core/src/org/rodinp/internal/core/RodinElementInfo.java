@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IResource;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.RodinElement;
 
 /**
@@ -163,4 +166,14 @@ public class RodinElementInfo {
 	public void setChildren(RodinElement[] children) {
 		this.children = children;
 	}
+
+	public void setChildren(Collection<? extends IRodinElement> children) {
+		final int length = children.size();
+		if (length == 0) {
+			this.children = RodinElement.NO_ELEMENTS;
+		} else {
+			this.children = children.toArray(new RodinElement[length]);
+		}
+	}
+
 }
