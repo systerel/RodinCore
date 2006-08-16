@@ -242,25 +242,26 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 					if (ps != null) { // Reload everything
 						initHypothesisSections(ps);
 						goalSection.setGoal(ps.getCurrentNode());
-						ProofsPage.this.getManagedForm().getForm().reflow(true);
 					} else {
 						initHypothesisSections(null);
 						goalSection.setGoal(null);
-						ProofsPage.this.getManagedForm().getForm().reflow(true);
 					}
+					ProofsPage.this.getManagedForm().getForm().reflow(true);
 				} else {
 					IProofTreeNode node = delta.getNewProofTreeNode();
 					if (node != null) {
 						initHypothesisSections(userSupport.getCurrentPO());
 						goalSection.setGoal(node);
-						ProofsPage.this.getManagedForm().getForm().reflow(true);
-					} else {
-						if (delta.getNewCache() || delta.getNewSearch()) {
-							initCacheAndSearch();
-							ProofsPage.this.getManagedForm().getForm().reflow(
-									true);
+					} else if (delta.getNewCache()) {
+						initCacheAndSearch();
+					} else if (delta.getNewSearch()) {
+						initCacheAndSearch();
+						Section section = searchedSection.getSection();
+						if (!section.isExpanded()) {
+							section.setExpanded(true);
 						}
 					}
+					ProofsPage.this.getManagedForm().getForm().reflow(true);
 				}
 
 			}
