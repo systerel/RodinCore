@@ -56,18 +56,15 @@
       <internalElementType
             class="org.rodinp.core.tests.basis.NamedElement"
             id="namedElement"
-            name="org.rodinp.core.tests.namedElement"
-            named="true"/>
+            name="org.rodinp.core.tests.namedElement"/>
       <internalElementType
             class="org.rodinp.core.tests.builder.basis.Dependency"
             id="dependency"
-            name="Dependency to another file"
-            named="true"/>
+            name="Dependency to another file"/>
       <internalElementType
             class="org.rodinp.core.tests.builder.basis.Data"
             id="data"
-            name="Arbitrary data"
-            named="true"/>
+            name="Arbitrary data"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
