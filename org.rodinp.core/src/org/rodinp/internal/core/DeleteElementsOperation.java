@@ -13,8 +13,6 @@ package org.rodinp.internal.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRegion;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -78,12 +76,8 @@ public class DeleteElementsOperation extends MultiOperation {
 	
 	@Override
 	protected ISchedulingRule getSchedulingRule() {
-		if (this.elementsToProcess != null && this.elementsToProcess.length == 1) {
-			IResource resource = this.elementsToProcess[0].getResource();
-			if (resource != null)
-				return ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
-		}
-		return super.getSchedulingRule();
+		assert false;
+		return null;
 	}
 	
 	/**
