@@ -13,13 +13,13 @@ package org.rodinp.internal.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
-import org.rodinp.core.basis.UnnamedInternalElement;
 
 /**
  * This class is used to perform operations on multiple <code>IRodinElement</code>.
@@ -263,7 +263,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
 			}
 		} else if (element instanceof InternalElement) {
-			if (! (destination instanceof InternalElement || destination instanceof RodinFile)) {
+			if (! (destination instanceof IInternalParent)) {
 				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
 			}
 		} else {
@@ -275,6 +275,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Verify that the new name specified for <code>element</code> is
 	 * valid for that type of Rodin element.
 	 */
+	@SuppressWarnings("deprecation")
 	protected void verifyRenaming(IRodinElement element) throws RodinDBException {
 		if (element instanceof RodinFile) {
 			String newName = getNewNameFor(element);
@@ -283,7 +284,7 @@ public abstract class MultiOperation extends RodinDBOperation {
 				throw new RodinDBException(new RodinDBStatus(
 						IRodinDBStatusConstants.INVALID_NAME, element, newName));
 			}
-		} else if (element instanceof UnnamedInternalElement) {
+		} else if (element instanceof org.rodinp.core.basis.UnnamedInternalElement) {
 			// Unnamed internal elements can not be renamed
 			String newName = getNewNameFor(element);
 			if (newName != null) {
