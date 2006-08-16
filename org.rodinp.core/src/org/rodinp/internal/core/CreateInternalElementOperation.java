@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
@@ -32,13 +30,13 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 
 	@Override
 	protected void executeOperation() throws RodinDBException {
-		RodinElementDelta delta = newRodinElementDelta();
-
 		try {
 			beginTask(Messages.operation_createInternalElementProgress, 2);
-			RodinFile file = newElement.getOpenableParent();
-			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
+			RodinFile file = newElement.getRodinFile();
+			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
+					file.getElementInfo(getSubProgressMonitor(1));
 			fileInfo.create(newElement, nextSibling);
+			RodinElementDelta delta = newRodinElementDelta();
 			delta.added(newElement);
 			addDelta(delta);
 			worked(1);
@@ -49,29 +47,43 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 
 	@Override
 	protected ISchedulingRule getSchedulingRule() {
-		IResource resource = newElement.getOpenableParent().getResource();
-		IWorkspace workspace = resource.getWorkspace();
-		if (resource.exists()) {
-			return workspace.getRuleFactory().modifyRule(resource);
-		} else {
-			return workspace.getRuleFactory().createRule(resource);
-		}
+		assert false;
+		return null;
 	}
 
 	/**
 	 * Possible failures:
 	 * <ul>
 	 * <li>NO_ELEMENTS_TO_PROCESS - the newElement supplied to the operation is
-	 * <code>null</code>.
-	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a different parent.
+	 * <code>null</code>.</li>
+	 * <li>NAME_COLLISION - the newElement supplied already exists and creating it
+	 * anew would create a duplicate element.</li>
+	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a different parent.</li>
+	 * <li>ELEMENT_DOES_NOT_EXIST - the sibling supplied doesn't exist.</li>
 	 * </ul>
 	 */
 	@Override
 	public IRodinDBStatus verify() {
 		super.verify();
-		if (nextSibling != null && nextSibling.getParent() != newElement.getParent()) {
-			return new RodinDBStatus(IRodinDBStatusConstants.INVALID_SIBLING,
-					nextSibling);
+		if (newElement.exists()) {
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.NAME_COLLISION,
+					newElement
+			);
+		}
+		if (nextSibling != null) {
+			if (nextSibling.getParent() != newElement.getParent()) {
+				return new RodinDBStatus(
+						IRodinDBStatusConstants.INVALID_SIBLING,
+						nextSibling
+				);
+			}
+			if (! nextSibling.exists()) {
+				return new RodinDBStatus(
+						IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+						nextSibling
+				);
+			}
 		}
 		return RodinDBStatus.VERIFIED_OK;
 	}
