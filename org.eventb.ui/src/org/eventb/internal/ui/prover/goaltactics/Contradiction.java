@@ -1,11 +1,11 @@
 package org.eventb.internal.ui.prover.goaltactics;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.ITactic;
-import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.ui.prover.IGoalTactic;
 
 public class Contradiction implements IGoalTactic {

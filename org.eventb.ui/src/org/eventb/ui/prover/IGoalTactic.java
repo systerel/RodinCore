@@ -12,8 +12,8 @@
 
 package org.eventb.ui.prover;
 
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.tactics.ITactic;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.tactics.ITactic;
 
 /**
  * @author htson

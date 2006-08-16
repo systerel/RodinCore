@@ -2,10 +2,10 @@ package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eventb.core.prover.IProofRule;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.rules.ReasoningStep;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.rules.ReasoningStep;
 
 public class RuleFilter extends ViewerFilter {
 

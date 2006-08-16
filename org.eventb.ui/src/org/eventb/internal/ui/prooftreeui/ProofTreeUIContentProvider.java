@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.IProofTreeChangedListener;
-import org.eventb.core.prover.IProofTreeDelta;
-import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeChangedListener;
+import org.eventb.core.seqprover.IProofTreeDelta;
+import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
  * @author htson

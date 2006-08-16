@@ -38,8 +38,8 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.sequent.Hypothesis;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IGlobalTactic;
 

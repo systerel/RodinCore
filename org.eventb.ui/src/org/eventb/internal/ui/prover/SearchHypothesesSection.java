@@ -26,10 +26,10 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.HypothesesManagement.ActionType;
-import org.eventb.core.prover.tactics.ITactic;
-import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.core.seqprover.sequent.HypothesesManagement.ActionType;
+import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 

@@ -13,8 +13,8 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eventb.core.pm.UserSupport;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.reasoners.ExternalML;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.reasoners.ExternalML;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
 import org.eventb.ui.prover.IGlobalTactic;
 import org.rodinp.core.RodinDBException;

@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eventb.core.prover.ReasonerRegistry;
+import org.eventb.core.seqprover.ReasonerRegistry;
 
 public class ProofTreeUIFiltersDialog extends SelectionDialog {
 

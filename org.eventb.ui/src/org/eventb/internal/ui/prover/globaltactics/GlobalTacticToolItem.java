@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.swt.widgets.ToolItem;
-import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.prover.IGlobalTactic;
 
 /**
