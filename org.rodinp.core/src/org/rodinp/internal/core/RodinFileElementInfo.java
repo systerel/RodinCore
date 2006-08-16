@@ -20,7 +20,11 @@ import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
+// TODO implement getDOMElementExisting
+// TODO implement getDOMElementNotExisting
+// TODO implement children cache behavior for the file itself, then remove the
+// special getChildren below.
 
 public class RodinFileElementInfo extends OpenableElementInfo {
 
@@ -145,35 +149,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	/**
-	 * Returns the DOM element corresponding to the given Rodin internal element,
-	 * searching for a child of the given DOM element.
-	 * 
-	 * @param element
-	 *            a Rodin internal element
-	 * @param domParent
-	 *            the DOM element corresponding to the parent of the given
-	 *            element
-	 * @return the DOM element corresponding to the given element or
-	 *         <code>null</code> if not found.
-	 */
-	private Element findDOMChildElement(InternalElement element, Element domParent) {
-		final String elementType = element.getElementType();
-		final String elementName = element.getElementName();
-		for (Node domChild = domParent.getFirstChild(); domChild != null;
-				domChild = domChild.getNextSibling()) {
-			if (domChild.getNodeType() == Node.ELEMENT_NODE
-					&& elementType.equals(domChild.getNodeName())) {
-				Element domElement = (Element) domChild;
-				String domElementName = domElement.getAttributeNS(null, "name");
-				if (elementName.equals(domElementName)) {
-					return domElement;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Returns the DOM element corresponding to the given Rodin element.
 	 * 
 	 * @param element
@@ -192,16 +167,14 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			removeFromMap(element);
 		}
 		
-		Element domParent = getDOMParent(element);
-		if (domParent == null) {
-			return null;
+		// Not found, force a cache update
+		IRodinElement parent = element.getParent();
+		if (parent instanceof RodinFile) {
+			getChildren((RodinFile) parent);
+		} else {
+			getElementInfo((InternalElement) element.getParent());
 		}
-		result = findDOMChildElement(element, domParent);
-		if (result == null) {
-			return null;
-		}
-		addToMap(element, result);
-		return result;
+		return internalElements.get(element);
 	}
 	
 	/**
@@ -270,16 +243,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return info;
 	}
 
-//	// Returns the element info associated to an element of this file.
-//	private RodinElementInfo getParentInfo(IRodinElement element) {
-//		IRodinElement parent = element.getParent();
-//		if (parent instanceof InternalElement) {
-//			return getElementInfo((InternalElement) parent);
-//		} else {
-//			return this;
-//		}
-//	}
-
 	public synchronized boolean hasUnsavedChanges() {
 		return buffer.hasUnsavedChanges();
 	}
@@ -292,147 +255,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.load(pm);
 		return true;
 	}
-
-//	private void parserAddChildren(
-//			Element parent, 
-//			IInternalParent rodinParent,
-//			RodinElementInfo parentInfo) throws RodinDBException {
-//		
-//		NodeList list = parent.getChildNodes();
-//		int length = list.getLength();
-//		if (length == 0) return;
-//
-//		RodinElement[] rodinChildren = new RodinElement[length];
-//		int rodinChildIndex = 0;
-//		boolean textNodeProcessed = false;
-//
-//		for (int i = 0; i < length; ++i) {
-//			Node child = list.item(i);
-//			switch (child.getNodeType()) {
-//			case Node.ELEMENT_NODE:
-//				InternalElement rodinChild = parserCreate((Element) child, rodinParent);
-//				InternalElementInfo childInfo = new InternalElementInfo();
-//				addToMap(rodinChild, childInfo);
-//				parserAddChildren((Element) child, rodinChild, childInfo);
-//				rodinChildren[rodinChildIndex ++] = rodinChild;
-//				break;
-//			case Node.TEXT_NODE:
-//				String contents = child.getNodeValue();
-//				contents = Util.trimSpaceChars(contents);
-//				if (contents.length() != 0) {
-//					// True text node
-//					if (textNodeProcessed || ! (parentInfo instanceof InternalElementInfo)) {
-//						// Two text nodes for the same parent
-//						throw newMalformedError(rodinParent);
-//					}
-//					textNodeProcessed = true;
-//					((InternalElementInfo) parentInfo).setContents(contents);
-//				}
-//				break;
-//			default:
-//				// Ignore other children.
-//				break;
-//			}
-//		}
-//		
-//		// Adjust children array
-//		if (rodinChildIndex == 0) {
-//			rodinChildren = RodinElement.NO_ELEMENTS;
-//		} else if (rodinChildIndex != length) {
-//			RodinElement[] newArray = new RodinElement[rodinChildIndex];
-//			System.arraycopy(rodinChildren, 0, newArray, 0, rodinChildIndex);
-//			rodinChildren = newArray;
-//		}		
-//		parentInfo.setChildren(rodinChildren);
-//	}
-
-//	private InternalElement parserCreate(Element element, IInternalParent rodinParent) {
-//		String rodinType = element.getTagName();
-//		String name = element.getAttribute("name");
-//		return (InternalElement) rodinParent.getInternalElement(rodinType, name);
-//	}
-
-//	private void printerAppendElement(StringBuilder result, InternalElement element, String tabs) {
-//		String childTabs = tabs + "\t";
-//		String elementType = element.getElementType();
-//		result.append("<");
-//		result.append(elementType);
-//		if (! (element instanceof UnnamedInternalElement)) {
-//			result.append(childTabs);
-//			result.append("name=\"");
-//			printerAppendEscapedString(result, element.getElementName());
-//			result.append("\"");
-//		}
-//
-//		// TODO save attributes here
-//		
-//		RodinElement[] children = RodinElement.NO_ELEMENTS;
-//		String contents = "";
-//		try {
-//			children = element.getChildren();
-//			contents = element.getContents();
-//		} catch (RodinDBException e) {
-//			Util.log(e, "Unexpected exception while saving a Rodin file.");
-//			assert false;
-//		}
-//		if (children.length == 0 && contents.length() == 0) {
-//			result.append(tabs);
-//			result.append("/>");
-//		} else {
-//			result.append(childTabs);
-//			result.append(">");
-//			for (RodinElement child: children) {
-//				printerAppendElement(result, (InternalElement) child, childTabs);
-//			}
-//			printerAppendEscapedString(result, contents);
-//			result.append("</");
-//			result.append(elementType);
-//			result.append(tabs);
-//			result.append(">");
-//		}
-//	}
-
-//	private void printerAppendEscapedString(StringBuilder result, String name) {
-//		for (char car: name.toCharArray()) {
-//			switch (car) {
-//			case '<':
-//				result.append("&lt;");
-//				break;
-//			case '>':
-//				result.append("&gt;");
-//				break;
-//			case '&':
-//				result.append("&amp;");
-//				break;
-//			case '"':
-//				result.append("&quot;");
-//				break;
-//			default:
-//				result.append(car);
-//			}
-//		}
-//	}
-
-//	private String printerGetFileContents(RodinFile rodinFile) {
-//		StringBuilder result = new StringBuilder();
-//		String elementType = rodinFile.getElementType();
-//		result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//		result.append("<");
-//		result.append(elementType);
-//		RodinElement[] children = this.getChildren();
-//		if (children.length == 0) {
-//			result.append("/>");
-//		} else {
-//			result.append("\n>");
-//			for (RodinElement child: children) {
-//				printerAppendElement(result, (InternalElement) child, "\n");
-//			}
-//			result.append("</");
-//			result.append(elementType);
-//			result.append(">\n");
-//		}
-//		return result.toString();
-//	}
 
 	// Removes an element and all its descendants from the cache map.
 	private void removeFromMap(InternalElement element) {
