@@ -13,9 +13,9 @@ package org.rodinp.core.basis;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -138,7 +138,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * 
 	 * @see IRodinElement
 	 */
-	public IResource getCorrespondingResource() throws RodinDBException {
+	public IResource getCorrespondingResource() {
 		return getUnderlyingResource();
 	}
 
@@ -173,28 +173,6 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	}
 
 	/**
-	 * @see IRodinElement
-	 */
-	public IResource getUnderlyingResource() throws RodinDBException {
-		IResource parentResource = this.parent.getUnderlyingResource();
-		if (parentResource == null) {
-			return null;
-		}
-		int type = parentResource.getType();
-		if (type == IResource.FOLDER || type == IResource.PROJECT) {
-			IContainer folder = (IContainer) parentResource;
-			IResource resource = folder.findMember(getElementName());
-			if (resource == null) {
-				throw newNotPresentException();
-			} else {
-				return resource;
-			}
-		} else {
-			return parentResource;
-		}
-	}
-
-	/**
 	 * @see IOpenable
 	 */
 	public boolean hasUnsavedChanges() {
@@ -224,6 +202,16 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 */
 	public boolean isOpen() {
 		return RodinDBManager.getRodinDBManager().getInfo(this) != null;
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		IResource resource = getCorrespondingResource();
+		if (resource == null) {
+			return false;
+		}
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		return attributes != null && attributes.isReadOnly();
 	}
 
 	/**
