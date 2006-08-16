@@ -46,7 +46,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eventb.core.seqprover.ReasonerRegistry;
+import org.eventb.core.seqprover.IReasonerRegistry;
+import org.eventb.core.seqprover.SequentProver;
 
 public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
@@ -91,8 +92,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	private void getFilters() {
 		ProofTreeUI.debug("Get initial filter list");
-		final ReasonerRegistry reasonerRegistry = ReasonerRegistry.getReasonerRegistry();
-		Collection<String> reasoners = reasonerRegistry.installedReasoners();
+		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
+		Collection<String> reasoners = reasonerRegistry.getReasonerIDs();
 		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.size());
 		
 		for (String reasoner : reasoners) {

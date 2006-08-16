@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.seqprover.rules.ProofTree;
 import org.eventb.core.seqprover.sequent.IProverSequent;
+import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -90,6 +91,10 @@ public class SequentProver extends Plugin {
 	 */
 	public static IProofTree makeProofTree(IProverSequent sequent) {
 		return new ProofTree(sequent);
+	}
+	
+	public static IReasonerRegistry getReasonerRegistry(){
+		return ReasonerRegistry.getReasonerRegistry();
 	}
 	
 	public static void debugOut(String message){

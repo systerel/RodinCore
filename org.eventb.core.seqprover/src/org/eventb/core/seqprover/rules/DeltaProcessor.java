@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.internal.core.prover.Util;
+import org.eventb.internal.core.seqprover.Util;
 
 /**
  * Processor for proof tree deltas.

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.internal.core.prover.Util;
+import org.eventb.internal.core.seqprover.Util;
 import org.osgi.framework.Bundle;
 
 public abstract class ProverShell {

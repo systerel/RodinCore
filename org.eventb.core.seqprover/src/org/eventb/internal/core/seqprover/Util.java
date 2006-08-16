@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.core.prover;
+package org.eventb.internal.core.seqprover;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

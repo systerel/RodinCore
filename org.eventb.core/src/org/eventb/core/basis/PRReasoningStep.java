@@ -15,8 +15,9 @@ import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPair;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ReasonerOutputSucc;
-import org.eventb.core.seqprover.ReasonerRegistry;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.seqprover.reasoners.ConjE;
@@ -45,8 +46,8 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 	}
 	
 	public IReasoner getReasoner()throws RodinDBException {
-		final ReasonerRegistry reasonerRegistry = ReasonerRegistry.getReasonerRegistry();
-		IReasoner reasoner = reasonerRegistry.getReasoner(this.getReasonerID());
+		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
+		IReasoner reasoner = reasonerRegistry.getReasonerInstance(this.getReasonerID());
 		// Uninstalled reasoner
 		if (reasoner == null) return null;
 		return reasoner;
