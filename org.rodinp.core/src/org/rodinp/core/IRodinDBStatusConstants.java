@@ -204,19 +204,30 @@ public interface IRodinDBStatusConstants {
 	 * standard, doesn't abide by the constraints of the XML subset used by the
 	 * Rodin database.
 	 */
-	int MALFORMED_FILE_ERROR = 988;
+	int MALFORMED_FILE_ERROR = 989;
 
 	/**
 	 * Status indicating that an internal element could not be created because
 	 * its type is not known by the database. The element type can be retrieved
 	 * using <code>getString</code> on the status object.
 	 */
-	int INVALID_INTERNAL_ELEMENT_TYPE = 989;
+	int INVALID_INTERNAL_ELEMENT_TYPE = 990;
 
 	/**
 	 * Status indicating that the number of renamings supplied to a copy or move
 	 * operation does not match the number of elements that were supplied.
 	 */
-	int INDEX_OUT_OF_BOUNDS = 990;
+	int INDEX_OUT_OF_BOUNDS = 991;
+
+	/**
+	 * Status indicating that an XML error was encountered while saving a Rodin file.
+	 */
+	int XML_SAVE_ERROR = 992;
+
+	/**
+	 * Status indicating that an XML configuration error was encountered while
+	 * parsing or saving a Rodin file.
+	 */
+	int XML_CONFIG_ERROR = 993;
 
 }
