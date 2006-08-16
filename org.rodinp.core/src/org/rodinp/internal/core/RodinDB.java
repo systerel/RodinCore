@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -278,8 +279,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IOpenable
 	 */
-	@Override
-	public IResource getUnderlyingResource() {
+	public IWorkspaceRoot getUnderlyingResource() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
