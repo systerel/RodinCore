@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -45,7 +44,8 @@ public class RodinProject
 	/**
 	 * Whether the underlying file system is case sensitive.
 	 */
-	protected static final boolean IS_CASE_SENSITIVE = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
+	protected static final boolean IS_CASE_SENSITIVE =
+		! new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * The platform project this <code>IRodinProject</code> is based on
@@ -108,7 +108,7 @@ public class RodinProject
 			IResource underlyingResource) throws RodinDBException {
 	
 		// check whether the java project can be opened
-		if (!underlyingResource.isAccessible()) {
+		if (! underlyingResource.isAccessible()) {
 			throw newNotPresentException();
 		}
 		
@@ -131,15 +131,15 @@ public class RodinProject
 		info.computeChildren(this);		
 	}
 
-	/**
-	 * Compute the file name to use for a given shared property
-	 * @param qName QualifiedName
-	 * @return String
-	 */
-	public String computeSharedPropertyFileName(QualifiedName qName) {
-
-		return '.' + qName.getLocalName();
-	}
+//	/**
+//	 * Compute the file name to use for a given shared property
+//	 * @param qName QualifiedName
+//	 * @return String
+//	 */
+//	public String computeSharedPropertyFileName(QualifiedName qName) {
+//
+//		return '.' + qName.getLocalName();
+//	}
 	
 	/**
 	 * Configure the project with Rodin nature.
@@ -190,11 +190,11 @@ public class RodinProject
 		if (this == o)
 			return true;
 	
-		if (!(o instanceof RodinProject))
+		if (! (o instanceof RodinProject))
 			return false;
 	
 		RodinProject other = (RodinProject) o;
-		return this.project.equals(other.getProject());
+		return this.project.equals(other.project);
 	}
 
 	@Override
@@ -202,9 +202,7 @@ public class RodinProject
 		return hasRodinNature(this.project);
 	}	
 
-	/**
-	 * @see IRodinProject
-	 */
+	@Deprecated
 	public IRodinElement findElement(IPath path) throws RodinDBException {
 		if (path == null || path.isAbsolute()) {
 			throw new RodinDBException(
@@ -427,26 +425,24 @@ public class RodinProject
 //		return this.project.getWorkingLocation(RodinCore.PLUGIN_ID);
 //	}	
 
-	/**
+	/*
 	 * @see IRodinProject#getProject()
 	 */
 	public IProject getProject() {
 		return this.project;
 	}
 
-	/**
+	/*
 	 * @see IRodinElement
 	 */
 	public IResource getResource() {
 		return this.project;
 	}
 
-	/**
+	/*
 	 * @see IRodinElement
 	 */
-	@Override
-	public IResource getUnderlyingResource() throws RodinDBException {
-		if (!exists()) throw newNotPresentException();
+	public IResource getUnderlyingResource() {
 		return this.project;
 	}
 
@@ -538,11 +534,16 @@ public class RodinProject
 	 * @see IRodinProject
 	 */
 	public RodinFile getRodinFile(String fileName) {
-		return ElementTypeManager.getElementTypeManager().createRodinFileHandle(this, fileName);
+		final ElementTypeManager manager = 
+			ElementTypeManager.getElementTypeManager();
+		return manager.createRodinFileHandle(this, fileName);
 	}
 
-	public RodinFile createRodinFile(String name, boolean force, IProgressMonitor monitor) throws RodinDBException {
-		CreateRodinFileOperation op = new CreateRodinFileOperation(this, name, force);
+	public RodinFile createRodinFile(String name, boolean force,
+			IProgressMonitor monitor) throws RodinDBException {
+
+		CreateRodinFileOperation op =
+				new CreateRodinFileOperation(this, name, force);
 		op.runOperation(monitor);
 		return getRodinFile(name);
 	}
@@ -555,7 +556,7 @@ public class RodinProject
 	}
 	
 	/**
-	 * Reset the collection of package fragment roots (local ones) - only if opened.
+	 * Recomputes the lists of children - only if opened.
 	 */
 	public void updateChildren() {
 		if (this.isOpen()) {
