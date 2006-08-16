@@ -142,7 +142,8 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 	}
 
 	public void setAutomaticallyGenerated() throws RodinDBException{
-		this.createInternalElement(IPair.ELEMENT_TYPE,"automaticallyGenerated",null,null);
+		if (! isAutomaticallyGenerated())
+			this.createInternalElement(IPair.ELEMENT_TYPE,"automaticallyGenerated",null,null);
 	}
 	
 	private class ProofDependencies implements IProofDependencies{
