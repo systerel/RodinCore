@@ -7,20 +7,11 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+
 public class InternalElementInfo extends RodinElementInfo {
 	
-	String contents = "";
-
 	public InternalElementInfo() {
 		super();
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
 	}
 
 }
