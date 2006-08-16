@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -39,7 +40,7 @@ import org.rodinp.internal.core.util.Util;
  * to the <code>org.rodinp.core.internalElementTypes</code> extension point.
  * <p>
  * This abstract class should not be used in any other way than subclassing it
- * in database extensions. In particular, database clients should not use it,
+ * in database extensions. In particular, database clients must not use it,
  * but rather use its associated interface <code>IInternalElement</code>.
  * </p>
  * 
@@ -50,16 +51,29 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	/* Name of this internal element */
 	private String name;
 
-	/*
-	 * A count to uniquely identify this element in the case
-	 * that a duplicate named element exists. For example, if
-	 * there are two fields in a compilation unit with the
-	 * same name, the occurrence count is used to distinguish
-	 * them.  The occurrence count starts at 1 (thus the first 
-	 * occurrence is occurrence 1, not occurrence 0).
+	/**
+	 * Returns a handle to the an internal element which has the same relative
+	 * path as the given one, but relative to the given file.
+	 * 
+	 * @param element
+	 *            base element
+	 * @param newFile
+	 *            file in which to construct the new handle
+	 * @return the element in the given file and with the same relative path
+	 *         inside its file as the given element
 	 */
-	public int occurrenceCount = 1;
-
+	protected static final IInternalParent getSimilarElement(
+			IInternalParent element, RodinFile newFile) {
+		if (element instanceof RodinFile) {
+			return newFile;
+		}
+		final IInternalParent parent = (IInternalParent) element.getParent();
+		final IInternalParent newParent = getSimilarElement(parent, newFile);
+		final String type = element.getElementType();
+		final String name = element.getElementName();
+		return newParent.getInternalElement(type, name);
+	}
+	
 	public InternalElement(String name, IRodinElement parent) {
 		super(parent);
 		this.name = name;
@@ -112,13 +126,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return manager.createInternalElementHandle(childType, childName, this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IInternalParent
-	 */
+	@Deprecated
 	public InternalElement getInternalElement(String type, String childName, int childOccurrenceCount) {
-		InternalElement result = getInternalElement(type, childName);
-		result.occurrenceCount = childOccurrenceCount;
-		return result;
+		if (childOccurrenceCount != 1) {
+			throw new IllegalArgumentException("Occurrence count must be 1.");
+		}
+		return getInternalElement(type, childName);
 	}
 
 	/* (non-Javadoc)
@@ -129,19 +142,14 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if (! (o instanceof InternalElement))
-			return false;
-		return this.occurrenceCount == ((InternalElement) o).occurrenceCount
-				&& super.equals(o);
-	}
-
-	@Override
 	protected IRodinElement getHandleFromMemento(String token,
 			MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case REM_COUNT:
-			return getHandleUpdatingCountFromMemento(memento);
+			// just skip the unused count.
+			if (! memento.hasMoreTokens()) return this;
+			if (! memento.hasMoreTokens()) return this;
+			return getHandleFromMemento(memento.nextToken(), memento);
 		case REM_INTERNAL:
 			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
@@ -149,11 +157,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	/*
-	 * Update the occurence count of the receiver and creates a Rodin element handle from the given memento.
+	 * Update the occurence count of the receiver and creates a Rodin element
+	 * handle from the given memento.
 	 */
 	public IRodinElement getHandleUpdatingCountFromMemento(MementoTokenizer memento) {
 		if (! memento.hasMoreTokens()) return this;
-		this.occurrenceCount = Integer.parseInt(memento.nextToken());
+		// just skip the unused count.
 		if (! memento.hasMoreTokens()) return this;
 		String token = memento.nextToken();
 		return getHandleFromMemento(token, memento);
@@ -166,10 +175,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		escapeMementoName(buff, getElementType());
 		buff.append(REM_TYPE_SEP);
 		escapeMementoName(buff, getElementName());
-		if (this.occurrenceCount > 1) {
-			buff.append(REM_COUNT);
-			buff.append(this.occurrenceCount);
-		}
 	}
 
 	@Override
@@ -195,11 +200,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 * @see IRodinElement
 	 */
 	public IFile getResource() {
-		try {
-			return getUnderlyingResource();
-		} catch (RodinDBException e) {
-			return null;
-		}
+		return getUnderlyingResource();
 	}
 
 	@Override
@@ -207,7 +208,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getOpenableParent();
 	}
 
-	public IFile getUnderlyingResource() throws RodinDBException {
+	public IFile getUnderlyingResource() {
 		return getOpenableParent().getResource();
 	}
 
@@ -230,8 +231,31 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return null;
 	}
 
+	@Deprecated
 	public int getOccurrenceCount() {
-		return occurrenceCount;
+		return 1;
+	}
+
+	public final InternalElement getMutableCopy() {
+		final RodinFile file = getRodinFile();
+		if (! file.isSnapshot()) {
+			return this;
+		}
+		
+		// Recreate this handle in the mutable version of its file.
+		final RodinFile newFile = file.getMutableCopy();
+		return (InternalElement) getSimilarElement(this, newFile);
+	}
+
+	public final InternalElement getSnapshot() {
+		final RodinFile file = getRodinFile();
+		if (file.isSnapshot()) {
+			return this;
+		}
+		
+		// Recreate this handle in the snapshot version of its file.
+		final RodinFile newFile = file.getSnapshot();
+		return (InternalElement) getSimilarElement(this, newFile);
 	}
 
 	@Override
@@ -256,6 +280,10 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getChildren().length > 0;
 	}
 
+	public final boolean isSnapshot() {
+		return getRodinFile().isSnapshot();
+	}
+	
 	@Override
 	public final String getElementName() {
 		return name;
@@ -263,8 +291,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	@Override
 	public InternalElementInfo getElementInfo(IProgressMonitor monitor) throws RodinDBException {
-		RodinFile file = getOpenableParent();
-		RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(monitor);
+		RodinFileElementInfo fileInfo = getFileInfo(monitor);
 		InternalElementInfo info = fileInfo.getElementInfo(this);
 		if (info != null)
 			return info;
@@ -282,7 +309,15 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	 * @see org.rodinp.core.IInternalElement#getContents(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String getContents(IProgressMonitor monitor) throws RodinDBException {
-		return getElementInfo(monitor).getContents();
+		return getFileInfo(monitor).getDescendantContents(this);
+	}
+
+	protected RodinFileElementInfo getFileInfo(IProgressMonitor monitor) throws RodinDBException {
+		RodinFile file = getOpenableParent();
+		RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(monitor);
+		if (fileInfo != null)
+			return fileInfo;
+		throw newNotPresentException();
 	}
 
 	/* (non-Javadoc)
@@ -341,7 +376,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		buffer.append("[");
 		buffer.append(getElementType());
 		buffer.append("]");
-		buffer.append(getOccurrenceCount());
 	}
 
 }
