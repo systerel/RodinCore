@@ -5,27 +5,24 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Common protocol for all internal elements.
  * <p>
- * Internal elements are elements of the database that are stored within files.
+ * Internal elements are elements of the database that are stored within Rodin
+ * files (i.e., are descendants thereof).
  * </p>
  * 
  * @author Laurent Voisin
  */
 //TODO document IInternalElement
-public interface IInternalElement extends IRodinElement, IInternalParent, IElementManipulation{
+public interface IInternalElement extends IRodinElement, IInternalParent,
+		IElementManipulation {
 
 	/**
-	 * Returns the occurrence count of this internal element.
-	 * <p>
-	 * The occurrence count uniquely identifies this element in the case that a
-	 * duplicate named element exists in the same parent. For example, if there
-	 * are two variables in a machine with the same name, the occurrence
-	 * count is used to distinguish them. The occurrence count starts at 1 (thus
-	 * the first occurrence is occurrence 1, not occurrence 0) inside its
-	 * parent.
-	 * </p>
+	 * Returns the occurrence count of this internal element, which is always
+	 * <code>1</code>.
 	 * 
-	 * @return the occurrence count of this internal element
+	 * @return <code>1</code>
+	 * @deprecated Internal elements are now unique.
 	 */
+	@Deprecated
 	int getOccurrenceCount();
 
 	/**
