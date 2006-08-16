@@ -15,11 +15,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -73,30 +71,29 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 			beginTask(Messages.operation_createFileProgress, 2);
 			RodinElementDelta delta = newRodinElementDelta();
 			RodinFile rodinFile = getRodinFile();
-			RodinProject project = (RodinProject) getParentElement();
-			IContainer folder = project.getProject();
 			worked(1);
-			IFile file = folder.getFile(new Path(name));
+			IFile file = rodinFile.getResource();
 			if (file.exists()) {
-				// update the contents of the existing unit if force is true
+				// update the contents of the existing file if force is true
 				if (force) {
-					InputStream stream = getInitialInputStream(rodinFile.getElementType());
-					createFile(folder, rodinFile.getElementName(), stream, force);
+					InputStream stream = getInitialInputStream(rodinFile);
+					createFile(file, stream, force);
 					resultElements = new IRodinElement[] { rodinFile };
+					// TODO check why the test below?
 					if (rodinFile.getParent().exists()) {
 						delta.changed(rodinFile, IRodinElementDelta.F_CONTENT);
 						addDelta(delta);
 					}
 				} else {
 					throw new RodinDBException(new RodinDBStatus(
-							IRodinDBStatusConstants.NAME_COLLISION, Messages
-									.bind(Messages.status_nameCollision,
-											file.getFullPath()
-													.toString())));
+							IRodinDBStatusConstants.NAME_COLLISION,
+							Messages.bind(Messages.status_nameCollision,
+									file.getFullPath().toString()))
+					);
 				}
 			} else {
-				InputStream stream = getInitialInputStream(rodinFile.getElementType());
-				createFile(folder, rodinFile.getElementName(), stream, force);
+				InputStream stream = getInitialInputStream(rodinFile);
+				createFile(file, stream, force);
 				resultElements = new IRodinElement[] { rodinFile };
 				if (rodinFile.getParent().exists()) {
 					delta.added(rodinFile);
@@ -109,8 +106,11 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 		}
 	}
 
-	private ByteArrayInputStream getInitialInputStream(String elementType) {
-		StringBuffer buffer = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	private ByteArrayInputStream getInitialInputStream(RodinFile rodinFile) {
+		String elementType = rodinFile.getElementType();
+		StringBuilder buffer = new StringBuilder(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		);
 		buffer.append("<");
 		buffer.append(elementType);
 		buffer.append("/>");
@@ -122,7 +122,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 		}
 	}
 
-	protected RodinFile getRodinFile() {
+	private RodinFile getRodinFile() {
 		return ((RodinProject) getParentElement()).getRodinFile(name);
 	}
 
@@ -135,6 +135,12 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 		} else {
 			return workspace.getRuleFactory().createRule(resource);
 		}
+	}
+
+
+	@Override
+	public boolean modifiesResources() {
+		return true;
 	}
 
 	/**
