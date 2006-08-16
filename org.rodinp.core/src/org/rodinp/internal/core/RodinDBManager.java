@@ -25,7 +25,13 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,6 +56,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -917,25 +924,62 @@ public class RodinDBManager implements ISaveParticipant {
 
 	private DocumentBuilderFactory builderFactory;
 	
-	public synchronized DocumentBuilder getDocumentBuilder() {
+	public synchronized DocumentBuilder getDocumentBuilder()
+			throws RodinDBException {
+
 		if (builderFactory == null) {
-			builderFactory = DocumentBuilderFactory.newInstance();
-			builderFactory.setCoalescing(true);
-			builderFactory.setExpandEntityReferences(false);
-			builderFactory.setIgnoringComments(true);
-			builderFactory.setIgnoringElementContentWhitespace(false);
-			builderFactory.setNamespaceAware(false);
-			builderFactory.setSchema(null);
-			builderFactory.setValidating(false);
-			builderFactory.setXIncludeAware(false);
+			try {
+				builderFactory = DocumentBuilderFactory.newInstance();
+				builderFactory.setCoalescing(true);
+				builderFactory.setExpandEntityReferences(true);
+				builderFactory.setIgnoringComments(true);
+				builderFactory.setIgnoringElementContentWhitespace(false);
+				builderFactory.setNamespaceAware(true);
+				builderFactory.setSchema(null);
+				builderFactory.setValidating(false);
+				builderFactory.setXIncludeAware(false);
+			} catch (FactoryConfigurationError e) {
+				Util.log(e, "Can't get a DOM builder");
+				throw new RodinDBException(e,
+						IRodinDBStatusConstants.XML_CONFIG_ERROR);
+			}
 		}
 		try {
 			// TODO see how DOM builders could be shared (take care of multi-threading)
-			// TODO register an error handler to the builder
 			return builderFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			Util.log(e, "Can't get a DOM builder");
-			return null;
+			throw new RodinDBException(e,
+					IRodinDBStatusConstants.XML_CONFIG_ERROR);
 		}
 	}
+
+	private TransformerFactory transformerFactory;
+	
+	public synchronized Transformer getDOMTransformer()
+			throws RodinDBException {
+		
+		if (transformerFactory == null) {
+			try {
+				transformerFactory = TransformerFactory.newInstance();
+			} catch (TransformerFactoryConfigurationError e) {
+				Util.log(e, "Can't get a DOM transformer");
+				throw new RodinDBException(e,
+						IRodinDBStatusConstants.XML_CONFIG_ERROR);
+			}
+		}
+		try {
+			// TODO see how DOM transformers could be shared (take care of multi-threading)
+			Transformer result = transformerFactory.newTransformer();
+			result.setOutputProperty(OutputKeys.INDENT, "yes");
+			result.setOutputProperty(OutputKeys.METHOD, "xml");
+			result.setOutputProperty(OutputKeys.MEDIA_TYPE, "text/xml");
+			return result;
+		} catch (TransformerConfigurationException e) {
+			Util.log(e, "Can't get a DOM transformer");
+			throw new RodinDBException(e,
+					IRodinDBStatusConstants.XML_CONFIG_ERROR);
+		}
+	}
+	
 }
