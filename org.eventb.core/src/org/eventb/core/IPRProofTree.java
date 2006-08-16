@@ -83,5 +83,6 @@ public interface IPRProofTree extends IInternalElement {
 		 */
 		int getConfidence() throws RodinDBException;
 		
+		boolean isAutomaticallyGenerated() throws RodinDBException;
 		
 }

@@ -3,6 +3,7 @@ package org.eventb.internal.core.pom;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.reasoners.ExternalML;
 import org.eventb.core.seqprover.tactics.BasicTactics;
@@ -49,6 +50,7 @@ public class AutoProver {
 				// Update the tree if it was discharged
 				if (tree.isClosed()) {
 					po.updateProofTree(tree);
+					((PRProofTree)po.getProofTree()).setAutomaticallyGenerated();
 					prFile.save(null, false);
 					dirty = false;
 				}
@@ -57,6 +59,7 @@ public class AutoProver {
 				else if (tree.getRoot().hasChildren() && !po.proofAttempted())
 				{
 					po.updateProofTree(tree);
+					((PRProofTree)po.getProofTree()).setAutomaticallyGenerated();
 					// in this case no need to save immediately.
 					dirty = true;
 				}
