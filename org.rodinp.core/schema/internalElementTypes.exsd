@@ -71,11 +71,14 @@ for element types within the extension namespace). The token cannot contain dot
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="named" type="boolean" use="required">
+         <attribute name="named" type="boolean">
             <annotation>
                <documentation>
                   true if elements of this type have a name
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -96,7 +99,7 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.5
       </documentation>
    </annotation>
 
@@ -105,7 +108,7 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         For extension examples, please refer to the &quot;org.eventb.core&quot; plug-in.
       </documentation>
    </annotation>
 
@@ -114,7 +117,9 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;If the element type is named (&lt;code&gt;named&lt;/code&gt; attribute is &lt;code&gt;true&lt;/code&gt;), the specified class must subclass
+         &lt;p&gt;In the new implementation of the Rodin database, all internal elements are named.  As a consequence, the usage of unnamed internal elements is deprecated and will be disallowed in future releases.
+&lt;/p&gt;
+&lt;p&gt;If the element type is named (&lt;code&gt;named&lt;/code&gt; attribute is &lt;code&gt;true&lt;/code&gt;), the specified class must subclass
 &lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt; and provide a constructor looking like the following:
 &lt;pre&gt;
     public ClassName(String name, org.rodinp.core.IRodinElement parent) {
@@ -143,7 +148,7 @@ unnamed element type.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The &quot;org.eventb.core&quot; plug-in is a good example of a database customization using this extension point.
       </documentation>
    </annotation>
 
@@ -152,7 +157,7 @@ unnamed element type.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 ETH Zurich.&lt;br&gt;
+         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
