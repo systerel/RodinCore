@@ -64,7 +64,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 	 * and forcing. The operation should succeed, so any exceptions
 	 * encountered are thrown.
 	 */
-	public IRodinElement copyPositive(IRodinElement element,
+	public IRodinElement copyPositive(IElementManipulation element,
 			IRodinElement container, IRodinElement sibling, String rename,
 			boolean force) throws RodinDBException {
 
@@ -79,7 +79,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			startDeltas();
 			
 			// copy
-			((IElementManipulation) element).copy(container, sibling, rename, force, null);
+			element.copy(container, sibling, rename, force, null);
 			
 			// ensure the original element still exists
 			assertTrue("The original element must still exist", element.exists());
@@ -93,13 +93,20 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				ensureCorrectPositioning((IParent) container, sibling, copy);
 			}
 			IRodinElementDelta destDelta = getDeltaFor(container, true);
-			assertTrue("Destination container not changed", destDelta != null && destDelta.getKind() == IRodinElementDelta.CHANGED);
+			assertTrue("Destination container not changed",
+					destDelta != null
+					&& destDelta.getKind() == IRodinElementDelta.CHANGED);
 			IRodinElementDelta[] deltas = destDelta.getAffectedChildren();
-			assertEquals("Wrong number of added children for element copy", deltas.length, 1);
-			if (deltas[0].getKind() != IRodinElementDelta.ADDED) {
-				assertEquals("Invalid delta for element copy", IRodinElementDelta.CHANGED, deltas[0].getKind());
+			assertEquals("Wrong number of added children for element copy",
+					deltas.length, 1);
+			if (force) {
+				assertEquals("Invalid delta for element copy",
+						IRodinElementDelta.CHANGED, deltas[0].getKind());
 				assertTrue("delta for element copy is not a replace",
 						(deltas[0].getFlags() & IRodinElementDelta.F_REPLACED) != 0);
+			} else {
+				assertEquals("Invalid delta for element copy",
+						IRodinElementDelta.ADDED, deltas[0].getKind());
 			}
 			assertTrue("Added children not correct for element copy", deltas[0].getElement().equals(copy));
 		} finally {
