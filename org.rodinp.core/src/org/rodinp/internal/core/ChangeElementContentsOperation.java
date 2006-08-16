@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -32,13 +30,13 @@ public class ChangeElementContentsOperation extends RodinDBOperation{
 
 	@Override
 	protected void executeOperation() throws RodinDBException {
-		RodinElementDelta delta = newRodinElementDelta();
-
 		try {
 			beginTask(Messages.operation_changeElementContentsProgress, 2);
-			RodinFile file = element.getOpenableParent();
-			RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(getSubProgressMonitor(1));
+			RodinFile file = element.getRodinFile();
+			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
+					file.getElementInfo(getSubProgressMonitor(1));
 			fileInfo.changeDescendantContents(element, newContents);
+			RodinElementDelta delta = newRodinElementDelta();
 			delta.changed(element, IRodinElementDelta.F_CONTENT);
 			addDelta(delta);
 			worked(1);
@@ -49,13 +47,8 @@ public class ChangeElementContentsOperation extends RodinDBOperation{
 
 	@Override
 	protected ISchedulingRule getSchedulingRule() {
-		IResource resource = element.getOpenableParent().getResource();
-		IWorkspace workspace = resource.getWorkspace();
-		if (resource.exists()) {
-			return workspace.getRuleFactory().modifyRule(resource);
-		} else {
-			return super.getSchedulingRule();
-		}
+		assert false;
+		return null;
 	}
 
 	/**
@@ -75,7 +68,8 @@ public class ChangeElementContentsOperation extends RodinDBOperation{
 		if (! element.exists()) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
-					element);
+					element
+			);
 		}
 		if (newContents == null) {
 			return new RodinDBStatus(IRodinDBStatusConstants.NULL_STRING);
