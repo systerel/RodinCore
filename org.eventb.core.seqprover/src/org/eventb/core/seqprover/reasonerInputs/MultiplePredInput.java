@@ -1,0 +1,73 @@
+package org.eventb.core.seqprover.reasonerInputs;
+
+import java.util.Set;
+
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.ReplayHints;
+import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+
+public class MultiplePredInput implements IReasonerInput{
+	
+	private Predicate[] predicates;
+	private String error;
+		
+	public MultiplePredInput(Predicate[] predicates){
+		this.predicates = predicates;
+		if (this.predicates != null)
+			this.error = null;
+		else
+			this.error = "Predicates uninitialised";
+	}
+
+	public MultiplePredInput(Set<Predicate> predicates){
+		this(predicates.toArray(new Predicate[predicates.size()]));
+	}
+		
+	public final boolean hasError(){
+		return (error != null);
+	}
+	
+	/**
+	 * @return Returns the error.
+	 */
+	public final String getError() {
+		return error;
+	}
+
+	/**
+	 * @return Returns the predicate.
+	 */
+	public final Predicate[] getPredicates() {
+		return predicates;
+	}
+	
+	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		assert ! hasError();
+		assert predicates != null;
+		reasonerInputSerializer.putString("length",String.valueOf(predicates.length));
+		for (int i = 0; i < predicates.length; i++) {
+			// null value taken care of in putExpression.
+			reasonerInputSerializer.putPredicate(String.valueOf(i),predicates[i]);
+		}
+	}
+
+	public MultiplePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		int length = Integer.parseInt(reasonerInputSerializer.getString("length"));
+		Predicate[] predicates = new Predicate[length];
+		for (int i = 0; i < length; i++) {
+			// null value taken care of in getExpression.
+			predicates[i] = reasonerInputSerializer.getPredicate(String.valueOf(i));
+		}
+		new MultiplePredInput(predicates);
+	}
+
+	public void applyHints(ReplayHints hints) {
+		for (int i = 0; i < predicates.length; i++) {
+			predicates[i] = hints.applyHints(predicates[i]);
+		}
+		
+	}
+
+}

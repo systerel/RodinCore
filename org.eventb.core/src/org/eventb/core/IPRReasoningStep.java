@@ -1,6 +1,6 @@
 package org.eventb.core;
 
-import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ReasonerOutputSucc;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 

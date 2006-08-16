@@ -10,7 +10,7 @@ package org.eventb.core;
 
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.prover.IProofTree;
+import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.RodinDBException;
 
 /**

@@ -13,7 +13,7 @@ import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;

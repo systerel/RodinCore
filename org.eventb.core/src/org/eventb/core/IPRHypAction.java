@@ -8,7 +8,7 @@
 
 package org.eventb.core;
 
-import org.eventb.core.prover.sequent.HypothesesManagement.Action;
+import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 

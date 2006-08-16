@@ -6,7 +6,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.prover.IConfidence;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POUtil;

@@ -1,6 +1,6 @@
 package org.eventb.core;
 
-import org.eventb.core.prover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.rodinp.core.IInternalElement;
 
 

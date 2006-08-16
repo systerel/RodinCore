@@ -1,6 +1,6 @@
 package org.eventb.core;
 
-import org.eventb.core.prover.IProofDependencies;
+import org.eventb.core.seqprover.IProofDependencies;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -12,7 +12,7 @@ import org.rodinp.core.RodinDBException;
  * de-serializing proof trees used inside the sequent prover.
  * </p>
  * <p>
- * This interface tries to mimic ({@link org.eventb.core.prover.IProofTree}) 
+ * This interface tries to mimic ({@link org.eventb.core.seqprover.IProofTree}) 
  * as much as possible.
  * </p>
  * 
@@ -78,7 +78,7 @@ public interface IPRProofTree extends IInternalElement {
 		 * Returns the confidence of this proof tree.
 		 * 
 		 * @return the confidence of this proof tree 
-		 * 			(see {@link org.eventb.core.prover.IConfidence})
+		 * 			(see {@link org.eventb.core.seqprover.IConfidence})
 		 * @throws RodinDBException 
 		 */
 		int getConfidence() throws RodinDBException;

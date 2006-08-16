@@ -14,7 +14,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.prover.SequentProver;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.prover.Util;
 import org.osgi.framework.Bundle;
 

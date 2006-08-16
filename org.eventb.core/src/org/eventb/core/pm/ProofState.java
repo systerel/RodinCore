@@ -17,11 +17,11 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.tactics.BasicTactics;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.rodinp.core.RodinDBException;
 

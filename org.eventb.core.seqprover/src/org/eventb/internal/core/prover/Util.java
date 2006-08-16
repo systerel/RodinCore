@@ -10,7 +10,7 @@ package org.eventb.internal.core.prover;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eventb.core.prover.SequentProver;
+import org.eventb.core.seqprover.SequentProver;
 
 /**
  * Class grouping various utility functions, which are intended for internal use

@@ -3,10 +3,10 @@ package org.eventb.internal.core.pom;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.reasoners.ExternalML;
-import org.eventb.core.prover.tactics.BasicTactics;
-import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.reasoners.ExternalML;
+import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.core.seqprover.tactics.Tactics;
 
 public class AutoProver {
 	

@@ -18,16 +18,16 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.prover.IProofRule;
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.IProofTreeChangedListener;
-import org.eventb.core.prover.IProofTreeDelta;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.rules.ProofRule;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.ProverSequent;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeChangedListener;
+import org.eventb.core.seqprover.IProofTreeDelta;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.rules.ProofRule;
+import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.core.seqprover.sequent.IProverSequent;
+import org.eventb.core.seqprover.sequent.ProverSequent;
 
 /**
  * Common implementation for tests related to proof trees.

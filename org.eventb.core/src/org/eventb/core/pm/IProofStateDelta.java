@@ -2,8 +2,8 @@ package org.eventb.core.pm;
 
 import java.util.List;
 
-import org.eventb.core.prover.IProofTreeDelta;
-import org.eventb.core.prover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofTreeDelta;
+import org.eventb.core.seqprover.IProofTreeNode;
 
 
 public interface IProofStateDelta {

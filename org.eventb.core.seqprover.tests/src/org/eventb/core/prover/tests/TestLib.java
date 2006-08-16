@@ -10,12 +10,12 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.Lib;
-import org.eventb.core.prover.rules.ProofTree;
-import org.eventb.core.prover.sequent.Hypothesis;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.sequent.ProverSequent;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.rules.ProofTree;
+import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.core.seqprover.sequent.IProverSequent;
+import org.eventb.core.seqprover.sequent.ProverSequent;
 
 public class TestLib {
 

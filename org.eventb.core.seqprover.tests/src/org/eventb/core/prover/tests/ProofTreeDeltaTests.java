@@ -8,11 +8,11 @@
 
 package org.eventb.core.prover.tests;
 
-import org.eventb.core.prover.IProofTree;
-import org.eventb.core.prover.IProofTreeNode;
-import org.eventb.core.prover.SequentProver;
-import org.eventb.core.prover.sequent.IProverSequent;
-import org.eventb.core.prover.tactics.Tactics;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.sequent.IProverSequent;
+import org.eventb.core.seqprover.tactics.Tactics;
 
 /**
  * Unit tests for deltas fired when modifying proof trees.
