@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.Path;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -90,11 +92,35 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	protected NamedElement createNamedElement(IInternalParent parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
-		return (NamedElement) parent.createInternalElement(
-				NamedElement.ELEMENT_TYPE,
-				name,
-				nextSibling,
-				null);
+		final String type = NamedElement.ELEMENT_TYPE;
+		final IInternalElement element = parent.getInternalElement(type, name);
+		if (element.exists()) {
+			try {
+				parent.createInternalElement(type, name, nextSibling, null);
+				fail("Should have raised an exception");
+			} catch (RodinDBException e) {
+				final IRodinDBStatus status = e.getRodinDBStatus();
+				assertEquals("Status should be an error",
+						IRodinDBStatus.ERROR,
+						status.getSeverity());
+				assertEquals("Status code should be a name collision", 
+						IRodinDBStatusConstants.NAME_COLLISION, 
+						status.getCode());
+				IRodinElement[] elements = status.getElements(); 
+				assertEquals("Status should be related to the given element", 
+						1, 
+						elements.length);
+				assertEquals("Status should be related to the given element", 
+						element, 
+						elements[0]);
+			}
+			assertTrue("Conflicting element should still exist", element.exists());
+			return null;
+		}
+		IRodinElement result = 
+				parent.createInternalElement(type, name, nextSibling, null);
+		assertTrue("Created element should exist", element.exists());
+		return (NamedElement) result;
 	}
 	
 	protected void deleteFile(String filePath) throws CoreException {
