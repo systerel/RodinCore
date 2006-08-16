@@ -32,27 +32,26 @@ public class TestAtomic extends BuilderTest {
 		int eventType;
 		
 		public DeltaListener() {
-			DeltaListener.this.deltas = new ArrayList<IRodinElementDelta>();
-			DeltaListener.this.eventType = -1;
+			this.deltas = new ArrayList<IRodinElementDelta>();
+			this.eventType = -1;
 		}
 		public DeltaListener(int eventType) {
-			DeltaListener.this.deltas = new ArrayList<IRodinElementDelta>();
-			DeltaListener.this.eventType = eventType;
+			this.deltas = new ArrayList<IRodinElementDelta>();
+			this.eventType = eventType;
 		}
 		public void elementChanged(ElementChangedEvent event) {
-			if (DeltaListener.this.eventType == -1 ||
-					event.getType() == DeltaListener.this.eventType) {
-				DeltaListener.this.deltas.add(event.getDelta());
+			if (eventType == -1 || event.getType() == eventType) {
+				deltas.add(event.getDelta());
 			}
 		}
 		public void flush() {
-			DeltaListener.this.deltas = new ArrayList<IRodinElementDelta>();
+			deltas = new ArrayList<IRodinElementDelta>();
 		}
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			final int length = DeltaListener.this.deltas.size();
+			final int length = deltas.size();
 			for (int i = 0; i < length; i++) {
-				IRodinElementDelta delta = this.deltas.get(i);
+				IRodinElementDelta delta = deltas.get(i);
 				IRodinElementDelta[] children = delta.getAffectedChildren();
 				final int childrenLength = children.length;
 				if (childrenLength > 0) {
