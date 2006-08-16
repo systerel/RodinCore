@@ -1,13 +1,11 @@
 package org.eventb.core.prover;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.prover.reasoners.AllD;
 import org.eventb.core.prover.reasoners.AllI;
@@ -31,42 +29,55 @@ import org.eventb.core.prover.reasoners.Review;
 import org.eventb.core.prover.reasoners.RewriteGoal;
 import org.eventb.core.prover.reasoners.RewriteHyp;
 import org.eventb.core.prover.reasoners.TrueGoal;
-import org.osgi.framework.Bundle;
 
 public class ReasonerRegistry {
 	
-	private static Map<String,IReasoner> registry = new HashMap<String,IReasoner>();
+	private static String REASONER_EXTENTION_POINT_ID =
+		SequentProver.PLUGIN_ID + ".reasoner";
 	
 	// Static initialization block for registry 
-	static {
-		IReasoner[] installedReasoners =	
-		{
-				// Add new reasoners here.
-				new Hyp(),
-				new TrueGoal(),
-				new FalseHyp(),
-//				new Tautology(),
-//				new Contradiction(),
-				new ConjI(),
-				new Cut(),
-				new DoCase(),
-				new Contr(),
-				new ConjE(),
-				new DisjE(),
-				new ImpI(),
-				new ImpE(),
-				new AllI(),
-				new AllD(),
-				new ExE(),
-				new ExI(),
-				new RewriteGoal(),
-				new Eq(),
-				new RewriteHyp(),
-				new ExternalPP(),
-				new ExternalML(),
-				new Review(),
-				new MngHyp()
-		};
+	private static IReasoner[] installedReasoners = {
+		// Add new reasoners here.
+		new Hyp(),
+		new TrueGoal(),
+		new FalseHyp(),
+//		new Tautology(),
+//		new Contradiction(),
+		new ConjI(),
+		new Cut(),
+		new DoCase(),
+		new Contr(),
+		new ConjE(),
+		new DisjE(),
+		new ImpI(),
+		new ImpE(),
+		new AllI(),
+		new AllD(),
+		new ExE(),
+		new ExI(),
+		new RewriteGoal(),
+		new Eq(),
+		new RewriteHyp(),
+		new ExternalPP(),
+		new ExternalML(),
+		new Review(),
+		new MngHyp()
+	};
+
+	private static ReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
+	
+	public static ReasonerRegistry getReasonerRegistry() {
+		return SINGLETON_INSTANCE;
+	}
+	
+	private Map<String,IReasoner> registry;
+	
+	private ReasonerRegistry() {
+		// Singleton implementation
+	}
+	
+	private void loadRegistry() {
+		registry = new HashMap<String,IReasoner>();
 		
 		for (IReasoner reasoner : installedReasoners)
 		{
@@ -77,56 +88,55 @@ public class ReasonerRegistry {
 		}
 		
 		
-		String REASONER_EXTENTION_POINT_ID = SequentProver.PLUGIN_ID+ ".reasoner";
-		
-		IExtension[] extensions = 
+		IExtensionPoint extensionPoint = 
 			Platform.getExtensionRegistry().
-			getExtensionPoint(REASONER_EXTENTION_POINT_ID).
-			getExtensions();
+			getExtensionPoint(REASONER_EXTENTION_POINT_ID);
 		
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension
-			.getConfigurationElements();
-			for (IConfigurationElement element : elements) {
-				String name = element.getName();
+		for (IConfigurationElement element:
+				extensionPoint.getConfigurationElements()) {
+//			Bundle bundle = Platform.getBundle(element
+//			.getNamespace());
+			try {
+				String reasonerID = element.getAttribute("id");
+				IReasoner reasoner = 
+					(IReasoner) element.createExecutableExtension("class");
+//				loadReasoner(
+//				bundle,
+//				element.getAttribute("class"));
 				
-				if (name.equals("reasoner")) {
-					Bundle bundle = Platform.getBundle(element
-							.getNamespace());
-					try {
-						String reasonerID = element.getAttribute("reasonerID");
-						IReasoner reasoner = loadReasoner(
-								bundle,
-								element.getAttribute("class"));
-						
-						assert reasonerID.equals(reasoner.getReasonerID());
-						
-						registry.put(reasonerID,reasoner);
-						System.out.println("Added reasoner:"+reasoner.getReasonerID());
-					} catch (Exception e) {
-						// TODO Exception handle
-						e.printStackTrace();
-					}
+				if (reasonerID.equals(reasoner.getReasonerID())) {
+					throw new IllegalArgumentException("mismatch between reasoner ids");
 				}
+				
+				registry.put(reasonerID,reasoner);
+				System.out.println("Added reasoner:"+reasoner.getReasonerID());
+			} catch (Exception e) {
+				// TODO Exception handle
+				e.printStackTrace();
 			}
-			
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static IReasoner loadReasoner(Bundle bundle, String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
-		Class classObject = bundle.loadClass(className).asSubclass(IReasoner.class);
-		Constructor constructor = classObject.getConstructor(new Class[0]);
-		IReasoner reasoner = (IReasoner) constructor.newInstance(new Object[0]);
-		return reasoner;
-	}
-	
-	public static IReasoner getReasoner(String reasonerID){
+//	@SuppressWarnings("unchecked")
+//	private IReasoner loadReasoner(Bundle bundle, String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
+//		Class classObject = bundle.loadClass(className).asSubclass(IReasoner.class);
+//		Constructor constructor = classObject.getConstructor(new Class[0]);
+//		IReasoner reasoner = (IReasoner) constructor.newInstance(new Object[0]);
+//		return reasoner;
+//	}
+//	
+	public IReasoner getReasoner(String reasonerID){
+		if (registry == null) {
+			loadRegistry();
+		}
 		return registry.get(reasonerID);
 	}
 	
 	
-	public static Set<String> installedReasoners(){
+	public Set<String> installedReasoners(){
+		if (registry == null) {
+			loadRegistry();
+		}
 		return registry.keySet();
 	}
 }
