@@ -32,6 +32,7 @@ import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
+import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
@@ -56,25 +57,28 @@ import org.rodinp.internal.core.util.Messages;
 public abstract class RodinFile extends Openable implements IRodinFile {
 	
 	/**
-	 * The platform project this <code>IRodinProject</code> is based on
+	 * The platform file resource this <code>IRodinFile</code> is based on
 	 */
 	protected IFile file;
+	
+	/**
+	 * <code>true</code> iff this handle corresponds to the snapshot version of
+	 * a Rodin file, <code>false</code> for the mutable version.
+	 */
+	private boolean snapshot;
 
 	protected RodinFile(IFile file, IRodinElement parent) {
 		super((RodinElement) parent);
 		this.file = file;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinFile#findElements(org.rodinp.core.IRodinElement)
-	 */
-	public IRodinElement[] findElements(IRodinElement element) {
+	public final IRodinElement[] findElements(IRodinElement element) {
 		// TODO implement findElements().
 		return NO_ELEMENTS;
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableElementInfo info,
+	protected final boolean buildStructure(OpenableElementInfo info,
 			IProgressMonitor pm,
 			Map<IRodinElement, RodinElementInfo> newElements,
 			IResource underlyingResource) throws RodinDBException {
@@ -86,10 +90,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return fileInfo.parseFile(pm, this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IElementManipulation
-	 */
-	public void copy(IRodinElement container, IRodinElement sibling,
+	public final void copy(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -101,36 +102,62 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	protected RodinElementInfo createElementInfo() {
+	protected final RodinElementInfo createElementInfo() {
 		return new RodinFileElementInfo();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IInternalParent#createInternalElement(java.lang.String, java.lang.String, org.rodinp.core.IInternalElement, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public InternalElement createInternalElement(String type, String name,
+	private final RodinFile createNewHandle() {
+		final ElementTypeManager etm =
+			ElementTypeManager.getElementTypeManager();
+		return 
+			etm.createRodinFileHandle(getRodinProject(), getElementName());
+	}
+
+	public final InternalElement createInternalElement(String type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, name);
 		if (result == null) {
-			IRodinDBStatus status =
-				new RodinDBStatus(IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE, type);
+			IRodinDBStatus status = new RodinDBStatus(
+					IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE,
+					type
+			);
 			throw new RodinDBException(status);
 		}
 		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see IElementManipulation
-	 */
-	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
+	public final void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteResourceElementsOperation(this, force).runOperation(monitor);
 	}
 
 	@Override
-	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
+	public final boolean equals(Object o) {
+		if (super.equals(o)) {
+			RodinFile other = (RodinFile) o;
+			return snapshot == other.snapshot;
+		}
+		return false;
+	}
+
+	@Override
+	public final RodinElement[] getChildren() throws RodinDBException {
+		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
+		if (info != null) {
+			return info.getChildren(this);
+		}
+		throw newNotPresentException();
+	}
+
+	@Override
+	public final String getElementName() {
+		return file.getName();
+	}
+
+	@Override
+	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case REM_INTERNAL:
 			return RodinElement.getInternalHandleFromMemento(memento, this);
@@ -139,72 +166,87 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	protected char getHandleMementoDelimiter() {
+	protected final char getHandleMementoDelimiter() {
 		return REM_EXTERNAL;
 	}
 
-	/* (non-Javadoc)
-	 * @see IInternalParent
-	 */
-	public InternalElement getInternalElement(String type, String name) {
+	public final InternalElement getInternalElement(String type, String name) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
 		return manager.createInternalElementHandle(type, name, this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IInternalParent
-	 */
-	public InternalElement getInternalElement(String type, String name, int occurrenceCount) {
-		InternalElement result = getInternalElement(type, name);
-		result.occurrenceCount = occurrenceCount;
-		return result;
+	@Deprecated
+	public final InternalElement getInternalElement(String type, String name, int occurrenceCount) {
+		if (occurrenceCount != 1) {
+			throw new IllegalArgumentException("Occurrence count must be 1");
+		}
+		return getInternalElement(type, name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinFile#getPath()
-	 */
-	public IPath getPath() {
+	public final RodinFile getMutableCopy() {
+		if (! isSnapshot()) {
+			return this;
+		}
+		return createNewHandle();
+	}
+	
+	public final IPath getPath() {
 		return file.getFullPath();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinFile#getResource()
-	 */
-	public IFile getResource() {
+	public final IFile getResource() {
+		return file;
+	}
+	
+	public final RodinFile getSnapshot() {
+		if (isSnapshot()) {
+			return this;
+		}
+		final RodinFile result = createNewHandle();
+		result.snapshot = true;
+		return result;
+	}
+	
+	public final IFile getUnderlyingResource() {
 		return file;
 	}
 	
 	@Override
-	public String getElementName() {
-		return file.getName();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinFile#hasUnsavedChanges()
-	 */
-	@Override
-	public boolean hasUnsavedChanges() {
-		if (isOpen()) {
-			try {
-				RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
-				return info.hasUnsavedChanges();
-			} catch (RodinDBException e) {
-				return false;
-			}
+	public final boolean hasChildren() throws RodinDBException {
+		RodinFileElementInfo info = (RodinFileElementInfo)
+				RodinDBManager.getRodinDBManager().getInfo(this);
+		if (info != null) {
+			return info.getChildren(this).length > 0;
+		} else {
+			return true;
 		}
-		// File not open
-		return false;
 	}
 
 	@Override
-	public boolean isConsistent() {
+	public final boolean hasUnsavedChanges() {
+		try {
+			RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
+			return info != null && info.hasUnsavedChanges();
+		} catch (RodinDBException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public final boolean isConsistent() {
 		return hasUnsavedChanges();
 	}
 
-	/* (non-Javadoc)
-	 * @see IElementManipulation
-	 */
-	public void move(IRodinElement container, IRodinElement sibling,
+	@Override
+	public boolean isReadOnly() {
+		return isSnapshot() || super.isReadOnly();
+	}
+
+	public final boolean isSnapshot() {
+		return snapshot;
+	}
+	
+	public final void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -215,15 +257,12 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 				sibling, rename, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see IElementManipulation
-	 */
-	public void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
+	public final void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameResourceElementsOperation(this, name, replace).runOperation(monitor);
 	}
 
 	@Override
-	public void save(IProgressMonitor progress, boolean force) throws RodinDBException {
+	public final void save(IProgressMonitor progress, boolean force) throws RodinDBException {
 		super.save(progress, force);
 		
 		// Then save the file contents.
@@ -233,4 +272,5 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
 		info.saveToFile(this, force, progress);
 	}
+
 }
