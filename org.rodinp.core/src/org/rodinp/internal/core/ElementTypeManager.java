@@ -251,6 +251,7 @@ public class ElementTypeManager {
 	 *         element type is unknown
 	 */
 	public InternalElement createInternalElementHandle(String type, String name, IRodinElement parent) {
+		assert name != null;
 		InternalElementTypeDescription description = getInternalElementTypeDescription(type);
 		if (description == null) {
 			// TODO create a default node for unknown types
