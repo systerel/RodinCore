@@ -7,15 +7,18 @@ import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasonerInputs.SinglePredInput;
 import org.eventb.core.prover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.prover.sequent.IProverSequent;
 
-public class Cut extends SinglePredInputReasoner{
+public class Cut extends SinglePredInputReasoner {
+
+	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".cut";
 	
 	public String getReasonerID() {
-		return "cut";
+		return REASONER_ID;
 	}
 	
 	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){

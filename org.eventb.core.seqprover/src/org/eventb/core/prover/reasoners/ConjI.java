@@ -7,16 +7,18 @@ import org.eventb.core.prover.IReasonerInput;
 import org.eventb.core.prover.ReasonerOutput;
 import org.eventb.core.prover.ReasonerOutputFail;
 import org.eventb.core.prover.ReasonerOutputSucc;
+import org.eventb.core.prover.SequentProver;
 import org.eventb.core.prover.ReasonerOutputSucc.Anticident;
 import org.eventb.core.prover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.prover.sequent.IProverSequent;
 
 public class ConjI extends EmptyInputReasoner{
 	
-	public String getReasonerID() {
-		return "conjI";
-	}
+	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".conjI";
 	
+	public String getReasonerID() {
+		return REASONER_ID;
+	}
 	
 	public ReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
