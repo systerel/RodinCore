@@ -38,7 +38,6 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.internal.ui.EventBFormText;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
