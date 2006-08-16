@@ -46,7 +46,7 @@ import org.rodinp.internal.core.util.Messages;
  */
 public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressMonitor {
 	
-	protected interface IPostAction {
+	protected static interface IPostAction {
 		/*
 		 * Returns the id of this action.
 		 * @see RodinDBOperation#postAction
@@ -261,8 +261,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * Convenience method to create a file
 	 */
-	protected void createFile(IContainer folder, String name, InputStream contents, boolean forceFlag) throws RodinDBException {
-		IFile file= folder.getFile(new Path(name));
+	protected void createFile(IFile file, InputStream contents, boolean forceFlag) throws RodinDBException {
 		final int updateFlags =
 			forceFlag ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY;
 		try {
@@ -270,8 +269,8 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 				file.setContents(contents, updateFlags, getSubProgressMonitor(1));
 			} else {
 				file.create(contents, updateFlags, getSubProgressMonitor(1));
-				this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE); 
 			}
+			this.setAttribute(HAS_MODIFIED_RESOURCE_ATTR, TRUE); 
 		} catch (CoreException e) {
 			throw new RodinDBException(e);
 		}
@@ -517,7 +516,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Returns false if this operation has not been executed yet.
 	 */
 	public boolean hasModifiedResource() {
-		return !this.isReadOnly() && this.getAttribute(HAS_MODIFIED_RESOURCE_ATTR) == TRUE; 
+		return this.modifiesResources() && this.getAttribute(HAS_MODIFIED_RESOURCE_ATTR) == TRUE; 
 	}
 	
 	public void internalWorked(double work) {
@@ -540,7 +539,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Returns <code>true</code> if this operation performs no resource modifications,
 	 * otherwise <code>false</code>. Subclasses must override.
 	 */
-	public boolean isReadOnly() {
+	public boolean modifiesResources() {
 		return false;
 	}
 	
@@ -764,7 +763,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 			throw new RodinDBException(status);
 		}
 		try {
-			if (isReadOnly()) {
+			if (! modifiesResources()) {
 				run(monitor);
 			} else {
 				// Use IWorkspace.run(...) to ensure that a build will be done in autobuild mode.
