@@ -319,8 +319,8 @@ public class ProofInformationPage extends Page implements
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(final IProofStateDelta delta) {
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		if (scrolledForm.getContent().isDisposed()) return;
+		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
 				ProofState ps = delta.getProofState();
