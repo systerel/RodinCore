@@ -16,18 +16,26 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Common protocol for all elements provided by the Rodin database.
- * Rodin database elements are exposed to clients as handles to the actual underlying element.
- * The Rodin database may hand out any number of handles for each element. Handles
- * that refer to the same element are guaranteed to be equal, but not necessarily identical.
+ * Common protocol for all elements provided by the Rodin database. Rodin
+ * database elements are exposed to clients as handles to the actual underlying
+ * element. The Rodin database may hand out any number of handles for each
+ * element. Handles that refer to the same element are guaranteed to be equal,
+ * but not necessarily identical.
  * <p>
- * Methods annotated as "handle-only" do not require underlying elements to exist. 
- * Methods that require underlying elements to exist throw
- * a <code>RodinDBException</code> when an underlying element is missing.
- * <code>RodinDBException.isDoesNotExist</code> can be used to recognize
- * this common special case.
+ * Methods annotated as "handle-only" do not require underlying elements to
+ * exist. Methods that require underlying elements to exist throw a
+ * <code>RodinDBException</code> when an underlying element is missing.
+ * {@link RodinDBException#isDoesNotExist()} can be used to recognize this
+ * common special case.
  * </p>
- * TODO add topo on Canonical Strings.
+ * <p>
+ * All methods that manipulate element types expect that the element type is
+ * represented by a canonical String. This restriction should not be a problem
+ * for clients, as most of the time the element types manipulated come from
+ * constant Strings (which are interned by the Java compiler). However, in case
+ * a client needs to dynamically create an element type name, this client needs
+ * to make it canonical before passing it to the Rodin database (see
+ * {@link String#intern()}).
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -47,40 +55,37 @@ public interface IRodinElement extends IAdaptable {
 	String RODIN_PROJECT = RodinCore.PLUGIN_ID + ".project";
 
 	/**
-	 * Constant representing a Rodin file.
-	 * A Rodin element with this type can be safely cast to <code>RodinFile</code>.
-	 */
-	String RODIN_FILE = RodinCore.PLUGIN_ID + ".file";
-
-	/**
 	 * Returns whether this Rodin element exists in the database.
 	 * <p>
 	 * Rodin elements are handle objects that may or may not be backed by an
 	 * actual element. Rodin elements that are backed by an actual element are
 	 * said to "exist", and this method returns <code>true</code>. For Rodin
-	 * elements that are not working copies, it is always the case that if the
-	 * element exists, then its parent also exists (provided it has one) and
-	 * includes the element as one of its children. It is therefore possible
-	 * to navigate to any existing Rodin element from the root of the Rodin database
-	 * along a chain of existing Rodin elements. On the other hand, working
-	 * copies are said to exist until they are destroyed (with
-	 * <code>IWorkingCopy.destroy</code>). Unlike regular Rodin elements, a
-	 * working copy never shows up among the children of its parent element
-	 * (which may or may not exist).
+	 * elements, it is always the case that if the element exists, then its
+	 * parent also exists (provided it has one). Moreover, for any element which
+	 * is not a stable file snapshot, the parent includes the element as one of
+	 * its children. It is therefore possible to navigate to any existing Rodin
+	 * element (except stable file snapshots) from the root of the Rodin
+	 * database along a chain of existing Rodin elements. On the other hand,
+	 * a stable snapshot file never shows up among the children of its parent
+	 * element.
 	 * </p>
-	 *
-	 * @return <code>true</code> if this element exists in the Rodin database, and
-	 * <code>false</code> if this element does not exist
+	 * 
+	 * @return <code>true</code> if this element exists in the Rodin database,
+	 *         and <code>false</code> if this element does not exist
 	 */
 	boolean exists();
 	
 	/**
 	 * Returns the first ancestor of this Rodin element that has the given type.
 	 * Returns <code>null</code> if no such an ancestor can be found.
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 * 
-	 * @param ancestorType the given type (must be a canonical String)
-	 * @return the first ancestor of this Rodin element that has the given type, null if no such an ancestor can be found
+	 * @param ancestorType
+	 *            the given type (must be a canonical String)
+	 * @return the first ancestor of this Rodin element that has the given type,
+	 *         or <code>null</code> if no such an ancestor can be found
 	 * @see String#intern()
 	 */
 	IRodinElement getAncestor(String ancestorType);
@@ -90,31 +95,36 @@ public interface IRodinElement extends IAdaptable {
 	 * <code>null</code> if there is no resource that corresponds to this
 	 * element.
 	 * <p>
-	 * For example, the corresponding resource for an <code>RodinFile</code>
+	 * For example, the corresponding resource for an <code>IRodinFile</code>
 	 * is its underlying <code>IFile</code>. The corresponding resource for
 	 * an <code>IRodinProject</code> is its underlying <code>IProject</code>.
 	 * Internal elements have no corresponding resource.
+	 * </p>
 	 * <p>
+	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @return the corresponding resource, or <code>null</code> if none
-	 * @exception RodinDBException
-	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
 	 */
-	IResource getCorrespondingResource() throws RodinDBException;
+	IResource getCorrespondingResource();
 
 	/**
-	 * Returns the name of this element. This is a handle-only method.
+	 * Returns the name of this element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
 	 *
 	 * @return the element name
 	 */
 	String getElementName();
 
 	/**
-	 * Returns this element's kind as a canonical String.
+	 * Returns the type of this element as a canonical String.
+	 * <p>
 	 * This is a handle-only method.
-	 *
-	 * @return the kind of element
+	 * </p>
+	 * 
+	 * @return the element type
 	 */
 	String getElementType();
 
@@ -123,8 +133,10 @@ public interface IRodinElement extends IAdaptable {
 	 * the string is not specified; however, the identifier is stable across
 	 * workspace sessions, and can be used to recreate this handle via the 
 	 * <code>RodinCore.create(String)</code> method.
+	 * <p>
 	 * This is a handle-only method.
-	 *
+	 * </p>
+	 * 
 	 * @return the string handle identifier
 	 * @see RodinCore#create(java.lang.String)
 	 */
@@ -132,7 +144,9 @@ public interface IRodinElement extends IAdaptable {
 
 	/**
 	 * Returns the Rodin database.
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 *
 	 * @return the Rodin database
 	 */
@@ -143,8 +157,10 @@ public interface IRodinElement extends IAdaptable {
 	 * or <code>null</code> if this element is not contained in any Rodin project
 	 * (for instance, the <code>IRodinDB</code> is not contained in any Rodin 
 	 * project).
+	 * <p>
 	 * This is a handle-only method.
-	 *
+	 * </p>
+	 * 
 	 * @return the containing Rodin project, or <code>null</code> if this element is
 	 *   not contained in a Rodin project
 	 */
@@ -154,7 +170,9 @@ public interface IRodinElement extends IAdaptable {
 	 * Returns the first openable parent. If this element is openable, the element
 	 * itself is returned. Returns <code>null</code> if this element doesn't have
 	 * an openable parent.
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @return the first openable parent or <code>null</code> if this element doesn't have
 	 * an openable parent.
@@ -164,8 +182,10 @@ public interface IRodinElement extends IAdaptable {
 	/**
 	 * Returns the element directly containing this element,
 	 * or <code>null</code> if this element has no parent.
+	 * <p>
 	 * This is a handle-only method.
-	 *
+	 * </p>
+	 * 
 	 * @return the parent element, or <code>null</code> if this element has no parent
 	 */
 	IRodinElement getParent();
@@ -174,7 +194,9 @@ public interface IRodinElement extends IAdaptable {
 	 * Returns the path to the innermost resource enclosing this element. 
 	 * The path returned is the full, absolute path to the underlying resource, 
 	 * relative to the workbench. 
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @return the path to the innermost resource enclosing this element
 	 */
@@ -182,7 +204,9 @@ public interface IRodinElement extends IAdaptable {
 	
 	/**
 	 * Returns the innermost resource enclosing this element. 
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @return the innermost resource enclosing this element
 	 */
@@ -190,7 +214,9 @@ public interface IRodinElement extends IAdaptable {
 	
 	/**
 	 * Returns the scheduling rule associated with this Rodin element.
+	 * <p>
 	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @return the scheduling rule associated with this Rodin element
 	 */
@@ -200,15 +226,19 @@ public interface IRodinElement extends IAdaptable {
 	 * Returns the smallest underlying resource that contains
 	 * this element, or <code>null</code> if this element is not contained
 	 * in a resource.
-	 *
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
 	 * @return the underlying resource, or <code>null</code> if none
-	 * @exception RodinDBException if this element does not exist or if an
-	 *		exception occurs while accessing its underlying resource
 	 */
-	IResource getUnderlyingResource() throws RodinDBException;
+	IResource getUnderlyingResource();
 
 	/**
 	 * Returns whether this element is an ancestor of the given element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
 	 * 
 	 * @param element
 	 *            the element to test as a descendent
@@ -218,14 +248,15 @@ public interface IRodinElement extends IAdaptable {
 	boolean isAncestorOf(IRodinElement element);
 
 	/**
-	 * Returns whether this Rodin element is read-only. An element is read-only
-	 * if its structure cannot be modified by the Rodin database. 
-	 * <p>
-	 * This is similar to IResource.isReadOnly().
+	 * Returns whether this Rodin element is read-only. An element can be
+	 * read-only for two reasons: either it corresponds to a resource which is
+	 * read-only, or it is an internal element that belongs to a stable snapshot
+	 * of a Rodin file, or the stable snapshot itself.
 	 * <p>
 	 * This is a handle-only method.
-	 *
-	 * @return <code>true</code> if this element is read-only
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this element is read-only
 	 */
 	boolean isReadOnly();
 
