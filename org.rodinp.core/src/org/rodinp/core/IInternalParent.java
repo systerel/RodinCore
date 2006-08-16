@@ -12,6 +12,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Common protocol for elements that contain internal elements.
+ * <p>
+ * Such elements are Rodin files and internal elements themselves (which are
+ * descendants of a Rodin file).
+ * </p>
+ * <p>
+ * For each Rodin file, the database provides two versions:
+ * <ul>
+ * <li>a stable snapshot that corresponds to the contents of the Rodin file on
+ * disk, and which is read-only.</li>
+ * <li>a buffered copy of the Rodin file in memory which is read-write.</li>
+ * </ul>
+ * As a consequence, there are two kinds of handles for these elements, stable
+ * snapshot handles and normal handles.
+ * </p>
  * 
  * @author Laurent Voisin
  */
@@ -19,33 +33,37 @@ public interface IInternalParent extends IParent, IRodinElement {
 
 	/**
 	 * Creates and returns a new child internal element with the given type and
-	 * name. As a side effect, the containing file is opened, if it was not
-	 * already.
+	 * name. This element must thus belong to a working copy of a Rodin file.
 	 * 
 	 * <p>
-	 * A new internal element is always created by this method, whether there
-	 * already exists an element with the same name or not.
+	 * If there already exists a child element with the same type and name, no
+	 * new element is created and a database exception is thrown.
 	 * </p>
+	 * 
+	 * TODO explain better use of nextSibling
 	 * 
 	 * @param type
 	 *            type of the internal element to create
 	 * @param name
-	 *            name of the internal element to create. Should be
-	 *            <code>null</code> if the new element is unnamed.
+	 *            name of the internal element to create
 	 * @param nextSibling
 	 *            succesor node of the internal element to create. Must be a
 	 *            child of this element or <code>null</code> (in that latter
 	 *            case, the new element will be the last child of this element).
 	 * @param monitor
-	 *            the given progress monitor
+	 *            a progress monitor
 	 * @exception RodinDBException
 	 *                if the element could not be created. Reasons include:
 	 *                <ul>
-	 *                <li> This Rodin element does not exist
+	 *                <li>This Rodin element does not exist
 	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                creating an underlying resource
-	 *                <li> The given type is unknown
+	 *                <li>This Rodin element belongs to a primary copy which is
+	 *                always read-only (READ_ONLY)</li>
+	 *                <li>The given type is unknown
+	 *                (INVALID_INTERNAL_ELEMENT_TYPE)</li>
+	 *                <li>There already exists a child element with the given
+	 *                type and name (NAME_COLLISION)</li>
+	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
 	 *                </ul>
 	 * @return a new internal element in this element with the specified type
 	 *         and name
@@ -56,36 +74,81 @@ public interface IInternalParent extends IParent, IRodinElement {
 
 	/**
 	 * Returns a handle to a child internal element with the given type and
-	 * name. The name is empty if it is an unnamed element. This is a
-	 * handle-only method. The child element may or may not be present.
+	 * name.
+	 * 
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
 	 * 
 	 * @param childType
 	 *            type of the child element
 	 * @param childName
 	 *            name of the child element
 	 * @return the child internal element with the given type and name or
-	 *         <code>null</code> if the given element type is unknown.
+	 *         <code>null</code> if the given element type is unknown
 	 */
 	IInternalElement getInternalElement(String childType, String childName);
 
 	/**
-	 * Returns a handle to a child internal element with the given type, name,
-	 * and position in its parent. The name is empty if it is an unnamed
-	 * element. Numbering starts at 1 (thus the first occurrence is occurrence
-	 * 1, not occurrence 0). This is a handle-only method. The child element may
-	 * or may not be present.
+	 * Returns a handle to a child internal element with the given type, name.
+	 * 
+	 * <p>
+	 * The given position must always be <code>1</code>.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
 	 * 
 	 * @param childType
 	 *            type of the child element
 	 * @param childName
 	 *            name of the child element
 	 * @param occurrenceCount
-	 *            position in the parent (in case of duplicate elements with
-	 *            same type and same name)
-	 * @return the child internal element with the given type, name and position
+	 *            must be <code>1</code>
+	 * @return the child internal element with the given type and name
 	 *         or <code>null</code> if the given element type is unknown.
+	 * @throws IllegalArgumentException
+	 *             if the given position is not <code>1</code>.
+	 * @deprecated As there are no duplicate elements anymore, the occurrence
+	 *             count has become deprecated.
 	 */
+	@Deprecated
 	IInternalElement getInternalElement(String childType, String childName,
-			int occurrenceCount);
+			int occurrenceCount) throws IllegalArgumentException;
+	
+	/**
+	 * Returns a handle to this element in the snapshot of its Rodin file.
+	 * 
+	 * <p>
+	 * This is a handle-only method. The element may or may not be present.
+	 * </p>
+	 * 
+	 * @return this element in the snapshot of its Rodin file
+	 */
+	IInternalParent getSnapshot();
 
+	/**
+	 * Returns a handle to this element in the mutable copy of its Rodin file.
+	 * 
+	 * <p>
+	 * This is a handle-only method. The element may or may not be present.
+	 * </p>
+	 * 
+	 * @return this element in the mutable copy of its Rodin file
+	 */
+	IInternalParent getMutableCopy();
+
+	/**
+	 * Returns whether this is a handle in a file snapshot or not.
+	 * <p>
+	 * This is a handle-only method. The element may or may not be present.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff the corresponding element is or belongs
+	 *         to the stable snapshot of a Rodin file
+	 */
+	boolean isSnapshot();
+	
 }
