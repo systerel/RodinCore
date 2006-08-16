@@ -30,11 +30,21 @@ public interface IRodinFile extends IOpenable, IInternalParent,
 	 * @return the found elements in this file that correspond to the given
 	 *         element
 	 */
-	public IRodinElement[] findElements(IRodinElement element);
+	IRodinElement[] findElements(IRodinElement element);
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getResource()
 	 */
-	public IFile getResource();
+	IFile getResource();
+
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalParent#getSnapshot()
+	 */
+	IRodinFile getSnapshot();
+	
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IInternalParent#getMutableCopy()
+	 */
+	IRodinFile getMutableCopy();
 
 }
