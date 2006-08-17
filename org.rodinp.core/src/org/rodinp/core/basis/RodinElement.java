@@ -482,7 +482,7 @@ public abstract class RodinElement extends PlatformObject implements
 		return parentElement != null;
 	}
 
-	/**
+	/*
 	 * @see IRodinElement
 	 */
 	public boolean isReadOnly() {
