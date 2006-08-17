@@ -10,6 +10,10 @@ public class RemoveNegation implements Rewriter{
 		return "removeNegation";
 	}
 	
+	public String getName() {
+		return "rewrite ¬";
+	}
+	
 	public boolean isApplicable(Predicate p) {
 		if (! (isNeg(p))) return false;
 		Predicate negP = negPred(p);

@@ -19,7 +19,8 @@ public class SequentProver extends Plugin {
 	 * debugging/tracing option names
 	 */
 	private static final String B4FREE_TRACE = PLUGIN_ID + "/debug/b4free"; //$NON-NLS-1$
-	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$	
+	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
+	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID + "/debug/reasonerRegistry"; //$NON-NLS-1$	
 
 	/**
 	 * The shared instance.
@@ -64,6 +65,9 @@ public class SequentProver extends Plugin {
 			option = Platform.getDebugOption(SEQPROVER_TRACE);
 			if (option != null)
 				SequentProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(REASONER_REGISTRY_TRACE);
+			if (option != null)
+				ReasonerRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

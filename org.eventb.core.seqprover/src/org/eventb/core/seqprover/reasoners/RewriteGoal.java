@@ -46,6 +46,7 @@ public class RewriteGoal extends SinglePredInputReasoner{
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
+		reasonerOutput.display = rewriter.getName()+" goal";
 		reasonerOutput.anticidents = new Anticident[1];
 		
 		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();

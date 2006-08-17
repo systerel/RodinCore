@@ -10,6 +10,10 @@ public class TrivialRewrites implements Rewriter{
 		return "trivialRewrites";
 	}
 	
+	public String getName() {
+		return "trivial rewrite";
+	}
+	
 	public boolean isApplicable(Predicate p) {
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 
 			return  true;

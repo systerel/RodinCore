@@ -14,6 +14,10 @@ public class DisjToImpl implements Rewriter{
 		return "disjToImpl";
 	}
 	
+	public String getName() {
+		return "∨ to ⇒";
+	}
+	
 	public boolean isApplicable(Predicate p) {
 		if (isDisj(p)) return true;
 		

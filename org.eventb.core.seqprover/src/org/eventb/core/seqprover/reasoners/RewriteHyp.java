@@ -64,6 +64,7 @@ public class RewriteHyp implements IReasoner{
 		
 		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
 		reasonerOutput.goal = seq.goal();
+		reasonerOutput.display = rewriter.getName()+" hyp ("+hyp.toString()+")";
 		reasonerOutput.neededHypotheses.add(hyp);
 		reasonerOutput.anticidents = new Anticident[1];
 		

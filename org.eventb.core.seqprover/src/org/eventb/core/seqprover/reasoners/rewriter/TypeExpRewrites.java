@@ -21,6 +21,10 @@ public class TypeExpRewrites implements Rewriter{
 		return "typeExpRewrites";
 	}
 	
+	public String getName() {
+		return "type properties in";
+	}
+	
 	public boolean isApplicable(Predicate p) {
 		if (isNotEq(p)) {
 			if (isEmptySet(notEqRight(p)) &&
