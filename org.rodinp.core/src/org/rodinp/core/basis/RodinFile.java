@@ -32,7 +32,6 @@ import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
-import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
@@ -143,15 +142,6 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public final RodinElement[] getChildren() throws RodinDBException {
-		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
-		if (info != null) {
-			return info.getChildren(this);
-		}
-		throw newNotPresentException();
-	}
-
-	@Override
 	public final String getElementName() {
 		return file.getName();
 	}
@@ -211,17 +201,6 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return file;
 	}
 	
-	@Override
-	public final boolean hasChildren() throws RodinDBException {
-		RodinFileElementInfo info = (RodinFileElementInfo)
-				RodinDBManager.getRodinDBManager().getInfo(this);
-		if (info != null) {
-			return info.getChildren(this).length > 0;
-		} else {
-			return true;
-		}
-	}
-
 	@Override
 	public final boolean hasUnsavedChanges() {
 		try {
