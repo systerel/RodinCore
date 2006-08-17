@@ -58,6 +58,94 @@ public class FreeIdentifier extends Identifier {
 		return name;
 	}
 
+	/**
+	 * Returns the primed free identifier corresponding this identifier.
+	 * 
+	 * @param factory
+	 *            a formula factory
+	 * An exception is thrown if it is already primed.
+	 * @return The identifier with a prime appended.
+	 */
+	public FreeIdentifier withPrime(FormulaFactory factory) {
+		
+		assert !isPrimed();
+		
+		FreeIdentifier primedIdentifier = factory.makeFreeIdentifier(
+				name + "'",
+				getSourceLocation(),
+				getType());
+		
+		return primedIdentifier;
+	}
+	
+	/**
+	 * Returns a declaration of a bound identifier,
+	 * using as model a free occurrence of the same identifier.
+	 * 
+	 * @param factory
+	 *            a formula factory
+	 * @return a bound identifier declaration
+	 */
+	public BoundIdentDecl asDecl(FormulaFactory factory) {
+		
+		BoundIdentDecl decl = factory.makeBoundIdentDecl(
+				name, 
+				getSourceLocation(), 
+				getType());
+		
+		return decl;
+	}
+
+	/**
+	 * Returns a primed declaration of a bound identifier,
+	 * using as model a free occurrence of the same identifier.
+	 * 
+	 * @param factory
+	 *            a formula factory
+	 * @return a bound identifier declaration
+	 */
+	public BoundIdentDecl asPrimedDecl(FormulaFactory factory) {
+		
+		assert !isPrimed();
+		
+		BoundIdentDecl primedDecl = factory.makeBoundIdentDecl(
+				name + "'", 
+				getSourceLocation(), 
+				getType());
+		
+		return primedDecl;
+		
+	}
+	
+	/**
+	 * Returns the unprimed free identifier corresponding this identifier.
+	 * 
+	 * @param factory
+	 *            a formula factory
+	 * An exception is thrown if it is not primed.
+	 * @return The identifier with the prime removed.
+	 */
+	public FreeIdentifier withoutPrime(FormulaFactory factory) {
+		
+		assert isPrimed();
+		
+		FreeIdentifier unprimedIdentifier = factory.makeFreeIdentifier(
+				name.substring(0, name.length() - 1),
+				getSourceLocation(),
+				getType());
+		
+		return unprimedIdentifier;
+	}
+	
+	/**
+	 * Returns whether this identifier is primed.
+	 * 
+	 * @return whether this identifier is primed
+	 */
+	public boolean isPrimed() {
+		return name.charAt(name.length()-1) == '\'';
+	}
+
 	@Override
 	protected String toString(boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes) {

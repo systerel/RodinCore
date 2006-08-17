@@ -339,6 +339,7 @@ public class FormulaFactory {
 	 *            a free identifier occurrence
 	 * @return a bound identifier declaration
 	 */
+	@Deprecated
 	public BoundIdentDecl makeBoundIdentDecl(FreeIdentifier ident) {
 		return new BoundIdentDecl(ident.getName(), Formula.BOUND_IDENT_DECL,
 				ident.getSourceLocation(), ident.getType());
@@ -459,6 +460,7 @@ public class FormulaFactory {
 	 * An exception is thrown if it is already primed.
 	 * @return The identifier passed as parameter with a prime appended.
 	 */
+	@Deprecated
 	public FreeIdentifier makePrimedFreeIdentifier(FreeIdentifier identifier) {
 		
 		String name = identifier.getName();
