@@ -13,7 +13,7 @@ import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 
-public class ReasonerOutputSucc extends ReasonerOutput{
+public class ProofRule extends ReasonerOutput implements IProofRule{
 	
 	public static class Anticident{
 		
@@ -102,7 +102,7 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 	public Predicate goal;
 	public int reasonerConfidence;
 	
-	public ReasonerOutputSucc(IReasoner generatedBy, IReasonerInput generatedUsing){
+	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
 		anticidents = null;
@@ -121,6 +121,46 @@ public class ReasonerOutputSucc extends ReasonerOutput{
 			typeEnv.addAll(
 					hyp.getPredicate().getFreeIdentifiers());
 		}
+	}
+
+	public String getDisplayName() {
+		return display;
+	}
+
+	public String getRuleID() {
+		return generatedBy.getReasonerID();
+	}
+
+	public int getConfidence() {
+		return reasonerConfidence;
+	}
+
+	public IProverSequent[] apply(IProverSequent seq) {
+		ProofRule reasonerOutput = this;
+		// Check if all the needed hyps are there
+		if (! seq.hypotheses().containsAll(reasonerOutput.neededHypotheses))
+			return null;
+		// Check if the goal is the same
+		if (! reasonerOutput.goal.equals(seq.goal())) return null;
+		
+		// Generate new anticidents
+		// Anticident[] anticidents = reasonerOutput.anticidents;
+		IProverSequent[] anticidents 
+			= new IProverSequent[reasonerOutput.anticidents.length];
+		for (int i = 0; i < anticidents.length; i++) {
+			anticidents[i] = reasonerOutput.anticidents[i].genSequent(seq);
+			if (anticidents[i] == null)
+				// most probably a name clash occured
+				// or an invalid type env.
+				// add renaming/refactoring code here
+				return null;
+		}
+		
+		return anticidents;
+	}
+
+	public Set<Hypothesis> getNeededHypotheses() {
+		return neededHypotheses;
 	}
 
 }

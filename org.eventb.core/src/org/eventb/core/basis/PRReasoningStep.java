@@ -16,10 +16,10 @@ import org.eventb.core.IPair;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasoners.ConjE;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.rodinp.core.IRodinElement;
@@ -81,8 +81,8 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		}
 	}
 	
-	public ReasonerOutputSucc getReasonerOutput()throws RodinDBException {
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this.getReasoner(),this.getReasonerInput());
+	public ProofRule getReasonerOutput()throws RodinDBException {
+		ProofRule reasonerOutput = new ProofRule(this.getReasoner(),this.getReasonerInput());
 		
 		IRodinElement[] rodinElements = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
@@ -113,7 +113,7 @@ public class PRReasoningStep extends InternalElement implements IPRReasoningStep
 		return reasonerOutput;
 	}
 
-	public void setReasonerOutput(ReasonerOutputSucc reasonerOutput) throws RodinDBException {
+	public void setReasonerOutput(ProofRule reasonerOutput) throws RodinDBException {
 		// delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);

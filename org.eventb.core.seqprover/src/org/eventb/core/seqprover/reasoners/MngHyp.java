@@ -7,10 +7,10 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
@@ -50,12 +50,12 @@ public class MngHyp implements IReasoner{
 		// TODO : maybe remove absent hyps - useful for later replay
 		// input.action.getHyps().retainAll(seq.hypotheses());
 		
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.display = "sl/ds";
 		reasonerOutput.anticidents = new Anticident[1];
 		
-		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[0].hypAction.add(action);
 		reasonerOutput.anticidents[0].subGoal = seq.goal();
 				

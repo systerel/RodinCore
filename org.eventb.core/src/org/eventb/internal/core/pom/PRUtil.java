@@ -33,18 +33,17 @@ import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.basis.PRProofTreeNode;
 import org.eventb.core.basis.PRReasoningStep;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.rules.ProofRule;
 import org.eventb.core.seqprover.rules.ProofTreeNode;
-import org.eventb.core.seqprover.rules.ReasoningStep;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.tactics.BasicTactics;
@@ -120,12 +119,12 @@ public class PRUtil {
 		if (prRule == null) return;
 		
 		// Try to replay the rule
-		if (prRule.getRuleID().equals("reasoningStep")){
+		if (true || prRule.getRuleID().equals("reasoningStep")){
 			IRodinElement[] prReasoningSteps = prRule.getChildrenOfType(IPRReasoningStep.ELEMENT_TYPE);
 			assert prReasoningSteps.length == 1;
 			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
 			
-			ReasonerOutputSucc reuseReasonerOutput = prReasoningStep.getReasonerOutput();
+			ProofRule reuseReasonerOutput = prReasoningStep.getReasonerOutput();
 			reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
 			IReasoner reasoner = reuseReasonerOutput.generatedBy;
 			// uninstalled reasoner
@@ -142,20 +141,20 @@ public class PRUtil {
 				reuseSuccessfull = (error == null);
 			}
 			
-			ReasonerOutputSucc replayReasonerOutputSucc = null;
+			ProofRule replayReasonerOutputSucc = null;
 			
 			if (! reuseSuccessfull)
 			{	// reuse failed
 				// try replay
 				replayHints.applyHints(reasonerInput);
-				ReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
+				IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
 				if ((replayReasonerOutput != null) && 
-						((replayReasonerOutput instanceof ReasonerOutputSucc))){
+						((replayReasonerOutput instanceof ProofRule))){
 					// reasoner successfully generated something
 					// compare replayReasonerOutput and reuseReasonerOutput
 					// and generate hints for continuing the proof
 					replayReasonerOutputSucc =
-						(ReasonerOutputSucc) replayReasonerOutput;
+						(ProofRule) replayReasonerOutput;
 					BasicTactics.reasonerTac(replayReasonerOutputSucc).apply(node);
 				}
 				
@@ -231,17 +230,17 @@ public class PRUtil {
 		
 	}
 	
-	public static void writeOutRule (ProofRule rule,IPRProofTreeNode parent) throws RodinDBException{
+	public static void writeOutRule (IProofRule rule,IPRProofTreeNode parent) throws RodinDBException{
 		
-		if (rule instanceof ReasoningStep) {
+		if (rule instanceof ProofRule) {
 			IPRProofRule prRule = (IPRProofRule)
 				parent.createInternalElement(
 					PRProofRule.ELEMENT_TYPE,
-					"reasoningStep",
+					rule.generatedBy().getReasonerID(),
 					null,null);
 			
-			ReasoningStep reasoningStep = (ReasoningStep) rule;
-			ReasonerOutputSucc reasonerOutput = reasoningStep.reasonerOutput;
+			// ReasoningStep reasoningStep = (ReasoningStep) rule;
+			ProofRule reasonerOutput = (ProofRule) rule;
 			
 			IPRReasoningStep prReasoningStep = 
 				(IPRReasoningStep)

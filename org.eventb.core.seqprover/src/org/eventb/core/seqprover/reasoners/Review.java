@@ -10,10 +10,10 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -57,7 +57,7 @@ public class Review implements IReasoner{
 			return reasonerOutput;
 		}
 		
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.neededHypotheses = hyps;
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.display = "rv (confidence "+reviewerConfidence+")";

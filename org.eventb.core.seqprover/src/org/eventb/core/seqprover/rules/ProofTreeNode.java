@@ -7,9 +7,11 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -48,7 +50,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * This field may be changed in a controlled way using methods in this class.
 	 * This field is equal to null iff <code>children</code> equals <code>null</code>.
 	 */
-	private ProofRule rule;
+	private IProofRule rule;
 
 	/**
 	 * Comment associated to this proof tree node.
@@ -132,7 +134,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#applyRule(ProofRule)
 	 */
-	public boolean applyRule(ProofRule rule) {
+	public boolean applyRule(IProofRule rule) {
 		// force pruning to avoid losing child proofs
 		if (this.children != null) return false;
 		if (this.rule != null) return false;
@@ -162,7 +164,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (! Lib.identical(this.sequent,tree.getSequent())) return false;
 		ProofTreeNode treeRoot = (ProofTreeNode)tree.getRoot();
 		ProofTreeNode[] treeChildren = treeRoot.getChildren();
-		ProofRule treeRule = treeRoot.getRule();
+		IProofRule treeRule = treeRoot.getRule();
 		boolean treeClosed = treeRoot.isClosed();
 		
 		// Disconnect treeChildren from treeRoot
@@ -292,7 +294,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getRule()
 	 */
-	public ProofRule getRule() {
+	public IProofRule getRule() {
 		return this.rule;
 	}
 	
@@ -363,7 +365,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		childrenChanged();
 	}
 	
-	private void setRule(ProofRule newRule) {
+	private void setRule(IProofRule newRule) {
 		this.rule = newRule;
 		ruleChanged();
 	}
@@ -377,7 +379,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * ancestors'.
 	 */
 	private void setClosed() {
-		this.confidence = this.rule.getRuleConfidence();
+		this.confidence = this.rule.getConfidence();
 		assert (Lib.isValid(this.confidence) && (! Lib.isPending(this.confidence)));
 		confidenceChanged();
 		ProofTreeNode node = this.parent;
@@ -385,7 +387,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		int nodeMinChildrenConf = node.minChildConf();
 		while (! Lib.isPending(nodeMinChildrenConf))
 		{
-				node.confidence = node.rule.getRuleConfidence();
+				node.confidence = node.rule.getConfidence();
 				if (node.confidence > nodeMinChildrenConf)
 					node.confidence = nodeMinChildrenConf;
 				node.confidenceChanged();
@@ -518,7 +520,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 */
 	private int computedConfidence() {
 		if (rule == null) return IConfidence.PENDING;
-		int minConfidence = rule.getRuleConfidence();
+		int minConfidence = rule.getConfidence();
 		for (ProofTreeNode child : children) {
 			int childConfidence = child.getConfidence();
 			if (childConfidence < minConfidence)

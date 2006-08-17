@@ -6,9 +6,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -38,7 +38,7 @@ public class ConjE extends SinglePredInputReasoner{
 					"Hypothesis is not a conjunction:"+conjHyp);
 		
 		// Generate the successful reasoner output
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.display = "∧ hyp ("+conjHyp+")";
 		reasonerOutput.neededHypotheses.add(conjHyp);
 		reasonerOutput.goal = seq.goal();

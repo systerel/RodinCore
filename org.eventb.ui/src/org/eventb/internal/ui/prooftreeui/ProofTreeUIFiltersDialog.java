@@ -95,15 +95,16 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
 		Collection<String> reasoners = reasonerRegistry.getReasonerIDs();
 		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.size());
-		
 		for (String reasoner : reasoners) {
 			fBuiltInFilters.add(new RuleFilter(reasoner));
+// TODO : display or use reasoner name from reasonerRegistry.getReasonerName(reasoner)
+			
 		}
 	}
 
 	protected void configureShell(Shell shell) {
 		setTitle("Proof Rule Filters");
-		setMessage("Please choose a set of rules");
+		setMessage("Please choose a set of reasoners to filter out");
 		super.configureShell(shell);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 		// IJavaHelpContextIds.CUSTOM_FILTERS_DIALOG);

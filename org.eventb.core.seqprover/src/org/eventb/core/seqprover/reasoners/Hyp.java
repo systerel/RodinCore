@@ -4,9 +4,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -28,7 +28,7 @@ public class Hyp extends EmptyInputReasoner{
 			return reasonerOutput;
 		}
 		
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.neededHypotheses.add(new Hypothesis(seq.goal()));
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.display = "hyp";

@@ -5,9 +5,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -28,7 +28,7 @@ public class TrueGoal extends EmptyInputReasoner{
 			return reasonerOutput;
 		}
 		
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.display = "⊤ goal";
 		

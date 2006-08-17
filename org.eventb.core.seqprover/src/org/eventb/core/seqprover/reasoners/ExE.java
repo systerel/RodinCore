@@ -10,9 +10,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -42,11 +42,11 @@ public class ExE extends SinglePredInputReasoner{
 					"Hypothesis is not existentially quantified:"+exHyp);
 		
 		
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.goal = seq.goal();
 		reasonerOutput.anticidents = new Anticident[1];
 		
-		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
 		
 		QuantifiedPredicate ExQ = (QuantifiedPredicate)exHypPred;
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(ExQ);

@@ -1,6 +1,6 @@
 package org.eventb.core;
 
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -13,8 +13,8 @@ import org.rodinp.core.RodinDBException;
 public interface IPRReasoningStep extends IInternalElement {
 		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".reasoningStep"; //$NON-NLS-1$
 		
-		public ReasonerOutputSucc getReasonerOutput() throws RodinDBException;
+		public ProofRule getReasonerOutput() throws RodinDBException;
 		
-		public void setReasonerOutput(ReasonerOutputSucc reasonerOutput) throws RodinDBException;	
+		public void setReasonerOutput(ProofRule reasonerOutput) throws RodinDBException;	
 }
 

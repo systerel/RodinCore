@@ -1,13 +1,12 @@
 package org.eventb.core.seqprover.tactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
-import org.eventb.core.seqprover.rules.ProofRule;
-import org.eventb.core.seqprover.rules.ReasoningStep;
+import org.eventb.core.seqprover.ProofRule;
 
 public class BasicTactics {
 	
@@ -43,13 +42,13 @@ public class BasicTactics {
 		return new ReasonerTac(reasoner,reasonerInput,monitor);
 	}
 	
-	public static ITactic reasonerTac(ReasonerOutputSucc reasonerOutput){
+	public static ITactic reasonerTac(ProofRule reasonerOutput){
 		return new ReuseTac(reasonerOutput);
 	}
 	
-	public static ITactic ruleTac(ProofRule rule){
-		return new RuleTac(rule);
-	}
+//	public static ITactic ruleTac(ProofRule rule){
+//		return new RuleTac(rule);
+//	}
 	
 	public static ITactic pasteTac(IProofTreeNode toPaste){
 		return new PasteTac(toPaste);
@@ -83,22 +82,22 @@ public class BasicTactics {
 		}
 	}
 	
-	private static class RuleTac implements ITactic {
-		
-		private final ProofRule rule;
-		
-		public RuleTac(ProofRule rule)
-		{
-			this.rule = rule;
-		}
-		
-		public Object apply(IProofTreeNode pt){
-			if (!pt.isOpen()) return "Root already has children";
-			if (pt.applyRule(this.rule)) return null;
-			else return "Rule "+this.rule.getDisplayName()+" is not applicable";
-			
-		}
-	}
+//	private static class RuleTac implements ITactic {
+//		
+//		private final ProofRule rule;
+//		
+//		public RuleTac(ProofRule rule)
+//		{
+//			this.rule = rule;
+//		}
+//		
+//		public Object apply(IProofTreeNode pt){
+//			if (!pt.isOpen()) return "Root already has children";
+//			if (pt.applyRule(this.rule)) return null;
+//			else return "Rule "+this.rule.getDisplayName()+" is not applicable";
+//			
+//		}
+//	}
 	
 	private static class ReasonerTac implements ITactic {
 		
@@ -124,27 +123,33 @@ public class BasicTactics {
 			if (!pt.isOpen()) return "Root already has children";
 			ReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
 			if (reasonerOutput == null) return "! Plugin returned null !";
-			if (!(reasonerOutput instanceof ReasonerOutputSucc)) return reasonerOutput;
-			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
-			ITactic temp = new RuleTac(reasonerStep);
+			if (!(reasonerOutput instanceof ProofRule)) return reasonerOutput;
+			ITactic temp = new ReuseTac((ProofRule)reasonerOutput);
 			return temp.apply(pt);
+			
+//			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
+//			ITactic temp = new RuleTac(reasonerStep);
+//			return temp.apply(pt);
 		}
 	}
 	
 	private static class ReuseTac implements ITactic {
 		
-		private final ReasonerOutputSucc reasonerOutput;
+		private final ProofRule reasonerOutput;
 		
-		public ReuseTac(ReasonerOutputSucc reasonerOutput)
+		public ReuseTac(ProofRule reasonerOutput)
 		{
 			this.reasonerOutput = reasonerOutput;
 		}
 		
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
-			ProofRule reasonerStep = new ReasoningStep(reasonerOutput);
-			ITactic temp = new RuleTac(reasonerStep);
-			return temp.apply(pt);
+			if (pt.applyRule(reasonerOutput)) return null;
+			else return "Rule "+reasonerOutput.getDisplayName()+" is not applicable";
+			
+//			ProofRule reasonerStep = new ReasoningStep(reasonerOutput);
+//			ITactic temp = new RuleTac(reasonerStep);
+//			return temp.apply(pt);
 		}
 	}
 	
@@ -159,7 +164,7 @@ public class BasicTactics {
 		
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
-			ProofRule rule = (ProofRule)toPaste.getRule();
+			IProofRule rule = toPaste.getRule();
 			if (rule == null) return null;
 			Boolean successfull = pt.applyRule(rule);
 			if (successfull)

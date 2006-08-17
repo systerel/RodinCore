@@ -6,9 +6,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -49,7 +49,7 @@ public class DoCase extends SinglePredInputReasoner{
 		Predicate trueCaseWD = Lib.WD(trueCase);
 		
 		// Generate the successful reasoner output
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.display = "dc ("+trueCase.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
@@ -57,16 +57,16 @@ public class DoCase extends SinglePredInputReasoner{
 		reasonerOutput.anticidents = new Anticident[3];
 		
 		// Well definedness condition
-		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[0].subGoal = trueCaseWD;
 		
 		// The goal with the true case
-		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(trueCase);
 		reasonerOutput.anticidents[1].subGoal = seq.goal();
 		
 		// The goal with the false case
-		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[2] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[2].addToAddedHyps(Lib.makeNeg(trueCase));
 		reasonerOutput.anticidents[2].subGoal = seq.goal();	
 				

@@ -6,9 +6,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -49,7 +49,7 @@ public class Cut extends SinglePredInputReasoner {
 		Predicate lemmaWD = Lib.WD(lemma);
 		
 		// Generate the successful reasoner output
-		ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,input);
+		ProofRule reasonerOutput = new ProofRule(this,input);
 		reasonerOutput.display = "ah ("+lemma.toString()+")";
 		reasonerOutput.goal = seq.goal();
 
@@ -57,15 +57,15 @@ public class Cut extends SinglePredInputReasoner {
 		reasonerOutput.anticidents = new Anticident[3];
 		
 		// Well definedness condition
-		reasonerOutput.anticidents[0] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[0].subGoal = lemmaWD;
 		
 		// The lemma to be proven
-		reasonerOutput.anticidents[1] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[1].subGoal = lemma;
 		
 		// Proving the original goal with the help of the lemma
-		reasonerOutput.anticidents[2] = new ReasonerOutputSucc.Anticident();
+		reasonerOutput.anticidents[2] = new ProofRule.Anticident();
 		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
 		reasonerOutput.anticidents[2].subGoal = seq.goal();
 				

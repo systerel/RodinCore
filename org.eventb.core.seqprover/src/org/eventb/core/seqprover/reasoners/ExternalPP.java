@@ -12,11 +12,11 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ReasonerOutputSucc;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -87,7 +87,7 @@ public class ExternalPP implements IReasoner {
 		final boolean success =
 			runPP(typeEnvironment, hypotheses, goal, timeOutDelay, progressMonitor);
 		if (success) {		
-			ReasonerOutputSucc reasonerOutput = new ReasonerOutputSucc(this,reasonerInput);
+			ProofRule reasonerOutput = new ProofRule(this,reasonerInput);
 			reasonerOutput.goal = sequent.goal();
 			reasonerOutput.neededHypotheses.addAll(hypotheses);
 			reasonerOutput.anticidents = new Anticident[0];

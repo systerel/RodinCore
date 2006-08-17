@@ -24,7 +24,6 @@ import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.rules.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.ProverSequent;
@@ -50,7 +49,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 *            the rule to apply
 	 */
 	public void applyRule(IProofTreeNode node, IProofRule rule) {
-		boolean applied = node.applyRule((ProofRule) rule);
+		boolean applied = node.applyRule(rule);
 		assertTrue(applied);
 		assertSame(node.getRule(), rule);
 		assertFalse(node.isOpen());

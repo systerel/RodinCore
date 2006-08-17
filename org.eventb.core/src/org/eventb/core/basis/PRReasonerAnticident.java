@@ -12,7 +12,7 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.seqprover.ReasonerOutputSucc.Anticident;
+import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;

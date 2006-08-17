@@ -3,7 +3,6 @@ package org.eventb.core.seqprover;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.seqprover.rules.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -53,7 +52,7 @@ public interface IProofTreeNode {
 	 *            the rule to apply to this node
 	 * @return <code>true</code> iff the application of the rule succeeded
 	 */
-	boolean applyRule(ProofRule rule);
+	boolean applyRule(IProofRule rule);
 
 	/**
 	 * Returns the children of this node.
