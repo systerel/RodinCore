@@ -45,6 +45,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -278,6 +280,37 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		
 		assertTrue("Element should exist", element.exists());
 		assertEquals(message, expectedContents, element.getContents());
+	}
+	
+	/**
+	 * Ensures that changing the contents of the given element works properly.
+	 */
+	public void assertContentsChanged(IInternalElement element,
+			String newContents) throws RodinDBException {
+		
+		assertTrue("Element should exist", element.exists());
+		element.setContents(newContents);
+		assertContents("Contents should have changed", newContents, element);
+	}
+	
+	/**
+	 * Ensures that changing the contents of the given element is rejected.
+	 */
+	public void assertContentsNotChanged(IInternalElement element,
+			String newContents) throws RodinDBException {
+		
+		assertTrue("Element should exist", element.exists());
+		assertTrue("Element should be read-only", element.isReadOnly());
+		String oldContents = element.getContents();
+		assertFalse("Old and new contents should differ",
+				oldContents.equals(newContents));
+		try {
+			element.setContents(newContents);
+			fail("Changed contents of a read-only element.");
+		} catch (RodinDBException e) {
+			assertReadOnlyErrorFor(e, element);
+		}
+		assertContents("Contents should not have changed", oldContents, element);
 	}
 	
 	/**
@@ -921,6 +954,41 @@ public abstract class AbstractRodinDBTests extends TestCase {
 				buffer.append("\n");
 		}
 		return buffer.toString();
+	}
+	
+	protected void assertErrorFor(RodinDBException exception, int expectedCode,
+			IRodinElement element) {
+
+		final IRodinDBStatus status = exception.getRodinDBStatus();
+		assertEquals("Status should be an error",
+				IRodinDBStatus.ERROR,
+				status.getSeverity());
+		assertEquals("Status code should be a name collision", 
+				expectedCode, 
+				status.getCode());
+		IRodinElement[] elements = status.getElements(); 
+		assertEquals("Status should be related to the given element", 
+				1, 
+				elements.length);
+		assertEquals("Status should be related to the given element", 
+				element, 
+				elements[0]);
+	}
+
+	protected void assertNameCollisionErrorFor(RodinDBException exception,
+			IRodinElement element) {
+		assertErrorFor(exception,  
+				IRodinDBStatusConstants.NAME_COLLISION, 
+				element
+		);
+	}
+
+	protected void assertReadOnlyErrorFor(RodinDBException exception,
+			IRodinElement element) {
+		assertErrorFor(exception,  
+				IRodinDBStatusConstants.READ_ONLY, 
+				element
+		);
 	}
 	
 	protected void tearDown() throws Exception {
