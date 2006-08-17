@@ -73,6 +73,34 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
+	 * Ensures that an internal element snapshot can be copied to a
+	 * different file.
+	 */
+	public void testCopyIntFromSnapshotToOtherFile() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement neSource = createNamedElement(neParent, "foo", null);
+		rfSource.save(null, false);
+		
+		IRodinFile rfDest = createRodinFile("P/Y.test");
+		NamedElement neDest = createNamedElement(rfDest, "target", null);
+		copyPositive(neSource.getSnapshot(), neDest, null, null, false);
+	}
+	
+	/**
+	 * Ensures that an internal element snapshot can be copied to the
+	 * mutable copy of its file with a different name.
+	 */
+	public void testCopyIntFromSnapshotToSameFile() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement neSource = createNamedElement(neParent, "foo", null);
+		rfSource.save(null, false);
+		
+		copyPositive(neSource.getSnapshot(), neSource, null, "bar", false);
+	}
+	
+	/**
 	 * Ensures that copying an internal element to itself is a no-op.
 	 */
 	public void testCopyIntNoop() throws CoreException {
@@ -226,6 +254,45 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		} finally {
 			deleteProject("P2");
 		}
+	}
+	
+	/**
+	 * Ensures that a top-level internal element snapshot can be copied to a
+	 * different file.
+	 */
+	public void testCopyTopFromSnapshotToOtherFile() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		IRodinFile rfDest = createRodinFile("P/Y.test");
+		copyPositive(neSource.getSnapshot(), rfDest, null, null, false);
+	}
+	
+	/**
+	 * Ensures that a top-level internal element snapshot can be copied to the
+	 * mutable copy of its file with a different name.
+	 */
+	public void testCopyTopFromSnapshotToSameFile() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		copyPositive(neSource.getSnapshot(), rfSource, null, "bar", false);
+	}
+	
+	/**
+	 * Ensures that one cannot copy to a snapshot.
+	 */
+	public void testCopyTopToSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		copyNegative(neSource, rfSource.getSnapshot(), null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
+		copyNegative(neSource, neSource.getSnapshot(), null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
 	}
 	
 	/**
@@ -650,6 +717,32 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 	
 	/**
+	 * Ensures that an internal element snapshot cannot be moved.
+	 */
+	public void testMoveIntFromSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement neSource = createNamedElement(neParent, "foo", null);
+		rfSource.save(null, false);
+		
+		moveNegative(neSource.getSnapshot(), neParent, null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
+	}
+	
+	/**
+	 * Ensures that an internal element cannot be moved to a snapshot.
+	 */
+	public void testMoveIntToSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement neSource = createNamedElement(neParent, "foo", null);
+		rfSource.save(null, false);
+		
+		moveNegative(neSource, neParent.getSnapshot(), null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
+	}
+	
+	/**
 	 * Ensures that an internal element cannot be moved to a different
 	 * file replacing an existing element if no force.
 	 */
@@ -728,6 +821,30 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		} finally {
 			deleteProject("P2");
 		}
+	}
+	
+	/**
+	 * Ensures that a top-level internal element snapshot cannot be moved.
+	 */
+	public void testMoveTopFromSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		moveNegative(neSource.getSnapshot(), rfSource, null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
+	}
+	
+	/**
+	 * Ensures that a top-level internal element cannot be moved to a snapshot.
+	 */
+	public void testMoveTopToSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		moveNegative(neSource, rfSource.getSnapshot(), null, "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
 	}
 	
 	/**
@@ -1107,6 +1224,19 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 	
 	/**
+	 * Ensures that an internal element snapshot cannot be renamed.
+	 */
+	public void testRenameIntSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement neSource = createNamedElement(neParent, "foo", null);
+		rfSource.save(null, false);
+		
+		renameNegative(neSource.getSnapshot(), "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
+	}
+	
+	/**
 	 * Ensures that an internal element cannot be renamed,
 	 * replacing an existing element if no force.
 	 */
@@ -1131,6 +1261,18 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		NamedElement neDest = getNamedElement(rfSource, "baz");
 		NamedElement childDest = getNamedElement(neDest, "bar");
 		assertTrue("Children not renamed with parent", childDest.exists());
+	}
+	
+	/**
+	 * Ensures that a top-level internal element snapshot cannot be renamed.
+	 */
+	public void testRenameTopSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neSource = createNamedElement(rfSource, "foo", null);
+		rfSource.save(null, false);
+		
+		renameNegative(neSource.getSnapshot(), "bar", false,
+				IRodinDBStatusConstants.READ_ONLY);
 	}
 	
 	/**
@@ -1271,6 +1413,20 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
+	 * Ensures that an internal element snapshot cannot be reordered.
+	 */
+	public void testReorderIntSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement neParent = createNamedElement(rfSource, "parent", null);
+		NamedElement ne1 = createNamedElement(neParent, "foo", null);
+		NamedElement ne2 = createNamedElement(neParent, "bar", null);
+		rfSource.save(null, false);
+		
+		reorderNegative(ne2.getSnapshot(), ne1.getSnapshot(),
+				IRodinDBStatusConstants.READ_ONLY);
+	}
+	
+	/**
 	 * Ensures that an internal element can be reordered.
 	 */
 	public void testReorderTop() throws CoreException {
@@ -1375,6 +1531,19 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 				"  baz[org.rodinp.core.tests.namedElement]",
 				rfSource
 		);
+	}
+	
+	/**
+	 * Ensures that a top-level internal element snapshot cannot be renamed.
+	 */
+	public void testReorderTopSnapshot() throws CoreException {
+		IRodinFile rfSource = createRodinFile("P/X.test");
+		NamedElement ne1 = createNamedElement(rfSource, "foo", null);
+		NamedElement ne2 = createNamedElement(rfSource, "bar", null);
+		rfSource.save(null, false);
+		
+		reorderNegative(ne2.getSnapshot(), ne1.getSnapshot(),
+				IRodinDBStatusConstants.READ_ONLY);
 	}
 	
 }
