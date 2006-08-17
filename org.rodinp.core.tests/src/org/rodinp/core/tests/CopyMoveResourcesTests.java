@@ -60,7 +60,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNamedElement(rfSource, "foo", null);
+		NamedElement ne = createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 		
 		copyNegative(
@@ -77,7 +77,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
@@ -92,7 +92,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		copyPositive(rfSource, getRodinProject("P2"), null, "Y.test", false);
@@ -148,7 +148,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
@@ -163,7 +163,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
@@ -393,7 +393,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNamedElement(rfSource, "foo", null);
+		NamedElement ne = createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 		
 		moveNegative(
@@ -410,7 +410,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
@@ -434,7 +434,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		movePositive(rfSource, getRodinProject("P2"), null, "Y.test", false);
@@ -446,7 +446,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
@@ -461,7 +461,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
@@ -559,7 +559,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNamedElement(rfSource, "foo", null);
+		NamedElement ne = createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 		
 		renameNegative(
@@ -574,7 +574,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");
@@ -598,7 +598,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNamedElement(rfSource, "foo", null);
+		createNEPositive(rfSource, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");

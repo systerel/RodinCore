@@ -104,7 +104,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteTopInternal() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
-			IInternalElement ne = createNamedElement(file, "foo", null);
+			IInternalElement ne = createNEPositive(file, "foo", null);
 			
 			startDeltas();
 			assertDeletion(ne);
@@ -128,9 +128,9 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteTopInternalWithChildren() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
-			IInternalElement ne1 = createNamedElement(file, "foo", null);
-			IInternalElement ne2 = createNamedElement(ne1, "bar", null);
-			IInternalElement ne3 = createNamedElement(ne2, "baz", null);
+			IInternalElement ne1 = createNEPositive(file, "foo", null);
+			IInternalElement ne2 = createNEPositive(ne1, "bar", null);
+			IInternalElement ne3 = createNEPositive(ne2, "baz", null);
 			
 			startDeltas();
 			assertDeletion(ne1);
@@ -156,8 +156,8 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteInternal() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
-			IInternalElement ne1 = createNamedElement(file, "foo", null);
-			IInternalElement ne2 = createNamedElement(ne1, "bar", null);
+			IInternalElement ne1 = createNEPositive(file, "foo", null);
+			IInternalElement ne2 = createNEPositive(ne1, "bar", null);
 			
 			startDeltas();
 			assertDeletion(ne2);
@@ -183,10 +183,10 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteInternalWithChildren() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
-			IInternalElement ne1 = createNamedElement(file, "foo", null);
-			IInternalElement ne2 = createNamedElement(ne1, "bar", null);
-			IInternalElement ne3 = createNamedElement(ne2, "baz", null);
-			IInternalElement ne4 = createNamedElement(ne3, "ba2", null);
+			IInternalElement ne1 = createNEPositive(file, "foo", null);
+			IInternalElement ne2 = createNEPositive(ne1, "bar", null);
+			IInternalElement ne3 = createNEPositive(ne2, "baz", null);
+			IInternalElement ne4 = createNEPositive(ne3, "ba2", null);
 			
 			startDeltas();
 			assertDeletion(ne2);
@@ -213,7 +213,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteInternalCancelled() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
-			IInternalElement ne = createNamedElement(file, "foo", null);
+			IInternalElement ne = createNEPositive(file, "foo", null);
 			
 			boolean isCanceled = false;
 			try {
@@ -236,7 +236,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteElementSchedulingRule() throws CoreException {
 		try {
 			IRodinFile rf = createRodinFile("P/X.test");
-			final IInternalElement ne = createNamedElement(rf, "foo", null);
+			final IInternalElement ne = createNEPositive(rf, "foo", null);
 			
 			startDeltas();
 			getWorkspace().run(
@@ -268,16 +268,16 @@ public class DeleteTests extends ModifyingResourceTests {
 	public void testDeleteMultipleMembersFromVariousRFs() throws CoreException {
 		try {
 			IRodinFile rfX = createRodinFile("P/X.test");
-			NamedElement x1  = createNamedElement(rfX, "1", null);
-			createNamedElement(x1,  "11", null);
-			NamedElement x2  = createNamedElement(rfX, "2", null);
-			NamedElement x21 = createNamedElement(x2,  "21", null);
+			NamedElement x1  = createNEPositive(rfX, "1", null);
+			createNEPositive(x1,  "11", null);
+			NamedElement x2  = createNEPositive(rfX, "2", null);
+			NamedElement x21 = createNEPositive(x2,  "21", null);
 			
 			IRodinFile rfY = createRodinFile("P/Y.test");
-			NamedElement y1  = createNamedElement(rfY, "1", null);
-			NamedElement y11 = createNamedElement(y1,  "11", null);
-			NamedElement y2  = createNamedElement(rfY, "2", null);
-			createNamedElement(y2,  "21", null);
+			NamedElement y1  = createNEPositive(rfY, "1", null);
+			NamedElement y11 = createNEPositive(y1,  "11", null);
+			NamedElement y2  = createNEPositive(rfY, "2", null);
+			createNEPositive(y2,  "21", null);
 
 			IRodinElement[] toBeDeleted = new IRodinElement[] { x1, x21, y11, y2 };
 			

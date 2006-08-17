@@ -10,6 +10,7 @@ package org.rodinp.core.tests;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -169,8 +170,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		testSnapshotNotExists(e11);
 		createRodinFile("P/X.test");
-		createNamedElement(rf, "foo", null);
-		createNamedElement(e1, "bar", null);
+		createNEPositive(rf, "foo", null);
+		createNEPositive(e1, "bar", null);
 		rf.save(null, false);
 		testSnapshotExists(e11);
 	}
@@ -227,7 +228,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 		final NamedElement e1 = getNamedElement(rf, "foo");
 		testSnapshotNotExists(e1);
 		createRodinFile("P/X.test");
-		createNamedElement(rf, "foo", null);
+		createNEPositive(rf, "foo", null);
 		rf.save(null, false);
 		testSnapshotExists(e1);
 	}
@@ -269,9 +270,9 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotDecorrelated() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNamedElement(rf, "foo", null);
-		final NamedElement e2 = createNamedElement(rf, "bar", null);
-		final NamedElement e11 = createNamedElement(e1, "baz", null); 
+		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		final NamedElement e2 = createNEPositive(rf, "bar", null);
+		final NamedElement e11 = createNEPositive(e1, "baz", null); 
 		rf.save(null, false);
 		
 		String frozenContents = 
@@ -311,11 +312,13 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotCreateInternalElement() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNamedElement(rf, "foo", null);
+		final NamedElement e1 = createNEPositive(rf, "foo", null);
 		rf.save(null, false);
 
-		createNamedElement(rf.getSnapshot(), "bar", null);
-		createNamedElement(e1.getSnapshot(), "baz", null); 
+		createNENegative(rf.getSnapshot(), "bar", null,
+				IRodinDBStatusConstants.READ_ONLY);
+		createNENegative(e1.getSnapshot(), "baz", null,
+				IRodinDBStatusConstants.READ_ONLY); 
 	}
 
 	/**
@@ -323,9 +326,9 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotChangeInternalElementContents() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNamedElement(rf, "foo", null);
+		final NamedElement e1 = createNEPositive(rf, "foo", null);
 		assertContentsChanged(e1, "initial");
-		final NamedElement e11 = createNamedElement(e1, "bar", null);
+		final NamedElement e11 = createNEPositive(e1, "bar", null);
 		assertContentsChanged(e11, "initial");
 		rf.save(null, false);
 

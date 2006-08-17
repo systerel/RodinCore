@@ -383,9 +383,9 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							IRodinFile rf = getRodinFile("P/A.test");
-							NamedElement foo = createNamedElement(rf, "foo", null);
-							NamedElement bar = createNamedElement(rf, "bar", foo);
-							createNamedElement(bar, "baz", null);
+							NamedElement foo = createNEPositive(rf, "foo", null);
+							NamedElement bar = createNEPositive(rf, "bar", foo);
+							createNEPositive(bar, "baz", null);
 						}
 					},
 					null);
@@ -714,7 +714,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNamedElement(rodinFile, "foo", null);
+			NamedElement ne = createNEPositive(rodinFile, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");
@@ -734,7 +734,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNamedElement(rodinFile, "foo", null);
+			NamedElement ne = createNEPositive(rodinFile, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");
@@ -755,7 +755,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNamedElement(rodinFile, "foo", null);
+			NamedElement ne = createNEPositive(rodinFile, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");

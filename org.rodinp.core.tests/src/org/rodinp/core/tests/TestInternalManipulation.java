@@ -78,16 +78,16 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
 		
-		IInternalElement e1 = createNamedElement(rodinFile, "e1", null);
+		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
 		checkEmptyChildren(rodinFile, e1);
 
-		IInternalElement e3 = createNamedElement(rodinFile, "e3", null);
+		IInternalElement e3 = createNEPositive(rodinFile, "e3", null);
 		checkEmptyChildren(rodinFile, e1, e3);
 
-		IInternalElement e2 = createNamedElement(rodinFile, "e2", e3);
+		IInternalElement e2 = createNEPositive(rodinFile, "e2", e3);
 		checkEmptyChildren(rodinFile, e1, e2, e3);
 
-		IInternalElement e0 = createNamedElement(rodinFile, "e0", e1);
+		IInternalElement e0 = createNEPositive(rodinFile, "e0", e1);
 		checkEmptyChildren(rodinFile, e0, e1, e2, e3);
 
 		rodinFile.save(null, true);
@@ -102,13 +102,13 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(rodinFile, e0, e1, e2, e3);
 		
 		// Create sub-elements
-		IInternalElement e12 = createNamedElement(e1, "e12", null);
+		IInternalElement e12 = createNEPositive(e1, "e12", null);
 		assertTrue(e12.exists());
 		checkChildren(rodinFile, e0, e1, e2, e3);
 		checkEmpty(e0, e2, e3);
 		checkEmptyChildren(e1, e12);
 		
-		IInternalElement e11 = createNamedElement(e1, "e11", e12);
+		IInternalElement e11 = createNEPositive(e1, "e11", e12);
 		assertTrue(e11.exists());
 		checkChildren(rodinFile, e0, e1, e2, e3);
 		checkEmpty(e0, e2, e3);
@@ -149,12 +149,12 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
 		
-		NamedElement e1 = createNamedElement(rodinFile, "foo", null);
+		NamedElement e1 = createNEPositive(rodinFile, "foo", null);
 		checkEmptyChildren(rodinFile, e1);
 
 		// Attempt to create a duplicate element
-		NamedElement e2 = createNamedElement(rodinFile, "foo", null);
-		assertNull("Creation should have failed", e2);
+		createNENegative(rodinFile, "foo", null,
+				IRodinDBStatusConstants.NAME_COLLISION);
 		
 		// File has not changed
 		checkEmptyChildren(rodinFile, e1);
@@ -169,14 +169,14 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
 		
-		NamedElement e1 = createNamedElement(rodinFile, "foo", null);
-		NamedElement e11 = createNamedElement(e1, "bar", null);
+		NamedElement e1 = createNEPositive(rodinFile, "foo", null);
+		NamedElement e11 = createNEPositive(e1, "bar", null);
 		checkChildren(rodinFile, e1);
 		checkEmptyChildren(e1, e11);
 
 		// Attempt to create a duplicate element
-		NamedElement e12 = createNamedElement(e1, "bar", null);
-		assertNull("Creation should have failed", e12);
+		createNENegative(e1, "bar", null,
+				IRodinDBStatusConstants.NAME_COLLISION);
 		
 		// File has not changed
 		checkChildren(rodinFile, e1);
@@ -195,7 +195,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 			RodinCore.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					rodinProject.createRodinFile(fileName, false, null);
-					IInternalElement e1 = createNamedElement(rf, "e1", null);
+					IInternalElement e1 = createNEPositive(rf, "e1", null);
 					assertTrue("New file should exist", rf.exists());
 					checkEmptyChildren(rf, e1);
 				}
@@ -216,7 +216,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	public void testDeleteInternalElementBypass() throws Exception {
 
 		// First create an internal element
-		final IInternalElement e1 = createNamedElement(rodinFile, "e1", null);
+		final IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
 		checkEmptyChildren(rodinFile, e1);
 
 		startDeltas();
@@ -254,7 +254,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
 		
-		IInternalElement e1 = createNamedElement(rodinFile, "e1", null);
+		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
 		checkEmptyChildren(rodinFile, e1);
 		assertEquals("", e1.getContents());
 		
@@ -292,7 +292,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(rodinFile.exists());
 		checkEmptyChildren(rodinFile);
 		
-		IInternalElement e1 = createNamedElement(rodinFile, "e1", null);
+		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
 		assertEquals("", e1.getContents());
 		rodinFile.save(null, true);
 		assertEquals("", e1.getContents());
