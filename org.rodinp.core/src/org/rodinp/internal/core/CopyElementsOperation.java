@@ -225,12 +225,14 @@ public class CopyElementsOperation extends MultiOperation {
 		if (! (element instanceof InternalElement))
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
 		
-		if (element.isReadOnly())
+		if (element.isReadOnly() && (isRename() || isMove()))
 			error(IRodinDBStatusConstants.READ_ONLY, element);
-		
+
 		IRodinElement dest = getDestinationParent(element);
 		verifyDestination(element, dest);
+		
 		verifySibling(element, dest);
+		
 		if (this.renamingsList != null) {
 			verifyRenaming(element);
 		}
