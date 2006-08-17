@@ -258,25 +258,23 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(rodinFile, e1);
 		assertEquals("", e1.getContents());
 		
-		e1.setContents("Hello");
+		assertContentsChanged(e1, "Hello");
 		checkEmptyChildren(rodinFile, e1);
-		assertEquals("Hello", e1.getContents());
 
 		rodinFile.save(null, true);
 		rodinFile.close();
 		
-		assertTrue(e1.exists());
 		checkEmptyChildren(rodinFile, e1);
-		assertEquals("Hello", e1.getContents());
+		assertContents("Contents should not have changed", "Hello", e1);
 		
 		try {
 			e1.setContents(null);
-			assertFalse("null contents should raise an error", true);
+			fail("null contents should raise an error");
 		} catch (RodinDBException e) {
 			assertEquals("null contents should raise a NULL_STRING error",
 					IRodinDBStatusConstants.NULL_STRING, e.getStatus().getCode());
 		}
-		assertEquals("Hello", e1.getContents());
+		assertContents("Contents should not have changed", "Hello", e1);
 		
 		// showFile(rodinFile.getResource());
 
@@ -301,19 +299,17 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		rodinFile.close();
 		assertEquals("", e1.getContents());
 		
-		e1.setContents("Hello");
-		assertEquals("Hello", e1.getContents());
+		assertContentsChanged(e1, "Hello");
 		rodinFile.save(null, true);
-		assertEquals("Hello", e1.getContents());
+		assertContents("Contents should not have changed", "Hello", e1);
 		rodinFile.close();
-		assertEquals("Hello", e1.getContents());
+		assertContents("Contents should not have changed", "Hello", e1);
 		
-		e1.setContents("Bye");
-		assertEquals("Bye", e1.getContents());
+		assertContentsChanged(e1, "Bye");
 		rodinFile.save(null, true);
-		assertEquals("Bye", e1.getContents());
+		assertContents("Contents should not have changed", "Bye", e1);
 		rodinFile.close();
-		assertEquals("Bye", e1.getContents());
+		assertContents("Contents should not have changed", "Bye", e1);
 		
 		// Cleanup
 		rodinFile.getResource().delete(true, null);
