@@ -199,7 +199,7 @@ public class BecomesMemberOf extends Assignment {
 	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
 		final SourceLocation loc = getSourceLocation();
 		final FreeIdentifier primedIdentifier = 
-			ff.makePrimedFreeIdentifier(assignedIdents[0]);
+			assignedIdents[0].withPrime(ff);
 		return ff.makeRelationalPredicate(IN, primedIdentifier, setExpr, loc);
 	}
 

@@ -271,7 +271,7 @@ public class BecomesEqualTo extends Assignment {
 		for (int i=0; i<length; i++) {
 			predicates[i] = 
 				ff.makeRelationalPredicate(EQUAL, 
-						ff.makePrimedFreeIdentifier(assignedIdents[i]),
+						assignedIdents[i].withPrime(ff),
 						values[i], 
 						loc);
 		}

@@ -1368,7 +1368,7 @@ public abstract class Formula<T extends Formula<T>> {
 		LinkedHashSet<FreeIdentifier> list = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(list);
 		for (FreeIdentifier ident: list) {
-			boundIdentDecls.add(factory.makeBoundIdentDecl(ident));
+			boundIdentDecls.add(ident.asDecl(factory));
 		}
 		return bindTheseIdents(list, factory);
 	}
