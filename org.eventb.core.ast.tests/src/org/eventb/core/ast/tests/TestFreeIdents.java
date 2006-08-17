@@ -662,19 +662,15 @@ public class TestFreeIdents extends TestCase {
 	public void testPrimedUnprimedIdentifiers() {
 		
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);
-		
-		assertTrue("a should be unprimed", !a.isPrimed());
+		assertFalse("a should be unprimed", a.isPrimed());
 		
 		FreeIdentifier ap = a.withPrime(ff);
-		
 		assertTrue("ap should be primed", ap.isPrimed());
 		
 		FreeIdentifier np = ap.withoutPrime(ff);
-		
 		assertEquals("Primed should be the inverse of Unprimed", a, np);
 		
 		FreeIdentifier pp = np.withPrime(ff);
-		
 		assertEquals("Unprimed should be the inverse of Primed", ap, pp);
 	}
 	
@@ -684,20 +680,18 @@ public class TestFreeIdents extends TestCase {
 	public void testIdentifiersAsDecl() {
 		
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);
-		
-		assertTrue("a should be unprimed", !a.isPrimed());
+		assertFalse("a should be unprimed", a.isPrimed());
 		
 		BoundIdentDecl bd = a.asDecl(ff);
-		
-		assertEquals("name of bound should equal name of free identifier", a.getName(), bd.getName());
+		assertEquals("name of bound should equal name of free identifier", 
+				a.getName(), bd.getName());
 		
 		FreeIdentifier ap = a.withPrime(ff);
-		
 		assertTrue("ap should be primed", ap.isPrimed());
 		
 		BoundIdentDecl bf = a.asPrimedDecl(ff);
-		
-		assertEquals("name of primed bound should equal name of primed free identifier", ap.getName(), bf.getName());
+		assertEquals("name of primed bound should equal name of primed free",
+				ap.getName(), bf.getName());
 	}
 
 }
