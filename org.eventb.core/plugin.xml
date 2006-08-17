@@ -78,253 +78,203 @@
       <internalElementType
             class="org.eventb.core.basis.CarrierSet"
             id="carrierSet"
-            name="%eventBCarrierSet"
-            named="true"/>
+            name="%eventBCarrierSet"/>
       <internalElementType
             class="org.eventb.core.basis.Constant"
             id="constant"
-            name="%eventBConstant"
-            named="true"/>
+            name="%eventBConstant"/>
       <internalElementType
             class="org.eventb.core.basis.Axiom"
             id="axiom"
-            name="%eventBAxiom"
-            named="true"/>
+            name="%eventBAxiom"/>
       <internalElementType
             class="org.eventb.core.basis.Theorem"
             id="theorem"
-            name="%eventBTheorem"
-            named="true"/>
+            name="%eventBTheorem"/>
       <internalElementType
             class="org.eventb.core.basis.SeesContext"
             id="seesContext"
-            name="%eventBSeesContext"
-            named="true"/>
+            name="%eventBSeesContext"/>
       <internalElementType
             class="org.eventb.core.basis.ExtendsContext"
             id="extendsContext"
-            name="%eventBExtendsContext"
-            named="true"/>
+            name="%eventBExtendsContext"/>
       <internalElementType
             class="org.eventb.core.basis.Variable"
             id="variable"
-            name="%eventBVariable"
-            named="true"/>
+            name="%eventBVariable"/>
       <internalElementType
             class="org.eventb.core.basis.Invariant"
             id="invariant"
-            name="%eventBInvariant"
-            named="true"/>
+            name="%eventBInvariant"/>
       <internalElementType
             class="org.eventb.core.basis.Event"
             id="event"
-            name="%eventBEvent"
-            named="true"/>
+            name="%eventBEvent"/>
       <internalElementType
             class="org.eventb.core.basis.RefinesMachine"
             id="refinesMachine"
-            name="%eventBRefinesMachine"
-            named="true"/>
+            name="%eventBRefinesMachine"/>
       <internalElementType
             class="org.eventb.core.basis.SCVariable"
             id="scVariable"
-            name="%eventBscVariable"
-            named="true"/>
+            name="%eventBscVariable"/>
       <internalElementType
             class="org.eventb.core.basis.SCAxiom"
             id="scAxiom"
-            name="%eventBscAxiom"
-            named="true"/>
+            name="%eventBscAxiom"/>
       <internalElementType
             class="org.eventb.core.basis.SCTheorem"
             id="scTheorem"
-            name="%eventBscTheorem"
-            named="true"/>
+            name="%eventBscTheorem"/>
       <internalElementType
             class="org.eventb.core.basis.POIdentifier"
             id="poIdentifier"
-            name="%eventBpoIdentifier"
-            named="true"/>
+            name="%eventBpoIdentifier"/>
       <internalElementType
             class="org.eventb.core.basis.SCInvariant"
             id="scInvariant"
-            name="%eventBscInvariant"
-            named="true"/>
+            name="%eventBscInvariant"/>
       <internalElementType
             class="org.eventb.core.basis.POPredicateSet"
             id="poPredicateSet"
-            name="%eventBpoPredicateSet"
-            named="true"/>
+            name="%eventBpoPredicateSet"/>
       <internalElementType
             class="org.eventb.core.basis.POPredicate"
             id="poPredicate"
-            name="%eventBpoPredicate"
-            named="true"/>
+            name="%eventBpoPredicate"/>
       <internalElementType
             class="org.eventb.core.basis.POSequent"
             id="poSequent"
-            name="%eventBpoSequent"
-            named="true"/>
+            name="%eventBpoSequent"/>
       <internalElementType
             class="org.eventb.core.basis.POHypothesis"
             id="poHypothesis"
-            name="%eventBpoHypothesis"
-            named="true"/>
+            name="%eventBpoHypothesis"/>
       <internalElementType
             class="org.eventb.core.basis.Witness"
             id="witness"
-            name="%eventBWitness"
-            named="true"/>
+            name="%eventBWitness"/>
       <internalElementType
             class="org.eventb.core.basis.PRSequent"
             id="prSequent"
-            name="%eventBprSequent"
-            named="true"/>
+            name="%eventBprSequent"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofTree"
             id="prProofTree"
-            name="%eventBprProofTree"
-            named="true"/>
+            name="%eventBprProofTree"/>
       <internalElementType
             class="org.eventb.core.basis.PODescription"
             id="poDescription"
-            name="%eventBpoDescription"
-            named="true"/>
+            name="%eventBpoDescription"/>
       <internalElementType
             class="org.eventb.core.basis.POSource"
             id="poSource"
-            name="%eventBpoSource"
-            named="true"/>
+            name="%eventBpoSource"/>
       <internalElementType
             class="org.eventb.core.basis.POHint"
             id="poHint"
-            name="%eventBpoHint"
-            named="true"/>
+            name="%eventBpoHint"/>
       <internalElementType
             class="org.eventb.core.basis.Guard"
             id="guard"
-            name="%eventBGuard"
-            named="true"/>
+            name="%eventBGuard"/>
       <internalElementType
             class="org.eventb.core.basis.Action"
             id="action"
-            name="%eventBAction"
-            named="true"/>
+            name="%eventBAction"/>
       <internalElementType
             class="org.eventb.core.basis.RefinesEvent"
             id="refinesEvent"
-            name="%eventBRefinesEvent"
-            named="true"/>
+            name="%eventBRefinesEvent"/>
       <internalElementType
             class="org.eventb.core.basis.Variant"
             id="variant"
-            name="%eventBVariant"
-            named="true"/>
+            name="%eventBVariant"/>
       <internalElementType
             class="org.eventb.core.basis.SCAction"
             id="scAction"
-            name="%eventBscAction"
-            named="true"/>
+            name="%eventBscAction"/>
       <internalElementType
             class="org.eventb.core.basis.SCEvent"
             id="scEvent"
-            name="%eventBscEvent"
-            named="true"/>
+            name="%eventBscEvent"/>
       <internalElementType
             class="org.eventb.core.basis.SCGuard"
             id="scGuard"
-            name="%eventBscGuard"
-            named="true"/>
+            name="%eventBscGuard"/>
       <internalElementType
             class="org.eventb.core.basis.SCConstant"
             id="scConstant"
-            name="%eventBscConstant"
-            named="true"/>
+            name="%eventBscConstant"/>
       <internalElementType
             class="org.eventb.core.basis.SCCarrierSet"
             id="scCarrierSet"
-            name="%eventBscCarrierSet"
-            named="true"/>
+            name="%eventBscCarrierSet"/>
       <internalElementType
             class="org.eventb.core.basis.SCInternalContext"
             id="scInternalContext"
-            name="%eventBscInternalContext"
-            named="true"/>
+            name="%eventBscInternalContext"/>
       <internalElementType
             class="org.eventb.core.basis.SCInternalMachine"
             id="scInternalMachine"
-            name="%eventBscInternalMachine"
-            named="true"/>
+            name="%eventBscInternalMachine"/>
       <internalElementType
             class="org.eventb.core.basis.SCRefinesEvent"
             id="scRefinesEvent"
-            name="%eventBscRefinesEvent"
-            named="true"/>
+            name="%eventBscRefinesEvent"/>
       <internalElementType
             class="org.eventb.core.basis.SCRefinesMachine"
             id="scRefinesMachine"
-            name="%eventBscRefinesMachine"
-            named="true"/>
+            name="%eventBscRefinesMachine"/>
       <internalElementType
             class="org.eventb.core.basis.SCVariant"
             id="scVariant"
-            name="%eventBscVariant"
-            named="true"/>
+            name="%eventBscVariant"/>
       <internalElementType
             class="org.eventb.core.basis.SCWitness"
             id="scWitness"
-            name="%eventBscWitness"
-            named="true"/>
+            name="%eventBscWitness"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofTreeNode"
             id="prProofTreeNode"
-            name="%eventBprProofTreeNode"
-            named="true"/>
+            name="%eventBprProofTreeNode"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofRule"
             id="proofRule"
-            name="%eventBprProofRule"
-            named="true"/>
+            name="%eventBprProofRule"/>
       <internalElementType
             class="org.eventb.core.basis.Pair"
             id="pair"
-            name="%eventBpair"
-            named="true"/>
+            name="%eventBpair"/>
       <internalElementType
             class="org.eventb.core.basis.PRPredicate"
             id="prPredicate"
-            name="%eventBprPredicate"
-            named="true"/>
+            name="%eventBprPredicate"/>
       <internalElementType
             class="org.eventb.core.basis.PRPredicateSet"
             id="prPredicateSet"
-            name="%eventBprPredicateSet"
-            named="true"/>
+            name="%eventBprPredicateSet"/>
       <internalElementType
             class="org.eventb.core.basis.PRReasonerInput"
             id="prReasonerInput"
-            name="%eventBprReasonerInput"
-            named="true"/>
+            name="%eventBprReasonerInput"/>
       <internalElementType
             class="org.eventb.core.basis.PRTypeEnvironment"
             id="prTypeEnv"
-            name="%eventBprTypeEnv"
-            named="true"/>
+            name="%eventBprTypeEnv"/>
       <internalElementType
             class="org.eventb.core.basis.PRReasonerAnticident"
             id="prReasonerAnticident"
-            name="%eventBprReasonerAnticident"
-            named="true"/>
+            name="%eventBprReasonerAnticident"/>
       <internalElementType
             class="org.eventb.core.basis.PRExpression"
             id="prExpression"
-            name="%eventBprExpression"
-            named="true"/>
+            name="%eventBprExpression"/>
       <internalElementType
             class="org.eventb.core.basis.PRHypAction"
             id="prHypAction"
-            name="%eventBprHypAction"
-            named="true"/>
+            name="%eventBprHypAction"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
