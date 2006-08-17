@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,13 +21,13 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.w3c.dom.Element;
 
-// TODO implement children cache behavior for the file itself, then remove the
-// special getChildren below.
-
 public class RodinFileElementInfo extends OpenableElementInfo {
 
 	// Buffer associated to this Rodin file
 	private Buffer buffer;
+	
+	// Tells whether the list of children is up to date
+	private boolean childrenUpToDate;
 	
 	// Local cache of internal element informations
 	private Map<InternalElement, InternalElementInfo> internalCache;
@@ -44,7 +44,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 	private void addToMap(InternalElement element, Element domElement) {
 		internalElements.put(element, domElement);
-		internalCache.remove(element.getParent());
+		invalidateParentCache(element);
 	}
 
 	public synchronized void changeDescendantContents(
@@ -66,6 +66,12 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 					)		
 			);
 		}
+	}
+	
+	private void computeChildren() {
+		final RodinFile element = buffer.getOwner();
+		final Element domElement = buffer.getDocumentElement();
+		computeChildren(element, domElement, this);
 	}
 	
 	private void computeChildren(IInternalParent element,
@@ -92,10 +98,8 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			(RodinFileElementInfo) rfSource.getElementInfo(null);
 
 		final Element domSource = rfSourceInfo.getDOMElement(source);
-		final Element domDestParent = getDOMParent(dest);
-		if (domDestParent == null) {
-			throw dest.getParent().newNotPresentException();
-		}
+		final IInternalParent destParent = (IInternalParent) dest.getParent();
+		final Element domDestParent = getDOMElementCheckExists(destParent);
 		checkDOMElementForCollision(dest);
 		final Element domNextSibling;
 		if (nextSibling != null) {
@@ -134,20 +138,14 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.deleteElement(domElement);
 	}
 
-	/**
-	 * Returns the children of this file.
-	 * 
-	 * @param rodinFile
-	 *            handle to this file
-	 * @return the children of this file element
-	 */
-	public synchronized RodinElement[] getChildren(RodinFile rodinFile) {
-
-		Element domElement = buffer.getDocumentElement();
-		computeChildren(rodinFile, domElement, this);
-		return getChildren();
+	@Override
+	public RodinElement[] getChildren() {
+		if (! childrenUpToDate) {
+			computeChildren();
+		}
+		return super.getChildren();
 	}
-	
+
 	/**
 	 * Returns the contents of an internal element in this file.
 	 * 
@@ -188,9 +186,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		// Not found, force a cache update
 		IRodinElement parent = element.getParent();
 		if (parent instanceof RodinFile) {
-			getChildren((RodinFile) parent);
+			computeChildren();
 		} else {
-			getElementInfo((InternalElement) element.getParent());
+			getElementInfo((InternalElement) parent);
 		}
 		return internalElements.get(element);
 	}
@@ -205,24 +203,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return domElement;
 	}
 	
-	/**
-	 * Returns the DOM element corresponding to the parent of the given Rodin
-	 * element.
-	 * 
-	 * @param element
-	 *            a Rodin internal element
-	 * @return the DOM element corresponding to the parent or <code>null</code>
-	 *         if inexistent
-	 */
-	private Element getDOMParent(InternalElement element) {
-		RodinElement parent = element.getParent();
-		if (parent instanceof RodinFile) {
-			return buffer.getDocumentElement();
-		}
-		assert parent instanceof InternalElement;
-		return getDOMElement((InternalElement) parent);
-	}
-		
 	public synchronized InternalElementInfo getElementInfo(
 			InternalElement element) {
 		
@@ -241,6 +221,15 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 	public synchronized boolean hasUnsavedChanges() {
 		return buffer.hasUnsavedChanges();
+	}
+
+	private void invalidateParentCache(InternalElement element) {
+		final RodinElement parent = element.getParent();
+		if (parent instanceof RodinFile) {
+			childrenUpToDate = false;
+		} else {
+			internalCache.remove(parent);
+		}
 	}
 
 	// Returns true if parse was successful
@@ -264,7 +253,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 		// Remove the given element
 		internalElements.remove(element);
-		internalCache.remove(element.getParent());
+		invalidateParentCache(element);
 	}
 
 	/**
@@ -306,7 +295,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		boolean changed = buffer.reorderElement(domSource, domNextSibling);
 		if (changed) {
-			internalCache.remove(source.getParent());
+			invalidateParentCache(source);
 		}
 		return changed;
 	}
