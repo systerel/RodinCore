@@ -108,9 +108,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			domNextSibling = null;
 		}
 		final String newName = dest.getElementName();
-		final Element newDOMNode = 
+		final Element newDOMElement = 
 			buffer.importNode(domSource, domDestParent, domNextSibling, newName);
-		addToMap(dest, newDOMNode);
+		addToMap(dest, newDOMElement);
 	}
 
 	public synchronized void create(InternalElement newElement,
