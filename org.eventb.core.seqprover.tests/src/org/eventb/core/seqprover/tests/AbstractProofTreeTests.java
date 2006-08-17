@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.core.prover.tests;
+package org.eventb.core.seqprover.tests;
 
 import java.util.ArrayList;
 import java.util.HashSet;

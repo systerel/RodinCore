@@ -1,4 +1,4 @@
-package org.eventb.core.prover.tests;
+package org.eventb.core.seqprover.tests;
 
 import java.util.HashSet;
 import java.util.Set;

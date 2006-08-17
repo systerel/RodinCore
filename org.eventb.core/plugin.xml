@@ -286,11 +286,6 @@
             name="%eventBprProofRule"
             named="true"/>
       <internalElementType
-            class="org.eventb.core.basis.PRReasoningStep"
-            id="reasoningStep"
-            name="%eventBprReasoningStep"
-            named="true"/>
-      <internalElementType
             class="org.eventb.core.basis.Pair"
             id="pair"
             name="%eventBpair"

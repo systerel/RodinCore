@@ -22,7 +22,6 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
-import org.eventb.core.IPRReasoningStep;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -31,7 +30,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.basis.PRProofRule;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.basis.PRProofTreeNode;
-import org.eventb.core.basis.PRReasoningStep;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
@@ -47,7 +45,6 @@ import org.eventb.core.seqprover.rules.ProofTreeNode;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -119,12 +116,16 @@ public class PRUtil {
 		if (prRule == null) return;
 		
 		// Try to replay the rule
-		if (true || prRule.getRuleID().equals("reasoningStep")){
-			IRodinElement[] prReasoningSteps = prRule.getChildrenOfType(IPRReasoningStep.ELEMENT_TYPE);
-			assert prReasoningSteps.length == 1;
-			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
+		if (true){
+//			IRodinElement[] prReasoningSteps = prRule.getChildrenOfType(IPRReasoningStep.ELEMENT_TYPE);
+//			assert prReasoningSteps.length == 1;
+//			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
+//			
+//			ProofRule reuseReasonerOutput = prReasoningStep.getReasonerOutput();
 			
-			ProofRule reuseReasonerOutput = prReasoningStep.getReasonerOutput();
+			// TODO : remove cast
+			ProofRule reuseReasonerOutput = (ProofRule) prRule.getProofRule();
+			
 			reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
 			IReasoner reasoner = reuseReasonerOutput.generatedBy;
 			// uninstalled reasoner
@@ -239,16 +240,17 @@ public class PRUtil {
 					rule.generatedBy().getReasonerID(),
 					null,null);
 			
-			// ReasoningStep reasoningStep = (ReasoningStep) rule;
-			ProofRule reasonerOutput = (ProofRule) rule;
+			prRule.setProofRule(rule);
 			
-			IPRReasoningStep prReasoningStep = 
-				(IPRReasoningStep)
-				prRule.createInternalElement(
-					IPRReasoningStep.ELEMENT_TYPE,
-					reasonerOutput.generatedBy.getReasonerID(),
-					null,null);		
-			prReasoningStep.setReasonerOutput(reasonerOutput);
+//			ProofRule reasonerOutput = (ProofRule) rule;
+//			
+//			IPRReasoningStep prReasoningStep = 
+//				(IPRReasoningStep)
+//				prRule.createInternalElement(
+//					IPRReasoningStep.ELEMENT_TYPE,
+//					reasonerOutput.generatedBy.getReasonerID(),
+//					null,null);		
+//			prReasoningStep.setReasonerOutput(reasonerOutput);
 		}
 	}
 	
