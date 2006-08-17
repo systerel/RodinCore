@@ -96,7 +96,7 @@ public class FastFactory {
 	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs, Predicate rhs) {
 		BoundIdentDecl[] primed = new BoundIdentDecl[lhs.length];
 		for (int i = 0; i < lhs.length; i++) {
-			primed[i] = ff.makeBoundIdentDecl(lhs[i]);
+			primed[i] = lhs[i].asDecl(ff);
 		}
 		return mBecomesSuchThat(lhs, primed, rhs);
 	}
