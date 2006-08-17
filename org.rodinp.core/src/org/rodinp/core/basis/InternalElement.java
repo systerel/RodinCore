@@ -280,6 +280,11 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getChildren().length > 0;
 	}
 
+	@Override
+	public boolean isReadOnly() {
+		return getRodinFile().isReadOnly();
+	}
+
 	public final boolean isSnapshot() {
 		return getRodinFile().isSnapshot();
 	}
