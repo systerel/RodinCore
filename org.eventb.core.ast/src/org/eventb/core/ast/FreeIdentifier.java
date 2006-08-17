@@ -24,6 +24,9 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @author François Terrier
  */
 public class FreeIdentifier extends Identifier {
+
+	// Suffix to be used for primed identifiers (after values of assigned variables)
+	private static String primeSuffix = "'";
 	
 	private final String name;
 	
@@ -59,19 +62,22 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	/**
-	 * Returns the primed free identifier corresponding this identifier.
+	 * Returns the primed free identifier corresponding to this unprimed
+	 * identifier.
+	 * <p>
+	 * This identifier <b>must not</b> be primed.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            a formula factory
-	 * An exception is thrown if it is already primed.
-	 * @return The identifier with a prime appended.
+	 * @return a copy of this identifier with a prime added
 	 */
 	public FreeIdentifier withPrime(FormulaFactory factory) {
 		
 		assert !isPrimed();
 		
 		FreeIdentifier primedIdentifier = factory.makeFreeIdentifier(
-				name + "'",
+				name + primeSuffix,
 				getSourceLocation(),
 				getType());
 		
@@ -79,12 +85,13 @@ public class FreeIdentifier extends Identifier {
 	}
 	
 	/**
-	 * Returns a declaration of a bound identifier,
-	 * using as model a free occurrence of the same identifier.
+	 * Returns a declaration of a bound identifier, using this identifier as
+	 * model.
 	 * 
 	 * @param factory
 	 *            a formula factory
-	 * @return a bound identifier declaration
+	 * @return a bound identifier declaration with the same properties as this
+	 *         identifier
 	 */
 	public BoundIdentDecl asDecl(FormulaFactory factory) {
 		
@@ -97,19 +104,24 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	/**
-	 * Returns a primed declaration of a bound identifier,
-	 * using as model a free occurrence of the same identifier.
+	 * Returns a primed declaration of a bound identifier, using this identifier
+	 * as model.
+	 * <p>
+	 * This is a short-hand for <code>ident.withPrime().asDecl()</code>, 
+	 * implemented in a more efficient way.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            a formula factory
-	 * @return a bound identifier declaration
+	 * @return a bound identifier declaration with the same properties as this
+	 *         identifier, except for the name which is primed
 	 */
 	public BoundIdentDecl asPrimedDecl(FormulaFactory factory) {
 		
 		assert !isPrimed();
 		
 		BoundIdentDecl primedDecl = factory.makeBoundIdentDecl(
-				name + "'", 
+				name + primeSuffix, 
 				getSourceLocation(), 
 				getType());
 		
@@ -118,19 +130,22 @@ public class FreeIdentifier extends Identifier {
 	}
 	
 	/**
-	 * Returns the unprimed free identifier corresponding this identifier.
+	 * Returns the unprimed free identifier corresponding to this primed
+	 * identifier.
+	 * <p>
+	 * This identifier <b>must</b> be primed.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            a formula factory
-	 * An exception is thrown if it is not primed.
-	 * @return The identifier with the prime removed.
+	 * @return a copy of this identifier with the prime removed
 	 */
 	public FreeIdentifier withoutPrime(FormulaFactory factory) {
 		
 		assert isPrimed();
 		
 		FreeIdentifier unprimedIdentifier = factory.makeFreeIdentifier(
-				name.substring(0, name.length() - 1),
+				name.substring(0, name.length() - primeSuffix.length()),
 				getSourceLocation(),
 				getType());
 		
@@ -143,7 +158,7 @@ public class FreeIdentifier extends Identifier {
 	 * @return whether this identifier is primed
 	 */
 	public boolean isPrimed() {
-		return name.charAt(name.length()-1) == '\'';
+		return name.endsWith(primeSuffix);
 	}
 
 	@Override
