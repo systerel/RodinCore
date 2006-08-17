@@ -459,4 +459,29 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 		}
 	}
 
+	/**
+	 * Attempts to reorder the element.
+	 * The operation should fail with the failure code.
+	 */
+	public void reorderNegative(IInternalElement src, IInternalElement nextSibling, int failureCode) throws RodinDBException {
+		try {
+			startDeltas();
+
+//			reorder
+			try {
+				src.move(src.getParent(), nextSibling, null, false, null);
+				fail("The reordering should have failed for: " + src);
+			} catch (RodinDBException jme) {
+				assertTrue("Code not correct for RodinDBException: " + jme, jme.getStatus().getCode() == failureCode);
+				return;
+			}
+
+			// check delta
+			IRodinElementDelta destDelta = getDeltaFor(src.getParent(), true);
+			assertNull("Parent changed in failed reordering", destDelta);
+		} finally {
+			stopDeltas();
+		}
+	}
+
 }
