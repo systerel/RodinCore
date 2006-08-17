@@ -717,7 +717,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 			NamedElement ne = createNamedElement(rodinFile, "foo", null);
 			
 			startDeltas();
-			ne.setContents("bar");
+			assertContentsChanged(ne, "bar");
 			assertDeltas(
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
@@ -737,7 +737,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 			NamedElement ne = createNamedElement(rodinFile, "foo", null);
 			
 			startDeltas();
-			ne.setContents("bar");
+			assertContentsChanged(ne, "bar");
 			rodinFile.save(null, false);
 			assertDeltas(
 					"Unexpected delta", 
@@ -758,7 +758,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 			NamedElement ne = createNamedElement(rodinFile, "foo", null);
 			
 			startDeltas();
-			ne.setContents("bar");
+			assertContentsChanged(ne, "bar");
 			rodinFile.close();
 			assertDeltas(
 					"Unexpected delta", 
