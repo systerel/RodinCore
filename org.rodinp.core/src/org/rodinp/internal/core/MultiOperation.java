@@ -258,6 +258,9 @@ public abstract class MultiOperation extends RodinDBOperation {
 		if (destination == null || ! destination.exists())
 			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
 		
+		if (destination.isReadOnly())
+			error(IRodinDBStatusConstants.READ_ONLY, destination);
+
 		if (element instanceof RodinFile) {
 			if (! (destination instanceof RodinProject)) {
 				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);

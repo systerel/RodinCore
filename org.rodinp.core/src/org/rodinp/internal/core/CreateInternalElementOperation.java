@@ -56,6 +56,7 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	 * <ul>
 	 * <li>NO_ELEMENTS_TO_PROCESS - the newElement supplied to the operation is
 	 * <code>null</code>.</li>
+	 * <li>READ_ONLY - the parent of the newElement supplied is readonly.</li>
 	 * <li>NAME_COLLISION - the newElement supplied already exists and creating it
 	 * anew would create a duplicate element.</li>
 	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a different parent.</li>
@@ -65,6 +66,12 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	@Override
 	public IRodinDBStatus verify() {
 		super.verify();
+		if (newElement.getParent().isReadOnly()) {
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.READ_ONLY,
+					newElement.getParent()
+			);
+		}
 		if (newElement.exists()) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.NAME_COLLISION,
