@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="fileElementTypes" name="%fileElementTypes" schema="schema/fileElementTypes.exsd"/>
-   <extension-point id="internalElementTypes" name="%internalElementTypes" schema="schema/internalElementTypes.exsd"/>
+   <extension-point id="fileElementTypes" name="%fileElementTypesName" schema="schema/fileElementTypes.exsd"/>
+   <extension-point id="internalElementTypes" name="%internalElementTypesName" schema="schema/internalElementTypes.exsd"/>
    <extension-point id="autoTools" name="%autoToolsName" schema="schema/autoTools.exsd"/>
+   <extension-point id="attributeTypes" name="%attributeTypesName" schema="schema/attributeTypes.exsd"/>
    <extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type
 			id="rodin"
@@ -38,5 +39,4 @@
       <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true"/>
    </extension>
-
 </plugin>
