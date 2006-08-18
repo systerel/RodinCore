@@ -81,7 +81,7 @@ public class ExI implements IReasoner{
 		    // or decreased, or their types have changed.
 			Expression[] witnesses = new Expression[boundIdentDecls.length];
 			for (int i = 0; i < witnesses.length; i++) {
-				if (i< input.getExpressions().length)
+				if (i< input.getExpressions().length && input.getExpressions()[i] != null)
 				{
 					if (! input.getExpressions()[i].getType().
 							equals(boundIdentDecls[i].getType()))

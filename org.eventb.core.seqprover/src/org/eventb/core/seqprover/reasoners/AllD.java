@@ -77,9 +77,10 @@ public class AllD implements IReasoner{
 		// copy and check that old input is still compatable
 		// it can be that the number of bound variables have increased 
 	    // or decreased, or their types have changed.
+		// TODO : Move this check to the input class
 		Expression[] instantiations = new Expression[boundIdentDecls.length];
 		for (int i = 0; i < instantiations.length; i++) {
-			if (i< expressions.length)
+			if (i < expressions.length && expressions[i] != null)
 			{
 				if (! expressions[i].getType().
 						equals(boundIdentDecls[i].getType()))
