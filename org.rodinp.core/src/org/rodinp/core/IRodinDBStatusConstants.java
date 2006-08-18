@@ -230,4 +230,33 @@ public interface IRodinDBStatusConstants {
 	 */
 	int XML_CONFIG_ERROR = 993;
 
+	/**
+	 * Status indicating that an attribute name specified by a client is not
+	 * known to the Rodin database. The name can be retrieved from
+	 * <code>getString</code>.
+	 */
+	int UNKNOWN_ATTRIBUTE = 994;
+	
+	/**
+	 * Status indicating that an attribute name doesn't match the Java type used
+	 * for manipulating it. For instance, a client tried to get or set a string
+	 * attribute using a method for boolean attributes. The name of the
+	 * attribute can be retrieved from <code>getString</code>.
+	 */
+	int INVALID_ATTRIBUTE_KIND = 995;
+
+	/**
+	 * Status indicating that an attribute value cannot be parsed by the
+	 * database. The name of the attribute can be retrieved from
+	 * <code>getString</code>.
+	 */
+	int INVALID_ATTRIBUTE_VALUE = 996;
+
+	/**
+	 * Status indicating that an attempt has been made to read an attribute
+	 * which doesn't exist. The name of the attribute can be retrieved from
+	 * <code>getString</code>.
+	 */
+	int ATTRIBUTE_DOES_NOT_EXIST = 997;
+	
 }

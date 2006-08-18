@@ -122,6 +122,7 @@ public class ElementTypeManager {
 	private void computeFileElementTypes() {
 		fileElementTypeIds = new HashMap<String, FileElementTypeDescription>();
 		fileContentTypes = new HashMap<String, FileElementTypeDescription>();
+		fileContentTypes = new HashMap<String, FileElementTypeDescription>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -271,6 +272,56 @@ public class ElementTypeManager {
 			Util.log(e, "Error when constructing instance of type " + type);
 			return null;
 		}
+	}
+	
+	// Local id of the fileElementTypes extension point of this plugin
+	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
+	
+	// Access to attribute type descriptions using their unique id
+	private HashMap<String, AttributeTypeDescription> attributeTypeIds;
+
+	private void computeAttributeTypes() {
+		attributeTypeIds = new HashMap<String, AttributeTypeDescription>();
+		
+		// Read the extension point extensions.
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = 
+			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, ATTRIBUTE_TYPES_ID);
+		for (IConfigurationElement element: elements) {
+			AttributeTypeDescription description =
+				AttributeTypeDescription.valueOf(element);
+			if (description != null) {
+				attributeTypeIds.put(description.getId(), description);
+			}
+		}
+	}
+
+	/**
+	 * Returns the attribute type description corresponding to the given name or
+	 * <code>null</code> if it is not a valid attribute name.
+	 * 
+	 * @param name
+	 *            the attribute name
+	 * @return the attribute type description associated to the given name or
+	 *         <code>null</code> if it is not a valid attribute name
+	 */
+	public AttributeTypeDescription getAttributeTypeDescription(String name) {
+		if (attributeTypeIds == null) {
+			computeAttributeTypes();
+		}
+		return attributeTypeIds.get(name);
+	}
+
+	/**
+	 * Tells whether the given attribute name is valid (that is corresponds to a
+	 * declared attribute type).
+	 * 
+	 * @param attributeName
+	 *            the attribute name to test
+	 * @return <code>true</code> iff the name is valid
+	 */
+	public boolean isValidAttributeName(String attributeName) {
+		return getAttributeTypeDescription(attributeName) != null;
 	}
 	
 }

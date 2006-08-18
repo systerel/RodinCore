@@ -19,6 +19,8 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.AttributeTypeDescription;
+import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.ChangeElementContentsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
@@ -130,10 +132,41 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 	}
 
+	public String[] getAttributeNames(IProgressMonitor monitor)
+			throws RodinDBException {
+		return getFileInfo(monitor).getAttributeNames(this);
+	}
+	
+	private String getAttributeRawValue(String attrName,
+			IProgressMonitor monitor) throws RodinDBException {
+		return getFileInfo(monitor).getAttributeRawValue(this, attrName);
+	}
+
+	private AttributeTypeDescription getAttributeTypeDescription(String attrName)
+			throws RodinDBException {
+		
+		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		AttributeTypeDescription attributeTypeDescription = 
+			manager.getAttributeTypeDescription(attrName);
+		if (attributeTypeDescription == null) {
+			throw new RodinDBException(new RodinDBStatus(
+					IRodinDBStatusConstants.UNKNOWN_ATTRIBUTE, attrName));
+		}
+		return attributeTypeDescription;
+	}
+
+	public boolean getBooleanAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrName, monitor);
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		return attributeTypeDescription.getBoolValue(rawValue);
+	}
+
 	public String getContents() throws RodinDBException {
 		return getContents(null);
 	}
-	
+
 	public String getContents(IProgressMonitor monitor) throws RodinDBException {
 		return getFileInfo(monitor).getDescendantContents(this);
 	}
@@ -164,6 +197,14 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		throw newNotPresentException();
 	}
 
+	public IRodinElement getHandleAttribute(String attrName,
+			IProgressMonitor monitor) throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrName, monitor);
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		return attributeTypeDescription.getHandleValue(rawValue);
+	}
+
 	@Override
 	protected IRodinElement getHandleFromMemento(String token,
 			MementoTokenizer memento) {
@@ -192,6 +233,14 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	protected char getHandleMementoDelimiter() {
 		return REM_INTERNAL;
 	}
+	
+	public int getIntegerAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrName, monitor);
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		return attributeTypeDescription.getIntValue(rawValue);
+	}
 
 	public InternalElement getInternalElement(String childType, String childName) {
 		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
@@ -205,7 +254,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 		return getInternalElement(type, childName);
 	}
-
+	
 	public final InternalElement getMutableCopy() {
 		final RodinFile file = getRodinFile();
 		if (! file.isSnapshot()) {
@@ -240,7 +289,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		assert false;
 		return null;
 	}
-	
+
 	public IPath getPath() {
 		return getOpenableParent().getPath();
 	}
@@ -253,7 +302,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	public RodinFile getRodinFile() {
 		return getOpenableParent();
 	}
-	
+
 	public final InternalElement getSnapshot() {
 		final RodinFile file = getRodinFile();
 		if (file.isSnapshot()) {
@@ -265,8 +314,21 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return (InternalElement) getSimilarElement(this, newFile);
 	}
 
+	public String getStringAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+		final String rawValue = getAttributeRawValue(attrName, monitor);
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		return attributeTypeDescription.getStringValue(rawValue);
+	}
+
 	public IFile getUnderlyingResource() {
 		return getOpenableParent().getResource();
+	}
+
+	public boolean hasAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+		return getFileInfo(monitor).hasAttribute(this, attrName);
 	}
 
 	@Override
@@ -294,9 +356,24 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 				sibling, rename, monitor);
 		
 	}
-
+	
 	public void rename(String newName, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameElementsOperation(this, newName, replace).runOperation(monitor);
+	}
+
+	private void setAttributeRawValue(String attrName, String newRawValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		new ChangeElementAttributeOperation(this, attrName, newRawValue)
+				.runOperation(monitor);
+	}
+
+	public void setBooleanAttribute(String attrName, boolean newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		final String newRawValue = attributeTypeDescription.toString(newValue);
+		setAttributeRawValue(attrName, newRawValue, monitor);
 	}
 
 	public void setContents(String contents) throws RodinDBException {
@@ -305,6 +382,30 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
 		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
+	}
+
+	public void setHandleAttribute(String attrName, IRodinElement newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		final String newRawValue = attributeTypeDescription.toString(newValue);
+		setAttributeRawValue(attrName, newRawValue, monitor);
+	}
+
+	public void setIntegerAttribute(String attrName, int newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		final String newRawValue = attributeTypeDescription.toString(newValue);
+		setAttributeRawValue(attrName, newRawValue, monitor);
+	}
+
+	public void setStringAttribute(String attrName, String newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		final String newRawValue = attributeTypeDescription.toString(newValue);
+		setAttributeRawValue(attrName, newRawValue, monitor);
 	}
 
 	@Override

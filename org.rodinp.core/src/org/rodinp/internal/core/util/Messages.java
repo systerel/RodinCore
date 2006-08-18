@@ -33,6 +33,7 @@ public final class Messages {
 	public static String element_invalidResourceForProject;
 	
 	public static String operation_cancelled;
+	public static String operation_changeElementAttributeProgress;
 	public static String operation_changeElementContentsProgress;
 	public static String operation_copyElementProgress;
 	public static String operation_copyResourceProgress;
@@ -71,7 +72,7 @@ public final class Messages {
 	public static String status_OK;
 	public static String status_readOnly;
 	public static String status_updateConflict;
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

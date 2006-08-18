@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 //TODO document IInternalElement
 public interface IInternalElement extends IRodinElement, IInternalParent,
-		IElementManipulation {
+		IElementManipulation, IAttributedElement {
 
 	/**
 	 * Returns the occurrence count of this internal element, which is always

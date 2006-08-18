@@ -32,8 +32,10 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.ErrorHandler;
@@ -89,6 +91,8 @@ public class Buffer {
 	private static final ErrorListener errorListener = new XMLErrorListener();
 	
 	private static final String NAME_ATTRIBUTE = "name";
+	
+	private static String[] NO_ATTRIBUTE_NAMES = new String[0];
 
 	private boolean changed;
 
@@ -150,31 +154,38 @@ public class Buffer {
 		return null;
 	}
 
-	public Element getDocumentElement() {
-		return domDocument.getDocumentElement();
+	public String[] getAttributeNames(Element domElement) {
+		final NamedNodeMap attributeMap = domElement.getAttributes();
+		final int length = attributeMap.getLength();
+		if (length == 0) {
+			return NO_ATTRIBUTE_NAMES;
+		}
+		final String[] result = new String[length];
+		for (int i = 0; i < length; i++) {
+			result[i] = attributeMap.item(i).getLocalName();
+		}
+		return result;
 	}
 
-	private InternalElement getElement(IInternalParent parent,
-			Element domChild) {
-		final String childType = getElementType(domChild);
-		final String childName = getElementName(domChild);
-		assert childName != null;
-		return (InternalElement) parent.getInternalElement(childType,
-				childName);
+	/**
+	 * Returns the value of the attribute with the given name carried by the
+	 * given element.
+	 * 
+	 * @param domElement
+	 *            the element
+	 * @param attrName
+	 *            the name of the attribute
+	 * @return the value of the specified attribute or <code>null</code> if
+	 *         there is no such attribute.
+	 */
+	public String getAttributeRawValue(Element domElement, String attrName) {
+		Attr attribute = domElement.getAttributeNodeNS(null, attrName);
+		if (attribute == null) {
+			return null;
+		}
+		return attribute.getValue();
 	}
 	
-	public String getElementContents(Element domElement) {
-		return domElement.getAttributeNS(null, CONTENTS_ATTRIBUTE);
-	}
-	
-	public String getElementName(Element domElement) {
-		return domElement.getAttributeNS(null, NAME_ATTRIBUTE);
-	}
-	
-	public String getElementType(Element domElement) {
-		return domElement.getNodeName();
-	}
-
 	public LinkedHashMap<InternalElement, Element> getChildren(
 			IInternalParent element, Element domElement) {
 
@@ -203,6 +214,31 @@ public class Buffer {
 		return result;
 	}
 	
+	public Element getDocumentElement() {
+		return domDocument.getDocumentElement();
+	}
+	
+	private InternalElement getElement(IInternalParent parent,
+			Element domChild) {
+		final String childType = getElementType(domChild);
+		final String childName = getElementName(domChild);
+		assert childName != null;
+		return (InternalElement) parent.getInternalElement(childType,
+				childName);
+	}
+
+	public String getElementContents(Element domElement) {
+		return domElement.getAttributeNS(null, CONTENTS_ATTRIBUTE);
+	}
+
+	public String getElementName(Element domElement) {
+		return domElement.getAttributeNS(null, NAME_ATTRIBUTE);
+	}
+
+	public String getElementType(Element domElement) {
+		return domElement.getNodeName();
+	}
+	
 	/**
 	 * Returns the Rodin file element of this buffer.
 	 * 
@@ -212,6 +248,17 @@ public class Buffer {
 		return owner;
 	}
 	
+	/**
+	 * Returns whether the give element carries an attribute with the given name
+	 * in this buffer.
+	 * 
+	 * @return <code>true</code> iff the given element carries the given
+	 *         attribute in this buffer
+	 */
+	public boolean hasAttribute(Element domElement, String attrName) {
+		return domElement.hasAttributeNS(null, attrName);
+	}
+
 	/**
 	 * Returns whether this buffer has been modified since it was last loaded.
 	 * 
@@ -378,6 +425,12 @@ public class Buffer {
 
 		// the resource no longer has unsaved changes
 		this.changed = false;
+	}
+	
+	public void setAttributeRawValue(Element domElement, String attrName,
+			String newRawValue) {
+		domElement.setAttributeNS(null, attrName, newRawValue);
+		changed = true;
 	}
 	
 	public void setElementContents(Element domElement, String newContents) {
