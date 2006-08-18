@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <li>a buffered copy of the Rodin file in memory which is read-write.</li>
  * </ul>
  * As a consequence, there are two kinds of handles for these elements, stable
- * snapshot handles and normal handles.
+ * snapshot handles and mutable handles.
  * </p>
  * 
  * @author Laurent Voisin
