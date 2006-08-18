@@ -248,6 +248,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (! hasUnsavedChanges())
 			return;
 
+		// TODO should be implemented as a RodinDBOperation
 		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
 		info.saveToFile(this, force, progress);
 	}
