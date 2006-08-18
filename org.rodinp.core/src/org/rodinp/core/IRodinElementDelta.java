@@ -30,6 +30,8 @@ import org.eclipse.core.resources.IResourceDelta;
  * changed in some way. Specification of the type of change is provided by
  * <code>getFlags</code> which returns the following values:
  * <ul>
+ * <li><code>F_ATTRIBUTE</code> - The value of some attribute of the element
+ * has been altered. This flag is only valid for internal elements.</li>
  * <li><code>F_CHILDREN</code> - A child of the element has changed in some
  * way. This flag is only valid if the element is an <code>IParent</code>.</li>
  * <li><code>F_CLOSED</code> - The underlying <code>IProject</code> has
@@ -77,9 +79,9 @@ import org.eclipse.core.resources.IResourceDelta;
  * </p>
  * <p>
  * The <code>F_REPLACED</code> flag is triggered by a deletion followed by an
- * addition of the same element.  It thus specifies only a coarse grain change. 
+ * addition of the same element. It thus specifies only a coarse grain change.
  * In particular, no comparison is done between the children before deletion and
- * the children after addition.  When encountering this flag, clients should
+ * the children after addition. When encountering this flag, clients should
  * therefore recompute from scratch the set of children of the replaced element.
  * </p>
  * <p>
@@ -117,8 +119,8 @@ public interface IRodinElementDelta {
 	public int CHANGED = 4;
 
 	/**
-	 * Change flag indicating that the content of the element has changed.
-	 * This flag is only valid for elements which correspond to files.
+	 * Change flag indicating that the content of the element has changed. This
+	 * flag is only valid for file and internal elements.
 	 */
 	public int F_CONTENT = 0x00001;
 
@@ -164,6 +166,12 @@ public interface IRodinElementDelta {
 	 * closed. This flag is only valid if the element is an <code>IRodinProject</code>. 
 	 */
 	public int F_CLOSED = 0x00200;
+
+	/**
+	 * Change flag indicating that the value of some attribute of the element
+	 * has changed. This flag is only valid for internal elements.
+	 */
+	public int F_ATTRIBUTE = 0x00400;
 
 	/**
 	 * Returns deltas for the children that have been added.
