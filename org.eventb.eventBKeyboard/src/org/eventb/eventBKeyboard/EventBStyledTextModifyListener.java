@@ -1,20 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
 package org.eventb.eventBKeyboard;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -22,9 +9,9 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
 /**
@@ -34,7 +21,7 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
  *         Event-B. This is done by using all the translators found in the
  *         extension registry.
  */
-public class EventBTextModifyListener implements ModifyListener {
+public class EventBStyledTextModifyListener implements ModifyListener {
 
 	// The extension identifier.
 	private static final String translatorId = "org.eventb.eventBKeyboard.translators";
@@ -42,7 +29,7 @@ public class EventBTextModifyListener implements ModifyListener {
 	/**
 	 * Collection of translators.
 	 */
-	private Collection<IEventBKeyboardTranslator> translators;
+	private Collection<IEventBStyledTextTranslator> translators;
 
 	/**
 	 * Main method for the listener. This is call when the text in the widget
@@ -53,18 +40,16 @@ public class EventBTextModifyListener implements ModifyListener {
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
-		Text widget = (Text) e.widget;
+		StyledText widget = (StyledText) e.widget;
 
 		getTranslators();
 
 		widget.removeModifyListener(this); // Disable the listener
-		for (Iterator<IEventBKeyboardTranslator> it = translators.iterator(); it
-				.hasNext();) {
-			IEventBKeyboardTranslator translator = it.next();
+		for (IEventBStyledTextTranslator translator : translators) {
 			translator.translate(widget);
 		}
 		widget.addModifyListener(this); // Enable the listener
-		KeyboardUtils.debugMath("Caret position: " + widget.getCaretPosition());
+		KeyboardUtils.debugMath("Caret position: " + widget.getCaretOffset());
 	}
 
 	/**
@@ -74,7 +59,7 @@ public class EventBTextModifyListener implements ModifyListener {
 		if (translators != null)
 			return;
 		else {
-			translators = new ArrayList<IEventBKeyboardTranslator>();
+			translators = new ArrayList<IEventBStyledTextTranslator>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry
 					.getExtensionPoint(translatorId);
@@ -87,9 +72,9 @@ public class EventBTextModifyListener implements ModifyListener {
 					try {
 						Object translator = elements[j]
 								.createExecutableExtension("class");
-						if (translator instanceof IEventBKeyboardTranslator) {
+						if (translator instanceof IEventBStyledTextTranslator) {
 							translators
-									.add((IEventBKeyboardTranslator) translator);
+									.add((IEventBStyledTextTranslator) translator);
 						}
 					} catch (CoreException e) {
 						e.printStackTrace();

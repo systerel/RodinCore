@@ -1,30 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
 package org.eventb.eventBKeyboard.internal.translators;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.IEventBKeyboardTranslator;
+import org.eclipse.swt.custom.StyledText;
+import org.eventb.eventBKeyboard.IEventBStyledTextTranslator;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
-/**
- * @author htson
- *         <p>
- *         The translator for mathematical tempSymbols
- */
-public class EventBKeyboardMathTranslator implements IEventBKeyboardTranslator {
+public class EventBStyledTextMathTranslator implements
+		IEventBStyledTextTranslator {
 
 	private static HashMap<String, Collection<Symbol>> symbols = null;
 
@@ -44,7 +28,7 @@ public class EventBKeyboardMathTranslator implements IEventBKeyboardTranslator {
 	 * @return true if there is a mathematical string which is translated into
 	 *         mathematical expression false otherwise
 	 */
-	public void translate(Text widget) {
+	public void translate(StyledText widget) {
 		if (symbols == null) {
 			MathSymbols mathSymbols = new MathSymbols();
 			symbols = mathSymbols.getSymbols();
@@ -54,16 +38,16 @@ public class EventBKeyboardMathTranslator implements IEventBKeyboardTranslator {
 		translate(widget, 0, text.length());
 	}
 
-	private void translate(Text widget, int beginIndex, int endIndex) {
+	private void translate(StyledText widget, int beginIndex, int endIndex) {
 		KeyboardUtils.debugMath("***************************************");
 		KeyboardUtils.debugMath("Begin: " + beginIndex);
 		KeyboardUtils.debugMath("End: " + endIndex);
 		if (beginIndex == endIndex) {
-			KeyboardUtils.debugMath("Here " + widget.getCaretPosition());
+			KeyboardUtils.debugMath("Here " + widget.getCaretOffset());
 			return;
 		}
 		String text = widget.getText();
-		int currentPos = widget.getCaretPosition();
+		int currentPos = widget.getCaretOffset();
 		String subString = text.substring(beginIndex, endIndex);
 
 		KeyboardUtils.debugMath("Process: \"" + text + "\"");
@@ -138,3 +122,4 @@ public class EventBKeyboardMathTranslator implements IEventBKeyboardTranslator {
 	}
 
 }
+

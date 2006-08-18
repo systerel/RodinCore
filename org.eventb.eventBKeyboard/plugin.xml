@@ -59,5 +59,18 @@
       <translator
       	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardMathTranslator">
       </translator>
+      <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextMathTranslator"/>
+      <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextTextTranslator"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eventb.eventBKeyboard.preferences.EventBKeyboardPreferencePage"
+            id="org.eventb.eventBKeyboard.preferences.EventBKeyboardPreferencePage"
+            name="Event-B Keyboard Preferences"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eventb.eventBKeyboard.preferences.PreferenceInitializer"/>
    </extension>
 </plugin>
