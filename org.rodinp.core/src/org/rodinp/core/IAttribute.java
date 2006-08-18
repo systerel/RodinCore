@@ -26,6 +26,7 @@ package org.rodinp.core;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public interface IAttribute {
 
 	/**
