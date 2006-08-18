@@ -222,7 +222,7 @@ public class ObligationExplorer extends ViewPart implements
 							else
 								return DISCHARGED;
 						}
-						return NULL;
+						return NULL; // Should not happen
 					}
 				}
 			}
@@ -815,7 +815,7 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void proofStateChanged(final IProofStateDelta delta) {
-		Display display = viewer.getControl().getDisplay();
+		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
 				UIUtils
