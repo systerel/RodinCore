@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -27,7 +29,7 @@ public interface ITraceableElement extends IInternalElement {
 	 * @param source the source element
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	void setSource(IInternalElement source) throws RodinDBException;
+	void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the source element of this traceable element, or <code>null</code> 
@@ -36,5 +38,5 @@ public interface ITraceableElement extends IInternalElement {
 	 * @return the source element
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	IInternalElement getSource() throws RodinDBException;
+	IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException;
 }

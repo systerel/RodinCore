@@ -8,8 +8,10 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for variables in Event-B statically checked (SC) machines.
@@ -41,14 +43,18 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * cannot be used again. It is "forbidden".
 	 * 
 	 * @param value the "forbidden" status of the variable name
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	void setForbidden(boolean value);
+	void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns whether the variable name is forbidden or not.
 	 * 
 	 * @return whether the variable name is forbidden or not
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	boolean isForbidden();
+	boolean isForbidden(IProgressMonitor monitor) throws RodinDBException;
 
 }

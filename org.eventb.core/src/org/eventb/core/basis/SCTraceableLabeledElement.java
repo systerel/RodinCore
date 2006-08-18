@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -25,15 +26,15 @@ public abstract class SCTraceableLabeledElement extends SCTraceableElement imple
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
 	 */
-	public void setLabel(String label) throws RodinDBException {
-		CommonAttributesUtil.setLabel(this, label);
+	public void setLabel(String label, IProgressMonitor monitor) throws RodinDBException {
+		CommonAttributesUtil.setLabel(this, label, monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ILabeledElement#getLabel()
 	 */
-	public String getLabel() throws RodinDBException {
-		return CommonAttributesUtil.getLabel(this);
+	public String getLabel(IProgressMonitor monitor) throws RodinDBException {
+		return CommonAttributesUtil.getLabel(this, monitor);
 	}
 
 }

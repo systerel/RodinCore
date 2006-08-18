@@ -8,8 +8,10 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC variable as an extension of the Rodin database.
@@ -27,6 +29,8 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public class SCVariable extends SCIdentifierElement implements ISCVariable {
+	
+	public static String FORBIDDEN_ATTRIBUTE = "forbidden"; 
 
 	public SCVariable(String name, IRodinElement parent) {
 		super(name, parent);
@@ -37,14 +41,12 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 
-	public void setForbidden(boolean value) {
-		// TODO Auto-generated method stub
-		
+	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
+		setBooleanAttribute(FORBIDDEN_ATTRIBUTE, value, monitor);
 	}
 
-	public boolean isForbidden() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isForbidden(IProgressMonitor monitor) throws RodinDBException {
+		return getBooleanAttribute(FORBIDDEN_ATTRIBUTE, monitor);
 	}
 
 }

@@ -9,6 +9,7 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -36,6 +37,8 @@ import org.rodinp.core.basis.InternalElement;
  * @author Laurent Voisin
  */
 public class Event extends InternalElement implements IEvent {
+	
+	public static String INHERITED_ATTRIBUTE = "inherited";
 	
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -100,29 +103,29 @@ public class Event extends InternalElement implements IEvent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
+	 * @see org.eventb.core.ILabeledElement#setLabel(String, IProgressMonitor)
 	 */
-	public void setLabel(String label) throws RodinDBException {
-		CommonAttributesUtil.setLabel(this, label);
+	public void setLabel(String label, IProgressMonitor monitor) throws RodinDBException {
+		CommonAttributesUtil.setLabel(this, label, monitor);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#getLabel()
+	 * @see org.eventb.core.ILabeledElement#getLabel(IProgressMonitor)
 	 */
-	public String getLabel() throws RodinDBException {
-		return CommonAttributesUtil.getLabel(this);
+	public String getLabel(IProgressMonitor monitor) throws RodinDBException {
+		return CommonAttributesUtil.getLabel(this, monitor);
 	}
 
-	public boolean isInherited() throws RodinDBException {
-		return getContents().equals("TRUE");
+	public boolean isInherited(IProgressMonitor monitor) throws RodinDBException {
+		return getBooleanAttribute(INHERITED_ATTRIBUTE, monitor);
 	}
 
-	public void setInherited(boolean inherited) throws RodinDBException {
+	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
 		if (inherited) {
 			if (hasChildren())
 				throw Util.newRodinDBException(Messages.database_EventSetInheritedFailure, this);
 		}
-		setContents(inherited ? "TRUE" : "FALSE");
+		setBooleanAttribute(INHERITED_ATTRIBUTE, inherited, monitor);
 	}
 
 }

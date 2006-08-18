@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -45,7 +46,7 @@ public interface IEvent extends ILabeledElement, IInternalElement {
 	 * @return <code>true</code> if the event is inherited.
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	boolean isInherited() throws RodinDBException;
+	boolean isInherited(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Sets the the event to inherited.
@@ -58,7 +59,7 @@ public interface IEvent extends ILabeledElement, IInternalElement {
 	 * @throws RodinDBException if there was a problem accessing the database, or
 	 * if the event has already children and it is attempted to specify it as inherited.
 	 */
-	void setInherited(boolean inherited) throws RodinDBException;
+	void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns an array of all refines clauses of this event.

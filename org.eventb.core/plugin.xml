@@ -330,5 +330,28 @@
          </extractor>
       </tool>
    </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+            id="label"
+            kind="string"
+            name="%eventBLabelAttribute"/>
+      <attributeType
+            id="source"
+            kind="string"
+            name="%eventBSourceAttribute"/>
+      <attributeType
+            id="forbidden"
+            kind="boolean"
+            name="%eventBForbiddenNameAttribute"/>
+      <attributeType
+            id="inherited"
+            kind="boolean"
+            name="%eventBInheritedEventAttribute"/>
+      <attributeType
+            id="identifier"
+            kind="string"
+            name="%eventBIdentifierAttribute"/>
+   </extension>
 
 </plugin>

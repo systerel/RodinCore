@@ -8,33 +8,36 @@
 
 package org.eventb.core.basis;
 
-import org.rodinp.core.IInternalElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
 class CommonAttributesUtil {
-
-	public static String getLabel(InternalElement element) {
-		return element.getElementName();
+	
+	public static String LABEL_ATTRIBUTE = "label";
+	public static String SOURCE_ATTRIBUTE = "source";
+	
+	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
+		return element.getStringAttribute(LABEL_ATTRIBUTE, monitor);
 	}
 	
-	public static void setLabel(InternalElement element, String label) {
-// TODO implement labels as attributes
-		throw new NotImplementedException();
+	public static void setLabel(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
+		element.setStringAttribute(LABEL_ATTRIBUTE, label, monitor);
 	}
 
-	public static IInternalElement getSource(InternalElement element) {
-		return element;
+	public static IRodinElement getSource(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
+		String handleID = element.getStringAttribute(SOURCE_ATTRIBUTE, monitor);
+		return RodinCore.create(handleID);
 	}
 	
-	public static void setSource(InternalElement element, IInternalElement source) {
-// TODO implement labels as attributes
-		throw new NotImplementedException();
+	public static void setSource(InternalElement element, IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
+		element.setStringAttribute(SOURCE_ATTRIBUTE, source.getHandleIdentifier(), monitor);
 	}
 
 }

@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -40,7 +41,7 @@ public interface ILabeledElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setLabel(String label) throws RodinDBException;
+	void setLabel(String label, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns the label contained in this element.
@@ -49,6 +50,6 @@ public interface ILabeledElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getLabel() throws RodinDBException;
+	String getLabel(IProgressMonitor monitor) throws RodinDBException;
 	
 }
