@@ -30,10 +30,6 @@ public final class Messages {
 	
 	public static String database_EventSetInheritedFailure;
 	
-	// Symbol table errors
-	public static String symtab_SymbolConflict;
-	public static String symtab_TypeConflict;
-
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
