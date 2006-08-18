@@ -20,19 +20,20 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -41,11 +42,9 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.internal.ui.EventBFormText;
-import org.eventb.internal.ui.EventBMath;
+import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 
 /**
@@ -61,19 +60,21 @@ public class HypothesisRow {
 
 	private Composite buttonComposite;
 
-	private Composite hypothesisComposite;
+	private ScrolledForm hypothesisComposite;
 
 	private List<IEventBInputText> textBoxes;
 
 	private IEventBInputText hypothesisText;
 
+	EventBPredicateText predText;
+	
 	// The UserSupport associated with this instance of the editor.
 	private UserSupport userSupport;
 
 	// The hypothesis contains in this row.
 	private Hypothesis hyp;
 
-	// private IEventBFormText formText;
+	private Collection<IEventBInputText> labelTexts;
 
 	private IEventBFormText form;
 
@@ -117,6 +118,8 @@ public class HypothesisRow {
 		layout.makeColumnsEqualWidth = true;
 		layout.numColumns = 5;
 
+		labelTexts = new ArrayList<IEventBInputText>();
+
 		buttonComposite.setLayout(layout);
 		buttonComposite.setBackground(background);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
@@ -124,73 +127,106 @@ public class HypothesisRow {
 		createHyperlinks(toolkit, buttonComposite, background, enable);
 
 		if (hypothesisComposite == null) {
-			hypothesisComposite = toolkit.createComposite(parent);
+			hypothesisComposite = toolkit.createScrolledForm(parent);
 			gd = new GridData(GridData.FILL_BOTH);
 			hypothesisComposite.setLayoutData(gd);
-			hypothesisComposite.setLayout(new GridLayout());
-			hypothesisComposite.setBackground(background);
+			// hypothesisComposite.setLayout(new GridLayout());
+			hypothesisComposite.getBody().setBackground(background);
 		}
-
 		textBoxes = new ArrayList<IEventBInputText>();
-		if (Lib.isUnivQuant(hyp.getPredicate())) {
-			Predicate pred = hyp.getPredicate();
-			String goalString = pred.toString();
-			IParseResult parseResult = Lib.ff.parsePredicate(goalString);
-			assert parseResult.isSuccess();
-			QuantifiedPredicate qpred = (QuantifiedPredicate) parseResult
-					.getParsedPredicate();
 
+		Predicate pred = hyp.getPredicate();
+		String predString = pred.toString();
+		IParseResult parseResult = Lib.ff.parsePredicate(predString);
+		assert parseResult.isSuccess();
+		Predicate parsedPred = parseResult.getParsedPredicate();
+
+		if (parsedPred instanceof QuantifiedPredicate
+				&& parsedPred.getTag() == Formula.FORALL) {
+			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
+			Collection<Point> indexes = new ArrayList<Point>();
+
+			String string = "\u2200\n";
 			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 
-			GridLayout gl = new GridLayout();
-			gl.numColumns = idents.length * 2 + 2;
-			hypothesisComposite.setLayout(gl);
+			// GridLayout gl = new GridLayout();
+			// gl.numColumns = idents.length * 2 + 2;
+			// hypothesisComposite.setLayout(gl);
 
-			Label label = toolkit.createLabel(hypothesisComposite, "\u2200 ");
-			label.setBackground(background);
+			// IEventBInputText text = new EventBMath(toolkit.createText(
+			// hypothesisComposite, "\u2200", SWT.READ_ONLY));
+			// text.getTextWidget().setBackground(background);
+
+			// labelTexts.add(text);
 
 			int i = 0;
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
-				String image = goalString.substring(loc.getStart(), loc
+				String image = predString.substring(loc.getStart(), loc
 						.getEnd());
 				ProverUIUtils.debugProverUI("Ident: " + image);
-				if (i++ != 0) {
-					label = toolkit.createLabel(hypothesisComposite, ", "
-							+ image);
-					label.setBackground(background);
+				string += "  " + image + "  ";
+				// text = new EventBMath(toolkit.createText(
+				// hypothesisComposite, ", " + image, SWT.READ_ONLY));
+				// text.getTextWidget().setBackground(background);
+				// labelTexts.add(text);
+				// } else {
+				// text = new EventBMath(toolkit.createText(
+				// hypothesisComposite, image, SWT.READ_ONLY));
+				// text.getTextWidget().setBackground(background);
+				// labelTexts.add(text);
+				// }
+				int x = string.length();
+				string += "      ";
+				int y = string.length();
+				indexes.add(new Point(x, y));
+
+				if (++i == idents.length) {
+					string += "\n";
 				} else {
-					label = toolkit.createLabel(hypothesisComposite, image);
-					label.setBackground(background);
+					string += "  ,\n";
 				}
-				Text box = toolkit.createText(hypothesisComposite, "");
-				gd = new GridData();
-				gd.widthHint = 15;
-				box.setLayoutData(gd);
-				box.setBackground(background);
-				toolkit.paintBordersFor(hypothesisComposite);
-				textBoxes.add(new EventBMath(box));
+				// Text box = toolkit.createText(hypothesisComposite, "");
+
+				// gd = new GridData();
+				// gd.widthHint = 15;
+				// box.setLayoutData(gd);
+				// box.setBackground(background);
+				// textBoxes.add(new EventBMath(box));
 			}
 
-			form = new EventBFormText(toolkit.createFormText(
-					hypothesisComposite, false));
-			gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-			form.getFormText().setLayoutData(gd);
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
-			String image = goalString.substring(loc.getStart(), loc.getEnd());
+			String image = predString.substring(loc.getStart(), loc.getEnd());
 			ProverUIUtils.debugProverUI("Pred: " + image);
-			form.getFormText().setText(
-					"<form><p>" + UIUtils.XMLWrapUp(image) + "</p></form>",
-					true, false);
-			form.getFormText().setBackground(background);
+			string += "\u00b7\n";
+			string += "  " + image;
+			predText = new EventBPredicateText(toolkit,
+					hypothesisComposite, string, indexes);
+			predText.getMainTextWidget().setBackground(background);
+			predText.getMainTextWidget().addModifyListener(
+					new EventBStyledTextModifyListener());
 		} else {
-			hypothesisText = new EventBMath(toolkit.createText(
-					hypothesisComposite, hyp.toString(), SWT.READ_ONLY));
 
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			hypothesisText.getTextWidget().setLayoutData(gd);
-			hypothesisText.getTextWidget().setBackground(background);
+			Collection<Point> indexes = new ArrayList<Point>();
+			// indexes.add(new Point(2, 6));
+			// indexes.add(new Point(14, 20));
+			predText = new EventBPredicateText(toolkit,
+					hypothesisComposite, hyp.getPredicate().toString(), indexes);
+			// hypothesisText = new EventBMath(toolkit.createText(
+			// hypothesisComposite.getBody(), hyp.toString(),
+			// SWT.READ_ONLY));
+
+			// gd = new GridData(GridData.FILL_HORIZONTAL);
+			// hypothesisText.getTextWidget().setLayoutData(gd);
+			predText.getMainTextWidget().setBackground(background);
+
+			// Rectangle bounds = hypothesisComposite.getClientArea();
+			// hypothesisText.getTextWidget().setBounds(bounds.x + inset,
+			// bounds.y + inset, bounds.width - inset * 2,
+			// bounds.height - inset * 2);
+
 		}
+		toolkit.paintBordersFor(hypothesisComposite);
 
 		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
 		checkBox.setBackground(background);
@@ -229,14 +265,13 @@ public class HypothesisRow {
 				public void linkActivated(HyperlinkEvent e) {
 					Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
 					hypSet.add(hyp);
-					String[] inputs = new String[textBoxes.size()];
-					int i = 0;
-					for (IEventBInputText text : textBoxes) {
-						inputs[i++] = text.getTextWidget().getText();
+					String[] inputs = predText.getResults();
+//					int i = 0;
+					for (String input : inputs) {
+						ProverUIUtils.debugProverUI("Input: \"" + input+"\"");
 					}
-					userSupport.applyTacticToHypotheses(tactic
-							.getTactic(node, hyp, inputs), hypSet);
-
+					userSupport.applyTacticToHypotheses(tactic.getTactic(node,
+							hyp, inputs), hypSet);
 				}
 
 			});
@@ -274,6 +309,10 @@ public class HypothesisRow {
 				text.dispose();
 		if (hypothesisText != null)
 			hypothesisText.dispose();
+		if (labelTexts != null)
+			for (IEventBInputText text : labelTexts)
+				text.dispose();
+
 		checkBox.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();
