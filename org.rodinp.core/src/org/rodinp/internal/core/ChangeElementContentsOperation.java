@@ -71,6 +71,12 @@ public class ChangeElementContentsOperation extends RodinDBOperation{
 					element
 			);
 		}
+		if (element.isReadOnly()) {
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.READ_ONLY,
+					element
+			);
+		}
 		if (newContents == null) {
 			return new RodinDBStatus(IRodinDBStatusConstants.NULL_STRING);
 		}
