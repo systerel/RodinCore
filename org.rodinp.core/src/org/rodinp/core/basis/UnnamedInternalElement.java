@@ -22,7 +22,7 @@ import org.rodinp.core.IRodinElement;
  * @deprecated Don't inherit from this class anymore.
  */
 @Deprecated
-public class UnnamedInternalElement extends InternalElement implements
+public abstract class UnnamedInternalElement extends InternalElement implements
 		org.rodinp.core.IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
