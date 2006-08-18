@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -138,8 +139,38 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.deleteElement(domElement);
 	}
 
+	public synchronized String[] getAttributeNames(InternalElement element)
+			throws RodinDBException {
+		Element domElement = getDOMElementCheckExists(element);
+		String[] rawAttrNames = buffer.getAttributeNames(domElement);
+		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		ArrayList<String> result = new ArrayList<String>(rawAttrNames.length);
+		for (String attrName: rawAttrNames) {
+			if (manager.getAttributeTypeDescription(attrName) != null) {
+				result.add(attrName);
+			}
+		}
+		return result.toArray(new String[result.size()]);
+	}
+
+	public synchronized String getAttributeRawValue(InternalElement element,
+			String attrName) throws RodinDBException {
+		Element domElement = getDOMElementCheckExists(element);
+		String result = buffer.getAttributeRawValue(domElement, attrName);
+		if (result == null) {
+			throw new RodinDBException(
+					new RodinDBStatus(
+							IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST,
+							element,
+							attrName
+					)
+			);
+		}
+		return result;
+	}
+
 	@Override
-	public RodinElement[] getChildren() {
+	public synchronized RodinElement[] getChildren() {
 		if (! childrenUpToDate) {
 			computeChildren();
 		}
@@ -160,7 +191,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		Element domElement = getDOMElementCheckExists(element);
 		return buffer.getElementContents(domElement);
 	}
-
+	
 	/**
 	 * Returns the DOM element corresponding to the given Rodin element.
 	 * 
@@ -202,7 +233,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		return domElement;
 	}
-	
+
 	public synchronized InternalElementInfo getElementInfo(
 			InternalElement element) {
 		
@@ -217,6 +248,12 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		info = new InternalElementInfo();
 		computeChildren(element, domElement, info);
 		return info;
+	}
+
+	public synchronized boolean hasAttribute(InternalElement element,
+			String attrName) throws RodinDBException {
+		Element domElement = getDOMElementCheckExists(element);
+		return buffer.hasAttribute(domElement, attrName);
 	}
 
 	public synchronized boolean hasUnsavedChanges() {
@@ -240,7 +277,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		buffer.load(pm);
 		return true;
 	}
-
+	
 	// Removes an element and all its descendants from the cache map.
 	private void removeFromMap(InternalElement element) {
 		// Remove all descendants
@@ -299,11 +336,17 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		return changed;
 	}
-	
+
 	public synchronized void saveToFile(RodinFile rodinFile, boolean force,
 			IProgressMonitor pm) throws RodinDBException {
 		
 		buffer.save(force, pm);
+	}
+
+	public synchronized void setAttributeRawValue(InternalElement element,
+			String attrName, String newRawValue) throws RodinDBException {
+		Element domElement = getDOMElementCheckExists(element);
+		buffer.setAttributeRawValue(domElement, attrName, newRawValue);
 	}
 
 }
