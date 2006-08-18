@@ -21,15 +21,6 @@ import org.rodinp.core.tests.basis.NamedElement;
  */
 public class SnapshotTests extends ModifyingResourceTests {
 	
-	public static void assertDiffers(String message, Object expected, Object actual) {
-		if (expected == null && actual == null)
-			fail(message);
-		if (expected != null && expected.equals(actual))
-			fail(message);
-		if (actual != null && actual.equals(expected))
-			fail(message);
-	}
-
 	public SnapshotTests(String name) {
 		super(name);
 	}

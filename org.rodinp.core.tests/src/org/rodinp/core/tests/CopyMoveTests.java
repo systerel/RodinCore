@@ -98,7 +98,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 					&& destDelta.getKind() == IRodinElementDelta.CHANGED);
 			IRodinElementDelta[] deltas = destDelta.getAffectedChildren();
 			assertEquals("Wrong number of added children for element copy",
-					deltas.length, 1);
+					1, deltas.length);
 			if (force) {
 				assertEquals("Invalid delta for element copy",
 						IRodinElementDelta.CHANGED, deltas[0].getKind());
@@ -108,7 +108,8 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				assertEquals("Invalid delta for element copy",
 						IRodinElementDelta.ADDED, deltas[0].getKind());
 			}
-			assertTrue("Added children not correct for element copy", deltas[0].getElement().equals(copy));
+			assertEquals("Added children not correct for element copy", 
+					copy, deltas[0].getElement());
 		} finally {
 			stopDeltas();
 		}
@@ -409,17 +410,22 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				assertTrue("Parent not changed", destDelta != null && destDelta.getKind() == IRodinElementDelta.CHANGED);
 				IRodinElementDelta[] deltas = destDelta.getAddedChildren();
 				if (deltas.length != 0) {
-					assertEquals("Wrong number of added children for element renaming", deltas.length, 1);
-					assertTrue("Added children not correct for element renaming", deltas[0].getElement().equals(renamed));
+					assertEquals("Wrong number of added children for element renaming", 
+							1, deltas.length);
+					assertEquals("Added children not correct for element renaming",
+							renamed, deltas[0].getElement());
 				} else {
 					deltas = destDelta.getChangedChildren();
-					assertEquals("Wrong number of added children for element renaming", deltas.length, 1);
-					assertEquals("Invalid delta for element renaming", IRodinElementDelta.CHANGED, deltas[0].getKind());
+					assertEquals("Wrong number of added children for element renaming",
+							1, deltas.length);
+					assertEquals("Invalid delta for element renaming",
+							IRodinElementDelta.CHANGED, deltas[0].getKind());
 					assertTrue("delta for element renaming is not a replace",
 							(deltas[0].getFlags() & IRodinElementDelta.F_REPLACED) != 0);
 				}
 				IRodinElementDelta sourceDelta= getDeltaFor(element, false);
-				assertTrue("delta for renamed element should be REMOVED", sourceDelta.getKind() == IRodinElementDelta.REMOVED);
+				assertEquals("delta for renamed element should be REMOVED", 
+						IRodinElementDelta.REMOVED, sourceDelta.getKind());
 			}
 		} finally {
 			stopDeltas();
@@ -448,9 +454,12 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			if (changeExpected) {
 				assertTrue("Destination container not changed", destDelta != null && destDelta.getKind() == IRodinElementDelta.CHANGED);
 				IRodinElementDelta[] deltas = destDelta.getChangedChildren();
-				assertEquals("Wrong number of changed children for element reorder", deltas.length, 1);
-				assertTrue("Changed children not correct for element reorder", deltas[0].getElement().equals(src));
-				assertTrue("Delta flags not correct for element reorder", deltas[0].getFlags() == IRodinElementDelta.F_REORDERED);
+				assertEquals("Wrong number of changed children for element reorder", 
+						1, deltas.length);
+				assertEquals("Changed children not correct for element reorder",
+						src, deltas[0].getElement());
+				assertEquals("Delta flags not correct for element reorder", 
+						IRodinElementDelta.F_REORDERED, deltas[0].getFlags());
 			} else {
 				assertNull("Parent changed in no-op reordering", destDelta);
 			}

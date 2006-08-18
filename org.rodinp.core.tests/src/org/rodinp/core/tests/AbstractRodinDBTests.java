@@ -153,6 +153,16 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			return buffer.toString();
 		}
 	}
+
+	public static void assertDiffers(String message, Object expected, Object actual) {
+		if (expected == null && actual == null)
+			fail(message);
+		if (expected != null && expected.equals(actual))
+			fail(message);
+		if (actual != null && actual.equals(expected))
+			fail(message);
+	}
+	
 	protected DeltaListener deltaListener = new DeltaListener();
 	 
 	
@@ -302,8 +312,8 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		assertTrue("Element should exist", element.exists());
 		assertTrue("Element should be read-only", element.isReadOnly());
 		String oldContents = element.getContents();
-		assertFalse("Old and new contents should differ",
-				oldContents.equals(newContents));
+		assertDiffers("Old and new contents should differ",
+				oldContents, newContents);
 		try {
 			element.setContents(newContents);
 			fail("Changed contents of a read-only element.");
@@ -1011,7 +1021,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			}
 		} while (wasInterrupted);
 	}
-	
+
 //	public static void waitUntilIndexesReady() {
 //		// dummy query for waiting until the indexes are ready
 //		SearchEngine engine = new SearchEngine();
