@@ -32,10 +32,23 @@ import org.eventb.core.ast.Type;
  * @author Stefan Hallerstede
  * 
  */
-public interface ISCVariable extends ISCIdentifierElement {
+public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scVariable"; //$NON-NLS-1$
 
-	// No additional method
+	/**
+	 * A variable name that has been used in an abstraction but not in some refinement
+	 * cannot be used again. It is "forbidden".
+	 * 
+	 * @param value the "forbidden" status of the variable name
+	 */
+	void setForbidden(boolean value);
+	
+	/**
+	 * Returns whether the variable name is forbidden or not.
+	 * 
+	 * @return whether the variable name is forbidden or not
+	 */
+	boolean isForbidden();
 
 }

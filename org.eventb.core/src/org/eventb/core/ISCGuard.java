@@ -33,7 +33,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCGuard extends ILabeledElement, ISCPredicateElement {
+public interface ISCGuard extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scGuard"; //$NON-NLS-1$
 

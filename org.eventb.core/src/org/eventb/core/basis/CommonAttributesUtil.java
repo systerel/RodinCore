@@ -8,7 +8,8 @@
 
 package org.eventb.core.basis;
 
-import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.basis.InternalElement;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -16,13 +17,22 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @author Stefan Hallerstede
  *
  */
-class LabeledElementUtil {
+class CommonAttributesUtil {
 
-	public static String getLabel(RodinElement element) {
+	public static String getLabel(InternalElement element) {
 		return element.getElementName();
 	}
 	
-	public static void setLabel(RodinElement element, String label) {
+	public static void setLabel(InternalElement element, String label) {
+// TODO implement labels as attributes
+		throw new NotImplementedException();
+	}
+
+	public static IInternalElement getSource(InternalElement element) {
+		return element;
+	}
+	
+	public static void setSource(InternalElement element, IInternalElement source) {
 // TODO implement labels as attributes
 		throw new NotImplementedException();
 	}

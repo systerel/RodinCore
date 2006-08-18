@@ -1,0 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eventb.core.basis;
+
+import org.eventb.core.ITraceableElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
+
+/**
+ * @author Stefan Hallerstede
+ *
+ */
+public abstract class SCTraceableElement extends InternalElement implements
+		ITraceableElement {
+
+	public SCTraceableElement(String name, IRodinElement parent) {
+		super(name, parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ITraceableElement#setSource(org.rodinp.core.IRodinElement)
+	 */
+	public void setSource(IInternalElement source) throws RodinDBException {
+		CommonAttributesUtil.setSource(this, source);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.ITraceableElement#getSource()
+	 */
+	public IInternalElement getSource() throws RodinDBException {
+		return CommonAttributesUtil.getSource(this);
+	}
+
+}

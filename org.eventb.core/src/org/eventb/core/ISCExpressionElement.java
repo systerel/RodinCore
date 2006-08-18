@@ -29,7 +29,20 @@ import org.rodinp.core.RodinDBException;
 public interface ISCExpressionElement extends IInternalElement {
 
 	/**
-	 * Returns the expression contained in this element.
+	 * Returns the untyped expression contained in this element.
+	 * 
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * 
+	 * @return the expression of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	Expression getExpression(FormulaFactory factory)
+			throws RodinDBException;
+
+	/**
+	 * Returns the typed expression contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result

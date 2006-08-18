@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 import org.eventb.core.IAssignmentElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation of Event-B elements that contain an assignment as an
@@ -27,7 +26,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Laurent Voisin
  */
-public abstract class AssignmentElement extends InternalElement
+public abstract class AssignmentElement extends LabeledElement
 		implements IAssignmentElement {
 
 	/**

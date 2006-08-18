@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 
 import org.eventb.core.ISCInvariant;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC invariants as an extension of the Rodin database.
@@ -41,20 +40,6 @@ public class SCInvariant extends SCPredicateElement implements ISCInvariant {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
-	 */
-	public void setLabel(String label) throws RodinDBException {
-		LabeledElementUtil.setLabel(this, label);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#getLabel()
-	 */
-	public String getLabel() throws RodinDBException {
-		return LabeledElementUtil.getLabel(this);
 	}
 
 }

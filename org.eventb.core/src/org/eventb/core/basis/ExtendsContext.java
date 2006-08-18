@@ -61,7 +61,7 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	public ISCContextFile getAbstractSCContext() throws RodinDBException {
 		final String bareName = getAbstractContextName();
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
+		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
 	}
 

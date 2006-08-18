@@ -30,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCRefinesMachine extends IInternalElement {
+public interface ISCRefinesMachine extends ITraceableElement, IInternalElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scRefinesMachine"; //$NON-NLS-1$
 

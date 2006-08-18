@@ -9,7 +9,6 @@ package org.eventb.core.basis;
 
 import org.eventb.core.ISCAction;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC actions as an extension of the Rodin database.
@@ -40,14 +39,6 @@ public class SCAction extends SCAssignmentElement implements ISCAction {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
-	}
-
-	public void setLabel(String label) throws RodinDBException {
-		LabeledElementUtil.setLabel(this, label);
-	}
-
-	public String getLabel() throws RodinDBException {
-		return LabeledElementUtil.getLabel(this);
 	}
 
 }

@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation of Event-B elements that contain a predicate, as an
@@ -27,7 +26,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Laurent Voisin
  */
-public abstract class PredicateElement extends InternalElement
+public abstract class PredicateElement extends LabeledElement
 		implements IPredicateElement {
 	
 	public PredicateElement(String name, IRodinElement parent) {

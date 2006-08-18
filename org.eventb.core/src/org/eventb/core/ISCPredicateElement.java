@@ -29,7 +29,20 @@ import org.rodinp.core.RodinDBException;
 public interface ISCPredicateElement extends IInternalElement {
 
 	/**
-	 * Returns the predicate contained in this element.
+	 * Returns the untyped predicate contained in this element.
+	 * 
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * 
+	 * @return the predicate of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	Predicate getPredicate(FormulaFactory factory)
+			throws RodinDBException;
+
+	/**
+	 * Returns the typed predicate contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
@@ -52,6 +65,7 @@ public interface ISCPredicateElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	
 	void setPredicate(Predicate predicate) throws RodinDBException;
 
 }

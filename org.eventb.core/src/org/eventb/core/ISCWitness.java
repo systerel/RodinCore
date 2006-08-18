@@ -34,7 +34,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCWitness extends ILabeledElement, ISCExpressionElement {
+public interface ISCWitness extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scWitness"; //$NON-NLS-1$
 

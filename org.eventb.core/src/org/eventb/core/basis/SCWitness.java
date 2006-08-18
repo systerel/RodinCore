@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 
 import org.eventb.core.ISCWitness;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC witnesses as an extension of the Rodin database.
@@ -27,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class SCWitness extends SCExpressionElement implements ISCWitness {
+public class SCWitness extends SCPredicateElement implements ISCWitness {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -42,20 +41,6 @@ public class SCWitness extends SCExpressionElement implements ISCWitness {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
-	 */
-	public void setLabel(String label) throws RodinDBException {
-		LabeledElementUtil.setLabel(this, label);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#getLabel()
-	 */
-	public String getLabel() throws RodinDBException {
-		return LabeledElementUtil.getLabel(this);
 	}
 
 }

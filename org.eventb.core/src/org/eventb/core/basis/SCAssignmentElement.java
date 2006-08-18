@@ -17,7 +17,6 @@ import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation of Event-B SC elements that contain an assignment, as
@@ -34,7 +33,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCAssignmentElement extends InternalElement
+public abstract class SCAssignmentElement extends SCTraceableLabeledElement
 		implements ISCAssignmentElement {
 
 	/**
@@ -44,8 +43,7 @@ public abstract class SCAssignmentElement extends InternalElement
 		super(name, parent);
 	}
 
-	public Assignment getAssignment(FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+	public Assignment getAssignment(FormulaFactory factory) throws RodinDBException {
 		
 		String contents = getContents();
 		IParseResult parserResult = factory.parseAssignment(contents);
@@ -56,6 +54,14 @@ public abstract class SCAssignmentElement extends InternalElement
 			);
 		}
 		Assignment result = parserResult.getParsedAssignment();
+		return result;
+	}
+
+	public Assignment getAssignment(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		
+		Assignment result = getAssignment(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(

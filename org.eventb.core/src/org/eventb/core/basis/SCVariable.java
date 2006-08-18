@@ -37,4 +37,14 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 
+	public void setForbidden(boolean value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isForbidden() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -103,14 +103,14 @@ public class Event extends InternalElement implements IEvent {
 	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
 	 */
 	public void setLabel(String label) throws RodinDBException {
-		LabeledElementUtil.setLabel(this, label);
+		CommonAttributesUtil.setLabel(this, label);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ILabeledElement#getLabel()
 	 */
 	public String getLabel() throws RodinDBException {
-		return LabeledElementUtil.getLabel(this);
+		return CommonAttributesUtil.getLabel(this);
 	}
 
 	public boolean isInherited() throws RodinDBException {

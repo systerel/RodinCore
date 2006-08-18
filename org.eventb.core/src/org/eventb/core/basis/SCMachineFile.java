@@ -14,7 +14,6 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ISCInternalMachine;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
@@ -55,11 +54,19 @@ public class SCMachineFile extends RodinFile implements ISCMachineFile {
 	}
 
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		return SCMachineUtil.getSCVariables(this); 
+		ArrayList<IRodinElement> list = 
+			getFilteredChildrenList(ISCVariable.ELEMENT_TYPE);
+		SCVariable[] variables = new SCVariable[list.size()];
+		list.toArray(variables);
+		return variables;
 	}
 	
 	public ISCEvent[] getSCEvents() throws RodinDBException {
-		return SCMachineUtil.getSCEvents(this); 
+		ArrayList<IRodinElement> list = 
+			getFilteredChildrenList(ISCEvent.ELEMENT_TYPE);
+		SCEvent[] events = new SCEvent[list.size()];
+		list.toArray(events);
+		return events;
 	}
 	
 	public IMachineFile getMachineFile() {
@@ -84,19 +91,20 @@ public class SCMachineFile extends RodinFile implements ISCMachineFile {
 		return contexts; 
 	}
 
-	public ISCInternalMachine[] getSCInternalMachines() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCInternalMachine.ELEMENT_TYPE);
-		SCInternalMachine[] theorems = new SCInternalMachine[list.size()];
-		list.toArray(theorems);
-		return theorems; 
-	}
-
 	public ISCInvariant[] getSCInvariants() throws RodinDBException {
-		return SCMachineUtil.getSCInvariants(this);
+		ArrayList<IRodinElement> list =
+			getFilteredChildrenList(ISCInvariant.ELEMENT_TYPE);
+		SCInvariant[] invariants = new SCInvariant[list.size()];
+		list.toArray(invariants);
+		return invariants;
 	}
 
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return SCMachineUtil.getSCTheorems(this);
+		ArrayList<IRodinElement> list = 
+			getFilteredChildrenList(ISCTheorem.ELEMENT_TYPE);
+		SCTheorem[] theorems = new SCTheorem[list.size()];
+		list.toArray(theorems);
+		return theorems;
 	}
 
 	private ISCRefinesMachine getRefinesClause() throws RodinDBException {

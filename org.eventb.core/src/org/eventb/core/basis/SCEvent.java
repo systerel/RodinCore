@@ -18,7 +18,6 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B SC events as an extension of the Rodin database.
@@ -34,7 +33,7 @@ import org.rodinp.core.basis.InternalElement;
  *
  * @author Stefan Hallerstede
  */
-public class SCEvent extends InternalElement implements ISCEvent {
+public class SCEvent extends SCTraceableLabeledElement implements ISCEvent {
 	
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -114,18 +113,14 @@ public class SCEvent extends InternalElement implements ISCEvent {
 		return actions; 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#setLabel(java.lang.String)
-	 */
-	public void setLabel(String label) throws RodinDBException {
-		LabeledElementUtil.setLabel(this, label);
+	public void setForbidden(boolean value) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#getLabel()
-	 */
-	public String getLabel() throws RodinDBException {
-		return LabeledElementUtil.getLabel(this);
+	public boolean isForbidden() {
+		// TODO Auto-generated method stub
+		return false;
 	}
-
+	
 }

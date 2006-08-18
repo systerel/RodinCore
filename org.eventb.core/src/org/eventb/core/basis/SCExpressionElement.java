@@ -17,7 +17,6 @@ import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation of Event-B SC elements that contain an expression, as
@@ -34,7 +33,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCExpressionElement extends InternalElement
+public abstract class SCExpressionElement extends SCTraceableElement
 		implements ISCExpressionElement {
 
 	/**
@@ -44,8 +43,7 @@ public abstract class SCExpressionElement extends InternalElement
 		super(name, parent);
 	}
 
-	public Expression getExpression(FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
 		
 		String contents = getContents();
 		IParseResult parserResult = factory.parseExpression(contents);
@@ -56,6 +54,14 @@ public abstract class SCExpressionElement extends InternalElement
 			);
 		}
 		Expression result = parserResult.getParsedExpression();
+		return result;
+	}
+
+	public Expression getExpression(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		
+		Expression result = getExpression(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(

@@ -17,7 +17,6 @@ import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B SC identifiers as an extension of the Rodin database.
@@ -33,7 +32,7 @@ import org.rodinp.core.basis.InternalElement;
  *
  * @author Laurent Voisin
  */
-public abstract class SCIdentifierElement extends InternalElement
+public abstract class SCIdentifierElement extends SCTraceableElement
 		implements ISCIdentifierElement {
 
 	/* (non-Javadoc)

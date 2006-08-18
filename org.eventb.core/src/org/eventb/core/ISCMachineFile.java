@@ -31,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  * The internal contexts are a local copy of the contents of the contexts seen,
  * directly or indirectly, by this machine. The other child elements of this
  * machine are the SC versions of the elements of the unchecked version of this
- * machine. They are manipulated by means of {@link org.eventb.core.ISCMachine}.
+ * machine.
  * In addition, access methods for related file handles are provided.
  * </p>
  * <p>
@@ -42,7 +42,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCMachineFile extends IRodinFile, ISCMachine {
+public interface ISCMachineFile extends IRodinFile {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scMachineFile"; //$NON-NLS-1$
 
@@ -79,16 +79,31 @@ public interface ISCMachineFile extends IRodinFile, ISCMachine {
 	ISCInternalContext[] getSCInternalContexts() throws RodinDBException;
 
 	/**
-	 * Returns the internal SC machine that are (transitively) refined by this
-	 * SC machine.
+	 * Returns an array containing all SC variables of this SC machine.
 	 * 
-	 * @return the array of internal machines
+	 * @return an array of all SC variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	// TODO remove this method?
-	ISCInternalMachine[] getSCInternalMachines() throws RodinDBException;
+	ISCVariable[] getSCVariables() throws RodinDBException;
 
+	/**
+	 * Returns an array containing all SC invariants of this SC machine.
+	 * 
+	 * @return an array of all SC invariants
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCInvariant[] getSCInvariants() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC theorems of this SC machine.
+	 * 
+	 * @return an array of all SC theorems
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCTheorem[] getSCTheorems() throws RodinDBException;
 	/**
 	 * Returns the array containing all SC events of this SC machine.
 	 * 

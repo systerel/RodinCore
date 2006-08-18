@@ -27,7 +27,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IWitness extends ILabeledElement, IExpressionElement {
+public interface IWitness extends ILabeledElement, IPredicateElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".witness"; //$NON-NLS-1$
 	

@@ -29,7 +29,20 @@ import org.rodinp.core.RodinDBException;
 public interface ISCAssignmentElement extends IInternalElement {
 
 	/**
-	 * Returns the assignment contained in this element.
+	 * Returns the untyped assignment contained in this element.
+	 * 
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * 
+	 * @return the assignment of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	Assignment getAssignment(FormulaFactory factory)
+			throws RodinDBException;
+
+	/**
+	 * Returns the typed assignment contained in this element.
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result

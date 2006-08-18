@@ -34,7 +34,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  * 
  */
-public interface ISCVariant extends ISCExpressionElement {
+public interface ISCVariant extends ITraceableElement, ISCExpressionElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scVariant"; //$NON-NLS-1$
 

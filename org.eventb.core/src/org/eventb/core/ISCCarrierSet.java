@@ -31,7 +31,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCCarrierSet extends ISCIdentifierElement {
+public interface ISCCarrierSet extends ITraceableElement, ISCIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scCarrierSet"; //$NON-NLS-1$
 

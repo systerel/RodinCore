@@ -8,16 +8,15 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation of Event-B SC elements that contain a predicate, as
@@ -34,7 +33,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCPredicateElement extends InternalElement
+public abstract class SCPredicateElement extends SCTraceableLabeledElement
 		implements ISCPredicateElement {
 
 	/**
@@ -44,8 +43,7 @@ public abstract class SCPredicateElement extends InternalElement
 		super(name, parent);
 	}
 
-	public Predicate getPredicate(FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
 		
 		String contents = getContents();
 		IParseResult parserResult = factory.parsePredicate(contents);
@@ -56,6 +54,14 @@ public abstract class SCPredicateElement extends InternalElement
 			);
 		}
 		Predicate result = parserResult.getParsedPredicate();
+		return result;
+	}
+
+	public Predicate getPredicate(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		
+		Predicate result = getPredicate(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(

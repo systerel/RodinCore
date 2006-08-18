@@ -35,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  * @see org.rodinp.core.IRodinElement#getElementName()
  * @author Stefan Hallerstede
  */
-public interface ISCEvent extends ILabeledElement, IInternalElement {
+public interface ISCEvent extends ITraceableElement, ILabeledElement, IInternalElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scEvent"; //$NON-NLS-1$
 
@@ -96,5 +96,20 @@ public interface ISCEvent extends ILabeledElement, IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	ISCAction[] getSCActions() throws RodinDBException;
+	
+	/**
+	 * An event label that has been used in an abstraction but not in some refinement
+	 * cannot be used again. It is "forbidden".
+	 * 
+	 * @param value the "forbidden" status of the event label
+	 */
+	void setForbidden(boolean value);
+	
+	/**
+	 * Returns whether the event label is forbidden or not.
+	 * 
+	 * @return whether the event label is forbidden or not
+	 */
+	boolean isForbidden();
 
 }

@@ -15,7 +15,6 @@ import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B SC refines clauses for events, as an extension of
@@ -32,7 +31,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public class SCRefinesEvent extends InternalElement implements ISCRefinesEvent {
+public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefinesEvent {
 
 	/**
 	 *  Constructor used by the Rodin database. 

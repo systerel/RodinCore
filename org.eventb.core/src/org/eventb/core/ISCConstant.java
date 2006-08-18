@@ -31,7 +31,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCConstant extends ISCIdentifierElement {
+public interface ISCConstant extends ITraceableElement, ISCIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scConstant"; //$NON-NLS-1$
 

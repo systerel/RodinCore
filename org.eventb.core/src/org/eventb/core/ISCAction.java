@@ -34,7 +34,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  * 
  */
-public interface ISCAction extends ILabeledElement, ISCAssignmentElement {
+public interface ISCAction extends ITraceableElement, ILabeledElement, ISCAssignmentElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAction"; //$NON-NLS-1$
 
