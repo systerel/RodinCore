@@ -216,10 +216,6 @@
             id="scInternalContext"
             name="%eventBscInternalContext"/>
       <internalElementType
-            class="org.eventb.core.basis.SCInternalMachine"
-            id="scInternalMachine"
-            name="%eventBscInternalMachine"/>
-      <internalElementType
             class="org.eventb.core.basis.SCRefinesEvent"
             id="scRefinesEvent"
             name="%eventBscRefinesEvent"/>
