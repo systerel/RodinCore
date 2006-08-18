@@ -80,5 +80,24 @@
          </extractor>
       </tool>
    </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+          id="fBool"
+          name="Boolean attribute"
+          kind="boolean"/>
+      <attributeType
+          id="fHandle"
+          name="Element handle attribute"
+          kind="handle"/>
+      <attributeType
+          id="fInt"
+          name="Integer attribute"
+          kind="integer"/>
+      <attributeType
+          id="fString"
+          name="String attribute"
+          kind="string"/>
+   </extension>
 
 </plugin>
