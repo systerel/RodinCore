@@ -319,6 +319,25 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkChildren(rodinFile);
 	}
 
+	// Test modification of some internal element with contents
+	public void testChangeContentsSnapshot() throws Exception {
+		// File exists and is empty
+		assertTrue(rodinFile.exists());
+		checkEmptyChildren(rodinFile);
+		
+		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
+		rodinFile.save(null, false);
+		
+		IInternalElement snapshot = (IInternalElement) e1.getSnapshot();
+		assertContentsChanged(e1, "Hello");
+		assertContents("Snapshot contents should not have changed",
+				"", snapshot);
+		
+		rodinFile.save(null, false);
+		assertContents("Contents should not have changed", "Hello", e1);
+		assertContents("Contents should have changed", "Hello", snapshot);
+	}
+
 	@SuppressWarnings("unused")
 	private void showFile(IFile file) throws CoreException, UnsupportedEncodingException, IOException {
 		InputStream contents = file.getContents();
