@@ -323,8 +323,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 		assertContentsChanged(e11, "initial");
 		rf.save(null, false);
 
-		assertContentsChanged(e1.getSnapshot(), "other");
-		assertContentsChanged(e11.getSnapshot(), "other");
+		assertContentsNotChanged(e1.getSnapshot(), "other");
+		assertContentsNotChanged(e11.getSnapshot(), "other");
 	}
 
 }
