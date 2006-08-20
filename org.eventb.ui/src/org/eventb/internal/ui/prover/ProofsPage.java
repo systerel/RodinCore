@@ -205,9 +205,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 	}
 
 	public void proofStateChanged(final IProofStateDelta delta) {
-		Display display = this.getEditorSite().getWorkbenchWindow()
-				.getWorkbench().getDisplay();
-
+		Display display = Display.getDefault();
+		if (this.getManagedForm().getForm().isDisposed())
+			return;
 		ProverUIUtils.debugProverUI("Proof State Change "
 				+ ((ProverUI) getEditor()).getRodinInput().getElementName());
 		display.syncExec(new Runnable() {

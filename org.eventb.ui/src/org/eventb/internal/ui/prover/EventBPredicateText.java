@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 public class EventBPredicateText implements IPropertyChangeListener {
@@ -36,26 +37,28 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	private int currSize;
 
 	private Collection<Point> dirtyStates;
-	
-	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent,
-			String string, Collection<Point> indexes) {
+
+	public EventBPredicateText(FormToolkit toolkit, final ScrolledForm parent) {
 
 		this.parent = parent;
-		this.indexes = indexes;
-
+		
 		dirtyStates = new ArrayList<Point>();
 		text = new StyledText(parent.getBody(), SWT.MULTI | SWT.FULL_SELECTION);
-		text.setText(string);
 		Font font = JFaceResources
-		.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		text.setFont(font);
-//		text.addModifyListener(new EventBTextModifyListener());
-		text.pack();
-		setStyle();
 
-		
 		JFaceResources.getFontRegistry().addListener(this);
 
+	}
+	
+	// This must be called after initialisation
+	public void setText(String string, Collection<Point> indexes) {
+		this.indexes = indexes;
+		text.setText(string);
+		text.pack();
+		text.addModifyListener(new EventBStyledTextModifyListener());
+		
 		text.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event event) {
 				drawBoxes(event);
@@ -81,14 +84,13 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 
 		});
-
 	}
-
+	
 	protected void checkModifiable(VerifyEvent e) {
 		e.doit = false;
-		int offset = text.getCaretOffset();
+		Point pt = text.getSelection();
 		for (Point index : indexes) {
-			if (index.x <= offset && index.y >= offset) {
+			if (index.x <= pt.x && index.y >= pt.y) {
 				e.doit = true;
 				current = index;
 				currSize = text.getText().length();
@@ -108,14 +110,15 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		}
 
 		current.y = current.y + offset;
-		
+
 		setStyle();
 		text.pack();
 		parent.reflow(true);
 	}
 
 	private void drawBoxes(Event event) {
-		ProverUIUtils.debugProverUI("Draw boxes");
+		// ProverUIUtils.debugProverUI("Draw boxes");
+		if (indexes == null) return;
 		String contents = text.getText();
 		int lineHeight = text.getLineHeight();
 		final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
@@ -130,13 +133,15 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	private void setStyle() {
+		if (indexes == null) return;
 		final Color YELLOW = Display.getDefault().getSystemColor(
 				SWT.COLOR_YELLOW);
 		for (Point index : indexes) {
 			StyleRange style = new StyleRange();
 			style.start = index.x;
 			style.length = index.y - index.x;
-			if (dirtyStates.contains(index)) style.background = YELLOW;
+			if (dirtyStates.contains(index))
+				style.background = YELLOW;
 			style.fontStyle = SWT.ITALIC;
 			text.setStyleRange(style);
 		}
@@ -145,7 +150,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	public StyledText getMainTextWidget() {
 		return text;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -166,15 +171,16 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	public String[] getResults() {
-		String [] results = new String[indexes.size()];
+		if (indexes == null) return new String[0];
+		String[] results = new String[indexes.size()];
 		int i = 0;
 		for (Point index : indexes) {
 			String str = text.getText().substring(index.x, index.y);
 			results[i] = str;
 			i++;
 		}
-		
+
 		return results;
 	}
-	
+
 }

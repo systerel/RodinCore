@@ -190,7 +190,7 @@ public class GoalSection extends SectionPart {
 					assert parseResult.isSuccess();
 					QuantifiedPredicate qpred = (QuantifiedPredicate) parseResult
 							.getParsedPredicate();
-
+					
 					BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 
 					composite = toolkit.createComposite(comp);

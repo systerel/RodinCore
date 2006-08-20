@@ -176,4 +176,6 @@ public abstract class HypothesesSection extends SectionPart {
 	public ScrolledForm getScrolledForm() {
 		return scrolledForm;
 	}
+	
+	
 }
