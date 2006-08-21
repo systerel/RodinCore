@@ -8,9 +8,9 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.ProofRule.Anticident;
@@ -41,15 +41,7 @@ public class AllD implements IReasoner{
 	public ReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		// Organize Input
-		CombiInput input;
-//		if (reasonerInput instanceof SerializableReasonerInput){
-//			input = new CombiInput((SerializableReasonerInput)reasonerInput);
-//			input.getReasonerInputs()[0] = new MultipleExprInput((SerializableReasonerInput)input.getReasonerInputs()[0]);
-//			input.getReasonerInputs()[1] = new SinglePredInput((SerializableReasonerInput)input.getReasonerInputs()[1]);
-//		} 
-//		else 
-			
-			input = (CombiInput) reasonerInput;
+		CombiInput input = (CombiInput) reasonerInput;
 
 		if (input.hasError())
 		{
@@ -68,31 +60,25 @@ public class AllD implements IReasoner{
 			return new ReasonerOutputFail(this,input,
 					"Hypothesis is not universally quantified:"+univHyp);
 		
-		
-		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
-		Expression[] expressions = ((MultipleExprInput)input.getReasonerInputs()[0]).getExpressions();
 		
 		
-		// copy and check that old input is still compatable
+		MultipleExprInput multipleExprInput = (MultipleExprInput) input.getReasonerInputs()[0];
+
+		// compute instantiations from the input: 
 		// it can be that the number of bound variables have increased 
 	    // or decreased, or their types have changed.
-		// TODO : Move this check to the input class
-		Expression[] instantiations = new Expression[boundIdentDecls.length];
-		for (int i = 0; i < instantiations.length; i++) {
-			if (i < expressions.length && expressions[i] != null)
-			{
-				if (! expressions[i].getType().
-						equals(boundIdentDecls[i].getType()))
-					return new ReasonerOutputFail(this,input,
-							"Type check failed : "+expressions[i]+" expected type "+ boundIdentDecls[i].getType());
-				instantiations[i] = expressions[i];
-			}
-			else
-			{
-				instantiations[i]=null;
-			}	
+		// Not sure if reasoner should actually modify its input to reflect this.
+		Expression[] instantiations = multipleExprInput.computeInstantiations(boundIdentDecls);
+		
+		if (instantiations == null)
+		{
+			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
+			reasonerOutput.error = "Type error when trying to instantiate bound identifiers";
+			return reasonerOutput;
 		}
+		assert instantiations.length == boundIdentDecls.length;
+		
 		
 		// Generate the well definedness predicate for the instantiations
 		Predicate WDpred = Lib.WD(instantiations);
@@ -122,14 +108,14 @@ public class AllD implements IReasoner{
 		return reasonerOutput;
 	}
 	
-	private String displayInstantiations(Expression[] witnesses){
+	private String displayInstantiations(Expression[] instantiations){
 		StringBuilder str = new StringBuilder();
-		for (int i = 0; i < witnesses.length; i++) {
-			if (witnesses[i] == null)
+		for (int i = 0; i < instantiations.length; i++) {
+			if (instantiations[i] == null)
 				str.append("_");
 			else
-				str.append(witnesses[i].toString());
-			if (i != witnesses.length-1) str.append(",");
+				str.append(instantiations[i].toString());
+			if (i != instantiations.length-1) str.append(",");
 		}
 		return str.toString();
 	}

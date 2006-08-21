@@ -69,6 +69,54 @@ public class MultipleExprInput implements IReasonerInput{
 	public final Expression[] getExpressions() {
 		return expressions;
 	}
+	
+	
+	// returns instantiations corresponding to the bound ident decls, and null if mismatch
+	public final Expression[] computeInstantiations(BoundIdentDecl[] boundIdentDecls){
+		Expression[] instantiations = new Expression[boundIdentDecls.length];
+		for (int i = 0; i < instantiations.length; i++) {
+			if (i < expressions.length && expressions[i] != null)
+			{
+				if (! expressions[i].getType().
+						equals(boundIdentDecls[i].getType()))
+					return null;
+				instantiations[i] = expressions[i];
+			}
+			else
+			{
+				instantiations[i]=null;
+			}
+		}
+		return instantiations;
+	}
+	
+	// It is unsure if it is desired that reasoners modify their own input.
+	@Deprecated
+	public final void modifyToInstantiate(BoundIdentDecl[] boundIdentDecls){
+		Expression[] instantiations = new Expression[boundIdentDecls.length];
+		for (int i = 0; i < instantiations.length; i++) {
+			if (i < expressions.length && expressions[i] != null)
+			{
+				if (! expressions[i].getType().
+						equals(boundIdentDecls[i].getType()))
+				{
+					error = "Type check failed: " 
+						+ expressions[i]
+						+ " expected type "
+						+ boundIdentDecls[i].getType();
+					expressions = null;
+					return;
+				}
+				instantiations[i] = expressions[i];
+			}
+			else
+			{
+				instantiations[i]=null;
+			}
+		}
+		expressions = instantiations;
+		error = null;
+	}
 
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		assert ! hasError();

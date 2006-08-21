@@ -50,62 +50,29 @@ public class ExI implements IReasoner{
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(seq.goal());
 		
-//		
-//		if (input.witnessesExp == null)
-//		{
-//			// Parse and typecheck input
-//			input.witnessesExpr = new Expression[boundIdentDecls.length];
-//			Expression witness;
-//			for (int i = 0; i < boundIdentDecls.length; i++) {
-//				if ( i< input.witnesses.length &&
-//						input.witnesses[i] != null && 
-//						input.witnesses[i].trim().length() != 0)
-//				{
-//					witness = Lib.parseExpression(input.witnesses[i]);
-//					if (witness == null) 
-//						return new ReasonerOutputFail(this,input,
-//								"Parse error for expression "+input.witnesses[i]);
-//					if (! Lib.isWellTypedInstantiation(witness,boundIdentDecls[i].getType(),seq.typeEnvironment())) 
-//						return new ReasonerOutputFail(this,input,
-//								"Type check failed : "+input.witnesses[i]+" expected type "+ boundIdentDecls[i].getType());
-//					input.witnessesExpr[i] = witness;
-//				}
-//				else
-//					input.witnessesExpr[i] = null;
-//			}
-//		}
-//		else
-		
-			// copy and check that old input is still compatable
-			// it can be that the number of bound variables have increased 
-		    // or decreased, or their types have changed.
-			Expression[] witnesses = new Expression[boundIdentDecls.length];
-			for (int i = 0; i < witnesses.length; i++) {
-				if (i< input.getExpressions().length && input.getExpressions()[i] != null)
-				{
-					if (! input.getExpressions()[i].getType().
-							equals(boundIdentDecls[i].getType()))
-						return new ReasonerOutputFail(this,input,
-								"Type check failed : "+input.getExpressions()[i]+" expected type "+ boundIdentDecls[i].getType());
-					witnesses[i] = input.getExpressions()[i];
-				}
-				else
-				{
-					witnesses[i]=null;
-				}	
-			}
-			// input. = witnessesExprCopy;
+		// compute instantiations from the input: 
+		// it can be that the number of bound variables have increased 
+	    // or decreased, or their types have changed.
+		// Not sure if reasoner should actually modify its input to reflect this.
+		Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
+		if (instantiations == null)
+		{
+			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
+			reasonerOutput.error = "Type error when trying to instantiate bound identifiers";
+			return reasonerOutput;
+		}
+		assert instantiations.length == boundIdentDecls.length;	
 		
 		
 		// Generate the well definedness predicate for the witnesses
-		Predicate WDpred = Lib.WD(witnesses);
+		Predicate WDpred = Lib.WD(instantiations);
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(seq.goal(),witnesses);
+		Predicate instantiatedPred = Lib.instantiateBoundIdents(seq.goal(),instantiations);
 		assert instantiatedPred != null;
 		
 		// Generate the successful reasoner output
 		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.display = "∃ goal (inst "+displayWitnesses(witnesses)+")";
+		reasonerOutput.display = "∃ goal (inst "+displayInstantiations(instantiations)+")";
 		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents
@@ -122,49 +89,16 @@ public class ExI implements IReasoner{
 		return reasonerOutput;
 	}
 	
-	private String displayWitnesses(Expression[] witnesses){
+	private String displayInstantiations(Expression[] instantiations){
 		StringBuilder str = new StringBuilder();
-		for (int i = 0; i < witnesses.length; i++) {
-			if (witnesses[i] == null)
+		for (int i = 0; i < instantiations.length; i++) {
+			if (instantiations[i] == null)
 				str.append("_");
 			else
-				str.append(witnesses[i].toString());
-			if (i != witnesses.length-1) str.append(",");
+				str.append(instantiations[i].toString());
+			if (i != instantiations.length-1) str.append(",");
 		}
 		return str.toString();
 	}
-	
-//	public static class Input implements ReasonerInput{
-//		public final String[] witnesses;
-//		public Expression[] witnessesExpr;
-//		
-//		public Input(String[] witnesses){
-//			this.witnesses = witnesses;
-//			this.witnessesExpr = null;
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.witnesses = null;
-//			int length = Integer.parseInt(serializableReasonerInput.getString("length"));
-//			this.witnessesExpr = new Expression[length];
-//			for (int i = 0; i < length; i++) {
-//				// null value taken care of in getExpression.
-//				this.witnessesExpr[i] = serializableReasonerInput.getExpression(String.valueOf(i));
-//			}
-//		}
-//		
-//		public SerializableReasonerInput genSerializable() {
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			assert witnessesExpr != null;
-//			serializableReasonerInput.putString("length",String.valueOf(witnessesExpr.length));
-//			for (int i = 0; i < witnessesExpr.length; i++) {
-//				if (witnessesExpr[i]!=null)
-//				serializableReasonerInput.putExpression(String.valueOf(i),witnessesExpr[i]);
-//			}
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

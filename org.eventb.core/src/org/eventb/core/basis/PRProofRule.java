@@ -61,6 +61,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		assert prReasonerInput.length == 1;
 		
 		try {
+			// TODO : check for getReasoner() == null
 			return (getReasoner()).deserializeInput((PRReasonerInput)prReasonerInput[0]);
 		} catch (SerializeException e) {
 			throw (RodinDBException) e.getNextedException();

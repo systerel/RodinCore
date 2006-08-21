@@ -11,7 +11,6 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
