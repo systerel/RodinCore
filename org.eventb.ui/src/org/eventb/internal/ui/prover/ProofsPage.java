@@ -398,6 +398,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		}
 
 		flag = false;
+//		for (HypothesisRow row : selectedSection.getRows()) {
+//			row.createHypothesisText();
+//		}
 	}
 
 }

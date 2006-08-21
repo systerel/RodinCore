@@ -148,12 +148,13 @@ public class HypothesisRow {
 		assert parseResult.isSuccess();
 		parsedPred = parseResult.getParsedPredicate();
 
-		createHypothesisText();
 
+		createHypothesisText();
 		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
 		checkBox.setBackground(background);
 		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		checkBox.setEnabled(enable);
+
 	}
 	
 	private class HypothesisTextLayout extends Layout {
@@ -183,13 +184,18 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite);
+		hypothesisText.getMainTextWidget().setBackground(background);
+		hypothesisText.getMainTextWidget().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		int borderWidth = hypothesisText.getMainTextWidget().getBorderWidth();
 		hypothesisText.getMainTextWidget().setText(" ");
 		hypothesisComposite.pack(true);
 		int textWidth = hypothesisText.getMainTextWidget().getSize().x;
 
-//		int compositeWidth = hypothesisComposite.getClientArea().width;
+		Rectangle rec = hypothesisComposite.getBounds();
+		Point size = hypothesisComposite.getSize();
+		int compositeWidth = hypothesisComposite.getClientArea().width;
 //		if (textWidth != 0) {
 //			max_length = (compositeWidth - borderWidth) / textWidth;
 //		} else
@@ -231,9 +237,6 @@ public class HypothesisRow {
 			Collection<Point> indexes = new ArrayList<Point>();
 			hypothesisText.setText(str, indexes);
 		}
-		hypothesisText.getMainTextWidget().setBackground(background);
-		hypothesisText.getMainTextWidget().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
 
@@ -599,8 +602,6 @@ public class HypothesisRow {
 
 		return 0;
 	}
-
-	int level;
 
 	/**
 	 * Utility methods to create image hyperlinks for applicable tactics.
