@@ -12,18 +12,19 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of IGlobalTactic for backtracking
+ *         This class is an implementation of IGlobalExpertTactic for backtracking
  * 
  */
-public class Backtrack implements IGlobalTactic {
+public class Backtrack implements IGlobalExpertTactic {
 
 	/*
 	 * (non-Javadoc)
@@ -35,14 +36,7 @@ public class Backtrack implements IGlobalTactic {
 		return (node != null) && (node.isOpen()) && (node.getParent() != null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport,
-	 *      java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input)
-			throws RodinDBException {
+	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
 		userSupport.back();
 	}
 

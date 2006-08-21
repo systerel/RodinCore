@@ -27,6 +27,8 @@ public class GlobalTacticToolItem {
 	ToolItem item;
 
 	IGlobalTactic tactic;
+	
+	boolean interrupt;
 
 	/**
 	 * Constructor.
@@ -37,10 +39,11 @@ public class GlobalTacticToolItem {
 	 * @param tactic
 	 *            The actual Global Tactic
 	 */
-	public GlobalTacticToolItem(ToolItem item, IGlobalTactic tactic) {
+	public GlobalTacticToolItem(ToolItem item, IGlobalTactic tactic,
+			boolean interrupt) {
 		this.item = item;
 		this.tactic = tactic;
-
+		this.interrupt = interrupt;
 	}
 
 	/**
@@ -77,4 +80,8 @@ public class GlobalTacticToolItem {
 		return tactic;
 	}
 
+	public boolean isInterruptable() {
+		return interrupt;
+	}
+	
 }

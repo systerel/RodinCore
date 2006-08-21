@@ -10,33 +10,31 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.prover.globaltactics;
+package org.eventb.ui.prover;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.tactics.ITactic;
-import org.eventb.core.seqprover.tactics.Tactics;
-import org.eventb.ui.prover.IGlobalSimpleTactic;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementation for proving by case distinction.
+ *         This is the common interface for global proof tactics.
  */
-public class DoCase implements IGlobalSimpleTactic {
+public interface IGlobalSimpleTactic extends IGlobalTactic {
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Apply the tactic.
+	 * <p>
 	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#isEnable(org.eventb.core.prover.IProofTreeNode,
-	 *      java.lang.String)
+	 * @param userSupport
+	 *            the current user support
+	 * @param input
+	 *            the (optional) string input
+	 * @throws RodinDBException
+	 *             exceptions can be throws when applying tactics.
 	 */
-	public boolean isApplicable(IProofTreeNode node, String input) {
-		return (node != null) && node.isOpen() && !input.equals("");
-	}
-
 	public ITactic getTactic(IProofTreeNode node, String input,
-			IProgressMonitor monitor) {
-		return Tactics.doCase(input);
-	}
+			IProgressMonitor monitor);
+
 }

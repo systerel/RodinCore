@@ -12,20 +12,20 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
-import org.eventb.core.pm.UserSupport;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.reasoners.ExternalML;
-import org.eventb.internal.ui.proofcontrol.ProofControlPage;
-import org.eventb.ui.prover.IGlobalTactic;
-import org.rodinp.core.RodinDBException;
+import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.tactics.Tactics;
+import org.eventb.ui.prover.IGlobalSimpleTactic;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of IGlobalTactic for applying
+ *         This class is an implementation of IGlobalExpertTactic for applying
  *         mono-lemma external prover in force 1.
  */
-public class M1 implements IGlobalTactic {
+public class M1 implements IGlobalSimpleTactic {
 
 	/*
 	 * (non-Javadoc)
@@ -37,15 +37,8 @@ public class M1 implements IGlobalTactic {
 		return node != null && node.isOpen();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport,
-	 *      java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input)
-			throws RodinDBException {
-		ProofControlPage.runML(userSupport, ExternalML.Input.FORCE_1);
+	public ITactic getTactic(IProofTreeNode node, String input, IProgressMonitor monitor) {
+		return Tactics.externalML(ExternalML.Input.FORCE_1, monitor);
 	}
 
 }

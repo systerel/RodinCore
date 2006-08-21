@@ -12,19 +12,19 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
-import org.eventb.core.pm.UserSupport;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
-import org.eventb.ui.prover.IGlobalTactic;
-import org.rodinp.core.RodinDBException;
+import org.eventb.ui.prover.IGlobalSimpleTactic;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of IGlobalTactic for adding a
+ *         This class is an implementation of IGlobalExpertTactic for adding a
  *         hypothesis.
  */
-public class AddHypothesis implements IGlobalTactic {
+public class AddHypothesis implements IGlobalSimpleTactic {
 
 	/*
 	 * (non-Javadoc)
@@ -36,14 +36,7 @@ public class AddHypothesis implements IGlobalTactic {
 		return (node != null) && node.isOpen() && !input.equals("");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport,
-	 *      java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input)
-			throws RodinDBException {
-		userSupport.applyTactic(Tactics.lemma(input));
+	public ITactic getTactic(IProofTreeNode node, String input, IProgressMonitor monitor) {
+		return Tactics.lemma(input);
 	}
 }

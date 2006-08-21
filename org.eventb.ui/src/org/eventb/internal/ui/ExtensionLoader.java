@@ -28,7 +28,8 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.ui.prover.IGlobalExpertTactic;
+import org.eventb.ui.prover.IGlobalSimpleTactic;
 import org.osgi.framework.Bundle;
 
 /**
@@ -170,7 +171,7 @@ public class ExtensionLoader {
 			for (IConfigurationElement element : elements) {
 				String name = element.getName();
 
-				if (name.equals("tactic")) {
+				if (name.equals("experttactic")) {
 					// TODO Is this the same as Plugin ID?
 					String namespace = element.getNamespace();
 					Bundle bundle = Platform.getBundle(namespace);
@@ -180,8 +181,8 @@ public class ExtensionLoader {
 						ImageRegistry imageRegistry = EventBUIPlugin
 								.getDefault().getImageRegistry();
 
-						ImageDescriptor desc = EventBImage
-								.getImageDescriptor(namespace, icon);
+						ImageDescriptor desc = EventBImage.getImageDescriptor(
+								namespace, icon);
 						imageRegistry.put(icon, desc);
 
 						String tooltip = element.getAttribute("tooltip");
@@ -190,13 +191,54 @@ public class ExtensionLoader {
 								.getAttribute("class"));
 
 						Class classObject = getSubclass(clazz,
-								IGlobalTactic.class);
+								IGlobalExpertTactic.class);
 						Constructor constructor = classObject
 								.getConstructor(new Class[0]);
 						String dropdown = element.getAttribute("dropdown");
 						String toolbar = element.getAttribute("toolbar");
+						String interrupt = element.getAttribute("interruptable");
+						boolean interruptable = interrupt
+								.equalsIgnoreCase("true");
 						GlobalTacticUI tactic = new GlobalTacticUI(ID, icon,
-								tooltip, dropdown, toolbar, constructor);
+								tooltip, dropdown, toolbar, constructor,
+								interruptable);
+						tactics.add(tactic);
+
+					} catch (Exception e) {
+						// TODO Exception handle
+						e.printStackTrace();
+					}
+				} else if (name.equals("simpletactic")) {
+					// TODO Is this the same as Plugin ID?
+					String namespace = element.getNamespace();
+					Bundle bundle = Platform.getBundle(namespace);
+					try {
+						String ID = element.getAttribute("id");
+						String icon = element.getAttribute("icon");
+						ImageRegistry imageRegistry = EventBUIPlugin
+								.getDefault().getImageRegistry();
+
+						ImageDescriptor desc = EventBImage.getImageDescriptor(
+								namespace, icon);
+						imageRegistry.put(icon, desc);
+
+						String tooltip = element.getAttribute("tooltip");
+
+						Class clazz = bundle.loadClass(element
+								.getAttribute("class"));
+
+						Class classObject = getSubclass(clazz,
+								IGlobalSimpleTactic.class);
+						Constructor constructor = classObject
+								.getConstructor(new Class[0]);
+						String dropdown = element.getAttribute("dropdown");
+						String toolbar = element.getAttribute("toolbar");
+						String interrupt = element.getAttribute("interruptable");
+						boolean interruptable = interrupt
+								.equalsIgnoreCase("true");
+						GlobalTacticUI tactic = new GlobalTacticUI(ID, icon,
+								tooltip, dropdown, toolbar, constructor,
+								interruptable);
 						tactics.add(tactic);
 
 					} catch (Exception e) {
@@ -218,7 +260,6 @@ public class ExtensionLoader {
 					toolbarMap.put(id, toolbar);
 				}
 
-
 			}
 		}
 
@@ -237,15 +278,13 @@ public class ExtensionLoader {
 		for (GlobalTacticUI tactic : tactics) {
 			String dropdownID = tactic.getDropdown();
 			String toolbarID = tactic.getToolbar();
-			GlobalTacticDropdownUI dropdown = dropdownMap
-					.get(dropdownID);
+			GlobalTacticDropdownUI dropdown = dropdownMap.get(dropdownID);
 
 			if (dropdown == null) {
 				GlobalTacticToolbarUI toolbar = toolbarMap.get(toolbarID);
 				if (toolbar == null) {
 					defaultToolbar.addChildren(tactic);
-				}
-				else {
+				} else {
 					toolbar.addChildren(tactic);
 				}
 			} else {

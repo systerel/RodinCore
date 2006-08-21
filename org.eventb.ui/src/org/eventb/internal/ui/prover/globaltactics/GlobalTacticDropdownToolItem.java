@@ -39,6 +39,8 @@ public abstract class GlobalTacticDropdownToolItem {
 	private GlobalDropdownSelectionListener listener;
 
 	private GlobalTacticUI active = null;
+	
+	private boolean interrupt = false;
 
 	/**
 	 * @author htson
@@ -89,6 +91,7 @@ public abstract class GlobalTacticDropdownToolItem {
 							.getImageRegistry().get(active.getImage()));
 
 					dropdown.getParent().redraw();
+					interrupt = active.isInterruptAble();
 					apply((IGlobalTactic) active.getTactic());
 
 				}
@@ -166,6 +169,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 */
 	public void updateStatus(IProofTreeNode node, String input) {
 		item.setEnabled(active.getTactic().isApplicable(node, input));
+		interrupt = active.isInterruptAble();
 	}
 
 	/**
@@ -178,4 +182,8 @@ public abstract class GlobalTacticDropdownToolItem {
 		return ID;
 	}
 
+	public boolean isInterruptable() {
+		return interrupt;
+	}
+	
 }

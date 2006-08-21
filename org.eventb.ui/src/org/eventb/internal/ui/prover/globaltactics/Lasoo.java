@@ -12,18 +12,19 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
-import org.eventb.core.pm.UserSupport;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
-import org.eventb.ui.prover.IGlobalTactic;
-import org.rodinp.core.RodinDBException;
+import org.eventb.ui.prover.IGlobalSimpleTactic;
 
 /**
  * @author fmehta
  *         <p>
- *         This class is an implementation of IGlobalTactic for the lasoo tactic
+ *         This class is an implementation of IGlobalExpertTactic for the lasoo
+ *         tactic
  */
-public class Lasoo implements IGlobalTactic {
+public class Lasoo implements IGlobalSimpleTactic {
 
 	/*
 	 * (non-Javadoc)
@@ -35,19 +36,9 @@ public class Lasoo implements IGlobalTactic {
 		return (node != null) && node.isOpen();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport,
-	 *      java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input)
-			throws RodinDBException {
-		userSupport.applyTactic(
-				Tactics.lasoo(
-						userSupport.
-						getCurrentPO().
-						getCurrentNode().
-						getSequent()));
+	public ITactic getTactic(IProofTreeNode node, String input,
+			IProgressMonitor monitor) {
+		return Tactics.lasoo();
 	}
+	
 }

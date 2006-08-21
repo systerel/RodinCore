@@ -12,17 +12,19 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.ui.prover.IGlobalExpertTactic;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementatoin of IGlobalTactic for searching the
+ *         This class is an implementatoin of IGlobalExpertTactic for searching the
  *         set of hypotheses.
  */
-public class SearchHypotheses implements IGlobalTactic {
+public class SearchHypotheses implements IGlobalExpertTactic {
 
 	/*
 	 * (non-Javadoc)
@@ -34,13 +36,7 @@ public class SearchHypotheses implements IGlobalTactic {
 		return (node != null) && node.isOpen();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport,
-	 *      java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input) {
+	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
 		userSupport.searchHyps(input);
 	}
 

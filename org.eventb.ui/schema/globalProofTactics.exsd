@@ -14,9 +14,10 @@
       <complexType>
          <sequence>
             <choice minOccurs="0" maxOccurs="unbounded">
-               <element ref="tactic"/>
+               <element ref="simpletactic"/>
                <element ref="toolbar"/>
                <element ref="dropdown"/>
+               <element ref="experttactic"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -46,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="tactic">
+   <element name="simpletactic">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="id" icon="icon"/>
@@ -66,7 +67,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IGlobalTactic"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IGlobalSimpleTactic"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -101,6 +102,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="interruptable" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -126,6 +134,71 @@
             </annotation>
          </attribute>
          <attribute name="toolbar" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="experttactic">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id" icon="icon"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IGlobalExpertTactic"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="dropdown" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="toolbar" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="interruptable" type="boolean" use="required">
             <annotation>
                <documentation>
                   

@@ -12,26 +12,29 @@
 
 package org.eventb.ui.prover;
 
-import org.eventb.core.seqprover.IProofTreeNode;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pm.UserSupport;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
  *         <p>
  *         This is the common interface for global proof tactics.
  */
-public interface IGlobalTactic {
+public interface IGlobalExpertTactic extends IGlobalTactic {
 
 	/**
-	 * Check if the tactic is enable (applicable).
+	 * Apply the tactic.
 	 * <p>
 	 * 
-	 * @param node
-	 *            the current proof tree node
+	 * @param userSupport
+	 *            the current user support
 	 * @param input
-	 *            the optional string input
-	 * @return <code>true</code> if the tactic is applicable and
-	 *         <code>false</code> otherwise
+	 *            the (optional) string input
+	 * @throws RodinDBException
+	 *             exceptions can be throws when applying tactics.
 	 */
-	public boolean isApplicable(IProofTreeNode node, String input);
+	public void apply(UserSupport userSupport, String input,
+			IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -12,18 +12,19 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.IGlobalTactic;
+import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of IGlobalTactic for moving to the
+ *         This class is an implementation of IGlobalExpertTactic for moving to the
  *         previous undischarged obligation.
  */
-public class Previous implements IGlobalTactic {
+public class Previous implements IGlobalExpertTactic {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.ui.prover.IGlobalTactic#isEnable(org.eventb.core.prover.IProofTreeNode, java.lang.String)
@@ -32,11 +33,7 @@ public class Previous implements IGlobalTactic {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.prover.IGlobalTactic#apply(org.eventb.core.pm.UserSupport, java.lang.String)
-	 */
-	public void apply(UserSupport userSupport, String input)
-			throws RodinDBException {
+	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
 		userSupport.prevUndischargedPO(false);
 	}
 
