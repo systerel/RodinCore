@@ -60,6 +60,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBFormText;
@@ -75,6 +76,8 @@ import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
+import org.eventb.ui.prover.IGlobalExpertTactic;
+import org.eventb.ui.prover.IGlobalSimpleTactic;
 import org.eventb.ui.prover.IGlobalTactic;
 import org.rodinp.core.RodinDBException;
 
@@ -220,7 +223,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	// item.setToolTipText(toolTipText);
 	// return item;
 	// }
-
 	CoolItem createItem(CoolBar coolBar, GlobalTacticToolbarUI toolbar) {
 		ProofControl.debug("------ Toolbar: -------" + toolbar.getID());
 		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
@@ -237,18 +239,59 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
 					// item.setText(itemCount++ + "");
 
-					GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
+					final GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
 							item, dropdown.getID()) {
 						@Override
-						public void apply(IGlobalTactic tactic) {
+						public void apply(final IGlobalTactic tactic) {
 							try {
 								ProofControl.debug("File "
 										+ ProofControlPage.this.editor
 												.getRodinInput()
 												.getElementName());
 								Text textWidget = textInput.getTextWidget();
-								String text = textWidget.getText();
-								tactic.apply(editor.getUserSupport(), text);
+								final String text = textWidget.getText();
+								final UserSupport userSupport = editor
+										.getUserSupport();
+								if (tactic instanceof IGlobalExpertTactic) {
+
+									if (isInterruptable()) {
+										applyTacticWithProgress(new IRunnableWithProgress() {
+											public void run(
+													IProgressMonitor monitor)
+													throws InvocationTargetException {
+												try {
+													((IGlobalExpertTactic) tactic).apply(
+															userSupport, text, monitor);
+												} catch (RodinDBException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+											}
+										});
+
+									} else {
+										((IGlobalExpertTactic) tactic).apply(
+												userSupport, text, null);
+									}
+								} else if (tactic instanceof IGlobalSimpleTactic) {
+									final ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
+											.getTactic(userSupport
+													.getCurrentPO()
+													.getCurrentNode(), text,
+													null);
+									if (isInterruptable()) {
+										applyTacticWithProgress(new IRunnableWithProgress() {
+											public void run(
+													IProgressMonitor monitor)
+													throws InvocationTargetException {
+												userSupport
+														.applyTactic(proofTactic);
+											}
+										});
+									} else {
+										userSupport.applyTactic(proofTactic);
+									}
+								}
 								if (!text.equals("")) {
 									historyCombo.add(text, 0);
 									textWidget.setText("");
@@ -269,7 +312,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					ProofControl.debug("----------------------------");
 				}
 			} else if (child instanceof GlobalTacticUI) {
-				GlobalTacticUI tactic = (GlobalTacticUI) child;
+				final GlobalTacticUI tactic = (GlobalTacticUI) child;
 				ProofControl.debug("Tactic: " + tactic.getID());
 
 				ToolItem item = new ToolItem(toolBar, SWT.PUSH);
@@ -281,7 +324,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				IGlobalTactic globalTactic = tactic.getTactic();
 
 				final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
-						item, globalTactic);
+						item, globalTactic, tactic.isInterruptAble());
 				// items.add(globalTacticToolItem);
 
 				item.addSelectionListener(new SelectionAdapter() {
@@ -297,10 +340,52 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								+ ProofControlPage.this.editor.getRodinInput()
 										.getElementName());
 						Text textWidget = textInput.getTextWidget();
-						String text = textWidget.getText();
+						final String text = textWidget.getText();
 						try {
-							globalTacticToolItem.getTactic().apply(
-									editor.getUserSupport(), text);
+
+							IGlobalTactic tactic2 = globalTacticToolItem
+									.getTactic();
+							final UserSupport userSupport = editor
+									.getUserSupport();
+							if (tactic2 instanceof IGlobalExpertTactic) {
+								
+								if (globalTacticToolItem.isInterruptable()) {
+									applyTacticWithProgress(new IRunnableWithProgress() {
+										public void run(
+												IProgressMonitor monitor)
+												throws InvocationTargetException {
+											try {
+												((IGlobalExpertTactic) tactic).apply(
+														userSupport, text, monitor);
+											} catch (RodinDBException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+										}
+									});	
+								}
+								else {
+								((IGlobalExpertTactic) tactic2).apply(
+										userSupport, text, null);
+								}
+							}
+							else if (tactic2 instanceof IGlobalSimpleTactic) {
+								final ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
+										.getTactic(userSupport.getCurrentPO()
+												.getCurrentNode(), text, null);
+
+								if (globalTacticToolItem.isInterruptable()) {
+									applyTacticWithProgress(new IRunnableWithProgress() {
+										public void run(IProgressMonitor monitor)
+												throws InvocationTargetException {
+											userSupport
+													.applyTactic(proofTactic);
+										}
+									});
+								} else {
+									userSupport.applyTactic(proofTactic);
+								}
+							}
 						} catch (RodinDBException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -340,23 +425,23 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	}
 
-//	private ToolItem createToolItem(CoolItem coolItem, String text,
-//			Image image, int style, String toolTipText) {
-//		ToolBar toolBar = (ToolBar) coolItem.getControl();
-//		ToolItem item = new ToolItem(toolBar, style);
-//		if (image != null)
-//			item.setImage(image);
-//		if (text != null)
-//			item.setText(text);
-//
-//		item.setToolTipText(toolTipText);
-//		toolBar.pack();
-//		Point size = toolBar.getSize();
-//		Point preferred = coolItem.computeSize(size.x + dropdownCount
-//				* dropdownSize, size.y);
-//		coolItem.setPreferredSize(preferred);
-//		return item;
-//	}
+	// private ToolItem createToolItem(CoolItem coolItem, String text,
+	// Image image, int style, String toolTipText) {
+	// ToolBar toolBar = (ToolBar) coolItem.getControl();
+	// ToolItem item = new ToolItem(toolBar, style);
+	// if (image != null)
+	// item.setImage(image);
+	// if (text != null)
+	// item.setText(text);
+	//
+	// item.setToolTipText(toolTipText);
+	// toolBar.pack();
+	// Point size = toolBar.getSize();
+	// Point preferred = coolItem.computeSize(size.x + dropdownCount
+	// * dropdownSize, size.y);
+	// coolItem.setPreferredSize(preferred);
+	// return item;
+	// }
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -402,11 +487,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		gl.numColumns = 1;
 		body.setLayout(gl);
 
-//		coolBar.addListener(SWT.Resize, new Listener() {
-//			public void handleEvent(Event event) {
-//				scrolledForm.pack();
-//			}
-//		});
+		// coolBar.addListener(SWT.Resize, new Listener() {
+		// public void handleEvent(Event event) {
+		// scrolledForm.pack();
+		// }
+		// });
 
 		// Create toolbars
 		dropdownItems = new ArrayList<GlobalTacticDropdownToolItem>();
