@@ -33,6 +33,11 @@ import org.rodinp.core.tests.basis.NamedElement;
 
 public class AttributeTests extends ModifyingResourceTests {
 	
+	public static final String fBool = "org.rodinp.core.tests.fBool";
+	public static final String fHandle = "org.rodinp.core.tests.fHandle";
+	public static final String fInt = "org.rodinp.core.tests.fInt";
+	public static final String fString = "org.rodinp.core.tests.fString";
+	
 	public AttributeTests(String name) {
 		super(name);
 	}
@@ -49,10 +54,10 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static final Set<String> knownAttributeNames =
 		new HashSet<String>(Arrays.asList(new String[] {
-			"fBool",
-			"fInt",
-			"fHandle",
-			"fString",
+			fBool,
+			fInt,
+			fHandle,
+			fString,
 		}));
 	
 	private void assertErrorCode(RodinDBException exception, int failureCode) {
@@ -120,16 +125,16 @@ public class AttributeTests extends ModifyingResourceTests {
 //		
 //		assertTrue("Element should exist", element.exists());
 //		try {
-//			if ("fBool".equals(name)) {
+//			if (fBool.equals(name)) {
 //				element.getBooleanAttribute(name, null);
 //			}
-//			if ("fHandle".equals(name)) {
+//			if (fHandle.equals(name)) {
 //				element.getHandleAttribute(name, null);
 //			}
-//			if ("fInt".equals(name)) {
+//			if (fInt.equals(name)) {
 //				element.getIntegerAttribute(name, null);
 //			}
-//			if ("fString".equals(name)) {
+//			if (fString.equals(name)) {
 //				element.getStringAttribute(name, null);
 //			}
 //			fail("Should have raised an exception");
@@ -230,17 +235,17 @@ public class AttributeTests extends ModifyingResourceTests {
 		final NamedElement e1 = createNEPositive(rf, "foo", null); 
 		assertAttributeNames(e1);
 		
-		setBoolAttrPositive(e1, "fBool", true);
-		assertAttributeNames(e1, "fBool");
+		setBoolAttrPositive(e1, fBool, true);
+		assertAttributeNames(e1, fBool);
 
-		setHandleAttrPositive(e1, "fHandle", rf);
-		assertAttributeNames(e1, "fBool", "fHandle");
+		setHandleAttrPositive(e1, fHandle, rf);
+		assertAttributeNames(e1, fBool, fHandle);
 		
-		setIntAttrPositive(e1, "fInt", -55);
-		assertAttributeNames(e1, "fBool", "fHandle", "fInt");
+		setIntAttrPositive(e1, fInt, -55);
+		assertAttributeNames(e1, fBool, fHandle, fInt);
 
-		setStringAttrPositive(e1, "fString", "bar");
-		assertAttributeNames(e1, "fBool", "fHandle", "fInt", "fString");
+		setStringAttrPositive(e1, fString, "bar");
+		assertAttributeNames(e1, fBool, fHandle, fInt, fString);
 	}
 
 	/**
@@ -253,10 +258,10 @@ public class AttributeTests extends ModifyingResourceTests {
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 		assertFalse("Element should not exist", e1.exists());
 
-		setBoolAttrNegative(e1, "fBool", true, code);
-		setHandleAttrNegative(e1, "fHandle", rf, code);
-		setIntAttrNegative(e1, "fInt", -55, code);
-		setStringAttrNegative(e1, "fString", "bar", code);
+		setBoolAttrNegative(e1, fBool, true, code);
+		setHandleAttrNegative(e1, fHandle, rf, code);
+		setIntAttrNegative(e1, fInt, -55, code);
+		setStringAttrNegative(e1, fString, "bar", code);
 	}
 
 	/**
@@ -270,24 +275,24 @@ public class AttributeTests extends ModifyingResourceTests {
 		
 		assertAttributeNames(e1);
 
-		setBoolAttrNegative(e1, "fHandle", true, code);
-		setBoolAttrNegative(e1, "fInt",    true, code);
-		setBoolAttrNegative(e1, "fString", true, code);
+		setBoolAttrNegative(e1, fHandle, true, code);
+		setBoolAttrNegative(e1, fInt,    true, code);
+		setBoolAttrNegative(e1, fString, true, code);
 		assertAttributeNames(e1);
 
-		setHandleAttrNegative(e1, "fBool",   rf, code);
-		setHandleAttrNegative(e1, "fInt",    rf, code);
-		setHandleAttrNegative(e1, "fString", rf, code);
+		setHandleAttrNegative(e1, fBool,   rf, code);
+		setHandleAttrNegative(e1, fInt,    rf, code);
+		setHandleAttrNegative(e1, fString, rf, code);
 		assertAttributeNames(e1);
 
-		setIntAttrNegative(e1, "fBool",   256, code);
-		setIntAttrNegative(e1, "fHandle", 256, code);
-		setIntAttrNegative(e1, "fString", 256, code);
+		setIntAttrNegative(e1, fBool,   256, code);
+		setIntAttrNegative(e1, fHandle, 256, code);
+		setIntAttrNegative(e1, fString, 256, code);
 		assertAttributeNames(e1);
 		
-		setStringAttrNegative(e1, "fBool",   "bar", code);
-		setStringAttrNegative(e1, "fHandle", "bar", code);
-		setStringAttrNegative(e1, "fInt",    "bar", code);
+		setStringAttrNegative(e1, fBool,   "bar", code);
+		setStringAttrNegative(e1, fHandle, "bar", code);
+		setStringAttrNegative(e1, fInt,    "bar", code);
 		assertAttributeNames(e1);
 	}
 
@@ -299,31 +304,31 @@ public class AttributeTests extends ModifyingResourceTests {
 		rf.save(null, false);
 
 		final InternalElement snapshot = e1.getSnapshot();
-		setBoolAttrNegative(snapshot, "fBool", true, code);
-		setHandleAttrNegative(snapshot, "fHandle", rf, code);
-		setIntAttrNegative(snapshot, "fInt", -55, code);
-		setStringAttrNegative(snapshot, "fString", "bar", code);
+		setBoolAttrNegative(snapshot, fBool, true, code);
+		setHandleAttrNegative(snapshot, fHandle, rf, code);
+		setIntAttrNegative(snapshot, fInt, -55, code);
+		setStringAttrNegative(snapshot, fString, "bar", code);
 	}
 
 	public void testAttributePersistent() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		setBoolAttrPositive(e1, "fBool", true);
-		setHandleAttrPositive(e1, "fHandle", rf);
-		setIntAttrPositive(e1, "fInt", -55);
-		setStringAttrPositive(e1, "fString", "bar");
+		setBoolAttrPositive(e1, fBool, true);
+		setHandleAttrPositive(e1, fHandle, rf);
+		setIntAttrPositive(e1, fInt, -55);
+		setStringAttrPositive(e1, fString, "bar");
 		rf.save(null, false);
 
 		final InternalElement snapshot = e1.getSnapshot();
-		assertBooleanValue(snapshot, "fBool", true);
-		assertHandleValue(snapshot, "fHandle", rf);
-		assertIntegerValue(snapshot, "fInt", -55);
-		assertStringValue(snapshot, "fString", "bar");
+		assertBooleanValue(snapshot, fBool, true);
+		assertHandleValue(snapshot, fHandle, rf);
+		assertIntegerValue(snapshot, fInt, -55);
+		assertStringValue(snapshot, fString, "bar");
 
-		assertBooleanValue(e1, "fBool", true);
-		assertHandleValue(e1, "fHandle", rf);
-		assertIntegerValue(e1, "fInt", -55);
-		assertStringValue(e1, "fString", "bar");
+		assertBooleanValue(e1, fBool, true);
+		assertHandleValue(e1, fHandle, rf);
+		assertIntegerValue(e1, fInt, -55);
+		assertStringValue(e1, fString, "bar");
 	}
 
 }

@@ -104,7 +104,8 @@ public abstract class AttributeTypeDescription {
 	}
 
 	public static AttributeTypeDescription valueOf(IConfigurationElement ice) {
-		final String id = ice.getAttributeAsIs("id");
+		final String nameSpace = ice.getNamespace();
+		final String id = nameSpace + "." + ice.getAttributeAsIs("id");
 		final String name = ice.getAttribute("name");
 		final String kind = ice.getAttributeAsIs("kind");
 		if ("boolean".equals(kind)) {
