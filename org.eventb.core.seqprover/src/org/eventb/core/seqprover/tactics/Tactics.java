@@ -175,7 +175,30 @@ public class Tactics {
 //		return mngHyp(ActionType.SELECT,hypsToSelect);
 //	}
 	
+	@Deprecated
 	public static ITactic lasoo(IProverSequent seq){
+		
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode pt) {
+				IProverSequent seq = pt.getSequent();
+				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
+				freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
+				for (Hypothesis hyp : seq.selectedHypotheses()){
+					freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
+				}
+				
+				Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
+				hypsToSelect.removeAll(seq.selectedHypotheses());
+				if (hypsToSelect.isEmpty())
+					return "No more hypotheses found";
+				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt);
+			}
+			
+		};
+	}
+	
+	public static ITactic lasoo(){
 		
 		return new ITactic(){
 
