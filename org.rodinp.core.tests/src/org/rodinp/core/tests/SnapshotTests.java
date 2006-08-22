@@ -267,14 +267,15 @@ public class SnapshotTests extends ModifyingResourceTests {
 		rf.save(null, false);
 		
 		String frozenContents = 
-			"X.test\n" + 
 			"  foo[org.rodinp.core.tests.namedElement]\n" + 
 			"    baz[org.rodinp.core.tests.namedElement]\n" + 
 			"  bar[org.rodinp.core.tests.namedElement]";
 		assertElementDescendants("Unexpected file contents",
+				"X.test\n" + 
 				frozenContents,
 				rf);
 		assertElementDescendants("Unexpected snapshot contents",
+				"X.test!\n" + 
 				frozenContents,
 				rf.getSnapshot());
 		
@@ -285,6 +286,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 				"    baz[org.rodinp.core.tests.namedElement]",
 				rf);
 		assertElementDescendants("Unexpected snapshot contents",
+				"X.test!\n" + 
 				frozenContents,
 				rf.getSnapshot());
 
@@ -294,6 +296,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 				"  foo[org.rodinp.core.tests.namedElement]",
 				rf);
 		assertElementDescendants("Unexpected snapshot contents",
+				"X.test!\n" + 
 				frozenContents,
 				rf.getSnapshot());
 	}
