@@ -28,12 +28,20 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -45,6 +53,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -225,7 +234,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	// }
 	CoolItem createItem(CoolBar coolBar, GlobalTacticToolbarUI toolbar) {
 		ProofControl.debug("------ Toolbar: -------" + toolbar.getID());
-		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
+		final ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 
 		ArrayList<Object> children = toolbar.getChildren();
 		for (Object child : children) {
@@ -260,10 +269,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 													IProgressMonitor monitor)
 													throws InvocationTargetException {
 												try {
-													((IGlobalExpertTactic) tactic).apply(
-															userSupport, text, monitor);
+													((IGlobalExpertTactic) tactic)
+															.apply(userSupport,
+																	text,
+																	monitor);
 												} catch (RodinDBException e) {
-													// TODO Auto-generated catch block
+													// TODO Auto-generated catch
+													// block
 													e.printStackTrace();
 												}
 											}
@@ -348,28 +360,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							final UserSupport userSupport = editor
 									.getUserSupport();
 							if (tactic2 instanceof IGlobalExpertTactic) {
-								
+
 								if (globalTacticToolItem.isInterruptable()) {
 									applyTacticWithProgress(new IRunnableWithProgress() {
-										public void run(
-												IProgressMonitor monitor)
+										public void run(IProgressMonitor monitor)
 												throws InvocationTargetException {
 											try {
-												((IGlobalExpertTactic) tactic).apply(
-														userSupport, text, monitor);
+												((IGlobalExpertTactic) tactic)
+														.apply(userSupport,
+																text, monitor);
 											} catch (RodinDBException e) {
-												// TODO Auto-generated catch block
+												// TODO Auto-generated catch
+												// block
 												e.printStackTrace();
 											}
 										}
-									});	
+									});
+								} else {
+									((IGlobalExpertTactic) tactic2).apply(
+											userSupport, text, null);
 								}
-								else {
-								((IGlobalExpertTactic) tactic2).apply(
-										userSupport, text, null);
-								}
-							}
-							else if (tactic2 instanceof IGlobalSimpleTactic) {
+							} else if (tactic2 instanceof IGlobalSimpleTactic) {
 								final ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
 										.getTactic(userSupport.getCurrentPO()
 												.getCurrentNode(), text, null);
@@ -421,6 +432,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		item.setControl(toolBar);
 		Point preferred = item.computeSize(size.x, size.y);
 		item.setPreferredSize(preferred);
+		// Allow data to be copied or moved to the drop target
+		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT;
+		DropTarget target = new DropTarget(toolBar, operations);
+
+		final TextTransfer textTransfer = TextTransfer.getInstance();
+		final FileTransfer fileTransfer = FileTransfer.getInstance();
+		Transfer[] types = new Transfer[] { fileTransfer, textTransfer };
+		target.setTransfer(types);
+
+		target.addDropListener(new ToolBarDropTargetListener(toolBar,
+				textTransfer, fileTransfer));
+
 		return item;
 
 	}
@@ -442,6 +465,153 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	// coolItem.setPreferredSize(preferred);
 	// return item;
 	// }
+
+	private class ToolBarDropTargetListener implements DropTargetListener {
+
+		ToolBar toolBar;
+
+		TextTransfer textTransfer;
+
+		FileTransfer fileTransfer;
+
+		ToolItem currentItem;
+
+		public ToolBarDropTargetListener(ToolBar toolBar,
+				TextTransfer textTransfer, FileTransfer fileTransfer) {
+			this.toolBar = toolBar;
+			this.textTransfer = textTransfer;
+			this.fileTransfer = fileTransfer;
+		}
+
+		private ToolItem findCurrentItem(Point pt) {
+			ProofControl.debug("Drop target location " + pt.x + ", " + pt.y);
+
+			Point loc = toolBar.getLocation();
+
+			Composite parent = toolBar.getParent();
+			while (parent != null) {
+				Point point = parent.getLocation();
+				loc.x = loc.x + point.x;
+				loc.y = loc.y + point.y;
+				parent = parent.getParent();
+			}
+			ProofControl.debug("Location Toolbar " + loc);
+
+			ToolItem[] children = toolBar.getItems();
+			ToolItem found = null;
+			for (ToolItem child : children) {
+				Rectangle rec = child.getBounds();
+				// Rectangle area = toolBar.getLocation();
+				ProofControl.debug("Tool Item " + child);
+				ProofControl.debug("Rec: " + rec);
+				// ProofControl.debug("Area: " + area);
+				if (loc.x + rec.x <= pt.x && pt.x <= loc.x + rec.x + rec.width) {
+					found = child;
+					break;
+				}
+			}
+
+			return found;
+		}
+
+		public void dragEnter(DropTargetEvent event) {
+
+			Point pt = new Point(event.x, event.y);
+			ToolItem item = findCurrentItem(pt);
+
+			if (item != currentItem) {
+				currentItem = item;
+			}
+			if (item != null && !item.isEnabled())
+				item.setEnabled(true);
+
+			if (event.detail == DND.DROP_DEFAULT) {
+				if ((event.operations & DND.DROP_COPY) != 0) {
+					event.detail = DND.DROP_COPY;
+				} else {
+					event.detail = DND.DROP_NONE;
+				}
+			}
+			// will accept text but prefer to have files dropped
+			for (int i = 0; i < event.dataTypes.length; i++) {
+				if (fileTransfer.isSupportedType(event.dataTypes[i])) {
+					event.currentDataType = event.dataTypes[i];
+					// files should only be copied
+					if (event.detail != DND.DROP_COPY) {
+						event.detail = DND.DROP_NONE;
+					}
+					break;
+				}
+			}
+		}
+
+		public void dragOver(DropTargetEvent event) {
+			// Determine which button are there
+
+			Point pt = new Point(event.x, event.y);
+			ToolItem item = findCurrentItem(pt);
+
+			if (item != currentItem) {
+				currentItem = item;
+			}
+			if (item != null && !item.isEnabled())
+				item.setEnabled(true);
+
+			event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
+			if (textTransfer.isSupportedType(event.currentDataType)) {
+				// NOTE: on unsupported platforms this will return null
+				Object o = textTransfer.nativeToJava(event.currentDataType);
+				String t = (String) o;
+				if (t != null)
+					System.out.println(t);
+			}
+
+		}
+
+		public void dragOperationChanged(DropTargetEvent event) {
+			if (event.detail == DND.DROP_DEFAULT) {
+				if ((event.operations & DND.DROP_COPY) != 0) {
+					event.detail = DND.DROP_COPY;
+				} else {
+					event.detail = DND.DROP_NONE;
+				}
+			}
+			// allow text to be moved but files should only be copied
+			if (fileTransfer.isSupportedType(event.currentDataType)) {
+				if (event.detail != DND.DROP_COPY) {
+					event.detail = DND.DROP_NONE;
+				}
+			}
+		}
+
+		public void dragLeave(DropTargetEvent event) {
+			ProofState currentPO = editor.getUserSupport().getCurrentPO();
+			if (currentPO == null)
+				updateToolItems(null);
+			else
+				updateToolItems(currentPO.getCurrentNode());
+		}
+
+		public void dropAccept(DropTargetEvent event) {
+		}
+
+		public void drop(DropTargetEvent event) {
+			if (textTransfer.isSupportedType(event.currentDataType)) {
+				ProofControl.debug("Drop Text: " + event.data);
+				currentItem.notifyListeners(SWT.Selection, new Event());
+				// String text = (String) event.data;
+				// TableItem item = new TableItem(dropTable, SWT.NONE);
+				// item.setText(text);
+			}
+			if (fileTransfer.isSupportedType(event.currentDataType)) {
+				String[] files = (String[]) event.data;
+				for (int i = 0; i < files.length; i++) {
+					// TableItem item = new TableItem(dropTable, SWT.NONE);
+					// item.setText(files[i]);
+				}
+			}
+		}
+	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
