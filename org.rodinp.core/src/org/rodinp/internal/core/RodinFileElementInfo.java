@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -338,9 +339,9 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 
 	public synchronized void saveToFile(RodinFile rodinFile, boolean force,
-			IProgressMonitor pm) throws RodinDBException {
+			ISchedulingRule rule, IProgressMonitor pm) throws RodinDBException {
 		
-		buffer.save(force, pm);
+		buffer.save(force, rule, pm);
 	}
 
 	public synchronized void setAttributeRawValue(InternalElement element,

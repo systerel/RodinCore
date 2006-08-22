@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.RodinDBException;
@@ -383,7 +384,7 @@ public class Buffer {
 	/*
 	 * Save this buffer to the corresponding resource.
 	 */
-	public synchronized void save(final boolean force, IProgressMonitor pm)
+	public synchronized void save(final boolean force, ISchedulingRule rule, IProgressMonitor pm)
 			throws RodinDBException {
 		
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
@@ -406,15 +407,11 @@ public class Buffer {
 			final IWorkspaceRunnable action = new IWorkspaceRunnable() {
 				@SuppressWarnings("synthetic-access")
 				public void run(IProgressMonitor monitor) throws CoreException {
-					if (file.exists()) {
-						file.setContents(stream, force, true, monitor);
-					} else {
-						file.create(stream, force, monitor);
-					}
+					file.setContents(stream, force, true, monitor);
 					stamp = file.getModificationStamp();
 				}
 			};
-			file.getWorkspace().run(action, pm);
+			file.getWorkspace().run(action, rule, 0, pm);
 		} catch (TransformerException e) {
 			throw new RodinDBException(e, IRodinDBStatusConstants.XML_SAVE_ERROR);
 		} catch (RodinDBException e) {

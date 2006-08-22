@@ -53,6 +53,7 @@ public final class Messages {
 	public static String operation_pathOutsideProject;
 	public static String operation_renameElementProgress;
 	public static String operation_renameResourceProgress;
+	public static String operation_saveFileProgress;
 	
 	public static String savedState_jobName;
 
