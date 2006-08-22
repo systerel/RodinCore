@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
@@ -567,21 +568,13 @@ public class UserSupport implements IElementChangedListener,
 	protected void processDelta(IRodinElementDelta elementChangedDelta)
 			throws RodinDBException {
 		IRodinElement element = elementChangedDelta.getElement();
-		// UserSupportUtils.debug("Process Delta " + element);
 		if (element instanceof IRodinProject) {
-			// UserSupportUtils.debug("Project changed " + kind + " for " +
-			// ((IRodinProject) element).getElementName());
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
 				processDelta(d);
 			}
 		} else if (element instanceof IPRFile) {
-			// UserSupportUtils.debug("PRFile changed " + kind + " for " +
-			// ((IPRFile) element).getElementName());
 			if (prFile.equals(element)) {
-				// Notify
-
-				// setInput((IPRFile) element);
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d);
@@ -618,7 +611,7 @@ public class UserSupport implements IElementChangedListener,
 
 					if (state.isUninitialised())
 						return;
-					
+
 					else if (state.isSequentDischarged()) {
 						UserSupportUtils.debug("Proof Discharged in file");
 						state.getProofTree().removeChangeListener(this);
@@ -648,8 +641,7 @@ public class UserSupport implements IElementChangedListener,
 									.addInformation("Current proof has been reused");
 							fireProofStateDelta(newDelta);
 						}
-						
-					
+
 					} else {
 						UserSupportUtils.debug("Cannot be reused");
 						state.getProofTree().removeChangeListener(this);
@@ -670,6 +662,64 @@ public class UserSupport implements IElementChangedListener,
 				}
 
 			}
+		} else if (element instanceof IPRProofTree) {
+			IPRProofTree proofTree = (IPRProofTree) element;
+			IPRSequent prSequent = proofTree.getSequent();
+
+			ProofState state = getProofState(prSequent);
+
+			if (state.isUninitialised())
+				return;
+
+			if (!proofTree.isAutomaticallyGenerated())
+				return;
+
+			if (state.isSequentDischarged()) {
+				UserSupportUtils.debug("Proof Discharged in file");
+
+				state.getProofTree().removeChangeListener(this);
+				state.loadProofTree();
+				state.getProofTree().addChangeListener(this);
+
+				if (state == currentPS) {
+					UserSupportUtils.debug("Is the current node");
+					ProofStateDelta newDelta = new ProofStateDelta(
+							UserSupport.this);
+					newDelta.setNewProofState(currentPS);
+					newDelta.addInformation("Current proof has been reused");
+					fireProofStateDelta(newDelta);
+				}
+			}
+
+//			else if (state.isProofReusable()) {
+//				state.getProofTree().removeChangeListener(this);
+//				state.proofReuse();
+//				state.getProofTree().addChangeListener(this);
+//				if (state == currentPS) {
+//					UserSupportUtils.debug("Is the current node");
+//					ProofStateDelta newDelta = new ProofStateDelta(
+//							UserSupport.this);
+//					newDelta.setNewProofState(currentPS);
+//					newDelta.addInformation("Current proof has been reused");
+//					fireProofStateDelta(newDelta);
+//				}
+//
+//			} else {
+//				UserSupportUtils.debug("Cannot be reused");
+//				state.getProofTree().removeChangeListener(this);
+//				state.reloadProofTree();
+//				state.getProofTree().addChangeListener(this);
+//				if (state == currentPS) {
+//					UserSupportUtils.debug("Is the current node");
+//					ProofStateDelta newDelta = new ProofStateDelta(
+//							UserSupport.this);
+//					newDelta.setNewProofState(currentPS);
+//
+//					newDelta.addInformation("Current proof cannot be reused");
+//					fireProofStateDelta(newDelta);
+//				}
+//			}
+
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
