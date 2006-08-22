@@ -35,6 +35,7 @@ import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
+import org.rodinp.internal.core.SaveRodinFileOperation;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 
@@ -87,6 +88,15 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) info;
 		//return false;
 		return fileInfo.parseFile(pm, this);
+	}
+
+	@Override
+	public void close() throws RodinDBException {
+		super.close();
+		// Also close the associated snapshot if this is a mutable file.
+		if (! snapshot) {
+			getSnapshot().close();
+		}
 	}
 
 	public final void copy(IRodinElement container, IRodinElement sibling,
@@ -241,16 +251,22 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public final void save(IProgressMonitor progress, boolean force) throws RodinDBException {
-		super.save(progress, force);
+	public final void save(IProgressMonitor monitor, boolean force) throws RodinDBException {
+		super.save(monitor, force);
 		
 		// Then save the file contents.
 		if (! hasUnsavedChanges())
 			return;
 
-		// TODO should be implemented as a RodinDBOperation
-		RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
-		info.saveToFile(this, force, progress);
+		new SaveRodinFileOperation(this, force).runOperation(monitor);
+	}
+
+	@Override
+	protected void toStringName(StringBuilder buffer) {
+		super.toStringName(buffer);
+		if (snapshot) {
+			buffer.append('!');
+		}
 	}
 
 }
