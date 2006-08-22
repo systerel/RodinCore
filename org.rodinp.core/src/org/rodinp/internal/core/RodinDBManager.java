@@ -542,13 +542,6 @@ public class RodinDBManager implements ISaveParticipant {
 					// ignore
 				}
 			}
-			if (child instanceof RodinFile) {
-				try {
-					((RodinFile) child).getSnapshot().close();
-				} catch (RodinDBException e) {
-					// ignore
-				}
-			}
 		}
 	}
 	
