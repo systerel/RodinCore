@@ -17,7 +17,7 @@ public class SinglePredInput implements IReasonerInput{
 	public SinglePredInput(String predString, ITypeEnvironment typeEnv){
 		
 		predicate = Lib.parsePredicate(predString);
-		if (predString == null)
+		if (predicate == null)
 		{
 			error = "Parse error for predicate: "+ predString;
 			return;
