@@ -614,7 +614,7 @@ public class ObligationExplorer extends ViewPart implements
 					return cat1 - cat2;
 				}
 			}
-			
+
 		});
 		viewer.addFilter(new ObligationTextFilter());
 		viewer.addFilter(new DischargedFilter());
@@ -815,6 +815,9 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void proofStateChanged(final IProofStateDelta delta) {
+		if (viewer.getControl().isDisposed())
+			return;
+
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
