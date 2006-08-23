@@ -39,6 +39,7 @@ public class SingleStringInput implements IReasonerInput{
 	
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		assert ! hasError();
+		assert string != null;
 		reasonerInputSerializer.putString("singleString",string);
 	}
 
