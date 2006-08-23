@@ -120,6 +120,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private Composite pgComp;
 
+	private String currentInput;
+
 	/**
 	 * Constructor
 	 * <p>
@@ -258,7 +260,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 												.getRodinInput()
 												.getElementName());
 								Text textWidget = textInput.getTextWidget();
-								final String text = textWidget.getText();
 								final UserSupport userSupport = editor
 										.getUserSupport();
 								if (tactic instanceof IGlobalExpertTactic) {
@@ -270,8 +271,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 													throws InvocationTargetException {
 												try {
 													((IGlobalExpertTactic) tactic)
-															.apply(userSupport,
-																	text,
+															.apply(
+																	userSupport,
+																	currentInput,
 																	monitor);
 												} catch (RodinDBException e) {
 													// TODO Auto-generated catch
@@ -282,15 +284,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 										});
 
 									} else {
-										((IGlobalExpertTactic) tactic).apply(
-												userSupport, text, null);
+										((IGlobalExpertTactic) tactic)
+												.apply(userSupport,
+														currentInput, null);
 									}
 								} else if (tactic instanceof IGlobalSimpleTactic) {
 									final ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
 											.getTactic(userSupport
 													.getCurrentPO()
-													.getCurrentNode(), text,
-													null);
+													.getCurrentNode(),
+													currentInput, null);
 									if (isInterruptable()) {
 										applyTacticWithProgress(new IRunnableWithProgress() {
 											public void run(
@@ -304,8 +307,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 										userSupport.applyTactic(proofTactic);
 									}
 								}
-								if (!text.equals("")) {
-									historyCombo.add(text, 0);
+								if (!currentInput.equals("")) {
+									historyCombo.add(currentInput, 0);
+								}
+								if (textWidget.getText() != "") {
 									textWidget.setText("");
 								}
 							} catch (RodinDBException e) {
@@ -352,7 +357,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								+ ProofControlPage.this.editor.getRodinInput()
 										.getElementName());
 						Text textWidget = textInput.getTextWidget();
-						final String text = textWidget.getText();
 						try {
 
 							IGlobalTactic tactic2 = globalTacticToolItem
@@ -368,7 +372,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											try {
 												((IGlobalExpertTactic) tactic)
 														.apply(userSupport,
-																text, monitor);
+																currentInput,
+																monitor);
 											} catch (RodinDBException e) {
 												// TODO Auto-generated catch
 												// block
@@ -378,12 +383,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 									});
 								} else {
 									((IGlobalExpertTactic) tactic2).apply(
-											userSupport, text, null);
+											userSupport, currentInput, null);
 								}
 							} else if (tactic2 instanceof IGlobalSimpleTactic) {
 								final ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
 										.getTactic(userSupport.getCurrentPO()
-												.getCurrentNode(), text, null);
+												.getCurrentNode(),
+												currentInput, null);
 
 								if (globalTacticToolItem.isInterruptable()) {
 									applyTacticWithProgress(new IRunnableWithProgress() {
@@ -401,8 +407,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						if (!text.equals("")) {
-							historyCombo.add(text, 0);
+						if (!currentInput.equals("")) {
+							historyCombo.add(currentInput, 0);
+						}
+						if (textWidget.getText() != "") {
 							textWidget.setText("");
 						}
 					}
@@ -598,6 +606,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		public void drop(DropTargetEvent event) {
 			if (textTransfer.isSupportedType(event.currentDataType)) {
 				ProofControl.debug("Drop Text: " + event.data);
+				currentInput = (String) event.data;
 				currentItem.notifyListeners(SWT.Selection, new Event());
 				// String text = (String) event.data;
 				// TableItem item = new TableItem(dropTable, SWT.NONE);
@@ -693,7 +702,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		textInput.getTextWidget().setLayoutData(gd);
 		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-
+				currentInput = textInput.getTextWidget().getText();
 				ProofState currentPO = editor.getUserSupport().getCurrentPO();
 				if (currentPO == null)
 					updateToolItems(null);
