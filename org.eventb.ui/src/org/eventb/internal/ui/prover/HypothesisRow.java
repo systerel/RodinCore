@@ -33,22 +33,17 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.sequent.Hypothesis;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 
 /**
@@ -245,6 +240,19 @@ public class HypothesisRow {
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
 
+	private void createNullHyperlinks() {
+		ProverUIUtils.debugProverUI("Create Null Image");
+		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+				SWT.CENTER);
+		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		toolkit.adapt(hyperlink, true, true);
+		hyperlink.setImage(EventBImage.getImage(EventBImage.IMG_NULL));
+		hyperlink.setBackground(background);
+		hyperlink.setEnabled(false);
+		return;
+	}
+
 	/**
 	 * Utility methods to create image hyperlinks for applicable tactics.
 	 * <p>
@@ -258,12 +266,17 @@ public class HypothesisRow {
 		Collection<HypothesisTacticUI> tactics = ProverUIUtils
 				.getApplicableToHypothesis(node, hyp);
 
+		if (tactics.size() == 0) {
+			createNullHyperlinks();
+			return;
+		}
+		
 		for (final HypothesisTacticUI tactic : tactics) {
-			ImageHyperlink ds = new ImageHyperlink(buttonComposite, SWT.CENTER);
-			ds.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			toolkit.adapt(ds, true, true);
-			ds.setImage(tactic.getImage());
-			ds.addHyperlinkListener(new IHyperlinkListener() {
+			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite, SWT.CENTER);
+			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			toolkit.adapt(hyperlink, true, true);
+			hyperlink.setImage(tactic.getImage());
+			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 
 				public void linkEntered(HyperlinkEvent e) {
 					return;
@@ -285,9 +298,9 @@ public class HypothesisRow {
 				}
 
 			});
-			ds.setBackground(background);
-			ds.setToolTipText(tactic.getHint());
-			ds.setEnabled(enable);
+			hyperlink.setBackground(background);
+			hyperlink.setToolTipText(tactic.getHint());
+			hyperlink.setEnabled(enable);
 		}
 
 		return;

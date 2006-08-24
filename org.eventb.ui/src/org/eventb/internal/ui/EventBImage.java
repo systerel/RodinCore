@@ -87,6 +87,8 @@ public class EventBImage {
 	public static final String IMG_DEFAULT = "Default";
 
 	public static final String IMG_REFINES = "Refines";
+	
+	public static final String IMG_NULL = "NULL";
 
 	// Just for fun :-)
 	public static final String IMG_PENGUIN = "Penguine";
@@ -207,6 +209,7 @@ public class EventBImage {
 		registerImage(registry, IMG_REFINES, "icons/full/ctool16/refines.gif");
 
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
+		registerImage(registry, IMG_NULL, "icons/full/ctool16/null.gif");
 	}
 
 	/**

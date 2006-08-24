@@ -41,6 +41,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.goaltactics.GoalTacticUI;
 
 /**
@@ -136,7 +137,7 @@ public class GoalSection extends SectionPart {
 			goalComposite.dispose();
 
 		Composite comp = scrolledForm.getBody();
-		
+
 		buttonComposite = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
@@ -152,7 +153,11 @@ public class GoalSection extends SectionPart {
 		goalComposite.getBody().setLayout(new GridLayout());
 
 		Predicate goal = node.getSequent().goal();
-		createHyperlinks(toolkit, buttonComposite, node, true);
+		if (node.isOpen())
+			createHyperlinks(node, true);
+		else
+			createHyperlinks(node, false);
+		
 		actualString = goal.toString();
 		IParseResult parseResult = Lib.ff.parsePredicate(actualString);
 		assert parseResult.isSuccess();
@@ -160,79 +165,6 @@ public class GoalSection extends SectionPart {
 
 		createGoalText(node);
 
-		// if (node != null) {
-		//
-		// if (!node.isOpen()) {
-		// Predicate goal = node.getSequent().goal();
-		// createHyperlinks(toolkit, buttonComposite, node, false);
-		// // Color color = Display.getCurrent().getSystemColor(
-		// // SWT.COLOR_GRAY);
-		// // createSimpleText(goal.toString(), color);
-		// } else {
-		//
-		// createGoalText();
-		// }
-		// } else {
-		// Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
-		// createSimpleText("No current goal", color);
-		// }
-
-		// textBoxes = new ArrayList<IEventBInputText>();
-
-		// } else {
-		//
-		// if (Lib.isExQuant(goal)) {
-		// String goalString = goal.toString();
-		// IParseResult parseResult = Lib.ff
-		// .parsePredicate(goalString);
-		// assert parseResult.isSuccess();
-		// QuantifiedPredicate qpred = (QuantifiedPredicate) parseResult
-		// .getParsedPredicate();
-		//					
-		// BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
-		//
-		// composite = toolkit.createComposite(comp);
-		//
-		// GridLayout gl = new GridLayout();
-		// gl.numColumns = idents.length * 2 + 2;
-		// composite.setLayout(gl);
-		//
-		// toolkit.createLabel(composite, "\u2203 ");
-		//
-		// int i = 0;
-		// for (BoundIdentDecl ident : idents) {
-		// SourceLocation loc = ident.getSourceLocation();
-		// String image = goalString.substring(loc.getStart(), loc
-		// .getEnd());
-		// if (i++ != 0)
-		// toolkit.createLabel(composite, ", " + image);
-		// else
-		// toolkit.createLabel(composite, image);
-		// EventBMath mathBox = new EventBMath(toolkit.createText(
-		// composite, ""));
-		// GridData gd = new GridData();
-		// gd.widthHint = 25;
-		// mathBox.getTextWidget().setLayoutData(gd);
-		// toolkit.paintBordersFor(composite);
-		// textBoxes.add(mathBox);
-		// }
-		//
-		// SourceLocation loc = qpred.getPredicate()
-		// .getSourceLocation();
-		// String image = goalString.substring(loc.getStart(), loc
-		// .getEnd());
-		// EventBMath text = new EventBMath(toolkit.createText(
-		// composite, " \u00b7 " + image, SWT.READ_ONLY));
-		// GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		// text.getTextWidget().setLayoutData(gd);
-		// scrolledForm.reflow(true);
-		// } else {
-		// Color color = Display.getCurrent().getSystemColor(
-		// SWT.COLOR_WHITE);
-		// createSimpleText(goal.toString(), color);
-		// }
-		//
-		// }
 		scrolledForm.reflow(true);
 
 		return;
@@ -315,6 +247,18 @@ public class GoalSection extends SectionPart {
 		super.dispose();
 	}
 
+	private void createNullHyperlinks() {
+		ProverUIUtils.debugProverUI("Create Null Image");
+		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+				SWT.CENTER);
+		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		toolkit.adapt(hyperlink, true, true);
+		hyperlink.setImage(EventBImage.getImage(EventBImage.IMG_NULL));
+		hyperlink.setEnabled(false);
+		return;
+	}
+
 	/**
 	 * Utility methods to create hyperlinks for applicable tactics.
 	 * <p>
@@ -322,10 +266,13 @@ public class GoalSection extends SectionPart {
 	 * @param formText
 	 *            the formText parent of these hyperlinks
 	 */
-	private void createHyperlinks(FormToolkit toolkit, Composite parent,
-			final IProofTreeNode node, boolean enable) {
+	private void createHyperlinks(final IProofTreeNode node, boolean enable) {
 		Collection<GoalTacticUI> tactics = ProverUIUtils
 				.getApplicableToGoal(node);
+
+		if (tactics.size() == 0) {
+			createNullHyperlinks();
+		}
 
 		for (final GoalTacticUI tactic : tactics) {
 			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
@@ -334,6 +281,7 @@ public class GoalSection extends SectionPart {
 					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			toolkit.adapt(hyperlink, true, true);
 			hyperlink.setImage(tactic.getImage());
+
 			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 
 				public void linkEntered(HyperlinkEvent e) {
@@ -346,11 +294,6 @@ public class GoalSection extends SectionPart {
 
 				public void linkActivated(HyperlinkEvent e) {
 					String[] inputs = goalText.getResults();
-					// String[] inputs = new String[textBoxes.size()];
-					// int i = 0;
-					// for (IEventBInputText text : textBoxes) {
-					// inputs[i++] = text.getTextWidget().getText();
-					// }
 					((ProverUI) page.getEditor()).getUserSupport().applyTactic(
 							tactic.getTactic(node, inputs));
 				}
