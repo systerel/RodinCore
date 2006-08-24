@@ -197,7 +197,7 @@ public class PredicateUtil {
 		return result;
 	}
 
-	private static String addSpacing(String predString, Predicate pred) {
+	public static String addSpacing(String predString, Predicate pred) {
 		return addSpacing(predString, pred, getHeight(pred));
 	}
 

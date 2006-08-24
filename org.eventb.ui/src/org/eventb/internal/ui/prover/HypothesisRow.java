@@ -204,7 +204,7 @@ public class HypothesisRow {
 			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
 			Collection<Point> indexes = new ArrayList<Point>();
 
-			String string = "\u2200\n";
+			String string = "\u2200 ";
 			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 
 			int i = 0;
@@ -220,19 +220,22 @@ public class HypothesisRow {
 				indexes.add(new Point(x, y));
 
 				if (++i == idents.length) {
-					string += "\n";
+					string += "\u00b7\n";
 				} else {
 					string += ", ";
 				}
 			}
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//					qpred.getPredicate());
+			String str = PredicateUtil.addSpacing(actualString,
 					qpred.getPredicate());
 
-			string += "\u00b7\n";
 			string += str;
 			hypothesisText.setText(string, indexes);
 		} else {
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//					parsedPred);
+			String str = PredicateUtil.addSpacing(actualString,
 					parsedPred);
 			Collection<Point> indexes = new ArrayList<Point>();
 			hypothesisText.setText(str, indexes);

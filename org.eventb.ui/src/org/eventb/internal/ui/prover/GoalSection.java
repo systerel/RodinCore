@@ -16,6 +16,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -157,7 +164,7 @@ public class GoalSection extends SectionPart {
 			createHyperlinks(node, true);
 		else
 			createHyperlinks(node, false);
-		
+
 		actualString = goal.toString();
 		IParseResult parseResult = Lib.ff.parsePredicate(actualString);
 		assert parseResult.isSuccess();
@@ -175,13 +182,14 @@ public class GoalSection extends SectionPart {
 		if (goalText != null)
 			goalText.dispose();
 		goalText = new EventBPredicateText(toolkit, goalComposite);
-		goalText.getMainTextWidget().setLayoutData(
+		final StyledText styledText = goalText.getMainTextWidget();
+		styledText.setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		int borderWidth = goalText.getMainTextWidget().getBorderWidth();
-		goalText.getMainTextWidget().setText(" ");
+		int borderWidth = styledText.getBorderWidth();
+		styledText.setText(" ");
 		goalComposite.pack(true);
-		int textWidth = goalText.getMainTextWidget().getSize().x;
+		int textWidth = styledText.getSize().x;
 
 		Rectangle rec = goalComposite.getBounds();
 		Point size = goalComposite.getSize();
@@ -194,7 +202,7 @@ public class GoalSection extends SectionPart {
 		if (node == null) {
 			Collection<Point> indexes = new ArrayList<Point>();
 			goalText.setText("No current goal", indexes);
-			goalText.getMainTextWidget().setBackground(color);
+			styledText.setBackground(color);
 		}
 		if (node != null && node.isOpen()
 				&& parsedPred instanceof QuantifiedPredicate
@@ -202,7 +210,7 @@ public class GoalSection extends SectionPart {
 			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
 			Collection<Point> indexes = new ArrayList<Point>();
 
-			String string = "\u2203\n";
+			String string = "\u2203 ";
 			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 
 			int i = 0;
@@ -218,27 +226,130 @@ public class GoalSection extends SectionPart {
 				indexes.add(new Point(x, y));
 
 				if (++i == idents.length) {
-					string += "\n";
+					string += "\u00b7\n";
 				} else {
 					string += ", ";
 				}
 			}
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//					qpred.getPredicate());
+			String str = PredicateUtil.addSpacing(actualString,
 					qpred.getPredicate());
-
-			string += "\u00b7\n";
 			string += str;
 			goalText.setText(string, indexes);
 		} else {
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//			String str = PredicateUtil.prettyPrint(max_length, actualString,
+//					parsedPred);
+			String str = PredicateUtil.addSpacing(actualString,
 					parsedPred);
 			Collection<Point> indexes = new ArrayList<Point>();
 			goalText.setText(str, indexes);
 			if (!node.isOpen()) {
-				goalText.getMainTextWidget().setBackground(color);
+				styledText.setBackground(color);
 			}
 		}
 		toolkit.paintBordersFor(goalComposite);
+
+		DragSource source = new DragSource(styledText,
+				DND.DROP_COPY | DND.DROP_MOVE);
+		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+//		source.addDragListener(new DragSourceAdapter() {
+//			Point selection;
+//
+//			public void dragStart(DragSourceEvent e) {
+//				selection = goalText.getMainTextWidget().getSelection();
+//				e.doit = selection.x != selection.y;
+//			}
+//
+//			public void dragSetData(DragSourceEvent e) {
+//				e.data = goalText.getMainTextWidget().getText(selection.x,
+//						selection.y - 1);
+//			}
+//
+//			public void dragFinished(DragSourceEvent e) {
+//				if (e.detail == DND.DROP_MOVE) {
+//					goalText.getMainTextWidget().replaceTextRange(selection.x,
+//							selection.y - selection.x, "");
+//				}
+//				selection = null;
+//			}
+//		});
+		
+		
+//		styledText.addListener(SWT.MouseDown, new Listener() {
+//			public void handleEvent(Event e) {
+//				Point location = new Point(e.x, e.y);
+//				Point maxLocation = styledText.getLocationAtOffset(styledText
+//						.getCharCount());
+//				int maxOffset = styledText.getCharCount();
+//				if (location.y >= maxLocation.y + styledText.getLineHeight()) {
+//					styledText.setCaretOffset(maxOffset);
+//					return;
+//				}
+//				int startLineOffset = styledText.getOffsetAtLocation(new Point(0,
+//						location.y));
+//				int line = styledText.getLineAtOffset(startLineOffset);
+//				Point pt = styledText.getSelection();
+//				ProverUIUtils.debugProverUI("Selection: " + pt.x + ", " + pt.y);
+//				if (line == styledText.getLineCount() - 1) {
+//					if (location.x > maxLocation.x) {
+//						styledText.setCaretOffset(maxOffset);
+//					} else {
+//						int offset = styledText.getOffsetAtLocation(location);
+////						styledText.setCaretOffset(offset);
+//						if (pt.x <= offset && offset <= pt.y) {
+//							ProverUIUtils.debugProverUI("Drag: " + offset);
+//						}
+//						else {
+//							ProverUIUtils.debugProverUI("Select " + offset);
+//						}
+//					}
+//					return;
+//				}
+//				
+//				
+//				
+//				int startNextLineOffset = styledText.getOffsetAtLine(line + 1);
+//				Point lineEnd = styledText
+//						.getLocationAtOffset(startNextLineOffset - 1);
+//				if (location.x > lineEnd.x) {
+////					styledText.setCaretOffset(startNextLineOffset - 1);
+//				} else {
+//					int offset = styledText.getOffsetAtLocation(location);
+////					styledText.setCaretOffset(offset);
+//					if (pt.x <= offset && offset <= pt.y) {
+//						ProverUIUtils.debugProverUI("Drag: " + offset);
+//					}
+//					else {
+//						ProverUIUtils.debugProverUI("Select " + offset);
+//					}
+//				}
+//			}
+//		});
+		
+		source.addDragListener(new DragSourceListener() {
+			Point selection;
+
+			public void dragStart(DragSourceEvent event) {
+				ProverUIUtils.debugProverUI("Start dragging: " );
+				selection = styledText.getSelection();
+				event.doit = selection.x != selection.y;
+			}
+
+			public void dragSetData(DragSourceEvent event) {
+				ProverUIUtils.debugProverUI("Set Data: " );
+				event.data = styledText.getText(selection.x,
+				selection.y - 1);
+
+			}
+
+			public void dragFinished(DragSourceEvent event) {
+				ProverUIUtils.debugProverUI("Finish dragging " );
+				
+			}
+			
+		});
+
 	}
 
 	@Override
