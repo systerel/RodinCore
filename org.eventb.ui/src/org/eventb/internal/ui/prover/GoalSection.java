@@ -183,8 +183,7 @@ public class GoalSection extends SectionPart {
 			goalText.dispose();
 		goalText = new EventBPredicateText(toolkit, goalComposite);
 		final StyledText styledText = goalText.getMainTextWidget();
-		styledText.setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		int borderWidth = styledText.getBorderWidth();
 		styledText.setText(" ");
@@ -231,17 +230,17 @@ public class GoalSection extends SectionPart {
 					string += ", ";
 				}
 			}
-//			String str = PredicateUtil.prettyPrint(max_length, actualString,
-//					qpred.getPredicate());
-			String str = PredicateUtil.addSpacing(actualString,
-					qpred.getPredicate());
+			// String str = PredicateUtil.prettyPrint(max_length, actualString,
+			// qpred.getPredicate());
+			SourceLocation loc = qpred.getPredicate().getSourceLocation();
+			String str = actualString.substring(loc.getStart(), loc.getEnd());
 			string += str;
 			goalText.setText(string, indexes);
 		} else {
-//			String str = PredicateUtil.prettyPrint(max_length, actualString,
-//					parsedPred);
-			String str = PredicateUtil.addSpacing(actualString,
-					parsedPred);
+			// String str = PredicateUtil.prettyPrint(max_length, actualString,
+			// parsedPred);
+			SourceLocation loc = parsedPred.getSourceLocation();
+			String str = actualString.substring(loc.getStart(), loc.getEnd());
 			Collection<Point> indexes = new ArrayList<Point>();
 			goalText.setText(str, indexes);
 			if (!node.isOpen()) {
@@ -250,104 +249,102 @@ public class GoalSection extends SectionPart {
 		}
 		toolkit.paintBordersFor(goalComposite);
 
-		DragSource source = new DragSource(styledText,
-				DND.DROP_COPY | DND.DROP_MOVE);
+		DragSource source = new DragSource(styledText, DND.DROP_COPY
+				| DND.DROP_MOVE);
 		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-//		source.addDragListener(new DragSourceAdapter() {
-//			Point selection;
-//
-//			public void dragStart(DragSourceEvent e) {
-//				selection = goalText.getMainTextWidget().getSelection();
-//				e.doit = selection.x != selection.y;
-//			}
-//
-//			public void dragSetData(DragSourceEvent e) {
-//				e.data = goalText.getMainTextWidget().getText(selection.x,
-//						selection.y - 1);
-//			}
-//
-//			public void dragFinished(DragSourceEvent e) {
-//				if (e.detail == DND.DROP_MOVE) {
-//					goalText.getMainTextWidget().replaceTextRange(selection.x,
-//							selection.y - selection.x, "");
-//				}
-//				selection = null;
-//			}
-//		});
-		
-		
-//		styledText.addListener(SWT.MouseDown, new Listener() {
-//			public void handleEvent(Event e) {
-//				Point location = new Point(e.x, e.y);
-//				Point maxLocation = styledText.getLocationAtOffset(styledText
-//						.getCharCount());
-//				int maxOffset = styledText.getCharCount();
-//				if (location.y >= maxLocation.y + styledText.getLineHeight()) {
-//					styledText.setCaretOffset(maxOffset);
-//					return;
-//				}
-//				int startLineOffset = styledText.getOffsetAtLocation(new Point(0,
-//						location.y));
-//				int line = styledText.getLineAtOffset(startLineOffset);
-//				Point pt = styledText.getSelection();
-//				ProverUIUtils.debugProverUI("Selection: " + pt.x + ", " + pt.y);
-//				if (line == styledText.getLineCount() - 1) {
-//					if (location.x > maxLocation.x) {
-//						styledText.setCaretOffset(maxOffset);
-//					} else {
-//						int offset = styledText.getOffsetAtLocation(location);
-////						styledText.setCaretOffset(offset);
-//						if (pt.x <= offset && offset <= pt.y) {
-//							ProverUIUtils.debugProverUI("Drag: " + offset);
-//						}
-//						else {
-//							ProverUIUtils.debugProverUI("Select " + offset);
-//						}
-//					}
-//					return;
-//				}
-//				
-//				
-//				
-//				int startNextLineOffset = styledText.getOffsetAtLine(line + 1);
-//				Point lineEnd = styledText
-//						.getLocationAtOffset(startNextLineOffset - 1);
-//				if (location.x > lineEnd.x) {
-////					styledText.setCaretOffset(startNextLineOffset - 1);
-//				} else {
-//					int offset = styledText.getOffsetAtLocation(location);
-////					styledText.setCaretOffset(offset);
-//					if (pt.x <= offset && offset <= pt.y) {
-//						ProverUIUtils.debugProverUI("Drag: " + offset);
-//					}
-//					else {
-//						ProverUIUtils.debugProverUI("Select " + offset);
-//					}
-//				}
-//			}
-//		});
-		
+		// source.addDragListener(new DragSourceAdapter() {
+		// Point selection;
+		//
+		// public void dragStart(DragSourceEvent e) {
+		// selection = goalText.getMainTextWidget().getSelection();
+		// e.doit = selection.x != selection.y;
+		// }
+		//
+		// public void dragSetData(DragSourceEvent e) {
+		// e.data = goalText.getMainTextWidget().getText(selection.x,
+		// selection.y - 1);
+		// }
+		//
+		// public void dragFinished(DragSourceEvent e) {
+		// if (e.detail == DND.DROP_MOVE) {
+		// goalText.getMainTextWidget().replaceTextRange(selection.x,
+		// selection.y - selection.x, "");
+		// }
+		// selection = null;
+		// }
+		// });
+
+		// styledText.addListener(SWT.MouseDown, new Listener() {
+		// public void handleEvent(Event e) {
+		// Point location = new Point(e.x, e.y);
+		// Point maxLocation = styledText.getLocationAtOffset(styledText
+		// .getCharCount());
+		// int maxOffset = styledText.getCharCount();
+		// if (location.y >= maxLocation.y + styledText.getLineHeight()) {
+		// styledText.setCaretOffset(maxOffset);
+		// return;
+		// }
+		// int startLineOffset = styledText.getOffsetAtLocation(new Point(0,
+		// location.y));
+		// int line = styledText.getLineAtOffset(startLineOffset);
+		// Point pt = styledText.getSelection();
+		// ProverUIUtils.debugProverUI("Selection: " + pt.x + ", " + pt.y);
+		// if (line == styledText.getLineCount() - 1) {
+		// if (location.x > maxLocation.x) {
+		// styledText.setCaretOffset(maxOffset);
+		// } else {
+		// int offset = styledText.getOffsetAtLocation(location);
+		// // styledText.setCaretOffset(offset);
+		// if (pt.x <= offset && offset <= pt.y) {
+		// ProverUIUtils.debugProverUI("Drag: " + offset);
+		// }
+		// else {
+		// ProverUIUtils.debugProverUI("Select " + offset);
+		// }
+		// }
+		// return;
+		// }
+		//				
+		//				
+		//				
+		// int startNextLineOffset = styledText.getOffsetAtLine(line + 1);
+		// Point lineEnd = styledText
+		// .getLocationAtOffset(startNextLineOffset - 1);
+		// if (location.x > lineEnd.x) {
+		// // styledText.setCaretOffset(startNextLineOffset - 1);
+		// } else {
+		// int offset = styledText.getOffsetAtLocation(location);
+		// // styledText.setCaretOffset(offset);
+		// if (pt.x <= offset && offset <= pt.y) {
+		// ProverUIUtils.debugProverUI("Drag: " + offset);
+		// }
+		// else {
+		// ProverUIUtils.debugProverUI("Select " + offset);
+		// }
+		// }
+		// }
+		// });
+
 		source.addDragListener(new DragSourceListener() {
 			Point selection;
 
 			public void dragStart(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Start dragging: " );
+				ProverUIUtils.debugProverUI("Start dragging: ");
 				selection = styledText.getSelection();
 				event.doit = selection.x != selection.y;
 			}
 
 			public void dragSetData(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Set Data: " );
-				event.data = styledText.getText(selection.x,
-				selection.y - 1);
+				ProverUIUtils.debugProverUI("Set Data: ");
+				event.data = styledText.getText(selection.x, selection.y - 1);
 
 			}
 
 			public void dragFinished(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Finish dragging " );
-				
+				ProverUIUtils.debugProverUI("Finish dragging ");
+
 			}
-			
+
 		});
 
 	}

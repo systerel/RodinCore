@@ -227,16 +227,17 @@ public class HypothesisRow {
 			}
 //			String str = PredicateUtil.prettyPrint(max_length, actualString,
 //					qpred.getPredicate());
-			String str = PredicateUtil.addSpacing(actualString,
-					qpred.getPredicate());
+			SourceLocation loc = qpred.getPredicate().getSourceLocation();
+			String str = actualString.substring(loc.getStart(), loc.getEnd());
 
 			string += str;
 			hypothesisText.setText(string, indexes);
 		} else {
 //			String str = PredicateUtil.prettyPrint(max_length, actualString,
 //					parsedPred);
-			String str = PredicateUtil.addSpacing(actualString,
-					parsedPred);
+			SourceLocation loc = parsedPred.getSourceLocation();
+			String str = actualString.substring(loc.getStart(), loc.getEnd());
+
 			Collection<Point> indexes = new ArrayList<Point>();
 			hypothesisText.setText(str, indexes);
 		}
