@@ -10,11 +10,12 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.internal.ui.perspectives;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.eventbeditor.AxiomMirror;
 import org.eventb.internal.ui.eventbeditor.CarrierSetMirror;
 import org.eventb.internal.ui.eventbeditor.ConstantMirror;
@@ -31,14 +32,14 @@ import org.eventb.internal.ui.wizards.NewProjectWizard;
  *         This is the modelling perspective for Event-B UI.
  */
 
-public class ModellingPerspective implements IPerspectiveFactory {
+public class EventBPerspective implements IPerspectiveFactory {
 
 	/**
 	 * The identifier of the modelling perspective (value
-	 * <code>"org.eventb.ui.perspective.Modelling"</code>).
+	 * <code>"org.eventb.ui.perspective.eventb"</code>).
 	 */
 	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".perspective.Modelling";
+			+ ".perspective.eventb";
 
 	/*
 	 * (non-Javadoc)

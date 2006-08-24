@@ -141,12 +141,12 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.eventb.internal.ui.ModellingPerspective"
-            id="org.eventb.ui.perspective.Modelling"
-            name="Modelling"/>
+            class="org.eventb.internal.ui.perspectives.EventBPerspective"
+            id="org.eventb.ui.perspective.eventb"
+            name="Event-B"/>
       <perspective
-            class="org.eventb.internal.ui.ProvingPerspective"
-            id="org.eventb.ui.perspective.Proving"
+            class="org.eventb.internal.ui.perspectives.ProvingPerspective"
+            id="org.eventb.ui.perspective.proving"
             name="Proving"/>
    </extension>
    <extension

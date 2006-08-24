@@ -10,11 +10,12 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.internal.ui.perspectives;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
@@ -30,10 +31,10 @@ public class ProvingPerspective implements IPerspectiveFactory {
 
 	/**
 	 * The identifier of the proving perspective (value
-	 * <code>"org.eventb.ui.perspective.Proving"</code>).
+	 * <code>"org.eventb.ui.perspective.proving"</code>).
 	 */
 	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".perspective.Proving";
+			+ ".perspective.proving";
 
 	/*
 	 * (non-Javadoc)
@@ -43,7 +44,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		defineActions(layout);
 		defineLayout(layout);
-		layout.addPerspectiveShortcut(ModellingPerspective.PERSPECTIVE_ID);
+		layout.addPerspectiveShortcut(EventBPerspective.PERSPECTIVE_ID);
 	}
 
 	/**
