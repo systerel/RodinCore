@@ -17,12 +17,6 @@ import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -127,7 +121,8 @@ public class GoalSection extends SectionPart {
 		ProofState ps = userSupport.getCurrentPO();
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
-		}
+		} else
+			setGoal(null);
 	}
 
 	/**
@@ -159,16 +154,12 @@ public class GoalSection extends SectionPart {
 		goalComposite.setLayoutData(gd);
 		goalComposite.getBody().setLayout(new GridLayout());
 
-		Predicate goal = node.getSequent().goal();
-		if (node.isOpen())
+		if (node == null)
+			createNullHyperlinks();
+		else if (node.isOpen())
 			createHyperlinks(node, true);
 		else
 			createHyperlinks(node, false);
-
-		actualString = goal.toString();
-		IParseResult parseResult = Lib.ff.parsePredicate(actualString);
-		assert parseResult.isSuccess();
-		parsedPred = parseResult.getParsedPredicate();
 
 		createGoalText(node);
 
@@ -202,56 +193,68 @@ public class GoalSection extends SectionPart {
 			Collection<Point> indexes = new ArrayList<Point>();
 			goalText.setText("No current goal", indexes);
 			styledText.setBackground(color);
-		}
-		if (node != null && node.isOpen()
-				&& parsedPred instanceof QuantifiedPredicate
-				&& parsedPred.getTag() == Formula.EXISTS) {
-			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
-			Collection<Point> indexes = new ArrayList<Point>();
+		} else {
+			Predicate goal = node.getSequent().goal();
+			actualString = goal.toString();
+			IParseResult parseResult = Lib.ff.parsePredicate(actualString);
+			assert parseResult.isSuccess();
+			parsedPred = parseResult.getParsedPredicate();
 
-			String string = "\u2203 ";
-			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
+			if (node != null && node.isOpen()
+					&& parsedPred instanceof QuantifiedPredicate
+					&& parsedPred.getTag() == Formula.EXISTS) {
+				QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
+				Collection<Point> indexes = new ArrayList<Point>();
 
-			int i = 0;
-			for (BoundIdentDecl ident : idents) {
-				SourceLocation loc = ident.getSourceLocation();
-				String image = actualString.substring(loc.getStart(), loc
+				String string = "\u2203 ";
+				BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
+
+				int i = 0;
+				for (BoundIdentDecl ident : idents) {
+					SourceLocation loc = ident.getSourceLocation();
+					String image = actualString.substring(loc.getStart(), loc
+							.getEnd());
+					// ProverUIUtils.debugProverUI("Ident: " + image);
+					string += " " + image + " ";
+					int x = string.length();
+					string += "      ";
+					int y = string.length();
+					indexes.add(new Point(x, y));
+
+					if (++i == idents.length) {
+						string += "\u00b7\n";
+					} else {
+						string += ", ";
+					}
+				}
+				// String str = PredicateUtil.prettyPrint(max_length,
+				// actualString,
+				// qpred.getPredicate());
+				SourceLocation loc = qpred.getPredicate().getSourceLocation();
+				String str = actualString.substring(loc.getStart(), loc
 						.getEnd());
-				// ProverUIUtils.debugProverUI("Ident: " + image);
-				string += " " + image + " ";
-				int x = string.length();
-				string += "      ";
-				int y = string.length();
-				indexes.add(new Point(x, y));
-
-				if (++i == idents.length) {
-					string += "\u00b7\n";
-				} else {
-					string += ", ";
+				string += str;
+				goalText.setText(string, indexes);
+			} else {
+				// String str = PredicateUtil.prettyPrint(max_length,
+				// actualString,
+				// parsedPred);
+				// SourceLocation loc = parsedPred.getSourceLocation();
+				// String str = actualString.substring(loc.getStart(),
+				// loc.getEnd());
+				Collection<Point> indexes = new ArrayList<Point>();
+				goalText.setText(actualString, indexes);
+				if (!node.isOpen()) {
+					styledText.setBackground(color);
 				}
 			}
-			// String str = PredicateUtil.prettyPrint(max_length, actualString,
-			// qpred.getPredicate());
-			SourceLocation loc = qpred.getPredicate().getSourceLocation();
-			String str = actualString.substring(loc.getStart(), loc.getEnd());
-			string += str;
-			goalText.setText(string, indexes);
-		} else {
-			// String str = PredicateUtil.prettyPrint(max_length, actualString,
-			// parsedPred);
-//			SourceLocation loc = parsedPred.getSourceLocation();
-//			String str = actualString.substring(loc.getStart(), loc.getEnd());
-			Collection<Point> indexes = new ArrayList<Point>();
-			goalText.setText(actualString, indexes);
-			if (!node.isOpen()) {
-				styledText.setBackground(color);
-			}
+
 		}
 		toolkit.paintBordersFor(goalComposite);
 
-//		DragSource source = new DragSource(styledText, DND.DROP_COPY
-//				| DND.DROP_MOVE);
-//		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		// DragSource source = new DragSource(styledText, DND.DROP_COPY
+		// | DND.DROP_MOVE);
+		// source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		// source.addDragListener(new DragSourceAdapter() {
 		// Point selection;
 		//
@@ -325,27 +328,27 @@ public class GoalSection extends SectionPart {
 		// }
 		// });
 
-//		source.addDragListener(new DragSourceListener() {
-//			Point selection;
-//
-//			public void dragStart(DragSourceEvent event) {
-//				ProverUIUtils.debugProverUI("Start dragging: ");
-//				selection = styledText.getSelection();
-//				event.doit = selection.x != selection.y;
-//			}
-//
-//			public void dragSetData(DragSourceEvent event) {
-//				ProverUIUtils.debugProverUI("Set Data: ");
-//				event.data = styledText.getText(selection.x, selection.y - 1);
-//
-//			}
-//
-//			public void dragFinished(DragSourceEvent event) {
-//				ProverUIUtils.debugProverUI("Finish dragging ");
-//
-//			}
-//
-//		});
+		// source.addDragListener(new DragSourceListener() {
+		// Point selection;
+		//
+		// public void dragStart(DragSourceEvent event) {
+		// ProverUIUtils.debugProverUI("Start dragging: ");
+		// selection = styledText.getSelection();
+		// event.doit = selection.x != selection.y;
+		// }
+		//
+		// public void dragSetData(DragSourceEvent event) {
+		// ProverUIUtils.debugProverUI("Set Data: ");
+		// event.data = styledText.getText(selection.x, selection.y - 1);
+		//
+		// }
+		//
+		// public void dragFinished(DragSourceEvent event) {
+		// ProverUIUtils.debugProverUI("Finish dragging ");
+		//
+		// }
+		//
+		// });
 
 	}
 
