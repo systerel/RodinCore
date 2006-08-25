@@ -70,7 +70,6 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.tactics.ITactic;
-import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBImage;
@@ -147,9 +146,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		try {
 			dialog.run(true, true, op);
 		} catch (InterruptedException exception) {
+			ProofControl.debug("Interrupt");
 			return;
 		} catch (InvocationTargetException exception) {
 			final Throwable realException = exception.getTargetException();
+			ProofControl.debug("Interrupt");
 			realException.printStackTrace();
 			final String message = realException.getMessage();
 			MessageDialog.openError(shell, "Unexpected Error", message);
@@ -164,34 +165,33 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            <code>true</code> is only selected hypotheses should be
 	 *            passed to PP
 	 */
-	public static void runPP(final UserSupport userSupport,
-			final boolean restricted) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
-				userSupport
-						.applyTactic(Tactics.externalPP(restricted, monitor));
-			}
-		};
-		applyTacticWithProgress(op);
-	}
-
+	// public static void runPP(final UserSupport userSupport,
+	// final boolean restricted) {
+	// IRunnableWithProgress op = new IRunnableWithProgress() {
+	// public void run(IProgressMonitor monitor)
+	// throws InvocationTargetException {
+	// userSupport
+	// .applyTactic(Tactics.externalPP(restricted, monitor));
+	// }
+	// };
+	// applyTacticWithProgress(op);
+	// }
 	/**
 	 * Runs the mono-lemma prover on the current proof tree node.
 	 * 
 	 * @param forces
 	 *            list of forces to use
 	 */
-	public static void runML(final UserSupport userSupport, final int forces) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
-				userSupport.applyTactic(Tactics.externalML(forces, monitor));
-			}
-		};
-		applyTacticWithProgress(op);
-	}
-
+	// public static void runML(final UserSupport userSupport, final int forces)
+	// {
+	// IRunnableWithProgress op = new IRunnableWithProgress() {
+	// public void run(IProgressMonitor monitor)
+	// throws InvocationTargetException {
+	// userSupport.applyTactic(Tactics.externalML(forces, monitor));
+	// }
+	// };
+	// applyTacticWithProgress(op);
+	// }
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -289,21 +289,28 @@ public class ProofControlPage extends Page implements IProofControlPage,
 														currentInput, null);
 									}
 								} else if (tactic instanceof IGlobalSimpleTactic) {
-									final ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
-											.getTactic(userSupport
-													.getCurrentPO()
-													.getCurrentNode(),
-													currentInput, null);
 									if (isInterruptable()) {
 										applyTacticWithProgress(new IRunnableWithProgress() {
 											public void run(
 													IProgressMonitor monitor)
 													throws InvocationTargetException {
+												ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
+														.getTactic(
+																userSupport
+																		.getCurrentPO()
+																		.getCurrentNode(),
+																currentInput,
+																monitor);
 												userSupport
 														.applyTactic(proofTactic);
 											}
 										});
 									} else {
+										ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
+												.getTactic(userSupport
+														.getCurrentPO()
+														.getCurrentNode(),
+														currentInput, null);
 										userSupport.applyTactic(proofTactic);
 									}
 								}
@@ -360,7 +367,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						Text textWidget = textInput.getTextWidget();
 						try {
 
-							IGlobalTactic tactic2 = globalTacticToolItem
+							final IGlobalTactic tactic2 = globalTacticToolItem
 									.getTactic();
 							final UserSupport userSupport = editor
 									.getUserSupport();
@@ -387,20 +394,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											userSupport, currentInput, null);
 								}
 							} else if (tactic2 instanceof IGlobalSimpleTactic) {
-								final ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
-										.getTactic(userSupport.getCurrentPO()
-												.getCurrentNode(),
-												currentInput, null);
 
 								if (globalTacticToolItem.isInterruptable()) {
 									applyTacticWithProgress(new IRunnableWithProgress() {
 										public void run(IProgressMonitor monitor)
 												throws InvocationTargetException {
+											ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
+													.getTactic(userSupport
+															.getCurrentPO()
+															.getCurrentNode(),
+															currentInput,
+															monitor);
 											userSupport
 													.applyTactic(proofTactic);
 										}
 									});
 								} else {
+									ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
+											.getTactic(userSupport
+													.getCurrentPO()
+													.getCurrentNode(),
+													currentInput, null);
 									userSupport.applyTactic(proofTactic);
 								}
 							}
