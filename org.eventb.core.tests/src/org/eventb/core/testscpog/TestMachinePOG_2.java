@@ -147,7 +147,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("Wrong PO name", "I2/WD", sequents[0].getName());
 		assertEquals("Wrong WD formula source", "I2", getSourceName(sequents[0], 0));
 
-		IPOPredicateSet predicateSet = sequents[0].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet predicateSet = sequents[0].getHypothesis().getPredicateSet();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
 		
@@ -260,7 +260,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("formula source", "T2", getSourceName(sequents[t2], 0));
 		assertEquals("WD formula source", "T2", getSourceName(sequents[t2wd], 0));
 
-		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getPredicateSet();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
 		
@@ -297,11 +297,11 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		assertTrue("names ok", t1 != -1 && t2 != -1);
 		
-		IPOPredicateSet set1 = sequents[t1].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set1 = sequents[t1].getHypothesis().getPredicateSet();
 		
 		assertTrue("Only invariant I1 in global hyp of T1", set1.getPredicates().length == 1 && set1.getPredicates()[0].getContents().equals(invariant1));
 		
-		IPOPredicateSet set2 = sequents[t2].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set2 = sequents[t2].getHypothesis().getPredicateSet();
 		
 		assertTrue("Theorem T1 in global hyp of T2", set2.getPredicates().length == 1 && set2.getPredicates()[0].getContents().equals(theorem1));
 		
@@ -341,7 +341,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		assertTrue("names ok", t1 != -1 && t2 != -1);
 		
-		IPOPredicateSet set1 = sequents[t1].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set1 = sequents[t1].getHypothesis().getPredicateSet();
 		
 		assertTrue("Invariant I1 in global hyp of T1", set1.getPredicates().length == 1 && set1.getPredicates()[0].getContents().equals(invariant1));
 		
@@ -355,7 +355,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 
 		assertTrue("Theorem X1 in global hyp of T1", hset.contains(ctxTheorem1));
 
-		IPOPredicateSet set2 = sequents[t2].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set2 = sequents[t2].getHypothesis().getPredicateSet();
 		
 		assertTrue("Theorem T1 in global hyp of T2", set2.getPredicates().length == 1 && set2.getPredicates()[0].getContents().equals(theorem1));
 		
@@ -426,9 +426,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		assertEquals("wd predicate 2 ok", getWDStringForPredicate(guard2, null), sequents[g2].getGoal().getContents());
 		
-		assertEquals("wd 2 hypothesis contains guard 1", guard1, sequents[g2].getHypothesis().getLocalHypothesis()[0].getContents());
+		assertEquals("wd 2 hypothesis contains guard 1", guard1, sequents[g2].getHypothesis().getPredicates()[0].getContents());
 		
-		assertEquals("wd 2 hypothesis contains invariant 1", invariant1, sequents[g2].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
+		assertEquals("wd 2 hypothesis contains invariant 1", invariant1, sequents[g2].getHypothesis().getPredicateSet().getPredicates()[0].getContents());
 		
 		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
 	}
@@ -544,13 +544,13 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("wd predicate 2 ok", getWDStringForPredicate(guard2, null), sequents[g2].getGoal().getContents());
 		
 		assertEquals("wd 2 hypothesis contains guard 1", guard1, 
-				sequents[g2].getHypothesis().getLocalHypothesis()[0].getContents());
+				sequents[g2].getHypothesis().getPredicates()[0].getContents());
 		
 		assertEquals("wd 2 hypothesis contains theorem 1", theorem1, 
-				sequents[g2].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
+				sequents[g2].getHypothesis().getPredicateSet().getPredicates()[0].getContents());
 		
 		assertEquals("wd 2 hypothesis contains invariant 1", invariant1, 
-				sequents[g2].getHypothesis().getGlobalHypothesis().getPredicateSet().getPredicates()[0].getContents());
+				sequents[g2].getHypothesis().getPredicateSet().getPredicateSet().getPredicates()[0].getContents());
 		
 		assertEquals("dlk predicate ok", dlk1, sequents[dlk].getGoal().getContents());
 	}
@@ -779,13 +779,13 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
 		
 		assertEquals("i2 hypothesis", getBAStringForAssignment(assignment2, env), 
-				sequents[i2].getHypothesis().getLocalHypothesis()[0].getContents());
+				sequents[i2].getHypothesis().getPredicates()[0].getContents());
 		
 		Predicate goal2 = rewriteGoal(env, invariant2, "y≔y'");
 		assertEquals("i2 goal ok p", goal2.toString(), ((IPOPredicate) sequents[i2].getGoal()).getContents());
 		
 		assertEquals("i3 hypothesis", getBAStringForAssignment(assignment3, env), 
-				sequents[i3].getHypothesis().getLocalHypothesis()[0].getContents());
+				sequents[i3].getHypothesis().getPredicates()[0].getContents());
 		Predicate goal3 = rewriteGoal(env, invariant3, "z≔z'");
 		assertEquals("i3 goal ok p", goal3.toString(), ((IPOPredicate) sequents[i3].getGoal()).getContents());
 		
@@ -840,15 +840,15 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertTrue("names ok", t2 != -1 && a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
 		
 		assertEquals("wd predicate 1 ok", getWDStringForAssignment(assignment1, env), sequents[a1wd].getGoal().getContents());
-		assertEquals("wd hypothesis 1 ok", theorem2, sequents[a1wd].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
+		assertEquals("wd hypothesis 1 ok", theorem2, sequents[a1wd].getHypothesis().getPredicateSet().getPredicates()[0].getContents());
 		
 		assertEquals("fis predicate 2 ok", getFISStringForAssignment(assignment2, env), sequents[a2fis].getGoal().getContents());
-		assertEquals("fis hypothesis 2 ok", theorem2, sequents[a2fis].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
+		assertEquals("fis hypothesis 2 ok", theorem2, sequents[a2fis].getHypothesis().getPredicateSet().getPredicates()[0].getContents());
 	
 		
 		Predicate goal1 = rewriteGoal(env, invariant1, assignment1);
 		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
-		assertEquals("i1 hypothesis ok", theorem2, sequents[i1].getHypothesis().getGlobalHypothesis().getPredicates()[0].getContents());
+		assertEquals("i1 hypothesis ok", theorem2, sequents[i1].getHypothesis().getPredicateSet().getPredicates()[0].getContents());
 	
 	}
 
@@ -991,31 +991,31 @@ public class TestMachinePOG_2 extends BuilderTest {
 		assertTrue("names ok", t2 != -1 && a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
 		
 		assertEquals("wd predicate 1 ok", getWDStringForAssignment(assignment1, env), sequents[a1wd].getGoal().getContents());
-		Set<String> hyp = contentsSetOf(sequents[a1wd].getHypothesis().getGlobalHypothesis().getPredicates());
+		Set<String> hyp = contentsSetOf(sequents[a1wd].getHypothesis().getPredicateSet().getPredicates());
 		assertTrue("wd hypothesis 1 ok", hyp.contains(theorem1));
 		assertTrue("wd hypothesis 1 ok", !hyp.contains(theorem2));
 		assertEquals("wd predicate 2 ok", getWDStringForAssignment(assignment2, env), sequents[a2wd].getGoal().getContents());
 		assertEquals("wd predicate 3 ok", getWDStringForAssignment(assignment3, env), sequents[a3wd].getGoal().getContents());
 		
 		assertEquals("fis predicate 2 ok", getFISStringForAssignment(assignment2, env), sequents[a2fis].getGoal().getContents());
-		hyp = contentsSetOf(sequents[a2fis].getHypothesis().getGlobalHypothesis().getPredicates());
+		hyp = contentsSetOf(sequents[a2fis].getHypothesis().getPredicateSet().getPredicates());
 		assertTrue("wd hypothesis 1 ok", hyp.contains(theorem1));
 		assertTrue("wd hypothesis 1 ok", !hyp.contains(theorem2));	
 		assertEquals("fis predicate 3 ok", getFISStringForAssignment(assignment3, env), sequents[a3fis].getGoal().getContents());
 		
 		Predicate goal1 = rewriteGoal(env, invariant1, assignment1);
 		assertEquals("i1 goal ok p", goal1.toString(), ((IPOPredicate) sequents[i1].getGoal()).getContents());
-		hyp = contentsSetOf(sequents[i1].getHypothesis().getGlobalHypothesis().getPredicates());
+		hyp = contentsSetOf(sequents[i1].getHypothesis().getPredicateSet().getPredicates());
 		assertTrue("wd hypothesis 1 ok", hyp.contains(theorem1));
 		assertTrue("wd hypothesis 1 ok", !hyp.contains(theorem2));	
 
 		assertEquals("i2 hypothesis", getBAStringForAssignment(assignment2, env), 
-				sequents[i2].getHypothesis().getLocalHypothesis()[0].getContents());
+				sequents[i2].getHypothesis().getPredicates()[0].getContents());
 		Predicate goal2 = rewriteGoal(env, invariant2, "y≔y'");
 		assertEquals("i2 goal ok p", goal2.toString(), ((IPOPredicate) sequents[i2].getGoal()).getContents());
 		
 		assertEquals("i3 hypothesis", getBAStringForAssignment(assignment3, env), 
-				sequents[i3].getHypothesis().getLocalHypothesis()[0].getContents());
+				sequents[i3].getHypothesis().getPredicates()[0].getContents());
 		Predicate goal3 = rewriteGoal(env, invariant3, "z≔z'");
 		assertEquals("i3 goal ok p", goal3.toString(), ((IPOPredicate) sequents[i3].getGoal()).getContents());
 		
@@ -1119,7 +1119,7 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
 		
-		IPOPredicate[] predicates = sequents[0].getHypothesis().getGlobalHypothesis().getPredicates();
+		IPOPredicate[] predicates = sequents[0].getHypothesis().getPredicateSet().getPredicates();
 		
 		assertTrue("global hypothesis size is 1", predicates.length == 1);
 		

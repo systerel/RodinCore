@@ -15,9 +15,9 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPODescription;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.FormulaFactory;
@@ -51,9 +51,9 @@ public class ProofObligation {
 		IPOSequent sequent = (IPOSequent) file.createInternalElement(
 				IPOSequent.ELEMENT_TYPE, name, null, monitor);
 		putTypeEnvironment(sequent, monitor);
-		IPOHypothesis hypothesis = 
-			(IPOHypothesis) sequent.createInternalElement(
-					IPOHypothesis.ELEMENT_TYPE, "global-hyps", null, monitor);
+		IPOPredicateSet hypothesis = 
+			(IPOPredicateSet) sequent.createInternalElement(
+					IPOPredicateSet.ELEMENT_TYPE, "global-hyps", null, monitor);
 		hypothesis.setContents(globalHypothesis, monitor);
 		int idx = 1;
 		for (Predicate predicate : localHypothesis) {

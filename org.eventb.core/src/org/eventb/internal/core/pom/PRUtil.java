@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -294,22 +293,22 @@ public class PRUtil {
 //	}
 
 	
-	private static Set<Hypothesis> readHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
 		result.addAll(readGlobalHypotheses(poHyp,typeEnv));
 		result.addAll(readLocalHypotheses(poHyp,typeEnv));
 		return result;
 	}
 	
-	private static Set<Hypothesis> readGlobalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readGlobalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		result.addAll(readPredicates(poHyp.getGlobalHypothesis(),typeEnv));
+		result.addAll(readPredicates(poHyp.getPredicateSet(),typeEnv));
 		return result;
 	}
 	
-	private static Set<Hypothesis> readLocalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readLocalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred : poHyp.getLocalHypothesis()){
+		for (IPOPredicate poPred : poHyp.getPredicates()){
 			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
 		}
 		return result;

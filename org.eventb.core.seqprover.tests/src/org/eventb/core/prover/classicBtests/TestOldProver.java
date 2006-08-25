@@ -19,6 +19,10 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 
+/**
+ * @author Stefan Hallerstede
+ */
+
 public class TestOldProver extends TestCase {
 	
 	// Default time out: 30 seconds

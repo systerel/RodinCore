@@ -18,6 +18,10 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.Util;
 import org.osgi.framework.Bundle;
 
+/**
+ * @author Stefan Hallerstede
+ *
+ */
 public abstract class ProverShell {
 	
 	private static final String BUNDLE_NAME = SequentProver.PLUGIN_ID;

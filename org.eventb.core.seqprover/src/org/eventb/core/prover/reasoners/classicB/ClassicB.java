@@ -25,7 +25,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public abstract class ClassicB {

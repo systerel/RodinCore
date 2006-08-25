@@ -35,7 +35,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  * 
  * This class implements the translation of EventB syntax 
  * into classical B syntax of Atelier B (TM). Some operators

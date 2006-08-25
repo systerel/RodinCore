@@ -9,7 +9,7 @@
 package org.eventb.core.prover.reasoners.classicB;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
 public class SyntaxError extends RuntimeException {

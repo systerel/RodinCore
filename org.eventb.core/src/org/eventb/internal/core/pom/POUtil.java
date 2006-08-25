@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -61,22 +60,22 @@ public class POUtil {
 	}
 
 	
-	private static Set<Hypothesis> readHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
 		result.addAll(readGlobalHypotheses(poHyp,typeEnv));
 		result.addAll(readLocalHypotheses(poHyp,typeEnv));
 		return result;
 	}
 	
-	private static Set<Hypothesis> readGlobalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readGlobalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		result.addAll(readPredicates(poHyp.getGlobalHypothesis(),typeEnv));
+		result.addAll(readPredicates(poHyp.getPredicateSet(),typeEnv));
 		return result;
 	}
 	
-	private static Set<Hypothesis> readLocalHypotheses(IPOHypothesis poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+	private static Set<Hypothesis> readLocalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred : poHyp.getLocalHypothesis()){
+		for (IPOPredicate poPred : poHyp.getPredicates()){
 			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
 		}
 		return result;
@@ -152,7 +151,7 @@ public class POUtil {
 	private static void addHypothesis(IPOSequent sequent, 
 			String globalHypothesis, 
 			String[] localHypothesis) throws RodinDBException {
-		IPOHypothesis hypothesis = (IPOHypothesis) sequent.createInternalElement(IPOHypothesis.ELEMENT_TYPE, "glob-hyp", null, null);
+		IPOPredicateSet hypothesis = (IPOPredicateSet) sequent.createInternalElement(IPOPredicateSet.ELEMENT_TYPE, "glob-hyp", null, null);
 		hypothesis.setContents(globalHypothesis);
 		int idx = 1;
 		for(int i=0; i<localHypothesis.length; i++) {

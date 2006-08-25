@@ -148,10 +148,6 @@
             id="poSequent"
             name="%eventBpoSequent"/>
       <internalElementType
-            class="org.eventb.core.basis.POHypothesis"
-            id="poHypothesis"
-            name="%eventBpoHypothesis"/>
-      <internalElementType
             class="org.eventb.core.basis.Witness"
             id="witness"
             name="%eventBWitness"/>

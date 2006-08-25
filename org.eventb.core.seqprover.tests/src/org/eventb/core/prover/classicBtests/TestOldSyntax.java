@@ -15,6 +15,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.reasoners.classicB.SyntaxVisitor;
 
+/**
+ * @author Stefan Hallerstede
+ */
+
 public class TestOldSyntax extends TestCase {
 	
 	private ITypeEnvironment defaultTEnv = SyntaxUtil.mTypeEnvironment(

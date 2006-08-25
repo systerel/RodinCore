@@ -56,7 +56,7 @@ public class TestContextPOG_2 extends BuilderTest {
 		
 		assertTrue("name ok", poFile.getSequents()[0].getName().equals("T1"));
 		
-		IPOPredicate[] predicates = sequents[0].getHypothesis().getGlobalHypothesis().getPredicates();
+		IPOPredicate[] predicates = sequents[0].getHypothesis().getPredicateSet().getPredicates();
 		
 		assertTrue("global hypothesis size is 1", predicates.length == 1);
 		
@@ -125,7 +125,7 @@ public class TestContextPOG_2 extends BuilderTest {
 		assertEquals("Exactly one proof obligation", 1, poFile.getSequents().length);
 		assertEquals("Wrong PO name", "A2/WD", poFile.getSequents()[0].getName());
 
-		IPOPredicateSet predicateSet = poFile.getSequents()[0].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet predicateSet = poFile.getSequents()[0].getHypothesis().getPredicateSet();
 		assertEquals("only one predicate in global hypothesis", 1, predicateSet.getPredicates().length);
 		assertEquals("A1 in global hypothesis", axiom1, predicateSet.getPredicates()[0].getContents());
 
@@ -215,7 +215,7 @@ public class TestContextPOG_2 extends BuilderTest {
 		
 		assertTrue("names ok", t1 != -1 && t2 != -1 && t2wd != -1);
 		
-		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet predicateSet = poFile.getSequents()[t2].getHypothesis().getPredicateSet();
 		
 		assertTrue("only one predicate in global hypothesis", predicateSet.getPredicates().length == 1);
 		
@@ -255,11 +255,11 @@ public class TestContextPOG_2 extends BuilderTest {
 		assertEquals("formula source", "T1", getSourceName(sequents[t1], 0));
 		assertEquals("formula source", "T2", getSourceName(sequents[t2], 0));
 		
-		IPOPredicateSet set1 = sequents[t1].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set1 = sequents[t1].getHypothesis().getPredicateSet();
 		
 		assertTrue("Only axiom A1 in global hyp of T1", set1.getPredicates().length == 1 && set1.getPredicates()[0].getContents().equals(axiom1));
 		
-		IPOPredicateSet set2 = sequents[t2].getHypothesis().getGlobalHypothesis();
+		IPOPredicateSet set2 = sequents[t2].getHypothesis().getPredicateSet();
 		
 		assertTrue("Theorem T1 in global hyp of T2", set2.getPredicates().length == 1 && set2.getPredicates()[0].getContents().equals(theorem1));
 		

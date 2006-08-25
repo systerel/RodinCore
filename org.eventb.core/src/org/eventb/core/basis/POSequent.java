@@ -10,9 +10,9 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eventb.core.IPODescription;
-import org.eventb.core.IPOHypothesis;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
+import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -62,12 +62,12 @@ public class POSequent extends InternalElement implements IPOSequent {
 		return identifiers;
 	}
 	
-	public IPOHypothesis getHypothesis() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOHypothesis.ELEMENT_TYPE);
+	public IPOPredicateSet getHypothesis() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicateSet.ELEMENT_TYPE);
 			
 		assert list.size() == 1;
 			
-		IPOHypothesis hypothesis = (IPOHypothesis) list.get(0);
+		IPOPredicateSet hypothesis = (IPOPredicateSet) list.get(0);
 		return hypothesis;
 	}
 	
