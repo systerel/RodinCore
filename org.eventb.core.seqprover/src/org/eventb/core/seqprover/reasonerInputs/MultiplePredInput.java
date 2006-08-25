@@ -55,12 +55,12 @@ public class MultiplePredInput implements IReasonerInput{
 
 	public MultiplePredInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
 		int length = Integer.parseInt(reasonerInputSerializer.getString("length"));
-		Predicate[] predicates = new Predicate[length];
+		predicates = new Predicate[length];
 		for (int i = 0; i < length; i++) {
 			// null value taken care of in getExpression.
 			predicates[i] = reasonerInputSerializer.getPredicate(String.valueOf(i));
 		}
-		new MultiplePredInput(predicates);
+		error = null;
 	}
 
 	public void applyHints(ReplayHints hints) {

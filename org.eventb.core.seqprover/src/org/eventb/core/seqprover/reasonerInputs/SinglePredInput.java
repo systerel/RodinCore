@@ -31,12 +31,14 @@ public class SinglePredInput implements IReasonerInput{
 	}
 	
 	public SinglePredInput(Predicate predicate){
+		assert predicate != null;
 		this.predicate = predicate;
 		this.error = null;
 	}
 
 	public SinglePredInput(Hypothesis hypothesis) {
 		predicate = hypothesis.getPredicate();
+		error = null;
 	}
 	
 	public final boolean hasError(){

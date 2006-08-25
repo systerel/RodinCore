@@ -3,18 +3,18 @@ package org.eventb.core.seqprover.reasoners;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.ProofRule.Anticident;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
+import org.eventb.core.seqprover.reasonerInputs.SingleStringInputReasoner;
 import org.eventb.core.seqprover.reasoners.rewriter.Rewriter;
 import org.eventb.core.seqprover.reasoners.rewriter.RewriterRegistry;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
-public class RewriteGoal extends SinglePredInputReasoner{
+public class RewriteGoal extends SingleStringInputReasoner{
 	
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".rewriteGoal";
 	
