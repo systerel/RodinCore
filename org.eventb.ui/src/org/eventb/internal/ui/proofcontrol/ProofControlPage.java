@@ -120,7 +120,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	private Composite pgComp;
 
-	private String currentInput;
+	private String currentInput = "";
 
 	/**
 	 * Constructor
@@ -313,6 +313,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								if (textWidget.getText() != "") {
 									textWidget.setText("");
 								}
+								currentInput = "";
 							} catch (RodinDBException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
