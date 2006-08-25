@@ -239,19 +239,19 @@ public class GoalSection extends SectionPart {
 		} else {
 			// String str = PredicateUtil.prettyPrint(max_length, actualString,
 			// parsedPred);
-			SourceLocation loc = parsedPred.getSourceLocation();
-			String str = actualString.substring(loc.getStart(), loc.getEnd());
+//			SourceLocation loc = parsedPred.getSourceLocation();
+//			String str = actualString.substring(loc.getStart(), loc.getEnd());
 			Collection<Point> indexes = new ArrayList<Point>();
-			goalText.setText(str, indexes);
+			goalText.setText(actualString, indexes);
 			if (!node.isOpen()) {
 				styledText.setBackground(color);
 			}
 		}
 		toolkit.paintBordersFor(goalComposite);
 
-		DragSource source = new DragSource(styledText, DND.DROP_COPY
-				| DND.DROP_MOVE);
-		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+//		DragSource source = new DragSource(styledText, DND.DROP_COPY
+//				| DND.DROP_MOVE);
+//		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		// source.addDragListener(new DragSourceAdapter() {
 		// Point selection;
 		//
@@ -325,27 +325,27 @@ public class GoalSection extends SectionPart {
 		// }
 		// });
 
-		source.addDragListener(new DragSourceListener() {
-			Point selection;
-
-			public void dragStart(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Start dragging: ");
-				selection = styledText.getSelection();
-				event.doit = selection.x != selection.y;
-			}
-
-			public void dragSetData(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Set Data: ");
-				event.data = styledText.getText(selection.x, selection.y - 1);
-
-			}
-
-			public void dragFinished(DragSourceEvent event) {
-				ProverUIUtils.debugProverUI("Finish dragging ");
-
-			}
-
-		});
+//		source.addDragListener(new DragSourceListener() {
+//			Point selection;
+//
+//			public void dragStart(DragSourceEvent event) {
+//				ProverUIUtils.debugProverUI("Start dragging: ");
+//				selection = styledText.getSelection();
+//				event.doit = selection.x != selection.y;
+//			}
+//
+//			public void dragSetData(DragSourceEvent event) {
+//				ProverUIUtils.debugProverUI("Set Data: ");
+//				event.data = styledText.getText(selection.x, selection.y - 1);
+//
+//			}
+//
+//			public void dragFinished(DragSourceEvent event) {
+//				ProverUIUtils.debugProverUI("Finish dragging ");
+//
+//			}
+//
+//		});
 
 	}
 

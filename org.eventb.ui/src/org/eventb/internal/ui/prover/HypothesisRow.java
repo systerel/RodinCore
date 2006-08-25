@@ -235,11 +235,11 @@ public class HypothesisRow {
 		} else {
 //			String str = PredicateUtil.prettyPrint(max_length, actualString,
 //					parsedPred);
-			SourceLocation loc = parsedPred.getSourceLocation();
-			String str = actualString.substring(loc.getStart(), loc.getEnd());
+//			SourceLocation loc = parsedPred.getSourceLocation();
+//			String str = actualString.substring(loc.getStart(), loc.getEnd());
 
 			Collection<Point> indexes = new ArrayList<Point>();
-			hypothesisText.setText(str, indexes);
+			hypothesisText.setText(actualString, indexes);
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
