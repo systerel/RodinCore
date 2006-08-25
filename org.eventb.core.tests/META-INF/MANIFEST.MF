@@ -5,8 +5,8 @@ Bundle-SymbolicName: org.eventb.core.tests
 Bundle-Version: 0.5.5
 Bundle-Vendor: Rodin
 Bundle-Localization: plugin
-Require-Bundle: org.junit,
- org.eventb.core,
+Require-Bundle: org.eventb.core,
  org.eclipse.core.runtime,
- org.eventb.core.seqprover
+ org.eventb.core.seqprover,
+ org.junit
 Eclipse-AutoStart: true
