@@ -668,6 +668,10 @@ public class UserSupport implements IElementChangedListener,
 
 			ProofState state = getProofState(prSequent);
 
+			// do nothing if there is no state corresponding to this
+			if (state == null)
+				return;
+
 			if (state.isUninitialised())
 				return;
 
@@ -691,34 +695,34 @@ public class UserSupport implements IElementChangedListener,
 				}
 			}
 
-//			else if (state.isProofReusable()) {
-//				state.getProofTree().removeChangeListener(this);
-//				state.proofReuse();
-//				state.getProofTree().addChangeListener(this);
-//				if (state == currentPS) {
-//					UserSupportUtils.debug("Is the current node");
-//					ProofStateDelta newDelta = new ProofStateDelta(
-//							UserSupport.this);
-//					newDelta.setNewProofState(currentPS);
-//					newDelta.addInformation("Current proof has been reused");
-//					fireProofStateDelta(newDelta);
-//				}
-//
-//			} else {
-//				UserSupportUtils.debug("Cannot be reused");
-//				state.getProofTree().removeChangeListener(this);
-//				state.reloadProofTree();
-//				state.getProofTree().addChangeListener(this);
-//				if (state == currentPS) {
-//					UserSupportUtils.debug("Is the current node");
-//					ProofStateDelta newDelta = new ProofStateDelta(
-//							UserSupport.this);
-//					newDelta.setNewProofState(currentPS);
-//
-//					newDelta.addInformation("Current proof cannot be reused");
-//					fireProofStateDelta(newDelta);
-//				}
-//			}
+			// else if (state.isProofReusable()) {
+			// state.getProofTree().removeChangeListener(this);
+			// state.proofReuse();
+			// state.getProofTree().addChangeListener(this);
+			// if (state == currentPS) {
+			// UserSupportUtils.debug("Is the current node");
+			// ProofStateDelta newDelta = new ProofStateDelta(
+			// UserSupport.this);
+			// newDelta.setNewProofState(currentPS);
+			// newDelta.addInformation("Current proof has been reused");
+			// fireProofStateDelta(newDelta);
+			// }
+			//
+			// } else {
+			// UserSupportUtils.debug("Cannot be reused");
+			// state.getProofTree().removeChangeListener(this);
+			// state.reloadProofTree();
+			// state.getProofTree().addChangeListener(this);
+			// if (state == currentPS) {
+			// UserSupportUtils.debug("Is the current node");
+			// ProofStateDelta newDelta = new ProofStateDelta(
+			// UserSupport.this);
+			// newDelta.setNewProofState(currentPS);
+			//
+			// newDelta.addInformation("Current proof cannot be reused");
+			// fireProofStateDelta(newDelta);
+			// }
+			// }
 
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
