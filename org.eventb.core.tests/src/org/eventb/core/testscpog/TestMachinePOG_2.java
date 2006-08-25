@@ -751,9 +751,9 @@ public class TestMachinePOG_2 extends BuilderTest {
 		
 		assertTrue("names ok", a1wd != -1 && a2wd != -1 && a3wd != -1 && a2fis != -1 && a3fis != -1 && i1 != -1 && i2 != -1 && i3 != -1);
 		
-		int ie1 = getIndexForName("event", sequents[i1].getDescription().getSources());
-		int ie2 = getIndexForName("event", sequents[i2].getDescription().getSources());
-		int ie3 = getIndexForName("event", sequents[i3].getDescription().getSources());
+		int ie1 = getIndexForName("event", sequents[i1].getSources());
+		int ie2 = getIndexForName("event", sequents[i2].getSources());
+		int ie3 = getIndexForName("event", sequents[i3].getSources());
 		
 		assertEquals("formula source", "E1", getSourceName(sequents[i1], ie1));
 		assertEquals("formula source", "E1", getSourceName(sequents[i2], ie2));

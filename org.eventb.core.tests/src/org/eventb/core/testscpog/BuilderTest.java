@@ -323,7 +323,7 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected IRodinElement getSourceElement(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
-		IPOSource[] sources = poSequent.getDescription().getSources();
+		IPOSource[] sources = poSequent.getSources();
 		String memento = sources[sourceIdx].getSourceHandleIdentifier();
 		return RodinCore.create(memento);
 	}

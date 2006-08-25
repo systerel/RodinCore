@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,8 +36,42 @@ public interface IPOSequent extends IInternalElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent"; //$NON-NLS-1$
 	
 	public String getName();
+	
+	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
 	public IPOPredicateSet getHypothesis() throws RodinDBException;
 	public IPOPredicate getGoal() throws RodinDBException;
-	public IPODescription getDescription() throws RodinDBException;
+
+	/**
+	 * Returns a more descriptive name of a proof obligation.
+	 * 
+	 * @return a descriptive proof obligation name
+	 */
+	String getDescription(IProgressMonitor monitor) throws RodinDBException;
+
+	void setDescription(String description, IProgressMonitor monitor) throws RodinDBException;
+	/**
+	 * Returns the (most important) source elements of a proof obligation.
+	 * <p>
+	 * The returned elements contain handle identifiers to elements of the
+	 * database.
+	 * </p>
+	 * 
+	 * @return the array of sources associated with the proof obligation that
+	 *         contains this description
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IPOSource[] getSources() throws RodinDBException;
+
+	/**
+	 * Returns the hints for a proof obligation.
+	 * 
+	 * @return the array of hints associated with the proof obligation that
+	 *         contains this description
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IPOHint[] getHints() throws RodinDBException;
+
 }

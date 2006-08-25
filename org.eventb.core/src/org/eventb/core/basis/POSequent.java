@@ -9,11 +9,14 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
-import org.eventb.core.IPODescription;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.IPOHint;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPOSource;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -34,6 +37,8 @@ import org.rodinp.core.basis.InternalElement;
  *
  */
 public class POSequent extends InternalElement implements IPOSequent {
+
+	public static String DESCRIPTION_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 
 	/**
 	 * @param name
@@ -80,12 +85,38 @@ public class POSequent extends InternalElement implements IPOSequent {
 		return goal;
 	}
 	
-	public IPODescription getDescription() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPODescription.ELEMENT_TYPE);
-		assert list.size() == 1;
-			
-		IPODescription desc = (IPODescription) list.get(0);
-		return desc;
+	/* (non-Javadoc)
+	 * @see org.eventb.core.IPODescription#getName()
+	 */
+	public String getDescription(IProgressMonitor monitor) throws RodinDBException {
+		return getStringAttribute(DESCRIPTION_ATTRIBUTE, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.IPODescription#getSources()
+	 */
+	public IPOSource[] getSources() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOSource.ELEMENT_TYPE);
+		IPOSource[] sources = new IPOSource[list.size()];
+		list.toArray(sources);
+		return sources;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.IPODescription#getHints()
+	 */
+	public IPOHint[] getHints() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOHint.ELEMENT_TYPE);
+		IPOHint[] hints = new IPOHint[list.size()];
+		list.toArray(hints);
+		return hints;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.IPOSequent#setDescriptionName(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setDescription(String description, IProgressMonitor monitor) throws RodinDBException {
+		setStringAttribute(DESCRIPTION_ATTRIBUTE, description, monitor);
 	}
 
 }

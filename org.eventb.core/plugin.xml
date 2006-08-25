@@ -160,10 +160,6 @@
             id="prProofTree"
             name="%eventBprProofTree"/>
       <internalElementType
-            class="org.eventb.core.basis.PODescription"
-            id="poDescription"
-            name="%eventBpoDescription"/>
-      <internalElementType
             class="org.eventb.core.basis.POSource"
             id="poSource"
             name="%eventBpoSource"/>
@@ -348,6 +344,10 @@
             id="identifier"
             kind="string"
             name="%eventBIdentifierAttribute"/>
+      <attributeType
+            id="poDescription"
+            kind="string"
+            name="%eventBpoDescriptionAttribute"/>
    </extension>
 
 </plugin>

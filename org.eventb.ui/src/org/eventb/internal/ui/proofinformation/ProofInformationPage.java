@@ -29,7 +29,6 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IPODescription;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.ITheorem;
@@ -126,8 +125,7 @@ public class ProofInformationPage extends Page implements
 		try {
 			String formString = "<form>";
 
-			IPODescription desc = prSequent.getDescription();
-			IPOSource[] sources = desc.getSources();
+			IPOSource[] sources = prSequent.getSources();
 			for (IPOSource source : sources) {
 				String role = source.getSourceRole();
 				formString = formString + "<li style=\"bullet\">" + role

@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPODescription;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -60,11 +59,11 @@ public class ProofObligation {
 			putPredicate("l" + idx++, hypothesis, predicate, monitor);
 		}
 		putPredicate("goal", sequent, goal, monitor);
-		IPODescription description = (IPODescription) sequent.createInternalElement(IPODescription.ELEMENT_TYPE, desc, null, monitor);
+		sequent.setDescription(desc, monitor);
 		for(Entry<String, String> entry : sources.entrySet()) {
 			String role = entry.getKey();
 			String handle = entry.getValue();
-			IPOSource source = (IPOSource) description.createInternalElement(IPOSource.ELEMENT_TYPE, role, null, monitor);
+			IPOSource source = (IPOSource) sequent.createInternalElement(IPOSource.ELEMENT_TYPE, role, null, monitor);
 			source.setContents(handle, monitor);
 		}
 		// TODO: output hints
