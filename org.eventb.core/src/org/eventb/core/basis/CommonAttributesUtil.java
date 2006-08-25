@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -20,8 +21,8 @@ import org.rodinp.core.basis.InternalElement;
  */
 class CommonAttributesUtil {
 	
-	public static String LABEL_ATTRIBUTE = "label";
-	public static String SOURCE_ATTRIBUTE = "source";
+	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
+	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
 	
 	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
 		return element.getStringAttribute(LABEL_ATTRIBUTE, monitor);

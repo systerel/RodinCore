@@ -29,6 +29,16 @@ import org.rodinp.core.RodinDBException;
 public interface ISCAssignmentElement extends IInternalElement {
 
 	/**
+	 * Returns the assignment string contained in this element.
+	 * 
+	 * @return the string representation of the assignment of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getAssignmentString()
+			throws RodinDBException;
+
+	/**
 	 * Returns the untyped assignment contained in this element.
 	 * 
 	 * @param factory

@@ -43,9 +43,13 @@ public abstract class SCPredicateElement extends SCTraceableLabeledElement
 		super(name, parent);
 	}
 
-	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
+	public String getPredicateString() throws RodinDBException {
+		return getContents();
+	}
+
+		public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
 		
-		String contents = getContents();
+		String contents = getPredicateString();
 		IParseResult parserResult = factory.parsePredicate(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(

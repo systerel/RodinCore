@@ -29,6 +29,16 @@ import org.rodinp.core.RodinDBException;
 public interface ISCPredicateElement extends IInternalElement {
 
 	/**
+	 * Returns the predicate string contained in this element.
+	 * 
+	 * @return the string representation of the predicate of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getPredicateString()
+			throws RodinDBException;
+
+	/**
 	 * Returns the untyped predicate contained in this element.
 	 * 
 	 * @param factory

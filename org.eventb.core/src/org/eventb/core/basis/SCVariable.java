@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -30,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	
-	public static String FORBIDDEN_ATTRIBUTE = "forbidden"; 
+	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden"; 
 
 	public SCVariable(String name, IRodinElement parent) {
 		super(name, parent);

@@ -42,7 +42,7 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	 * @see org.eventb.core.IRefinesMachine#getRefinedMachine()
 	 */
 	public String getAbstractMachineName() throws RodinDBException {
-		return getElementName();
+		return getContents();
 	}
 
 	/* (non-Javadoc)
@@ -57,9 +57,9 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	 * @see org.eventb.core.IRefinesMachine#getAbstractSCMachine()
 	 */
 	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		final String bareName = EventBPlugin.getComponentName(getAbstractMachineName());
+		final String bareName = getAbstractMachineName();
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
-		final IRodinProject project = (IRodinProject) getParent();
+		final IRodinProject project = getRodinProject();
 		return (ISCMachineFile) project.getRodinFile(scName);
 	}
 
