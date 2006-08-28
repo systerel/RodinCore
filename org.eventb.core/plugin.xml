@@ -333,6 +333,10 @@
             kind="string"
             name="%eventBSourceAttribute"/>
       <attributeType
+            id="bag"
+            kind="string"
+            name="%eventBBagAttribute"/>
+      <attributeType
             id="forbidden"
             kind="boolean"
             name="%eventBForbiddenNameAttribute"/>
