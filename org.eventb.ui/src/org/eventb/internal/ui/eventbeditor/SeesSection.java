@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -343,7 +344,9 @@ public class SeesSection extends SectionPart implements
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
-		Display display = Display.getDefault();
+		Control control = viewer.getControl();
+		if (control.isDisposed()) return;
+		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
 				viewer.setInput(rodinFile);
