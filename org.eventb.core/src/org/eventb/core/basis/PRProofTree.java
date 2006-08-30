@@ -130,8 +130,15 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 	}
 	
 	public void setConfidence(int confidence) throws RodinDBException{
-		this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null).
-		setContents(Integer.toString(confidence));
+		InternalElement confidenceAtt = getInternalElement(IPair.ELEMENT_TYPE,"confidence");
+		assert confidenceAtt != null;
+		if (! confidenceAtt.exists())
+			{
+				this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null).
+				setContents(Integer.toString(confidence));
+				return;
+			}
+		confidenceAtt.setContents(Integer.toString(confidence));
 	}
 	
 	public boolean isAutomaticallyGenerated() throws RodinDBException {
