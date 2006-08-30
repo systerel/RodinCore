@@ -70,6 +70,8 @@ import org.eventb.internal.ui.EventBUIPlugin;
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelectionChangedListener, IProofStateChangedListener {
 
+	private static final int MAX_WIDTH = 1500;
+
 	// The contained tree viewer.
 	private TreeViewer viewer;
 
@@ -376,6 +378,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		if (fInput != null)
 			update();
 		elementColumn.pack();
+		elementColumn.setWidth(MAX_WIDTH);
 
 	}
 
@@ -407,6 +410,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				if (fInput != null) {
 					viewer.setExpandedElements(elements);
 					elementColumn.pack();
+					elementColumn.setWidth(MAX_WIDTH);
 					// UIUtils.debug("Width: " + elementColumn.getWidth());
 					viewer.refresh();
 					viewer.setSelection(new StructuredSelection(userSupport
@@ -724,6 +728,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						IProofTreeNode currentNode = ps.getCurrentNode();
 						page.getViewer().expandAll();
 						elementColumn.pack();
+						elementColumn.setWidth(MAX_WIDTH);
 						if (currentNode != null)
 							page.getViewer().setSelection(
 									new StructuredSelection(currentNode));
@@ -731,6 +736,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						ProofTreeUIPage page = ProofTreeUIPage.this;
 						page.setInput(null);
 						elementColumn.pack();
+						elementColumn.setWidth(MAX_WIDTH);
 					}
 				} else if (ps != null && delta.isDeleted()) {
 					// Do nothing
@@ -740,6 +746,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();
+						elementColumn.setWidth(MAX_WIDTH);
 						IProofTreeNode node = delta.getNewProofTreeNode();
 						if (node != null) {
 							viewer.setSelection(new StructuredSelection(node),

@@ -103,6 +103,8 @@ public class ObligationExplorer extends ViewPart implements
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ObligationExplorer";
 
+	private static final int MAX_WIDTH = 500;
+
 	// Debug flag
 	public static boolean DEBUG = false;
 
@@ -520,6 +522,7 @@ public class ObligationExplorer extends ViewPart implements
 						+ exclude.getSelection());
 				viewer.refresh();
 				column.pack();
+				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -537,6 +540,7 @@ public class ObligationExplorer extends ViewPart implements
 						+ exclude.getSelection());
 				viewer.refresh();
 				column.pack();
+				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -629,6 +633,7 @@ public class ObligationExplorer extends ViewPart implements
 		column = new TreeColumn(tree, SWT.LEFT);
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 		column.pack();
+		column.setWidth(MAX_WIDTH);
 
 		// Sync with the current active ProverUI
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
@@ -731,6 +736,7 @@ public class ObligationExplorer extends ViewPart implements
 	public void refresh() {
 		viewer.refresh();
 		column.pack();
+		column.setWidth(MAX_WIDTH);
 	}
 
 	/*
@@ -829,6 +835,7 @@ public class ObligationExplorer extends ViewPart implements
 				final UserSupport userSupport = delta.getSource();
 				viewer.refresh(userSupport.getInput(), true);
 				column.pack();
+				column.setWidth(MAX_WIDTH);
 				if (delta.isNewProofState()) {
 
 					if (ps != null) {
@@ -846,6 +853,7 @@ public class ObligationExplorer extends ViewPart implements
 						IPRSequent prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
 						column.pack();
+						column.setWidth(MAX_WIDTH);
 					}
 				}
 			}
