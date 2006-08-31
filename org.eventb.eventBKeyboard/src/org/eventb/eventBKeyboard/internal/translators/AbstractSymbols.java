@@ -7,7 +7,7 @@ import java.util.HashSet;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
 public abstract class AbstractSymbols {
-	
+
 	private Collection<Symbol> newSymbols;
 
 	private HashMap<String, Collection<Symbol>> tempSymbols = null;
@@ -15,14 +15,14 @@ public abstract class AbstractSymbols {
 	private HashMap<String, Collection<Symbol>> symbols = null;
 
 	public int maxSize = 0;
-	
+
 	public HashMap<String, Collection<Symbol>> getSymbols() {
 		if (symbols == null) {
 			int count = 0;
 			tempSymbols = new HashMap<String, Collection<Symbol>>();
-			String [] mathCombo = getCombo();
-			String [] mathComboTranslation = getTranslation();
-			
+			String[] mathCombo = getCombo();
+			String[] mathComboTranslation = getTranslation();
+
 			for (int i = 0; i < mathCombo.length; i++) {
 				String combo = mathCombo[i];
 				String translation = mathComboTranslation[i];
@@ -54,9 +54,9 @@ public abstract class AbstractSymbols {
 		}
 		return symbols;
 	}
-	
+
 	protected abstract String[] getTranslation();
-	
+
 	protected abstract String[] getCombo();
 
 	private void mutateSymbols() {
@@ -80,7 +80,7 @@ public abstract class AbstractSymbols {
 				}
 			}
 		}
-		
+
 		for (Symbol newSymbol : newSymbols) {
 			pushTempSymbol(newSymbol);
 		}
@@ -90,7 +90,7 @@ public abstract class AbstractSymbols {
 
 	private void pushTempSymbol(Symbol symbol) {
 		String key = generateKey(symbol.getCombo().length());
-//		KeyboardUtils.debugMath("Push Temp: " + symbol.getCombo());
+		// KeyboardUtils.debugMath("Push Temp: " + symbol.getCombo());
 		Collection<Symbol> collection = tempSymbols.get(key);
 		if (collection == null) {
 			collection = new HashSet<Symbol>();
@@ -105,24 +105,26 @@ public abstract class AbstractSymbols {
 		}
 
 	}
-	
-	
+
 	private void generateNewSymbol(Symbol symbol, Symbol oldSymbol) {
 		String combo = symbol.getCombo();
 		String oldCombo = oldSymbol.getCombo();
-		
+
 		int i = oldCombo.indexOf(combo);
 		while (i != -1) {
-			KeyboardUtils.debugMath("New Symbol from: \"" + combo + "\" and \"" + oldCombo + "\"");
-			oldCombo = oldCombo.substring(0, i) + symbol.getTranslation()
+			KeyboardUtils.debugMath("New Symbol from: \"" + combo + "\" and \""
+					+ oldCombo + "\"");
+			String newCombo = oldCombo.substring(0, i) + symbol.getTranslation()
 					+ oldCombo.substring(i + combo.length(), oldCombo.length());
-			newSymbols.add(new Symbol(oldCombo, oldSymbol.getTranslation()));
-			KeyboardUtils.debugMath("New Symbol: " + oldCombo);
-			i = oldCombo.indexOf(combo);
+			Symbol newSymbol = new Symbol(newCombo, oldSymbol.getTranslation());
+			newSymbols.add(newSymbol);
+			generateNewSymbol(symbol, newSymbol);
+			KeyboardUtils.debugMath("New Symbol: " + newSymbol.getCombo()
+					+ " ===> " + newSymbol.getTranslation());
+			i = oldCombo.indexOf(combo, i + 1);
 		}
 	}
 
-	
 	private Symbol popNextSymbol() {
 		for (int i = 1; i <= maxSize; i++) {
 			String key = generateKey(i);
@@ -162,7 +164,7 @@ public abstract class AbstractSymbols {
 
 	private void pushSymbol(Symbol symbol) {
 		String key = generateKey(symbol.getCombo().length());
-		
+
 		Collection<Symbol> collection = symbols.get(key);
 		if (collection == null) {
 			collection = new HashSet<Symbol>();
@@ -181,6 +183,5 @@ public abstract class AbstractSymbols {
 	public int getMaxSize() {
 		return maxSize;
 	}
-
 
 }
