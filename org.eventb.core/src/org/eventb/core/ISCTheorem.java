@@ -32,7 +32,8 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCTheorem extends ITraceableElement, ILabeledElement, ISCPredicateElement {
+public interface ISCTheorem 
+extends ITraceableElement, ILabeledElement, ISCBaggedElement, ISCPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scTheorem"; //$NON-NLS-1$
 

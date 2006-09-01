@@ -5,23 +5,20 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Specifies a source element of a proof obligation.
- * The name of an <code>IPOSource</code> describes the role of the element
- * and the contents contains a handle identifier for the element.
- * 
  * @author Stefan Hallerstede
  *
  */
-public interface IPOSource extends IInternalElement, ITraceableElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSource"; //$NON-NLS-1$
+public interface ISCBaggedElement extends IInternalElement {
+
+	void setBag(String bag, IProgressMonitor monitor) throws RodinDBException;
 	
-	String getSourceRole();
-	String getSourceHandleIdentifier() throws RodinDBException;
+	String getBag(IProgressMonitor monitor) throws RodinDBException;
+	
 }

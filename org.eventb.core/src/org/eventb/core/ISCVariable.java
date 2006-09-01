@@ -56,5 +56,23 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	boolean isForbidden(IProgressMonitor monitor) throws RodinDBException;
+	/**
+	 * A variable name that has been used in the abstraction and the refinement
+	 * are called "preserved". A forbidden variable must not be preserved.
+	 * 
+	 * @param value the "preserved" status of the variable name
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns whether the variable name is preserved or not.
+	 * 
+	 * @return whether the variable name is preserved or not
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean isPreserved(IProgressMonitor monitor) throws RodinDBException;
 
 }

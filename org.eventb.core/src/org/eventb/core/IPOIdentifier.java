@@ -25,7 +25,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IPOIdentifier extends IInternalElement {
+public interface IPOIdentifier extends IInternalElement, ISCIdentifierElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier"; //$NON-NLS-1$
 
 	public String getName();	

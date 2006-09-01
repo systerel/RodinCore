@@ -10,7 +10,6 @@ package org.eventb.core.basis;
 import org.eventb.core.IPOIdentifier;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PO typed identifier as an extension of the Rodin database.
@@ -27,7 +26,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
-public class POIdentifier extends InternalElement implements IPOIdentifier {
+public class POIdentifier extends SCIdentifierElement implements IPOIdentifier {
 
 	public POIdentifier(String name, IRodinElement parent) {
 		super(name, parent);
