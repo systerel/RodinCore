@@ -32,6 +32,7 @@ import org.rodinp.core.RodinDBException;
 public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	
 	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden"; 
+	public static String PRESERVED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".preserved"; 
 
 	public SCVariable(String name, IRodinElement parent) {
 		super(name, parent);
@@ -48,6 +49,14 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 
 	public boolean isForbidden(IProgressMonitor monitor) throws RodinDBException {
 		return getBooleanAttribute(FORBIDDEN_ATTRIBUTE, monitor);
+	}
+
+	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
+		setBooleanAttribute(PRESERVED_ATTRIBUTE, value, monitor);
+	}
+
+	public boolean isPreserved(IProgressMonitor monitor) throws RodinDBException {
+		return getBooleanAttribute(PRESERVED_ATTRIBUTE, monitor);
 	}
 
 }

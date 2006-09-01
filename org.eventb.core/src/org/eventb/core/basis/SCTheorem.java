@@ -8,8 +8,10 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCTheorem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC theorems as an extension of the Rodin database.
@@ -41,6 +43,14 @@ public class SCTheorem extends SCPredicateElement implements ISCTheorem {
 	@Override
 	public String getElementType() {
 		return ELEMENT_TYPE;
+	}
+
+	public void setBag(String bag, IProgressMonitor monitor) throws RodinDBException {
+		CommonAttributesUtil.setBag(this, bag, monitor);
+	}
+
+	public String getBag(IProgressMonitor monitor) throws RodinDBException {
+		return CommonAttributesUtil.getBag(this, monitor);
 	}
 
 }
