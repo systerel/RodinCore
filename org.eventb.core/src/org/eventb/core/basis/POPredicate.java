@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicate;
+import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -44,6 +46,22 @@ public class POPredicate extends InternalElement implements IPOPredicate {
 
 	public String getPredicate() throws RodinDBException {
 		return getContents();
+	}
+
+	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
+		setContents(predicate.toStringWithTypes(), monitor);
+	}
+
+	public void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
+		CommonAttributesUtil.setSource(this, source, monitor);
+	}
+
+	public IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException {
+		return CommonAttributesUtil.getSource(this, monitor);
+	}
+
+	public void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException {
+		setContents(predicate, monitor);
 	}
 
 }

@@ -9,6 +9,7 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -61,11 +62,18 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	public IPOPredicateSet getPredicateSet() throws RodinDBException {
 		if (getContents().equals("")) return null;
 		IPOPredicateSet sup = null;
+		
+		// TODO the hack below has to disappear
+		
 			if (getOpenable() instanceof IPOFile)
 			sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
 			else sup = ((IPRFile) getOpenable()).getPredicateSet(getContents());
 	
 		return sup;
+	}
+
+	public void setParentPredicateSet(String setName, IProgressMonitor monitor) throws RodinDBException {
+		setContents(setName, monitor);
 	}
 
 }
