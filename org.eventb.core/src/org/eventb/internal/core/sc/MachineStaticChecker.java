@@ -55,8 +55,8 @@ public class MachineStaticChecker extends StaticChecker {
 			
 		}
 		
-		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.create(file);
-		IMachineFile machineFile = scMachineFile.getMachineFile();
+		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.create(file).getMutableCopy();
+		IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
 		
 		IRodinProject project = (IRodinProject) scMachineFile.getParent();
 		project.createRodinFile(scMachineFile.getElementName(), true, null);
@@ -72,7 +72,10 @@ public class MachineStaticChecker extends StaticChecker {
 		
 		scMachineFile.save(monitor, true);
 		
-		return repository.targetHasChanged();
+		// TODO delta checking
+		// return repository.targetHasChanged();
+		
+		return true;
 	}
 
 	/* (non-Javadoc)

@@ -54,8 +54,8 @@ public class ContextStaticChecker extends StaticChecker {
 			
 		}
 		
-		ISCContextFile scContextFile = (ISCContextFile) RodinCore.create(file);
-		IContextFile contextFile = scContextFile.getContextFile();
+		ISCContextFile scContextFile = (ISCContextFile) RodinCore.create(file).getMutableCopy();
+		IContextFile contextFile = (IContextFile) scContextFile.getContextFile().getSnapshot();
 		
 		IRodinProject project = (IRodinProject) scContextFile.getParent();
 		project.createRodinFile(scContextFile.getElementName(), true, null);
@@ -71,7 +71,10 @@ public class ContextStaticChecker extends StaticChecker {
 		
 		scContextFile.save(monitor, true);
 		
-		return repository.targetHasChanged();
+		// TODO delta checking
+		// return repository.targetHasChanged();
+		
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -84,19 +87,19 @@ public class ContextStaticChecker extends StaticChecker {
 	
 	public void extract(IFile file, IGraph graph) throws CoreException {
 		
-		IContextFile contextIn = (IContextFile) RodinCore.create(file);
-		ISCContextFile target = contextIn.getSCContextFile();
+		IContextFile source = (IContextFile) RodinCore.create(file);
+		ISCContextFile target = source.getSCContextFile();
 		
-		IPath inPath = contextIn.getPath();
+		IPath sourcePath = source.getPath();
 		IPath targetPath = target.getPath();
 		
 		graph.addNode(targetPath, CONTEXT_SC_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, CONTEXT_SC_TOOL_ID, true);
+		graph.putToolDependency(sourcePath, targetPath, CONTEXT_SC_TOOL_ID, true);
 		
-		IExtendsContext[] extendsContexts = contextIn.getExtendsClauses();
+		IExtendsContext[] extendsContexts = source.getExtendsClauses();
 		for(IExtendsContext extendsContext : extendsContexts) {
 			graph.putUserDependency(
-					contextIn.getPath(), 
+					source.getPath(), 
 					extendsContext.getAbstractSCContext().getPath(), 
 					target.getPath(), 
 					CONTEXT_SC_EXTENDS_ID, 

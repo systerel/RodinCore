@@ -57,7 +57,7 @@ public final class ModuleManager implements IModuleManager {
 	 */
 	public IAcceptorModule[] getAcceptorModules(String moduleType) {
 		IAcceptorCreator creator = 
-			(IAcceptorCreator) ruleTable.get(moduleType);
+			(IAcceptorCreator) moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyAcc;
 		IAcceptorModule[] rules = creator.create();
@@ -69,21 +69,21 @@ public final class ModuleManager implements IModuleManager {
 	 */
 	public IProcessorModule[] getProcessorModules(String moduleType) {
 		IProcessorCreator creator = 
-			(IProcessorCreator) ruleTable.get(moduleType);
+			(IProcessorCreator) moduleTable.get(moduleType);
 		if (creator == null)
 			return emptyProc;
 		IProcessorModule[] rules = creator.create();
 		return rules;
 	}
 	
-	private Hashtable<String, IModuleCreator> ruleTable;
+	private Hashtable<String, IModuleCreator> moduleTable;
 	
 	private ModuleManager() {
-		ruleTable = new Hashtable<String, IModuleCreator>(43);
+		moduleTable = new Hashtable<String, IModuleCreator>(43);
 		
 		// contexts:
 		
-		ruleTable.put(ContextAxiomModule.CONTEXT_AXIOM_ACCEPTOR,
+		moduleTable.put(ContextAxiomModule.CONTEXT_AXIOM_ACCEPTOR,
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
@@ -93,7 +93,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
-		ruleTable.put(ContextTheoremModule.CONTEXT_THEOREM_ACCEPTOR,
+		moduleTable.put(ContextTheoremModule.CONTEXT_THEOREM_ACCEPTOR,
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
@@ -103,7 +103,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
-		ruleTable.put(ContextStaticChecker.CONTEXT_PROCESSOR,
+		moduleTable.put(ContextStaticChecker.CONTEXT_PROCESSOR,
 				new IProcessorCreator() {
 					public IProcessorModule[] create() {
 						return new IProcessorModule[] {
@@ -121,7 +121,7 @@ public final class ModuleManager implements IModuleManager {
 		
 		// machines:
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineVariableModule.MACHINE_VARIABLE_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -133,7 +133,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineInvariantModule.MACHINE_INVARIANT_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -146,7 +146,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineTheoremModule.MACHINE_THEOREM_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -159,7 +159,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
-		ruleTable.put(MachineStaticChecker.MACHINE_PROCESSOR,
+		moduleTable.put(MachineStaticChecker.MACHINE_PROCESSOR,
 				new IProcessorCreator() {
 					public IProcessorModule[] create() {
 						return new IProcessorModule[] {
@@ -180,7 +180,7 @@ public final class ModuleManager implements IModuleManager {
 		
 		// events:
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineEventGuardModule.MACHINE_EVENT_GUARD_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -192,7 +192,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);	
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineEventWitnessModule.MACHINE_EVENT_WITNESS_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -204,7 +204,7 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);	
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineEventActionModule.MACHINE_EVENT_ACTION_ACCEPTOR, 
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
@@ -216,13 +216,13 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);	
 		
-		ruleTable.put(
+		moduleTable.put(
 				MachineEventModule.MACHINE_EVENT_PROCESSOR, 
 				new IProcessorCreator() {
 					public IProcessorModule[] create() {
 						return new IProcessorModule[] {
-								new MachineEventVariableModule(),
 								new MachineEventRefinesModule(),
+								new MachineEventVariableModule(),
 								new MachineEventGuardModule(),
 								new MachineEventSaveIdentifiersModule(),
 								new MachineEventWitnessModule(),

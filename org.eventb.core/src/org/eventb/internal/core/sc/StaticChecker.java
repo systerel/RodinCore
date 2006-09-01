@@ -28,7 +28,7 @@ import org.rodinp.core.builder.IExtractor;
  * @author Stefan Hallerstede
  *
  */
-public abstract class StaticChecker implements IAutomaticTool, IExtractor {
+public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
 
@@ -65,11 +65,23 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		return repository;
 	}
 	
+	public static String getStrippedComponentName(String component) {
+		int dotPos = component.indexOf('.');
+		if (dotPos == -1)
+			return component;
+		else
+			return component.substring(0, dotPos - 1);
+	}
+	
+	public static String getParentName(IRodinElement element) {
+		return element.getParent().getElementName();
+	}
+
 	protected void runProcessorModules(
 			IRodinFile file, 
-			IInternalParent target,
+			IInternalParent target, 
 			IProcessorModule[] modules, 
-			IStateRepository repository,
+			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		for(IProcessorModule module : modules) {
@@ -80,7 +92,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					monitor);
 	
 		}		
-
+	
 		for(IProcessorModule module : modules) {
 			
 			module.process(
@@ -99,20 +111,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					monitor);
 	
 		}		
-
-	}
 	
-	public static String getStrippedComponentName(String component) {
-		int dotPos = component.indexOf('.');
-		if (dotPos == -1)
-			return component;
-		else
-			return component.substring(0, dotPos - 1);
 	}
-	
-	public static String getParentName(IRodinElement element) {
-		return element.getParent().getElementName();
-	}
-
 
 }
