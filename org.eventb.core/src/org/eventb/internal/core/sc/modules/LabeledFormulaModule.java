@@ -178,13 +178,21 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				break;
 			}
 			
-			issueMarkerWithLocation(
-					severity, 
-					element, 
-					message, 
-					location.getStart(), 
-					location.getEnd(), 
-					objects);
+			if (location == null) {
+				issueMarker(
+						severity, 
+						element, 
+						message, 
+						objects);
+			} else {	
+				issueMarkerWithLocation(
+						severity, 
+						element, 
+						message, 
+						location.getStart(), 
+						location.getEnd(), 
+						objects);
+			}
 		}
 	}
 

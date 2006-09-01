@@ -23,6 +23,7 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IAbstractEventInfo;
@@ -31,6 +32,7 @@ import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IIdentifierSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
@@ -56,6 +58,7 @@ public class MachineRefinesModule extends ProcessorModule {
 	ISCMachineFile scMachineFile;
 	IRefinesMachine refinesMachine;
 	IAbstractEventTable abstractEventTable;
+	ITypeEnvironment typeEnvironment;
 
 	public void process(
 			IRodinElement element, 
@@ -221,6 +224,8 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 		identifierSymbolTable.putSymbolInfo(symbolInfo);
 		
+		typeEnvironment.addName(name, type);
+		
 		return symbolInfo;
 		
 	}
@@ -296,16 +301,6 @@ public class MachineRefinesModule extends ProcessorModule {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
-		refinesMachine = null;
-		scMachineFile = null;
-		abstractEventTable = null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -317,6 +312,9 @@ public class MachineRefinesModule extends ProcessorModule {
 		emptyVariableList = new FreeIdentifier[0];
 		emptyPredicateList = new Predicate[0];
 		emptyAssignmentList = new Assignment[0];
+		
+		typeEnvironment = 
+			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
@@ -341,6 +339,15 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.sc.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		refinesMachine = null;
+		scMachineFile = null;
+		abstractEventTable = null;
+	}
 
-	
 }
+
