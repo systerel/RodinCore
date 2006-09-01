@@ -352,6 +352,10 @@
             id="poDescription"
             kind="string"
             name="%eventBpoDescriptionAttribute"/>
+      <attributeType
+            id="preserved"
+            kind="boolean"
+            name="%eventBpreservedVariableAttribute"/>
    </extension>
 
 </plugin>

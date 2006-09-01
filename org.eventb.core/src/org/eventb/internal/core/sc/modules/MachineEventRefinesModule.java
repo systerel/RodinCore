@@ -47,22 +47,13 @@ public class MachineEventRefinesModule extends ProcessorModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		if (refinesEvents.length == 0)
+		if (refinesEvents.length == 0 || refinedEventTable.getAbstractEventInfos().size() == 0)
 			return;
 		
 		IAbstractEventInfo abstractEventInfo =
-			abstractEventTable.getAbstractEventInfo(
-					refinesEvents[0].getAbstractEventName());
-		
-		if (abstractEventInfo == null) {
-			issueMarker(IMarkerDisplay.SEVERITY_ERROR, refinesEvents[0], 
-					Messages.scuser_AbstractEventNotFound);
-			return;
-		}
+			refinedEventTable.getAbstractEventInfos().get(0);
 		
 		createRefinesClause(target, 0, refinesEvents[0], abstractEventInfo.getEvent(), monitor);
-		
-		refinedEventTable.addAbstractEventInfo(abstractEventInfo);
 
 	}
 	
@@ -103,6 +94,22 @@ public class MachineEventRefinesModule extends ProcessorModule {
 
 		abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
+		
+		if (refinesEvents.length == 0)
+			return;
+		
+		IAbstractEventInfo abstractEventInfo =
+			abstractEventTable.getAbstractEventInfo(
+					refinesEvents[0].getAbstractEventName());
+		
+		if (abstractEventInfo == null) {
+			issueMarker(IMarkerDisplay.SEVERITY_ERROR, refinesEvents[0], 
+					Messages.scuser_AbstractEventNotFound);
+			return;
+		}
+		
+		refinedEventTable.addAbstractEventInfo(abstractEventInfo);
+
 	}
 
 	/* (non-Javadoc)

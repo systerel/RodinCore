@@ -264,8 +264,10 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			}
 
 			for (IIdentifierSymbolInfo symbolInfo : symbolList) {
-				symbolInfo.setVisible();
-				symbolInfo.setImmutable();
+				if (symbolInfo.isMutable()) {
+					symbolInfo.setVisible();
+					symbolInfo.setImmutable();
+				}
 				typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());
 			}
 

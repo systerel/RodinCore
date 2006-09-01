@@ -71,6 +71,7 @@ public class MachineVariableModule extends IdentifierModule {
 			
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
 			((IVariableSymbolInfo) newSymbolInfo).setPreserved();
+			((IVariableSymbolInfo) newSymbolInfo).setFresh();
 			
 		} catch (CoreException e) {
 			

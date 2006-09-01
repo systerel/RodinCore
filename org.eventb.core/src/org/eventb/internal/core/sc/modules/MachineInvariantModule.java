@@ -91,6 +91,8 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
+		final String bag = parent.getElementName();
+		
 		int index = offset;
 		
 		for (int i=0; i<invariants.length; i++) {
@@ -105,6 +107,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			scInvariant.setLabel(invariants[i].getLabel(monitor), monitor);
 			scInvariant.setPredicate(predicates[i]);
 			scInvariant.setSource(invariants[i], monitor);
+			scInvariant.setBag(bag, monitor);
 		}
 	}
 

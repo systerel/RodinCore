@@ -79,6 +79,8 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
+		final String bag = parent.getElementName();
+		
 		int index = 0;
 		
 		for (int i=0; i<axioms.length; i++) {
@@ -93,6 +95,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 			scAxiom.setLabel(axioms[i].getLabel(monitor), monitor);
 			scAxiom.setPredicate(predicates[i]);
 			scAxiom.setSource(axioms[i], monitor);
+			scAxiom.setBag(bag, monitor);
 		}
 	}
 

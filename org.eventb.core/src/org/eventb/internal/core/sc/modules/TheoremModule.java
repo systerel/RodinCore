@@ -54,6 +54,8 @@ public abstract class TheoremModule extends PredicateModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
+		final String bag = parent.getElementName();
+		
 		int index = offset;
 		
 		for (int i=0; i<theorems.length; i++) {
@@ -68,6 +70,7 @@ public abstract class TheoremModule extends PredicateModule {
 			scTheorem.setLabel(theorems[i].getLabel(monitor), monitor);
 			scTheorem.setPredicate(predicates[i]);
 			scTheorem.setSource(theorems[i], monitor);
+			scTheorem.setBag(bag, monitor);
 		}
 	}
 	
