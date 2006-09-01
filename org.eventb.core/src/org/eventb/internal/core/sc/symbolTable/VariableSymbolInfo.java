@@ -42,12 +42,16 @@ public class VariableSymbolInfo
 		
 		preserved = false;
 		
+		fresh = false;
+		
 		local = false;
 	}
 
 	private boolean forbidden;
 	
 	private boolean preserved;
+	
+	private boolean fresh;
 	
 	private boolean local;
 	
@@ -86,7 +90,10 @@ public class VariableSymbolInfo
 			(ISCVariable) parent.createInternalElement(
 					ISCVariable.ELEMENT_TYPE, getSymbol(), null, monitor);
 		variable.setType(getType());
-		variable.setForbidden(isForbidden() || !isPreserved(), monitor);
+		if (!isLocal()) {
+			variable.setForbidden(isForbidden() || !isPreserved(), monitor);
+			variable.setPreserved(isPreserved() && !isFresh(), monitor);
+		}
 		variable.setSource(getSourceElement(), monitor);
 	}
 
@@ -103,5 +110,15 @@ public class VariableSymbolInfo
 
 	public boolean isLocal() {
 		return local;
+	}
+
+	public void setFresh() throws CoreException {
+		if (!isMutable())
+			throw Util.newCoreException(Messages.symtab_ImmutableSymbolViolation);
+		fresh = true;
+	}
+
+	public boolean isFresh() {
+		return fresh;
 	}
 }

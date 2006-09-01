@@ -58,4 +58,17 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	 */
 	boolean isLocal();
 	
+	/**
+	 * Mark this the variable as "fresh", i.e. its name was not used before.
+	 * 
+	 * @throws CoreException if this symbol is not mutable
+	 */
+	void setFresh() throws CoreException;
+	
+	/**
+	 * Returns whether the variable symbol is "fresh".
+	 * @return whether the variable symbol is "fresh"
+	 */
+	boolean isFresh();
+	
 }
