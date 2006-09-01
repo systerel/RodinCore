@@ -32,7 +32,6 @@ import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
-import org.eventb.internal.core.sc.WA;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -308,8 +307,6 @@ public abstract class ContextPointerModule extends ProcessorModule {
 					(ISCInternalContext) target.createInternalElement(
 							ISCInternalContext.ELEMENT_TYPE, 
 							context.getElementName(), null, monitor);
-				
-				WA.save(internalContext);
 				
 				copyElements(contextFile.getChildren(), internalContext, monitor);
 				

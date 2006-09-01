@@ -17,7 +17,6 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.sc.IContextPointerArray;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
-import org.eventb.internal.core.sc.WA;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -66,8 +65,6 @@ public class SaveInternalContextsModule extends ProcessorModule {
 					(ISCInternalContext) target.createInternalElement(
 							ISCInternalContext.ELEMENT_TYPE, 
 							context.getElementName(), null, monitor);
-				
-				WA.save(internalContext);
 				
 				copyElements(contextFile.getChildren(), internalContext, monitor);
 				

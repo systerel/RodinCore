@@ -24,7 +24,6 @@ import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.sc.ModuleManager;
-import org.eventb.internal.core.sc.WA;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
@@ -91,7 +90,6 @@ public class MachineEventModule extends LabeledElementModule {
 		for (int i=0; i < events.length; i++) {
 			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
 				scEvents[i] = createSCEvent(target, index++, symbolInfos[i], events[i], monitor);
-				WA.save(scEvents[i]);
 			} else
 				scEvents[i] = null;
 		}
