@@ -157,7 +157,9 @@ public class Graph implements Serializable, Iterable<Node> {
 		RodinBuilder.deleteMarkers(file);
 		boolean changed = false;
 		try {
-			changed = tool.run(file, monitor);
+			FileRunnable runnable = new FileRunnable(tool, file);
+			RodinCore.run(runnable, monitor);
+			changed = runnable.targetHasChanged();
 		} catch (OperationCanceledException e) {
 			throw e;
 		} catch (CoreException e) {
@@ -275,7 +277,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		for(Node node : values) {
 			try {
 				cleanNode(node, monitor);
-				if(node.isDerived()) //$NON-NLS-1$
+				if(node.isDerived()) 
 					tryRemoveNode(node);
 				
 			} catch(CoreException e) {
