@@ -62,11 +62,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.basis.SCCarrierSet;
-import org.eventb.core.basis.SCConstant;
-import org.eventb.core.basis.SCVariable;
 import org.eventb.internal.core.pom.AutoProver;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -122,20 +118,20 @@ public abstract class BasicTest extends TestCase {
 		return (IContextFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-		return (ISCContextFile) rodinProject.createRodinFile(fileName, true, null);
-	}
+//	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
+//		final String fileName = EventBPlugin.getSCContextFileName(bareName);
+//		return (ISCContextFile) rodinProject.createRodinFile(fileName, true, null);
+//	}
 
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
 		return (IMachineFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-		return (ISCMachineFile) rodinProject.createRodinFile(fileName, true, null);
-	}
+//	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
+//		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
+//		return (ISCMachineFile) rodinProject.createRodinFile(fileName, true, null);
+//	}
 
 	public static void addAxioms(
 			IRodinFile rodinFile, 
@@ -150,24 +146,24 @@ public abstract class BasicTest extends TestCase {
 		}
 	}
 	
-	public static void addSCAxioms(
-			IRodinFile rodinFile, 
-			String[] names, 
-			Predicate[] axioms, 
-			IInternalParent parent) throws RodinDBException {
-		IInternalParent element = null;
-		if(parent == null) 
-			element = rodinFile;
-		else
-			element = parent;
-		for(int i=0; i<names.length; i++) {
-			ISCAxiom axiom = 
-				(ISCAxiom) element.createInternalElement(ISCAxiom.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			axiom.setPredicate(axioms[i]);
-			axiom.setLabel(names[i], null);
-		}
-	}
+//	public static void addSCAxioms(
+//			IRodinFile rodinFile, 
+//			String[] names, 
+//			Predicate[] axioms, 
+//			IInternalParent parent) throws RodinDBException {
+//		IInternalParent element = null;
+//		if(parent == null) 
+//			element = rodinFile;
+//		else
+//			element = parent;
+//		for(int i=0; i<names.length; i++) {
+//			ISCAxiom axiom = 
+//				(ISCAxiom) element.createInternalElement(ISCAxiom.ELEMENT_TYPE, 
+//						getUniqueName(), null, null);
+//			axiom.setPredicate(axioms[i]);
+//			axiom.setLabel(names[i], null);
+//		}
+//	}
 	
 	public static void addCarrierSets(IRodinFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
@@ -248,91 +244,91 @@ public abstract class BasicTest extends TestCase {
 		}
 	}
 
-	public static void addSCInvariants(IRodinFile rodinFile, String[] names, Predicate[] invariants) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			ISCInvariant invariant = 
-				(ISCInvariant) rodinFile.createInternalElement(ISCInvariant.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			invariant.setPredicate(invariants[i]);
-			invariant.setLabel(names[i], null);
-		}
-	}
-
-	public static ISCInternalContext addSCInternalContext(IRodinFile file, String name) throws RodinDBException {
-		return (ISCInternalContext) file.createInternalElement(ISCInternalContext.ELEMENT_TYPE, name, null, null);
-	}
-
-	public static void addSCCarrierSets(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
-		IInternalParent parent = null;
-		if(internalContext == null)
-			parent = rodinFile;
-		else
-			parent = internalContext;
-		for(int i=0; i<names.length; i++) {
-			SCCarrierSet identifier = 
-				(SCCarrierSet) parent.createInternalElement(ISCCarrierSet.ELEMENT_TYPE, 
-						names[i], null, null);
-			identifier.setType(types[i]);
-		}
-	}
-
-	public static void addSCConstants(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
-		IInternalParent parent = null;
-		if(internalContext == null)
-			parent = rodinFile;
-		else
-			parent = internalContext;
-		for(int i=0; i<names.length; i++) {
-			SCConstant identifier = 
-				(SCConstant) parent.createInternalElement(ISCConstant.ELEMENT_TYPE, 
-						names[i], null, null);
-			identifier.setType(types[i]);
-		}
-	}
-
-	public static void addSCEvent(IRodinFile rodinFile, 
-				String name,
-				String[] vars,
-				Type[] types,
-				String[] guardNames,
-				Predicate[] guards,
-				String[] actionNames,
-				Assignment[] actions
-	) throws RodinDBException {
-		ISCEvent event = 
-			(ISCEvent) rodinFile.createInternalElement(ISCEvent.ELEMENT_TYPE, 
-					getUniqueName(), null, null);
-		event.setLabel(name, null);
-		for(int i=0; i<vars.length; i++) {
-			ISCVariable variable = 
-				(ISCVariable) event.createInternalElement(ISCVariable.ELEMENT_TYPE, 
-						vars[i], null, null);
-			variable.setType(types[i]);
-		}
-		for(int i=0; i<guards.length; i++) {
-			ISCGuard guard = 
-				(ISCGuard) event.createInternalElement(ISCGuard.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			guard.setPredicate(guards[i]);
-			guard.setLabel(guardNames[i], null);
-		}
-		for(int j=0; j<actions.length; j++) {
-			ISCAction action = 
-				(ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			action.setAssignment(actions[j]);
-			action.setLabel(actionNames[j], null);
-		}
-	}
-
-	public static void addSCVariables(IRodinFile rodinFile, String[] names, Type[] types) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			SCVariable identifier = 
-				(SCVariable) rodinFile.createInternalElement(ISCVariable.ELEMENT_TYPE, 
-						names[i], null, null);
-			identifier.setType(types[i]);
-		}
-	}
+//	public static void addSCInvariants(IRodinFile rodinFile, String[] names, Predicate[] invariants) throws RodinDBException {
+//		for(int i=0; i<names.length; i++) {
+//			ISCInvariant invariant = 
+//				(ISCInvariant) rodinFile.createInternalElement(ISCInvariant.ELEMENT_TYPE, 
+//						getUniqueName(), null, null);
+//			invariant.setPredicate(invariants[i]);
+//			invariant.setLabel(names[i], null);
+//		}
+//	}
+//
+//	public static ISCInternalContext addSCInternalContext(IRodinFile file, String name) throws RodinDBException {
+//		return (ISCInternalContext) file.createInternalElement(ISCInternalContext.ELEMENT_TYPE, name, null, null);
+//	}
+//
+//	public static void addSCCarrierSets(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
+//		IInternalParent parent = null;
+//		if(internalContext == null)
+//			parent = rodinFile;
+//		else
+//			parent = internalContext;
+//		for(int i=0; i<names.length; i++) {
+//			SCCarrierSet identifier = 
+//				(SCCarrierSet) parent.createInternalElement(ISCCarrierSet.ELEMENT_TYPE, 
+//						names[i], null, null);
+//			identifier.setType(types[i]);
+//		}
+//	}
+//
+//	public static void addSCConstants(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
+//		IInternalParent parent = null;
+//		if(internalContext == null)
+//			parent = rodinFile;
+//		else
+//			parent = internalContext;
+//		for(int i=0; i<names.length; i++) {
+//			SCConstant identifier = 
+//				(SCConstant) parent.createInternalElement(ISCConstant.ELEMENT_TYPE, 
+//						names[i], null, null);
+//			identifier.setType(types[i]);
+//		}
+//	}
+//
+//	public static void addSCEvent(IRodinFile rodinFile, 
+//				String name,
+//				String[] vars,
+//				Type[] types,
+//				String[] guardNames,
+//				Predicate[] guards,
+//				String[] actionNames,
+//				Assignment[] actions
+//	) throws RodinDBException {
+//		ISCEvent event = 
+//			(ISCEvent) rodinFile.createInternalElement(ISCEvent.ELEMENT_TYPE, 
+//					getUniqueName(), null, null);
+//		event.setLabel(name, null);
+//		for(int i=0; i<vars.length; i++) {
+//			ISCVariable variable = 
+//				(ISCVariable) event.createInternalElement(ISCVariable.ELEMENT_TYPE, 
+//						vars[i], null, null);
+//			variable.setType(types[i]);
+//		}
+//		for(int i=0; i<guards.length; i++) {
+//			ISCGuard guard = 
+//				(ISCGuard) event.createInternalElement(ISCGuard.ELEMENT_TYPE, 
+//						getUniqueName(), null, null);
+//			guard.setPredicate(guards[i]);
+//			guard.setLabel(guardNames[i], null);
+//		}
+//		for(int j=0; j<actions.length; j++) {
+//			ISCAction action = 
+//				(ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, 
+//						getUniqueName(), null, null);
+//			action.setAssignment(actions[j]);
+//			action.setLabel(actionNames[j], null);
+//		}
+//	}
+//
+//	public static void addSCVariables(IRodinFile rodinFile, String[] names, Type[] types) throws RodinDBException {
+//		for(int i=0; i<names.length; i++) {
+//			SCVariable identifier = 
+//				(SCVariable) rodinFile.createInternalElement(ISCVariable.ELEMENT_TYPE, 
+//						names[i], null, null);
+//			identifier.setType(types[i]);
+//		}
+//	}
 
 	public static void addMachineSees(IRodinFile rodinFile, String refName, String name) throws RodinDBException {
 		ISeesContext sees = (ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, refName, null, null);
@@ -359,20 +355,20 @@ public abstract class BasicTest extends TestCase {
 		}
 	}
 
-	public static void addSCTheorems(IRodinFile rodinFile, String[] names, Predicate[] theorems, IInternalParent parent) throws RodinDBException {
-		IInternalParent element = null;
-		if(parent == null) 
-			element = rodinFile;
-		else
-			element = parent;
-		for(int i=0; i<names.length; i++) {
-			ISCTheorem theorem = 
-				(ISCTheorem) element.createInternalElement(ISCTheorem.ELEMENT_TYPE, 
-						getUniqueName(), null, null);
-			theorem.setPredicate(theorems[i]);
-			theorem.setLabel(names[i], null);
-		}
-	}
+//	public static void addSCTheorems(IRodinFile rodinFile, String[] names, Predicate[] theorems, IInternalParent parent) throws RodinDBException {
+//		IInternalParent element = null;
+//		if(parent == null) 
+//			element = rodinFile;
+//		else
+//			element = parent;
+//		for(int i=0; i<names.length; i++) {
+//			ISCTheorem theorem = 
+//				(ISCTheorem) element.createInternalElement(ISCTheorem.ELEMENT_TYPE, 
+//						getUniqueName(), null, null);
+//			theorem.setPredicate(theorems[i]);
+//			theorem.setLabel(names[i], null);
+//		}
+//	}
 
 	public static void addVariables(IRodinFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {

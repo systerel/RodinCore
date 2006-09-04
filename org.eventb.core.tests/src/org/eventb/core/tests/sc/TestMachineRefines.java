@@ -9,6 +9,7 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 
@@ -58,6 +59,111 @@ public class TestMachineRefines extends BasicTest {
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"));
 		
 		getInternalContexts(file, 0);
+
+	}
+	
+	public void testMachineRefines_1() throws Exception {
+		IContextFile con =  createContext("con");
+		addCarrierSets(con, "S1");
+	
+		con.save(null, true);
+		
+		runSC(con);
+
+		IMachineFile abs = createMachine("abs");
+		
+		addMachineSees(abs, "con", "con");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineSees(mac, "con", "con");
+		addMachineRefines(mac, "abs", "abs");
+
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+				
+		ISCInternalContext[] contexts = getInternalContexts(file, 1);
+		
+		containsCarrierSets(contexts[0], "S1");
+
+	}
+	
+	public void testMachineRefines_2() throws Exception {
+		IContextFile con =  createContext("con");
+		addConstants(con, "C1");
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+	
+		con.save(null, true);
+		
+		runSC(con);
+
+		IMachineFile abs = createMachine("abs");
+		
+		addMachineSees(abs, "con", "con");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineSees(mac, "con", "con");
+		addMachineRefines(mac, "abs", "abs");
+
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+				
+		ISCInternalContext[] contexts = getInternalContexts(file, 1);
+		
+		containsConstants(contexts[0], "C1");
+
+	}
+	
+	public void testMachineRefines_3() throws Exception {
+		IContextFile con =  createContext("con");
+		addConstants(con, "C1");
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+	
+		con.save(null, true);
+		
+		runSC(con);
+
+		IMachineFile abs = createMachine("abs");
+		
+		addMachineSees(abs, "con", "con");
+		addVariables(abs, "V1");
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineSees(mac, "con", "con");
+		addMachineRefines(mac, "abs", "abs");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+				
+		ISCInternalContext[] contexts = getInternalContexts(file, 1);
+		
+		containsConstants(contexts[0], "C1");
 
 	}
 
