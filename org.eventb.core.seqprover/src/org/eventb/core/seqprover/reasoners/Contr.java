@@ -1,13 +1,17 @@
 package org.eventb.core.seqprover.reasoners;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -22,72 +26,78 @@ public class Contr extends SinglePredInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = input.getError();
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		Predicate falseHypPred = input.getPredicate();
 		Hypothesis falseHyp = new Hypothesis(falseHypPred);
 		
 		if ((!falseHypPred.equals(Lib.True)) && (! seq.hypotheses().contains(falseHyp)))
-		return new ReasonerOutputFail(this,input,
+		return RuleFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+falseHyp);
 
 		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
+		
+		Predicate goal;
+		String display;
+		Set<Hypothesis> neededHypotheses = new HashSet<Hypothesis>();
+		
 		if (falseHypPred.equals(Lib.True))
 		{
-			reasonerOutput.display = "ct goal";
+			goal = Lib.False;
+			display = "ct goal";
 		}
-		else 
-		{
-			reasonerOutput.display = "ct hyp ("+falseHyp+")";
-			reasonerOutput.neededHypotheses.add(falseHyp);
-		}
-		reasonerOutput.goal = seq.goal();
-
-		// Generate the anticident
-		reasonerOutput.anticidents = new Anticident[1];
-		reasonerOutput.anticidents[0] = new Anticident();		
-		reasonerOutput.anticidents[0].addedHypotheses.add(Lib.makeNeg(seq.goal()));
-		if (falseHypPred.equals(Lib.True))
-			reasonerOutput.anticidents[0].subGoal = Lib.False;
 		else
-			reasonerOutput.anticidents[0].subGoal = Lib.makeNeg(falseHypPred);
+		{
+			goal = Lib.makeNeg(falseHypPred);
+			display = "ct hyp ("+falseHyp+")";
+			neededHypotheses.add(falseHyp);
+		}
+			
+		IAnticident[] anticidents = new Anticident[1];
+		anticidents[0] = RuleFactory.makeAnticident(
+				goal,
+				Lib.breakPossibleConjunct(Lib.makeNeg(seq.goal())),
+				null);
+		
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				neededHypotheses,
+				null,
+				display,
+				anticidents);
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		String display;
+//		
+//		if (falseHypPred.equals(Lib.True))
+//		{
+//			display = "ct goal";
+//		}
+//		else 
+//		{
+//			display = "ct hyp ("+falseHyp+")";
+//			reasonerOutput.neededHypotheses.add(falseHyp);
+//		}
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticident
+//		reasonerOutput.anticidents = new Anticident[1];
+//		
+//		Predicate goal;
+//		if (falseHypPred.equals(Lib.True))
+//			goal = Lib.False;
+//		else
+//			goal = Lib.makeNeg(falseHypPred);
+//		
+//		reasonerOutput.anticidents[0] = new Anticident(goal);		
+//		reasonerOutput.anticidents[0].addToAddedHyps(Lib.makeNeg(seq.goal()));
 		return reasonerOutput;
 	}
-	
-	
-//	public static class Input implements ReasonerInput{
-//		
-//		Hypothesis falseHyp;
-//		
-//		public Input(Hypothesis falseHyp){
-//			this.falseHyp = falseHyp;
-//		}
-//		
-//		public Input(){
-//			this.falseHyp = new Hypothesis(Lib.True);
-//		}
-//		
-//		public Input(SerializableReasonerInput serializableReasonerInput) {
-//			this.falseHyp = new Hypothesis(serializableReasonerInput.getPredicate("falseHyp"));
-//		}
-//		
-//		public SerializableReasonerInput genSerializable(){
-//			SerializableReasonerInput serializableReasonerInput 
-//			= new SerializableReasonerInput();
-//			serializableReasonerInput.putPredicate("falseHyp",falseHyp.getPredicate());
-//			return serializableReasonerInput;
-//		}
-//		
-//	}
 
 }

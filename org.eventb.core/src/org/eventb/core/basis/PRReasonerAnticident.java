@@ -12,6 +12,8 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 import org.rodinp.core.IRodinElement;
@@ -59,9 +61,18 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 //	}
 
 	public Anticident getAnticident() throws RodinDBException {
-		Anticident anticident = new Anticident();
-		IRodinElement[] children = 
+		
+		IRodinElement[] children;
+		
+		children = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
+		assert children.length == 1;
+		
+		Predicate goal = ((IPRPredicate)children[0]).getPredicate();
+		Anticident anticident = new Anticident(goal);
+		
+		children = 
 			this.getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
+		
 		if (children.length != 0)
 		{
 			assert children.length == 1;
@@ -72,8 +83,7 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 		if (children.length != 0)
 		{
 			assert children.length == 1;
-			anticident.addedHypotheses = 
-				((IPRPredicateSet)children[0]).getPredicateSet();
+			anticident.addToAddedHyps(((IPRPredicateSet)children[0]).getPredicateSet());
 		}
 		children = this.getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
@@ -84,30 +94,26 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 			}
 		}
 		
-		children = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
-		assert children.length == 1;
-		anticident.subGoal = ((IPRPredicate)children[0]).getPredicate();
-		
 		return anticident;
 	}
 
-	public void setAnticident(Anticident anticident) throws RodinDBException {
+	public void setAnticident(IAnticident anticident) throws RodinDBException {
 		//	delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
 	
-		if (anticident.addedFreeIdentifiers.length != 0){
+		if (anticident.getAddedFreeIdents().length != 0){
 			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
 					"addedFreeIdentifiers",
-					null,null))).setTypeEnvironment(anticident.addedFreeIdentifiers);
+					null,null))).setTypeEnvironment(anticident.getAddedFreeIdents());
 		}
-		if (! anticident.addedHypotheses.isEmpty()){
+		if (! anticident.getAddedHyps().isEmpty()){
 			((IPRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,
 					"addedHyps",
-					null,null))).setPredicateSet(anticident.addedHypotheses);
+					null,null))).setPredicateSet(anticident.getAddedHyps());
 		}
-		if (! anticident.hypAction.isEmpty()){
-			for (Action action : anticident.hypAction) {
+		if (! anticident.getHypAction().isEmpty()){
+			for (Action action : anticident.getHypAction()) {
 				((IPRHypAction)(this.createInternalElement(IPRHypAction.ELEMENT_TYPE,
 						"hypAction",
 						null,null))).setAction(action);
@@ -116,7 +122,7 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 		
 		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,
 				"subgoal",
-				null,null))).setPredicate(anticident.subGoal);
+				null,null))).setPredicate(anticident.getGoal());
 		
 	}
 

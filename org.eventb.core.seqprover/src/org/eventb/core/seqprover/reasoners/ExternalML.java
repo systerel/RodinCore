@@ -7,16 +7,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ReplayHints;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -66,13 +66,13 @@ public class ExternalML implements IReasoner {
 		}
 	}
 	
-	public ReasonerOutput apply(IProverSequent sequent,
+	public IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProgressMonitor progressMonitor) {
 		
 		Input input = (Input) reasonerInput;
 		
 		if (input.hasError())
-			return new ReasonerOutputFail(this,input,input.getError());
+			return RuleFactory.reasonerFailure(this,input,input.getError());
 		
 		final long timeOutDelay = input.timeOutDelay;
 		final String forces = input.forces;
@@ -80,21 +80,29 @@ public class ExternalML implements IReasoner {
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final Set<Hypothesis> hypotheses = sequent.visibleHypotheses();
 		final Predicate goal = sequent.goal();
-		
 		final boolean success =
 			runML(typeEnvironment, hypotheses, goal, forces, timeOutDelay, progressMonitor);
 		if (success) {
 			
-			ProofRule reasonerOutput = new ProofRule(this,reasonerInput);
-			reasonerOutput.goal = sequent.goal();
-			reasonerOutput.neededHypotheses.addAll(hypotheses);
-			reasonerOutput.anticidents = new Anticident[0];
-			reasonerOutput.display = "ml";
+			IProofRule reasonerOutput = RuleFactory.makeProofRule(
+					this,reasonerInput,
+					sequent.goal(),
+					hypotheses,
+					null,
+					"ml",
+					new IAnticident[0]);
+			
+			
+//			ProofRule reasonerOutput = new ProofRule(this,reasonerInput);
+//			reasonerOutput.goal = sequent.goal();
+//			reasonerOutput.neededHypotheses.addAll(hypotheses);
+//			reasonerOutput.anticidents = new Anticident[0];
+//			reasonerOutput.display = "ml";
 			
 			return reasonerOutput;
 
 		}
-		return new ReasonerOutputFail(
+		return RuleFactory.reasonerFailure(
 				this,
 				reasonerInput,
 				"ML failed"

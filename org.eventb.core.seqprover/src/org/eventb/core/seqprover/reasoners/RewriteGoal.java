@@ -2,12 +2,12 @@ package org.eventb.core.seqprover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.ProofRule;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
+import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ProofRule.Anticident;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInputReasoner;
 import org.eventb.core.seqprover.reasoners.rewriter.Rewriter;
@@ -22,35 +22,42 @@ public class RewriteGoal extends SingleStringInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SingleStringInput input;
 		input = (SingleStringInput) reasonerInput;
 		
 		if (input.hasError())
-		{
-			return new ReasonerOutputFail(this,input,input.getError());
-		}
+			RuleFactory.reasonerFailure(this,input,input.getError());
 		
 		Rewriter rewriter = RewriterRegistry.getRewriter(input.getString());
 		
 		if (rewriter == null) 
-			return new ReasonerOutputFail(this,input,
-					"Uninstalled rewriter");
+			return RuleFactory.reasonerFailure(this,input,"Uninstalled rewriter");
 		
 		Predicate newGoal = rewriter.apply(seq.goal());
 		if (newGoal == null)
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Rewriter " + rewriter +" inapplicable for goal "+ seq.goal());
 
+		IAnticident[] anticidents = new IAnticident[1];
 		
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = rewriter.getName()+" goal";
-		reasonerOutput.anticidents = new Anticident[1];
+		anticidents[0] = RuleFactory.makeAnticident(newGoal);
 		
-		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[0].subGoal = newGoal;
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				rewriter.getName()+" goal",
+				anticidents
+				);		
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.goal = seq.goal();
+//		reasonerOutput.display = rewriter.getName()+" goal";
+//		reasonerOutput.anticidents = new Anticident[1];
+//		
+//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0].goal = newGoal;
 				
 		return reasonerOutput;
 	}

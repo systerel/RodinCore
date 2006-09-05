@@ -10,6 +10,6 @@ public interface IReasoner {
 	
 	IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException;
 	
-	ReasonerOutput apply(IProverSequent seq,IReasonerInput input, IProgressMonitor progressMonitor);
+	IReasonerOutput apply(IProverSequent seq,IReasonerInput input, IProgressMonitor progressMonitor);
 
 }

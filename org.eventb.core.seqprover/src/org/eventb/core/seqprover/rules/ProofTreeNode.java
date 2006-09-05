@@ -11,6 +11,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -49,7 +50,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * This field may be changed in a controlled way using methods in this class.
 	 * This field is equal to null iff <code>children</code> equals <code>null</code>.
 	 */
-	private IProofRule rule;
+	private ProofRule rule;
 
 	/**
 	 * Comment associated to this proof tree node.
@@ -133,7 +134,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#applyRule(ProofRule)
 	 */
-	public boolean applyRule(IProofRule rule) {
+	public boolean applyRule(IProofRule proofRule) {
+		ProofRule rule = (ProofRule) proofRule;
 		// force pruning to avoid losing child proofs
 		if (this.children != null) return false;
 		if (this.rule != null) return false;
@@ -152,6 +154,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		fireDeltas();
 		return true;
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#graft(org.eventb.core.prover.IProofTree)
@@ -163,7 +166,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (! Lib.identical(this.sequent,tree.getSequent())) return false;
 		ProofTreeNode treeRoot = (ProofTreeNode)tree.getRoot();
 		ProofTreeNode[] treeChildren = treeRoot.getChildren();
-		IProofRule treeRule = treeRoot.getRule();
+		ProofRule treeRule = (ProofRule) treeRoot.getRule();
 		boolean treeClosed = treeRoot.isClosed();
 		
 		// Disconnect treeChildren from treeRoot
@@ -364,7 +367,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		childrenChanged();
 	}
 	
-	private void setRule(IProofRule newRule) {
+	private void setRule(ProofRule newRule) {
 		this.rule = newRule;
 		ruleChanged();
 	}
@@ -466,8 +469,8 @@ public final class ProofTreeNode implements IProofTreeNode {
 //		return usedHypotheses;
 //	}
 
-	public void addFreeIdents(ITypeEnvironment typEnv) {
-		if (this.rule != null) rule.addFreeIdents(typEnv);
+	protected void addFreeIdents(ITypeEnvironment typEnv) {
+		if (this.rule != null) ((ProofRule) rule).addFreeIdents(typEnv);
 	}
 
 	/* (non-Javadoc)
@@ -490,7 +493,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if ((rule == null) && (children != null)) return false;
 		if (rule != null) {
 			if (children == null) return false;
-			IProverSequent[] anticidents = rule.apply(sequent);
+			IProverSequent[] anticidents = ((ProofRule) rule).apply(sequent);
 			if (anticidents == null) return false;
 			if (children.length != anticidents.length) return false;
 			for (int i=0;i<anticidents.length;i++)

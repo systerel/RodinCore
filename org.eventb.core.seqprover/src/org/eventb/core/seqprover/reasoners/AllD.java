@@ -4,16 +4,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ProofRule;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -38,26 +38,22 @@ public class AllD implements IReasoner{
 		return combiInput;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		// Organize Input
 		CombiInput input = (CombiInput) reasonerInput;
 
 		if (input.hasError())
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = input.getError();
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		Predicate univHypPred = ((SinglePredInput)input.getReasonerInputs()[1]).getPredicate();
 		Hypothesis univHyp = new Hypothesis(univHypPred);
 		
 		if (! seq.hypotheses().contains(univHyp))
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+univHyp);
 		if (! Lib.isUnivQuant(univHypPred))
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Hypothesis is not universally quantified:"+univHyp);
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
@@ -72,11 +68,11 @@ public class AllD implements IReasoner{
 		Expression[] instantiations = multipleExprInput.computeInstantiations(boundIdentDecls);
 		
 		if (instantiations == null)
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = "Type error when trying to instantiate bound identifiers";
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(
+					this,
+					reasonerInput,
+					"Type error when trying to instantiate bound identifiers");
+		
 		assert instantiations.length == boundIdentDecls.length;
 		
 		
@@ -87,24 +83,42 @@ public class AllD implements IReasoner{
 		assert instantiatedPred != null;
 		
 		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.display = "∀ hyp (inst "+displayInstantiations(instantiations)+")";
-		reasonerOutput.neededHypotheses.add(univHyp);
-		reasonerOutput.goal = seq.goal();
-
+		
 		// Generate the anticidents
-		reasonerOutput.anticidents = new Anticident[2];
-		
+		IAnticident[] anticidents = new IAnticident[2];
 		// Well definedness condition
-		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[0].subGoal = WDpred;
-		
+		anticidents[0] = RuleFactory.makeAnticident(WDpred);
 		// The instantiated goal
-		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(instantiatedPred);
-		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(univHyp));
-		reasonerOutput.anticidents[1].subGoal = seq.goal();
-				
+		anticidents[1] = RuleFactory.makeAnticident(
+				seq.goal(),
+				Lib.breakPossibleConjunct(instantiatedPred),
+				Lib.deselect(univHyp)
+				);
+		
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				univHyp,
+				"∀ hyp (inst "+displayInstantiations(instantiations)+")",
+				anticidents
+				);
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.display = "∀ hyp (inst "+displayInstantiations(instantiations)+")";
+//		reasonerOutput.neededHypotheses.add(univHyp);
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticidents
+//		reasonerOutput.anticidents = new Anticident[2];
+//		
+//		// Well definedness condition
+//		reasonerOutput.anticidents[0] = new ProofRule.Anticident(WDpred);
+//		
+//		// The instantiated goal
+//		reasonerOutput.anticidents[1] = new ProofRule.Anticident(seq.goal());
+//		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(instantiatedPred);
+//		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(univHyp));
+//				
 		return reasonerOutput;
 	}
 	

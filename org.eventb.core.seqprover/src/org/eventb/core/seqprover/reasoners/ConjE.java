@@ -2,13 +2,13 @@ package org.eventb.core.seqprover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ProofRule.Anticident;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -22,7 +22,7 @@ public class ConjE extends SinglePredInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
@@ -31,25 +31,39 @@ public class ConjE extends SinglePredInputReasoner{
 		
 		
 		if (! seq.hypotheses().contains(conjHyp))
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+conjHyp);
 		if (! Lib.isConj(conjHypPred))
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Hypothesis is not a conjunction:"+conjHyp);
 		
 		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.display = "∧ hyp ("+conjHyp+")";
-		reasonerOutput.neededHypotheses.add(conjHyp);
-		reasonerOutput.goal = seq.goal();
-
-		// Generate the anticident
-		// Predicate[] conjuncts = Lib.conjuncts(conjHypPred);
-		reasonerOutput.anticidents = new Anticident[1];
-		reasonerOutput.anticidents[0] = new Anticident();
-		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(conjHypPred);
-		reasonerOutput.anticidents[0].hypAction.add(Lib.hide(conjHyp));
-		reasonerOutput.anticidents[0].subGoal = seq.goal();
+		
+		IAnticident[] anticidents = new IAnticident[1];
+		anticidents[0] = RuleFactory.makeAnticident(
+				seq.goal(),
+				Lib.breakPossibleConjunct(conjHypPred),
+				Lib.hide(conjHyp));
+		
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				"∧ hyp ("+conjHyp+")",
+				anticidents
+				);
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.display = "∧ hyp ("+conjHyp+")";
+//		reasonerOutput.neededHypotheses.add(conjHyp);
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticident
+//		// Predicate[] conjuncts = Lib.conjuncts(conjHypPred);
+//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents[0] = new Anticident();
+//		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(conjHypPred);
+//		reasonerOutput.anticidents[0].hypAction.add(Lib.hide(conjHyp));
+//		reasonerOutput.anticidents[0].goal = seq.goal();
 		
 		return reasonerOutput;
 	}

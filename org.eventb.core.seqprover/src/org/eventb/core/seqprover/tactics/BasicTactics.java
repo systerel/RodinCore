@@ -5,6 +5,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ReasonerOutput;
 import org.eventb.core.seqprover.ProofRule;
 
@@ -121,7 +122,7 @@ public class BasicTactics {
 		
 		public Object apply(IProofTreeNode pt){
 			if (!pt.isOpen()) return "Root already has children";
-			ReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
+			IReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof ProofRule)) return reasonerOutput;
 			ITactic temp = new ReuseTac((ProofRule)reasonerOutput);

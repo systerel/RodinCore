@@ -6,6 +6,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 
 public class ReplayHints {
@@ -30,16 +31,16 @@ public class ReplayHints {
 		return this.freeVarRename.isEmpty();
 	}
 		
-	public void addHints(Anticident old,Anticident current){
+	public void addHints(IAnticident old,IAnticident current){
 
-		if (old.addedFreeIdentifiers.length == 0) return;
+		if (old.getAddedFreeIdents().length == 0) return;
 		
-		for (int i = 0; i < old.addedFreeIdentifiers.length; i++) {
+		for (int i = 0; i < old.getAddedFreeIdents().length; i++) {
 			if
-			((i < current.addedFreeIdentifiers.length) &&
-			(! old.addedFreeIdentifiers[i].equals(current.addedFreeIdentifiers[i])))
+			((i < current.getAddedFreeIdents().length) &&
+			(! old.getAddedFreeIdents()[i].equals(current.getAddedFreeIdents()[i])))
 			{
-				this.freeVarRename.put(old.addedFreeIdentifiers[i],current.addedFreeIdentifiers[i]);
+				this.freeVarRename.put(old.getAddedFreeIdents()[i],current.getAddedFreeIdents()[i]);
 			}
 		}	
 	}

@@ -7,12 +7,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -27,7 +28,7 @@ public class Eq extends SinglePredInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 
@@ -35,10 +36,10 @@ public class Eq extends SinglePredInputReasoner{
 		Hypothesis eqHyp = new Hypothesis(eqHypPred);
 		
 		if (! seq.hypotheses().contains(eqHyp))
-		return new ReasonerOutputFail(this,input,
+		return RuleFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+eqHyp);
 		if (! Lib.isEq(eqHypPred))
-			return new ReasonerOutputFail(this,input,
+			return RuleFactory.reasonerFailure(this,input,
 					"Hypothesis is not an implication:"+eqHyp);
 		
 		Expression from;
@@ -49,7 +50,7 @@ public class Eq extends SinglePredInputReasoner{
 		
 		// TODO remove when full equality possible.
 		if (!(from instanceof FreeIdentifier)) 
-			return new ReasonerOutputFail(this,input,"Identifier expected:"+from);
+			return RuleFactory.reasonerFailure(this,input,"Identifier expected:"+from);
 		
 		Set<Hypothesis> toDeselect = Hypothesis.Hypotheses();
 		toDeselect.add(eqHyp);
@@ -66,20 +67,38 @@ public class Eq extends SinglePredInputReasoner{
 		
 		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),(FreeIdentifier)from,to);
 		
-		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
+		//	Generate the anticident
+		IAnticident[] anticidents = new Anticident[1];
+		anticidents[0] = RuleFactory.makeAnticident(
+				rewrittenGoal,
+				rewrittenHyps,
+				Lib.deselect(toDeselect));
 		
-		reasonerOutput.display = "eh ("+eqHyp+")";
-		reasonerOutput.neededHypotheses.add(eqHyp);
-		reasonerOutput.neededHypotheses.addAll(toDeselect);
-		reasonerOutput.goal = seq.goal();
-
-		// Generate the anticident
-		reasonerOutput.anticidents = new Anticident[1];
-		reasonerOutput.anticidents[0] = new Anticident();
-		reasonerOutput.anticidents[0].addedHypotheses.addAll(rewrittenHyps);
-		reasonerOutput.anticidents[0].hypAction.add(Lib.deselect(toDeselect));
-		reasonerOutput.anticidents[0].subGoal = rewrittenGoal;
+		//	 Generate the successful reasoner output
+		// no need to clone since toDeselect is not used later
+		Set<Hypothesis> neededHyps = toDeselect;
+		neededHyps.add(eqHyp);
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				neededHyps,
+				null,
+				"eh ("+eqHyp+")",
+				anticidents);
+		
+//		// Generate the successful reasoner output
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		
+//		reasonerOutput.display = "eh ("+eqHyp+")";
+//		reasonerOutput.neededHypotheses.add(eqHyp);
+//		reasonerOutput.neededHypotheses.addAll(toDeselect);
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticident
+//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents[0] = new Anticident(rewrittenGoal);
+//		reasonerOutput.anticidents[0].addToAddedHyps(rewrittenHyps);
+//		reasonerOutput.anticidents[0].hypAction.add(Lib.deselect(toDeselect));
 		return reasonerOutput;
 	}
 

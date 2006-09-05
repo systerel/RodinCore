@@ -181,12 +181,12 @@ public final class ProofTree implements IProofTree {
 		}
 
 		// actually static
-		private void collectFreeIdentifiers(ITypeEnvironment typeEnv, IProofTreeNode node) {
+		private void collectFreeIdentifiers(ITypeEnvironment typeEnv, ProofTreeNode node) {
 			node.addFreeIdents(typeEnv);
 			IProofTreeNode[] children = node.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				children[i].addFreeIdents(typeEnv);
-				collectFreeIdentifiers(typeEnv,children[i]);
+				((ProofTreeNode) children[i]).addFreeIdents(typeEnv);
+				collectFreeIdentifiers(typeEnv,((ProofTreeNode)children[i]));
 			}
 			
 		}

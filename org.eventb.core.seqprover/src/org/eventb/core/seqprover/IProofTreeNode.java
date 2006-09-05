@@ -217,7 +217,7 @@ public interface IProofTreeNode {
 	//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
 	
 	// Perhaps make public but not published
-	void addFreeIdents(ITypeEnvironment typEnv);
+	// void addFreeIdents(ITypeEnvironment typEnv);
 	
 	
 	/**

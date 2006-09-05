@@ -1,12 +1,12 @@
 package org.eventb.core.seqprover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ProofRule.Anticident;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -19,21 +19,26 @@ public class Hyp extends EmptyInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! (Hypothesis.containsPredicate(seq.hypotheses(),seq.goal())))
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,input);
-			reasonerOutput.error = "Goal not in hypotheses";
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(
+					this,input,
+					"Goal not in hypotheses");
 		
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.neededHypotheses.add(new Hypothesis(seq.goal()));
-		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "hyp";
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				new Hypothesis(seq.goal()),
+				"hyp",
+				new IAnticident[0]);
 		
-		reasonerOutput.anticidents = new Anticident[0];
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.neededHypotheses.add(new Hypothesis(seq.goal()));
+//		reasonerOutput.goal = seq.goal();
+//		reasonerOutput.display = "hyp";
+//		
+//		reasonerOutput.anticidents = new Anticident[0];
 		
 		return reasonerOutput;
 	}

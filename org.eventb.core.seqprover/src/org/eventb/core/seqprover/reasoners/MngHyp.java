@@ -3,14 +3,15 @@ package org.eventb.core.seqprover.reasoners;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
@@ -35,7 +36,7 @@ public class MngHyp implements IReasoner{
 		);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		//	 Organize Input
 		CombiInput input = (CombiInput) reasonerInput;
@@ -50,14 +51,29 @@ public class MngHyp implements IReasoner{
 		// TODO : maybe remove absent hyps - useful for later replay
 		// input.action.getHyps().retainAll(seq.hypotheses());
 		
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "sl/ds";
-		reasonerOutput.anticidents = new Anticident[1];
 		
-		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[0].hypAction.add(action);
-		reasonerOutput.anticidents[0].subGoal = seq.goal();
+		IAnticident[] anticidents = new IAnticident[1];
+		
+		anticidents[0] = RuleFactory.makeAnticident(
+				seq.goal(),
+				null,
+				action);
+		
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				"sl/ds",
+				anticidents);
+		
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.goal = seq.goal();
+//		reasonerOutput.display = "sl/ds";
+//		reasonerOutput.anticidents = new Anticident[1];
+//		
+//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0].hypAction.add(action);
+//		reasonerOutput.anticidents[0].goal = seq.goal();
 				
 		return reasonerOutput;
 	}

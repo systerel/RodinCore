@@ -1,14 +1,16 @@
 package org.eventb.core.seqprover.reasoners;
 
+import java.util.Collections;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ProofRule.Anticident;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -21,15 +23,13 @@ public class Cut extends SinglePredInputReasoner {
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 		
 		// Organize Input
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
-		{
-			return new ReasonerOutputFail(this,input,input.getError());
-		}
+			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
 
 		Predicate lemma = input.getPredicate();
 		
@@ -47,27 +47,50 @@ public class Cut extends SinglePredInputReasoner {
 		
 		// Generate the well definedness condition for the lemma
 		Predicate lemmaWD = Lib.WD(lemma);
-		
-		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.display = "ah ("+lemma.toString()+")";
-		reasonerOutput.goal = seq.goal();
 
 		// Generate the anticidents
-		reasonerOutput.anticidents = new Anticident[3];
+		IAnticident[] anticidents = new IAnticident[3];
 		
 		// Well definedness condition
-		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[0].subGoal = lemmaWD;
+		anticidents[0] = RuleFactory.makeAnticident(lemmaWD);
 		
 		// The lemma to be proven
-		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[1].subGoal = lemma;
+		anticidents[1] = RuleFactory.makeAnticident(lemma);
 		
 		// Proving the original goal with the help of the lemma
-		reasonerOutput.anticidents[2] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
-		reasonerOutput.anticidents[2].subGoal = seq.goal();
+		anticidents[2] = RuleFactory.makeAnticident(
+				seq.goal(),
+				Collections.singleton(lemma),
+				null);
+		
+		// Generate the proof rule
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				"ah ("+lemma.toString()+")",
+				anticidents);
+		
+//		
+//		// Generate the successful reasoner output
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.display = "ah ("+lemma.toString()+")";
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticidents
+//		reasonerOutput.anticidents = new Anticident[3];
+//		
+//		// Well definedness condition
+//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0].goal = lemmaWD;
+//		
+//		// The lemma to be proven
+//		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[1].goal = lemma;
+//		
+//		// Proving the original goal with the help of the lemma
+//		reasonerOutput.anticidents[2] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
+//		reasonerOutput.anticidents[2].goal = seq.goal();
 				
 		return reasonerOutput;
 	}

@@ -137,6 +137,13 @@ public final class Lib {
 				((AssociativePredicate)P).getChildren());
 	}
 	
+	public static Set<Predicate> breakPossibleConjunct(Predicate P){
+		if (! isConj(P)) return Collections.singleton(P);
+		return new HashSet<Predicate>(
+				Arrays.asList(
+						((AssociativePredicate)P).getChildren()));
+	}
+	
 	public static Predicate[] disjuncts(Predicate P){
 		if (! isDisj(P)) return null;
 		return ((AssociativePredicate)P).getChildren();

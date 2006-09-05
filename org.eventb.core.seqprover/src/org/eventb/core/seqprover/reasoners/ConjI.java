@@ -2,13 +2,13 @@ package org.eventb.core.seqprover.reasoners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.ProofRule.Anticident;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -20,27 +20,37 @@ public class ConjI extends EmptyInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isConj(seq.goal()))
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,input);
-			reasonerOutput.error = "Goal is not a conjunction";
-			return reasonerOutput;
-		}
-		
+			return RuleFactory.reasonerFailure(
+					this,input,
+					"Goal is not a conjunction");
 		
 		Predicate[] conjuncts = Lib.conjuncts(seq.goal());
 		
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.goal = seq.goal();
-		reasonerOutput.display = "∧ goal";
-		reasonerOutput.anticidents = new Anticident[conjuncts.length];
-		for (int i = 0; i < reasonerOutput.anticidents.length; i++) {
+		IAnticident[] anticidents = new IAnticident[conjuncts.length];
+		for (int i = 0; i < anticidents.length; i++) {
 			// Generate one anticident per conjunct
-			reasonerOutput.anticidents[i] = new ProofRule.Anticident();
-			reasonerOutput.anticidents[i].subGoal = conjuncts[i];
+			anticidents[i] = RuleFactory.makeAnticident(conjuncts[i]);
 		}
+		
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				"∧ goal",
+				anticidents
+				);
+		
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.goal = seq.goal();
+//		reasonerOutput.display = "∧ goal";
+//		reasonerOutput.anticidents = new Anticident[conjuncts.length];
+//		for (int i = 0; i < reasonerOutput.anticidents.length; i++) {
+//			// Generate one anticident per conjunct
+//			reasonerOutput.anticidents[i] = new ProofRule.Anticident();
+//			reasonerOutput.anticidents[i].goal = conjuncts[i];
+//		}
 		
 		return reasonerOutput;
 	}

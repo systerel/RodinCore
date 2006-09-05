@@ -4,14 +4,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutputFail;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -29,24 +30,18 @@ public class ExI implements IReasoner{
 		return new MultipleExprInput(reasonerInputSerializer);
 	}
 	
-	public ReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isExQuant(seq.goal()))
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = "Goal is not existentially quantified";
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(
+					this,reasonerInput,
+					"Goal is not existentially quantified"); 
 		
 		// Organize Input
 		MultipleExprInput input = (MultipleExprInput) reasonerInput;
 		
 		if (input.hasError())
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = input.getError();
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(seq.goal());
 		
@@ -56,11 +51,10 @@ public class ExI implements IReasoner{
 		// Not sure if reasoner should actually modify its input to reflect this.
 		Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
 		if (instantiations == null)
-		{
-			ReasonerOutputFail reasonerOutput = new ReasonerOutputFail(this,reasonerInput);
-			reasonerOutput.error = "Type error when trying to instantiate bound identifiers";
-			return reasonerOutput;
-		}
+			return RuleFactory.reasonerFailure(
+				this,reasonerInput,
+				"Type error when trying to instantiate bound identifiers");
+		
 		assert instantiations.length == boundIdentDecls.length;	
 		
 		
@@ -70,21 +64,37 @@ public class ExI implements IReasoner{
 		Predicate instantiatedPred = Lib.instantiateBoundIdents(seq.goal(),instantiations);
 		assert instantiatedPred != null;
 		
-		// Generate the successful reasoner output
-		ProofRule reasonerOutput = new ProofRule(this,input);
-		reasonerOutput.display = "∃ goal (inst "+displayInstantiations(instantiations)+")";
-		reasonerOutput.goal = seq.goal();
-
 		// Generate the anticidents
-		reasonerOutput.anticidents = new Anticident[2];
+		IAnticident[] anticidents = new Anticident[2];
 		
 		// Well definedness condition
-		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[0].subGoal = WDpred;
+		anticidents[0] = RuleFactory.makeAnticident(WDpred);
 		
 		// The instantiated goal
-		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
-		reasonerOutput.anticidents[1].subGoal = instantiatedPred;
+		anticidents[1] = RuleFactory.makeAnticident(instantiatedPred);
+
+		// Generate the successful reasoner output
+		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+				this,input,
+				seq.goal(),
+				"∃ goal (inst "+displayInstantiations(instantiations)+")",
+				anticidents);
+		
+//		// Generate the successful reasoner output
+//		ProofRule reasonerOutput = new ProofRule(this,input);
+//		reasonerOutput.display = "∃ goal (inst "+displayInstantiations(instantiations)+")";
+//		reasonerOutput.goal = seq.goal();
+//
+//		// Generate the anticidents
+//		reasonerOutput.anticidents = new Anticident[2];
+//		
+//		// Well definedness condition
+//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0].goal = WDpred;
+//		
+//		// The instantiated goal
+//		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[1].goal = instantiatedPred;
 				
 		return reasonerOutput;
 	}

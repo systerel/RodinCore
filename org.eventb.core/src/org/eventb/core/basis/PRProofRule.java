@@ -19,6 +19,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -109,7 +110,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		.setHypSet(proofRule.neededHypotheses);
 		// write out the anticidents (next subgoals)
 		int idx = 1;
-		for (Anticident anticident : proofRule.anticidents){
+		for (IAnticident anticident : proofRule.getAnticidents()){
 			((IPRReasonerAnticident)this.createInternalElement(
 					IPRReasonerAnticident.ELEMENT_TYPE,
 					"anticident" + idx++,null,null)).setAnticident(anticident);
