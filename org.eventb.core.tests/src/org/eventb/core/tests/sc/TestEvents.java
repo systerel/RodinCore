@@ -352,5 +352,36 @@ public class TestEvents extends BasicTest {
 		containsActions(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
 	}
+	
+	public void testEvents_15() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", factory.makeIntegerType());
+		typeEnvironment.addName("V1'", factory.makeIntegerType());
+
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addEvent(mac, "evt1", makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V1:∣V1'∈ℕ"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		containsEvents(file, "evt1");
+		
+		containsVariables(file, "V1");
+		
+		ISCEvent[] scEvents = getSCEvents(file, "evt1");
+		
+		containsVariables(scEvents[0]);
+		containsGuards(scEvents[0], typeEnvironment, makeSList(), makeSList());
+		containsActions(scEvents[0], typeEnvironment, makeSList("A1"), makeSList("V1:∣V1'∈ℕ"));
+		
+	}
 
 }
