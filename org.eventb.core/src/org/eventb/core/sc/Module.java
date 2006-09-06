@@ -10,11 +10,16 @@ package org.eventb.core.sc;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 /**
  * 
@@ -42,15 +47,30 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	public void issueMarker(int severity, IRodinElement element, String message, Object... objects) {
 		addMarker((IRodinFile) element.getOpenable(), element, message, severity);
 	}
+	
+	private String printSymbol(IRodinElement element) {
+		try {
+			if (element instanceof ILabeledElement) {
+				ILabeledElement labeledElement = (ILabeledElement) element;
+				return labeledElement.getLabel(null);
+			} else if (element instanceof IIdentifierElement) {
+				IIdentifierElement identifierElement = (IIdentifierElement) element;
+				return identifierElement.getIdentifierString();
+			} else
+				return element.getElementName();
+		} catch (RodinDBException e) {
+			return "";
+		}
+	}
 		
 	private String printElement(IRodinElement element) {
 		String elementType = element.getElementType();
 		String result = elementType.substring(elementType.lastIndexOf('.')+1);
 		IRodinElement parent = element.getParent();
 		if(parent instanceof IInternalElement)
-			result = result + " " + ((IInternalElement) element).getElementName() + " in " + printElement(parent);
+			result = result + " " + printSymbol(element) + " in " + printElement(parent);
 		else
-			result = result + " " + element.getElementName(); 
+			result = result + " " + printSymbol(element); 
 		return result;
 	}
 	
