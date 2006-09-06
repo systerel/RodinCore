@@ -18,8 +18,6 @@ public interface ITypingState extends IState {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".typingState";
 	
-	void setTypeEnvironment(ITypeEnvironment typeEnvironment);
-	
 	ITypeEnvironment getTypeEnvironment();
 	
 }

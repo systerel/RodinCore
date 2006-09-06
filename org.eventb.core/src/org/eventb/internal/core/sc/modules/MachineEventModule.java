@@ -14,6 +14,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IIdentifierSymbolTable;
@@ -23,7 +24,10 @@ import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ISymbolInfo;
+import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.ModuleManager;
+import org.eventb.internal.core.sc.TypingState;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
@@ -62,8 +66,6 @@ public class MachineEventModule extends LabeledElementModule {
 	FormulaFactory factory;
 	
 	ITypingState typingState;
-	
-	ITypeEnvironment typeEnvironment;
 
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
@@ -116,8 +118,9 @@ public class MachineEventModule extends LabeledElementModule {
 					new LabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
 			
 			ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
-			eventTypeEnvironment.addAll(typeEnvironment);
-			typingState.setTypeEnvironment(eventTypeEnvironment);
+			eventTypeEnvironment.addAll(typingState.getTypeEnvironment());
+			addPostValues(eventTypeEnvironment);
+			repository.setState(new TypingState(eventTypeEnvironment));
 			
 			initProcessorModules(events[i], processorModules, repository, monitor);
 			
@@ -171,6 +174,22 @@ public class MachineEventModule extends LabeledElementModule {
 		scEvent.setSource(event, monitor);
 		return scEvent;
 	}
+	
+	private void addPostValues(ITypeEnvironment typeEnvironment) {
+		for (ISymbolInfo symbolInfo : identifierSymbolTable)
+			if (symbolInfo instanceof IVariableSymbolInfo){
+				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
+				if (variableSymbolInfo.isVisible() 
+						&& !variableSymbolInfo.hasError() 
+						&& !variableSymbolInfo.isForbidden()) {
+					FreeIdentifier identifier = 
+						factory.makeFreeIdentifier(
+								variableSymbolInfo.getSymbol(), null, 
+								variableSymbolInfo.getType()).withPrime(factory);
+					typeEnvironment.addName(identifier.getName(), identifier.getType());
+				}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -187,9 +206,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		typingState = 
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
-		
-		typeEnvironment = typingState.getTypeEnvironment();
-
+				
 	}
 
 	/* (non-Javadoc)
@@ -202,12 +219,11 @@ public class MachineEventModule extends LabeledElementModule {
 			IProgressMonitor monitor) throws CoreException {
 		repository.setState(identifierSymbolTable);
 		repository.setState(labelSymbolTable);
-		typingState.setTypeEnvironment(typeEnvironment);
+		repository.setState(typingState);
 		identifierSymbolTable = null;
 		labelSymbolTable = null;
 		factory = null;
 		typingState = null;
-		typeEnvironment = null;
 	}
 	
 }

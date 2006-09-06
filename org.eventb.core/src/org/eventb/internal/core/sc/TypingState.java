@@ -18,18 +18,11 @@ public class TypingState implements ITypingState {
 	
 	private ITypeEnvironment typeEnvironment;
 
-	public TypingState() {
+	public TypingState(ITypeEnvironment typeEnvironment) {
 		
-		this.typeEnvironment = null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ITypingState#setTypeEnvironment(org.eventb.core.ast.ITypeEnvironment)
-	 */
-	public void setTypeEnvironment(ITypeEnvironment typeEnvironment) {
 		this.typeEnvironment = typeEnvironment;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ITypingState#getTypeEnvironment()
 	 */

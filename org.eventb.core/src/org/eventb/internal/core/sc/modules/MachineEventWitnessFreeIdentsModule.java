@@ -17,6 +17,7 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -50,18 +51,20 @@ public class MachineEventWitnessFreeIdentsModule extends MachinePredicateFreeIde
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, identifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (primed && variableSymbolInfo.isPreserved())
-				return null;
-			// local variables of the abstraction are not stored in the
-			// identifier symbol table.
+			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isPreserved()) {
+				String label = ((IWitness) element).getLabel(monitor);
+				if (!label.equals(freeIdentifier.getName()))
+					return null;
+			}
 		}
-		if (symbolInfo == null) {
+		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table
 			String label = ((IWitness) element).getLabel(monitor);
 			if (label.equals(freeIdentifier.getName()))
 				return SymbolInfoFactory.createVariableSymbolInfo(label, null, null);
 		}
 		return symbolInfo;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

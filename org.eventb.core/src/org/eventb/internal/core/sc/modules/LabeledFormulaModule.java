@@ -217,7 +217,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	 * @param index the index of the formula to be parsed
 	 * @param formulaElements the formula elements
 	 * @param formulas the parsed formulas
-	 * @param typeEnvironment the initial type environment
+	 * @param savedTypeEnvironment the initial type environment
 	 * @return the inferred type environment
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */

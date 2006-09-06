@@ -11,7 +11,6 @@ package org.eventb.internal.core.sc;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
@@ -50,10 +49,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);
 		
-		final ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
-		
-		final ITypingState typingState = new TypingState();
-		typingState.setTypeEnvironment(typeEnvironment);
+		final ITypingState typingState = new TypingState(factory.makeTypeEnvironment());
 		
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
 
