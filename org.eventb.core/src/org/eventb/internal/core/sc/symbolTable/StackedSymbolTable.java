@@ -61,4 +61,12 @@ public class StackedSymbolTable extends SymbolTable {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.symbolTable.SymbolTable#toString()
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + parentTable.toString();
+	}
+
 }
