@@ -129,9 +129,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		}
 	}
 
-	protected void sequentHasNoHypotheses(
-			IPOSequent sequent, 
-			ITypeEnvironment typeEnvironment) throws Exception {
+	protected void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
 		IPOPredicateSet predicateSet = sequent.getHypothesis();
 		
