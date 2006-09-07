@@ -63,7 +63,7 @@ public class MachineEventModule extends Module {
 			ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 			typeEnvironment.addAll(machineTypeEnvironment);
 			
-			repository.setState(new TypingState(machineTypeEnvironment));
+			repository.setState(new TypingState(typeEnvironment));
 			
 			initModules(event, target, modules, repository, monitor);
 			
