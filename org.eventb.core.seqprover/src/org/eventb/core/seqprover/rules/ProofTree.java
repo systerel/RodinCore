@@ -165,12 +165,13 @@ public final class ProofTree implements IProofTree {
 		}
 		
 		// actually static
-		private void collectNeededHypotheses(Set<Hypothesis> neededHyps,IProofTreeNode node){
+		private void collectNeededHypotheses(Set<Hypothesis> neededHyps,ProofTreeNode node){
 			neededHyps.addAll(node.getNeededHypotheses());
 			IProofTreeNode[] children = node.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				neededHyps.addAll(children[i].getNeededHypotheses());
-				collectNeededHypotheses(neededHyps,children[i]);
+				ProofTreeNode child = (ProofTreeNode)children[i];
+				neededHyps.addAll(child.getNeededHypotheses());
+				collectNeededHypotheses(neededHyps,child);
 			}
 		}
 

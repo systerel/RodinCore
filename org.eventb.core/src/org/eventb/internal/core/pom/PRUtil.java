@@ -37,9 +37,9 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.rules.ProofRule;
 import org.eventb.core.seqprover.rules.ProofTreeNode;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -123,13 +123,13 @@ public class PRUtil {
 //			ProofRule reuseReasonerOutput = prReasoningStep.getReasonerOutput();
 			
 			// TODO : remove cast
-			ProofRule reuseReasonerOutput = (ProofRule) prRule.getProofRule();
+			IProofRule reuseReasonerOutput = prRule.getProofRule();
 			
-			reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
-			IReasoner reasoner = reuseReasonerOutput.generatedBy;
+			// reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
+			IReasoner reasoner = reuseReasonerOutput.generatedBy();
 			// uninstalled reasoner
 			assert reasoner != null;
-			IReasonerInput reasonerInput = reuseReasonerOutput.generatedUsing;
+			IReasonerInput reasonerInput = reuseReasonerOutput.generatedUsing();
 			
 			// choose between reuse and replay
 			boolean reuseSuccessfull = false;
@@ -179,7 +179,7 @@ public class PRUtil {
 			if (replayReasonerOutputSucc != null)
 			{
 				newReplayHints = replayHints.clone();
-				newReplayHints.addHints(reuseReasonerOutput.anticidents[i],replayReasonerOutputSucc.anticidents[i]);
+				newReplayHints.addHints(reuseReasonerOutput.getAnticidents()[i],replayReasonerOutputSucc.getAnticidents()[i]);
 			}
 			rebuild(children[i],prChildren[i],newReplayHints);
 		}

@@ -6,8 +6,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ReasonerOutput;
-import org.eventb.core.seqprover.ProofRule;
 
 public class BasicTactics {
 	
@@ -43,7 +41,7 @@ public class BasicTactics {
 		return new ReasonerTac(reasoner,reasonerInput,monitor);
 	}
 	
-	public static ITactic reasonerTac(ProofRule reasonerOutput){
+	public static ITactic reasonerTac(IProofRule reasonerOutput){
 		return new ReuseTac(reasonerOutput);
 	}
 	
@@ -124,8 +122,8 @@ public class BasicTactics {
 			if (!pt.isOpen()) return "Root already has children";
 			IReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
 			if (reasonerOutput == null) return "! Plugin returned null !";
-			if (!(reasonerOutput instanceof ProofRule)) return reasonerOutput;
-			ITactic temp = new ReuseTac((ProofRule)reasonerOutput);
+			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
+			ITactic temp = new ReuseTac((IProofRule)reasonerOutput);
 			return temp.apply(pt);
 			
 //			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
@@ -136,9 +134,9 @@ public class BasicTactics {
 	
 	private static class ReuseTac implements ITactic {
 		
-		private final ProofRule reasonerOutput;
+		private final IProofRule reasonerOutput;
 		
-		public ReuseTac(ProofRule reasonerOutput)
+		public ReuseTac(IProofRule reasonerOutput)
 		{
 			this.reasonerOutput = reasonerOutput;
 		}

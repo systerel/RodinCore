@@ -7,21 +7,23 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.Set;
+
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.ProofRule;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -70,44 +72,41 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 	}
 	
 	public IProofRule getProofRule()throws RodinDBException {
-		ProofRule reasonerOutput = new ProofRule(this.getReasoner(),this.getReasonerInput());
 		
 		IRodinElement[] rodinElements = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
 		assert rodinElements[0].getElementName().equals("goal");
-		reasonerOutput.goal = ((IPRPredicate)rodinElements[0]).getPredicate();
+		Predicate goal = ((IPRPredicate)rodinElements[0]).getPredicate();
 		
 		rodinElements = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
-		assert rodinElements[0].getElementName().equals("neededHypotheses");
-		reasonerOutput.neededHypotheses = Hypothesis.Hypotheses(((IPRPredicateSet)rodinElements[0]).getPredicateSet());
+		assert rodinElements[0].getElementName().equals("neededHyps");
+		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(((IPRPredicateSet)rodinElements[0]).getPredicateSet());
 		
 		rodinElements = this.getChildrenOfType(IPRReasonerAnticident.ELEMENT_TYPE);
-		reasonerOutput.anticidents = new Anticident[rodinElements.length];
+		IAnticident[] anticidents = new IAnticident[rodinElements.length];
 		for (int i = 0; i < rodinElements.length; i++) {
-			reasonerOutput.anticidents[i] = ((IPRReasonerAnticident)rodinElements[i]).getAnticident();
+			anticidents[i] = ((IPRReasonerAnticident)rodinElements[i]).getAnticident();
 		}
 		
-		reasonerOutput.display = 
-			this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
-		reasonerOutput.reasonerConfidence = 
-			Integer.parseInt(this.getInternalElement(IPair.ELEMENT_TYPE,"confidence").getContents());
+		String display = this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
+		int confidence = Integer.parseInt(this.getInternalElement(IPair.ELEMENT_TYPE,"confidence").getContents());
 
-		return reasonerOutput;
+		return RuleFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(), goal, neededHyps, confidence, display, anticidents);
 	}
 
-	public void setProofRule(IProofRule rule) throws RodinDBException {
+	public void setProofRule(IProofRule proofRule) throws RodinDBException {
 		// TODO : eventually delete cast
-		ProofRule proofRule = (ProofRule)rule;
+		// ProofRule proofRule = (ProofRule)rule;
 		// delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
 		
 		// write out the current goal and needed hypotheses
 		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,"goal",null,null)))
-		.setPredicate(proofRule.goal);
-		((PRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"neededHypotheses",null,null)))
-		.setHypSet(proofRule.neededHypotheses);
+		.setPredicate(proofRule.getGoal());
+		((PRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"neededHyps",null,null)))
+		.setHypSet(proofRule.getNeededHyps());
 		// write out the anticidents (next subgoals)
 		int idx = 1;
 		for (IAnticident anticident : proofRule.getAnticidents()){
@@ -118,14 +117,15 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		
 		// write out display
 		((IPair)(this.createInternalElement(IPair.ELEMENT_TYPE,"display",null,null)))
-		.setContents(proofRule.display);
+		.setContents(proofRule.getDisplayName());
 		
 		// write out confidence level
 		((IPair)(this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null)))
-		.setContents(Integer.toString(proofRule.reasonerConfidence));
+		.setContents(Integer.toString(proofRule.getConfidence()));
 		
 		// write out the reasoner input
-		if (proofRule.generatedUsing != null)
+		// TODO : remove this check
+		if (proofRule.generatedUsing() != null)
 		{
 			PRReasonerInput prReasonerInput =
 				(PRReasonerInput)
@@ -134,7 +134,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 					"",
 					null,null);
 			try {
-				proofRule.generatedUsing.serialize(prReasonerInput);
+				proofRule.generatedUsing().serialize(prReasonerInput);
 			} catch (SerializeException e) {
 				throw (RodinDBException)e.getNextedException();
 			}

@@ -11,7 +11,6 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ProofRule;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -451,7 +450,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 */
 	public Set<Hypothesis> getNeededHypotheses(){
 		if (this.rule == null) return new HashSet<Hypothesis>();
-		return rule.getNeededHypotheses();
+		return rule.getNeededHyps();
 	}
 	
 	

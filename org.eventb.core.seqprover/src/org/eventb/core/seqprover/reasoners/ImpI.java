@@ -8,7 +8,6 @@ import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -25,7 +24,7 @@ public class ImpI extends EmptyInputReasoner{
 		if (! Lib.isImp(seq.goal()))
 			return RuleFactory.reasonerFailure(this,input,"Goal is not an implication");
 		
-		IAnticident[] anticidents = new Anticident[1];
+		IAnticident[] anticidents = new IAnticident[1];
 		
 		anticidents[0] = RuleFactory.makeAnticident(
 				Lib.impRight(seq.goal()),

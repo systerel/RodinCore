@@ -206,12 +206,12 @@ public interface IProofTreeNode {
 	 */
 	String getComment();
 	
-	/**
-	 * Returns the hypotheses needed by rule applied at this node.
-	 * 
-	 * @return the hypotheses needed by rule applied at this node.
-	 */
-	Set<Hypothesis> getNeededHypotheses();
+//	/**
+//	 * Returns the hypotheses needed by rule applied at this node.
+//	 * 
+//	 * @return the hypotheses needed by rule applied at this node.
+//	 */
+//	Set<Hypothesis> getNeededHypotheses();
 	
 	// TODO : Replace getNeededHypotheses() with a more sophisticated 
 	//        getUsedHypotheses() once Rule and ReasoningStep have been merged.

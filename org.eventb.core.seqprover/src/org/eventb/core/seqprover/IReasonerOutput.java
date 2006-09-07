@@ -4,6 +4,6 @@ public interface IReasonerOutput {
 
 	IReasoner generatedBy();
 
-	IReasonerInput genaratedUsing();
+	IReasonerInput generatedUsing();
 
 }

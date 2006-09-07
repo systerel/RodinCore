@@ -8,9 +8,9 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
-import org.eventb.core.seqprover.reasonerInputs.CombiInput;
-import org.eventb.core.seqprover.reasoners.AllD;
+import org.eventb.core.seqprover.rules.ProofRule;
+import org.eventb.core.seqprover.rules.ReasonerFailure;
+import org.eventb.core.seqprover.rules.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 
@@ -23,7 +23,7 @@ public class RuleFactory {
 			IReasoner generatedBy,
 			IReasonerInput generatedUsing,
 			String reason){
-		return new ReasonerOutputFail(generatedBy,generatedUsing,reason);
+		return new ReasonerFailure(generatedBy,generatedUsing,reason);
 	}
 	
 	public static IProofRule makeProofRule (
@@ -70,7 +70,7 @@ public class RuleFactory {
 		
 		assert goal != null;
 		
-		Anticident anticident = new Anticident(goal, addedHyps, addedFreeIdents, hypAction);
+		IAnticident anticident = new Anticident(goal, addedHyps, addedFreeIdents, hypAction);
 		
 		return anticident;
 		

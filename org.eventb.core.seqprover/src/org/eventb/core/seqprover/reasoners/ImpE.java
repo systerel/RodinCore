@@ -11,7 +11,6 @@ import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -43,7 +42,7 @@ public class ImpE extends SinglePredInputReasoner{
 		// Generate the anticident
 		Predicate toAssume = Lib.impRight(impHypPred);
 		Predicate toShow = Lib.impLeft(impHypPred);
-		IAnticident[] anticidents = new Anticident[2];
+		IAnticident[] anticidents = new IAnticident[2];
 		
 		anticidents[0] = RuleFactory.makeAnticident(toShow);
 		

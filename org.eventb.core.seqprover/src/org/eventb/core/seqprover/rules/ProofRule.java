@@ -1,4 +1,4 @@
-package org.eventb.core.seqprover;
+package org.eventb.core.seqprover.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,11 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.sequent.HypothesesManagement;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.IProverSequent;
@@ -20,18 +24,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	
 	public static class Anticident implements IAnticident{
 		
-		public FreeIdentifier[] addedFreeIdentifiers;
+		private FreeIdentifier[] addedFreeIdentifiers;
 		private Set <Predicate> addedHypotheses;
-		public List <Action> hypAction;
-		public Predicate goal;
-		
-		@Deprecated
-		public Anticident(){
-			addedFreeIdentifiers = new FreeIdentifier[0];
-			addedHypotheses = new HashSet<Predicate>();
-			hypAction = new ArrayList<Action>();
-			goal = null;
-		}
+		private List <Action> hypAction;
+		private Predicate goal;
 		
 		public Anticident(Predicate goal){
 			addedFreeIdentifiers = new FreeIdentifier[0];
@@ -162,11 +158,11 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		
 	}
 	
-	public String display;
-	public IAnticident[] anticidents;
-	public Set<Hypothesis> neededHypotheses;
-	public Predicate goal;
-	public int reasonerConfidence;
+	private String display;
+	private IAnticident[] anticidents;
+	private Set<Hypothesis> neededHypotheses;
+	private Predicate goal;
+	private int reasonerConfidence;
 	
 	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
@@ -199,8 +195,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
 
-	// TODO : change to protected
-	public void addFreeIdents(ITypeEnvironment typeEnv) {
+	protected void addFreeIdents(ITypeEnvironment typeEnv) {
 		for(IAnticident anticident : anticidents){
 			((Anticident) anticident).addFreeIdents(typeEnv);
 		}
@@ -224,8 +219,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		return reasonerConfidence;
 	}
 
-	// TODO : change to protected
-	public IProverSequent[] apply(IProverSequent seq) {
+	protected IProverSequent[] apply(IProverSequent seq) {
 		ProofRule reasonerOutput = this;
 		// Check if all the needed hyps are there
 		if (! seq.hypotheses().containsAll(reasonerOutput.neededHypotheses))
@@ -249,7 +243,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		return anticidents;
 	}
 
-	public Set<Hypothesis> getNeededHypotheses() {
+	public Set<Hypothesis> getNeededHyps() {
 		return neededHypotheses;
 	}
 

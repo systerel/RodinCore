@@ -14,7 +14,6 @@ import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -68,7 +67,7 @@ public class Eq extends SinglePredInputReasoner{
 		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),(FreeIdentifier)from,to);
 		
 		//	Generate the anticident
-		IAnticident[] anticidents = new Anticident[1];
+		IAnticident[] anticidents = new IAnticident[1];
 		anticidents[0] = RuleFactory.makeAnticident(
 				rewrittenGoal,
 				rewrittenHyps,

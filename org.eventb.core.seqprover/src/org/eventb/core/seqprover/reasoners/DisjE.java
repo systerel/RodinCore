@@ -9,7 +9,6 @@ import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
@@ -40,7 +39,7 @@ public class DisjE extends SinglePredInputReasoner{
 		
 		//	 Generate the anticidents
 		Predicate[] disjuncts = Lib.disjuncts(disjHypPred);
-		IAnticident[] anticidents = new Anticident[disjuncts.length];
+		IAnticident[] anticidents = new IAnticident[disjuncts.length];
 		
 		for (int i = 0; i < disjuncts.length; i++) {
 			anticidents[i] = RuleFactory.makeAnticident(

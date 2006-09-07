@@ -4,21 +4,21 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 
 
 public interface IProofRule extends IReasonerOutput{
 
+	
 	Predicate getGoal();
 
-	Set<Hypothesis> getNeededHypotheses();
+	
+	Set<Hypothesis> getNeededHyps();
 
 	/**
-	 * Returns the confidence of this proof rule.
+	 * Returns the confidence of this proof rule as returned by the reasoner.
 	 * 
 	 * @return the confidence of this proof rule (see {@see IConfidence})
 	 */
@@ -41,9 +41,6 @@ public interface IProofRule extends IReasonerOutput{
 	 * @return array of proof sequents produced by this rule.
 	 */
 	// public abstract IProverSequent[] apply(IProverSequent sequent);
-
-
-	// void addFreeIdents(ITypeEnvironment typEnv);
 	
 
 	public interface IAnticident {

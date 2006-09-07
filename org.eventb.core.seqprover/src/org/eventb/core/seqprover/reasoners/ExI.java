@@ -14,7 +14,6 @@ import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.sequent.IProverSequent;
 
@@ -65,7 +64,7 @@ public class ExI implements IReasoner{
 		assert instantiatedPred != null;
 		
 		// Generate the anticidents
-		IAnticident[] anticidents = new Anticident[2];
+		IAnticident[] anticidents = new IAnticident[2];
 		
 		// Well definedness condition
 		anticidents[0] = RuleFactory.makeAnticident(WDpred);

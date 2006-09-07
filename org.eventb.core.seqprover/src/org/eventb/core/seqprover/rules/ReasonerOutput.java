@@ -1,4 +1,8 @@
-package org.eventb.core.seqprover;
+package org.eventb.core.seqprover.rules;
+
+import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 
 public class ReasonerOutput implements IReasonerOutput {
 	
@@ -20,7 +24,7 @@ public class ReasonerOutput implements IReasonerOutput {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IReasonerOutput#genaratedUsing()
 	 */
-	public IReasonerInput genaratedUsing(){
+	public IReasonerInput generatedUsing(){
 		return generatedUsing;
 	}
 	

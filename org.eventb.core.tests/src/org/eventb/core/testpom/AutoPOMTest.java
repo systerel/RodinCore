@@ -7,6 +7,9 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POUtil;
@@ -53,7 +56,7 @@ public class AutoPOMTest extends BuilderTest {
 		POUtil.addSequent(poFile, "PO7", 
 				"hyp0", 
 				mp("y"), mp("ℤ"), 
-				mh(), 
+				mh("x=x"), 
 				"y∈ℕ");
 		poFile.save(null, true);
 		return poFile;
@@ -80,7 +83,23 @@ public class AutoPOMTest extends BuilderTest {
 			assertDischarged(prSequent);
 		}
 		assertNotDischarged(prs[prs.length-1]);
+		
+		// Try an interactive proof on the last one
+		IProofTree proofTree = prs[prs.length-1].makeFreshProofTree();
+		Tactics.lasoo().apply(proofTree.getRoot());
+		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant());
+		Tactics.norm().apply(proofTree.getRoot());
+		// System.out.println(proofTree.getRoot());
+		prs[prs.length-1].updateProofTree(proofTree);
+		
+		IProofTree loadedProofTree = prs[prs.length-1].rebuildProofTree();
+		// System.out.println(loadedProofTree.getRoot());
+		assertTrue(ProverLib.deepEquals(proofTree,loadedProofTree));
+		loadedProofTree.getRoot().pruneChildren();
+		assertFalse(ProverLib.deepEquals(proofTree,loadedProofTree));
+		assertTrue(ProverLib.deepEquals(prs[prs.length-1].makeFreshProofTree(),loadedProofTree));
 	}
+	
 
 	private void checkSameContents(
 			IInternalParent poElement,

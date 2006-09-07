@@ -7,14 +7,19 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.ProofRule.Anticident;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -34,67 +39,43 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 	public String getElementType() {
 		return ELEMENT_TYPE;
 	}
-//
-//	public ITypeEnvironment getTypeEnvironment() throws RodinDBException {
-//		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
-//		for (IRodinElement pair : this.getChildrenOfType(IPair.ELEMENT_TYPE)) {
-//			Type type = Lib.parseType(((IPair)pair).getContents());
-//			assert type != null;
-//			typEnv.addName(pair.getElementName(),type);
-//		}
-//		return typEnv;
-//	}
-//
-//	public void setTypeEnvironment(ITypeEnvironment typeEnv) throws RodinDBException {
-//		//	delete previous children, if any.
-//		if (this.getChildren().length != 0)
-//			this.getRodinDB().delete(this.getChildren(),true,null);
-//		
-//		// write out the type environment
-//		Set<String> names = typeEnv.getNames();
-//		
-//		for (String name : names) {
-//			this.createInternalElement(IPair.ELEMENT_TYPE,name,null,null)
-//			.setContents(typeEnv.getType(name).toString());
-//		}
-//		
-//	}
 
-	public Anticident getAnticident() throws RodinDBException {
+	private InternalElement getChild(String childType, String childName) throws RodinDBException{
+		InternalElement internalElement = 
+			getInternalElement(childType,childName);
+		assert internalElement != null;
+		if (internalElement.exists()) return internalElement;
+		throw newNotPresentException();
+	}
+	
+	public IAnticident getAnticident() throws RodinDBException {
 		
-		IRodinElement[] children;
+		InternalElement child; 
 		
-		children = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
-		assert children.length == 1;
+		child = getChild(IPRPredicate.ELEMENT_TYPE,"goal");
+		Predicate goal = ((IPRPredicate)child).getPredicate();
 		
-		Predicate goal = ((IPRPredicate)children[0]).getPredicate();
-		Anticident anticident = new Anticident(goal);
+		// optional entries
+		FreeIdentifier[] addedFreeIdens = null;
+		Set<Predicate> addedHyps = null;
+		List<Action> hypAction = null;
 		
-		children = 
-			this.getChildrenOfType(IPRTypeEnvironment.ELEMENT_TYPE);
+		child = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"addedFreeIdents");
+		if (child.exists()) addedFreeIdens = ((IPRTypeEnvironment)child).getFreeIdentifiers();
 		
+		child = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"addedHyps");
+		if (child.exists()) addedHyps = ((IPRPredicateSet)child).getPredicateSet();
+		
+		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
 		{
-			assert children.length == 1;
-			anticident.addedFreeIdentifiers = 
-				((IPRTypeEnvironment)children[0]).getFreeIdentifiers();
-		}
-		children = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
-		if (children.length != 0)
-		{
-			assert children.length == 1;
-			anticident.addToAddedHyps(((IPRPredicateSet)children[0]).getPredicateSet());
-		}
-		children = this.getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
-		if (children.length != 0)
-		{
-			for (IRodinElement child : children) {
-				anticident.hypAction.add( 
-					((IPRHypAction)child).getAction());				
+			hypAction = new ArrayList<Action>(children.length);
+			for (IRodinElement action : children) {
+				hypAction.add(((IPRHypAction)action).getAction());				
 			}
 		}
 		
-		return anticident;
+		return RuleFactory.makeAnticident(goal,addedHyps,addedFreeIdens,hypAction);
 	}
 
 	public void setAnticident(IAnticident anticident) throws RodinDBException {
@@ -104,7 +85,7 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 	
 		if (anticident.getAddedFreeIdents().length != 0){
 			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
-					"addedFreeIdentifiers",
+					"addedFreeIdents",
 					null,null))).setTypeEnvironment(anticident.getAddedFreeIdents());
 		}
 		if (! anticident.getAddedHyps().isEmpty()){
@@ -113,15 +94,17 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 					null,null))).setPredicateSet(anticident.getAddedHyps());
 		}
 		if (! anticident.getHypAction().isEmpty()){
+			int count = 0;
 			for (Action action : anticident.getHypAction()) {
 				((IPRHypAction)(this.createInternalElement(IPRHypAction.ELEMENT_TYPE,
-						"hypAction",
+						"hypAction"+count,
 						null,null))).setAction(action);
+				count ++;
 			}
 		}
 		
 		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,
-				"subgoal",
+				"goal",
 				null,null))).setPredicate(anticident.getGoal());
 		
 	}
