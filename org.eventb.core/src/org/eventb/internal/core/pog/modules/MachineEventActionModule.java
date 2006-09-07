@@ -401,11 +401,13 @@ public class MachineEventActionModule extends Module {
 		}
 		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
-		substitution.add(concreteEventActionInfo.getDeltaPrime());
+		if (concreteEventActionInfo.getDeltaPrime() != null)
+			substitution.add(concreteEventActionInfo.getDeltaPrime());
 		substitution.addAll(abstractEventActionInfo.getDisappearingWitnesses());
 		substitution.addAll(witnessTable.getEventDetAssignments());
 		substitution.addAll(witnessTable.getMachineDetAssignments());
-		substitution.add(witnessTable.getPrimeSubstitution());
+		if (witnessTable.getPrimeSubstitution() != null)
+			substitution.add(witnessTable.getPrimeSubstitution());
 		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
 		substitution.clear();
 		if (concreteEventActionInfo.getXiUnprime() != null)

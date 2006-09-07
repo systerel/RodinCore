@@ -30,7 +30,7 @@ import org.rodinp.core.IRodinElement;
 public class MachineEventVariableModule extends IdentifierModule {
 
 	public static final String MACHINE_EVENT_VARIABLE_ACCEPTOR = 
-		EventBPlugin.PLUGIN_ID + ".machineVariableAcceptor";
+		EventBPlugin.PLUGIN_ID + ".machineEventVariableAcceptor";
 
 	private IAcceptorModule[] modules;
 
