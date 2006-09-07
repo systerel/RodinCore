@@ -18,6 +18,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -94,7 +95,7 @@ public class MachineEventGuardModule extends Module {
 						eventHypothesisManager.getHypothesisName(guards.get(i), monitor),
 						emptyPredicates,
 						new POGPredicate(guards.get(i), wdPredicate),
-						sources(new POGSource("guard", guards.get(i))),
+						sources(new POGSource("guard", (ITraceableElement) guards.get(i))),
 						emptyHints,
 						monitor);
 			}

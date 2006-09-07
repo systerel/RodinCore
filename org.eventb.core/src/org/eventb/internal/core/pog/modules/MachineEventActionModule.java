@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
@@ -24,6 +23,7 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCWitness;
+import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
@@ -144,7 +144,7 @@ public class MachineEventActionModule extends Module {
 					new POGPredicate(guards.get(i), predicate),
 					sources(
 							new POGSource("abstract event", abstractEvent),
-							new POGSource("abstract guard", guards.get(i)),
+							new POGSource("abstract guard", (ITraceableElement) guards.get(i)),
 							new POGSource("concrete event", concreteEvent)),
 					emptyHints,
 					monitor);

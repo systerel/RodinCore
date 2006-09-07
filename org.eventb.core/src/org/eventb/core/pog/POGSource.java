@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eventb.core.ITraceableElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -16,9 +17,9 @@ import org.rodinp.core.IRodinElement;
 public class POGSource {
 	
 	private final String key;
-	private final IRodinElement source;
+	private final ITraceableElement source;
 	
-	public POGSource(String key, IRodinElement source) {
+	public POGSource(String key, ITraceableElement source) {
 		this.key = key;
 		this.source = source;
 	}
@@ -27,7 +28,7 @@ public class POGSource {
 		return key;
 	}
 	
-	public IRodinElement getSource() {
+	public ITraceableElement getSource() {
 		return source;
 	}
 

@@ -105,7 +105,7 @@ public abstract class Module implements IModule {
 			IPOSource source =
 				(IPOSource) sequent.createInternalElement(
 						IPOSource.ELEMENT_TYPE, SRC_NAME_PREFIX + idx, null, monitor);
-			source.setSource(sources[idx].getSource(), monitor);
+			source.setSource(sources[idx].getSource().getSource(monitor), monitor);
 
 		}
 
