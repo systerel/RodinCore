@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBMarker;
@@ -45,7 +46,11 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarker(int, org.rodinp.core.IRodinElement, java.lang.String, java.lang.Object[])
 	 */
 	public void issueMarker(int severity, IRodinElement element, String message, Object... objects) {
-		addMarker((IRodinFile) element.getOpenable(), element, message, severity);
+		addMarker(
+				(IRodinFile) element.getOpenable(), 
+				element, 
+				Messages.bind(message, objects), 
+				severity);
 	}
 	
 	private String printSymbol(IRodinElement element) {
