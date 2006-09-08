@@ -1,6 +1,11 @@
 package org.eventb.core.seqprover.reasoners.rewriter;
 
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.Type;
 
 import static org.eventb.core.seqprover.Lib.*;
 
@@ -29,6 +34,9 @@ public class TrivialRewrites implements Rewriter{
 		if (isNotInclusion(p) && isEmptySet(getSet(p)))
 			return true;
 		
+		if (isNotEq(p) && (isEmptySet(notEqRight(p)) || isEmptySet(notEqLeft(p))))
+			return true;
+		
 		return false;
 	}
 
@@ -47,6 +55,25 @@ public class TrivialRewrites implements Rewriter{
 		if (isNotInclusion(p) && isEmptySet(getSet(p)))
 			return True;
 		
+		if (isNotEq(p) && (isEmptySet(notEqRight(p)) || isEmptySet(notEqLeft(p))))
+		{
+			Expression nonEmptySet = isEmptySet(notEqRight(p)) ?
+					notEqLeft(p) : notEqRight(p);
+			
+			Type type = nonEmptySet.getType().getBaseType();
+			assert type != null;
+			// TODO : find a nice way to generate a name for this variable
+			// Although it is bound freeing it may clutter the name space and
+			// maybe force refactoring.
+			String varName = "e";
+			BoundIdentDecl[] boundIdentDecls = {ff.makeBoundIdentDecl(varName,null,type)};
+			BoundIdentifier boundIdent = ff.makeBoundIdentifier(0,null,type);
+			Predicate pred = ff.makeRelationalPredicate(RelationalPredicate.IN,boundIdent,nonEmptySet,null);
+			Predicate exPred = makeExQuant(boundIdentDecls,pred);
+			typeCheck(exPred);
+			assert exPred.isTypeChecked();
+			return exPred;
+		}
 		return null;
 	}
 

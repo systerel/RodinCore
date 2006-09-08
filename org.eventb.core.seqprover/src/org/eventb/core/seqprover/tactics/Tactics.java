@@ -135,7 +135,7 @@ public class Tactics {
 	
 	public static ITactic norm(){
 		ITactic Ti = repeat(compose(conjI(),allI(),impI()));
-		ITactic T = repeat(compose(trivialGoalRewrite(),tautology(),contradiction(),hyp(),Ti));
+		ITactic T = repeat(compose(hyp(),trivialGoalRewrite(),tautology(),contradiction(),hyp(),Ti));
 		return repeat(onAllPending(T));
 	}
 	
@@ -412,6 +412,7 @@ public class Tactics {
 	
 	public static ITactic trivial() {
 		return compose(
+				hyp(),
 				trivialGoalRewrite(),
 				tautology(),
 				hyp()
