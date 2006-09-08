@@ -26,6 +26,8 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	
+	public static boolean DEBUG = false;
+	
 	protected IStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {

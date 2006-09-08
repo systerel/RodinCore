@@ -29,6 +29,8 @@ import org.rodinp.core.builder.IExtractor;
  */
 public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
+	public static boolean DEBUG = false;
+	
 	private final static int LABEL_SYMTAB_SIZE = 2047;
 
 	private final static int IDENT_SYMTAB_SIZE = 2047;
