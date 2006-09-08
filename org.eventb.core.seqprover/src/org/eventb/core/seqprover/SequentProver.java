@@ -1,9 +1,14 @@
 package org.eventb.core.seqprover;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.seqprover.rules.ProofTree;
+import org.eventb.core.seqprover.sequent.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.osgi.framework.BundleContext;
 
@@ -76,6 +81,10 @@ public class SequentProver extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
+	}
+
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){
+		return new ProverSequent(typeEnvironment,hyps,goal);
 	}
 
 	/**

@@ -38,6 +38,6 @@ public class Review implements IGlobalExpertTactic {
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
-		userSupport.applyTactic(Tactics.review());
+		userSupport.applyTactic(Tactics.review(1));
 	}
 }

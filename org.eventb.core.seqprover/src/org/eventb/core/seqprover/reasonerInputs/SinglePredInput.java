@@ -2,12 +2,12 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
-import org.eventb.core.seqprover.sequent.Hypothesis;
 
 public class SinglePredInput implements IReasonerInput{
 	

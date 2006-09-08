@@ -14,9 +14,11 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -49,13 +51,18 @@ import org.eventb.core.seqprover.reasoners.rewriter.DisjToImpl;
 import org.eventb.core.seqprover.reasoners.rewriter.RemoveNegation;
 import org.eventb.core.seqprover.reasoners.rewriter.TrivialRewrites;
 import org.eventb.core.seqprover.reasoners.rewriter.TypeExpRewrites;
-import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.HypothesesManagement.ActionType;
 
 
 public class Tactics {
 	
 	// Globally applicable tactics
+	
+	
+	// TODO : remove soon
+	public static int FORCE_0 = ExternalML.Input.FORCE_0;
+	public static int FORCE_1 = ExternalML.Input.FORCE_1;
+	public static int FORCE_2 = ExternalML.Input.FORCE_2;
+	public static int FORCE_3 = ExternalML.Input.FORCE_3;
 	
 	public static ITactic externalPP(boolean restricted,
 			IProgressMonitor monitor) {
@@ -88,15 +95,6 @@ public class Tactics {
 				monitor);
 	}
 	
-	
-//	public static ITactic review(Set<Hypothesis> hyps,Predicate goal) {
-//		return BasicTactics.reasonerTac(new Review(),new Review.Input(hyps,goal));
-//	}
-	
-	public static ITactic review() {
-		return review(1);
-	}
-	
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic(){
 			
@@ -108,14 +106,9 @@ public class Tactics {
 								new SinglePredInput(pt.getSequent().goal()),
 								new SingleStringInput(Integer.toString(reviewerConfidence)))))
 								.apply(pt);
-			}
-			
+			}		
 		};
 	}
-	
-//	public static ITactic lemma1(String lemma,ITypeEnvironment typeEnv) {
-//		return BasicTactics.reasonerTac(new Cut(),new SinglePredInput(lemma,typeEnv));
-//	}
 
 	public static ITactic lemma(final String lemma) {
 		
@@ -159,44 +152,6 @@ public class Tactics {
 		};
 	}
 	
-//	public static ITactic lasoo1(IProverSequent seq){
-//		
-//		Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
-//		freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
-//		for (Hypothesis hyp : seq.selectedHypotheses()){
-//			freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
-//		}
-//		
-//		Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
-//		hypsToSelect.removeAll(seq.selectedHypotheses());
-//		if (hypsToSelect.isEmpty())
-//			return BasicTactics.failTac("No more Hyps found");
-//
-//		return mngHyp(ActionType.SELECT,hypsToSelect);
-//	}
-	
-	@Deprecated
-	public static ITactic lasoo(IProverSequent seq){
-		
-		return new ITactic(){
-
-			public Object apply(IProofTreeNode pt) {
-				IProverSequent seq = pt.getSequent();
-				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
-				freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
-				for (Hypothesis hyp : seq.selectedHypotheses()){
-					freeIdents.addAll(Arrays.asList(hyp.getPredicate().getFreeIdentifiers()));
-				}
-				
-				Set<Hypothesis> hypsToSelect = Hypothesis.freeIdentsSearch(seq.hypotheses(),freeIdents);
-				hypsToSelect.removeAll(seq.selectedHypotheses());
-				if (hypsToSelect.isEmpty())
-					return "No more hypotheses found";
-				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt);
-			}
-			
-		};
-	}
 	
 	public static ITactic lasoo(){
 		
@@ -256,10 +211,6 @@ public class Tactics {
 		return Lib.isUnivQuant(goal);
 	}
 	
-//	public static ITactic exI(String... witnesses) {
-//		return BasicTactics.reasonerTac(new ExI(),new ExI.Input(witnesses));
-//	}
-	
 	public static ITactic exI(final String... witnesses) {
 		return new ITactic(){
 
@@ -317,8 +268,8 @@ public class Tactics {
 												instantiations,
 												boundIdentDecls,
 												typeEnv),
-												new SinglePredInput(univHyp))
-				)).apply(pt);
+										new SinglePredInput(univHyp))
+						)).apply(pt);
 			}
 			
 		};
@@ -393,9 +344,6 @@ public class Tactics {
 		return (!seq.goal().equals(Lib.makeNeg(hyp.getPredicate())));
 	}
 	
-    // Tactics applicable on every hypothesis
-	
-	
 	// Misc tactics
 	
 	public static ITactic hyp() {
@@ -457,6 +405,29 @@ public class Tactics {
 		// System.out.println("* Expert Mode *");
 		return norm();
 				
+	}
+	
+	public static ITactic autoProver(IProgressMonitor progressMonitor, long timeOutDelay){
+		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
+		return BasicTactics.compose(
+				lasoo(),
+				BasicTactics.onAllPending(norm()),
+				BasicTactics.onAllPending(externalML(MLforces, timeOutDelay, progressMonitor)),
+				BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, progressMonitor))
+				);
+		
+////		 First try applying an internal tactic
+//		Tactics.norm().apply(pt.getRoot());
+//		if (pt.isClosed())
+//			return;
+//		
+//		// Then, try with the legacy provers.
+//		// pt.getRoot().pruneChildren();
+//		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
+//		BasicTactics.onAllPending(Tactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
+//		if (! pt.isClosed()) {
+//			BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
+//		}
 	}
 	
 }

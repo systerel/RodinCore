@@ -10,14 +10,14 @@ import java.util.Set;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.HypothesesManagement;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.sequent.HypothesesManagement;
-import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
+import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	

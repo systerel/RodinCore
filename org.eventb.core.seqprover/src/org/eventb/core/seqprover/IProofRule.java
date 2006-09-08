@@ -5,8 +5,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
+import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 
 public interface IProofRule extends IReasonerOutput{

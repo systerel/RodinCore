@@ -7,12 +7,11 @@ import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.rules.ProofRule;
 import org.eventb.core.seqprover.rules.ReasonerFailure;
 import org.eventb.core.seqprover.rules.ProofRule.Anticident;
-import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 
 public class RuleFactory {
 

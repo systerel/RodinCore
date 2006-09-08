@@ -1,7 +1,7 @@
 package org.eventb.ui.prover;
 
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.tactics.ITactic;
 
 public interface IHypothesisTactic {

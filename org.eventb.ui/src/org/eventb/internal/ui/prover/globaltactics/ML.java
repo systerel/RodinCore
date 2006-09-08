@@ -14,7 +14,6 @@ package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.reasoners.ExternalML;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.ui.prover.IGlobalSimpleTactic;
@@ -38,8 +37,8 @@ public class ML implements IGlobalSimpleTactic {
 	}
 
 	public ITactic getTactic(IProofTreeNode node, String input, IProgressMonitor monitor) {
-		return Tactics.externalML(ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1 | ExternalML.Input.FORCE_2
-				| ExternalML.Input.FORCE_3, monitor);
+		return Tactics.externalML(Tactics.FORCE_0 | Tactics.FORCE_1 | Tactics.FORCE_2
+				| Tactics.FORCE_3, monitor);
 	}
 
 }

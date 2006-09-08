@@ -8,8 +8,6 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tests.SequentProverTests;

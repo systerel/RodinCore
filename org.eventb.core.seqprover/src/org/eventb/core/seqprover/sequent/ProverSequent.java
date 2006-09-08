@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
 
@@ -121,9 +122,9 @@ public class ProverSequent implements IProverSequent{
 		return new ProverSequent(this);
 	}
 	
-	public ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
-		return new ProverSequent(typeEnvironment,globalHypotheses,goal);
-	}
+//	public ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
+//		return new ProverSequent(typeEnvironment,globalHypotheses,goal);
+//	}
 	
 	public ProverSequent addHyps(Set<Hypothesis> hyps,ITypeEnvironment typeEnvironment){
 		assert (hyps != null);

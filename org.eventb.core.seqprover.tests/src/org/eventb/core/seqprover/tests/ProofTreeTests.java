@@ -108,7 +108,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(root);
 		assertFalse("Tree is closed", tree.isClosed());
 		
-		Tactics.review().apply(right);
+		Tactics.review(1).apply(right);
 		assertNodeReviewed(right);
 		assertNodeDischarged(left);
 		assertNodeReviewed(conj);

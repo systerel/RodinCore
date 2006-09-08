@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.sequent.Hypothesis;
 
 public interface IProverSequent{
 	

@@ -40,9 +40,9 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.UserSupport;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 

@@ -10,12 +10,11 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.ProverSequent;
 
 public class TestLib {
 
@@ -61,7 +60,7 @@ public class TestLib {
 			// new HashSet<Predicate>(Arrays.asList(hyps));
 		
 		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
-		IProverSequent Seq = new ProverSequent(typeEnvironment,Hyps,goal);
+		IProverSequent Seq = SequentProver.makeSequent(typeEnvironment,Hyps,goal);
 		return Seq.selectHypotheses(Hyps);
 	}
 	

@@ -1,4 +1,4 @@
-package org.eventb.core.seqprover.sequent;
+package org.eventb.core.seqprover;
 
 import java.util.Arrays;
 import java.util.Collections;
