@@ -116,19 +116,31 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 
 						realIndex = beginIndex + index;
 
-						if (index != 0) {
-							if (isTextCharacter(text.charAt(index - 1))) {
+						// If the previous character is a text character then
+						// ignore and continue (similar to identical
+						// translation).
+						if (realIndex != 0) {
+							if (isTextCharacter(text.charAt(realIndex - 1))) {
+								result = test;
+								translated = true;
 								break;
 							}
 						}
 
+						// If the next character is a text character or the end
+						// then ignore and continue (similar to identical
+						// translation).
 						if (realIndex + test.length() != endIndex) {
 							if (isTextCharacter(text.charAt(realIndex
 									+ test.length()))) {
+								result = test;
+								translated = true;
 								break;
 							}
 						} else {
 							if (endIndex == text.length()) {
+								result = test;
+								translated = true;
 								break;
 							}
 						}
@@ -162,9 +174,11 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 
 		}
 
+		// No translation occurred, exit.
 		if (i == 0)
 			return;
 
+		// Otherwise, keep translating the head and last of the string
 		else {
 			translate(widget, realIndex + result.length(), endIndex
 					- test.length() + result.length());
