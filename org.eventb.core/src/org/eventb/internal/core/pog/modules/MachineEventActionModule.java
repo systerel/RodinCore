@@ -404,16 +404,18 @@ public class MachineEventActionModule extends Module {
 		if (concreteEventActionInfo.getDeltaPrime() != null)
 			substitution.add(concreteEventActionInfo.getDeltaPrime());
 		substitution.addAll(abstractEventActionInfo.getDisappearingWitnesses());
+		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
+		substitution.clear();		
 		substitution.addAll(witnessTable.getEventDetAssignments());
 		substitution.addAll(witnessTable.getMachineDetAssignments());
 		if (witnessTable.getPrimeSubstitution() != null)
 			substitution.add(witnessTable.getPrimeSubstitution());
-		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
+		predicate = predicate.applyAssignments(substitution, factory);
 		substitution.clear();
 		if (concreteEventActionInfo.getXiUnprime() != null)
 			substitution.add(concreteEventActionInfo.getXiUnprime());
 		substitution.addAll(concreteEventActionInfo.getPrimedDetAssignments());
-		Predicate goal = predicate.applyAssignments(substitution, factory);
+		predicate = predicate.applyAssignments(substitution, factory);
 		
 		createPO(
 				target, 
@@ -422,7 +424,7 @@ public class MachineEventActionModule extends Module {
 				identifierTable,
 				fullHypothesisName,
 				bighyp,
-				new POGPredicate(invariant, goal),
+				new POGPredicate(invariant, predicate),
 				sources(
 						new POGSource("abstract event", abstractEvent),
 						new POGSource("concrete event", concreteEvent), 
