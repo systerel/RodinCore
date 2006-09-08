@@ -13,6 +13,8 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.IntType;
+
 /**
  * @author Stefan Hallerstede
  *
@@ -165,6 +167,36 @@ public class TestMachineRefines extends BasicTest {
 		
 		containsConstants(contexts[0], "C1");
 
+	}
+	
+	public void testMachineRefines_4() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "V1");
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineRefines(mac, "abs", "abs");
+		addVariables(mac, "V2");
+		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"));
+
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", factory.makeIntegerType());
+		typeEnvironment.addName("V2", factory.makeIntegerType());
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+				
+		containsVariables(file, "V1", "V2");
+		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"));
 	}
 
 }

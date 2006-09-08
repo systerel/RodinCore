@@ -161,5 +161,66 @@ public class TestRefines extends BasicTest {
 		sequentHasGoal(sequent, typeEnvironment, "V1'∈ℕ");
 		
 	}
+	
+	public void testEvents_03() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "V1", "V2");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2≥6"));
+		addEvent(abs, "evt", 
+				makeSList("L1"), 
+				makeSList("G1"), makeSList("L1∈ℕ∖{0}"), 
+				makeSList("A1", "A2"), makeSList("V1≔L1", "V2≔7"));
+		
+		abs.save(null, true);
+		
+		runSC(abs);
+		
+		IMachineFile mac = createMachine("mac");
+
+		addMachineRefines(mac, "abs", "abs");
+		addVariables(mac, "V1X", "V2");
+		addInvariants(mac, makeSList("I3"), makeSList("V1X=V1+1"));
+		IEvent event = addEvent(mac, "evt", 
+				makeSList("L2"), 
+				makeSList("L2"), makeSList("L2∈ℕ"), 
+				makeSList("A1"), makeSList("V1X≔L2"));
+		addEventRefines(event, "evt", "evt");
+		addEventWitnesses(event, makeSList("L1"), makeSList("L1=L2−1"));
+		
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		IPOFile po = mac.getPOFile();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", intType);
+		typeEnvironment.addName("V2", intType);
+		typeEnvironment.addName("V1X", intType);
+		typeEnvironment.addName("L1", intType);
+		typeEnvironment.addName("L2", intType);
+		
+		containsIdentifiers(po, "V1", "V1X", "V2");
+		
+		IPOSequent sequent = getSequent(po, "evt/I3/INV");
+		
+		sequentHasIdentifiers(sequent, "L1", "L2", "V1X'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2≥6", "V1X=V1+1");
+		sequentHasGoal(sequent, typeEnvironment, "L2=(L2−1)+1");
+
+//		sequent = getSequent(po, "evt/I2/INV");
+//		
+//		sequentHasIdentifiers(sequent, "V1'", "V2'");
+//		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
+//		sequentHasGoal(sequent, typeEnvironment, "V2+2≥V1'");
+//		
+//		sequent = getSequent(po, "evt/A1/SIM");
+//		
+//		sequentHasIdentifiers(sequent, "V1'", "V2'");
+//		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
+//		sequentHasGoal(sequent, typeEnvironment, "V1'∈ℕ");
+		
+	}
 
 }
