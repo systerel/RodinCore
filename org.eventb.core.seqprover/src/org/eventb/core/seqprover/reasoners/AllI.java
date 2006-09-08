@@ -6,6 +6,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
@@ -13,7 +14,6 @@ import org.eventb.core.seqprover.RuleFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 public class AllI extends EmptyInputReasoner{
 	

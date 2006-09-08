@@ -29,7 +29,6 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.ProverSequent;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.ActionType;

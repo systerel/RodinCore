@@ -33,16 +33,15 @@ import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.rules.ProofRule;
-import org.eventb.core.seqprover.rules.ProofTreeNode;
+
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -141,7 +140,7 @@ public class PRUtil {
 				reuseSuccessfull = (error == null);
 			}
 			
-			ProofRule replayReasonerOutputSucc = null;
+			IProofRule replayReasonerOutputSucc = null;
 			
 			if (! reuseSuccessfull)
 			{	// reuse failed
@@ -149,12 +148,12 @@ public class PRUtil {
 				replayHints.applyHints(reasonerInput);
 				IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
 				if ((replayReasonerOutput != null) && 
-						((replayReasonerOutput instanceof ProofRule))){
+						((replayReasonerOutput instanceof IProofRule))){
 					// reasoner successfully generated something
 					// compare replayReasonerOutput and reuseReasonerOutput
 					// and generate hints for continuing the proof
 					replayReasonerOutputSucc =
-						(ProofRule) replayReasonerOutput;
+						(IProofRule) replayReasonerOutput;
 					BasicTactics.reasonerTac(replayReasonerOutputSucc).apply(node);
 				}
 				
@@ -219,7 +218,7 @@ public class PRUtil {
 				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
 		
 		// Write out the proof tree
-		writeOutProofTreeNode((ProofTreeNode) pt.getRoot(),0,(InternalElement) prSeq.getProofTree());
+		writeOutProofTreeNode((IProofTreeNode) pt.getRoot(),0,(InternalElement) prSeq.getProofTree());
 		
 		// Update the status
 		int confidence = pt.getConfidence();
@@ -232,7 +231,7 @@ public class PRUtil {
 	
 	public static void writeOutRule (IProofRule rule,IPRProofTreeNode parent) throws RodinDBException{
 		
-		if (rule instanceof ProofRule) {
+		if (rule instanceof IProofRule) {
 			IPRProofRule prRule = (IPRProofRule)
 				parent.createInternalElement(
 					PRProofRule.ELEMENT_TYPE,
@@ -253,7 +252,7 @@ public class PRUtil {
 		}
 	}
 	
-	public static void writeOutProofTreeNode (ProofTreeNode proofTreeNode,int childNumber,InternalElement parent) throws RodinDBException{
+	public static void writeOutProofTreeNode (IProofTreeNode proofTreeNode,int childNumber,InternalElement parent) throws RodinDBException{
 		assert (proofTreeNode != null);
 		IPRProofTreeNode prProofTreeNode = (IPRProofTreeNode)
 			parent.createInternalElement(PRProofTreeNode.ELEMENT_TYPE,Integer.toString(childNumber),null,null);
@@ -264,7 +263,7 @@ public class PRUtil {
 		
 		writeOutRule(proofTreeNode.getRule(),prProofTreeNode);
 		
-		ProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
+		IProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
 		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
 			writeOutProofTreeNode(proofTreeNodeChildren[i],i,(InternalElement) prProofTreeNode);
 		}

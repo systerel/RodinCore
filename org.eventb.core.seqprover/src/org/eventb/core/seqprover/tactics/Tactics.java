@@ -15,6 +15,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -49,7 +50,6 @@ import org.eventb.core.seqprover.reasoners.rewriter.RemoveNegation;
 import org.eventb.core.seqprover.reasoners.rewriter.TrivialRewrites;
 import org.eventb.core.seqprover.reasoners.rewriter.TypeExpRewrites;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.ActionType;
 
 

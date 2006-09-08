@@ -4,7 +4,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.core.seqprover.rules.ProofTree;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.osgi.framework.BundleContext;
 

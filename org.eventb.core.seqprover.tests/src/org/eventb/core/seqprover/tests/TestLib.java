@@ -11,10 +11,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.rules.ProofTree;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.sequent.ProverSequent;
 
 public class TestLib {
@@ -66,7 +66,8 @@ public class TestLib {
 	}
 	
 	public static IProofTreeNode genProofTreeNode(String str){
-		return (new ProofTree(genSeq(str))).getRoot();
+		return SequentProver.makeProofTree(genSeq(str)).getRoot();
+		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	
 	public static Hypothesis genHyp(String s){

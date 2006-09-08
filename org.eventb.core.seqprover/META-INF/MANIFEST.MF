@@ -13,7 +13,6 @@ Export-Package: org.eventb.core.prover.reasoners.classicB;x-friends:="org.eventb
  org.eventb.core.seqprover,
  org.eventb.core.seqprover.reasonerInputs,
  org.eventb.core.seqprover.reasoners,
- org.eventb.core.seqprover.reasoners.rewriter,
- org.eventb.core.seqprover.rules,
+ org.eventb.core.seqprover.reasoners.rewriter;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.core.seqprover.sequent,
  org.eventb.core.seqprover.tactics

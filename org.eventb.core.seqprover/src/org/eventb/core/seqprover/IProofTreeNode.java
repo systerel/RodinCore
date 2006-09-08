@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 /**
  * Common protocol for a proof tree node.

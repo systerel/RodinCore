@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
@@ -19,7 +20,6 @@ import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 public class Review implements IReasoner{
 	

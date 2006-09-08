@@ -10,8 +10,8 @@ package org.eventb.core.seqprover.tests;
 
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 import org.eventb.core.seqprover.tactics.Tactics;
 
 /**

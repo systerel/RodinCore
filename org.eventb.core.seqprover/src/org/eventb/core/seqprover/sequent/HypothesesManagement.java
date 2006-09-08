@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.seqprover.IProverSequent;
 
 
+// TODO : clean up this class and its interface
 public class HypothesesManagement {
 
 	public enum ActionType {SELECT, DESELECT, HIDE, SHOW};

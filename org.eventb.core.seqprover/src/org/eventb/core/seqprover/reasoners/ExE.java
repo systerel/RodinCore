@@ -9,6 +9,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
@@ -18,7 +19,6 @@ import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 import org.eventb.core.seqprover.sequent.Hypothesis;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 public class ExE extends SinglePredInputReasoner{
 	

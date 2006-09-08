@@ -9,7 +9,6 @@
 package org.eventb.core.seqprover;
 
 
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 /**
  * Common protocol for a proof tree of the sequent prover.

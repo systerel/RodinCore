@@ -5,6 +5,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
@@ -15,7 +16,6 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
-import org.eventb.core.seqprover.sequent.IProverSequent;
 
 public class ExI implements IReasoner{
 	
