@@ -16,5 +16,5 @@ Require-Bundle: org.eclipse.ui,
  org.eventb.eventBKeyboard,
  org.eventb.core
 Eclipse-AutoStart: true
-Export-Package: org.eventb.internal.ui.prover,
- org.eventb.ui.prover;x-friends:="org.eventb.ui.tests"
+Export-Package: org.eventb.internal.ui.prover;x-internal:=true,
+ org.eventb.ui.prover
