@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,10 +50,6 @@ public final class Lib {
 	public final static Predicate True = ff.makeLiteralPredicate(Formula.BTRUE,null);
 	public final static Predicate False = ff.makeLiteralPredicate(Formula.BFALSE,null);
 	
-	
-	public static Set<Predicate> singHyp(Predicate h){
-		return Collections.singleton(h);
-	}
 	
 	public static boolean isTrue(Predicate P){
 		if (P instanceof LiteralPredicate && P.getTag() == Formula.BTRUE) 
@@ -130,14 +125,16 @@ public final class Lib {
 		return ((AssociativePredicate)P).getChildren();
 	}
 	
-	public static List<Predicate> breakConjuncts(Predicate P){
-		if (! isConj(P)) return Collections.singletonList(P);
-		return Arrays.asList(
-				((AssociativePredicate)P).getChildren());
+	
+	private static Set<Predicate> singeleton(Predicate P){
+		HashSet<Predicate> result = new HashSet<Predicate>(1);
+		result.add(P);
+		return result;
 	}
 	
+	
 	public static Set<Predicate> breakPossibleConjunct(Predicate P){
-		if (! isConj(P)) return Collections.singleton(P);
+		if (! isConj(P)) return singeleton(P);
 		return new HashSet<Predicate>(
 				Arrays.asList(
 						((AssociativePredicate)P).getChildren()));

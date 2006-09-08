@@ -15,7 +15,6 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.sequent.HypothesesManagement;
 import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.eventb.core.seqprover.sequent.HypothesesManagement.Action;
@@ -42,10 +41,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			this.addedHypotheses = addedHyps == null ? new HashSet<Predicate>() : addedHyps;
 			this.addedFreeIdentifiers = addedFreeIdents == null ? new FreeIdentifier[0] : addedFreeIdents;
 			this.hypAction = hypAction == null ? new ArrayList<Action>() : hypAction;
-		}
-
-		public void addConjunctsToAddedHyps(Predicate pred){
-			addedHypotheses.addAll(Lib.breakConjuncts(pred));
 		}
 		
 		public void addToAddedHyps(Predicate pred){
