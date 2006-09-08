@@ -13,14 +13,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 /**
  * 
@@ -87,6 +86,12 @@ public abstract class Module implements IModule, IMarkerDisplay {
 			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
 			marker.setAttribute(IMarker.MESSAGE, "(" + printElement(element) + ") " + message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
+			
+			if (StaticChecker.DEBUG) {
+				System.out.print(element.getPath().toString() + " : ");
+				System.out.print("(" + printElement(element) + ") " + message);
+				System.out.println(severity == SEVERITY_ERROR ? " ERROR" : " WARNING");
+			}
 		} catch(CoreException e) {
 			// can safely ignore
 		}
