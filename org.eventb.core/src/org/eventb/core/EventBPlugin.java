@@ -7,7 +7,11 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.prover.reasoners.classicB.ClassicB;
+import org.eventb.internal.core.pog.ProofObligationGenerator;
+import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -24,6 +28,12 @@ public class EventBPlugin extends Plugin {
 	 */
 	public static final String PLUGIN_ID = "org.eventb.core"; //$NON-NLS-1$
 	
+	/**
+	 * debugging/tracing option names
+	 */
+	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
+	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
+
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
 	 * 
@@ -137,12 +147,29 @@ public class EventBPlugin extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		configureDebugOptions();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
+	}
+	
+	/**
+	 * Process debugging/tracing options coming from Eclipse.
+	 */
+	private void configureDebugOptions() {
+		if (isDebugging()) {
+			String option;
+			option = Platform.getDebugOption(SC_TRACE);
+			if (option != null)
+				StaticChecker.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POG_TRACE);
+			if (option != null)
+				ProofObligationGenerator.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
 	}
 
 }
