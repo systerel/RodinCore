@@ -33,6 +33,7 @@ public class BasicTactics {
 		return new ComposeStrict(tactics);
 	}
 	
+	
 	public static ITactic reasonerTac(IReasoner reasoner,IReasonerInput reasonerInput){
 		return new ReasonerTac(reasoner,reasonerInput);
 	}

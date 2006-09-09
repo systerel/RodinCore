@@ -407,13 +407,38 @@ public class Tactics {
 				
 	}
 	
+	public static ITactic afterLasoo(final ITactic tactic){
+		return new ITactic(){
+
+			public Object apply(IProofTreeNode pt) {
+				
+				lasoo().apply(pt);
+				final IProofTreeNode firstOpenDescendant = pt.getFirstOpenDescendant();
+				Object output = tactic.apply(firstOpenDescendant);
+				if (output == null){
+					// tactic was successful
+					return null;
+				}
+				else
+				{ // revert proof tree
+					prune().apply(pt);
+					return output;
+				}
+				
+			}
+			
+		};
+	}
+	
+	
 	public static ITactic autoProver(IProgressMonitor progressMonitor, long timeOutDelay){
 		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
 		return BasicTactics.compose(
 				lasoo(),
 				BasicTactics.onAllPending(norm()),
-				BasicTactics.onAllPending(externalML(MLforces, timeOutDelay, progressMonitor)),
-				BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, progressMonitor))
+				BasicTactics.onAllPending(externalML(MLforces, timeOutDelay, progressMonitor)), // ML
+				BasicTactics.onAllPending(Tactics.externalPP(true, timeOutDelay, progressMonitor)), // P1
+				BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, progressMonitor)) // PP
 				);
 		
 ////		 First try applying an internal tactic
