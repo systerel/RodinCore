@@ -1,9 +1,5 @@
 package org.eventb.core.seqprover;
 
-import java.util.Set;
-
-import org.eventb.core.ast.ITypeEnvironment;
-
 /**
  * Common protocol for a proof tree node.
  * 
