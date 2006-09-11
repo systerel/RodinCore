@@ -7,23 +7,26 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 
 /**
  * Common protocol for Event-B witnesses.
  * <p>
- * A witness has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()} and contains an
- * expression that is accessed and manipulated via
- * {@link org.eventb.core.IExpressionElement}. This interface itself does not
+ * A witness has a label that is accessed and manipulated via
+ * {@link org.eventb.core.ILabeledElement} and contains a
+ * predicate that is accessed and manipulated via
+ * {@link org.eventb.core.IPredicateElement}. This interface itself does not
  * contribute any methods.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.IExpressionElement#getExpressionString()
- * @see org.eventb.core.IExpressionElement#setExpressionString(String)
+ * @see org.eventb.core.ILabeledElement#getLabel(IProgressMonitor)
+ * @see org.eventb.core.ILabeledElement#setLabel(String, IProgressMonitor)
+ * @see org.eventb.core.IPredicateElement#getPredicateString()
+ * @see org.eventb.core.IPredicateElement#setPredicateString(String)
  * 
  * @author Laurent Voisin
  */
