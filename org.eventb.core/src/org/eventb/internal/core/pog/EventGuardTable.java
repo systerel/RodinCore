@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
