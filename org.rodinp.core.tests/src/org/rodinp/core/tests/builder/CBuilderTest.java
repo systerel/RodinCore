@@ -8,16 +8,17 @@ import org.rodinp.core.IRodinProject;
  * @author lvoisin
  *
  */
-public class BuilderTest extends AbstractBuilderTest {
+public class CBuilderTest extends AbstractBuilderTest {
 	
 	private IRodinProject project;
 	
-	public BuilderTest(String name) {
+	public CBuilderTest(String name) {
 		super(name);
 	}
 	
 	protected void setUp() throws Exception {
 		super.setUp();
+		CPOTool.runCPO = false; // do not use dumb POG
 		project = createRodinProject("P");
 		ToolTrace.flush();
 	}
@@ -38,8 +39,8 @@ public class BuilderTest extends AbstractBuilderTest {
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(
-				"SC extract /P/x.ctx\n" +
-				"SC run /P/x.csc"
+				"CSC extract /P/x.ctx\n" +
+				"CSC run /P/x.csc"
 		);
 		
 		IRodinFile scCtx = getRodinFile("P/x.csc");
@@ -61,7 +62,7 @@ public class BuilderTest extends AbstractBuilderTest {
 
 		ctx.delete(true, null);
 		runBuilder(
-				"SC clean /P/x.csc"
+				"CSC clean /P/x.csc"
 		);
 	}
 	
@@ -80,10 +81,10 @@ public class BuilderTest extends AbstractBuilderTest {
 		createData(cty, "two");
 		cty.save(null, true);		
 		runBuilder(
-				"SC extract /P/x.ctx\n" +
-				"SC run /P/x.csc\n" +
-				"SC extract /P/y.ctx\n" +
-				"SC run /P/y.csc"
+				"CSC extract /P/x.ctx\n" +
+				"CSC run /P/x.csc\n" +
+				"CSC extract /P/y.ctx\n" +
+				"CSC run /P/y.csc"
 		);
 	}
 
@@ -102,10 +103,10 @@ public class BuilderTest extends AbstractBuilderTest {
 		ctx.save(null, true);
 		
 		runBuilder(
-				"SC extract /P/y.ctx\n" +
-				"SC extract /P/x.ctx\n" +
-				"SC run /P/x.csc\n" +
-				"SC run /P/y.csc"
+				"CSC extract /P/y.ctx\n" +
+				"CSC extract /P/x.ctx\n" +
+				"CSC run /P/x.csc\n" +
+				"CSC run /P/y.csc"
 		);
 	}
 	
@@ -129,12 +130,12 @@ public class BuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"SC extract /P/x.ctx\n" +
-				"SC run /P/x.csc\n" +
-				"SC extract /P/y.ctx\n" +
-				"SC run /P/y.csc\n" +
-				"SC extract /P/z.ctx\n" +
-				"SC run /P/z.csc"
+				"CSC extract /P/x.ctx\n" +
+				"CSC run /P/x.csc\n" +
+				"CSC extract /P/y.ctx\n" +
+				"CSC run /P/y.csc\n" +
+				"CSC extract /P/z.ctx\n" +
+				"CSC run /P/z.csc"
 		);
 	}
 	
@@ -158,10 +159,10 @@ public class BuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"SC extract /P/x.ctx\n" +
-				"SC extract /P/y.ctx\n" +
-				"SC extract /P/z.ctx\n" +
-				"SC run /P/z.csc"
+				"CSC extract /P/x.ctx\n" +
+				"CSC extract /P/y.ctx\n" +
+				"CSC extract /P/z.ctx\n" +
+				"CSC run /P/z.csc"
 		);
 	}
 	

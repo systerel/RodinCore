@@ -1,9 +1,10 @@
 package org.rodinp.core.tests.builder;
 
-import org.rodinp.core.IRodinFile;
 
-public interface ISCContext extends IRodinFile {
+public interface ISCContext extends ISCProvable {
 
+	public static final String ELEMENT_TYPE = "org.rodinp.core.tests.scContext";
+	
 	IContext getUncheckedVersion();
 
 }

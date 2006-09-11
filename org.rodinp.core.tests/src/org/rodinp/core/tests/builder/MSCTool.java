@@ -1,0 +1,91 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.rodinp.core.tests.builder;
+
+import java.util.HashSet;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.builder.IAutomaticTool;
+import org.rodinp.core.builder.IExtractor;
+import org.rodinp.core.builder.IGraph;
+
+/**
+ * @author Stefan Hallerstede
+ *
+ */
+public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
+	
+	private static final String MSC = "MSC";
+	// Id of this tool
+	private static String SC_ID = "org.rodinp.core.tests.testMSC";
+	
+	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+		ToolTrace.addTrace(MSC, "clean", file);
+
+		if (file.getFileExtension().equals("msc"))
+			file.delete(true, monitor);
+	}
+	
+	public void extract(IFile file, IGraph graph) throws CoreException {
+		ToolTrace.addTrace(MSC, "extract", file);
+		
+		IMachine mch = (IMachine) RodinCore.create(file);
+		
+		ISCMachine smch = mch.getCheckedVersion();
+		IPath scPath = smch.getResource().getFullPath();
+		graph.addNode(scPath, SC_ID);
+		graph.putToolDependency(mch.getResource().getFullPath(), scPath, SC_ID, true);
+		
+		ISCMachine machine = mch.getCheckedVersion();
+		if (machine != null) {
+			graph.putUserDependency(
+					mch.getResource().getFullPath(), machine.getResource().getFullPath(), scPath, SC_ID, false);
+		}
+		
+		HashSet<IPath> newSources = new HashSet<IPath>(mch.getUsedContexts().length * 4 / 3 + 1);
+		for (IContext usedContext: mch.getUsedContexts()) {
+			IPath source = usedContext.getCheckedVersion().getResource().getFullPath();
+			newSources.add(source);
+		}
+		for (IPath path : newSources)
+			graph.putUserDependency(mch.getResource().getFullPath(), path, scPath, SC_ID, false);
+		
+		graph.updateGraph();
+	}
+	
+	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+		ToolTrace.addTrace(MSC, "run", file);
+
+		ISCMachine target = (ISCMachine) RodinCore.create(file);
+		IMachine mch = target.getUncheckedVersion(); 
+		
+		// First clean up target
+		if (target.exists()) {
+			target.delete(true, null);
+		}
+		target = (ISCMachine) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		
+		// Populate with a copy of inputs
+		copyDataElements(mch, target);
+		
+		if (mch.getReferencedMachine() != null)
+			copyDataElements(mch.getReferencedMachine(), target);
+		
+		for (IContext usedContext: mch.getUsedContexts()) {
+			copyDataElements(usedContext.getCheckedVersion(), target);
+		}
+		
+		target.save(null, true);
+		return true;
+	}
+
+}
