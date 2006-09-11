@@ -267,44 +267,44 @@
    <extension
          point="org.rodinp.core.autoTools">
       <tool
-            class="org.eventb.internal.core.protosc.ContextSC"
+            class="org.eventb.internal.core.sc.ContextStaticChecker"
             id="contextSC"
             name="%contextSCTool">
          <extractor
-               class="org.eventb.internal.core.protosc.ContextSC"
+               class="org.eventb.internal.core.sc.ContextStaticChecker"
                id="contextSC"
                name="%contextSCExtractor">
             <inputType id="org.eventb.core.contextFile"/>
          </extractor>
       </tool>
       <tool
-            class="org.eventb.internal.core.protosc.MachineSC"
+            class="org.eventb.internal.core.sc.MachineStaticChecker"
             id="machineSC"
             name="%machineSCTool">
          <extractor
-               class="org.eventb.internal.core.protosc.MachineSC"
+               class="org.eventb.internal.core.sc.MachineStaticChecker"
                id="machineSC"
                name="%machineSCExtractor">
             <inputType id="org.eventb.core.machineFile"/>
          </extractor>
       </tool>
       <tool
-            class="org.eventb.internal.core.protopog.ContextPOG"
+            class="org.eventb.internal.core.pog.ContextPOGenerator"
             id="contextPOG"
             name="%contextPOG">
          <extractor
-               class="org.eventb.internal.core.protopog.ContextPOG"
+               class="org.eventb.internal.core.pog.ContextPOGenerator"
                id="contextPOG"
                name="%contextPOGExtractor">
             <inputType id="org.eventb.core.scContextFile"/>
          </extractor>
       </tool>
       <tool
-            class="org.eventb.internal.core.protopog.MachinePOG"
+            class="org.eventb.internal.core.pog.MachinePOGenerator"
             id="machinePOG"
             name="%machinePOG">
          <extractor
-               class="org.eventb.internal.core.protopog.MachinePOG"
+               class="org.eventb.internal.core.pog.MachinePOGenerator"
                id="machinePOG"
                name="%machinePOGExtractor">
             <inputType id="org.eventb.core.scMachineFile"/>
