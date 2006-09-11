@@ -11,6 +11,7 @@ package org.eventb.core.tests.sc;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
+import org.eventb.core.ast.ITypeEnvironment;
 
 /**
  * @author Stefan Hallerstede
@@ -18,7 +19,7 @@ import org.eventb.core.ISCInternalContext;
  */
 public class TestConstants extends BasicTest {
 
-	public void testConstants_0() throws Exception {
+	public void testConstants_00() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -33,7 +34,7 @@ public class TestConstants extends BasicTest {
 		
 	}
 
-	public void testConstants_1() throws Exception {
+	public void testConstants_01() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -51,7 +52,7 @@ public class TestConstants extends BasicTest {
 
 	}
 
-	public void testConstants_2() throws Exception {
+	public void testConstants_02() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -68,7 +69,7 @@ public class TestConstants extends BasicTest {
 		numberOfAxioms(file, 0);
 	}
 	
-	public void testConstants_3() throws Exception {
+	public void testConstants_03() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -88,7 +89,7 @@ public class TestConstants extends BasicTest {
 		numberOfAxioms(file, 1);
 	}
 	
-	public void testConstants_4() throws Exception {
+	public void testConstants_04() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
@@ -117,7 +118,7 @@ public class TestConstants extends BasicTest {
 
 	}
 	
-	public void testConstants_5() throws Exception {
+	public void testConstants_05() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
@@ -144,6 +145,26 @@ public class TestConstants extends BasicTest {
 		
 		containsConstants(contexts[0], "C1");
 
+	}
+
+	public void testConstants_06() throws Exception {
+		IContextFile con = createContext("con");
+
+		addConstants(con, makeSList("d"));
+		addAxioms(con, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("d", factory.makeIntegerType());
+		
+		con.save(null, true);
+		
+		runSC(con);
+		
+		ISCContextFile file = con.getSCContextFile();
+		
+		containsConstants(file, "d");
+		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
+		
 	}
 
 }
