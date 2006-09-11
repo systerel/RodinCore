@@ -72,6 +72,12 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.views.EventMirror"
             name="Event Mirror"/>
+      <view
+            category="org.event.ui"
+            class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
+            icon="icons/sample.gif"
+            id="org.eventb.ui.views.SearchHypothesis"
+            name="Search Hypothesis"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -120,6 +126,7 @@
    <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
    <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
    <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
+   <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
    <extension
          point="org.eventb.ui.machinePages">
       <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
@@ -607,6 +614,77 @@
             hint="Exists Instantiation"
             icon="icons/full/ctool16/exI_prover.gif"
             id="Exists Instantiation"/>
+   </extension>
+   <extension
+         point="org.eventb.ui.elementui">
+      <element
+            class="org.rodinp.core.IRodinProject"
+            icon="icons/full/obj16/prj_obj.gif"
+            name="Rodin Project"/>
+      <element
+            class="org.eventb.core.IMachineFile"
+            icon="icons/full/obj16/mch_obj.gif"
+            name="Machine"/>
+      <element
+            class="org.eventb.core.IContextFile"
+            icon="icons/full/obj16/ctx_obj.gif"
+            name="Context"/>
+      <element
+            class="org.eventb.core.ISeesContext"
+            icon="icons/full/obj16/ctx_obj.gif"
+            name="See Context"/>
+      <element
+            class="org.eventb.core.IRefinesMachine"
+            icon="icons/full/obj16/mch_obj.gif"
+            name="Refines Machine"/>
+      <element
+            class="org.eventb.core.IExtendsContext"
+            icon="icons/full/obj16/ctx_obj.gif"
+            name="Extends Context"/>
+      <element
+            class="org.eventb.core.IVariable"
+            icon="icons/full/obj16/var_obj.gif"
+            name="Variable"/>
+      <element
+            class="org.eventb.core.IInvariant"
+            icon="icons/full/obj16/inv_obj.gif"
+            name="Invariant"/>
+      <element
+            class="org.eventb.core.ITheorem"
+            icon="icons/full/obj16/thm_obj.gif"
+            name="Theorem"/>
+      <element
+            class="org.eventb.core.IEvent"
+            icon="icons/full/obj16/evt_obj.gif"
+            name="Event"/>
+      <element
+            class="org.eventb.core.IRefinesEvent"
+            icon="icons/full/obj16/evt_obj.gif"
+            name="Refines Event"/>
+      <element
+            class="org.eventb.core.IGuard"
+            icon="icons/full/obj16/grd_obj.gif"
+            name="Guard"/>
+      <element
+            class="org.eventb.core.IAction"
+            icon="icons/full/obj16/act_obj.gif"
+            name="Action"/>
+      <element
+            class="org.eventb.core.ICarrierSet"
+            icon="icons/full/obj16/set_obj.gif"
+            name="Carrier Set"/>
+      <element
+            class="org.eventb.core.IConstant"
+            icon="icons/full/obj16/cst_obj.gif"
+            name="Constant"/>
+      <element
+            class="org.eventb.core.IAxiom"
+            icon="icons/full/obj16/axm_obj.gif"
+            name="Axiom"/>
+      <element
+            class="org.eventb.core.IWitness"
+            icon="icons/unattempted.gif"
+            name="Witness"/>
    </extension>
 
 </plugin>
