@@ -13,8 +13,6 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.IntType;
-
 /**
  * @author Stefan Hallerstede
  *
