@@ -11,8 +11,6 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.ITypeEnvironment;
 
 /**
