@@ -9,7 +9,6 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
