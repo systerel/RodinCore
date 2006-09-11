@@ -21,10 +21,9 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.sequent.Hypothesis;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
@@ -49,11 +48,12 @@ public class POUtil {
 			String name = poSeq.getName();
 			ITypeEnvironment typeEnv = globalTypeEnv.clone();
 			addIdents(poSeq.getIdentifiers(),typeEnv);
-			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
-			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
+			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(), typeEnv);
+//			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
+//			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
 			Predicate goal = readPredicate(poSeq.getGoal(),typeEnv);
-			IProverSequent seq = SequentProver.makeSequent(typeEnv,hypotheses,goal);
-			seq = seq.selectHypotheses(localHypotheses);
+			IProverSequent seq = Lib.makeSequent(typeEnv,hypotheses,goal);
+//			seq = seq.selectHypotheses(localHypotheses);
 			// System.out.println(name+" : "+seq);
 			result.put(name,seq);
 		}
@@ -61,26 +61,26 @@ public class POUtil {
 	}
 
 	
-	private static Set<Hypothesis> readHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		result.addAll(readGlobalHypotheses(poHyp,typeEnv));
-		result.addAll(readLocalHypotheses(poHyp,typeEnv));
-		return result;
-	}
+//	private static Set<Hypothesis> readHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+//		Set<Hypothesis> result = new HashSet<Hypothesis>();
+//		result.addAll(readGlobalHypotheses(poHyp,typeEnv));
+//		result.addAll(readLocalHypotheses(poHyp,typeEnv));
+//		return result;
+//	}
 	
-	private static Set<Hypothesis> readGlobalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		result.addAll(readPredicates(poHyp.getPredicateSet(),typeEnv));
-		return result;
-	}
+//	private static Set<Hypothesis> readGlobalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+//		Set<Hypothesis> result = new HashSet<Hypothesis>();
+//		result.addAll(readPredicates(poHyp.getPredicateSet(),typeEnv));
+//		return result;
+//	}
 	
-	private static Set<Hypothesis> readLocalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred : poHyp.getPredicates()){
-			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
-		}
-		return result;
-	}
+//	private static Set<Hypothesis> readLocalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
+//		Set<Hypothesis> result = new HashSet<Hypothesis>();
+//		for (IPOPredicate poPred : poHyp.getPredicates()){
+//			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
+//		}
+//		return result;
+//	}
 
 
 	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
