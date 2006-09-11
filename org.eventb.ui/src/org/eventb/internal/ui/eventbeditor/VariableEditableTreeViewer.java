@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,7 +24,6 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.basis.MachineFile;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -147,14 +144,14 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	}
 
 	public void commit(IRodinElement element, int col, String text) {
-
+		IVariable var = (IVariable) element;
 		switch (col) {
 		case 0: // Commit name
 			try {
 				UIUtils.debugEventBEditor("Commit : "
-						+ element.getElementName() + " to be : " + text);
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+						+ var.getIdentifierString() + " to be : " + text);
+				if (!var.getIdentifierString().equals(text)) {
+					var.setIdentifierString(text);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -179,11 +176,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof IRodinElement))
-			return false;
-		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object))
-				return true;
-		}
+			return true;
 		return false;
 	}
 
@@ -248,12 +241,5 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	// }
 	//
 	// }
-
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
-	}
 
 }

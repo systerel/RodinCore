@@ -36,9 +36,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -78,7 +78,7 @@ public class RefinesSection extends SectionPart implements
 	private Combo machineCombo;
 
 	// The refined internal element.
-	private IInternalElement refined;
+	private IRefinesMachine refined;
 
 	// Flag to indicate if the combo box need to be updated.
 	private boolean refreshCombo;
@@ -316,10 +316,19 @@ public class RefinesSection extends SectionPart implements
 								// creation
 								public void run(IProgressMonitor monitor)
 										throws CoreException {
-									refined = rodinFile.createInternalElement(
-											IRefinesMachine.ELEMENT_TYPE,
-											machine, null, null);
-									refined.setContents(machine);
+									refined = (IRefinesMachine) rodinFile
+											.createInternalElement(
+													IRefinesMachine.ELEMENT_TYPE,
+													UIUtils
+															.getFreeElementName(
+																	(EventBEditor) editor,
+																	rodinFile,
+																	IRefinesMachine.ELEMENT_TYPE,
+																	PrefixRefinesMachineName.QUALIFIED_NAME,
+																	PrefixRefinesMachineName.DEFAULT_PREFIX),
+													null, monitor);
+
+									refined.setAbstractMachineName(machine);
 								}
 							}, null);
 				} catch (RodinDBException exception) {
@@ -331,8 +340,8 @@ public class RefinesSection extends SectionPart implements
 				}
 			} else { // Change the element
 				try {
-					if (!(refined.getContents().equals(machine))) {
-						refined.setContents(machine);
+					if (!(refined.getAbstractMachineName().equals(machine))) {
+						refined.setAbstractMachineName(machine);
 					}
 				} catch (RodinDBException exception) {
 					exception.printStackTrace();
@@ -379,7 +388,8 @@ public class RefinesSection extends SectionPart implements
 	// return;
 	// }
 	public void elementChanged(final ElementChangedEvent event) {
-		if (machineCombo.isDisposed()) return;
+		if (machineCombo.isDisposed())
+			return;
 		Display display = machineCombo.getDisplay();
 		display.syncExec(new Runnable() {
 
@@ -423,9 +433,9 @@ public class RefinesSection extends SectionPart implements
 			IRodinElement[] refinedMachines = rodinFile
 					.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 			if (refinedMachines.length != 0) {
-				refined = (IInternalElement) refinedMachines[0];
+				refined = (IRefinesMachine) refinedMachines[0];
 				try {
-					machineCombo.setText(refined.getContents());
+					machineCombo.setText(refined.getAbstractMachineName());
 					// contextText.setText(refined.getContents());
 				} catch (RodinDBException e) {
 					e.printStackTrace();
@@ -529,7 +539,7 @@ public class RefinesSection extends SectionPart implements
 				// nullButton.setSelection(false);
 				try {
 					machineCombo.setText(((IRefinesMachine) element)
-							.getContents());
+							.getAbstractMachineName());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -538,7 +548,8 @@ public class RefinesSection extends SectionPart implements
 				if ((delta.getFlags() & IRodinElementDelta.F_CONTENT) != 0) {
 					String machine;
 					try {
-						machine = ((IRefinesMachine) element).getContents();
+						machine = ((IRefinesMachine) element)
+								.getAbstractMachineName();
 						if (!machineCombo.getText().equals(machine)) {
 							machineCombo.setText(machine);
 						}

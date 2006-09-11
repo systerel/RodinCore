@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,7 +23,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -158,13 +155,14 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int, java.lang.String)
 	 */
 	public void commit(IRodinElement element, int col, String text) {
+		IAxiom axm = (IAxiom) element;
 		switch (col) {
-		case 0: // Commit name
+		case 0: // Commit label
 			try {
 				UIUtils.debugEventBEditor("Commit : "
-						+ element.getElementName() + " to be : " + text);
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+						+ axm.getLabel(null) + " to be : " + text);
+				if (!axm.getLabel(null).equals(text)) {
+					axm.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -172,13 +170,13 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 
 			break;
 
-		case 1: // Commit content
+		case 1: // Commit predicate
 			try {
 				UIUtils.debugEventBEditor("Commit content: "
-						+ ((IInternalElement) element).getContents()
+						+ axm.getPredicateString()
 						+ " to be : " + text);
-				if (!((IInternalElement) element).getContents().equals(text)) {
-					((IInternalElement) element).setContents(text);
+				if (!axm.getPredicateString().equals(text)) {
+					axm.setPredicateString(text);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -216,12 +214,8 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int)
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement))
-			return false;
-		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object))
-				return true;
-		}
+		if (!(object instanceof IAxiom))
+			return true;
 		return false;
 	}
 
@@ -236,11 +230,4 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		selectItem(item, 1);
 	}
 
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
-	}
-	
 }

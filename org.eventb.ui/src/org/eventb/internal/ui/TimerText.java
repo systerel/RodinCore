@@ -81,6 +81,7 @@ public abstract class TimerText implements ModifyListener {
 		this.text = text;
 		this.delay = delay;
 		text.addModifyListener(this);
+		
 	}
 
 	/*

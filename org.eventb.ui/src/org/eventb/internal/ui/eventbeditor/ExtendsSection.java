@@ -46,6 +46,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -249,9 +250,14 @@ public class ExtendsSection extends SectionPart implements
 	private void addExtendedContext(String context) {
 		try {
 			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-			IInternalElement extended = rodinFile.createInternalElement(
-					IExtendsContext.ELEMENT_TYPE, context, null, null);
-			extended.setContents(context);
+			IExtendsContext extended = (IExtendsContext) rodinFile
+					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
+							UIUtils.getFreeElementName((EventBEditor) editor,
+									rodinFile, IExtendsContext.ELEMENT_TYPE,
+									PrefixExtendsContextName.QUALIFIED_NAME,
+									PrefixExtendsContextName.DEFAULT_PREFIX),
+							null, null);
+			extended.setAbstractContextName(context);
 			// markDirty();
 		} catch (RodinDBException exception) {
 			exception.printStackTrace();
@@ -264,55 +270,61 @@ public class ExtendsSection extends SectionPart implements
 	public void handleAdd() {
 		String context = contextCombo.getText();
 		try {
-			IInternalElement extended = rodinFile.createInternalElement(
-					IExtendsContext.ELEMENT_TYPE, context, null, null);
-			extended.setContents(context);
+			IExtendsContext extended = (IExtendsContext) rodinFile
+					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
+							UIUtils.getFreeElementName((EventBEditor) editor,
+									rodinFile, IExtendsContext.ELEMENT_TYPE,
+									PrefixExtendsContextName.QUALIFIED_NAME,
+									PrefixExtendsContextName.DEFAULT_PREFIX),
+							null, null);
+			extended.setAbstractContextName(context);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-//		IRodinProject project = (IRodinProject) rodinFile.getParent();
-//		String contextFileName = EventBPlugin.getContextFileName(context);
-//		IRodinFile contextFile = project.getRodinFile(contextFileName);
-//		if (!contextFile.exists()) {
-//			boolean answer = MessageDialog
-//					.openQuestion(
-//							this.getSection().getShell(),
-//							"Create Context",
-//							"Context "
-//									+ contextFileName
-//									+ " does not exist. Do you want to create new extended context?");
-//
-//			if (!answer)
-//				return;
-//
-//			try {
-//				contextFile = project.createRodinFile(contextFileName, true,
-//						null);
-//			} catch (RodinDBException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		UIUtils.linkToEventBEditor(contextFile);
+		// IRodinProject project = (IRodinProject) rodinFile.getParent();
+		// String contextFileName = EventBPlugin.getContextFileName(context);
+		// IRodinFile contextFile = project.getRodinFile(contextFileName);
+		// if (!contextFile.exists()) {
+		// boolean answer = MessageDialog
+		// .openQuestion(
+		// this.getSection().getShell(),
+		// "Create Context",
+		// "Context "
+		// + contextFileName
+		// + " does not exist. Do you want to create new extended context?");
+		//
+		// if (!answer)
+		// return;
+		//
+		// try {
+		// contextFile = project.createRodinFile(contextFileName, true,
+		// null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// UIUtils.linkToEventBEditor(contextFile);
 
 		return;
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
 		Control control = viewer.getControl();
-		if (control.isDisposed()) return;
+		if (control.isDisposed())
+			return;
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 
 			public void run() {
 				viewer.setInput(rodinFile);
 				initContextCombo();
-				updateButtons();				
+				updateButtons();
 			}
-			
+
 		});
 	}
 
@@ -332,8 +344,8 @@ public class ExtendsSection extends SectionPart implements
 				for (IRodinElement extendContext : extendedContexts) {
 					if (EventBPlugin.getComponentName(context.getElementName())
 							.equals(
-									((IInternalElement) extendContext)
-											.getContents())) {
+									((IExtendsContext) extendContext)
+											.getAbstractContextName())) {
 						found = true;
 						break;
 					}
@@ -361,9 +373,9 @@ public class ExtendsSection extends SectionPart implements
 			try {
 				IRodinElement[] extendedContexts = rodinFile
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
-				for (IRodinElement seenContext : extendedContexts) {
-					if (((IInternalElement) seenContext).getContents().equals(
-							text)) {
+				for (IRodinElement extendedContext : extendedContexts) {
+					if (((IExtendsContext) extendedContext)
+							.getAbstractContextName().equals(text)) {
 						addButton.setEnabled(false);
 						return;
 					}

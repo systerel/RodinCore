@@ -16,7 +16,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -50,12 +49,13 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 			IRodinElement[] theorems = editor.getRodinInput()
 					.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 			for (int i = 0; i < theorems.length; i++) {
-				formString = formString + "<li style=\"bullet\">"
-						+ UIUtils.makeHyperlink(theorems[i].getElementName())
-						+ ": ";
 				formString = formString
-						+ UIUtils.XMLWrapUp(((IInternalElement) theorems[i])
-								.getContents());
+						+ "<li style=\"bullet\">"
+						+ UIUtils.makeHyperlink(((ITheorem) theorems[i])
+								.getLabel(null)) + ": ";
+				formString = formString
+						+ UIUtils.XMLWrapUp(((ITheorem) theorems[i])
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -76,13 +76,14 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-//					UIUtils.debug("Event: " + e.toString());
-//					UIUtils.debug("Data: " + e.data);
-//					UIUtils.debug("Here: " + e.getSource());
+					// UIUtils.debug("Event: " + e.toString());
+					// UIUtils.debug("Data: " + e.data);
+					// UIUtils.debug("Here: " + e.getSource());
 					IRodinElement[] theorems = editor.getRodinInput()
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 					for (int i = 0; i < theorems.length; i++) {
-						if (e.getHref().equals(theorems[i].getElementName())) {
+						if (e.getHref().equals(
+								((ITheorem) theorems[i]).getLabel(null))) {
 							editor.edit(theorems[i]);
 							return;
 						}
@@ -94,5 +95,4 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 			}
 		});
 	}
-
 }

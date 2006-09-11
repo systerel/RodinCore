@@ -19,7 +19,7 @@ public class NewEvent implements IEditorActionDelegate {
 
 	public void run(IAction action) {
 		IRodinFile rodinFile = editor.getRodinInput();
-		UIUtils.newEvent(editor, rodinFile);
+		UIUtils.newEvent(editor, rodinFile, null);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

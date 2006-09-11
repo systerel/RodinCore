@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author htson
@@ -30,29 +31,9 @@ public class EventBImage {
 	/**
 	 * Image IDs for RODIN Elements
 	 */
-	public static final String IMG_PROJECT = "Project";
-
 	public static final String IMG_MACHINE = "IMachine";
 
 	public static final String IMG_CONTEXT = "IContext";
-
-	public static final String IMG_VARIABLE = "Variable";
-
-	public static final String IMG_INVARIANT = "Invariant";
-
-	public static final String IMG_THEOREM = "Theorem";
-
-	public static final String IMG_EVENT = "Event";
-
-	public static final String IMG_GUARD = "Guard";
-
-	public static final String IMG_ACTION = "Action";
-
-	public static final String IMG_CARRIER_SET = "CarrierSet";
-
-	public static final String IMG_CONSTANT = "Constant";
-
-	public static final String IMG_AXIOM = "Axiom";
 
 	public static final String IMG_VARIABLES = "Variables";
 
@@ -170,18 +151,8 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IMG_PROJECT, "icons/full/obj16/prj_obj.gif");
 		registerImage(registry, IMG_MACHINE, "icons/full/obj16/mch_obj.gif");
 		registerImage(registry, IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
-		registerImage(registry, IMG_VARIABLE, "icons/full/obj16/var_obj.gif");
-		registerImage(registry, IMG_INVARIANT, "icons/full/obj16/inv_obj.gif");
-		registerImage(registry, IMG_THEOREM, "icons/full/obj16/thm_obj.gif");
-		registerImage(registry, IMG_EVENT, "icons/full/obj16/evt_obj.gif");
-		registerImage(registry, IMG_GUARD, "icons/full/obj16/grd_obj.gif");
-		registerImage(registry, IMG_ACTION, "icons/full/obj16/act_obj.gif");
-		registerImage(registry, IMG_CARRIER_SET, "icons/full/obj16/set_obj.gif");
-		registerImage(registry, IMG_CONSTANT, "icons/full/obj16/cst_obj.gif");
-		registerImage(registry, IMG_AXIOM, "icons/full/obj16/axm_obj.gif");
 		registerImage(registry, IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
 		registerImage(registry, IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
 		registerImage(registry, IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
@@ -260,4 +231,24 @@ public class EventBImage {
 		return registry.get(key);
 	}
 
+	/**
+	 * Getting the impage corresponding to a Rodin element.
+	 * <p>
+	 * 
+	 * @param element
+	 *            A Rodin element
+	 * @return The image for displaying corresponding to the input element
+	 */
+	public static Image getRodinImage(IRodinElement element) {
+		Collection<ElementUI> elementUIs = ElementUILoader.getElementUIs();
+
+		for (ElementUI elementUI : elementUIs) {
+			Class clazz = elementUI.getElementClass();
+			if (clazz.isInstance(element))
+				return elementUI.getImage();
+		}
+
+		return null;
+	}
+	
 }

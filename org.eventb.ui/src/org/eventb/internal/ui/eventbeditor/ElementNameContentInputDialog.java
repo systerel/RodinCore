@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -35,7 +37,7 @@ import org.eventb.internal.ui.IEventBInputText;
  *         entering a list of element name with content.
  */
 public class ElementNameContentInputDialog extends EventBInputDialog {
-	private String defaultNamePrefix;
+	private String prefix;
 
 	private Collection<String> names;
 
@@ -47,7 +49,11 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 
 	private String message;
 
-	private int counter;
+	private int index;
+
+	private EventBEditor editor;
+
+	private String type;
 
 	/**
 	 * Constructor.
@@ -59,17 +65,19 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 *            The title of the dialog
 	 * @param message
 	 *            The message of the dialog
-	 * @param defaultNamePrefix
+	 * @param prefix
 	 *            The default name prefix
-	 * @param counter
+	 * @param index
 	 *            The start counter for the elements.
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
-			String message, String defaultNamePrefix, int counter) {
+			String message, EventBEditor editor, String type, String prefix, int index) {
 		super(parentShell, title);
 		this.message = message;
-		this.defaultNamePrefix = defaultNamePrefix;
-		this.counter = counter;
+		this.prefix = prefix;
+		this.editor = editor;
+		this.type = type;
+		this.index = index;
 		names = new ArrayList<String>();
 		nameTexts = new ArrayList<IEventBInputText>();
 		contents = new ArrayList<String>();
@@ -113,24 +121,32 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 		label.setLayoutData(gd);
 
 		Text focusText = null;
-		
+
 		for (int i = 1; i <= 3; i++) {
 			IEventBInputText text = new EventBText(toolkit.createText(body,
-					defaultNamePrefix + (counter++)));
+					prefix + index));
+			try {
+				index = UIUtils.getFreeElementLabelIndex(editor, editor
+						.getRodinInput(), type, prefix, index + 1);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
-			text.getTextWidget().setLayoutData(gd);
-			text.getTextWidget().addModifyListener(new DirtyStateListener());
+			text.getWidget().setLayoutData(gd);
+			text.getWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 150;
-			textMath.getTextWidget().setLayoutData(gd);
+			textMath.getWidget().setLayoutData(gd);
 			contentTexts.add(textMath);
-			textMath.getTextWidget().setFocus();
-			textMath.getTextWidget().addModifyListener(new DirtyStateListener());
-			if (focusText == null) focusText = textMath.getTextWidget();
+			textMath.getWidget().setFocus();
+			textMath.getWidget().addModifyListener(new DirtyStateListener());
+			if (focusText == null)
+				focusText = textMath.getWidget();
 		}
 
 		focusText.setFocus();
@@ -147,22 +163,29 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			contents = new HashSet<String>();
 		} else if (buttonId == IDialogConstants.YES_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
-					scrolledForm.getBody(), defaultNamePrefix + (counter++)));
+					scrolledForm.getBody(), prefix + index));
+			try {
+				index = UIUtils.getFreeElementLabelIndex(editor, editor
+						.getRodinInput(), type, prefix, index);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
-			text.getTextWidget().setLayoutData(gd);
-			text.getTextWidget().addModifyListener(new DirtyStateListener());
+			text.getWidget().setLayoutData(gd);
+			text.getWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			text = new EventBMath(toolkit
 					.createText(scrolledForm.getBody(), ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 150;
-			text.getTextWidget().setLayoutData(gd);
-			text.getTextWidget().addModifyListener(new DirtyStateListener());
+			text.getWidget().setLayoutData(gd);
+			text.getWidget().addModifyListener(new DirtyStateListener());
 			contentTexts.add(text);
-			
-			updateSize();		
+
+			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			names = new ArrayList<String>();
 			contents = new ArrayList<String>();
@@ -170,11 +193,11 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			Object[] contentsList = contentTexts.toArray();
 			for (int i = 0; i < namesList.length; i++) {
 				IEventBInputText contentText = (IEventBInputText) contentsList[i];
-				Text textWidget = contentText.getTextWidget();
+				Text textWidget = contentText.getWidget();
 				String text = textWidget.getText();
 				if (dirtyTexts.contains(textWidget)) {
 					IEventBInputText nameText = (IEventBInputText) namesList[i];
-					names.add(nameText.getTextWidget().getText());
+					names.add(nameText.getWidget().getText());
 					contents.add(text);
 				}
 			}
@@ -204,11 +227,11 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 
 	@Override
 	public boolean close() {
-		for (IEventBInputText text : nameTexts) text.dispose();
-		for (IEventBInputText text : contentTexts) text.dispose();
+		for (IEventBInputText text : nameTexts)
+			text.dispose();
+		for (IEventBInputText text : contentTexts)
+			text.dispose();
 		return super.close();
 	}
 
-	
-	
 }

@@ -103,8 +103,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		EventBMath text = new EventBMath(toolkit.createText(body, defaultPrefix));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getTextWidget().setLayoutData(gd);
-		text.getTextWidget().addModifyListener(new DirtyStateListener());
+		text.getWidget().setLayoutData(gd);
+		text.getWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
@@ -113,7 +113,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getTextWidget().setLayoutData(gd);
+		text.getWidget().setLayoutData(gd);
 		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
@@ -123,7 +123,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getTextWidget().setLayoutData(gd);
+		text.getWidget().setLayoutData(gd);
 		texts.add(text);
 
 	}
@@ -143,8 +143,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 			EventBMath text = new EventBMath(toolkit.createText(scrolledForm
 					.getBody(), ""));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-			text.getTextWidget().setLayoutData(gd);
-			text.getTextWidget().addModifyListener(new DirtyStateListener());
+			text.getWidget().setLayoutData(gd);
+			text.getWidget().addModifyListener(new DirtyStateListener());
 			texts.add(text);
 
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -153,8 +153,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
 			for (IEventBInputText text : texts) {
-				String inputText = text.getTextWidget().getText();
-				if (dirtyTexts.contains(text.getTextWidget()))
+				String inputText = text.getWidget().getText();
+				if (dirtyTexts.contains(text.getWidget()))
 					attributes.add(inputText);
 			}
 		}

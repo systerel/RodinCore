@@ -12,21 +12,14 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
  *         <p>
  *         This is the class that hold a Text that used Event-B Text Font.
  */
-public class EventBText implements IEventBInputText {
-
-	// The actual Text.
-	Text text;
+public class EventBText extends EventBControl implements IEventBInputText {
 
 	/**
 	 * Constructor.
@@ -40,36 +33,7 @@ public class EventBText implements IEventBInputText {
 	 *            the style used to create the Text
 	 */
 	public EventBText(Text text) {
-		this.text = text;
-		// TODO Create a new font for Event-B Text
-		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		text.setFont(font);
-
-		JFaceResources.getFontRegistry().addListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			text.setFont(font);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.IEventBInputText#setFocus()
-	 */
-	public void setFocus() {
-		text.setFocus();
-		text.selectAll();
+		super(text);
 	}
 
 	/*
@@ -77,13 +41,8 @@ public class EventBText implements IEventBInputText {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBInputText#getTextWidget()
 	 */
-	public Text getTextWidget() {
-		return text;
+	public Text getWidget() {
+		return (Text) getControl();
 	}
 
-	public void dispose() {
-		JFaceResources.getFontRegistry().removeListener(this);
-		text.dispose();
-	}
-	
 }

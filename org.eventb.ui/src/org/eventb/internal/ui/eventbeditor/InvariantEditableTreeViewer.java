@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -24,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -157,11 +154,12 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 	 */
 	public void commit(IRodinElement element, int col, String text) {
 
+		IInvariant inv = (IInvariant) element;
 		switch (col) {
-		case 0: // Commit name
+		case 0: // Commit label
 			try {
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+				if (!inv.getLabel(null).equals(text)) {
+					inv.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -171,8 +169,8 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!((IInternalElement) element).getContents().equals(text)) {
-					((IInternalElement) element).setContents(text);
+				if (!inv.getPredicateString().equals(text)) {
+					inv.setPredicateString(text);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -211,11 +209,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof IRodinElement))
-			return false;
-		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object))
-				return true;
-		}
+			return true;
 		return false;
 	}
 
@@ -230,11 +224,4 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		selectItem(item, 1);
 	}
 
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
-	}
-	
 }

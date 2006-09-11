@@ -36,13 +36,17 @@ public class EventMirrorPage extends EventBMirrorPage implements
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param editor an Event-B Editor
+	 * 
+	 * @param editor
+	 *            an Event-B Editor
 	 */
 	public EventMirrorPage(EventBEditor editor) {
 		super(editor);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#getFormString()
 	 */
 	protected String getFormString() {
@@ -98,8 +102,8 @@ public class EventMirrorPage extends EventBMirrorPage implements
 					formString = formString
 							+ UIUtils.makeHyperlink(guards[j].getElementName())
 							+ ": "
-							+ UIUtils.XMLWrapUp(((IInternalElement) guards[j])
-									.getContents());
+							+ UIUtils.XMLWrapUp(((IGuard) guards[j])
+									.getPredicateString());
 					formString = formString + "</li>";
 				}
 
@@ -113,9 +117,8 @@ public class EventMirrorPage extends EventBMirrorPage implements
 					formString = formString
 							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 					formString = formString
-							+ UIUtils
-									.makeHyperlink(((IInternalElement) actions[j])
-											.getContents());
+							+ UIUtils.makeHyperlink(((IAction) actions[j])
+									.getAssignmentString());
 					formString = formString + "</li>";
 				}
 				formString = formString
@@ -131,18 +134,21 @@ public class EventMirrorPage extends EventBMirrorPage implements
 		return formString;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#createHyperlinkListener()
 	 */
 	protected HyperlinkAdapter createHyperlinkListener() {
-		// TODO Using name is not enough since local guards can have same name in different event.
+		// TODO Using name is not enough since local guards can have same name
+		// in different event.
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
 					IEvent[] events = ((IMachineFile) rodinFile).getEvents();
 					for (int i = 0; i < events.length; i++) {
-						if (e.getHref().equals(events[i].getElementName())) {
+						if (e.getHref().equals(events[i].getLabel(null))) {
 							editor.edit(events[i]);
 						}
 						IRodinElement[] lvars = events[i]
@@ -152,19 +158,21 @@ public class EventMirrorPage extends EventBMirrorPage implements
 						IRodinElement[] actions = events[i]
 								.getChildrenOfType(IAction.ELEMENT_TYPE);
 						for (int j = 0; j < lvars.length; j++) {
-							if (e.getHref().equals(lvars[j].getElementName())) {
+							if (e.getHref().equals(
+									((IVariable) lvars[j])
+											.getIdentifierString())) {
 								editor.edit(lvars[j]);
 							}
 						}
 						for (int j = 0; j < guards.length; j++) {
-							if (e.getHref().equals(guards[j].getElementName())) {
+							if (e.getHref().equals(((IGuard) guards[j]).getLabel(null))) {
 								editor.edit(guards[j]);
 							}
 						}
 						for (int j = 0; j < actions.length; j++) {
 							if (e.getHref().equals(
-									((IInternalElement) actions[j])
-											.getContents())) {
+									((IAction) actions[j])
+											.getAssignmentString())) {
 								editor.edit(actions[j]);
 							}
 						}

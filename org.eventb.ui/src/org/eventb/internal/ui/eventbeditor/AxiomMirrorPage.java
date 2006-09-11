@@ -16,7 +16,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IAxiom;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -49,13 +48,13 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 		try {
 			IRodinElement[] axioms = editor.getRodinInput().getChildrenOfType(
 					IAxiom.ELEMENT_TYPE);
-			for (int i = 0; i < axioms.length; i++) {
+			for (IRodinElement axiom : axioms) {
 				formString = formString + "<li style=\"bullet\">"
-						+ UIUtils.makeHyperlink(axioms[i].getElementName())
+						+ UIUtils.makeHyperlink(((IAxiom) axiom).getLabel(null))
 						+ ": ";
 				formString = formString
-						+ UIUtils.XMLWrapUp(((IInternalElement) axioms[i])
-								.getContents());
+						+ UIUtils.XMLWrapUp(((IAxiom) axiom)
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -79,7 +78,7 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 					IRodinElement[] axioms = editor.getRodinInput()
 							.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 					for (int i = 0; i < axioms.length; i++) {
-						if (e.getHref().equals(axioms[i].getElementName())) {
+						if (e.getHref().equals(((IAxiom) axioms[i]).getLabel(null))) {
 							editor.edit(axioms[i]);
 							break;
 						}

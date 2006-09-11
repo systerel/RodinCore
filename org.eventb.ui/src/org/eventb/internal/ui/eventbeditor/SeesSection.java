@@ -46,6 +46,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixSeesContextName;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -279,9 +280,13 @@ public class SeesSection extends SectionPart implements
 	private void addSeenContext(String context) {
 		try {
 			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-			IInternalElement seen = rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, context, null, null);
-			seen.setContents(context);
+			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
+					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
+							(EventBEditor) editor, rodinFile,
+							ISeesContext.ELEMENT_TYPE,
+							PrefixSeesContextName.QUALIFIED_NAME,
+							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
+			seen.setSeenContextName(context);
 			// markDirty();
 		} catch (RodinDBException exception) {
 			exception.printStackTrace();
@@ -294,39 +299,43 @@ public class SeesSection extends SectionPart implements
 	public void handleAdd() {
 		String context = contextCombo.getText();
 		try {
-			IInternalElement seen = rodinFile.createInternalElement(
-					ISeesContext.ELEMENT_TYPE, context, null, null);
-			seen.setContents(context);
+			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
+					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
+							(EventBEditor) editor, rodinFile,
+							ISeesContext.ELEMENT_TYPE,
+							PrefixSeesContextName.QUALIFIED_NAME,
+							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
+			seen.setSeenContextName(context);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-//		IRodinProject project = (IRodinProject) rodinFile.getParent();
-//		String contextFileName = EventBPlugin.getContextFileName(context);
-//		IRodinFile contextFile = project.getRodinFile(contextFileName);
-//		if (!contextFile.exists()) {
-//			boolean answer = MessageDialog
-//					.openQuestion(
-//							this.getSection().getShell(),
-//							"Create Machine",
-//							"Machine "
-//									+ contextFileName
-//									+ " does not exist. Do you want to create new refined machine?");
-//
-//			if (!answer)
-//				return;
-//
-//			try {
-//				contextFile = project.createRodinFile(contextFileName, true,
-//						null);
-//			} catch (RodinDBException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		UIUtils.linkToEventBEditor(contextFile);
+		// IRodinProject project = (IRodinProject) rodinFile.getParent();
+		// String contextFileName = EventBPlugin.getContextFileName(context);
+		// IRodinFile contextFile = project.getRodinFile(contextFileName);
+		// if (!contextFile.exists()) {
+		// boolean answer = MessageDialog
+		// .openQuestion(
+		// this.getSection().getShell(),
+		// "Create Machine",
+		// "Machine "
+		// + contextFileName
+		// + " does not exist. Do you want to create new refined machine?");
+		//
+		// if (!answer)
+		// return;
+		//
+		// try {
+		// contextFile = project.createRodinFile(contextFileName, true,
+		// null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// UIUtils.linkToEventBEditor(contextFile);
 
 		// ContextChoosingDialog dialog = new ContextChoosingDialog(null,
 		// "Context Name", "Please choose the seen context");
@@ -345,15 +354,16 @@ public class SeesSection extends SectionPart implements
 
 	public void elementChanged(ElementChangedEvent event) {
 		Control control = viewer.getControl();
-		if (control.isDisposed()) return;
+		if (control.isDisposed())
+			return;
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
 				viewer.setInput(rodinFile);
 				initContextCombo();
-				updateButtons();				
+				updateButtons();
 			}
-			
+
 		});
 	}
 
@@ -372,8 +382,8 @@ public class SeesSection extends SectionPart implements
 				for (IRodinElement seenContext : seenContexts) {
 					if (EventBPlugin.getComponentName(context.getElementName())
 							.equals(
-									((IInternalElement) seenContext)
-											.getContents())) {
+									((ISeesContext) seenContext)
+											.getSeenContextName())) {
 						found = true;
 						break;
 					}
@@ -401,8 +411,8 @@ public class SeesSection extends SectionPart implements
 				seenContexts = rodinFile
 						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 				for (IRodinElement seenContext : seenContexts) {
-					if (((IInternalElement) seenContext).getContents().equals(
-							text)) {
+					if (((ISeesContext) seenContext).getSeenContextName()
+							.equals(text)) {
 						addButton.setEnabled(false);
 						return;
 					}

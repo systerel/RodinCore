@@ -32,6 +32,7 @@ import org.eventb.core.IVariable;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -164,18 +165,23 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		boolean canMoveDown = false;
 
 		if (hasOneSelection) {
-			IRodinElement event;
+			IEvent event;
 			if (ssel.getFirstElement() instanceof IRodinElement) {
 				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				if (element instanceof IEvent) {
-					event = (IRodinElement) element;
+					event = (IEvent) element;
 				} else if (element instanceof IInternalElement) {
-					event = ((IInternalElement) element).getParent();
+					event = (IEvent) ((IInternalElement) element).getParent();
 				} else { // Should not happen
 					event = null;
 				}
-				initSelected = (event.getElementName().equals("INITIALISATION")) ? true
-						: false;
+				try {
+					initSelected = (event.getLabel(null).equals("INITIALISATION")) ? true
+							: false;
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		}

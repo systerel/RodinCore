@@ -12,11 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -27,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 
@@ -36,151 +34,7 @@ import org.rodinp.core.IRodinElement;
  *         This class implements the decorator for Text input that is used in
  *         the Editable Tree Viewer.
  */
-public abstract class ElementText implements ModifyListener,
-		IElementMovedListener {
-
-	// The time that the text is last modified.
-	int lastModify;
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class implements the auto commit behaviour of the text.
-	 */
-	private class TimeRunnable implements Runnable {
-		private int time;
-
-		TimeRunnable(int time) {
-			this.time = time;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			// TODO Auto-generated method stub
-			if (lastModify == time) {
-				Text textWidget = text.getTextWidget();
-				if (!textWidget.isDisposed())
-					commit(element, column, textWidget.getText());
-			}
-		}
-	}
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class handles the different changes to the Text.
-	 */
-	private class ElementTextListener implements Listener {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
-		public void handleEvent(Event event) {
-			Text textWidget = text.getTextWidget();
-			final String contents = textWidget.getText();
-			switch (event.type) {
-			case SWT.FocusOut:
-				// UIUtils.debug("FocusOut");
-				commit(element, column, contents);
-				textWidget.getParent().dispose();
-				text.dispose();
-				viewer.removeElementMovedListener(ElementText.this);
-				break;
-			case SWT.Verify:
-				// UIUtils.debug("Verify");
-				String newText = textWidget.getText();
-				String leftText = newText.substring(0, event.start);
-				String rightText = newText.substring(event.end, newText
-						.length());
-				GC gc = new GC(textWidget);
-				Point size = gc.textExtent(leftText + event.text + rightText);
-				gc.dispose();
-				size = textWidget.computeSize(size.x, SWT.DEFAULT);
-				editor.horizontalAlignment = SWT.LEFT;
-				Rectangle itemRect = item.getBounds(),
-				rect = tree.getClientArea();
-				// UIUtils.debug("ItemRect: " + itemRect);
-				// UIUtils.debug("Rect: " + rect);
-				// UIUtils.debug("Size: " + size.x);
-				editor.minimumWidth = Math.max(size.x, itemRect.width) + inset
-						* 2;
-				int left = itemRect.x,
-				right = rect.x + rect.width;
-				editor.minimumWidth = Math.min(editor.minimumWidth, right
-						- left);
-				editor.minimumHeight = size.y + inset * 2;
-				// UIUtils.debug("Editor layout --- Height: " +
-				// editor.minimumHeight + " Width: " + editor.minimumWidth);
-				editor.layout();
-				break;
-			case SWT.Traverse:
-				switch (event.detail) {
-				case SWT.TRAVERSE_RETURN:
-//					UIUtils.debugEventBEditor("TraverseReturn");
-					commit(element, column, contents);
-					textWidget.getParent().dispose();
-					text.dispose();
-					viewer.removeElementMovedListener(ElementText.this);
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_ESCAPE:
-					commit(element, column, original);
-					textWidget.getParent().dispose();
-					text.dispose();
-					viewer.removeElementMovedListener(ElementText.this);
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_TAB_NEXT:
-					commit(element, column, contents);
-					textWidget.getParent().dispose();
-					text.dispose();
-					viewer.removeElementMovedListener(ElementText.this);
-					nextEditableCell();
-					event.doit = false;
-					break;
-				case SWT.TRAVERSE_TAB_PREVIOUS:
-					commit(element, column, contents);
-					textWidget.getParent().dispose();
-					text.dispose();
-					viewer.removeElementMovedListener(ElementText.this);
-					prevEditableCell();
-					event.doit = false;
-					break;
-				// case SWT.TRAVERSE_ARROW_NEXT:
-				// commit(leaf, column, original);
-				// text.getParent().dispose();
-				// nextEditableCell();
-				// event.doit = false;
-				// break;
-				// case SWT.TRAVERSE_ARROW_PREVIOUS:
-				// commit(leaf, column, original);
-				// text.getParent().dispose();
-				// prevEditableCell();
-				// event.doit = false;
-				// break;
-				// case SWT.TRAVERSE_PAGE_NEXT:
-				// commit(leaf, column, original);
-				// text.getParent().dispose();
-				// nextEditableCell();
-				// event.doit = false;
-				// break;
-				// case SWT.TRAVERSE_PAGE_PREVIOUS:
-				// commit(leaf, column, original);
-				// text.getParent().dispose();
-				// prevEditableCell();
-				// event.doit = false;
-				// break;
-				}
-			}
-		}
-	}
-	
-	private EventBEditableTreeViewer viewer;
+public abstract class ElementText extends TimerText implements ModifyListener {
 
 	private IRodinElement element;
 
@@ -197,6 +51,87 @@ public abstract class ElementText implements ModifyListener,
 	private int inset;
 
 	private String original;
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         This class handles the different changes to the Text.
+	 */
+	private class ElementTextListener implements Listener {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 */
+		public void handleEvent(Event event) {
+			Text textWidget = text.getWidget();
+			final String contents = textWidget.getText();
+			switch (event.type) {
+			case SWT.FocusOut:
+				commit(element, column, contents);
+				textWidget.getParent().dispose();
+				text.dispose();
+				break;
+			case SWT.Verify:
+				// UIUtils.debug("Verify");
+				String newText = textWidget.getText();
+				String leftText = newText.substring(0, event.start);
+				String rightText = newText.substring(event.end, newText
+						.length());
+				GC gc = new GC(textWidget);
+				Point size = gc.textExtent(leftText + event.text + rightText);
+				gc.dispose();
+				size = textWidget.computeSize(size.x, SWT.DEFAULT);
+				editor.horizontalAlignment = SWT.LEFT;
+				Rectangle itemRect = item.getBounds(),
+				rect = tree.getClientArea();
+				UIUtils.debugEventBEditor("ItemRect: " + itemRect);
+				UIUtils.debugEventBEditor("Rect: " + rect);
+				UIUtils.debugEventBEditor("Size: " + size.x);
+				editor.minimumWidth = Math.max(size.x, itemRect.width) + inset
+						* 2;
+				int left = itemRect.x,
+				right = rect.x + rect.width;
+				editor.minimumWidth = Math.min(editor.minimumWidth, right
+						- left);
+				editor.minimumHeight = size.y + inset * 2;
+				UIUtils.debugEventBEditor("Editor layout --- Height: "
+						+ editor.minimumHeight + " Width: "
+						+ editor.minimumWidth);
+				editor.layout();
+				break;
+			case SWT.Traverse:
+				switch (event.detail) {
+				case SWT.TRAVERSE_RETURN:
+					commit(element, column, contents);
+					textWidget.getParent().dispose();
+					text.dispose();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_ESCAPE:
+					commit(element, column, original);
+					textWidget.getParent().dispose();
+					text.dispose();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_TAB_NEXT:
+					commit(element, column, contents);
+					textWidget.getParent().dispose();
+					text.dispose();
+					nextEditableCell();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_TAB_PREVIOUS:
+					commit(element, column, contents);
+					textWidget.getParent().dispose();
+					text.dispose();
+					prevEditableCell();
+					event.doit = false;
+					break;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Committing the content of the text according to the current column and
@@ -226,16 +161,6 @@ public abstract class ElementText implements ModifyListener,
 	 */
 	public abstract void prevEditableCell();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-	 */
-	public void modifyText(ModifyEvent e) {
-		lastModify = e.time;
-		text.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
-	}
-
 	/**
 	 * Constructor.
 	 * <p>
@@ -253,21 +178,20 @@ public abstract class ElementText implements ModifyListener,
 	 * @param column
 	 *            The column in the Editable Tree Viewer of the Text Widget.
 	 */
-	public ElementText(EventBEditableTreeViewer viewer, IEventBInputText text,
-			TreeEditor editor, TreeItem item, IRodinElement element, int column) {
+	public ElementText(IEventBInputText text, TreeEditor editor, Tree tree,
+			TreeItem item, IRodinElement element, int column, int delay) {
+		super(text.getWidget(), delay);
 		this.text = text;
 		this.element = element;
 		this.editor = editor;
 		this.column = column;
-		this.tree = viewer.getTree();
+		this.tree = tree;
 		this.item = item;
 		this.original = item.getText(column);
 		boolean isCarbon = SWT.getPlatform().equals("carbon");
 		inset = isCarbon ? 0 : 1;
-		this.viewer = viewer;
-		viewer.addElementMovedListener(this);
 		Listener textListener = new ElementTextListener();
-		Text textWidget = text.getTextWidget();
+		Text textWidget = text.getWidget();
 		textWidget.addListener(SWT.FocusOut, textListener);
 		textWidget.addListener(SWT.Traverse, textListener);
 		textWidget.addListener(SWT.Verify, textListener);
@@ -277,15 +201,13 @@ public abstract class ElementText implements ModifyListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.IElementMovedListener#elementMoved(java.util.HashMap)
+	 * @see org.eventb.internal.ui.TimerText#response()
 	 */
-	public void elementMoved(HashMap<IRodinElement, IRodinElement> moved) {
-		if (moved.containsKey(element)) {
-			UIUtils.debugEventBEditor("Element moved, update from "
-					+ element.getElementName() + " to "
-					+ moved.get(element).getElementName());
-			element = moved.get(element);
-		}
+	@Override
+	protected void response() {
+		Text textWidget = text.getWidget();
+		String contents = textWidget.getText();
+		commit(element, column, contents);
 	}
 
 }

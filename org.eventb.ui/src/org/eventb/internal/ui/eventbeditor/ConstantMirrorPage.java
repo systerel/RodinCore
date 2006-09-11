@@ -55,7 +55,8 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 				if (i != 0)
 					formString = formString + ", ";
 				formString = formString
-						+ UIUtils.makeHyperlink(constants[i].getElementName());
+						+ UIUtils.makeHyperlink(((IConstant) constants[i])
+								.getIdentifierString());
 			}
 			formString = formString + "</li>";
 		} catch (RodinDBException e) {
@@ -78,10 +79,11 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IRodinElement[] constants = ((IContextFile) rodinFile)
+					IConstant[] constants = ((IContextFile) rodinFile)
 							.getConstants();
 					for (int i = 0; i < constants.length; i++) {
-						if (e.getHref().equals(constants[i].getElementName())) {
+						if (e.getHref().equals(
+								constants[i].getIdentifierString())) {
 							editor.edit(constants[i]);
 						}
 					}

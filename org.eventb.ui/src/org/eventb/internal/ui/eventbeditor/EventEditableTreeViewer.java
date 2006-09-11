@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -22,11 +20,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.core.IAssignmentElement;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExpressionElement;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPredicateElement;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -159,26 +162,46 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	public void commit(IRodinElement element, int col, String text) {
 
 		switch (col) {
-		case 0: // Commit name
+		case 0: // Commit label / identifier
 			try {
-				UIUtils.debugEventBEditor("Commit : " + element.getElementName()
-						+ " to be : " + text);
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+				if (element instanceof IIdentifierElement) {
+					IIdentifierElement identifierElement = (IIdentifierElement) element;
+					if (!identifierElement.getIdentifierString().equals(text)) {
+						identifierElement.setIdentifierString(text);
+					}
+				} else if (element instanceof ILabeledElement) {
+					ILabeledElement labelElement = (ILabeledElement) element;
+					UIUtils.debugEventBEditor("Rename label: "
+							+ labelElement.getLabel(null) + " to " + text);
+					if (!labelElement.getLabel(null).equals(text)) {
+						labelElement.setLabel(text, null);
+					}
+
+				} else if (element instanceof IRefinesEvent) {
+					IRefinesEvent refinesEvent = (IRefinesEvent) element;
+					if (!refinesEvent.getAbstractEventName().equals(text)) {
+						refinesEvent.setAbstractEventName(text);
+					}
 				}
+
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 
 			break;
 
-		case 1: // Commit content
+		case 1: // Commit predicate/assignment
 			try {
-				UIUtils.debugEventBEditor("Commit content: "
-						+ ((IInternalElement) element).getContents()
-						+ " to be : " + text);
-				if (!((IInternalElement) element).getContents().equals(text)) {
-					((IInternalElement) element).setContents(text);
+				if (element instanceof IPredicateElement) {
+					IPredicateElement predicateElement = (IPredicateElement) element;
+					if (!predicateElement.getPredicateString().equals(text)) {
+						predicateElement.setPredicateString(text);
+					}
+				} else if (element instanceof IAssignmentElement) {
+					IAssignmentElement assignmentElement = (IAssignmentElement) element;
+					if (!assignmentElement.getAssignmentString().equals(text)) {
+						assignmentElement.setAssignmentString(text);
+					}
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -216,17 +239,20 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int)
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement))
-			return false;
-		IRodinElement element = (IRodinElement) object;
 		if (column == 0) {
-			if (!editor.isNewElement(element))
+			if (object instanceof ILabeledElement
+					|| object instanceof IIdentifierElement
+					|| object instanceof IRefinesEvent)
+				return false;
+			else
 				return true;
 		}
 		if (column == 1) {
-			if (element instanceof IVariable)
-				return true;
-			if (element instanceof IEvent)
+			if (object instanceof IAssignmentElement
+					|| object instanceof IPredicateElement
+					|| object instanceof IExpressionElement)
+				return false;
+			else
 				return true;
 		}
 		return false;
@@ -248,11 +274,4 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			selectItem(item, 1);
 	}
 
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
-	}
-	
 }

@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -135,16 +136,23 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		}
 
 		try {
-			IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
+			final IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
 					.getRodinProject(projectName);
 
-			IProject project = rodinProject.getProject();
-			if (!project.exists())
-				project.create(null);
-			project.open(null);
-			IProjectDescription description = project.getDescription();
-			description.setNatureIds(new String[] { RodinCore.NATURE_ID });
-			project.setDescription(description, null);
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IProject project = rodinProject.getProject();
+					if (!project.exists())
+						project.create(null);
+					project.open(null);
+					IProjectDescription description = project.getDescription();
+					description.setNatureIds(new String[] { RodinCore.NATURE_ID });
+					project.setDescription(description, null);					
+				}
+				
+			}, monitor);
+			
 			monitor.worked(1);
 		} catch (CoreException e) {
 			e.printStackTrace();

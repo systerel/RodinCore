@@ -19,7 +19,7 @@ public class NewEnumeratedSet implements IEditorActionDelegate {
 
 	public void run(IAction action) {
 		IRodinFile rodinFile = editor.getRodinInput();
-		UIUtils.newEnumeratedSet(editor, rodinFile);
+		UIUtils.newEnumeratedSet(editor, rodinFile, null);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

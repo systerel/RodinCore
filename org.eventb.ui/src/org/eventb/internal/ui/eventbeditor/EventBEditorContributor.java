@@ -23,9 +23,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -116,16 +117,31 @@ public class EventBEditorContributor extends
 						if (ssel.getFirstElement() instanceof IRodinElement) {
 							IRodinElement element = (IRodinElement) ssel
 									.getFirstElement();
-							InputDialog dialog = new InputDialog(part.getSite()
-									.getShell(), "Rename", "Rename element",
-									element.getElementName(), null);
-							dialog.open();
+
+							String name = "";
 							try {
+
+								if (element instanceof IIdentifierElement)
+									name = ((IIdentifierElement) element)
+											.getIdentifierString();
+								else if (element instanceof ILabeledElement)
+									name = ((ILabeledElement) element)
+											.getLabel(null);
+								InputDialog dialog = new InputDialog(part
+										.getSite().getShell(), "Rename",
+										"Rename element", name, null);
+								dialog.open();
 								String text = dialog.getValue();
 								if (text != null) {
-									if (!element.getElementName().equals(text)) {
-										((IInternalElement) element).rename(
-												text, false, null);
+									if (element instanceof IIdentifierElement) {
+										IIdentifierElement identifierElement = (IIdentifierElement) element;
+										if (!identifierElement.getIdentifierString().equals(text))
+											identifierElement.setIdentifierString(text);
+									}
+									else if (element instanceof ILabeledElement) {
+										ILabeledElement labeledElement = (ILabeledElement) element;
+										if (!labeledElement.getLabel(null).equals(text))
+											labeledElement.setLabel(text, null);
 									}
 								}
 							} catch (RodinDBException e) {

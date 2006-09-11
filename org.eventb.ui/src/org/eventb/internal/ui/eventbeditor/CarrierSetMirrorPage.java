@@ -55,8 +55,8 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 				if (i != 0)
 					formString = formString + ", ";
 				formString = formString
-						+ UIUtils
-								.makeHyperlink(carrierSets[i].getElementName());
+						+ UIUtils.makeHyperlink(((ICarrierSet) carrierSets[i])
+								.getIdentifierString());
 			}
 			formString = formString + "</li>";
 		} catch (RodinDBException e) {
@@ -81,7 +81,8 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 					ICarrierSet[] carrierSets = ((IContextFile) rodinFile)
 							.getCarrierSets();
 					for (int i = 0; i < carrierSets.length; i++) {
-						if (e.getHref().equals(carrierSets[i].getElementName())) {
+						if (e.getHref().equals(
+								carrierSets[i].getIdentifierString())) {
 							editor.edit(carrierSets[i]);
 						}
 					}

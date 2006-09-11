@@ -19,7 +19,7 @@ public class NewCarrierSets implements IEditorActionDelegate {
 
 	public void run(IAction action) {
 		IRodinFile rodinFile = editor.getRodinInput();
-		UIUtils.newCarrierSets(editor, rodinFile);
+		UIUtils.newCarrierSets(editor, rodinFile, null);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

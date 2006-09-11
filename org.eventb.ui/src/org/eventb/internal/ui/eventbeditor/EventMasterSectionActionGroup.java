@@ -23,19 +23,15 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
+import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution;
+import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
+import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -61,48 +57,14 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 	protected Action addAction;
 
 	protected Action delete;
+	
+	protected Action addRefinesEvent;
+	
+	protected Action addWitness;
 
 	protected Action handleUp;
 
 	protected Action handleDown;
-
-	protected Action showAbstraction;
-
-	private class ShowAbstraction extends Action {
-		IRodinFile abstractFile;
-
-		IRodinElement concreteElement;
-
-		ShowAbstraction(IRodinFile abstractFile, IRodinElement concreteElement) {
-			this.abstractFile = abstractFile;
-			this.concreteElement = concreteElement;
-			this.setText(EventBPlugin.getComponentName(abstractFile
-					.getElementName()));
-			this.setToolTipText("Show the corresponding abstract event");
-			this.setImageDescriptor(new EventBImageDescriptor(
-					EventBImage.IMG_REFINES));
-		}
-
-		public void run() {
-			try {
-				IInternalElement event = TreeSupports.getEvent(concreteElement);
-				IRodinElement abs_evt = getAbstractElement(event);
-
-				while (abs_evt != null && abs_evt.exists()
-						&& !abs_evt.getOpenable().equals(abstractFile)) {
-					abs_evt = getAbstractElement(abs_evt);
-				}
-				if (abs_evt != null && abs_evt.exists()) {
-					UIUtils.linkToEventBEditor(abs_evt);
-				} else
-					UIUtils.linkToEventBEditor(abstractFile);
-
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
 
 	/**
 	 * Constructor: Create the actions.
@@ -162,6 +124,28 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addAction.setImageDescriptor(EventBImage
 				.getImageDescriptor(EventBImage.IMG_NEW_ACTION_PATH));
 
+		// Add a refines event.
+		addRefinesEvent = new Action() {
+			public void run() {
+				EventBEditorUtils.addRefinesEvent(editor, viewer);
+			}
+		};
+		addRefinesEvent.setText("New &Refine Event");
+		addRefinesEvent.setToolTipText("Create a new refines event");
+		addRefinesEvent.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
+		
+		// Add a refines event.
+		addWitness = new Action() {
+			public void run() {
+				EventBEditorUtils.addWitness(editor, viewer);
+			}
+		};
+		addWitness.setText("New &Witness");
+		addWitness.setToolTipText("Create a new witness");
+		addWitness.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
+
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
 			public void run() {
@@ -194,104 +178,6 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		handleDown.setToolTipText("Move the element down");
 		handleDown.setImageDescriptor(new EventBImageDescriptor(
 				EventBImage.IMG_NEW_PROJECT));
-
-		// Handle Show Abstraction action.
-		showAbstraction = new Action() {
-			public void run() {
-				IStructuredSelection ssel = (IStructuredSelection) viewer
-						.getSelection();
-				if (ssel.size() == 1) {
-					Object obj = ssel.getFirstElement();
-					IInternalElement event = TreeSupports.getEvent(obj);
-
-					IMachineFile file = (IMachineFile) editor.getRodinInput();
-					try {
-						IRodinElement[] refines = file
-								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-						if (refines.length == 1) {
-							IRodinElement refine = refines[0];
-							String name = ((IInternalElement) refine)
-									.getContents();
-							IRodinProject prj = file.getRodinProject();
-							IMachineFile refinedFile = (IMachineFile) prj
-									.getRodinFile(EventBPlugin
-											.getMachineFileName(name));
-							UIUtils.debugEventBEditor("Refined: "
-									+ refinedFile.getElementName());
-
-							IInternalElement abs_evt = null;
-							IRodinElement[] abs_evts = event
-									.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-							if (abs_evts.length == 0) {
-								abs_evt = refinedFile.getInternalElement(event
-										.getElementType(), event
-										.getElementName());
-							} else {
-								abs_evt = refinedFile.getInternalElement(event
-										.getElementType(),
-										((IInternalElement) abs_evts[0])
-												.getContents());
-							}
-							if (abs_evt.exists())
-								UIUtils.linkToEventBEditor(abs_evt);
-							else
-								UIUtils.linkToEventBEditor(refinedFile);
-
-							// if (refinedFile.exists()) {
-							// IWorkbenchPage activePage = EventBUIPlugin
-							// .getActivePage();
-							// IEditorReference[] editors = activePage
-							// .getEditorReferences();
-							//
-							// for (IEditorReference editor : editors) {
-							// IEditorPart part = editor.getEditor(true);
-							// if (activePage.isPartVisible(part)) {
-							// if (part instanceof EventBMachineEditor) {
-							// activePage.openEditor();
-							// }
-							// }
-							//								
-							// IRodinFile rodinInput = ((EventBMachineEditor)
-							// part)
-							// .getRodinInput();
-							// UIUtils.debugEventBEditor("Trying: "
-							// + rodinInput.getElementName());
-							// if (rodinInput.equals(refinedFile)) {
-							// UIUtils.debugEventBEditor("Focus");
-							// if (activePage.isPartVisible(part)) {
-							// IStructuredSelection ssel =
-							// (IStructuredSelection) event
-							// .getSelection();
-							// if (ssel.size() == 1) {
-							// IInternalElement obj = (IInternalElement) ssel
-							// .getFirstElement();
-							// IInternalElement element = refinedFile
-							// .getInternalElement(
-							// obj
-							// .getElementType(),
-							// obj
-							// .getElementName());
-							// if (element != null)
-							// ((EventBEditor) part)
-							// .setSelection(element);
-							// }
-							// }
-							// }
-							// }
-							// }
-							// }
-						}
-					} catch (RodinDBException e) {
-						e.printStackTrace();
-					}
-
-				}
-			}
-		};
-		showAbstraction.setText("Abstraction");
-		showAbstraction.setToolTipText("Show the corresponding abstract event");
-		showAbstraction.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_REFINES));
 	}
 
 	/**
@@ -302,9 +188,13 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
+		menu.add(addEvent);
+		IRodinFile file = (IRodinFile) editor.getRodinInput();
+
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
+
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 
@@ -312,43 +202,38 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 					menu.add(addLocalVariable);
 					menu.add(addGuard);
 					menu.add(addAction);
+					menu.add(addRefinesEvent);
+					menu.add(addWitness);
 					// MenuManager newMenu = new MenuManager("&New");
 					// newMenu.add(addLocalVariable);
 					// newMenu.add(addGuard);
 					// newMenu.add(addAction);
 					// menu.add(newMenu);
-					menu.add(new Separator());
 				}
 			}
 
-			menu.add(addEvent);
-			menu.add(new Separator());
-			IRodinFile file = (IRodinFile) editor.getRodinInput();
+			// Group for showing the corresponding abstract information
+			menu.add(new Separator("Information"));
+
+			// Contexts
+			MenuManager submenu = new MenuManager("Sees Contexts");
+			menu.add(submenu);
+			submenu.add(new ShowSeesContextContribution(file));
+
+			// Abstract event
+			submenu = new MenuManager("Abstract Event");
+			menu.add(submenu);
 			if (ssel.size() == 1) {
-
-				try {
-					IRodinFile abstractFile = getAbstractFile(file);
-					if (abstractFile != null && abstractFile.exists()) {
-						MenuManager abstractionMenu = new MenuManager(
-								"&Abstraction");
-						menu.add(abstractionMenu);
-						abstractionMenu.add(new ShowAbstraction(abstractFile,
-								(IRodinElement) ssel.getFirstElement()));
-
-						abstractFile = getAbstractFile(abstractFile);
-						while (abstractFile != null && abstractFile.exists()) {
-							abstractionMenu.add(new ShowAbstraction(
-									abstractFile, (IRodinElement) ssel
-											.getFirstElement()));
-							abstractFile = getAbstractFile(abstractFile);
-						}
-					}
-
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				submenu.add(new ShowAbstractEventContribution(file,
+						(IEvent) UIUtils.getParentOfType((IRodinElement) ssel
+								.getFirstElement(), IEvent.ELEMENT_TYPE)));
 			}
+
+			// Abstract invariants
+			submenu = new MenuManager("Abstract Invariant");
+			menu.add(submenu);
+			submenu.add(new ShowAbstractInvariantContribution(file));
+
 			if (!sel.isEmpty()) {
 				menu.add(new Separator());
 				menu.add(delete);
@@ -361,44 +246,4 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		// Other plug-ins can contribute there actions here
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-
-	public IRodinFile getAbstractFile(IRodinFile concreteFile)
-			throws RodinDBException {
-		IRodinElement[] refines = concreteFile
-				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-		if (refines.length == 1) {
-			IRodinElement refine = refines[0];
-			String name = ((IInternalElement) refine).getContents();
-			IRodinProject prj = concreteFile.getRodinProject();
-			return prj.getRodinFile(EventBPlugin.getMachineFileName(name));
-		}
-		return null;
-	}
-
-	public IRodinElement getAbstractElement(IRodinElement concreteElement)
-			throws RodinDBException {
-		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
-		IRodinFile abstractFile = getAbstractFile(rodinFile);
-		if (abstractFile == null)
-			return null;
-		if (!abstractFile.exists())
-			return null;
-
-		IRodinElement abstractElement = null;
-		if (concreteElement instanceof IEvent) {
-			IRodinElement[] abs_evts = ((IEvent) concreteElement)
-					.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-			if (abs_evts.length == 0) {
-				abstractElement = abstractFile.getInternalElement(
-						IEvent.ELEMENT_TYPE, ((IEvent) concreteElement)
-								.getElementName());
-			} else {
-				abstractElement = abstractFile.getInternalElement(
-						IEvent.ELEMENT_TYPE, ((IInternalElement) abs_evts[0])
-								.getContents());
-			}
-		}
-		return abstractElement;
-	}
-
 }

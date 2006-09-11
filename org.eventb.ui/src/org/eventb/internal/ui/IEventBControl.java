@@ -12,14 +12,15 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * @author htson
  *         <p>
  *         This is the interface for Event-B Input Text
  */
-public interface IEventBInputText extends IEventBControl {
+public interface IEventBControl extends IPropertyChangeListener {
 
 	/**
 	 * Getting the Text Widget contains inside this Event-B Input Text.
@@ -27,6 +28,8 @@ public interface IEventBInputText extends IEventBControl {
 	 * 
 	 * @return the Text Widget contains inside this Event-B Input Text
 	 */
-	public Text getWidget();
+	public Control getControl();
+	
+	public void dispose();
 
 }

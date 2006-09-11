@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,7 +23,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -137,14 +134,15 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement, int, java.lang.String)
 	 */
 	public void commit(IRodinElement element, int col, String text) {
-
+		IConstant cst = (IConstant) element;
+		
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debugEventBEditor("Commit : " + element.getElementName()
+				UIUtils.debugEventBEditor("Commit : " + cst.getIdentifierString()
 						+ " to be : " + text);
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+				if (!cst.getIdentifierString().equals(text)) {
+					cst.setIdentifierString(text);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -170,12 +168,8 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object, int)
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement))
-			return false;
-		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object))
-				return true;
-		}
+		if (!(object instanceof IConstant))
+			return true;
 		return false;
 	}
 
@@ -186,13 +180,6 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);
 		selectItem(item, 0);
-	}
-
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
 	}
 
 }

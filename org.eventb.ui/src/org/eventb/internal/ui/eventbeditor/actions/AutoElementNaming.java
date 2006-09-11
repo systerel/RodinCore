@@ -7,6 +7,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -32,25 +34,22 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 					IRodinElement[] elements = file
 							.getChildrenOfType(type);
 
-					// Dummy name first
-					for (IRodinElement element : elements) {
-						UIUtils.debugEventBEditor("Rename: "
-								+ element.getElementName() + " to ___"
-								+ element.getElementName());
-
-						((IInternalElement) element).rename("___"
-								+ element.getElementName(), false, null);
-					}
-
-					elements = file
-							.getChildrenOfType(type);
-
 					// Rename to the real desired naming convention
 					for (int counter = 1; counter <= elements.length; counter++) {
 						IRodinElement element = elements[counter-1];
-						UIUtils.debugEventBEditor("Rename: "
-								+ element.getElementName() + " to " + prefix + 
-								+ counter);
+						if (element instanceof IIdentifierElement) {
+							UIUtils.debugEventBEditor("Rename: "
+									+ ((IIdentifierElement) element).getIdentifierString() + " to " + prefix + 
+									+ counter);
+							((IIdentifierElement) element).setIdentifierString(prefix + counter);
+						}
+						else if (element instanceof ILabeledElement) {
+							UIUtils.debugEventBEditor("Rename: "
+									+ ((ILabeledElement) element).getLabel(monitor) + " to " + prefix + 
+									+ counter);
+							((ILabeledElement) element).setLabel(prefix + counter, monitor);
+							
+						}
 						((IInternalElement) element).rename(prefix + counter, false,
 								null);
 					}

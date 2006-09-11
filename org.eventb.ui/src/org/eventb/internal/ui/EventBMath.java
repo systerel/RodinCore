@@ -12,12 +12,8 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.eventBKeyboard.EventBTextModifyListener;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -25,10 +21,7 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
  *         This is the class that hold a Text using to display and to retrive
  *         expressions which are in the mathematical language of Event-B.
  */
-public class EventBMath implements IEventBInputText {
-
-	// The actual Text.
-	private Text text;
+public class EventBMath extends EventBControl implements IEventBInputText {
 
 	/**
 	 * Constructor.
@@ -42,26 +35,8 @@ public class EventBMath implements IEventBInputText {
 	 *            the style used to create the Text
 	 */
 	public EventBMath(Text text) {
-		this.text = text;
-		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		text.setFont(font);
+		super(text);
 		text.addModifyListener(new EventBTextModifyListener());
-
-		JFaceResources.getFontRegistry().addListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			text.setFont(font);
-		}
 	}
 
 	/*
@@ -70,6 +45,7 @@ public class EventBMath implements IEventBInputText {
 	 * @see org.eventb.internal.ui.IEventBInputText#setFocus()
 	 */
 	public void setFocus() {
+		Text text = (Text) getControl();
 		text.setFocus();
 		text.selectAll();
 	}
@@ -79,13 +55,8 @@ public class EventBMath implements IEventBInputText {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBInputText#getTextWidget()
 	 */
-	public Text getTextWidget() {
-		return text;
+	public Text getWidget() {
+		return (Text) getControl();
 	}
 
-	public void dispose() {
-		JFaceResources.getFontRegistry().removeListener(this);
-		text.dispose();
-	}
-	
 }

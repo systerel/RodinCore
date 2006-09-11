@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.Collection;
-
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -23,7 +21,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.ITheorem;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -157,11 +154,12 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int, java.lang.String)
 	 */
 	public void commit(IRodinElement element, int col, String text) {
+		ITheorem thm = (ITheorem) element;
 		switch (col) {
 		case 0: // Commit name
 			try {
-				if (!element.getElementName().equals(text)) {
-					((IInternalElement) element).rename(text, false, null);
+				if (!thm.getLabel(null).equals(text)) {
+					thm.setLabel(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -171,8 +169,8 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!((IInternalElement) element).getContents().equals(text)) {
-					((IInternalElement) element).setContents(text);
+				if (!thm.getPredicateString().equals(text)) {
+					thm.setPredicateString(text);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -210,12 +208,8 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int)
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
-		if (!(object instanceof IRodinElement))
-			return false;
-		if (column == 0) {
-			if (!editor.isNewElement((IRodinElement) object))
-				return true;
-		}
+		if (!(object instanceof ITheorem))
+			return true;
 		return false;
 	}
 
@@ -230,11 +224,4 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 		selectItem(item, 1);
 	}
 
-	@Override
-	protected void refreshViewer(Collection<IRodinElement> elements) {
-		for (IRodinElement element : elements) {
-			this.refresh(element);
-		}
-	}
-	
 }

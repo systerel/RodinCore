@@ -12,11 +12,8 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -39,11 +36,9 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -60,12 +55,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	protected int numColumn;
 
 	// Listener to the changes for element moving.
-	private Collection<IElementMovedListener> elementMovedListeners;
+//	private Collection<IElementMovedListener> elementMovedListeners;
 
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<IRodinElement> toRefresh;
 
-	private Collection<StatusObject> newStatus;
+//	private Collection<StatusObject> newStatus;
 
 	/**
 	 * @author htson
@@ -73,39 +68,39 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 *         This class is used to keep the status of the new object (when
 	 *         process element moving)
 	 */
-	private class StatusObject {
-		Object object;
-
-		Object moveFrom;
-
-		boolean expanded;
-
-		boolean selected;
-
-		StatusObject(Object object, Object moveFrom, boolean expanded,
-				boolean selected) {
-			this.object = object;
-			this.moveFrom = moveFrom;
-			this.expanded = expanded;
-			this.selected = selected;
-		}
-
-		Object getObject() {
-			return object;
-		}
-
-		Object getMoveFrom() {
-			return moveFrom;
-		}
-
-		boolean getExpandedStatus() {
-			return expanded;
-		}
-
-		boolean getSelectedStatus() {
-			return selected;
-		}
-	}
+//	private class StatusObject {
+//		Object object;
+//
+//		Object moveFrom;
+//
+//		boolean expanded;
+//
+//		boolean selected;
+//
+//		StatusObject(Object object, Object moveFrom, boolean expanded,
+//				boolean selected) {
+//			this.object = object;
+//			this.moveFrom = moveFrom;
+//			this.expanded = expanded;
+//			this.selected = selected;
+//		}
+//
+//		Object getObject() {
+//			return object;
+//		}
+//
+//		Object getMoveFrom() {
+//			return moveFrom;
+//		}
+//
+//		boolean getExpandedStatus() {
+//			return expanded;
+//		}
+//
+//		boolean getSelectedStatus() {
+//			return selected;
+//		}
+//	}
 
 	/**
 	 * Create the tree column for this tree viewer.
@@ -155,9 +150,9 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param listener
 	 *            an element moved listener
 	 */
-	public void addElementMovedListener(IElementMovedListener listener) {
-		elementMovedListeners.add(listener);
-	}
+//	public void addElementMovedListener(IElementMovedListener listener) {
+//		elementMovedListeners.add(listener);
+//	}
 
 	/**
 	 * Remove listener for element moving.
@@ -166,9 +161,9 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param listener
 	 *            an element moved listner
 	 */
-	public void removeElementMovedListener(IElementMovedListener listener) {
-		elementMovedListeners.remove(listener);
-	}
+//	public void removeElementMovedListener(IElementMovedListener listener) {
+//		elementMovedListeners.remove(listener);
+//	}
 
 	/**
 	 * Notified the element moved listeners with the map of moving elements.
@@ -177,12 +172,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param moved
 	 *            a set of mapping from old elements to new elements.
 	 */
-	public void notifyElementMovedListener(
-			HashMap<IRodinElement, IRodinElement> moved) {
-		for (IElementMovedListener listener : elementMovedListeners) {
-			listener.elementMoved(moved);
-		}
-	}
+//	public void notifyElementMovedListener(
+//			HashMap<IRodinElement, IRodinElement> moved) {
+//		for (IElementMovedListener listener : elementMovedListeners) {
+//			listener.elementMoved(moved);
+//		}
+//	}
 
 	/**
 	 * Constructor.
@@ -199,7 +194,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			int style) {
 		super(parent, style);
 		this.editor = editor;
-		elementMovedListeners = new HashSet<IElementMovedListener>();
+//		elementMovedListeners = new HashSet<IElementMovedListener>();
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
@@ -282,8 +277,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			composite.setBackground(black);
 		final Text text = new Text(composite, SWT.NONE);
 
-		new ElementText(this, new EventBMath(text), treeEditor, item, (IRodinElement) itemData,
-				column) {
+		new ElementText(new EventBMath(text), treeEditor, tree, item, (IRodinElement) itemData,
+				column, 1000) {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -386,79 +381,79 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		toRefresh = new HashSet<IRodinElement>();
-		newStatus = new HashSet<StatusObject>();
-		moved = new HashMap<IRodinElement, IRodinElement>();
+//		newStatus = new HashSet<StatusObject>();
+//		moved = new HashMap<IRodinElement, IRodinElement>();
 		UIUtils.debugEventBEditor("--- Table: " + this + "---");
 		UIUtils.debugEventBEditor(event.getDelta().toString());
 		UIUtils.debugEventBEditor("------------------------------------------");
 		// if (this instanceof EventEditableTreeViewer)
 		// UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
-		notifyElementMovedListener(moved);
+//		notifyElementMovedListener(moved);
 		postRefresh(toRefresh, true);
 	}
 
-	private HashMap<IRodinElement, IRodinElement> moved;
+//	private HashMap<IRodinElement, IRodinElement> moved;
 
-	private void processMoveRecursive(IRodinElement oldElement,
-			IRodinElement newElement) {
-		UIUtils.debugEventBEditor("from: " + oldElement.getElementName()
-				+ " expanded " + this.getExpandedState(oldElement) + "\n to: "
-				+ newElement.getElementName() + "\n Expanded elements "
-				+ this.getExpandedElements());
-
-		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
-		boolean selected = ssel.toList().contains(oldElement);
-
-		moved.put(oldElement, newElement);
-		newStatus.add(new StatusObject(newElement, oldElement, this
-				.getExpandedState(oldElement), selected));
-
-		if (newElement instanceof IInternalElement) {
-			IRodinElement[] elements;
-			try {
-				elements = ((IInternalElement) newElement).getChildren();
-				for (IRodinElement element : elements) {
-					IRodinElement oldChild = ((IInternalElement) oldElement)
-							.getInternalElement(element.getElementType(),
-									element.getElementName(),
-									((IInternalElement) element)
-											.getOccurrenceCount());
-					processMoveRecursive(oldChild, element);
-				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}
+//	private void processMoveRecursive(IRodinElement oldElement,
+//			IRodinElement newElement) {
+//		UIUtils.debugEventBEditor("from: " + oldElement.getElementName()
+//				+ " expanded " + this.getExpandedState(oldElement) + "\n to: "
+//				+ newElement.getElementName() + "\n Expanded elements "
+//				+ this.getExpandedElements());
+//
+//		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
+//		boolean selected = ssel.toList().contains(oldElement);
+//
+////		moved.put(oldElement, newElement);
+//		newStatus.add(new StatusObject(newElement, oldElement, this
+//				.getExpandedState(oldElement), selected));
+//
+//		if (newElement instanceof IInternalElement) {
+//			IRodinElement[] elements;
+//			try {
+//				elements = ((IInternalElement) newElement).getChildren();
+//				for (IRodinElement element : elements) {
+//					IRodinElement oldChild = ((IInternalElement) oldElement)
+//							.getInternalElement(element.getElementType(),
+//									element.getElementName(),
+//									((IInternalElement) element)
+//											.getOccurrenceCount());
+//					processMoveRecursive(oldChild, element);
+//				}
+//			} catch (RodinDBException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
 
 	private void processDelta(IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
 			// Handle move operation
-			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
-				UIUtils.debugEventBEditor("Moved: " + element.getElementName()
-						+ " from: " + delta.getMovedFromElement());
-				IRodinElement oldElement = delta.getMovedFromElement();
-				UIUtils.debugEventBEditor("--- Process Move ---");
-				processMoveRecursive(oldElement, element);
-			} else {
-				UIUtils.debugEventBEditor("Added: " + element.getElementName());
-			}
-			IRodinElement parent = element.getParent();
-			toRefresh.add(parent);
+//			if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
+//				UIUtils.debugEventBEditor("Moved: " + element.getElementName()
+//						+ " from: " + delta.getMovedFromElement());
+//				IRodinElement oldElement = delta.getMovedFromElement();
+//				UIUtils.debugEventBEditor("--- Process Move ---");
+//				processMoveRecursive(oldElement, element);
+//			} else {
+//				UIUtils.debugEventBEditor("Added: " + element.getElementName());
+//			}
+//			IRodinElement parent = element.getParent();
+			toRefresh.add(element.getParent());
 			return;
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
 			// Ignore the move operation
 			// if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
-			UIUtils.debugEventBEditor("Removed: " + element.getElementName());
-			IRodinElement parent = element.getParent();
-			toRefresh.add(parent);
+//			UIUtils.debugEventBEditor("Removed: " + element.getElementName());
+//			IRodinElement parent = element.getParent();
+			toRefresh.add(element.getParent());
 			// }
 			return;
 		}
@@ -489,6 +484,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 					toRefresh.add(element);
 				return;
 			}
+			
+			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+				UIUtils.debugEventBEditor("ATTRIBUTE");
+				toRefresh.add(element);
+				return;				
+			}
 		}
 
 	}
@@ -509,7 +510,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					refreshViewer(toRefresh);
+					ctrl.setRedraw(false);
+					for (IRodinElement element : toRefresh) {
+						viewer.refresh(element);
+					}
+//					refreshViewer(toRefresh);
+					ctrl.setRedraw(true);
 //					for (Iterator iter = toRefresh.iterator(); iter.hasNext();) {
 //						IRodinElement element = (IRodinElement) iter.next();
 //						UIUtils.debugEventBEditor("Refresh element " + element);
@@ -517,44 +523,42 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 //						viewer.refresh(element, updateLabels);
 //					}
 
-					// Processing the Moved elements
-					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
-						StatusObject state = (StatusObject) iter.next();
-						Object newElement = state.getObject();
-						UIUtils.debugEventBEditor("Object: " + newElement
-								+ " expanded: " + state.getExpandedStatus());
-						viewer.setExpandedState(newElement, state
-								.getExpandedStatus());
-						viewer.update(newElement, null);
+//					// Processing the Moved elements
+//					for (Iterator iter = newStatus.iterator(); iter.hasNext();) {
+//						StatusObject state = (StatusObject) iter.next();
+//						Object newElement = state.getObject();
+//						UIUtils.debugEventBEditor("Object: " + newElement
+//								+ " expanded: " + state.getExpandedStatus());
+//						viewer.setExpandedState(newElement, state
+//								.getExpandedStatus());
+//						viewer.update(newElement, null);
+//
+//						if (state.getSelectedStatus()) {
+//							IStructuredSelection ssel = (IStructuredSelection) viewer
+//									.getSelection();
+//							ArrayList<Object> list = new ArrayList<Object>(ssel
+//									.size() + 1);
+//							for (Iterator it = ssel.iterator(); it.hasNext();) {
+//								list.add(it.next());
+//							}
+//							list.add(newElement);
+//							viewer.setSelection(new StructuredSelection(list));
+//						}
 
-						if (state.getSelectedStatus()) {
-							IStructuredSelection ssel = (IStructuredSelection) viewer
-									.getSelection();
-							ArrayList<Object> list = new ArrayList<Object>(ssel
-									.size() + 1);
-							for (Iterator it = ssel.iterator(); it.hasNext();) {
-								list.add(it.next());
-							}
-							list.add(newElement);
-							viewer.setSelection(new StructuredSelection(list));
-						}
+//						Object oldElement = state.getMoveFrom();
+//						if (EventBEditableTreeViewer.this.editor
+//								.isNewElement((IRodinElement) oldElement)) {
+//							EventBEditableTreeViewer.this.editor
+//									.addNewElement((IRodinElement) newElement);
+//						}
 
-						Object oldElement = state.getMoveFrom();
-						if (EventBEditableTreeViewer.this.editor
-								.isNewElement((IRodinElement) oldElement)) {
-							EventBEditableTreeViewer.this.editor
-									.addNewElement((IRodinElement) newElement);
-						}
-
-					}
+//					}
 
 				}
 			}
 
-		}, this.getControl());
+		}, viewer.getControl());
 	}
-
-	protected abstract void refreshViewer(Collection<IRodinElement> elements);
 	
 	/*
 	 * (non-Javadoc)

@@ -22,10 +22,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IAxiom;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -37,7 +39,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 	private String defaultName;
 
-	private int axmCount;
+	private int axmIndex;
+
+	private String axmPrefix;
 
 	private String name;
 
@@ -61,11 +65,13 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 *            the default variable name
 	 */
 	public IntelligentNewConstantInputDialog(EventBEditor editor,
-			Shell parentShell, String title, String defaultName, int axmCount) {
+			Shell parentShell, String title, String defaultName,
+			String axmPrefix, int axmIndex) {
 		super(parentShell, title);
 		this.editor = editor;
 		this.defaultName = defaultName;
-		this.axmCount = axmCount;
+		this.axmIndex = axmIndex;
+		this.axmPrefix = axmPrefix;
 		axiomPairTexts = new ArrayList<Pair>();
 	}
 
@@ -106,36 +112,32 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		nameText.getWidget().setLayoutData(gd);
+		nameText.getWidget().addModifyListener(new DirtyStateListener());
 
 		toolkit.createLabel(body, "Axiom");
 
-		String axmPrefix = EventBEditorUtils.getPrefix(editor,
-				PrefixAxmName.QUALIFIED_NAME, PrefixAxmName.DEFAULT_PREFIX);
 		IEventBInputText axiomNameText = new EventBText(toolkit.createText(
-				body, axmPrefix + (axmCount++)));
+				body, axmPrefix + axmIndex));
 
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		axiomNameText.getTextWidget().setLayoutData(gd);
-		axiomNameText.getTextWidget().addModifyListener(
-				new DirtyStateListener());
+		axiomNameText.getWidget().setLayoutData(gd);
+		axiomNameText.getWidget().addModifyListener(new DirtyStateListener());
 
 		IEventBInputText axiomPredicateText = new EventBMath(toolkit
 				.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
-		axiomPredicateText.getTextWidget().setLayoutData(gd);
-		axiomPredicateText.getTextWidget().addModifyListener(
+		axiomPredicateText.getWidget().setLayoutData(gd);
+		axiomPredicateText.getWidget().addModifyListener(
 				new DirtyStateListener());
-		nameText.getTextWidget().addModifyListener(
-				new GuardListener(axiomPredicateText.getTextWidget()));
+		nameText.getWidget().addModifyListener(
+				new GuardListener(axiomPredicateText.getWidget()));
 
-		axiomPairTexts.add(new Pair(axiomNameText,
-				axiomPredicateText));
+		axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
 
-		nameText.getTextWidget().setText(defaultName);
+		nameText.getWidget().setText(defaultName);
 
 	}
 
@@ -153,31 +155,35 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			Label label = toolkit.createLabel(body, "Axiom");
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			label.setLayoutData(gd);
-			
-			String axmPrefix = EventBEditorUtils.getPrefix(editor,
-					PrefixAxmName.QUALIFIED_NAME, PrefixAxmName.DEFAULT_PREFIX);
-			IEventBInputText axiomNameText = new EventBText(toolkit
-					.createText(body, axmPrefix + (axmCount++)));
+
+			try {
+				axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
+						.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix,
+						axmIndex + 1);
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			IEventBInputText axiomNameText = new EventBText(toolkit.createText(
+					body, axmPrefix + axmIndex));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			axiomNameText.getTextWidget().setLayoutData(gd);
-			axiomNameText.getTextWidget().addModifyListener(
+			axiomNameText.getWidget().setLayoutData(gd);
+			axiomNameText.getWidget().addModifyListener(
 					new DirtyStateListener());
 
 			IEventBInputText axiomPredicateText = new EventBMath(toolkit
 					.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			axiomPredicateText.getTextWidget().setLayoutData(gd);
-			axiomPredicateText.getTextWidget().addModifyListener(
+			axiomPredicateText.getWidget().setLayoutData(gd);
+			axiomPredicateText.getWidget().addModifyListener(
 					new DirtyStateListener());
 
-			axiomPairTexts.add(new Pair(axiomNameText,
-					axiomPredicateText));
-			
-			
+			axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
+
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getTextWidget()))
-				name = nameText.getTextWidget().getText();
+			if (dirtyTexts.contains(nameText.getWidget()))
+				name = nameText.getWidget().getText();
 			else
 				name = null;
 			axioms = new ArrayList<Pair>();
@@ -186,10 +192,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 						.getSecond();
 				IEventBInputText axiomNameText = (IEventBInputText) pair
 						.getFirst();
-				if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
-					String name = axiomNameText.getTextWidget().getText();
-					String pred = axiomPredicateText.getTextWidget()
-							.getText();
+				if (dirtyTexts.contains(axiomPredicateText.getWidget())) {
+					String name = axiomNameText.getWidget().getText();
+					String pred = axiomPredicateText.getWidget().getText();
 					axioms.add(new Pair(name, pred));
 				}
 			}
@@ -217,15 +222,13 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		return axioms;
 	}
 
-
 	@Override
 	public boolean close() {
 		nameText.dispose();
 		for (Pair pair : axiomPairTexts) {
 			IEventBInputText axiomPredicateText = (IEventBInputText) pair
 					.getSecond();
-			IEventBInputText axiomNameText = (IEventBInputText) pair
-					.getFirst();
+			IEventBInputText axiomNameText = (IEventBInputText) pair.getFirst();
 			axiomNameText.dispose();
 			axiomPredicateText.dispose();
 		}

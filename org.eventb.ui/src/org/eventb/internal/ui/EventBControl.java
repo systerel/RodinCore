@@ -1,13 +1,12 @@
 package org.eventb.internal.ui;
 
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
-public class EventBControl implements IPropertyChangeListener {
+public class EventBControl implements IEventBControl {
 
 	Control control;
 

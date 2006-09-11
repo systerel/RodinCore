@@ -25,12 +25,17 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eventb.core.IAssignmentElement;
+import org.eventb.core.IExpressionElement;
+import org.eventb.core.IExtendsContext;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
+import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -43,10 +48,9 @@ import org.rodinp.core.RodinDBException;
 public class EventBTreeLabelProvider implements ITableLabelProvider,
 		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
 
-	// TODO: This class should be extensible
 	// TODO: The font should associated with the viewer that used this label
 	// provider.
-	
+
 	// The associated Event-B Editor
 	private EventBEditor editor;
 
@@ -77,10 +81,8 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0)
 			return null;
-		if (element instanceof IRodinElement) {
-			IRodinElement rodinElement = (IRodinElement) element;
-			return UIUtils.getImage(rodinElement);
-		}
+		if (element instanceof IRodinElement)
+			return EventBImage.getRodinImage((IRodinElement) element);
 		return null;
 	}
 
@@ -91,31 +93,48 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof IRodinElement) {
-			IRodinElement rodinElement = (IRodinElement) element;
-
+		try {
 			if (columnIndex == 0) {
-				if (rodinElement instanceof ISeesContext)
-					return "";
-				if (rodinElement instanceof IRefinesMachine)
-					return "";
-				if (rodinElement instanceof IRefinesEvent)
-					return "";
+				if (element instanceof ISeesContext)
+					return ((ISeesContext) element).getSeenContextName();
+				if (element instanceof IRefinesMachine)
+					return ((IRefinesMachine) element).getAbstractMachineName();
+				if (element instanceof IExtendsContext)
+					return ((IExtendsContext) element).getAbstractContextName();
+				if (element instanceof IRefinesEvent)
+					return ((IRefinesEvent) element).getAbstractEventName();
 
-				if (rodinElement instanceof IInternalElement)
-					return ((IInternalElement) rodinElement).getElementName();
-				return rodinElement.toString();
+				if (element instanceof ILabeledElement)
+					return ((ILabeledElement) element).getLabel(null);
+
+				if (element instanceof IIdentifierElement)
+					return ((IIdentifierElement) element).getIdentifierString();
+
+				// if (rodinElement instanceof IInternalElement)
+				// return ((IInternalElement)
+				// rodinElement).getElementName();
+
+				return "";
 			}
 
 			if (columnIndex == 1) {
 				try {
-					if (rodinElement instanceof IInternalElement)
-						return ((IInternalElement) rodinElement).getContents();
+					if (element instanceof IAssignmentElement)
+						return ((IAssignmentElement) element)
+								.getAssignmentString();
+					if (element instanceof IPredicateElement)
+						return ((IPredicateElement) element)
+								.getPredicateString();
+					if (element instanceof IExpressionElement)
+						return ((IExpressionElement) element)
+								.getExpressionString();
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
-				return rodinElement.toString();
+				return "";
 			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 
 		return element.toString();

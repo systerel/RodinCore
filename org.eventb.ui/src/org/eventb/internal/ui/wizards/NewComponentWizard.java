@@ -35,6 +35,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -155,13 +156,14 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 				final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
 						false, null);
 				if (rodinFile instanceof IMachineFile) {
-					rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
-							"INITIALISATION", null, null);
+					IEvent init = (IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
+							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, monitor);
+					init.setLabel("INITIALISATION", monitor);
 				}
 				rodinFile.save(null, true);
 			}
 			
-		}, null);
+		}, monitor);
 		
 
 		monitor.worked(1);

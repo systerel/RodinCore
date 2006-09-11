@@ -16,7 +16,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -50,12 +49,13 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 			IRodinElement[] invariants = editor.getRodinInput()
 					.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 			for (int i = 0; i < invariants.length; i++) {
-				formString = formString + "<li style=\"bullet\">"
-						+ UIUtils.makeHyperlink(invariants[i].getElementName())
-						+ ": ";
 				formString = formString
-						+ UIUtils.XMLWrapUp(((IInternalElement) invariants[i])
-								.getContents());
+						+ "<li style=\"bullet\">"
+						+ UIUtils.makeHyperlink(((IInvariant) invariants[i])
+								.getLabel(null)) + ": ";
+				formString = formString
+						+ UIUtils.XMLWrapUp(((IInvariant) invariants[i])
+								.getPredicateString());
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {
@@ -76,11 +76,12 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 		return (new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				try {
-//					UIUtils.debug("Event: " + e.toString());
+					// UIUtils.debug("Event: " + e.toString());
 					IRodinElement[] invariants = editor.getRodinInput()
 							.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 					for (int i = 0; i < invariants.length; i++) {
-						if (e.getHref().equals(invariants[i].getElementName())) {
+						if (e.getHref().equals(
+								((IInvariant) invariants[i]).getLabel(null))) {
 							editor.edit(invariants[i]);
 							return;
 						}

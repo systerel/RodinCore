@@ -101,8 +101,8 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		nameText = new EventBText(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
-		nameText.getTextWidget().setLayoutData(gd);
-		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
+		nameText.getWidget().setLayoutData(gd);
+		nameText.getWidget().addModifyListener(new DirtyStateListener());
 
 		elementTexts = new ArrayList<IEventBInputText>();
 
@@ -113,13 +113,13 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 					body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 150;
-			elementText.getTextWidget().setLayoutData(gd);
-			elementText.getTextWidget().addModifyListener(
+			elementText.getWidget().setLayoutData(gd);
+			elementText.getWidget().addModifyListener(
 					new DirtyStateListener());
 
 			elementTexts.add(elementText);
 		}
-		nameText.getTextWidget().setText(defaultName);
+		nameText.getWidget().setText(defaultName);
 		scrolledForm.reflow(true);
 	}
 
@@ -141,22 +141,22 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 			IEventBInputText elementText = new EventBMath(toolkit.createText(
 					body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			elementText.getTextWidget().setLayoutData(gd);
-			elementText.getTextWidget().addModifyListener(
+			elementText.getWidget().setLayoutData(gd);
+			elementText.getWidget().addModifyListener(
 					new DirtyStateListener());
 
 			elementTexts.add(elementText);
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getTextWidget()))
-				name = nameText.getTextWidget().getText();
+			if (dirtyTexts.contains(nameText.getWidget()))
+				name = nameText.getWidget().getText();
 			else
 				name = null;
 			elements = new ArrayList<String>();
 			for (IEventBInputText text : elementTexts) {
-				if (dirtyTexts.contains(text.getTextWidget())) {
-					String element = text.getTextWidget().getText();
+				if (dirtyTexts.contains(text.getWidget())) {
+					String element = text.getWidget().getText();
 					elements.add(element);
 				}
 			}
