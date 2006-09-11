@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 
@@ -142,7 +143,7 @@ public abstract class HypothesesSection extends SectionPart {
 		for (Hypothesis hyp : hyps) {
 			UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
 					+ hyp.getPredicate());
-			HypothesisRow row = new HypothesisRow(this, comp, hyp,
+			HypothesisRow row = new HypothesisRow(this.getManagedForm().getToolkit(), comp, hyp,
 					((ProverUI) page.getEditor()).getUserSupport(),
 					(i % 2) == 0, enable);
 			rows.add(row);

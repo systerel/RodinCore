@@ -41,7 +41,6 @@ import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -157,8 +156,8 @@ public class ProofInformationPage extends Page implements
 							+ UIUtils.makeHyperlink(id, element
 									.getElementName()) + ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((IInternalElement) element)
-									.getContents());
+							+ UIUtils.XMLWrapUp(((ITheorem) element)
+									.getPredicateString());
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
@@ -167,8 +166,8 @@ public class ProofInformationPage extends Page implements
 							+ UIUtils.makeHyperlink(id, element
 									.getElementName()) + ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((IInternalElement) element)
-									.getContents());
+							+ UIUtils.XMLWrapUp(((IAxiom) element)
+									.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IInvariant) {
 					formString = formString
@@ -176,8 +175,8 @@ public class ProofInformationPage extends Page implements
 							+ UIUtils.makeHyperlink(id, element
 									.getElementName()) + ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((IInternalElement) element)
-									.getContents());
+							+ UIUtils.XMLWrapUp(((IInvariant) element)
+									.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IEvent) {
 					formString = formString
@@ -232,8 +231,8 @@ public class ProofInformationPage extends Page implements
 										.getElementName())
 								+ ": "
 								+ UIUtils
-										.XMLWrapUp(((IInternalElement) guards[j])
-												.getContents());
+										.XMLWrapUp(((IGuard) guards[j])
+												.getPredicateString());
 						formString = formString + "</li>";
 					}
 
@@ -252,8 +251,8 @@ public class ProofInformationPage extends Page implements
 										.getElementName())
 								+ ": "
 								+ UIUtils
-										.XMLWrapUp(((IInternalElement) actions[j])
-												.getContents());
+										.XMLWrapUp(((IAction) actions[j])
+												.getAssignmentString());
 						formString = formString + "</li>";
 					}
 					formString = formString

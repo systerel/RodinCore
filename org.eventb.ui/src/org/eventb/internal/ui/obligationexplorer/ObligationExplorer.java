@@ -80,6 +80,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -403,7 +404,9 @@ public class ObligationExplorer extends ViewPart implements
 				else if (prFile.getContext().exists())
 					return registry.get(EventBImage.IMG_CONTEXT);
 			}
-			return UIUtils.getImage(obj);
+			if (obj instanceof IRodinElement)
+				return EventBImage.getRodinImage((IRodinElement) obj);
+			return null;
 		}
 
 		public String getColumnText(Object obj, int columnIndex) {

@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,15 +40,25 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -67,7 +78,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 	// Debug flag
 	public static boolean DEBUG = false;
-	
+
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
@@ -112,18 +123,22 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 			if (e1 instanceof IMachineFile && e2 instanceof IMachineFile) {
 				IMachineFile m1 = (IMachineFile) e1;
 				IMachineFile m2 = (IMachineFile) e2;
-				String name1 = EventBPlugin.getComponentName(m1.getElementName());
-				String name2 = EventBPlugin.getComponentName(m2.getElementName());
+				String name1 = EventBPlugin.getComponentName(m1
+						.getElementName());
+				String name2 = EventBPlugin.getComponentName(m2
+						.getElementName());
 				return name1.compareTo(name2);
 			}
 			if (e1 instanceof IContextFile && e2 instanceof IContextFile) {
 				IContextFile m1 = (IContextFile) e1;
 				IContextFile m2 = (IContextFile) e2;
-				String name1 = EventBPlugin.getComponentName(m1.getElementName());
-				String name2 = EventBPlugin.getComponentName(m2.getElementName());
+				String name1 = EventBPlugin.getComponentName(m1
+						.getElementName());
+				String name2 = EventBPlugin.getComponentName(m2
+						.getElementName());
 				return name1.compareTo(name2);
 			}
-			
+
 			if (e1 instanceof IRodinProject) {
 				return super.compare(viewer, e1, e2);
 			} else {
@@ -156,20 +171,62 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	 *         Providing the label for object in the tree.
 	 */
 	private class ViewLabelProvider extends LabelProvider {
-		
+
 		public String getText(Object obj) {
+			if (obj instanceof IRodinProject)
+				return ((IRodinProject) obj).getElementName();
 			if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
 				return EventBPlugin.getComponentName(name);
 			}
-			if (obj instanceof IRodinElement)
-				return ((IRodinElement) obj).getElementName();
+			try {
+				if (obj instanceof IIdentifierElement)
+					return ((IIdentifierElement) obj).getIdentifierString();
+				if (obj instanceof ILabeledElement)
+					return ((ILabeledElement) obj).getLabel(null);
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
 			return obj.toString();
 		}
 
 		public Image getImage(Object obj) {
-			return UIUtils.getImage(obj);
+			if (obj instanceof IRodinElement)
+				return EventBImage.getRodinImage((IRodinElement) obj);
+			if (obj instanceof TreeNode)
+				return (getTreeNodeImage((TreeNode) obj));
+			return null;
 		}
+	}
+
+	/**
+	 * Getting the impage corresponding to a tree node.
+	 * <p>
+	 * 
+	 * @param element
+	 *            A Tree node
+	 * @return The image for displaying corresponding to the tree node
+	 */
+	private Image getTreeNodeImage(TreeNode node) {
+
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+
+		if (node.isType(IVariable.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_VARIABLES);
+		if (node.isType(IInvariant.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_INVARIANTS);
+		if (node.isType(ITheorem.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_THEOREMS);
+		if (node.isType(IEvent.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_EVENTS);
+		if (node.isType(ICarrierSet.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_CARRIER_SETS);
+		if (node.isType(IConstant.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_CONSTANTS);
+		if (node.isType(IAxiom.ELEMENT_TYPE))
+			return registry.get(EventBImage.IMG_AXIOMS);
+
+		return null;
 	}
 
 	/**
@@ -264,7 +321,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 		newMenu.add(ProjectExplorerActionGroup.newComponentAction);
 		manager.add(newMenu);
 		manager.add(new Separator());
-//		manager.add(ProjectExplorerActionGroup.deleteAction);
+		// manager.add(ProjectExplorerActionGroup.deleteAction);
 	}
 
 	/**
@@ -278,7 +335,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 
 		manager.add(ProjectExplorerActionGroup.newProjectAction);
 		manager.add(ProjectExplorerActionGroup.newComponentAction);
-//		manager.add(ProjectExplorerActionGroup.deleteAction);
+		// manager.add(ProjectExplorerActionGroup.deleteAction);
 		manager.add(new Separator());
 		ProjectExplorerActionGroup.drillDownAdapter
 				.addNavigationActions(manager);
@@ -371,7 +428,8 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 		return viewer.getSelection();
 	}
 
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
 		viewer.removeSelectionChangedListener(listener);
 	}
 

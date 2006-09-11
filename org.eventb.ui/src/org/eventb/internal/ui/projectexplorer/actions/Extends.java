@@ -14,7 +14,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IInternalElement;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -24,6 +24,8 @@ public class Extends implements IObjectActionDelegate {
 	private ISelection selection;
 
 	private IWorkbenchPart part;
+
+	private IRodinFile newFile;
 
 	/**
 	 * Constructor for Action1.
@@ -52,8 +54,8 @@ public class Extends implements IObjectActionDelegate {
 				final IContextFile context = (IContextFile) obj;
 				final IRodinProject prj = context.getRodinProject();
 
-				InputDialog dialog = new InputDialog(part.getSite()
-						.getShell(), "New EXTENDS Clause",
+				InputDialog dialog = new InputDialog(part.getSite().getShell(),
+						"New EXTENDS Clause",
 						"Please enter the name of the new context", "c0",
 						new RodinFileInputValidator(prj));
 
@@ -69,25 +71,28 @@ public class Extends implements IObjectActionDelegate {
 
 						public void run(IProgressMonitor monitor)
 								throws CoreException {
-							IRodinFile newFile = prj.createRodinFile(
-									EventBPlugin.getContextFileName(bareName),
-									false, null);
+							newFile = prj.createRodinFile(EventBPlugin
+									.getContextFileName(bareName), false, null);
 
-							IInternalElement refined = newFile
+							IExtendsContext extended = (IExtendsContext) newFile
 									.createInternalElement(
 											IExtendsContext.ELEMENT_TYPE,
-											abstractContextName, null, null);
-							refined.setContents(abstractContextName);
-							newFile.save(null, true);
-							UIUtils.linkToEventBEditor(newFile);
-
+											"internal_"
+													+ PrefixExtendsContextName.DEFAULT_PREFIX
+													+ 1, null, monitor);
+							extended
+									.setAbstractContextName(abstractContextName);
+							newFile.save(monitor, true);
 						}
 
 					}, null);
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					newFile = null;
 				}
+				if (newFile != null)
+					UIUtils.linkToEventBEditor(newFile);
 
 			}
 		}

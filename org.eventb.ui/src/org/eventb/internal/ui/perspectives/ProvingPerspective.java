@@ -21,6 +21,7 @@ import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
+import org.eventb.internal.ui.searchhypothesis.SearchHypothesis;
 
 /**
  * @author htson
@@ -61,6 +62,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut(ProofTreeUI.VIEW_ID);
 		layout.addShowViewShortcut(ProofControl.VIEW_ID);
 		layout.addShowViewShortcut(ProofInformation.VIEW_ID);
+		layout.addShowViewShortcut(SearchHypothesis.VIEW_ID);
 		layout.addShowViewShortcut(ProjectExplorer.VIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
@@ -93,6 +95,7 @@ public class ProvingPerspective implements IPerspectiveFactory {
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.75f, editorArea);
 		bottom.addView(ProofControl.VIEW_ID);
+		bottom.addView(SearchHypothesis.VIEW_ID);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 
 		// Place the Proof Information to the bottom left of the editor area.

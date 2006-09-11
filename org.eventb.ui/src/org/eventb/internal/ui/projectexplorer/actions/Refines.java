@@ -18,6 +18,8 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -28,9 +30,11 @@ import org.rodinp.core.RodinDBException;
 public class Refines implements IObjectActionDelegate {
 
 	private ISelection selection;
-	
+
 	private IWorkbenchPart part;
-	
+
+	private IRodinFile newFile;
+
 	/**
 	 * Constructor for Action1.
 	 */
@@ -58,65 +62,86 @@ public class Refines implements IObjectActionDelegate {
 				final IMachineFile machine = (IMachineFile) obj;
 				final IRodinProject prj = machine.getRodinProject();
 
-				InputDialog dialog = new InputDialog(part.getSite()
-						.getShell(), "New REFINES Clause",
-						"Please enter the name of the new machine",
-						"m0", new RodinFileInputValidator(prj));
+				InputDialog dialog = new InputDialog(part.getSite().getShell(),
+						"New REFINES Clause",
+						"Please enter the name of the new machine", "m0",
+						new RodinFileInputValidator(prj));
 
 				dialog.open();
 
 				final String abstractMachineName = EventBPlugin
 						.getComponentName(machine.getElementName());
 				final String bareName = dialog.getValue();
-				if (bareName == null) return;
+				if (bareName == null)
+					return;
 
 				try {
 					RodinCore.run(new IWorkspaceRunnable() {
 
 						public void run(IProgressMonitor monitor)
 								throws CoreException {
-							IRodinFile newFile = prj
-									.createRodinFile(
-											EventBPlugin
-													.getMachineFileName(bareName),
-											false, null);
-							
-							IInternalElement refined = newFile
+							newFile = prj.createRodinFile(EventBPlugin
+									.getMachineFileName(bareName), false,
+									monitor);
+
+							IRefinesMachine refined = (IRefinesMachine) newFile
 									.createInternalElement(
 											IRefinesMachine.ELEMENT_TYPE,
-											abstractMachineName, null,
-											null);
-							refined.setContents(abstractMachineName);
+											"internal_"
+													+ PrefixRefinesMachineName.DEFAULT_PREFIX
+													+ 1, null, monitor);
+							refined.setAbstractMachineName(abstractMachineName);
 
 							copyChildrenOfType(newFile, machine,
-									ISeesContext.ELEMENT_TYPE);
+									ISeesContext.ELEMENT_TYPE, monitor);
 							copyChildrenOfType(newFile, machine,
-									IVariable.ELEMENT_TYPE);
+									IVariable.ELEMENT_TYPE, monitor);
 							copyChildrenOfType(newFile, machine,
-									IEvent.ELEMENT_TYPE);
-							
-							IRodinElement[] elements = machine.getChildrenOfType(IEvent.ELEMENT_TYPE);
+									IEvent.ELEMENT_TYPE, monitor);
+
+							IRodinElement[] elements = machine
+									.getChildrenOfType(IEvent.ELEMENT_TYPE);
 
 							for (IRodinElement element : elements) {
-								String name = element.getElementName();
-								IInternalElement newElement = newFile.getInternalElement(IEvent.ELEMENT_TYPE, name);
-								IInternalElement refineEvent = newElement.createInternalElement(IRefinesEvent.ELEMENT_TYPE, name, null, null);
-								refineEvent.setContents(name);
+								String name = ((IEvent) element)
+										.getElementName();
+								String label = ((IEvent) element)
+										.getLabel(monitor);
+								IInternalElement newElement = newFile
+										.getInternalElement(
+												IEvent.ELEMENT_TYPE, name);
+								// Need to remove the existing IRefinesEvent
+								// elements
+
+								IRodinElement[] refinesEvents = newElement
+										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
+								
+								for (IRodinElement refinesEvent : refinesEvents)
+									((IInternalElement) refinesEvent).delete(true, monitor);
+
+								IRefinesEvent refinesEvent = (IRefinesEvent) newElement
+										.createInternalElement(
+												IRefinesEvent.ELEMENT_TYPE,
+												"internal_"
+														+ PrefixRefinesEventName.DEFAULT_PREFIX
+														+ 1, null, monitor);
+								refinesEvent.setAbstractEventName(label);
 							}
 							newFile.save(null, true);
-							UIUtils.linkToEventBEditor(newFile);
-
 						}
 
 					}, null);
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					newFile = null;
 				}
+				if (newFile != null)
+					UIUtils.linkToEventBEditor(newFile);
 
 			}
 		}
-	
+
 	}
 
 	/**
@@ -127,11 +152,13 @@ public class Refines implements IObjectActionDelegate {
 	}
 
 	private void copyChildrenOfType(IRodinFile destination,
-			IRodinFile original, String type) throws RodinDBException {
+			IRodinFile original, String type, IProgressMonitor monitor)
+			throws RodinDBException {
 		IRodinElement[] elements = original.getChildrenOfType(type);
 
 		for (IRodinElement element : elements) {
-			((IInternalElement) element).copy(destination, null, null, false, null);
+			((IInternalElement) element).copy(destination, null, null, false,
+					monitor);
 		}
 	}
 

@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -73,7 +72,7 @@ public class GoalSection extends SectionPart {
 
 	private String actualString;
 
-	private int max_length = 30;
+//	private int max_length = 30;
 
 	/**
 	 * Constructor
@@ -176,14 +175,14 @@ public class GoalSection extends SectionPart {
 		final StyledText styledText = goalText.getMainTextWidget();
 		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		int borderWidth = styledText.getBorderWidth();
-		styledText.setText(" ");
-		goalComposite.pack(true);
-		int textWidth = styledText.getSize().x;
-
-		Rectangle rec = goalComposite.getBounds();
-		Point size = goalComposite.getSize();
-		int compositeWidth = goalComposite.getClientArea().width;
+//		int borderWidth = styledText.getBorderWidth();
+//		styledText.setText(" ");
+//		goalComposite.pack(true);
+//		int textWidth = styledText.getSize().x;
+//
+//		Rectangle rec = goalComposite.getBounds();
+//		Point size = goalComposite.getSize();
+//		int compositeWidth = goalComposite.getClientArea().width;
 		// if (textWidth != 0) {
 		// max_length = (compositeWidth - borderWidth) / textWidth;
 		// } else

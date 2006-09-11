@@ -46,6 +46,8 @@ import org.eventb.internal.ui.proofinformation.IProofInformationPage;
 import org.eventb.internal.ui.proofinformation.ProofInformationPage;
 import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
+import org.eventb.internal.ui.searchhypothesis.ISearchHypothesisPage;
+import org.eventb.internal.ui.searchhypothesis.SearchHypothesisPage;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -74,6 +76,9 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 	// The associated Proof Information page
 	private ProofInformationPage fProofInformationPage;
+	
+	// The associated Search Hypothesis
+	private SearchHypothesisPage fSearchHypothesisPage;
 
 	// The associated UserSupport
 	private UserSupport userSupport;
@@ -209,6 +214,14 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			}
 			return fProofInformationPage;
 		}
+		
+		if (ISearchHypothesisPage.class.equals(required)) {
+			if (fSearchHypothesisPage == null) {
+				fSearchHypothesisPage = new SearchHypothesisPage(this);
+			}
+			return fSearchHypothesisPage;
+		}
+
 		return super.getAdapter(required);
 	}
 
@@ -333,12 +346,12 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		}
 
 		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
+			// Do nothing
 
 		}
 
 		public void dispose() {
-			// TODO Auto-generated method stub
+			// Do nothing
 
 		}
 
