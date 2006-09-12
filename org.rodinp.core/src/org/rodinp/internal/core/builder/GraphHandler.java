@@ -49,7 +49,8 @@ public class GraphHandler {
 			node.setToolId(producerId);
 			node.setDated(true);
 			node.setPhantom(false);
-			graph.setInstable(); // nodes depending on this phantom may already have been processed
+			if (node.done)
+				graph.setInstable(); // nodes depending on this phantom may already have been processed
 		} else
 			node.setToolId(producerId);
 //			throw new CoreException(new Status(IStatus.ERROR,
@@ -138,10 +139,14 @@ public class GraphHandler {
 		if(currentEqualsSource || targetIsSuccessor) {
 			target.addLink(link);
 			boolean instable = false;
-			instable |= currentEqualsSource && target.done; // the new target of the present node was already processed
-			instable |= targetIsSuccessor && !link.source.done; // the new source in the predecessor list of target has not been processed
-			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccPos() > 0; // child nodes already traversed partially (and the new source is first in list)
-			instable |= link.source.getSuccPos() > link.source.succSize(); // the list of child nodes was already completely traversed
+			instable |= currentEqualsSource && target.done; 
+				// the new target of the present node was already processed
+			instable |= targetIsSuccessor && !link.source.done && !link.source.isPhantom();
+				// the new source in the predecessor list of target has not been processed
+			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccPos() > 0; 
+				// child nodes already traversed partially (and the new source is first in list)
+			instable |= link.source.getSuccPos() > link.source.succSize(); 
+				// the list of child nodes was already completely traversed
 //			if(currentEqualsSource && targetNode.done)
 //				graph.setInstable();
 //				targetNode.setDated(false);

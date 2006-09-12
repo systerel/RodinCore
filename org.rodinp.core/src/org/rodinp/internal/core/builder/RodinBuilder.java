@@ -47,6 +47,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
 
+		final IProgressMonitor monitor;
+		
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -59,7 +61,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// handle added resource
 				
 				if(createNode(resource) != null)
-					markNodeDated(resource, false, null);
+					markNodeDated(resource, true, monitor);
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
@@ -70,11 +72,15 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				markNodeDated(resource, true, new NullProgressMonitor());
+				markNodeDated(resource, true, monitor);
 				break;
 			}
 			//return true to continue visiting children.
 			return true;
+		}
+
+		public RodinBuilderDeltaVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
 		}
 	}
 	
@@ -103,10 +109,16 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	class RodinBuilderResourceVisitor implements IResourceVisitor {
 		
+		final IProgressMonitor monitor;
+		
 		public boolean visit(IResource resource) {
-			markNodeDated(resource, false, null);
+			markNodeDated(resource, true, monitor);
 			//return true to continue visiting children.
 			return true;
+		}
+
+		public RodinBuilderResourceVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
 		}
 	}
 
@@ -211,12 +223,12 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		try {
-			getProject().accept(new RodinBuilderResourceVisitor());
+			cleanGraph(monitor);
+			getProject().accept(new RodinBuilderResourceVisitor(monitor));
 		} catch (CoreException e) {
 			Util.log(e, "during builder full build");
 		}
 		try {
-			cleanGraph(monitor);
 			buildGraph(monitor);
 		} catch (OperationCanceledException e) {
 			if(isInterrupted())
@@ -241,7 +253,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	protected void incrementalBuild(IResourceDelta delta,
 			IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
-		delta.accept(new RodinBuilderDeltaVisitor());
+		delta.accept(new RodinBuilderDeltaVisitor(monitor));
 		try {
 			buildGraph(monitor);
 		} catch (OperationCanceledException e) {

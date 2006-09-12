@@ -74,5 +74,14 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 				null);
 		return dep;
 	}
+	
+	protected IReference createReference(IRodinFile parent, String target) throws RodinDBException {
+		IReference ref = (IReference) parent.createInternalElement(
+				IReference.ELEMENT_TYPE,
+				target,
+				null,
+				null);
+		return ref;
+	}
 
 }

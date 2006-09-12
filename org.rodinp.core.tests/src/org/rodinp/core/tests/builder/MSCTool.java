@@ -45,7 +45,7 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		graph.addNode(scPath, SC_ID);
 		graph.putToolDependency(mch.getResource().getFullPath(), scPath, SC_ID, true);
 		
-		ISCMachine machine = mch.getCheckedVersion();
+		ISCMachine machine = mch.getReferencedMachine();
 		if (machine != null) {
 			graph.putUserDependency(
 					mch.getResource().getFullPath(), machine.getResource().getFullPath(), scPath, SC_ID, false);

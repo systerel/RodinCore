@@ -163,11 +163,11 @@ public class Graph implements Serializable, Iterable<Node> {
 		} catch (OperationCanceledException e) {
 			throw e;
 		} catch (CoreException e) {
-			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
+			Util.log(e, " while running tool " + file.getName()); //$NON-NLS-1$
 			node.setDated(false); // do not run defect tools unnecessarily often
 			return;
 		} catch (RuntimeException e) {
-			Util.log(e, "while running tool" + file.getName()); //$NON-NLS-1$
+			Util.log(e, " while running tool " + file.getName()); //$NON-NLS-1$
 			node.setDated(false); // do not run defect tools unnecessarily often
 			return;
 		}
@@ -182,7 +182,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			try {
 				extract(node, new GraphHandler(this, node), monitor);
 			} catch (CoreException e) {
-				Util.log(e, "while extracting dependencies"); //$NON-NLS-1$
+				Util.log(e, " while extracting dependencies"); //$NON-NLS-1$
 			}
 		}
 	}

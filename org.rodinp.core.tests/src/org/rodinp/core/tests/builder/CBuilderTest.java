@@ -39,6 +39,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(
+				"CSC extract /P/x.ctx\n" + 
 				"CSC extract /P/x.ctx\n" +
 				"CSC run /P/x.csc"
 		);
@@ -81,9 +82,11 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createData(cty, "two");
 		cty.save(null, true);		
 		runBuilder(
-				"CSC extract /P/x.ctx\n" +
-				"CSC run /P/x.csc\n" +
-				"CSC extract /P/y.ctx\n" +
+				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/y.ctx\n" + 
 				"CSC run /P/y.csc"
 		);
 	}
@@ -103,9 +106,11 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctx.save(null, true);
 		
 		runBuilder(
-				"CSC extract /P/y.ctx\n" +
-				"CSC extract /P/x.ctx\n" +
-				"CSC run /P/x.csc\n" +
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
 				"CSC run /P/y.csc"
 		);
 	}
@@ -130,11 +135,14 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"CSC extract /P/x.ctx\n" +
-				"CSC run /P/x.csc\n" +
-				"CSC extract /P/y.ctx\n" +
-				"CSC run /P/y.csc\n" +
-				"CSC extract /P/z.ctx\n" +
+				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/z.ctx\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC run /P/y.csc\n" + 
+				"CSC extract /P/z.ctx\n" + 
 				"CSC run /P/z.csc"
 		);
 	}
@@ -159,9 +167,12 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"CSC extract /P/x.ctx\n" +
-				"CSC extract /P/y.ctx\n" +
-				"CSC extract /P/z.ctx\n" +
+				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/z.ctx\n" + 
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/z.ctx\n" + 
 				"CSC run /P/z.csc"
 		);
 	}

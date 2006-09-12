@@ -17,7 +17,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCTool {
 
-	static boolean DEBUG = false;
+	static boolean DEBUG = true;
+	
+	private int index = 0;
 
 	protected void copyDataElements(IRodinFile ctx, IRodinFile target) throws RodinDBException {
 		if (DEBUG)
@@ -27,7 +29,7 @@ public class SCTool {
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
 			IData copy = (IData) target.createInternalElement(
-					IData.ELEMENT_TYPE, "foo", null, null);
+					IData.ELEMENT_TYPE, "foo" + index++, null, null);
 			copy.setContents(data.getContents());
 		}
 		if (DEBUG)
