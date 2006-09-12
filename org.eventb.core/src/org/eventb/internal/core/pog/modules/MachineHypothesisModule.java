@@ -37,7 +37,6 @@ import org.eventb.core.pog.IMachineVariableTable;
 import org.eventb.core.pog.IPredicateTable;
 import org.eventb.core.pog.Module;
 import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
 import org.eventb.internal.core.pog.IdentifierTable;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
