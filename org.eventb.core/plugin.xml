@@ -356,6 +356,10 @@
             id="preserved"
             kind="boolean"
             name="%eventBpreservedVariableAttribute"/>
+      <attributeType
+            id="role"
+            kind="string"
+            name="%eventBpoSourceRoleAttribute"/>
    </extension>
 
 </plugin>
