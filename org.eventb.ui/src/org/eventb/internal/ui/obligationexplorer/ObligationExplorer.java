@@ -200,33 +200,33 @@ public class ObligationExplorer extends ViewPart implements
 			for (ProofState proofState : proofStates) {
 				if (proofState.getPRSequent().equals(sequent)) {
 					IProofTree tree = proofState.getProofTree();
+					if (!proofState.isDirty() || tree == null)
+						break;
 
-					if (tree != null) {
-						if (!tree.proofAttempted())
-							return UNATTEMPTED;
+					if (!tree.proofAttempted())
+						return UNATTEMPTED;
 
-						int confidence = tree.getConfidence();
+					int confidence = tree.getConfidence();
 
-						if (confidence == IConfidence.PENDING) {
-							if (false && sequent.isProofBroken())
-								return PENDING_BROKEN;
-							else
-								return PENDING;
-						}
-						if (confidence <= IConfidence.REVIEWED_MAX) {
-							if (false && sequent.isProofBroken())
-								return REVIEWED_BROKEN;
-							else
-								return REVIEWED;
-						}
-						if (confidence <= IConfidence.DISCHARGED_MAX) {
-							if (false && sequent.isProofBroken())
-								return DISCHARGED_BROKEN;
-							else
-								return DISCHARGED;
-						}
-						return NULL; // Should not happen
+					if (confidence == IConfidence.PENDING) {
+						if (false && sequent.isProofBroken())
+							return PENDING_BROKEN;
+						else
+							return PENDING;
 					}
+					if (confidence <= IConfidence.REVIEWED_MAX) {
+						if (false && sequent.isProofBroken())
+							return REVIEWED_BROKEN;
+						else
+							return REVIEWED;
+					}
+					if (confidence <= IConfidence.DISCHARGED_MAX) {
+						if (false && sequent.isProofBroken())
+							return DISCHARGED_BROKEN;
+						else
+							return DISCHARGED;
+					}
+					return NULL; // Should not happen
 				}
 			}
 		}

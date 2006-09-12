@@ -291,8 +291,8 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	private void setProofState(ProofState ps) throws RodinDBException {
-		if (currentPS != ps) {
-			if (currentPS != null)
+//		if (currentPS != ps) {
+			if (currentPS != null && !currentPS.isUninitialised())
 				currentPS.getProofTree().removeChangeListener(this);
 
 			UserSupportUtils.debug("New Proof Sequent: " + ps);
@@ -317,7 +317,7 @@ public class UserSupport implements IElementChangedListener,
 				fireProofStateDelta(newDelta);
 
 			}
-		}
+//		}
 		return;
 	}
 
@@ -644,18 +644,38 @@ public class UserSupport implements IElementChangedListener,
 
 					} else {
 						UserSupportUtils.debug("Cannot be reused");
-						state.getProofTree().removeChangeListener(this);
-						state.reloadProofTree();
-						state.getProofTree().addChangeListener(this);
-						if (state == currentPS) {
-							UserSupportUtils.debug("Is the current node");
-							ProofStateDelta newDelta = new ProofStateDelta(
-									UserSupport.this);
-							newDelta.setNewProofState(currentPS);
+						// Trash the current proof tree and then re-build 
+//						state.unloadProofTree();
+						if (!state.isDirty()) {
+							if (state != currentPS) {
+								state.getProofTree().removeChangeListener(this);
+								state.unloadProofTree();
+								ProofStateDelta newDelta = new ProofStateDelta(
+										UserSupport.this);
+								newDelta.setNewProofState(state);
 
-							newDelta
-									.addInformation("Current proof cannot be reused");
-							fireProofStateDelta(newDelta);
+								newDelta
+										.addInformation("Current proof cannot be reused");
+								fireProofStateDelta(newDelta);
+							}
+							else {
+//								state.getProofTree().removeChangeListener(this);
+//								state.reloadProofTree();
+//								state.getProofTree().addChangeListener(this);
+//								if (state == currentPS) {
+									UserSupportUtils.debug("Is the current node");
+									state.getProofTree().removeChangeListener(this);
+									state.unloadProofTree();
+									ProofStateDelta newDelta = new ProofStateDelta(
+											UserSupport.this);
+									newDelta.setNewProofState(currentPS);
+
+									newDelta
+											.addInformation("Current proof cannot be reused");
+									fireProofStateDelta(newDelta);
+//								}
+								
+							}
 						}
 					}
 

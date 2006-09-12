@@ -197,6 +197,7 @@ public class ProofState {
 	}
 
 	public void reloadProofTree() throws RodinDBException {
+		
 		pt = prSequent.makeFreshProofTree(); // Construct the proof tree from
 												// the file.
 
@@ -210,6 +211,11 @@ public class ProofState {
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
 		dirty = prSequent.isProofBroken();
+	}
+
+	public void unloadProofTree() {
+		pt = null;
+		current = null;
 	}
 
 }
