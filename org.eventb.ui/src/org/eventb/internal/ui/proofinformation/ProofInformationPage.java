@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.proofinformation;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,6 +25,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
@@ -41,7 +43,6 @@ import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -126,68 +127,76 @@ public class ProofInformationPage extends Page implements
 
 			IPOSource[] sources = prSequent.getSources();
 			for (IPOSource source : sources) {
-				String role = source.getSourceRole();
-				formString = formString + "<li style=\"bullet\">" + role
-						+ "</li>";
-
 				String id = source.getSourceHandleIdentifier();
 
-				// TODO Dirty fix to get the uncheck element handle identifier
-				id = id.replaceFirst("\\.bcm\\|", "\\.bum\\|");
-				id = id.replaceFirst("\\.bcc\\|", "\\.buc\\|");
-				id = id.replaceAll("org.eventb.core.scInvariant",
-						"org.eventb.core.invariant");
-				id = id.replaceAll("org.eventb.core.scTheorem",
-						"org.eventb.core.theorem");
-				id = id.replaceAll("org.eventb.core.scAxiom",
-						"org.eventb.core.axiom");
-				id = id.replaceAll("org.eventb.core.scGuard",
-						"org.eventb.core.guard");
-				id = id.replaceAll("org.eventb.core.scEvent",
-						"org.eventb.core.event");
 				ProofInformation.debug("ID unchecked model " + id);
 
 				IRodinElement element = RodinCore.create(id);
 				ProofInformation.debug("id: " + id);
 				ProofInformation.debug("Find: " + element);
 				if (element instanceof ITheorem) {
+					ITheorem thm = (ITheorem) element;
+					formString = formString
+							+ "<li style=\"bullet\">"
+							+ "Theorem in "
+							+ EventBPlugin.getComponentName(thm.getParent()
+									.getElementName()) + "</li>";
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, element
-									.getElementName()) + ": ";
+							+ UIUtils.makeHyperlink(id, thm
+									.getLabel(new NullProgressMonitor()))
+							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((ITheorem) element)
-									.getPredicateString());
+							+ UIUtils.XMLWrapUp(thm.getPredicateString());
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
+					IAxiom axm = (IAxiom) element;
+					formString = formString
+							+ "<li style=\"bullet\">"
+							+ "Axiom in "
+							+ EventBPlugin.getComponentName(axm.getParent()
+									.getElementName()) + "</li>";
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, element
-									.getElementName()) + ": ";
+							+ UIUtils.makeHyperlink(id, axm
+									.getLabel(new NullProgressMonitor()))
+							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((IAxiom) element)
-									.getPredicateString());
+							+ UIUtils.XMLWrapUp(axm.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IInvariant) {
+					IInvariant inv = (IInvariant) element;
+					formString = formString
+							+ "<li style=\"bullet\">"
+							+ "Invariant in "
+							+ EventBPlugin.getComponentName(inv.getParent()
+									.getElementName()) + "</li>";
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, element
-									.getElementName()) + ": ";
+							+ UIUtils.makeHyperlink(id, inv
+									.getLabel(new NullProgressMonitor()))
+							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(((IInvariant) element)
-									.getPredicateString());
+							+ UIUtils.XMLWrapUp(inv.getPredicateString());
 					formString = formString + "</li>";
 				} else if (element instanceof IEvent) {
+					IEvent evt = (IEvent) element;
+					formString = formString
+							+ "<li style=\"bullet\">"
+							+ "Event in "
+							+ EventBPlugin.getComponentName(evt.getParent()
+									.getElementName()) + "</li>";
 					formString = formString
 							+ "<li style=\"text\" value=\"\">"
-							+ UIUtils.makeHyperlink(id, element
-									.getElementName()) + ":</li>";
-					IRodinElement[] lvars = ((IParent) element)
+							+ UIUtils.makeHyperlink(id, evt
+									.getLabel(new NullProgressMonitor()))
+							+ ":</li>";
+					IRodinElement[] lvars = evt
 							.getChildrenOfType(IVariable.ELEMENT_TYPE);
-					IRodinElement[] guards = ((IParent) element)
+					IRodinElement[] guards = evt
 							.getChildrenOfType(IGuard.ELEMENT_TYPE);
-					IRodinElement[] actions = ((IParent) element)
+					IRodinElement[] actions = evt
 							.getChildrenOfType(IAction.ELEMENT_TYPE);
 
 					if (lvars.length != 0) {
@@ -195,17 +204,18 @@ public class ProofInformationPage extends Page implements
 								+ "<li style=\"text\" value=\"\" bindent = \"20\">";
 						formString = formString + "<b>ANY</b> ";
 						for (int j = 0; j < lvars.length; j++) {
+							IVariable var = (IVariable) lvars[j];
 							if (j == 0) {
 								formString = formString
-										+ UIUtils.makeHyperlink(lvars[j]
-												.getHandleIdentifier(),
-												lvars[j].getElementName());
+										+ UIUtils.makeHyperlink(var
+												.getHandleIdentifier(), var
+												.getIdentifierString());
 							} else
 								formString = formString
 										+ ", "
-										+ UIUtils.makeHyperlink(lvars[j]
-												.getHandleIdentifier(),
-												lvars[j].getElementName());
+										+ UIUtils.makeHyperlink(var
+												.getHandleIdentifier(), var
+												.getIdentifierString());
 						}
 						formString = formString + " <b>WHERE</b>";
 						formString = formString + "</li>";
@@ -222,17 +232,16 @@ public class ProofInformationPage extends Page implements
 
 					}
 
-					for (int j = 0; j < guards.length; j++) {
+					for (IRodinElement child : guards) {
+						IGuard guard = (IGuard) child;
 						formString = formString
 								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 						formString = formString
-								+ UIUtils.makeHyperlink(guards[j]
-										.getHandleIdentifier(), guards[j]
-										.getElementName())
+								+ UIUtils.makeHyperlink(guard
+										.getHandleIdentifier(), guard
+										.getLabel(new NullProgressMonitor()))
 								+ ": "
-								+ UIUtils
-										.XMLWrapUp(((IGuard) guards[j])
-												.getPredicateString());
+								+ UIUtils.XMLWrapUp(guard.getPredicateString());
 						formString = formString + "</li>";
 					}
 
@@ -242,17 +251,17 @@ public class ProofInformationPage extends Page implements
 						formString = formString + "<b>THEN</b></li>";
 					}
 
-					for (int j = 0; j < actions.length; j++) {
+					for (IRodinElement child : actions) {
+						IAction action = (IAction) child;
 						formString = formString
 								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 						formString = formString
-								+ UIUtils.makeHyperlink(actions[j]
-										.getHandleIdentifier(), actions[j]
-										.getElementName())
+								+ UIUtils.makeHyperlink(action
+										.getHandleIdentifier(), action
+										.getLabel(new NullProgressMonitor()))
 								+ ": "
-								+ UIUtils
-										.XMLWrapUp(((IAction) actions[j])
-												.getAssignmentString());
+								+ UIUtils.XMLWrapUp(action
+										.getAssignmentString());
 						formString = formString + "</li>";
 					}
 					formString = formString
@@ -315,7 +324,8 @@ public class ProofInformationPage extends Page implements
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
 	public void proofStateChanged(final IProofStateDelta delta) {
-		if (scrolledForm.getContent().isDisposed()) return;
+		if (scrolledForm.getContent().isDisposed())
+			return;
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -328,8 +338,7 @@ public class ProofInformationPage extends Page implements
 							setFormText(prSequent);
 							scrolledForm.reflow(true);
 						}
-					}
-					else {
+					} else {
 						clearFormText();
 					}
 				}
