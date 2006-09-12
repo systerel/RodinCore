@@ -1,11 +1,14 @@
 package org.eventb.internal.ui.projectexplorer.actions;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -17,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -25,38 +29,58 @@ import org.rodinp.core.RodinDBException;
 public class Delete implements IViewActionDelegate {
 
 	private ISelection selection;
+
 	private IWorkbenchPart part;
-	
+
 	public Delete() {
 		super();
 	}
 
 	public void run(IAction action) {
 		if (!(selection.isEmpty())) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			Object[] slist = ssel.toArray();
 
-			for (int i = 0; i < slist.length; i++) {
-				UIUtils.debugProjectExplorer(slist[i].toString()
-						+ " : " + slist[i].getClass().toString());
-				if (slist[i] instanceof IRodinProject) {
-					IRodinProject rodinProject = (IRodinProject) slist[i];
+			// Putting the selection into a set which does not contains any pair
+			// of parent and child
+			Collection<IRodinElement> set = new ArrayList<IRodinElement>();
+
+			IStructuredSelection ssel = (IStructuredSelection) selection;
+
+			for (Iterator it = ssel.iterator(); it.hasNext();) {
+				Object obj = it.next();
+				// Ignore element which is not Rodin Element
+				if (!(obj instanceof IRodinElement))
+					continue;
+				else
+					set = UIUtils.addToTreeSet(set, (IRodinElement) obj);
+			}
+
+			int answer = YesToAllMessageDialog.YES;
+			for (IRodinElement element : set) {
+				if (element instanceof IRodinProject) {
+					IRodinProject rodinProject = (IRodinProject) element;
 					// Confirmation dialog
-					boolean answer = MessageDialog.openQuestion(
-							part.getSite().getShell(),
-							"Confirm Project Delete",
-							"Are you sure you want to delete project '"
-									+ rodinProject.getElementName()
-									+ "' ?");
-					if (answer) {
+					if (answer != YesToAllMessageDialog.YES_TO_ALL) {
+						answer = YesToAllMessageDialog
+								.openYesNoToAllQuestion(part.getSite()
+										.getShell(), "Confirm Project Delete",
+										"Are you sure you want to delete project '"
+												+ rodinProject.getElementName()
+												+ "' ?");
+						UIUtils.debugProjectExplorer("Answer: " + answer);
+					}
+					if (answer == YesToAllMessageDialog.NO_TO_ALL)
+						break;
+
+					if (answer != YesToAllMessageDialog.NO) {
 						IProject project = rodinProject.getProject();
 
 						try {
-							IRodinElement[] files = rodinProject
-									.getChildren();
-							for (int j = 0; j < files.length; j++) {
-								if (files[j] instanceof IRodinFile)
-									closeOpenedEditor((IRodinFile) files[j]);
+							// Close all the open file which is the children of
+							// this project
+							IRodinElement[] files = rodinProject.getChildren();
+							for (IRodinElement file : files) {
+								if (file instanceof IRodinFile)
+									closeOpenedEditor((IRodinFile) file);
 							}
 
 							project.delete(true, true, null);
@@ -70,17 +94,25 @@ public class Delete implements IViewActionDelegate {
 					}
 				}
 
-				else if (slist[i] instanceof IRodinFile) {
-					boolean answer = MessageDialog.openQuestion(
-							part.getSite().getShell(),
-							"Confirm File Delete",
-							"Are you sure you want to delete file '"
-									+ ((IRodinFile) slist[i])
-											.getElementName() + "' ?");
-					if (answer) {
+				else if (element instanceof IRodinFile) {
+					if (answer != YesToAllMessageDialog.YES_TO_ALL) {
+						answer = YesToAllMessageDialog.openYesNoToAllQuestion(
+								part.getSite().getShell(),
+								"Confirm File Delete",
+								"Are you sure you want to delete file '"
+										+ ((IRodinFile) element)
+												.getElementName()
+										+ "' in project '"
+										+ element.getParent().getElementName()
+										+ "' ?");
+					}
+					if (answer == YesToAllMessageDialog.NO_TO_ALL)
+						break;
+
+					if (answer != YesToAllMessageDialog.NO) {
 						try {
-							closeOpenedEditor((IRodinFile) slist[i]);
-							((IRodinFile) slist[i]).delete(true,
+							closeOpenedEditor((IRodinFile) element);
+							((IRodinFile) element).delete(true,
 									new NullProgressMonitor());
 						} catch (PartInitException e) {
 							e.printStackTrace();
@@ -90,10 +122,9 @@ public class Delete implements IViewActionDelegate {
 					}
 				}
 			}
-			// viewer.refresh();
+
 		}
 	}
-	
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.selection = selection;
@@ -125,5 +156,5 @@ public class Delete implements IViewActionDelegate {
 	public void init(IViewPart view) {
 		part = view;
 	}
-	
+
 }

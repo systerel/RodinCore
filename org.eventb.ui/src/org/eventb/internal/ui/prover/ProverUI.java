@@ -76,7 +76,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 	// The associated Proof Information page
 	private ProofInformationPage fProofInformationPage;
-	
+
 	// The associated Search Hypothesis
 	private SearchHypothesisPage fSearchHypothesisPage;
 
@@ -214,7 +214,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			}
 			return fProofInformationPage;
 		}
-		
+
 		if (ISearchHypothesisPage.class.equals(required)) {
 			if (fSearchHypothesisPage == null) {
 				fSearchHypothesisPage = new SearchHypothesisPage(this);
@@ -383,9 +383,17 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 */
 	@Override
 	public void setFocus() {
-//		if (userSupport.isOutOfDate()) {
-//			updateUserSupport();
-//		}
+		// if (userSupport.isOutOfDate()) {
+		// updateUserSupport();
+		// }
+		if (userSupport.getCurrentPO().isUninitialised())
+			try {
+				userSupport.setCurrentPO(userSupport.getCurrentPO()
+						.getPRSequent());
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		syncObligationExplorer();
 		super.setFocus();
 		// UIUtils.debugProverUI("Focus");
@@ -481,32 +489,34 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			public void run() {
 				if (saving)
 					return; // Ignore delta while saving
-//				if (userSupport.isOutOfDate()) {
-//					IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-//					if (activePage.isPartVisible(ProverUI.this))
-//						updateUserSupport();
-//				}
+					// if (userSupport.isOutOfDate()) {
+					// IWorkbenchPage activePage =
+					// EventBUIPlugin.getActivePage();
+					// if (activePage.isPartVisible(ProverUI.this))
+					// updateUserSupport();
+					// }
 
 				ProverUI.this.editorDirtyStateChanged();
 				// syncObligationExplorer();
 			}
 		});
 	}
-//
-//	private void updateUserSupport() {		
-//		MessageDialog
-//				.openInformation(this.getActivePageInstance().getSite()
-//						.getShell(), "Out of Date",
-//						"The Proof Obligation is Out of Date and need to be reloeaded.");
-//		try {
-//			doSave(null);
-//			UserSupportManager.setInput(userSupport, this.getRodinInput());
-//		} catch (RodinDBException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return;
-//
-//	}
+
+	//
+	// private void updateUserSupport() {
+	// MessageDialog
+	// .openInformation(this.getActivePageInstance().getSite()
+	// .getShell(), "Out of Date",
+	// "The Proof Obligation is Out of Date and need to be reloeaded.");
+	// try {
+	// doSave(null);
+	// UserSupportManager.setInput(userSupport, this.getRodinInput());
+	// } catch (RodinDBException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return;
+	//
+	// }
 
 }

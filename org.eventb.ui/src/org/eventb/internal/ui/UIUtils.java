@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -800,4 +801,30 @@ public class UIUtils {
 		}
 		return null;
 	}
+
+	public static Collection<IRodinElement> addToTreeSet(
+			Collection<IRodinElement> set, IRodinElement element) {
+		Collection<IRodinElement> delete = new ArrayList<IRodinElement>();
+		for (IRodinElement member : set) {
+			if (isInSubTree(member, element))
+				return set;
+			else if (isInSubTree(element, member)) {
+				delete.add(member);
+			}
+		}
+		set.removeAll(delete);
+		set.add(element);
+		return set;
+	}
+
+	private static boolean isInSubTree(IRodinElement member,
+			IRodinElement element) {
+		while (element != null) {
+			if (element == member)
+				return true;
+			element = element.getParent();
+		}
+		return false;
+	}
+
 }
