@@ -386,9 +386,10 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// if (userSupport.isOutOfDate()) {
 		// updateUserSupport();
 		// }
-		if (userSupport.getCurrentPO().isUninitialised())
+		ProofState currentPO = userSupport.getCurrentPO();
+		if (currentPO != null && currentPO.isUninitialised())
 			try {
-				userSupport.setCurrentPO(userSupport.getCurrentPO()
+				userSupport.setCurrentPO(currentPO
 						.getPRSequent());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
