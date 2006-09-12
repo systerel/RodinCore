@@ -151,9 +151,6 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setContentProvider(new EventContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new RodinElementSorter());
-		CommentToolTip handler = new CommentToolTip(this.getControl()
-				.getShell());
-		handler.activateHoverHelp(this.getControl());
 	}
 
 	/*

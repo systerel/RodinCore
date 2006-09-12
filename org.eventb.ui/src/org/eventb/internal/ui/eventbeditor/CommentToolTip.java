@@ -103,8 +103,6 @@ public class CommentToolTip {
 							text.setText(element
 									.getComment(new NullProgressMonitor()));
 						} catch (RodinDBException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 							text.setText("");
 						}
 						text.setSize(400, 200);
@@ -188,8 +186,6 @@ public class CommentToolTip {
 			try {
 				original = element.getComment(new NullProgressMonitor());
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 				original = "";
 			}
 		}
@@ -237,8 +233,6 @@ public class CommentToolTip {
 		try {
 			comments = element.getComment(new NullProgressMonitor());
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			comments = "";
 		}
 		int i = comments.indexOf('.');

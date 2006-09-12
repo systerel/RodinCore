@@ -247,6 +247,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 				}
 			}
 		});
+		
+		CommentToolTip handler = new CommentToolTip(this.getControl()
+				.getShell());
+		handler.activateHoverHelp(this.getControl());
+
 	}
 
 	public void selectItem(TreeItem item, int column) {
