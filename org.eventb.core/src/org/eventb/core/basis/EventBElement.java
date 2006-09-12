@@ -9,12 +9,6 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IAssignmentElement;
-import org.eventb.core.ICommentedElement;
-import org.eventb.core.IExpressionElement;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -28,9 +22,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author htson
  * 
  */
-public abstract class EventBElement extends InternalElement implements
-		IAssignmentElement, ILabeledElement, ICommentedElement,
-		IPredicateElement, IExpressionElement, IIdentifierElement {
+public abstract class EventBElement extends InternalElement {
 
 	public EventBElement(String name, IRodinElement parent) {
 		super(name, parent);
