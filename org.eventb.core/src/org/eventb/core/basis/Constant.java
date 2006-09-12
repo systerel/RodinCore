@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Constant extends IdentifierElement implements IConstant {
+public class Constant extends EventBElement implements IConstant {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

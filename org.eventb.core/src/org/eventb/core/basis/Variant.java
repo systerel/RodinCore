@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Laurent Voisin
  */
-public class Variant extends ExpressionElement implements IVariant {
+public class Variant extends EventBElement implements IVariant {
 
 	public Variant(String name, IRodinElement parent) {
 		super(name, parent);

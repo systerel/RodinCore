@@ -26,7 +26,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IInvariant extends ILabeledElement, IPredicateElement {
+public interface IInvariant extends ICommentedElement, ILabeledElement, IPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant"; //$NON-NLS-1$
 

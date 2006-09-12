@@ -24,6 +24,7 @@ class CommonAttributesUtil {
 	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
 	public static String BAG_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".bag";
+	public static String COMMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".comment";
 	
 	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
 		return element.getStringAttribute(LABEL_ATTRIBUTE, monitor);
@@ -48,6 +49,14 @@ class CommonAttributesUtil {
 	
 	public static void setBag(InternalElement element, String bag, IProgressMonitor monitor) throws RodinDBException {
 		element.setStringAttribute(BAG_ATTRIBUTE, bag, monitor);
+	}
+
+	public static String getComment(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
+		return element.getStringAttribute(COMMENT_ATTRIBUTE, monitor);
+	}
+	
+	public static void setComment(InternalElement element, String label, IProgressMonitor monitor) throws RodinDBException {
+		element.setStringAttribute(COMMENT_ATTRIBUTE, label, monitor);
 	}
 
 }

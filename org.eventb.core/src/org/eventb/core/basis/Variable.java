@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Variable extends IdentifierElement implements IVariable {
+public class Variable extends EventBElement implements IVariable {
 	
 	public Variable(String name, IRodinElement parent) {
 		super(name, parent);

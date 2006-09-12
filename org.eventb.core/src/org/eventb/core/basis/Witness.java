@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Laurent Voisin
  */
-public class Witness extends PredicateElement implements IWitness {
+public class Witness extends EventBElement implements IWitness {
 
 	public Witness(String name, IRodinElement parent) {
 		super(name, parent);

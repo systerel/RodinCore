@@ -26,7 +26,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IAction extends ILabeledElement, IAssignmentElement {
+public interface IAction extends ICommentedElement, ILabeledElement, IAssignmentElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action"; //$NON-NLS-1$
 

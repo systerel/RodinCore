@@ -27,7 +27,7 @@ package org.eventb.core;
  * 
  * @author Stefan Hallerstede
  */
-public interface IVariant extends IExpressionElement {
+public interface IVariant extends ICommentedElement, IExpressionElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variant"; //$NON-NLS-1$
 

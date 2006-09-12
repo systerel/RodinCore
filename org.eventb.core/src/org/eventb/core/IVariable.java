@@ -25,7 +25,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IVariable extends IIdentifierElement {
+public interface IVariable extends ICommentedElement, IIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variable"; //$NON-NLS-1$
 

@@ -27,7 +27,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IGuard extends ILabeledElement, IPredicateElement {
+public interface IGuard extends ICommentedElement, ILabeledElement, IPredicateElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".guard"; //$NON-NLS-1$
 	

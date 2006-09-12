@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Axiom extends PredicateElement implements IAxiom {
+public class Axiom extends EventBElement implements IAxiom {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

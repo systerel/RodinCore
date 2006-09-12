@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Invariant extends PredicateElement implements IInvariant {
+public class Invariant extends EventBElement implements IInvariant {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

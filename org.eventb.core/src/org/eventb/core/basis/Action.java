@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Action extends AssignmentElement implements IAction {
+public class Action extends EventBElement implements IAction {
 
 	/**
 	 *  Constructor used by the Rodin database. 

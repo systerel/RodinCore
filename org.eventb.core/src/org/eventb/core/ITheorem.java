@@ -27,7 +27,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface ITheorem extends ILabeledElement, IPredicateElement {
+public interface ITheorem extends ICommentedElement, ILabeledElement, IPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".theorem"; //$NON-NLS-1$
 

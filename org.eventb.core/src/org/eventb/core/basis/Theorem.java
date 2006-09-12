@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Theorem extends PredicateElement implements ITheorem {
+public class Theorem extends EventBElement implements ITheorem {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

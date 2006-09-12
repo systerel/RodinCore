@@ -24,7 +24,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface IConstant extends IIdentifierElement {
+public interface IConstant extends ICommentedElement, IIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".constant"; //$NON-NLS-1$
 

@@ -20,7 +20,6 @@ import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B events as an extension of the Rodin database.
@@ -36,7 +35,7 @@ import org.rodinp.core.basis.InternalElement;
  *
  * @author Laurent Voisin
  */
-public class Event extends InternalElement implements IEvent {
+public class Event extends EventBElement implements IEvent {
 	
 	public static String INHERITED_ATTRIBUTE = "inherited";
 	
@@ -100,20 +99,6 @@ public class Event extends InternalElement implements IEvent {
 		Action[] actions = new Action[list.size()];
 		list.toArray(actions);
 		return actions; 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#setLabel(String, IProgressMonitor)
-	 */
-	public void setLabel(String label, IProgressMonitor monitor) throws RodinDBException {
-		CommonAttributesUtil.setLabel(this, label, monitor);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ILabeledElement#getLabel(IProgressMonitor)
-	 */
-	public String getLabel(IProgressMonitor monitor) throws RodinDBException {
-		return CommonAttributesUtil.getLabel(this, monitor);
 	}
 
 	public boolean isInherited(IProgressMonitor monitor) throws RodinDBException {

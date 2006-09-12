@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class CarrierSet extends IdentifierElement implements ICarrierSet {
+public class CarrierSet extends EventBElement implements ICarrierSet {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

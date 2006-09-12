@@ -8,7 +8,6 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -35,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public interface IEvent extends ILabeledElement, IInternalElement {
+public interface IEvent extends ICommentedElement, ILabeledElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event"; //$NON-NLS-1$
 

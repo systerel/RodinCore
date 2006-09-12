@@ -360,6 +360,10 @@
             id="role"
             kind="string"
             name="%eventBpoSourceRoleAttribute"/>
+      <attributeType
+            id="comment"
+            kind="string"
+            name="%eventBCommentAttribute"/>
    </extension>
 
 </plugin>

@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  */
-public class Guard extends PredicateElement implements IGuard {
+public class Guard extends EventBElement implements IGuard {
 	
 	/**
 	 *  Constructor used by the Rodin database. 

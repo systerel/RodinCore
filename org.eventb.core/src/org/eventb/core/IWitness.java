@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Laurent Voisin
  */
-public interface IWitness extends ILabeledElement, IPredicateElement {
+public interface IWitness extends ICommentedElement, ILabeledElement, IPredicateElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".witness"; //$NON-NLS-1$
 	

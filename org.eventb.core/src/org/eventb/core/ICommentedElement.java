@@ -1,0 +1,55 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
+package org.eventb.core;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
+
+/**
+ * Common protocol for elements that carry a comment. A comment is a text string
+ * that the user associates with the element and give more information about the
+ * element.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @author htson
+ * 
+ */
+public interface ICommentedElement extends IInternalElement {
+
+	/**
+	 * Sets the comment contained in this element.
+	 * 
+	 * @param comment
+	 *            the comment for the element
+	 * @param monitor
+	 *            the progress monitor
+	 * 
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setComment(String comment, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Returns the comment contained in this element.
+	 * 
+	 * @param monitor
+	 *            the progress monitor
+	 * 
+	 * @return the identifier of this element as a string
+	 * 
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getComment(IProgressMonitor monitor) throws RodinDBException;
+
+}

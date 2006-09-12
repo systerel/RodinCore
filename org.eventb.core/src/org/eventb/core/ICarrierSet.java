@@ -24,7 +24,7 @@ package org.eventb.core;
  * 
  * @author Laurent Voisin
  */
-public interface ICarrierSet extends IIdentifierElement {
+public interface ICarrierSet extends ICommentedElement, IIdentifierElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".carrierSet"; //$NON-NLS-1$
 
