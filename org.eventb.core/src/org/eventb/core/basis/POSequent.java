@@ -60,6 +60,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 		return getElementName();
 	}
 	
+	@Deprecated
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOIdentifier.ELEMENT_TYPE);
 		IPOIdentifier[] identifiers = new IPOIdentifier[list.size()];
