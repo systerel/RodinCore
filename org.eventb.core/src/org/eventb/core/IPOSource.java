@@ -8,7 +8,9 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,6 +24,11 @@ import org.rodinp.core.RodinDBException;
 public interface IPOSource extends IInternalElement, ITraceableElement {
 	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSource"; //$NON-NLS-1$
 	
-	String getSourceRole();
+	String getSourceRole(IProgressMonitor monitor) throws RodinDBException;
+	
+	void setSourceRole(String role, IProgressMonitor monitor) throws RodinDBException;
+	
 	String getSourceHandleIdentifier() throws RodinDBException;
+	
+	IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException;
 }
