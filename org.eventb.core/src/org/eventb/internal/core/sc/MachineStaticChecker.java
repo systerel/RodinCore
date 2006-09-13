@@ -48,34 +48,44 @@ public class MachineStaticChecker extends StaticChecker {
 	 */
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
-
-		if (machineModules == null) {
-			
-			machineModules = manager.getProcessorModules(MACHINE_PROCESSOR);
-			
-		}
 		
 		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.create(file).getMutableCopy();
 		IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
 		
-		IRodinProject project = (IRodinProject) scMachineFile.getParent();
-		project.createRodinFile(scMachineFile.getElementName(), true, null);
+		int size = machineFile.getChildren().length;
+		
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_runningMSC, file.getName()), size);
 
-		IStateRepository repository = createRepository(machineFile, monitor);
+			if (machineModules == null) {
+			
+				machineModules = manager.getProcessorModules(MACHINE_PROCESSOR);
+			
+			}
 		
-		runProcessorModules(
-				machineFile, 
-				scMachineFile,
-				machineModules, 
-				repository,
-				monitor);
+			IRodinProject project = (IRodinProject) scMachineFile.getParent();
+			project.createRodinFile(scMachineFile.getElementName(), true, null);
+
+			IStateRepository repository = createRepository(machineFile, monitor);
 		
-		scMachineFile.save(monitor, true);
+			runProcessorModules(
+					machineFile, 
+					scMachineFile,
+					machineModules, 
+					repository,
+					monitor);
 		
-		// TODO delta checking
-		// return repository.targetHasChanged();
+			scMachineFile.save(monitor, true);
 		
-		return true;
+			// TODO delta checking
+			// return repository.targetHasChanged();
+		
+			return true;
+			
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -83,47 +93,64 @@ public class MachineStaticChecker extends StaticChecker {
 	 */
 	public void clean(IFile file, IProgressMonitor monitor)
 			throws CoreException {
-		file.delete(true, monitor);
+		
+		try {
+		
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
-		IMachineFile source = (IMachineFile) RodinCore.create(file);
-		ISCMachineFile target = source.getSCMachineFile();
-		ISeesContext[] seen = source.getSeesClauses();
-		IRefinesMachine abstractMachine = source.getRefinesClause();
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
+		
+			IMachineFile source = (IMachineFile) RodinCore.create(file);
+			ISCMachineFile target = source.getSCMachineFile();
+			ISeesContext[] seen = source.getSeesClauses();
+			IRefinesMachine abstractMachine = source.getRefinesClause();
 
-		IPath sourcePath = source.getPath();
-		IPath targetPath = target.getPath();
+			IPath sourcePath = source.getPath();
+			IPath targetPath = target.getPath();
 		
-		graph.addNode(targetPath, MACHINE_SC_TOOL_ID);
-		graph.putToolDependency(sourcePath, targetPath, MACHINE_SC_TOOL_ID, true);	
+			graph.addNode(targetPath, MACHINE_SC_TOOL_ID);
+			graph.putToolDependency(sourcePath, targetPath, MACHINE_SC_TOOL_ID, true);	
 		
-		if (seen.length != 0) {
-			for (ISeesContext seesContext : seen) {
-				IPath seenPath = seesContext.getSeenSCContext().getPath();
+			if (seen.length != 0) {
+				for (ISeesContext seesContext : seen) {
+					IPath seenPath = seesContext.getSeenSCContext().getPath();
+					graph.putUserDependency(
+							sourcePath, 
+							seenPath, 
+							targetPath, 
+							MACHINE_SC_SEES_ID, true);
+				}
+			}
+		
+			if (abstractMachine != null) {
+				IPath abstractPath = abstractMachine.getAbstractSCMachine().getPath();
 				graph.putUserDependency(
 						sourcePath, 
-						seenPath, 
+						abstractPath, 
 						targetPath, 
-						MACHINE_SC_SEES_ID, true);
+						MACHINE_SC_REFINES_ID, true);
 			}
-		}
 		
-		if (abstractMachine != null) {
-			IPath abstractPath = abstractMachine.getAbstractSCMachine().getPath();
-			graph.putUserDependency(
-					sourcePath, 
-					abstractPath, 
-					targetPath, 
-					MACHINE_SC_REFINES_ID, true);
+			graph.updateGraph();
+			
+		} finally {
+			monitor.done();
 		}
-		
-		graph.updateGraph();
 
 	}
 

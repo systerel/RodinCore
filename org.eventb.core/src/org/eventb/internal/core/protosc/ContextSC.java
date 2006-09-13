@@ -102,7 +102,7 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		file.delete(true, monitor);
 	}
 	
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		// the prototype does not have refinements
 
 		IContextFile contextIn = (IContextFile) RodinCore.create(file);

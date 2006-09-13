@@ -58,4 +58,9 @@ public class ContextTheoremModule extends TheoremModule {
 		
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		monitor.worked(1);
+	}
+
 }

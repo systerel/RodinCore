@@ -326,6 +326,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			if (symbolInfo != null)
 				symbolInfo.setImmutable();
 			
+			makeProgress(monitor);
+			
 		}
 		
 		endAcceptorModules(modules, repository, monitor);
@@ -347,5 +349,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	private void removeParsedState(IStateRepository repository) throws CoreException {
 		repository.removeState(IParsedFormula.STATE_TYPE);
 	}
+	
+	protected abstract void makeProgress(IProgressMonitor monitor);
 	
 }

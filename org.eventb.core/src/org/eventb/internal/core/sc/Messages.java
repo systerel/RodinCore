@@ -30,6 +30,12 @@ public final class Messages {
 	public static String symtab_ImmutableSymbolViolation;
 	public static String symtab_StackUnderflow;
 	
+	// build
+	public static String build_cleaning;
+	public static String build_runningMSC;
+	public static String build_runningCSC;
+	public static String build_extracting;
+	
     // error messages of the static checker addressed to the user
 	
 	public static String scuser_OnlyOneEventRefinesClauseProblem;

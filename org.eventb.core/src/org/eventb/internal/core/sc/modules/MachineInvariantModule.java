@@ -111,4 +111,9 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 		}
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		monitor.worked(1);
+	}
+
 }

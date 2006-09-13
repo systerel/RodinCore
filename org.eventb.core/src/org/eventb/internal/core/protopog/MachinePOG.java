@@ -97,7 +97,7 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		file.delete(true, monitor);
 	}
 
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
 		ISCMachineFile in = (ISCMachineFile) RodinCore.create(file);
 		IPOFile target = in.getMachineFile().getPOFile();

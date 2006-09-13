@@ -48,33 +48,43 @@ public class ContextStaticChecker extends StaticChecker {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
-		if (contextModules == null) {
-			
-			contextModules = manager.getProcessorModules(CONTEXT_PROCESSOR);
-			
-		}
-		
 		ISCContextFile scContextFile = (ISCContextFile) RodinCore.create(file).getMutableCopy();
 		IContextFile contextFile = (IContextFile) scContextFile.getContextFile().getSnapshot();
 		
-		IRodinProject project = (IRodinProject) scContextFile.getParent();
-		project.createRodinFile(scContextFile.getElementName(), true, null);
+		int size = contextFile.getChildren().length;
+		
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_runningMSC, file.getName()), size);
 
-		IStateRepository repository = createRepository(contextFile, monitor);
+			if (contextModules == null) {
+			
+				contextModules = manager.getProcessorModules(CONTEXT_PROCESSOR);
+			
+			}
 		
-		runProcessorModules(
-				contextFile, 
-				scContextFile,
-				contextModules, 
-				repository,
-				monitor);
+			IRodinProject project = (IRodinProject) scContextFile.getParent();
+			project.createRodinFile(scContextFile.getElementName(), true, null);
+
+			IStateRepository repository = createRepository(contextFile, monitor);
 		
-		scContextFile.save(monitor, true);
+			runProcessorModules(
+					contextFile, 
+					scContextFile,
+					contextModules, 
+					repository,
+					monitor);
 		
-		// TODO delta checking
-		// return repository.targetHasChanged();
+			scContextFile.save(monitor, true);
 		
-		return true;
+			// TODO delta checking
+			// return repository.targetHasChanged();
+		
+			return true;
+			
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -82,31 +92,49 @@ public class ContextStaticChecker extends StaticChecker {
 	 */
 	public void clean(IFile file, IProgressMonitor monitor)
 			throws CoreException {
-		file.delete(true, monitor);
-	}
-	
-	public void extract(IFile file, IGraph graph) throws CoreException {
 		
-		IContextFile source = (IContextFile) RodinCore.create(file);
-		ISCContextFile target = source.getSCContextFile();
-		
-		IPath sourcePath = source.getPath();
-		IPath targetPath = target.getPath();
-		
-		graph.addNode(targetPath, CONTEXT_SC_TOOL_ID);
-		graph.putToolDependency(sourcePath, targetPath, CONTEXT_SC_TOOL_ID, true);
-		
-		IExtendsContext[] extendsContexts = source.getExtendsClauses();
-		for(IExtendsContext extendsContext : extendsContexts) {
-			graph.putUserDependency(
-					source.getPath(), 
-					extendsContext.getAbstractSCContext().getPath(), 
-					target.getPath(), 
-					CONTEXT_SC_EXTENDS_ID, 
-					false);
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
 		}
 		
-		graph.updateGraph();
+	}
+	
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
+		
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
+		
+			IContextFile source = (IContextFile) RodinCore.create(file);
+			ISCContextFile target = source.getSCContextFile();
+		
+			IPath sourcePath = source.getPath();
+			IPath targetPath = target.getPath();
+		
+			graph.addNode(targetPath, CONTEXT_SC_TOOL_ID);
+			graph.putToolDependency(sourcePath, targetPath, CONTEXT_SC_TOOL_ID, true);
+		
+			IExtendsContext[] extendsContexts = source.getExtendsClauses();
+			for(IExtendsContext extendsContext : extendsContexts) {
+				graph.putUserDependency(
+						source.getPath(), 
+						extendsContext.getAbstractSCContext().getPath(), 
+						target.getPath(), 
+						CONTEXT_SC_EXTENDS_ID, 
+						false);
+			}
+		
+			graph.updateGraph();
+			
+		} finally {
+			monitor.done();
+		}
 
 	}
 

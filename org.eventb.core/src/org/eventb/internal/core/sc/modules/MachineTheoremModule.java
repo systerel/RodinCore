@@ -74,4 +74,9 @@ public class MachineTheoremModule extends TheoremModule {
 		
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		monitor.worked(1);
+	}
+
 }

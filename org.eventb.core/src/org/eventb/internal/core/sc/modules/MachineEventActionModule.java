@@ -93,4 +93,9 @@ public class MachineEventActionModule extends AssignmentModule {
 		}
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		// no progress inside event
+	}
+
 }

@@ -129,6 +129,8 @@ public abstract class IdentifierModule extends ProcessorModule {
 				continue;
 				
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
+			
+			monitor.worked(1);
 				
 		}
 		

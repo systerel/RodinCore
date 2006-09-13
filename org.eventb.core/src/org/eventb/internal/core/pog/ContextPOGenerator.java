@@ -56,7 +56,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		ISCContextFile source = (ISCContextFile) RodinCore.create(file);
 		IPOFile target = source.getContextFile().getPOFile();
 		

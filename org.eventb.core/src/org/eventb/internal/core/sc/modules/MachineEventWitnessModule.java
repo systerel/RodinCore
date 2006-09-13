@@ -265,4 +265,9 @@ public class MachineEventWitnessModule extends PredicateModule {
 		factory = null;
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		// no progress inside event
+	}
+
 }

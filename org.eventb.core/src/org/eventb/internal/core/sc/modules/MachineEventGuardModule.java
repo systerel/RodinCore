@@ -179,4 +179,9 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		refinedEventTable = null;
 	}
 
+	@Override
+	protected void makeProgress(IProgressMonitor monitor) {
+		// no progress inside event
+	}
+
 }

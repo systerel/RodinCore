@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,7 +23,6 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.internal.core.protosc.ContextSC;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -42,56 +40,50 @@ import org.rodinp.core.builder.IGraph;
  */
 public class AutoPOM implements IAutomaticTool, IExtractor {
 
-//	private IInterrupt interrupt;
-	private IProgressMonitor monitor;
+	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
 
-	private IPOFile poFile;
-	private IPRFile prFile;
-	
-	
-	public void init(
-			@SuppressWarnings("hiding") IPOFile poFile, 
-			@SuppressWarnings("hiding") IPRFile prFile, 
-			@SuppressWarnings("hiding") IProgressMonitor monitor) {
-		this.monitor = monitor;
-		this.poFile = poFile;
-		this.prFile = prFile;
-	}
-	
-	
-	public boolean run(IFile file, 
-			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
-
-		IPRFile newPRFile = (IPRFile) RodinCore.create(file);
-		IPOFile poIn = newPRFile.getPOFile();
+		IPRFile prFile = (IPRFile) RodinCore.create(file);
+		IPOFile poFile = prFile.getPOFile();
 		
-		if (! poIn.exists()) {
-			ContextSC.makeError("Source PO file does not exist.");
-		}
+		final int size = poFile.getChildren().length;
 		
-		init(poIn, newPRFile, monitor);
-
+		try {
+			
+			monitor.beginTask("Proving " + file.getName(), size);
+		
+//			if (! poFile.exists()) {
+//				ContextSC.makeError("Source PO file does not exist.");
+//			}
+		
+			Map<String, IPRProofTree> oldProofs = getOldProofs(prFile);
+			Map<String, Boolean> newValidity = computeNewValidity(oldProofs, poFile);
+			createFreshPRFile(newValidity,oldProofs, poFile, prFile, monitor);
+		
 		// Create the resulting PR file atomically.
-		RodinCore.run(
-				new IWorkspaceRunnable() {
-					public void run(IProgressMonitor saveMonitor) throws CoreException {
-						Map<String, IPRProofTree> oldProofs = getOldProofs();
-						Map<String, Boolean> newValidity = computeNewValidity(oldProofs);
-						createFreshPRFile(newValidity,oldProofs);
-					}
-				}, monitor);
+//		RodinCore.run(
+//				new IWorkspaceRunnable() {
+//					public void run(IProgressMonitor saveMonitor) throws CoreException {
+//						Map<String, IPRProofTree> oldProofs = getOldProofs();
+//						Map<String, Boolean> newValidity = computeNewValidity(oldProofs);
+//						createFreshPRFile(newValidity,oldProofs);
+//					}
+//				}, monitor);
 		
-		new AutoProver().run(newPRFile);
-		return true;
+			new AutoProver().run(prFile);
+			return true;
+			
+		} finally {
+			monitor.done();
+		}
 	}
 
-	Map<String, IPRProofTree> getOldProofs() throws RodinDBException{
+	Map<String, IPRProofTree> getOldProofs(IPRFile prFile) throws RodinDBException{
 		if (prFile.exists())
 			return prFile.getProofTrees();
 		return new HashMap<String, IPRProofTree>();
 	}
 	
-	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs) throws RodinDBException
+	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs, IPOFile poFile) throws RodinDBException
 	{
 		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
 		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
@@ -120,25 +112,46 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 	
 	
-	public void clean(IFile file, 
-			@SuppressWarnings("hiding") IProgressMonitor monitor) throws CoreException {
-		file.delete(true, monitor);
+	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+		try {
+			
+			monitor.beginTask("Cleaning " + file.getName(), 1);
+			
+			file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
+		
 	}
 
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {	
 		
-		IPOFile in = (IPOFile) RodinCore.create(file);
-		IPRFile target = in.getPRFile();
+		try {
+			
+			monitor.beginTask("Extracting " + file.getName(), 1);
 		
-		IPath inPath = in.getPath();
-		IPath targetPath = target.getPath();
+			IPOFile in = (IPOFile) RodinCore.create(file);
+			IPRFile target = in.getPRFile();
 		
-		graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
-		graph.updateGraph();
+			IPath inPath = in.getPath();
+			IPath targetPath = target.getPath();
+		
+			graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
+			graph.putToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
+			graph.updateGraph();
+			
+		} finally {
+			monitor.done();
+		}
 	}
 
-	void createFreshPRFile(Map<String, Boolean> newValidity, Map<String, IPRProofTree> oldProofs) throws CoreException {
+	void createFreshPRFile(
+			Map<String, Boolean> newValidity, 
+			Map<String, IPRProofTree> oldProofs, 
+			IPOFile poFile,
+			IPRFile prFile, 
+			IProgressMonitor monitor) throws CoreException {
 
 		if (prFile.exists()) 
 		{
@@ -156,13 +169,18 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			project.createRodinFile(prFile.getElementName(), true, null);
 		}
 		
-		copyGlobalInfo();
-		copySequents(newValidity,oldProofs);
+		copyGlobalInfo(poFile, prFile, monitor);
+		copySequents(newValidity,oldProofs, poFile, prFile, monitor);
 		
 		prFile.save(monitor, true);
 	}
 	
-	private void copySequents(Map<String, Boolean> newValidity, Map<String, IPRProofTree> oldProofs) throws RodinDBException{
+	private void copySequents(
+			Map<String, Boolean> newValidity, 
+			Map<String, IPRProofTree> oldProofs,
+			IPOFile poFile,
+			IPRFile prFile,
+			IProgressMonitor monitor) throws RodinDBException{
 		IPOSequent[] poSequents = poFile.getSequents();
 		
 		for (IPOSequent poSeq : poSequents)
@@ -191,7 +209,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-	private void copyGlobalInfo() throws RodinDBException{
+	private void copyGlobalInfo(IPOFile poFile, IPRFile prFile, IProgressMonitor monitor) throws RodinDBException{
 		
 		IRodinElement[] children = ((RodinElement)poFile).getChildren();
 		for (IRodinElement child : children){

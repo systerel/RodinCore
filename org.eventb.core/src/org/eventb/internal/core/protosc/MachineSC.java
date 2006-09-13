@@ -119,7 +119,7 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 
 	}
 	
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		IMachineFile machineIn = (IMachineFile) RodinCore.create(file);
 		ISCMachineFile target = machineIn.getSCMachineFile();
 		ISCContextFile seen = getSeenContext(machineIn);

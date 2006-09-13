@@ -102,7 +102,7 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		file.delete(true, monitor);
 	}
 
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
 		ISCContextFile in = (ISCContextFile) RodinCore.create(file);
 		IPOFile target = in.getContextFile().getPOFile();
