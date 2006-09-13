@@ -19,6 +19,7 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
@@ -42,6 +43,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -72,6 +74,8 @@ public class MachineRefinesModule extends ProcessorModule {
 		if (scMachineFile == null)
 			return;
 		
+		saveRefinesMachine(target, monitor);
+		
 		IIdentifierSymbolTable abstractIdentifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		
@@ -84,6 +88,13 @@ public class MachineRefinesModule extends ProcessorModule {
 				repository.getFormulaFactory(), 
 				monitor);
 		
+	}
+
+	private void saveRefinesMachine(IInternalParent target, IProgressMonitor monitor) throws RodinDBException {
+		ISCRefinesMachine refinesMachine =
+			(ISCRefinesMachine) target.createInternalElement(
+					ISCRefinesMachine.ELEMENT_TYPE, "REF", null, monitor);
+		refinesMachine.setAbstractSCMachine(scMachineFile);
 	}
 	
 	/**
