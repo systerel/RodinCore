@@ -260,17 +260,17 @@ public class EventBImage {
 				// overlay = comment + error 
 				String key = pluginID + ":" + path;
 				
-				String overlay;
+				String overlay = "0";
 				if (element instanceof ICommentedElement) {
 					ICommentedElement commentedElement = (ICommentedElement) element;
 					try {
-						commentedElement.getComment(new NullProgressMonitor());
-						overlay = "1";
+						String comment = commentedElement.getComment(new NullProgressMonitor());
+						if (!comment.equals("")) overlay = "1";
+						System.out.println(overlay); 
 					} catch (RodinDBException e) {
-						overlay = "0";
+						// Do nothing
 					}
 				}
-				else overlay = "0";
 				key += ":" + overlay;
 				
 				Image image = images.get(key);

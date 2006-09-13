@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -27,12 +28,15 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class PrettyPrintPage extends FormPage {
+public class PrettyPrintPage extends FormPage implements
+		IElementChangedListener {
 
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = "Pretty Print"; //$NON-NLS-1$
@@ -47,12 +51,7 @@ public class PrettyPrintPage extends FormPage {
 
 	public PrettyPrintPage(FormEditor editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE);
-	}
-
-	@Override
-	public void dispose() {
-		formText.dispose();
-		super.dispose();
+		((EventBEditor) editor).addElementChangedListener(this);
 	}
 
 	/*
@@ -63,7 +62,7 @@ public class PrettyPrintPage extends FormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		form = managedForm.getForm();
-		form.setText(PAGE_TITLE); //$NON-NLS-1$
+		form.setText(PAGE_TITLE);
 		Composite body = form.getBody();
 		body.setLayout(new FillLayout());
 
@@ -91,16 +90,15 @@ public class PrettyPrintPage extends FormPage {
 		formText = new EventBFormText(widget);
 
 		setFormText(new NullProgressMonitor());
+
 	}
 
 	String formString;
 
 	private void setFormText(IProgressMonitor monitor) {
 		formString = "<form>";
-
 		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
 				.getRodinInput();
-
 		if (rodinFile instanceof IMachineFile) {
 			addMachineName(rodinFile);
 			addMachineDependencies(rodinFile, monitor);
@@ -111,6 +109,7 @@ public class PrettyPrintPage extends FormPage {
 		} else if (rodinFile instanceof IContextFile) {
 
 		}
+		formString += "<li style=\"text\" value=\"\"></li>";
 		formString += "<li style=\"text\" value=\"\"><b>END</b></li>";
 		formString += "</form>";
 
@@ -140,6 +139,7 @@ public class PrettyPrintPage extends FormPage {
 				if (refines.length != 0) {
 					IRefinesMachine refine = (IRefinesMachine) refines[0];
 					String name = refine.getAbstractMachineName();
+					formString += "<li style=\"text\" value=\"\"></li>";
 					formString += "<li style=\"text\" value=\"\"><b>REFINES</b> ";
 					formString += UIUtils.makeHyperlink(name, name);
 					formString += "</li>";
@@ -162,6 +162,7 @@ public class PrettyPrintPage extends FormPage {
 
 			int length = seeContexts.length;
 			if (length != 0) {
+				formString += "<li style=\"text\" value=\"\"></li>";
 				formString += "<li style=\"text\" value=\"\"><b>SEES</b> ";
 				for (int i = 0; i < length; i++) {
 					try {
@@ -193,6 +194,7 @@ public class PrettyPrintPage extends FormPage {
 			return;
 		}
 		if (vars.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
 			formString += "<li style=\"text\" value=\"\"><b>VARIABLES</b>";
 			formString += "</li>";
 			for (IRodinElement child : vars) {
@@ -227,6 +229,7 @@ public class PrettyPrintPage extends FormPage {
 			return;
 		}
 		if (invs.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
 			formString += "<li style=\"text\" value=\"\"><b>INVARIANTS</b>";
 			formString += "</li>";
 			for (IRodinElement child : invs) {
@@ -262,6 +265,7 @@ public class PrettyPrintPage extends FormPage {
 			return;
 		}
 		if (thms.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
 			formString += "<li style=\"text\" value=\"\"><b>THEOREMS</b>";
 			formString += "</li>";
 			for (IRodinElement child : thms) {
@@ -298,15 +302,22 @@ public class PrettyPrintPage extends FormPage {
 		}
 
 		if (evts.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
 			formString += "<li style=\"text\" value=\"\"><b>EVENTS</b>";
 			formString += "</li>";
 			for (IRodinElement element : evts) {
 				IEvent evt = (IEvent) element;
 				try {
-					formString = formString
-							+ "<li style=\"text\" value=\"\" bindent = \"20\">"
+					formString += "<li style=\"text\" value=\"\"></li>";
+					formString += "<li style=\"text\" value=\"\" bindent = \"20\">"
 							+ UIUtils.makeHyperlink(evt.getHandleIdentifier(),
 									evt.getLabel(monitor)) + "</li>";
+					try {
+						String comment = evt.getComment(monitor);
+						formString += "   /* " + comment + " */";
+					} catch (RodinDBException e) {
+						// Do nothing
+					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -323,32 +334,35 @@ public class PrettyPrintPage extends FormPage {
 					if (lvars.length != 0) {
 						formString = formString
 								+ "<li style=\"text\" value=\"\" bindent = \"40\">";
-						formString = formString + "<b>ANY</b> ";
-						for (int j = 0; j < lvars.length; j++) {
-							IVariable var = (IVariable) lvars[j];
-							if (j == 0) {
-								formString = formString
-										+ UIUtils.makeHyperlink(var
-												.getHandleIdentifier(), var
-												.getIdentifierString());
-							} else
-								formString = formString
-										+ ", "
-										+ UIUtils.makeHyperlink(var
-												.getHandleIdentifier(), var
-												.getIdentifierString());
+						formString = formString + "<b>ANY</b></li>";
+						for (IRodinElement child : lvars) {
+							IVariable var = (IVariable) child;
+							formString += "<li style=\"text\" value=\"\" bindent = \"60\">";
+							try {
+								formString += UIUtils.makeHyperlink(var
+										.getHandleIdentifier(), var
+										.getIdentifierString());
+							} catch (RodinDBException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+							try {
+								String comment = var.getComment(monitor);
+								formString += "   /* " + comment + " */";
+							} catch (RodinDBException e) {
+								// Do nothing
+							}
+							formString += "</li>";
 						}
-						formString = formString + " <b>WHERE</b>";
-						formString = formString + "</li>";
+						formString += "<li style=\"text\" value=\"\" bindent = \"40\"><b>WHERE</b></li>";
 					} else {
 						if (guards.length != 0) {
-							formString = formString
-									+ "<li style=\"text\" value=\"\" bindent = \"40\">";
-							formString = formString + "<b>WHEN</b></li>";
+							formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
+							formString += "<b>WHEN</b></li>";
 						} else {
-							formString = formString
-									+ "<li style=\"text\" value=\"\" bindent = \"40\">";
-							formString = formString + "<b>BEGIN</b></li>";
+							formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
+							formString += "<b>BEGIN</b></li>";
 						}
 
 					}
@@ -363,6 +377,12 @@ public class PrettyPrintPage extends FormPage {
 										.getLabel(new NullProgressMonitor()))
 								+ ": "
 								+ UIUtils.XMLWrapUp(guard.getPredicateString());
+						try {
+							String comment = guard.getComment(monitor);
+							formString += "   /* " + comment + " */";
+						} catch (RodinDBException e) {
+							// Do nothing
+						}
 						formString = formString + "</li>";
 					}
 
@@ -383,6 +403,12 @@ public class PrettyPrintPage extends FormPage {
 								+ ": "
 								+ UIUtils.XMLWrapUp(action
 										.getAssignmentString());
+						try {
+							String comment = action.getComment(monitor);
+							formString += "   /* " + comment + " */";
+						} catch (RodinDBException e) {
+							// Do nothing
+						}
 						formString = formString + "</li>";
 					}
 					formString = formString
@@ -394,6 +420,35 @@ public class PrettyPrintPage extends FormPage {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void dispose() {
+		if (formText != null)
+			formText.dispose();
+		((EventBEditor) this.getEditor()).removeElementChangedListener(this);
+		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		if (form == null)
+			return;
+		if (form.getContent().isDisposed())
+			return;
+
+		Display display = this.getEditorSite().getShell().getDisplay();
+		display.syncExec(new Runnable() {
+
+			public void run() {
+				setFormText(new NullProgressMonitor());
+			}
+
+		});
 	}
 
 }
