@@ -28,8 +28,8 @@ public class CPOTool extends POTool {
 		clean(file, monitor, CPO);
 	}
 
-	public void extract(IFile file, IGraph graph) throws CoreException {
-		extract(file, graph, CPO, SC_ID, runCPO);
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
+		extract(file, graph, CPO, SC_ID, runCPO, monitor);
 	}
 
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {

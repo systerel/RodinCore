@@ -20,9 +20,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
+
+import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 /**
  * @author Stefan Hallerstede
@@ -68,7 +72,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				Node node = state.graph.getNode(resource.getFullPath());
 				if(node == null)
 					break;
-				state.graph.removeNodeFromGraph(node, makeMonitor(new NullProgressMonitor()));
+				state.graph.removeNodeFromGraph(node, makeProgressMonitor(monitor));
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
@@ -135,31 +139,48 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		
-		if (DEBUG) {
-			String kindImage = 
-				kind == FULL_BUILD ? "full" :
-				kind == AUTO_BUILD ? "auto" :
-				kind == INCREMENTAL_BUILD ? "incremental" :
-				"unknown";
-			System.out.println("Starting " + kindImage + " build.");
-		}
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+	
+		try {
 		
-		if (state == null)
-			state = BuildState.getBuildState(getProject(), monitor);
-		if (kind == FULL_BUILD) {
-			fullBuild(monitor);
-		} else {
-			IResourceDelta delta = getDelta(getProject());
-			if (delta == null) {
+			monitor.beginTask(
+					Messages.bind(Messages.build_building, getProject().getName()), 
+					IProgressMonitor.UNKNOWN);
+		
+		
+			if (DEBUG) {
+				String kindImage = 
+					kind == FULL_BUILD ? "full" :
+						kind == AUTO_BUILD ? "auto" :
+							kind == INCREMENTAL_BUILD ? "incremental" :
+								"unknown";
+				System.out.println("Starting " + kindImage + " build.");
+			}
+		
+			if (state == null)
+				state = BuildState.getBuildState(getProject(), monitor);
+			if (kind == FULL_BUILD) {
 				fullBuild(monitor);
 			} else {
-				incrementalBuild(delta, monitor);
+				IResourceDelta delta = getDelta(getProject());
+				if (delta == null) {
+					fullBuild(monitor);
+				} else {
+					incrementalBuild(delta, monitor);
+				}
 			}
+		} finally {
+			monitor.done();
 		}
 		return null;
 	}
 	
-	IProgressMonitor makeMonitor(IProgressMonitor monitor) {
+	IProgressMonitor makeProgressMonitor(IProgressMonitor monitor) {
+		return new SubProgressMonitor(makeBuilderProgressMonitor(monitor), 1);
+	}
+
+	IProgressMonitor makeBuilderProgressMonitor(IProgressMonitor monitor) {
 		return new BuilderProgressMonitor(monitor, this);
 	}
 
@@ -172,7 +193,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
     }
     
 	private void buildGraph(IProgressMonitor monitor) throws CoreException {
-		state.graph.buildGraph(makeMonitor(monitor));
+		state.graph.buildGraph(makeBuilderProgressMonitor(monitor));
 	}
 	
 	/**
@@ -186,7 +207,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	private void cleanGraph(IProgressMonitor monitor) throws CoreException {
 		if (state == null)
 			state = BuildState.getBuildState(getProject(), monitor);
-		state.graph.cleanGraph(makeMonitor(monitor));
+		state.graph.cleanGraph(makeProgressMonitor(monitor), getProject());
 		state.graph = new Graph();
 	}
 	
@@ -211,7 +232,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// So by default we could always implement for the case "changed = true".
 				if (changed)
 					try {
-						state.graph.extractNode(node, makeMonitor(monitor));
+						state.graph.extractNode(node, makeProgressMonitor(monitor));
 					} catch (CoreException e) {
 						Util.log(e, "during extraction after change");
 					}

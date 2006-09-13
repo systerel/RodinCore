@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class BuilderProgressMonitor implements IProgressMonitor {
 
-	private IProgressMonitor monitor;
-	private IncrementalProjectBuilder builder;
+	private final IProgressMonitor monitor;
+	private final IncrementalProjectBuilder builder;
 	
 	public BuilderProgressMonitor(IProgressMonitor monitor, IncrementalProjectBuilder builder) {
 		this.monitor = monitor;

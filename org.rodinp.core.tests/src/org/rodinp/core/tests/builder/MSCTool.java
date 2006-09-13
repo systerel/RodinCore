@@ -35,7 +35,7 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 			file.delete(true, monitor);
 	}
 	
-	public void extract(IFile file, IGraph graph) throws CoreException {
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		ToolTrace.addTrace(MSC, "extract", file);
 		
 		IMachine mch = (IMachine) RodinCore.create(file);

@@ -30,7 +30,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 			file.delete(true, monitor);
 	}
 
-	protected void extract(IFile file, IGraph graph, String name, String ID, boolean runPO) {
+	protected void extract(IFile file, IGraph graph, String name, String ID, boolean runPO, IProgressMonitor monitor) {
 		if (!runPO)
 			return;
 		ToolTrace.addTrace(name, "extract", file);

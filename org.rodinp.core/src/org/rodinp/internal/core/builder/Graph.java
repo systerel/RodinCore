@@ -16,15 +16,18 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
+import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -158,7 +161,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		boolean changed = false;
 		try {
 			FileRunnable runnable = new FileRunnable(tool, file);
-			RodinCore.run(runnable, monitor);
+			RodinCore.run(runnable, new SubProgressMonitor(monitor, 1));
 			changed = runnable.targetHasChanged();
 		} catch (OperationCanceledException e) {
 			throw e;
@@ -192,7 +195,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(extractor == null)
 			return;
 		for(int j = 0; j < extractor.length; j++)
-			extractor[j].extract(node.getFile(), new GraphFacade(handler));
+			extractor[j].extract(node.getFile(), new GraphFacade(handler), new SubProgressMonitor(monitor, 1));
 	}
 
 	public void extractNode(Node node, IProgressMonitor monitor) throws CoreException {
@@ -249,16 +252,28 @@ public class Graph implements Serializable, Iterable<Node> {
 		for(Node n : values)
 			n.done = true;
 		node.markReachable();
-		for(Node n : values) {
-			if(!n.done) {
-				removeNode(n);
-				try {
-					cleanNode(n, monitor);
-				} catch(CoreException e) {
-					if(Graph.DEBUG)
-						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
+		
+		try {
+		
+			monitor.beginTask(
+					Messages.bind(Messages.build_removing, node.getName()), 
+					values.size());
+			
+			for(Node n : values) {
+				if(!n.done) {
+					removeNode(n);
+					try {
+						cleanNode(n, new SubProgressMonitor(monitor, 1));
+					} catch(CoreException e) {
+						if(Graph.DEBUG)
+							System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
+					}
+				} else {
+					monitor.worked(1);
 				}
 			}
+		} finally {
+			monitor.done();
 		}
 		initCaches();
 	}
@@ -272,20 +287,25 @@ public class Graph implements Serializable, Iterable<Node> {
 			tool.clean(node.getFile(), monitor);
 	}
 	
-	public void cleanGraph(IProgressMonitor monitor) throws CoreException {
+	public void cleanGraph(IProgressMonitor monitor, IProject project) throws CoreException {
 		ArrayList<IStatus> vStats = null; // lazy initialized
 		Collection<Node> values = new ArrayList<Node>(nodes.values());
-		for(Node node : values) {
-			try {
-				cleanNode(node, monitor);
-				if(node.isDerived()) 
-					tryRemoveNode(node);
+		try {
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, project.getName()), values.size());
+			for(Node node : values) {
+				try {
+					cleanNode(node, new SubProgressMonitor(monitor, 1));
+					if(node.isDerived()) 
+						tryRemoveNode(node);
 				
-			} catch(CoreException e) {
-				if (vStats == null)
-					vStats= new ArrayList<IStatus>();
-				vStats.add(e.getStatus());
+				} catch(CoreException e) {
+					if (vStats == null)
+						vStats= new ArrayList<IStatus>();
+					vStats.add(e.getStatus());
+				}
 			}
+		} finally {
+			monitor.done();
 		}
 //		for(Node node : values) {
 //			String toolName = node.getProducerId();

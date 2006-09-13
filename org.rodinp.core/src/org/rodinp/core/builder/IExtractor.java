@@ -9,6 +9,7 @@ package org.rodinp.core.builder;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
@@ -35,6 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 public interface IExtractor {
 	
 	// dependency extractor handler
-	public void extract(IFile file, IGraph graph) throws CoreException;
+	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException;
 
 }
