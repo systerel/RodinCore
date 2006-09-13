@@ -21,7 +21,7 @@ public class TestInit extends BasicTest {
 	
 	private static String init = "INITIALISATION";
 
-	public void testEvents_00() throws Exception {
+	public void testInit_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -50,7 +50,7 @@ public class TestInit extends BasicTest {
 		
 	}
 	
-	public void testEvents_01() throws Exception {
+	public void testInit_01() throws Exception {
 		IMachineFile abs = createMachine("abs");
 
 		addVariables(abs, "V1");
@@ -91,6 +91,41 @@ public class TestInit extends BasicTest {
 		sequentHasNoHypotheses(sequent);
 		sequentHasGoal(sequent, typeEnvironment, "2=1");
 		
+	}
+	
+	/*
+	 * Ensures that both abstract and concrete actions of the initialisation are
+	 * applied to the glueing invariant.
+	 */
+	public void testInit_02() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I1"), makeSList("x ∈ ℤ"));
+		addEvent(abs, init, 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x≔0"));
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		abs.save(null, true);
+		runSC(abs);
+		
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "", "abs");
+		addVariables(con, "y");
+		addInvariants(con, makeSList("I1"), makeSList("y = x + 1"));
+		IEvent event = addEvent(con, init,
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("y ≔ 1"));
+		addEventRefines(event, init, init);
+		con.save(null, true);
+		runSC(con);
+		
+		IPOFile po = con.getPOFile();
+		IPOSequent sequent = getSequent(po, init + "/I1/INV");
+		sequentHasNoHypotheses(sequent);
+		sequentHasGoal(sequent, typeEnvironment, "1=0+1");
 	}
 	
 }
