@@ -129,12 +129,27 @@
    <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
    <extension
          point="org.eventb.ui.machinePages">
-      <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.VariablePage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.InvariantPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.TheoremPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.EventPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
+            name="Dependencies"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.VariablePage"
+            name="Variables"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.InvariantPage"
+            name="Invariants"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.TheoremPage"
+            name="Theorems"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.EventPage"
+            name="Events"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
+            name="Synthetic View"/>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
+            name="Pretty Print"/>
    </extension>
    <extension
          point="org.eventb.ui.contextPages">
