@@ -268,7 +268,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(node.isNotDerived())
 			return;
 		IAutomaticTool tool = getManager().getTool(node.getToolId());
-		tool.clean(node.getFile(), monitor);
+		if (tool != null)
+			tool.clean(node.getFile(), monitor);
 	}
 	
 	public void cleanGraph(IProgressMonitor monitor) throws CoreException {

@@ -187,6 +187,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		if (state == null)
 			state = BuildState.getBuildState(getProject(), monitor);
 		state.graph.cleanGraph(makeMonitor(monitor));
+		state.graph = new Graph();
 	}
 	
 	void markNodeDated(IResource resource, boolean changed, IProgressMonitor monitor) {

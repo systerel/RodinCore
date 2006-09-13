@@ -126,7 +126,11 @@ public class ToolManager {
 
 	public IAutomaticTool getTool(String id) {
 		computeToolList();
-		return tools.get(id).getTool();
+		ToolDescription toolDesc = tools.get(id);
+		if (toolDesc == null)
+			return null;
+		else	
+			return toolDesc.getTool();
 	}
 	
 	@SuppressWarnings("unused")
