@@ -1,15 +1,17 @@
 package org.eventb.internal.ui;
 
-import org.eclipse.swt.graphics.Image;
 
 public class ElementUI {
 
-	private Image image;
-
 	private Class clazz;
 
-	public ElementUI(Image image, Class clazz) {
-		this.image = image;
+	private String pluginID;
+	
+	private String path;
+	
+	public ElementUI(String pluginID, String path, Class clazz) {
+		this.pluginID = pluginID;
+		this.path = path;
 		this.clazz = clazz;
 	}
 
@@ -17,8 +19,11 @@ public class ElementUI {
 		return clazz;
 	}
 
-	public Image getImage() {
-		return image;
+	public String getPluginID() {
+		return pluginID;
 	}
 
+	public String getPath() {
+		return path;
+	}
 }

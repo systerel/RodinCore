@@ -13,13 +13,17 @@
 package org.eventb.internal.ui;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.core.ICommentedElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -108,13 +112,15 @@ public class EventBImage {
 
 	public static final String IMG_MACHINE_PATH = "icons/full/obj16/mch_obj.gif";
 
-	public static final String IMG_REFINES_OVERLAY_PATH = "icons/full/ovr16/ref_ovr.gif";
+	public static final String IMG_REFINE_OVERLAY_PATH = "icons/full/ovr16/ref_ovr.gif";
+
+	public static final String IMG_COMMENT_OVERLAY_PATH = "icons/full/ovr16/cmt_ovr.gif";
 
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
 
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
 
-	private static Collection<Image> images = new HashSet<Image>();
+	private static Map<String, Image> images = new HashMap<String, Image>();
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
@@ -207,23 +213,24 @@ public class EventBImage {
 		registry.put(key, desc);
 	}
 
-	public static Image getOverlayIcon(String name) {
-		if (name.equals("IMG_REFINES_MACHINE")) {
-			OverlayIcon icon = new OverlayIcon(
-					getImageDescriptor(IMG_MACHINE_PATH));
-			icon.addTopRight(getImageDescriptor(IMG_REFINES_OVERLAY_PATH));
-			icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
-			Image image = icon.createImage();
-			images.add(image);
-			return image;
-		}
-		return null;
-	}
+//	public static Image getOverlayIcon(String name) {
+//		if (name.equals("IMG_REFINES_MACHINE")) {
+//			OverlayIcon icon = new OverlayIcon(
+//					getImageDescriptor(IMG_MACHINE_PATH));
+//			icon.addTopRight(getImageDescriptor(IMG_REFINE_OVERLAY_PATH));
+//			icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
+//			Image image = icon.createImage();
+////			images.put(image);
+//			return image;
+//		}
+//		return null;
+//	}
 
 	public static void disposeImages() {
-		for (Image image : images) {
+		for (Image image : images.values()) {
 			image.dispose();
 		}
+		images = new HashMap<String, Image>();
 	}
 
 	public static Image getImage(String key) {
@@ -244,8 +251,40 @@ public class EventBImage {
 
 		for (ElementUI elementUI : elementUIs) {
 			Class clazz = elementUI.getElementClass();
-			if (clazz.isInstance(element))
-				return elementUI.getImage();
+			if (clazz.isInstance(element)) {
+				String pluginID = elementUI.getPluginID();
+				String path = elementUI.getPath();
+				
+				// Compute the key
+				// key = pluginID:path:overlay
+				// overlay = comment + error 
+				String key = pluginID + ":" + path;
+				
+				String overlay;
+				if (element instanceof ICommentedElement) {
+					ICommentedElement commentedElement = (ICommentedElement) element;
+					try {
+						commentedElement.getComment(new NullProgressMonitor());
+						overlay = "1";
+					} catch (RodinDBException e) {
+						overlay = "0";
+					}
+				}
+				else overlay = "0";
+				key += ":" + overlay;
+				
+				Image image = images.get(key);
+				if (image == null) {
+					UIUtils.debugEventBEditor("Create a new image: " + key);
+					OverlayIcon icon = new OverlayIcon(
+							getImageDescriptor(pluginID, path));
+					if (overlay == "1")
+						icon.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+					image = icon.createImage();
+					images.put(key, image);					
+				}
+				return image;
+			}
 		}
 
 		return null;

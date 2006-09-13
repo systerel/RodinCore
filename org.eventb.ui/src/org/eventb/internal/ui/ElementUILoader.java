@@ -8,8 +8,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IRodinElement;
 
@@ -45,18 +43,6 @@ public class ElementUILoader {
 					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String icon = element.getAttribute("icon");
-						String key = namespace + ":" + icon;
-
-						ImageRegistry imageRegistry = EventBUIPlugin
-								.getDefault().getImageRegistry();
-
-						Image image = imageRegistry.get(key);
-
-						if (image == null) {
-							EventBImage.registerImage(imageRegistry, key,
-									namespace, icon);
-							image = imageRegistry.get(key);
-						}
 
 						Class clazz = bundle.loadClass(element
 								.getAttribute("class"));
@@ -64,7 +50,7 @@ public class ElementUILoader {
 						Class classObject = getSubclass(clazz,
 								IRodinElement.class);
 
-						ElementUI elementUI = new ElementUI(image, classObject);
+						ElementUI elementUI = new ElementUI(namespace, icon, classObject);
 						result.add(elementUI);
 
 					} catch (Exception e) {
