@@ -61,6 +61,7 @@ public class ChangeElementAttributeOperation extends RodinDBOperation{
 	 * <code>null</code>.
 	 * <li>ELEMENT_DOES_NOT_EXIST - the element supplied to the operation
 	 * doesn't exist yet.
+	 * <li>READ_ONLY - the element supplied to the operation is read only.
 	 * <li>NULL_STRING - the new value supplied to the operation is
 	 * <code>null</code>.
 	 * </ul>
