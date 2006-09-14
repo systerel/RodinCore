@@ -14,6 +14,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
@@ -66,10 +67,17 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	@Override
 	public IRodinDBStatus verify() {
 		super.verify();
-		if (newElement.getParent().isReadOnly()) {
+		final RodinElement parent = newElement.getParent();
+		if (! parent.exists()) {
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+					parent
+			);
+		}
+		if (parent.isReadOnly()) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.READ_ONLY,
-					newElement.getParent()
+					parent
 			);
 		}
 		if (newElement.exists()) {
@@ -79,7 +87,7 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 			);
 		}
 		if (nextSibling != null) {
-			if (nextSibling.getParent() != newElement.getParent()) {
+			if (! parent.equals(nextSibling.getParent())) {
 				return new RodinDBStatus(
 						IRodinDBStatusConstants.INVALID_SIBLING,
 						nextSibling
