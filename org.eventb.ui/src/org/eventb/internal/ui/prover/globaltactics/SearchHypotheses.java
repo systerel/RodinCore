@@ -33,7 +33,7 @@ public class SearchHypotheses implements IGlobalExpertTactic {
 	 *      java.lang.String)
 	 */
 	public boolean isApplicable(IProofTreeNode node, String input) {
-		return (node != null) && node.isOpen();
+		return (node != null);
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
