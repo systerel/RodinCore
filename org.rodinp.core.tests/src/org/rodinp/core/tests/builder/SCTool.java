@@ -17,8 +17,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCTool {
 
-	static boolean DEBUG = true;
+	public static boolean SHOW_CLEAN = false;
+	public static boolean SHOW_RUN = false;
+	public static boolean SHOW_EXTRACT = false;
+
+	public static boolean DEBUG = true;
 	
+	public static boolean RUN_SC = false;
+
 	private int index = 0;
 
 	protected void copyDataElements(IRodinFile ctx, IRodinFile target) throws RodinDBException {

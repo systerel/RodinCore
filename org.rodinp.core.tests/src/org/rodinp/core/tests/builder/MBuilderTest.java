@@ -44,6 +44,17 @@ public class MBuilderTest extends AbstractBuilderTest {
 		IRodinFile mch = createRodinFile("P/x.mch");
 		createData(mch, "one");
 		mch.save(null, true);
+		
+		SCTool.RUN_SC = true;
+		SCTool.SHOW_CLEAN = true;
+		SCTool.SHOW_EXTRACT = true;
+		SCTool.SHOW_RUN = true;
+		
+		POTool.RUN_PO = true;
+		POTool.SHOW_CLEAN = true;
+		POTool.SHOW_EXTRACT = true;
+		POTool.SHOW_RUN = true;
+		
 		runBuilder(
 				"MSC extract /P/x.mch\n" + 
 				"MSC extract /P/x.mch\n" + 
@@ -100,35 +111,30 @@ public class MBuilderTest extends AbstractBuilderTest {
 		createData(mcd, "mfour");
 		mcd.save(null, true);
 		
+		SCTool.RUN_SC = true;
+		SCTool.SHOW_CLEAN = false;
+		SCTool.SHOW_EXTRACT = false;
+		SCTool.SHOW_RUN = true;
+		
+		POTool.RUN_PO = true;
+		POTool.SHOW_CLEAN = false;
+		POTool.SHOW_EXTRACT = false;
+		POTool.SHOW_RUN = true;	
+		
 		runBuilder(
-				"CSC extract /P/z.ctx\n" + 
-				"CSC extract /P/y.ctx\n" + 
-				"CSC extract /P/x.ctx\n" + 
-				"MSC extract /P/d.mch\n" + 
-				"MSC extract /P/c.mch\n" + 
-				"MSC extract /P/b.mch\n" + 
-				"MSC extract /P/a.mch\n" + 
-				"CSC extract /P/z.ctx\n" + 
 				"CSC run /P/z.csc\n" + 
-				"CSC extract /P/y.ctx\n" + 
-				"CSC extract /P/x.ctx\n" + 
+				"CPO run /P/z.po\n" + 
 				"CSC run /P/x.csc\n" + 
+				"CPO run /P/x.po\n" + 
 				"CSC run /P/y.csc\n" + 
-				"MSC extract /P/d.mch\n" + 
-				"MSC extract /P/c.mch\n" + 
-				"MSC extract /P/b.mch\n" + 
-				"MSC extract /P/a.mch\n" + 
+				"CPO run /P/y.po\n" + 
 				"MSC run /P/a.msc\n" + 
-				"MPO extract /P/a.msc\n" + 
 				"MPO run /P/a.po\n" + 
 				"MSC run /P/b.msc\n" + 
-				"MPO extract /P/b.msc\n" + 
 				"MPO run /P/b.po\n" + 
 				"MSC run /P/c.msc\n" + 
-				"MPO extract /P/c.msc\n" + 
 				"MPO run /P/c.po\n" + 
 				"MSC run /P/d.msc\n" + 
-				"MPO extract /P/d.msc\n" + 
 				"MPO run /P/d.po"
 		);
 		

@@ -29,14 +29,18 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	private static String SC_ID = "org.rodinp.core.tests.testMSC";
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(MSC, "clean", file);
+		if (SCTool.SHOW_CLEAN)
+			ToolTrace.addTrace(MSC, "clean", file);
 
 		if (file.getFileExtension().equals("msc"))
 			file.delete(true, monitor);
 	}
 	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(MSC, "extract", file);
+		if (!RUN_SC)
+			return;
+		if (SCTool.SHOW_EXTRACT)
+			ToolTrace.addTrace(MSC, "extract", file);
 		
 		IMachine mch = (IMachine) RodinCore.create(file);
 		
@@ -63,7 +67,8 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	}
 	
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(MSC, "run", file);
+		if (SCTool.SHOW_RUN)
+			ToolTrace.addTrace(MSC, "run", file);
 
 		ISCMachine target = (ISCMachine) RodinCore.create(file);
 		IMachine mch = target.getUncheckedVersion(); 

@@ -19,14 +19,18 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	private static String SC_ID = "org.rodinp.core.tests.testCSC";
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(CSC, "clean", file);
+		if (SCTool.SHOW_CLEAN)
+			ToolTrace.addTrace(CSC, "clean", file);
 
 		if (file.getFileExtension().equals("csc"))
 			file.delete(true, monitor);
 	}
 	
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(CSC, "extract", file);
+		if (!RUN_SC)
+			return;
+		if (SCTool.SHOW_EXTRACT)
+			ToolTrace.addTrace(CSC, "extract", file);
 		
 		IContext ctx = (IContext) RodinCore.create(file);
 		
@@ -47,7 +51,8 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	}
 	
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
-		ToolTrace.addTrace(CSC, "run", file);
+		if (SCTool.SHOW_RUN)
+			ToolTrace.addTrace(CSC, "run", file);
 
 		ISCContext target = (ISCContext) RodinCore.create(file);
 		IContext ctx = target.getUncheckedVersion(); 

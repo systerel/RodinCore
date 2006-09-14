@@ -71,7 +71,7 @@ public class Node implements Serializable {
 	
 	@Override
 	public String toString() {
-		return name;
+		return printNode();
 	}
 	
 	@Override
@@ -180,7 +180,7 @@ public class Node implements Serializable {
 	protected void markSuccessorsDated() {
 		for(Node suc : succNodes) {
 			suc.setDated(true);
-			suc.markOriginDated(this);
+//			suc.markOriginDated(this);
 		}
 	}
 	

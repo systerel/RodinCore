@@ -22,6 +22,12 @@ import org.rodinp.core.builder.IGraph;
  *
  */
 public abstract class POTool extends SCTool implements IExtractor, IAutomaticTool {
+	
+	public static boolean SHOW_CLEAN = false;
+	public static boolean SHOW_RUN = false;
+	public static boolean SHOW_EXTRACT = false;
+	
+	public static boolean RUN_PO = false;
 
 	protected void clean(IFile file, IProgressMonitor monitor, String name) throws CoreException {
 		ToolTrace.addTrace(name, "clean", file);
@@ -30,10 +36,11 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 			file.delete(true, monitor);
 	}
 
-	protected void extract(IFile file, IGraph graph, String name, String ID, boolean runPO, IProgressMonitor monitor) {
-		if (!runPO)
+	protected void extract(IFile file, IGraph graph, String name, String ID, IProgressMonitor monitor) {
+		if (!RUN_PO)
 			return;
-		ToolTrace.addTrace(name, "extract", file);
+		if (SHOW_EXTRACT)
+			ToolTrace.addTrace(name, "extract", file);
 		
 		ISCProvable prv = (ISCProvable) RodinCore.create(file);
 		
@@ -46,7 +53,8 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 	}
 
 	protected void run(IFile file, IProgressMonitor monitor, String name) throws RodinDBException {
-		ToolTrace.addTrace(name, "run", file);
+		if (SHOW_RUN)
+			ToolTrace.addTrace(name, "run", file);
 	
 		ISCContext target = (ISCContext) RodinCore.create(file);
 		IContext ctx = target.getUncheckedVersion(); 

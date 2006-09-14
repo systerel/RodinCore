@@ -18,8 +18,6 @@ import org.rodinp.core.builder.IGraph;
  */
 public class CPOTool extends POTool {
 
-	public static boolean runCPO = true;
-
 	private static final String CPO = "CPO";
 	// Id of this tool
 	private static String SC_ID = "org.rodinp.core.tests.testCPO";
@@ -29,7 +27,7 @@ public class CPOTool extends POTool {
 	}
 
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
-		extract(file, graph, CPO, SC_ID, runCPO, monitor);
+		extract(file, graph, CPO, SC_ID, monitor);
 	}
 
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {

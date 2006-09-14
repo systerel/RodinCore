@@ -18,7 +18,10 @@ public class CBuilderTest extends AbstractBuilderTest {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		CPOTool.runCPO = false; // do not use dumb POG
+		SCTool.RUN_SC = true;
+		SCTool.SHOW_CLEAN = true;
+		SCTool.SHOW_EXTRACT = true;
+		SCTool.SHOW_RUN = true;
 		project = createRodinProject("P");
 		ToolTrace.flush();
 	}
