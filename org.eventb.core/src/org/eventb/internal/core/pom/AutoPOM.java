@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
@@ -44,21 +46,33 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
 		IPOFile poFile = (IPOFile) prFile.getPOFile().getSnapshot();
-		
-		final int size = poFile.getChildren().length;
+		int noOfPOs = poFile.getSequents().length;
+		final int workUnits = 5 + 5 + noOfPOs * 2;
+		// 5 : loading old proofs
+		// 5 : writing new proofs
+		// 1x : megging each proof
+		// 1x : autoproving each proof
 		
 		try {
 			
-			monitor.beginTask("Proving " + file.getName(), size);
+			monitor.beginTask("Managing proofs " + file.getName(), workUnits);
 		
+			
 //			if (! poFile.exists()) {
 //				ContextSC.makeError("Source PO file does not exist.");
 //			}
 		
+			monitor.subTask("Loading old proofs ");
 			Map<String, IPRProofTree> oldProofs = getOldProofs(prFile);
-			Map<String, Boolean> newValidity = computeNewValidity(oldProofs, poFile);
+			monitor.worked(5);
+			if (monitor.isCanceled()) throw new OperationCanceledException();
+			monitor.subTask("Merging proofs ");
+			Map<String, Boolean> newValidity = computeNewValidity(oldProofs, poFile, monitor);
+			if (monitor.isCanceled()) throw new OperationCanceledException();
+			monitor.subTask("Writing new proofs ");
 			createFreshPRFile(newValidity,oldProofs, poFile, prFile, monitor);
-		
+			monitor.worked(5);
+			
 		// Create the resulting PR file atomically.
 //		RodinCore.run(
 //				new IWorkspaceRunnable() {
@@ -68,8 +82,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 //						createFreshPRFile(newValidity,oldProofs);
 //					}
 //				}, monitor);
-		
-			new AutoProver().run(prFile);
+			
+			if (monitor.isCanceled()) throw new OperationCanceledException();
+			monitor.subTask("Running auto prover ");
+			AutoProver.run(prFile,new SubProgressMonitor(monitor,noOfPOs));
+			
 			return true;
 			
 		} finally {
@@ -83,7 +100,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		return new HashMap<String, IPRProofTree>();
 	}
 	
-	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs, IPOFile poFile) throws RodinDBException
+	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs, IPOFile poFile, IProgressMonitor monitor) throws RodinDBException
 	{
 		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
 		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
@@ -107,6 +124,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 					else
 						newValidity.put(newPOname,false);
 				}
+			monitor.worked(1);
 		}
 		return newValidity;
 	}

@@ -433,6 +433,13 @@
             toolbar="sequent"
             tooltip="Add hypothesis"/>
       <simpletactic
+            class="org.eventb.internal.ui.prover.globaltactics.AutoProver"
+            icon="icons/full/ctool16/auto_prover.png"
+            id="org.eventb.ui.autoProver"
+            interruptable="true"
+            toolbar="sequent"
+            tooltip="Auto provers : rerun the auto provers"/>
+      <simpletactic
             class="org.eventb.internal.ui.prover.globaltactics.Normalise"
             icon="icons/full/ctool16/broom_prover.gif"
             id="org.eventb.ui.normalise"
