@@ -312,14 +312,6 @@ public class SearchHypothesisPage extends Page implements
 		Display display = Display.getDefault();
 
 		final UserSupport userSupport = editor.getUserSupport();
-		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-		if (activePage != null) {
-			SearchHypothesis searchHypothesisView = (SearchHypothesis) activePage
-					.findView(SearchHypothesis.VIEW_ID);
-			if (searchHypothesisView != null) {
-				
-			}
-		}
 		display.syncExec(new Runnable() {
 			public void run() {
 				ProofState ps = delta.getProofState();
