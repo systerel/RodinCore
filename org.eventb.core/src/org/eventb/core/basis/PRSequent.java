@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
@@ -51,7 +50,7 @@ public class PRSequent extends POSequent implements IPRSequent {
 	
 	public IPRProofTree getProofTree() throws RodinDBException {
 		IPRProofTree proofTree = ((IPRFile)getOpenable()).getProofTree(getName());
-		assert proofTree != null;
+		// assert proofTree != null;
 		return proofTree;
 	}
 
@@ -73,29 +72,29 @@ public class PRSequent extends POSequent implements IPRSequent {
 		}, null);
 	}
 
-	@Deprecated
-	public boolean isClosed() throws RodinDBException {
-		if (isProofBroken()) return false;
-		IPRProofTree proof = getProofTree();
-		return (proof.getConfidence() != IConfidence.PENDING);
-	}
+//	@Deprecated
+//	public boolean isClosed() throws RodinDBException {
+//		if (isProofBroken()) return false;
+//		IPRProofTree proof = getProofTree();
+//		if (proof==null) return false;
+//		return (proof.getConfidence() != IConfidence.PENDING);
+//	}
 
 	public boolean isProofBroken() throws RodinDBException {
 		return getContents().equals("ProofBroken");
 	}
 
-	@Deprecated
 	public void setProofBroken(boolean broken) throws RodinDBException {
 		if (broken) setContents("ProofBroken");
 		else setContents("ProofValid");
 	}
 
-	@Deprecated
-	public boolean proofAttempted() throws RodinDBException {
-		IPRProofTree proof = getProofTree();
-		if (proof == null || ! proof.proofAttempted()) return false;
-		return true;
-	}
+//	@Deprecated
+//	public boolean proofAttempted() throws RodinDBException {
+//		IPRProofTree proof = getProofTree();
+//		if (proof == null || ! proof.proofAttempted()) return false;
+//		return true;
+//	}
 	
 	
 	

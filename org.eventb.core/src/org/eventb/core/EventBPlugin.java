@@ -10,6 +10,7 @@ package org.eventb.core;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
+import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
 
@@ -32,7 +33,8 @@ public class EventBPlugin extends Plugin {
 	 */
 	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
 	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
-
+	private static final String POM_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
 	 * 
@@ -168,6 +170,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(POG_TRACE);
 			if (option != null)
 				ProofObligationGenerator.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POM_TRACE);
+			if (option != null)
+				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

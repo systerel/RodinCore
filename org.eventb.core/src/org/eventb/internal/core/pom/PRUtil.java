@@ -20,6 +20,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofRule;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
@@ -29,6 +30,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.basis.PRProofRule;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.basis.PRProofTreeNode;
+import org.eventb.core.basis.PRSequent;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
@@ -98,9 +100,11 @@ public class PRUtil {
 	public static IProofTree rebiuldProofTree(IPRSequent prSeq) throws RodinDBException{		
 		IProofTree proofTree = makeInitialProofTree(prSeq);		
 		IProofTreeNode root = proofTree.getRoot();
-		IPRProofTreeNode prRoot = prSeq.getProofTree().getRoot();
-		ReplayHints replayHints = new ReplayHints();
-		if (prRoot != null) rebuild(root,prRoot,replayHints);
+		if (prSeq.getProofTree() != null){
+			IPRProofTreeNode prRoot = prSeq.getProofTree().getRoot();
+			ReplayHints replayHints = new ReplayHints();
+			if (prRoot != null) rebuild(root,prRoot,replayHints);
+		}
 		return proofTree;
 	}
 	
@@ -199,58 +203,55 @@ public class PRUtil {
 		else broken = false;
 		
 		// remove the previous proof
-		if (prSeq.getProofTree().hasChildren())
-		prSeq.getRodinDB().delete(prSeq.getProofTree().getChildren(),true,null);
+		IPRProofTree proofTree = prSeq.getProofTree();
+		if (proofTree == null) {
+			// create a fresh proof
+			proofTree =
+				(IPRProofTree) ((IPRFile)prSeq.getOpenable()).createInternalElement(
+						IPRProofTree.ELEMENT_TYPE,prSeq.getName(), null, null);
+			proofTree.initialize();
+		}
+		
+		if (proofTree.hasChildren())
+		prSeq.getRodinDB().delete(proofTree.getChildren(),true,null);
 
 		// Write out the proof tree dependencies
 		IProofDependencies proofDependencies = pt.getProofDependencies();
 		
-		((IPRPredicate)(prSeq.getProofTree().createInternalElement(
+		((IPRPredicate)(proofTree.createInternalElement(
 				IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
 				setPredicate(proofDependencies.getGoal());
-		((IPRPredicateSet)(prSeq.getProofTree().createInternalElement(
+		((IPRPredicateSet)(proofTree.createInternalElement(
 				IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 				setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()));
-		((IPRTypeEnvironment)(prSeq.getProofTree().createInternalElement(
+		((IPRTypeEnvironment)(proofTree.createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
 				setTypeEnvironment(proofDependencies.getUsedFreeIdents());
-		((IPRTypeEnvironment)(prSeq.getProofTree().createInternalElement(
+		((IPRTypeEnvironment)(proofTree.createInternalElement(
 				IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
 				setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
 		
 		// Write out the proof tree
-		writeOutProofTreeNode((IProofTreeNode) pt.getRoot(),0,(InternalElement) prSeq.getProofTree());
+		writeOutProofTreeNode(pt.getRoot(),0,(InternalElement) proofTree);
 		
 		// Update the status
 		int confidence = pt.getConfidence();
-		((PRProofTree)prSeq.getProofTree()).setConfidence(confidence);
+		((PRProofTree)proofTree).setConfidence(confidence);
 			
 		// set proof validity
-		prSeq.setProofBroken(broken);
+		((PRSequent)prSeq).setProofBroken(broken);
 		
 	}
 	
 	public static void writeOutRule (IProofRule rule,IPRProofTreeNode parent) throws RodinDBException{
 		
-		if (rule instanceof IProofRule) {
-			IPRProofRule prRule = (IPRProofRule)
-				parent.createInternalElement(
-					PRProofRule.ELEMENT_TYPE,
-					rule.generatedBy().getReasonerID(),
-					null,null);
-			
-			prRule.setProofRule(rule);
-			
-//			ProofRule reasonerOutput = (ProofRule) rule;
-//			
-//			IPRReasoningStep prReasoningStep = 
-//				(IPRReasoningStep)
-//				prRule.createInternalElement(
-//					IPRReasoningStep.ELEMENT_TYPE,
-//					reasonerOutput.generatedBy.getReasonerID(),
-//					null,null);		
-//			prReasoningStep.setReasonerOutput(reasonerOutput);
-		}
+		IPRProofRule prRule = (IPRProofRule)
+		parent.createInternalElement(
+				PRProofRule.ELEMENT_TYPE,
+				rule.generatedBy().getReasonerID(),
+				null,null);
+		
+		prRule.setProofRule(rule);
 	}
 	
 	public static void writeOutProofTreeNode (IProofTreeNode proofTreeNode,int childNumber,InternalElement parent) throws RodinDBException{

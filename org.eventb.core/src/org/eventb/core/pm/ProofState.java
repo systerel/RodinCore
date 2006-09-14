@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTree;
@@ -80,8 +81,9 @@ public class ProofState {
 	public boolean isClosed() throws RodinDBException {
 		if (pt != null)
 			return pt.isClosed();
-		else
-			return prSequent.isClosed();
+		
+		final IPRProofTree prProofTree = prSequent.getProofTree();
+		return (prProofTree != null && prProofTree.isClosed());
 	}
 
 	public IPRSequent getPRSequent() {
@@ -186,7 +188,8 @@ public class ProofState {
 	}
 
 	public boolean isSequentDischarged() throws RodinDBException {
-		return prSequent.isClosed();
+		final IPRProofTree prProofTree = prSequent.getProofTree();
+		return (prProofTree != null && prProofTree.isClosed());
 	}
 
 	public boolean isProofReusable() throws RodinDBException {

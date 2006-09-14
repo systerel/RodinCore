@@ -3,13 +3,11 @@ package org.eventb.internal.core.pom;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
-
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
 
@@ -47,23 +45,27 @@ public class AutoProver {
 		boolean dirty = false;
 		try{
 			
-			monitor.beginTask("Auto proving",pos.length);
+			monitor.beginTask("Auto prover",pos.length);
 			
 			for (IPRSequent po : pos) {
 				if (monitor.isCanceled()) throw new OperationCanceledException();
-				if (! po.isClosed()) {
-					
+				IPRProofTree proofTree = po.getProofTree();
+				//return (prProofTree != null && prProofTree.isClosed());
+				//if (! po.isClosed()) {
+				if (proofTree == null || (!proofTree.isClosed())) {
 					// System.out.println("AutoProver tried for "+po);
 					
 					// Go ahead even if a proof was previously attempted
 					IProofTree tree = po.makeFreshProofTree();
-					autoTactic(new SubProgressMonitor(monitor,1)).apply(tree.getRoot());
+					monitor.subTask("Auto proving " + po.getName());
+					autoTactic(monitor).apply(tree.getRoot());
+					monitor.worked(1);
 					// Update the tree if it was discharged
-					final IPRProofTree proofTree = po.getProofTree();
 					if (tree.isClosed()) {
 						po.updateProofTree(tree);
+						if (proofTree == null) proofTree = po.getProofTree();
 						((PRProofTree)proofTree).setAutomaticallyGenerated();
-						prFile.save(monitor, false);
+						prFile.save(null, false);
 						dirty = false;
 					}
 					// If the auto prover made 'some' progress, and no
@@ -81,7 +83,7 @@ public class AutoProver {
 				}
 			}
 			// monitor.worked(1);
-			if (dirty) prFile.save(monitor, false);
+			if (dirty) prFile.save(null, false);
 		}
 		finally
 		{

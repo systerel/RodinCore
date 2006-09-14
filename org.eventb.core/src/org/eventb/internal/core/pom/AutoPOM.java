@@ -22,6 +22,8 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.basis.PRProofTree;
+import org.eventb.core.basis.PRSequent;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
@@ -42,6 +44,8 @@ import org.rodinp.core.builder.IGraph;
  */
 public class AutoPOM implements IAutomaticTool, IExtractor {
 
+	public static boolean DEBUG = false;
+
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
 
 		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
@@ -55,7 +59,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		try {
 			
-			monitor.beginTask("Managing proofs " + file.getName(), workUnits);
+			monitor.beginTask("Managing proofs for " + file.getName(), workUnits);
 		
 			
 //			if (! poFile.exists()) {
@@ -70,18 +74,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			Map<String, Boolean> newValidity = computeNewValidity(oldProofs, poFile, monitor);
 			if (monitor.isCanceled()) throw new OperationCanceledException();
 			monitor.subTask("Writing new proofs ");
-			createFreshPRFile(newValidity,oldProofs, poFile, prFile, monitor);
-			monitor.worked(5);
-			
-		// Create the resulting PR file atomically.
-//		RodinCore.run(
-//				new IWorkspaceRunnable() {
-//					public void run(IProgressMonitor saveMonitor) throws CoreException {
-//						Map<String, IPRProofTree> oldProofs = getOldProofs();
-//						Map<String, Boolean> newValidity = computeNewValidity(oldProofs);
-//						createFreshPRFile(newValidity,oldProofs);
-//					}
-//				}, monitor);
+			createFreshPRFile(newValidity,oldProofs, poFile, prFile, null);
+			prFile.save(new SubProgressMonitor(monitor,5), true);
+			// monitor.worked(5);
 			
 			if (monitor.isCanceled()) throw new OperationCanceledException();
 			monitor.subTask("Running auto prover ");
@@ -131,11 +126,24 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
+		
+		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
+		
 		try {
+		
+			final IRodinElement[] children = prFile.getChildren();
 			
-			monitor.beginTask("Cleaning " + file.getName(), 1);
+			monitor.beginTask("Cleaning " + file.getName(), children.length + 5);
 			
-			file.delete(true, monitor);
+			for (IRodinElement child : children){
+				// do not delete interactive proofs !
+				if ((! child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)) ||
+						((PRProofTree)child).isAutomaticallyGenerated())
+					((InternalElement)child).delete(true,null);
+				monitor.worked(1);
+			}
+			
+			prFile.save(new SubProgressMonitor(monitor,5),true);
 			
 		} finally {
 			monitor.done();
@@ -189,8 +197,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		copyGlobalInfo(poFile, prFile, monitor);
 		copySequents(newValidity,oldProofs, poFile, prFile, monitor);
-		
-		prFile.save(monitor, true);
 	}
 	
 	private void copySequents(
@@ -213,7 +219,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			}
 			
 			assert (newValidity.get(poSeq.getName()) != null);
-			prSeq.setProofBroken(! newValidity.get(poSeq.getName()));
+			((PRSequent)prSeq).setProofBroken(! newValidity.get(poSeq.getName()));
 			
 			IPRProofTree oldProof = oldProofs.get(prSeq.getName());
 			if (oldProof == null)

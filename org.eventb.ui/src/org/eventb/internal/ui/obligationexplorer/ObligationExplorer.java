@@ -62,6 +62,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.basis.PRSequent;
 import org.eventb.core.pm.IProofStateChangedListener;
@@ -232,10 +233,14 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		// Otherwise, setting the label accordingly.
-		if (!sequent.proofAttempted())
+		
+		final IPRProofTree prProofTree = sequent.getProofTree();
+		
+		if (prProofTree == null || (!prProofTree.proofAttempted()))
 			return UNATTEMPTED;
 
-		int confidence = sequent.getProofTree().getConfidence();
+		
+		int confidence = prProofTree.getConfidence();
 		if (sequent.isProofBroken()) {
 
 			if (confidence == IConfidence.PENDING)
@@ -357,10 +362,13 @@ public class ObligationExplorer extends ViewPart implements
 					}
 
 					// Otherwise, setting the label accordingly.
-					if (!prSequent.proofAttempted())
+					final IPRProofTree prProofTree = prSequent.getProofTree();
+					
+					if (prProofTree == null || (!prProofTree.proofAttempted()))
 						return registry.get(EventBImage.IMG_UNATTEMPTED);
 
-					int confidence = prSequent.getProofTree().getConfidence();
+					
+					int confidence = prProofTree.getConfidence();
 					if (prSequent.isProofBroken()) {
 
 						if (confidence == IConfidence.PENDING)

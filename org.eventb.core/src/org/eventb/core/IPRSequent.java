@@ -26,8 +26,8 @@ public interface IPRSequent extends IPOSequent {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
 	
-	@ Deprecated
-	boolean isClosed() throws RodinDBException;
+//	@ Deprecated
+//	boolean isClosed() throws RodinDBException;
 
 	/**
 	 * Returns the proof tree associated to this proof obligation from the
@@ -45,12 +45,12 @@ public interface IPRSequent extends IPOSequent {
 	IProofTree makeFreshProofTree() throws RodinDBException;
 	
 	
-	@ Deprecated
-	boolean proofAttempted() throws RodinDBException;
+//	@ Deprecated
+//	boolean proofAttempted() throws RodinDBException;
 	boolean isProofBroken() throws RodinDBException;
 	
-	@ Deprecated
-	void setProofBroken(boolean broken) throws RodinDBException;
+//	@ Deprecated
+//	void setProofBroken(boolean broken) throws RodinDBException;
 	
 	void updateProofTree(IProofTree pt) throws RodinDBException, CoreException;
 

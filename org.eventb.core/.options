@@ -1,3 +1,4 @@
 org.eventb.core/debug = true
 org.eventb.core/debug/sc = false
 org.eventb.core/debug/pog = false
+org.eventb.core/debug/pom = false
