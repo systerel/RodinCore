@@ -271,8 +271,6 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public ObligationExplorer() {
 		byExternal = false;
-		UserSupportManager.addUSManagerListener(this);
-		registerUserSupports();
 	}
 
 	private void registerUserSupports() {
@@ -659,6 +657,8 @@ public class ObligationExplorer extends ViewPart implements
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+		UserSupportManager.addUSManagerListener(this);
+		registerUserSupports();
 	}
 
 	/**
@@ -865,6 +865,8 @@ public class ObligationExplorer extends ViewPart implements
 
 	@Override
 	public void dispose() {
+		if (viewer == null)
+			return;
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
 		for (UserSupport userSupport : userSupports) {
