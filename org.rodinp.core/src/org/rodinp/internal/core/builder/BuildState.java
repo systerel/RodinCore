@@ -63,7 +63,7 @@ public class BuildState {
 	 */
 	public static BuildState read(IProject project, DataInputStream in) throws IOException {
 		if (RodinBuilder.DEBUG)
-			System.out.println("About to read builder state for" + project.getName()); //$NON-NLS-1$
+			System.out.println("About to read builder state for " + project.getName()); //$NON-NLS-1$
 		
 		// Check version
 		if (VERSION != in.readByte()) {
@@ -102,7 +102,7 @@ public class BuildState {
 
 	public void write(DataOutputStream out) throws IOException {
 		if (RodinBuilder.DEBUG)
-			System.out.println("About to write builder state for" + projectName); //$NON-NLS-1$
+			System.out.println("About to write builder state for " + projectName); //$NON-NLS-1$
 		
 		// Write version
 		out.writeByte(VERSION);
