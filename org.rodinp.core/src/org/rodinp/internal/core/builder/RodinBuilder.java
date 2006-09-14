@@ -148,14 +148,14 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 					Messages.bind(Messages.build_building, getProject().getName()), 
 					IProgressMonitor.UNKNOWN);
 		
-		
 			if (DEBUG) {
 				String kindImage = 
 					kind == FULL_BUILD ? "full" :
 						kind == AUTO_BUILD ? "auto" :
 							kind == INCREMENTAL_BUILD ? "incremental" :
 								"unknown";
-				System.out.println("Starting " + kindImage + " build.");
+				System.out.println("##############################################");
+				System.out.println("BUILDER: Starting " + kindImage + " build.");
 			}
 		
 			if (state == null)
@@ -172,6 +172,10 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			}
 		} finally {
 			monitor.done();
+			if (DEBUG) {
+				System.out.println("BUILDER: Finished build.");
+				System.out.println("##############################################");
+			}
 		}
 		return null;
 	}
@@ -262,13 +266,20 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected void clean(IProgressMonitor monitor) {
         try {
+			if (DEBUG) {
+				System.out.println("BUILDER: Starting cleaning");
+			}
         	cleanGraph(monitor);
-        } catch(CoreException e) {
+        } catch (CoreException e) {
 			Util.log(e, "during builder clean");
 		} catch (OperationCanceledException e) {
-			if(isInterrupted())
+			if (isInterrupted())
 				return;
-			else throw e;
+			throw e;
+		} finally {
+			if (DEBUG) {
+				System.out.println("BUILDER: Finished cleaning");
+			}
 		}
      }
 
