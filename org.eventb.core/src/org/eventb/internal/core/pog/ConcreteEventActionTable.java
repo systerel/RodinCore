@@ -26,13 +26,13 @@ import org.eventb.core.pog.IMachineVariableTable;
  * @author Stefan Hallerstede
  *
  */
-public class ConcreteEventActionInfo extends EventActionInfo implements
+public class ConcreteEventActionTable extends EventActionInfo implements
 		IConcreteEventActionTable {
 
 	private final BecomesEqualTo xiUnprime;
 	private final BecomesEqualTo deltaPrime;
 	
-	public ConcreteEventActionInfo(
+	public ConcreteEventActionTable(
 			ISCAction[] actions, 
 			ITypeEnvironment typeEnvironment, 
 			IMachineVariableTable variables,

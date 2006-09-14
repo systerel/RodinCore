@@ -7,22 +7,30 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.pog.IAbstractEventActionTable;
+import org.eventb.core.pog.IConcreteEventActionTable;
 import org.eventb.core.pog.IConcreteEventGuardTable;
 import org.eventb.core.pog.IEventHypothesisManager;
 import org.eventb.core.pog.IIdentifierTable;
 import org.eventb.core.pog.IMachineHypothesisManager;
+import org.eventb.core.pog.IMachineVariableTable;
 import org.eventb.core.pog.Module;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
+import org.eventb.internal.core.pog.AbstractEventActionTable;
+import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
 import org.eventb.internal.core.pog.EventHypothesisManager;
 import org.eventb.internal.core.pog.IdentifierTable;
@@ -33,11 +41,12 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class EventHypothesisModule extends Module {
+public class MachineEventHypothesisModule extends Module {
 
-	IMachineHypothesisManager machineHypothesisManager;
 	IEventHypothesisManager eventHypothesisManager;
-	IIdentifierTable identifierTable;
+	IAbstractEventActionTable abstractEventActionTable;
+	IConcreteEventActionTable concreteEventActionTable;
+	IIdentifierTable eventIdentifierTable;
 	IConcreteEventGuardTable eventGuardTable;
 	ITypeEnvironment eventTypeEnvironment;
 	FormulaFactory factory;
@@ -61,19 +70,17 @@ public class EventHypothesisModule extends Module {
 		
 		factory = repository.getFormulaFactory();
 		
-		identifierTable = new IdentifierTable();
+		eventIdentifierTable = new IdentifierTable();
 		
-		repository.setState(identifierTable);
+		repository.setState(eventIdentifierTable);
 	
 		ITypingState typingState =
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
 		eventTypeEnvironment = typingState.getTypeEnvironment();
-		machineHypothesisManager =
+		IMachineHypothesisManager machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		
 		ISCEvent event = (ISCEvent) element;
-		
-		fetchVariables(eventTypeEnvironment, event.getSCVariables());
 		
 		ISCGuard[] guards = event.getSCGuards();
 		
@@ -83,7 +90,47 @@ public class EventHypothesisModule extends Module {
 		eventHypothesisManager = new EventHypothesisManager(
 				event, guards, machineHypothesisManager.getFullHypothesisName());
 		
+		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents());
+		
+		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
+		
 		repository.setState(eventHypothesisManager);
+		
+		IMachineVariableTable machineVariableTable =
+			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
+		
+		abstractEventActionTable = 
+			new AbstractEventActionTable(
+					(abstractEvent == null ? new ISCAction[0] : abstractEvent.getSCActions()), 
+					eventTypeEnvironment, 
+					machineVariableTable,
+					factory);
+		repository.setState(abstractEventActionTable);
+		concreteEventActionTable =
+			new ConcreteEventActionTable(
+					event.getSCActions(), 
+					eventTypeEnvironment, 
+					machineVariableTable, 
+					factory);
+		repository.setState(concreteEventActionTable);
+		
+		fetchVariables(event.getSCVariables());
+		if (abstractEvent != null)
+			fetchVariables(abstractEvent.getSCVariables());
+		
+		fetchPostValueVariables(concreteEventActionTable.getAssignedVariables());
+		fetchPostValueVariables(abstractEventActionTable.getAssignedVariables());
+
+	}
+
+	private void fetchPostValueVariables(Set<FreeIdentifier> identifiers) {
+		for (FreeIdentifier identifier : identifiers) {
+			FreeIdentifier primedIdentifier = identifier.withPrime(factory);
+			if (eventTypeEnvironment.contains(primedIdentifier.getName()))
+				continue;
+			eventIdentifierTable.addIdentifier(primedIdentifier);
+			eventTypeEnvironment.addName(primedIdentifier.getName(), primedIdentifier.getType());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -95,22 +142,21 @@ public class EventHypothesisModule extends Module {
 		
 		eventHypothesisManager.createHypotheses(target, monitor);
 
-		identifierTable = null;
+		abstractEventActionTable = null;
+		concreteEventActionTable = null;
+		eventIdentifierTable = null;
 		eventTypeEnvironment = null;
-		machineHypothesisManager = null;
 		factory = null;
 	}
 	
-	void fetchVariables(
-			ITypeEnvironment typeEnvironment, 
-			ISCVariable[] variables) throws RodinDBException {
+	private void fetchVariables(ISCVariable[] variables) throws RodinDBException {
 		for (ISCVariable variable : variables) {
 			FreeIdentifier identifier = 
 				factory.makeFreeIdentifier(
 						variable.getIdentifierName(), null, 
 						variable.getType(factory));
-			typeEnvironment.addName(identifier.getName(), identifier.getType());
-			identifierTable.addIdentifier(identifier);
+			eventTypeEnvironment.addName(identifier.getName(), identifier.getType());
+			eventIdentifierTable.addIdentifier(identifier);
 		}
 	}
 

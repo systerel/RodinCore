@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.IEventHypothesisManager;
 import org.rodinp.core.IRodinElement;
@@ -21,6 +22,8 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 	
 	public static String ALLHYP_NAME = "EVTALLHYP";
 	
+	private ISCEvent[] abstractEvents;
+	
 	public EventHypothesisManager(
 			IRodinElement parentElement, 
 			ISCPredicateElement[] predicateTable,
@@ -32,6 +35,21 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 
 	public String getStateType() {
 		return STATE_TYPE;
+	}
+
+	public void setAbstractEvents(ISCEvent[] events) {
+		abstractEvents = events;
+	}
+
+	public ISCEvent[] getAbstractEvents() {
+		return abstractEvents;
+	}
+
+	public ISCEvent getFirstAbstractEvent() {
+		if (abstractEvents.length == 0)
+			return null;
+		
+		return abstractEvents[0];
 	}
 
 }

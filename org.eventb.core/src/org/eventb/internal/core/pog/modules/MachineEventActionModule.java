@@ -21,7 +21,6 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Assignment;
@@ -47,8 +46,6 @@ import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
-import org.eventb.internal.core.pog.AbstractEventActionInfo;
-import org.eventb.internal.core.pog.ConcreteEventActionInfo;
 import org.eventb.internal.core.pog.IdentifierTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -79,17 +76,20 @@ public class MachineEventActionModule extends Module {
 			isInit ? 
 					machineHypothesisManager.getContextHypothesisName() : 
 					eventHypothesisManager.getFullHypothesisName();
+					
+		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		
 		processConcreteActions(
 				target, 
 				concreteEventLabel, 
 				fullHypothesisName, 
-				concreteEventActionInfo.getActions(), 
-				concreteEventActionInfo.getAssignments(), 
+				concreteEventActionTable.getActions(), 
+				concreteEventActionTable.getAssignments(), 
 				monitor);
 				
 		processInvariants(
 				target, 
+				abstractEvent,
 				concreteEvent, 
 				concreteEventLabel, 
 				isInit, 
@@ -98,6 +98,7 @@ public class MachineEventActionModule extends Module {
 		
 		createREF_X_EQL(
 				target, 
+				abstractEvent,
 				concreteEvent, 
 				concreteEventLabel, 
 				isInit, 
@@ -106,6 +107,7 @@ public class MachineEventActionModule extends Module {
 		
 		createREF_X_SIM(
 				target, 
+				abstractEvent,
 				concreteEvent, 
 				concreteEventLabel, 
 				fullHypothesisName, 
@@ -113,13 +115,20 @@ public class MachineEventActionModule extends Module {
 
 		createREF_GRD_REF(
 				target, 
+				abstractEvent,
 				concreteEvent, 
 				concreteEventLabel, 
 				fullHypothesisName, 
 				monitor);
 	}
 
-	private void createREF_GRD_REF(IPOFile target, ISCEvent concreteEvent, String concreteEventLabel, String fullHypothesisName, IProgressMonitor monitor) throws RodinDBException {
+	private void createREF_GRD_REF(
+			IPOFile target, 
+			ISCEvent abstractEvent, 
+			ISCEvent concreteEvent, 
+			String concreteEventLabel, 
+			String fullHypothesisName, 
+			IProgressMonitor monitor) throws RodinDBException {
 		List<ISCPredicateElement> guards = abstractEventGuardTable.getElements();
 		List<Predicate> grdPredicates = abstractEventGuardTable.getPredicates();
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
@@ -129,9 +138,9 @@ public class MachineEventActionModule extends Module {
 			Predicate predicate = grdPredicates.get(i);
 			predicate = predicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
-			if (concreteEventActionInfo.getXiUnprime() != null)
-				substitution.add(concreteEventActionInfo.getXiUnprime());
-			substitution.addAll(concreteEventActionInfo.getPrimedDetAssignments());
+			if (concreteEventActionTable.getXiUnprime() != null)
+				substitution.add(concreteEventActionTable.getXiUnprime());
+			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			predicate = predicate.applyAssignments(substitution, factory);
 			
 			createPO(
@@ -152,19 +161,22 @@ public class MachineEventActionModule extends Module {
 		}
 	}
 
-	private void createREF_X_SIM(IPOFile target, ISCEvent concreteEvent, String concreteEventLabel, String fullHypothesisName, IProgressMonitor monitor) throws RodinDBException {
+	private void createREF_X_SIM(
+			IPOFile target, 
+			ISCEvent abstractEvent, 
+			ISCEvent concreteEvent, 
+			String concreteEventLabel, 
+			String fullHypothesisName, 
+			IProgressMonitor monitor) throws RodinDBException {
 
 		// this applies to refined events
 		if (abstractEvent == null)
 			return;
 
-		IIdentifierTable mdlIdentifierTable = addConcreteAssignedIdentifiers(eventIdentifierTable);
-		IIdentifierTable refIdentifierTable = addMachineWitnessIdentifiers(mdlIdentifierTable);
-
 		ArrayList<POGPredicate> hyp = makeActionHypothesis();
 		hyp.addAll(makeWitnessHypothesis());
-		ArrayList<Assignment> simAssignments = abstractEventActionInfo.getSimAssignments();
-		ArrayList<ISCAction> simActions = abstractEventActionInfo.getSimActions();
+		ArrayList<Assignment> simAssignments = abstractEventActionTable.getSimAssignments();
+		ArrayList<ISCAction> simActions = abstractEventActionTable.getSimActions();
 		for (int i=0; i<simActions.size(); i++) {
 			String actionLabel = simActions.get(i).getLabel(monitor);
 			Predicate predicate = simAssignments.get(i).getBAPredicate(factory);
@@ -175,16 +187,16 @@ public class MachineEventActionModule extends Module {
 			substitution.addAll(witnessTable.getEventDetAssignments());
 			predicate = predicate.applyAssignments(substitution, factory);
 			substitution.clear();
-			if (concreteEventActionInfo.getXiUnprime() != null)
-				substitution.add(concreteEventActionInfo.getXiUnprime());
-			substitution.addAll(concreteEventActionInfo.getPrimedDetAssignments());
+			if (concreteEventActionTable.getXiUnprime() != null)
+				substitution.add(concreteEventActionTable.getXiUnprime());
+			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 			predicate = predicate.applyAssignments(substitution, factory);
 			
 			createPO(
 					target, 
 					concreteEventLabel + "/" + actionLabel + "/SIM", 
 					"Action simulation",
-					refIdentifierTable,
+					eventIdentifierTable,
 					fullHypothesisName,
 					hyp,
 					new POGPredicate(simActions.get(i), predicate),
@@ -206,12 +218,16 @@ public class MachineEventActionModule extends Module {
 		return witIdentifierTable;
 	}
 
-	private void processInvariants(IPOFile target, ISCEvent concreteEvent, String concreteEventLabel, boolean isInit, String fullHypothesisName, IProgressMonitor monitor) throws RodinDBException {
+	private void processInvariants(
+			IPOFile target, 
+			ISCEvent abstractEvent, 
+			ISCEvent concreteEvent, 
+			String concreteEventLabel, 
+			boolean isInit, 
+			String fullHypothesisName, 
+			IProgressMonitor monitor) throws RodinDBException {
 		List<ISCPredicateElement> invariants = invariantTable.getElements();
 		List<Predicate> invPredicates = invariantTable.getPredicates();
-		
-		IIdentifierTable mdlIdentifierTable = addConcreteAssignedIdentifiers(eventIdentifierTable);
-		IIdentifierTable refIdentifierTable = addMachineWitnessIdentifiers(mdlIdentifierTable);
 		
 		for (int i=0; i<invariants.size(); i++) {
 			
@@ -223,7 +239,7 @@ public class MachineEventActionModule extends Module {
 			boolean commonIdents = false; // common identifiers?
 			for(FreeIdentifier identifier : freeIdentifiers) {
 				freeIdents.add(identifier);
-				if(!commonIdents && concreteEventActionInfo.getAssignedVariables().contains(identifier))
+				if(!commonIdents && concreteEventActionTable.getAssignedVariables().contains(identifier))
 					commonIdents = true;
 			}
 				
@@ -233,6 +249,7 @@ public class MachineEventActionModule extends Module {
 				
 				createMDL_X_INV(
 						target, 
+						abstractEvent,
 						concreteEvent, 
 						concreteEventLabel, 
 						isInit, 
@@ -240,20 +257,21 @@ public class MachineEventActionModule extends Module {
 						invPredicates.get(i), 
 						invariantLabel, 
 						fullHypothesisName, 
-						mdlIdentifierTable,
+						eventIdentifierTable,
 						hyp,
 						freeIdents, 
 						monitor);
 				
 				createREF_X_INV(
 						target, 
+						abstractEvent,
 						concreteEvent, 
 						concreteEventLabel, 
 						isInit, 
 						(ISCInvariant) invariants.get(i), 
 						invariantLabel, 
 						invPredicates.get(i), 
-						refIdentifierTable,
+						eventIdentifierTable,
 						fullHypothesisName, 
 						hyp, 
 						freeIdents,
@@ -264,15 +282,9 @@ public class MachineEventActionModule extends Module {
 		}
 	}
 
-	private IIdentifierTable addConcreteAssignedIdentifiers(IIdentifierTable identifierTable) {
-		IIdentifierTable table = new IdentifierTable(identifierTable);
-		for (FreeIdentifier identifier : concreteEventActionInfo.getAssignedVariables())
-			table.addIdentifier(identifier.withPrime(factory));
-		return table;
-	}
-
 	private void createREF_X_EQL(
 			IPOFile target, 
+			ISCEvent abstractEvent, 
 			ISCEvent concreteEvent, 
 			String concreteEventLabel, 
 			boolean isInit, 
@@ -285,14 +297,14 @@ public class MachineEventActionModule extends Module {
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(1);
 		
-		ArrayList<Assignment> nondetAssignments = concreteEventActionInfo.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionInfo.getNondetActions();
-		ArrayList<BecomesEqualTo> detAssignments = concreteEventActionInfo.getDetAssignments();
-		ArrayList<BecomesEqualTo> primedDetAssignments = concreteEventActionInfo.getPrimedDetAssignments();
-		ArrayList<ISCAction> detActions = concreteEventActionInfo.getDetActions();
+		ArrayList<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
+		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
+		ArrayList<BecomesEqualTo> detAssignments = concreteEventActionTable.getDetAssignments();
+		ArrayList<BecomesEqualTo> primedDetAssignments = concreteEventActionTable.getPrimedDetAssignments();
+		ArrayList<ISCAction> detActions = concreteEventActionTable.getDetActions();
 		
 		Set<FreeIdentifier> abstractAssignedVariables = 
-			abstractEventActionInfo.getAssignedVariables();
+			abstractEventActionTable.getAssignedVariables();
 		
 		for (FreeIdentifier variable : machineVariableTable.getPreservedVariables()) {
 			
@@ -359,6 +371,7 @@ public class MachineEventActionModule extends Module {
 
 	private void createREF_X_INV(
 			IPOFile target, 
+			ISCEvent abstractEvent, 
 			ISCEvent concreteEvent, 
 			String concreteEventLabel, 
 			boolean isInit, 
@@ -378,8 +391,8 @@ public class MachineEventActionModule extends Module {
 		LinkedList<POGPredicate> bighyp = new LinkedList<POGPredicate>();
 		bighyp.addAll(hyp);
 		
-		ArrayList<Assignment> nondet = concreteEventActionInfo.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionInfo.getNondetActions();
+		ArrayList<Assignment> nondet = concreteEventActionTable.getNondetAssignments();
+		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		for (int k=0; k<nondet.size(); k++) {
 			bighyp.add(
 					new POGPredicate(
@@ -401,9 +414,9 @@ public class MachineEventActionModule extends Module {
 		}
 		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
-		if (concreteEventActionInfo.getDeltaPrime() != null)
-			substitution.add(concreteEventActionInfo.getDeltaPrime());
-		substitution.addAll(abstractEventActionInfo.getDisappearingWitnesses());
+		if (concreteEventActionTable.getDeltaPrime() != null)
+			substitution.add(concreteEventActionTable.getDeltaPrime());
+		substitution.addAll(abstractEventActionTable.getDisappearingWitnesses());
 		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
 		substitution.clear();		
 		substitution.addAll(witnessTable.getEventDetAssignments());
@@ -412,9 +425,9 @@ public class MachineEventActionModule extends Module {
 			substitution.add(witnessTable.getPrimeSubstitution());
 		predicate = predicate.applyAssignments(substitution, factory);
 		substitution.clear();
-		if (concreteEventActionInfo.getXiUnprime() != null)
-			substitution.add(concreteEventActionInfo.getXiUnprime());
-		substitution.addAll(concreteEventActionInfo.getPrimedDetAssignments());
+		if (concreteEventActionTable.getXiUnprime() != null)
+			substitution.add(concreteEventActionTable.getXiUnprime());
+		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
 		predicate = predicate.applyAssignments(substitution, factory);
 		
 		createPO(
@@ -436,8 +449,8 @@ public class MachineEventActionModule extends Module {
 	private ArrayList<POGPredicate> makeActionHypothesis() {
 		// create local hypothesis for nondeterministic assignments
 		
-		ArrayList<Assignment> nondetAssignments = concreteEventActionInfo.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionInfo.getNondetActions();
+		ArrayList<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
+		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(nondetAssignments.size());
@@ -471,8 +484,8 @@ public class MachineEventActionModule extends Module {
 	private ArrayList<POGPredicate> makeActionHypothesis(HashSet<FreeIdentifier> freeIdents) {
 		// create local hypothesis for nondeterministic assignments
 		
-		ArrayList<Assignment> nondetAssignments = concreteEventActionInfo.getNondetAssignments();
-		ArrayList<ISCAction> nondetActions = concreteEventActionInfo.getNondetActions();
+		ArrayList<Assignment> nondetAssignments = concreteEventActionTable.getNondetAssignments();
+		ArrayList<ISCAction> nondetActions = concreteEventActionTable.getNondetActions();
 		
 		ArrayList<POGPredicate> hyp = 
 			new ArrayList<POGPredicate>(nondetAssignments.size());
@@ -493,6 +506,7 @@ public class MachineEventActionModule extends Module {
 
 	private void createMDL_X_INV(
 			IPOFile target, 
+			ISCEvent abstractEvent, 
 			ISCEvent concreteEvent, 
 			String concreteEventLabel, 
 			boolean isInit, 
@@ -511,11 +525,11 @@ public class MachineEventActionModule extends Module {
 		
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		
-		if (concreteEventActionInfo.getDeltaPrime() != null)
-			substitution.add(concreteEventActionInfo.getDeltaPrime());
+		if (concreteEventActionTable.getDeltaPrime() != null)
+			substitution.add(concreteEventActionTable.getDeltaPrime());
 		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
 		substitution.clear();
-		substitution.addAll(concreteEventActionInfo.getPrimedDetAssignments());	
+		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		predicate = predicate.applyAssignments(substitution, factory);
 		
 		createPO(
@@ -581,16 +595,13 @@ public class MachineEventActionModule extends Module {
 			String fullHypothesisName,
 			IProgressMonitor monitor) throws CoreException {
 		
-		IIdentifierTable identifierTable = new IdentifierTable(eventIdentifierTable);
-		addAssignedIdentifiers(assignment, identifierTable);
-		
 		Predicate wdPredicate = assignment.getWDPredicate(factory);
 		if(!wdPredicate.equals(btrue)) {
 			createPO(
 					target, 
 					eventLabel + "/" + actionLabel + "/WD", 
 					"Well-definedness of Action",
-					identifierTable,
+					eventIdentifierTable,
 					fullHypothesisName,
 					emptyPredicates,
 					new POGPredicate(action, wdPredicate),
@@ -632,8 +643,8 @@ public class MachineEventActionModule extends Module {
 	IMachineInvariantTable invariantTable;
 	IIdentifierTable eventIdentifierTable;
 	IMachineVariableTable machineVariableTable;
-	IAbstractEventActionTable abstractEventActionInfo;
-	IConcreteEventActionTable concreteEventActionInfo;
+	IAbstractEventActionTable abstractEventActionTable;
+	IConcreteEventActionTable concreteEventActionTable;
 	IWitnessTable witnessTable;
 	FormulaFactory factory;
 
@@ -643,8 +654,6 @@ public class MachineEventActionModule extends Module {
 	@Override
 	public void initModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		ISCEvent event = (ISCEvent) element;
-		abstractEvent = getAbstractEvent(event);
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		eventHypothesisManager = 
@@ -664,35 +673,13 @@ public class MachineEventActionModule extends Module {
 		witnessTable =
 			(IWitnessTable) repository.getState(IWitnessTable.STATE_TYPE);
 		factory = repository.getFormulaFactory();
-		abstractEventActionInfo = 
-			new AbstractEventActionInfo(
-					(abstractEvent == null ? new ISCAction[0] : abstractEvent.getSCActions()), 
-					eventTypeEnvironment, 
-					machineVariableTable,
-					factory);
-		repository.setState(abstractEventActionInfo);
-		concreteEventActionInfo =
-			new ConcreteEventActionInfo(
-					event.getSCActions(), 
-					eventTypeEnvironment, 
-					machineVariableTable, 
-					factory);
-		repository.setState(concreteEventActionInfo);
+		abstractEventActionTable = 
+			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
+		concreteEventActionTable =
+			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 		emptyPredicates = new ArrayList<POGPredicate>(0);
 	}
-
-	private ISCEvent getAbstractEvent(ISCEvent event) throws CoreException {
-		ISCEvent[] events = event.getAbstractSCEvents();
-		
-		if (events.length == 0)
-			return null;
-		
-		return events[0];
-	}
-	
-	ISCEvent abstractEvent;
-	ISCRefinesMachine abstractMachine;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -704,8 +691,8 @@ public class MachineEventActionModule extends Module {
 		concreteEventGuardTable = null;
 		invariantTable = null;
 		eventIdentifierTable = null;
-		abstractEventActionInfo = null;
-		concreteEventActionInfo = null;
+		abstractEventActionTable = null;
+		concreteEventActionTable = null;
 		witnessTable = null;
 		factory = null;
 		btrue = null;

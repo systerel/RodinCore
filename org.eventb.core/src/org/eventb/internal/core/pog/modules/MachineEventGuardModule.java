@@ -17,13 +17,11 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCVariable;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.pog.IAbstractEventGuardTable;
 import org.eventb.core.pog.IConcreteEventGuardTable;
 import org.eventb.core.pog.IEventHypothesisManager;
@@ -104,16 +102,6 @@ public class MachineEventGuardModule extends Module {
 		
 	}
 	
-	private ISCEvent getAbstractEvent(ISCEvent event) throws CoreException {
-		ISCEvent[] events = event.getAbstractSCEvents();
-		
-		if (events.length == 0)
-			return null;
-		
-		return events[0];
-	}
-	
-	ISCEvent abstractEvent;
 	IEventHypothesisManager eventHypothesisManager;
 	ITypeEnvironment eventTypeEnvironment;
 	IConcreteEventGuardTable eventGuardTable;
@@ -140,21 +128,8 @@ public class MachineEventGuardModule extends Module {
 		factory = repository.getFormulaFactory();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 		emptyPredicates = new ArrayList<POGPredicate>(0);
-		abstractEvent = getAbstractEvent(event);
-		
-		if (abstractEvent != null) {
-			ISCVariable[] abstractVariables = abstractEvent.getSCVariables();
-			
-			for (ISCVariable variable : abstractVariables) {
-				String name = variable.getIdentifierName();
-				if (eventTypeEnvironment.contains(name))
-					continue;
-				Type type = variable.getType(factory);
-				eventIdentifierTable.addIdentifier(factory.makeFreeIdentifier(name, null, type));
-				eventTypeEnvironment.addName(name, type);
-			}
-		}
-		
+
+		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		abstractEventGuardTable = 
 			new AbstractEventGuardTable(
 					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards()),

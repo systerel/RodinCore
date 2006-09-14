@@ -11,7 +11,7 @@ import java.util.Hashtable;
 
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.internal.core.pog.modules.EventHypothesisModule;
+import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineEventActionModule;
 import org.eventb.internal.core.pog.modules.MachineEventGuardModule;
 import org.eventb.internal.core.pog.modules.MachineEventModule;
@@ -59,7 +59,7 @@ public class ModuleManager implements IModuleManager {
 
 					public IModule[] create() {
 						return new IModule[] {
-								new EventHypothesisModule(),
+								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
 								new MachineEventActionModule()
 						};

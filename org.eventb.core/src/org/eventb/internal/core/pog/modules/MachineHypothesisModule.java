@@ -144,8 +144,6 @@ public class MachineHypothesisModule extends Module {
 		
 		for(ISCVariable variable : variables) {
 			FreeIdentifier identifier = fetchIdentifier(variable);
-			FreeIdentifier primedIdent = identifier.withPrime(factory);
-			typeEnvironment.addName(primedIdent.getName(), primedIdent.getType());
 			if (variable.isForbidden(monitor))
 				continue;
 			variableTable.add(identifier, variable.isPreserved(monitor));

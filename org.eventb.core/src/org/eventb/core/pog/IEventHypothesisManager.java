@@ -8,6 +8,7 @@
 package org.eventb.core.pog;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCEvent;
 
 /**
  * @author Stefan Hallerstede
@@ -17,4 +18,10 @@ public interface IEventHypothesisManager extends IHypothesisManager {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".eventHypothesisManager";
 
+	void setAbstractEvents(ISCEvent[] events);
+	
+	ISCEvent[] getAbstractEvents();
+	
+	ISCEvent getFirstAbstractEvent();
+	
 }

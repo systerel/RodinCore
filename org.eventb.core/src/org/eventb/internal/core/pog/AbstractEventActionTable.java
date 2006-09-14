@@ -23,14 +23,14 @@ import org.eventb.core.pog.IMachineVariableTable;
  * @author Stefan Hallerstede
  *
  */
-public class AbstractEventActionInfo extends EventActionInfo implements
+public class AbstractEventActionTable extends EventActionInfo implements
 		IAbstractEventActionTable {
 	
 	ArrayList<BecomesEqualTo> disappearingWitnesses;
 	ArrayList<Assignment> simAssignments;
 	ArrayList<ISCAction> simActions;
 
-	public AbstractEventActionInfo(
+	public AbstractEventActionTable(
 			ISCAction[] actions, 
 			ITypeEnvironment typeEnvironment, 
 			IMachineVariableTable variables,

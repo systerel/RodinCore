@@ -99,7 +99,7 @@ public class TestRefines extends BasicTest {
 		
 		IPOSequent sequent = getSequent(po, "evt/V1/EQL");
 		
-		sequentHasIdentifiers(sequent);
+		sequentHasIdentifiers(sequent, "V1'");
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4");
 		sequentHasGoal(sequent, typeEnvironment, "V1+2=V1");
 		
@@ -205,7 +205,7 @@ public class TestRefines extends BasicTest {
 		
 		IPOSequent sequent = getSequent(po, "evt/I3/INV");
 		
-		sequentHasIdentifiers(sequent, "L1", "L2", "V1X'");
+		sequentHasIdentifiers(sequent, "L1", "L2", "V1'", "V2'", "V1X'");
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2≥6", "V1X=V1+1");
 		sequentHasGoal(sequent, typeEnvironment, "L2=(L2−1)+1");
 
