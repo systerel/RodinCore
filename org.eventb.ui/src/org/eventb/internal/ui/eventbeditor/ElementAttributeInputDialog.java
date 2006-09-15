@@ -114,6 +114,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getWidget().setLayoutData(gd);
+		text.getWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
@@ -124,6 +125,7 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
 		text.getWidget().setLayoutData(gd);
+		text.getWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 	}
