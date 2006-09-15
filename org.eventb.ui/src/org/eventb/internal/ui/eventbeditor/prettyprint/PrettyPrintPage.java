@@ -210,7 +210,7 @@ public class PrettyPrintPage extends FormPage implements
 
 				try {
 					String comment = var.getComment(monitor);
-					formString += "   /* " + comment + " */";
+					formString += "   /* " + UIUtils.XMLWrapUp(comment) + " */";
 				} catch (RodinDBException e) {
 					// Do nothing
 				}
@@ -238,7 +238,8 @@ public class PrettyPrintPage extends FormPage implements
 				try {
 					formString += UIUtils.makeHyperlink(inv
 							.getHandleIdentifier(), inv.getLabel(monitor));
-					formString += ": " + inv.getPredicateString();
+					formString += ": "
+							+ UIUtils.XMLWrapUp(inv.getPredicateString());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -246,7 +247,8 @@ public class PrettyPrintPage extends FormPage implements
 
 				try {
 					String comment = inv.getComment(monitor);
-					formString += "   /* " + comment + " */";
+					formString += "      /* " + UIUtils.XMLWrapUp(comment)
+							+ " */";
 				} catch (RodinDBException e) {
 					// Do nothing
 				}
@@ -274,7 +276,8 @@ public class PrettyPrintPage extends FormPage implements
 				try {
 					formString += UIUtils.makeHyperlink(thm
 							.getHandleIdentifier(), thm.getLabel(monitor));
-					formString += ": " + thm.getPredicateString();
+					formString += ": "
+							+ UIUtils.XMLWrapUp(thm.getPredicateString());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -282,7 +285,7 @@ public class PrettyPrintPage extends FormPage implements
 
 				try {
 					String comment = thm.getComment(monitor);
-					formString += "   /* " + comment + " */";
+					formString += "   /* " + UIUtils.XMLWrapUp(comment) + " */";
 				} catch (RodinDBException e) {
 					// Do nothing
 				}
@@ -314,7 +317,8 @@ public class PrettyPrintPage extends FormPage implements
 									evt.getLabel(monitor)) + "</li>";
 					try {
 						String comment = evt.getComment(monitor);
-						formString += "   /* " + comment + " */";
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
 					} catch (RodinDBException e) {
 						// Do nothing
 					}
@@ -349,7 +353,8 @@ public class PrettyPrintPage extends FormPage implements
 
 							try {
 								String comment = var.getComment(monitor);
-								formString += "   /* " + comment + " */";
+								formString += "   /* "
+										+ UIUtils.XMLWrapUp(comment) + " */";
 							} catch (RodinDBException e) {
 								// Do nothing
 							}
@@ -379,7 +384,8 @@ public class PrettyPrintPage extends FormPage implements
 								+ UIUtils.XMLWrapUp(guard.getPredicateString());
 						try {
 							String comment = guard.getComment(monitor);
-							formString += "   /* " + comment + " */";
+							formString += "   /* " + UIUtils.XMLWrapUp(comment)
+									+ " */";
 						} catch (RodinDBException e) {
 							// Do nothing
 						}
@@ -405,7 +411,8 @@ public class PrettyPrintPage extends FormPage implements
 										.getAssignmentString());
 						try {
 							String comment = action.getComment(monitor);
-							formString += "   /* " + comment + " */";
+							formString += "   /* " + UIUtils.XMLWrapUp(comment)
+									+ " */";
 						} catch (RodinDBException e) {
 							// Do nothing
 						}
