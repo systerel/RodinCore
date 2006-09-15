@@ -52,7 +52,7 @@ public class AutoProver {
 				IPRProofTree proofTree = po.getProofTree();
 				//return (prProofTree != null && prProofTree.isClosed());
 				//if (! po.isClosed()) {
-				if (proofTree == null || (!proofTree.isClosed())) {
+				if (po.isProofBroken() || proofTree == null || (!proofTree.isClosed())) {
 					// System.out.println("AutoProver tried for "+po);
 					
 					// Go ahead even if a proof was previously attempted
