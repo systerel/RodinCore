@@ -15,6 +15,7 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -50,6 +51,8 @@ public class ContextConstantModule extends IdentifierModule {
 		
 		if(constants.length == 0)
 			return;
+		
+		monitor.subTask(Messages.bind(Messages.progress_ContextConstants));
 		
 		fetchSymbols(
 				constants,

@@ -77,7 +77,7 @@ public class MachineContextClosureModule extends ProcessorModule {
 				
 				// repair
 				// TODO delta checking
-				context.copy(target, null, null, false, monitor);
+				context.copy(target, null, null, false, null);
 
 			}
 		}

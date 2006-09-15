@@ -26,6 +26,7 @@ import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.TypingState;
 import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
@@ -82,6 +83,8 @@ public class MachineEventModule extends LabeledElementModule {
 		if (events.length == 0)
 			return;
 		
+		monitor.subTask(Messages.bind(Messages.progress_MachineEvents));
+		
 		IEventSymbolInfo[] symbolInfos = 
 			fetchEvents(machineFile, events, repository, monitor);
 		
@@ -122,11 +125,13 @@ public class MachineEventModule extends LabeledElementModule {
 			addPostValues(eventTypeEnvironment);
 			repository.setState(new TypingState(eventTypeEnvironment));
 			
-			initProcessorModules(events[i], processorModules, repository, monitor);
+			initProcessorModules(events[i], processorModules, repository, null);
 			
 			processModules(processorModules, events[i], scEvents[i], repository, monitor);
 			
-			endProcessorModules(events[i], processorModules, repository, monitor);
+			endProcessorModules(events[i], processorModules, repository, null);
+			
+			monitor.worked(1);
 		}
 		
 	}
@@ -139,7 +144,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		String machineName = machineFile.getElementName();
 		
-		initAcceptorModules(acceptorModules, repository, monitor);
+		initAcceptorModules(acceptorModules, repository, null);
 		
 		IEventSymbolInfo[] symbolInfos = new IEventSymbolInfo[events.length];
 
@@ -148,15 +153,15 @@ public class MachineEventModule extends LabeledElementModule {
 			IEvent event = events[i];
 			
 			symbolInfos[i] = 
-				(IEventSymbolInfo) fetchLabel(event, labelSymbolTable, machineName, monitor);
+				(IEventSymbolInfo) fetchLabel(event, labelSymbolTable, machineName, null);
 			
-			if (symbolInfos[i] != null && !acceptModules(acceptorModules, event, repository, monitor)) {
+			if (symbolInfos[i] != null && !acceptModules(acceptorModules, event, repository, null)) {
 				symbolInfos[i].setError();
 			}
 			
 		}
 		
-		endAcceptorModules(acceptorModules, repository, monitor);
+		endAcceptorModules(acceptorModules, repository, null);
 		
 		return symbolInfos;
 	}

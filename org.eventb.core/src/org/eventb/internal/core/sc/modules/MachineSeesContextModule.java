@@ -15,6 +15,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.IContextPointerArray;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -53,6 +54,8 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		if (seesContexts.length == 0)
 			return; // nothing to do
 		
+		monitor.subTask(Messages.bind(Messages.progress_MachineSees));
+		
 		fetchSCContexts(
 				contextPointerArray,
 				monitor);
@@ -61,7 +64,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 				target, 
 				contextPointerArray.getValidContexts(), 
 				repository, 
-				monitor);
+				null);
 		
 	}
 		

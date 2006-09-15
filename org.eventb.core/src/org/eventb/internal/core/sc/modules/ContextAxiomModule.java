@@ -17,6 +17,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -60,6 +61,8 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 		if (axioms.length == 0)
 			return;
 		
+		monitor.subTask(Messages.bind(Messages.progress_ContextAxioms));
+		
 		checkAndType(
 				axioms, 
 				target,
@@ -69,7 +72,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 				repository,
 				monitor);
 		
-		saveAxioms(target, axioms, predicates, monitor);
+		saveAxioms(target, axioms, predicates, null);
 		
 	}
 	

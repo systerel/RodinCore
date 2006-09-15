@@ -44,7 +44,7 @@ public abstract class TheoremModule extends PredicateModule {
 				repository,
 				monitor);
 		
-		saveTheorems(target, offset, theorems, predicates, monitor);
+		saveTheorems(target, offset, theorems, predicates, null);
 	}
 	
 	private void saveTheorems(

@@ -76,7 +76,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 				repository,
 				monitor);
 		
-		saveGuards(target, guards, predicates, monitor);
+		saveGuards(target, guards, predicates, null);
 
 	}
 	

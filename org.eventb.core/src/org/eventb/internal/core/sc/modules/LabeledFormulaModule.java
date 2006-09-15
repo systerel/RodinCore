@@ -217,7 +217,6 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	 * @param index the index of the formula to be parsed
 	 * @param formulaElements the formula elements
 	 * @param formulas the parsed formulas
-	 * @param savedTypeEnvironment the initial type environment
 	 * @return the inferred type environment
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
@@ -275,7 +274,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		
 		createParsedState(repository);
 		
-		initAcceptorModules(modules, repository, monitor);
+		initAcceptorModules(modules, repository, null);
 		
 		for (int i=0; i<formulaElements.length; i++) {
 			
@@ -284,7 +283,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 					(ILabeledElement) formulaElements[i], 
 					labelSymbolTable,
 					component,
-					monitor);
+					null);
 			
 			boolean ok = parseFormula(
 					i,
@@ -299,7 +298,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				
 				setParsedState(formulas[i]);
 			
-				if (!acceptModules(modules, formulaElements[i], repository, monitor)) {
+				if (!acceptModules(modules, formulaElements[i], repository, null)) {
 					// the predicate will be rejected
 					// and will not contribute to the type environment!
 					ok = false;
@@ -330,7 +329,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			
 		}
 		
-		endAcceptorModules(modules, repository, monitor);
+		endAcceptorModules(modules, repository, null);
 		
 		removeParsedState(repository);
 	}

@@ -66,7 +66,7 @@ public class MachineEventActionModule extends AssignmentModule {
 				repository,
 				monitor);
 		
-		saveActions(target, actions, assignments, monitor);
+		saveActions(target, actions, assignments, null);
 
 	}
 	

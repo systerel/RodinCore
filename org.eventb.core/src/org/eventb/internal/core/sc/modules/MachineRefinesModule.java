@@ -74,7 +74,9 @@ public class MachineRefinesModule extends ProcessorModule {
 		if (scMachineFile == null)
 			return;
 		
-		saveRefinesMachine(target, monitor);
+		monitor.subTask(Messages.bind(Messages.progress_MachineRefines));
+		
+		saveRefinesMachine(target, null);
 		
 		IIdentifierSymbolTable abstractIdentifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -86,15 +88,17 @@ public class MachineRefinesModule extends ProcessorModule {
 				abstractIdentifierSymbolTable, 
 				contextTable,
 				repository.getFormulaFactory(), 
-				monitor);
+				null);
+		
+		monitor.worked(1);
 		
 	}
 
 	private void saveRefinesMachine(IInternalParent target, IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesMachine refinesMachine =
+		ISCRefinesMachine scRefinesMachine =
 			(ISCRefinesMachine) target.createInternalElement(
 					ISCRefinesMachine.ELEMENT_TYPE, "REF", null, monitor);
-		refinesMachine.setAbstractSCMachine(scMachineFile);
+		scRefinesMachine.setAbstractSCMachine(scMachineFile);
 	}
 	
 	/**

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -27,7 +28,12 @@ public class MachineVariantModule extends ProcessorModule {
 			IStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		// TODO Auto-generated method stub
+		
+		if (true)
+			return;
 
+		monitor.subTask(Messages.bind(Messages.progress_MachineVariant));
+		
 	}
 
 }

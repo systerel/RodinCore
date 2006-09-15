@@ -104,7 +104,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 		
 		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
 
-		initAcceptorModules(rules, repository, monitor);
+		initAcceptorModules(rules, repository, null);
 		
 		for(IIdentifierElement element : elements) {
 			FreeIdentifier identifier = parseIdentifier(element, factory);
@@ -125,7 +125,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 					identifierSymbolTable, 
 					newSymbolInfo);
 
-			if (!ok || !acceptModules(rules, element, repository, monitor))
+			if (!ok || !acceptModules(rules, element, repository, null))
 				continue;
 				
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
@@ -134,7 +134,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 				
 		}
 		
-		endAcceptorModules(rules, repository, monitor);
+		endAcceptorModules(rules, repository, null);
 	}
 
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo, final ITypeEnvironment typeEnvironment) throws CoreException {

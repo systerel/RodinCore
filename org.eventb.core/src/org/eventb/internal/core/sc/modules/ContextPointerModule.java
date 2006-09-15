@@ -150,6 +150,8 @@ public abstract class ContextPointerModule extends ProcessorModule {
 				}
 				
 			}
+			
+			monitor.worked(1);
 		}
 		
 		commitValidContexts(contextPointerArray, contextTable.size() * 4 / 3 + 1);

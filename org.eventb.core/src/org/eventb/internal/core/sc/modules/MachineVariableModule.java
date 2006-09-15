@@ -19,6 +19,7 @@ import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -52,6 +53,8 @@ public class MachineVariableModule extends IdentifierModule {
 		
 		if(variables.length == 0)
 			return;
+		
+		monitor.subTask(Messages.bind(Messages.progress_MachineVariables));
 		
 		fetchSymbols(
 				variables,

@@ -19,6 +19,7 @@ import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -57,6 +58,8 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
 		
 		ISCMachineFile scMachineFile = abstractEventTable.getMachineFile();
+		
+		monitor.subTask(Messages.bind(Messages.progress_MachineInvariants));
 		
 		int offset = 0;
 		
