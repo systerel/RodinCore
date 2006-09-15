@@ -33,7 +33,7 @@ public class EventBPlugin extends Plugin {
 	 */
 	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
 	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
-	private static final String POM_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
+	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
