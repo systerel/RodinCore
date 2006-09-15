@@ -113,6 +113,7 @@ public class MachineStaticChecker extends StaticChecker {
 			IPath sourcePath = source.getPath();
 			IPath targetPath = target.getPath();
 		
+			graph.openGraph();
 			graph.addNode(targetPath, MACHINE_SC_TOOL_ID);
 			graph.putToolDependency(sourcePath, targetPath, MACHINE_SC_TOOL_ID, true);	
 		
@@ -136,7 +137,7 @@ public class MachineStaticChecker extends StaticChecker {
 						MACHINE_SC_REFINES_ID, true);
 			}
 		
-			graph.updateGraph();
+			graph.closeGraph();
 			
 		} finally {
 			monitor.done();

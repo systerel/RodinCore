@@ -111,9 +111,10 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IPath inPath = contextIn.getPath();
 		IPath targetPath = target.getPath();
 		
+		graph.openGraph();
 		graph.addNode(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
 		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
-		graph.updateGraph();
+		graph.closeGraph();
 	}
 
 	public void runSC() throws CoreException {

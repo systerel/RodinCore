@@ -128,11 +128,12 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IPath targetPath = target.getPath();
 		IPath seenPath = seen != null ? seen.getPath() : null;
 		
+		graph.openGraph();
 		graph.addNode(targetPath, SCCore.MACHINE_SC_TOOL_ID);
 		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
 		if (seenPath != null)
 			graph.putUserDependency(inPath, seenPath, targetPath, SCCore.MACHINE_SEES_REL_ID, true);
-		graph.updateGraph();
+		graph.closeGraph();
 	}
 
 	public void runSC() throws CoreException {

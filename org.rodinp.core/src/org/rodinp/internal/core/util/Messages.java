@@ -29,6 +29,7 @@ public final class Messages {
 	public static String build_building;
 	public static String build_cleaning;
 	public static String build_removing;
+	public static String build_graphTransactionError;
 
 	public static String cache_invalidLoadFactor;
 	

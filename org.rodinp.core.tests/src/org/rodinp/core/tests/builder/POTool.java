@@ -37,11 +37,18 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 			file.delete(true, monitor);
 	}
 
-	protected void extract(IFile file, IGraph graph, String name, String ID, IProgressMonitor monitor) {
+	protected void extract(
+			IFile file, 
+			IGraph graph, 
+			String name, 
+			String ID, 
+			IProgressMonitor monitor) throws CoreException {
 		if (!RUN_PO)
 			return;
 		if (SHOW_EXTRACT)
 			ToolTrace.addTrace(name, "extract", file);
+		
+		graph.openGraph();
 		
 		ISCProvable prv = (ISCProvable) RodinCore.create(file);
 		
@@ -50,7 +57,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		graph.addNode(scPath, ID);
 		graph.putToolDependency(prv.getResource().getFullPath(), scPath, ID, true);
 				
-		graph.updateGraph();
+		graph.closeGraph();
 	}
 
 	protected void run(IFile file, IProgressMonitor monitor, String name) throws RodinDBException {

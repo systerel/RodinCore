@@ -105,9 +105,10 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		IPath inPath = in.getPath();
 		IPath targetPath = target.getPath();
 		
+		graph.openGraph();
 		graph.addNode(targetPath, POGCore.MACHINE_POG_TOOL_ID);
 		graph.putToolDependency(inPath, targetPath, POGCore.MACHINE_POG_TOOL_ID, true);
-		graph.updateGraph();
+		graph.closeGraph();
 	}
 
 	void createPOFile() throws CoreException {

@@ -8,6 +8,7 @@
 
 package org.rodinp.core.builder;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -32,6 +33,8 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IGraph {
 
+	public void openGraph() throws CoreException;
+	
 	/**
 	 * Adds a a node "path" with associated tool into the graph. If a node with
 	 * this path exists already only the tool is reassigned.
@@ -40,8 +43,9 @@ public interface IGraph {
 	 *            The path of the node
 	 * @param toolId
 	 *            The path of the tool
+	 * @throws CoreException TODO
 	 */
-	public void addNode(IPath path, String toolId);
+	public void addNode(IPath path, String toolId) throws CoreException;
 	
 //	/**
 //	 * Remove the node "path" from the graph. If the node does not exist,
@@ -68,9 +72,14 @@ public interface IGraph {
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
+	 * @throws CoreException TODO
 	 */
-	public void putUserDependency(IPath origin, IPath source, IPath target,
-			String id, boolean prioritize);
+	public void putUserDependency(
+			IPath origin, 
+			IPath source, 
+			IPath target,
+			String id, 
+			boolean prioritize) throws CoreException;
 	
 	/**
 	 * Adds a dependency controlled by a tool to the graph.
@@ -83,13 +92,18 @@ public interface IGraph {
 	 * @param prioritize
 	 *            True if this dependency should be prioritized in the
 	 *            topological order derived from the graph.
+	 * @throws CoreException TODO
 	 */
-	public void putToolDependency(IPath source, IPath target, String id,
-			boolean prioritize);
+	public void putToolDependency(
+			IPath source, 
+			IPath target, 
+			String id,
+			boolean prioritize) throws CoreException;
 
 	/**
 	 * When all manipulations have been done method <code>updateGraph()</code>
 	 * must be called to synchronise the state of the graph.
+	 * @throws CoreException TODO
 	 */
-	public void updateGraph();
+	public void closeGraph() throws CoreException;
 }

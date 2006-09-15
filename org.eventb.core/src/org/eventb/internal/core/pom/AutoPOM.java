@@ -50,7 +50,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
 		try {
 			
-			monitor.beginTask("Extracting " + file.getName(), 1);
+			monitor.beginTask("Removing " + file.getName(), 1);
 			
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
@@ -179,9 +179,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			IPath inPath = in.getPath();
 			IPath targetPath = target.getPath();
 		
+			graph.openGraph();
 			graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
 			graph.putToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
-			graph.updateGraph();
+			graph.closeGraph();
 			
 		} finally {
 			monitor.done();

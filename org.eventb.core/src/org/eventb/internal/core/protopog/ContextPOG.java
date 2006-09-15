@@ -110,9 +110,10 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		IPath inPath = in.getPath();
 		IPath targetPath = target.getPath();
 		
+		graph.openGraph();
 		graph.addNode(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
 		graph.putToolDependency(inPath, targetPath, POGCore.CONTEXT_POG_TOOL_ID, true);
-		graph.updateGraph();
+		graph.closeGraph();
 	}
 
 	void createPOFile() throws CoreException {

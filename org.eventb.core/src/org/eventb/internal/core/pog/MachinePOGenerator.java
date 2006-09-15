@@ -96,9 +96,10 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		IPath sourcePath = source.getPath();
 		IPath targetPath = target.getPath();
 		
+		graph.openGraph();
 		graph.addNode(targetPath, MACHINE_POG_TOOL_ID);
 		graph.putToolDependency(sourcePath, targetPath, MACHINE_POG_TOOL_ID, true);
-		graph.updateGraph();
+		graph.closeGraph();
 
 	}
 

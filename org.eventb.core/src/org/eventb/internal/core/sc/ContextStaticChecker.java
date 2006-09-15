@@ -107,6 +107,7 @@ public class ContextStaticChecker extends StaticChecker {
 			IPath sourcePath = source.getPath();
 			IPath targetPath = target.getPath();
 		
+			graph.openGraph();
 			graph.addNode(targetPath, CONTEXT_SC_TOOL_ID);
 			graph.putToolDependency(sourcePath, targetPath, CONTEXT_SC_TOOL_ID, true);
 		
@@ -120,7 +121,7 @@ public class ContextStaticChecker extends StaticChecker {
 						false);
 			}
 		
-			graph.updateGraph();
+			graph.closeGraph();
 			
 		} finally {
 			monitor.done();
