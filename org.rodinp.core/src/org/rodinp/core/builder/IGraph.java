@@ -43,14 +43,14 @@ public interface IGraph {
 	 */
 	public void addNode(IPath path, String toolId);
 	
-	/**
-	 * Remove the node "path" from the graph. If the node does not exist,
-	 * nothing happens. All dependencies are removed with the node.
-	 * 
-	 * @param path
-	 *            The path of the node to be removed.
-	 */
-	public void removeNode(IPath path);
+//	/**
+//	 * Remove the node "path" from the graph. If the node does not exist,
+//	 * nothing happens. All dependencies are removed with the node.
+//	 * 
+//	 * @param path
+//	 *            The path of the node to be removed.
+//	 */
+//	public void removeNode(IPath path);
 	
 	/**
 	 * Adds a dependency controlled by the user to the graph.

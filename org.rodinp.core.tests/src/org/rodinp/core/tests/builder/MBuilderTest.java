@@ -57,7 +57,6 @@ public class MBuilderTest extends AbstractBuilderTest {
 		
 		runBuilder(
 				"MSC extract /P/x.mch\n" + 
-				"MSC extract /P/x.mch\n" + 
 				"MSC run /P/x.msc\n" + 
 				"MPO extract /P/x.msc\n" + 
 				"MPO run /P/x.po"

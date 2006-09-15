@@ -13,16 +13,16 @@ import org.rodinp.core.builder.IGraph;
  * @author Stefan Hallerstede
  *
  */
-public class GraphFacade implements IGraph {
+public class GraphTransaction implements IGraph {
 
 	private ArrayList<Link> links;
 	private ArrayList<Node> targets;
-	private GraphHandler handler;
+	private GraphModifier handler;
 	
 	private HashSet<Node> targetSet; // all target nodes
 	private HashSet<String> ids; // all tool ids used
 	
-	public GraphFacade(GraphHandler handler) {
+	public GraphTransaction(GraphModifier handler) {
 		links = new ArrayList<Link>(7);
 		targets = new ArrayList<Node>(7);
 		this.handler = handler;
@@ -66,10 +66,10 @@ public class GraphFacade implements IGraph {
 		handler.addNode(path, producerId);
 	}
 
-	public void removeNode(IPath path) {
-		handler.removeNode(path);
-	}
-
+//	public void removeNode(IPath path) {
+//		handler.removeNode(path);
+//	}
+//
 	public void updateGraph() {
 		
 		boolean[] found = new boolean[targets.size()];

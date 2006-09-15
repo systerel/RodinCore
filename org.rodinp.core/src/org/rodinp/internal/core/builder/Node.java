@@ -173,7 +173,7 @@ public class Node implements Serializable {
 		return toolId;
 	}
 	
-	// after removal of a node node from the graph
+	// after removal of a node from the graph
 	// the successors of the node must be recreated;
 	// this requires also recreating the origin of the
 	// outgoing edges of the node! 
@@ -184,12 +184,12 @@ public class Node implements Serializable {
 		}
 	}
 	
-	private void markOriginDated(Node node) {
-		for(Link link : pred) {
-			if(link.source == node && link.origin != null)
-				link.origin.setDated(true);
-		}
-	}
+//	private void markOriginDated(Node node) {
+//		for(Link link : pred) {
+//			if(link.source == node && link.origin != null)
+//				link.origin.setDated(true);
+//		}
+//	}
 	
 	protected boolean hasSuccessor(Node node) {
 		return succNodes.contains(node);

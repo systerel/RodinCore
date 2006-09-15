@@ -23,10 +23,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.rodinp.core.IRodinDBMarker;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
-
-import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 /**
  * @author Stefan Hallerstede
@@ -51,7 +48,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
 
-		final IProgressMonitor monitor;
+		final ProgressManager manager;
 		
 		/*
 		 * (non-Javadoc)
@@ -65,26 +62,26 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// handle added resource
 				
 				if(createNode(resource) != null)
-					markNodeDated(resource, true, monitor);
+					markNodeDated(resource, manager);
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
 				Node node = state.graph.getNode(resource.getFullPath());
 				if(node == null)
 					break;
-				state.graph.removeNodeFromGraph(node, makeProgressMonitor(monitor));
+				state.graph.builderRemoveNodeFromGraph(node, manager);
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				markNodeDated(resource, true, monitor);
+				markNodeDated(resource, manager);
 				break;
 			}
 			//return true to continue visiting children.
 			return true;
 		}
 
-		public RodinBuilderDeltaVisitor(IProgressMonitor monitor) {
-			this.monitor = monitor;
+		public RodinBuilderDeltaVisitor(ProgressManager manager) {
+			this.manager = manager;
 		}
 	}
 	
@@ -92,8 +89,6 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	// request to the repository!
 	Node createNode(IResource resource) {
 		if(resource instanceof IFile) {
-// TODO the builder should only react to creation of files whose content type
-//		is recognised as 'RODIN'. For the moment we use file extensions.
 			IFile file = (IFile) resource;
 			String elementType = elementTypeManager.getFileElementType(file);
 			if(elementType == null)
@@ -103,7 +98,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			if(node == null) {
 				node = new Node();
 				node.setPath(resource.getFullPath());
-				state.graph.addNodeToGraph(node);
+				state.graph.builderAddNodeToGraph(node);
 			}
 			return node;
 
@@ -113,16 +108,16 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 
 	class RodinBuilderResourceVisitor implements IResourceVisitor {
 		
-		final IProgressMonitor monitor;
+		final ProgressManager manager;
 		
 		public boolean visit(IResource resource) {
-			markNodeDated(resource, true, monitor);
+			markNodeDated(resource, manager);
 			//return true to continue visiting children.
 			return true;
 		}
 
-		public RodinBuilderResourceVisitor(IProgressMonitor monitor) {
-			this.monitor = monitor;
+		public RodinBuilderResourceVisitor(ProgressManager manager) {
+			this.manager = manager;
 		}
 	}
 
@@ -141,12 +136,11 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
+		
+		ProgressManager progressManager = 
+			new ProgressManager(monitor, this);
 	
 		try {
-		
-			monitor.beginTask(
-					Messages.bind(Messages.build_building, getProject().getName()), 
-					IProgressMonitor.UNKNOWN);
 		
 			if (DEBUG) {
 				String kindImage = 
@@ -159,19 +153,25 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			}
 		
 			if (state == null)
-				state = BuildState.getBuildState(getProject(), monitor);
+				state = 
+					BuildState.getBuildState(
+						getProject(), 
+						progressManager.getZeroProgressMonitor());
+			
+			progressManager.anticipateSlices(state.graph);
+			
 			if (kind == FULL_BUILD) {
-				fullBuild(monitor);
+				fullBuild(progressManager);
 			} else {
 				IResourceDelta delta = getDelta(getProject());
 				if (delta == null) {
-					fullBuild(monitor);
+					fullBuild(progressManager);
 				} else {
-					incrementalBuild(delta, monitor);
+					incrementalBuild(delta, progressManager);
 				}
 			}
 		} finally {
-			monitor.done();
+			progressManager.done(); 
 			if (DEBUG) {
 				System.out.println("BUILDER: Finished build.");
 				System.out.println("##############################################");
@@ -196,8 +196,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		// build has finished
     }
     
-	private void buildGraph(IProgressMonitor monitor) throws CoreException {
-		state.graph.buildGraph(makeBuilderProgressMonitor(monitor));
+	private void buildGraph(ProgressManager manager) throws CoreException {
+		state.graph.builderBuildGraph(manager);
 	}
 	
 	/**
@@ -208,14 +208,12 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		// build is about to start
 	}
 
-	private void cleanGraph(IProgressMonitor monitor) throws CoreException {
-		if (state == null)
-			state = BuildState.getBuildState(getProject(), monitor);
-		state.graph.cleanGraph(makeProgressMonitor(monitor), getProject());
+	private void cleanGraph(ProgressManager manager, int percent) throws CoreException {
+		state.graph.builderCleanGraph(getProject(), percent, manager);
 		state.graph = new Graph();
 	}
 	
-	void markNodeDated(IResource resource, boolean changed, IProgressMonitor monitor) {
+	void markNodeDated(IResource resource, ProgressManager manager) {
 		if (resource instanceof IFile) {
 			Node node = state.graph.getNode(resource.getFullPath());
 			if(node == null) {
@@ -231,31 +229,25 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				// other resources may be editable or non-editable, e.g., Event-B models that may
 				// have been entered directly by the user, or created by a tool such as u2b;
 				// in the first case it is editable, in the second it isn't.
-				// TODO the distinction based on changed is not really necessary because only the
-				// extractors are run on the first element of a non-tool node of the graph.
-				// So by default we could always implement for the case "changed = true".
-				if (changed)
-					try {
-						state.graph.extractNode(node, makeProgressMonitor(monitor));
-					} catch (CoreException e) {
-						Util.log(e, "during extraction after change");
-					}
-			    else
-					node.setDated(true);
+				try {
+					state.graph.builderExtractNode(node, manager);
+				} catch (CoreException e) {
+					Util.log(e, "during extraction after change");
+				}
 			} else if(DEBUG)
 				System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
 		}
 	}
 
-	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
+	protected void fullBuild(final ProgressManager manager) throws CoreException {
 		try {
-			cleanGraph(monitor);
-			getProject().accept(new RodinBuilderResourceVisitor(monitor));
+			cleanGraph(manager, 5);
+			getProject().accept(new RodinBuilderResourceVisitor(manager));
 		} catch (CoreException e) {
 			Util.log(e, "during builder full build");
 		}
 		try {
-			buildGraph(monitor);
+			buildGraph(manager);
 		} catch (OperationCanceledException e) {
 			if(isInterrupted())
 				return;
@@ -265,11 +257,26 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	
 	@Override
 	protected void clean(IProgressMonitor monitor) {
-        try {
+		
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		
+		ProgressManager progressManager = 
+			new ProgressManager(monitor, this);
+	
+		if (state == null)
+			state = 
+				BuildState.getBuildState(
+					getProject(), 
+					progressManager.getZeroProgressMonitor());
+		
+		progressManager.anticipateSlices(state.graph);
+		
+      try {
 			if (DEBUG) {
 				System.out.println("BUILDER: Starting cleaning");
 			}
-        	cleanGraph(monitor);
+        	cleanGraph(progressManager, 100);
         } catch (CoreException e) {
 			Util.log(e, "during builder clean");
 		} catch (OperationCanceledException e) {
@@ -277,18 +284,18 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				return;
 			throw e;
 		} finally {
+			progressManager.done();
 			if (DEBUG) {
 				System.out.println("BUILDER: Finished cleaning");
 			}
 		}
      }
 
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(IResourceDelta delta, ProgressManager manager) throws CoreException {
 		// the visitor does the work.
-		delta.accept(new RodinBuilderDeltaVisitor(monitor));
+		delta.accept(new RodinBuilderDeltaVisitor(manager));
 		try {
-			buildGraph(monitor);
+			buildGraph(manager);
 		} catch (OperationCanceledException e) {
 			if(isInterrupted())
 				return;

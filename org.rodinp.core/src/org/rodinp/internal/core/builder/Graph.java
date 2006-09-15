@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -71,7 +70,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	
 	transient private boolean instable; // true if the top order must be changed during build
 	
-	transient private ToolManager manager; // = GraphManager.getGraphManager();
+	transient private ToolManager toolManager; // = GraphManager.getGraphManager();
 	
 	transient private int N;
 	
@@ -86,6 +85,125 @@ public class Graph implements Serializable, Iterable<Node> {
 //	transient private IInterrupt progress;
 //	transient private IProgressMonitor monitor;
 	
+	public Node getNode(String name) {
+		return nodes.get(name);
+	}
+
+	public Node getNode(IPath path) {
+		Node node = nodeCache.get(path);
+		if(node == null) {
+			node = nodes.get(path.toString());
+			if(node == null)
+				return null;
+			nodeCache.put(path, node);
+		}
+		return node;
+	}
+
+	public void builderAddNodeToGraph(Node node) {
+		nodes.put(node.getName(),node);
+		nodePostList.add(node);
+	}
+
+	public void builderRemoveNodeFromGraph(Node node, ProgressManager manager) {
+		
+		if (nodes.size() == 0)
+			return;
+		
+		Collection<Node> values = new ArrayList<Node>(nodes.values());
+		for(Node n : values)
+			n.done = true;
+		node.markReachable();
+		
+		manager.subTask(Messages.bind(Messages.build_removing, node.getName()));
+		
+		for(Node n : values) {
+			if(!n.done) {
+				removeNode(n);
+				try {
+					cleanNode(n, manager.getZeroProgressMonitor());
+				} catch(CoreException e) {
+					if(Graph.DEBUG)
+						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
+				}
+			}
+		}
+		initCaches();
+	}
+
+	public void builderCleanGraph(IProject project, int percent, ProgressManager manager) throws CoreException {
+			
+			if (nodes.size() == 0)
+				return;
+			
+			ArrayList<IStatus> vStats = null; // lazy initialized
+			Collection<Node> values = new ArrayList<Node>(nodes.values());
+			
+			int slice = percent / values.size();
+			
+			manager.subTask(Messages.bind(Messages.build_cleaning, project.getName()));
+	//			monitor.beginTask(Messages.bind(Messages.build_cleaning, project.getName()), values.size());
+			
+			for(Node node : values) {
+				try {
+					cleanNode(node, manager.getProgressMonitor(slice));
+					if(node.isDerived()) 
+						tryRemoveNode(node);
+					
+				} catch(CoreException e) {
+					if (vStats == null)
+						vStats= new ArrayList<IStatus>();
+					vStats.add(e.getStatus());
+				}
+			}
+			initCaches();
+			if (vStats != null) {
+				IStatus[] stats= new IStatus[vStats.size()];
+				vStats.toArray(stats);
+				throw new CoreException(new MultiStatus(RodinCore.BUILDER_ID, IStatus.ERROR, stats, "Error while cleaning", null)); //$NON-NLS-1$
+			}
+		}
+
+	/**
+		 * This method implements the incremental build for Rodin projects.
+		 * The building process terminates when all tools (@see IAutomaticTool) have run
+		 * and the the graph is stable. As dependencies are added, changed, or removed during the build,
+		 * it can happen that the build would have been started with wrong dependencies, hence,
+		 * the topological order would be invalid for the Rodin project. In this case
+		 * the build is restarted, recreating all derived resources that may have been invalidated.
+		 * @param manager
+		 * 		The progress manager to use
+		 * @throws CoreException
+		 * 		If any problem occurred during build.
+		 */
+		public void builderBuildGraph(ProgressManager manager) throws CoreException {
+			if(Graph.DEBUG)
+				System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
+	//		this.progress = progress;
+	//		this.monitor = monitor;
+			instable = true;
+			while(instable) {
+				topSortInit();
+				topSortNodes(nodePreList, true, manager);
+				if(Graph.DEBUG)
+					System.out.print(getClass().getName() + ": OUT Graph:\n" + printGraph()); //$NON-NLS-1$
+				if(Graph.DEBUG)
+					System.out.println(getClass().getName() + ": Build Order: " + nodePreList.toString()); //$NON-NLS-1$
+				if(instable) {
+					if(Graph.DEBUG)
+						System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
+					continue;
+				}
+				commit();
+			}
+			removePhantoms();
+		}
+
+	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
+	//		node.markSuccessorsDated();
+			extract(node, new GraphModifier(this, node, manager), manager);
+		}
+
 	public Graph() {
 		nodes = new HashMap<String,Node>(11);
 		active = null;
@@ -103,9 +221,9 @@ public class Graph implements Serializable, Iterable<Node> {
 	}
 	
 	private ToolManager getManager() {
-		if(manager == null)
-		  	manager = ToolManager.getToolManager();
-		return manager;
+		if(toolManager == null)
+		  	toolManager = ToolManager.getToolManager();
+		return toolManager;
 	}
 	
 	private String printGraph() {
@@ -122,7 +240,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		return printGraph();
 	}
 		
-	private void runTool(Node node, IProgressMonitor monitor) {
+	private void runTool(Node node, ProgressManager manager) {
 		if(node.isPhantom())
 			return;
 		if(node.dependsOnPhantom()) {
@@ -137,42 +255,54 @@ public class Graph implements Serializable, Iterable<Node> {
 				System.out.println(getClass().getName() + ": Builder resource not a file!"); //$NON-NLS-1$
 			return;
 		}
+		
+		boolean changed = false;
+		
 		if (toolName == null || toolName.equals("")) {
 			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Root node changed: " + node.getName());
-			node.setDated(false);
+//			node.setDated(false);
 
 			RodinBuilder.deleteMarkers(file);
-			node.markSuccessorsDated();
-			try {
-				extract(node, new GraphHandler(this, node), monitor);
-			} catch (CoreException e){
-				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
-			}
+			
+			manager.decreaseSliceAdjustment();
+			
+			changed = true;
+			
+//			node.markSuccessorsDated();
+//			try {
+//				extract(node, new GraphHandler(this, node), manager);
+//			} catch (CoreException e){
+//				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
+//			}
 			return; // no associated tool
-		} else if(Graph.DEBUG)
-			System.out.println(getClass().getName() + ": Running tool: " + toolName + " on node: " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-		IAutomaticTool tool = getManager().getTool(toolName);
-		if(tool == null) {
-			Util.log(null, "Unknown tool: " + toolName + " for node " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		RodinBuilder.deleteMarkers(file);
-		boolean changed = false;
-		try {
-			FileRunnable runnable = new FileRunnable(tool, file);
-			RodinCore.run(runnable, new SubProgressMonitor(monitor, 1));
-			changed = runnable.targetHasChanged();
-		} catch (OperationCanceledException e) {
-			throw e;
-		} catch (CoreException e) {
-			Util.log(e, " while running tool " + file.getName()); //$NON-NLS-1$
-			node.setDated(false); // do not run defect tools unnecessarily often
-			return;
-		} catch (RuntimeException e) {
-			Util.log(e, " while running tool " + file.getName()); //$NON-NLS-1$
-			node.setDated(false); // do not run defect tools unnecessarily often
-			return;
+		} else {
+			if(Graph.DEBUG)
+			 System.out.println(getClass().getName() + 
+					 ": Running tool: " + toolName + " on node: " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			IAutomaticTool tool = getManager().getTool(toolName);
+			if(tool == null) {
+				Util.log(null, "Unknown tool: " + toolName + " for node " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
+			}
+			RodinBuilder.deleteMarkers(file);
+			try {
+				
+				FileRunnable runnable = new FileRunnable(tool, file);
+				RodinCore.run(runnable, manager.getProgressMonitorForNode(node));
+				changed = runnable.targetHasChanged();
+				
+			} catch (OperationCanceledException e) {
+				throw e;
+			} catch (CoreException e) {
+				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
+				node.setDated(false); // do not run defect tools unnecessarily often
+				return;
+			} catch (RuntimeException e) {
+				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
+				node.setDated(false); // do not run defect tools unnecessarily often
+				return;
+			}
 		}
 		
 		// we can ignore the rest of this method on cancelation
@@ -183,24 +313,23 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(changed) {
 			node.markSuccessorsDated();
 			try {
-				extract(node, new GraphHandler(this, node), monitor);
+				extract(node, new GraphModifier(this, node, manager), manager);
 			} catch (CoreException e) {
-				Util.log(e, " while extracting dependencies"); //$NON-NLS-1$
+				Util.log(e, " while extracting from " + file.getFullPath()); //$NON-NLS-1$
+//				Util.log(e, " while extracting dependencies"); //$NON-NLS-1$
 			}
 		}
 	}
 	
-	private void extract(Node node, GraphHandler handler, IProgressMonitor monitor) throws CoreException {
+	private void extract(Node node, GraphModifier handler, ProgressManager manager) throws CoreException {
 		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
 		if(extractor == null)
 			return;
 		for(int j = 0; j < extractor.length; j++)
-			extractor[j].extract(node.getFile(), new GraphFacade(handler), new SubProgressMonitor(monitor, 1));
-	}
-
-	public void extractNode(Node node, IProgressMonitor monitor) throws CoreException {
-		node.markSuccessorsDated();
-		extract(node, new GraphHandler(this, node), monitor);
+			extractor[j].extract(
+					node.getFile(), 
+					new GraphTransaction(handler), 
+					manager.getZeroProgressMonitor());
 	}
 
 	public void activate(String name) {
@@ -242,42 +371,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 	}
 	
-	public void addNodeToGraph(Node node) {
-		nodes.put(node.getName(),node);
-		nodePostList.add(node);
-	}
-	
-	public void removeNodeFromGraph(Node node, IProgressMonitor monitor) {
-		Collection<Node> values = new ArrayList<Node>(nodes.values());
-		for(Node n : values)
-			n.done = true;
-		node.markReachable();
-		
-		try {
-		
-			monitor.beginTask(
-					Messages.bind(Messages.build_removing, node.getName()), 
-					values.size());
-			
-			for(Node n : values) {
-				if(!n.done) {
-					removeNode(n);
-					try {
-						cleanNode(n, new SubProgressMonitor(monitor, 1));
-					} catch(CoreException e) {
-						if(Graph.DEBUG)
-							System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
-					}
-				} else {
-					monitor.worked(1);
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-		initCaches();
-	}
-	
 	private void cleanNode(Node node, IProgressMonitor monitor) throws CoreException {
 		node.setDated(true);
 		if(node.isNotDerived())
@@ -285,54 +378,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		IAutomaticTool tool = getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.clean(node.getFile(), monitor);
-	}
-	
-	public void cleanGraph(IProgressMonitor monitor, IProject project) throws CoreException {
-		ArrayList<IStatus> vStats = null; // lazy initialized
-		Collection<Node> values = new ArrayList<Node>(nodes.values());
-		try {
-			monitor.beginTask(Messages.bind(Messages.build_cleaning, project.getName()), values.size());
-			for(Node node : values) {
-				try {
-					cleanNode(node, new SubProgressMonitor(monitor, 1));
-					if(node.isDerived()) 
-						tryRemoveNode(node);
-				
-				} catch(CoreException e) {
-					if (vStats == null)
-						vStats= new ArrayList<IStatus>();
-					vStats.add(e.getStatus());
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-//		for(Node node : values) {
-//			String toolName = node.getProducerId();
-//			if(toolName != null && !toolName.equals("")) //$NON-NLS-1$
-//				removeNode(node);
-//		}
-		initCaches();
-		if (vStats != null) {
-			IStatus[] stats= new IStatus[vStats.size()];
-			vStats.toArray(stats);
-			throw new CoreException(new MultiStatus(RodinCore.BUILDER_ID, IStatus.ERROR, stats, "Error while cleaning", null)); //$NON-NLS-1$
-		}
-	}
-	
-	public Node getNode(String name) {
-		return nodes.get(name);
-	}
-	
-	public Node getNode(IPath path) {
-		Node node = nodeCache.get(path);
-		if(node == null) {
-			node = nodes.get(path.toString());
-			if(node == null)
-				return null;
-			nodeCache.put(path, node);
-		}
-		return node;
 	}
 	
 	private void topSortInit() {
@@ -360,47 +405,12 @@ public class Graph implements Serializable, Iterable<Node> {
 		instable = false;
 	}
 
-	/**
-	 * This method implements the incremental build for Rodin projects.
-	 * The building process terminates when all tools (@see IAutomaticTool) have run
-	 * and the the graph is stable. As dependencies are added, changed, or removed during the build,
-	 * it can happen that the build would have been started with wrong dependencies, hence,
-	 * the topological order would be invalid for the Rodin project. In this case
-	 * the build is restarted, recreating all derived resources that may have been invalidated.
-	 * @param monitor
-	 * 		The progress monitor to use
-	 * @throws CoreException
-	 * 		If any problem occurred during build.
-	 */
-	public void buildGraph(IProgressMonitor monitor) throws CoreException {
-		if(Graph.DEBUG)
-			System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
-//		this.progress = progress;
-//		this.monitor = monitor;
-		instable = true;
-		while(instable) {
-			topSortInit();
-			topSortNodes(nodePreList, true, true, monitor);
-			if(Graph.DEBUG)
-				System.out.print(getClass().getName() + ": OUT Graph:\n" + printGraph()); //$NON-NLS-1$
-			if(Graph.DEBUG)
-				System.out.println(getClass().getName() + ": Build Order: " + nodePreList.toString()); //$NON-NLS-1$
-			if(instable) {
-				if(Graph.DEBUG)
-					System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
-				continue;
-			}
-			commit(monitor);
-		}
-		removePhantoms();
-	}
-	
-	private void topSortNodes(LinkedList<Node> sorted, boolean run, boolean toolLinks, IProgressMonitor monitor) throws CoreException {
+	private void topSortNodes(LinkedList<Node> sorted, boolean toolLinks, ProgressManager manager) throws CoreException {
 		// sort all undone nodes in nodes append to sorted
 		// tools are only run if run is true
 		// if toolLinks is false only user links are considered (for cycle analysis)
 		while(!instable) {
-			if(monitor.isCanceled())
+			if(manager != null && manager.isCanceled())
 				throw new OperationCanceledException();
 			if(nodeStack.isEmpty()) {
 				Node firstNode = null;
@@ -418,9 +428,9 @@ public class Graph implements Serializable, Iterable<Node> {
 				sorted.add(firstNode);
 				N--;
 				firstNode.done = true;
-				if(run)
+				if(manager != null)
 					if(firstNode.isDated())
-						runTool(firstNode, monitor);
+						runTool(firstNode, manager);
 //				else if(node.isCycle())
 //				RodinBuilderX.deleteMarkers(node.getFile());
 			} else {
@@ -439,9 +449,9 @@ public class Graph implements Serializable, Iterable<Node> {
 							sorted.add(succNode);
 							N--;
 							succNode.done = true;
-							if(run)
+							if(manager != null)
 								if(succNode.isDated())
-									runTool(succNode, monitor);
+									runTool(succNode, manager);
 //							else if(succNode.isCycle())
 //							RodinBuilderX.deleteMarkers(succNode.getFile());
 						}
@@ -454,7 +464,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 	}
 	
-	private void commit(IProgressMonitor monitor) throws CoreException {
+	private void commit() throws CoreException {
 		// the purpose of this method is analyze the cycles more closely
 		// in order to avoid faulty error messages. In particular, when
 		// an error message is shown to the user, the user should be responsible
@@ -502,7 +512,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		// if spurious is empty everything is ok from the point of view of the tools:
 		// it's the user's fault!
 		LinkedList<Node> spurious = new LinkedList<Node>();
-		topSortNodes(spurious, false, false, monitor);
+		topSortNodes(spurious, false, null);
 		
 		// print to error console all spurious errors
 		if(spurious.size() > 0)
@@ -551,4 +561,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		return nodes.values().iterator();
 	}
 	
+	public int size() {
+		return nodes.size();
+	}
+
 }
