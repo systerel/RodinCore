@@ -97,24 +97,6 @@ public class MachineStaticChecker extends StaticChecker {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void clean(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		
-		try {
-		
-			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
-			
-			file.delete(true, monitor);
-			
-		} finally {
-			monitor.done();
-		}
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {

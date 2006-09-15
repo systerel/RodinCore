@@ -86,15 +86,6 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void clean(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		file.delete(true, monitor);
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {

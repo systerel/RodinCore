@@ -7,8 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IModule;
@@ -39,6 +41,24 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 		return repository;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void clean(IFile file, IProgressMonitor monitor)
+			throws CoreException {
+		
+		try {
+		
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
+
+	}
+
 	protected void runModules(
 			IRodinFile file, 
 			IPOFile target, 
@@ -75,6 +95,21 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 					monitor);
 	
 		}		
+	}
+
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			String s = EventBPlugin.getComponentName(file.getName());
+			String t = EventBPlugin.getComponentName(origin.getName());
+			if (s.equals(t))
+				file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

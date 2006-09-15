@@ -92,5 +92,9 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		target.save(null, true);
 		return true;
 	}
+	
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		remove(file, origin, monitor, MSC);
+	}
 
 }

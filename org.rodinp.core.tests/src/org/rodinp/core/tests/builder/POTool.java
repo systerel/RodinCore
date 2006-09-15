@@ -26,6 +26,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 	public static boolean SHOW_CLEAN = false;
 	public static boolean SHOW_RUN = false;
 	public static boolean SHOW_EXTRACT = false;
+	public static boolean SHOW_REMOVE = false;
 	
 	public static boolean RUN_PO = false;
 
@@ -69,6 +70,14 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		copyDataElements(ctx, target);
 		
 		target.save(null, true);
+	}
+
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor, String name) throws CoreException {
+		if (SHOW_REMOVE)
+			ToolTrace.addTrace(name, "remove", file);
+	
+		if (AbstractBuilderTest.getComponentName(file.getName()).equals(AbstractBuilderTest.getComponentName(origin.getName())))
+			file.delete(true, monitor);
 	}
 
 }

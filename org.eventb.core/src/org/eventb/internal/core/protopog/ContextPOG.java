@@ -188,5 +188,10 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 			obligation.put(poFile, monitor);
 		}
 	}
+
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -583,5 +583,10 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 			}
 		}
 	}
+
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

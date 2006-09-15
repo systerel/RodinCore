@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -20,6 +23,7 @@ public class SCTool {
 	public static boolean SHOW_CLEAN = false;
 	public static boolean SHOW_RUN = false;
 	public static boolean SHOW_EXTRACT = false;
+	public static boolean SHOW_REMOVE = false;
 
 	public static boolean DEBUG = true;
 	
@@ -41,6 +45,14 @@ public class SCTool {
 		if (DEBUG)
 			System.out.println("Copying " + ctx.getElementName() +
 					" -> " + target.getElementName() + " done.");
+	}
+	
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor, String name) throws CoreException {
+		if (SHOW_REMOVE)
+			ToolTrace.addTrace(name, "remove", file);
+	
+		if (AbstractBuilderTest.getComponentName(file.getName()).equals(AbstractBuilderTest.getComponentName(origin.getName())))
+			file.delete(true, monitor);
 	}
 
 }

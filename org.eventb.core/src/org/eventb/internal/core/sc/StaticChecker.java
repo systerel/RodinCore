@@ -8,8 +8,10 @@
 
 package org.eventb.internal.core.sc;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IProcessorModule;
@@ -63,6 +65,39 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		return repository;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void clean(IFile file, IProgressMonitor monitor)
+			throws CoreException {
+		
+		try {
+		
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
+
+	}
+
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		try {
+			
+			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
+			
+			String s = EventBPlugin.getComponentName(file.getName());
+			String t = EventBPlugin.getComponentName(origin.getName());
+			if (s.equals(t))
+				file.delete(true, monitor);
+			
+		} finally {
+			monitor.done();
+		}
+	}
+
 	public static String getStrippedComponentName(String component) {
 		int dotPos = component.indexOf('.');
 		if (dotPos == -1)

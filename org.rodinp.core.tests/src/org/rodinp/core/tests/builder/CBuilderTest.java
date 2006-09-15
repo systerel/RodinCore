@@ -21,6 +21,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		SCTool.RUN_SC = true;
 		SCTool.SHOW_CLEAN = true;
 		SCTool.SHOW_EXTRACT = true;
+		SCTool.SHOW_REMOVE = true;
 		SCTool.SHOW_RUN = true;
 		project = createRodinProject("P");
 		ToolTrace.flush();
@@ -65,7 +66,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 
 		ctx.delete(true, null);
 		runBuilder(
-				"CSC clean /P/x.csc"
+				"CSC remove /P/x.csc"
 		);
 	}
 	

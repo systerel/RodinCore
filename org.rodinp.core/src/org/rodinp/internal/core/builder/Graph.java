@@ -121,7 +121,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			if(!n.done) {
 				removeNode(n);
 				try {
-					cleanNode(n, manager.getZeroProgressMonitor());
+					removeNode(n, node, manager.getZeroProgressMonitor());
 				} catch(CoreException e) {
 					if(Graph.DEBUG)
 						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
@@ -378,6 +378,15 @@ public class Graph implements Serializable, Iterable<Node> {
 		IAutomaticTool tool = getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.clean(node.getFile(), monitor);
+	}
+	
+	private void removeNode(Node node, Node origin, IProgressMonitor monitor) throws CoreException {
+		node.setDated(true);
+		if(node.isNotDerived())
+			return;
+		IAutomaticTool tool = getManager().getTool(node.getToolId());
+		if (tool != null)
+			tool.remove(node.getFile(), origin.getFile(), monitor);
 	}
 	
 	private void topSortInit() {

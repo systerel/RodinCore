@@ -73,4 +73,8 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		return true;
 	}
 	
+	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
+		remove(file, origin, monitor, CSC);
+	}
+
 }

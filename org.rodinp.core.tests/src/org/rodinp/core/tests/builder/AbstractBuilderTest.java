@@ -83,5 +83,11 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 				null);
 		return ref;
 	}
+	
+	public static String getComponentName(String fileName) {
+		final int length = fileName.length() - 4;
+		assert 0 < length;
+		return fileName.substring(0, length);
+	}
 
 }
