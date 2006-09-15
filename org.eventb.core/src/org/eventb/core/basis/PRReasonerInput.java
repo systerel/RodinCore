@@ -79,6 +79,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 	}
 
 	public void putExpression(String name, Expression expression) throws SerializeException {
+		if (expression == null) return;
 		try {
 			((IPRExpression)(createInternalElement(
 					IPRExpression.ELEMENT_TYPE,
