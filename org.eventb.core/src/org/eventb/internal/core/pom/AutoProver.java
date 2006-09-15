@@ -72,8 +72,9 @@ public class AutoProver {
 					// proof was previously attempted update the proof
 					else if (tree.getRoot().hasChildren() && 
 							(proofTree == null ||
-									(! proofTree.proofAttempted()) ||
-									proofTree.isAutomaticallyGenerated()))
+									(! proofTree.proofAttempted()) 
+									|| (proofTree.isAutomaticallyGenerated() && !proofTree.isClosed())
+									))
 					{
 						po.updateProofTree(tree);
 						((PRProofTree)proofTree).setAutomaticallyGenerated();
