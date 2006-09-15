@@ -37,11 +37,22 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		IPOFile target = (IPOFile) RodinCore.create(file);
 		ISCContextFile source = target.getSCContext();
 
-		IRodinProject project = target.getRodinProject();
-		project.createRodinFile(target.getElementName(), true, null);
-
-		target.save(monitor, true);
-		return true;
+		try {
+		
+			monitor.beginTask(
+					Messages.bind(
+							Messages.build_runningCPO, 
+							EventBPlugin.getComponentName(file.getName())),
+					1);
+			
+			IRodinProject project = target.getRodinProject();
+			project.createRodinFile(target.getElementName(), true, null);
+		
+			target.save(monitor, true);
+			return true;
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)

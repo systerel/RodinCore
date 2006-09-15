@@ -45,33 +45,44 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 
-		if (machineModules == null) {
-			
-			machineModules = manager.getProcessorModules(MACHINE_MODULE);
-			
-		}
-		
 		IPOFile poFile = (IPOFile) RodinCore.create(file);
 		ISCMachineFile scMachineFile = poFile.getSCMachine();
 		
-		IRodinProject project = (IRodinProject) poFile.getParent();
-		project.createRodinFile(poFile.getElementName(), true, null);
+		try {
+			
+			monitor.beginTask(
+					Messages.bind(
+							Messages.build_runningMPO, 
+							EventBPlugin.getComponentName(file.getName())),
+					1);
+			
+			if (machineModules == null) {
+			
+				machineModules = manager.getProcessorModules(MACHINE_MODULE);
+			
+			}
+		
+			IRodinProject project = (IRodinProject) poFile.getParent();
+			project.createRodinFile(poFile.getElementName(), true, null);
 
-		IStateRepository repository = createRepository(scMachineFile, monitor);
+			IStateRepository repository = createRepository(scMachineFile, monitor);
 		
-		runModules(
-				scMachineFile, 
-				poFile,
-				machineModules, 
-				repository,
-				monitor);
+			runModules(
+					scMachineFile, 
+					poFile,
+					machineModules, 
+					repository,
+					monitor);
 		
-		poFile.save(monitor, true);
+			poFile.save(monitor, true);
 		
-		// TODO delta checking
-		// return repository.targetHasChanged();
+			// TODO delta checking
+			// return repository.targetHasChanged();
 
-		return true;
+			return true;
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
