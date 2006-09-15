@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
@@ -52,11 +53,15 @@ public class MachineStaticChecker extends StaticChecker {
 		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.create(file).getMutableCopy();
 		IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
 		
-		int size = machineFile.getChildren().length;
+		int size = machineFile.getChildren().length + 3;
 		
 		try {
 			
-			monitor.beginTask(Messages.bind(Messages.build_runningMSC, file.getName()), size);
+			monitor.beginTask(
+					Messages.bind(
+							Messages.build_runningMSC, 
+							StaticChecker.getStrippedComponentName(file.getName())), 
+					size);
 
 			if (machineModules == null) {
 			
@@ -66,8 +71,11 @@ public class MachineStaticChecker extends StaticChecker {
 		
 			IRodinProject project = (IRodinProject) scMachineFile.getParent();
 			project.createRodinFile(scMachineFile.getElementName(), true, null);
-
+			
 			IStateRepository repository = createRepository(machineFile, monitor);
+			
+			machineFile.open(new SubProgressMonitor(monitor, 1));
+			scMachineFile.open(new SubProgressMonitor(monitor, 1));
 		
 			runProcessorModules(
 					machineFile, 
@@ -76,7 +84,7 @@ public class MachineStaticChecker extends StaticChecker {
 					repository,
 					monitor);
 		
-			scMachineFile.save(monitor, true);
+			scMachineFile.save(new SubProgressMonitor(monitor, 1), true);
 		
 			// TODO delta checking
 			// return repository.targetHasChanged();

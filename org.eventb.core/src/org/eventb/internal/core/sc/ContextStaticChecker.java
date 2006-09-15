@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
@@ -51,11 +52,15 @@ public class ContextStaticChecker extends StaticChecker {
 		ISCContextFile scContextFile = (ISCContextFile) RodinCore.create(file).getMutableCopy();
 		IContextFile contextFile = (IContextFile) scContextFile.getContextFile().getSnapshot();
 		
-		int size = contextFile.getChildren().length;
+		int size = contextFile.getChildren().length + 3;
 		
 		try {
 			
-			monitor.beginTask(Messages.bind(Messages.build_runningMSC, file.getName()), size);
+			monitor.beginTask(
+					Messages.bind(
+							Messages.build_runningMSC, 
+							StaticChecker.getStrippedComponentName(file.getName())), 
+					size);
 
 			if (contextModules == null) {
 			
@@ -68,6 +73,9 @@ public class ContextStaticChecker extends StaticChecker {
 
 			IStateRepository repository = createRepository(contextFile, monitor);
 		
+			contextFile.open(new SubProgressMonitor(monitor, 1));
+			scContextFile.open(new SubProgressMonitor(monitor, 1));
+		
 			runProcessorModules(
 					contextFile, 
 					scContextFile,
@@ -75,7 +83,7 @@ public class ContextStaticChecker extends StaticChecker {
 					repository,
 					monitor);
 		
-			scContextFile.save(monitor, true);
+			scContextFile.save(new SubProgressMonitor(monitor, 1), true);
 		
 			// TODO delta checking
 			// return repository.targetHasChanged();

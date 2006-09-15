@@ -36,6 +36,21 @@ public final class Messages {
 	public static String build_runningCSC;
 	public static String build_extracting;
 	
+	// progress messages
+	public static String progress_ContextCarrierSets;
+	public static String progress_ContextConstants;
+	public static String progress_ContextAxioms;
+	public static String progress_ContextTheorems;
+	public static String progress_ContextExtends;
+	
+	public static String progress_MachineVariables;
+	public static String progress_MachineInvariants;
+	public static String progress_MachineTheorems;
+	public static String progress_MachineEvents;
+	public static String progress_MachineVariant;
+	public static String progress_MachineRefines;
+	public static String progress_MachineSees;
+	
     // error messages of the static checker addressed to the user
 	
 	public static String scuser_OnlyOneEventRefinesClauseProblem;
