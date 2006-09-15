@@ -17,7 +17,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -54,7 +53,6 @@ import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -119,21 +117,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		 *      int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
-			ImageRegistry registry = EventBUIPlugin.getDefault()
-					.getImageRegistry();
-
 			if (element instanceof IProofTreeNode) {
-				IProofTreeNode pt = (IProofTreeNode) element;
-				if (pt.isOpen())
-					return registry.get(EventBImage.IMG_PENDING);
-				if (!pt.isClosed())
-					return registry.get(EventBImage.IMG_APPLIED);
-				int confidence = pt.getConfidence();
-				if (confidence <= IConfidence.REVIEWED_MAX)
-					return registry.get(EventBImage.IMG_REVIEWED);
-				if (confidence <= IConfidence.DISCHARGED_MAX)
-					return registry.get(EventBImage.IMG_DISCHARGED);
-				return registry.get(EventBImage.IMG_DEFAULT);
+				return EventBImage
+						.getProofTreeNodeImage((IProofTreeNode) element);
 			}
 
 			// TODO Removed?
@@ -713,8 +699,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	public void proofStateChanged(final IProofStateDelta delta) {
 		// byUserSupport = true;
 		ProofTreeUI.debug("Proof Tree UI for "
-				+ ProofTreeUIPage.this.userSupport.getInput().getElementName() + ": State Changed: "
-				+ delta.toString());
+				+ ProofTreeUIPage.this.userSupport.getInput().getElementName()
+				+ ": State Changed: " + delta.toString());
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
@@ -742,7 +728,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// Do nothing
 				} else {
 					IProofTreeDelta proofTreeDelta = delta.getProofTreeDelta();
-//					ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
+					// ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
 						elementColumn.pack();

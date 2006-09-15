@@ -22,6 +22,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -120,6 +122,14 @@ public class EventBImage {
 
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
 
+	public static final String IMG_PENDING_PATH = "icons/pending.gif";
+	
+	public static final String IMG_APPLIED_PATH = "icons/applied.gif";
+	
+	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
+	
+	public static final String IMG_DISCHARGED_PATH = "icons/discharged.gif";
+	
 	private static Map<String, Image> images = new HashMap<String, Image>();
 
 	/**
@@ -290,4 +300,45 @@ public class EventBImage {
 		return null;
 	}
 	
+	public static Image getProofTreeNodeImage(IProofTreeNode node) {
+		String base_path = "";
+
+		if (node.isOpen())
+			base_path = EventBImage.IMG_PENDING_PATH;
+		else if (!node.isClosed())
+			base_path = EventBImage.IMG_APPLIED_PATH;
+		// return registry.get(EventBImage.IMG_APPLIED);
+		else {
+			int confidence = node.getConfidence();
+
+			if (confidence <= IConfidence.REVIEWED_MAX)
+				base_path = EventBImage.IMG_REVIEWED_PATH;
+			// return registry.get(EventBImage.IMG_REVIEWED);
+			if (confidence <= IConfidence.DISCHARGED_MAX)
+				base_path = EventBImage.IMG_DISCHARGED_PATH;
+			// return registry.get(EventBImage.IMG_DISCHARGED);
+		}
+		// Compute the key
+		// key = pluginID:base_path:overlay
+		// overlay = comment 
+		String key = base_path;
+		
+		String comment = "0";
+		if (!node.getComment().equals("")) {
+			comment = "1";
+		}
+		key += ":" + comment;
+		
+		Image image = images.get(key);
+		if (image == null) {
+			UIUtils.debugEventBEditor("Create a new image: " + key);
+			OverlayIcon icon = new OverlayIcon(
+					getImageDescriptor(base_path));
+			if (comment == "1")
+				icon.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+			image = icon.createImage();
+			images.put(key, image);					
+		}
+		return image;
+	}
 }
