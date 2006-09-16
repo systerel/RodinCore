@@ -806,25 +806,15 @@ public class UIUtils {
 			Collection<IRodinElement> set, IRodinElement element) {
 		Collection<IRodinElement> delete = new ArrayList<IRodinElement>();
 		for (IRodinElement member : set) {
-			if (isInSubTree(member, element))
+			if (element.isAncestorOf(member))
 				return set;
-			else if (isInSubTree(element, member)) {
+			else if (member.isAncestorOf(element)) {
 				delete.add(member);
 			}
 		}
 		set.removeAll(delete);
 		set.add(element);
 		return set;
-	}
-
-	private static boolean isInSubTree(IRodinElement member,
-			IRodinElement element) {
-		while (element != null) {
-			if (element == member)
-				return true;
-			element = element.getParent();
-		}
-		return false;
 	}
 
 }
