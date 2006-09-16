@@ -8,8 +8,8 @@
 
 package org.rodinp.core.builder;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * @author Stefan Hallerstede
@@ -39,13 +39,13 @@ public interface IGraph {
 	 * Adds a a node "path" with associated tool into the graph. If a node with
 	 * this path exists already only the tool is reassigned.
 	 * 
-	 * @param path
-	 *            The path of the node
+	 * @param file
+	 *            The file of the node
 	 * @param toolId
-	 *            The path of the tool
+	 *            The unique identifier of the tool
 	 * @throws CoreException TODO
 	 */
-	public void addNode(IPath path, String toolId) throws CoreException;
+	public void addNode(IFile file, String toolId) throws CoreException;
 	
 //	/**
 //	 * Remove the node "path" from the graph. If the node does not exist,
@@ -75,9 +75,9 @@ public interface IGraph {
 	 * @throws CoreException TODO
 	 */
 	public void putUserDependency(
-			IPath origin, 
-			IPath source, 
-			IPath target,
+			IFile origin, 
+			IFile source, 
+			IFile target,
 			String id, 
 			boolean prioritize) throws CoreException;
 	
@@ -95,8 +95,8 @@ public interface IGraph {
 	 * @throws CoreException TODO
 	 */
 	public void putToolDependency(
-			IPath source, 
-			IPath target, 
+			IFile source, 
+			IFile target, 
 			String id,
 			boolean prioritize) throws CoreException;
 

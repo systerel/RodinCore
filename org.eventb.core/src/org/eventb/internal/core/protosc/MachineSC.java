@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
@@ -124,15 +123,16 @@ public class MachineSC extends CommonSC implements IAutomaticTool, IExtractor {
 		ISCMachineFile target = machineIn.getSCMachineFile();
 		ISCContextFile seen = getSeenContext(machineIn);
 
-		IPath inPath = machineIn.getPath();
-		IPath targetPath = target.getPath();
-		IPath seenPath = seen != null ? seen.getPath() : null;
-		
 		graph.openGraph();
-		graph.addNode(targetPath, SCCore.MACHINE_SC_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
-		if (seenPath != null)
-			graph.putUserDependency(inPath, seenPath, targetPath, SCCore.MACHINE_SEES_REL_ID, true);
+		graph.addNode(target.getResource(), SCCore.MACHINE_SC_TOOL_ID);
+		graph.putToolDependency(
+				machineIn.getResource(), 
+				target.getResource(), SCCore.CONTEXT_SC_TOOL_ID, true);
+		if (seen != null)
+			graph.putUserDependency(
+					machineIn.getResource(), 
+					seen.getResource(), 
+					target.getResource(), SCCore.MACHINE_SEES_REL_ID, true);
 		graph.closeGraph();
 	}
 

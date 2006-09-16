@@ -8,7 +8,6 @@
 package org.eventb.internal.core.pog;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.IConcreteEventActionTable;
-import org.eventb.core.pog.IMachineInvariantTable;
 import org.eventb.core.pog.IMachineVariableTable;
 
 /**

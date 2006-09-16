@@ -6,6 +6,7 @@ package org.rodinp.internal.core.builder;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -43,54 +44,70 @@ public class GraphTransaction implements IGraph {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IGraph#putUserDependency(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, java.lang.String, boolean)
+	 * @see org.rodinp.core.builder.IGraph#putUserDependency(IFile, IFile, IFile, String, boolean)
 	 */
-	public void putUserDependency(IPath origin, IPath source, IPath target,
-			String id, boolean prioritize) throws CoreException {
+	public void putUserDependency(
+			IFile origin, 
+			IFile source, 
+			IFile target,
+			String id, 
+			boolean prioritize) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
+		
+		IPath originPath =  origin.getFullPath();
+		IPath sourcePath =  source.getFullPath();
+		IPath targetPath =  target.getFullPath();
 		
 		links.add(new Link(Link.Provider.USER, 
 						prioritize ? Link.Priority.HIGH : Link.Priority.LOW, 
 						id, 
-						handler.getNodeOrPhantom(source), 
-						handler.getNodeOrPhantom(origin)));
-		Node node = handler.getNodeOrPhantom(target);
+						handler.getNodeOrPhantom(sourcePath), 
+						handler.getNodeOrPhantom(originPath)));
+		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
 		targetSet.add(node);
 		ids.add(id);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IGraph#putToolDependency(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath, java.lang.String, boolean)
+	 * @see org.rodinp.core.builder.IGraph#putToolDependency(IFile, IFile, String, boolean)
 	 */
-	public void putToolDependency(IPath source, IPath target, String id,
+	public void putToolDependency(
+			IFile source, 
+			IFile target, 
+			String id,
 			boolean prioritize) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
 		
+		IPath sourcePath =  source.getFullPath();
+		IPath targetPath =  target.getFullPath();
+		
 		links.add(new Link(Link.Provider.TOOL, 
 				prioritize ? Link.Priority.HIGH : Link.Priority.LOW, 
 				id, 
-				handler.getNodeOrPhantom(source), 
+				handler.getNodeOrPhantom(sourcePath), 
 				null));
-		Node node = handler.getNodeOrPhantom(target);
+		Node node = handler.getNodeOrPhantom(targetPath);
 		targets.add(node);
 		targetSet.add(node);
 		ids.add(id);
 	}
 
-	public void addNode(IPath path, String producerId) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.resources.IFile, java.lang.String)
+	 */
+	public void addNode(IFile file, String producerId) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();
 		
-		handler.addNode(path, producerId);
+		handler.addNode(file.getFullPath(), producerId);
 	}
 
-//	public void removeNode(IPath path) {
-//		handler.removeNode(path);
-//	}
-//
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.builder.IGraph#closeGraph()
+	 */
 	public void closeGraph() throws CoreException {
 		if (opened && !closed) {
 			opened = false;
@@ -128,6 +145,9 @@ public class GraphTransaction implements IGraph {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.builder.IGraph#openGraph()
+	 */
 	public void openGraph() throws CoreException {
 		if (!opened && !closed) 
 			opened = true;

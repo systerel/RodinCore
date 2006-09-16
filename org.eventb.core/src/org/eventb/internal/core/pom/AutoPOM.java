@@ -173,15 +173,14 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			monitor.beginTask("Extracting " + file.getName(), 1);
 		
-			IPOFile in = (IPOFile) RodinCore.create(file);
-			IPRFile target = in.getPRFile();
-		
-			IPath inPath = in.getPath();
-			IPath targetPath = target.getPath();
+			IPOFile source = (IPOFile) RodinCore.create(file);
+			IPRFile target = source.getPRFile();
 		
 			graph.openGraph();
-			graph.addNode(targetPath, POMCore.AUTO_POM_TOOL_ID);
-			graph.putToolDependency(inPath, targetPath, POMCore.AUTO_POM_TOOL_ID, true);
+			graph.addNode(target.getResource(), POMCore.AUTO_POM_TOOL_ID);
+			graph.putToolDependency(
+					source.getResource(), 
+					target.getResource(), POMCore.AUTO_POM_TOOL_ID, true);
 			graph.closeGraph();
 			
 		} finally {

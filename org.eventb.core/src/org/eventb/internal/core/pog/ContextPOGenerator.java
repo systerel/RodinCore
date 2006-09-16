@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
@@ -61,13 +60,12 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		ISCContextFile source = (ISCContextFile) RodinCore.create(file);
 		IPOFile target = source.getContextFile().getPOFile();
-		
-		IPath sourcePath = source.getPath();
-		IPath targetPath = target.getPath();
-		
+				
 		graph.openGraph();
-		graph.addNode(targetPath, CONTEXT_POG_TOOL_ID);
-		graph.putToolDependency(sourcePath, targetPath, CONTEXT_POG_TOOL_ID, true);
+		graph.addNode(target.getResource(), CONTEXT_POG_TOOL_ID);
+		graph.putToolDependency(
+				source.getResource(), 
+				target.getResource(), CONTEXT_POG_TOOL_ID, true);
 		graph.closeGraph();
 
 	}

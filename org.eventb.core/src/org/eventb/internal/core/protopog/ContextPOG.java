@@ -107,12 +107,9 @@ public class ContextPOG implements IAutomaticTool, IExtractor {
 		ISCContextFile in = (ISCContextFile) RodinCore.create(file);
 		IPOFile target = in.getContextFile().getPOFile();
 		
-		IPath inPath = in.getPath();
-		IPath targetPath = target.getPath();
-		
 		graph.openGraph();
-		graph.addNode(targetPath, POGCore.CONTEXT_POG_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, POGCore.CONTEXT_POG_TOOL_ID, true);
+		graph.addNode(target.getResource(), POGCore.CONTEXT_POG_TOOL_ID);
+		graph.putToolDependency(in.getResource(), target.getResource(), POGCore.CONTEXT_POG_TOOL_ID, true);
 		graph.closeGraph();
 	}
 

@@ -108,12 +108,9 @@ public class ContextSC extends CommonSC implements IAutomaticTool, IExtractor {
 		IContextFile contextIn = (IContextFile) RodinCore.create(file);
 		ISCContextFile target = contextIn.getSCContextFile();
 		
-		IPath inPath = contextIn.getPath();
-		IPath targetPath = target.getPath();
-		
 		graph.openGraph();
-		graph.addNode(targetPath, SCCore.CONTEXT_SC_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, SCCore.CONTEXT_SC_TOOL_ID, true);
+		graph.addNode(target.getResource(), SCCore.CONTEXT_SC_TOOL_ID);
+		graph.putToolDependency(contextIn.getResource(), target.getResource(), SCCore.CONTEXT_SC_TOOL_ID, true);
 		graph.closeGraph();
 	}
 

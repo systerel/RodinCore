@@ -110,30 +110,27 @@ public class MachineStaticChecker extends StaticChecker {
 			ISeesContext[] seen = source.getSeesClauses();
 			IRefinesMachine abstractMachine = source.getRefinesClause();
 
-			IPath sourcePath = source.getPath();
-			IPath targetPath = target.getPath();
-		
 			graph.openGraph();
-			graph.addNode(targetPath, MACHINE_SC_TOOL_ID);
-			graph.putToolDependency(sourcePath, targetPath, MACHINE_SC_TOOL_ID, true);	
+			graph.addNode(target.getResource(), MACHINE_SC_TOOL_ID);
+			graph.putToolDependency(
+					source.getResource(), 
+					target.getResource(), MACHINE_SC_TOOL_ID, true);	
 		
 			if (seen.length != 0) {
 				for (ISeesContext seesContext : seen) {
-					IPath seenPath = seesContext.getSeenSCContext().getPath();
 					graph.putUserDependency(
-							sourcePath, 
-							seenPath, 
-							targetPath, 
+							source.getResource(), 
+							seesContext.getSeenSCContext().getResource(), 
+							target.getResource(), 
 							MACHINE_SC_SEES_ID, true);
 				}
 			}
 		
 			if (abstractMachine != null) {
-				IPath abstractPath = abstractMachine.getAbstractSCMachine().getPath();
 				graph.putUserDependency(
-						sourcePath, 
-						abstractPath, 
-						targetPath, 
+						source.getResource(), 
+						abstractMachine.getAbstractSCMachine().getResource(), 
+						target.getResource(), 
 						MACHINE_SC_REFINES_ID, true);
 			}
 		

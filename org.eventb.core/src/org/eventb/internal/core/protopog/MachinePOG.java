@@ -102,12 +102,9 @@ public class MachinePOG implements IAutomaticTool, IExtractor {
 		ISCMachineFile in = (ISCMachineFile) RodinCore.create(file);
 		IPOFile target = in.getMachineFile().getPOFile();
 		
-		IPath inPath = in.getPath();
-		IPath targetPath = target.getPath();
-		
 		graph.openGraph();
-		graph.addNode(targetPath, POGCore.MACHINE_POG_TOOL_ID);
-		graph.putToolDependency(inPath, targetPath, POGCore.MACHINE_POG_TOOL_ID, true);
+		graph.addNode(target.getResource(), POGCore.MACHINE_POG_TOOL_ID);
+		graph.putToolDependency(in.getResource(), target.getResource(), POGCore.MACHINE_POG_TOOL_ID, true);
 		graph.closeGraph();
 	}
 

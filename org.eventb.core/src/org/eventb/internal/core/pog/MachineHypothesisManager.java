@@ -10,7 +10,6 @@ package org.eventb.internal.core.pog;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.IMachineHypothesisManager;
 import org.rodinp.core.IRodinElement;
 

@@ -10,7 +10,6 @@ package org.eventb.internal.core.sc;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -104,19 +103,18 @@ public class ContextStaticChecker extends StaticChecker {
 			IContextFile source = (IContextFile) RodinCore.create(file);
 			ISCContextFile target = source.getSCContextFile();
 		
-			IPath sourcePath = source.getPath();
-			IPath targetPath = target.getPath();
-		
 			graph.openGraph();
-			graph.addNode(targetPath, CONTEXT_SC_TOOL_ID);
-			graph.putToolDependency(sourcePath, targetPath, CONTEXT_SC_TOOL_ID, true);
+			graph.addNode(target.getResource(), CONTEXT_SC_TOOL_ID);
+			graph.putToolDependency(
+					source.getResource(), 
+					target.getResource(), CONTEXT_SC_TOOL_ID, true);
 		
 			IExtendsContext[] extendsContexts = source.getExtendsClauses();
 			for(IExtendsContext extendsContext : extendsContexts) {
 				graph.putUserDependency(
-						source.getPath(), 
-						extendsContext.getAbstractSCContext().getPath(), 
-						target.getPath(), 
+						source.getResource(), 
+						extendsContext.getAbstractSCContext().getResource(), 
+						target.getResource(), 
 						CONTEXT_SC_EXTENDS_ID, 
 						false);
 			}

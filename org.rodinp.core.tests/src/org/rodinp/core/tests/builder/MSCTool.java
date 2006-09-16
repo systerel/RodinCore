@@ -47,23 +47,23 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		IMachine mch = (IMachine) RodinCore.create(file);
 		
 		ISCMachine smch = mch.getCheckedVersion();
-		IPath scPath = smch.getResource().getFullPath();
-		graph.addNode(scPath, SC_ID);
-		graph.putToolDependency(mch.getResource().getFullPath(), scPath, SC_ID, true);
+		IFile scFile = smch.getResource();
+		graph.addNode(scFile, SC_ID);
+		graph.putToolDependency(mch.getResource(), scFile, SC_ID, true);
 		
 		ISCMachine machine = mch.getReferencedMachine();
 		if (machine != null) {
 			graph.putUserDependency(
-					mch.getResource().getFullPath(), machine.getResource().getFullPath(), scPath, SC_ID, false);
+					mch.getResource(), machine.getResource(), scFile, SC_ID, false);
 		}
 		
-		HashSet<IPath> newSources = new HashSet<IPath>(mch.getUsedContexts().length * 4 / 3 + 1);
+		HashSet<IFile> newSources = new HashSet<IFile>(mch.getUsedContexts().length * 4 / 3 + 1);
 		for (IContext usedContext: mch.getUsedContexts()) {
-			IPath source = usedContext.getCheckedVersion().getResource().getFullPath();
+			IFile source = usedContext.getCheckedVersion().getResource();
 			newSources.add(source);
 		}
-		for (IPath path : newSources)
-			graph.putUserDependency(mch.getResource().getFullPath(), path, scPath, SC_ID, false);
+		for (IFile newSrc : newSources)
+			graph.putUserDependency(mch.getResource(), newSrc, scFile, SC_ID, false);
 		
 		graph.closeGraph();
 	}

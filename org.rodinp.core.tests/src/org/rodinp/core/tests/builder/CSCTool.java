@@ -37,17 +37,17 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		IContext ctx = (IContext) RodinCore.create(file);
 		
 		ISCContext sctx = ctx.getCheckedVersion();
-		IPath scPath = sctx.getResource().getFullPath();
-		graph.addNode(scPath, SC_ID);
-		graph.putToolDependency(ctx.getResource().getFullPath(), scPath, SC_ID, true);
+		IFile scFile = sctx.getResource();
+		graph.addNode(scFile, SC_ID);
+		graph.putToolDependency(ctx.getResource(), scFile, SC_ID, true);
 		
-		HashSet<IPath> newSources = new HashSet<IPath>(ctx.getUsedContexts().length * 4 / 3 + 1);
+		HashSet<IFile> newSources = new HashSet<IFile>(ctx.getUsedContexts().length * 4 / 3 + 1);
 		for (IContext usedContext: ctx.getUsedContexts()) {
-			IPath source = usedContext.getCheckedVersion().getResource().getFullPath();
+			IFile source = usedContext.getCheckedVersion().getResource();
 			newSources.add(source);
 		}
-		for (IPath path : newSources)
-			graph.putUserDependency(ctx.getResource().getFullPath(), path, scPath, SC_ID, false);
+		for (IFile newFile : newSources)
+			graph.putUserDependency(ctx.getResource(), newFile, scFile, SC_ID, false);
 		
 		graph.closeGraph();
 	}

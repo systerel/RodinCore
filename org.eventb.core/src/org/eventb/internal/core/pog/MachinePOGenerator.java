@@ -9,7 +9,6 @@ package org.eventb.internal.core.pog;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
@@ -93,12 +92,11 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 		ISCMachineFile source = (ISCMachineFile) RodinCore.create(file);
 		IPOFile target = source.getMachineFile().getPOFile();
 		
-		IPath sourcePath = source.getPath();
-		IPath targetPath = target.getPath();
-		
 		graph.openGraph();
-		graph.addNode(targetPath, MACHINE_POG_TOOL_ID);
-		graph.putToolDependency(sourcePath, targetPath, MACHINE_POG_TOOL_ID, true);
+		graph.addNode(target.getResource(), MACHINE_POG_TOOL_ID);
+		graph.putToolDependency(
+				source.getResource(), 
+				target.getResource(), MACHINE_POG_TOOL_ID, true);
 		graph.closeGraph();
 
 	}
