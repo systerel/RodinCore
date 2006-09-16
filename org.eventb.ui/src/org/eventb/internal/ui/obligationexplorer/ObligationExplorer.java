@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
@@ -362,44 +363,8 @@ public class ObligationExplorer extends ViewPart implements
 					}
 
 					// Otherwise, setting the label accordingly.
-					final IPRProofTree prProofTree = prSequent.getProofTree();
-					
-					if (prProofTree == null || (!prProofTree.proofAttempted()))
-						return registry.get(EventBImage.IMG_UNATTEMPTED);
-
-					
-					int confidence = prProofTree.getConfidence();
-					if (prSequent.isProofBroken()) {
-
-						if (confidence == IConfidence.PENDING)
-							return registry.get(EventBImage.IMG_PENDING_BROKEN);
-						if (confidence <= IConfidence.REVIEWED_MAX)
-							return registry
-									.get(EventBImage.IMG_REVIEWED_BROKEN);
-						if (confidence <= IConfidence.DISCHARGED_MAX)
-							return registry
-									.get(EventBImage.IMG_DISCHARGED_BROKEN);
-
-					} else {
-
-						if (confidence == IConfidence.PENDING)
-							return registry.get(EventBImage.IMG_PENDING);
-						if (confidence <= IConfidence.REVIEWED_MAX)
-							return registry.get(EventBImage.IMG_REVIEWED);
-						if (confidence <= IConfidence.DISCHARGED_MAX)
-							return registry.get(EventBImage.IMG_DISCHARGED);
-
-					}
-
-					return registry.get(EventBImage.IMG_DEFAULT);
-
-					// Previous code:
-					// IProof status = ps.getProof();
-					// if (status.getContents().equals("PENDING"))
-					// return registry.get(EventBImage.IMG_PENDING);
-					// else if (status.getContents().equals("DISCHARGED"))
-					// return registry.get(EventBImage.IMG_DISCHARGED);
-				} catch (RodinDBException e) {
+					return EventBImage.getPRSequentImage(prSequent);
+									} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -813,7 +778,11 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void USManagerChanged(final UserSupport userSupport, final int status) {
-		Display display = viewer.getControl().getDisplay();
+		
+		Control control = viewer.getControl();
+		if (control.isDisposed()) return;
+		
+		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
 				UIUtils.debugObligationExplorer("Obligation Explorer: "
@@ -832,8 +801,6 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void proofStateChanged(final IProofStateDelta delta) {
-		if (viewer.getControl().isDisposed())
-			return;
 
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
@@ -844,6 +811,8 @@ public class ObligationExplorer extends ViewPart implements
 				final ProofState ps = delta.getProofState();
 
 				final UserSupport userSupport = delta.getSource();
+				if (viewer.getControl().isDisposed())
+					return;
 				viewer.refresh(userSupport.getInput(), true);
 				column.pack();
 				column.setWidth(MAX_WIDTH);

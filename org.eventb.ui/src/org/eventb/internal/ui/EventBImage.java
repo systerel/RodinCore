@@ -22,6 +22,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.rodinp.core.IRodinElement;
@@ -74,7 +76,7 @@ public class EventBImage {
 	public static final String IMG_DEFAULT = "Default";
 
 	public static final String IMG_REFINES = "Refines";
-	
+
 	public static final String IMG_NULL = "NULL";
 
 	// Just for fun :-)
@@ -118,18 +120,28 @@ public class EventBImage {
 
 	public static final String IMG_COMMENT_OVERLAY_PATH = "icons/full/ovr16/cmt_ovr.gif";
 
+	public static final String IMG_AUTO_OVERLAY_PATH = "icons/full/ovr16/auto_ovr.gif";
+
 	public static final String IMG_ERROR_OVERLAY_PATH = "icons/full/ovr16/error_ovr.gif";
 
 	public static final String IMG_EXPERT_MODE_PATH = "icons/full/ctool16/xp_prover.gif";
 
 	public static final String IMG_PENDING_PATH = "icons/pending.gif";
-	
+
+	public static final String IMG_PENDING_BROKEN_PATH = "icons/pending_broken.gif";
+
 	public static final String IMG_APPLIED_PATH = "icons/applied.gif";
-	
+
 	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
-	
+
+	public static final String IMG_REVIEWED_BROKEN_PATH = "icons/reviewed.gif";
+
 	public static final String IMG_DISCHARGED_PATH = "icons/discharged.gif";
-	
+
+	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged.gif";
+
+	public static final String IMG_UNATTEMPTED_PATH = "icons/unattempted.gif";
+
 	private static Map<String, Image> images = new HashMap<String, Image>();
 
 	/**
@@ -223,18 +235,18 @@ public class EventBImage {
 		registry.put(key, desc);
 	}
 
-//	public static Image getOverlayIcon(String name) {
-//		if (name.equals("IMG_REFINES_MACHINE")) {
-//			OverlayIcon icon = new OverlayIcon(
-//					getImageDescriptor(IMG_MACHINE_PATH));
-//			icon.addTopRight(getImageDescriptor(IMG_REFINE_OVERLAY_PATH));
-//			icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
-//			Image image = icon.createImage();
-////			images.put(image);
-//			return image;
-//		}
-//		return null;
-//	}
+	// public static Image getOverlayIcon(String name) {
+	// if (name.equals("IMG_REFINES_MACHINE")) {
+	// OverlayIcon icon = new OverlayIcon(
+	// getImageDescriptor(IMG_MACHINE_PATH));
+	// icon.addTopRight(getImageDescriptor(IMG_REFINE_OVERLAY_PATH));
+	// icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
+	// Image image = icon.createImage();
+	// // images.put(image);
+	// return image;
+	// }
+	// return null;
+	// }
 
 	public static void disposeImages() {
 		for (Image image : images.values()) {
@@ -264,34 +276,37 @@ public class EventBImage {
 			if (clazz.isInstance(element)) {
 				String pluginID = elementUI.getPluginID();
 				String path = elementUI.getPath();
-				
+
 				// Compute the key
 				// key = pluginID:path:overlay
-				// overlay = comment + error 
+				// overlay = comment + error
 				String key = pluginID + ":" + path;
-				
+
 				String overlay = "0";
 				if (element instanceof ICommentedElement) {
 					ICommentedElement commentedElement = (ICommentedElement) element;
 					try {
-						String comment = commentedElement.getComment(new NullProgressMonitor());
-						if (!comment.equals("")) overlay = "1";
-						System.out.println(overlay); 
+						String comment = commentedElement
+								.getComment(new NullProgressMonitor());
+						if (!comment.equals(""))
+							overlay = "1";
+						System.out.println(overlay);
 					} catch (RodinDBException e) {
 						// Do nothing
 					}
 				}
 				key += ":" + overlay;
-				
+
 				Image image = images.get(key);
 				if (image == null) {
 					UIUtils.debugEventBEditor("Create a new image: " + key);
-					OverlayIcon icon = new OverlayIcon(
-							getImageDescriptor(pluginID, path));
+					OverlayIcon icon = new OverlayIcon(getImageDescriptor(
+							pluginID, path));
 					if (overlay == "1")
-						icon.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+						icon
+								.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 					image = icon.createImage();
-					images.put(key, image);					
+					images.put(key, image);
 				}
 				return image;
 			}
@@ -299,46 +314,105 @@ public class EventBImage {
 
 		return null;
 	}
-	
+
 	public static Image getProofTreeNodeImage(IProofTreeNode node) {
 		String base_path = "";
 
 		if (node.isOpen())
-			base_path = EventBImage.IMG_PENDING_PATH;
+			base_path = IMG_PENDING_PATH;
 		else if (!node.isClosed())
-			base_path = EventBImage.IMG_APPLIED_PATH;
+			base_path = IMG_APPLIED_PATH;
 		// return registry.get(EventBImage.IMG_APPLIED);
 		else {
 			int confidence = node.getConfidence();
 
 			if (confidence <= IConfidence.REVIEWED_MAX)
-				base_path = EventBImage.IMG_REVIEWED_PATH;
+				base_path = IMG_REVIEWED_PATH;
 			// return registry.get(EventBImage.IMG_REVIEWED);
 			if (confidence <= IConfidence.DISCHARGED_MAX)
-				base_path = EventBImage.IMG_DISCHARGED_PATH;
+				base_path = IMG_DISCHARGED_PATH;
 			// return registry.get(EventBImage.IMG_DISCHARGED);
 		}
 		// Compute the key
 		// key = pluginID:base_path:overlay
-		// overlay = comment 
+		// overlay = comment
 		String key = base_path;
-		
+
 		String comment = "0";
 		if (!node.getComment().equals("")) {
 			comment = "1";
 		}
 		key += ":" + comment;
-		
+
 		Image image = images.get(key);
 		if (image == null) {
 			UIUtils.debugEventBEditor("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(
-					getImageDescriptor(base_path));
+			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (comment == "1")
 				icon.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
-			images.put(key, image);					
+			images.put(key, image);
 		}
 		return image;
 	}
+
+	public static Image getPRSequentImage(IPRSequent prSequent) throws RodinDBException {
+		String base_path = "";
+		String auto = "0";
+
+		final IPRProofTree prProofTree = prSequent.getProofTree();
+
+		if (prProofTree == null || (!prProofTree.proofAttempted()))
+			base_path = IMG_UNATTEMPTED_PATH;
+		// return registry.get(EventBImage.IMG_UNATTEMPTED);
+
+		else {
+			int confidence = prProofTree.getConfidence();
+			if (prProofTree.isAutomaticallyGenerated()) {
+				auto = "1";
+			}
+			if (prSequent.isProofBroken()) {
+
+				if (confidence == IConfidence.PENDING)
+					base_path = IMG_PENDING_BROKEN_PATH;
+//					return registry.get(EventBImage.IMG_PENDING_BROKEN);
+				if (confidence <= IConfidence.REVIEWED_MAX)
+					base_path = IMG_REVIEWED_BROKEN_PATH;
+//					return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
+				if (confidence <= IConfidence.DISCHARGED_MAX)
+					base_path = IMG_DISCHARGED_BROKEN_PATH;
+//					return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
+
+			} else {
+
+				if (confidence == IConfidence.PENDING)
+					base_path = IMG_PENDING_PATH;
+//					return registry.get(EventBImage.IMG_PENDING);
+				if (confidence <= IConfidence.REVIEWED_MAX)
+					base_path = IMG_REVIEWED_PATH;
+//					return registry.get(EventBImage.IMG_REVIEWED);
+				if (confidence <= IConfidence.DISCHARGED_MAX)
+					base_path = IMG_DISCHARGED_PATH;
+//					return registry.get(EventBImage.IMG_DISCHARGED);
+
+			}
+		}
+
+		// Compute the key
+		// key = pluginID:base_path:overlay
+		// overlay = auto
+		String key = base_path + ":" + auto;
+
+		Image image = images.get(key);
+		if (image == null) {
+			UIUtils.debugEventBEditor("Create a new image: " + key);
+			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
+			if (auto == "1")
+				icon.addTopLeft(getImageDescriptor(IMG_AUTO_OVERLAY_PATH));
+			image = icon.createImage();
+			images.put(key, image);
+		}
+		return image;
+	}
+
 }
