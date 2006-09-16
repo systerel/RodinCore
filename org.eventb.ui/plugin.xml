@@ -73,7 +73,7 @@
             id="org.eventb.ui.views.EventMirror"
             name="Event Mirror"/>
       <view
-            category="org.event.ui"
+            category="org.eventb.ui"
             class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.SearchHypothesis"
