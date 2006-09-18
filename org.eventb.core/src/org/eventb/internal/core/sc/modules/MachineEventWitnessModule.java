@@ -72,8 +72,8 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		Predicate[] predicates = new Predicate[witnesses.length];
 		
-		if (witnesses.length == 0)
-			return;
+//		if (witnesses.length == 0)
+//			return;
 		
 		// the name space of witness label is distinct from the name space of
 		// other labels. Witness labels are variable names.

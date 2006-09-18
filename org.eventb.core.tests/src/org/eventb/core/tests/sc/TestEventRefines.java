@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestEventRefines extends BasicTest {
 	
-	public void testEvents_0() throws Exception {
+	public void testEvents_00() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -44,7 +44,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_1() throws Exception {
+	public void testEvents_01() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -72,7 +72,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_2() throws Exception {
+	public void testEvents_02() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -98,7 +98,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_3() throws Exception {
+	public void testEvents_03() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -124,7 +124,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_4() throws Exception {
+	public void testEvents_04() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1", "L3"), 
@@ -158,7 +158,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_5() throws Exception {
+	public void testEvents_05() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
@@ -196,7 +196,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_6() throws Exception {
+	public void testEvents_06() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
@@ -236,5 +236,40 @@ public class TestEventRefines extends BasicTest {
 		containsWitnesses(events[0], typeEnvironment, makeSList("V1'"), makeSList("V1'∈V2'"));
 		
 	}
+	
+	public void testEvents_07() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt", makeSList("L1", "L3"), 
+				makeSList("G1", "G3"), makeSList("L1∈ℕ", "L3∈ℕ"), makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs", "abs");
+		IEvent evt = addEvent(mac, "evt", makeSList("L1", "L2"), 
+				makeSList("G1", "G2"), makeSList("L1=1", "L2⊆ℕ"), makeSList(), makeSList());
+		addEventRefines(evt, "evt", "evt");
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("L1", factory.makeIntegerType());
+		typeEnvironment.addName("L2", factory.makePowerSetType(factory.makeIntegerType()));
+		typeEnvironment.addName("L3", factory.makeIntegerType());
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt");
+		
+		containsVariables(events[0], "L1", "L2");
+		containsWitnesses(events[0], typeEnvironment, makeSList("L3"), makeSList("⊤"));
+		
+	}
+	
 
 }

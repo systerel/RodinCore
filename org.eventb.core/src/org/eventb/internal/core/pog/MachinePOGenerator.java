@@ -53,7 +53,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 					Messages.bind(
 							Messages.build_runningMPO, 
 							EventBPlugin.getComponentName(file.getName())),
-					1);
+					10);
 			
 			if (machineModules == null) {
 			
