@@ -123,9 +123,6 @@ public abstract class Openable extends RodinElement implements IOpenable {
 			throw e;
 		}
 
-		// remove out of sync buffer for this element
-		RodinDBManager.getRodinDBManager().getElementsOutOfSynch().remove(this);
-
 		if (RodinDBManager.VERBOSE) {
 			System.out.println(RodinDBManager.getRodinDBManager().cache
 					.toStringFillingRation("-> ")); //$NON-NLS-1$
