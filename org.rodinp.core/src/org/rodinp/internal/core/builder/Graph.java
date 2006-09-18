@@ -202,6 +202,8 @@ public class Graph implements Serializable, Iterable<Node> {
 	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
 	//		node.markSuccessorsDated();
 			extract(node, new GraphModifier(this, node, manager), manager);
+			if (node.getToolId() == null || node.getToolId() == "")
+				node.setDated(false);
 		}
 
 	public Graph() {
@@ -275,7 +277,7 @@ public class Graph implements Serializable, Iterable<Node> {
 //			} catch (CoreException e){
 //				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
 //			}
-			return; // no associated tool
+			//return; // no associated tool
 		} else {
 			if(Graph.DEBUG)
 			 System.out.println(getClass().getName() + 
