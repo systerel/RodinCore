@@ -84,6 +84,8 @@ public class MachineEventHypothesisModule extends Module {
 		
 		ISCGuard[] guards = event.getSCGuards();
 		
+		fetchVariables(event.getSCVariables());
+		
 		eventGuardTable = new ConcreteEventGuardTable(guards, eventTypeEnvironment, factory);
 		repository.setState(eventGuardTable);
 		
@@ -114,7 +116,6 @@ public class MachineEventHypothesisModule extends Module {
 					factory);
 		repository.setState(concreteEventActionTable);
 		
-		fetchVariables(event.getSCVariables());
 		if (abstractEvent != null)
 			fetchVariables(abstractEvent.getSCVariables());
 		
