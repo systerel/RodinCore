@@ -47,16 +47,12 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 
 	private void checkChildren(IParent parent,
 			IInternalElement... expChildren) throws RodinDBException {
-		if (expChildren.length == 0) {
-			assertEquals(parent.getChildren().length, 0);
-			assertFalse(parent.hasChildren());
-		} else {
-			IRodinElement[] children = parent.getChildren();
-			assertTrue(parent.hasChildren());
-			assertEquals(expChildren.length, children.length);
-			for (int i = 0; i < children.length; ++i) {
-				assertEquals(expChildren[i], children[i]);
-			}
+
+		assertEquals(expChildren.length != 0, parent.hasChildren());
+		final IRodinElement[] children = parent.getChildren();
+		assertEquals(expChildren.length, children.length);
+		for (int i = 0; i < children.length; ++i) {
+			assertEquals(expChildren[i], children[i]);
 		}
 	}
 	
@@ -206,6 +202,31 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 			IInternalElement e1 =
 				rf.getInternalElement(NamedElement.ELEMENT_TYPE, "e1");
 			checkEmptyChildren(rf, e1);
+		} finally {
+			// Ensure the new Rodin file is destroyed.
+			rf.delete(true, null);
+		}
+	}
+
+	// Test modification of the in-memory copy of a Rodin file and then
+	// reverting the changes
+	public void testCreateInternalElementRevert() throws Exception {
+		
+		// Start with a fresh file
+		final String fileName = "titi.test";
+		final IRodinFile rf = rodinProject.getRodinFile(fileName);
+		assertFalse("Target file should not exist", rf.exists());
+		
+		try {
+			rodinProject.createRodinFile(fileName, false, null);
+			IInternalElement e1 = createNEPositive(rf, "e1", null);
+			assertTrue("Internal element should exist", e1.exists());
+			checkEmptyChildren(rf, e1);
+
+			// Revert the changes
+			rf.makeConsistent(null);
+			assertFalse("Internal element should not exist", e1.exists());
+			checkEmptyChildren(rf);
 		} finally {
 			// Ensure the new Rodin file is destroyed.
 			rf.delete(true, null);
