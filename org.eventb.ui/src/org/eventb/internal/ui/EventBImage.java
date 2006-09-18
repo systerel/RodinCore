@@ -134,14 +134,16 @@ public class EventBImage {
 
 	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
 
-	public static final String IMG_REVIEWED_BROKEN_PATH = "icons/reviewed.gif";
+	public static final String IMG_REVIEWED_BROKEN_PATH = "icons/reviewed_broken.gif";
 
 	public static final String IMG_DISCHARGED_PATH = "icons/discharged.gif";
 
-	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged.gif";
+	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged_broken.gif";
 
 	public static final String IMG_UNATTEMPTED_PATH = "icons/unattempted.gif";
 
+	public static final String IMG_NULL_PATH = "icons/full/ctool16/null.gif";
+	
 	private static Map<String, Image> images = new HashMap<String, Image>();
 
 	/**
@@ -200,9 +202,9 @@ public class EventBImage {
 		registerImage(registry, IMG_DISCHARGED, "icons/discharged.gif");
 		registerImage(registry, IMG_DISCHARGED_BROKEN,
 				"icons/discharged_broken.gif");
-		registerImage(registry, IMG_REVIEWED, "icons/reviewed.png");
+		registerImage(registry, IMG_REVIEWED, "icons/reviewed.gif");
 		registerImage(registry, IMG_REVIEWED_BROKEN,
-				"icons/reviewed_broken.png");
+				"icons/reviewed_broken.gif");
 		registerImage(registry, IMG_UNATTEMPTED, "icons/unattempted.gif");
 		registerImage(registry, IMG_DEFAULT, "icons/sample.gif");
 		registerImage(registry, IMG_REFINES, "icons/full/ctool16/refines.gif");
@@ -315,24 +317,41 @@ public class EventBImage {
 		return null;
 	}
 
-	public static Image getProofTreeNodeImage(IProofTreeNode node) {
-		String base_path = "";
+	private static final String getProofTreeNodeImageBasePath(IProofTreeNode node){
 
-		if (node.isOpen())
-			base_path = IMG_PENDING_PATH;
-		else if (!node.isClosed())
-			base_path = IMG_APPLIED_PATH;
-		// return registry.get(EventBImage.IMG_APPLIED);
-		else {
-			int confidence = node.getConfidence();
-
-			if (confidence <= IConfidence.REVIEWED_MAX)
-				base_path = IMG_REVIEWED_PATH;
-			// return registry.get(EventBImage.IMG_REVIEWED);
-			if (confidence <= IConfidence.DISCHARGED_MAX)
-				base_path = IMG_DISCHARGED_PATH;
-			// return registry.get(EventBImage.IMG_DISCHARGED);
+		int confidence = node.getConfidence();
+		
+		if (confidence == IConfidence.PENDING) {
+			if (node.hasChildren()) return IMG_APPLIED_PATH;
+			return IMG_PENDING_PATH;
 		}
+		if (confidence <= IConfidence.REVIEWED_MAX) return IMG_REVIEWED_PATH;
+		if (confidence <= IConfidence.DISCHARGED_MAX) return IMG_DISCHARGED_PATH;
+		return IMG_NULL_PATH;
+	}
+	
+	
+	public static Image getProofTreeNodeImage(IProofTreeNode node) {
+//		String base_path = "";
+//
+//		if (node.isOpen())
+//			base_path = IMG_PENDING_PATH;
+//		else if (!node.isClosed())
+//			base_path = IMG_APPLIED_PATH;
+//		// return registry.get(EventBImage.IMG_APPLIED);
+//		else {
+//			int confidence = node.getConfidence();
+//
+//			if (confidence <= IConfidence.REVIEWED_MAX)
+//				base_path = IMG_REVIEWED_PATH;
+//			// return registry.get(EventBImage.IMG_REVIEWED);
+//			if (confidence <= IConfidence.DISCHARGED_MAX)
+//				base_path = IMG_DISCHARGED_PATH;
+//			// return registry.get(EventBImage.IMG_DISCHARGED);
+//		}
+		
+		String base_path = getProofTreeNodeImageBasePath(node);
+		
 		// Compute the key
 		// key = "node":pluginID:base_path:overlay
 		// overlay = comment
