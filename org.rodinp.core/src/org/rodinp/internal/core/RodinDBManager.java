@@ -201,11 +201,6 @@ public class RodinDBManager implements ISaveParticipant {
 	private ThreadLocal<ElementMap> temporaryCache = new ThreadLocal<ElementMap>();
 
 	/**
-	 * Set of elements which are out of sync with their buffers.
-	 */
-	protected Map elementsOutOfSynchWithBuffers = new HashMap(11);
-	
-	/**
 	 * Holds the state used for delta processing.
 	 */
 	public DeltaProcessingState deltaState = new DeltaProcessingState();
@@ -339,6 +334,18 @@ public class RodinDBManager implements ISaveParticipant {
 		return this.deltaState.getDeltaProcessor();
 	}
 	
+	/**
+	 *  Returns the buffer for the given Rodin file.
+	 */
+	public synchronized Buffer getBuffer(RodinFile rodinFile) {
+		Buffer result = this.cache.getBuffer(rodinFile);
+		if (result == null) {
+			result = new Buffer(rodinFile);
+			this.cache.putBuffer(rodinFile, result);
+		}
+		return result;
+	}
+
 	/**
 	 *  Returns the info for the element.
 	 */
@@ -512,6 +519,7 @@ public class RodinDBManager implements ISaveParticipant {
 	public void prepareToSave(ISaveContext context) /*throws CoreException*/ {
 		// nothing to do
 	}
+
 	/*
 	 * Puts the infos in the given map (keys are IRodinElements and values are RodinElementInfos)
 	 * in the Rodin database cache in an atomic way.
@@ -579,6 +587,14 @@ public class RodinDBManager implements ISaveParticipant {
 		}
 		return null;
 	}
+
+	/*
+	 * Removes the buffer for the given Rodin file from the cache.
+	 * Returns the removed buffer, or null if none.
+	 */
+	public synchronized void removeBuffer(RodinFile rodinFile, boolean force) {
+		this.cache.removeBuffer(rodinFile, force);
+	}	
 
 	/*
 	 * Removes all cached info for the given element (including all children)
@@ -916,10 +932,6 @@ public class RodinDBManager implements ISaveParticipant {
 		}
 		
 		// Note: no need to close the Rodin database as this just removes Rodin element infos from the Rodin database cache
-	}
-
-	public Map getElementsOutOfSynch() {
-		return elementsOutOfSynchWithBuffers;
 	}
 
 	private DocumentBuilderFactory builderFactory;
