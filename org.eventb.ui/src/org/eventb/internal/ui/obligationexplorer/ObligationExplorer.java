@@ -324,7 +324,7 @@ public class ObligationExplorer extends ViewPart implements
 							if (proofState.getPRSequent().equals(obj)) {
 								IProofTree tree = proofState.getProofTree();
 
-								if (tree != null) {
+								if (tree != null && proofState.isDirty()) {
 									if (!tree.proofAttempted())
 										return registry
 												.get(EventBImage.IMG_UNATTEMPTED);
