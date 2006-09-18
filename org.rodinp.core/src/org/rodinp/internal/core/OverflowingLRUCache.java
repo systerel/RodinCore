@@ -124,7 +124,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	 * 
 	 * <p>
 	 * NOTE: this triggers an external remove from the cache by closing the
-	 * obejct.
+	 * object.
 	 * 
 	 */
 	protected abstract boolean close(LRUCacheEntry<K,V> entry);
