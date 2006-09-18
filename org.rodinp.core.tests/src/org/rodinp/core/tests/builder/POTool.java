@@ -9,7 +9,6 @@ package org.rodinp.core.tests.builder;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
