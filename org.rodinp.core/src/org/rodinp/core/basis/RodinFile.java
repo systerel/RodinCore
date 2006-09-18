@@ -32,6 +32,7 @@ import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
+import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
@@ -97,6 +98,18 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (! snapshot) {
 			getSnapshot().close();
 		}
+	}
+
+	@Override
+	public void closing(RodinElementInfo info) {
+		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
+		rodinDBManager.removeBuffer(this.getSnapshot(), true);
+		synchronized (info) {
+			if (! ((RodinFileElementInfo) info).hasUnsavedChanges()) {
+				rodinDBManager.removeBuffer(this, true);
+			}
+		}
+		super.closing(info);
 	}
 
 	public final void copy(IRodinElement container, IRodinElement sibling,
@@ -213,17 +226,15 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	
 	@Override
 	public final boolean hasUnsavedChanges() {
-		try {
-			RodinFileElementInfo info = (RodinFileElementInfo) getElementInfo();
-			return info != null && info.hasUnsavedChanges();
-		} catch (RodinDBException e) {
-			return false;
-		}
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		RodinFileElementInfo info =
+			(RodinFileElementInfo) manager.peekAtInfo(this);
+		return info != null && info.hasUnsavedChanges();
 	}
 
 	@Override
 	public final boolean isConsistent() {
-		return hasUnsavedChanges();
+		return ! hasUnsavedChanges();
 	}
 
 	@Override
@@ -235,6 +246,12 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return snapshot;
 	}
 	
+	@Override
+	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
+		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
+		super.makeConsistent(monitor);
+	}
+
 	public final void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
