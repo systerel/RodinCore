@@ -73,7 +73,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		ImageData bg;
 		if (fBase == null || (bg = fBase.getImageData()) == null)
 			bg = DEFAULT_IMAGE_DATA;
-		drawImage(bg, 4, 0);
+		drawImage(bg, 0, 0);
 
 		drawTopRight();
 		drawTopLeft();

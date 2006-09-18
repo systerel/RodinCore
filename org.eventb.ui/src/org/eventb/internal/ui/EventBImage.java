@@ -278,9 +278,9 @@ public class EventBImage {
 				String path = elementUI.getPath();
 
 				// Compute the key
-				// key = pluginID:path:overlay
+				// key = element:pluginID:path:overlay
 				// overlay = comment + error
-				String key = pluginID + ":" + path;
+				String key = "element:" + pluginID + ":" + path;
 
 				String overlay = "0";
 				if (element instanceof ICommentedElement) {
@@ -304,7 +304,7 @@ public class EventBImage {
 							pluginID, path));
 					if (overlay == "1")
 						icon
-								.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+								.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 					image = icon.createImage();
 					images.put(key, image);
 				}
@@ -334,9 +334,9 @@ public class EventBImage {
 			// return registry.get(EventBImage.IMG_DISCHARGED);
 		}
 		// Compute the key
-		// key = pluginID:base_path:overlay
+		// key = "node":pluginID:base_path:overlay
 		// overlay = comment
-		String key = base_path;
+		String key = "node:" + base_path;
 
 		String comment = "0";
 		if (!node.getComment().equals("")) {
@@ -349,7 +349,7 @@ public class EventBImage {
 			UIUtils.debugEventBEditor("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (comment == "1")
-				icon.addTopRight(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+				icon.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
 			images.put(key, image);
 		}
@@ -398,16 +398,16 @@ public class EventBImage {
 		}
 
 		// Compute the key
-		// key = pluginID:base_path:overlay
+		// key = "prsequent":pluginID:base_path:overlay
 		// overlay = auto
-		String key = base_path + ":" + auto;
+		String key = "prsequent:" + base_path + ":" + auto;
 
 		Image image = images.get(key);
 		if (image == null) {
 			UIUtils.debugEventBEditor("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (auto == "1")
-				icon.addTopLeft(getImageDescriptor(IMG_AUTO_OVERLAY_PATH));
+				icon.addTopRight(getImageDescriptor(IMG_AUTO_OVERLAY_PATH));
 			image = icon.createImage();
 			images.put(key, image);
 		}
