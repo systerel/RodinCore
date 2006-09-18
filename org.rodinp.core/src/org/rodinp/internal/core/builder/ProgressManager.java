@@ -8,6 +8,8 @@
 package org.rodinp.internal.core.builder;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,8 +28,11 @@ public class ProgressManager {
 	
 	private int remainingEffort;
 	
+	private int cnt;
+	private List<Integer> cntL;
+	
 	private HashSet<String> nodes;
-	private int userNodeCount;
+	private int expected;
 	
 	public ProgressManager(IProgressMonitor monitor, IncrementalProjectBuilder builder) {
 		this.monitor = new BuilderProgressMonitor(monitor, builder);
@@ -36,7 +41,9 @@ public class ProgressManager {
 				MAX_EFFORT);
 		remainingEffort = MAX_EFFORT;
 		nodes = null;
-		userNodeCount = 0;
+		expected = 0;
+		cnt = 0;
+		cntL = new LinkedList<Integer>();
 	}
 	
 	public void anticipateSlice(Node node) {
@@ -45,18 +52,19 @@ public class ProgressManager {
 		}
 	}
 	
-	public void decreaseSliceAdjustment() {
-		if (userNodeCount > 0)
-			userNodeCount--;
+	public void decreaseSliceAdjustment(Graph graph, Node node) {
+		if (expected > 0)
+			expected--;
 	}
 	
 	public void anticipateSlices(Graph graph) {
 		nodes = new HashSet<String>(graph.size() * 4 / 3 + 1);
-		userNodeCount = 0;
+		expected = 0;
 		for (Node node : graph) {
-			anticipateSlice(node);
 			if (node.getToolId() == null || node.getToolId() == "")
-				userNodeCount++;
+				expected++;
+			else
+				anticipateSlice(node);
 		}
 	}
 	
@@ -72,10 +80,12 @@ public class ProgressManager {
 	
 	IProgressMonitor getProgressMonitorForNode(Node node) {
 		int nodeCount = nodes == null ? 0 : nodes.size();
-		int nodeEffort = remainingEffort / (nodeCount + userNodeCount * 2);
+		int nodeEffort = remainingEffort / (nodeCount + expected);
 		remainingEffort = remainingEffort - nodeEffort;
 		if (nodeCount > 0)
 			nodes.remove(node.getName());
+		cnt += nodeEffort;
+		cntL.add(nodeEffort);
 		return new SubProgressMonitor(monitor, nodeEffort);
 	}
 	

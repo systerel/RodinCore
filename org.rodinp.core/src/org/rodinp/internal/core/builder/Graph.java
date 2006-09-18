@@ -267,8 +267,6 @@ public class Graph implements Serializable, Iterable<Node> {
 
 			RodinBuilder.deleteMarkers(file);
 			
-			manager.decreaseSliceAdjustment();
-			
 			changed = true;
 			
 //			node.markSuccessorsDated();
@@ -318,7 +316,6 @@ public class Graph implements Serializable, Iterable<Node> {
 				extract(node, new GraphModifier(this, node, manager), manager);
 			} catch (CoreException e) {
 				Util.log(e, " while extracting from " + file.getFullPath()); //$NON-NLS-1$
-//				Util.log(e, " while extracting dependencies"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -432,18 +429,7 @@ public class Graph implements Serializable, Iterable<Node> {
 					}
 				if(firstNode == null)
 					break;
-				nodePostList.remove(firstNode);
-				nodeStack.push(firstNode);
-//				firstNode.succPos = 0;
-//				succStack.push(new Position());
-				sorted.add(firstNode);
-				N--;
-				firstNode.done = true;
-				if(manager != null)
-					if(firstNode.isDated())
-						runTool(firstNode, manager);
-//				else if(node.isCycle())
-//				RodinBuilderX.deleteMarkers(node.getFile());
+				topSortStep(sorted, firstNode, manager);
 			} else {
 				Node node = nodeStack.peek();
 				Node succNode = node.succNode();	
@@ -453,25 +439,26 @@ public class Graph implements Serializable, Iterable<Node> {
 					if(toolLinks || succLink.prov == Link.Provider.USER) {
 						succNode.count--;
 						if(succNode.count == 0) {
-							nodeStack.push(succNode);
-//							succNode.succPos = 0;
-//							succStack.push(new Position());
-							nodePostList.remove(succNode);
-							sorted.add(succNode);
-							N--;
-							succNode.done = true;
-							if(manager != null)
-								if(succNode.isDated())
-									runTool(succNode, manager);
-//							else if(succNode.isCycle())
-//							RodinBuilderX.deleteMarkers(succNode.getFile());
+							topSortStep(sorted, succNode, manager);
 						}
 					}
 				} else {
 					nodeStack.pop();
-//					succStack.pop();
 				}
 			}
+		}
+	}
+
+	private void topSortStep(LinkedList<Node> sorted, Node node, ProgressManager manager) {
+		nodePostList.remove(node);
+		nodeStack.push(node);
+		sorted.add(node);
+		N--;
+		node.done = true;
+		if(manager != null) {
+			manager.decreaseSliceAdjustment(this, node);
+			if(node.isDated())
+				runTool(node, manager);
 		}
 	}
 	
