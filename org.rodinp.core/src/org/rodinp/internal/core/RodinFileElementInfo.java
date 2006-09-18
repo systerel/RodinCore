@@ -274,7 +274,8 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	public synchronized boolean parseFile(IProgressMonitor pm,
 			RodinFile rodinFile) throws RodinDBException {
 		
-		buffer = new Buffer(rodinFile);
+		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
+		buffer = rodinDBManager.getBuffer(rodinFile);
 		buffer.load(pm);
 		return true;
 	}

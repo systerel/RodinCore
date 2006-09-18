@@ -32,6 +32,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.DebugUtil;
 import org.rodinp.internal.core.util.Util;
@@ -393,11 +394,13 @@ public class DeltaProcessor {
 			// regular element removal
 			close(element);
 			removeFromParentInfo(element);
+			removeFromBufferCache(element);
 			currentDelta().removed(element);
 		} else {
 			// element is moved
 			close(element);
 			removeFromParentInfo(element);
+			removeFromBufferCache(element);
 			
 			IPath movedToPath = delta.getMovedToPath();
 			IResource res = delta.getResource();
@@ -740,13 +743,24 @@ public class DeltaProcessor {
 	public void registerRodinDBDelta(IRodinElementDelta delta) {
 		this.rodinDBDeltas.add(delta);
 	}
+
+	/*
+	 * Removes any buffer associated to the given element. 
+	 */
+	private void removeFromBufferCache(Openable child) {
+		if (child instanceof RodinFile) {
+			final RodinFile rodinFile = (RodinFile) child;
+			final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
+			rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), true);
+		}
+	}
+
 	/*
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,
 	 * this has no effect. 
 	 */
 	private void removeFromParentInfo(Openable child) {
-
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
 			try {

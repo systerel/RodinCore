@@ -13,7 +13,6 @@ package org.rodinp.internal.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -72,10 +71,11 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 		} else {
 			throw new RodinDBException(new RodinDBStatus(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element));
 		}
-		// ensure the element is closed
-		if (element instanceof IOpenable) {
-			((IOpenable) element).close();
-		}
+		// ensure the element is closed and all buffers removed
+		final RodinFile rodinFile = (RodinFile) element;
+		rodinFile.close();
+		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
+		rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), true);
 	}
 
 	@Override

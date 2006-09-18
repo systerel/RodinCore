@@ -35,6 +35,8 @@ public class RodinDBCache {
 
 	// average 20 members per openable
 	public static final int DEFAULT_MEMBER_SIZE = BASE_VALUE * 100 * 20;
+
+	public static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
 	
 	/**
 	 * Active Rodin Model Info
@@ -55,6 +57,11 @@ public class RodinDBCache {
 	 * Cache of open members of openable Rodin elements
 	 */
 	protected Map<IRodinElement, RodinElementInfo> memberCache;
+	
+	/**
+	 * Cache of Rodin file buffers
+	 */
+	protected BufferCache bufferCache;
 
 	public RodinDBCache() {
 		// NB: Don't use a LRUCache for projects as they are constantly reopened
@@ -62,6 +69,7 @@ public class RodinDBCache {
 		this.projectCache = new HashMap<IRodinProject, RodinElementInfo>(DEFAULT_PROJECT_SIZE);
 		this.openableCache = new OpenableCache(DEFAULT_OPENABLE_SIZE);
 		this.memberCache = new HashMap<IRodinElement, RodinElementInfo>(DEFAULT_MEMBER_SIZE);
+		this.bufferCache = new BufferCache(DEFAULT_BUFFER_SIZE);
 	}
 
 	/**
@@ -81,6 +89,13 @@ public class RodinDBCache {
 	}
 
 	/**
+	 * Returns the buffer for the given Rodin file.
+	 */
+	public Buffer getBuffer(RodinFile rodinFile) {
+		return this.bufferCache.get(rodinFile);
+	}
+
+	/**
 	 * Returns the info for this element without disturbing the cache ordering.
 	 */
 	protected RodinElementInfo peekAtInfo(IRodinElement element) {
@@ -94,6 +109,13 @@ public class RodinDBCache {
 		} else {
 			return this.memberCache.get(element);
 		}
+	}
+
+	/**
+	 * Remembers the buffer for the given Rodin file.
+	 */
+	public void putBuffer(RodinFile rodinFile, Buffer buffer) {
+		this.bufferCache.put(rodinFile, buffer);
 	}
 
 	/**
@@ -128,8 +150,24 @@ public class RodinDBCache {
 		}
 	}
 
+	/**
+	 * Removes the buffer for the given Rodin file from the cache. If
+	 * <code>force</code> is <code>true</code>, always remove the buffer,
+	 * otherwise remove the buffer only if it has not been modified yet.
+	 */
+	protected void removeBuffer(RodinFile rodinFile, boolean force) {
+		if (force) {
+			this.bufferCache.remove(rodinFile);
+		} else {
+			Buffer buffer = this.bufferCache.peek(rodinFile);
+			if (! buffer.hasUnsavedChanges()) {
+				this.bufferCache.remove(rodinFile);
+			}
+		}
+	}
+
 	public String toStringFillingRation(String prefix) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(prefix);
 		buffer.append("Project cache: "); //$NON-NLS-1$
 		buffer.append(this.projectCache.size());
@@ -140,6 +178,12 @@ public class RodinDBCache {
 		buffer.append("]: "); //$NON-NLS-1$
 		buffer.append(NumberFormat.getInstance().format(
 				this.openableCache.fillingRatio()));
+		buffer.append("%\n"); //$NON-NLS-1$
+		buffer.append("Buffer cache["); //$NON-NLS-1$
+		buffer.append(this.bufferCache.getSpaceLimit());
+		buffer.append("]: "); //$NON-NLS-1$
+		buffer.append(NumberFormat.getInstance().format(
+				this.bufferCache.fillingRatio()));
 		buffer.append("%\n"); //$NON-NLS-1$
 		return buffer.toString();
 	}
