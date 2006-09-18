@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Point;
  */
 public class OverlayIcon extends CompositeImageDescriptor {
 
-	static final int DEFAULT_WIDTH = 20;
+	static final int DEFAULT_WIDTH = 16;
 
 	static final int DEFAULT_HEIGHT = 16;
 

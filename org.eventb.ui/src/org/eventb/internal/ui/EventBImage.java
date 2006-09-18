@@ -292,7 +292,6 @@ public class EventBImage {
 								.getComment(new NullProgressMonitor());
 						if (!comment.equals(""))
 							overlay = "1";
-						System.out.println(overlay);
 					} catch (RodinDBException e) {
 						// Do nothing
 					}
