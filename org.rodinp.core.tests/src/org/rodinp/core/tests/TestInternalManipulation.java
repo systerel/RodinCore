@@ -48,12 +48,12 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	private void checkChildren(IParent parent,
 			IInternalElement... expChildren) throws RodinDBException {
 
-		assertEquals(expChildren.length != 0, parent.hasChildren());
 		final IRodinElement[] children = parent.getChildren();
 		assertEquals(expChildren.length, children.length);
 		for (int i = 0; i < children.length; ++i) {
 			assertEquals(expChildren[i], children[i]);
 		}
+		assertEquals(expChildren.length != 0, parent.hasChildren());
 	}
 	
 	private void checkEmpty(IInternalElement... children) throws RodinDBException {
@@ -238,6 +238,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 
 		// First create an internal element
 		final IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
+		rodinFile.save(null, false);
 		checkEmptyChildren(rodinFile, e1);
 
 		startDeltas();
@@ -258,12 +259,12 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 			}
 		}, null);
 
+		// Once the workable is finished, the database gets the resource delta
 		assertDeltas("Should report an unknown change to the file",
 				"foo[*]: {CHILDREN}\n" + 
 				"	toto.test[*]: {CONTENT}"
 		);
 
-		// Once the workable is finished, the database gets the resource delta
 		checkEmptyChildren(rodinFile);
 		assertFalse("Internal element should not exist", e1.exists());
 	}
