@@ -140,6 +140,11 @@ public class ProjectExplorerContentProvider implements
 				toRefresh.add(element);
 				return;
 			}
+			
+			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+				toRefresh.add(element);
+				return;
+			}
 		}
 
 	}
