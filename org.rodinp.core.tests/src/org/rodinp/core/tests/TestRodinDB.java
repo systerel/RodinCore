@@ -33,7 +33,6 @@ public class TestRodinDB extends TestCase {
 		assertEquals(workspaceRoot, db.getCorrespondingResource());
 		assertFalse(db.isReadOnly());
 		// last handle-only method
-		assertFalse(db.isOpen());
 		
 		// Opening methods.
 		assertTrue(db.exists());
