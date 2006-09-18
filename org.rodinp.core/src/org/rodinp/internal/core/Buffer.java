@@ -265,7 +265,7 @@ public class Buffer {
 	 * 
 	 * @return <code>true</code> iff this buffer has been modified
 	 */
-	boolean hasUnsavedChanges() {
+	public boolean hasUnsavedChanges() {
 		return changed;
 	}
 
@@ -298,8 +298,14 @@ public class Buffer {
 	/*
 	 * Loads this buffer from the corresponding resource.
 	 */
+	// TODO check for use of progress monitor.
 	public synchronized void load(IProgressMonitor pm) 
 			throws RodinDBException {
+		
+		// Buffer has already been loaded (maybe concurrently by another thread).
+		if (domDocument != null) {
+			return;
+		}
 		
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		final DocumentBuilder builder = manager.getDocumentBuilder();
