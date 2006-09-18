@@ -57,6 +57,15 @@ public interface IRefinesMachine extends IInternalElement {
 	void setAbstractMachineName(String name) throws RodinDBException;
 
 	/**
+	 * Returns a handle to the unchecked version of the abstract machine.
+	 * 
+	 * @return a handle to the unchecked version of the abstract machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IMachineFile getAbstractMachine() throws RodinDBException;
+
+	/**
 	 * Returns a handle to the checked version of the abstract machine, that is
 	 * the file produced when statically checking that machine.
 	 * 

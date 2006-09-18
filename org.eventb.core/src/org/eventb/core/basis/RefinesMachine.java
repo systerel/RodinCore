@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IRodinElement;
@@ -53,6 +54,16 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 		return ELEMENT_TYPE;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.core.IRefinesMachine#getAbstractMachine()
+	 */
+	public IMachineFile getAbstractMachine() throws RodinDBException {
+		final String bareName = getAbstractMachineName();
+		final String scName = EventBPlugin.getMachineFileName(bareName);
+		final IRodinProject project = getRodinProject();
+		return (IMachineFile) project.getRodinFile(scName);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getAbstractSCMachine()
 	 */
