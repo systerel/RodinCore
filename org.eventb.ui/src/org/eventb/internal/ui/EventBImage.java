@@ -376,10 +376,10 @@ public class EventBImage {
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_BROKEN_PATH;
 //					return registry.get(EventBImage.IMG_PENDING_BROKEN);
-				if (confidence <= IConfidence.REVIEWED_MAX)
+				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_BROKEN_PATH;
 //					return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
-				if (confidence <= IConfidence.DISCHARGED_MAX)
+				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_BROKEN_PATH;
 //					return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
 
@@ -388,13 +388,12 @@ public class EventBImage {
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_PATH;
 //					return registry.get(EventBImage.IMG_PENDING);
-				if (confidence <= IConfidence.REVIEWED_MAX)
+				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_PATH;
 //					return registry.get(EventBImage.IMG_REVIEWED);
-				if (confidence <= IConfidence.DISCHARGED_MAX)
+				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_PATH;
 //					return registry.get(EventBImage.IMG_DISCHARGED);
-
 			}
 		}
 
