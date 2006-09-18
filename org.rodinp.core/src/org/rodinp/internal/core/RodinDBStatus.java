@@ -268,7 +268,9 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 				if (string != null) {
 					return string;
 				} else {
-					return Messages.bind(Messages.status_nameCollision, ""); //$NON-NLS-1$
+					return Messages.bind(Messages.status_nameCollision,
+							((RodinElement) elements[0])
+							.toStringWithAncestors());
 				}
 			case NO_ELEMENTS_TO_PROCESS:
 				return Messages.operation_needElements;
