@@ -30,7 +30,7 @@ public class Token {
 	}
 	
 	public int getEnd() {
-		return pos + val.length();
+		return pos + val.length() - 1;
 	}
 	
 	@Override
