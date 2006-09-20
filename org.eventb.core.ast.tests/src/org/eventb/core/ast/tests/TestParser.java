@@ -42,6 +42,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 
 /**
@@ -88,13 +89,27 @@ public class TestParser extends TestCase {
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
 	}
+
+	static SourceLocationChecker slChecker = new SourceLocationChecker();
 	
 	private static abstract class TestPair {
-		String image;
+		private String image;
 		TestPair(String image) {
 			this.image = image;
 		}
-		abstract void parseAndCheck();
+		final void verify() {
+			final Formula parsedFormula = parseAndCheck(image);
+			
+			// Verify that source locations are properly nested
+			parsedFormula.accept(slChecker);
+
+			// also check that the source location reported corresponds to the
+			// whole substring.
+			final SourceLocation loc = parsedFormula.getSourceLocation();
+			final String subImage = image.substring(loc.getStart(), loc.getEnd() + 1);
+			parseAndCheck(subImage);
+		}
+		abstract Formula parseAndCheck(String stringToParse);
 	}
 	
 	private static class ExprTestPair extends TestPair {
@@ -104,10 +119,12 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		void parseAndCheck() {
+		Formula parseAndCheck(String image) {
 			IParseResult result = ff.parseExpression(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedExpression());
+			final Expression actual = result.getParsedExpression();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 	
@@ -118,10 +135,12 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		void parseAndCheck() {
+		Formula parseAndCheck(String image) {
 			IParseResult result = ff.parsePredicate(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedPredicate());
+			final Predicate actual = result.getParsedPredicate();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 	
@@ -132,10 +151,12 @@ public class TestParser extends TestCase {
 			this.formula = formula;
 		}
 		@Override 
-		void parseAndCheck() {
+		Formula parseAndCheck(String image) {
 			IParseResult result = ff.parseAssignment(image);
 			assertTrue("Parse failed for " + image, result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedAssignment());
+			final Assignment actual = result.getParsedAssignment();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 	
@@ -1042,7 +1063,7 @@ public class TestParser extends TestCase {
 
 	private void testList(TestPair[] list) {
 		for (TestPair pair: list) {
-			pair.parseAndCheck();
+			pair.verify();
 		}
 	}
 	
