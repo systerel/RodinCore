@@ -45,6 +45,7 @@ public class TestAll {
 		suite.addTestSuite(TestTypedEmptySet.class);
 		suite.addTestSuite(TestTypeCheckError.class);
 		suite.addTestSuite(TestTypedIdentDecl.class);
+		suite.addTestSuite(TestLocation.class);
 		//$JUnit-END$
 		return suite;
 	}
