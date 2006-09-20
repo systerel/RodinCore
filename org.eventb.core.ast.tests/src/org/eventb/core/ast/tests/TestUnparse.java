@@ -75,6 +75,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.SourceLocation;
 
 
 
@@ -120,13 +121,21 @@ public class TestUnparse extends TestCase {
 
 	private static IntegerLiteral two = ff.makeIntegerLiteral(Common.TWO, null);
 	
+	static SourceLocationChecker slChecker = new SourceLocationChecker();
+
 	private static abstract class TestPair {
 		String image;
 		TestPair(String image) {
 			this.image = image;
 		}
 		abstract Formula getFormula();
-		void parseAndCheck(String input) {
+		abstract Formula parseAndCheck(String input);
+		void verify(String input) {
+			checkUnneededParentheses(input);
+			Formula actual = parseAndCheck(input);
+			checkSourceLocations(input, actual);
+		}
+		void checkUnneededParentheses(String input) {
 			// This check ensures that there is no unnecessary external parenthesis in
 			// the given string
 			if (input.charAt(0) != '(')
@@ -150,6 +159,15 @@ public class TestUnparse extends TestCase {
 			}
 			assertFalse("'" + input + "' contains unbalanced parentheses", true);
 		}
+		void checkSourceLocations(String input, Formula parsedFormula) {
+			// Verify that source locations are properly nested
+			parsedFormula.accept(slChecker);
+
+			// also check that the source location reported corresponds to the
+			// whole substring.
+			final SourceLocation loc = parsedFormula.getSourceLocation();
+			parseAndCheck(input.substring(loc.getStart(), loc.getEnd() + 1));
+		}
 	}
 	
 	private static class ExprTestPair extends TestPair {
@@ -163,11 +181,12 @@ public class TestUnparse extends TestCase {
 			return formula;
 		}
 		@Override 
-		void parseAndCheck(String input) {
-			super.parseAndCheck(input);
+		Expression parseAndCheck(String input) {
 			IParseResult result = ff.parseExpression(input);
 			assertTrue("Parse failed", result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedExpression());
+			final Expression actual = result.getParsedExpression();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 	
@@ -182,11 +201,12 @@ public class TestUnparse extends TestCase {
 			return formula;
 		}
 		@Override 
-		void parseAndCheck(String input) {
-			super.parseAndCheck(input);
+		Predicate parseAndCheck(String input) {
 			IParseResult result = ff.parsePredicate(input);
-			assertTrue("Parse failed", result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedPredicate());
+			assertTrue("Parse failed for " + input, result.isSuccess());
+			final Predicate actual = result.getParsedPredicate();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 
@@ -201,11 +221,12 @@ public class TestUnparse extends TestCase {
 			return formula;
 		}
 		@Override 
-		void parseAndCheck(String input) {
-			super.parseAndCheck(input);
+		Assignment parseAndCheck(String input) {
 			IParseResult result = ff.parseAssignment(input);
 			assertTrue("Parse failed", result.isSuccess());
-			assertEquals("Unexpected parser result", formula, result.getParsedAssignment());
+			final Assignment actual = result.getParsedAssignment();
+			assertEquals("Unexpected parser result", formula, actual);
+			return actual;
 		}
 	}
 
@@ -1074,8 +1095,8 @@ public class TestUnparse extends TestCase {
 			assertEquals("\nTest failed on original String: "+pair.image+"\nUnparser produced: "+formula+"\n",
 					pair.image, formula);
 			
-			pair.parseAndCheck(formula);
-			pair.parseAndCheck(formulaParenthesized);
+			pair.verify(formula);
+			pair.verify(formulaParenthesized);
 		}
 	}
 	
@@ -1131,8 +1152,8 @@ public class TestUnparse extends TestCase {
 			String formula = pair.getFormula().toString();
 			String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
 			
-			pair.parseAndCheck(formula);
-			pair.parseAndCheck(formulaParenthesized);
+			pair.verify(formula);
+			pair.verify(formulaParenthesized);
 		}
 	}
 
