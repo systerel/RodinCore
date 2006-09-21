@@ -121,4 +121,77 @@ public class TestLocation extends TestCase {
 		assertEquals("Source Loc End 2 ", 4, loc.getEnd());
 	}
 
+	public void testPredicate4() {
+		//                   0123 4
+		String predString = "∅∈∅↔S";
+		System.out.println("Predicate: " + predString);
+		IParseResult parseResult = ff.parsePredicate(predString);
+		assertTrue("Parse Successful", parseResult.isSuccess());
+		Predicate parsedPred = parseResult.getParsedPredicate();
+		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
+		
+		SourceLocation loc = rPred.getLeft().getSourceLocation();
+		assertEquals("Source Loc Start 1 ", 0, loc.getStart());
+		assertEquals("Source Loc End 1 ", 0, loc.getEnd());
+		
+		loc = rPred.getRight().getSourceLocation();
+		assertEquals("Source Loc Start 2 ", 2, loc.getStart());
+		assertEquals("Source Loc End 2 ", 4, loc.getEnd());
+	}
+	
+	public void testPredicate5() {
+		//                   0123456789012345678901234
+		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id(ℤ)";
+		System.out.println("Predicate: " + predString);
+		IParseResult parseResult = ff.parsePredicate(predString);
+		assertTrue("Parse Successful", parseResult.isSuccess());
+		Predicate parsedPred = parseResult.getParsedPredicate();
+		AssociativePredicate aPred = (AssociativePredicate) parsedPred;
+		
+		Predicate [] children = aPred.getChildren();
+		
+		SourceLocation loc = children[0].getSourceLocation();
+		assertEquals("Source Loc Start 1 ", 0, loc.getStart());
+		assertEquals("Source Loc End 1 ", 7, loc.getEnd());
+		
+		loc = children[1].getSourceLocation();
+		assertEquals("Source Loc Start 2 ", 9, loc.getStart());
+		assertEquals("Source Loc End 2 ", 24, loc.getEnd());
+	}
+	
+	public void testPredicate6() {
+		//                   0123456789012345
+		String predString = "f∼;({a}◁f)⊆id(ℤ)";
+		System.out.println("Predicate: " + predString);
+		IParseResult parseResult = ff.parsePredicate(predString);
+		assertTrue("Parse Successful", parseResult.isSuccess());
+		Predicate parsedPred = parseResult.getParsedPredicate();
+		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
+		
+		SourceLocation loc = rPred.getLeft().getSourceLocation();
+		assertEquals("Source Loc Start 1 ", 0, loc.getStart());
+		assertEquals("Source Loc End 1 ", 9, loc.getEnd());
+		
+		loc = rPred.getRight().getSourceLocation();
+		assertEquals("Source Loc Start 2 ", 11, loc.getStart());
+		assertEquals("Source Loc End 2 ", 15, loc.getEnd());
+	}
+	
+	public void testPredicate7() {
+		String predString = "f(a)⊆S";
+		System.out.println("Predicate: " + predString);
+		IParseResult parseResult = ff.parsePredicate(predString);
+		assertTrue("Parse Successful", parseResult.isSuccess());
+		Predicate parsedPred = parseResult.getParsedPredicate();
+		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
+		
+		SourceLocation loc = rPred.getLeft().getSourceLocation();
+		assertEquals("Source Loc Start 1 ", 0, loc.getStart());
+		assertEquals("Source Loc End 1 ", 3, loc.getEnd());
+		
+		loc = rPred.getRight().getSourceLocation();
+		assertEquals("Source Loc Start 2 ", 5, loc.getStart());
+		assertEquals("Source Loc End 2 ", 5, loc.getEnd());
+	}
+
 }
