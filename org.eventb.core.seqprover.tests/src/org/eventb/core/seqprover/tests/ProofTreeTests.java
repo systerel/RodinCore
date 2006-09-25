@@ -13,6 +13,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.tactics.Tactics;
 
@@ -214,6 +215,45 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertSame(left.getProofTree(),pruned[0]);
 		assertSame(right.getProofTree(),pruned[1]);
 	}
+	
+	/**
+	 * Checks consistency after copying the subtree of a pending node.
+	 */
+	public void testCopyPending() {
+		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
+		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTreeNode root = tree.getRoot();
+
+		Tactics.impI().apply(root);
+		assertEquals(1, root.getChildren().length);
+		IProofTreeNode imp = root.getChildren()[0];
+
+		Tactics.conjI().apply(imp);
+		assertEquals(2, imp.getChildren().length);
+		IProofTreeNode left = imp.getChildren()[0];
+		IProofTreeNode right = imp.getChildren()[1];
+
+		// the nodes to copy are part of the same proof tree.
+		assertSame(imp.getProofTree(),tree);
+		assertSame(left.getProofTree(),tree);
+		assertSame(right.getProofTree(),tree);
+		
+		assertNodePending(root);
+		IProofTree copied = root.copySubTree();
+		assertNodePending(copied.getRoot());
+		assertTrue(ProverLib.deepEquals(root,copied.getRoot()));
+		
+		// the copied nodes are not in the original tree
+		assertNotSame(imp.getProofTree(),copied);
+		assertNotSame(left.getProofTree(),copied);
+		assertNotSame(right.getProofTree(),copied);
+		
+		// Pruning the copied node has no effect on the original tree.
+		copied.getRoot().pruneChildren();
+		assertFalse(ProverLib.deepEquals(root,copied.getRoot()));
+		
+	}
+
 	
 	/**
 	 * Checks that grafting a tree with a un-identical sequent results in failure.

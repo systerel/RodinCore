@@ -183,6 +183,14 @@ public interface IProofTreeNode {
 	
 	
 	/**
+	 * Copies the sub proof tree corresping to the current node and returns a new
+	 * proof tree corresponding to this sub tree
+	 * 
+	 * @return A new proof tree with the root identical to the current node
+	 */
+	IProofTree copySubTree();
+	
+	/**
 	 * Sets the comment field of the current proof tree node.
 	 * 
 	 * @param comment

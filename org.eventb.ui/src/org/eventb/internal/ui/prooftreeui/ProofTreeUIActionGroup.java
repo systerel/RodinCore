@@ -86,8 +86,8 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						.getSelection();
 				if (sel instanceof IStructuredSelection) {
 					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.size() == 1) {
-						ProofTreeUI.buffer = ssel.getFirstElement();
+					if (ssel.size() == 1 && ssel.getFirstElement() instanceof IProofTreeNode) {
+						ProofTreeUI.buffer = ((IProofTreeNode)ssel.getFirstElement()).copySubTree().getRoot();
 						System.out.println("Copied : " + ProofTreeUI.buffer);
 					}
 				}
@@ -427,7 +427,6 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			if (ssel.size() == 1) {
 				IProofTreeNode pt = (IProofTreeNode) ssel.getFirstElement();
 
-				// TODO Prechecking for displaying here
 				if (!pt.isOpen()) {
 					menu.add(copy);
 					menu.add(new Separator());

@@ -20,7 +20,7 @@ public class ProverLib {
 		return deepEquals(pt1.getRoot(),pt2.getRoot());
 	}
 
-	private static boolean deepEquals(IProofTreeNode pn1, IProofTreeNode pn2) {
+	public static boolean deepEquals(IProofTreeNode pn1, IProofTreeNode pn2) {
 		if (pn1.hasChildren() != pn2.hasChildren()) return false;
 		if (pn1.getConfidence() != pn2.getConfidence()) return false;
 		if (! pn1.getComment().equals(pn2.getComment())) return false;

@@ -114,6 +114,44 @@ public final class ProofTreeNode implements IProofTreeNode {
 		assert classInvariant();
 	}
 	
+	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param node
+	 * 				node to copy
+	 */
+	private ProofTreeNode(ProofTreeNode node) {
+		this.tree = node.tree;
+		this.parent = node.parent;
+		this.sequent = node.sequent;
+		this.rule = node.rule;
+		if (node.children == null) 
+			this.children = null;
+		else
+		{
+			this.children = new ProofTreeNode[node.children.length];
+			for (int i = 0; i < node.children.length; i++) {
+				this.children[i]= new ProofTreeNode(node.children[i]);
+				this.children[i].parent = this;
+			}
+		}
+		this.confidence = node.confidence;
+		this.comment = node.comment;
+	}
+	
+	public ProofTree copySubTree(){
+		// Copy the subtree
+		ProofTreeNode root = new ProofTreeNode(this);
+		// Disconnect the copy from the tree
+		root.parent = null;
+		root.tree = null;
+		ProofTree proofTree = new ProofTree(root);
+		assert proofTree.getRoot().classInvariant();
+		return proofTree;
+	}
+	
+	
 	/**
 	 * Append the open descendants of this node to the given list.
 	 * 

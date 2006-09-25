@@ -72,6 +72,11 @@ public class ProverSequent implements IProverSequent{
 		// assert this.invariant();
 	}
 	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param pS
+	 */
 	private ProverSequent(ProverSequent pS){
 		this.typeEnvironment = pS.typeEnvironment;
 		this.globalHypotheses = pS.globalHypotheses;
@@ -117,10 +122,10 @@ public class ProverSequent implements IProverSequent{
 	}
 	
 	
-	@Override
-	public ProverSequent clone(){
-		return new ProverSequent(this);
-	}
+//	@Override
+//	public ProverSequent clone(){
+//		return new ProverSequent(this);
+//	}
 	
 //	public ProverSequent InitialSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> globalHypotheses,Predicate goal){
 //		return new ProverSequent(typeEnvironment,globalHypotheses,goal);
