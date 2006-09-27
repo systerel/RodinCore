@@ -21,6 +21,7 @@ import org.eclipse.ui.PartInitException;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -66,7 +67,8 @@ public class Delete implements IViewActionDelegate {
 										"Are you sure you want to delete project '"
 												+ rodinProject.getElementName()
 												+ "' ?");
-						UIUtils.debugProjectExplorer("Answer: " + answer);
+						if (ProjectExplorerUtils.DEBUG)
+							ProjectExplorerUtils.debug("Answer: " + answer);
 					}
 					if (answer == YesToAllMessageDialog.NO_TO_ALL)
 						break;
