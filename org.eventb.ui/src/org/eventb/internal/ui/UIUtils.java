@@ -58,8 +58,6 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.rodinp.core.IInternalElement;
@@ -82,31 +80,18 @@ public class UIUtils {
 
 	public static boolean DEBUG = false;
 
-	/**
-	 * Print out the message if the <code>ProjectExplorer.DEBUG</code> flag is
-	 * <code>true</code>.
-	 * <p>
-	 * 
-	 * @param message
-	 *            the messege to print out
-	 */
-	public static void debugProjectExplorer(String message) {
-		if (ProjectExplorer.DEBUG)
-			System.out.println("*** Project Explorer *** " + message);
-	}
-
-	/**
-	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag
-	 * is <code>true</code>.
-	 * <p>
-	 * 
-	 * @param message
-	 *            the messege to print out
-	 */
-	public static void debugObligationExplorer(String message) {
-		if (ObligationExplorer.DEBUG)
-			System.out.println(message);
-	}
+//	/**
+//	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag
+//	 * is <code>true</code>.
+//	 * <p>
+//	 * 
+//	 * @param message
+//	 *            the messege to print out
+//	 */
+//	public static void debugObligationExplorer(String message) {
+//		if (ObligationExplorer.DEBUG)
+//			System.out.println(message);
+//	}
 
 	/**
 	 * Method to return the openable for an object (IRodinElement or TreeNode).
@@ -183,7 +168,8 @@ public class UIUtils {
 				.isTrue(component != null,
 						"component must be initialised by now");
 		try {
-			UIUtils.debugObligationExplorer("Link to : " + obj);
+//			if (ObligationExplorer.DEBUG)
+//				("Link to : " + obj);
 
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());

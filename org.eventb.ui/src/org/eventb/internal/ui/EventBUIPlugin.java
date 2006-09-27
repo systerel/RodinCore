@@ -23,8 +23,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
+import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
@@ -135,11 +135,11 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 			option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
 			if (option != null)
-				ObligationExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ObligationExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
 			if (option != null)
-				ProjectExplorer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ProjectExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(PROVERUI_TRACE);
 			if (option != null)

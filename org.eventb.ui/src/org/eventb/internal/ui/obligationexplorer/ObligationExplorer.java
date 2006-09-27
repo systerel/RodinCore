@@ -108,9 +108,6 @@ public class ObligationExplorer extends ViewPart implements
 
 	private static final int MAX_WIDTH = 500;
 
-	// Debug flag
-	public static boolean DEBUG = false;
-
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
 
@@ -234,13 +231,12 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		// Otherwise, setting the label accordingly.
-		
+
 		final IPRProofTree prProofTree = sequent.getProofTree();
-		
+
 		if (prProofTree == null || (!prProofTree.proofAttempted()))
 			return UNATTEMPTED;
 
-		
 		int confidence = prProofTree.getConfidence();
 		if (sequent.isProofBroken()) {
 
@@ -364,7 +360,7 @@ public class ObligationExplorer extends ViewPart implements
 
 					// Otherwise, setting the label accordingly.
 					return EventBImage.getPRSequentImage(prSequent);
-									} catch (RodinDBException e) {
+				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
 			}
@@ -381,10 +377,12 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		public String getColumnText(Object obj, int columnIndex) {
-			UIUtils.debugObligationExplorer("Label for: " + obj);
+			if (ObligationExplorerUtils.DEBUG)
+				ObligationExplorerUtils.debug("Label for: " + obj);
 			if (obj instanceof IRodinProject) {
-				UIUtils.debugObligationExplorer("Project: "
-						+ ((IRodinProject) obj).getElementName());
+				if (ObligationExplorerUtils.DEBUG)
+					ObligationExplorerUtils.debug("Project: "
+							+ ((IRodinProject) obj).getElementName());
 				return ((IRodinProject) obj).getElementName();
 			} else if (obj instanceof IRodinFile) {
 				String name = ((IRodinFile) obj).getElementName();
@@ -491,9 +489,11 @@ public class ObligationExplorer extends ViewPart implements
 		discharge.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				UIUtils.debugObligationExplorer("Event " + e);
-				UIUtils.debugObligationExplorer("Status "
-						+ exclude.getSelection());
+				if (ObligationExplorerUtils.DEBUG) {
+					ObligationExplorerUtils.debug("Event " + e);
+					ObligationExplorerUtils.debug("Status "
+							+ exclude.getSelection());
+				}
 				viewer.refresh();
 				column.pack();
 				column.setWidth(MAX_WIDTH);
@@ -509,9 +509,11 @@ public class ObligationExplorer extends ViewPart implements
 		exclude.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				UIUtils.debugObligationExplorer("Event " + e);
-				UIUtils.debugObligationExplorer("Status "
-						+ exclude.getSelection());
+				if (ObligationExplorerUtils.DEBUG) {
+					ObligationExplorerUtils.debug("Event " + e);
+					ObligationExplorerUtils.debug("Status "
+							+ exclude.getSelection());
+				}
 				viewer.refresh();
 				column.pack();
 				column.setWidth(MAX_WIDTH);
@@ -724,7 +726,8 @@ public class ObligationExplorer extends ViewPart implements
 		if (byExternal)
 			return;
 
-		UIUtils.debugObligationExplorer("Selection changed: ");
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("Selection changed: ");
 		ISelection sel = event.getSelection();
 
 		if (sel instanceof IStructuredSelection) {
@@ -743,7 +746,8 @@ public class ObligationExplorer extends ViewPart implements
 					selectPO(ps);
 				}
 			} else {
-				UIUtils.debugObligationExplorer("De-selected");
+				if (ObligationExplorerUtils.DEBUG)
+					ObligationExplorerUtils.debug("De-selected");
 				// Do nothing when there is no selection
 				// editor.getUserSupport().selectNode(null);
 			}
@@ -769,7 +773,8 @@ public class ObligationExplorer extends ViewPart implements
 		byExternal = true;
 		if (!((IStructuredSelection) viewer.getSelection()).toList().contains(
 				obj)) {
-			UIUtils.debugObligationExplorer("Set new Selection");
+			if (ObligationExplorerUtils.DEBUG)
+				ObligationExplorerUtils.debug("Set new Selection");
 			viewer.getControl().setRedraw(false);
 			viewer.setSelection(new StructuredSelection(obj));
 			viewer.getControl().setRedraw(true);
@@ -778,15 +783,17 @@ public class ObligationExplorer extends ViewPart implements
 	}
 
 	public void USManagerChanged(final UserSupport userSupport, final int status) {
-		
+
 		Control control = viewer.getControl();
-		if (control.isDisposed()) return;
-		
+		if (control.isDisposed())
+			return;
+
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				UIUtils.debugObligationExplorer("Obligation Explorer: "
-						+ userSupport + " : " + status);
+				if (ObligationExplorerUtils.DEBUG)
+					ObligationExplorerUtils.debug("Obligation Explorer: "
+							+ userSupport + " : " + status);
 				if (status == UserSupportManager.ADDED) {
 					userSupport
 							.addStateChangedListeners(ObligationExplorer.this);
@@ -805,9 +812,10 @@ public class ObligationExplorer extends ViewPart implements
 		Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				UIUtils
-						.debugObligationExplorer("Obligation Exprlorer: Proof Changed "
-								+ delta);
+				if (ObligationExplorerUtils.DEBUG)
+					ObligationExplorerUtils
+							.debug("Obligation Exprlorer: Proof Changed "
+									+ delta);
 				final ProofState ps = delta.getProofState();
 
 				final UserSupport userSupport = delta.getSource();
