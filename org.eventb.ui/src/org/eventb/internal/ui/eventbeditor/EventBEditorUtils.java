@@ -1349,4 +1349,7 @@ public class EventBEditorUtils {
 		return (IEvent) abs_evt;
 	}
 
+	public static void debug(String message) {
+		System.out.println(EventBEditor.DebugPrefix + message);
+	}
 }

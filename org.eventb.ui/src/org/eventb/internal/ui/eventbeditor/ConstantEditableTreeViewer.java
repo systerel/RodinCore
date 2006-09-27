@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -46,7 +45,9 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		// The invisible root of the tree.
 		private IContextFile invisibleRoot = null;
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object child) {
@@ -55,7 +56,9 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			return null;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
@@ -81,14 +84,18 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
@@ -101,14 +108,19 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			return getChildren(parent);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
@@ -118,9 +130,13 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	/**
 	 * Constructor.
 	 * <p>
-	 * @param editor The Event-B Editor
-	 * @param parent The composit parent
-	 * @param style The style used to create the tree viewer 
+	 * 
+	 * @param editor
+	 *            The Event-B Editor
+	 * @param parent
+	 *            The composit parent
+	 * @param style
+	 *            The style used to create the tree viewer
 	 */
 	public ConstantEditableTreeViewer(EventBEditor editor, Composite parent,
 			int style) {
@@ -130,17 +146,21 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new RodinElementSorter());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement, int, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
+	 *      int, java.lang.String)
 	 */
 	public void commit(IRodinElement element, int col, String text) {
 		IConstant cst = (IConstant) element;
-		
+
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debugEventBEditor("Commit : " + cst.getIdentifierString()
-						+ " to be : " + text);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Commit : "
+							+ cst.getIdentifierString() + " to be : " + text);
 				if (!cst.getIdentifierString().equals(text)) {
 					cst.setIdentifierString(text);
 				}
@@ -164,8 +184,11 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		tree.setHeaderVisible(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
+	 *      int)
 	 */
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof IConstant))
@@ -173,7 +196,9 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
 	protected void edit(IRodinElement element) {

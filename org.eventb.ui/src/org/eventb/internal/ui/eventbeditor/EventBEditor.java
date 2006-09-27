@@ -51,7 +51,6 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -73,6 +72,8 @@ public abstract class EventBEditor extends FormEditor implements
 		IElementChangedListener {
 
 	public static boolean DEBUG = false;
+	
+	public final static String DebugPrefix = "*** EventBEditor *** ";
 
 	private String lastActivePageID = null;
 
@@ -359,7 +360,8 @@ public abstract class EventBEditor extends FormEditor implements
 	 * actions required by the Event-B editor.
 	 */
 	public void dispose() {
-		UIUtils.debugEventBEditor("Dispose");
+		if (EventBEditor.DEBUG)
+			EventBEditorUtils.debug("Dispose");
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
 
@@ -380,7 +382,8 @@ public abstract class EventBEditor extends FormEditor implements
 	private void saveDefaultPage() {
 		IRodinFile inputFile = this.getRodinInput();
 		try {
-			UIUtils.debugEventBEditor("Save Page: " + lastActivePageID);
+			if (EventBEditor.DEBUG)
+				EventBEditorUtils.debug("Save Page: " + lastActivePageID);
 			if (lastActivePageID != null)
 				inputFile.getResource().setPersistentProperty(
 						new QualifiedName(EventBUIPlugin.PLUGIN_ID,
@@ -476,14 +479,16 @@ public abstract class EventBEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			UIUtils.debugEventBEditor("Save");
+			if (EventBEditor.DEBUG)
+				EventBEditorUtils.debug("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
 					Object page = pages.get(i);
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
 						if (fpage.isDirty()) {
-							UIUtils.debugEventBEditor("Saving "
+							if (EventBEditor.DEBUG)
+								EventBEditorUtils.debug("Saving "
 									+ fpage.toString());
 							fpage.doSave(monitor);
 						}

@@ -83,32 +83,6 @@ public class UIUtils {
 	public static boolean DEBUG = false;
 
 	/**
-	 * Print out the message if the <code>DEBUG</code> flag is
-	 * <code>true</code>.
-	 * <p>
-	 * 
-	 * @param message
-	 *            the messege to print out
-	 */
-	public static void debug(String message) {
-		if (DEBUG)
-			System.out.println(message);
-	}
-
-	/**
-	 * Print out the message if the <code>EventBEditor.DEBUG</code> flag is
-	 * <code>true</code>.
-	 * <p>
-	 * 
-	 * @param message
-	 *            the messege to print out
-	 */
-	public static void debugEventBEditor(String message) {
-		if (EventBEditor.DEBUG)
-			System.out.println("*** EventBEditor *** " + message);
-	}
-
-	/**
 	 * Print out the message if the <code>ProjectExplorer.DEBUG</code> flag is
 	 * <code>true</code>.
 	 * <p>

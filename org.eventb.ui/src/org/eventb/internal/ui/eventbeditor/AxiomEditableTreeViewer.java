@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -159,8 +158,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit label
 			try {
-				UIUtils.debugEventBEditor("Commit : "
-						+ axm.getLabel(null) + " to be : " + text);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Commit : " + axm.getLabel(null)
+							+ " to be : " + text);
 				if (!axm.getLabel(null).equals(text)) {
 					axm.setLabel(text, null);
 				}
@@ -172,9 +172,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit predicate
 			try {
-				UIUtils.debugEventBEditor("Commit content: "
-						+ axm.getPredicateString()
-						+ " to be : " + text);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString()
+							+ " to be : " + text);
 				if (!axm.getPredicateString().equals(text)) {
 					axm.setPredicateString(text);
 				}

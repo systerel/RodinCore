@@ -233,13 +233,16 @@ public class NewComponentWizardPage extends WizardPage {
 			project = (IRodinProject) curr;
 		} else {
 			// Trying to find the current project from the Project Explorer
-			UIUtils.debug("From Project Explorer: ");
+			if (UIUtils.DEBUG)
+				System.out.println("From Project Explorer: ");
 			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin
 					.getActivePage().findView(ProjectExplorer.VIEW_ID);
 			project = explorer.getCurrentProject();
 		}
 
-		UIUtils.debug("Project " + project);
+		if (UIUtils.DEBUG)
+			System.out.println("Project " + project);
+		
 		if (project != null) {
 			final IProject container = project.getProject();
 			containerText.setText(container.getFullPath().toString());
@@ -299,7 +302,8 @@ public class NewComponentWizardPage extends WizardPage {
 		try {
 			IRodinElement[] elements = rodinProject.getChildren();
 			for (IRodinElement elem : elements) {
-				if (elem instanceof IMachineFile || elem instanceof IContextFile) {
+				if (elem instanceof IMachineFile
+						|| elem instanceof IContextFile) {
 					if (EventBPlugin.getComponentName(
 							((IRodinFile) elem).getElementName()).equals(
 							componentName)) {

@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.basis.MachineFile;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -68,10 +67,6 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 				try {
 					IRodinElement[] elements = ((IMachineFile) parent)
 							.getChildrenOfType(IVariable.ELEMENT_TYPE);
-					for (IRodinElement element : elements) {
-						UIUtils.debugEventBEditor("Variable: "
-								+ element.getElementName());
-					}
 					return elements;
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -148,8 +143,9 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debugEventBEditor("Commit : "
-						+ var.getIdentifierString() + " to be : " + text);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Commit : "
+							+ var.getIdentifierString() + " to be : " + text);
 				if (!var.getIdentifierString().equals(text)) {
 					var.setIdentifierString(text);
 				}

@@ -30,7 +30,6 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
@@ -216,8 +215,9 @@ public class CommentToolTip {
 
 		@Override
 		protected void response() {
-			UIUtils.debugEventBEditor("Set comment for "
-					+ element.getElementName());
+			if (EventBEditor.DEBUG)
+				EventBEditorUtils.debug("Set comment for "
+						+ element.getElementName());
 			try {
 				element.setComment(text.getWidget().getText(), null);
 			} catch (RodinDBException e) {

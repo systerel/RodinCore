@@ -160,7 +160,6 @@ public class ExtendsSection extends SectionPart implements
 
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				UIUtils.debugEventBEditor("Here");
 				ISelection sel = viewer.getSelection();
 				if (sel instanceof IStructuredSelection) {
 					final IStructuredSelection ssel = (IStructuredSelection) sel;

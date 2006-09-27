@@ -256,8 +256,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
-
-		UIUtils.debugEventBEditor("Item " + item);
+		if (EventBEditor.DEBUG)
+			EventBEditorUtils.debug("Item " + item);
 
 		// Set the selection of the viewer
 		IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
@@ -388,9 +388,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		toRefresh = new HashSet<IRodinElement>();
 //		newStatus = new HashSet<StatusObject>();
 //		moved = new HashMap<IRodinElement, IRodinElement>();
-		UIUtils.debugEventBEditor("--- Table: " + this + "---");
-		UIUtils.debugEventBEditor(event.getDelta().toString());
-		UIUtils.debugEventBEditor("------------------------------------------");
+		if (EventBEditor.DEBUG) {
+			EventBEditorUtils.debug("--- Table: " + this + "---");
+			EventBEditorUtils.debug(event.getDelta().toString());
+			EventBEditorUtils.debug("------------------------------------------");
+		}
 		// if (this instanceof EventEditableTreeViewer)
 		// UIUtils.debug("Delta: " + event.getDelta());
 		processDelta(event.getDelta());
@@ -465,10 +467,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 		if (kind == IRodinElementDelta.CHANGED) {
 			int flags = delta.getFlags();
-			UIUtils.debugEventBEditor("Changed: " + element.getElementName());
+			if (EventBEditor.DEBUG)
+				EventBEditorUtils.debug("Changed: " + element.getElementName());
 
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				UIUtils.debugEventBEditor("CHILDREN");
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("CHILDREN");
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
 					processDelta(deltas[i]);
@@ -477,13 +481,15 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				UIUtils.debugEventBEditor("REORDERED");
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("REORDERED");
 				toRefresh.add(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				UIUtils.debugEventBEditor("CONTENT");
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("CONTENT");
 
 				if (!(element instanceof IRodinFile))
 					toRefresh.add(element);
@@ -491,7 +497,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 			
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				UIUtils.debugEventBEditor("ATTRIBUTE");
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("ATTRIBUTE");
 				toRefresh.add(element);
 				return;				
 			}

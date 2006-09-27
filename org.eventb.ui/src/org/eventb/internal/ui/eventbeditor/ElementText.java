@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -85,9 +84,11 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				editor.horizontalAlignment = SWT.LEFT;
 				Rectangle itemRect = item.getBounds(),
 				rect = tree.getClientArea();
-				UIUtils.debugEventBEditor("ItemRect: " + itemRect);
-				UIUtils.debugEventBEditor("Rect: " + rect);
-				UIUtils.debugEventBEditor("Size: " + size.x);
+				if (EventBEditor.DEBUG) {
+					EventBEditorUtils.debug("ItemRect: " + itemRect);
+					EventBEditorUtils.debug("Rect: " + rect);
+					EventBEditorUtils.debug("Size: " + size.x);
+				}
 				editor.minimumWidth = Math.max(size.x, itemRect.width) + inset
 						* 2;
 				int left = itemRect.x,
@@ -95,9 +96,10 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				editor.minimumWidth = Math.min(editor.minimumWidth, right
 						- left);
 				editor.minimumHeight = size.y + inset * 2;
-				UIUtils.debugEventBEditor("Editor layout --- Height: "
-						+ editor.minimumHeight + " Width: "
-						+ editor.minimumWidth);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Editor layout --- Height: "
+							+ editor.minimumHeight + " Width: "
+							+ editor.minimumWidth);
 				editor.layout();
 				break;
 			case SWT.Traverse:

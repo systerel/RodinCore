@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -158,8 +157,9 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				UIUtils.debugEventBEditor("Commit : " + set.getIdentifierString()
-						+ " to be : " + text);
+				if (EventBEditor.DEBUG)
+					EventBEditorUtils.debug("Commit : "
+							+ set.getIdentifierString() + " to be : " + text);
 				if (!set.getIdentifierString().equals(text)) {
 					set.setIdentifierString(text);
 				}

@@ -9,8 +9,8 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -31,27 +31,31 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IRodinFile file = editor.getRodinInput();
-					IRodinElement[] elements = file
-							.getChildrenOfType(type);
+					IRodinElement[] elements = file.getChildrenOfType(type);
 
 					// Rename to the real desired naming convention
 					for (int counter = 1; counter <= elements.length; counter++) {
-						IRodinElement element = elements[counter-1];
+						IRodinElement element = elements[counter - 1];
 						if (element instanceof IIdentifierElement) {
-							UIUtils.debugEventBEditor("Rename: "
-									+ ((IIdentifierElement) element).getIdentifierString() + " to " + prefix + 
-									+ counter);
-							((IIdentifierElement) element).setIdentifierString(prefix + counter);
+							if (EventBEditor.DEBUG)
+								EventBEditorUtils.debug("Rename: "
+										+ ((IIdentifierElement) element)
+												.getIdentifierString() + " to "
+										+ prefix + +counter);
+							((IIdentifierElement) element)
+									.setIdentifierString(prefix + counter);
+						} else if (element instanceof ILabeledElement) {
+							if (EventBEditor.DEBUG)
+								EventBEditorUtils.debug("Rename: "
+										+ ((ILabeledElement) element)
+												.getLabel(monitor) + " to "
+										+ prefix + +counter);
+							((ILabeledElement) element).setLabel(prefix
+									+ counter, monitor);
+
 						}
-						else if (element instanceof ILabeledElement) {
-							UIUtils.debugEventBEditor("Rename: "
-									+ ((ILabeledElement) element).getLabel(monitor) + " to " + prefix + 
-									+ counter);
-							((ILabeledElement) element).setLabel(prefix + counter, monitor);
-							
-						}
-						((IInternalElement) element).rename(prefix + counter, false,
-								null);
+						((IInternalElement) element).rename(prefix + counter,
+								false, null);
 					}
 				}
 

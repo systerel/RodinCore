@@ -143,7 +143,7 @@ public class EventBImage {
 	public static final String IMG_UNATTEMPTED_PATH = "icons/unattempted.gif";
 
 	public static final String IMG_NULL_PATH = "icons/full/ctool16/null.gif";
-	
+
 	private static Map<String, Image> images = new HashMap<String, Image>();
 
 	/**
@@ -300,7 +300,8 @@ public class EventBImage {
 
 				Image image = images.get(key);
 				if (image == null) {
-					UIUtils.debugEventBEditor("Create a new image: " + key);
+					if (UIUtils.DEBUG)
+						System.out.println("Create a new image: " + key);
 					OverlayIcon icon = new OverlayIcon(getImageDescriptor(
 							pluginID, path));
 					if (overlay == "1")
@@ -316,41 +317,44 @@ public class EventBImage {
 		return null;
 	}
 
-	private static final String getProofTreeNodeImageBasePath(IProofTreeNode node){
+	private static final String getProofTreeNodeImageBasePath(
+			IProofTreeNode node) {
 
 		int confidence = node.getConfidence();
-		
+
 		if (confidence == IConfidence.PENDING) {
-			if (node.hasChildren()) return IMG_APPLIED_PATH;
+			if (node.hasChildren())
+				return IMG_APPLIED_PATH;
 			return IMG_PENDING_PATH;
 		}
-		if (confidence <= IConfidence.REVIEWED_MAX) return IMG_REVIEWED_PATH;
-		if (confidence <= IConfidence.DISCHARGED_MAX) return IMG_DISCHARGED_PATH;
+		if (confidence <= IConfidence.REVIEWED_MAX)
+			return IMG_REVIEWED_PATH;
+		if (confidence <= IConfidence.DISCHARGED_MAX)
+			return IMG_DISCHARGED_PATH;
 		return IMG_NULL_PATH;
 	}
-	
-	
+
 	public static Image getProofTreeNodeImage(IProofTreeNode node) {
-//		String base_path = "";
-//
-//		if (node.isOpen())
-//			base_path = IMG_PENDING_PATH;
-//		else if (!node.isClosed())
-//			base_path = IMG_APPLIED_PATH;
-//		// return registry.get(EventBImage.IMG_APPLIED);
-//		else {
-//			int confidence = node.getConfidence();
-//
-//			if (confidence <= IConfidence.REVIEWED_MAX)
-//				base_path = IMG_REVIEWED_PATH;
-//			// return registry.get(EventBImage.IMG_REVIEWED);
-//			if (confidence <= IConfidence.DISCHARGED_MAX)
-//				base_path = IMG_DISCHARGED_PATH;
-//			// return registry.get(EventBImage.IMG_DISCHARGED);
-//		}
-		
+		// String base_path = "";
+		//
+		// if (node.isOpen())
+		// base_path = IMG_PENDING_PATH;
+		// else if (!node.isClosed())
+		// base_path = IMG_APPLIED_PATH;
+		// // return registry.get(EventBImage.IMG_APPLIED);
+		// else {
+		// int confidence = node.getConfidence();
+		//
+		// if (confidence <= IConfidence.REVIEWED_MAX)
+		// base_path = IMG_REVIEWED_PATH;
+		// // return registry.get(EventBImage.IMG_REVIEWED);
+		// if (confidence <= IConfidence.DISCHARGED_MAX)
+		// base_path = IMG_DISCHARGED_PATH;
+		// // return registry.get(EventBImage.IMG_DISCHARGED);
+		// }
+
 		String base_path = getProofTreeNodeImageBasePath(node);
-		
+
 		// Compute the key
 		// key = "node":pluginID:base_path:overlay
 		// overlay = comment
@@ -364,7 +368,8 @@ public class EventBImage {
 
 		Image image = images.get(key);
 		if (image == null) {
-			UIUtils.debugEventBEditor("Create a new image: " + key);
+			if (UIUtils.DEBUG)
+				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (comment == "1")
 				icon.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
@@ -374,7 +379,8 @@ public class EventBImage {
 		return image;
 	}
 
-	public static Image getPRSequentImage(IPRSequent prSequent) throws RodinDBException {
+	public static Image getPRSequentImage(IPRSequent prSequent)
+			throws RodinDBException {
 		String base_path = "";
 		String auto = "0";
 
@@ -393,25 +399,25 @@ public class EventBImage {
 
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_BROKEN_PATH;
-//					return registry.get(EventBImage.IMG_PENDING_BROKEN);
+				// return registry.get(EventBImage.IMG_PENDING_BROKEN);
 				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_BROKEN_PATH;
-//					return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
+				// return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_BROKEN_PATH;
-//					return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
+				// return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
 
 			} else {
 
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_PATH;
-//					return registry.get(EventBImage.IMG_PENDING);
+				// return registry.get(EventBImage.IMG_PENDING);
 				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_PATH;
-//					return registry.get(EventBImage.IMG_REVIEWED);
+				// return registry.get(EventBImage.IMG_REVIEWED);
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_PATH;
-//					return registry.get(EventBImage.IMG_DISCHARGED);
+				// return registry.get(EventBImage.IMG_DISCHARGED);
 			}
 		}
 
@@ -422,7 +428,8 @@ public class EventBImage {
 
 		Image image = images.get(key);
 		if (image == null) {
-			UIUtils.debugEventBEditor("Create a new image: " + key);
+			if (UIUtils.DEBUG)
+				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			if (auto == "1")
 				icon.addTopRight(getImageDescriptor(IMG_AUTO_OVERLAY_PATH));
