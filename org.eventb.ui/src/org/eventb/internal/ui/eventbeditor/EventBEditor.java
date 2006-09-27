@@ -71,10 +71,6 @@ import org.rodinp.core.RodinDBException;
 public abstract class EventBEditor extends FormEditor implements
 		IElementChangedListener {
 
-	public static boolean DEBUG = false;
-	
-	public final static String DebugPrefix = "*** EventBEditor *** ";
-
 	private String lastActivePageID = null;
 
 	/**
@@ -360,7 +356,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * actions required by the Event-B editor.
 	 */
 	public void dispose() {
-		if (EventBEditor.DEBUG)
+		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Dispose");
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
@@ -382,7 +378,7 @@ public abstract class EventBEditor extends FormEditor implements
 	private void saveDefaultPage() {
 		IRodinFile inputFile = this.getRodinInput();
 		try {
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Save Page: " + lastActivePageID);
 			if (lastActivePageID != null)
 				inputFile.getResource().setPersistentProperty(
@@ -479,7 +475,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Save");
 			if (this.pages != null) {
 				for (int i = 0; i < pages.size(); i++) {
@@ -487,7 +483,7 @@ public abstract class EventBEditor extends FormEditor implements
 					if (page instanceof IFormPage) {
 						IFormPage fpage = (IFormPage) page;
 						if (fpage.isDirty()) {
-							if (EventBEditor.DEBUG)
+							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Saving "
 									+ fpage.toString());
 							fpage.doSave(monitor);

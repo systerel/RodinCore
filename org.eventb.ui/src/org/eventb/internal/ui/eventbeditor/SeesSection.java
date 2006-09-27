@@ -168,7 +168,7 @@ public class SeesSection extends SectionPart implements
 								for (Iterator it = ssel.iterator(); it
 										.hasNext();) {
 									Object obj = it.next();
-									if (EventBEditor.DEBUG)
+									if (EventBEditorUtils.DEBUG)
 										EventBEditorUtils
 												.debug("Sees Section: Deleting "
 														+ obj);
@@ -377,7 +377,7 @@ public class SeesSection extends SectionPart implements
 					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 
 			for (IRodinElement context : contexts) {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Sees Section -- Context: "
 							+ context.getElementName());
 				boolean found = false;
@@ -390,7 +390,7 @@ public class SeesSection extends SectionPart implements
 						break;
 					}
 				}
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Sees Section -- Found: " + found);
 				if (!found)
 					contextCombo.add(EventBPlugin.getComponentName(context

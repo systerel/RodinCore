@@ -170,7 +170,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 					}
 				} else if (element instanceof ILabeledElement) {
 					ILabeledElement labelElement = (ILabeledElement) element;
-					if (EventBEditor.DEBUG)
+					if (EventBEditorUtils.DEBUG)
 						EventBEditorUtils.debug("Rename label: "
 								+ labelElement.getLabel(null) + " to " + text);
 					if (!labelElement.getLabel(null).equals(text)) {

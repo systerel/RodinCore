@@ -158,7 +158,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit label
 			try {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : " + axm.getLabel(null)
 							+ " to be : " + text);
 				if (!axm.getLabel(null).equals(text)) {
@@ -172,7 +172,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit predicate
 			try {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString()
 							+ " to be : " + text);
 				if (!axm.getPredicateString().equals(text)) {

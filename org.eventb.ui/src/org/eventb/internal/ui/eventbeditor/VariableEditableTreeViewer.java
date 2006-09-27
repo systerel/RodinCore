@@ -143,7 +143,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
 							+ var.getIdentifierString() + " to be : " + text);
 				if (!var.getIdentifierString().equals(text)) {

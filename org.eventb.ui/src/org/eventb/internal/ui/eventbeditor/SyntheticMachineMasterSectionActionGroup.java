@@ -218,7 +218,7 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 							IMachineFile refinedFile = (IMachineFile) prj
 									.getRodinFile(EventBPlugin
 											.getMachineFileName(name));
-							if (EventBEditor.DEBUG)
+							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Refined: "
 										+ refinedFile.getElementName());
 							IInternalElement abs_evt = refinedFile

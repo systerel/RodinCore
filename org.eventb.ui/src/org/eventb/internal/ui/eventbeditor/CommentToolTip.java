@@ -215,7 +215,7 @@ public class CommentToolTip {
 
 		@Override
 		protected void response() {
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
 			try {

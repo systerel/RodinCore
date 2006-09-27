@@ -157,7 +157,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
 							+ set.getIdentifierString() + " to be : " + text);
 				if (!set.getIdentifierString().equals(text)) {

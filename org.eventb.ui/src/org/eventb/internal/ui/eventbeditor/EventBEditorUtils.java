@@ -1350,6 +1350,10 @@ public class EventBEditorUtils {
 	}
 
 	public static void debug(String message) {
-		System.out.println(EventBEditor.DebugPrefix + message);
+		System.out.println(EventBEditorUtils.DebugPrefix + message);
 	}
+
+	public static boolean DEBUG = false;
+
+	public final static String DebugPrefix = "*** EventBEditor *** ";
 }

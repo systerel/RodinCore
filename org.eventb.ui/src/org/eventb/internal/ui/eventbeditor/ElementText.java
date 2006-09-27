@@ -84,7 +84,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				editor.horizontalAlignment = SWT.LEFT;
 				Rectangle itemRect = item.getBounds(),
 				rect = tree.getClientArea();
-				if (EventBEditor.DEBUG) {
+				if (EventBEditorUtils.DEBUG) {
 					EventBEditorUtils.debug("ItemRect: " + itemRect);
 					EventBEditorUtils.debug("Rect: " + rect);
 					EventBEditorUtils.debug("Size: " + size.x);
@@ -96,7 +96,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				editor.minimumWidth = Math.min(editor.minimumWidth, right
 						- left);
 				editor.minimumHeight = size.y + inset * 2;
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Editor layout --- Height: "
 							+ editor.minimumHeight + " Width: "
 							+ editor.minimumWidth);

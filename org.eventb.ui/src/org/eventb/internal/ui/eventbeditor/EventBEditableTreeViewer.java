@@ -256,7 +256,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
-		if (EventBEditor.DEBUG)
+		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Item " + item);
 
 		// Set the selection of the viewer
@@ -388,7 +388,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		toRefresh = new HashSet<IRodinElement>();
 //		newStatus = new HashSet<StatusObject>();
 //		moved = new HashMap<IRodinElement, IRodinElement>();
-		if (EventBEditor.DEBUG) {
+		if (EventBEditorUtils.DEBUG) {
 			EventBEditorUtils.debug("--- Table: " + this + "---");
 			EventBEditorUtils.debug(event.getDelta().toString());
 			EventBEditorUtils.debug("------------------------------------------");
@@ -467,11 +467,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 		if (kind == IRodinElementDelta.CHANGED) {
 			int flags = delta.getFlags();
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Changed: " + element.getElementName());
 
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("CHILDREN");
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
@@ -481,14 +481,14 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("REORDERED");
 				toRefresh.add(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("CONTENT");
 
 				if (!(element instanceof IRodinFile))
@@ -497,7 +497,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 			
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("ATTRIBUTE");
 				toRefresh.add(element);
 				return;				

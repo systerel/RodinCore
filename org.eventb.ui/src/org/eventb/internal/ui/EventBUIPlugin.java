@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
@@ -131,7 +131,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 			option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
 			if (option != null)
-				EventBEditor.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				EventBEditorUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
 			if (option != null)

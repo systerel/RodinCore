@@ -143,7 +143,7 @@ public abstract class EventBInputDialog extends Dialog {
 		public void modifyText(ModifyEvent e) {
 			Display display = Display.getCurrent();
 			Text text = (Text) e.widget;
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Modified: " + text.getText());
 			if (text.getText().equals("")) {
 				dirtyTexts.remove(text);

@@ -37,7 +37,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 					for (int counter = 1; counter <= elements.length; counter++) {
 						IRodinElement element = elements[counter - 1];
 						if (element instanceof IIdentifierElement) {
-							if (EventBEditor.DEBUG)
+							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "
 										+ ((IIdentifierElement) element)
 												.getIdentifierString() + " to "
@@ -45,7 +45,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 							((IIdentifierElement) element)
 									.setIdentifierString(prefix + counter);
 						} else if (element instanceof ILabeledElement) {
-							if (EventBEditor.DEBUG)
+							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "
 										+ ((ILabeledElement) element)
 												.getLabel(monitor) + " to "

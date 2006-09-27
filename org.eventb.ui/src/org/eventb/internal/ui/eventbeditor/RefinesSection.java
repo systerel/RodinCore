@@ -394,10 +394,10 @@ public class RefinesSection extends SectionPart implements
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Refine Section: Element change");
 				IRodinElementDelta delta = event.getDelta();
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Refines Section - Process Delta: "
 							+ delta);
 				processDelta(delta);
@@ -416,7 +416,7 @@ public class RefinesSection extends SectionPart implements
 
 			for (IRodinElement machine : machines) {
 				if (!rodinFile.equals(machine)) {
-					if (EventBEditor.DEBUG)
+					if (EventBEditorUtils.DEBUG)
 						EventBEditorUtils.debug("Add to Combo: "
 								+ machine.getElementName());
 					machineCombo.add(EventBPlugin.getComponentName(machine
@@ -466,7 +466,7 @@ public class RefinesSection extends SectionPart implements
 
 	private void updateCombo() {
 		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
-		if (EventBEditor.DEBUG)
+		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Update Combo: "
 					+ rodinFile.getElementName() + " --- " + refreshCombo);
 		if (refreshCombo) {
@@ -511,7 +511,7 @@ public class RefinesSection extends SectionPart implements
 		}
 
 		if (element instanceof IRodinFile) {
-			if (EventBEditor.DEBUG)
+			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Refines Section: file" + element);
 			if (!(element instanceof IMachineFile)) {
 				return;

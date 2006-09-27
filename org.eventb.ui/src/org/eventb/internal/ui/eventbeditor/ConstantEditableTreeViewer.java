@@ -158,7 +158,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		switch (col) {
 		case 0: // Commit name
 			try {
-				if (EventBEditor.DEBUG)
+				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
 							+ cst.getIdentifierString() + " to be : " + text);
 				if (!cst.getIdentifierString().equals(text)) {
