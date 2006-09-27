@@ -86,8 +86,10 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						.getSelection();
 				if (sel instanceof IStructuredSelection) {
 					IStructuredSelection ssel = (IStructuredSelection) sel;
-					if (ssel.size() == 1 && ssel.getFirstElement() instanceof IProofTreeNode) {
-						ProofTreeUI.buffer = ((IProofTreeNode)ssel.getFirstElement()).copySubTree().getRoot();
+					if (ssel.size() == 1
+							&& ssel.getFirstElement() instanceof IProofTreeNode) {
+						ProofTreeUI.buffer = ((IProofTreeNode) ssel
+								.getFirstElement()).copySubTree().getRoot();
 						System.out.println("Copied : " + ProofTreeUI.buffer);
 					}
 				}
@@ -111,7 +113,8 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
 							proofTreeUI.getUserSupport().applyTactic(
 									BasicTactics.pasteTac(copyNode));
-							ProofTreeUI.debug("Copy: " + copyNode);
+							if (ProofTreeUIUtils.DEBUG)
+								ProofTreeUIUtils.debug("Copy: " + copyNode);
 						}
 					}
 				}
@@ -131,7 +134,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (results != null) {
 					ProofTreeUIActionGroup.this.proofTreeUI.setFilters(results);
 				}
-				
+
 				ProofTreeUIActionGroup.this.proofTreeUI.refresh();
 			}
 		};

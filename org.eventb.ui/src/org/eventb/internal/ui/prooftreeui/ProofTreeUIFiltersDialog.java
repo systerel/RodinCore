@@ -64,7 +64,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	// private String[] fEnabledFilterIds;
 
 	private static Collection<RuleFilter> fBuiltInFilters = null;
-	
+
 	private CheckboxTableViewer fCheckBoxList;
 
 	private Button fEnableUserDefinedPatterns;
@@ -84,21 +84,25 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		this.proofTreeUI = proofTreeUI;
 
-		if (fBuiltInFilters == null) getFilters();
+		if (fBuiltInFilters == null)
+			getFilters();
 
 		fFilterDescriptorChangeHistory = new Stack<ViewerFilter>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	private void getFilters() {
-		ProofTreeUI.debug("Get initial filter list");
-		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Get initial filter list");
+		final IReasonerRegistry reasonerRegistry = SequentProver
+				.getReasonerRegistry();
 		Collection<String> reasoners = reasonerRegistry.getReasonerIDs();
 		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.size());
 		for (String reasoner : reasoners) {
 			fBuiltInFilters.add(new RuleFilter(reasoner));
-// TODO : display or use reasoner name from reasonerRegistry.getReasonerName(reasoner)
-			
+			// TODO : display or use reasoner name from
+			// reasonerRegistry.getReasonerName(reasoner)
+
 		}
 	}
 
@@ -188,10 +192,11 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		fCheckBoxList.setLabelProvider(createLabelPrivder());
 		fCheckBoxList.setContentProvider(new ArrayContentProvider());
-//		Arrays.sort(fBuiltInFilters);
+		// Arrays.sort(fBuiltInFilters);
 		fCheckBoxList.setInput(fBuiltInFilters);
 		Object[] filters = proofTreeUI.getFilters();
-		if (filters != null) setInitialSelections(filters);
+		if (filters != null)
+			setInitialSelections(filters);
 
 		List initialSelection = getInitialElementSelections();
 		if (initialSelection != null && !initialSelection.isEmpty())
@@ -323,6 +328,4 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		return fFilterDescriptorChangeHistory;
 	}
 
-	
-	
 }

@@ -46,12 +46,6 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 
 	public static Object buffer;
 	
-	public static boolean DEBUG = false;
-	
-	public static void debug(String message) {
-		if (DEBUG) System.out.println("*** ProofTreeUI *** " + message);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

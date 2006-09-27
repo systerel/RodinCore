@@ -610,7 +610,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		ProofTreeUI.debug("Selection Changed: " + event);
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Selection Changed: " + event);
 		ISelection sel = event.getSelection();
 
 		if (sel instanceof IStructuredSelection) {
@@ -698,7 +699,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	public void proofStateChanged(final IProofStateDelta delta) {
 		// byUserSupport = true;
-		ProofTreeUI.debug("Proof Tree UI for "
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Proof Tree UI for "
 				+ ProofTreeUIPage.this.userSupport.getInput().getElementName()
 				+ ": State Changed: " + delta.toString());
 
