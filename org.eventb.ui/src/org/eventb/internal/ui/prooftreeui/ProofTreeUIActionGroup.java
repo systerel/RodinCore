@@ -90,7 +90,9 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 							&& ssel.getFirstElement() instanceof IProofTreeNode) {
 						ProofTreeUI.buffer = ((IProofTreeNode) ssel
 								.getFirstElement()).copySubTree().getRoot();
-						System.out.println("Copied : " + ProofTreeUI.buffer);
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Copied : "
+									+ ProofTreeUI.buffer);
 					}
 				}
 			}

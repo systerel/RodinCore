@@ -252,15 +252,9 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		// if (this.pages != null) {
 		// for (int i = 0; i < pages.size(); i++) {
 		// Object page = pages.get(i);
-		// // if (UIUtils.DEBUG) System.out.println("Trying to save page "
-		// // + i + " : " + page);
-		// if (page instanceof IFormPage) {
-		// // if (UIUtils.DEBUG) System.out.println("Saving");
 		// IFormPage fpage = (IFormPage) page;
 		//
 		// fpage.doSave(monitor);
-		// // if (UIUtils.DEBUG) System.out.println("Dirty? " + i + " "
-		// // + fpage.isDirty());
 		// }
 		// }
 		// }

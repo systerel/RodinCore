@@ -44,13 +44,6 @@ public class SearchHypothesis extends PageBookView implements
 	// The default text when it is not available (depend on the current editor)
 	private String defaultText = "Search Hypothesis is not available";
 
-	public static boolean DEBUG = false;
-
-	public static void debug(String message) {
-		if (DEBUG)
-			System.out.println("*** SearchHypothesis *** " + message);
-	}
-
 	public HashMap<IPage, IWorkbenchPart> fPagesToParts;
 	
 	public SearchHypothesis() {

@@ -300,7 +300,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		// @Override
 		// public boolean select(Viewer viewer, Object parentElement, Object
 		// element) {
-		// if (UIUtils.DEBUG) System.out.println("Filter");
 		// if (element instanceof IProofTreeNode) {
 		// if (((IProofTreeNode) element).isOpen()) return true;
 		// if (((IProofTreeNode) element).getRule().getName().equals("hyp"))
