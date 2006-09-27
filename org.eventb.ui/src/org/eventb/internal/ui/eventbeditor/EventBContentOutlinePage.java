@@ -47,7 +47,8 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 *         This is the content provider class for the tree display in the
 	 *         outline page.
 	 */
-	class EventBContentOutlineProvider implements ITreeContentProvider, IElementChangedListener {
+	class EventBContentOutlineProvider implements ITreeContentProvider,
+			IElementChangedListener {
 		// The invisible root of the tree (should be the current editting file).
 		private IRodinFile invisibleRoot = null;
 
@@ -63,7 +64,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 				RodinCore.addElementChangedListener(this);
 			else if (oldInput != null && newInput == null)
 				RodinCore.removeElementChangedListener(this);
-			
+
 			invisibleRoot = null;
 			return;
 		}
@@ -138,11 +139,10 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 				}
 			return false;
 		}
-		
-		
+
 		/**
-		 * This method implements the listener method when there is a change in the
-		 * Rodin database
+		 * This method implements the listener method when there is a change in
+		 * the Rodin database
 		 * <p>
 		 * 
 		 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
@@ -150,36 +150,12 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		public void elementChanged(ElementChangedEvent event) {
 			// TODO Process the delta increamentally, see
 			// ObligationExplorerContentProvider
-			// if (UIUtils.DEBUG) System.out.println("Update the Explorer " +
-			// event.toString());
-			IRodinElementDelta[] elements = event.getDelta().getAffectedChildren();
+			IRodinElementDelta[] elements = event.getDelta()
+					.getAffectedChildren();
 			for (int i = 0; i < elements.length; i++) {
-				// if (UIUtils.DEBUG) System.out.println(elements[i].toString() + "
-				// which is " + elements[i].getKind() + " contains " +
-				// elements[i].getElement());
 				if ((elements[i].getKind() & IRodinElementDelta.ADDED) != 0) {
-					// if (UIUtils.DEBUG) System.out.println("Refresh add " +
-					// elements[i].getElement());
-					// refresh(elements[i].getElement().getParent());
-					// viewer.refresh(false);
-					// viewer.setInput(EventBUIPlugin.getRodinDatabase());
-					// viewer.refresh();
-					// if (UIUtils.DEBUG) System.out.println("******* Finish
-					// Updating *****");
 				} else if ((elements[i].getKind() & IRodinElementDelta.REMOVED) != 0) {
-					// if (UIUtils.DEBUG) System.out.println("Refresh delete " +
-					// elements[i].getElement());
-					// refresh(elements[i].getElement().getParent());
-					// viewer.refresh(false);
-					// viewer.setInput(EventBUIPlugin.getRodinDatabase());
-					// viewer.refresh();
 				} else if ((elements[i].getKind() & IRodinElementDelta.CHANGED) != 0) {
-					// if (UIUtils.DEBUG) System.out.println("Refresh change " +
-					// elements[i].getElement());
-					// refresh(elements[i].getElement().getParent());
-					// viewer.refresh(false);
-					// viewer.setInput(EventBUIPlugin.getRodinDatabase());
-					// viewer.refresh();
 				}
 				UIUtils.syncPostRunnable(new Runnable() {
 					/*
@@ -191,8 +167,6 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 						update();
 					}
 				}, EventBContentOutlinePage.this.getControl());
-				// if (UIUtils.DEBUG) System.out.println("********** Finish changing
-				// **********");
 			}
 		}
 	}

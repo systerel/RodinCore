@@ -146,11 +146,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		try {
 			dialog.run(true, true, op);
 		} catch (InterruptedException exception) {
-			ProofControl.debug("Interrupt");
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Interrupt");
 			return;
 		} catch (InvocationTargetException exception) {
 			final Throwable realException = exception.getTargetException();
-			ProofControl.debug("Interrupt");
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Interrupt");
 			realException.printStackTrace();
 			final String message = realException.getMessage();
 			MessageDialog.openError(shell, "Unexpected Error", message);
@@ -235,14 +237,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	// return item;
 	// }
 	CoolItem createItem(CoolBar coolBar, GlobalTacticToolbarUI toolbar) {
-		ProofControl.debug("------ Toolbar: -------" + toolbar.getID());
+		if (ProofControlUtils.DEBUG)
+			ProofControlUtils
+					.debug("------ Toolbar: -------" + toolbar.getID());
 		final ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 
 		ArrayList<Object> children = toolbar.getChildren();
 		for (Object child : children) {
 			if (child instanceof GlobalTacticDropdownUI) {
 				GlobalTacticDropdownUI dropdown = (GlobalTacticDropdownUI) child;
-				ProofControl.debug("Dropdown: " + dropdown.getID());
+				if (ProofControlUtils.DEBUG)
+					ProofControlUtils.debug("Dropdown: " + dropdown.getID());
 
 				ArrayList<GlobalTacticUI> tactics = dropdown.getChildren();
 
@@ -255,10 +260,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						@Override
 						public void apply(final IGlobalTactic tactic) {
 							try {
-								ProofControl.debug("File "
-										+ ProofControlPage.this.editor
-												.getRodinInput()
-												.getElementName());
+								if (ProofControlUtils.DEBUG)
+									ProofControlUtils.debug("File "
+											+ ProofControlPage.this.editor
+													.getRodinInput()
+													.getElementName());
 								Text textWidget = textInput.getWidget();
 								final UserSupport userSupport = editor
 										.getUserSupport();
@@ -331,14 +337,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					dropdownItems.add(dropdownItem);
 
 					for (GlobalTacticUI tactic : tactics) {
-						ProofControl.debug("Tactic: " + tactic.getID());
+						if (ProofControlUtils.DEBUG)
+							ProofControlUtils
+									.debug("Tactic: " + tactic.getID());
 						dropdownItem.addTactic(tactic);
 					}
-					ProofControl.debug("----------------------------");
+					if (ProofControlUtils.DEBUG)
+						ProofControlUtils.debug("----------------------------");
 				}
 			} else if (child instanceof GlobalTacticUI) {
 				final GlobalTacticUI tactic = (GlobalTacticUI) child;
-				ProofControl.debug("Tactic: " + tactic.getID());
+				if (ProofControlUtils.DEBUG)
+					ProofControlUtils.debug("Tactic: " + tactic.getID());
 
 				ToolItem item = new ToolItem(toolBar, SWT.PUSH);
 				// item.setText(itemCount++ + "");
@@ -361,9 +371,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					 */
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						ProofControl.debug("File "
-								+ ProofControlPage.this.editor.getRodinInput()
-										.getElementName());
+						if (ProofControlUtils.DEBUG)
+							ProofControlUtils.debug("File "
+									+ ProofControlPage.this.editor
+											.getRodinInput().getElementName());
 						Text textWidget = textInput.getWidget();
 						try {
 
@@ -507,7 +518,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 
 		private ToolItem findCurrentItem(Point pt) {
-			ProofControl.debug("Drop target location " + pt.x + ", " + pt.y);
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Drop target location " + pt.x + ", "
+						+ pt.y);
 
 			Point loc = toolBar.getLocation();
 
@@ -518,15 +531,18 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				loc.y = loc.y + point.y;
 				parent = parent.getParent();
 			}
-			ProofControl.debug("Location Toolbar " + loc);
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Location Toolbar " + loc);
 
 			ToolItem[] children = toolBar.getItems();
 			ToolItem found = null;
 			for (ToolItem child : children) {
 				Rectangle rec = child.getBounds();
 				// Rectangle area = toolBar.getLocation();
-				ProofControl.debug("Tool Item " + child);
-				ProofControl.debug("Rec: " + rec);
+				if (ProofControlUtils.DEBUG) {
+					ProofControlUtils.debug("Tool Item " + child);
+					ProofControlUtils.debug("Rec: " + rec);
+				}
 				// ProofControl.debug("Area: " + area);
 				if (loc.x + rec.x <= pt.x && pt.x <= loc.x + rec.x + rec.width) {
 					found = child;
@@ -620,7 +636,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		public void drop(DropTargetEvent event) {
 			if (textTransfer.isSupportedType(event.currentDataType)) {
-				ProofControl.debug("Drop Text: " + event.data);
+				if (ProofControlUtils.DEBUG)
+					ProofControlUtils.debug("Drop Text: " + event.data);
 				currentInput = (String) event.data;
 				currentItem.notifyListeners(SWT.Selection, new Event());
 				// String text = (String) event.data;
@@ -651,9 +668,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		pgComp = toolkit.createComposite(parent, SWT.NULL);
 		pgComp.setLayout(new FormLayout());
 
-		ProofControl.debug("Parent: "
-				+ this.editor.getRodinInput().getElementName() + " is "
-				+ parent);
+		if (ProofControlUtils.DEBUG)
+			ProofControlUtils.debug("Parent: "
+					+ this.editor.getRodinInput().getElementName() + " is "
+					+ parent);
 
 		// parent.setLayout(new GridLayout());
 
@@ -704,9 +722,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		textInput.getWidget().addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				ProofControl.debug("File: "
-						+ ProofControlPage.this.editor.getRodinInput()
-								.getElementName());
+				if (ProofControlUtils.DEBUG)
+					ProofControlUtils.debug("File: "
+							+ ProofControlPage.this.editor.getRodinInput()
+									.getElementName());
 			}
 
 		});
@@ -933,12 +952,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			public void run() {
 				List<Object> information = delta.getInformation();
 
-				ProofControl.debug("********** MESSAGE *********");
-				for (Object info : information) {
-					ProofControl.debug(info.toString());
+				if (ProofControlUtils.DEBUG) {
+					ProofControlUtils.debug("********** MESSAGE *********");
+					for (Object info : information) {
+						ProofControlUtils.debug(info.toString());
+					}
+					ProofControlUtils.debug("****************************");
 				}
-				ProofControl.debug("****************************");
-
+				
 				int size = information.size();
 				if (size != 0)
 					setFormTextInformation(information.get(size - 1).toString());

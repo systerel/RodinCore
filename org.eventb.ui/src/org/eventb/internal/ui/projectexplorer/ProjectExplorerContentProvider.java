@@ -182,8 +182,6 @@ public class ProjectExplorerContentProvider implements
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		// if (UIUtils.DEBUG) System.out.println("Input change, redisplay the
-		// tree");
 		if (oldInput == null && newInput != null)
 			RodinCore.addElementChangedListener(this);
 		else if (oldInput != null && newInput == null)
@@ -235,7 +233,6 @@ public class ProjectExplorerContentProvider implements
 		if (parent instanceof IMachineFile) {
 			IMachineFile mch = (IMachineFile) parent;
 			if (elementsMap.containsKey(mch)) {
-				// if (UIUtils.DEBUG) System.out.println("Already explored");
 				return (Object[]) elementsMap.get(mch);
 			} else {
 				ArrayList<TreeNode> list = new ArrayList<TreeNode>();
