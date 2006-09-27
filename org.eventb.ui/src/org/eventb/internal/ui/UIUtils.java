@@ -80,19 +80,6 @@ public class UIUtils {
 
 	public static boolean DEBUG = false;
 
-//	/**
-//	 * Print out the message if the <code>ObligationExplorer.DEBUG</code> flag
-//	 * is <code>true</code>.
-//	 * <p>
-//	 * 
-//	 * @param message
-//	 *            the messege to print out
-//	 */
-//	public static void debugObligationExplorer(String message) {
-//		if (ObligationExplorer.DEBUG)
-//			System.out.println(message);
-//	}
-
 	/**
 	 * Method to return the openable for an object (IRodinElement or TreeNode).
 	 * <p>
@@ -295,7 +282,6 @@ public class UIUtils {
 					r.run();
 				} finally {
 					// removePendingChange();
-					// if (UIUtils.DEBUG) System.out.println("Runned");
 				}
 			}
 		};
@@ -326,7 +312,6 @@ public class UIUtils {
 					r.run();
 				} finally {
 					// removePendingChange();
-					// if (UIUtils.DEBUG) System.out.println("Runned");
 				}
 			}
 		};
