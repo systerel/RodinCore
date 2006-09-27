@@ -208,8 +208,11 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		Display display = Display.getDefault();
 		if (this.getManagedForm().getForm().isDisposed())
 			return;
-		ProverUIUtils.debugProverUI("Proof State Change "
-				+ ((ProverUI) getEditor()).getRodinInput().getElementName());
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils
+					.debug("Proof State Change "
+							+ ((ProverUI) getEditor()).getRodinInput()
+									.getElementName());
 		display.syncExec(new Runnable() {
 			public void run() {
 				ProofState ps = delta.getProofState();
@@ -398,9 +401,9 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		}
 
 		flag = false;
-//		for (HypothesisRow row : selectedSection.getRows()) {
-//			row.createHypothesisText();
-//		}
+		// for (HypothesisRow row : selectedSection.getRows()) {
+		// row.createHypothesisText();
+		// }
 	}
 
 }

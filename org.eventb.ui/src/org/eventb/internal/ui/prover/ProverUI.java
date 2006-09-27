@@ -65,9 +65,6 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editors.ProverUI";
 
-	// Debug flag.
-	public static boolean DEBUG = false;
-
 	// The outline page
 	private ProofTreeUIPage fProofTreeUI;
 
@@ -389,8 +386,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		ProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
 			try {
-				userSupport.setCurrentPO(currentPO
-						.getPRSequent());
+				userSupport.setCurrentPO(currentPO.getPRSequent());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -406,7 +402,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * obligation.
 	 */
 	private void syncObligationExplorer() {
-		ProverUIUtils.debugProverUI("Sync");
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Sync");
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
 		if (activePage != null) {
 			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage
@@ -490,12 +487,12 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			public void run() {
 				if (saving)
 					return; // Ignore delta while saving
-					// if (userSupport.isOutOfDate()) {
-					// IWorkbenchPage activePage =
-					// EventBUIPlugin.getActivePage();
-					// if (activePage.isPartVisible(ProverUI.this))
-					// updateUserSupport();
-					// }
+				// if (userSupport.isOutOfDate()) {
+				// IWorkbenchPage activePage =
+				// EventBUIPlugin.getActivePage();
+				// if (activePage.isPartVisible(ProverUI.this))
+				// updateUserSupport();
+				// }
 
 				ProverUI.this.editorDirtyStateChanged();
 				// syncObligationExplorer();

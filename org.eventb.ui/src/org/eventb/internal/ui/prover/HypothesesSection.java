@@ -28,7 +28,6 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.internal.ui.IEventBFormText;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -141,11 +140,12 @@ public abstract class HypothesesSection extends SectionPart {
 		// Add new hyps
 		int i = 0;
 		for (Hypothesis hyp : hyps) {
-			UIUtils.debugEventBEditor("Add to " + this.title + " hyp: "
-					+ hyp.getPredicate());
-			HypothesisRow row = new HypothesisRow(this.getManagedForm().getToolkit(), comp, hyp,
-					((ProverUI) page.getEditor()).getUserSupport(),
-					(i % 2) == 0, enable);
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils.debug("Add to " + this.title + " hyp: "
+						+ hyp.getPredicate());
+			HypothesisRow row = new HypothesisRow(this.getManagedForm()
+					.getToolkit(), comp, hyp, ((ProverUI) page.getEditor())
+					.getUserSupport(), (i % 2) == 0, enable);
 			rows.add(row);
 			i++;
 		}

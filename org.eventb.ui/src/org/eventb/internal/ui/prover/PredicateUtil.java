@@ -16,7 +16,7 @@ import org.eventb.core.ast.UnaryPredicate;
 public class PredicateUtil {
 
 	private static final int tab = 2;
-	
+
 	private static String printSpace(int indent) {
 		String result = "";
 		for (int i = 0; i < indent; i++)
@@ -81,7 +81,8 @@ public class PredicateUtil {
 					} else {
 						if (oldString != "")
 							result += printSpace(indent) + oldString + "\n";
-						result += prettyPrint(max_length, predString, child, indent);
+						result += prettyPrint(max_length, predString, child,
+								indent);
 					}
 				}
 
@@ -90,7 +91,8 @@ public class PredicateUtil {
 						currentString = newString;
 						currentChildren.add(child);
 					} else if (oldString == "") {
-						result += prettyPrint(max_length, predString, child, indent);
+						result += prettyPrint(max_length, predString, child,
+								indent);
 						result += printSpace(indent) + op + "\n";
 						currentString = "";
 						currentChildren.clear();
@@ -107,8 +109,10 @@ public class PredicateUtil {
 				}
 
 			}
-			ProverUIUtils.debugProverUI("Pred: " + pred);
-			ProverUIUtils.debugProverUI("Result: \n" + result);
+			if (ProverUIUtils.DEBUG) {
+				ProverUIUtils.debug("Pred: " + pred);
+				ProverUIUtils.debug("Result: \n" + result);
+			}
 			return result;
 		}
 
@@ -120,9 +124,14 @@ public class PredicateUtil {
 				op = "\u21d2";
 			else if (tag == Predicate.LEQV)
 				op = "\u21d4";
-			return prettyPrint(max_length, predString, bPred.getLeft(), indent + tab)
-					+ "\n" + printSpace(indent) + op + "\n"
-					+ prettyPrint(max_length, predString, bPred.getRight(), indent + tab);
+			return prettyPrint(max_length, predString, bPred.getLeft(), indent
+					+ tab)
+					+ "\n"
+					+ printSpace(indent)
+					+ op
+					+ "\n"
+					+ prettyPrint(max_length, predString, bPred.getRight(),
+							indent + tab);
 		}
 
 		if (pred instanceof LiteralPredicate) {
@@ -145,7 +154,8 @@ public class PredicateUtil {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = predString.substring(loc.getStart(), loc
 						.getEnd());
-				ProverUIUtils.debugProverUI("Ident: " + image);
+				if (ProverUIUtils.DEBUG)
+					ProverUIUtils.debug("Ident: " + image);
 
 				if (i++ == 0) {
 					result += image;
@@ -158,8 +168,8 @@ public class PredicateUtil {
 
 			return result
 					+ "\n"
-					+ prettyPrint(max_length, predString, qPred.getPredicate(), indent
-							+ tab);
+					+ prettyPrint(max_length, predString, qPred.getPredicate(),
+							indent + tab);
 		}
 
 		if (pred instanceof RelationalPredicate) {
@@ -177,8 +187,11 @@ public class PredicateUtil {
 			if (tag == Predicate.NOT)
 				op = "\u00ac";
 
-			return printSpace(indent) + op + "\n"
-					+ prettyPrint(max_length, predString, uPred.getChild(), indent + tab);
+			return printSpace(indent)
+					+ op
+					+ "\n"
+					+ prettyPrint(max_length, predString, uPred.getChild(),
+							indent + tab);
 		}
 		return "";
 	}
@@ -258,7 +271,8 @@ public class PredicateUtil {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = predString.substring(loc.getStart(), loc
 						.getEnd());
-				ProverUIUtils.debugProverUI("Ident: " + image);
+				if (ProverUIUtils.DEBUG)
+					ProverUIUtils.debug("Ident: " + image);
 
 				if (i++ == 0) {
 					result += image;

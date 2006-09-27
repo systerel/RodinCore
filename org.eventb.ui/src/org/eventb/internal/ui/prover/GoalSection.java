@@ -72,7 +72,7 @@ public class GoalSection extends SectionPart {
 
 	private String actualString;
 
-//	private int max_length = 30;
+	// private int max_length = 30;
 
 	/**
 	 * Constructor
@@ -175,14 +175,14 @@ public class GoalSection extends SectionPart {
 		final StyledText styledText = goalText.getMainTextWidget();
 		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-//		int borderWidth = styledText.getBorderWidth();
-//		styledText.setText(" ");
-//		goalComposite.pack(true);
-//		int textWidth = styledText.getSize().x;
-//
-//		Rectangle rec = goalComposite.getBounds();
-//		Point size = goalComposite.getSize();
-//		int compositeWidth = goalComposite.getClientArea().width;
+		// int borderWidth = styledText.getBorderWidth();
+		// styledText.setText(" ");
+		// goalComposite.pack(true);
+		// int textWidth = styledText.getSize().x;
+		//
+		// Rectangle rec = goalComposite.getBounds();
+		// Point size = goalComposite.getSize();
+		// int compositeWidth = goalComposite.getClientArea().width;
 		// if (textWidth != 0) {
 		// max_length = (compositeWidth - borderWidth) / textWidth;
 		// } else
@@ -358,7 +358,8 @@ public class GoalSection extends SectionPart {
 	}
 
 	private void createNullHyperlinks() {
-		ProverUIUtils.debugProverUI("Create Null Image");
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

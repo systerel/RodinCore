@@ -23,6 +23,11 @@ import org.osgi.framework.Bundle;
 
 public class ProverUIUtils {
 
+	// Debug flag.
+	public static boolean DEBUG = false;
+
+	public final static String DEBUG_PREFIX = "*** ProverUI *** ";
+	
 	public static final String HYPOTHESIS_PROOF_TACTIC_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".hypothesisProofTactics";
 
@@ -37,9 +42,8 @@ public class ProverUIUtils {
 	 * @param message
 	 *            the messege to print out
 	 */
-	public static void debugProverUI(String message) {
-		if (ProverUI.DEBUG)
-			System.out.println("*** ProverUI *** " + message);
+	public static void debug(String message) {
+		System.out.println(DEBUG_PREFIX + message);
 	}
 
 	private static Collection<HypothesisTacticUI> hypothesisTactics = null;
@@ -202,4 +206,5 @@ public class ProverUIUtils {
 		}
 
 	}
+
 }

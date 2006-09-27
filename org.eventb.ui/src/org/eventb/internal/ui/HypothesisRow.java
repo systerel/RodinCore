@@ -68,7 +68,7 @@ public class HypothesisRow {
 	private Hypothesis hyp;
 
 	// This should be varied when the user resize.
-//	private int max_length = 30;
+	// private int max_length = 30;
 
 	private Color background;
 
@@ -147,34 +147,34 @@ public class HypothesisRow {
 
 	}
 
-//	private class HypothesisTextLayout extends Layout {
-//
-//		@Override
-//		protected Point computeSize(Composite composite, int wHint, int hHint,
-//				boolean flushCache) {
-//			Point size = layout(composite, false, 0, 0, wHint, hHint,
-//					flushCache);
-//			if (wHint != SWT.DEFAULT)
-//				size.x = wHint;
-//			if (hHint != SWT.DEFAULT)
-//				size.y = hHint;
-//			return size;
-//		}
-//
-//		private Point layout(Composite composite, boolean b, int i, int j,
-//				int hint, int hint2, boolean flushCache) {
-//			createHypothesisText();
-//			return hypothesisText.getMainTextWidget().getSize();
-//		}
-//
-//		@Override
-//		protected void layout(Composite composite, boolean flushCache) {
-//			Rectangle rect = composite.getClientArea();
-//			layout(composite, true, rect.x, rect.y, rect.width, rect.height,
-//					flushCache);
-//		}
-//
-//	}
+	// private class HypothesisTextLayout extends Layout {
+	//
+	// @Override
+	// protected Point computeSize(Composite composite, int wHint, int hHint,
+	// boolean flushCache) {
+	// Point size = layout(composite, false, 0, 0, wHint, hHint,
+	// flushCache);
+	// if (wHint != SWT.DEFAULT)
+	// size.x = wHint;
+	// if (hHint != SWT.DEFAULT)
+	// size.y = hHint;
+	// return size;
+	// }
+	//
+	// private Point layout(Composite composite, boolean b, int i, int j,
+	// int hint, int hint2, boolean flushCache) {
+	// createHypothesisText();
+	// return hypothesisText.getMainTextWidget().getSize();
+	// }
+	//
+	// @Override
+	// protected void layout(Composite composite, boolean flushCache) {
+	// Rectangle rect = composite.getClientArea();
+	// layout(composite, true, rect.x, rect.y, rect.width, rect.height,
+	// flushCache);
+	// }
+	//
+	// }
 
 	public void createHypothesisText() {
 		if (hypothesisText != null)
@@ -184,14 +184,15 @@ public class HypothesisRow {
 		hypothesisText.getMainTextWidget().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 
-//		int borderWidth = hypothesisText.getMainTextWidget().getBorderWidth();
-//		hypothesisText.getMainTextWidget().setText(" ");
-//		hypothesisComposite.pack(true);
-//		int textWidth = hypothesisText.getMainTextWidget().getSize().x;
-//
-//		Rectangle rec = hypothesisComposite.getBounds();
-//		Point size = hypothesisComposite.getSize();
-//		int compositeWidth = hypothesisComposite.getClientArea().width;
+		// int borderWidth =
+		// hypothesisText.getMainTextWidget().getBorderWidth();
+		// hypothesisText.getMainTextWidget().setText(" ");
+		// hypothesisComposite.pack(true);
+		// int textWidth = hypothesisText.getMainTextWidget().getSize().x;
+		//
+		// Rectangle rec = hypothesisComposite.getBounds();
+		// Point size = hypothesisComposite.getSize();
+		// int compositeWidth = hypothesisComposite.getClientArea().width;
 		// if (textWidth != 0) {
 		// max_length = (compositeWidth - borderWidth) / textWidth;
 		// } else
@@ -223,18 +224,19 @@ public class HypothesisRow {
 					string += ", ";
 				}
 			}
-//			String str = PredicateUtil.prettyPrint(max_length, actualString,
-//					qpred.getPredicate());
+			// String str = PredicateUtil.prettyPrint(max_length, actualString,
+			// qpred.getPredicate());
 			SourceLocation loc = qpred.getPredicate().getSourceLocation();
 			String str = actualString.substring(loc.getStart(), loc.getEnd());
 
 			string += str;
 			hypothesisText.setText(string, indexes);
 		} else {
-//			String str = PredicateUtil.prettyPrint(max_length, actualString,
-//					parsedPred);
-//			SourceLocation loc = parsedPred.getSourceLocation();
-//			String str = actualString.substring(loc.getStart(), loc.getEnd());
+			// String str = PredicateUtil.prettyPrint(max_length, actualString,
+			// parsedPred);
+			// SourceLocation loc = parsedPred.getSourceLocation();
+			// String str = actualString.substring(loc.getStart(),
+			// loc.getEnd());
 
 			Collection<Point> indexes = new ArrayList<Point>();
 			hypothesisText.setText(actualString, indexes);
@@ -243,7 +245,8 @@ public class HypothesisRow {
 	}
 
 	private void createNullHyperlinks() {
-		ProverUIUtils.debugProverUI("Create Null Image");
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -272,10 +275,12 @@ public class HypothesisRow {
 			createNullHyperlinks();
 			return;
 		}
-		
+
 		for (final HypothesisTacticUI tactic : tactics) {
-			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite, SWT.CENTER);
-			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+					SWT.CENTER);
+			hyperlink
+					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			toolkit.adapt(hyperlink, true, true);
 			hyperlink.setImage(tactic.getImage());
 			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
@@ -292,9 +297,10 @@ public class HypothesisRow {
 					Set<Hypothesis> hypSet = new HashSet<Hypothesis>();
 					hypSet.add(hyp);
 					String[] inputs = hypothesisText.getResults();
-					for (String input : inputs) {
-						ProverUIUtils.debugProverUI("Input: \"" + input + "\"");
-					}
+					if (ProverUIUtils.DEBUG)
+						for (String input : inputs)
+							ProverUIUtils.debug("Input: \"" + input + "\"");
+
 					userSupport.applyTacticToHypotheses(tactic.getTactic(node,
 							hyp, inputs), hypSet);
 				}

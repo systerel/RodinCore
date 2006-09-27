@@ -28,7 +28,7 @@ import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
-import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -143,7 +143,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 			option = Platform.getDebugOption(PROVERUI_TRACE);
 			if (option != null)
-				ProverUI.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ProverUIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(PROOFCONTROL_TRACE);
 			if (option != null)

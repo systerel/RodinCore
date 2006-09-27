@@ -66,6 +66,10 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBEditorUtils {
 
+	public static boolean DEBUG = false;
+
+	public final static String DEBUG_PREFIX = "*** EventBEditor *** ";
+
 	private static IAction newAct;
 
 	private static IGuard newGrd;
@@ -1350,10 +1354,7 @@ public class EventBEditorUtils {
 	}
 
 	public static void debug(String message) {
-		System.out.println(EventBEditorUtils.DebugPrefix + message);
+		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);
 	}
 
-	public static boolean DEBUG = false;
-
-	public final static String DebugPrefix = "*** EventBEditor *** ";
 }
