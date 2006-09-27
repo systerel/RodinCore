@@ -44,13 +44,6 @@ public class ProofInformation extends PageBookView implements
 	// The default text when not available (depend on the current editor)
 	private String defaultText = "Proof Information is not available";
 
-	public static boolean DEBUG = false;
-
-	public static void debug(String message) {
-		if (DEBUG)
-			System.out.println("***ProofInformation *** " + message);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

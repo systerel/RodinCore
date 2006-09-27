@@ -26,7 +26,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
-import org.eventb.internal.ui.proofinformation.ProofInformation;
+import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.osgi.framework.BundleContext;
@@ -155,7 +155,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 			option = Platform.getDebugOption(PROOFINFORMATION_TRACE);
 			if (option != null)
-				ProofInformation.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				ProofInformationUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

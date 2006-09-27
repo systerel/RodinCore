@@ -128,12 +128,14 @@ public class ProofInformationPage extends Page implements
 			IPOSource[] sources = prSequent.getSources();
 			for (IPOSource source : sources) {
 				String id = source.getSourceHandleIdentifier();
-
-				ProofInformation.debug("ID unchecked model " + id);
+				if (ProofInformationUtils.DEBUG)
+					ProofInformationUtils.debug("ID unchecked model " + id);
 
 				IRodinElement element = RodinCore.create(id);
-				ProofInformation.debug("id: " + id);
-				ProofInformation.debug("Find: " + element);
+				if (ProofInformationUtils.DEBUG) {
+					ProofInformationUtils.debug("id: " + id);
+					ProofInformationUtils.debug("Find: " + element);
+				}
 				if (element instanceof ITheorem) {
 					ITheorem thm = (ITheorem) element;
 					formString = formString

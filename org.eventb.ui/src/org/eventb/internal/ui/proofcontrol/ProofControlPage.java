@@ -602,7 +602,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				Object o = textTransfer.nativeToJava(event.currentDataType);
 				String t = (String) o;
 				if (t != null)
-					System.out.println(t);
+					if (ProofControlUtils.DEBUG)
+						ProofControlUtils.debug(t);
 			}
 
 		}
