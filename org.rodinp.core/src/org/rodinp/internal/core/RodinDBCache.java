@@ -160,7 +160,7 @@ public class RodinDBCache {
 			this.bufferCache.remove(rodinFile);
 		} else {
 			Buffer buffer = this.bufferCache.peek(rodinFile);
-			if (! buffer.hasUnsavedChanges()) {
+			if (buffer != null && ! buffer.hasUnsavedChanges()) {
 				this.bufferCache.remove(rodinFile);
 			}
 		}
