@@ -44,8 +44,13 @@ public interface IProofRule extends IReasonerOutput{
 
 	public interface IAnticident {
 		Predicate getGoal();
+		
+		// Added hyps are by default selected.
 		Set<Predicate> getAddedHyps();
 		FreeIdentifier[] getAddedFreeIdents();
+		
+		// The hypAction should not contain added hyps
+		// (Constraint from simplifier)
 		List<Action> getHypAction();
 	}	
 

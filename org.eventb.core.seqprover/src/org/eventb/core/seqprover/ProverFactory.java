@@ -6,16 +6,26 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.rules.ProofRule;
+import org.eventb.core.seqprover.rules.ProofTree;
 import org.eventb.core.seqprover.rules.ReasonerFailure;
 import org.eventb.core.seqprover.rules.ProofRule.Anticident;
+import org.eventb.core.seqprover.sequent.ProverSequent;
 
-public class RuleFactory {
+/**
+ * Static class with factory methods required to construct various data structures
+ * used in the sequent prover
+ * 
+ * @author Farhad Mehta
+ *
+ */
+public final class ProverFactory {
 
-	private RuleFactory() {
+	private ProverFactory() {
 	}
 	
 	public static IReasonerFailure reasonerFailure(
@@ -90,6 +100,21 @@ public class RuleFactory {
 	
 	public static IAnticident makeAnticident(Predicate goal) {
 		return makeAnticident(goal,null,null,null);
+	}
+
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){
+		return new ProverSequent(typeEnvironment,hyps,goal);
+	}
+
+	/**
+	 * Creates a new proof tree for the given sequent.
+	 * 
+	 * @param sequent
+	 *            the sequent to prove
+	 * @return a new proof tree for the given sequent
+	 */
+	public static IProofTree makeProofTree(IProverSequent sequent) {
+		return new ProofTree(sequent);
 	}
 
 	

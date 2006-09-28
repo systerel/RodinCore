@@ -15,7 +15,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ReplayHints;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -71,7 +71,7 @@ public class ExternalPP implements IReasoner {
 		Input input = (Input) reasonerInput;
 		
 		if (input.hasError())
-			RuleFactory.reasonerFailure(this,input,input.getError());
+			ProverFactory.reasonerFailure(this,input,input.getError());
 		
 		final long timeOutDelay = input.timeOutDelay;
 	
@@ -88,7 +88,7 @@ public class ExternalPP implements IReasoner {
 			runPP(typeEnvironment, hypotheses, goal, timeOutDelay, progressMonitor);
 		if (success) {
 			
-			IProofRule reasonerOutput = RuleFactory.makeProofRule(
+			IProofRule reasonerOutput = ProverFactory.makeProofRule(
 					this,reasonerInput,
 					sequent.goal(),
 					hypotheses,
@@ -104,7 +104,7 @@ public class ExternalPP implements IReasoner {
 			
 			return reasonerOutput;
 		}
-		return RuleFactory.reasonerFailure(
+		return ProverFactory.reasonerFailure(
 				this,
 				reasonerInput,
 				"PP failed"

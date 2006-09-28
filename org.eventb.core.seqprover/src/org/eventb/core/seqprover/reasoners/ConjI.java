@@ -7,7 +7,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
@@ -23,7 +23,7 @@ public class ConjI extends EmptyInputReasoner{
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isConj(seq.goal()))
-			return RuleFactory.reasonerFailure(
+			return ProverFactory.reasonerFailure(
 					this,input,
 					"Goal is not a conjunction");
 		
@@ -32,10 +32,10 @@ public class ConjI extends EmptyInputReasoner{
 		IAnticident[] anticidents = new IAnticident[conjuncts.length];
 		for (int i = 0; i < anticidents.length; i++) {
 			// Generate one anticident per conjunct
-			anticidents[i] = RuleFactory.makeAnticident(conjuncts[i]);
+			anticidents[i] = ProverFactory.makeAnticident(conjuncts[i]);
 		}
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"∧ goal",

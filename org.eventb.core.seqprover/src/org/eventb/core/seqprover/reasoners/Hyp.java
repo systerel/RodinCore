@@ -6,7 +6,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
@@ -22,11 +22,11 @@ public class Hyp extends EmptyInputReasoner{
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! (Hypothesis.containsPredicate(seq.hypotheses(),seq.goal())))
-			return RuleFactory.reasonerFailure(
+			return ProverFactory.reasonerFailure(
 					this,input,
 					"Goal not in hypotheses");
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				new Hypothesis(seq.goal()),

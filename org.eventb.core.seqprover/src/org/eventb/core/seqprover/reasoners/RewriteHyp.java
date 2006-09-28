@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -43,32 +43,32 @@ public class RewriteHyp implements IReasoner{
 		CombiInput input = (CombiInput)reasonerInput;
 		
 		if (input.hasError())
-			RuleFactory.reasonerFailure(this,input,input.getError());
+			ProverFactory.reasonerFailure(this,input,input.getError());
 		
 		Hypothesis hyp = new Hypothesis(((SinglePredInput)input.getReasonerInputs()[0]).getPredicate());
 		Rewriter rewriter = RewriterRegistry.getRewriter(((SingleStringInput)input.getReasonerInputs()[1]).getString());
 		
 		if (rewriter == null) 
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Uninstalled rewriter");
 		
 		if (! seq.hypotheses().contains(hyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+hyp);
 		
 		Predicate newHyp = rewriter.apply(hyp.getPredicate());
 		if (newHyp == null)
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Rewriter " + rewriter +" inapplicable for hypothesis "+ hyp);
 
 		IAnticident[] anticidents = new IAnticident[1];
 		
-		anticidents[0] = RuleFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Collections.singleton(newHyp),
 				Lib.deselect(hyp));
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				hyp,

@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -37,10 +37,10 @@ public class ExE extends SinglePredInputReasoner{
 		
 		
 		if (! seq.hypotheses().contains(exHyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+exHyp);
 		if (! Lib.isExQuant(exHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not existentially quantified:"+exHyp);
 		
 		QuantifiedPredicate ExQ = (QuantifiedPredicate)exHypPred;
@@ -61,13 +61,13 @@ public class ExE extends SinglePredInputReasoner{
 		assert instantiatedEx.isTypeChecked();
 		
 		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = RuleFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Lib.breakPossibleConjunct(instantiatedEx),
 				freeIdents,
 				Collections.singletonList(Lib.deselect(exHyp)));
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"∃ hyp (frees "+displayFreeIdents(freeIdents)+")",

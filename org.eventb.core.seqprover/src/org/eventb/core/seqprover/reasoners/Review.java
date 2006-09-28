@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -51,12 +51,12 @@ public class Review implements IReasoner{
 		
 		if ((! (seq.goal().equals(goal))) ||
 		   (! (seq.hypotheses().containsAll(hyps))))
-			return RuleFactory.reasonerFailure(this,input,"Reviewed sequent does not match");
+			return ProverFactory.reasonerFailure(this,input,"Reviewed sequent does not match");
 		
 		assert reviewerConfidence > 0;
 		assert reviewerConfidence <= IConfidence.REVIEWED_MAX;
 	
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				hyps,

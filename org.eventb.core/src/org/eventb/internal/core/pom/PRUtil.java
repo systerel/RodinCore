@@ -41,8 +41,8 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ReplayHints;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -70,7 +70,7 @@ public class PRUtil {
 //			Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
 //			Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
 			Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
-			IProverSequent seq = SequentProver.makeSequent(typeEnv,hypotheses,goal);
+			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 //			seq = seq.selectHypotheses(localHypotheses);
 			// System.out.println(name+" : "+seq);
 			result.put(name,seq);
@@ -87,13 +87,13 @@ public class PRUtil {
 //		Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
 //		Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
 		Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
-		IProverSequent seq = SequentProver.makeSequent(typeEnv,hypotheses,goal);
+		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 //		seq = seq.selectHypotheses(localHypotheses);
 		return seq;
 	}
 	
 	public static IProofTree makeInitialProofTree(IPRSequent prSeq) throws RodinDBException{		
-		IProofTree proofTree = SequentProver.makeProofTree(makeSequent(prSeq));		
+		IProofTree proofTree = ProverFactory.makeProofTree(makeSequent(prSeq));		
 		return proofTree;
 	}
 	

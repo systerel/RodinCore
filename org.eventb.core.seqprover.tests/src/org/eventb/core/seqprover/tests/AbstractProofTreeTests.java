@@ -26,7 +26,7 @@ import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ProverFactory;
 
 /**
  * Common implementation for tests related to proof trees.
@@ -272,7 +272,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 		ITypeCheckResult tr = goalPredicate.typeCheck(te);
 		assertTrue("Can't typecheck predicate" + goalPredicate, goalPredicate
 				.isTypeChecked());
-		return SequentProver.makeSequent(tr.getInferredEnvironment(),
+		return ProverFactory.makeSequent(tr.getInferredEnvironment(),
 				new HashSet<Hypothesis>(), goalPredicate);
 	}
 

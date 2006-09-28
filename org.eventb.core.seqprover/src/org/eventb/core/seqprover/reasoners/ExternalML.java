@@ -15,7 +15,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ReplayHints;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -72,7 +72,7 @@ public class ExternalML implements IReasoner {
 		Input input = (Input) reasonerInput;
 		
 		if (input.hasError())
-			return RuleFactory.reasonerFailure(this,input,input.getError());
+			return ProverFactory.reasonerFailure(this,input,input.getError());
 		
 		final long timeOutDelay = input.timeOutDelay;
 		final String forces = input.forces;
@@ -84,7 +84,7 @@ public class ExternalML implements IReasoner {
 			runML(typeEnvironment, hypotheses, goal, forces, timeOutDelay, progressMonitor);
 		if (success) {
 			
-			IProofRule reasonerOutput = RuleFactory.makeProofRule(
+			IProofRule reasonerOutput = ProverFactory.makeProofRule(
 					this,reasonerInput,
 					sequent.goal(),
 					hypotheses,
@@ -102,7 +102,7 @@ public class ExternalML implements IReasoner {
 			return reasonerOutput;
 
 		}
-		return RuleFactory.reasonerFailure(
+		return ProverFactory.reasonerFailure(
 				this,
 				reasonerInput,
 				"ML failed"

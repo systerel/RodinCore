@@ -11,7 +11,7 @@ package org.eventb.core.seqprover.tests;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.tactics.Tactics;
 
 /**
@@ -27,7 +27,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testApply() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
 		startDeltas(tree);
@@ -40,7 +40,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testApplyFailed() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
 		startDeltas(tree);
@@ -53,7 +53,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testPrune() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
 
@@ -67,7 +67,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
 		assertEquals(1, root.getChildren().length);
@@ -87,7 +87,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testDischargeParent() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
 		assertEquals(1, root.getChildren().length);
@@ -107,7 +107,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testNoDischargeAncestor() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
@@ -132,7 +132,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testDischargeBranch() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
@@ -158,7 +158,7 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 	 */
 	public void testSetComment() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = SequentProver.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
 		startDeltas(tree);

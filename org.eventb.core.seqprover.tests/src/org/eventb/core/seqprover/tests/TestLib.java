@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ProverFactory;
 
 public class TestLib {
 
@@ -60,12 +60,12 @@ public class TestLib {
 			// new HashSet<Predicate>(Arrays.asList(hyps));
 		
 		// return new SimpleProverSequent(typeEnvironment,Hyps,goal);
-		IProverSequent Seq = SequentProver.makeSequent(typeEnvironment,Hyps,goal);
+		IProverSequent Seq = ProverFactory.makeSequent(typeEnvironment,Hyps,goal);
 		return Seq.selectHypotheses(Hyps);
 	}
 	
 	public static IProofTreeNode genProofTreeNode(String str){
-		return SequentProver.makeProofTree(genSeq(str)).getRoot();
+		return ProverFactory.makeProofTree(genSeq(str)).getRoot();
 		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	

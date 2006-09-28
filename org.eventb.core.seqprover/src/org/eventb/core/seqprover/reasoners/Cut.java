@@ -9,7 +9,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -29,7 +29,7 @@ public class Cut extends SinglePredInputReasoner {
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
-			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
+			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 
 		Predicate lemma = input.getPredicate();
 		
@@ -52,19 +52,19 @@ public class Cut extends SinglePredInputReasoner {
 		IAnticident[] anticidents = new IAnticident[3];
 		
 		// Well definedness condition
-		anticidents[0] = RuleFactory.makeAnticident(lemmaWD);
+		anticidents[0] = ProverFactory.makeAnticident(lemmaWD);
 		
 		// The lemma to be proven
-		anticidents[1] = RuleFactory.makeAnticident(lemma);
+		anticidents[1] = ProverFactory.makeAnticident(lemma);
 		
 		// Proving the original goal with the help of the lemma
-		anticidents[2] = RuleFactory.makeAnticident(
+		anticidents[2] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Collections.singleton(lemma),
 				null);
 		
 		// Generate the proof rule
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"ah ("+lemma.toString()+")",

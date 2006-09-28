@@ -9,7 +9,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -29,7 +29,7 @@ public class DoCase extends SinglePredInputReasoner{
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
 		if (input.hasError())
-			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
+			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 
 		Predicate trueCase = input.getPredicate();
 		// This check may be redone for replay since the type environment
@@ -52,22 +52,22 @@ public class DoCase extends SinglePredInputReasoner{
 		IAnticident[] anticidents = new IAnticident[3];
 		
 		// Well definedness condition
-		anticidents[0] = RuleFactory.makeAnticident(trueCaseWD);
+		anticidents[0] = ProverFactory.makeAnticident(trueCaseWD);
 		
 		// The goal with the true case
-		anticidents[1] = RuleFactory.makeAnticident(
+		anticidents[1] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Collections.singleton(trueCase),
 				null);
 		
 		// The goal with the false case
-		anticidents[2] = RuleFactory.makeAnticident(
+		anticidents[2] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Collections.singleton(Lib.makeNeg(trueCase)),
 				null);
 		
 		// Generate the successful reasoner output
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"dc ("+trueCase.toString()+")",

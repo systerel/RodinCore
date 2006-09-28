@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -31,10 +31,10 @@ public class DisjE extends SinglePredInputReasoner{
 		
 		
 		if (! seq.hypotheses().contains(disjHyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+disjHyp);
 		if (! Lib.isDisj(disjHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not a disjunction:"+disjHyp);
 		
 		//	 Generate the anticidents
@@ -42,14 +42,14 @@ public class DisjE extends SinglePredInputReasoner{
 		IAnticident[] anticidents = new IAnticident[disjuncts.length];
 		
 		for (int i = 0; i < disjuncts.length; i++) {
-			anticidents[i] = RuleFactory.makeAnticident(
+			anticidents[i] = ProverFactory.makeAnticident(
 					seq.goal(),
 					Lib.breakPossibleConjunct(disjuncts[i]),
 					Lib.deselect(disjHyp));
 		}
 		
 		//	Generate the successful reasoner output
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				disjHyp,

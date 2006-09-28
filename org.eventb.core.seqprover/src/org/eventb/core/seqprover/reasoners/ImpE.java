@@ -10,7 +10,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -33,10 +33,10 @@ public class ImpE extends SinglePredInputReasoner{
 		
 		
 		if (! seq.hypotheses().contains(impHyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+impHyp);
 		if (! Lib.isImp(impHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not an implication:"+impHyp);
 		
 		// Generate the anticident
@@ -44,17 +44,17 @@ public class ImpE extends SinglePredInputReasoner{
 		Predicate toShow = Lib.impLeft(impHypPred);
 		IAnticident[] anticidents = new IAnticident[2];
 		
-		anticidents[0] = RuleFactory.makeAnticident(toShow);
+		anticidents[0] = ProverFactory.makeAnticident(toShow);
 		
 		Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
 		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
-		anticidents[1] = RuleFactory.makeAnticident(
+		anticidents[1] = ProverFactory.makeAnticident(
 				seq.goal(),
 				addedHyps,
 				Lib.deselect(impHyp));
 		
 		// Generate the successful reasoner output
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				impHyp,

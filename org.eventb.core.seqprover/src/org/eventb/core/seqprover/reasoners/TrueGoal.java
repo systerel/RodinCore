@@ -6,7 +6,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
@@ -22,9 +22,9 @@ public class TrueGoal extends EmptyInputReasoner{
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor){
 	
 		if (! (seq.goal().equals(Lib.True)))
-			return RuleFactory.reasonerFailure(this,input,"Goal is not a tautology");
+			return ProverFactory.reasonerFailure(this,input,"Goal is not a tautology");
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),"⊤ goal",
 				new IAnticident[0]);

@@ -10,7 +10,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
@@ -54,12 +54,12 @@ public class MngHyp implements IReasoner{
 		
 		IAnticident[] anticidents = new IAnticident[1];
 		
-		anticidents[0] = RuleFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAnticident(
 				seq.goal(),
 				null,
 				action);
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"sl/ds",

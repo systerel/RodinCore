@@ -13,7 +13,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -35,10 +35,10 @@ public class Eq extends SinglePredInputReasoner{
 		Hypothesis eqHyp = new Hypothesis(eqHypPred);
 		
 		if (! seq.hypotheses().contains(eqHyp))
-		return RuleFactory.reasonerFailure(this,input,
+		return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+eqHyp);
 		if (! Lib.isEq(eqHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not an implication:"+eqHyp);
 		
 		Expression from;
@@ -49,7 +49,7 @@ public class Eq extends SinglePredInputReasoner{
 		
 		// TODO remove when full equality possible.
 		if (!(from instanceof FreeIdentifier)) 
-			return RuleFactory.reasonerFailure(this,input,"Identifier expected:"+from);
+			return ProverFactory.reasonerFailure(this,input,"Identifier expected:"+from);
 		
 		Set<Hypothesis> toDeselect = Hypothesis.Hypotheses();
 		toDeselect.add(eqHyp);
@@ -68,7 +68,7 @@ public class Eq extends SinglePredInputReasoner{
 		
 		//	Generate the anticident
 		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = RuleFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAnticident(
 				rewrittenGoal,
 				rewrittenHyps,
 				Lib.deselect(toDeselect));
@@ -77,7 +77,7 @@ public class Eq extends SinglePredInputReasoner{
 		// no need to clone since toDeselect is not used later
 		Set<Hypothesis> neededHyps = toDeselect;
 		neededHyps.add(eqHyp);
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				neededHyps,

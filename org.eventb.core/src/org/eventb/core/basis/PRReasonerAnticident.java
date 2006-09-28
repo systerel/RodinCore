@@ -18,7 +18,7 @@ import org.eventb.core.IPRReasonerAnticident;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.rodinp.core.IRodinElement;
@@ -75,7 +75,7 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 			}
 		}
 		
-		return RuleFactory.makeAnticident(goal,addedHyps,addedFreeIdens,hypAction);
+		return ProverFactory.makeAnticident(goal,addedHyps,addedFreeIdens,hypAction);
 	}
 
 	public void setAnticident(IAnticident anticident) throws RodinDBException {

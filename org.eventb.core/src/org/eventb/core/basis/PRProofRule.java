@@ -21,7 +21,7 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -92,7 +92,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		String display = this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
 		int confidence = Integer.parseInt(this.getInternalElement(IPair.ELEMENT_TYPE,"confidence").getContents());
 
-		return RuleFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(), goal, neededHyps, confidence, display, anticidents);
+		return ProverFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(), goal, neededHyps, confidence, display, anticidents);
 	}
 
 	public void setProofRule(IProofRule proofRule) throws RodinDBException {

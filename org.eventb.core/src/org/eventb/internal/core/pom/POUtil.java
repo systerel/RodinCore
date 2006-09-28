@@ -24,7 +24,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ProverFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
@@ -53,7 +53,7 @@ public class POUtil {
 //			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
 //			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
 			Predicate goal = readPredicate(poSeq.getGoal(),typeEnv);
-			IProverSequent seq = SequentProver.makeSequent(typeEnv,hypotheses,goal);
+			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 //			seq = seq.selectHypotheses(localHypotheses);
 			// System.out.println(name+" : "+seq);
 			result.put(name,seq);

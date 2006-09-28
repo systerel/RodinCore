@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -44,16 +44,16 @@ public class AllD implements IReasoner{
 		CombiInput input = (CombiInput) reasonerInput;
 
 		if (input.hasError())
-			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
+			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		Predicate univHypPred = ((SinglePredInput)input.getReasonerInputs()[1]).getPredicate();
 		Hypothesis univHyp = new Hypothesis(univHypPred);
 		
 		if (! seq.hypotheses().contains(univHyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+univHyp);
 		if (! Lib.isUnivQuant(univHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not universally quantified:"+univHyp);
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHypPred);
@@ -68,7 +68,7 @@ public class AllD implements IReasoner{
 		Expression[] instantiations = multipleExprInput.computeInstantiations(boundIdentDecls);
 		
 		if (instantiations == null)
-			return RuleFactory.reasonerFailure(
+			return ProverFactory.reasonerFailure(
 					this,
 					reasonerInput,
 					"Type error when trying to instantiate bound identifiers");
@@ -87,15 +87,15 @@ public class AllD implements IReasoner{
 		// Generate the anticidents
 		IAnticident[] anticidents = new IAnticident[2];
 		// Well definedness condition
-		anticidents[0] = RuleFactory.makeAnticident(WDpred);
+		anticidents[0] = ProverFactory.makeAnticident(WDpred);
 		// The instantiated goal
-		anticidents[1] = RuleFactory.makeAnticident(
+		anticidents[1] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Lib.breakPossibleConjunct(instantiatedPred),
 				Lib.deselect(univHyp)
 				);
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				univHyp,

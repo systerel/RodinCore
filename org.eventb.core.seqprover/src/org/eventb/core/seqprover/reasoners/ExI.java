@@ -11,7 +11,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
@@ -32,7 +32,7 @@ public class ExI implements IReasoner{
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
 	
 		if (! Lib.isExQuant(seq.goal()))
-			return RuleFactory.reasonerFailure(
+			return ProverFactory.reasonerFailure(
 					this,reasonerInput,
 					"Goal is not existentially quantified"); 
 		
@@ -40,7 +40,7 @@ public class ExI implements IReasoner{
 		MultipleExprInput input = (MultipleExprInput) reasonerInput;
 		
 		if (input.hasError())
-			return RuleFactory.reasonerFailure(this,reasonerInput,input.getError());
+			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
 		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(seq.goal());
 		
@@ -50,7 +50,7 @@ public class ExI implements IReasoner{
 		// Not sure if reasoner should actually modify its input to reflect this.
 		Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
 		if (instantiations == null)
-			return RuleFactory.reasonerFailure(
+			return ProverFactory.reasonerFailure(
 				this,reasonerInput,
 				"Type error when trying to instantiate bound identifiers");
 		
@@ -67,13 +67,13 @@ public class ExI implements IReasoner{
 		IAnticident[] anticidents = new IAnticident[2];
 		
 		// Well definedness condition
-		anticidents[0] = RuleFactory.makeAnticident(WDpred);
+		anticidents[0] = ProverFactory.makeAnticident(WDpred);
 		
 		// The instantiated goal
-		anticidents[1] = RuleFactory.makeAnticident(instantiatedPred);
+		anticidents[1] = ProverFactory.makeAnticident(instantiatedPred);
 
 		// Generate the successful reasoner output
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"∃ goal (inst "+displayInstantiations(instantiations)+")",

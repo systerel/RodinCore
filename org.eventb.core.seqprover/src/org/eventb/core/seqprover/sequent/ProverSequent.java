@@ -72,19 +72,19 @@ public class ProverSequent implements IProverSequent{
 		// assert this.invariant();
 	}
 	
-	/**
-	 * Copy constructor
-	 * 
-	 * @param pS
-	 */
-	private ProverSequent(ProverSequent pS){
-		this.typeEnvironment = pS.typeEnvironment;
-		this.globalHypotheses = pS.globalHypotheses;
-		this.localHypotheses = pS.localHypotheses;
-		this.hiddenHypotheses = pS.hiddenHypotheses;
-		this.selectedHypotheses = pS.selectedHypotheses;
-		this.goal = pS.goal;
-	}
+//	/**
+//	 * Copy constructor
+//	 * 
+//	 * @param pS
+//	 */
+//	private ProverSequent(ProverSequent pS){
+//		this.typeEnvironment = pS.typeEnvironment;
+//		this.globalHypotheses = pS.globalHypotheses;
+//		this.localHypotheses = pS.localHypotheses;
+//		this.hiddenHypotheses = pS.hiddenHypotheses;
+//		this.selectedHypotheses = pS.selectedHypotheses;
+//		this.goal = pS.goal;
+//	}
 	
 	private ProverSequent(ProverSequent pS, ITypeEnvironment typeEnvironment, Set<Hypothesis> globalHypotheses,
 			Set<Hypothesis> localHypotheses, Set<Hypothesis> hiddenHypotheses, Set<Hypothesis> selectedHypotheses,

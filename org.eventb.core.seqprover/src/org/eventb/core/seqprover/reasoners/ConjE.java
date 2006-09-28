@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.RuleFactory;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -31,21 +31,21 @@ public class ConjE extends SinglePredInputReasoner{
 		
 		
 		if (! seq.hypotheses().contains(conjHyp))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Nonexistent hypothesis:"+conjHyp);
 		if (! Lib.isConj(conjHypPred))
-			return RuleFactory.reasonerFailure(this,input,
+			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not a conjunction:"+conjHyp);
 		
 		// Generate the successful reasoner output
 		
 		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = RuleFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAnticident(
 				seq.goal(),
 				Lib.breakPossibleConjunct(conjHypPred),
 				Lib.hide(conjHyp));
 		
-		IProofRule reasonerOutput = RuleFactory.makeProofRule(
+		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),
 				"∧ hyp ("+conjHyp+")",
