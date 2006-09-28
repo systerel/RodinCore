@@ -8,7 +8,6 @@
 package org.eventb.core.pog;
 
 import org.eventb.core.ITraceableElement;
-import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
