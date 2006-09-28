@@ -6,6 +6,8 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
+import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
+import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,19 +125,15 @@ public class AssociativePredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		
-		StringBuffer str = new StringBuffer();
-		str.append(children[0].toString(false, getTag(), boundNames, withTypes));
-		for (int i=1; i<children.length;i++) {
-			str.append(getTagOperator());
-			str.append(children[i].toString(false,getTag(),boundNames,withTypes));
-		}
-		if (parenthesesMap[getTag()-firstTag].get(parentTag)) {
-			return "("+str.toString()+")";
-		}
-		return str.toString();
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		toStringHelper(builder, boundNames, needsParenthesis(parentTag),
+				children, getTagOperator(), getTag(), withTypes);
+	}
+
+	private boolean needsParenthesis(int parentTag) {
+		return parenthesesMap[getTag() - firstTag].get(parentTag);
 	}
 
 	protected String getTagOperator() {
@@ -203,17 +201,10 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		StringBuffer str = new StringBuffer();
-		str.append("(" + children[0].toStringFullyParenthesized(boundNames)
-				+ ")");
-		for (int i = 1; i < children.length; i++) {
-			str.append(getTagOperator()
-					+ "("
-					+ children[i].toStringFullyParenthesized(boundNames)
-					+ ")");
-		}
-		return str.toString();
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class BoundIdentifier extends Identifier {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
-		this.freeIdents = NO_FREE_IDENTS;
+		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = new BoundIdentifier[] {this};
 		
 		if (givenType == null) {
@@ -83,27 +83,42 @@ public class BoundIdentifier extends Identifier {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return toStringFullyParenthesized(boundNames);
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		toStringFullyParenthesized(builder, boundNames);
 	}
-	
+
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		String result = resolveIndex(boundIndex, boundNames);
-		if (result == null) {
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		String image = resolveIndex(boundIndex, boundNames);
+		if (image == null) {
 			// Fallback default in case this can not be resolved.
-			result = "[[" + boundIndex + "]]";
+			builder.append("[[");
+			builder.append(boundIndex);
+			builder.append("]]");
+		} else {
+			builder.append(image);
 		}
-		return result;
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
-		return tabs + this.getClass().getSimpleName() + " [name: "
-				+ toStringFullyParenthesized(boundNames) + "] [index: "
-				+ boundIndex + "]" + typeName + "\n";
+		final StringBuilder builder = new StringBuilder();
+		builder.append(tabs);
+		builder.append(this.getClass().getSimpleName());
+		builder.append(" [name: ");
+		toStringFullyParenthesized(builder, boundNames);
+		builder.append("] [index: ");
+		builder.append(boundIndex);
+		if (getType() != null) {
+			builder.append("] [type: ");
+			builder.append(getType().toString());
+		}
+		builder.append("]\n");
+		return builder.toString();
 	}
 
 	@Override

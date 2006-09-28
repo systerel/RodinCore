@@ -43,20 +43,23 @@ public class LiteralPredicate extends Predicate {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
-		this.freeIdents = NO_FREE_IDENTS;
-		this.boundIdents = NO_BOUND_IDENTS;
+		this.freeIdents = NO_FREE_IDENT;
+		this.boundIdents = NO_BOUND_IDENT;
 		typeChecked = true;
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return tags[getTag()-firstTag];
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		builder.append(tags[getTag() - firstTag]);
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return tags[getTag()-firstTag];
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		builder.append(tags[getTag() - firstTag]);
 	}
 
 	@Override

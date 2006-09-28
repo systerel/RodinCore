@@ -62,23 +62,34 @@ import org.eventb.internal.core.ast.Substitution;
 		return str.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see Formula#toStringFullyParenthesized(FreeIdentifier[])
-	 */
-	protected static String toStringFullyParenthesizedHelper(String[] boundNames,
-			Formula[] children, String tagOperator) {
-		StringBuilder str = new StringBuilder();
-		str.append("(" + children[0].toStringFullyParenthesized(boundNames)
-				+ ")");
-		for (int i = 1; i < children.length; i++) {
-			str.append(tagOperator
-					+ "("
-					+ children[i].toStringFullyParenthesized(boundNames)
-					+ ")");
+	protected static void toStringHelper(StringBuilder builder,
+			String[] boundNames, boolean needsParen, Formula[] children,
+			String tagOperator, int tag, boolean withTypes) {
+
+		if (needsParen)  builder.append('(');
+		boolean isRight = false;
+		String sep = "";
+		for (Formula child: children) {
+			builder.append(sep);
+			sep = tagOperator;
+			child.toString(builder, isRight, tag, boundNames, withTypes);
+			isRight = true;
 		}
-		return str.toString();
+		if (needsParen) builder.append(')');
+	}
+	
+	protected static void toStringFullyParenthesizedHelper(
+			StringBuilder builder, String[] boundNames,
+			Formula[] children, String tagOperator) {
+		
+		String sep = "";
+		for (Formula child : children) {
+			builder.append(sep);
+			sep = tagOperator;
+			builder.append('(');
+			child.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+		}
 	}
 
 	// Disable default constructor.

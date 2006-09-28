@@ -51,8 +51,8 @@ public class AtomicExpression extends Expression {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
-		this.freeIdents = NO_FREE_IDENTS;
-		this.boundIdents = NO_BOUND_IDENTS;
+		this.freeIdents = NO_FREE_IDENT;
+		this.boundIdents = NO_BOUND_IDENT;
 
 		final Type resultType;
 		switch (getTag()) {
@@ -90,19 +90,26 @@ public class AtomicExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 		
 		final String image = tags[getTag()-firstTag];
 		if (withTypes && getTag() == EMPTYSET && isTypeChecked()) {
-			return "(" + image + " \u2982 " + getType() + ")";
+			builder.append('(');
+			builder.append(image);
+			builder.append(" \u2982 ");
+			builder.append(getType());
+			builder.append(')');
+		} else {
+			builder.append(image);
 		}
-		return image;
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return tags[getTag()-firstTag];
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		builder.append(tags[getTag()-firstTag]);
 	}
 
 	@Override

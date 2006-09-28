@@ -65,16 +65,21 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
+	protected void toString(StringBuilder builder, boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes) {
 
-		return tags[getTag()-firstTag] + "(" +
-			child.toString(false, getTag(), boundNames, withTypes) + ")";
+		builder.append(tags[getTag()-firstTag]);
+		builder.append('(');
+		child.toString(builder, false, getTag(), boundNames, withTypes);
+		builder.append(')');
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return tags[getTag()-firstTag]+"("+child.toStringFullyParenthesized(boundNames)+")";
+	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
+		builder.append(tags[getTag()-firstTag]);
+		builder.append('(');
+		child.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
 
 	@Override

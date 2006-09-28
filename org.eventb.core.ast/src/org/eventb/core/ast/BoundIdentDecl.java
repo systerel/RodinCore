@@ -46,8 +46,8 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	private void synthesizeType(Type givenType) {
-		this.freeIdents = NO_FREE_IDENTS;
-		this.boundIdents = NO_BOUND_IDENTS;
+		this.freeIdents = NO_FREE_IDENT;
+		this.boundIdents = NO_BOUND_IDENT;
 
 		if (givenType == null)
 			return;
@@ -67,14 +67,17 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return name;
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+		
+		builder.append(name);
 	}
-	
+
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return name;
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		builder.append(name);
 	}
 
 	@Override

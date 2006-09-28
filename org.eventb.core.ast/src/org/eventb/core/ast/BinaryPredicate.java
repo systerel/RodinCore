@@ -90,18 +90,16 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
+	protected void toString(StringBuilder builder, boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes) {
 
-		// parenthteses if AND OR or NOT
-		final String str = 
-			left.toString(false, getTag(), boundNames, withTypes) +
-			getTagOperator() +
-			right.toString(true, getTag(), boundNames, withTypes);
-		if (parenthesesMap[getTag()-firstTag].get(parentTag)) {
-			return "(" + str + ")";
-		}
-		return str;
+		final boolean needsParen = 
+			parenthesesMap[getTag()-firstTag].get(parentTag);
+		if (needsParen) builder.append('(');
+		left.toString(builder, false, getTag(), boundNames, withTypes);
+		builder.append(getTagOperator());
+		right.toString(builder, true, getTag(), boundNames, withTypes);
+		if (needsParen) builder.append(')');
 	}
 
 	// Tag operator.
@@ -153,18 +151,17 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		switch (getTag()) {
-		case (Formula.FUNIMAGE):
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+"("+
-	           right.toStringFullyParenthesized(boundNames)+")";
-		case (Formula.RELIMAGE):
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+"["+
-	           right.toStringFullyParenthesized(boundNames)+"]";
-		default:
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+getTagOperator()+"("+right.toStringFullyParenthesized(boundNames)+")";
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		builder.append('(');
+		left.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
+		builder.append(getTagOperator());
+		builder.append('(');
+		right.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
-}
 
 	/**
 	 * Returns the predicate on the left-hand side of this node.

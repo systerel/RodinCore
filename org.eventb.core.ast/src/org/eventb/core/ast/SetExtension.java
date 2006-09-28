@@ -116,39 +116,38 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
 		// Might be a typed empty set
 		if (withTypes && members.length == 0 && isTypeChecked()) {
-			return "(\u2205 \u2982 " + getType() + ")";
-		}
-		
-		StringBuffer str = new StringBuffer();
-		str.append("{");
-		if (members.length > 0) {
-			str.append(members[0].toString(false, getTag(), boundNames, withTypes));
-			for (int i=1; i<members.length;i++) {
-				str.append(",");
-				str.append(members[i].toString(false, getTag(), boundNames, withTypes));
+			builder.append("(\u2205 \u2982 ");
+			builder.append(getType());
+			builder.append(')');
+		} else {
+			builder.append('{');
+			String sep = "";
+			for (Expression member : members) {
+				builder.append(sep);
+				sep = ",";
+				member.toString(builder, false, getTag(), boundNames, withTypes);
 			}
+			builder.append('}');
 		}
-		str.append("}");
-		return str.toString();
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		StringBuffer str = new StringBuffer();
-		str.append("{");
-		if (members.length > 0) {
-			str.append(members[0].toStringFullyParenthesized(boundNames));
-			for (int i=1; i<members.length;i++) {
-				str.append(","+members[i].toStringFullyParenthesized(boundNames));
-			}
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		builder.append('{');
+		String sep = "";
+		for (Expression member : members) {
+			builder.append(sep);
+			sep = ",";
+			member.toStringFullyParenthesized(builder, boundNames);
 		}
-		str.append("}");
-		return str.toString();
+		builder.append('}');
 	}
 
 	@Override

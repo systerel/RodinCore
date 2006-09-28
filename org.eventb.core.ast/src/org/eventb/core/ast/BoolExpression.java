@@ -58,16 +58,21 @@ public class BoolExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		// does not put parentheses when parent is: TILDE
-		return "bool("+child.toString(false, getTag(), boundNames, withTypes)+")";
+		builder.append("bool(");
+		child.toString(builder, false, getTag(), boundNames, withTypes);
+		builder.append(')');
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return "bool("+child.toStringFullyParenthesized(boundNames)+")";
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		builder.append("bool(");
+		child.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
 
 	@Override

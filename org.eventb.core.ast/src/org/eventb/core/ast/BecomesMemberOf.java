@@ -152,24 +152,22 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		StringBuilder result = new StringBuilder();
-		appendAssignedIdents(result);
-		result.append(" :\u2208 ");
-		result.append(setExpr.toString(false, STARTTAG, boundNames, withTypes));
-		return result.toString();
+		appendAssignedIdents(builder);
+		builder.append(" :\u2208 ");
+		setExpr.toString(builder, false, STARTTAG, boundNames, withTypes);
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		StringBuilder result = new StringBuilder();
-		appendAssignedIdents(result);
-		result.append(" :\u2208 (");
-		result.append(setExpr.toStringFullyParenthesized(boundNames));
-		result.append(')');
-		return result.toString();
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		appendAssignedIdents(builder);
+		builder.append(" :\u2208 (");
+		setExpr.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
 
 	@Override

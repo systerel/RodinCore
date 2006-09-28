@@ -263,36 +263,45 @@ public class UnaryExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		final String childImage = 
-			child.toString(false, getTag(), boundNames, withTypes);
-		final String operator = getTagOperator();
-		if (isPrefix[getTag()-firstTag]) {
+		if (isPrefix()) {
 			if (isAlwaysParenthesized()) {
-				return operator + "(" + childImage + ")";
+				builder.append(getTagOperator());
+				builder.append('(');
+				child.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(')');
+			} else if (needsParentheses(isRightChild, parentTag)) {
+				builder.append('(');
+				builder.append(getTagOperator());
+				child.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(')');
+			} else {
+				builder.append(getTagOperator());
+				child.toString(builder, false, getTag(), boundNames, withTypes);
 			}
-			else if (needsParentheses(isRightChild, parentTag)) {
-				return "(" + operator + childImage + ")";
-			}
-			else {
-				return operator + childImage;
-			}
-		}
-		else {
+		} else {
 			if (isAlwaysParenthesized()) {
 				// for now this is never the case
-				return "(" + childImage + ")" + operator;
-			}
-			else if (needsParentheses(isRightChild, parentTag)) {
-				return "(" + childImage + operator + ")";
-			}
-			else {
-				return childImage + operator;
+				builder.append('(');
+				child.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(')');
+				builder.append(getTagOperator());
+			} else if (needsParentheses(isRightChild, parentTag)) {
+				builder.append('(');
+				child.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(getTagOperator());
+				builder.append(')');
+			} else {
+				child.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(getTagOperator());
 			}
 		}
-		
+	}
+
+	private boolean isPrefix() {
+		return isPrefix[getTag() - firstTag];
 	}
 
 	private boolean needsParentheses(boolean isRightChild, int parentTag) {
@@ -427,12 +436,19 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		if (isPrefix[getTag()-firstTag]) {
-			return getTagOperator()+"("+child.toStringFullyParenthesized(boundNames)+")";
-		}
-		else {
-			return "("+child.toStringFullyParenthesized(boundNames)+")"+getTagOperator();
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		if (isPrefix()) {
+			builder.append(getTagOperator());
+			builder.append('(');
+			child.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+		} else {
+			builder.append('(');
+			child.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+			builder.append(getTagOperator());
 		}
 	}
 

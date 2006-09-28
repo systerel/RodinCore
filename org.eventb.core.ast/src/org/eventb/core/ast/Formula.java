@@ -784,11 +784,13 @@ public abstract class Formula<T extends Formula<T>> {
 	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
 		new BoundIdentDecl[0];
 	
-	protected final static FreeIdentifier[] NO_FREE_IDENTS =
+	protected final static FreeIdentifier[] NO_FREE_IDENT =
 		new FreeIdentifier[0];
 
-	protected final static BoundIdentifier[] NO_BOUND_IDENTS =
+	protected final static BoundIdentifier[] NO_BOUND_IDENT =
 		new BoundIdentifier[0];
+	
+	protected final static String[] NO_STRING = new String[0];
 
 	// Internal constructor for derived classes (with location).
 	protected Formula(int tag, SourceLocation location, int hashCode) {
@@ -875,7 +877,7 @@ public abstract class Formula<T extends Formula<T>> {
 		}
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
-			lists.add(NO_FREE_IDENTS);
+			lists.add(NO_FREE_IDENT);
 		}
 		return IdentListMerger.makeMerger(lists);
 	}
@@ -899,7 +901,7 @@ public abstract class Formula<T extends Formula<T>> {
 		}
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
-			lists.add(NO_BOUND_IDENTS);
+			lists.add(NO_BOUND_IDENT);
 		}
 		return IdentListMerger.makeMerger(lists);
 	}
@@ -943,7 +945,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a string representation of this formula.
 	 */
 	public final String toStringFullyParenthesized() {
-		return toStringFullyParenthesized(new String[0]);
+		StringBuilder builder = new StringBuilder();
+		toStringFullyParenthesized(builder, NO_STRING);
+		return builder.toString();
 	}
 
 	/**
@@ -961,7 +965,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	@Override
 	public final String toString() {
-		return toString(false, STARTTAG, new String[0], false);
+		StringBuilder builder = new StringBuilder();
+		toString(builder, false, STARTTAG, NO_STRING, false);
+		return builder.toString();
 	}
 
 	/**
@@ -977,7 +983,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         information.
 	 */
 	public final String toStringWithTypes() {
-		return toString(false, STARTTAG, new String[0], true);
+		StringBuilder builder = new StringBuilder();
+		toString(builder, false, STARTTAG, NO_STRING, true);
+		return builder.toString();
 	}
 
 	/**
@@ -1230,7 +1238,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return Returns the printable syntax tree.
 	 */
 	public final String getSyntaxTree() {
-		return getSyntaxTree(new String[0], "");
+		return getSyntaxTree(NO_STRING, "");
 	}
 
 	/**
@@ -1727,10 +1735,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * same AST. Method {@link Formula#toString()} calls this method with false,
 	 * Formula.STARTTAG, and an empty array.
 	 * 
+	 * @param builder
+	 *            string builder containing the result
 	 * @param isRightChild
 	 *            <code>true</code> if this node is the right child of its
-	 *            parent node. <code>false</code> if it is the left child or a
-	 *            unique child.
+	 *            parent node, <code>false</code> if it is the left child or a
+	 *            unique child
 	 * @param parentTag
 	 *            the tag of the parent node
 	 * @param boundNames
@@ -1741,11 +1751,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            <code>true</code> iff type information should be output for
 	 *            atomic expressions.
 	 * 
-	 * @return Returns the string representation of this formula.
 	 * @see java.lang.Object#toString()
 	 * @see org.eventb.core.ast.Formula#toStringFullyParenthesized()
 	 */
-	protected abstract String toString(boolean isRightChild, int parentTag,
+	protected abstract void toString(StringBuilder builder, boolean isRightChild, int parentTag,
 			String[] boundNames, boolean withTypes);
 
 	/**
@@ -1755,16 +1764,17 @@ public abstract class Formula<T extends Formula<T>> {
 	 * {@link Formula#toStringFullyParenthesized()} in fact calls this method
 	 * with an empty Identifier array.
 	 * 
+	 * @param builder
+	 *            string builder containing the result
 	 * @param boundNames
 	 *            the identifiers that are bound in the path from the root node
 	 *            to the current node. Should not be null, can be an empty
 	 *            array.
 	 * 
-	 * @return Returns the string representation of this formula.
 	 * @see org.eventb.core.ast.Formula#toStringFullyParenthesized()
 	 */
-	protected abstract String toStringFullyParenthesized(
-			String[] boundNames);
+	protected abstract void toStringFullyParenthesized(
+			StringBuilder builder, String[] boundNames);
 
 	/**
 	 * Traverses this formula with the given visitor.

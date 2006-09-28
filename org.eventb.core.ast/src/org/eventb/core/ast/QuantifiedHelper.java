@@ -44,24 +44,24 @@ abstract class QuantifiedHelper {
 	}
 
 	/*
-	 * Returns the list of names as a string.
+	 * Appends the list of names to the given string builder.
 	 */
-	protected static String getBoundIdentifiersString(String[] names,
-			BoundIdentDecl[] decls, boolean withTypes) {
+	protected static void appendBoundIdentifiersString(StringBuilder builder,
+			String[] names, BoundIdentDecl[] decls, boolean withTypes) {
 		
-		final StringBuffer str = new StringBuffer();
 		String separator = "";
 		for (int i = 0; i < names.length; ++i) {
-			str.append(separator);
+			builder.append(separator);
 			separator = ",";
-			str.append(names[i]);
-			final BoundIdentDecl decl = decls[i];
-			if (withTypes && decl.isTypeChecked()) {
-				str.append("\u2982");
-				str.append(decl.getType());
+			builder.append(names[i]);
+			if (withTypes) {
+				final BoundIdentDecl decl = decls[i];
+				if (decl.isTypeChecked()) {
+					builder.append("\u2982");
+					builder.append(decl.getType());
+				}
 			}
 		}
-		return str.toString();
 	}
 
 	/**
@@ -98,7 +98,7 @@ abstract class QuantifiedHelper {
 				return result;
 			}
 		}
-		return Formula.NO_BOUND_IDENTS;
+		return Formula.NO_BOUND_IDENT;
 	}
 	
 	/**

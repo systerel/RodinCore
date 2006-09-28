@@ -44,7 +44,7 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = new FreeIdentifier[] {this};
-		this.boundIdents = NO_BOUND_IDENTS;
+		this.boundIdents = NO_BOUND_IDENT;
 		
 		if (givenType == null) {
 			return;
@@ -162,14 +162,17 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return name;
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		builder.append(name);
 	}
-	
+
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return name;
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		builder.append(name);
 	}
 
 	@Override

@@ -419,28 +419,33 @@ public class BinaryExpression extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		String str;
+		final boolean needsParen = needsParenthesis(isRightChild, parentTag);
+		if (needsParen) builder.append('(');
 		switch (getTag()) {
 			case FUNIMAGE:
-				str = left.toString(false,getTag(),boundNames,withTypes)+"("+
-		           right.toString(true,getTag(),boundNames,withTypes)+")";
+				left.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append('(');
+				right.toString(builder, true, getTag(), boundNames, withTypes);
+				builder.append(')');
 				break;
 			case RELIMAGE:
-				str = left.toString(false,getTag(),boundNames,withTypes)+"["+
-		           right.toString(true,getTag(),boundNames,withTypes)+"]";
+				left.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append('[');
+				right.toString(builder, true, getTag(), boundNames, withTypes);
+				builder.append(']');
 				break;
 			default:
-				str = left.toString(false,getTag(),boundNames,withTypes)+" "+
-					getTagOperator()+" "+
-					right.toString(true,getTag(),boundNames,withTypes);
+				left.toString(builder, false, getTag(), boundNames, withTypes);
+				builder.append(' ');
+				builder.append(getTagOperator());
+				builder.append(' ');
+				right.toString(builder, true, getTag(), boundNames, withTypes);
+				break;
 		}
-		if (needsNoParenthesis(isRightChild, parentTag)) {
-			return str;
-		}
-		return "("+str+")";
+		if (needsParen) builder.append(')');
 	}
 
 	// Tag operator
@@ -448,12 +453,12 @@ public class BinaryExpression extends Expression {
 		return tags[getTag()-firstTag];
 	}
 
-	private boolean needsNoParenthesis(boolean isRightChild, int parentTag) {
+	private boolean needsParenthesis(boolean isRightChild, int parentTag) {
 		final int relativeTag = getTag() - firstTag;
 		if (isRightChild) {
-			return rightNoParenthesesMap[relativeTag].get(parentTag);
+			return ! rightNoParenthesesMap[relativeTag].get(parentTag);
 		}
-		return leftNoParenthesesMap[relativeTag].get(parentTag);
+		return ! leftNoParenthesesMap[relativeTag].get(parentTag);
 	}
 	
 	@Override
@@ -607,18 +612,35 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
 		switch (getTag()) {
-		case (Formula.FUNIMAGE):
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+"("+
-	           right.toStringFullyParenthesized(boundNames)+")";
-		case (Formula.RELIMAGE):
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+"["+
-	           right.toStringFullyParenthesized(boundNames)+"]";
+		case Formula.FUNIMAGE:
+			builder.append('(');
+			left.toStringFullyParenthesized(builder, boundNames);
+			builder.append(")(");
+			right.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+			break;
+		case Formula.RELIMAGE:
+			builder.append('(');
+			left.toStringFullyParenthesized(builder, boundNames);
+			builder.append(")[");
+			right.toStringFullyParenthesized(builder, boundNames);
+			builder.append(']');
+			break;
 		default:
-			return "("+left.toStringFullyParenthesized(boundNames)+")"+getTagOperator()+"("+right.toStringFullyParenthesized(boundNames)+")";
+			builder.append('(');
+			left.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+			builder.append(getTagOperator());
+			builder.append('(');
+			right.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+			break;
+		}
 	}
-}
 
 	/**
 	 * Returns the expression on the left-hand side of this node.

@@ -40,8 +40,8 @@ public class IntegerLiteral extends Expression {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
-		this.freeIdents = NO_FREE_IDENTS;
-		this.boundIdents = NO_BOUND_IDENTS;
+		this.freeIdents = NO_FREE_IDENT;
+		this.boundIdents = NO_BOUND_IDENT;
 		
 		setFinalType(ff.makeIntegerType(), givenType);
 	}
@@ -56,26 +56,31 @@ public class IntegerLiteral extends Expression {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return toStringInternal();
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		toStringInternal(builder);
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return toStringInternal();
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		toStringInternal(builder);
 	}
 
 	/**
 	 * Change the minus sign if any, so that it conforms to the mathematical
 	 * language: \u2212 (minus sign) instead of \u002d (hyphen-minus).
 	 */
-	private String toStringInternal() {
-		String result = literal.toString();
-		if (result.charAt(0) == '-') {
-			return '\u2212' + result.substring(1);
+	private void toStringInternal(StringBuilder builder) {
+		final String image = literal.toString();
+		if (image.charAt(0) == '-') {
+			builder.append('\u2212');
+			builder.append(image, 1, image.length());
+		} else {
+			builder.append(image);
 		}
-		return result;
 	}
 
 	@Override

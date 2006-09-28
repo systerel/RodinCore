@@ -65,11 +65,11 @@ public class UnaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		
-		return getTagOperator() + 
-			child.toString(false, getTag(), boundNames, withTypes);
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		builder.append(getTagOperator());
+		child.toString(builder, false, getTag(), boundNames, withTypes);
 	}
 
 	protected String getTagOperator() {
@@ -113,8 +113,11 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return getTagOperator()+"("+child.toStringFullyParenthesized(boundNames)+")";
+	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
+		builder.append(getTagOperator());
+		builder.append('(');
+		child.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
 
 	@Override

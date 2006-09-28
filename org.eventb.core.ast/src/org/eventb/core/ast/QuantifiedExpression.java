@@ -6,7 +6,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
-import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentifiersString;
+import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
@@ -305,172 +305,188 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	@Override
-	protected String toStringFullyParenthesized(String[] existingBoundIdents) {
-		return toStringHelper(existingBoundIdents, true, false);
+	protected void toStringFullyParenthesized(StringBuilder builder, String[] existingBoundIdents) {
+		toStringHelper(builder, existingBoundIdents, true, false);
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		// put parentheses if parent is QuantifiedExpr...
-		if (noParenthesesMap.get(parentTag) ||
-				(isRightChild && rightNoParenthesesMap.get(parentTag)) ||
-				(form != Form.Lambda  && getTag() == Formula.CSET && csetImplicitNoParenthesesMap.get(parentTag))) {
-			return toStringHelper(boundNames, false, withTypes);
+		final boolean needParenthesis;
+		if (noParenthesesMap.get(parentTag)) {
+			needParenthesis = false;
+		} else if (isRightChild && rightNoParenthesesMap.get(parentTag)) {
+			needParenthesis = false;
+		} else if (form != Form.Lambda && getTag() == Formula.CSET
+				&& csetImplicitNoParenthesesMap.get(parentTag)) {
+			needParenthesis = false;
+		} else {
+			needParenthesis = true;
 		}
-		else return "("+toStringHelper(boundNames, false, withTypes)+")";
+
+		if (needParenthesis) builder.append('(');
+		toStringHelper(builder, boundNames, false, withTypes);
+		if (needParenthesis) builder.append(')');
 	}
-	
+
 	/*
 	 * avoid having to write almost twice the same for methods 
 	 * toString and method toStringFully parenthesized
 	 */ 
-	private String toStringHelper(String[] boundNames, boolean parenthesized,
-			boolean withTypes) {
+	private void toStringHelper(StringBuilder builder, String[] boundNames,
+			boolean parenthesized, boolean withTypes) {
 
 		// Collect names used in subformulas and not locally bound
 		HashSet<String> usedNames = new HashSet<String>();
-		expr.collectNamesAbove(usedNames, boundNames, quantifiedIdentifiers.length);
+		expr.collectNamesAbove(usedNames, boundNames,
+				quantifiedIdentifiers.length);
 		boolean exprIsClosed = usedNames.size() == 0;
-		pred.collectNamesAbove(usedNames, boundNames, quantifiedIdentifiers.length);
-		
+		pred.collectNamesAbove(usedNames, boundNames,
+				quantifiedIdentifiers.length);
+
 		String[] localNames = resolveIdents(quantifiedIdentifiers, usedNames);
 		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		
+
 		switch (form) {
-		case Lambda: 
-			return toStringLambda(parenthesized, newBoundNames, withTypes);
+		case Lambda:
+			toStringLambda(builder, parenthesized, newBoundNames, withTypes);
+			break;
 		case Implicit:
 			if (exprIsClosed && ! withTypes) {
 				// Still OK to use implicit form.
-				return toStringImplicit(parenthesized, localNames, newBoundNames, withTypes);
+				toStringImplicit(builder, parenthesized, localNames,
+						newBoundNames, withTypes);
+			} else {
+				toStringExplicit(builder, parenthesized, localNames,
+						newBoundNames, withTypes);
 			}
-			return toStringExplicit(parenthesized, localNames, newBoundNames, withTypes);
+			break;
 		case Explicit:
-			return toStringExplicit(parenthesized, localNames, newBoundNames, withTypes);
+			toStringExplicit(builder, parenthesized, localNames, newBoundNames,
+					withTypes);
+			break;
 		default:
 			assert false;
-			return null;
+			break;
 		}
 	}
 
-	private String toStringLambda(boolean parenthesized, String[] boundNames,
-			boolean withTypes) {
+	private void toStringLambda(StringBuilder builder, boolean parenthesized,
+			String[] boundNames, boolean withTypes) {
 
-		// Extract left and right subexpressions as Strings
+		// Extract left and right subexpressions
 		assert expr.getTag() == MAPSTO;
-		BinaryExpression binExpr = (BinaryExpression) this.expr;
+		final BinaryExpression binExpr = (BinaryExpression) this.expr;
+		final Expression leftExpr = binExpr.getLeft();
+		final Expression rightExpr = binExpr.getRight();
 
-		final String leftExprString;
-		final String rightExprString;
+		builder.append("\u03bb");
 		if (parenthesized) {
-			leftExprString = binExpr.getLeft().toStringFullyParenthesized(boundNames);
-			rightExprString = binExpr.getRight().toStringFullyParenthesized(boundNames);
+			leftExpr.toStringFullyParenthesized(builder, boundNames);
+		} else if (withTypes) {
+			appendTypedPattern(builder, leftExpr, boundNames);
 		} else {
-			if (withTypes) {
-				StringBuilder builder = new StringBuilder();
-				appendTypedPatternAsString(builder, binExpr.getLeft(),
-						boundNames, quantifiedIdentifiers);
-				leftExprString = builder.toString();
-			} else {
-				leftExprString = binExpr.getLeft().toString(false, MAPSTO,
-						boundNames, withTypes);
-			}
-			rightExprString = binExpr.getRight().toString(true, MAPSTO,
-					boundNames, withTypes);
+			leftExpr.toString(builder, false, MAPSTO, boundNames, withTypes);
 		}
-
-		StringBuffer str = new StringBuffer();
-		str.append("\u03bb");
-		str.append(leftExprString);
-		str.append("\u00b7");
-		str.append(getPredString(parenthesized, boundNames, withTypes));
-		str.append(" \u2223 ");
-		str.append(rightExprString);
-		return str.toString();
+		builder.append("\u00b7");
+		appendPredString(builder, parenthesized, boundNames, withTypes);
+		builder.append(" \u2223 ");
+		if (parenthesized) {
+			rightExpr.toStringFullyParenthesized(builder, boundNames);
+		} else {
+			rightExpr.toString(builder, true, MAPSTO, boundNames, withTypes);
+		}
 	}
 
-	private void appendTypedPatternAsString(StringBuilder builder, Expression pattern,
-			String[] boundNames, BoundIdentDecl[] decls) {
+	private void appendTypedPattern(StringBuilder builder, Expression pattern,
+			String[] boundNames) {
 		
-		if (pattern.getTag() == MAPSTO) {
-			final Expression left = ((BinaryExpression) pattern).getLeft();
-			final Expression right = ((BinaryExpression) pattern).getRight();
-			appendTypedPatternAsString(builder, left, boundNames, decls);
+		switch (pattern.getTag()) {
+		case MAPSTO:
+			final BinaryExpression maplet = (BinaryExpression) pattern;
+			final Expression left = maplet.getLeft();
+			final Expression right = maplet.getRight();
+			appendTypedPattern(builder, left, boundNames);
 			builder.append("\u21a6");
 			final boolean needsParen = right.getTag() == MAPSTO;
 			if (needsParen) builder.append("(");
-			appendTypedPatternAsString(builder, right, boundNames, decls);
+			appendTypedPattern(builder, right, boundNames);
 			if (needsParen) builder.append(")");
-		} else {
-			assert pattern.getTag() == BOUND_IDENT;
-			final int length = decls.length;
-			final int idx = length - 1 - ((BoundIdentifier) pattern).getBoundIndex();
-			assert 0 <= idx && idx < length;
-			builder.append(boundNames[idx]);
+			break;
+		case BOUND_IDENT:
+			final BoundIdentifier ident = (BoundIdentifier) pattern;
+			ident.toStringFullyParenthesized(builder, boundNames);
 			builder.append("\u2982");
-			builder.append(decls[idx].getType());
+			final int length = quantifiedIdentifiers.length;
+			final int idx = length - ident.getBoundIndex() - 1;
+			builder.append(quantifiedIdentifiers[idx].getType());
+			break;
+		default:
+			assert false;
+			break;
 		}
 	}
 
-	private String toStringImplicit(boolean parenthesized, String[] localNames,
-			String[] boundNames, boolean withTypes) {
+	private void toStringImplicit(StringBuilder builder, boolean parenthesized,
+			String[] localNames, String[] boundNames, boolean withTypes) {
 
-		StringBuffer str = new StringBuffer();
 		if (getTag() == Formula.CSET) {
-			str.append("{");
+			builder.append("{");
 		}
 		else {
-			str.append(tags[getTag()-firstTag]);
+			builder.append(tags[getTag()-firstTag]);
 		}
-		str.append(getExprString(parenthesized, boundNames, withTypes));
-		str.append(" \u2223 ");
-		str.append(getPredString(parenthesized, boundNames, withTypes));
+		appendExprString(builder, parenthesized, boundNames, withTypes);
+		builder.append(" \u2223 ");
+		appendPredString(builder, parenthesized, boundNames, withTypes);
 		if (getTag() == Formula.CSET) {
-			str.append("}");
+			builder.append("}");
 		}
-		return str.toString();
 	}
 
-	private String toStringExplicit(boolean parenthesized, String[] localNames,
-			String[] boundNames, boolean withTypes) {
+	private void toStringExplicit(StringBuilder builder, boolean parenthesized,
+			String[] localNames, String[] boundNames, boolean withTypes) {
 		
-		StringBuffer str = new StringBuffer();
 		if (getTag() == Formula.CSET) { 
-			str.append("{");
+			builder.append("{");
 		}
 		else {
-			str.append(tags[getTag()-firstTag]);
+			builder.append(tags[getTag()-firstTag]);
 		}
-		str.append(getBoundIdentifiersString(
-				localNames, quantifiedIdentifiers, withTypes));
-		str.append("\u00b7");
-		str.append(getPredString(parenthesized, boundNames, withTypes));
-		str.append(" \u2223 ");
-		str.append(getExprString(parenthesized, boundNames, withTypes));
+		appendBoundIdentifiersString(builder, localNames,
+				quantifiedIdentifiers, withTypes);
+		builder.append("\u00b7");
+		appendPredString(builder, parenthesized, boundNames, withTypes);
+		builder.append(" \u2223 ");
+		appendExprString(builder, parenthesized, boundNames, withTypes);
 		if (getTag() == Formula.CSET) {
-			str.append("}");
+			builder.append("}");
 		}
-		return str.toString();
 	}
 
-	private String getPredString(boolean parenthesized, String[] boundNames,
-			boolean withTypes) {
+	private void appendPredString(StringBuilder builder, boolean parenthesized,
+			String[] boundNames, boolean withTypes) {
 
 		if (parenthesized) {
-			return "(" + pred.toStringFullyParenthesized(boundNames) + ")";
+			builder.append('(');
+			pred.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+		} else {
+			pred.toString(builder, false, getTag(), boundNames, withTypes);
 		}
-		return pred.toString(false, getTag(), boundNames, withTypes);
 	}
 
-	private String getExprString(boolean parenthesized, String[] boundNames,
-			boolean withTypes) {
+	private void appendExprString(StringBuilder builder, boolean parenthesized,
+			String[] boundNames, boolean withTypes) {
 
 		if (parenthesized) {
-			return "(" + expr.toStringFullyParenthesized(boundNames) + ")";
+			builder.append('(');
+			expr.toStringFullyParenthesized(builder, boundNames);
+			builder.append(')');
+		} else {
+			expr.toString(builder, false, getTag(), boundNames, withTypes);
 		}
-		return expr.toString(true, getTag(), boundNames, withTypes);
 	}
 	
 	@Override

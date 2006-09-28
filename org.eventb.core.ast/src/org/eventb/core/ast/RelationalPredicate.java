@@ -146,17 +146,25 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-		return left.toString(false, getTag(), boundNames, withTypes)
-				+ tags[getTag()-firstTag]
-				+ right.toString(true,getTag(),boundNames, withTypes);
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
+
+		left.toString(builder, false, getTag(), boundNames, withTypes);
+		builder.append(tags[getTag() - firstTag]);
+		right.toString(builder, true, getTag(), boundNames, withTypes);
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return "("+left.toStringFullyParenthesized(boundNames)+")"+tags[getTag()-firstTag]+
-		      "("+right.toStringFullyParenthesized(boundNames)+")";
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
+		builder.append('(');
+		left.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
+		builder.append(tags[getTag() - firstTag]);
+		builder.append('(');
+		right.toStringFullyParenthesized(builder, boundNames);
+		builder.append(')');
 	}
 
 	@Override

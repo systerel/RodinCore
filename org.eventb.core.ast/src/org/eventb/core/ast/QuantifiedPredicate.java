@@ -7,7 +7,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
-import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentifiersString;
+import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
@@ -133,43 +133,35 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
 		String[] localNames = resolveIdentsPred(boundNames);
 		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
+		final boolean needsParen = parenthesesMap.get(parentTag);
 
-		// put parentheses when parent is : Formula.NOT
-		StringBuffer str = new StringBuffer();
-		str.append(tags[getTag()-firstTag]);
-		str.append(getBoundIdentifiersString(
-				localNames, quantifiedIdentifiers, withTypes));
-		str.append("\u00b7");
-		str.append(pred.toString(false, getTag(), newBoundNames, withTypes));
-		if (parenthesesMap.get(parentTag)) {
-			return "("+str.toString()+")";
-		}		
-		return str.toString();
+		if (needsParen) builder.append('(');
+		builder.append(tags[getTag() - firstTag]);
+		appendBoundIdentifiersString(builder, localNames,
+				quantifiedIdentifiers, withTypes);
+		builder.append("\u00b7");
+		pred.toString(builder, false, getTag(), newBoundNames, withTypes);
+		if (needsParen) builder.append(')');
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		// create new array with the new bound identifiers, to pass as parameter
-		// to next toStringFullyParenthesized method
-		// put the bound identifiers of the current quantified predicate object
-		// first so that they are first on the array
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+
 		String[] localNames = resolveIdentsPred(boundNames);
 		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		
-		// creating output string
-		StringBuffer str = new StringBuffer();
-		str.append(tags[getTag()-firstTag]);
-		str.append(getBoundIdentifiersString(
-				localNames, quantifiedIdentifiers, false));
-		str.append("\u00b7(");
-		str.append(pred.toStringFullyParenthesized(newBoundNames));
-		str.append(")");
-		return str.toString();
+
+		builder.append(tags[getTag() - firstTag]);
+		appendBoundIdentifiersString(builder, localNames,
+				quantifiedIdentifiers, false);
+		builder.append("\u00b7(");
+		pred.toStringFullyParenthesized(builder, newBoundNames);
+		builder.append(")");
 	}
 
 	private String[] resolveIdentsPred(String[] boundNames) {

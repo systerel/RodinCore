@@ -8,6 +8,7 @@ import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSubstitutedList;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
+import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -310,31 +311,23 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		StringBuffer str = new StringBuffer();
-		str.append(children[0].toString(false,getTag(),boundNames, withTypes));
-		for (int i=1; i<children.length; i++) {
-			str.append(getTagOperator());
-			str.append(children[i].toString(true,getTag(),boundNames, withTypes));
-		}
-		if (needsNoParenthesis(isRightChild, parentTag)) {
-			return str.toString();
-		}
-		return "("+str.toString()+")";
+		toStringHelper(builder, boundNames, needsParenthesis(isRightChild,
+				parentTag), children, getTagOperator(), getTag(), withTypes);
 	}
 
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
 	}
 
-	private boolean needsNoParenthesis(boolean isRightChild, int parentTag) {
+	private boolean needsParenthesis(boolean isRightChild, int parentTag) {
 		final int relativeTag = getTag() - firstTag;
 		if (isRightChild) {
-			return rightNoParenthesesMap[relativeTag].get(parentTag);
+			return ! rightNoParenthesesMap[relativeTag].get(parentTag);
 		}
-		return leftNoParenthesesMap[relativeTag].get(parentTag);
+		return ! leftNoParenthesesMap[relativeTag].get(parentTag);
 	}
 	
 	@Override
@@ -445,8 +438,10 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		return toStringFullyParenthesizedHelper(boundNames, children, getTagOperator());
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
+		
+		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
 	}
 
 	@Override

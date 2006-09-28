@@ -242,32 +242,29 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected String toString(boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	protected void toString(StringBuilder builder, boolean isRightChild,
+			int parentTag, String[] boundNames, boolean withTypes) {
 
-		StringBuilder result = new StringBuilder();
-		appendAssignedIdents(result);
-		result.append(" :\u2223 ");
+		appendAssignedIdents(builder);
+		builder.append(" :\u2223 ");
 		
-		final String[] localNames = getLocalNames();
-		final String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		result.append(condition.toString(false, STARTTAG, newBoundNames, withTypes));
-		
-		return result.toString();
+		final String[] newBoundNames = 
+			catenateBoundIdentLists(boundNames, getLocalNames());
+		condition.toString(builder, false, STARTTAG, newBoundNames, withTypes);
 	}
 
 	@Override
-	protected String toStringFullyParenthesized(String[] boundNames) {
-		StringBuilder result = new StringBuilder();
-		appendAssignedIdents(result);
-		result.append(" :\u2223 (");
-
-		final String[] localNames = getLocalNames();
-		final String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		result.append(condition.toStringFullyParenthesized(newBoundNames));
+	protected void toStringFullyParenthesized(StringBuilder builder,
+			String[] boundNames) {
 		
-		result.append(')');
-		return result.toString();
+		appendAssignedIdents(builder);
+		builder.append(" :\u2223 (");
+
+		final String[] newBoundNames = 
+			catenateBoundIdentLists(boundNames, getLocalNames());
+		condition.toStringFullyParenthesized(builder, newBoundNames);
+		
+		builder.append(')');
 	}
 
 	// TODO check for other uses of primed variables.
