@@ -39,7 +39,7 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                </ul>
 	 * @return the contents of this element.
 	 */
-	public String getContents() throws RodinDBException;
+	String getContents() throws RodinDBException;
 
 	/**
 	 * Returns the contents of this internal element. The file containing this
@@ -57,7 +57,7 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                </ul>
 	 * @return the contents of this element.
 	 */
-	public String getContents(IProgressMonitor monitor) throws RodinDBException;
+	String getContents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the contents of this internal element to the provided string. The
@@ -74,7 +74,7 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                accessing its underlying resource
 	 *                </ul>
 	 */
-	public void setContents(String contents) throws RodinDBException;
+	void setContents(String contents) throws RodinDBException;
 
 	/**
 	 * Sets the contents of this internal element to the provided string. The
@@ -93,7 +93,17 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                accessing its underlying resource
 	 *                </ul>
 	 */
-	public void setContents(String contents, IProgressMonitor monitor)
+	void setContents(String contents, IProgressMonitor monitor)
 			throws RodinDBException;
 
+	/**
+	 * Returns the Rodin file containing this internal element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @return the Rodin file containing this element
+	 */
+	IRodinFile getRodinFile();
+	
 }
