@@ -247,13 +247,6 @@ public abstract class RodinElement extends PlatformObject implements
 
 	
 	/**
-	 * @see InternalElement
-	 */
-	public RodinFile getRodinFile() {
-		return null;
-	}
-
-	/**
 	 * Returns the info for this handle. If this element is not already open, it
 	 * and all of its parents are opened. Does not return null.
 	 * 

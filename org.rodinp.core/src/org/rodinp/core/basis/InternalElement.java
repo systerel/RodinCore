@@ -298,7 +298,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getUnderlyingResource();
 	}
 
-	@Override
 	public RodinFile getRodinFile() {
 		return getOpenableParent();
 	}
