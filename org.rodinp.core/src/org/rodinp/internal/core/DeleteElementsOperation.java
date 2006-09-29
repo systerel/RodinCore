@@ -89,10 +89,10 @@ public class DeleteElementsOperation extends MultiOperation {
 	protected void groupElements() throws RodinDBException {
 		childrenToRemove = new HashMap<RodinFile, IRegion>(1);
 		for (IRodinElement element: elementsToProcess) {
-			RodinFile rf = getRodinFileFor(element);
-			if (rf == null) {
+			if (! (element instanceof InternalElement)) {
 				error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
 			} else {
+				RodinFile rf = ((InternalElement) element).getRodinFile();
 				IRegion region = childrenToRemove.get(rf);
 				if (region == null) {
 					region = new Region();

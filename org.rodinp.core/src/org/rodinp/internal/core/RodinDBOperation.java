@@ -37,7 +37,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
-import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
@@ -391,15 +390,6 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		}
 	}
 	
-	/**
-	 * Returns the Rodin file the given element is contained in,
-	 * or the element itself (if it is a Rodin file),
-	 * otherwise <code>null</code>.
-	 */
-	protected RodinFile getRodinFileFor(IRodinElement element) {
-	
-		return ((RodinElement) element).getRodinFile();
-	}
 	/*
 	 * Returns the stack of operations running in the current thread.
 	 * Returns an empty stack if no operations are currently running in this thread. 
