@@ -386,7 +386,7 @@ public class EventBImage {
 
 		final IPRProofTree prProofTree = prSequent.getProofTree();
 
-		if (prProofTree == null || (!prProofTree.proofAttempted()))
+		if (prProofTree == null || (! prProofTree.exists()) || (!prProofTree.proofAttempted()))
 			base_path = IMG_UNATTEMPTED_PATH;
 		// return registry.get(EventBImage.IMG_UNATTEMPTED);
 
