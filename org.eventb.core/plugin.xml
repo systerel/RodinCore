@@ -363,7 +363,11 @@
       <attributeType
             id="convergence"
             kind="integer"
-            name="%eventBConvergencettribute"/>
+            name="%eventBConvergenceAttribute"/>
+      <attributeType
+            id="signature"
+            kind="integer"
+            name="%eventBSignatureAttribute"/>
    </extension>
 
 </plugin>
