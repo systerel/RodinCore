@@ -21,6 +21,7 @@ import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -83,9 +84,9 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
-			if (s.equals(t))
-				file.delete(true, monitor);
-			
+			if (s.equals(t)) {
+				RodinCore.create(file).delete(true, monitor);
+			}
 		} finally {
 			monitor.done();
 		}
