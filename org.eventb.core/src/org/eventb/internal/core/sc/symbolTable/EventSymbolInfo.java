@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
@@ -25,11 +26,16 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 			IRodinElement element, 
 			String component) {
 		super(symbol, element, component);
+		inherited = false;
 	}
 	
 	private boolean forbidden;
 	
 	private boolean disappearing;
+	
+	private boolean inherited;
+	
+	private IEventRefinesInfo refinesInfo;
 	
 	public boolean isForbidden() {
 		return forbidden;
@@ -52,6 +58,22 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 	@Override
 	public String getLabelConflictMessage() {
 		return Messages.scuser_EventLabelConflict;
+	}
+
+	public void setRefinesInfo(IEventRefinesInfo refinesInfo) {
+		this.refinesInfo = refinesInfo;
+	}
+
+	public IEventRefinesInfo getRefinesInfo() {
+		return hasError() ? null : refinesInfo;
+	}
+
+	public boolean isInherited() {
+		return inherited;
+	}
+
+	public void setInherited() throws CoreException {
+		inherited = true;
 	}
 	
 }

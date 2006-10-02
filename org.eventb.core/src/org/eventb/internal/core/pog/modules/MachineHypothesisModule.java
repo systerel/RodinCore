@@ -16,7 +16,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCAxiom;
-import org.eventb.core.ISCBaggedElement;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCIdentifierElement;
@@ -43,7 +42,9 @@ import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
 import org.eventb.internal.core.sc.TypingState;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -100,7 +101,7 @@ public class MachineHypothesisModule extends Module {
 					MachineHypothesisManager.ABS_HYP_NAME, null, monitor);
 		rootSet.setParentPredicateSet(MachineHypothesisManager.CTX_HYP_NAME, monitor);
 		
-		String bag = scMachineFile.getElementName();
+		String bag = scMachineFile.getMachineFile().getElementName();
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		
@@ -190,8 +191,10 @@ public class MachineHypothesisModule extends Module {
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		for(ISCPredicateElement element : predicateElements) {
-			ISCBaggedElement baggedElement = (ISCBaggedElement) element;
-			if (bag.equals(baggedElement.getBag(monitor))) {
+			ITraceableElement baggedElement = (ITraceableElement) element;
+			String elementBag = 
+				((IInternalElement) baggedElement.getSource(monitor)).getRodinFile().getElementName();
+			if (bag.equals(elementBag)) {
 				predicates.add(element);
 				predicateTable.addElement(element, typeEnvironment, factory);
 			} else {

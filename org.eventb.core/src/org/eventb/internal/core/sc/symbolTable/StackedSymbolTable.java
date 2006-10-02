@@ -68,5 +68,10 @@ public class StackedSymbolTable extends SymbolTable {
 	public String toString() {
 		return super.toString() + parentTable.toString();
 	}
+	
+	@Override
+	public ISymbolInfo getSymbolInfoFromTop(String symbol) {
+		return super.getSymbolInfoFromTop(symbol);
+	}
 
 }

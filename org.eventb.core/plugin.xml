@@ -333,10 +333,6 @@
             kind="string"
             name="%eventBSourceAttribute"/>
       <attributeType
-            id="bag"
-            kind="string"
-            name="%eventBBagAttribute"/>
-      <attributeType
             id="forbidden"
             kind="boolean"
             name="%eventBForbiddenNameAttribute"/>
@@ -364,6 +360,10 @@
             id="comment"
             kind="string"
             name="%eventBCommentAttribute"/>
+      <attributeType
+            id="convergence"
+            kind="integer"
+            name="%eventBConvergencettribute"/>
    </extension>
 
 </plugin>

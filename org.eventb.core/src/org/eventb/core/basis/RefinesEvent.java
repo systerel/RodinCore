@@ -47,15 +47,15 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#getAbstractMachineName()
 	 */
-	public String getAbstractEventName() throws RodinDBException {
+	public String getAbstractEventLabel() throws RodinDBException {
 		return getContents();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#setAbstractMachineName(java.lang.String)
 	 */
-	public void setAbstractEventName(String name) throws RodinDBException {
-		setContents(name);
+	public void setAbstractEventLabel(String label) throws RodinDBException {
+		setContents(label);
 	}
 
 }

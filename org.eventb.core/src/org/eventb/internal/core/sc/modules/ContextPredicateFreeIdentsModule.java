@@ -7,12 +7,20 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import org.eventb.internal.core.sc.Messages;
+
 /**
  * @author Stefan Hallerstede
  *
  */
 public class ContextPredicateFreeIdentsModule extends FormulaFreeIdentsModule {
 
+	@Override
+	protected String declaredFreeIdentifierErrorMessage() {
+		return Messages.scuser_PredicateFreeIdentifierError;
+	}
+
 	// uses default implementation
+	
 	
 }

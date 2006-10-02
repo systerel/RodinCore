@@ -13,6 +13,8 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IContextLabelSymbolTable;
+import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
@@ -64,6 +66,15 @@ public class ContextTheoremModule extends TheoremModule {
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 
 }

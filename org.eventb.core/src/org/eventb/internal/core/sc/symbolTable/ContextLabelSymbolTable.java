@@ -5,43 +5,26 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.internal.core.sc;
+package org.eventb.internal.core.sc.symbolTable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IRefinedEventTable;
+import org.eventb.core.sc.IContextLabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class RefinedEventTable implements IRefinedEventTable {
+public class ContextLabelSymbolTable extends SymbolTable implements
+		IContextLabelSymbolTable {
 
-	private final List<IAbstractEventInfo> array;
-	
+	public ContextLabelSymbolTable(int size) {
+		super(size);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
 	public String getStateType() {
 		return STATE_TYPE;
-	}
-
-	public List<IAbstractEventInfo> getAbstractEventInfos() {
-		return array;
-	}
-
-	public RefinedEventTable(int size) {
-		array = new ArrayList<IAbstractEventInfo>(size);
-	}
-	
-	public int size() {
-		return array.size();
-	}
-
-	public void addAbstractEventInfo(IAbstractEventInfo info) {
-		array.add(info);
 	}
 
 }

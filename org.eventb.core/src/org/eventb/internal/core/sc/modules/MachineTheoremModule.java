@@ -16,6 +16,8 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IMachineLabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
@@ -80,6 +82,15 @@ public class MachineTheoremModule extends TheoremModule {
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
 }

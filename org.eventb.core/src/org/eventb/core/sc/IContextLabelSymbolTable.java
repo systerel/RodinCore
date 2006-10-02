@@ -7,13 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eventb.core.sc.symbolTable.ISymbolTable;
+import org.eventb.core.EventBPlugin;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable, IState {
+public interface IContextLabelSymbolTable extends ILabelSymbolTable {
+	
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".contextLabelSymbolTable";
 
-	// common interface to machine and event symbol tables
 }

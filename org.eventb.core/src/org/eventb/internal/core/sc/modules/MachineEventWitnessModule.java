@@ -23,15 +23,16 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IEventLabelSymbolTable;
+import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IRefinedEventTable;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
-import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
+import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -80,7 +81,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		ILabelSymbolTable savedLabelSymbolTable = labelSymbolTable;
 		
-		labelSymbolTable = new LabelSymbolTable(witnesses.length * 4 / 3 + 1);
+		labelSymbolTable = new EventLabelSymbolTable(witnesses.length * 4 / 3 + 1);
 		
 		repository.setState(labelSymbolTable);
 		
@@ -175,10 +176,10 @@ public class MachineEventWitnessModule extends PredicateModule {
 		if (parent == null)
 			return;
 		
-		IRefinedEventTable refinedEventTable = (IRefinedEventTable)
-			repository.getState(IRefinedEventTable.STATE_TYPE);
+		IEventRefinesInfo refinedEventTable = (IEventRefinesInfo)
+			repository.getState(IEventRefinesInfo.STATE_TYPE);
 		
-		if (refinedEventTable.size() == 0)
+		if (refinedEventTable.isEmpty())
 			return;
 		
 		IAbstractEventInfo abstractEventInfo = 
@@ -268,6 +269,15 @@ public class MachineEventWitnessModule extends PredicateModule {
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		// no progress inside event
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 }

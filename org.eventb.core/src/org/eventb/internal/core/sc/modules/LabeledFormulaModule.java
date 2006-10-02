@@ -11,7 +11,6 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -23,7 +22,6 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IParsedFormula;
 import org.eventb.core.sc.IStateRepository;
@@ -42,7 +40,6 @@ import org.rodinp.core.IRodinElement;
 public abstract class LabeledFormulaModule extends LabeledElementModule {
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
-	protected ILabelSymbolTable labelSymbolTable;
 	protected ITypingState typingState;
 	
 	/* (non-Javadoc)
@@ -53,10 +50,9 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			IRodinElement element, 
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		labelSymbolTable =
-			(ILabelSymbolTable) repository.getState(ILabelSymbolTable.STATE_TYPE);
 		typingState = 
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
 	}
@@ -70,8 +66,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
-		labelSymbolTable = null;
 		typingState = null;
+		super.endModule(element, repository, monitor);
 	}
 
 	protected void issueASTProblemMarkers(int severity, IRodinElement element, IResult result) {
@@ -238,10 +234,24 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 
 	}
 
-	protected void updateIdentifierSymbolTable(
-			ITypeEnvironment inferredEnvironment,
+	protected boolean updateIdentifierSymbolTable(
+			IInternalElement formulaElement,
+			ITypeEnvironment inferredEnvironment, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
-		// by default do nothing
+		
+		if (inferredEnvironment.isEmpty())
+			return true;
+		
+		ITypeEnvironment.IIterator iterator = inferredEnvironment.getIterator();
+		while (iterator.hasNext()) {
+			iterator.advance();
+			issueMarker(
+					IMarkerDisplay.SEVERITY_ERROR, 
+					formulaElement, 
+					Messages.scuser_UntypedIdentifierError, 
+					iterator.getName());
+		}
+		return false;
 	}
 
 		/**
@@ -280,8 +290,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			
 			ILabelSymbolInfo symbolInfo = 
 				fetchLabel(
-					(ILabeledElement) formulaElements[i], 
-					labelSymbolTable,
+					formulaElements[i], 
 					component,
 					null);
 			
@@ -310,7 +319,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				ok &= inferredEnvironment != null;
 			
 				if (ok && !inferredEnvironment.isEmpty()) {
-					updateIdentifierSymbolTable(
+					ok = updateIdentifierSymbolTable(
+							formulaElements[i],
 							inferredEnvironment, 
 							typeEnvironment);
 				}

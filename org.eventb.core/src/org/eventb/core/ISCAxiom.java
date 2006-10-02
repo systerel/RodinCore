@@ -33,7 +33,7 @@ import org.eventb.core.ast.Predicate;
  * @author Stefan Hallerstede
  */
 public interface ISCAxiom 
-extends ITraceableElement, ILabeledElement, ISCBaggedElement, ISCPredicateElement {
+extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scAxiom"; //$NON-NLS-1$
 

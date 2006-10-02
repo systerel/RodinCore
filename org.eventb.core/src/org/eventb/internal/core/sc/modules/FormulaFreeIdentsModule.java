@@ -61,10 +61,14 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 			
 			if (symbolInfo == null || symbolInfo.hasError() || !symbolInfo.isVisible()) {
 				ok = false;
+				String message = 
+					symbolInfo == null && symbolTable.containsKey(freeIdentifier.getName()) ?
+					declaredFreeIdentifierErrorMessage() :
+					Messages.scuser_UndeclaredFreeIdentifierError;
 				issueMarkerWithLocation(
 						IMarkerDisplay.SEVERITY_ERROR, 
 						element, 
-						Messages.scuser_UndeclaredFreeIdentifierError, 
+						message, 
 						freeIdentifier.getSourceLocation().getStart(), 
 						freeIdentifier.getSourceLocation().getEnd(), 
 						freeIdentifier.getName());
@@ -72,6 +76,8 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 		}
 		return ok;
 	}
+	
+	protected abstract String declaredFreeIdentifierErrorMessage();
 
 	protected IIdentifierSymbolInfo getSymbolInfo(
 			IRodinElement element, 

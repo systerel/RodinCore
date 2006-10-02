@@ -11,13 +11,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ITraceableElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class SCTraceableElement extends InternalElement implements
+public abstract class SCTraceableElement extends EventBElement implements
 		ITraceableElement {
 
 	public SCTraceableElement(String name, IRodinElement parent) {

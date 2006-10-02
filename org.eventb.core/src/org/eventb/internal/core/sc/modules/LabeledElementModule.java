@@ -11,9 +11,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
@@ -21,21 +24,35 @@ import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
  */
 public abstract class LabeledElementModule extends ProcessorModule {
 
+	ILabelSymbolTable labelSymbolTable;
+	
+	@Override
+	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		labelSymbolTable = getLabelSymbolTableFromRepository(repository);
+	}
+	
+	@Override
+	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		labelSymbolTable = null;
+	}
+
+	protected abstract ILabelSymbolTable getLabelSymbolTableFromRepository(IStateRepository repository) throws CoreException;
+
 	/**
 	 * Adds a new label symbol to the label symbol table.
 	 * Returns the new symbol info created if the label is not already in use,
 	 * and <code>null</code> otherwise.
 	 * 
-	 * @param labeledElement the labeled element
-	 * @param labelSymbolTable the label symbol table
+	 * @param internalElement the labeled element
 	 * @return the new label symbol
 	 * @throws CoreException if there was a problem with the database or the symbol table
 	 */
 	protected ILabelSymbolInfo fetchLabel(
-			ILabeledElement labeledElement, 
-			ILabelSymbolTable labelSymbolTable, 
+			IInternalElement internalElement, 
 			String component,
 			IProgressMonitor monitor) throws CoreException {
+		
+		ILabeledElement labeledElement = (ILabeledElement) internalElement;
 		
 		String label = labeledElement.getLabel(monitor);
 		

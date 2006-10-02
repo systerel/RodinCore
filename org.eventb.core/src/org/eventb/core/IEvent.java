@@ -34,9 +34,11 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public interface IEvent extends ICommentedElement, ILabeledElement {
+public interface IEvent extends ICommentedElement, ILabeledElement, IEventConvergence {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event"; //$NON-NLS-1$
+	
+	String INITIALISATION = "INITIALISATION";
 
 	/**
 	 * Returns whether the event is inherited, that is whether it is

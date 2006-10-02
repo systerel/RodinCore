@@ -14,7 +14,6 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IIdentifierSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -67,7 +66,6 @@ public class MachineVariableModule extends IdentifierModule {
 	@Override
 	protected boolean insertIdentifierSymbol(
 			IIdentifierElement element,
-			IIdentifierSymbolTable identifierSymbolTable, 
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		
 		try {

@@ -19,10 +19,11 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.ISCVariant;
+import org.eventb.internal.core.Messages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * Implementation of Event-B SC machines as an extension of the Rodin database.
@@ -39,7 +40,7 @@ import org.rodinp.core.basis.RodinFile;
  * @author Stefan Hallerstede
  *
  */
-public class SCMachineFile extends RodinFile implements ISCMachineFile {
+public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -108,11 +109,15 @@ public class SCMachineFile extends RodinFile implements ISCMachineFile {
 	}
 
 	private ISCRefinesMachine getRefinesClause() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCRefinesMachine.ELEMENT_TYPE);
-		if (list.size() == 1) {
-			return (SCRefinesMachine) list.get(0);
-		}
-		return null;
+		return (ISCRefinesMachine) getSingletonChild(
+				ISCRefinesMachine.ELEMENT_TYPE, 
+				Messages.database_SCMachineMultipleRefinesFailure);
+	}
+
+	public ISCVariant getSCVariant() throws RodinDBException {
+		return (ISCVariant) getSingletonChild(
+				ISCVariant.ELEMENT_TYPE, 
+				Messages.database_SCMachineMultipleVariantFailure);
 	}
 
 }

@@ -19,6 +19,8 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.internal.core.sc.symbolTable.ContextLabelSymbolTable;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -29,6 +31,8 @@ import org.rodinp.core.builder.IGraph;
  */
 public class ContextStaticChecker extends StaticChecker {
 	
+	private final static int LABEL_SYMTAB_SIZE = 2047;
+
 	public static final String CONTEXT_SC_TOOL_ID = EventBPlugin.PLUGIN_ID + ".contextSC"; //$NON-NLS-1$
 	public static final String CONTEXT_SC_EXTENDS_ID = EventBPlugin.PLUGIN_ID + ".contextSCExtends"; //$NON-NLS-1$
 
@@ -125,6 +129,15 @@ public class ContextStaticChecker extends StaticChecker {
 			monitor.done();
 		}
 
+	}
+
+	@Override
+	protected IStateRepository createRepository(IRodinFile file, IProgressMonitor monitor) throws CoreException {
+		IStateRepository repository = super.createRepository(file, monitor);
+		final ContextLabelSymbolTable labelSymbolTable = 
+			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
+		repository.setState(labelSymbolTable);		
+		return repository;
 	}
 
 }

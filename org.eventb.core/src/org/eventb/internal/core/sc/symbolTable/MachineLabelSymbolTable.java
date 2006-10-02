@@ -5,15 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc;
+package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.symbolTable.ISymbolTable;
+import org.eventb.core.sc.IMachineLabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable, IState {
+public class MachineLabelSymbolTable extends SymbolTable implements IMachineLabelSymbolTable {
 
-	// common interface to machine and event symbol tables
+	public MachineLabelSymbolTable(int size) {
+		super(size);
+	}
+
+	public String getStateType() {
+		return STATE_TYPE;
+	}
+
 }

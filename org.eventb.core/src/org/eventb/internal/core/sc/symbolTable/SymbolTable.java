@@ -78,4 +78,8 @@ public class SymbolTable implements ISymbolTable {
 		return table.toString();
 	}
 	
+	public ISymbolInfo getSymbolInfoFromTop(String symbol) {
+		return getSymbolInfo(symbol);
+	}
+
 }

@@ -17,6 +17,8 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IMachineLabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
@@ -94,8 +96,6 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		final String bag = parent.getElementName();
-		
 		int index = offset;
 		
 		for (int i=0; i<invariants.length; i++) {
@@ -110,13 +110,21 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 			scInvariant.setLabel(invariants[i].getLabel(monitor), monitor);
 			scInvariant.setPredicate(predicates[i]);
 			scInvariant.setSource(invariants[i], monitor);
-			scInvariant.setBag(bag, monitor);
 		}
 	}
 
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
 }

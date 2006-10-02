@@ -33,6 +33,16 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	ISymbolInfo getSymbolInfo(String symbol);
 	
 	/**
+	 * This method allows to access only the top level of a stacked symbol table.
+	 * Returns the symbol info of the top symbol table for a symbol. 
+	 * If the symbol is not present <code>null</code> is returned. 
+	 * 
+	 * @param symbol the symbol corresponding to the symbol info
+	 * @return the symbol info
+	 */
+	ISymbolInfo getSymbolInfoFromTop(String symbol);
+	
+	/**
 	 * Inserts a symbol info into the symbol table. Multiple insertions are not allowed.
 	 * The symbol corresponding symbol is <code>symbolInfo.getSymbol()</code>.
 	 * 

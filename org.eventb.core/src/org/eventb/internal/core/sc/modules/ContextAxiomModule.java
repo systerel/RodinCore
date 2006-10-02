@@ -15,6 +15,8 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IContextLabelSymbolTable;
+import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
@@ -82,8 +84,6 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		final String bag = parent.getElementName();
-		
 		int index = 0;
 		
 		for (int i=0; i<axioms.length; i++) {
@@ -98,13 +98,20 @@ public class ContextAxiomModule extends PredicateWithTypingModule {
 			scAxiom.setLabel(axioms[i].getLabel(monitor), monitor);
 			scAxiom.setPredicate(predicates[i]);
 			scAxiom.setSource(axioms[i], monitor);
-			scAxiom.setBag(bag, monitor);
 		}
 	}
 
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
+	}
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 
 }

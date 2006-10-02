@@ -7,18 +7,27 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.HashSet;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.sc.IAbstractEventInfo;
+import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.IIdentifierSymbolTable;
 import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IMachineLabelSymbolTable;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
@@ -26,10 +35,11 @@ import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.TypingState;
-import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
+import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -62,11 +72,13 @@ public class MachineEventModule extends LabeledElementModule {
 	
 	IIdentifierSymbolTable identifierSymbolTable;
 	
-	ILabelSymbolTable labelSymbolTable;
-	
 	FormulaFactory factory;
 	
 	ITypingState typingState;
+	
+	IEvent[] events;
+	
+	private IAbstractEventTable abstractEventTable;
 
 	private static String EVENT_NAME_PREFIX = "EVT";
 	
@@ -78,17 +90,76 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IEvent[] events = machineFile.getEvents();
-		
 		if (events.length == 0)
 			return;
 		
 		monitor.subTask(Messages.bind(Messages.progress_MachineEvents));
 		
 		IEventSymbolInfo[] symbolInfos = 
-			fetchEvents(machineFile, events, repository, monitor);
+			fetchEvents(machineFile, repository, monitor);
 		
 		ISCEvent[] scEvents = new ISCEvent[events.length];
+		
+		preprocessEvents(machineFile, target, scEvents, symbolInfos, monitor);
+				
+		processEvents(scEvents, repository, monitor);
+				
+	}
+
+	private void preprocessEvents(
+			IMachineFile machineFile,
+			IInternalParent target, 
+			ISCEvent[] scEvents, 
+			IEventSymbolInfo[] symbolInfos, 
+			IProgressMonitor monitor) throws CoreException {
+		
+		for (IAbstractEventInfo abstractEventInfo : abstractEventTable) {
+			if (!abstractEventInfo.isRefined())
+				issueMarker(
+						IMarkerDisplay.SEVERITY_ERROR, 
+						machineFile, 
+						Messages.scuser_AbstractEventNotRefined, 
+						abstractEventInfo.getEventLabel());
+			else {
+				List<IEventSymbolInfo> mergeSymbolInfos = abstractEventInfo.getMergeSymbolInfos();
+				List<IEventSymbolInfo> splitSymbolInfos = abstractEventInfo.getSplitSymbolInfos();
+				if (mergeSymbolInfos.size() > 0 && splitSymbolInfos.size() > 0) {
+					issueErrorMarkers(
+							mergeSymbolInfos, 
+							abstractEventInfo, 
+							Messages.scuser_EventMergeSplitConflict);
+					issueErrorMarkers(
+							splitSymbolInfos, 
+							abstractEventInfo, 
+							Messages.scuser_EventMergeSplitConflict);
+				} else if (mergeSymbolInfos.size() > 1) {
+					issueErrorMarkers(
+							mergeSymbolInfos, 
+							abstractEventInfo, 
+							Messages.scuser_EventMergeMergeConflict);
+				}
+				
+				IEventSymbolInfo eventSymbolInfo = abstractEventInfo.getInherited();
+				
+				if (eventSymbolInfo != null)
+					if (mergeSymbolInfos.size() > 0 || splitSymbolInfos.size() > 0) {
+//						issueErrorMarkers(
+//								mergeSymbolInfos, 
+//								abstractEventInfo, 
+//								Messages.scuser_EventInheritedMergeSplitConflict);
+//						issueErrorMarkers(
+//								splitSymbolInfos, 
+//								abstractEventInfo, 
+//								Messages.scuser_EventInheritedMergeSplitConflict);
+						issueMarker(
+								IMarkerDisplay.SEVERITY_ERROR, 
+								eventSymbolInfo.getSourceElement(), 
+								Messages.scuser_EventInheritedMergeSplitConflict,
+								abstractEventInfo.getEventLabel());
+						eventSymbolInfo.setError();
+					}
+			}
+		}
 		
 		int index = 0;
 		
@@ -98,13 +169,124 @@ public class MachineEventModule extends LabeledElementModule {
 			} else
 				scEvents[i] = null;
 		}
-				
-		processEvents(events, scEvents, repository, monitor);
-				
+		
+	}
+
+	void issueErrorMarkers(
+			List<IEventSymbolInfo> symbolInfos, 
+			IAbstractEventInfo abstractEventInfo, 
+			String message) throws CoreException {
+		String abstractEventLabel = abstractEventInfo.getEventLabel();
+		for (IEventSymbolInfo symbolInfo : symbolInfos) {
+			IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
+			
+			issueRefinementErrorMarker(symbolInfo);
+			
+			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesEvents())
+				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
+					issueMarker(
+							IMarkerDisplay.SEVERITY_ERROR, 
+							refinesEvent, 
+							message, 
+							abstractEventLabel);
+		}
+		abstractEventInfo.setRefineError(true);
+	}
+
+	private void issueRefinementErrorMarker(IEventSymbolInfo symbolInfo) throws CoreException {
+		if (!symbolInfo.hasError())
+			issueMarker(
+					IMarkerDisplay.SEVERITY_ERROR, 
+					symbolInfo.getSourceElement(), 
+					Messages.scuser_EventRefinementError);
+		symbolInfo.setError();
+	}
+	
+	private boolean fetchRefineData(
+			IEventSymbolInfo symbolInfo, 
+			IRefinesEvent[] refinesEvents, 
+			IProgressMonitor monitor) throws CoreException {
+		
+		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo() == null ?
+				new EventRefinesInfo(symbolInfo, refinesEvents.length) :
+				symbolInfo.getRefinesInfo();
+		
+		symbolInfo.setRefinesInfo(refinesInfo);
+		
+		boolean found = false;
+		
+		HashSet<String> abstractLabels = (refinesEvents.length > 1) ? 
+				new HashSet<String>(refinesEvents.length * 4 / 3 + 1) : 
+				null;
+		
+		for (int i=0; i<refinesEvents.length; i++) {
+			
+			String label = refinesEvents[i].getAbstractEventLabel();
+			
+			// filter duplicates
+			if (abstractLabels != null)
+				if (abstractLabels.contains(label)) {
+					issueMarker(
+							IMarkerDisplay.SEVERITY_WARNING, 
+							refinesEvents[i], 
+							Messages.scuser_AbstractEventLabelConflict, 
+							label);
+					continue;
+				} else
+					abstractLabels.add(label);
+			
+			if (label.equals(IEvent.INITIALISATION)) {
+				issueMarker(
+						IMarkerDisplay.SEVERITY_ERROR, 
+						refinesEvents[i], 
+						Messages.scuser_InitialisationRefinedError);
+				issueRefinementErrorMarker(symbolInfo);
+				continue;
+			}
+			
+			IAbstractEventInfo abstractEventInfo = 
+				getAbstractEventInfoForLabel(symbolInfo, label, refinesEvents[i]);
+			
+			if (abstractEventInfo == null)
+				continue;
+			
+			if (symbolInfo.getSymbol().equals(abstractEventInfo.getEventLabel()))
+				found = true;
+			
+			refinesInfo.addAbstractEventInfo(abstractEventInfo);
+			refinesInfo.addRefinesEvent(refinesEvents[i]);
+			
+			// this is a pretty rough distinction. But it should be sufficient in practice.
+			if (refinesEvents.length == 1) {
+				abstractEventInfo.addSplitSymbolInfo(symbolInfo);
+			} else {
+				abstractEventInfo.addMergeSymbolInfo(symbolInfo);
+			}
+		}
+		
+		return found;
+	}
+
+	private IAbstractEventInfo getAbstractEventInfoForLabel(
+			IEventSymbolInfo symbolInfo, 
+			String label, 
+			IRodinElement element) throws CoreException {
+		IAbstractEventInfo abstractEventInfo = abstractEventTable.getAbstractEventInfo(label);
+
+		if (abstractEventInfo == null || abstractEventInfo.isForbidden()) {
+			issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
+					Messages.scuser_AbstractEventNotFound);
+			abstractEventInfo = null;
+			issueMarker(
+					IMarkerDisplay.SEVERITY_ERROR, 
+					symbolInfo.getSourceElement(), 
+					Messages.scuser_EventRefinementError);
+			issueRefinementErrorMarker(symbolInfo);
+		}
+		return abstractEventInfo;
 	}
 
 	private void processEvents(
-			IEvent[] events, 
 			ISCEvent[] scEvents, 
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -118,7 +300,7 @@ public class MachineEventModule extends LabeledElementModule {
 							factory));
 			
 			repository.setState(
-					new LabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
+					new EventLabelSymbolTable(EVENT_LABEL_SYMTAB_SIZE));
 			
 			ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
 			eventTypeEnvironment.addAll(typingState.getTypeEnvironment());
@@ -138,7 +320,6 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private IEventSymbolInfo[] fetchEvents(
 			IMachineFile machineFile, 
-			IEvent[] events, 
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -147,23 +328,92 @@ public class MachineEventModule extends LabeledElementModule {
 		initAcceptorModules(acceptorModules, repository, null);
 		
 		IEventSymbolInfo[] symbolInfos = new IEventSymbolInfo[events.length];
+		
+		IEventSymbolInfo init = null;
 
 		for (int i=0; i < events.length; i++) {
 			
 			IEvent event = events[i];
 			
 			symbolInfos[i] = 
-				(IEventSymbolInfo) fetchLabel(event, labelSymbolTable, machineName, null);
+				(IEventSymbolInfo) fetchLabel(event, machineName, null);
 			
-			if (symbolInfos[i] != null && !acceptModules(acceptorModules, event, repository, null)) {
+			if (symbolInfos[i] == null)
+				continue;
+			
+			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION))
+				init = symbolInfos[i];
+			
+			if (!acceptModules(acceptorModules, event, repository, null)) {
 				symbolInfos[i].setError();
+				continue;
 			}
 			
+			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION)) {
+				init = symbolInfos[i];
+				fetchRefinement(machineFile, event, symbolInfos[i], true, monitor);
+			} else {
+				fetchRefinement(machineFile, event, symbolInfos[i], false, monitor);
+			}
+
 		}
+		
+		if (init == null || init.hasError())
+			issueMarker(
+					IMarkerDisplay.SEVERITY_ERROR, 
+					machineFile, 
+					Messages.scuser_MachineWithoutInitialisationError, 
+					machineName);
 		
 		endAcceptorModules(acceptorModules, repository, null);
 		
 		return symbolInfos;
+	}
+
+	private void fetchRefinement(
+			IMachineFile machineFile,
+			IEvent event, 
+			IEventSymbolInfo symbolInfo, 
+			boolean isInit, 
+			IProgressMonitor monitor) throws RodinDBException, CoreException {
+		boolean inherited = event.isInherited(monitor);
+		
+		if (isInit && !inherited) {
+			if (machineFile.getRefinesClause() != null)
+				makeImplicitRefinement(event, symbolInfo);
+		}
+		
+		if (inherited) {
+			symbolInfo.setInherited();
+			
+			makeImplicitRefinement(event, symbolInfo);
+		} else {
+			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(), monitor);
+			if (!found) {
+				IAbstractEventInfo abstractEventInfo =
+					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
+				if (abstractEventInfo != null && !abstractEventInfo.isForbidden())
+					issueMarker(
+							IMarkerDisplay.SEVERITY_WARNING, 
+							event, 
+							Messages.scuser_InconsistentEventLabelProblem, 
+							symbolInfo.getSymbol());
+			}
+		}
+	}
+
+	private void makeImplicitRefinement(IEvent event, IEventSymbolInfo symbolInfo) throws CoreException {
+		IAbstractEventInfo eventInfo = 
+			getAbstractEventInfoForLabel(symbolInfo, symbolInfo.getSymbol(), event);
+		
+		if (eventInfo == null)
+			symbolInfo.setError();
+		else {
+			eventInfo.setInherited(symbolInfo);
+			IEventRefinesInfo refinesInfo = new EventRefinesInfo(symbolInfo, 1);
+			symbolInfo.setRefinesInfo(refinesInfo);
+			refinesInfo.addAbstractEventInfo(eventInfo);
+		}
 	}
 	
 	private ISCEvent createSCEvent(
@@ -201,11 +451,16 @@ public class MachineEventModule extends LabeledElementModule {
 	 */
 	@Override
 	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
+		IMachineFile machineFile = (IMachineFile) element;
+		
+		events = machineFile.getEvents();
+		
+		abstractEventTable =
+			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
+		
 		identifierSymbolTable =
 			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		
-		labelSymbolTable =
-			(ILabelSymbolTable) repository.getState(ILabelSymbolTable.STATE_TYPE);
 		
 		factory = repository.getFormulaFactory();
 		
@@ -223,12 +478,22 @@ public class MachineEventModule extends LabeledElementModule {
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		repository.setState(identifierSymbolTable);
-		repository.setState(labelSymbolTable);
 		repository.setState(typingState);
 		identifierSymbolTable = null;
-		labelSymbolTable = null;
 		factory = null;
 		typingState = null;
+		events = null;
+		abstractEventTable = null;
+		super.endModule(element, repository, monitor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 	
 }

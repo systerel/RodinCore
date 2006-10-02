@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
@@ -19,7 +20,8 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 public abstract class PredicateWithTypingModule extends PredicateModule {
 
 	@Override
-	protected void updateIdentifierSymbolTable(
+	protected boolean updateIdentifierSymbolTable(
+			IInternalElement formulaElement,
 			ITypeEnvironment inferredEnvironment,
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
@@ -38,6 +40,7 @@ public abstract class PredicateWithTypingModule extends PredicateModule {
 		}
 		
 		typeEnvironment.addAll(inferredEnvironment);
+		return true;
 	}
 
 }

@@ -39,6 +39,7 @@ import org.eventb.internal.core.sc.modules.MachineSeesContextModule;
 import org.eventb.internal.core.sc.modules.MachineTheoremModule;
 import org.eventb.internal.core.sc.modules.MachineVariableFromLocalModule;
 import org.eventb.internal.core.sc.modules.MachineVariableModule;
+import org.eventb.internal.core.sc.modules.MachineVariantFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineVariantModule;
 
 /**
@@ -159,6 +160,18 @@ public final class ModuleManager implements IModuleManager {
 				}
 		);
 		
+		moduleTable.put(
+				MachineVariantModule.MACHINE_VARIANT_ACCEPTOR, 
+				new IAcceptorCreator() {
+					public IAcceptorModule[] create() {
+						return new IAcceptorModule[] {
+								new MachineVariantFreeIdentsModule()
+						};
+					}
+			
+				}
+		);	
+		
 		moduleTable.put(MachineStaticChecker.MACHINE_PROCESSOR,
 				new IProcessorCreator() {
 					public IProcessorModule[] create() {
@@ -215,6 +228,18 @@ public final class ModuleManager implements IModuleManager {
 			
 				}
 		);	
+		
+		moduleTable.put(
+				MachineEventModule.MACHINE_EVENT_ACCEPTOR, 
+				new IAcceptorCreator() {
+					public IAcceptorModule[] create() {
+						return new IAcceptorModule[] {
+								new MachinePreviousEventLabelModule()
+						};
+					}
+			
+				}
+		);
 		
 		moduleTable.put(
 				MachineEventModule.MACHINE_EVENT_PROCESSOR, 

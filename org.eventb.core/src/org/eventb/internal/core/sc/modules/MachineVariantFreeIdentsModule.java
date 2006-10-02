@@ -12,15 +12,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachinePredicateFreeIdentsModule extends FormulaFreeIdentsModule {
-
+public class MachineVariantFreeIdentsModule extends MachinePredicateFreeIdentsModule {
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo(org.eventb.core.ast.FreeIdentifier)
 	 */
@@ -31,17 +30,12 @@ public class MachinePredicateFreeIdentsModule extends FormulaFreeIdentsModule {
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (variableSymbolInfo.isForbidden())
+			IVariableSymbolInfo variableSymbolInfo = 
+				(IVariableSymbolInfo) symbolInfo;
+			if (!variableSymbolInfo.isPreserved())
 				return null;
 		}
 		return symbolInfo;
 	}
 
-	@Override
-	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_PredicateFreeIdentifierError;
-	}
-
-	
 }

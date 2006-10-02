@@ -10,14 +10,13 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -37,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class Event extends EventBElement implements IEvent {
 	
-	public static String INHERITED_ATTRIBUTE = "inherited";
+	public static String INHERITED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".inherited";
 	
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -106,10 +105,6 @@ public class Event extends EventBElement implements IEvent {
 	}
 
 	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
-		if (inherited) {
-			if (hasChildren())
-				throw Util.newRodinDBException(Messages.database_EventSetInheritedFailure, this);
-		}
 		setBooleanAttribute(INHERITED_ATTRIBUTE, inherited, monitor);
 	}
 

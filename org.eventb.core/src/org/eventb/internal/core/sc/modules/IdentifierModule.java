@@ -36,6 +36,12 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class IdentifierModule extends ProcessorModule {
 
+	FormulaFactory factory;
+	
+	IIdentifierSymbolTable identifierSymbolTable;
+
+	ITypingState typingState;
+
 	protected static FreeIdentifier parseIdentifier(
 			String name, 
 			IRodinElement element,
@@ -67,13 +73,11 @@ public abstract class IdentifierModule extends ProcessorModule {
 	 * Parse the identifier element
 	 * 
 	 * @param element the element to be parsed
-	 * @param factory a formula factory
 	 * @return a <code>FreeIdentifier</code> in case of success, <code>null</code> otherwise
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	protected FreeIdentifier parseIdentifier(
-			IIdentifierElement element, 
-			FormulaFactory factory) throws RodinDBException {
+			IIdentifierElement element) throws RodinDBException {
 		return parseIdentifier(element.getIdentifierString(), element, factory, this);
 	}
 
@@ -94,20 +98,12 @@ public abstract class IdentifierModule extends ProcessorModule {
 			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		
-		final FormulaFactory factory = repository.getFormulaFactory();
-		
-		final IIdentifierSymbolTable identifierSymbolTable = (IIdentifierSymbolTable)
-			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-
-		final ITypingState typingState = 
-			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
-		
 		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
 
 		initAcceptorModules(rules, repository, null);
 		
 		for(IIdentifierElement element : elements) {
-			FreeIdentifier identifier = parseIdentifier(element, factory);
+			FreeIdentifier identifier = parseIdentifier(element);
 			
 			if(identifier == null)
 				continue;
@@ -122,7 +118,6 @@ public abstract class IdentifierModule extends ProcessorModule {
 			boolean ok = 
 				insertIdentifierSymbol(
 					element,
-					identifierSymbolTable, 
 					newSymbolInfo);
 
 			if (!ok || !acceptModules(rules, element, repository, null))
@@ -143,7 +138,6 @@ public abstract class IdentifierModule extends ProcessorModule {
 
 	protected boolean insertIdentifierSymbol(
 			IIdentifierElement element,
-			IIdentifierSymbolTable identifierSymbolTable, 
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		
 		try {
@@ -168,6 +162,27 @@ public abstract class IdentifierModule extends ProcessorModule {
 			return false;
 		}
 		return true;
+	}
+
+
+	@Override
+	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
+		factory = repository.getFormulaFactory();
+		
+		identifierSymbolTable = (IIdentifierSymbolTable)
+			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
+
+		typingState = (ITypingState) repository.getState(ITypingState.STATE_TYPE);
+	}
+
+
+	@Override
+	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		factory = null;
+		identifierSymbolTable = null;
+		typingState = null;
+		super.endModule(element, repository, monitor);
 	}
 
 }

@@ -37,25 +37,25 @@ public interface IRefinesEvent extends IInternalElement {
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".refinesEvent"; //$NON-NLS-1$
 
 	/**
-	 * Returns the name of the event that is refined by the event that contains
+	 * Returns the label of the event that is refined by the event that contains
 	 * this element.
 	 * 
-	 * @return the name of the abstract event
+	 * @return the label of the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getAbstractEventName() throws RodinDBException;
+	String getAbstractEventLabel() throws RodinDBException;
 
 	/**
-	 * Sets the name of the event that is refined by the event that contains
+	 * Sets the label of the event that is refined by the event that contains
 	 * this element.
 	 * 
-	 * @param name
-	 *            the name of the abstract event
+	 * @param label
+	 *            the label of the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setAbstractEventName(String name) throws RodinDBException;
+	void setAbstractEventLabel(String label) throws RodinDBException;
 
 	// No method getAbstractSCEvent(), as its implementation would involve
 	// non-local operations on the database (essentially, getting to the

@@ -129,5 +129,14 @@ public interface IMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	IEvent[] getEvents() throws RodinDBException;
+	
+	/**
+	 * Returns a handle to the variant of this machine.
+	 * 
+	 * @return a handle to the variant
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IVariant getVariant() throws RodinDBException;
 
 }

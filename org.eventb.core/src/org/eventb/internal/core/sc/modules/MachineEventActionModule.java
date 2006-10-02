@@ -15,6 +15,8 @@ import org.eventb.core.IEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IEventLabelSymbolTable;
+import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
@@ -65,7 +67,7 @@ public class MachineEventActionModule extends AssignmentModule {
 				StaticChecker.getParentName(event),
 				repository,
 				monitor);
-		
+
 		saveActions(target, actions, assignments, null);
 
 	}
@@ -75,6 +77,9 @@ public class MachineEventActionModule extends AssignmentModule {
 			IAction[] actions, 
 			Assignment[] assignments,
 			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (parent == null)
+			return;
 		
 		int index = 0;
 		
@@ -96,6 +101,15 @@ public class MachineEventActionModule extends AssignmentModule {
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		// no progress inside event
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 }

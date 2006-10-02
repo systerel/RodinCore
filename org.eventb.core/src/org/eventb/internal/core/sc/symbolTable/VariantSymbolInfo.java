@@ -7,20 +7,25 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.ILabelSymbolTable;
+import org.rodinp.core.IRodinElement;
 
 /**
+ * This class is only used internally to be able to reuse the
+ * <code>LabeledFormulaModule</code> for variants. Instances of
+ * this class are never stored in the label symbol table.
+ * 
  * @author Stefan Hallerstede
  *
  */
-public class LabelSymbolTable extends SymbolTable implements ILabelSymbolTable {
+public class VariantSymbolInfo extends LabelSymbolInfo {
 
-	public LabelSymbolTable(int size) {
-		super(size);
+	public VariantSymbolInfo(String symbol, IRodinElement element, String component) {
+		super(symbol, element, component);
 	}
 
-	public String getStateType() {
-		return STATE_TYPE;
+	@Override
+	public String getLabelConflictMessage() {
+		return null;
 	}
 
 }

@@ -7,13 +7,18 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eventb.core.sc.symbolTable.ISymbolTable;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.ast.Expression;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable, IState {
+public interface IVariantInfo extends IState {
 
-	// common interface to machine and event symbol tables
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".variantInfo";
+	
+	void setExpression(Expression expression);
+	Expression getExpression();
+	
 }

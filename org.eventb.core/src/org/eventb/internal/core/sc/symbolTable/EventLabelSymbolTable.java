@@ -5,20 +5,25 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core;
+package org.eventb.internal.core.sc.symbolTable;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
+import org.eventb.core.sc.IEventLabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ISCBaggedElement extends IInternalElement {
+public class EventLabelSymbolTable extends SymbolTable implements IEventLabelSymbolTable {
 
-	void setBag(String bag, IProgressMonitor monitor) throws RodinDBException;
-	
-	String getBag(IProgressMonitor monitor) throws RodinDBException;
-	
+	public EventLabelSymbolTable(int size) {
+		super(size);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.core.sc.IState#getStateType()
+	 */
+	public String getStateType() {
+		return STATE_TYPE;
+	}
+
 }

@@ -22,6 +22,8 @@ import org.eventb.internal.core.Util;
 public final class StateRepository implements IStateRepository {
 	
 	private CoreException exception;
+	
+	public static boolean DEBUG = true;
 
 	public static final int REPOSITORY_SIZE = 117;
 	
@@ -30,6 +32,8 @@ public final class StateRepository implements IStateRepository {
 	private final FormulaFactory factory;
 	
 	public StateRepository(FormulaFactory factory) {
+		if (DEBUG)
+			System.out.println("NEW STATE REPOSITORY ##################");
 		this.factory = factory;
 		fileChanged = false;
 		repository = new Hashtable<String, IState>(REPOSITORY_SIZE);
@@ -69,8 +73,12 @@ public final class StateRepository implements IStateRepository {
 	}
 
 	public void setState(IState state) throws CoreException {
+		if (DEBUG)
+			System.out.println("SET STATE: " + state.getStateType() + " [" + state.getClass().getName() + "]");
 		if (exception != null)
 			throw exception;
+		if (state == null)
+			throw Util.newCoreException(Messages.sctool_NullStateError);
 		repository.put(state.getStateType(), state);
 	}
 

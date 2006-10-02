@@ -22,10 +22,11 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
+import org.eventb.internal.core.Messages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * Implementation of Event-B (unchecked) machines as an extension of the Rodin database.
@@ -41,7 +42,7 @@ import org.rodinp.core.basis.RodinFile;
  *
  * @author Laurent Voisin
  */
-public class MachineFile extends RodinFile implements IMachineFile {
+public class MachineFile extends EventBFile implements IMachineFile {
 	
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -136,11 +137,12 @@ public class MachineFile extends RodinFile implements IMachineFile {
 	}
 
 	public IRefinesMachine getRefinesClause() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IRefinesMachine.ELEMENT_TYPE);
-		if(list.size() == 1)
-			return (RefinesMachine) list.get(0);
-		else
-			return null;
+		return (IRefinesMachine) getSingletonChild(IRefinesMachine.ELEMENT_TYPE, Messages.database_MachineMultipleRefinesFailure);
 	}
+
+	public IVariant getVariant() throws RodinDBException {
+		return (IVariant) getSingletonChild(IVariant.ELEMENT_TYPE, Messages.database_MachineMultipleVariantFailure);
+	}
+
 
 }

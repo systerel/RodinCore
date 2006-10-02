@@ -35,7 +35,7 @@ import org.eventb.core.ast.Predicate;
  * 
  */
 public interface ISCInvariant 
-extends ITraceableElement, ILabeledElement, ISCBaggedElement, ISCPredicateElement {
+extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scInvariant"; //$NON-NLS-1$
 

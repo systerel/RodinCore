@@ -23,6 +23,7 @@ public final class Messages {
 	
 	// Static checker error
 	public static String sctool_UninitializedStateError;
+	public static String sctool_NullStateError;
 	
 	// Symbol table errors
 	public static String symtab_SymbolConflict;
@@ -61,6 +62,14 @@ public final class Messages {
     public static String scuser_SeenContextNotFound;
     public static String scuser_AbstractMachineNotFound;
     public static String scuser_AbstractEventNotFound;
+    public static String scuser_AbstractEventNotRefined;
+    public static String scuser_AbstractEventLabelConflict;
+    public static String scuser_EventMergeSplitConflict;
+    public static String scuser_EventMergeMergeConflict;
+    public static String scuser_EventInheritedMergeSplitConflict;
+    public static String scuser_EventRefinementError;
+    public static String scuser_MachineWithoutInitialisationError;
+    public static String scuser_InitialisationRefinedError;
     public static String scuser_CarrierSetNameImportConflict;
     public static String scuser_CarrierSetNameConflict;
     public static String scuser_ConstantNameImportConflict;
@@ -70,7 +79,11 @@ public final class Messages {
 	public static String scuser_UntypedCarrierSetError;
     public static String scuser_UntypedConstantError;
     public static String scuser_UntypedVariableError;
+    public static String scuser_UntypedIdentifierError;
     public static String scuser_UndeclaredFreeIdentifierError;
+    public static String scuser_VariantFreeIdentifierError;
+    public static String scuser_PredicateFreeIdentifierError;
+    public static String scuser_InvalidVariantTypeError;
     
     public static String scuser_AxiomLabelConflict;
     public static String scuser_TheoremLabelConflict;
@@ -87,6 +100,7 @@ public final class Messages {
     
     public static String scuser_AbstractEventLabelProblem;
     public static String scuser_ObsoleteEventLabelProblem;
+    public static String scuser_InconsistentEventLabelProblem;
     public static String scuser_ObsoleteVariableNameProblem;
     public static String scuser_VariableHasDisappearedError;
     public static String scuser_VariableIsLocalInAbstractMachine;

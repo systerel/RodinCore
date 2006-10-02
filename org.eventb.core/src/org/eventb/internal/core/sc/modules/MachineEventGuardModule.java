@@ -22,10 +22,14 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
+import org.eventb.core.sc.IEventLabelSymbolTable;
+import org.eventb.core.sc.IEventRefinesInfo;
+import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IRefinedEventTable;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.symbolTable.ISymbolInfo;
+import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalElement;
@@ -103,7 +107,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		}
 	}
 
-	protected IRefinedEventTable refinedEventTable;
+	protected IEventRefinesInfo refinedEventTable;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#typeCheckFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], org.eventb.core.ast.ITypeEnvironment)
@@ -164,7 +168,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		refinedEventTable = (IRefinedEventTable) repository.getState(IRefinedEventTable.STATE_TYPE);
+		refinedEventTable = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)
@@ -182,6 +186,47 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		// no progress inside event
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+	 */
+	@Override
+	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository repository) throws CoreException {
+		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
+	}
+	
+	private boolean allLocalVariables(ITypeEnvironment typeEnvironment) {
+		ITypeEnvironment.IIterator iterator = typeEnvironment.getIterator();
+		while (iterator.hasNext()) {
+			iterator.advance();
+			ISymbolInfo symbolInfo = 
+				identifierSymbolTable.getSymbolInfoFromTop(iterator.getName());
+			if (symbolInfo instanceof IVariableSymbolInfo) {
+				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
+				if (variableSymbolInfo.isLocal())
+					continue;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	protected boolean updateIdentifierSymbolTable(
+			IInternalElement formulaElement, 
+			ITypeEnvironment inferredEnvironment, 
+			ITypeEnvironment typeEnvironment) throws CoreException {
+		
+		if (allLocalVariables(inferredEnvironment))
+			return super.updateIdentifierSymbolTable(
+					formulaElement, 
+					inferredEnvironment, 
+					typeEnvironment);
+		else
+			return false;
+
 	}
 
 }

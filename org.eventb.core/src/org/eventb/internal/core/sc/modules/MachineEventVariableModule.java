@@ -13,8 +13,12 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IVariable;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
+import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IIdentifierSymbolTable;
+import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -38,6 +42,8 @@ public class MachineEventVariableModule extends IdentifierModule {
 		IModuleManager manager = ModuleManager.getModuleManager();
 		modules = manager.getAcceptorModules(MACHINE_EVENT_VARIABLE_ACCEPTOR);
 	}
+	
+	protected IEventRefinesInfo eventRefinesInfo;
 
 	public void process(
 			IRodinElement element, 
@@ -59,18 +65,49 @@ public class MachineEventVariableModule extends IdentifierModule {
 				modules,
 				repository, 
 				monitor);
+		
+		patchTypeEnvironment();
 	}
 
+	/**
+	 * add abstract local variables to type environment
+	 * that are not also local variables of the refined event
+	 */
+	private void patchTypeEnvironment() {
+		if (eventRefinesInfo.isEmpty())
+			return;
+		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
+		ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
+		for (FreeIdentifier freeIdentifier : abstractEventInfo.getIdentifiers()) {
+			String name = freeIdentifier.getName();
+			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)
+				continue;
+			Type type = freeIdentifier.getType();
+			typeEnvironment.addName(name, type);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.IdentifierModule#insertIdentifierSymbol(org.eventb.core.sc.IIdentifierSymbolTable, org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo)
 	 */
 	@Override
 	protected boolean insertIdentifierSymbol(
 			IIdentifierElement element,
-			IIdentifierSymbolTable identifierSymbolTable, 
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		((IVariableSymbolInfo) newSymbolInfo).setLocal();
-		return super.insertIdentifierSymbol(element, identifierSymbolTable, newSymbolInfo);
+		return super.insertIdentifierSymbol(element, newSymbolInfo);
+	}
+
+	@Override
+	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		super.initModule(element, repository, monitor);
+		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		eventRefinesInfo = null;
+		super.endModule(element, repository, monitor);
 	}
 
 }

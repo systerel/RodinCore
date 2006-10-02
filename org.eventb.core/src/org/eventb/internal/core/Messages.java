@@ -27,8 +27,13 @@ public final class Messages {
 	public static String database_SCPredicateTCFailure;
 	public static String database_SCRefinesEventTypeFailure;
 	public static String database_SCRefinesMachineTypeFailure;
+	public static String database_SCMachineMultipleVariantFailure;
+	public static String database_SCMachineMultipleRefinesFailure;
+
+	public static String database_MachineMultipleRefinesFailure;
+	public static String database_MachineMultipleVariantFailure;
 	
-	public static String database_EventSetInheritedFailure;
+	public static String database_EventSetInvalidConvergenceFailure;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

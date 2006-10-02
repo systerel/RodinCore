@@ -22,10 +22,10 @@ import org.eventb.core.sc.IAbstractEventTable;
  */
 public class AbstractEventTable implements IAbstractEventTable {
 	
-	ISCMachineFile machineFile;
-	Hashtable<String, IAbstractEventInfo> table;
-	HashSet<IAbstractEventInfo> set;
-	HashSet<String> localVariables;
+	final private ISCMachineFile machineFile;
+	final private Hashtable<String, IAbstractEventInfo> table;
+	final private HashSet<IAbstractEventInfo> set;
+	final private HashSet<String> localVariables;
 
 	public AbstractEventTable(int size, ISCMachineFile m) {
 		table = new Hashtable<String, IAbstractEventInfo>(size);

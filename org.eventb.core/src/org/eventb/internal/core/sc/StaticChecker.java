@@ -18,7 +18,7 @@ import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
-import org.eventb.internal.core.sc.symbolTable.LabelSymbolTable;
+import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -33,8 +33,6 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	public static boolean DEBUG = false;
 	
-	private final static int LABEL_SYMTAB_SIZE = 2047;
-
 	private final static int IDENT_SYMTAB_SIZE = 2047;
 
 	private final static int CONTEXT_TABLE_SIZE = 137;
@@ -47,9 +45,6 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		
 		final IStateRepository repository = new StateRepository(factory);
 		
-		final LabelSymbolTable labelSymbolTable = 
-			new LabelSymbolTable(LABEL_SYMTAB_SIZE);
-		
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);
 		
@@ -57,7 +52,6 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 		
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
 
-		repository.setState(labelSymbolTable);
 		repository.setState(identifierSymbolTable);
 		repository.setState(typingState);
 		repository.setState(contextTable);

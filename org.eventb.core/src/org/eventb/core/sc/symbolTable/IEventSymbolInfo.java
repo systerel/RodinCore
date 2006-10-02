@@ -8,6 +8,7 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.IEventRefinesInfo;
 
 /**
  * @author Stefan Hallerstede
@@ -22,5 +23,13 @@ public interface IEventSymbolInfo extends ISymbolInfo {
 	boolean isDisappearing();
 
 	void setDisappearing() throws CoreException;
+	
+	boolean isInherited();
+	
+	void setInherited() throws CoreException;
+	
+	void setRefinesInfo(IEventRefinesInfo refinesInfo);
+	
+	IEventRefinesInfo getRefinesInfo();
 
 }

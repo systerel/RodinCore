@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEvent;
@@ -15,12 +17,13 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.IRefinedEventTable;
+import org.eventb.core.sc.IEventRefinesInfo;
+import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IMachineLabelSymbolTable;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
-import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.RefinedEventTable;
+import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -31,9 +34,10 @@ import org.rodinp.core.RodinDBException;
  */
 public class MachineEventRefinesModule extends ProcessorModule {
 
-	private IRefinesEvent[] refinesEvents;
-	private IRefinedEventTable refinedEventTable;
+	private ILabelSymbolTable labelSymbolTable;
 	private IAbstractEventTable abstractEventTable;
+	private IEventRefinesInfo eventRefinesInfo;
+	private String eventLabel;
 	
 	private static String REFINES_NAME_PREFIX = "REF";
 
@@ -46,70 +50,86 @@ public class MachineEventRefinesModule extends ProcessorModule {
 			IStateRepository repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
-		
-		if (refinesEvents.length == 0 || refinedEventTable.getAbstractEventInfos().size() == 0)
+
+		if (target == null)
 			return;
 		
-		IAbstractEventInfo abstractEventInfo =
-			refinedEventTable.getAbstractEventInfos().get(0);
+		IEventSymbolInfo symbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
 		
-		createRefinesClause(target, 0, refinesEvents[0], abstractEventInfo.getEvent(), monitor);
-
+		createRefinesClause(target, symbolInfo, monitor);
+		
 	}
 	
 	private void createRefinesClause(
 			IInternalParent target, 
-			int index,
-			IRefinesEvent refinesEvent, 
-			ISCEvent event,
+			IEventSymbolInfo symbolInfo, 
+			IProgressMonitor monitor) throws RodinDBException {
+		
+		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
+		
+		List<IRefinesEvent> refines = refinesInfo.getRefinesEvents();
+		
+		if (refines.size() > 0) { // user specified refinements
+		
+			int index = 0;
+			
+			for (IRefinesEvent refinesEvent : refines) {
+				
+				String label = refinesEvent.getAbstractEventLabel();
+				
+				ISCEvent abstractEvent = abstractEventTable.getAbstractEventInfo(label).getEvent();
+		
+				index = createRefinesEvent(target, index, refinesEvent, abstractEvent, monitor);
+			}
+		} else if (refinesInfo.getAbstractEventInfos().size() > 0) { // inherited event or initialisation
+			IAbstractEventInfo abstractEventInfo = refinesInfo.getAbstractEventInfos().get(0);
+			
+			createRefinesEvent(target, 0, 
+					symbolInfo.getSourceElement(), abstractEventInfo.getEvent(), monitor);
+		}
+	}
+
+	private int createRefinesEvent(
+			IInternalParent target, 
+			int index, 
+			IRodinElement element, 
+			ISCEvent abstractEvent, 
 			IProgressMonitor monitor) throws RodinDBException {
 		ISCRefinesEvent scRefinesEvent = (ISCRefinesEvent) target.createInternalElement(
 				ISCRefinesEvent.ELEMENT_TYPE, 
-				REFINES_NAME_PREFIX + index, null, monitor);
-		scRefinesEvent.setAbstractSCEvent(event);
-		scRefinesEvent.setSource(refinesEvent, monitor);
+				REFINES_NAME_PREFIX + index++, null, monitor);
+		scRefinesEvent.setAbstractSCEvent(abstractEvent);
+		scRefinesEvent.setSource(element, monitor);
+		return index;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
 		IEvent event = (IEvent) element;
 		
-		refinesEvents = event.getRefinesClauses();
+		eventLabel = event.getLabel(monitor);
 		
-		if (refinesEvents.length > 1)
-			issueMarker(
-					IMarkerDisplay.SEVERITY_WARNING, 
-					event, 
-					Messages.scuser_OnlyOneEventRefinesClauseProblem);
+		labelSymbolTable = (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 		
-		refinedEventTable =
-			new RefinedEventTable(refinesEvents.length);
+		IEventSymbolInfo eventSymbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
 		
-		repository.setState(refinedEventTable);
-
-		abstractEventTable =
-			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
+		eventRefinesInfo = eventSymbolInfo.getRefinesInfo();
 		
-		if (refinesEvents.length == 0)
-			return;
+		if (eventRefinesInfo == null)
+			eventRefinesInfo = new EventRefinesInfo(eventSymbolInfo, 0);
 		
-		IAbstractEventInfo abstractEventInfo =
-			abstractEventTable.getAbstractEventInfo(
-					refinesEvents[0].getAbstractEventName());
+		repository.setState(eventRefinesInfo);
 		
-		if (abstractEventInfo == null) {
-			issueMarker(IMarkerDisplay.SEVERITY_ERROR, refinesEvents[0], 
-					Messages.scuser_AbstractEventNotFound);
-			return;
-		}
+		abstractEventTable = (IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
 		
-		refinedEventTable.addAbstractEventInfo(abstractEventInfo);
-
 	}
 
 	/* (non-Javadoc)
@@ -118,8 +138,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 	@Override
 	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
-		refinesEvents = null;
-		refinedEventTable = null;
+		labelSymbolTable = null;
 		abstractEventTable = null;
 	}
 	

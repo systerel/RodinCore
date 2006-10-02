@@ -7,10 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
+import java.util.List;
+
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
@@ -30,7 +33,18 @@ public interface IAbstractEventInfo extends Comparable {
 	void setForbidden(boolean value);
 	boolean isForbidden();
 	
-	void setRefined(boolean value);
+	void setInherited(IEventSymbolInfo eventSymbolInfo);
+	IEventSymbolInfo getInherited();
+	
 	boolean isRefined();
+	
+	void addMergeSymbolInfo(IEventSymbolInfo symbolInfo);
+	void addSplitSymbolInfo(IEventSymbolInfo symbolInfo);
+	
+	List<IEventSymbolInfo> getMergeSymbolInfos();
+	List<IEventSymbolInfo> getSplitSymbolInfos();
+	
+	void setRefineError(boolean value);
+	boolean hasRefineError();
 
 }

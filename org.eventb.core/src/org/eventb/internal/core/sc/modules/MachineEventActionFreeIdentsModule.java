@@ -74,4 +74,10 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		return true;
 	}
 
+	@Override
+	protected String declaredFreeIdentifierErrorMessage() {
+		// cannot be called
+		return null;
+	}
+
 }

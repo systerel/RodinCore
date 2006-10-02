@@ -9,6 +9,9 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IEventConvergence;
+import org.eventb.internal.core.Messages;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -138,4 +141,18 @@ public abstract class EventBElement extends InternalElement {
 	public void setIdentifierString(String identifier) throws RodinDBException {
 		setContents(identifier);
 	}
+	
+	public void setConvergence(int value, IProgressMonitor monitor) throws RodinDBException {
+		if (value < 0 || value > 2)
+			throw Util.newRodinDBException(
+					Messages.database_EventSetInvalidConvergenceFailure,
+					this
+			);
+		setIntegerAttribute(IEventConvergence.CONVERGENCE_ATTRIBUTE, value, monitor);
+	}
+	
+	public int getConvergence(IProgressMonitor monitor) throws RodinDBException {
+		return getIntegerAttribute(IEventConvergence.CONVERGENCE_ATTRIBUTE, monitor);
+	}
+
 }

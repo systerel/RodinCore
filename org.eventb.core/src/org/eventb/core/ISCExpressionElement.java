@@ -29,6 +29,16 @@ import org.rodinp.core.RodinDBException;
 public interface ISCExpressionElement extends IInternalElement {
 
 	/**
+	 * Returns the expression string contained in this element.
+	 * 
+	 * @return the string representation of the expression of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getExpressionString()
+			throws RodinDBException;
+
+	/**
 	 * Returns the untyped expression contained in this element.
 	 * 
 	 * @param factory

@@ -104,6 +104,7 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCTheorem[] getSCTheorems() throws RodinDBException;
+	
 	/**
 	 * Returns the array containing all SC events of this SC machine.
 	 * 
@@ -112,5 +113,14 @@ public interface ISCMachineFile extends IRodinFile {
 	 *             if there was a problem accessing the database
 	 */
 	ISCEvent[] getSCEvents() throws RodinDBException;
+	
+	/**
+	 * Returns the handle of the SC variant of this SC machine.
+	 * 
+	 * @return the handle of the SC variant
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCVariant getSCVariant() throws RodinDBException;
 
 }

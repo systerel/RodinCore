@@ -44,12 +44,4 @@ public class SCInvariant extends SCPredicateElement implements ISCInvariant {
 		return ELEMENT_TYPE;
 	}
 
-	public void setBag(String bag, IProgressMonitor monitor) throws RodinDBException {
-		CommonAttributesUtil.setBag(this, bag, monitor);
-	}
-
-	public String getBag(IProgressMonitor monitor) throws RodinDBException {
-		return CommonAttributesUtil.getBag(this, monitor);
-	}
-
 }

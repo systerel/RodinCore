@@ -10,19 +10,28 @@ package org.eventb.core.sc;
 import java.util.List;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEvent;
+import org.eventb.core.IRefinesEvent;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IRefinedEventTable extends IState {
+public interface IEventRefinesInfo extends IState {
 	
-	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".refinedEventTable";
+	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".eventRefinesInfo";
+	
+	IEvent getEvent();
+	String getEventLabel();
 	
 	List<IAbstractEventInfo> getAbstractEventInfos();
 	
-	int size();
+	boolean isEmpty();
 	
 	void addAbstractEventInfo(IAbstractEventInfo info);
+	
+	List<IRefinesEvent> getRefinesEvents();
+	
+	void addRefinesEvent(IRefinesEvent refinesEvent);
 	
 }
