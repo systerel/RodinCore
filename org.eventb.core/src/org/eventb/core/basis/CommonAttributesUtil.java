@@ -65,7 +65,7 @@ class CommonAttributesUtil {
 	}
 	
 	public static void setSignature(InternalElement element, int signature, IProgressMonitor monitor) throws RodinDBException {
-		element.setIntegerAttribute(COMMENT_ATTRIBUTE, signature, monitor);
+		element.setIntegerAttribute(SIGNATURE_ATTRIBUTE, signature, monitor);
 	}
 
 }
