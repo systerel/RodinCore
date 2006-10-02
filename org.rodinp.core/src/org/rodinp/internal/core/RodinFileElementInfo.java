@@ -280,6 +280,12 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return true;
 	}
 	
+	public synchronized boolean removeAttribute(InternalElement element,
+			String attrName) throws RodinDBException {
+		Element domElement = getDOMElementCheckExists(element);
+		return buffer.removeAttribute(domElement, attrName);
+	}
+
 	// Removes an element and all its descendants from the cache map.
 	private void removeFromMap(InternalElement element) {
 		// Remove all descendants

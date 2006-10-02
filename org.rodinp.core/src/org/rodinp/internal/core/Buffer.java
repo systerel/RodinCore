@@ -370,6 +370,15 @@ public class Buffer {
 		}
 	}
 
+	public boolean removeAttribute(Element domElement, String attrName) {
+		if (domElement.hasAttributeNS(null, attrName)) {
+			domElement.removeAttributeNS(null, attrName);
+			changed = true;
+			return true;
+		}
+		return false;
+	}
+	
 	public void renameElement(Element domElement, String newName) {
 		domElement.setAttributeNS(null, NAME_ATTRIBUTE, newName);
 		changed = true;

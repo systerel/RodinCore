@@ -55,6 +55,7 @@ public final class Messages {
 	public static String operation_notSupported;
 	public static String operation_nullContainer;
 	public static String operation_pathOutsideProject;
+	public static String operation_removeElementAttributeProgress;
 	public static String operation_renameElementProgress;
 	public static String operation_renameResourceProgress;
 	public static String operation_saveFileProgress;
