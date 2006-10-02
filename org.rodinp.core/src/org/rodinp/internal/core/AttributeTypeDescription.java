@@ -85,6 +85,28 @@ public abstract class AttributeTypeDescription {
 		
 	}
 
+	private static class LongAttributeTypeDescr extends AttributeTypeDescription {
+
+		protected LongAttributeTypeDescr(String id, String name) {
+			super(id, name);
+		}
+
+		@Override
+		public long getLongValue(String rawValue) throws RodinDBException {
+			try {
+				return Long.valueOf(rawValue);
+			} catch (NumberFormatException e) {
+				throw newInvalidValueException();
+			}
+		}
+
+		@Override
+		public String toString(long value) throws RodinDBException {
+			return Long.toString(value);
+		}
+		
+	}
+
 	private static class StringAttributeTypeDescr extends AttributeTypeDescription {
 
 		protected StringAttributeTypeDescr(String id, String name) {
@@ -116,6 +138,9 @@ public abstract class AttributeTypeDescription {
 		}
 		if ("integer".equals(kind)) {
 			return new IntAttributeTypeDescr(id, name);
+		}
+		if ("long".equals(kind)) {
+			return new LongAttributeTypeDescr(id, name);
 		}
 		if ("string".equals(kind)) {
 			return new StringAttributeTypeDescr(id, name);
@@ -151,6 +176,10 @@ public abstract class AttributeTypeDescription {
 	}
 	
 	public int getIntValue(String rawValue) throws RodinDBException {
+		throw newInvalidKindException();
+	}
+
+	public long getLongValue(String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
@@ -192,6 +221,10 @@ public abstract class AttributeTypeDescription {
 	}
 	
 	public String toString(IRodinElement value) throws RodinDBException {
+		throw newInvalidKindException();
+	}
+	
+	public String toString(long value) throws RodinDBException {
 		throw newInvalidKindException();
 	}
 	
