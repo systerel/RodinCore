@@ -271,7 +271,7 @@ public class EventBEditorUtils {
 										.createInternalElement(
 												IRefinesEvent.ELEMENT_TYPE,
 												name, null, monitor);
-								newRefEvt.setAbstractEventName(abs_name);
+								newRefEvt.setAbstractEventLabel(abs_name);
 								editor.addNewElement(newRefEvt);
 							}
 
@@ -1331,7 +1331,7 @@ public class EventBEditorUtils {
 			} else {
 				abstractElement = abstractFile.getInternalElement(
 						IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-								.getAbstractEventName());
+								.getAbstractEventLabel());
 			}
 		}
 		return abstractElement;
@@ -1345,7 +1345,7 @@ public class EventBEditorUtils {
 		if (abs_evts.length != 0) {
 			abs_evt = UIUtils.getFirstChildOfTypeWithLabel(abstractFile,
 					IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-							.getAbstractEventName());
+							.getAbstractEventLabel());
 		} else {
 			// Do nothing at the moment. Should try to get the event with same
 			// name?

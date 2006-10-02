@@ -220,8 +220,8 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					}
 				} else if (element instanceof IRefinesEvent) {
 					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-					if (!refinesEvent.getAbstractEventName().equals(text)) {
-						refinesEvent.setAbstractEventName(text);
+					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
+						refinesEvent.setAbstractEventLabel(text);
 					}
 				}
 
