@@ -154,6 +154,10 @@
           name="Integer attribute"
           kind="integer"/>
       <attributeType
+            id="fLong"
+            kind="long"
+            name="Long attribute"/>
+      <attributeType
           id="fString"
           name="String attribute"
           kind="string"/>
