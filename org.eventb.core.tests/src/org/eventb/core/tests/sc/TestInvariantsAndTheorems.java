@@ -123,7 +123,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
 
-		addMachineSees(mac, "con", "con");
+		addMachineSees(mac, "con");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"));
 	
@@ -150,7 +150,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		typeEnvironment.addName("V1", factory.makeGivenType("S1"));
 		
 		IMachineFile mac = createMachine("mac");
-		addMachineSees(mac, "con", "con");
+		addMachineSees(mac, "con");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1", "I2", "I3", "I4"), makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 	

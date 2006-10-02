@@ -38,13 +38,13 @@ public class TestRefines extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+2"));
-		addEventRefines(event, "evt", "evt");
+		addEventRefines(event, "evt");
 		
 		mac.save(null, true);
 		
@@ -81,13 +81,13 @@ public class TestRefines extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+2"));
-		addEventRefines(event, "evt", "evt");
+		addEventRefines(event, "evt");
 		
 		mac.save(null, true);
 		
@@ -124,14 +124,14 @@ public class TestRefines extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V2∈0‥5", "V2≥V1"));
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V2≔V2+2"));
-		addEventRefines(event, "evt", "evt");
+		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("V1'"), makeSList("V1'≥V2'"));
 		
 		mac.save(null, true);
@@ -178,14 +178,14 @@ public class TestRefines extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1X", "V2");
 		addInvariants(mac, makeSList("I3"), makeSList("V1X=V1+1"));
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("L2"), 
 				makeSList("L2"), makeSList("L2∈ℕ"), 
 				makeSList("A1"), makeSList("V1X≔L2"));
-		addEventRefines(event, "evt", "evt");
+		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("L1"), makeSList("L1=L2−1"));
 		
 		mac.save(null, true);

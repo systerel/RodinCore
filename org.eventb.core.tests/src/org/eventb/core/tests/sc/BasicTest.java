@@ -51,10 +51,12 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
@@ -118,20 +120,10 @@ public abstract class BasicTest extends TestCase {
 		return (IContextFile) rodinProject.createRodinFile(fileName, true, null);
 	}
 
-//	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
-//		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-//		return (ISCContextFile) rodinProject.createRodinFile(fileName, true, null);
-//	}
-
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
 		return (IMachineFile) rodinProject.createRodinFile(fileName, true, null);
 	}
-
-//	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
-//		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-//		return (ISCMachineFile) rodinProject.createRodinFile(fileName, true, null);
-//	}
 
 	public static void addAxioms(
 			IRodinFile rodinFile, 
@@ -145,26 +137,7 @@ public abstract class BasicTest extends TestCase {
 			axiom.setLabel(names[i], null);
 		}
 	}
-	
-//	public static void addSCAxioms(
-//			IRodinFile rodinFile, 
-//			String[] names, 
-//			Predicate[] axioms, 
-//			IInternalParent parent) throws RodinDBException {
-//		IInternalParent element = null;
-//		if(parent == null) 
-//			element = rodinFile;
-//		else
-//			element = parent;
-//		for(int i=0; i<names.length; i++) {
-//			ISCAxiom axiom = 
-//				(ISCAxiom) element.createInternalElement(ISCAxiom.ELEMENT_TYPE, 
-//						getUniqueName(), null, null);
-//			axiom.setPredicate(axioms[i]);
-//			axiom.setLabel(names[i], null);
-//		}
-//	}
-	
+		
 	public static void addCarrierSets(IRodinFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
 			ICarrierSet set = 
@@ -184,9 +157,11 @@ public abstract class BasicTest extends TestCase {
 		}
 	}
 
-	public static void addEventRefines(IEvent event, String refName, String name) throws RodinDBException {
-		IRefinesEvent refines = (IRefinesEvent) event.createInternalElement(IRefinesEvent.ELEMENT_TYPE, refName, null, null);
-		refines.setAbstractEventName(name);
+	public static void addEventRefines(IEvent event, String name) throws RodinDBException {
+		IRefinesEvent refines = 
+			(IRefinesEvent) event.createInternalElement(IRefinesEvent.ELEMENT_TYPE, 
+					getUniqueName(), null, null);
+		refines.setAbstractEventLabel(name);
 	}
 
 	public static void addEventWitnesses(IEvent event, String[] labels, String[] predicates) throws RodinDBException {
@@ -210,6 +185,7 @@ public abstract class BasicTest extends TestCase {
 			(IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
 		event.setLabel(name, null);
+		event.setInherited(false, null);
 		for(int i=0; i<vars.length; i++) {
 			IVariable variable = 
 				(IVariable) event.createInternalElement(IVariable.ELEMENT_TYPE, 
@@ -233,6 +209,22 @@ public abstract class BasicTest extends TestCase {
 		}
 		return event;
 	}
+	
+	public static IEvent addEvent(IRodinFile rodinFile, 
+			String name) throws RodinDBException {
+		return addEvent(rodinFile, name, makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+	}
+	
+	public static IEvent addInheritedEvent(IRodinFile rodinFile, 
+			String name) throws RodinDBException {
+		IEvent event = 
+			(IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE, 
+					getUniqueName(), null, null);
+		event.setLabel(name, null);
+		event.setInherited(true, null);
+		return event;
+		
+	}
 
 	public static void addInvariants(IRodinFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
@@ -244,104 +236,31 @@ public abstract class BasicTest extends TestCase {
 		}
 	}
 
-//	public static void addSCInvariants(IRodinFile rodinFile, String[] names, Predicate[] invariants) throws RodinDBException {
-//		for(int i=0; i<names.length; i++) {
-//			ISCInvariant invariant = 
-//				(ISCInvariant) rodinFile.createInternalElement(ISCInvariant.ELEMENT_TYPE, 
-//						getUniqueName(), null, null);
-//			invariant.setPredicate(invariants[i]);
-//			invariant.setLabel(names[i], null);
-//		}
-//	}
-//
-//	public static ISCInternalContext addSCInternalContext(IRodinFile file, String name) throws RodinDBException {
-//		return (ISCInternalContext) file.createInternalElement(ISCInternalContext.ELEMENT_TYPE, name, null, null);
-//	}
-//
-//	public static void addSCCarrierSets(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
-//		IInternalParent parent = null;
-//		if(internalContext == null)
-//			parent = rodinFile;
-//		else
-//			parent = internalContext;
-//		for(int i=0; i<names.length; i++) {
-//			SCCarrierSet identifier = 
-//				(SCCarrierSet) parent.createInternalElement(ISCCarrierSet.ELEMENT_TYPE, 
-//						names[i], null, null);
-//			identifier.setType(types[i]);
-//		}
-//	}
-//
-//	public static void addSCConstants(IRodinFile rodinFile, String[] names, Type[] types, ISCInternalContext internalContext) throws RodinDBException {
-//		IInternalParent parent = null;
-//		if(internalContext == null)
-//			parent = rodinFile;
-//		else
-//			parent = internalContext;
-//		for(int i=0; i<names.length; i++) {
-//			SCConstant identifier = 
-//				(SCConstant) parent.createInternalElement(ISCConstant.ELEMENT_TYPE, 
-//						names[i], null, null);
-//			identifier.setType(types[i]);
-//		}
-//	}
-//
-//	public static void addSCEvent(IRodinFile rodinFile, 
-//				String name,
-//				String[] vars,
-//				Type[] types,
-//				String[] guardNames,
-//				Predicate[] guards,
-//				String[] actionNames,
-//				Assignment[] actions
-//	) throws RodinDBException {
-//		ISCEvent event = 
-//			(ISCEvent) rodinFile.createInternalElement(ISCEvent.ELEMENT_TYPE, 
-//					getUniqueName(), null, null);
-//		event.setLabel(name, null);
-//		for(int i=0; i<vars.length; i++) {
-//			ISCVariable variable = 
-//				(ISCVariable) event.createInternalElement(ISCVariable.ELEMENT_TYPE, 
-//						vars[i], null, null);
-//			variable.setType(types[i]);
-//		}
-//		for(int i=0; i<guards.length; i++) {
-//			ISCGuard guard = 
-//				(ISCGuard) event.createInternalElement(ISCGuard.ELEMENT_TYPE, 
-//						getUniqueName(), null, null);
-//			guard.setPredicate(guards[i]);
-//			guard.setLabel(guardNames[i], null);
-//		}
-//		for(int j=0; j<actions.length; j++) {
-//			ISCAction action = 
-//				(ISCAction) event.createInternalElement(ISCAction.ELEMENT_TYPE, 
-//						getUniqueName(), null, null);
-//			action.setAssignment(actions[j]);
-//			action.setLabel(actionNames[j], null);
-//		}
-//	}
-//
-//	public static void addSCVariables(IRodinFile rodinFile, String[] names, Type[] types) throws RodinDBException {
-//		for(int i=0; i<names.length; i++) {
-//			SCVariable identifier = 
-//				(SCVariable) rodinFile.createInternalElement(ISCVariable.ELEMENT_TYPE, 
-//						names[i], null, null);
-//			identifier.setType(types[i]);
-//		}
-//	}
+	public static void addVariant(IRodinFile rodinFile, String variant) throws RodinDBException {
+		IVariant invariant = 
+				(IVariant) rodinFile.createInternalElement(IVariant.ELEMENT_TYPE, 
+						getUniqueName(), null, null);
+			invariant.setExpressionString(variant);
+	}
 
-	public static void addMachineSees(IRodinFile rodinFile, String refName, String name) throws RodinDBException {
-		ISeesContext sees = (ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, refName, null, null);
+	public static void addMachineSees(IRodinFile rodinFile, String name) throws RodinDBException {
+		ISeesContext sees = 
+			(ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, 
+					getUniqueName(), null, null);
 		sees.setSeenContextName(name);
 	}
 
-	public static void addMachineRefines(IRodinFile rodinFile, String refName, String name) throws RodinDBException {
-		IRefinesMachine refines = (IRefinesMachine) rodinFile.createInternalElement(IRefinesMachine.ELEMENT_TYPE, refName, null, null);
+	public static void addMachineRefines(IRodinFile rodinFile, String name) throws RodinDBException {
+		IRefinesMachine refines = 
+			(IRefinesMachine) rodinFile.createInternalElement(IRefinesMachine.ELEMENT_TYPE, 
+					getUniqueName(), null, null);
 		refines.setAbstractMachineName(name);
 	}
 
-	public static void addContextExtends(IRodinFile rodinFile, String refName, String name) throws RodinDBException {
-		IExtendsContext extendsContext = (IExtendsContext) rodinFile.createInternalElement(IExtendsContext.ELEMENT_TYPE, refName, null, null);
+	public static void addContextExtends(IRodinFile rodinFile, String name) throws RodinDBException {
+		IExtendsContext extendsContext = 
+			(IExtendsContext) rodinFile.createInternalElement(IExtendsContext.ELEMENT_TYPE, 
+					getUniqueName(), null, null);
 		extendsContext.setAbstractContextName(name);
 	}
 
@@ -354,21 +273,6 @@ public abstract class BasicTest extends TestCase {
 			theorem.setLabel(names[i], null);
 		}
 	}
-
-//	public static void addSCTheorems(IRodinFile rodinFile, String[] names, Predicate[] theorems, IInternalParent parent) throws RodinDBException {
-//		IInternalParent element = null;
-//		if(parent == null) 
-//			element = rodinFile;
-//		else
-//			element = parent;
-//		for(int i=0; i<names.length; i++) {
-//			ISCTheorem theorem = 
-//				(ISCTheorem) element.createInternalElement(ISCTheorem.ELEMENT_TYPE, 
-//						getUniqueName(), null, null);
-//			theorem.setPredicate(theorems[i]);
-//			theorem.setLabel(names[i], null);
-//		}
-//	}
 
 	public static void addVariables(IRodinFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
@@ -449,6 +353,13 @@ public abstract class BasicTest extends TestCase {
 		return tt;
 	}
 
+	protected String getNormalizedExpression(String input, ITypeEnvironment environment) {
+		Expression expr = factory.parseExpression(input).getParsedExpression();
+		expr.typeCheck(environment);
+		assertTrue(expr.isTypeChecked());
+		return expr.toStringWithTypes();
+	}
+	
 	protected String getNormalizedPredicate(String input, ITypeEnvironment environment) {
 		Predicate pred = factory.parsePredicate(input).getParsedPredicate();
 		pred.typeCheck(environment);
@@ -702,6 +613,23 @@ public abstract class BasicTest extends TestCase {
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
+	}
+
+	protected void containsVariant(ISCMachineFile file, ITypeEnvironment environment, String... strings) throws RodinDBException {
+		assert strings.length <= 1;
+		ISCVariant variant = file.getSCVariant();
+		
+		
+		
+		assertEquals("wrong number of variants", strings.length, variant == null ? 0 : 1);
+		
+		if (strings.length == 0)
+			return;
+		
+		String vs = variant.getExpressionString();
+		String exp = getNormalizedExpression(strings[0], environment);
+				
+		assertEquals("wrong variant", exp, vs);
 	}
 
 	protected void containsCarrierSets(ISCContext context, String... strings) throws RodinDBException {

@@ -320,7 +320,7 @@ public class TestEvents extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineSees(mac, "con", "con");
+		addMachineSees(mac, "con");
 		
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));

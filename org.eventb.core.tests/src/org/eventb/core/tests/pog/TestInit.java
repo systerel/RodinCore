@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestInit extends BasicTest {
 	
-	private static String init = "INITIALISATION";
+	private static String init = IEvent.INITIALISATION;
 
 	public void testInit_00() throws Exception {
 		IMachineFile mac = createMachine("mac");
@@ -69,13 +69,12 @@ public class TestInit extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
-		IEvent event = addEvent(mac, init, 
+		addEvent(mac, init, 
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔2"));
-		addEventRefines(event, init, init);
 		
 		mac.save(null, true);
 		
@@ -111,14 +110,13 @@ public class TestInit extends BasicTest {
 		runSC(abs);
 		
 		IMachineFile con = createMachine("con");
-		addMachineRefines(con, "", "abs");
+		addMachineRefines(con, "abs");
 		addVariables(con, "y");
 		addInvariants(con, makeSList("I1"), makeSList("y = x + 1"));
-		IEvent event = addEvent(con, init,
+		addEvent(con, init,
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("y ≔ 1"));
-		addEventRefines(event, init, init);
 		con.save(null, true);
 		runSC(con);
 		

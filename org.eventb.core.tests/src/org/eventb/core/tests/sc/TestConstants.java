@@ -99,7 +99,7 @@ public class TestConstants extends BasicTest {
 		runSC(abs1);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs1", "abs1");
+		addContextExtends(con, "abs1");
 
 		addConstants(con, makeSList("C2"));
 		addAxioms(con, makeSList("A1"), makeSList("C2∈ℕ"));
@@ -128,7 +128,7 @@ public class TestConstants extends BasicTest {
 		runSC(abs1);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs1", "abs1");
+		addContextExtends(con, "abs1");
 
 		addConstants(con, makeSList("C1"));
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));

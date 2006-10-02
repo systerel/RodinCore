@@ -27,7 +27,7 @@ public class TestExtendsContext extends BasicTest {
 		runSC(abs);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs", "abs");
+		addContextExtends(con, "abs");
 		
 		con.save(null, true);
 		
@@ -49,7 +49,7 @@ public class TestExtendsContext extends BasicTest {
 		runSC(abs);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs", "abs");
+		addContextExtends(con, "abs");
 		
 		con.save(null, true);
 		
@@ -78,8 +78,8 @@ public class TestExtendsContext extends BasicTest {
 		runSC(abs2);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs1", "abs1");
-		addContextExtends(con, "abs2", "abs2");
+		addContextExtends(con, "abs1");
+		addContextExtends(con, "abs2");
 		
 		con.save(null, true);
 		
@@ -107,8 +107,8 @@ public class TestExtendsContext extends BasicTest {
 		runSC(abs2);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs1", "abs1");
-		addContextExtends(con, "abs2", "abs2");
+		addContextExtends(con, "abs1");
+		addContextExtends(con, "abs2");
 		
 		con.save(null, true);
 		
@@ -144,9 +144,9 @@ public class TestExtendsContext extends BasicTest {
 		runSC(abs3);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs1", "abs1");
-		addContextExtends(con, "abs2", "abs2");
-		addContextExtends(con, "abs3", "abs3");
+		addContextExtends(con, "abs1");
+		addContextExtends(con, "abs2");
+		addContextExtends(con, "abs3");
 		
 		con.save(null, true);
 		

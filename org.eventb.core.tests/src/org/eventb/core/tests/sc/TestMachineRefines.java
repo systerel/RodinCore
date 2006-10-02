@@ -38,8 +38,8 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineSees(mac, "con");
+		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V2"));
 		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
@@ -72,7 +72,7 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile abs = createMachine("abs");
 		
-		addMachineSees(abs, "con", "con");
+		addMachineSees(abs, "con");
 
 		abs.save(null, true);
 		
@@ -80,8 +80,8 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineSees(mac, "con");
+		addMachineRefines(mac, "abs");
 
 		mac.save(null, true);
 		
@@ -106,7 +106,7 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile abs = createMachine("abs");
 		
-		addMachineSees(abs, "con", "con");
+		addMachineSees(abs, "con");
 
 		abs.save(null, true);
 		
@@ -114,8 +114,8 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineSees(mac, "con");
+		addMachineRefines(mac, "abs");
 
 		mac.save(null, true);
 		
@@ -140,7 +140,7 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile abs = createMachine("abs");
 		
-		addMachineSees(abs, "con", "con");
+		addMachineSees(abs, "con");
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
 
@@ -150,8 +150,8 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineSees(mac, "con");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 
@@ -179,7 +179,7 @@ public class TestMachineRefines extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"));
 

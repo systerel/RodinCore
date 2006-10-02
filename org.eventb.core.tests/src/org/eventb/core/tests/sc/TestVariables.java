@@ -79,7 +79,7 @@ public class TestVariables extends BasicTest {
 		
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
+		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
@@ -112,7 +112,7 @@ public class TestVariables extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineSees(mac, "con", "con");
+		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("C1"));
 		addInvariants(mac, makeSList("I1"), makeSList("C1∈ℕ"));
@@ -145,7 +145,7 @@ public class TestVariables extends BasicTest {
 
 		IMachineFile mac = createMachine("mac");
 		
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V1"));
 

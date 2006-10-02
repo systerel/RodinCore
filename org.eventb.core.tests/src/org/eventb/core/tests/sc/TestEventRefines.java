@@ -22,16 +22,16 @@ public class TestEventRefines extends BasicTest {
 	public void testEvents_00() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
-		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+		addEvent(abs, "evt");
 
 		abs.save(null, true);
 		
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
-		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
 		
 		mac.save(null, true);
 		
@@ -47,18 +47,18 @@ public class TestEventRefines extends BasicTest {
 	public void testEvents_01() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
-		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+		addEvent(abs, "evt");
 
 		abs.save(null, true);
 		
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
-		IEvent evt1 = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
-		addEventRefines(evt1, "evt", "evt");
-		IEvent evt2 = addEvent(mac, "evt2", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
-		addEventRefines(evt2, "evt", "evt");
+		addMachineRefines(mac, "abs");
+		IEvent evt1 = addEvent(mac, "evt1");
+		addEventRefines(evt1, "evt");
+		IEvent evt2 = addEvent(mac, "evt2");
+		addEventRefines(evt2, "evt");
 		
 		mac.save(null, true);
 		
@@ -82,9 +82,9 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		IEvent evt = addEvent(mac, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		
 		mac.save(null, true);
 		
@@ -108,9 +108,9 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		IEvent evt = addEvent(mac, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1⊆ℕ"), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		
 		mac.save(null, true);
 		
@@ -135,10 +135,10 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		IEvent evt = addEvent(mac, "evt", makeSList("L2"), 
 				makeSList("G1"), makeSList("L2⊆ℕ"), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("L1"), makeSList("L1∈L2"));
 		mac.save(null, true);
 		
@@ -172,10 +172,10 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		IEvent evt = addEvent(mac, "evt", makeSList("L2"), 
 				makeSList("G1"), makeSList("L2∈ℕ"), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=L2"));
 		mac.save(null, true);
 		
@@ -210,12 +210,12 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I2"), makeSList("V2⊆ℕ"));
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), makeSList("A2"), makeSList("V2:∣V2'⊆ℕ"));
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'∈V2'"));
 		mac.save(null, true);
 		
@@ -248,10 +248,10 @@ public class TestEventRefines extends BasicTest {
 		runSC(abs);
 
 		IMachineFile mac = createMachine("mac");
-		addMachineRefines(mac, "abs", "abs");
+		addMachineRefines(mac, "abs");
 		IEvent evt = addEvent(mac, "evt", makeSList("L1", "L2"), 
 				makeSList("G1", "G2"), makeSList("L1=1", "L2⊆ℕ"), makeSList(), makeSList());
-		addEventRefines(evt, "evt", "evt");
+		addEventRefines(evt, "evt");
 		mac.save(null, true);
 		
 		runSC(mac);
@@ -271,5 +271,356 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
+	public void testEvents_08() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		IEvent gvt = addEvent(mac, "gvt");
+		addEventRefines(gvt, "evt");
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
+		refinesEvents(events[0], "evt");
+		refinesEvents(events[1], "evt");
+		refinesEvents(events[2], "evt");
+	}
+
+	public void testEvents_09() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+		addEvent(abs, "fvt");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "fvt");
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt", "fvt");
+	}
+	
+	public void testEvents_10() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInheritedEvent(mac, "evt");
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt");
+	}
+
+	public void testEvents_11() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInheritedEvent(mac, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "fvt");
+		refinesEvents(events[0], "evt");
+		
+	}
+
+	public void testEvents_12() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+		addEvent(abs, "fvt");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInheritedEvent(mac, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		addEventRefines(fvt, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "fvt");
+		refinesEvents(events[0], "evt", "fvt");
+		
+	}	
+	
+	public void testEvents_13() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+		addEvent(abs, "fvt");
+		addEvent(abs, "gvt");
+		
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		addEventRefines(fvt, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file);
+		
+	}	
+	
+	public void testEvents_14() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+		addEvent(abs, "fvt");
+		addEvent(abs, "gvt");
+		addEvent(abs, "hvt");
+		
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "gvt");
+		addEventRefines(fvt, "fvt");
+		addInheritedEvent(mac, "hvt");
+		addEvent(mac, "ivt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "hvt", "ivt");
+		refinesEvents(events[0], "evt");
+		refinesEvents(events[1], "fvt", "gvt");
+		refinesEvents(events[2], "hvt");
+		refinesEvents(events[3]);
+	}	
+	
+	public void testEvents_15() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "gvt");
+		addEventRefines(fvt, "fvt");
+		addInheritedEvent(mac, "hvt");
+		addEvent(mac, "ivt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "ivt");
+	}	
+	
+	public void testEvents_16() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, IEvent.INITIALISATION);
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addEvent(mac, IEvent.INITIALISATION);
+		
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		refinesEvents(events[0], IEvent.INITIALISATION);
+		
+	}
+	
+	public void testEvents_17() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, IEvent.INITIALISATION);
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent init = addEvent(mac, IEvent.INITIALISATION);
+		addEventRefines(init, IEvent.INITIALISATION);
+		
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file);
+		
+	}
+	
+	public void testEvents_18() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, IEvent.INITIALISATION);
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInheritedEvent(mac, IEvent.INITIALISATION);
+		
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		refinesEvents(events[0], IEvent.INITIALISATION);
+		
+	}
+	
+	public void testEvents_19() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, IEvent.INITIALISATION);
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, IEvent.INITIALISATION);
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "fvt");
+		
+	}
+	
+	public void testEvents_20() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt");
+		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, "gvt");
+		addEvent(abs, "hvt");
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent hvt = addEvent(mac, "hvt");
+		addEventRefines(hvt, "hvt");
+		addEventRefines(hvt, IEvent.INITIALISATION);
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		IEvent gvt = addEvent(mac, "gvt");
+		addEventRefines(gvt, "gvt");
+		addEventRefines(gvt, "evt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "fvt");
+		
+	}
 
 }

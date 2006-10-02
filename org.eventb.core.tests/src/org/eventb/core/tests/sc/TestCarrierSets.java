@@ -84,7 +84,7 @@ public class TestCarrierSets extends BasicTest {
 		runSC(abs);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs", "abs");
+		addContextExtends(con, "abs");
 		
 		addCarrierSets(con, makeSList("S2"));
 		
@@ -110,7 +110,7 @@ public class TestCarrierSets extends BasicTest {
 		runSC(abs);
 		
 		IContextFile con = createContext("con");
-		addContextExtends(con, "abs", "abs");
+		addContextExtends(con, "abs");
 		
 		addCarrierSets(con, makeSList("S1"));
 		
