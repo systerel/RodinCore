@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -54,9 +53,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
-			if (s.equals(t))
-				file.delete(true, monitor);
-			
+			if (s.equals(t)) {
+				RodinCore.create(file).delete(true, monitor);
+			}			
 		} finally {
 			monitor.done();
 		}

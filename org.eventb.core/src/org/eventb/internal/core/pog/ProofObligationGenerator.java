@@ -17,6 +17,7 @@ import org.eventb.core.pog.IModule;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.internal.core.sc.StateRepository;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -99,14 +100,13 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 
 	public void remove(IFile file, IFile origin, IProgressMonitor monitor) throws CoreException {
 		try {
-			
 			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
 			
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
-			if (s.equals(t))
-				file.delete(true, monitor);
-			
+			if (s.equals(t)) {
+				RodinCore.create(file).delete(true, monitor);
+			}
 		} finally {
 			monitor.done();
 		}
