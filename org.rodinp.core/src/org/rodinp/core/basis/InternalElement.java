@@ -28,6 +28,7 @@ import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.MoveElementsOperation;
+import org.rodinp.internal.core.RemoveElementAttributeOperation;
 import org.rodinp.internal.core.RenameElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -255,6 +256,15 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return getInternalElement(type, childName);
 	}
 	
+	public long getLongAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+
+		final String rawValue = getAttributeRawValue(attrName, monitor);
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		return attributeTypeDescription.getLongValue(rawValue);
+	}
+
 	public final InternalElement getMutableCopy() {
 		final RodinFile file = getRodinFile();
 		if (! file.isSnapshot()) {
@@ -356,6 +366,11 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		
 	}
 	
+	public void removeAttribute(String attrName, IProgressMonitor monitor)
+			throws RodinDBException {
+		new RemoveElementAttributeOperation(this, attrName).runOperation(monitor);
+	}
+	
 	public void rename(String newName, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameElementsOperation(this, newName, replace).runOperation(monitor);
 	}
@@ -392,6 +407,14 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	public void setIntegerAttribute(String attrName, int newValue,
+			IProgressMonitor monitor) throws RodinDBException {
+		final AttributeTypeDescription attributeTypeDescription =
+			getAttributeTypeDescription(attrName);
+		final String newRawValue = attributeTypeDescription.toString(newValue);
+		setAttributeRawValue(attrName, newRawValue, monitor);
+	}
+
+	public void setLongAttribute(String attrName, long newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final AttributeTypeDescription attributeTypeDescription =
 			getAttributeTypeDescription(attrName);
