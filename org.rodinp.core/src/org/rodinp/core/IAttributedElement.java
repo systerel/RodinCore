@@ -123,6 +123,31 @@ public interface IAttributedElement {
 	 * The file containing this element is opened if it was not already.
 	 * </p>
 	 * <p>
+	 * The attribute name must have been declared with the <code>long</code>
+	 * kind.
+	 * </p>
+	 * 
+	 * @param name
+	 *            name of the attribute
+	 * @param monitor
+	 *            progress monitor to use for opening the file
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource or if the given attribute has
+	 *                another kind than <code>long</code>
+	 * @return the value of the attribute with the given name
+	 */
+	long getLongAttribute(String name, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given name and carried by
+	 * this element.
+	 * <p>
+	 * The file containing this element is opened if it was not already.
+	 * </p>
+	 * <p>
 	 * The attribute name must have been declared with the <code>string</code>
 	 * kind.
 	 * </p>
@@ -158,6 +183,27 @@ public interface IAttributedElement {
 	 *         the given name
 	 */
 	boolean hasAttribute(String name, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Removes the attribute with the given name from this element.
+	 * <p>
+	 * If the attribute didn't exist previously, this method returns directly.
+	 * No exception is thrown.
+	 * </p>
+	 * <p>
+	 * The file containing this element is opened if it was not already.
+	 * </p>
+	 * 
+	 * @param name
+	 *            name of the attribute to test for existence
+	 * @param monitor
+	 *            progress monitor to use for opening the file
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void removeAttribute(String name, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -233,6 +279,31 @@ public interface IAttributedElement {
 	 *                attribute has another kind than <code>integer</code>
 	 */
 	void setIntegerAttribute(String name, int newValue, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given name to the given value.
+	 * <p>
+	 * If the specified attribute didn't exist, it is created automatically. 
+	 * The file containing this element is opened if it was not already.
+	 * </p>
+	 * <p>
+	 * The attribute name must have been declared with the <code>long</code>
+	 * kind.
+	 * </p>
+	 * 
+	 * @param name
+	 *            name of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            progress monitor to use for opening the file
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource or if the given
+	 *                attribute has another kind than <code>long</code>
+	 */
+	void setLongAttribute(String name, long newValue, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
