@@ -15,8 +15,8 @@ public class TestAddSpacingPredicate extends TestCase {
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 
-		String prettyPrint = PredicateUtil.addSpacing(predString,
-				parsedPred);
+		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred,
+				false);
 		System.out.println("Add Spacing: \"" + prettyPrint + "\"");
 
 		assertEquals(msg + ": ", expectedPrettyPrint, prettyPrint);
@@ -57,18 +57,20 @@ public class TestAddSpacingPredicate extends TestCase {
 	}
 
 	public void testRelationalPred() {
-		addSpacingTest("Equal", "1" + "=" + "2", "1 = 2");
-		addSpacingTest("Not Equal", "1" + "\u2260" + "2", "1 \u2260 2");
-		addSpacingTest("Less Than", "1" + "<" + "2", "1 < 2");
-		addSpacingTest("Less Than Equal", "1" + "\u2264" + "2", "1 \u2264 2");
-		addSpacingTest("Greater Than", "1" + ">" + "2", "1 > 2");
-		addSpacingTest("Greater Than Equal", "1" + "\u2265" + "2", "1 \u2265 2");
-		addSpacingTest("In", "1" + "\u2208" + "ℕ", "1 \u2208 ℕ");
-		addSpacingTest("Not In", "1" + "\u2209" + "ℕ", "1 \u2209 ℕ");
-		addSpacingTest("Subset", "ℕ" + "\u2282" + "ℕ", "ℕ \u2282 ℕ");
-		addSpacingTest("Not Subset", "ℕ" + "\u2284" + "ℕ", "ℕ \u2284 ℕ");
-		addSpacingTest("Subset Equal", "ℕ" + "\u2286" + "ℕ", "ℕ \u2286 ℕ");
-		addSpacingTest("Not Subset Equal", "ℕ" + "\u2288" + "ℕ", "ℕ \u2288 ℕ");
+		addSpacingTest("Equal", "1" + "=" + "2", "1=2");
+		addSpacingTest("Not Equal", "1" + "\u2260" + "2", "1" + "\u2260" + "2");
+		addSpacingTest("Less Than", "1" + "<" + "2", "1<2");
+		addSpacingTest("Less Than Equal", "1" + "\u2264" + "2", "1" + "\u2264"
+				+ "2");
+		addSpacingTest("Greater Than", "1" + ">" + "2", "1>2");
+		addSpacingTest("Greater Than Equal", "1" + "\u2265" + "2", "1\u2265"
+				+ "2");
+		addSpacingTest("In", "1" + "\u2208" + "ℕ", "1\u2208ℕ");
+		addSpacingTest("Not In", "1" + "\u2209" + "ℕ", "1\u2209ℕ");
+		addSpacingTest("Subset", "ℕ" + "\u2282" + "ℕ", "ℕ\u2282ℕ");
+		addSpacingTest("Not Subset", "ℕ" + "\u2284" + "ℕ", "ℕ\u2284ℕ");
+		addSpacingTest("Subset Equal", "ℕ" + "\u2286" + "ℕ", "ℕ\u2286ℕ");
+		addSpacingTest("Not Subset Equal", "ℕ" + "\u2288" + "ℕ", "ℕ\u2288ℕ");
 	}
 
 	public void testSimplePredicate() {
@@ -80,9 +82,9 @@ public class TestAddSpacingPredicate extends TestCase {
 	}
 
 	public void testBrackets() {
-		addSpacingTest("Brackets", "(1=2" + "\u2228" + "2=3)" + "\u2227"
-				+ "3=4", "(1 = 2" + "  \u2228  " + "2 = 3)" + "   \u2227   "
-				+ "3  =  4");
+		addSpacingTest("Brackets", "(1=2" + "\u2228" + "2=3" + "\u2228"
+				+ "3=4)" + "\u2227" + "4=5", "(1=2" + " \u2228 " + "2=3"
+				+ " \u2228 " + "3=4)" + "  \u2227  " + "4 = 5");
 	}
 
 }

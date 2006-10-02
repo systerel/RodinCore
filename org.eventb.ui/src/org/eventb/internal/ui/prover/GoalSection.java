@@ -72,7 +72,7 @@ public class GoalSection extends SectionPart {
 
 	private String actualString;
 
-	// private int max_length = 30;
+	private int max_length = 30;
 
 	/**
 	 * Constructor
@@ -212,7 +212,7 @@ public class GoalSection extends SectionPart {
 				for (BoundIdentDecl ident : idents) {
 					SourceLocation loc = ident.getSourceLocation();
 					String image = actualString.substring(loc.getStart(), loc
-							.getEnd());
+							.getEnd() + 1);
 					// ProverUIUtils.debugProverUI("Ident: " + image);
 					string += " " + image + " ";
 					int x = string.length();
@@ -226,23 +226,23 @@ public class GoalSection extends SectionPart {
 						string += ", ";
 					}
 				}
-				// String str = PredicateUtil.prettyPrint(max_length,
-				// actualString,
-				// qpred.getPredicate());
-				SourceLocation loc = qpred.getPredicate().getSourceLocation();
-				String str = actualString.substring(loc.getStart(), loc
-						.getEnd());
+				 String str = PredicateUtil.prettyPrint(max_length,
+				 actualString,
+				 qpred.getPredicate());
+				// SourceLocation loc =
+				// qpred.getPredicate().getSourceLocation();
+				// String str = actualString.substring(loc.getStart(), loc
+				// .getEnd() + 1);
 				string += str;
 				goalText.setText(string, indexes);
 			} else {
-				// String str = PredicateUtil.prettyPrint(max_length,
-				// actualString,
-				// parsedPred);
+				 String str = PredicateUtil.prettyPrint(max_length,
+						actualString, parsedPred);
 				// SourceLocation loc = parsedPred.getSourceLocation();
 				// String str = actualString.substring(loc.getStart(),
 				// loc.getEnd());
 				Collection<Point> indexes = new ArrayList<Point>();
-				goalText.setText(actualString, indexes);
+				goalText.setText(str, indexes);
 				if (!node.isOpen()) {
 					styledText.setBackground(color);
 				}

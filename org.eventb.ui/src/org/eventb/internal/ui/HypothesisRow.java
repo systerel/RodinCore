@@ -41,6 +41,7 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.internal.ui.prover.EventBPredicateText;
+import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 
@@ -68,7 +69,7 @@ public class HypothesisRow {
 	private Hypothesis hyp;
 
 	// This should be varied when the user resize.
-	// private int max_length = 30;
+	private int max_length = 30;
 
 	private Color background;
 
@@ -210,8 +211,9 @@ public class HypothesisRow {
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = actualString.substring(loc.getStart(), loc
-						.getEnd());
-				// ProverUIUtils.debugProverUI("Ident: " + image);
+						.getEnd() + 1);
+				if (ProverUIUtils.DEBUG)
+					ProverUIUtils.debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
 				string += "      ";
@@ -224,22 +226,23 @@ public class HypothesisRow {
 					string += ", ";
 				}
 			}
-			// String str = PredicateUtil.prettyPrint(max_length, actualString,
-			// qpred.getPredicate());
-			SourceLocation loc = qpred.getPredicate().getSourceLocation();
-			String str = actualString.substring(loc.getStart(), loc.getEnd());
+			String str = PredicateUtil.prettyPrint(max_length, actualString,
+					qpred.getPredicate());
+			// SourceLocation loc = qpred.getPredicate().getSourceLocation();
+			// String str = actualString.substring(loc.getStart(),
+			// loc.getEnd());
 
 			string += str;
 			hypothesisText.setText(string, indexes);
 		} else {
-			// String str = PredicateUtil.prettyPrint(max_length, actualString,
-			// parsedPred);
+			String str = PredicateUtil.prettyPrint(max_length, actualString,
+					parsedPred);
 			// SourceLocation loc = parsedPred.getSourceLocation();
 			// String str = actualString.substring(loc.getStart(),
 			// loc.getEnd());
 
 			Collection<Point> indexes = new ArrayList<Point>();
-			hypothesisText.setText(actualString, indexes);
+			hypothesisText.setText(str, indexes);
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
 	}

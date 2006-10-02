@@ -78,6 +78,7 @@ import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.ExtensionLoader;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
@@ -282,9 +283,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 																	currentInput,
 																	monitor);
 												} catch (RodinDBException e) {
-													// TODO Auto-generated catch
-													// block
 													e.printStackTrace();
+													UIUtils.log(e, "Error applying " + tactic);
 												}
 											}
 										});

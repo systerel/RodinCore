@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -140,7 +141,7 @@ public class ProjectExplorerContentProvider implements
 				toRefresh.add(element);
 				return;
 			}
-			
+
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				toRefresh.add(element);
 				return;
@@ -285,16 +286,24 @@ public class ProjectExplorerContentProvider implements
 
 				return results;
 			} catch (RodinDBException e) {
-				e.printStackTrace();
-				MessageDialog
-						.openWarning(
-								EventBUIPlugin.getActiveWorkbenchShell(),
-								"Resource out of date",
-								"Project "
-										+ ((IRodinProject) parent)
-												.getElementName()
-										+ " is out of date with the file system and will be refresh.");
-				ProjectExplorerActionGroup.refreshAction.refreshAll();
+				// If it is out of date then prompt the user to refresh
+				if (!prj.getResource().isSynchronized(IResource.DEPTH_INFINITE)) {
+					MessageDialog
+							.openWarning(
+									EventBUIPlugin.getActiveWorkbenchShell(),
+									"Resource out of date",
+									"Project "
+											+ ((IRodinProject) parent)
+													.getElementName()
+											+ " is out of date with the file system and will be refresh.");
+					ProjectExplorerActionGroup.refreshAction.refreshAll();
+				} else { // Otherwise, there are problems, log an error
+					// message
+					e.printStackTrace();
+					UIUtils.log(e, "Cannot read the Rodin project "
+							+ prj.getElementName());
+					return new Object[0];
+				}
 			}
 		}
 
@@ -303,16 +312,23 @@ public class ProjectExplorerContentProvider implements
 				return ((IParent) parent).getChildren();
 			}
 		} catch (RodinDBException e) {
-			// TODO Handle Exception
-			MessageDialog
-					.openWarning(
-							EventBUIPlugin.getActiveWorkbenchShell(),
-							"Resource out of date",
-							"Element "
-									+ ((IParent) parent).toString()
-									+ " is out of date with the file system and will be refresh.");
-			ProjectExplorerActionGroup.refreshAction.refreshAll();
-			e.printStackTrace();
+			// If the resource is out of date then prompt the user to refresh
+			if (((IRodinElement) parent).getCorrespondingResource()
+					.isSynchronized(IResource.DEPTH_INFINITE)) {
+				MessageDialog
+						.openWarning(
+								EventBUIPlugin.getActiveWorkbenchShell(),
+								"Resource out of date",
+								"Element "
+										+ ((IParent) parent).toString()
+										+ " is out of date with the file system and will be refresh.");
+				ProjectExplorerActionGroup.refreshAction.refreshAll();
+			} else { // Otherwise, there are problems, log an error
+				// message
+				e.printStackTrace();
+				UIUtils.log(e, "Cannot read the element "
+						+ parent);
+			}
 		}
 
 		if (parent instanceof TreeNode) {

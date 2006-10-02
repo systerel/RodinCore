@@ -80,25 +80,6 @@ public class CacheHypothesesSection extends HypothesesSection {
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
 				editor.getUserSupport().applyTacticToHypotheses(t, selected);
-
-				// TODO, this should be done as the consequences of
-				// IProofTreeDelta
-				// TreeViewer viewer = editor.getProofTreeUI().getViewer();
-				// ISelection selection = viewer.getSelection();
-				// Object obj = ((IStructuredSelection) selection)
-				// .getFirstElement();
-				// if (obj instanceof IProofTreeNode) {
-				// IProofTreeNode proofTree = (IProofTreeNode) obj;
-				// editor.getProofTreeUI().refresh(proofTree);
-				// // Expand the node
-				// viewer.expandToLevel(proofTree,
-				// AbstractTreeViewer.ALL_LEVELS);
-				// ProofState ps = editor.getUserSupport().getCurrentPO();
-				// IProofTreeNode pt = ps.getNextPendingSubgoal(proofTree);
-				// if (pt != null)
-				// editor.getProofTreeUI().getViewer().setSelection(
-				// new StructuredSelection(pt));
-				// }
 			}
 
 			else if (widget.equals(ds)) {

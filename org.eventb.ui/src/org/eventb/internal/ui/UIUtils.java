@@ -18,7 +18,9 @@ import java.util.Collection;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -80,6 +82,21 @@ public class UIUtils {
 
 	public static boolean DEBUG = false;
 
+	public static void log(Throwable exc, String message) {
+		Throwable nestedException;
+		if (exc instanceof RodinDBException 
+				&& (nestedException = ((RodinDBException)exc).getException()) != null) {
+			exc = nestedException;
+		}
+		IStatus status= new Status(
+			IStatus.ERROR, 
+			EventBUIPlugin.PLUGIN_ID, 
+			IStatus.ERROR, 
+			message, 
+			exc); 
+		EventBUIPlugin.getDefault().getLog().log(status);
+	}
+	
 	/**
 	 * Method to return the openable for an object (IRodinElement or TreeNode).
 	 * <p>
