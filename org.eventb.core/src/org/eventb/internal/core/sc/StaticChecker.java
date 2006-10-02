@@ -18,7 +18,6 @@ import org.eventb.core.sc.IProcessorModule;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
-import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;

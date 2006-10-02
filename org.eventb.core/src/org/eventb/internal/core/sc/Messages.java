@@ -82,9 +82,19 @@ public final class Messages {
     public static String scuser_UntypedIdentifierError;
     public static String scuser_UndeclaredFreeIdentifierError;
     public static String scuser_VariantFreeIdentifierError;
-    public static String scuser_PredicateFreeIdentifierError;
+    public static String scuser_AxiomFreeIdentifierError;
+    public static String scuser_TheoremFreeIdentifierError;
+    public static String scuser_InvariantFreeIdentifierError;
+    public static String scuser_GuardFreeIdentifierError;
+    public static String scuser_ActionFreeIdentifierError;
+    public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
-    
+    public static String scuser_InconsistentAbstractConvergence;
+    public static String scuser_OrdinaryConvergentFaultyConvergence;
+    public static String scuser_AnticipatedFaultyConvergence;
+    public static String scuser_AnticipatedEventNoVariant;
+    public static String scuser_ConvergentEventNoVariant;
+
     public static String scuser_AxiomLabelConflict;
     public static String scuser_TheoremLabelConflict;
     public static String scuser_InvariantLabelConflict;

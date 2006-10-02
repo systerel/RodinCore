@@ -114,8 +114,8 @@ public class TestVariant extends BasicTest {
 	
 	public void testVariant_05() throws Exception {
 		IMachineFile abs = createMachine("abs");
-		addConstants(abs, "V0");
-		addAxioms(abs, makeSList("I0"), makeSList("V0∈ℕ"));
+		addVariables(abs, "V0");
+		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
 
 		abs.save(null, true);
 		

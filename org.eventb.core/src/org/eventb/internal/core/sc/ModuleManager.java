@@ -12,16 +12,19 @@ import java.util.Hashtable;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
+import org.eventb.internal.core.sc.modules.ContextAxiomFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.ContextAxiomModule;
 import org.eventb.internal.core.sc.modules.ContextCarrierSetModule;
 import org.eventb.internal.core.sc.modules.ContextConstantModule;
 import org.eventb.internal.core.sc.modules.ContextExtendsModule;
-import org.eventb.internal.core.sc.modules.ContextPredicateFreeIdentsModule;
+import org.eventb.internal.core.sc.modules.ContextFormulaFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.ContextSaveIdentifiersModule;
+import org.eventb.internal.core.sc.modules.ContextTheoremFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.ContextTheoremModule;
 import org.eventb.internal.core.sc.modules.MachineContextClosureModule;
 import org.eventb.internal.core.sc.modules.MachineEventActionFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineEventActionModule;
+import org.eventb.internal.core.sc.modules.MachineEventConvergenceModule;
 import org.eventb.internal.core.sc.modules.MachineEventGuardFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineEventGuardModule;
 import org.eventb.internal.core.sc.modules.MachineEventModule;
@@ -30,12 +33,14 @@ import org.eventb.internal.core.sc.modules.MachineEventSaveIdentifiersModule;
 import org.eventb.internal.core.sc.modules.MachineEventVariableModule;
 import org.eventb.internal.core.sc.modules.MachineEventWitnessFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineEventWitnessModule;
+import org.eventb.internal.core.sc.modules.MachineInvariantFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineInvariantModule;
-import org.eventb.internal.core.sc.modules.MachinePredicateFreeIdentsModule;
+import org.eventb.internal.core.sc.modules.MachineFormulaFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachinePreviousEventLabelModule;
 import org.eventb.internal.core.sc.modules.MachineRefinesModule;
 import org.eventb.internal.core.sc.modules.MachineSaveIdentifiersModule;
 import org.eventb.internal.core.sc.modules.MachineSeesContextModule;
+import org.eventb.internal.core.sc.modules.MachineTheoremFreeIdentsModule;
 import org.eventb.internal.core.sc.modules.MachineTheoremModule;
 import org.eventb.internal.core.sc.modules.MachineVariableFromLocalModule;
 import org.eventb.internal.core.sc.modules.MachineVariableModule;
@@ -88,7 +93,7 @@ public final class ModuleManager implements IModuleManager {
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
-								new ContextPredicateFreeIdentsModule()
+								new ContextAxiomFreeIdentsModule()
 						};
 					}
 				}
@@ -98,7 +103,7 @@ public final class ModuleManager implements IModuleManager {
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
-								new ContextPredicateFreeIdentsModule()
+								new ContextTheoremFreeIdentsModule()
 						};
 					}
 				}
@@ -139,7 +144,7 @@ public final class ModuleManager implements IModuleManager {
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
-								new MachinePredicateFreeIdentsModule(),
+								new MachineInvariantFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
 					}
@@ -152,7 +157,7 @@ public final class ModuleManager implements IModuleManager {
 				new IAcceptorCreator() {
 					public IAcceptorModule[] create() {
 						return new IAcceptorModule[] {
-								new MachinePredicateFreeIdentsModule(),
+								new MachineTheoremFreeIdentsModule(),
 								new MachinePreviousEventLabelModule()
 						};
 					}
@@ -247,6 +252,7 @@ public final class ModuleManager implements IModuleManager {
 					public IProcessorModule[] create() {
 						return new IProcessorModule[] {
 								new MachineEventRefinesModule(),
+								new MachineEventConvergenceModule(),
 								new MachineEventVariableModule(),
 								new MachineEventGuardModule(),
 								new MachineEventSaveIdentifiersModule(),

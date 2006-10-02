@@ -13,14 +13,15 @@ import org.eventb.internal.core.sc.Messages;
  * @author Stefan Hallerstede
  *
  */
-public class ContextPredicateFreeIdentsModule extends FormulaFreeIdentsModule {
+public class MachineInvariantFreeIdentsModule extends
+		MachineFormulaFreeIdentsModule {
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#declaredFreeIdentifierErrorMessage()
+	 */
 	@Override
 	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_PredicateFreeIdentifierError;
+		return Messages.scuser_InvariantFreeIdentifierError;
 	}
 
-	// uses default implementation
-	
-	
 }

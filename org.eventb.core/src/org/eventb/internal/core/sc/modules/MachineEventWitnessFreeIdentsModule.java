@@ -15,6 +15,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IRodinElement;
 
@@ -22,7 +23,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventWitnessFreeIdentsModule extends MachinePredicateFreeIdentsModule {
+public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdentsModule {
 
 	FormulaFactory factory;
 	
@@ -72,6 +73,11 @@ public class MachineEventWitnessFreeIdentsModule extends MachinePredicateFreeIde
 	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;
+	}
+
+	@Override
+	protected String declaredFreeIdentifierErrorMessage() {
+		return Messages.scuser_WitnessFreeIdentifierError;
 	}
 
 }

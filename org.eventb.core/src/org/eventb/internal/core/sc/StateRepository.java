@@ -23,7 +23,7 @@ public final class StateRepository implements IStateRepository {
 	
 	private CoreException exception;
 	
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	public static final int REPOSITORY_SIZE = 117;
 	

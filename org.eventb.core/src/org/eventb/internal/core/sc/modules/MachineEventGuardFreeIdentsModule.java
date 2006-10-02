@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
 
 
@@ -19,7 +20,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventGuardFreeIdentsModule extends MachinePredicateFreeIdentsModule {
+public class MachineEventGuardFreeIdentsModule extends MachineFormulaFreeIdentsModule {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo(org.eventb.core.ast.FreeIdentifier)
@@ -37,6 +38,11 @@ public class MachineEventGuardFreeIdentsModule extends MachinePredicateFreeIdent
 				return null;
 		}
 		return symbolInfo;
+	}
+
+	@Override
+	protected String declaredFreeIdentifierErrorMessage() {
+		return Messages.scuser_GuardFreeIdentifierError;
 	}
 
 
