@@ -80,7 +80,8 @@ public class ProgressManager {
 	
 	IProgressMonitor getProgressMonitorForNode(Node node) {
 		int nodeCount = nodes == null ? 0 : nodes.size();
-		int nodeEffort = remainingEffort / (nodeCount + expected);
+		int div = nodeCount + expected;
+		int nodeEffort = div == 0 ? 0 : remainingEffort / div;
 		remainingEffort = remainingEffort - nodeEffort;
 		if (nodeCount > 0)
 			nodes.remove(node.getName());
