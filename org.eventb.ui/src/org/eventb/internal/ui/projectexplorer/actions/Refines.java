@@ -125,7 +125,7 @@ public class Refines implements IObjectActionDelegate {
 												"internal_"
 														+ PrefixRefinesEventName.DEFAULT_PREFIX
 														+ 1, null, monitor);
-								refinesEvent.setAbstractEventName(label);
+								refinesEvent.setAbstractEventLabel(label);
 							}
 							newFile.save(null, true);
 						}

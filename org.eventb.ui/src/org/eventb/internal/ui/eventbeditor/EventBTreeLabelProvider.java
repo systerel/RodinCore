@@ -102,7 +102,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 				if (element instanceof IExtendsContext)
 					return ((IExtendsContext) element).getAbstractContextName();
 				if (element instanceof IRefinesEvent)
-					return ((IRefinesEvent) element).getAbstractEventName();
+					return ((IRefinesEvent) element).getAbstractEventLabel();
 
 				if (element instanceof ILabeledElement)
 					return ((ILabeledElement) element).getLabel(null);
