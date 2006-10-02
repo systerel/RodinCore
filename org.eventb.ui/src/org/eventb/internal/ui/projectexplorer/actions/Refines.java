@@ -112,7 +112,6 @@ public class Refines implements IObjectActionDelegate {
 												IEvent.ELEMENT_TYPE, name);
 								// Need to remove the existing IRefinesEvent
 								// elements
-
 								IRodinElement[] refinesEvents = newElement
 										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
 								

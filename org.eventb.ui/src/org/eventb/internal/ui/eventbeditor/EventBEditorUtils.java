@@ -623,6 +623,8 @@ public class EventBEditorUtils {
 							newEvt.setLabel(evtLabel, monitor);
 							editor.addNewElement(newEvt);
 
+							newEvt.setConvergence(IEvent.ORDINARY, monitor);
+							
 							String namePrefix = UIUtils.getNamePrefix(editor,
 									PrefixVarName.QUALIFIED_NAME,
 									PrefixVarName.DEFAULT_PREFIX);

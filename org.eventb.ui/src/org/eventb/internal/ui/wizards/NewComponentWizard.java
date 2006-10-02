@@ -158,7 +158,8 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 				if (rodinFile instanceof IMachineFile) {
 					IEvent init = (IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
 							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, monitor);
-					init.setLabel("INITIALISATION", monitor);
+					init.setLabel(IEvent.INITIALISATION, monitor);
+					init.setConvergence(IEvent.ORDINARY, monitor);
 				}
 				rodinFile.save(null, true);
 			}

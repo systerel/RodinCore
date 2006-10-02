@@ -386,9 +386,13 @@ public class UIUtils {
 								monitor);
 						evt.setLabel(name, monitor);
 						editor.addNewElement(evt);
+						
+						evt.setConvergence(IEvent.ORDINARY, monitor);
+						
 						String varPrefix = getNamePrefix(editor,
 								PrefixVarName.QUALIFIED_NAME,
 								PrefixVarName.DEFAULT_PREFIX);
+						
 						int varIndex = getFreeElementNameIndex(editor, evt,
 								IVariable.ELEMENT_TYPE, varPrefix);
 						for (String varName : varNames) {
