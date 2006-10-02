@@ -36,6 +36,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	public static final String fBool = "org.rodinp.core.tests.fBool";
 	public static final String fHandle = "org.rodinp.core.tests.fHandle";
 	public static final String fInt = "org.rodinp.core.tests.fInt";
+	public static final String fLong = "org.rodinp.core.tests.fLong";
 	public static final String fString = "org.rodinp.core.tests.fString";
 	
 	public AttributeTests(String name) {
@@ -57,6 +58,7 @@ public class AttributeTests extends ModifyingResourceTests {
 			fBool,
 			fInt,
 			fHandle,
+			fLong,
 			fString,
 		}));
 	
@@ -112,6 +114,14 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getIntegerAttribute(name, null));
 	}
 	
+	private void assertLongValue(IInternalElement element, String name,
+			long expected) throws RodinDBException {
+		
+		assertTrue("Element should exist", element.exists());
+		assertEquals("Unexpected attribute value", expected,
+				element.getLongAttribute(name, null));
+	}
+	
 	private void assertStringValue(IInternalElement element, String name,
 			String expected) throws RodinDBException {
 		
@@ -134,6 +144,9 @@ public class AttributeTests extends ModifyingResourceTests {
 //			if (fInt.equals(name)) {
 //				element.getIntegerAttribute(name, null);
 //			}
+//			if (fLong.equals(name)) {
+//				element.getLongAttribute(name, null);
+//			}
 //			if (fString.equals(name)) {
 //				element.getStringAttribute(name, null);
 //			}
@@ -146,6 +159,26 @@ public class AttributeTests extends ModifyingResourceTests {
 //	}
 	
 	
+	void removeAttrPositive(IInternalElement element, String name)
+			throws RodinDBException {
+
+		assertTrue("Element should exist", element.exists());
+		element.removeAttribute(name, null);
+		assertFalse("Attribute should have been removed", 
+				element.hasAttribute(name, null));
+	}
+
+	void removeAttrNegative(IInternalElement element, String name,
+			int failureCode) throws RodinDBException {
+		
+		try {
+			element.removeAttribute(name, null);
+			fail("Removing the attribute should have failed");
+		} catch (RodinDBException e) {
+			assertErrorCode(e, failureCode);
+		}
+	}
+
 	void setBoolAttrPositive(IInternalElement element, String name,
 			boolean newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
@@ -174,6 +207,16 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.hasAttribute(name, null));
 		assertEquals("New value should have been set",
 				newValue, element.getIntegerAttribute(name, null));
+	}
+
+	void setLongAttrPositive(IInternalElement element, String name,
+			long newValue) throws RodinDBException {
+		assertTrue("Element should exist", element.exists());
+		element.setLongAttribute(name, newValue, null);
+		assertTrue("Attribute should have been created", 
+				element.hasAttribute(name, null));
+		assertEquals("New value should have been set",
+				newValue, element.getLongAttribute(name, null));
 	}
 
 	void setStringAttrPositive(IInternalElement element, String name,
@@ -216,6 +259,16 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
+	void setLongAttrNegative(IInternalElement element, String name,
+			long newValue, int failureCode) throws RodinDBException {
+		try {
+			element.setLongAttribute(name, newValue, null);
+			fail("Setting the attribute should have failed");
+		} catch (RodinDBException e) {
+				assertErrorCode(e, failureCode);
+		}
+	}
+	
 	void setStringAttrNegative(IInternalElement element, String name,
 			String newValue, int failureCode) throws RodinDBException {
 		try {
@@ -244,13 +297,47 @@ public class AttributeTests extends ModifyingResourceTests {
 		setIntAttrPositive(e1, fInt, -55);
 		assertAttributeNames(e1, fBool, fHandle, fInt);
 
+		setLongAttrPositive(e1, fLong, 12345678901L);
+		assertAttributeNames(e1, fBool, fHandle, fInt, fLong);
+
 		setStringAttrPositive(e1, fString, "bar");
+		assertAttributeNames(e1, fBool, fHandle, fInt, fLong, fString);
+		
+		removeAttrPositive(e1, fLong);
 		assertAttributeNames(e1, fBool, fHandle, fInt, fString);
 	}
 
 	/**
+	 * Ensures that the removeAttribute() method works properly on internal
+	 * elements.
+	 */
+	public void testRemoveAttribute() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		final NamedElement e1 = createNEPositive(rf, "foo", null); 
+		
+		setBoolAttrPositive(e1, fBool, true);
+		removeAttrPositive(e1, fBool);
+
+		// Can be done twice
+		removeAttrPositive(e1, fBool);
+	}
+
+	/**
+	 * Ensures that attempting to remove an attribute on an inexistent element
+	 * raises an ELEMENT_DOES_NOT_EXIST error.
+	 */
+	public void testRemoveAttributeNoElement() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test");
+		final NamedElement e1 = getNamedElement(rf, "foo"); 
+		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+		assertFalse("Element should not exist", e1.exists());
+
+		removeAttrNegative(e1, fBool, code);
+	}
+
+	/**
 	 * Ensures that attempting to set an attribute on an inexistent element
-	 * raises an INVALID_ATTRIBUTE_KIND error.
+	 * raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
 	public void testSetAttributeNoElement() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
@@ -261,6 +348,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		setBoolAttrNegative(e1, fBool, true, code);
 		setHandleAttrNegative(e1, fHandle, rf, code);
 		setIntAttrNegative(e1, fInt, -55, code);
+		setLongAttrNegative(e1, fLong, 12345678901L, code);
 		setStringAttrNegative(e1, fString, "bar", code);
 	}
 
@@ -277,22 +365,32 @@ public class AttributeTests extends ModifyingResourceTests {
 
 		setBoolAttrNegative(e1, fHandle, true, code);
 		setBoolAttrNegative(e1, fInt,    true, code);
+		setBoolAttrNegative(e1, fLong,   true, code);
 		setBoolAttrNegative(e1, fString, true, code);
 		assertAttributeNames(e1);
 
 		setHandleAttrNegative(e1, fBool,   rf, code);
 		setHandleAttrNegative(e1, fInt,    rf, code);
+		setHandleAttrNegative(e1, fLong,   rf, code);
 		setHandleAttrNegative(e1, fString, rf, code);
 		assertAttributeNames(e1);
 
 		setIntAttrNegative(e1, fBool,   256, code);
 		setIntAttrNegative(e1, fHandle, 256, code);
+		setIntAttrNegative(e1, fLong,  256, code);
 		setIntAttrNegative(e1, fString, 256, code);
+		assertAttributeNames(e1);
+		
+		setLongAttrNegative(e1, fBool,   12345678901L, code);
+		setLongAttrNegative(e1, fHandle, 12345678901L, code);
+		setLongAttrNegative(e1, fInt,    12345678901L, code);
+		setLongAttrNegative(e1, fString, 12345678901L, code);
 		assertAttributeNames(e1);
 		
 		setStringAttrNegative(e1, fBool,   "bar", code);
 		setStringAttrNegative(e1, fHandle, "bar", code);
 		setStringAttrNegative(e1, fInt,    "bar", code);
+		setStringAttrNegative(e1, fLong,    "bar", code);
 		assertAttributeNames(e1);
 	}
 
@@ -304,9 +402,11 @@ public class AttributeTests extends ModifyingResourceTests {
 		rf.save(null, false);
 
 		final InternalElement snapshot = e1.getSnapshot();
+		removeAttrNegative(snapshot, fBool, code);
 		setBoolAttrNegative(snapshot, fBool, true, code);
 		setHandleAttrNegative(snapshot, fHandle, rf, code);
 		setIntAttrNegative(snapshot, fInt, -55, code);
+		setLongAttrNegative(snapshot, fLong, 12345678901L, code);
 		setStringAttrNegative(snapshot, fString, "bar", code);
 	}
 
@@ -316,6 +416,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		setBoolAttrPositive(e1, fBool, true);
 		setHandleAttrPositive(e1, fHandle, rf);
 		setIntAttrPositive(e1, fInt, -55);
+		setLongAttrPositive(e1, fLong, 12345678901L);
 		setStringAttrPositive(e1, fString, "bar");
 		rf.save(null, false);
 
@@ -323,11 +424,13 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertBooleanValue(snapshot, fBool, true);
 		assertHandleValue(snapshot, fHandle, rf);
 		assertIntegerValue(snapshot, fInt, -55);
+		assertLongValue(snapshot, fLong, 12345678901L);
 		assertStringValue(snapshot, fString, "bar");
 
 		assertBooleanValue(e1, fBool, true);
 		assertHandleValue(e1, fHandle, rf);
 		assertIntegerValue(e1, fInt, -55);
+		assertLongValue(e1, fLong, 12345678901L);
 		assertStringValue(e1, fString, "bar");
 	}
 
