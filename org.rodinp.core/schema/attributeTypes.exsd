@@ -65,7 +65,7 @@ for attribute types within the extension namespace). The token cannot contain do
          <attribute name="kind" use="required">
             <annotation>
                <documentation>
-                  Kind of value: one of &lt;code&gt;string&lt;/code&gt;, &lt;code&gt;integer&lt;/code&gt;, &lt;code&gt;boolean&lt;/code&gt; or &lt;code&gt;handle&lt;/code&gt;
+                  Kind of value: one of &lt;code&gt;boolean&lt;/code&gt;, &lt;code&gt;handle&lt;/code&gt;, &lt;code&gt;integer&lt;/code&gt;,  &lt;code&gt;long&lt;/code&gt;, or  &lt;code&gt;string&lt;/code&gt;
                </documentation>
             </annotation>
             <simpleType>
@@ -75,6 +75,8 @@ for attribute types within the extension namespace). The token cannot contain do
                   <enumeration value="handle">
                   </enumeration>
                   <enumeration value="integer">
+                  </enumeration>
+                  <enumeration value="long">
                   </enumeration>
                   <enumeration value="string">
                   </enumeration>
