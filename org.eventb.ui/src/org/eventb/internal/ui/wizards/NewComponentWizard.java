@@ -160,6 +160,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, monitor);
 					init.setLabel(IEvent.INITIALISATION, monitor);
 					init.setConvergence(IEvent.ORDINARY, monitor);
+					init.setInherited(false, monitor);
 				}
 				rodinFile.save(null, true);
 			}

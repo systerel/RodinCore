@@ -388,6 +388,7 @@ public class UIUtils {
 						editor.addNewElement(evt);
 						
 						evt.setConvergence(IEvent.ORDINARY, monitor);
+						evt.setInherited(false, monitor);
 						
 						String varPrefix = getNamePrefix(editor,
 								PrefixVarName.QUALIFIED_NAME,

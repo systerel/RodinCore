@@ -624,6 +624,7 @@ public class EventBEditorUtils {
 							editor.addNewElement(newEvt);
 
 							newEvt.setConvergence(IEvent.ORDINARY, monitor);
+							newEvt.setInherited(false, monitor);
 							
 							String namePrefix = UIUtils.getNamePrefix(editor,
 									PrefixVarName.QUALIFIED_NAME,
