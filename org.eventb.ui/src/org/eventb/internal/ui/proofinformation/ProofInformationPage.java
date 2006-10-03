@@ -125,7 +125,7 @@ public class ProofInformationPage extends Page implements
 		try {
 			String formString = "<form>";
 
-			IPOSource[] sources = prSequent.getSources();
+			IPOSource[] sources = prSequent.getPOSequent().getSources();
 			for (IPOSource source : sources) {
 				String id = source.getSourceHandleIdentifier();
 				if (ProofInformationUtils.DEBUG)

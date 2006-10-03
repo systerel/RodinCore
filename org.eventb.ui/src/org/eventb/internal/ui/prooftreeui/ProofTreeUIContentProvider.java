@@ -90,7 +90,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 			IProofTreeNode pt = (IProofTreeNode) parentElement;
 			// TODO enquire effect of new contract for pt.getChildren()
 			if (pt.hasChildren())
-				return getChildrenOfList(pt.getChildren());
+				return getChildrenOfList(pt.getChildNodes());
 			else
 				return new Object[0];
 		}
@@ -153,7 +153,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 					if (filters[j] instanceof ViewerFilter) { 
 						ViewerFilter filter = (ViewerFilter) filters[j];
 						if (!filter.select(page.getViewer(), pt.getParent(), pt)) {
-							Object[] list = getChildrenOfList(pt.getChildren());
+							Object[] list = getChildrenOfList(pt.getChildNodes());
 							for (int k = 0; k < list.length; k++)
 								children.add(list[k]);
 							break;
