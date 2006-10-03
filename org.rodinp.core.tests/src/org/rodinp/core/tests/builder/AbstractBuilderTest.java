@@ -56,10 +56,12 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 		assertStringEquals(message, expected, expandFile(file));
 	}
 	
+	int index = 0;
+	
 	protected IData createData(IRodinFile parent, String contents) throws RodinDBException {
 		IData data = (IData) parent.createInternalElement(
 				IData.ELEMENT_TYPE,
-				"foo",
+				"foo" + index++,
 				null,
 				null);
 		data.setContents(contents);

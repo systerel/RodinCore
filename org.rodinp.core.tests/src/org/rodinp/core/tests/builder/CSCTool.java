@@ -13,6 +13,8 @@ import org.rodinp.core.builder.IGraph;
 
 public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 	
+	public static boolean FAULTY = false;
+	
 	private static final String CSC = "CSC";
 	// Id of this tool
 	private static String SC_ID = "org.rodinp.core.tests.testCSC";
@@ -63,6 +65,9 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 			target.delete(true, null);
 		}
 		target = (ISCContext) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
+		
+		if (FAULTY)
+			target.createInternalElement("NON_EXISTENT_TYPE", "X", null, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);

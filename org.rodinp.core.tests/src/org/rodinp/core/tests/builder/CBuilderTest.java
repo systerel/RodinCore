@@ -169,82 +169,62 @@ public class CBuilderTest extends AbstractBuilderTest {
 				"CSC run /P/z.csc"
 		);
 	}
+	/**
+	 * Test that the test case for database problems can work correctly
+	 */
+	public void testRodinDBProblem() throws Exception {
+		
+		CSCTool.FAULTY = true;
+		
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		runBuilder(
+				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc"
+		);
+		
+		CSCTool.FAULTY = false;
+		
+	}
+
 	
-//			TODO enco/**
-//			
-//			IRodinElement[] tops = obj.getChildren();
-//			assertEquals("Checked context should contain one element.")
-//			
-//			createFile("one.ctx", oneContents);
-//			String contents = getContents("one.csc");
-//			
-//			assertEquals("CONTEXT one LOCAL one GLOBAL one", contents);
-//		}
-//		if (DEBUG)
-//			System.out.println("Create file two.ctx");
-//		{
-//			String twoContents =
-//				"CONTEXT two " +
-//				"REFINES one " +
-//				"LOCAL two " +
-//				"GLOBAL two";
-//			
-//			
-//			USE ELEMENT TYPES + MODIFY TOOL MANAGER + GRAPH MANAGER.
-//			
-//			
-//			
-//			createFile("two.ctx", twoContents);
-//			String contents = getContents("two.csc");
-//			
-//			assertEquals("CONTEXT two REFINES one LOCAL two GLOBAL two one", contents);
-//		}
-//		if (DEBUG)
-//			System.out.println("Create file three.ctx");
-//		{
-//			String threeContents =
-//				"CONTEXT three " +
-//				"REFINES one " +
-//				"LOCAL three " +
-//				"GLOBAL three";
-//			
-//			createFile("three.ctx", threeContents);
-//			String contents = getContents("three.csc");
-//			
-//			assertEquals("CONTEXT three REFINES one LOCAL three GLOBAL three one", contents);
-//		}
-//		if (DEBUG)
-//			System.out.println("Change file two./**
-//		{
-//			String twoContents =
-//				"CONTEXT two " +
-//				"REFINES three " +
-//				"LOCAL two " +
-//				"GLOBAL two";
-//			
-//			changeFile("two.ctx", twoContents);
-//			String contents = getContents("two.csc");
-//			
-//			assertEquals("CONTEXT two REFINES three one LOCAL two GLOBAL two three one", contents);
-//		}
-//		if (DEBUG)
-//			System.out.println("Change file one.ctx");
-//		{
-//			
-//			String oneContents =
-//				"CONTEXT one " +
-//				"LOCAL one " +
-//				"GLOBAL one new";
-//			
-//			changeFile("one.ctx", oneContents);
-//			
-//			String contentsOne = getContents("one.csc");
-//			String contentsTwo = getContents("two.csc");
-//			String contentsThree = getContents("three.csc");
-//			
-//			assertEquals("CONTEXT one LOCAL one GLOBAL one new", contentsOne);
-//			assertEquals("CONTEXT two REFINES three one LOCAL two GLOBAL two three one new", contentsTwo);
-//			assertEquals("CONTEXT three REFINES one LOCAL three GLOBAL three one new", contentsThree);
-//		}
 	
+	/**
+	 * Proper treatment of database errors while tools are run
+	 */
+	public void testRodinDBProblemInTool() throws Exception {
+		
+		CSCTool.FAULTY = true;
+		
+		IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+		
+		IRodinFile cty = createRodinFile("P/y.ctx");
+		createDependency(cty, "x");
+		createData(cty, "two");
+		cty.save(null, true);		
+		runBuilder(null);
+		ToolTrace.flush();
+		
+		CSCTool.FAULTY = false;
+
+		createData(ctx, "three");
+		ctx.save(null, true);
+		runBuilder(null);
+		
+		runBuilder(
+				"CSC extract /P/x.ctx\n" + 
+				"CSC run /P/x.csc\n" + 
+				"CSC run /P/y.csc"
+		);
+	}
+		
 }

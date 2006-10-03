@@ -297,10 +297,12 @@ public class Graph implements Serializable, Iterable<Node> {
 			} catch (CoreException e) {
 				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
 				node.setDated(false); // do not run defect tools unnecessarily often
+				node.setPhantom(true);
 				return;
 			} catch (RuntimeException e) {
 				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
 				node.setDated(false); // do not run defect tools unnecessarily often
+				node.setPhantom(true);
 				return;
 			}
 		}
