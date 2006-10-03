@@ -2,8 +2,8 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class SingleStringInput implements IReasonerInput{
 	

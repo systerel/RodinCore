@@ -1,5 +1,7 @@
 package org.eventb.core.seqprover;
 
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+
 /**
  * Common protocol for a proof tree node.
  * 
@@ -37,7 +39,7 @@ package org.eventb.core.seqprover;
  * @author Farhad Mehta
  * @author Laurent Voisin
  */
-public interface IProofTreeNode {
+public interface IProofTreeNode extends IProofSkeleton {
 
 	/**
 	 * Applies the given rule to this node.
@@ -58,7 +60,7 @@ public interface IProofTreeNode {
 	 * @return an array of the children of this node
 	 * @see #hasChildren()
 	 */
-	IProofTreeNode[] getChildren();
+	IProofTreeNode[] getChildNodes();
 
 	/**
 	 * Returns the first open descendant of this node.
@@ -143,7 +145,7 @@ public interface IProofTreeNode {
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this node has some child
-	 * @see #getChildren()
+	 * @see #getChildNodes()
 	 */
 	boolean hasChildren();
 
@@ -207,19 +209,6 @@ public interface IProofTreeNode {
 	 * @see #setComment()
 	 */
 	String getComment();
-	
-//	/**
-//	 * Returns the hypotheses needed by rule applied at this node.
-//	 * 
-//	 * @return the hypotheses needed by rule applied at this node.
-//	 */
-//	Set<Hypothesis> getNeededHypotheses();
-	
-	// TODO : Replace getNeededHypotheses() with a more sophisticated 
-	//        getUsedHypotheses() once Rule and ReasoningStep have been merged.
-	
-	// Perhaps make public but not published
-	// void addFreeIdents(ITypeEnvironment typEnv);
 	
 	
 	/**

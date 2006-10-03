@@ -9,7 +9,6 @@
 package org.eventb.core.seqprover;
 
 
-
 /**
  * Common protocol for a proof tree of the sequent prover.
  * <p>

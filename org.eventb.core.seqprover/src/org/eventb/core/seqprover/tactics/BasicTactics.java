@@ -169,8 +169,8 @@ public class BasicTactics {
 			Boolean successfull = pt.applyRule(rule);
 			if (successfull)
 			{
-				IProofTreeNode[] ptChildren = pt.getChildren();
-				IProofTreeNode[] toPasteChildren = toPaste.getChildren();
+				IProofTreeNode[] ptChildren = pt.getChildNodes();
+				IProofTreeNode[] toPasteChildren = toPaste.getChildNodes();
 				if (ptChildren.length != toPasteChildren.length) 
 					return "Paste unsuccessful";
 				Object error = null;

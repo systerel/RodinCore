@@ -167,7 +167,7 @@ public final class ProofTree implements IProofTree {
 		// actually static
 		private void collectNeededHypotheses(Set<Hypothesis> neededHyps,ProofTreeNode node){
 			neededHyps.addAll(node.getNeededHypotheses());
-			IProofTreeNode[] children = node.getChildren();
+			IProofTreeNode[] children = node.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				ProofTreeNode child = (ProofTreeNode)children[i];
 				neededHyps.addAll(child.getNeededHypotheses());
@@ -184,7 +184,7 @@ public final class ProofTree implements IProofTree {
 		// actually static
 		private void collectFreeIdentifiers(ITypeEnvironment typeEnv, ProofTreeNode node) {
 			node.addFreeIdents(typeEnv);
-			IProofTreeNode[] children = node.getChildren();
+			IProofTreeNode[] children = node.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				((ProofTreeNode) children[i]).addFreeIdents(typeEnv);
 				collectFreeIdentifiers(typeEnv,((ProofTreeNode)children[i]));

@@ -5,8 +5,8 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
-import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class MultiplePredInput implements IReasonerInput{
 	

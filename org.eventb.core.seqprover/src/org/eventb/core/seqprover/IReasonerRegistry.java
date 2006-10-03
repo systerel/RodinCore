@@ -92,5 +92,34 @@ public interface IReasonerRegistry {
 	 */
 	String getReasonerName(String reasonerID);
 
+	/**
+	 * Factory method to create a dummy reasoner.
+	 * 
+	 * A dummy reasoner is used as a facade to a reasoner that is not currently
+	 * installed so that the rule provided by it may be used in the proof tree
+	 * and serialized. A dummy reasoner cannot be replayed. An attempt to call
+	 * the <code>apply()</code> method on it will always return an 
+	 * <code>IReasonerFailure</code>.
+	 * 
+	 * @see IReasoner
+	 * 
+	 * @param reasonerID
+	 * 					The reasoner ID to be used to construct the dummy reasoner
+	 * @return
+	 * 			A dummy reasoner with the given reasoner ID.
+	 */
+	IReasoner makeDummyReasoner(String reasonerID);
+	
+	
+	/**
+	 * Checks if a given reasoner is a dummy reasoner or not.
+	 * 
+	 * @see makeDummyReasoner()
+	 * 
+	 * @param reasoner
+	 * 				The reasoner to check
+	 * @return <code>true</code> iff the given reasoner is a dummy reasoner
+	 */
+	boolean isDummyReasoner(IReasoner reasoner);
 
 }

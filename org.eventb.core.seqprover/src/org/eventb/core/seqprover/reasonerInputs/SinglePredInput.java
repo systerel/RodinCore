@@ -6,8 +6,8 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.ReplayHints;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class SinglePredInput implements IReasonerInput{
 	

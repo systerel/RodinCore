@@ -202,7 +202,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if (this.rule != null) return false;
 		if (! Lib.identical(this.sequent,tree.getSequent())) return false;
 		ProofTreeNode treeRoot = (ProofTreeNode)tree.getRoot();
-		ProofTreeNode[] treeChildren = treeRoot.getChildren();
+		ProofTreeNode[] treeChildren = treeRoot.getChildNodes();
 		ProofRule treeRule = (ProofRule) treeRoot.getRule();
 		boolean treeClosed = treeRoot.isClosed();
 		
@@ -266,7 +266,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTreeNode#getChildren()
 	 */
-	public ProofTreeNode[] getChildren() {
+	public ProofTreeNode[] getChildNodes() {
 		if (children == null)
 			return NO_NODE;
 		final int length = children.length;

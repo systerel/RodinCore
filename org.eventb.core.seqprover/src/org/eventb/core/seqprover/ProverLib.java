@@ -30,8 +30,8 @@ public class ProverLib {
 		if (pn1.hasChildren())
 		{
 			if (!deepEquals(pn1.getRule(),pn2.getRule())) return false;
-			for (int i = 0; i < pn1.getChildren().length; i++) {
-				if (! deepEquals(pn1.getChildren()[i],pn2.getChildren()[i])) return false;
+			for (int i = 0; i < pn1.getChildNodes().length; i++) {
+				if (! deepEquals(pn1.getChildNodes()[i],pn2.getChildNodes()[i])) return false;
 			}
 		}
 		return true;

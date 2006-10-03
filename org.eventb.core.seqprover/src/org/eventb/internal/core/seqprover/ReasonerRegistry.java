@@ -8,10 +8,18 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerInputSerializer;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IReasonerRegistry;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 
 /**
  * Singeleton class implementing the reasoner registry.
@@ -121,6 +129,20 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.seqprover.IReasonerRegistry#makeDummyReasoner(java.lang.String)
+	 */
+	public IReasoner makeDummyReasoner(String reasonerID){
+		return new DummyReasoner(reasonerID);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.seqprover.IReasonerRegistry#isDummyReasoner(org.eventb.core.seqprover.IReasoner)
+	 */
+	public boolean isDummyReasoner(IReasoner reasoner){
+		return (reasoner != null) && (reasoner instanceof DummyReasoner);
+	}
+	
 	/**
 	 * 
 	 * Private helper class implementing lazy loading of reasoner instances
@@ -193,5 +215,36 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		public String getReasonerName() {
 			return reasonerName;
 		}
+	}
+	
+	/**
+	 * 
+	 * Private helper class implementing dummy reasoners
+	 * 
+	 * @see IReasonerRegistry.makeDummyReasoner()
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 */
+	private class DummyReasoner implements IReasoner{
+
+		private final String reasonerID;
+		
+		private DummyReasoner(String reasonerID){
+			this.reasonerID = reasonerID;
+		}
+		
+		public String getReasonerID() {
+			return reasonerID;
+		}
+
+		public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+			return new EmptyInput();
+		}
+
+		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor) {
+			return ProverFactory.reasonerFailure(this,input,"Reasoner "+ getReasonerID() +" is not installed");
+		}
+		
 	}
 }

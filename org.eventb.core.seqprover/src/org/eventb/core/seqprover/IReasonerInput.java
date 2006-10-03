@@ -1,6 +1,7 @@
 package org.eventb.core.seqprover;
 
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 
 
