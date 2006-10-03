@@ -389,7 +389,7 @@ public class MachineEventModule extends LabeledElementModule {
 			makeImplicitRefinement(event, symbolInfo);
 		} else {
 			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(), monitor);
-			if (!found) {
+			if (!found && !isInit) {
 				IAbstractEventInfo abstractEventInfo =
 					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
 				if (abstractEventInfo != null && !abstractEventInfo.isForbidden())
