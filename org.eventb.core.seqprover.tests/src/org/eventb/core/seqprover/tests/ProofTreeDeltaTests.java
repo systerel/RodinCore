@@ -70,8 +70,8 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
-		assertEquals(1, root.getChildren().length);
-		IProofTreeNode imp = root.getChildren()[0];
+		assertEquals(1, root.getChildNodes().length);
+		IProofTreeNode imp = root.getChildNodes()[0];
 		Tactics.hyp().apply(imp);
 
 		startDeltas(tree);
@@ -90,8 +90,8 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		Tactics.impI().apply(root);
-		assertEquals(1, root.getChildren().length);
-		IProofTreeNode imp = root.getChildren()[0];
+		assertEquals(1, root.getChildNodes().length);
+		IProofTreeNode imp = root.getChildNodes()[0];
 
 		startDeltas(tree);
 		Tactics.hyp().apply(imp);
@@ -111,11 +111,11 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertNotEmpty(root.getChildren());
-		IProofTreeNode imp = root.getChildren()[0];
+		assertNotEmpty(root.getChildNodes());
+		IProofTreeNode imp = root.getChildNodes()[0];
 		Tactics.conjI().apply(imp);
-		assertEquals(2, imp.getChildren().length);
-		IProofTreeNode left = imp.getChildren()[0];
+		assertEquals(2, imp.getChildNodes().length);
+		IProofTreeNode left = imp.getChildNodes()[0];
 
 		startDeltas(tree);
 		Tactics.hyp().apply(left);
@@ -136,11 +136,11 @@ public class ProofTreeDeltaTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertNotEmpty(root.getChildren());
-		IProofTreeNode imp = root.getChildren()[0];
+		assertNotEmpty(root.getChildNodes());
+		IProofTreeNode imp = root.getChildNodes()[0];
 		Tactics.conjI().apply(imp);
-		assertEquals(2, imp.getChildren().length);
-		IProofTreeNode left = imp.getChildren()[0];
+		assertEquals(2, imp.getChildNodes().length);
+		IProofTreeNode left = imp.getChildNodes()[0];
 		Tactics.hyp().apply(left);
 
 		startDeltas(tree);

@@ -45,10 +45,10 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 
 		Tactics.impI().apply(root);
 		assertNodePending(root);
-		assertNotEmpty(root.getChildren());
+		assertNotEmpty(root.getChildNodes());
 
-		IProofTreeNode imp = root.getChildren()[0];
-		assertSingleton(imp, root.getChildren());
+		IProofTreeNode imp = root.getChildNodes()[0];
+		assertSingleton(imp, root.getChildNodes());
 		assertNodeOpen(imp);
 		
 		Tactics.hyp().apply(imp);
@@ -67,9 +67,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertNotEmpty(root.getChildren());
-		IProofTreeNode imp = root.getChildren()[0];
-		assertSingleton(imp, root.getChildren());
+		assertNotEmpty(root.getChildNodes());
+		IProofTreeNode imp = root.getChildNodes()[0];
+		assertSingleton(imp, root.getChildNodes());
 		assertNodeOpen(imp);
 		assertNodePending(root);
 		
@@ -86,23 +86,23 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertNotEmpty(root.getChildren());
-		IProofTreeNode conj = root.getChildren()[0];
-		assertSingleton(conj, root.getChildren());
+		assertNotEmpty(root.getChildNodes());
+		IProofTreeNode conj = root.getChildNodes()[0];
+		assertSingleton(conj, root.getChildNodes());
 		assertNodeOpen(conj);
 		assertNodePending(root);
 
 		Tactics.conjI().apply(conj);
-		assertEquals(2, conj.getChildren().length);
-		IProofTreeNode left = conj.getChildren()[0];
-		IProofTreeNode right = conj.getChildren()[1];
+		assertEquals(2, conj.getChildNodes().length);
+		IProofTreeNode left = conj.getChildNodes()[0];
+		IProofTreeNode right = conj.getChildNodes()[1];
 		assertNodeOpen(left);
 		assertNodeOpen(right);
 		assertNodePending(conj);
 		assertNodePending(root);
 		
 		Tactics.hyp().apply(left);
-		assertEmpty(left.getChildren());
+		assertEmpty(left.getChildNodes());
 		assertNodeDischarged(left);
 		assertNodeOpen(right);
 		assertNodePending(conj);
@@ -142,13 +142,13 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertEquals(1, root.getChildren().length);
-		IProofTreeNode imp = root.getChildren()[0];
+		assertEquals(1, root.getChildNodes().length);
+		IProofTreeNode imp = root.getChildNodes()[0];
 
 		Tactics.conjI().apply(imp);
-		assertEquals(2, imp.getChildren().length);
-		IProofTreeNode left = imp.getChildren()[0];
-		IProofTreeNode right = imp.getChildren()[1];
+		assertEquals(2, imp.getChildNodes().length);
+		IProofTreeNode left = imp.getChildNodes()[0];
+		IProofTreeNode right = imp.getChildNodes()[1];
 
 		// the nodes to prune are part of the same proof tree.
 		assertSame(imp.getProofTree(),tree);
@@ -181,13 +181,13 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertEquals(1, root.getChildren().length);
-		IProofTreeNode imp = root.getChildren()[0];
+		assertEquals(1, root.getChildNodes().length);
+		IProofTreeNode imp = root.getChildNodes()[0];
 
 		Tactics.conjI().apply(imp);
-		assertEquals(2, imp.getChildren().length);
-		IProofTreeNode left = imp.getChildren()[0];
-		IProofTreeNode right = imp.getChildren()[1];
+		assertEquals(2, imp.getChildNodes().length);
+		IProofTreeNode left = imp.getChildNodes()[0];
+		IProofTreeNode right = imp.getChildNodes()[1];
 		
 		Tactics.hyp().apply(left);
 		Tactics.hyp().apply(right);
@@ -225,13 +225,13 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root);
-		assertEquals(1, root.getChildren().length);
-		IProofTreeNode imp = root.getChildren()[0];
+		assertEquals(1, root.getChildNodes().length);
+		IProofTreeNode imp = root.getChildNodes()[0];
 
 		Tactics.conjI().apply(imp);
-		assertEquals(2, imp.getChildren().length);
-		IProofTreeNode left = imp.getChildren()[0];
-		IProofTreeNode right = imp.getChildren()[1];
+		assertEquals(2, imp.getChildNodes().length);
+		IProofTreeNode left = imp.getChildNodes()[0];
+		IProofTreeNode right = imp.getChildNodes()[1];
 
 		// the nodes to copy are part of the same proof tree.
 		assertSame(imp.getProofTree(),tree);
@@ -294,9 +294,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode graftRoot = graft.getRoot();
 		
 		Tactics.conjI().apply(graftRoot);
-		assertEquals(2, graftRoot.getChildren().length);
-		IProofTreeNode ch1 = graftRoot.getChildren()[0];
-		IProofTreeNode ch2 = graftRoot.getChildren()[1];
+		assertEquals(2, graftRoot.getChildNodes().length);
+		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
+		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
 				
 		treeRoot.graft(graft);
 		
@@ -324,9 +324,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTreeNode graftRoot = graft.getRoot();
 		
 		Tactics.conjI().apply(graftRoot);
-		assertEquals(2, graftRoot.getChildren().length);
-		IProofTreeNode ch1 = graftRoot.getChildren()[0];
-		IProofTreeNode ch2 = graftRoot.getChildren()[1];
+		assertEquals(2, graftRoot.getChildNodes().length);
+		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
+		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
 		Tactics.tautology().apply(ch1);
 		Tactics.tautology().apply(ch2);
 		assertNodeClosed(graftRoot);

@@ -38,7 +38,6 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 
 	ArrayList<IProofTreeDelta> deltas = null;
 
-	FormulaFactory ff = FormulaFactory.getDefault();
 
 	/**
 	 * Applies the given rule to the given node, expecting success.
@@ -152,7 +151,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 *            the node to test
 	 */
 	public void assertNodeOpen(IProofTreeNode node) {
-		assertEmpty(node.getChildren());
+		assertEmpty(node.getChildNodes());
 		assertSame(node, node.getFirstOpenDescendant());
 		assertSingleton(node, node.getOpenDescendants());
 		assertNull(node.getRule());
@@ -168,7 +167,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 *            the node to test
 	 */
 	public void assertNodePending(IProofTreeNode node) {
-		assertNotEmpty(node.getChildren());
+		assertNotEmpty(node.getChildNodes());
 		assertNotNull(node.getFirstOpenDescendant());
 		assertNotSame(node, node.getFirstOpenDescendant());
 		assertNotEmpty(node.getOpenDescendants());
@@ -264,7 +263,8 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 *            goal of the sequent
 	 * @return a new sequent with the given goal
 	 */
-	public IProverSequent makeSimpleSequent(String goal) {
+	public static IProverSequent makeSimpleSequent(String goal) {
+		FormulaFactory ff = FormulaFactory.getDefault();
 		IParseResult parseResult = ff.parsePredicate(goal);
 		Predicate goalPredicate = parseResult.getParsedPredicate();
 		assertNotNull("Can't parse predicate: " + goal, goalPredicate);
