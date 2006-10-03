@@ -27,13 +27,11 @@ import org.eventb.core.basis.PRSequent;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
@@ -112,7 +110,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs, IPOFile poFile, IProgressMonitor monitor) throws RodinDBException
 	{
-		Map<String, IProverSequent> newPOs = POUtil.readPOs(poFile);		
+		Map<String, IProverSequent> newPOs = POLoader.readPOs(poFile);		
 		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
 		
 		for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
@@ -210,7 +208,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			project.createRodinFile(prFile.getElementName(), true, null);
 		}
 		
-		copyGlobalInfo(poFile, prFile, monitor);
+		// copyGlobalInfo(poFile, prFile, monitor);
 		copySequents(newValidity,oldProofs, poFile, prFile, monitor);
 	}
 	
@@ -227,11 +225,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			IPRSequent prSeq = 
 				(IPRSequent) prFile.createInternalElement(
 						IPRSequent.ELEMENT_TYPE, poSeq.getName(), null, monitor);
-			IRodinElement[] children = poSeq.getChildren();
-			
-			for (IRodinElement child : children){
-				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
-			}
+//			IRodinElement[] children = poSeq.getChildren();
+//			
+//			for (IRodinElement child : children){
+//				((IInternalElement)child).copy(prSeq,null,null,false,monitor);
+//			}
 			
 			assert (newValidity.get(poSeq.getName()) != null);
 			((PRSequent)prSeq).setProofBroken(! newValidity.get(poSeq.getName()));
@@ -248,13 +246,14 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-	private void copyGlobalInfo(IPOFile poFile, IPRFile prFile, IProgressMonitor monitor) throws RodinDBException{
-		
-		IRodinElement[] children = ((RodinElement)poFile).getChildren();
-		for (IRodinElement child : children){
-			if (!(child.getElementType().equals(IPOSequent.ELEMENT_TYPE))){
-				((IInternalElement)child).copy(prFile,null,null,false,monitor);
-			}
-		}
-	}
+//	private void copyGlobalInfo(IPOFile poFile, IPRFile prFile, IProgressMonitor monitor) throws RodinDBException{
+//		
+//		IRodinElement[] children = ((RodinElement)poFile).getChildren();
+//		for (IRodinElement child : children){
+//			if (!(child.getElementType().equals(IPOSequent.ELEMENT_TYPE))){
+//				((IInternalElement)child).copy(prFile,null,null,false,monitor);
+//			}
+//		}
+//	}
+	
 }

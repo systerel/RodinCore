@@ -61,28 +61,6 @@ public class POUtil {
 		return result;
 	}
 
-	
-//	private static Set<Hypothesis> readHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-//		Set<Hypothesis> result = new HashSet<Hypothesis>();
-//		result.addAll(readGlobalHypotheses(poHyp,typeEnv));
-//		result.addAll(readLocalHypotheses(poHyp,typeEnv));
-//		return result;
-//	}
-	
-//	private static Set<Hypothesis> readGlobalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-//		Set<Hypothesis> result = new HashSet<Hypothesis>();
-//		result.addAll(readPredicates(poHyp.getPredicateSet(),typeEnv));
-//		return result;
-//	}
-	
-//	private static Set<Hypothesis> readLocalHypotheses(IPOPredicateSet poHyp, ITypeEnvironment typeEnv) throws RodinDBException {
-//		Set<Hypothesis> result = new HashSet<Hypothesis>();
-//		for (IPOPredicate poPred : poHyp.getPredicates()){
-//			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
-//		}
-//		return result;
-//	}
-
 
 	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();

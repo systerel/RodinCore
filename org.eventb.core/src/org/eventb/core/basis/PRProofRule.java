@@ -53,7 +53,10 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
 		IReasoner reasoner = reasonerRegistry.getReasonerInstance(this.getReasonerID());
 		// Uninstalled reasoner
-		if (reasoner == null) return null;
+		if (reasoner == null) {
+			
+			return reasonerRegistry.makeDummyReasoner(getReasonerID());
+		}
 		return reasoner;
 	} 
 	

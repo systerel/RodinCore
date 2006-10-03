@@ -7,8 +7,11 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -28,15 +31,21 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return ELEMENT_TYPE;
 	}
 	
-	public IPRProofRule getRule() throws RodinDBException {
+//	public IPRProofRule getPRRule() throws RodinDBException {
+//		IRodinElement[] rules =  this.getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
+//		if (rules.length == 0) return null;
+//		assert rules.length == 1;
+//		return (IPRProofRule) rules[0];
+//	}
+	
+	public IProofRule getRule() throws RodinDBException {
 		IRodinElement[] rules =  this.getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 		if (rules.length == 0) return null;
 		assert rules.length == 1;
-		return (IPRProofRule) rules[0];
+		return ((IPRProofRule) rules[0]).getProofRule();
 	}
 
-	public IPRProofTreeNode[] getChildProofTreeNodes() throws RodinDBException {
-		if (this.getRule() == null) return null;
+	public IPRProofTreeNode[] getChildNodes() throws RodinDBException {
 		IRodinElement[] rodinElements =  this.getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		IPRProofTreeNode[] proofTreeNodes = new IPRProofTreeNode[rodinElements.length];
 		// Do the cast
@@ -46,12 +55,50 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return proofTreeNodes;
 	}
 	
+	public IPRProofTreeNode[] getChildNodesRR() throws RodinDBException {
+		return null;
+	}
+	
 	public String getComment() throws RodinDBException {
 		return getContents();
 	}
 	
+	public String getComment(IProgressMonitor monitor) throws RodinDBException {
+		return getContents(monitor);
+	}
+	
 	public void setComment(String comment) throws RodinDBException {
 		setContents(comment);
+	}
+	
+	public IProofSkeleton getSkeleton(final IProgressMonitor monitor) throws RodinDBException {
+		final String comment = getComment();
+		final IProofRule proofRule = getRule();
+		final IPRProofTreeNode[] prChildNodes = getChildNodes();
+		final IProofSkeleton[] childNodes = new IProofSkeleton[prChildNodes.length];
+		for (int i = 0; i < childNodes.length; i++) {
+			childNodes[i] = prChildNodes[i].getSkeleton(monitor);
+		}
+		
+		// if (monitor.isCanceled()) throw new OperationCanceledException();
+		
+		IProofSkeleton skeleton =
+			new IProofSkeleton(){
+
+				public IProofSkeleton[] getChildNodes() {
+					return childNodes;
+				}
+
+				public IProofRule getRule() {
+					return proofRule;
+				}
+
+				public String getComment() {
+					return comment;
+				}
+			
+		};
+		return skeleton;
 	}
 	
 }

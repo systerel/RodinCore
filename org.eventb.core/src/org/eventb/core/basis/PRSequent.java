@@ -10,6 +10,8 @@ package org.eventb.core.basis;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
@@ -18,6 +20,7 @@ import org.eventb.internal.core.pom.PRUtil;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B PR proof obligation as an extension of the Rodin database.
@@ -34,7 +37,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public class PRSequent extends POSequent implements IPRSequent {
+public class PRSequent extends InternalElement implements IPRSequent {
 
 	public PRSequent(String name, IRodinElement parent) {
 		super(name, parent);
@@ -48,6 +51,9 @@ public class PRSequent extends POSequent implements IPRSequent {
 		return IPRSequent.ELEMENT_TYPE;
 	}
 	
+	public String getName() {
+		return getElementName();
+	}
 	public IPRProofTree getProofTree() throws RodinDBException {
 		IPRProofTree proofTree = ((IPRFile)getOpenable()).getProofTree(getName());
 		// assert proofTree != null;
@@ -73,14 +79,6 @@ public class PRSequent extends POSequent implements IPRSequent {
 		}, null);
 	}
 
-//	@Deprecated
-//	public boolean isClosed() throws RodinDBException {
-//		if (isProofBroken()) return false;
-//		IPRProofTree proof = getProofTree();
-//		if (proof==null) return false;
-//		return (proof.getConfidence() != IConfidence.PENDING);
-//	}
-
 	public boolean isProofBroken() throws RodinDBException {
 		return getContents().equals("ProofBroken");
 	}
@@ -90,12 +88,13 @@ public class PRSequent extends POSequent implements IPRSequent {
 		else setContents("ProofValid");
 	}
 
-//	@Deprecated
-//	public boolean proofAttempted() throws RodinDBException {
-//		IPRProofTree proof = getProofTree();
-//		if (proof == null || ! proof.proofAttempted()) return false;
-//		return true;
-//	}
+	public IPOSequent getPOSequent() {
+		IPRFile prFile = (IPRFile) getOpenable();
+		IPOFile poFile = prFile.getPOFile();
+		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getName());
+		if (! poSeq.exists()) return null;
+		return poSeq;
+	}
 	
 	
 	

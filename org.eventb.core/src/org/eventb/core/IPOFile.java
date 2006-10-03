@@ -77,4 +77,8 @@ public interface IPOFile extends IRodinFile {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	public IPOSequent[] getSequents() throws RodinDBException;
+	
+	// TODO : a method that returns a sequent with a particular name
+	// 			or null if no suc sequent exists
+	// public IPOSequent getSequent(String name) throws RodinDBException;
 }

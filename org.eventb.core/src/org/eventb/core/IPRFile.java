@@ -10,6 +10,7 @@ package org.eventb.core;
 
 import java.util.Map;
 
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 
@@ -29,7 +30,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRFile extends IPOFile {
+public interface IPRFile extends IRodinFile{
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
 	
@@ -65,6 +66,10 @@ public interface IPRFile extends IPOFile {
 	 * @return a handle to the PO file of this component
 	 */
 	IPOFile getPOFile();
+	
+	IPRSequent[] getSequents() throws RodinDBException;
+	
+	IPRSequent getSequent(String name) throws RodinDBException;
 	
 	/**
 	 * Returns all the proof trees contained in this PR file, indexed according 

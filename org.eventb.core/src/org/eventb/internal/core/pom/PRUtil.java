@@ -8,14 +8,6 @@
 
 package org.eventb.internal.core.pom;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.eventb.core.IPOIdentifier;
-import org.eventb.core.IPOPredicate;
-import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
@@ -24,9 +16,6 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.basis.PRProofRule;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.basis.PRProofTreeNode;
@@ -37,13 +26,11 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.ReplayHints;
-import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -53,43 +40,47 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class PRUtil {
 
-	// Functions to read & update status in PR files
+//	// Functions to read & update status in PR files
+//	
+//	public static Map<String, IProverSequent> readPOs(IPRFile prFile) throws RodinDBException {
+//		// read in the global type environment
+//		ITypeEnvironment globalTypeEnv = Lib.ff.makeTypeEnvironment();
+//		addIdents(prFile.getIdentifiers(), globalTypeEnv);
+//		
+//		Map<String, IProverSequent> result 
+//		= new HashMap<String, IProverSequent>(prFile.getSequents().length);
+//		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
+//			String name = prSeq.getName();
+//			ITypeEnvironment typeEnv = globalTypeEnv.clone();
+//			addIdents(prSeq.getIdentifiers(),typeEnv);
+//			Set<Hypothesis> hypotheses = readPredicates(prSeq.getHypothesis(),typeEnv);
+////			Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
+////			Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
+//			Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
+//			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
+////			seq = seq.selectHypotheses(localHypotheses);
+//			// System.out.println(name+" : "+seq);
+//			result.put(name,seq);
+//		}
+//		return result;
+//	}
 	
-	public static Map<String, IProverSequent> readPOs(IPRFile prFile) throws RodinDBException {
-		// read in the global type environment
-		ITypeEnvironment globalTypeEnv = Lib.ff.makeTypeEnvironment();
-		addIdents(prFile.getIdentifiers(), globalTypeEnv);
-		
-		Map<String, IProverSequent> result 
-		= new HashMap<String, IProverSequent>(prFile.getSequents().length);
-		for (IPRSequent prSeq : (IPRSequent[]) prFile.getSequents()){
-			String name = prSeq.getName();
-			ITypeEnvironment typeEnv = globalTypeEnv.clone();
-			addIdents(prSeq.getIdentifiers(),typeEnv);
-			Set<Hypothesis> hypotheses = readPredicates(prSeq.getHypothesis(),typeEnv);
-//			Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
-//			Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
-			Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
-			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
-//			seq = seq.selectHypotheses(localHypotheses);
-			// System.out.println(name+" : "+seq);
-			result.put(name,seq);
-		}
-		return result;
-	}
+//	public static IProverSequent makeSequent(IPRSequent prSeq) throws RodinDBException{
+//		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
+//		IPRFile prFile = (IPRFile) prSeq.getOpenable();
+//		addIdents(prFile.getIdentifiers(), typeEnv);
+//		addIdents(prSeq.getIdentifiers(),typeEnv);
+//		Set<Hypothesis> hypotheses = readPredicates(prSeq.getHypothesis(),typeEnv);
+////		Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
+////		Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
+//		Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
+//		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
+////		seq = seq.selectHypotheses(localHypotheses);
+//		return seq;
+//	}
 	
 	public static IProverSequent makeSequent(IPRSequent prSeq) throws RodinDBException{
-		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
-		IPRFile prFile = (IPRFile) prSeq.getOpenable();
-		addIdents(prFile.getIdentifiers(), typeEnv);
-		addIdents(prSeq.getIdentifiers(),typeEnv);
-		Set<Hypothesis> hypotheses = readPredicates(prSeq.getHypothesis(),typeEnv);
-//		Set<Hypothesis> hypotheses = readHypotheses(prSeq.getHypothesis(),typeEnv);
-//		Set<Hypothesis> localHypotheses = readLocalHypotheses(prSeq.getHypothesis(),typeEnv);
-		Predicate goal = readPredicate(prSeq.getGoal(),typeEnv);
-		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
-//		seq = seq.selectHypotheses(localHypotheses);
-		return seq;
+		return POLoader.makeSequent(prSeq);
 	}
 	
 	public static IProofTree makeInitialProofTree(IPRSequent prSeq) throws RodinDBException{		
@@ -102,93 +93,91 @@ public class PRUtil {
 		IProofTreeNode root = proofTree.getRoot();
 		if (prSeq.getProofTree() != null){
 			IPRProofTreeNode prRoot = prSeq.getProofTree().getRoot();
+			IProofSkeleton ptsn = prRoot.getSkeleton(null);
 			ReplayHints replayHints = new ReplayHints();
-			if (prRoot != null) rebuild(root,prRoot,replayHints);
+			
+			if (prRoot != null) ProofBuilder.rebuild(root,ptsn,replayHints);
 		}
 		return proofTree;
 	}
 	
-	// TODO:
-	// Return value true if there may be a change in the proof tree node from the
-	// stored DB version
-	public static void rebuild(IProofTreeNode node,IPRProofTreeNode prNode, ReplayHints replayHints) throws RodinDBException{
-		// System.out.println("trying rebuild"+node.getSequent());
-		node.setComment(prNode.getComment());
-		IPRProofRule prRule = prNode.getRule();
-		// Check if this is an open node
-		if (prRule == null) return;
-		
-		// Try to replay the rule
-		if (true){
-//			IRodinElement[] prReasoningSteps = prRule.getChildrenOfType(IPRReasoningStep.ELEMENT_TYPE);
-//			assert prReasoningSteps.length == 1;
-//			PRReasoningStep prReasoningStep = (PRReasoningStep) prReasoningSteps[0];
+//	// TODO:
+//	// Return value true if there may be a change in the proof tree node from the
+//	// stored DB version
+//	public static void rebuild(IProofTreeNode node,IPRProofTreeNode prNode, ReplayHints replayHints) throws RodinDBException{
+//		// System.out.println("trying rebuild"+node.getSequent());
+//		node.setComment(prNode.getComment());
+//
+//		IProofRule reuseProofRule = prNode.getRule();
+//		
+//		// Check if this is an open node
+//		if (reuseProofRule == null) return;
+//		
+//		// Try to replay the rule
+//		if (true){
 //			
-//			ProofRule reuseReasonerOutput = prReasoningStep.getReasonerOutput();
-			
-			// TODO : remove cast
-			IProofRule reuseReasonerOutput = prRule.getProofRule();
-			
-			// reuseReasonerOutput.display = reuseReasonerOutput.display + ".";
-			IReasoner reasoner = reuseReasonerOutput.generatedBy();
-			// uninstalled reasoner
-			assert reasoner != null;
-			IReasonerInput reasonerInput = reuseReasonerOutput.generatedUsing();
-			
-			// choose between reuse and replay
-			boolean reuseSuccessfull = false;
-			// if there are replay hints do not even try a reuse
-			if (replayHints.isEmpty())
-			{
-				// see if reuse works
-				Object error = BasicTactics.reasonerTac(reuseReasonerOutput).apply(node);
-				reuseSuccessfull = (error == null);
-			}
-			
-			IProofRule replayReasonerOutputSucc = null;
-			
-			if (! reuseSuccessfull)
-			{	// reuse failed
-				// try replay
-				replayHints.applyHints(reasonerInput);
-				IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
-				if ((replayReasonerOutput != null) && 
-						((replayReasonerOutput instanceof IProofRule))){
-					// reasoner successfully generated something
-					// compare replayReasonerOutput and reuseReasonerOutput
-					// and generate hints for continuing the proof
-					replayReasonerOutputSucc =
-						(IProofRule) replayReasonerOutput;
-					BasicTactics.reasonerTac(replayReasonerOutputSucc).apply(node);
-				}
-				
-				// BasicTactics.reasonerTac(reasoner,reasonerInput).apply(node);
-			}	
-		
-		// Check if rebuild for this node was succesfull
-		if (! node.hasChildren()) return;
-		// System.out.println("rebuild successful! ");
-		IPRProofTreeNode[] prChildren = prNode.getChildProofTreeNodes();
-		assert prChildren != null;
-		IProofTreeNode[] children = node.getChildren();
-		assert children != null;
-		
-		// Maybe check if the node has the same number of children as the prNode
-		// it may be smart to replay anyway, but generate a warning.
-		if (children.length != prChildren.length) return;
-		
-		// run recursively for each child
-		for (int i = 0; i < children.length; i++) {
-			ReplayHints newReplayHints = replayHints;
-			if (replayReasonerOutputSucc != null)
-			{
-				newReplayHints = replayHints.clone();
-				newReplayHints.addHints(reuseReasonerOutput.getAnticidents()[i],replayReasonerOutputSucc.getAnticidents()[i]);
-			}
-			rebuild(children[i],prChildren[i],newReplayHints);
-		}
-		}
-	}
+//			IReasoner reasoner = reuseProofRule.generatedBy();
+//			// uninstalled reasoner
+//			assert reasoner != null;
+//			
+//			IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
+//			
+//			// choose between reuse and replay
+//			boolean reuseSuccessfull = false;
+//			boolean replaySuccessfull = false;
+//			// if there are replay hints do not even try a reuse
+//			if (replayHints.isEmpty())
+//			{
+//				// see if reuse works
+////				Object error = BasicTactics.reasonerTac(proofRule).apply(node);
+////				reuseSuccessfull = (error == null);
+//				reuseSuccessfull = node.applyRule(reuseProofRule);
+//				
+//			}
+//			
+//			IProofRule replayProofRule = null;
+//			
+//			if (! reuseSuccessfull)
+//			{	// reuse failed
+//				// try replay
+//				replayHints.applyHints(reasonerInput);
+//				IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(),reasonerInput, null);
+//				if ((replayReasonerOutput != null) && 
+//						((replayReasonerOutput instanceof IProofRule))){
+//					// reasoner successfully generated something
+//					replayProofRule = (IProofRule) replayReasonerOutput;
+//					replaySuccessfull = node.applyRule(replayProofRule);
+//					// BasicTactics.reasonerTac(replayProofRule).apply(node);
+//				}
+//				
+//				// BasicTactics.reasonerTac(reasoner,reasonerInput).apply(node);
+//			}	
+//			
+//			// Check if rebuild for this node was succesfull
+//			if (!(reuseSuccessfull || replaySuccessfull)) return;
+//			// if (! node.hasChildren()) return;
+//			// System.out.println("rebuild successful! ");
+//			IPRProofTreeNode[] prChildren = prNode.getChildNodes();
+//			assert prChildren != null;
+//			IProofTreeNode[] children = node.getChildNodes();
+//			
+//			// Maybe check if the node has the same number of children as the prNode
+//			// it may be smart to replay anyway, but generate a warning.
+//			if (children.length != prChildren.length) return;
+//			
+//			// run recursively for each child
+//			for (int i = 0; i < children.length; i++) {
+//				ReplayHints newReplayHints = replayHints;
+//				if (replayProofRule != null)
+//				{
+//					// generate hints for continuing the proof
+//					newReplayHints = replayHints.clone();
+//					newReplayHints.addHints(reuseProofRule.getAnticidents()[i],replayProofRule.getAnticidents()[i]);
+//				}
+//				rebuild(children[i],prChildren[i],newReplayHints);
+//			}
+//		}
+//	}
 	
 	public static void updateProofTree(IPRSequent prSeq, IProofTree pt) throws RodinDBException{
 		// IProofTree oldPt = makeProofTree(prSeq);
@@ -265,7 +254,7 @@ public class PRUtil {
 		
 		writeOutRule(proofTreeNode.getRule(),prProofTreeNode);
 		
-		IProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildren();
+		IProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildNodes();
 		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
 			writeOutProofTreeNode(proofTreeNodeChildren[i],i,(InternalElement) prProofTreeNode);
 		}
@@ -315,36 +304,36 @@ public class PRUtil {
 //		return result;
 //	}
 
-
-	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
-		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred:poPredSet.getPredicates()){
-			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
-		}
-		if (poPredSet.getPredicateSet() != null) 
-			result.addAll(readPredicates(poPredSet.getPredicateSet(),typeEnv));
-		return result;
-	}
-
-
-	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
-			Predicate pred =  Lib.parsePredicate(poPred.getContents());
-			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
-			assert pred != null;
-			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
-			assert wellTyped;
-			return pred;
-	}
-
-
-	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
-		for (IPOIdentifier poIdent: poIdents){
-			String name = poIdent.getName();
-			Type type = Lib.parseType(poIdent.getType());
-			assert (name!=null && type !=null);
-			typeEnv.addName(name,type);
-		}
-	}
+//
+//	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
+//		Set<Hypothesis> result = new HashSet<Hypothesis>();
+//		for (IPOPredicate poPred:poPredSet.getPredicates()){
+//			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
+//		}
+//		if (poPredSet.getPredicateSet() != null) 
+//			result.addAll(readPredicates(poPredSet.getPredicateSet(),typeEnv));
+//		return result;
+//	}
+//
+//
+//	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
+//			Predicate pred =  Lib.parsePredicate(poPred.getContents());
+//			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
+//			assert pred != null;
+//			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
+//			assert wellTyped;
+//			return pred;
+//	}
+//
+//
+//	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
+//		for (IPOIdentifier poIdent: poIdents){
+//			String name = poIdent.getName();
+//			Type type = Lib.parseType(poIdent.getType());
+//			assert (name!=null && type !=null);
+//			typeEnv.addName(name,type);
+//		}
+//	}
 
 	
 

@@ -11,6 +11,7 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.seqprover.IProofTree;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,13 +23,15 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public interface IPRSequent extends IPOSequent {
+public interface IPRSequent extends IInternalElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
 	
 //	@ Deprecated
 //	boolean isClosed() throws RodinDBException;
 
+	public String getName();
+	
 	/**
 	 * Returns the proof tree associated to this proof obligation from the
 	 * RODIN database.
@@ -53,5 +56,7 @@ public interface IPRSequent extends IPOSequent {
 //	void setProofBroken(boolean broken) throws RodinDBException;
 	
 	void updateProofTree(IProofTree pt) throws RodinDBException, CoreException;
+	
+	IPOSequent getPOSequent();
 
 }

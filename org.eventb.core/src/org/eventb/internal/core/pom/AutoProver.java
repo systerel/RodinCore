@@ -41,7 +41,7 @@ public class AutoProver {
 	protected static void run(IPRFile prFile, IProgressMonitor monitor) throws CoreException {
 		if (! enabled)
 			return;
-		final IPRSequent[] pos = (IPRSequent[]) prFile.getSequents();
+		final IPRSequent[] pos = prFile.getSequents();
 		boolean dirty = false;
 		try{
 			

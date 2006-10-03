@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
@@ -222,7 +221,7 @@ public class UserSupport implements IElementChangedListener,
 		proofStates = new LinkedList<ProofState>();
 		try {
 			for (int i = 0; i < prFile.getSequents().length; i++) {
-				IPRSequent prSequent = (IPRSequent) prFile.getSequents()[i];
+				IPRSequent prSequent = prFile.getSequents()[i];
 				proofStates.add(new ProofState(prSequent));
 			}
 		} catch (RodinDBException e) {
@@ -545,7 +544,7 @@ public class UserSupport implements IElementChangedListener,
 		try {
 			int index = 0;
 			ProofState proofState = getProofState(index);
-			for (IPOSequent prSequent : prFile.getSequents()) {
+			for (IPRSequent prSequent : prFile.getSequents()) {
 				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
 				UserSupportUtils.debug("Index: " + index);
 				if (proofState != null) {
@@ -555,7 +554,7 @@ public class UserSupport implements IElementChangedListener,
 						continue;
 					}
 				}
-				ProofState state = new ProofState((IPRSequent) prSequent);
+				ProofState state = new ProofState(prSequent);
 				UserSupportUtils.debug("Added at position " + index);
 				proofStates.add(index++, state);
 			}
@@ -684,7 +683,8 @@ public class UserSupport implements IElementChangedListener,
 			}
 		} else if (element instanceof IPRProofTree) {
 			IPRProofTree proofTree = (IPRProofTree) element;
-			IPRSequent prSequent = proofTree.getSequent();
+			// IPRSequent prSequent = proofTree.getSequent();
+			IPRSequent prSequent = prFile.getSequent(proofTree.getElementName());
 
 			ProofState state = getProofState(prSequent);
 

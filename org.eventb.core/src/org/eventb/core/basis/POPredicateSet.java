@@ -63,12 +63,13 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		if (getContents().equals("")) return null;
 		IPOPredicateSet sup = null;
 		
-		// TODO the hack below has to disappear
+//		// TODODONE the hack below has to disappear
+//		
+//			if (getOpenable() instanceof IPOFile)
+//			sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
+//			else sup = ((IPRFile) getOpenable()).getPredicateSet(getContents());
 		
-			if (getOpenable() instanceof IPOFile)
-			sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
-			else sup = ((IPRFile) getOpenable()).getPredicateSet(getContents());
-	
+		sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
 		return sup;
 	}
 

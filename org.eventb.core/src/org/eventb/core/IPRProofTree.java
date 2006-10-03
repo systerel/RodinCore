@@ -39,7 +39,8 @@ public interface IPRProofTree extends IInternalElement {
 		 * @return the PR sequent associated with this proof tree, or <code>null</code>
 		 * if no such PR sequent present
 		 */
-		IPRSequent getSequent();
+//		@Deprecated
+//		IPRSequent getSequent();
 		
 		/**
 		 * Returns whether or not this proof tree is closed.

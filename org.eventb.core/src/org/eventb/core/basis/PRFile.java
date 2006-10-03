@@ -17,18 +17,19 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRSequent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.RodinFile;
 
 /**
  * @author Farhad Mehta
  *
  */
-public class PRFile extends POFile implements IPRFile {
+public class PRFile extends RodinFile implements IPRFile {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -45,7 +46,7 @@ public class PRFile extends POFile implements IPRFile {
 		return IPRFile.ELEMENT_TYPE;
 	}
 	
-	@Override
+	
 	public IPRFile getPRFile() {
 		return this;
 	}
@@ -71,12 +72,17 @@ public class PRFile extends POFile implements IPRFile {
 		return (IPOFile) project.getRodinFile(poName);
 	}
 
-	@Override
 	public IPRSequent[] getSequents() throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRSequent.ELEMENT_TYPE);
 		PRSequent[] sequents = new PRSequent[list.size()];
 		list.toArray(sequents);
 		return sequents;
+	}
+	
+	public IPRSequent getSequent(String name) throws RodinDBException {
+		IPRSequent prSeq = (IPRSequent) getInternalElement(IPRSequent.ELEMENT_TYPE,name);
+		if (!prSeq.exists()) return null;
+		return prSeq;
 	}
 
 	public Map<String, IPRProofTree> getProofTrees() throws RodinDBException {
