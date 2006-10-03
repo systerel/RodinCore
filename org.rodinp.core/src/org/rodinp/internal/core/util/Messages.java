@@ -30,6 +30,8 @@ public final class Messages {
 	public static String build_cleaning;
 	public static String build_removing;
 	public static String build_graphTransactionError;
+	public static String build_ToolError;
+	public static String build_ExtractorError;
 
 	public static String cache_invalidLoadFactor;
 	

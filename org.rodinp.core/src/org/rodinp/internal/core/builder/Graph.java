@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
-import org.rodinp.core.builder.IExtractor;
+import org.rodinp.core.builder.TempMarkerHelper;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
 
@@ -280,7 +281,8 @@ public class Graph implements Serializable, Iterable<Node> {
 			if(Graph.DEBUG)
 			 System.out.println(getClass().getName() + 
 					 ": Running tool: " + toolName + " on node: " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-			IAutomaticTool tool = getManager().getTool(toolName);
+			ToolDescription toolDescription = getManager().getToolDescription(toolName);
+			IAutomaticTool tool = toolDescription.getTool();
 			if(tool == null) {
 				Util.log(null, "Unknown tool: " + toolName + " for node " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
@@ -295,14 +297,10 @@ public class Graph implements Serializable, Iterable<Node> {
 			} catch (OperationCanceledException e) {
 				throw e;
 			} catch (CoreException e) {
-				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
-				node.setDated(false); // do not run defect tools unnecessarily often
-				node.setPhantom(true);
+				issueToolError(node, file, toolDescription, toolName, e);
 				return;
 			} catch (RuntimeException e) {
-				Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
-				node.setDated(false); // do not run defect tools unnecessarily often
-				node.setPhantom(true);
+				issueToolError(node, file, toolDescription, toolName, e);
 				return;
 			}
 		}
@@ -314,23 +312,57 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		if(changed) {
 			node.markSuccessorsDated();
-			try {
-				extract(node, new GraphModifier(this, node, manager), manager);
-			} catch (CoreException e) {
-				Util.log(e, " while extracting from " + file.getFullPath()); //$NON-NLS-1$
-			}
+			extract(node, new GraphModifier(this, node, manager), manager);
 		}
 	}
+
+	private void issueToolError(
+			Node node, 
+			IFile file, 
+			ToolDescription toolDescription, 
+			String toolName, 
+			Exception e) {
+		Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
+		RodinBuilder.deleteMarkers(file);
+		TempMarkerHelper.addMarker(
+				file, 
+				IMarker.SEVERITY_ERROR, 
+				Messages.bind(Messages.build_ToolError, toolDescription.getName()));
+		node.setDated(false); // do not run defect tools unnecessarily often
+		node.setPhantom(true);
+	}
 	
-	private void extract(Node node, GraphModifier handler, ProgressManager manager) throws CoreException {
-		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
-		if(extractor == null)
+	private void issueExtractionError(
+			Node node, 
+			IFile file, 
+			ExtractorDescription extractorDescription, 
+			Exception e) {
+		Util.log(e, " while extracting from " + file.getName()); //$NON-NLS-1$
+		RodinBuilder.deleteMarkers(file);
+		TempMarkerHelper.addMarker(
+				file, 
+				IMarker.SEVERITY_ERROR, 
+				Messages.bind(Messages.build_ExtractorError, extractorDescription.getName()));
+		node.setPhantom(true);
+	}
+	
+	private void extract(Node node, GraphModifier handler, ProgressManager manager) {
+//		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
+		ExtractorDescription[] descriptions = 
+			getManager().getExtractorDescriptions(node.getFileElementTypeId());
+		if(descriptions == null)
 			return;
-		for(int j = 0; j < extractor.length; j++)
-			extractor[j].extract(
-					node.getFile(), 
-					new GraphTransaction(handler), 
-					manager.getZeroProgressMonitor());
+		for(int j = 0; j < descriptions.length; j++) {
+			IFile file = node.getFile();
+			try {
+				descriptions[j].getExtractor().extract(
+						file, 
+						new GraphTransaction(handler), 
+						manager.getZeroProgressMonitor());
+			} catch (Exception e) {
+				issueExtractionError(node, file, descriptions[j], e);
+			}
+		}
 	}
 
 	public void activate(String name) {
@@ -376,7 +408,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		node.setDated(true);
 		if(node.isNotDerived())
 			return;
-		IAutomaticTool tool = getManager().getTool(node.getToolId());
+		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
+			//getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.clean(node.getFile(), monitor);
 	}
@@ -385,7 +418,8 @@ public class Graph implements Serializable, Iterable<Node> {
 		node.setDated(true);
 		if(node.isNotDerived())
 			return;
-		IAutomaticTool tool = getManager().getTool(node.getToolId());
+		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
+			//getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.remove(node.getFile(), origin.getFile(), monitor);
 	}

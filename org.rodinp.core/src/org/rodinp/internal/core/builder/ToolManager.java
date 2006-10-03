@@ -42,6 +42,8 @@ public class ToolManager {
 
 	private static final IExtractor[] NO_EXTRACTOR = new IExtractor[0];
 	
+	private static final ExtractorDescription[] NO_EXTRACTOR_DESC = new ExtractorDescription[0];
+	
 	public static ToolManager getToolManager() {
 		return MANAGER;
 	}
@@ -110,6 +112,7 @@ public class ToolManager {
 		}
 	}
 	
+	@Deprecated
 	public IExtractor[] getExtractors(String inputType) {
 		computeToolList();
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
@@ -124,6 +127,21 @@ public class ToolManager {
 		return result;
 	}
 
+	public ExtractorDescription[] getExtractorDescriptions(String inputType) {
+		computeToolList();
+		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
+		if (extractorSet == null || extractorSet.size() == 0) {
+			return NO_EXTRACTOR_DESC;
+		}
+		ExtractorDescription[] result = new ExtractorDescription[extractorSet.size()];
+		int idx = 0;
+		for (ExtractorDescription extractorDescription : extractorSet) {
+			result[idx ++] = extractorDescription;
+		}
+		return result;
+	}
+
+	@Deprecated
 	public IAutomaticTool getTool(String id) {
 		computeToolList();
 		ToolDescription toolDesc = tools.get(id);
@@ -131,6 +149,12 @@ public class ToolManager {
 			return null;
 		else	
 			return toolDesc.getTool();
+	}
+	
+	public ToolDescription getToolDescription(String id) {
+		computeToolList();
+		ToolDescription toolDesc = tools.get(id);
+		return toolDesc;
 	}
 	
 	@SuppressWarnings("unused")
