@@ -649,6 +649,14 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns the specified Rodin file in the given project.
 	 */
+	public IRodinFile getRodinFile(IRodinProject project, String fileName)
+			throws RodinDBException {
+		return project.getRodinFile(fileName);
+	}
+	
+	/**
+	 * Returns the specified Rodin file in the given project.
+	 */
 	public IRodinFile getRodinFile(String projectName, String fileName) throws RodinDBException {
 		return getRodinProject(projectName).getRodinFile(fileName);
 	}
