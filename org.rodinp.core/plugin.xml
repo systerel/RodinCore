@@ -15,6 +15,24 @@
 		</content-type>
    </extension>
    <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.rodinp.core.IRodinElement"
+            class="org.rodinp.internal.core.RodinElementAdapterFactory">
+         <adapter type="org.eclipse.core.resources.IResource"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.core.resources.IResource"
+            class="org.rodinp.internal.core.ResourceAdapterFactory">
+         <adapter type="org.rodinp.core.IRodinElement"/>
+      </factory>
+      <factory
+            adaptableType="org.rodinp.core.IRodinProject"
+            class="org.rodinp.internal.core.RodinProjectAdapterFactory">
+         <adapter type="org.eclipse.core.resources.IProject"/>
+      </factory>
+   </extension>
+   <extension
          id="rodinnature"
          name="%rodinNatureName"
          point="org.eclipse.core.resources.natures">
