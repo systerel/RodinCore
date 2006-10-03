@@ -344,18 +344,18 @@ public class MachineEventModule extends LabeledElementModule {
 			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION))
 				init = symbolInfos[i];
 			
-			if (!acceptModules(acceptorModules, event, repository, null)) {
-				symbolInfos[i].setError();
-				continue;
-			}
-			
 			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION)) {
 				init = symbolInfos[i];
 				fetchRefinement(machineFile, event, symbolInfos[i], true, monitor);
 			} else {
 				fetchRefinement(machineFile, event, symbolInfos[i], false, monitor);
 			}
-
+			
+			if (!acceptModules(acceptorModules, event, repository, null)) {
+				symbolInfos[i].setError();
+				continue;
+			}
+			
 		}
 		
 		if (init == null || init.hasError())
