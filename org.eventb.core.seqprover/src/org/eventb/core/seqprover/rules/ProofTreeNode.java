@@ -13,6 +13,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 
 
 /**
@@ -149,6 +150,35 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ProofTree proofTree = new ProofTree(root);
 		assert proofTree.getRoot().classInvariant();
 		return proofTree;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.core.seqprover.IProofTreeNode#copyProofSkeleton()
+	 */
+	public IProofSkeleton copyProofSkeleton() {
+		final String comment = getComment();
+		final IProofRule proofRule = getRule();
+		final IProofTreeNode[] childNodes = getChildNodes();
+		final IProofSkeleton[] childSkelNodes = new IProofSkeleton[childNodes.length];
+		for (int i = 0; i < childNodes.length; i++) {
+			childSkelNodes[i] = childNodes[i].copyProofSkeleton();
+		}
+		
+		return 
+		new IProofSkeleton(){
+			
+			public IProofSkeleton[] getChildNodes() {
+				return childSkelNodes;
+			}
+			
+			public IProofRule getRule() {
+				return proofRule;
+			}
+			
+			public String getComment() {
+				return comment;
+			}		
+		};
 	}
 	
 	

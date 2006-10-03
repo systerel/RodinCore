@@ -27,6 +27,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.tactics.Tactics;
 import org.rodinp.core.RodinDBException;
@@ -89,7 +90,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 					if (ssel.size() == 1
 							&& ssel.getFirstElement() instanceof IProofTreeNode) {
 						ProofTreeUI.buffer = ((IProofTreeNode) ssel
-								.getFirstElement()).copySubTree().getRoot();
+								.getFirstElement()).copyProofSkeleton();
 						if (ProofTreeUIUtils.DEBUG)
 							ProofTreeUIUtils.debug("Copied : "
 									+ ProofTreeUI.buffer);
@@ -111,12 +112,14 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 					if (ssel.size() == 1
 							&& ssel.getFirstElement() instanceof IProofTreeNode) {
 
-						if (ProofTreeUI.buffer instanceof IProofTreeNode) {
-							IProofTreeNode copyNode = (IProofTreeNode) ProofTreeUI.buffer;
+						if (ProofTreeUI.buffer instanceof IProofSkeleton) {
+							IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
+							
+							
 							proofTreeUI.getUserSupport().applyTactic(
-									BasicTactics.pasteTac(copyNode));
+									BasicTactics.rebuildTac(copyNode));
 							if (ProofTreeUIUtils.DEBUG)
-								ProofTreeUIUtils.debug("Copy: " + copyNode);
+								ProofTreeUIUtils.debug("Paste: " + copyNode);
 						}
 					}
 				}

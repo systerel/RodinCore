@@ -6,6 +6,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
+import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class BasicTactics {
 	
@@ -52,6 +55,19 @@ public class BasicTactics {
 	
 	public static ITactic pasteTac(IProofTreeNode toPaste){
 		return new PasteTac(toPaste);
+	}
+	
+	public static ITactic rebuildTac(final IProofSkeleton proofSkeleton){
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt) {
+				if (!pt.isOpen()) return "Root already has children";
+				ProofBuilder.rebuild(pt,proofSkeleton,new ReplayHints());
+				if (!pt.isOpen()) return null;
+				return "Rebuild unsuccessful";
+			}
+			
+		};
 	}
 	
 	public static ITactic failTac(String message){

@@ -11,15 +11,16 @@ public class ProofBuilder {
 	private ProofBuilder() {
 	}
 
-	
-	public static void rebuild(IProofTreeNode node,IProofSkeleton prNode, ReplayHints replayHints) {
+	// TODO:
+	// Return value true if there may be a change in the proof tree node from the
+	public static boolean rebuild(IProofTreeNode node,IProofSkeleton skeleton, ReplayHints replayHints) {
 
-		node.setComment(prNode.getComment());
+		node.setComment(skeleton.getComment());
 
-		IProofRule reuseProofRule = prNode.getRule();
+		IProofRule reuseProofRule = skeleton.getRule();
 		
 		// Check if this is an open node
-		if (reuseProofRule == null) return;
+		if (reuseProofRule == null) return true;
 		
 		// Try to replay the rule
 		if (true){
@@ -62,16 +63,16 @@ public class ProofBuilder {
 			}	
 			
 			// Check if rebuild for this node was succesfull
-			if (!(reuseSuccessfull || replaySuccessfull)) return;
+			if (!(reuseSuccessfull || replaySuccessfull)) return false;
 			// if (! node.hasChildren()) return;
 			// System.out.println("rebuild successful! ");
-			IProofSkeleton[] prChildren = prNode.getChildNodes();
+			IProofSkeleton[] prChildren = skeleton.getChildNodes();
 			assert prChildren != null;
 			IProofTreeNode[] children = node.getChildNodes();
 			
 			// Maybe check if the node has the same number of children as the prNode
 			// it may be smart to replay anyway, but generate a warning.
-			if (children.length != prChildren.length) return;
+			if (children.length != prChildren.length) return false;
 			
 			// run recursively for each child
 			for (int i = 0; i < children.length; i++) {
@@ -85,6 +86,7 @@ public class ProofBuilder {
 				rebuild(children[i],prChildren[i],newReplayHints);
 			}
 		}
+		return false;
 	}
 	
 }

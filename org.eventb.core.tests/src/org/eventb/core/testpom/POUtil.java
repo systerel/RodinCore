@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.core.pom;
+package org.eventb.core.testpom;
 
 import java.util.HashMap;
 import java.util.HashSet;

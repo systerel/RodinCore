@@ -193,6 +193,13 @@ public interface IProofTreeNode extends IProofSkeleton {
 	IProofTree copySubTree();
 	
 	/**
+	 * Extracts the proof skeleton rooted in the current node and returns it
+	 * 
+	 * @return A new proof skeleton rooted at this node
+	 */
+	IProofSkeleton copyProofSkeleton();
+	
+	/**
 	 * Sets the comment field of the current proof tree node.
 	 * 
 	 * @param comment
