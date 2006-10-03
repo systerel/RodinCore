@@ -82,7 +82,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 			ToolTrace.addTrace(name, "remove", file);
 	
 		if (AbstractBuilderTest.getComponentName(file.getName()).equals(AbstractBuilderTest.getComponentName(origin.getName())))
-			file.delete(true, monitor);
+			RodinCore.create(file).delete(true, monitor);
 	}
 
 }
