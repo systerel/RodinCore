@@ -1,35 +1,39 @@
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
+import junit.framework.TestCase;
+
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.tests.TestLib;
 
-import com.sun.corba.se.spi.ior.MakeImmutable;
-
-import junit.framework.TestCase;
-
 public class ReasonerRegistryTest extends TestCase {
 
-	private static final IReasonerRegistry REASONER_REGISTRY = SequentProver.getReasonerRegistry();
+	private final IReasonerRegistry REGISTRY = SequentProver.getReasonerRegistry();
 
+	private int count = 0;
+	
+	// Each call returns a new dummy id, not used before.
+	private String getDummyId() {
+		return "dummy_id_" + (++ count);
+	}
+	
 	/*
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.isPresent(String)'
 	 */
 	public void testIsPresent() {
-		assertTrue(REASONER_REGISTRY.isPresent(TrueGoal.REASONER_ID));
-		assertFalse(REASONER_REGISTRY.isPresent(TrueGoal.REASONER_ID+"other"));
+		assertTrue(REGISTRY.isPresent(TrueGoal.REASONER_ID));
+		assertFalse(REGISTRY.isPresent(getDummyId()));
 	}
 
 	/*
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.getReasonerIDs()'
 	 */
 	public void testGetReasonerIDs() {
-		assertTrue(REASONER_REGISTRY.getReasonerIDs().contains(TrueGoal.REASONER_ID));
-		assertFalse(REASONER_REGISTRY.getReasonerIDs().contains(TrueGoal.REASONER_ID+"other"));
+		assertTrue(REGISTRY.getReasonerIDs().contains(TrueGoal.REASONER_ID));
+		assertFalse(REGISTRY.getReasonerIDs().contains(getDummyId()));
 		
 	}
 
@@ -37,25 +41,33 @@ public class ReasonerRegistryTest extends TestCase {
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.getReasonerInstance(String)'
 	 */
 	public void testGetReasonerInstance() {
-		assertTrue(REASONER_REGISTRY.getReasonerInstance(TrueGoal.REASONER_ID) instanceof TrueGoal);
-		assertNull(REASONER_REGISTRY.getReasonerInstance(TrueGoal.REASONER_ID+"other"));
+		IReasoner reasoner = REGISTRY.getReasonerInstance(TrueGoal.REASONER_ID);
+		assertTrue(reasoner instanceof TrueGoal);
+		
+		reasoner = REGISTRY.getReasonerInstance(getDummyId());
+		assertTrue(reasoner instanceof IReasoner);
 	}
 
 	/*
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.getReasonerName(String)'
 	 */
 	public void testGetReasonerName() {
-		assertTrue(REASONER_REGISTRY.getReasonerName(TrueGoal.REASONER_ID).equals("⊤ goal"));
-		assertNull(REASONER_REGISTRY.getReasonerName(TrueGoal.REASONER_ID+"other"));
+		assertTrue(REGISTRY.getReasonerName(TrueGoal.REASONER_ID).equals("⊤ goal"));
+		assertNotNull(REGISTRY.getReasonerName(getDummyId()));
 	}
 	
 	/*
-	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.makeDummyReasoner(String)'
+	 * Ensures that a dummy reasone always fails.
 	 */
-	public void testMakeDummyReasoner() {
-		IReasoner dummyReasoner = REASONER_REGISTRY.makeDummyReasoner("dummy");
-		assertEquals(dummyReasoner.getReasonerID(),"dummy");
-		IReasonerOutput reasonerOutput = dummyReasoner.apply(TestLib.genSeq(" 1=1 |- 1=1"),new EmptyInput(),null);
+	public void testDummyReasoner() {
+		String id = getDummyId();
+		IReasoner dummyReasoner = REGISTRY.getReasonerInstance(id);
+		assertEquals(dummyReasoner.getReasonerID(), id);
+		IReasonerOutput reasonerOutput = dummyReasoner.apply(
+				TestLib.genSeq(" 1=1 |- 1=1"),
+				new EmptyInput(),
+				null
+		);
 		assertTrue(reasonerOutput instanceof IReasonerFailure);
 	}
 	
@@ -63,9 +75,11 @@ public class ReasonerRegistryTest extends TestCase {
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.isDummyReasoner(String)'
 	 */
 	public void testIsDummyReasoner() {
-		IReasoner dummyReasoner = REASONER_REGISTRY.makeDummyReasoner("dummy");
-		assertTrue(REASONER_REGISTRY.isDummyReasoner(dummyReasoner));
-		assertFalse(REASONER_REGISTRY.isDummyReasoner(REASONER_REGISTRY.getReasonerInstance(TrueGoal.REASONER_ID)));
+		IReasoner dummyReasoner = REGISTRY.getReasonerInstance(getDummyId());
+		assertTrue(REGISTRY.isDummyReasoner(dummyReasoner));
+		
+		IReasoner trueGoal = REGISTRY.getReasonerInstance(TrueGoal.REASONER_ID);
+		assertFalse(REGISTRY.isDummyReasoner(trueGoal));
 	}
 
 }

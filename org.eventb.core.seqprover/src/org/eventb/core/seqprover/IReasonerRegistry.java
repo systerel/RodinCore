@@ -7,8 +7,8 @@ import java.util.Set;
  * the Reasoner Registry.
  * 
  * <p>
- * The Reasoner Registry manages Reasoners that have been declared as extentions 
- * to the 'reasoners' extention point provided by the sequent prover.
+ * The Reasoner Registry manages Reasoners that have been declared as extensions 
+ * to the 'reasoners' extension point provided by the sequent prover.
  * </p>
  * 
  * <p>
@@ -21,103 +21,69 @@ import java.util.Set;
 public interface IReasonerRegistry {
 
 	/**
-	 * Checks if a reasoner extention with the given reasoner id is present in the
-	 * reasoner registry.
+	 * Checks if a reasoner extension with the given reasoner id is present in
+	 * the reasoner registry.
 	 * 
 	 * <p>
 	 * Shortcut for getReasonerIDs().contains(reasonerID).
 	 * </p>
 	 * 
 	 * @param reasonerID
-	 * 				The reasoner id to check for
-	 * @return <code>true</code> if a reasoner extention with the given reasoner id
-	 * 			is present in the reasoner registry
+	 *            The reasoner id to check for
+	 * @return <code>true</code> if a reasoner extension with the given id is
+	 *         present in the reasoner registry
 	 */
 	boolean isPresent(String reasonerID);
 	
 	/**
-	 * Returns the reasoner ids of all reasoner extentions present in the reasoner
-	 * registry. 
+	 * Returns the ids of all reasoner extensions present in the reasoner
+	 * registry.
 	 * 
-	 * @return The reasoner ids of all reasoner extentions present in 
-	 * 			the reasoner registry  
+	 * @return the ids of all known reasoner extensions
 	 */
 	Set<String> getReasonerIDs();
 
 	/**
-	 * Returns an instance of the class implementing the reasoner extention 
-	 * with the given reasoner id.
+	 * Returns an instance of the reasoner extension with the given reasoner id.
 	 * <p>
-	 * Ideally the presence of a reasoner extention with the given reasoner extention
-	 * must be checked first.
-	 * <p>
-	 * </p>
-	 * In case no reasoner extention with the given name is present, <code>null</code>
-	 * is returned.
-	 * In case there was a problem loading the class specified in the reasoner extention
-	 * <code>null</code> is returned, and the reason is recorded as an exception in the 
-	 * log. Possible problems loading the class include:
-	 * <ul>
-	 * <li>The specified class could not be loaded and instantiated
-	 * <li>The specified class does not implement <code>IReasoner</code>
-	 * <li>The reasoner id specified in the extention point and returned by the class instance
-	 * do not match
-	 * </ul>
+	 * In case no reasoner extension with the given id has been registered, or
+	 * if there is a problem instantiating the reasoner class, a dummy reasoner
+	 * instance is returned.
 	 * </p>
 	 * 
 	 * @param reasonerID
-	 * 		The reasoner id concerned
-	 * @return
-	 * 		The name of the reasoner id as 	declared in the reasoner extention, or
-	 * 		<code>null</code> if no such extention exists or if there was a problem
-	 * 		loading the specified class. In the latter case an exception is logged.
+	 *            the id of the reasoner
+	 * @return an instance of the reasoner (might be a dummy one in case of
+	 *         error)
+	 * @see #isDummyReasoner(IReasoner)
 	 */
 	IReasoner getReasonerInstance(String reasonerID);
 
 	/**
-	 * Returns the name of the reasoner extention with the given reasoner id.
-	 * 
+	 * Returns the name of the reasoner extension with the given id.
 	 * <p>
-	 * Ideally the presence of a reasoner extention with the given reasoner extention
-	 * must be checked first.
-	 * In case no reasoner extention with the given name is present, <code>null</code>
-	 * is returned.
+	 * In case no reasoner extension with the given id has been registered, a
+	 * placeholder string is returned, stating the problem.
 	 * </p>
 	 * 
 	 * @param reasonerID
-	 * 		The reasoner id concerned
-	 * @return
-	 * 		The name of the reasoner id as 	declared in the reasoner extention, or
-	 * 		<code>null</code> if no such extention exists.
+	 *            the reasoner id concerned
+	 * @return the name of the reasoner with the given id
 	 */
 	String getReasonerName(String reasonerID);
 
 	/**
-	 * Factory method to create a dummy reasoner.
-	 * 
+	 * Checks whether a given reasoner is a dummy reasoner.
+	 * <p>
 	 * A dummy reasoner is used as a facade to a reasoner that is not currently
 	 * installed so that the rule provided by it may be used in the proof tree
 	 * and serialized. A dummy reasoner cannot be replayed. An attempt to call
-	 * the <code>apply()</code> method on it will always return an 
+	 * the <code>apply()</code> method on it will always return an
 	 * <code>IReasonerFailure</code>.
-	 * 
-	 * @see IReasoner
-	 * 
-	 * @param reasonerID
-	 * 					The reasoner ID to be used to construct the dummy reasoner
-	 * @return
-	 * 			A dummy reasoner with the given reasoner ID.
-	 */
-	IReasoner makeDummyReasoner(String reasonerID);
-	
-	
-	/**
-	 * Checks if a given reasoner is a dummy reasoner or not.
-	 * 
-	 * @see makeDummyReasoner()
+	 * </p>
 	 * 
 	 * @param reasoner
-	 * 				The reasoner to check
+	 *            the reasoner to check
 	 * @return <code>true</code> iff the given reasoner is a dummy reasoner
 	 */
 	boolean isDummyReasoner(IReasoner reasoner);

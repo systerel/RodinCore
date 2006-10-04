@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IProverSequent;
@@ -26,13 +26,11 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
  * 
  * @see org.eventb.core.seqprover.IReasonerRegistry
  * 
- * TODO : Generate and log proper exceptions
- * 
  * @author Farhad Mehta
  */
 public class ReasonerRegistry implements IReasonerRegistry {
 	
-	private static String REASONER_EXTENTION_POINT_ID =
+	private static String REASONERS_ID =
 		SequentProver.PLUGIN_ID + ".reasoners";
 
 	private static IReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
@@ -42,7 +40,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 	 */
 	public static boolean DEBUG;
 	
-	private Map<String,ReasonerExtentionInfo> registry;
+	private volatile Map<String,ReasonerInfo> registry;
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -56,19 +54,13 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return SINGLETON_INSTANCE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#isInstalled(java.lang.String)
-	 */
-	public boolean isPresent(String reasonerID){
+	public boolean isPresent(String id){
 		if (registry == null) {
 			loadRegistry();
 		}
-		return registry.containsKey(reasonerID);
+		return registry.containsKey(id);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#getInstalledReasoners()
-	 */
 	public Set<String> getReasonerIDs(){
 		if (registry == null) {
 			loadRegistry();
@@ -76,157 +68,154 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return Collections.unmodifiableSet(registry.keySet());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#getReasonerInstance(java.lang.String)
-	 */
-	public IReasoner getReasonerInstance(String reasonerID){
+	public IReasoner getReasonerInstance(String id){
+		return getInfo(id).getReasonerInstance();
+	}
+	
+	public String getReasonerName(String id){
+		return getInfo(id).getReasonerName();
+	}
+
+	private ReasonerInfo getInfo(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
-		final ReasonerExtentionInfo reasonerExtentionInfo = registry.get(reasonerID);
-		if (reasonerExtentionInfo == null) return null;
-		return reasonerExtentionInfo.getReasonerInstance();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#getReasonerName(java.lang.String)
-	 */
-	public String getReasonerName(String reasonerID){
-		if (registry == null) {
-			loadRegistry();
+		ReasonerInfo info = registry.get(id);
+		if (info == null) {
+			// Unknown reasoner, just create a dummy entry
+			info = new ReasonerInfo(id);
+			registry.put(id, info);
 		}
-		final ReasonerExtentionInfo reasonerExtentionInfo = registry.get(reasonerID);
-		if (reasonerExtentionInfo == null) return null;
-		return reasonerExtentionInfo.getReasonerName();
+		return info;
 	}
-	
 	
 	/**
-	 * Initializes the registry using extentions to the reasoner extention point.
-	 * 
+	 * Initializes the registry using extensions to the reasoner extension point.
 	 */
-	private void loadRegistry() {
-		registry = new HashMap<String,ReasonerExtentionInfo>();		
-		
-		IExtensionPoint extensionPoint = 
-			Platform.getExtensionRegistry().
-			getExtensionPoint(REASONER_EXTENTION_POINT_ID);
-		
-		for (IConfigurationElement element:
-				extensionPoint.getConfigurationElements()) {
-				String reasonerID = element.getNamespace()+"."+element.getAttributeAsIs("id");
-				
-				if (registry.containsKey(reasonerID)){
-					Util.log(
-							new IllegalArgumentException("Reasoner registry already contains an extention with the id "+reasonerID),
-							"Duplicate reasoner extention with the id "+ reasonerID +" ignored.");
-					if (DEBUG) System.out.println("Duplicate reasoner extention "+ reasonerID + " ignored");
-				}
-				else{
-					registry.put(reasonerID,new ReasonerExtentionInfo(element,reasonerID));
-					if (DEBUG) System.out.println("Registered reasoner extention :"+reasonerID);
-				}
+	private synchronized void loadRegistry() {
+		if (registry != null) {
+			// Prevent double initialization
+			return;
+		}
+		registry = new HashMap<String, ReasonerInfo>();
+		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
+		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(REASONERS_ID);
+		for (IConfigurationElement element: xPoint.getConfigurationElements()) {
+			final ReasonerInfo info = new ReasonerInfo(element);
+			final String id = info.getReasonerID();
+			ReasonerInfo oldInfo = registry.put(id, info);
+			if (oldInfo != null) {
+				registry.put(id, oldInfo);
+				Util.log(null,
+						"Duplicate reasoner extension " + id + " ignored"
+				);
+				if (DEBUG) System.out.println(
+						"Duplicate reasoner extension "+ id + " ignored");
+			} else {
+				if (DEBUG) System.out.println(
+						"Registered reasoner extension " + id);
+			}
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#makeDummyReasoner(java.lang.String)
-	 */
-	public IReasoner makeDummyReasoner(String reasonerID){
-		return new DummyReasoner(reasonerID);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasonerRegistry#isDummyReasoner(org.eventb.core.seqprover.IReasoner)
-	 */
 	public boolean isDummyReasoner(IReasoner reasoner){
-		return (reasoner != null) && (reasoner instanceof DummyReasoner);
+		return reasoner instanceof DummyReasoner;
 	}
 	
 	/**
-	 * 
 	 * Private helper class implementing lazy loading of reasoner instances
-	 * 
-	 * @author Farhad Mehta
-	 *
 	 */
-	private class ReasonerExtentionInfo{
+	private static class ReasonerInfo{
 
 		private final IConfigurationElement configurationElement;
-		private final String reasonerID;
-		private final String reasonerName;
+		private final String id;
+		private final String name;
 		
 		/**
-		 * Reasoner instances lazily loaded using <code>configurationElement</code>
+		 * Reasoner instance lazily loaded using <code>configurationElement</code>
 		 */
-		private IReasoner reasonerInstance;
+		private IReasoner instance;
 		
-		private ReasonerExtentionInfo(IConfigurationElement configurationElement) {
-			this(configurationElement,
-					configurationElement.getNamespace()+"."+
-					configurationElement.getAttributeAsIs("id")
-			);
+		public ReasonerInfo(IConfigurationElement element) {
+			this.configurationElement = element;
+			final String bundleName = element.getNamespace();
+			final String localId = element.getAttributeAsIs("id");
+			this.id = bundleName + "." + localId;
+			this.name = element.getAttribute("name");
 		}
 		
-		private ReasonerExtentionInfo(IConfigurationElement configurationElement, String reasonerID) {
-			this.configurationElement = configurationElement;
-			this.reasonerID = reasonerID;
-			this.reasonerName = configurationElement.getAttribute("name");
+		public ReasonerInfo(String id) {
+			this.configurationElement = null;
+			this.id = id;
+			// TODO externalize name of dummy reasoner which is user-visible
+			this.name = "Unknown reasoner " + id;
 		}
 		
-		private IReasoner getReasonerInstance(){
-			if (reasonerInstance != null) return reasonerInstance;
-			
-			Object instance = null;
+		public synchronized IReasoner getReasonerInstance(){
+			if (instance != null) {
+				return instance;
+			}
+
+			if (configurationElement == null) {
+				return instance = getDummyInstance(id);
+			}
 			
 			// Try creating an instance of the specified class
 			try {
-				instance = configurationElement.createExecutableExtension("class");
-			} catch (CoreException e) {
-				Util.log(
-						e,
-						"Class specified in the reasoner extention point for " + reasonerID + " cannot be loaded ");
-				return null;
+				instance = (IReasoner) 
+					configurationElement.createExecutableExtension("class");
+			} catch (Exception e) {
+				final String className = 
+					configurationElement.getAttributeAsIs("class");
+				Util.log(e,
+						"Error instantiating class " + className +
+						" for reasoner " + id);
+				if (DEBUG) System.out.println(
+						"Create a dummy instance for reasoner " + id);
+				return instance = getDummyInstance(id);
 			}
 			
-			// Try casting the instance to IReasoner
-			if (! (instance instanceof IReasoner)){	
-				Util.log(
-						new ClassCastException("Cannot cast " + instance + " to " + IReasoner.class ),
-						"Class specified in the reasoner extention point for " + reasonerID + " does not implement" + IReasoner.class);
-				return null;
-			}
-		
-			reasonerInstance = (IReasoner) instance;
-			
-			// Check if the reasoner id from the extention point matches that 
+			// Check if the reasoner id from the extension point matches that 
 			// returned by the class instance. 
-			if (! reasonerID.equals(reasonerInstance.getReasonerID())) {
-				Util.log(
-						new IllegalArgumentException("Mismatch between reasoner ids " + reasonerID + ", " + reasonerInstance.getReasonerID()),
-				"Reasoner id in extention point differs from that returned by the reasoner");
-				return null;
+			if (! id.equals(instance.getReasonerID())) {
+				Util.log(null,
+						"Reasoner instance says its id is " +
+						instance.getReasonerID() +
+						" while it was registered with id " +
+						id);
+				if (DEBUG) System.out.println(
+						"Created a dummy instance for reasoner " + id);
+				return instance = getDummyInstance(id);
 			}
 
-			if (DEBUG) System.out.println("Loaded reasoner instance:"+reasonerInstance);
-			return reasonerInstance;
+			if (DEBUG) System.out.println(
+					"Successfully loaded reasoner " + id);
+			return instance;
 		}
 
-		public String getReasonerName() {
-			return reasonerName;
+		private static IReasoner getDummyInstance(String id) {
+			return new DummyReasoner(id);
 		}
+		
+		public String getReasonerID() {
+			return id;
+		}
+		
+		public String getReasonerName() {
+			return name;
+		}
+
 	}
 	
 	/**
 	 * 
-	 * Private helper class implementing dummy reasoners
-	 * 
-	 * @see IReasonerRegistry.makeDummyReasoner()
-	 * 
-	 * @author Farhad Mehta
-	 *
+	 * Protected helper class implementing dummy reasoners.
+	 * <p>
+	 * Used as a placeholder when we can't create the regular instance of a
+	 * reasoner (wrong class, unknown id, ...).
+	 * </p>
 	 */
-	private class DummyReasoner implements IReasoner{
+	protected static class DummyReasoner implements IReasoner{
 
 		private final String reasonerID;
 		
@@ -238,13 +227,22 @@ public class ReasonerRegistry implements IReasonerRegistry {
 			return reasonerID;
 		}
 
-		public IReasonerInput deserializeInput(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
+		public IReasonerInput deserializeInput(
+				IReasonerInputSerializer reasonerInputSerializer)
+				throws SerializeException {
+
 			return new EmptyInput();
 		}
 
-		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProgressMonitor progressMonitor) {
-			return ProverFactory.reasonerFailure(this,input,"Reasoner "+ getReasonerID() +" is not installed");
+		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
+				IProgressMonitor progressMonitor) {
+			
+			return ProverFactory.reasonerFailure(
+					this,
+					input,
+					"Reasoner " + reasonerID + " is not installed");
 		}
-		
+
 	}
+
 }
