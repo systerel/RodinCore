@@ -114,17 +114,20 @@ public class Refines implements IObjectActionDelegate {
 								// elements
 								IRodinElement[] refinesEvents = newElement
 										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-								
 								for (IRodinElement refinesEvent : refinesEvents)
-									((IInternalElement) refinesEvent).delete(true, monitor);
+									((IInternalElement) refinesEvent).delete(
+											true, monitor);
 
-								IRefinesEvent refinesEvent = (IRefinesEvent) newElement
-										.createInternalElement(
-												IRefinesEvent.ELEMENT_TYPE,
-												"internal_"
-														+ PrefixRefinesEventName.DEFAULT_PREFIX
-														+ 1, null, monitor);
-								refinesEvent.setAbstractEventLabel(label);
+								// INITILISATION does not have RefineEvents Element
+								if (!label.equals(IEvent.INITIALISATION)) {
+									IRefinesEvent refinesEvent = (IRefinesEvent) newElement
+											.createInternalElement(
+													IRefinesEvent.ELEMENT_TYPE,
+													"internal_"
+															+ PrefixRefinesEventName.DEFAULT_PREFIX
+															+ 1, null, monitor);
+									refinesEvent.setAbstractEventLabel(label);
+								}
 							}
 							newFile.save(null, true);
 						}
