@@ -3,7 +3,6 @@ package org.eventb.core.seqprover;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.prover.reasoners.classicB.ClassicB;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.osgi.framework.BundleContext;
 
@@ -17,7 +16,6 @@ public class SequentProver extends Plugin {
 	/**
 	 * debugging/tracing option names
 	 */
-	private static final String B4FREE_TRACE = PLUGIN_ID + "/debug/b4free"; //$NON-NLS-1$
 	private static final String SEQPROVER_TRACE = PLUGIN_ID + "/debug/seqProver"; //$NON-NLS-1$
 	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID + "/debug/reasonerRegistry"; //$NON-NLS-1$	
 
@@ -58,9 +56,6 @@ public class SequentProver extends Plugin {
 	private void configureDebugOptions() {
 		if (isDebugging()) {
 			String option;
-			option = Platform.getDebugOption(B4FREE_TRACE);
-			if (option != null)
-				ClassicB.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SEQPROVER_TRACE);
 			if (option != null)
 				SequentProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

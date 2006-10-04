@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -36,8 +35,6 @@ import org.eventb.core.seqprover.reasoners.DoCase;
 import org.eventb.core.seqprover.reasoners.Eq;
 import org.eventb.core.seqprover.reasoners.ExE;
 import org.eventb.core.seqprover.reasoners.ExI;
-import org.eventb.core.seqprover.reasoners.ExternalML;
-import org.eventb.core.seqprover.reasoners.ExternalPP;
 import org.eventb.core.seqprover.reasoners.FalseHyp;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.ImpE;
@@ -56,44 +53,6 @@ import org.eventb.core.seqprover.reasoners.rewriter.TypeExpRewrites;
 public class Tactics {
 	
 	// Globally applicable tactics
-	
-	
-	// TODO : remove soon
-	public static int FORCE_0 = ExternalML.Input.FORCE_0;
-	public static int FORCE_1 = ExternalML.Input.FORCE_1;
-	public static int FORCE_2 = ExternalML.Input.FORCE_2;
-	public static int FORCE_3 = ExternalML.Input.FORCE_3;
-	
-	public static ITactic externalPP(boolean restricted,
-			IProgressMonitor monitor) {
-		return BasicTactics.reasonerTac(
-				new ExternalPP(),
-				new ExternalPP.Input(restricted),monitor);
-	}
-	
-	public static ITactic externalPP(boolean restricted, long timeOutDelay,
-			IProgressMonitor monitor) {
-		return BasicTactics.reasonerTac(
-				new ExternalPP(),
-				new ExternalPP.Input(restricted, timeOutDelay),
-				monitor);
-	}
-	
-	public static ITactic externalML(int forces,
-			IProgressMonitor monitor) {
-		return BasicTactics.reasonerTac(
-				new ExternalML(),
-				new ExternalML.Input(forces),
-				monitor);
-	}
-	
-	public static ITactic externalML(int forces, long timeOutDelay,
-			IProgressMonitor monitor) {
-		return BasicTactics.reasonerTac(
-				new ExternalML(),
-				new ExternalML.Input(forces, timeOutDelay),
-				monitor);
-	}
 	
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic(){
@@ -428,31 +387,6 @@ public class Tactics {
 			}
 			
 		};
-	}
-	
-	
-	public static ITactic autoProver(IProgressMonitor progressMonitor, long timeOutDelay){
-		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
-		return BasicTactics.compose(
-				lasoo(),
-				BasicTactics.onAllPending(norm()),
-				BasicTactics.onAllPending(externalML(MLforces, timeOutDelay, progressMonitor)), // ML
-				BasicTactics.onAllPending(Tactics.externalPP(true, timeOutDelay, progressMonitor)), // P1
-				BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, progressMonitor)) // PP
-				);
-		
-////		 First try applying an internal tactic
-//		Tactics.norm().apply(pt.getRoot());
-//		if (pt.isClosed())
-//			return;
-//		
-//		// Then, try with the legacy provers.
-//		// pt.getRoot().pruneChildren();
-//		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
-//		BasicTactics.onAllPending(Tactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
-//		if (! pt.isClosed()) {
-//			BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
-//		}
 	}
 	
 }
