@@ -3,11 +3,10 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -21,7 +20,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -53,6 +54,10 @@ public class CommentToolTip {
 
 	private final static int MAX_HEIGHT = 120;
 
+	private Display display;
+
+	private Listener labelListener;
+
 	/**
 	 * Creates a new tooltip handler
 	 * 
@@ -60,107 +65,25 @@ public class CommentToolTip {
 	 *            the parent Shell
 	 */
 	public CommentToolTip(Shell parent) {
-		final Display display = parent.getDisplay();
+		display = parent.getDisplay();
 		this.parentShell = parent;
 
-		// Tip shell
-		tipShell = new Shell(parent, SWT.NONE);
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		gridLayout.marginWidth = 0;
-		gridLayout.marginHeight = 0;
-		tipShell.setLayout(gridLayout);
-		tipShell.setBackground(display
-				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		tipShell.addKeyListener(new KeyListener() {
-
-			public void keyPressed(KeyEvent e) {
-				// Do nothing
-			}
-
-			public void keyReleased(KeyEvent e) {
-				if (e.keyCode == SWT.F2) {
-					ICommentedElement element = null;
-					if (tipWidget == null)
-						return;
-					if (tipWidget instanceof TreeItem) {
-						Object obj = tipWidget.getData();
-						if (obj instanceof ICommentedElement) {
-							element = (ICommentedElement) obj;
-						}
-					}
-					if (tipShell.isVisible()) {
-						tipShell.setVisible(false);
-						Display display = parentShell.getDisplay();
-						helpShell = new Shell(parentShell, SWT.NONE);
-						helpShell.setLayout(new FillLayout());
-						helpShell.setSize(400, 200);
-						Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP
-								| SWT.V_SCROLL);
-
-						try {
-							text.setText(element
-									.getComment(new NullProgressMonitor()));
-						} catch (RodinDBException e1) {
-							text.setText("");
-						}
-						text.setSize(400, 200);
-						text.setForeground(display
-								.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-						text.setBackground(display
-								.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-						text.setLayoutData(new GridData(
-								GridData.FILL_HORIZONTAL
-										| GridData.VERTICAL_ALIGN_CENTER));
-
-						TextListener listener = new TextListener(
-								new EventBMath(text), 1000, element);
-						text.addListener(SWT.FocusOut, listener);
-						text.addListener(SWT.Traverse, listener);
-						text.addModifyListener(listener);
-
-						setHoverLocation(helpShell, tipPosition);
-						helpShell.open();
-					}
-
+		// Implement a "fake" tooltip
+		labelListener = new Listener() {
+			public void handleEvent(Event event) {
+				Label label = (Label) event.widget;
+				Shell shell = label.getShell();
+				switch (event.type) {
+				case SWT.MouseDown:
+					shell.dispose();
+					parentShell.setFocus();
+					break;
+				case SWT.MouseExit:
+					shell.dispose();
+					break;
 				}
 			}
-
-		});
-
-		// Tip label
-		tipLabel = new Label(tipShell, SWT.LEFT | SWT.WRAP);
-		tipLabel.setForeground(display
-				.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		tipLabel.setBackground(display
-				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
-				| GridData.VERTICAL_ALIGN_CENTER));
-
-		// Create a new font for this label
-		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		tipLabel.setFont(font);
-
-		// Create a separator
-		Label separator = new Label(tipShell, SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_CENTER);
-		gd.heightHint = 1;
-		separator.setLayoutData(gd);
-
-		// Create the F2 label
-		labelF2 = new Label(tipShell, SWT.RIGHT);
-		labelF2
-				.setForeground(display
-						.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		labelF2
-				.setBackground(display
-						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		labelF2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_CENTER));
-		labelF2.setText("Press 'F2' to edit.");
-
+		};
 	}
 
 	/**
@@ -278,44 +201,98 @@ public class CommentToolTip {
 		 */
 		control.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				if (tipShell.isVisible())
-					tipShell.setVisible(false);
+				if (EventBEditorUtils.DEBUG)
+					EventBEditorUtils.debug("Mouse Down");
+				if (tipShell != null) {
+					tipShell.dispose();
+					tipShell = null;
+					tipLabel = null;
+				}
 			}
 		});
 
+		control.addMouseMoveListener(new MouseMoveListener() {
+
+			public void mouseMove(MouseEvent e) {
+				if (tipShell != null) {
+					tipShell.dispose();
+					tipShell = null;
+				}
+				if (helpShell != null) {
+					helpShell.dispose();
+					helpShell.dispose();
+				}
+				tipLabel = null;
+				return;
+			}
+
+		});
 		/*
 		 * Trap hover events to pop-up tooltip
 		 */
 		control.addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseExit(MouseEvent e) {
-				if (tipShell.isVisible())
-					tipShell.setVisible(false);
-				tipWidget = null;
+				if (EventBEditorUtils.DEBUG)
+					EventBEditorUtils.debug("Mouse Exit");
+				// if (tipShell != null) {
+				// tipShell.dispose();
+				// tipShell = null;
+				// }
+				// tipWidget = null;
 			}
 
 			public void mouseHover(MouseEvent event) {
 				widgetPosition = new Point(event.x, event.y);
 				Widget widget = event.widget;
-				// if (widget instanceof ToolBar) {
-				// ToolBar w = (ToolBar) widget;
-				// widget = w.getItem(widgetPosition);
-				// }
-				// if (widget instanceof Table) {
-				// Table w = (Table) widget;
-				// widget = w.getItem(widgetPosition);
-				// }
+				if (widget instanceof ToolBar) {
+					ToolBar w = (ToolBar) widget;
+					widget = w.getItem(widgetPosition);
+				}
+				if (widget instanceof Table) {
+					Table w = (Table) widget;
+					widget = w.getItem(widgetPosition);
+				}
 				if (widget instanceof Tree) {
 					Tree w = (Tree) widget;
 					widget = w.getItem(widgetPosition);
 				}
 				if (widget == null) {
-					tipShell.setVisible(false);
+					// tipShell.setVisible(false);
 					tipWidget = null;
 					return;
 				}
 				if (widget == tipWidget)
 					return;
 				tipWidget = widget;
+
+				if (tipShell != null && !tipShell.isDisposed())
+					tipShell.dispose();
+				tipShell = new Shell(parentShell, SWT.ON_TOP | SWT.NO_FOCUS
+						| SWT.TOOL);
+				GridLayout gridLayout = new GridLayout();
+				// gridLayout.numColumns = 1;
+				gridLayout.marginWidth = 0;
+				gridLayout.marginHeight = 0;
+				tipShell.setLayout(gridLayout);
+				tipShell.setBackground(display
+						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+
+				// FillLayout layout = new FillLayout();
+				// layout.marginWidth = 2;
+				// tipShell.setLayout(layout);
+				tipLabel = new Label(tipShell, SWT.NONE);
+				tipLabel.setForeground(display
+						.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+				tipLabel.setBackground(display
+						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+				tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
+						| GridData.VERTICAL_ALIGN_CENTER));
+				// Create a new font for this label
+				Font font = JFaceResources
+						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				tipLabel.setFont(font);
+
+				// tipLabel.setData ("_TABLEITEM", item);
 				if (tipWidget instanceof TreeItem) {
 					Object obj = tipWidget.getData();
 					if (obj instanceof ICommentedElement) {
@@ -323,17 +300,46 @@ public class CommentToolTip {
 						tipLabel.setText(getToolTipText(element));
 					}
 				}
+				// tipLabel.setText("Test");
+				tipLabel.addListener(SWT.MouseExit, labelListener);
+				tipLabel.addListener(SWT.MouseDown, labelListener);
+
+				// Create a separator
+				Label separator = new Label(tipShell, SWT.SEPARATOR);
+				GridData gd = new GridData(GridData.FILL_HORIZONTAL
+						| GridData.VERTICAL_ALIGN_CENTER);
+				gd.heightHint = 1;
+				separator.setLayoutData(gd);
+
+				// Create the F2 label
+				labelF2 = new Label(tipShell, SWT.RIGHT);
+				labelF2.setForeground(display
+						.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+				labelF2.setBackground(display
+						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+				labelF2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+						| GridData.VERTICAL_ALIGN_CENTER));
+				labelF2.setText("Press 'F2' to edit.");
+
 				tipPosition = control.toDisplay(widgetPosition);
-				tipShell.pack();
-				Point shellSize = tipShell.getSize();
+				Point shellSize = tipShell
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				int width = MAX_WIDTH < shellSize.x ? MAX_WIDTH : shellSize.x;
 				Point pt = tipShell.computeSize(width, SWT.DEFAULT);
-				tipLabel.setSize(width, 40);
 				int height = MAX_HEIGHT < pt.y ? MAX_HEIGHT : pt.y;
+				tipLabel.setSize(width, height);
 				tipShell.setSize(width, height);
+				// tipLabel.setSize(200, 40);
+				if (EventBEditorUtils.DEBUG) {
+					EventBEditorUtils.debug("Widget: " + tipWidget);
+					EventBEditorUtils
+							.debug("WidgetPosition: " + widgetPosition);
+					EventBEditorUtils.debug("TipPosition: " + tipPosition);
+					EventBEditorUtils.debug("Size: " + width + ", " + height);
+				}
 				setHoverLocation(tipShell, tipPosition);
 				tipShell.setVisible(true);
-				tipShell.setFocus(); // Focus on the shell
+
 			}
 		});
 
@@ -356,6 +362,54 @@ public class CommentToolTip {
 		shellBounds.y = Math.max(Math.min(position.y + 16, displayBounds.height
 				- shellBounds.height), 0);
 		shell.setBounds(shellBounds);
+	}
+
+	public void openEditing() {
+		ICommentedElement element = null;
+		if (tipWidget == null)
+			return;
+		if (tipWidget instanceof TreeItem) {
+			Object obj = tipWidget.getData();
+			if (obj instanceof ICommentedElement) {
+				element = (ICommentedElement) obj;
+			}
+		}
+		if (tipShell != null) {
+			tipShell.setVisible(false);
+
+			if (helpShell != null)
+				helpShell.dispose();
+
+			if (EventBEditorUtils.DEBUG) {
+				EventBEditorUtils.debug("Creat editing shell");
+			}
+			helpShell = new Shell(parentShell, SWT.NONE);
+			helpShell.setLayout(new FillLayout());
+			helpShell.setSize(400, 200);
+			Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+
+			try {
+				text.setText(element.getComment(new NullProgressMonitor()));
+			} catch (RodinDBException e1) {
+				text.setText("");
+			}
+			text.setSize(400, 200);
+			text.setForeground(display
+					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			text.setBackground(display
+					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+					| GridData.VERTICAL_ALIGN_CENTER));
+
+			TextListener listener = new TextListener(new EventBMath(text),
+					1000, element);
+			text.addListener(SWT.FocusOut, listener);
+			text.addListener(SWT.Traverse, listener);
+			text.addModifyListener(listener);
+
+			setHoverLocation(helpShell, tipPosition);
+			helpShell.open();
+		}
 	}
 
 }

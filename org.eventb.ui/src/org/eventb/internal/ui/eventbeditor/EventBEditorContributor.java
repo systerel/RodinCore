@@ -61,8 +61,8 @@ public class EventBEditorContributor extends
 
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
-					rename);
+//			actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
+//					rename);
 			// actionBars.setGlobalActionHandler(
 			// ActionFactory.UNDO.getId(),
 			// getAction(editor, ITextEditorActionConstants.UNDO));

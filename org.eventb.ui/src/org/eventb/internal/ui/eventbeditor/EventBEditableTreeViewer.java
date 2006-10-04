@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -59,6 +61,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<IRodinElement> toRefresh;
+	
+	private CommentToolTip handler;
+	
+	private KeyListener keyListener;
 
 //	private Collection<StatusObject> newStatus;
 
@@ -248,12 +254,27 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			}
 		});
 		
-		CommentToolTip handler = new CommentToolTip(this.getControl()
+		handler = new CommentToolTip(this.getControl()
 				.getShell());
 		handler.activateHoverHelp(this.getControl());
 
-	}
+		keyListener = new KeyListener() {
 
+			public void keyPressed(KeyEvent e) {
+				// Do nothing
+			}
+
+			public void keyReleased(KeyEvent e) {
+				if (e.keyCode == SWT.F2) {
+					handler.openEditing();
+				}
+			}
+			
+		};
+		
+		this.getControl().addKeyListener(keyListener);
+	}
+	 
 	public void selectItem(TreeItem item, int column) {
 		Tree tree = EventBEditableTreeViewer.this.getTree();
 		if (EventBEditorUtils.DEBUG)
@@ -281,7 +302,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		if (!isCarbon)
 			composite.setBackground(black);
 		final Text text = new Text(composite, SWT.NONE);
-
+		text.addKeyListener(keyListener);
+		
 		new ElementText(new EventBMath(text), treeEditor, tree, item, (IRodinElement) itemData,
 				column, 1000) {
 			/*
