@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;visibility:=reexport,
  org.eventb.core.ast;visibility:=reexport,
- org.eventb.core.seqprover;visibility:=reexport
+ org.eventb.core.seqprover;visibility:=reexport,
+ com.b4free.rodin.core
 Eclipse-AutoStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
