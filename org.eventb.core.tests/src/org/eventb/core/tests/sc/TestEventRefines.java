@@ -622,5 +622,143 @@ public class TestEventRefines extends BasicTest {
 		getSCEvents(file, "fvt");
 		
 	}
+	
+	public void testEvents_21() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
+		addEvent(abs, "gvt", makeSList("x", "y"), makeSList("G1", "G2"), makeSList("x∈ℕ","y∈BOOL"), makeSList(), makeSList());
+		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"), makeSList("y∈BOOL"), makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEventRefines(evt, "hvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "evt", "fvt");
+		
+	}
+
+	public void testEvents_22() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
+		addEvent(abs, "gvt", makeSList("x", "y"), makeSList("G1", "G2"), makeSList("x⊆ℕ","y∈BOOL"), makeSList(), makeSList());
+		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"), makeSList("y∈BOOL"), makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEventRefines(evt, "hvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "fvt");
+		
+	}
+
+	public void testEvents_23() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p", "q");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE","q:∈ℕ"));
+		addEvent(abs, "gvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE","q:∈ℕ"));
+		addEvent(abs, "hvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("q:∈ℕ", "p≔TRUE"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEventRefines(evt, "hvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "evt", "fvt");
+		
+	}
+
+	public void testEvents_24() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p", "q");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1", "A2"), makeSList("p≔TRUE","q:∈{x}"));
+		addEvent(abs, "gvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("p≔y","q:∈ℕ"));
+		addEvent(abs, "hvt", 
+				makeSList("y"), 
+				makeSList("G1"), makeSList("y∈BOOL"), 
+				makeSList("A1", "A2"), makeSList("q:∈ℕ", "p≔TRUE"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "gvt");
+		addEventRefines(evt, "hvt");
+		addEvent(mac, "fvt");
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		getSCEvents(file, "fvt");
+		
+	}
 
 }

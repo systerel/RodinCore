@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eventb.core.IEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;

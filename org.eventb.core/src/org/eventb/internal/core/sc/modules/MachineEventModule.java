@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.modules;
 
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -16,10 +17,12 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
+import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
@@ -219,6 +222,19 @@ public class MachineEventModule extends LabeledElementModule {
 				new HashSet<String>(refinesEvents.length * 4 / 3 + 1) : 
 				null;
 		
+		HashSet<String> typeErrors = (refinesEvents.length > 1) ?
+				new HashSet<String>(37) :
+				null;
+		Hashtable<String, Type> types = (refinesEvents.length > 1) ?
+				new Hashtable<String, Type>(37) :
+				null;
+				
+		boolean firstAction = true;
+		boolean actionError = false;
+		HashSet<String> actions = (refinesEvents.length > 1) ?
+				new HashSet<String>(43) :
+				null;
+				
 		for (int i=0; i<refinesEvents.length; i++) {
 			
 			String label = refinesEvents[i].getAbstractEventLabel();
@@ -252,6 +268,49 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			if (symbolInfo.getSymbol().equals(abstractEventInfo.getEventLabel()))
 				found = true;
+			
+			if (types != null)
+				for (FreeIdentifier identifier : abstractEventInfo.getIdentifiers()) {
+					String name = identifier.getName();
+					Type newType = identifier.getType();
+					Type type = types.put(name, newType);
+					if (type == null || type.equals(newType))
+						continue;
+					if (typeErrors.add(name)) {
+						issueMarker(
+								IMarkerDisplay.SEVERITY_ERROR, 
+								symbolInfo.getSourceElement(), 
+								Messages.scuser_EventMergeVariableTypeConflict, 
+								name);
+						symbolInfo.setError();
+					}
+				}
+			
+			if (actions != null && !actionError)
+				if (firstAction) {
+					for (ISCAction action : abstractEventInfo.getEvent().getSCActions()) {
+						actions.add(action.getAssignmentString());
+					}
+					firstAction = false;
+				} else {
+					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
+					boolean ok = scActions.length == actions.size();
+					if (ok)
+						for (ISCAction action : scActions) {
+							if (actions.contains(action.getAssignmentString()))
+								continue;
+							ok = false;
+							break;
+						}
+					if (!ok) {
+						issueMarker(
+								IMarkerDisplay.SEVERITY_ERROR, 
+								symbolInfo.getSourceElement(), 
+								Messages.scuser_EventMergeActionConflict);
+						actionError = true;
+						symbolInfo.setError();
+					}
+				}
 			
 			refinesInfo.addAbstractEventInfo(abstractEventInfo);
 			refinesInfo.addRefinesEvent(refinesEvents[i]);
@@ -341,9 +400,6 @@ public class MachineEventModule extends LabeledElementModule {
 			if (symbolInfos[i] == null)
 				continue;
 			
-			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION))
-				init = symbolInfos[i];
-			
 			if (symbolInfos[i].getSymbol().equals(IEvent.INITIALISATION)) {
 				init = symbolInfos[i];
 				fetchRefinement(machineFile, event, symbolInfos[i], true, monitor);
@@ -369,7 +425,7 @@ public class MachineEventModule extends LabeledElementModule {
 		
 		return symbolInfos;
 	}
-
+	
 	private void fetchRefinement(
 			IMachineFile machineFile,
 			IEvent event, 

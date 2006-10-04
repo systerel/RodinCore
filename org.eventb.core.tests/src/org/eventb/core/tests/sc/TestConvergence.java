@@ -8,7 +8,6 @@
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventConvergence;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;

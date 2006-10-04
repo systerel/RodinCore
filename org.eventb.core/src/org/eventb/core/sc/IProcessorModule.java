@@ -50,7 +50,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IProcessorModule {
+public interface IProcessorModule extends IModule {
 
 	/**
 	 * Initialisation code for the module

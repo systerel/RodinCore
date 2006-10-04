@@ -19,10 +19,10 @@ import org.rodinp.core.IRodinElement;
  * as follows:
  * <p>
  * <code>
- * m.initModule(repository, monitor);
+ * m.initModule(element, repository, monitor);
  * a = m.accept(element, repository, monitor);
  * ...
- * m.endModule(repository, monitor);
+ * m.endModule(element, repository, monitor);
  * </code>
  * </p>
  * </ul>
@@ -30,12 +30,12 @@ import org.rodinp.core.IRodinElement;
  * as follows:
  * <p>
  * <code>
- * m.initModule(repository, monitor);
+ * m.initModule(element, repository, monitor);
  * while (more elements) {
  *    a = m.accept(element, repository, monitor);
  *    ...
  * }
- * m.endModule(repository, monitor);
+ * m.endModule(element, repository, monitor);
  * </code>
  * </p>
  * </ul>
@@ -49,7 +49,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public interface IAcceptorModule {
+public interface IAcceptorModule extends IModule {
 
 	/**
 	 * Runs the static checker module.
