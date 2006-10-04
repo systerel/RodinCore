@@ -51,13 +51,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 	
 	private IReasoner getReasoner()throws RodinDBException {
 		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
-		IReasoner reasoner = reasonerRegistry.getReasonerInstance(this.getReasonerID());
-		// Uninstalled reasoner
-		if (reasoner == null) {
-			
-			return reasonerRegistry.makeDummyReasoner(getReasonerID());
-		}
-		return reasoner;
+		return reasonerRegistry.getReasonerInstance(this.getReasonerID());
 	} 
 	
 	private IReasonerInput getReasonerInput() throws RodinDBException {
