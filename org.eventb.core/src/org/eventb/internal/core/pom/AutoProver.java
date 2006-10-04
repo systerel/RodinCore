@@ -8,8 +8,12 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
+
+import com.b4free.rodin.core.B4FreeTactics;
+import com.b4free.rodin.core.ExternalML;
 
 public class AutoProver {
 	
@@ -95,24 +99,36 @@ public class AutoProver {
 //	private void run(IProofTree pt) {
 //		if (! enabled)
 //			return;
-//		Tactics.autoProver(null,timeOutDelay).apply(pt.getRoot());
+//		B4FreeTactics.autoProver(null,timeOutDelay).apply(pt.getRoot());
 //		
 ////		// First try applying an internal tactic
-////		Tactics.norm().apply(pt.getRoot());
+////		B4FreeTactics.norm().apply(pt.getRoot());
 ////		if (pt.isClosed())
 ////			return;
 ////		
 ////		// Then, try with the legacy provers.
 ////		// pt.getRoot().pruneChildren();
 ////		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
-////		BasicTactics.onAllPending(Tactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
+////		BasicTactics.onAllPending(B4FreeTactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
 ////		if (! pt.isClosed()) {
-////			BasicTactics.onAllPending(Tactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
+////			BasicTactics.onAllPending(B4FreeTactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
 ////		}
 //	}
 	
-	public static ITactic autoTactic(IProgressMonitor monitor){
-		return Tactics.autoProver(monitor,timeOutDelay);
+	private static ITactic autoTactic(IProgressMonitor progressMonitor){
+		final int MLforces = 
+			ExternalML.Input.FORCE_0 |
+			ExternalML.Input.FORCE_1;
+		return BasicTactics.compose(
+				Tactics.lasoo(),
+				BasicTactics.onAllPending(Tactics.norm()),
+				BasicTactics.onAllPending(
+						B4FreeTactics.externalML(MLforces, timeOutDelay, progressMonitor)), // ML
+				BasicTactics.onAllPending(
+						B4FreeTactics.externalPP(true, timeOutDelay, progressMonitor)), // P1
+				BasicTactics.onAllPending(
+						B4FreeTactics.externalPP(false, timeOutDelay, progressMonitor)) // PP
+				);
 	}
-	
+
 }
