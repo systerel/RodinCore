@@ -332,8 +332,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				formulas[i] = null;
 			}
 			
-			if (symbolInfo != null)
-				symbolInfo.setImmutable();
+			setImmutable(symbolInfo);
 			
 			makeProgress(monitor);
 			
@@ -342,6 +341,11 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		endAcceptorModules(modules, repository, null);
 		
 		removeParsedState(repository);
+	}
+
+	protected void setImmutable(ILabelSymbolInfo symbolInfo) {
+		if (symbolInfo != null)
+			symbolInfo.setImmutable();
 	}
 	
 	private IParsedFormula parsedFormula;

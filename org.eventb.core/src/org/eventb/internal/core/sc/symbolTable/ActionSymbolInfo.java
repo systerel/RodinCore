@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
 
@@ -14,7 +15,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class ActionSymbolInfo extends LabelSymbolInfo {
+public class ActionSymbolInfo extends LabelSymbolInfo implements IActionSymbolInfo {
 
 	public ActionSymbolInfo(String symbol, IRodinElement element, String component) {
 		super(symbol, element, component);

@@ -89,7 +89,8 @@ public final class Messages {
     public static String scuser_InvariantFreeIdentifierError;
     public static String scuser_GuardFreeIdentifierError;
     public static String scuser_ActionFreeIdentifierError;
-    public static String scuser_WitnessFreeIdentifierError;
+    public static String scuser_ActionDisjointLHSError;
+   public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
     public static String scuser_InconsistentAbstractConvergence;
     public static String scuser_OrdinaryConvergentFaultyConvergence;

@@ -7,6 +7,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -14,11 +19,16 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IEventLabelSymbolTable;
 import org.eventb.core.sc.ILabelSymbolTable;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
@@ -68,10 +78,51 @@ public class MachineEventActionModule extends AssignmentModule {
 				repository,
 				monitor);
 
+		checkLHS(actions, assignments, monitor);
 		saveActions(target, actions, assignments, null);
 
 	}
 	
+	private void checkLHS(
+			IAction[] actions, 
+			Assignment[] assignments, 
+			IProgressMonitor monitor) throws CoreException {
+		HashMap<String, Integer> conflicts = new HashMap<String, Integer>(43);
+		boolean[] error = new boolean[actions.length];
+		for (int i=0; i< actions.length; i++) {
+			if (assignments[i] == null)
+				continue;
+			for (FreeIdentifier identifier : assignments[i].getAssignedIdentifiers()) {
+				String name = identifier.getName();
+				Integer conflict = conflicts.get(name);
+				if (conflict == null)
+					conflicts.put(name, i);
+				else if (conflict == -1) {
+					error[i] = true;
+				} else {
+					error[i] = true;
+					error[conflict] = true;
+					conflicts.put(name, -1);
+				}
+			}
+		}
+		for (int i=0; i<actions.length; i++) {
+			if (assignments[i] == null)
+				continue;
+			IActionSymbolInfo actionSymbolInfo = 
+				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(actions[i].getLabel(monitor));
+			if (error[i]) {
+				assignments[i] = null;
+				issueMarker(
+						IMarkerDisplay.SEVERITY_ERROR, 
+						actions[i], 
+						Messages.scuser_ActionDisjointLHSError);
+				actionSymbolInfo.setError();
+			}
+			actionSymbolInfo.setImmutable();
+		}
+	}
+
 	private void saveActions(
 			IInternalParent parent, 
 			IAction[] actions, 
@@ -110,6 +161,11 @@ public class MachineEventActionModule extends AssignmentModule {
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			IStateRepository repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
+	}
+
+	@Override
+	protected void setImmutable(ILabelSymbolInfo symbolInfo) {
+		// do nothing
 	}
 
 }
