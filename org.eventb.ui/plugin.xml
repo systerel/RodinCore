@@ -488,55 +488,6 @@
             interruptable="false"
             toolbar="navigation"
             tooltip="Next undischarged PO"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.P0"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/p0_prover.gif"
-            id="org.eventb.ui.p0"
-            interruptable="true"
-            tooltip="External prover: Predicate prover on selected hypotheses"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.PP"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/pp_prover.gif"
-            id="org.eventb.ui.pp"
-            interruptable="true"
-            tooltip="External prover: Predicate prover on all hypotheses"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.M0"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/m0_prover.gif"
-            id="org.eventb.ui.m0"
-            interruptable="true"
-            tooltip="External prover: Mono-Lemma prover in force 0"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.M1"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/m1_prover.gif"
-            id="org.eventb.ui.m1"
-            interruptable="true"
-            tooltip="External prover: Mono-lemma prover in force 1"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.M2"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/m2_prover.gif"
-            id="org.eventb.ui.m2"
-            interruptable="true"
-            tooltip="External prover: Mono-lemma prover in force 2"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.M3"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/m3_prover.gif"
-            id="org.eventb.ui.m3"
-            interruptable="true"
-            tooltip="External prover: Mono-lemma prover in force 3"/>
-      <simpletactic
-            class="org.eventb.internal.ui.prover.globaltactics.ML"
-            dropdown="externalProvers"
-            icon="icons/full/ctool16/ml_prover.gif"
-            id="org.eventb.ui.ml"
-            interruptable="true"
-            tooltip="External prover: Mono-lemma prover in all force"/>
       <toolbar id="sequent"/>
       <toolbar id="backtrack"/>
       <toolbar id="navigation"/>
