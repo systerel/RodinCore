@@ -71,17 +71,34 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		if (guards.length == 0)
 			return;
 		
-		checkAndType(
-				guards, 
-				target,
-				predicates,
-				modules,
-				event.getElementName(),
-				repository,
-				monitor);
+		if (checkInitialisation(event, guards, monitor))
+			checkAndType(
+					guards, 
+					target,
+					predicates,
+					modules,
+					event.getElementName(),
+					repository,
+					monitor);
 		
-		saveGuards(target, guards, predicates, null);
+		saveGuards(target, guards, predicates, monitor);
 
+	}
+	
+	private boolean checkInitialisation(
+			IEvent event, 
+			IGuard[] guards, 
+			IProgressMonitor monitor) throws RodinDBException {
+		if (event.getLabel(monitor).contains(IEvent.INITIALISATION))
+			if (guards.length > 0) {
+				for (IGuard guard : guards)
+					issueMarker(
+							IMarkerDisplay.SEVERITY_ERROR, 
+							guard, 
+							Messages.scuser_InitialisationGuardError);
+				return false;
+			}
+		return true;
 	}
 	
 	private void saveGuards(

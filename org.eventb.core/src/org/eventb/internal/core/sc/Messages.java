@@ -72,6 +72,8 @@ public final class Messages {
     public static String scuser_EventRefinementError;
     public static String scuser_MachineWithoutInitialisationError;
     public static String scuser_InitialisationRefinedError;
+    public static String scuser_InitialisationVariableError;
+    public static String scuser_InitialisationGuardError;
     public static String scuser_CarrierSetNameImportConflict;
     public static String scuser_CarrierSetNameConflict;
     public static String scuser_ConstantNameImportConflict;
@@ -90,7 +92,7 @@ public final class Messages {
     public static String scuser_GuardFreeIdentifierError;
     public static String scuser_ActionFreeIdentifierError;
     public static String scuser_ActionDisjointLHSError;
-   public static String scuser_WitnessFreeIdentifierError;
+    public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
     public static String scuser_InconsistentAbstractConvergence;
     public static String scuser_OrdinaryConvergentFaultyConvergence;

@@ -19,10 +19,12 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IEventRefinesInfo;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -44,6 +46,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	}
 	
 	protected IEventRefinesInfo eventRefinesInfo;
+	protected boolean isInitialisation;
 
 	public void process(
 			IRodinElement element, 
@@ -94,14 +97,27 @@ public class MachineEventVariableModule extends IdentifierModule {
 	protected boolean insertIdentifierSymbol(
 			IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
-		((IVariableSymbolInfo) newSymbolInfo).setLocal();
-		return super.insertIdentifierSymbol(element, newSymbolInfo);
+		IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) newSymbolInfo;
+		variableSymbolInfo.setLocal();
+		if (super.insertIdentifierSymbol(element, newSymbolInfo)) {
+			if (isInitialisation) {
+				issueMarker(
+						IMarkerDisplay.SEVERITY_ERROR, 
+						element, 
+						Messages.scuser_InitialisationVariableError);
+				newSymbolInfo.setError();
+				return false;
+			} else
+				return true;
+		} else
+			return false;
 	}
 
 	@Override
 	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
+		isInitialisation = ((IEvent) element).getLabel(monitor).contains(IEvent.INITIALISATION);
 	}
 
 	@Override

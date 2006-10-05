@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
@@ -412,4 +413,48 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
+	public void testEvents_17() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		addEvent(mac, IEvent.INITIALISATION, makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList(), makeSList());
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsVariables(scEvents[0]);
+		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
+		
+	}
+	
+	public void testEvents_18() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+				makeSList("G1", "G2"), makeSList("x∈ℕ", "⊤"), 
+				makeSList(), makeSList());
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
+		
+	}
+
 }
