@@ -11,6 +11,14 @@ import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.tests.TestLib;
 
+/**
+ * Unit tests for the reasoner registry
+ * 
+ * @see org.eventb.core.seqprover.IReasonerRegistry
+ * 
+ * @author Farhad Mehta
+ * @author Laurent Voisin
+ */
 public class ReasonerRegistryTest extends TestCase {
 
 	private final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
@@ -80,7 +88,7 @@ public class ReasonerRegistryTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link ReasonerRegistry#getReasonerInstance(String)}.
+	 * Test method for {@link IReasonerRegistry#getReasonerInstance(String)}.
 	 */
 	public void testGetReasonerInstance() {
 		IReasoner reasoner = registry.getReasonerInstance(TrueGoal.REASONER_ID);
@@ -91,7 +99,7 @@ public class ReasonerRegistryTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link ReasonerRegistry#getReasonerName(String)}.
+	 * Test method for {@link IReasonerRegistry#getReasonerName(String)}.
 	 */
 	public void testGetReasonerName() {
 		assertTrue(registry.getReasonerName(TrueGoal.REASONER_ID).equals("⊤ goal"));
@@ -99,7 +107,7 @@ public class ReasonerRegistryTest extends TestCase {
 	}
 	
 	/**
-	 * Ensures that a dummy reasone always fails.
+	 * Ensures that a dummy reasoner always fails.
 	 */
 	public void testDummyReasoner() {
 		String id = getDummyId();
