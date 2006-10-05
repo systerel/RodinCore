@@ -1,61 +1,75 @@
 package org.eventb.core.seqprover;
 
-import java.util.Set;
 
 /**
- * Interface defining the protocol to the singeleton class that implements 
- * the Reasoner Registry.
- * 
+ * Interface defining the protocol to the singleton class that implements the
+ * Reasoner Registry.
  * <p>
- * The Reasoner Registry manages Reasoners that have been declared as extensions 
+ * The Reasoner Registry manages Reasoners that have been declared as extensions
  * to the 'reasoners' extension point provided by the sequent prover.
  * </p>
- * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Farhad Mehta
- *
  */
 public interface IReasonerRegistry {
 
 	/**
 	 * Checks if a reasoner extension with the given reasoner id is present in
 	 * the reasoner registry.
-	 * 
 	 * <p>
-	 * Shortcut for getReasonerIDs().contains(reasonerID).
+	 * This is fully equivalent to
+	 * <code>Arrays.asList(getReasonerIDs()).contains(reasonerID)</code>,
+	 * although implemented in a more efficient way.
 	 * </p>
 	 * 
 	 * @param reasonerID
-	 *            The reasoner id to check for
-	 * @return <code>true</code> if a reasoner extension with the given id is
-	 *         present in the reasoner registry
+	 *            the reasoner id to check for
+	 * @return <code>true</code> iff the given reasoner id is known to the
+	 *         reasoner registry
 	 */
 	boolean isPresent(String reasonerID);
 	
 	/**
 	 * Returns the ids of all reasoner extensions present in the reasoner
 	 * registry.
+	 * <p>
+	 * The returned set is immutable. Any attempt to modify it will raise an
+	 * {@link UnsupportedOperationException}.
+	 * </p>
+	 * <p>
+	 * A reasoner id is present in the registry if any of the following holds
+	 * (exhaustive list):
+	 * <ul>
+	 * <li>It has been registered through the <code>reasoners</code>
+	 * extension point.</li>
+	 * <li>Its name has been requested by way of {@link #getReasonerName()}.</li>
+	 * <li>Its instance has been requested by way of
+	 * {@link #getReasonerInstance()}.</li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @return the ids of all known reasoner extensions
+	 * @return an array of all known reasoner ids
 	 */
-	Set<String> getReasonerIDs();
+	String[] getReasonerIDs();
 
 	/**
-	 * Returns an instance of the reasoner extension with the given reasoner id.
+	 * Returns an instance of the reasoner extension with the given id.
 	 * <p>
 	 * In case no reasoner extension with the given id has been registered, or
 	 * if there is a problem instantiating the reasoner class, a dummy reasoner
-	 * instance is returned.
+	 * instance is returned. Subsequently, the reasoner is considered as
+	 * registered.
 	 * </p>
 	 * 
+	 * @see #isDummyReasoner(IReasoner)
+	 *
 	 * @param reasonerID
 	 *            the id of the reasoner
 	 * @return an instance of the reasoner (might be a dummy one in case of
 	 *         error)
-	 * @see #isDummyReasoner(IReasoner)
 	 */
 	IReasoner getReasonerInstance(String reasonerID);
 
@@ -63,11 +77,12 @@ public interface IReasonerRegistry {
 	 * Returns the name of the reasoner extension with the given id.
 	 * <p>
 	 * In case no reasoner extension with the given id has been registered, a
-	 * placeholder string is returned, stating the problem.
+	 * placeholder string is returned, stating the problem. Subsequently, the
+	 * reasoner is considered as registered.
 	 * </p>
 	 * 
 	 * @param reasonerID
-	 *            the reasoner id concerned
+	 *            the id of the reasoner
 	 * @return the name of the reasoner with the given id
 	 */
 	String getReasonerName(String reasonerID);
