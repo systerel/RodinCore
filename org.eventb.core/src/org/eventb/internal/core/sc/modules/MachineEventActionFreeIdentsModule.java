@@ -9,8 +9,10 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.ICurrentEvent;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -23,6 +25,39 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule {
+
+	private boolean isInitialisation;
+	
+	@Override
+	public void initModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		super.initModule(repository, monitor);
+		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		isInitialisation = 
+			currentEvent.getCurrentEvent().getLabel(monitor).equals(IEvent.INITIALISATION);
+	}
+
+	@Override
+	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		super.endModule(repository, monitor);
+	}
+
+	@Override
+	protected IIdentifierSymbolInfo getSymbolInfo(
+			IRodinElement element, 
+			FreeIdentifier freeIdentifier, 
+			IProgressMonitor monitor) throws CoreException {
+		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
+		if (isInitialisation && symbolInfo instanceof IVariableSymbolInfo) {
+			issueMarker(
+					IMarkerDisplay.SEVERITY_ERROR, 
+					element, 
+					Messages.scuser_InitialisationActionRHSError, 
+					freeIdentifier.getName());
+			return null;
+		}
+		return symbolInfo;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -76,8 +111,14 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 
 	@Override
 	protected String declaredFreeIdentifierErrorMessage() {
-		// cannot be called
-		return null;
+		return Messages.scuser_InitialisationActionRHSError;
+	}
+
+	@Override
+	protected FreeIdentifier[] getFreeIdentifiers() {
+		FreeIdentifier[] freeIdentifiers =
+			((Assignment) parsedFormula.getFormula()).getUsedIdentifiers();
+		return freeIdentifiers;
 	}
 
 }

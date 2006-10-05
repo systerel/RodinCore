@@ -456,5 +456,78 @@ public class TestEvents extends BasicTest {
 		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
 		
 	}
+	
+	public void testEvents_19() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(mac, "evt", makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x :∣ y'=x"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, "evt");
+		
+		containsActions(scEvents[0], emptyEnv, makeSList(), makeSList());
+		
+	}
+	
+	public void testEvents_20() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x :∣ x'=1"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsActions(scEvents[0], typeEnvironment, makeSList("A1"), makeSList("x :∣ x'=1"));
+		
+	}
+	
+	public void testEvents_21() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x :∣ x=1"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsActions(scEvents[0], emptyEnv, makeSList(), makeSList());
+		
+	}
+
 
 }

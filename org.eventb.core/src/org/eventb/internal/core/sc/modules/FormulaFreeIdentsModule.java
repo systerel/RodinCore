@@ -17,7 +17,6 @@ import org.eventb.core.sc.IParsedFormula;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -52,8 +51,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 		
 		boolean ok = true;	
 		
-		FreeIdentifier[] freeIdentifiers =
-			parsedFormula.getFormula().getFreeIdentifiers();
+		FreeIdentifier[] freeIdentifiers = getFreeIdentifiers();
 		
 		for (FreeIdentifier freeIdentifier : freeIdentifiers) {
 			
@@ -76,6 +74,12 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 		}
 		return ok;
 	}
+
+	protected FreeIdentifier[] getFreeIdentifiers() {
+		FreeIdentifier[] freeIdentifiers =
+			parsedFormula.getFormula().getFreeIdentifiers();
+		return freeIdentifiers;
+	}
 	
 	protected abstract String declaredFreeIdentifierErrorMessage();
 
@@ -83,7 +87,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 			IRodinElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
-		IdentifierSymbolInfo symbolInfo = (IdentifierSymbolInfo) 
+		IIdentifierSymbolInfo symbolInfo = (IIdentifierSymbolInfo) 
 			symbolTable.getSymbolInfo(freeIdentifier.getName());
 		return symbolInfo;
 	}

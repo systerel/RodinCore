@@ -7,10 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

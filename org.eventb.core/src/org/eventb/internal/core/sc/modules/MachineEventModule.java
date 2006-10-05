@@ -38,6 +38,7 @@ import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
@@ -351,6 +352,8 @@ public class MachineEventModule extends LabeledElementModule {
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (int i=0; i < events.length; i++) {
+			
+			repository.setState(new CurrentEvent(events[i]));
 			
 			repository.setState(
 					new StackedIdentifierSymbolTable(
