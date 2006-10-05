@@ -1,9 +1,7 @@
 package org.eventb.internal.core.seqprover;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -35,12 +33,14 @@ public class ReasonerRegistry implements IReasonerRegistry {
 
 	private static IReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
 
+	private static final String[] NO_STRING = new String[0];
+	
 	/**
 	 * Debug flag for <code>REASONER_REGISTRY_TRACE</code>
 	 */
 	public static boolean DEBUG;
 	
-	private volatile Map<String,ReasonerInfo> registry;
+	private Map<String,ReasonerInfo> registry;
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -54,18 +54,18 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return SINGLETON_INSTANCE;
 	}
 	
-	public boolean isPresent(String id){
+	public synchronized boolean isPresent(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
 		return registry.containsKey(id);
 	}
 	
-	public Set<String> getReasonerIDs(){
+	public synchronized String[] getReasonerIDs(){
 		if (registry == null) {
 			loadRegistry();
 		}
-		return Collections.unmodifiableSet(registry.keySet());
+		return registry.keySet().toArray(NO_STRING);
 	}
 	
 	public IReasoner getReasonerInstance(String id){
@@ -76,7 +76,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return getInfo(id).getReasonerName();
 	}
 
-	private ReasonerInfo getInfo(String id) {
+	private synchronized ReasonerInfo getInfo(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
@@ -94,7 +94,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 	 */
 	private synchronized void loadRegistry() {
 		if (registry != null) {
-			// Prevent double initialization
+			// Prevents loading by two thread in parallel
 			return;
 		}
 		registry = new HashMap<String, ReasonerInfo>();
