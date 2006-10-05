@@ -120,7 +120,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		toolkit.createLabel(body, "Name");
+		Label label = toolkit.createLabel(body, "Name");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		nameText = new EventBText(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -129,7 +130,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		nameText.getWidget().setLayoutData(gd);
 		nameText.getWidget().addModifyListener(new DirtyStateListener());
 
-		toolkit.createLabel(body, "Initialisation");
+		label = toolkit.createLabel(body, "Initialisation");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		initNameText = new EventBText(toolkit.createText(body, defaultInitName));
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
@@ -146,7 +148,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		nameText.getWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getWidget()));
 
-		toolkit.createLabel(body, "Invariant");
+		label = toolkit.createLabel(body, "Invariant");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		IEventBInputText invariantNameText = new EventBText(toolkit.createText(
 				body, invPrefix + invIndex));
@@ -188,7 +191,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.YES_ID) {
 			Composite body = scrolledForm.getBody();
 			Label label = toolkit.createLabel(body, "Invariant");
-			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
 
 			try {

@@ -106,7 +106,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		scrolledForm.setLayoutData(gd);
 
-		toolkit.createLabel(body, "Name");
+		Label label = toolkit.createLabel(body, "Name");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		nameText = new EventBText(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -115,7 +116,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		nameText.getWidget().setLayoutData(gd);
 		nameText.getWidget().addModifyListener(new DirtyStateListener());
 
-		toolkit.createLabel(body, "Axiom");
+		label = toolkit.createLabel(body, "Axiom");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		IEventBInputText axiomNameText = new EventBText(toolkit.createText(
 				body, axmPrefix + axmIndex));
@@ -153,7 +155,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.YES_ID) {
 			Composite body = scrolledForm.getBody();
 			Label label = toolkit.createLabel(body, "Axiom");
-			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
 
 			try {
