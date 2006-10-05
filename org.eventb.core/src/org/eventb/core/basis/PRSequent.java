@@ -7,18 +7,16 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.seqprover.IProofTree;
-import org.eventb.internal.core.pom.PRUtil;
+import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.Lib;
+import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -54,30 +52,31 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	public String getName() {
 		return getElementName();
 	}
-	public IPRProofTree getProofTree() throws RodinDBException {
+	
+	public IPRProofTree getProofTree(){
 		IPRProofTree proofTree = ((IPRFile)getOpenable()).getProofTree(getName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;
 	}
 
-	public IProofTree rebuildProofTree() throws RodinDBException {
-		return PRUtil.rebiuldProofTree(this);
-	}
+//	public IProofTree rebuildProofTree() throws RodinDBException {
+//		return PRUtil.rebiuldProofTree(this);
+//	}
 	
 
-	public IProofTree makeFreshProofTree() throws RodinDBException {
-		return PRUtil.makeInitialProofTree(this);
-	}
+//	public IProofTree makeFreshProofTree() throws RodinDBException {
+//		return PRUtil.makeInitialProofTree(this);
+//	}
 	
-	public void updateProofTree(final IProofTree pt) throws CoreException {
-		RodinCore.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				PRUtil.updateProofTree(PRSequent.this, pt);
-			}
-
-		}, null);
-	}
+//	public void updateProofTree(final IProofTree pt) throws CoreException {
+//		RodinCore.run(new IWorkspaceRunnable() {
+//			public void run(IProgressMonitor monitor) throws CoreException {
+//				PRUtil.updateProofTree(PRSequent.this, pt);
+//			}
+//
+//		}, null);
+//	}
 
 	public boolean isProofBroken() throws RodinDBException {
 		return getContents().equals("ProofBroken");
@@ -94,6 +93,13 @@ public class PRSequent extends InternalElement implements IPRSequent {
 		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getName());
 		if (! poSeq.exists()) return null;
 		return poSeq;
+	}
+
+	public void updateStatus() throws RodinDBException {
+		IProverSequent seq =  POLoader.readPO(getPOSequent());
+		IProofDependencies deps = getProofTree().getProofDependencies();
+		boolean validity = Lib.proofReusable(deps,seq);
+		setProofBroken(! validity);
 	}
 	
 	

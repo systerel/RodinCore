@@ -22,6 +22,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -48,6 +49,39 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
 		setConfidence(IConfidence.PENDING);
+	}
+	
+
+	public void setProofTree(IProofTree pt) throws RodinDBException {
+		// TODO Auto-generated method stub
+		PRProofTree prProofTree = this;
+		if (prProofTree.hasChildren())
+			getRodinDB().delete(prProofTree.getChildren(),true,null);
+
+			// Write out the proof tree dependencies
+			IProofDependencies proofDependencies = pt.getProofDependencies();
+			
+			((IPRPredicate)(prProofTree.createInternalElement(
+					IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
+					setPredicate(proofDependencies.getGoal());
+			((IPRPredicateSet)(prProofTree.createInternalElement(
+					IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
+					setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()));
+			((IPRTypeEnvironment)(prProofTree.createInternalElement(
+					IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
+					setTypeEnvironment(proofDependencies.getUsedFreeIdents());
+			((IPRTypeEnvironment)(prProofTree.createInternalElement(
+					IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
+					setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
+			
+			// write out the proof skeleton
+			IPRProofTreeNode root = (IPRProofTreeNode)
+			createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"0",null,null);
+			root.setProofTreeNode(pt.getRoot());
+			
+			//	Update the status
+			int confidence = pt.getConfidence();
+			this.setConfidence(confidence);
 	}
 	
 	public IPRSequent getSequent() {
@@ -211,5 +245,6 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		}
 		
 	}
+
 	
 }

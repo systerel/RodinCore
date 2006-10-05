@@ -1,6 +1,7 @@
 package org.eventb.core;
 
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -31,18 +32,6 @@ public interface IPRProofTree extends IInternalElement {
 		
 		
 		/**
-		 * Returns the PR sequent associated this proof tree.
-		 * <p>
-		 * It is also possible for a proof tree to not be associated to a PR sequent.
-		 * </p>
-		 * 
-		 * @return the PR sequent associated with this proof tree, or <code>null</code>
-		 * if no such PR sequent present
-		 */
-//		@Deprecated
-//		IPRSequent getSequent();
-		
-		/**
 		 * Returns whether or not this proof tree is closed.
 		 * <p>
 		 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
@@ -63,6 +52,8 @@ public interface IPRProofTree extends IInternalElement {
 		
 		public void initialize() throws RodinDBException;
 
+		public void setProofTree(IProofTree proofTree) throws RodinDBException;
+		
 		public boolean proofAttempted() throws RodinDBException;
 
 		/**
@@ -85,5 +76,7 @@ public interface IPRProofTree extends IInternalElement {
 		int getConfidence() throws RodinDBException;
 		
 		boolean isAutomaticallyGenerated() throws RodinDBException;
+
+		void setAutomaticallyGenerated() throws RodinDBException;
 		
 }

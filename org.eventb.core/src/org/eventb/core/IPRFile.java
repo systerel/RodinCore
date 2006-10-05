@@ -57,13 +57,13 @@ public interface IPRFile extends IRodinFile{
 	IMachineFile getMachine();
 
 	/**
-	 * Returns a handle to the file containing proof obligations for this
+	 * Returns a handle to the snapshot of file containing proof obligations for this
 	 * component.
 	 * <p>
 	 * This is a handle-only operation.
 	 * </p>
 	 * 
-	 * @return a handle to the PO file of this component
+	 * @return a handle to snapshot of the PO file of this component
 	 */
 	IPOFile getPOFile();
 	
@@ -95,8 +95,18 @@ public interface IPRFile extends IRodinFile{
 	 * @return the proof tree with the correcponging name, or <code>null</code> if not
 	 * present.
 	 * 
-	 * @throws RodinDBException
 	 */
-	IPRProofTree getProofTree(String name) throws RodinDBException;
+	IPRProofTree getProofTree(String name);
+	
+	/**
+	 * Creates and returns a new initialised proof tree with the given name.
+	 * 
+	 * @param name
+	 * 				Name of the proof tree to create.
+	 * 
+	 * @return the created proof tree
+	 * 
+	 */
+	IPRProofTree createProofTree(String name) throws RodinDBException;
 	
 }

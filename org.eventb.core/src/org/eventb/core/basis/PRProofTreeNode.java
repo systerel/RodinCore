@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -99,6 +100,32 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 			
 		};
 		return skeleton;
+	}
+
+	public void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException {
+		
+		IPRProofTreeNode prProofTreeNode = this;
+		
+		prProofTreeNode .setComment(proofTreeNode.getComment());
+		
+		if (proofTreeNode.isOpen()) return;
+		
+		// writeOutRule(proofTreeNode.getRule(),prProofTreeNode);
+		
+		IPRProofRule prRule = (IPRProofRule)
+		createInternalElement(
+				IPRProofRule.ELEMENT_TYPE,
+				proofTreeNode.getRule().generatedBy().getReasonerID(),
+				null,null);
+		
+		prRule.setProofRule(proofTreeNode.getRule());
+		
+		IProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildNodes();
+		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
+			IPRProofTreeNode child = (IPRProofTreeNode)
+			createInternalElement(IPRProofTreeNode.ELEMENT_TYPE,Integer.toString(i),null,null);
+			child.setProofTreeNode(proofTreeNodeChildren[i]);
+		}
 	}
 	
 }

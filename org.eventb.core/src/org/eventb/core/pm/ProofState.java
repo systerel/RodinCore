@@ -15,15 +15,24 @@ package org.eventb.core.pm;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProofTree;
+import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.pm.UserSupportUtils;
+import org.eventb.internal.core.pom.POLoader;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -61,9 +70,26 @@ public class ProofState {
 	}
 
 	public void loadProofTree() throws RodinDBException {
-		pt = prSequent.rebuildProofTree(); // Construct the proof tree from the
-											// file.
+		//pt = prSequent.rebuildProofTree();
 
+		// Construct the proof tree from the
+		// file.
+		
+		// load the PO from the po file and create a proof tree with it
+		IProverSequent seq = POLoader.readPO(prSequent.getPOSequent());
+		pt = ProverFactory.makeProofTree(seq);
+		
+		// If a proof exists in the PR file rebuild it.
+		final IPRProofTree prProofTree = prSequent.getProofTree();
+		if (prProofTree != null)
+		{
+			final IPRProofTreeNode root = prProofTree.getRoot();
+			if (root != null){
+				IProofSkeleton skel = root.getSkeleton(null);
+				ProofBuilder.rebuild(pt.getRoot(),skel);
+			}
+		}
+		
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
 		current = getNextPendingSubgoal();
@@ -143,7 +169,20 @@ public class ProofState {
 
 	public void doSave() throws CoreException {
 		UserSupportUtils.debug("Saving: " + prSequent.getElementName());
-		prSequent.updateProofTree(pt);
+		
+		// TODO add lock for po and pr file
+		
+		RodinCore.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				prSequent.getProofTree().setProofTree(pt);
+				prSequent.updateStatus();
+				// PRUtil.updateProofTree(PRSequent.this, pt);
+			}
+		}, prSequent.getSchedulingRule() ,null);
+		
+		// prSequent.updateProofTree(pt);
+		
+		
 		dirty = false;
 	}
 
@@ -166,10 +205,11 @@ public class ProofState {
 	public void proofReuse() throws RodinDBException {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
-		IProofTree newTree = prSequent.makeFreshProofTree();
-
-		if (Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot()
-				.getSequent())) {
+		
+		IProverSequent newSeq = POLoader.readPO(prSequent.getPOSequent());
+		IProofTree newTree = ProverFactory.makeProofTree(newSeq);
+		
+		if (Lib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot());
 			pt = newTree;
 			current = getNextPendingSubgoal();
@@ -193,17 +233,17 @@ public class ProofState {
 	}
 
 	public boolean isProofReusable() throws RodinDBException {
-		IProofTree newTree = prSequent.makeFreshProofTree();
-
-		return Lib.proofReusable(pt.getProofDependencies(), newTree.getRoot()
-				.getSequent());
+		IProverSequent seq = POLoader.readPO(prSequent.getPOSequent());
+		return Lib.proofReusable(pt.getProofDependencies(), seq);
 	}
 
 	public void reloadProofTree() throws RodinDBException {
 		
-		pt = prSequent.makeFreshProofTree(); // Construct the proof tree from
-												// the file.
-
+		// Construct the proof tree from the file.
+		IProverSequent newSeq = POLoader.readPO(prSequent.getPOSequent());
+		pt = ProverFactory.makeProofTree(newSeq);
+		
+		
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
 		current = getNextPendingSubgoal();

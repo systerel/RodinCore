@@ -64,7 +64,7 @@ public final class POLoader {
 		return readPO(poSeq);
 	}
 	
-	private static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
+	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		if (! poSeq.exists()) return null;
 		IPOFile poFile = (IPOFile) poSeq.getOpenable();
 		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
@@ -89,27 +89,14 @@ public final class POLoader {
 //	}
 	
 	// Lock the pofile before calling this method
+	@Deprecated
 	public static IProverSequent makeSequent(final IPRSequent prSeq) throws RodinDBException{
 		IPRFile prFile = (IPRFile) prSeq.getOpenable();
 		final IPOFile poFile = prFile.getPOFile();
 		IProverSequent readPO = readPO(poFile,prSeq.getName());
-		
-//		RodinCore.run(
-//		new IWorkspaceRunnable(){
-//
-//			public void run(IProgressMonitor monitor) throws CoreException {
-//				// TODO Auto-generated method stub
-//				readPO = readPO(poFile,prSeq.getName());
-//			}
-//			
-//		}
-//		,poFile.getSchedulingRule(),null
-//		);
-		
 		return readPO;
-
 	}
-	
+		
 	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
 		for (IPOPredicate poPred:poPredSet.getPredicates()){

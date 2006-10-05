@@ -93,8 +93,6 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 	}
 
 	public void setProofRule(IProofRule proofRule) throws RodinDBException {
-		// TODO : eventually delete cast
-		// ProofRule proofRule = (ProofRule)rule;
 		// delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);

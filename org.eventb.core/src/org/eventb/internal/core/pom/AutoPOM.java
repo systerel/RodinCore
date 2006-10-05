@@ -74,11 +74,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			monitor.beginTask("Managing proofs for " + file.getName(), workUnits);
 		
-			
-//			if (! poFile.exists()) {
-//				ContextSC.makeError("Source PO file does not exist.");
-//			}
-		
 			monitor.subTask("Loading old proofs ");
 			Map<String, IPRProofTree> oldProofs = getOldProofs(prFile);
 			monitor.worked(5);

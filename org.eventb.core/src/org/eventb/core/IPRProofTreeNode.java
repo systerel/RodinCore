@@ -2,6 +2,7 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -28,4 +29,6 @@ public interface IPRProofTreeNode extends IInternalElement {
 		public String getComment() throws RodinDBException;
 
 		public IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
+
+		public void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException;
 }

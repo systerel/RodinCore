@@ -8,6 +8,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
@@ -54,33 +55,44 @@ public class AutoProver {
 			for (IPRSequent po : pos) {
 				if (monitor.isCanceled()) throw new OperationCanceledException();
 				IPRProofTree proofTree = po.getProofTree();
+				if (proofTree == null)
+					proofTree = prFile.createProofTree(po.getName());
 				//return (prProofTree != null && prProofTree.isClosed());
 				//if (! po.isClosed()) {
-				if (po.isProofBroken() || proofTree == null || (!proofTree.isClosed())) {
+				if (po.isProofBroken() || (!proofTree.isClosed())) {
 					// System.out.println("AutoProver tried for "+po);
 					
 					// Go ahead even if a proof was previously attempted
-					IProofTree tree = po.makeFreshProofTree();
+					
+					// IProofTree tree = po.makeFreshProofTree();
+					IProofTree tree = ProverFactory.makeProofTree(POLoader.readPO(po.getPOSequent()));
+					
 					monitor.subTask("Auto proving " + po.getName());
 					autoTactic(monitor).apply(tree.getRoot());
 					monitor.worked(1);
 					// Update the tree if it was discharged
 					if (tree.isClosed()) {
-						po.updateProofTree(tree);
-						if (proofTree == null) proofTree = po.getProofTree();
-						((PRProofTree)proofTree).setAutomaticallyGenerated();
+						// po.updateProofTree(tree);
+						proofTree.setProofTree(tree);
+						po.updateStatus();
+						// if (proofTree == null) proofTree = po.getProofTree();
+						proofTree.setAutomaticallyGenerated();
 						prFile.save(null, false);
 						dirty = false;
 					}
 					// If the auto prover made 'some' progress, and no
 					// proof was previously attempted update the proof
 					else if (tree.getRoot().hasChildren() && 
-							(proofTree == null ||
+							(
 									(! proofTree.proofAttempted()) 
 									|| (proofTree.isAutomaticallyGenerated() && !proofTree.isClosed())
 									))
 					{
-						po.updateProofTree(tree);
+						// po.updateProofTree(tree);
+						proofTree.setProofTree(tree);
+						po.updateStatus();
+						proofTree.setAutomaticallyGenerated();
+						
 						((PRProofTree)proofTree).setAutomaticallyGenerated();
 						// in this case no need to save immediately.
 						dirty = true;
@@ -115,7 +127,7 @@ public class AutoProver {
 ////		}
 //	}
 	
-	private static ITactic autoTactic(IProgressMonitor progressMonitor){
+	public static ITactic autoTactic(IProgressMonitor progressMonitor){
 		final int MLforces = 
 			ExternalML.Input.FORCE_0 |
 			ExternalML.Input.FORCE_1;

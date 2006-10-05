@@ -88,5 +88,9 @@ public class ProofBuilder {
 		}
 		return false;
 	}
+
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton) {
+		return rebuild(node,skeleton,new ReplayHints());
+	}
 	
 }

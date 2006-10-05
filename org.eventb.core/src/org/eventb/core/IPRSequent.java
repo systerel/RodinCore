@@ -9,13 +9,11 @@
 package org.eventb.core;
 
 
-import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for proof obligations in Event-B Prover (PR) files.
+ * Common protocol for proof status in Event-B Prover (PR) files.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -26,10 +24,13 @@ import org.rodinp.core.RodinDBException;
 public interface IPRSequent extends IInternalElement {
 	
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
-	
-//	@ Deprecated
-//	boolean isClosed() throws RodinDBException;
 
+	/**
+	 * Returns the name of this proof obligation in the RODIN database.
+	 * 
+	 * @return the name of this proof obligation.
+	 * 
+	 */
 	public String getName();
 	
 	/**
@@ -44,19 +45,26 @@ public interface IPRSequent extends IInternalElement {
 	 */
 	IPRProofTree getProofTree() throws RodinDBException;
 	
-	IProofTree rebuildProofTree() throws RodinDBException;
-	IProofTree makeFreshProofTree() throws RodinDBException;
+	/**
+	 * Returns the IPOSequent associated to this proof obligation from the
+	 * RODIN database.
+	 * 
+	 * @return the IPOSequent associated to this proof obligation from the
+	 * RODIN database, or <code>null</code> if none is associated to
+	 * this proof obligation.
+	 * 
+	 * @throws RodinDBException
+	 */
+	IPOSequent getPOSequent() throws RodinDBException;
 	
-	
-//	@ Deprecated
-//	boolean proofAttempted() throws RodinDBException;
 	boolean isProofBroken() throws RodinDBException;
 	
-//	@ Deprecated
-//	void setProofBroken(boolean broken) throws RodinDBException;
 	
-	void updateProofTree(IProofTree pt) throws RodinDBException, CoreException;
-	
-	IPOSequent getPOSequent();
+	// IProofTree rebuildProofTree() throws RodinDBException;
+	// IProofTree makeFreshProofTree() throws RodinDBException;
+	// void updateProofTree(IProofTree pt) throws RodinDBException, CoreException;
 
+	// lock po & pr files before calling this method
+	public void updateStatus() throws RodinDBException;
+	
 }

@@ -69,17 +69,19 @@ public class PRFile extends RodinFile implements IPRFile {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String poName = EventBPlugin.getPOFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (IPOFile) project.getRodinFile(poName);
+		return (IPOFile) project.getRodinFile(poName).getSnapshot();
 	}
 
 	public IPRSequent[] getSequents() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRSequent.ELEMENT_TYPE);
-		PRSequent[] sequents = new PRSequent[list.size()];
-		list.toArray(sequents);
+		IRodinElement[] list = getChildrenOfType(IPRSequent.ELEMENT_TYPE);
+		IPRSequent[] sequents = new PRSequent[list.length];
+		for (int i = 0; i < sequents.length; i++) {
+			sequents[i] = (IPRSequent) list[i];
+		}
 		return sequents;
 	}
 	
-	public IPRSequent getSequent(String name) throws RodinDBException {
+	public IPRSequent getSequent(String name) {
 		IPRSequent prSeq = (IPRSequent) getInternalElement(IPRSequent.ELEMENT_TYPE,name);
 		if (!prSeq.exists()) return null;
 		return prSeq;
@@ -96,10 +98,17 @@ public class PRFile extends RodinFile implements IPRFile {
 		return proofs;
 	}
 
-	public IPRProofTree getProofTree(String name) throws RodinDBException {
+	public IPRProofTree getProofTree(String name) {
 		IInternalElement proofTree = getInternalElement(IPRProofTree.ELEMENT_TYPE,name);
 		if (proofTree.exists()) return (IPRProofTree) proofTree;
 		return null;
+	}
+
+	public IPRProofTree createProofTree(String name) throws RodinDBException {
+		IPRProofTree prProofTree = (IPRProofTree) createInternalElement(
+				IPRProofTree.ELEMENT_TYPE,name, null, null);
+		prProofTree.initialize();
+		return prProofTree;
 	}
 	
 	

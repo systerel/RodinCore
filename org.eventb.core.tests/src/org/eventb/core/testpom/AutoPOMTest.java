@@ -8,10 +8,15 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.core.testscpog.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
+import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -84,19 +89,25 @@ public class AutoPOMTest extends BuilderTest {
 		assertNotDischarged(prs[prs.length-1]);
 		
 		// Try an interactive proof on the last one
-		IProofTree proofTree = prs[prs.length-1].makeFreshProofTree();
+		IProverSequent seq = POLoader.readPO(prs[prs.length-1].getPOSequent());
+		IProofTree proofTree = ProverFactory.makeProofTree(seq);
+		
 		Tactics.lasoo().apply(proofTree.getRoot());
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant());
 		Tactics.norm().apply(proofTree.getRoot());
 		// System.out.println(proofTree.getRoot());
-		prs[prs.length-1].updateProofTree(proofTree);
+		prs[prs.length-1].getProofTree().setProofTree(proofTree);
+		prs[prs.length-1].updateStatus();
 		
-		IProofTree loadedProofTree = prs[prs.length-1].rebuildProofTree();
+		IProofSkeleton skel = prs[prs.length-1].getProofTree().getRoot().getSkeleton(null);
+		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq);
+		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
+		
 		// System.out.println(loadedProofTree.getRoot());
 		assertTrue(ProverLib.deepEquals(proofTree,loadedProofTree));
 		loadedProofTree.getRoot().pruneChildren();
 		assertFalse(ProverLib.deepEquals(proofTree,loadedProofTree));
-		assertTrue(ProverLib.deepEquals(prs[prs.length-1].makeFreshProofTree(),loadedProofTree));
+		assertTrue(ProverLib.deepEquals(ProverFactory.makeProofTree(seq),loadedProofTree));
 	}
 	
 
