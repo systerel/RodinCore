@@ -1,5 +1,7 @@
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.seqprover.IReasoner;
@@ -32,9 +34,9 @@ public class ReasonerRegistryTest extends TestCase {
 	 * Test method for 'org.eventb.internal.core.seqprover.ReasonerRegistry.getReasonerIDs()'
 	 */
 	public void testGetReasonerIDs() {
-		assertTrue(REGISTRY.getReasonerIDs().contains(TrueGoal.REASONER_ID));
-		assertFalse(REGISTRY.getReasonerIDs().contains(getDummyId()));
-		
+		final String[] ids = REGISTRY.getReasonerIDs();
+		assertTrue(Arrays.asList(ids).contains(TrueGoal.REASONER_ID));
+		assertFalse(Arrays.asList(ids).contains(getDummyId()));
 	}
 
 	/*
