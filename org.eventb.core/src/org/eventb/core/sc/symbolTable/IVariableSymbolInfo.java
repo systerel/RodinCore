@@ -39,11 +39,11 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	public void setPreserved();
 	
 	/**
-	 * Returns whether the variable is preserved.
+	 * Returns whether this is a variable of the current machine.
 	 * 
-	 * @return whether the variable is preserved
+	 * @return whether this is a variable of the current machine
 	 */
-	boolean isPreserved();
+	boolean isConcrete();
 	
 	/**
 	 * Mark this the variable as "local", i.e. it is a local variable

@@ -91,7 +91,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 					issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
 							Messages.scuser_UndeclaredFreeIdentifierError, name);
 					return false;
-				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isPreserved()) {
+				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
 					issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
 							Messages.scuser_VariableHasDisappearedError, name);
 					return false;

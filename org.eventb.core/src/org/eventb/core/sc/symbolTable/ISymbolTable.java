@@ -54,6 +54,15 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	void putSymbolInfo(ISymbolInfo symbolInfo) throws CoreException;
 		
 	/**
+	 * Returns the parent symbol table for a stacked symbol table,
+	 * and <code>null</code> if the symbol table is not stacked.
+	 * 
+	 * @return the parent symbol table or <code>null</code>
+	 * 
+	 */
+	ISymbolTable getParentTable();
+		
+	/**
 	 * Turns all symbols of the symbol table immutable
 	 */
 	void setImmutable();

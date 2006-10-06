@@ -82,4 +82,8 @@ public class SymbolTable implements ISymbolTable {
 		return getSymbolInfo(symbol);
 	}
 
+	public ISymbolTable getParentTable() {
+		return null;
+	}
+
 }

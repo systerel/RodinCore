@@ -65,7 +65,7 @@ public class VariableSymbolInfo
 		this.forbidden = true;
 	}
 
-	public boolean isPreserved() {
+	public boolean isConcrete() {
 		return preserved;
 	}
 
@@ -91,8 +91,8 @@ public class VariableSymbolInfo
 					ISCVariable.ELEMENT_TYPE, getSymbol(), null, monitor);
 		variable.setType(getType());
 		if (!isLocal()) {
-			variable.setForbidden(isForbidden() || !isPreserved(), monitor);
-			variable.setPreserved(isPreserved() && !isFresh(), monitor);
+			variable.setForbidden(isForbidden() || !isConcrete(), monitor);
+			variable.setPreserved(isConcrete() && !isFresh(), monitor);
 		}
 		variable.setSource(getSourceElement(), monitor);
 	}

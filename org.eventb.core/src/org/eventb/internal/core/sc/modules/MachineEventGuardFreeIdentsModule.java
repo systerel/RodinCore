@@ -34,7 +34,7 @@ public class MachineEventGuardFreeIdentsModule extends MachineFormulaFreeIdentsM
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = 
 				(IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isPreserved())
+			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete())
 				return null;
 		}
 		return symbolInfo;

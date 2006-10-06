@@ -38,7 +38,7 @@ public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModu
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = 
 				(IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isPreserved())
+			if (!variableSymbolInfo.isConcrete())
 				return null;
 		}
 		return symbolInfo;

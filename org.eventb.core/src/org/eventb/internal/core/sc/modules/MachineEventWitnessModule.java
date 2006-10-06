@@ -212,7 +212,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 				IVariableSymbolInfo symbolInfo = (IVariableSymbolInfo)
 					identifierSymbolTable.getSymbolInfo(identifier.getName());
 				
-				if (symbolInfo.isPreserved())
+				if (symbolInfo.isConcrete())
 					continue;
 				
 				FreeIdentifier primedIdentifier = identifier.withPrime(factory);

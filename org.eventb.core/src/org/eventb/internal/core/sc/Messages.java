@@ -75,6 +75,7 @@ public final class Messages {
     public static String scuser_InitialisationVariableError;
     public static String scuser_InitialisationGuardError;
     public static String scuser_InitialisationActionRHSError;
+    public static String scuser_InitialisationIncomplete;
     public static String scuser_CarrierSetNameImportConflict;
     public static String scuser_CarrierSetNameConflict;
     public static String scuser_ConstantNameImportConflict;

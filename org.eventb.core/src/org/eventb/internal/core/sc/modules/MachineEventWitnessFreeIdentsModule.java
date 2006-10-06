@@ -51,7 +51,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, identifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isPreserved()) {
+			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete()) {
 				String label = ((IWitness) element).getLabel(monitor);
 				if (!label.equals(freeIdentifier.getName()))
 					return null;
