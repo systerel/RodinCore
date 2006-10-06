@@ -97,7 +97,8 @@ public class PRSequent extends InternalElement implements IPRSequent {
 
 	public void updateStatus() throws RodinDBException {
 		IProverSequent seq =  POLoader.readPO(getPOSequent());
-		IProofDependencies deps = getProofTree().getProofDependencies();
+		final IPRProofTree proofTree = getProofTree();
+		IProofDependencies deps = proofTree.getProofDependencies();
 		boolean validity = Lib.proofReusable(deps,seq);
 		setProofBroken(! validity);
 	}

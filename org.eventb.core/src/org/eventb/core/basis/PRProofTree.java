@@ -23,7 +23,6 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.internal.core.pom.AutoPOM;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -148,15 +147,16 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 
 	public IProofDependencies getProofDependencies() throws RodinDBException{
 		ProofDependencies proofDependencies = new ProofDependencies();
-		if (proofDependencies.valid == false)
-		{
-			if (AutoPOM.DEBUG) {
-				System.out.println("*** Proof Deps invalid for "+this+" ***");
-				System.out.println("*** Proof attempted "+this.proofAttempted()+" ***");
-			}
-			return null;
-		}
 		return proofDependencies;
+//		if (proofDependencies.valid == false)
+//		{
+//			if (AutoPOM.DEBUG) {
+//				System.out.println("*** Proof Deps invalid for "+this+" ***");
+//				System.out.println("*** Proof attempted "+this.proofAttempted()+" ***");
+//			}
+//			return null;
+//		}
+//		return proofDependencies;
 	}
 
 	public int getConfidence() throws RodinDBException {
@@ -212,6 +212,10 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 					introducedFreeIdents != null);
 		}
 
+		public boolean hasDeps() {
+			return valid;
+		}
+		
 		/**
 		 * @return Returns the goal.
 		 */
