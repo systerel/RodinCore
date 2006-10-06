@@ -54,14 +54,14 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return SINGLETON_INSTANCE;
 	}
 	
-	public synchronized boolean isPresent(String id) {
+	public synchronized boolean isRegistered(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
 		return registry.containsKey(id);
 	}
 	
-	public synchronized String[] getReasonerIDs(){
+	public synchronized String[] getRegisteredIDs(){
 		if (registry == null) {
 			loadRegistry();
 		}

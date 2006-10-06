@@ -32,16 +32,16 @@ public class ReasonerRegistryTest extends TestCase {
 	
 	/**
 	 * Asserts that the given reasoner id has been registered. This is checked
-	 * using both inquiry methods {@link IReasonerRegistry#isPresent(String)}
-	 * and {@link IReasonerRegistry#getReasonerIDs()}.
+	 * using both inquiry methods {@link IReasonerRegistry#isRegistered(String)}
+	 * and {@link IReasonerRegistry#getRegisteredIDs()}.
 	 * 
 	 * @param id
 	 *            the reasoner id to check
 	 */
 	private void assertKnown(String id) {
-		assertTrue(registry.isPresent(id));
+		assertTrue(registry.isRegistered(id));
 		
-		final String[] ids = registry.getReasonerIDs();
+		final String[] ids = registry.getRegisteredIDs();
 		assertTrue("Missing id " + id + " in list " + ids,
 				Arrays.asList(ids).contains(id));
 	}
@@ -49,23 +49,23 @@ public class ReasonerRegistryTest extends TestCase {
 	/**
 	 * Asserts that the given reasoner id has not been registered yet. This is
 	 * checked using both inquiry methods
-	 * {@link IReasonerRegistry#isPresent(String)} and
-	 * {@link IReasonerRegistry#getReasonerIDs()}.
+	 * {@link IReasonerRegistry#isRegistered(String)} and
+	 * {@link IReasonerRegistry#getRegisteredIDs()}.
 	 * 
 	 * @param id
 	 *            the reasoner id to check
 	 */
 	private void assertNotKnown(String id) {
-		assertFalse(registry.isPresent(id));
+		assertFalse(registry.isRegistered(id));
 		
-		final String[] ids = registry.getReasonerIDs();
+		final String[] ids = registry.getRegisteredIDs();
 		assertFalse("Id " + id + " occurs in list " + ids,
 				Arrays.asList(ids).contains(id));
 	}
 	
 	/**
-	 * Test method for {@link IReasonerRegistry#isPresent(String)} and
-	 * {@link IReasonerRegistry#getReasonerIDs()}.
+	 * Test method for {@link IReasonerRegistry#isRegistered(String)} and
+	 * {@link IReasonerRegistry#getRegisteredIDs()}.
 	 */
 	public void testRegisteredReasoners() {
 		final String idName = getDummyId();
