@@ -11,6 +11,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * A proof is reusable for another sequent if:
  * <ul>
+ * <li> It has no dependencies OR</li>
  * <li> The goal is identical to the goal of the sequent and</li>
  * <li> All used hypotheses are contained in the hypotheses of the sequent and</li>
  * <li> All used free identifiers (with identical types) are contained in the 
@@ -25,7 +26,18 @@ import org.eventb.core.ast.Predicate;
 public interface IProofDependencies{
 	
 	/**
+	 * Returns if the proof does indeed have dependencies.
+	 * The rest of the methods in this interface are only valid if 
+	 * <code>hasDeps()</code> returns <code>true</code>.
+	 * 
+	 * @return <code>false</code> iff the proof can be reused for any sequent.
+	 */
+	boolean hasDeps();
+	
+	/**
 	 * Returns the goal predicate of the proof.
+	 * 
+	 * In case the proof has no dependencies the result is undefined.
 	 * 
 	 * @return the goal predicate of the proof.
 	 */
@@ -33,6 +45,8 @@ public interface IProofDependencies{
 	
 	/**
 	 * Returns the hypotheses used in a proof.
+	 * 
+	 * In case the proof has no dependencies the result is undefined.
 	 * 
 	 * @return the hypotheses used in a proof.
 	 * 
@@ -43,6 +57,8 @@ public interface IProofDependencies{
 	 * Returns the type environment corresponding to the used free
 	 * identifiers in a proof.
 	 * 
+	 * In case the proof has no dependencies the result is undefined.
+	 * 
 	 * @return the type environment corresponding to the used free
 	 *  		identifiers in a proof.
 	 */
@@ -51,6 +67,8 @@ public interface IProofDependencies{
 	/**
 	 * Returns the type environment corresponding to the free
 	 * identifiers introduced in a proof.
+	 * 
+	 * In case the proof has no dependencies the result is undefined.
 	 * 
 	 * @return the type environment corresponding to the free
 	 *  		identifiers introduced in a proof.

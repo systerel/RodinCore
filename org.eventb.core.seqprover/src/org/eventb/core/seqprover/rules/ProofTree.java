@@ -138,6 +138,12 @@ public final class ProofTree implements IProofTree {
 			// Assert that the proof of the same sequent is replayable.
 			assert Lib.proofReusable(this,getSequent());
 		}
+
+		public boolean hasDeps() {
+			// TODO : make this method more selective
+			// once forward reasoning is implemented
+			return getRoot().isOpen();
+		}
 		
 		public Predicate getGoal() {
 			return goal;
@@ -212,7 +218,6 @@ public final class ProofTree implements IProofTree {
 				}
 			}
 		}
-
 		
 	}
 

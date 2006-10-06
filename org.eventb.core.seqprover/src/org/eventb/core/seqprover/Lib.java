@@ -576,6 +576,7 @@ public final class Lib {
 	}
 	
 	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
+		if (! proofDependencies.hasDeps()) return true;
 		if (! sequent.goal().equals(proofDependencies.getGoal())) return false;
 		if (! sequent.hypotheses().containsAll(proofDependencies.getUsedHypotheses())) return false;
 		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;
