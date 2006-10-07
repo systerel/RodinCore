@@ -270,55 +270,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								final UserSupport userSupport = editor
 										.getUserSupport();
 								if (tactic instanceof IGlobalExpertTactic) {
-
-									if (isInterruptable()) {
-										applyTacticWithProgress(new IRunnableWithProgress() {
-											public void run(
-													IProgressMonitor monitor)
-													throws InvocationTargetException {
-												try {
-													((IGlobalExpertTactic) tactic)
-															.apply(
-																	userSupport,
-																	currentInput,
-																	monitor);
-												} catch (RodinDBException e) {
-													e.printStackTrace();
-													UIUtils.log(e, "Error applying " + tactic);
-												}
-											}
-										});
-
-									} else {
-										((IGlobalExpertTactic) tactic)
-												.apply(userSupport,
-														currentInput, null);
-									}
+									applyGlobalExpertTactic(
+											(IGlobalExpertTactic) tactic,
+											userSupport, isInterruptable());
 								} else if (tactic instanceof IGlobalSimpleTactic) {
-									if (isInterruptable()) {
-										applyTacticWithProgress(new IRunnableWithProgress() {
-											public void run(
-													IProgressMonitor monitor)
-													throws InvocationTargetException {
-												ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
-														.getTactic(
-																userSupport
-																		.getCurrentPO()
-																		.getCurrentNode(),
-																currentInput,
-																monitor);
-												userSupport
-														.applyTactic(proofTactic);
-											}
-										});
-									} else {
-										ITactic proofTactic = ((IGlobalSimpleTactic) tactic)
-												.getTactic(userSupport
-														.getCurrentPO()
-														.getCurrentNode(),
-														currentInput, null);
-										userSupport.applyTactic(proofTactic);
-									}
+									applyGlobalSimpleTactic(
+											(IGlobalSimpleTactic) tactic,
+											userSupport, isInterruptable());
 								}
 								if (!currentInput.equals("")) {
 									historyCombo.add(currentInput, 0);
@@ -383,51 +341,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							final UserSupport userSupport = editor
 									.getUserSupport();
 							if (tactic2 instanceof IGlobalExpertTactic) {
-
-								if (globalTacticToolItem.isInterruptable()) {
-									applyTacticWithProgress(new IRunnableWithProgress() {
-										public void run(IProgressMonitor monitor)
-												throws InvocationTargetException {
-											try {
-												((IGlobalExpertTactic) tactic)
-														.apply(userSupport,
-																currentInput,
-																monitor);
-											} catch (RodinDBException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											}
-										}
-									});
-								} else {
-									((IGlobalExpertTactic) tactic2).apply(
-											userSupport, currentInput, null);
-								}
+								applyGlobalExpertTactic(
+										(IGlobalExpertTactic) tactic2,
+										userSupport,
+										globalTacticToolItem.isInterruptable()
+								);
 							} else if (tactic2 instanceof IGlobalSimpleTactic) {
-
-								if (globalTacticToolItem.isInterruptable()) {
-									applyTacticWithProgress(new IRunnableWithProgress() {
-										public void run(IProgressMonitor monitor)
-												throws InvocationTargetException {
-											ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
-													.getTactic(userSupport
-															.getCurrentPO()
-															.getCurrentNode(),
-															currentInput,
-															monitor);
-											userSupport
-													.applyTactic(proofTactic);
-										}
-									});
-								} else {
-									ITactic proofTactic = ((IGlobalSimpleTactic) tactic2)
-											.getTactic(userSupport
-													.getCurrentPO()
-													.getCurrentNode(),
-													currentInput, null);
-									userSupport.applyTactic(proofTactic);
-								}
+								applyGlobalSimpleTactic(
+										(IGlobalSimpleTactic) tactic2,
+										userSupport, 
+										globalTacticToolItem.isInterruptable()
+								);
 							}
 						} catch (RodinDBException e1) {
 							// TODO Auto-generated catch block
@@ -480,6 +404,57 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		return item;
 
+	}
+
+
+	// Applies a global tactic to the current proof tree node.
+	private void applyGlobalExpertTactic(final IGlobalExpertTactic get,
+			final UserSupport userSupport, final boolean interruptable)
+			throws RodinDBException {
+
+		if (interruptable) {
+			applyTacticWithProgress(new IRunnableWithProgress() {
+				public void run(IProgressMonitor pm)
+						throws InvocationTargetException {
+					try {
+						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
+						get.apply(userSupport, currentInput, pm);
+					} catch (RodinDBException e) {
+						e.printStackTrace();
+						UIUtils.log(e, "Error applying " + get);
+					} finally {
+						pm.done();
+					}
+				}
+			});
+
+		} else {
+			get.apply(userSupport, currentInput, null);
+		}
+	}
+
+	// Applies a global tactic to the current proof tree node.
+	private void applyGlobalSimpleTactic(final IGlobalSimpleTactic gst,
+			final UserSupport userSupport, boolean interruptable) {
+
+		final IProofTreeNode proofTreeNode =
+			userSupport.getCurrentPO().getCurrentNode();
+		final ITactic proofTactic = gst.getTactic(proofTreeNode, currentInput);
+		if (interruptable) {
+			applyTacticWithProgress(new IRunnableWithProgress() {
+				public void run(IProgressMonitor pm)
+						throws InvocationTargetException {
+					try {
+						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
+						userSupport.applyTactic(proofTactic, pm);
+					} finally {
+						pm.done();
+					}
+				}
+			});
+		} else {
+			userSupport.applyTactic(proofTactic, null);
+		}
 	}
 
 	// private ToolItem createToolItem(CoolItem coolItem, String text,
