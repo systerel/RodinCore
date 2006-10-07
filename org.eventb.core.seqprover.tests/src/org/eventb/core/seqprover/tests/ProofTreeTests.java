@@ -43,7 +43,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertNodePending(root);
 		assertNotEmpty(root.getChildNodes());
 
@@ -51,7 +51,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertSingleton(imp, root.getChildNodes());
 		assertNodeOpen(imp);
 		
-		Tactics.hyp().apply(imp);
+		Tactics.hyp().apply(imp, null);
 		assertNodeClosed(imp);
 		assertNodeClosed(root);
 		assertTrue("Tree is not discharged", tree.isClosed());
@@ -66,7 +66,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertNotEmpty(root.getChildNodes());
 		IProofTreeNode imp = root.getChildNodes()[0];
 		assertSingleton(imp, root.getChildNodes());
@@ -85,14 +85,14 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertNotEmpty(root.getChildNodes());
 		IProofTreeNode conj = root.getChildNodes()[0];
 		assertSingleton(conj, root.getChildNodes());
 		assertNodeOpen(conj);
 		assertNodePending(root);
 
-		Tactics.conjI().apply(conj);
+		Tactics.conjI().apply(conj, null);
 		assertEquals(2, conj.getChildNodes().length);
 		IProofTreeNode left = conj.getChildNodes()[0];
 		IProofTreeNode right = conj.getChildNodes()[1];
@@ -101,7 +101,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(conj);
 		assertNodePending(root);
 		
-		Tactics.hyp().apply(left);
+		Tactics.hyp().apply(left, null);
 		assertEmpty(left.getChildNodes());
 		assertNodeDischarged(left);
 		assertNodeOpen(right);
@@ -109,7 +109,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(root);
 		assertFalse("Tree is closed", tree.isClosed());
 		
-		Tactics.review(1).apply(right);
+		Tactics.review(1).apply(right, null);
 		assertNodeReviewed(right);
 		assertNodeDischarged(left);
 		assertNodeReviewed(conj);
@@ -128,7 +128,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 		
-		Object error = Tactics.tautology().apply(root);
+		Object error = Tactics.tautology().apply(root, null);
 		assertNotNull(error);
 		assertNodeOpen(root);
 	}
@@ -141,11 +141,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertEquals(1, root.getChildNodes().length);
 		IProofTreeNode imp = root.getChildNodes()[0];
 
-		Tactics.conjI().apply(imp);
+		Tactics.conjI().apply(imp, null);
 		assertEquals(2, imp.getChildNodes().length);
 		IProofTreeNode left = imp.getChildNodes()[0];
 		IProofTreeNode right = imp.getChildNodes()[1];
@@ -180,17 +180,17 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertEquals(1, root.getChildNodes().length);
 		IProofTreeNode imp = root.getChildNodes()[0];
 
-		Tactics.conjI().apply(imp);
+		Tactics.conjI().apply(imp, null);
 		assertEquals(2, imp.getChildNodes().length);
 		IProofTreeNode left = imp.getChildNodes()[0];
 		IProofTreeNode right = imp.getChildNodes()[1];
 		
-		Tactics.hyp().apply(left);
-		Tactics.hyp().apply(right);
+		Tactics.hyp().apply(left, null);
+		Tactics.hyp().apply(right, null);
 		
 		// the nodes to prune are part of the same proof tree.
 		assertSame(left.getProofTree(),tree);
@@ -224,11 +224,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree tree = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode root = tree.getRoot();
 
-		Tactics.impI().apply(root);
+		Tactics.impI().apply(root, null);
 		assertEquals(1, root.getChildNodes().length);
 		IProofTreeNode imp = root.getChildNodes()[0];
 
-		Tactics.conjI().apply(imp);
+		Tactics.conjI().apply(imp, null);
 		assertEquals(2, imp.getChildNodes().length);
 		IProofTreeNode left = imp.getChildNodes()[0];
 		IProofTreeNode right = imp.getChildNodes()[1];
@@ -267,7 +267,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree graft = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
-		Tactics.tautology().apply(graftRoot);
+		Tactics.tautology().apply(graftRoot, null);
 		assertNodeClosed(graftRoot);
 		
 		boolean success = treeRoot.graft(graft);
@@ -293,7 +293,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree graft = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
-		Tactics.conjI().apply(graftRoot);
+		Tactics.conjI().apply(graftRoot, null);
 		assertEquals(2, graftRoot.getChildNodes().length);
 		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
 		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
@@ -323,12 +323,12 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		IProofTree graft = ProverFactory.makeProofTree(sequent);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
-		Tactics.conjI().apply(graftRoot);
+		Tactics.conjI().apply(graftRoot, null);
 		assertEquals(2, graftRoot.getChildNodes().length);
 		IProofTreeNode ch1 = graftRoot.getChildNodes()[0];
 		IProofTreeNode ch2 = graftRoot.getChildNodes()[1];
-		Tactics.tautology().apply(ch1);
-		Tactics.tautology().apply(ch2);
+		Tactics.tautology().apply(ch1, null);
+		Tactics.tautology().apply(ch2, null);
 		assertNodeClosed(graftRoot);
 		
 		treeRoot.graft(graft);
@@ -355,7 +355,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2;; x=1 |- x=1");
 		proofTree = ProverFactory.makeProofTree(sequent);
-		Tactics.hyp().apply(proofTree.getRoot());
+		Tactics.hyp().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1")));
@@ -366,8 +366,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
 		proofTree = ProverFactory.makeProofTree(sequent);
-		Tactics.impI().apply(proofTree.getRoot());
-		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant());
+		Tactics.impI().apply(proofTree.getRoot(), null);
+		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("x=1 ⇒ x=1")));
@@ -381,7 +381,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// test getUsedFreeIdents
 		sequent = TestLib.genSeq("y=2;; 1=1 |- 1=1");
 		proofTree = ProverFactory.makeProofTree(sequent);
-		Tactics.lemma("y=2").apply(proofTree.getRoot());
+		Tactics.lemma("y=2").apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("1=1")));
@@ -392,7 +392,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		//	 test getIntroducedFreeIdents
 		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
 		proofTree = ProverFactory.makeProofTree(sequent);
-		Tactics.allI().apply(proofTree.getRoot());
+		Tactics.allI().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(Lib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPredicate("∀ x· x∈ℤ")));
