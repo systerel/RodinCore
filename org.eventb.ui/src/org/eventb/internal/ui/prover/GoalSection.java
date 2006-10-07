@@ -406,7 +406,7 @@ public class GoalSection extends SectionPart {
 				public void linkActivated(HyperlinkEvent e) {
 					String[] inputs = goalText.getResults();
 					((ProverUI) page.getEditor()).getUserSupport().applyTactic(
-							tactic.getTactic(node, inputs));
+							tactic.getTactic(node, inputs), null);
 				}
 
 			});
