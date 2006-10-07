@@ -2,9 +2,9 @@ package org.eventb.core.seqprover.reasoners;
 
 import java.util.Collections;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -38,7 +38,7 @@ public class RewriteHyp implements IReasoner{
 		);
 	}
 	
-	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProofMonitor pm){
 		
 		CombiInput input = (CombiInput)reasonerInput;
 		

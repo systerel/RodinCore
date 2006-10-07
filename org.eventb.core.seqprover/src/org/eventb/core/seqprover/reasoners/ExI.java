@@ -1,9 +1,9 @@
 package org.eventb.core.seqprover.reasoners;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -29,7 +29,7 @@ public class ExI implements IReasoner{
 		return new MultipleExprInput(reasonerInputSerializer);
 	}
 	
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
 		if (! Lib.isExQuant(seq.goal()))
 			return ProverFactory.reasonerFailure(

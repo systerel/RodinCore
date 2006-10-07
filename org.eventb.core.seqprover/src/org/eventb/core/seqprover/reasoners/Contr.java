@@ -3,9 +3,9 @@ package org.eventb.core.seqprover.reasoners;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -25,7 +25,7 @@ public class Contr extends SinglePredInputReasoner{
 		return REASONER_ID;
 	}
 	
-	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProgressMonitor progressMonitor){
+	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProofMonitor pm){
 		
 		SinglePredInput input = (SinglePredInput) reasonerInput;
 		
