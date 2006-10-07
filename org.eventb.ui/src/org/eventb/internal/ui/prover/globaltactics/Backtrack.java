@@ -37,7 +37,8 @@ public class Backtrack implements IGlobalExpertTactic {
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
-		userSupport.back();
+		// TODO LV: add a progressMonitor here?
+		userSupport.back(null);
 	}
 
 }
