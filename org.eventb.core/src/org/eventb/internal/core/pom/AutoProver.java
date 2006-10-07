@@ -51,7 +51,7 @@ public class AutoProver {
 			return;
 		final IPRSequent[] pos = prFile.getSequents();
 		boolean dirty = false;
-		try{
+		try {
 			monitor.beginTask("Auto-proving", pos.length);
 			for (IPRSequent po : pos) {
 				if (monitor.isCanceled()) {
@@ -67,9 +67,7 @@ public class AutoProver {
 			}
 			// monitor.worked(1);
 			if (dirty) prFile.save(null, false);
-		}
-		finally
-		{
+		} finally {
 			monitor.done();
 		}
 	}
