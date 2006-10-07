@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.prover.globaltactics;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
@@ -36,7 +35,7 @@ public class Normalise implements IGlobalSimpleTactic {
 		return (node != null) && node.isOpen();
 	}
 
-	public ITactic getTactic(IProofTreeNode node, String input, IProgressMonitor monitor) {
+	public ITactic getTactic(IProofTreeNode node, String input) {
 		return Tactics.norm();
 	}
 
