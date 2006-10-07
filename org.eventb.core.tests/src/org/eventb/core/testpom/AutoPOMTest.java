@@ -92,9 +92,9 @@ public class AutoPOMTest extends BuilderTest {
 		IProverSequent seq = POLoader.readPO(prs[prs.length-1].getPOSequent());
 		IProofTree proofTree = ProverFactory.makeProofTree(seq);
 		
-		Tactics.lasoo().apply(proofTree.getRoot());
-		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant());
-		Tactics.norm().apply(proofTree.getRoot());
+		Tactics.lasoo().apply(proofTree.getRoot(), null);
+		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
+		Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
 		prs[prs.length-1].getProofTree().setProofTree(proofTree);
 		prs[prs.length-1].updateStatus();
