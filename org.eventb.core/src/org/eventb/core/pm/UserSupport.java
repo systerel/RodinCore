@@ -7,17 +7,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
+import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.core.pm.ProofStateDelta;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.rodinp.core.ElementChangedEvent;
@@ -339,7 +342,7 @@ public class UserSupport implements IElementChangedListener,
 		batchOperation(new Runnable() {
 			public void run() {
 				addAllToCached(hyps);
-				applyTactic(t);
+				applyTactic(t, null);
 			}
 		});
 
@@ -352,10 +355,10 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	public void applyTactic(final ITactic t) {
+	public void applyTactic(final ITactic t, final IProgressMonitor pm) {
 		batchOperation(new Runnable() {
 			public void run() {
-				internalApplyTactic(t);
+				internalApplyTactic(t, new ProofMonitor(pm));
 				IProofTreeNode currentNode = currentPS.getCurrentNode();
 				IProofTreeNode newNode = currentPS
 						.getNextPendingSubgoal(currentNode);
@@ -368,14 +371,14 @@ public class UserSupport implements IElementChangedListener,
 
 	}
 
-	protected void internalApplyTactic(ITactic t) {
+	protected void internalApplyTactic(ITactic t, IProofMonitor pm) {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
-		Object info = t.apply(currentNode);
+		Object info = t.apply(currentNode, pm);
 		if (!t.equals(Tactics.prune())) {
 			if (expertMode) {
-				Tactics.postProcessExpert().apply(currentNode);
+				Tactics.postProcessExpert().apply(currentNode, pm);
 			} else {
-				Tactics.postProcessBeginner().apply(currentNode);
+				Tactics.postProcessBeginner().apply(currentNode, pm);
 			}
 		}
 		if (info == null) {
@@ -392,10 +395,10 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	protected void internalPrune() {
+	protected void internalPrune(IProofMonitor pm) {
 		IProofTreeNode currentNode = currentPS.getCurrentNode();
 		UserSupportUtils.debug("Internal Prune");
-		Object info = Tactics.prune().apply(currentNode);
+		Object info = Tactics.prune().apply(currentNode, pm);
 		UserSupportUtils.debug("Information: " + info);
 		if (info == null) {
 			info = "Tactic applied successfully";
@@ -414,7 +417,7 @@ public class UserSupport implements IElementChangedListener,
 	public void prune() throws RodinDBException {
 		batchOperation(new Runnable() {
 			public void run() {
-				internalPrune();
+				internalPrune(null);
 				IProofTreeNode currentNode = currentPS.getCurrentNode();
 				IProofTreeNode newNode = currentPS
 						.getNextPendingSubgoal(currentNode);
@@ -760,7 +763,7 @@ public class UserSupport implements IElementChangedListener,
 		return null;
 	}
 
-	public void back() throws RodinDBException {
+	public void back(IProofMonitor pm) throws RodinDBException {
 		// TODO Batch operation.
 		if (currentPS.getCurrentNode().getParent() != null) {
 			selectNode(currentPS.getCurrentNode().getParent());

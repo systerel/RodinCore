@@ -210,7 +210,7 @@ public class ProofState {
 		IProofTree newTree = ProverFactory.makeProofTree(newSeq);
 		
 		if (Lib.proofReusable(pt.getProofDependencies(), newSeq)) {
-			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot());
+			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(), null);
 			pt = newTree;
 			current = getNextPendingSubgoal();
 			if (current == null) {
