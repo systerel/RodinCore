@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.internal.core.pom;
-
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -21,9 +19,11 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.basis.PRProofTree;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -56,7 +56,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
 		IPOFile poFile = (IPOFile) prFile.getPOFile().getSnapshot();
-		int noOfPOs = poFile.getSequents().length;
+		final String componentName = 
+			EventBPlugin.getComponentName(prFile.getElementName());
+		final int noOfPOs = poFile.getSequents().length;
 		final int workUnits = 3 + 2 + noOfPOs * 2;
 		// 3 : creating fresh PR file
 		// 1x : updating eash proof status
@@ -64,13 +66,13 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		// 1x : autoproving each proof obligation
 		
 		try {
-			
-			monitor.beginTask("Managing proofs for " + file.getName(), workUnits);
+			monitor.beginTask("Proving " + componentName, workUnits);
 			
 			// remove old proof status
+			monitor.subTask("cleaning up");
 			createFreshPRFile(prFile,null);
 			monitor.worked(3);
-			if (monitor.isCanceled()) throw new OperationCanceledException();
+			checkCancellation(monitor, prFile);
 			
 			// create new proof status
 			IPOSequent[] prfOblgs = poFile.getSequents();
@@ -78,11 +80,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			for (int i = 0; i < prfOblgs.length; i++) {
 				
 				final String name = prfOblgs[i].getName();
-				monitor.subTask("Updating status for " + name);
+				monitor.subTask("updating status for " + name);
 				
 				final IPRProofTree prProof = prFile.getProofTree(name);
 				
-				if (prProof == null){
+				if (prProof == null) {
 					prFile.createProofTree(name);
 				}
 				
@@ -90,33 +92,35 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				
 				poState.updateStatus();
 				monitor.worked(1);
-				if (monitor.isCanceled()) throw new OperationCanceledException();
+				checkCancellation(monitor, prFile);
 			}
 			
-			prFile.save(new SubProgressMonitor(monitor,2), true);
-			
-//			monitor.beginTask("Managing proofs for " + file.getName(), workUnits);
-//		
-//			monitor.subTask("Loading old proofs ");
-//			Map<String, IPRProofTree> oldProofs = getOldProofs(prFile);
-//			monitor.worked(5);
-//			if (monitor.isCanceled()) throw new OperationCanceledException();
-//			monitor.subTask("Merging proofs ");
-//			Map<String, Boolean> newValidity = computeNewValidity(oldProofs, poFile, monitor);
-//			if (monitor.isCanceled()) throw new OperationCanceledException();
-//			monitor.subTask("Writing new proofs ");
-//			createFreshPRFile(newValidity,oldProofs, poFile, prFile, null);
-//			prFile.save(new SubProgressMonitor(monitor,5), true);
-//			
-			
-			if (monitor.isCanceled()) throw new OperationCanceledException();
-			monitor.subTask("Running auto prover ");
-			AutoProver.run(prFile,new SubProgressMonitor(monitor,noOfPOs));
-			
+			monitor.subTask("saving");
+			prFile.save(new SubProgressMonitor(monitor, 2), true);
+			checkCancellation(monitor, prFile);
+
+			SubProgressMonitor spm = new SubProgressMonitor(monitor, noOfPOs,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
+			);
+			AutoProver.run(prFile, spm);
 			return true;
-			
 		} finally {
 			monitor.done();
+		}
+	}
+
+	// TODO harmonize cleanup after cancellation
+	
+	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile) {
+		if (monitor.isCanceled()) {
+			// Cleanup PR file (may have unsaved changes).
+			try {
+				prFile.makeConsistent(null);
+			} catch (RodinDBException e) {
+				Util.log(e, "when reverting changes to proof file "
+						+ prFile.getElementName());
+			}
+			throw new OperationCanceledException();
 		}
 	}
 
