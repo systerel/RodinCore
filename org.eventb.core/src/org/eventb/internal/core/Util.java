@@ -8,8 +8,10 @@
 
 package org.eventb.internal.core;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.EventBPlugin;
 import org.rodinp.core.RodinDBException;
@@ -19,7 +21,30 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public abstract class Util {
+public class Util {
+	
+	private Util() {
+		// Non-instanciable class.
+	}
+
+	/**
+	 * Logs an internal plug-in error to the platform log, with the given
+	 * exception and message
+	 * 
+	 * @param exc
+	 *            exception to report (may be <code>null</code>)
+	 * @param message
+	 *            message giving context of the reported error
+	 */
+	public static void log(Exception exc, String message) {
+		IStatus status = new Status(
+				IMarker.SEVERITY_ERROR, 
+				EventBPlugin.PLUGIN_ID, 
+				Platform.PLUGIN_ERROR, 
+				message, 
+				exc);
+		EventBPlugin.getDefault().getLog().log(status);
+	}
 
 	/**
 	 * Creates a new Rodin database exception with the given message.
