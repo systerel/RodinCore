@@ -8,7 +8,6 @@
 
 package org.eventb.internal.core;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -38,7 +37,7 @@ public class Util {
 	 */
 	public static void log(Exception exc, String message) {
 		IStatus status = new Status(
-				IMarker.SEVERITY_ERROR, 
+				IStatus.ERROR, 
 				EventBPlugin.PLUGIN_ID, 
 				Platform.PLUGIN_ERROR, 
 				message, 
