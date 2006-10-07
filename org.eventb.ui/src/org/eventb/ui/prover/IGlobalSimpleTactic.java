@@ -12,9 +12,9 @@
 
 package org.eventb.ui.prover;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.tactics.ITactic;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -26,15 +26,14 @@ public interface IGlobalSimpleTactic extends IGlobalTactic {
 	/**
 	 * Apply the tactic.
 	 * <p>
-	 * 
-	 * @param userSupport
-	 *            the current user support
 	 * @param input
 	 *            the (optional) string input
+	 * @param userSupport
+	 *            the current user support
+	 * 
 	 * @throws RodinDBException
 	 *             exceptions can be throws when applying tactics.
 	 */
-	public ITactic getTactic(IProofTreeNode node, String input,
-			IProgressMonitor monitor);
+	public ITactic getTactic(IProofTreeNode node, String input);
 
 }
