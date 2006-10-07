@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +59,7 @@ public class AutoProver {
 		final IPRSequent[] pos = prFile.getSequents();
 		boolean dirty = false;
 		try {
-			monitor.beginTask("Auto-proving", pos.length);
+			monitor.beginTask("auto-proving", pos.length);
 			for (IPRSequent po : pos) {
 				if (monitor.isCanceled()) {
 					prFile.makeConsistent(null);
