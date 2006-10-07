@@ -23,8 +23,7 @@ import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
-import com.b4free.rodin.core.B4FreeTactics;
-import com.b4free.rodin.core.ExternalML;
+import com.b4free.rodin.core.B4freeCore;
 
 public class AutoProver {
 	
@@ -154,17 +153,17 @@ public class AutoProver {
 	
 	public static ITactic autoTactic(){
 		final int MLforces = 
-			ExternalML.Input.FORCE_0 |
-			ExternalML.Input.FORCE_1;
+			B4freeCore.ML_FORCE_0 |
+			B4freeCore.ML_FORCE_1;
 		return BasicTactics.compose(
 				Tactics.lasoo(),
 				BasicTactics.onAllPending(Tactics.norm()),
 				BasicTactics.onAllPending(
-						B4FreeTactics.externalML(MLforces, timeOutDelay)), // ML
+						B4freeCore.externalML(MLforces, timeOutDelay)), // ML
 				BasicTactics.onAllPending(
-						B4FreeTactics.externalPP(true, timeOutDelay)), // P1
+						B4freeCore.externalPP(true, timeOutDelay)), // P1
 				BasicTactics.onAllPending(
-						B4FreeTactics.externalPP(false, timeOutDelay)) // PP
+						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
 	}
 
