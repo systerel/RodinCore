@@ -115,9 +115,9 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 						if (ProofTreeUI.buffer instanceof IProofSkeleton) {
 							IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
 							
-							
+							// TODO LV: add progressMonitor here?
 							proofTreeUI.getUserSupport().applyTactic(
-									BasicTactics.rebuildTac(copyNode));
+									BasicTactics.rebuildTac(copyNode), null);
 							if (ProofTreeUIUtils.DEBUG)
 								ProofTreeUIUtils.debug("Paste: " + copyNode);
 						}
@@ -192,7 +192,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isOpen()) {
-						Tactics.prune().apply(proofTree);
+						Tactics.prune().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						viewer.setSelection(new StructuredSelection(proofTree));
 					}
@@ -216,7 +216,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.norm().apply(proofTree);
+						Tactics.norm().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree,
@@ -251,7 +251,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.conjI().apply(proofTree);
+						Tactics.conjI().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree,
@@ -288,7 +288,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.hyp().apply(proofTree);
+						Tactics.hyp().apply(proofTree, null);
 						ProofTreeUIActionGroup.this.proofTreeUI
 								.refresh(proofTree);
 						// Expand the node
@@ -323,7 +323,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.allI().apply(proofTree);
+						Tactics.allI().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree,
@@ -359,7 +359,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.impI().apply(proofTree);
+						Tactics.impI().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree,
@@ -395,7 +395,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 				if (obj instanceof IProofTreeNode) {
 					IProofTreeNode proofTree = (IProofTreeNode) obj;
 					if (!proofTree.isClosed()) {
-						Tactics.trivial().apply(proofTree);
+						Tactics.trivial().apply(proofTree, null);
 						viewer.refresh(proofTree);
 						// Expand the node
 						viewer.expandToLevel(proofTree,
