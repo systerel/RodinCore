@@ -49,14 +49,6 @@
             id="exI"
             name="%exIName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ExternalML"
-            id="externalML"
-            name="externalML"/>
-      <reasoner
-            class="org.eventb.core.seqprover.reasoners.ExternalPP"
-            id="externalPP"
-            name="externalPP"/>
-      <reasoner
             class="org.eventb.core.seqprover.reasoners.FalseHyp"
             id="falseHyp"
             name="%falseHypName"/>
