@@ -1,6 +1,6 @@
 package org.eventb.core.seqprover.tactics;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
@@ -37,12 +37,9 @@ public class BasicTactics {
 	}
 	
 	
-	public static ITactic reasonerTac(IReasoner reasoner,IReasonerInput reasonerInput){
+	public static ITactic reasonerTac(IReasoner reasoner,
+			IReasonerInput reasonerInput) {
 		return new ReasonerTac(reasoner,reasonerInput);
-	}
-	
-	public static ITactic reasonerTac(IReasoner reasoner,IReasonerInput reasonerInput, IProgressMonitor monitor){
-		return new ReasonerTac(reasoner,reasonerInput,monitor);
 	}
 	
 	public static ITactic reasonerTac(IProofRule reasonerOutput){
@@ -60,7 +57,7 @@ public class BasicTactics {
 	public static ITactic rebuildTac(final IProofSkeleton proofSkeleton){
 		return new ITactic() {
 
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
 				ProofBuilder.rebuild(pt,proofSkeleton,new ReplayHints());
 				if (!pt.isOpen()) return null;
@@ -78,7 +75,7 @@ public class BasicTactics {
 	
 		public Prune(){}
 		
-		public Object apply(IProofTreeNode pt){
+		public Object apply(IProofTreeNode pt, IProofMonitor pm){
 			if (pt.isOpen()) return "Root is already open";
 			pt.pruneChildren();
 			return null;
@@ -93,7 +90,7 @@ public class BasicTactics {
 			this.message = message;
 		}
 		
-		public Object apply(IProofTreeNode pt){
+		public Object apply(IProofTreeNode pt, IProofMonitor pm){
 			return message;
 		}
 	}
@@ -119,29 +116,21 @@ public class BasicTactics {
 		
 		private final IReasoner reasoner;
 		private final IReasonerInput reasonerInput;
-		private final IProgressMonitor progressMonitor;
 		
 		public ReasonerTac(IReasoner reasoner,IReasonerInput reasonerInput)
 		{
 			this.reasoner = reasoner;
 			this.reasonerInput = reasonerInput;
-			this.progressMonitor = null;
 		}
 		
-		public ReasonerTac(IReasoner reasoner,IReasonerInput reasonerInput,IProgressMonitor progressMonitor)
-		{
-			this.reasoner = reasoner;
-			this.reasonerInput = reasonerInput;
-			this.progressMonitor = progressMonitor;
-		}
-		
-		public Object apply(IProofTreeNode pt){
+		public Object apply(IProofTreeNode pt, IProofMonitor pm){
 			if (!pt.isOpen()) return "Root already has children";
-			IReasonerOutput reasonerOutput = reasoner.apply(pt.getSequent(),reasonerInput, progressMonitor);
+			IReasonerOutput reasonerOutput = 
+				reasoner.apply(pt.getSequent(), reasonerInput, pm);
 			if (reasonerOutput == null) return "! Plugin returned null !";
 			if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 			ITactic temp = new ReuseTac((IProofRule)reasonerOutput);
-			return temp.apply(pt);
+			return temp.apply(pt, pm);
 			
 //			ProofRule reasonerStep = new ReasoningStep((ReasonerOutputSucc) reasonerOutput);
 //			ITactic temp = new RuleTac(reasonerStep);
@@ -158,7 +147,7 @@ public class BasicTactics {
 			this.reasonerOutput = reasonerOutput;
 		}
 		
-		public Object apply(IProofTreeNode pt){
+		public Object apply(IProofTreeNode pt, IProofMonitor pm){
 			if (!pt.isOpen()) return "Root already has children";
 			if (pt.applyRule(reasonerOutput)) return null;
 			else return "Rule "+reasonerOutput.getDisplayName()+" is not applicable";
@@ -177,8 +166,10 @@ public class BasicTactics {
 		{
 			this.toPaste = proofTreeNode;
 		}
+
+		// TODO improve implementation of apply that creates new tactics recursively!
 		
-		public Object apply(IProofTreeNode pt){
+		public Object apply(IProofTreeNode pt, IProofMonitor pm){
 			if (!pt.isOpen()) return "Root already has children";
 			IProofRule rule = toPaste.getRule();
 			if (rule == null) return null;
@@ -191,8 +182,9 @@ public class BasicTactics {
 					return "Paste unsuccessful";
 				Object error = null;
 				for (int i = 0; i < toPasteChildren.length; i++) {
-					if
-					(pasteTac(toPasteChildren[i]).apply(ptChildren[i]) != null)
+					final Object pasteResult = 
+						pasteTac(toPasteChildren[i]).apply(ptChildren[i], pm);
+					if (pasteResult != null)
 						error = "Paste unsuccessful";
 				}
 				return error;
@@ -209,11 +201,11 @@ public class BasicTactics {
 			this.t = t;
 		}
 		
-		public Object apply(IProofTreeNode pt) {
+		public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 			String applicable = "onAllPending unapplicable";
 			IProofTreeNode[] subgoals = pt.getOpenDescendants();
 			for(IProofTreeNode subgoal : subgoals){
-				if (t.apply(subgoal) == null) applicable = null;
+				if (t.apply(subgoal, pm) == null) applicable = null;
 			}
 			return applicable;
 		}
@@ -230,13 +222,13 @@ public class BasicTactics {
 			this.subgoalNo = subgoalNo;
 		}
 		
-		public Object apply(IProofTreeNode pt) {
+		public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 			IProofTreeNode[] subgoals = pt.getOpenDescendants();
 			if (this.subgoalNo < 0 || this.subgoalNo >= subgoals.length) 
 				return "Subgoal "+this.subgoalNo+" non-existent";
 			IProofTreeNode subgoal = subgoals[this.subgoalNo];
 			if (subgoal == null) return "Subgoal "+this.subgoalNo+" is null!";
-			return this.t.apply(subgoal);
+			return this.t.apply(subgoal, pm);
 		}
 		
 		
@@ -250,11 +242,11 @@ public class BasicTactics {
 			this.tactics = tactics;
 		}
 		
-		public Object apply(IProofTreeNode pt) {
+		public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 			boolean applicable = false;
 			Object lastFailure = "compose unapplicable: no tactics";
 			for (ITactic tactic : tactics){
-				Object tacticApp = tactic.apply(pt);
+				Object tacticApp = tactic.apply(pt, pm);
 				if (tacticApp == null) applicable = true; 
 				else lastFailure = tacticApp;
 			}
@@ -271,9 +263,9 @@ public class BasicTactics {
 			this.tactics = tactics;
 		}
 		
-		public Object apply(IProofTreeNode pt) {
+		public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 			for (ITactic tactic : tactics){
-				Object tacticApp = tactic.apply(pt);
+				Object tacticApp = tactic.apply(pt, pm);
 				if (tacticApp != null) return tacticApp; 
 			}
 			return null;
@@ -290,12 +282,12 @@ public class BasicTactics {
 			this.t = t;
 		}
 		
-		public Object apply(IProofTreeNode pt) {
+		public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 			boolean applicable = false;
-			Object tacticApp = t.apply(pt);
+			Object tacticApp = t.apply(pt, pm);
 			while(tacticApp == null){
 				applicable = true;
-				tacticApp = t.apply(pt);
+				tacticApp = t.apply(pt, pm);
 			};
 			return applicable ? null : tacticApp;
 		}
