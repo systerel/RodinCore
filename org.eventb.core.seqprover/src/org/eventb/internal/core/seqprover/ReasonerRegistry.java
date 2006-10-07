@@ -6,8 +6,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -235,7 +235,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		}
 
 		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-				IProgressMonitor progressMonitor) {
+				IProofMonitor pm) {
 			
 			return ProverFactory.reasonerFailure(
 					this,
