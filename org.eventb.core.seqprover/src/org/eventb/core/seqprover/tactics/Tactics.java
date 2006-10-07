@@ -14,6 +14,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.Lib;
@@ -57,14 +58,14 @@ public class Tactics {
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic(){
 			
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(
 						new Review(),
 						new CombiInput(
 								new MultiplePredInput(Hypothesis.Predicates(pt.getSequent().selectedHypotheses())),
 								new SinglePredInput(pt.getSequent().goal()),
 								new SingleStringInput(Integer.toString(reviewerConfidence)))))
-								.apply(pt);
+								.apply(pt, pm);
 			}		
 		};
 	}
@@ -73,13 +74,13 @@ public class Tactics {
 		
 		return new ITactic(){
 			
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(
 						new Cut(),
 						new SinglePredInput(
 								lemma,
 								pt.getSequent().typeEnvironment())))
-								.apply(pt);
+								.apply(pt, pm);
 			}
 			
 		};
@@ -99,13 +100,13 @@ public class Tactics {
 		
 		return new ITactic(){
 			
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(
 						new DoCase(),
 						new SinglePredInput(
 								trueCase,
 								pt.getSequent().typeEnvironment())))
-								.apply(pt);
+								.apply(pt, pm);
 			}
 			
 		};
@@ -116,7 +117,7 @@ public class Tactics {
 		
 		return new ITactic(){
 
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				IProverSequent seq = pt.getSequent();
 				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 				freeIdents.addAll(Arrays.asList(seq.goal().getFreeIdentifiers()));
@@ -128,7 +129,7 @@ public class Tactics {
 				hypsToSelect.removeAll(seq.selectedHypotheses());
 				if (hypsToSelect.isEmpty())
 					return "No more hypotheses found";
-				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt);
+				return (mngHyp(ActionType.SELECT,hypsToSelect)).apply(pt, pm);
 			}
 			
 		};
@@ -173,7 +174,7 @@ public class Tactics {
 	public static ITactic exI(final String... witnesses) {
 		return new ITactic(){
 
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pt.getSequent().goal());
 				return (
@@ -183,7 +184,7 @@ public class Tactics {
 										witnesses,
 										boundIdentDecls,
 										typeEnv)
-								)).apply(pt);
+								)).apply(pt, pm);
 			}
 			
 		};
@@ -216,7 +217,7 @@ public class Tactics {
 	public static ITactic allD(final Hypothesis univHyp, final String... instantiations){
 		return new ITactic(){
 
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp.getPredicate());
 				return (
@@ -228,7 +229,7 @@ public class Tactics {
 												boundIdentDecls,
 												typeEnv),
 										new SinglePredInput(univHyp))
-						)).apply(pt);
+						)).apply(pt, pm);
 			}
 			
 		};
@@ -369,18 +370,18 @@ public class Tactics {
 	public static ITactic afterLasoo(final ITactic tactic){
 		return new ITactic(){
 
-			public Object apply(IProofTreeNode pt) {
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
-				lasoo().apply(pt);
+				lasoo().apply(pt, pm);
 				final IProofTreeNode firstOpenDescendant = pt.getFirstOpenDescendant();
-				Object output = tactic.apply(firstOpenDescendant);
+				Object output = tactic.apply(firstOpenDescendant, pm);
 				if (output == null){
 					// tactic was successful
 					return null;
 				}
 				else
 				{ // revert proof tree
-					prune().apply(pt);
+					prune().apply(pt, pm);
 					return output;
 				}
 				
