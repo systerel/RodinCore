@@ -13,9 +13,7 @@ package org.rodinp.internal.core;
 import java.io.File;
 import java.util.Map;
 
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -37,9 +35,7 @@ import org.rodinp.internal.core.util.MementoTokenizer;
  *
  * @see IRodinProject
  */
-public class RodinProject 
-	extends Openable
-	implements IRodinProject, IProjectNature {
+public class RodinProject extends Openable implements IRodinProject {
 	
 	/**
 	 * Whether the underlying file system is case sensitive.
@@ -79,23 +75,6 @@ public class RodinProject
 	public RodinProject(IProject project, RodinElement parent) {
 		super(parent);
 		this.project = project;
-	}
-
-	/**
-	 * Adds a builder to the build spec for the given project.
-	 */
-	protected void addToBuildSpec(String builderID) throws CoreException {
-
-		IProjectDescription description = this.project.getDescription();
-		int rodinCommandIndex = getRodinCommandIndex(description.getBuildSpec());
-
-		if (rodinCommandIndex == -1) {
-
-			// Add a Rodin command to the build spec
-			ICommand command = description.newCommand();
-			command.setBuilderName(builderID);
-			setRodinCommand(description, command);
-		}
 	}
 
 	/**
@@ -141,13 +120,6 @@ public class RodinProject
 //		return '.' + qName.getLocalName();
 //	}
 	
-	/**
-	 * Configure the project with Rodin nature.
-	 */
-	public void configure() throws CoreException {
-		// register Rodin builder
-		addToBuildSpec(RodinCore.BUILDER_ID);
-	}
 	/*
 	 * Returns whether the given resource is accessible directly
 	 * through the children or the non-Rodin resources of this project.
@@ -165,15 +137,6 @@ public class RodinProject
 	@Override
 	protected RodinProjectElementInfo createElementInfo() {
 		return new RodinProjectElementInfo();
-	}
-
-	/**
-	/**
-	 * Removes the Rodin nature from the project.
-	 */
-	public void deconfigure() throws CoreException {
-		// deregister Rodin builder
-		removeFromBuildSpec(RodinCore.BUILDER_ID);
 	}
 
 	/**
@@ -312,19 +275,6 @@ public class RodinProject
 	}
 
 	/**
-	 * Find the specific Rodin command amongst the given build spec
-	 * and return its index or -1 if not found.
-	 */
-	private int getRodinCommandIndex(ICommand[] buildSpec) {
-		for (int i = 0; i < buildSpec.length; ++i) {
-			if (buildSpec[i].getBuilderName().equals(RodinCore.BUILDER_ID)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 * Convenience method that returns the specific type of info for a Rodin project.
 	 */
 	protected RodinProjectElementInfo getRodinProjectElementInfo()
@@ -459,25 +409,6 @@ public class RodinProject
 		return this.project.hashCode();
 	}
 	
-	/**
-	 * Removes the given builder from the build spec for the given project.
-	 */
-	protected void removeFromBuildSpec(String builderID) throws CoreException {
-
-		IProjectDescription description = this.project.getDescription();
-		ICommand[] commands = description.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(builderID)) {
-				ICommand[] newCommands = new ICommand[commands.length - 1];
-				System.arraycopy(commands, 0, newCommands, 0, i);
-				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
-				description.setBuildSpec(newCommands);
-				this.project.setDescription(description, null);
-				return;
-			}
-		}
-	}
-	
 	/*
 	 * Resets this project's caches
 	 */
@@ -487,34 +418,6 @@ public class RodinProject
 //		if (info != null){
 //			info.resetCaches();
 //		}
-	}
-
-	/**
-	 * Update the Rodin command in the build spec (replace existing one if present,
-	 * add one first if none).
-	 */
-	private void setRodinCommand(
-		IProjectDescription description,
-		ICommand newCommand)
-		throws CoreException {
-
-		ICommand[] oldBuildSpec = description.getBuildSpec();
-		int oldRodinCommandIndex = getRodinCommandIndex(oldBuildSpec);
-		ICommand[] newCommands;
-
-		if (oldRodinCommandIndex == -1) {
-			// Add a Rodin build spec before other builders (1FWJK7I)
-			newCommands = new ICommand[oldBuildSpec.length + 1];
-			System.arraycopy(oldBuildSpec, 0, newCommands, 1, oldBuildSpec.length);
-			newCommands[0] = newCommand;
-		} else {
-		    oldBuildSpec[oldRodinCommandIndex] = newCommand;
-			newCommands = oldBuildSpec;
-		}
-
-		// Commit the spec change into the project
-		description.setBuildSpec(newCommands);
-		this.project.setDescription(description, null);
 	}
 
 	/**
