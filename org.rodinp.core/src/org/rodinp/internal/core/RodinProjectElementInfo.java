@@ -13,9 +13,8 @@ package org.rodinp.internal.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
 import org.rodinp.core.basis.RodinElement;
+import org.rodinp.core.basis.RodinFile;
 
 /** 
  * Info for IRodinProject.
@@ -83,10 +82,9 @@ import org.rodinp.core.basis.RodinElement;
 			for (IResource res : members) {
 				switch (res.getType()) {
 				case IResource.FILE:
-					final IFile file = (IFile) res;
-					if (isRodinFile(file)) {
-						newChildren[resourcesCounter++] =
-							RodinDBManager.createRodinFileFrom(file, project);
+					final RodinFile rf = project.getRodinFile(res.getName());
+					if (rf != null) {
+						newChildren[resourcesCounter++] = rf;
 					}
 					break;
 				}
@@ -98,26 +96,9 @@ import org.rodinp.core.basis.RodinElement;
 			}
 		} catch (CoreException e) {
 			newChildren = RodinElement.NO_ELEMENTS;
-			resourcesCounter = 0;
 		}
 		setChildren(newChildren);
 	}
-	
-	private boolean isRodinFile(IFile file) {
-		try {
-			final IContentDescription description = file
-					.getContentDescription();
-			if (description == null)
-				return false;
-			final IContentType type = description.getContentType();
-			if (type == null)
-				return false;
-			return type.isKindOf(RodinDBManager.rodinContentType);
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-	
 	
 	/**
 	 * Returns an array of non-Rodin resources contained in the receiver.
