@@ -7,11 +7,11 @@
    <extension-point id="attributeTypes" name="%attributeTypesName" schema="schema/attributeTypes.exsd"/>
    <extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type
-			id="rodin"
-			name="%rodinContentTypeName" 
-			priority="high"
-			file-extensions="rodin"
-			base-type="org.eclipse.core.runtime.xml">
+        base-type="org.eclipse.core.runtime.xml"
+        default-charset="UTF-8"
+        id="rodin"
+        name="%rodinContentTypeName"
+        priority="high">
 		</content-type>
    </extension>
    <extension
@@ -37,15 +37,17 @@
          name="%rodinNatureName"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.rodinp.internal.core.RodinProject"/>
+         <run class="org.rodinp.internal.core.RodinProjectNature"/>
       </runtime>
       <builder id="org.rodinp.core.rodinbuilder"/>
+	  <options allowLinking="false"/>
+   <content-type id="org.rodinp.core.rodin"/>
    </extension>
    <extension
          id="rodinbuilder"
          name="%rodinBuilderName"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder hasNature="true">
          <run class="org.rodinp.internal.core.builder.RodinBuilder"/>
       </builder>
    </extension>
@@ -54,7 +56,20 @@
          name="%rodinProblemMarkerName"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
-      <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true"/>
+      <attribute name="id"/>
+      <attribute name="arguments"/>
+      <attribute name="element"/>
+      <attribute name="attributeId"/>
+      <attribute name="charStart"/>
+      <attribute name="charEnd"/>
+   </extension>
+   <extension
+         id="buildProblem"
+         name="%rodinBuildProblemMarkerName"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
+      <attribute name="cycleDetected"/>
    </extension>
 </plugin>
