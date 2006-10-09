@@ -32,6 +32,8 @@ public final class Messages {
 	public static String build_graphTransactionError;
 	public static String build_ToolError;
 	public static String build_ExtractorError;
+	public static String build_resourceDoesNotExist;
+	public static String build_resourceInCycle;
 
 	public static String cache_invalidLoadFactor;
 	
