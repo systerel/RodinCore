@@ -8,12 +8,37 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 
+/**
+ * Common protocol for a proof rule for the sequent prover.
+ * <p>
+ * A proof rule contains a goal, needed hypotheses, and a possibly empty array of
+ * anticidents.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients. Objects of this type 
+ * are typically generated inside reasoners by calling a factory method.
+ * </p>
+ * @see org.eventb.core.seqprover.IReasoner
+ * @see org.eventb.core.seqprover.ProverFactory
+ * 
+ * @author Farhad Mehta
+ */
 public interface IProofRule extends IReasonerOutput{
 
 	
+	/**
+	 * Returns the goal of this proof rule as returned by the reasoner.
+	 * 
+	 * @return the goal of this proof rule
+	 */
 	Predicate getGoal();
 
 	
+	/**
+	 * Returns the needed hypotheses of this proof rule as returned by the reasoner.
+	 * 
+	 * @return the needed hypotheses of this proof rule
+	 */
 	Set<Hypothesis> getNeededHyps();
 
 	/**
@@ -30,27 +55,62 @@ public interface IProofRule extends IReasonerOutput{
 	 */
 	String getDisplayName();
 	
+	/**
+	 * Returns the anticidents of this proof rule as returned by the reasoner.
+	 * 
+	 * @return the anticidents of this proof rule (see {@see IAnticident})
+	 */
 	IAnticident[] getAnticidents();
 	
-	/**
-	 * Applies this rule to the given proof sequent.
-	 * 
-	 * @param sequent
-	 *            proof sequent to apply the rule to
-	 * @return array of proof sequents produced by this rule.
-	 */
-	// public abstract IProverSequent[] apply(IProverSequent sequent);
-	
 
+	/**
+	 * Common protocol for an anticident for a proof rule.
+	 * <p>
+	 * An anticident contains a goal, added hypotheses, added free identifiers, and hypothesis
+	 * selection information.
+	 * </p>
+	 * <p>
+	 * This interface is not intended to be implemented by clients. Objects of this type 
+	 * are typically generated inside reasoners by calling a factory method.
+	 * </p>
+	 * @see org.eventb.core.seqprover.IReasoner
+	 * @see org.eventb.core.seqprover.ProverFactory
+	 * 
+	 * @author Farhad Mehta
+	 */
 	public interface IAnticident {
+		
+		/**
+		 * Returns the goal of this anticident.
+		 * 
+		 * @return the goal of this anticident
+		 */
 		Predicate getGoal();
 		
-		// Added hyps are by default selected.
+		/**
+		 * Returns the added hypotheses of this anticident.
+		 * <p>
+		 * Added hyps are by default selected.
+		 * </p>
+		 * @return the added hypotheses of this anticident
+		 */
 		Set<Predicate> getAddedHyps();
+		
+		/**
+		 * Returns the added free identifiers of this anticident.
+		 *
+		 * @return the added free identifiers of this anticident
+		 */
 		FreeIdentifier[] getAddedFreeIdents();
 		
-		// The hypAction should not contain added hyps
-		// (Constraint from simplifier)
+		/**
+		 * Returns hypotheses selection information for this anticident.
+		 * <p>
+		 * Added hyps are by default selected. The hypAction should not contain 
+		 * added hypotheses. (simlifier constraint)
+		 * </p>
+		 * @return the hypotheses selection information for this anticident
+		 */
 		List<Action> getHypAction();
 	}	
 
