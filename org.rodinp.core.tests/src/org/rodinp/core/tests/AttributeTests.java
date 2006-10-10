@@ -48,7 +48,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		createRodinProject("P");
 	}
 	
-	public void tearDown() throws Exception {
+	protected void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
 	}
@@ -62,7 +62,8 @@ public class AttributeTests extends ModifyingResourceTests {
 			fString,
 		}));
 	
-	private void assertErrorCode(RodinDBException exception, int failureCode) {
+	static void assertErrorCode(RodinDBException exception, int failureCode) {
+
 		final IRodinDBStatus status = exception.getRodinDBStatus();
 		assertEquals("Status should be an error",
 				IRodinDBStatus.ERROR,
@@ -72,8 +73,9 @@ public class AttributeTests extends ModifyingResourceTests {
 				status.getCode());
 	}
 	
-	private void assertAttributeNames(IInternalElement element,
+	static void assertAttributeNames(IInternalElement element,
 			String... expectedNames) throws RodinDBException {
+		
 		assertTrue("Element should exist", element.exists());
 		String[] actualNames = element.getAttributeNames(null);
 		Set<String> expected = new HashSet<String>(Arrays.asList(expectedNames));
@@ -90,7 +92,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	private void assertBooleanValue(IInternalElement element, String name,
+	static void assertBooleanValue(IInternalElement element, String name,
 			boolean expected) throws RodinDBException {
 		
 		assertTrue("Element should exist", element.exists());
@@ -98,7 +100,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getBooleanAttribute(name, null));
 	}
 	
-	private void assertHandleValue(IInternalElement element, String name,
+	static void assertHandleValue(IInternalElement element, String name,
 			IRodinElement expected) throws RodinDBException {
 		
 		assertTrue("Element should exist", element.exists());
@@ -106,7 +108,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getHandleAttribute(name, null));
 	}
 	
-	private void assertIntegerValue(IInternalElement element, String name,
+	static void assertIntegerValue(IInternalElement element, String name,
 			int expected) throws RodinDBException {
 		
 		assertTrue("Element should exist", element.exists());
@@ -114,7 +116,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getIntegerAttribute(name, null));
 	}
 	
-	private void assertLongValue(IInternalElement element, String name,
+	static void assertLongValue(IInternalElement element, String name,
 			long expected) throws RodinDBException {
 		
 		assertTrue("Element should exist", element.exists());
@@ -122,7 +124,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getLongAttribute(name, null));
 	}
 	
-	private void assertStringValue(IInternalElement element, String name,
+	static void assertStringValue(IInternalElement element, String name,
 			String expected) throws RodinDBException {
 		
 		assertTrue("Element should exist", element.exists());
@@ -159,7 +161,7 @@ public class AttributeTests extends ModifyingResourceTests {
 //	}
 	
 	
-	void removeAttrPositive(IInternalElement element, String name)
+	static void removeAttrPositive(IInternalElement element, String name)
 			throws RodinDBException {
 
 		assertTrue("Element should exist", element.exists());
@@ -168,7 +170,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.hasAttribute(name, null));
 	}
 
-	void removeAttrNegative(IInternalElement element, String name,
+	static void removeAttrNegative(IInternalElement element, String name,
 			int failureCode) throws RodinDBException {
 		
 		try {
@@ -179,7 +181,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setBoolAttrPositive(IInternalElement element, String name,
+	static void setBoolAttrPositive(IInternalElement element, String name,
 			boolean newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
 		element.setBooleanAttribute(name, newValue, null);
@@ -189,7 +191,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getBooleanAttribute(name, null));
 	}
 
-	void setHandleAttrPositive(IInternalElement element, String name,
+	static void setHandleAttrPositive(IInternalElement element, String name,
 			IRodinElement newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
 		element.setHandleAttribute(name, newValue, null);
@@ -199,7 +201,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getHandleAttribute(name, null));
 	}
 
-	void setIntAttrPositive(IInternalElement element, String name,
+	static void setIntAttrPositive(IInternalElement element, String name,
 			int newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
 		element.setIntegerAttribute(name, newValue, null);
@@ -209,7 +211,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getIntegerAttribute(name, null));
 	}
 
-	void setLongAttrPositive(IInternalElement element, String name,
+	static void setLongAttrPositive(IInternalElement element, String name,
 			long newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
 		element.setLongAttribute(name, newValue, null);
@@ -219,7 +221,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getLongAttribute(name, null));
 	}
 
-	void setStringAttrPositive(IInternalElement element, String name,
+	static void setStringAttrPositive(IInternalElement element, String name,
 			String newValue) throws RodinDBException {
 		assertTrue("Element should exist", element.exists());
 		element.setStringAttribute(name, newValue, null);
@@ -229,7 +231,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				newValue, element.getStringAttribute(name, null));
 	}
 
-	void setBoolAttrNegative(IInternalElement element, String name,
+	static void setBoolAttrNegative(IInternalElement element, String name,
 			boolean newValue, int failureCode) throws RodinDBException {
 		try {
 			element.setBooleanAttribute(name, newValue, null);
@@ -239,7 +241,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setHandleAttrNegative(IInternalElement element, String name,
+	static void setHandleAttrNegative(IInternalElement element, String name,
 			IRodinElement newValue, int failureCode) throws RodinDBException {
 		try {
 			element.setHandleAttribute(name, newValue, null);
@@ -249,7 +251,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setIntAttrNegative(IInternalElement element, String name,
+	static void setIntAttrNegative(IInternalElement element, String name,
 			int newValue, int failureCode) throws RodinDBException {
 		try {
 			element.setIntegerAttribute(name, newValue, null);
@@ -259,7 +261,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setLongAttrNegative(IInternalElement element, String name,
+	static void setLongAttrNegative(IInternalElement element, String name,
 			long newValue, int failureCode) throws RodinDBException {
 		try {
 			element.setLongAttribute(name, newValue, null);
@@ -269,7 +271,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	void setStringAttrNegative(IInternalElement element, String name,
+	static void setStringAttrNegative(IInternalElement element, String name,
 			String newValue, int failureCode) throws RodinDBException {
 		try {
 			element.setStringAttribute(name, newValue, null);
