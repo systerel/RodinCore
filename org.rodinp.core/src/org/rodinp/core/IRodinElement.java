@@ -53,7 +53,28 @@ public interface IRodinElement extends IAdaptable {
 	 * A Rodin element with this type can be safely cast to <code>IRodinProject</code>.
 	 */
 	String RODIN_PROJECT = RodinCore.PLUGIN_ID + ".project";
-
+	
+	/**
+	 * Creates a new Rodin Problem marker for this element.
+	 * <p>
+	 * The new marker is attached to the underlying resource of this element.
+	 * Its marker type is {@link RodinMarkerUtil#RODIN_PROBLEM_MARKER}.
+	 * </p>
+	 * 
+	 * @param problem
+	 *            problem to attach to the new marker
+	 * @param args
+	 *            arguments to the problem
+	 * @exception RodinDBException
+	 *                if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li> This element does not exist.</li>
+	 *                </ul>
+	 * @see RodinMarkerUtil
+	 */
+	void createProblemMarker(IRodinProblem problem, Object... args)
+			throws RodinDBException;
+	
 	/**
 	 * Returns whether this Rodin element exists in the database.
 	 * <p>

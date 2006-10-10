@@ -27,7 +27,9 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBManager;
@@ -115,6 +117,13 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Returns a new element info for this element.
 	 */
 	protected abstract RodinElementInfo createElementInfo();
+
+	public void createProblemMarker(IRodinProblem problem, Object... args)
+			throws RodinDBException {
+
+		new CreateProblemMarkerOperation(this, problem, args, null, -1, -1)
+				.runOperation(null);
+	}
 
 	/**
 	 * Returns true if this handle represents the same Rodin element as the

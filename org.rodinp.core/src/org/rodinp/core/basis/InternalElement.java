@@ -18,12 +18,14 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeTypeDescription;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.ChangeElementContentsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
+import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementInfo;
@@ -113,6 +115,21 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		}
 		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
 		return result;
+	}
+
+	public void createProblemMarker(String attributeId, int charStart,
+			int charEnd, IRodinProblem problem, Object... args)
+			throws RodinDBException {
+		
+		new CreateProblemMarkerOperation(this, problem, args, attributeId,
+				charStart, charEnd).runOperation(null);
+	}
+
+	public void createProblemMarker(String attributeId, IRodinProblem problem,
+			Object... args) throws RodinDBException {
+
+		new CreateProblemMarkerOperation(this, problem, args, attributeId, -1,
+				-1).runOperation(null);
 	}
 
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {

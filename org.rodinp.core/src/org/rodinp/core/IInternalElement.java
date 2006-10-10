@@ -16,6 +16,71 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 		IElementManipulation, IAttributedElement {
 
 	/**
+	 * Creates a new Rodin Problem marker for the given attribute of this
+	 * element.
+	 * <p>
+	 * The new marker is attached to the underlying resource of this element.
+	 * Its marker type is {@link RodinMarkerUtil#RODIN_PROBLEM_MARKER}.
+	 * </p>
+	 * 
+	 * @param attributeId
+	 *            id of the attribute to mark, or <code>null</code> if no
+	 *            attribute should be marked
+	 * @param problem
+	 *            problem to attach to the new marker
+	 * @param args
+	 *            arguments to the problem
+	 * @exception RodinDBException
+	 *                if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>This element does not exist.</li>
+	 *                <li>The specified attribute is not set for this element.</li>
+	 *                </ul>
+	 * @see RodinMarkerUtil
+	 */
+	void createProblemMarker(String attributeId, IRodinProblem problem,
+			Object... args) throws RodinDBException;
+
+	/**
+	 * Creates a new Rodin Problem marker for the given String attribute of this
+	 * element, and located at the given position in the attribute.
+	 * <p>
+	 * The new marker is attached to the underlying resource of this element.
+	 * Its marker type is {@link RodinMarkerUtil#RODIN_PROBLEM_MARKER}.
+	 * </p>
+	 * 
+	 * @param attributeId
+	 *            id of the attribute to mark, or <code>null</code> if no
+	 *            attribute should be marked
+	 * @param charStart
+	 *            start position (zero-relative and inclusive), or a negative
+	 *            value to indicate its absence
+	 * @param charEnd
+	 *            end position (zero-relative and exclusive), or a negative
+	 *            value to indicate its absence
+	 * @param problem
+	 *            problem to attach to the new marker
+	 * @param args
+	 *            arguments to the problem
+	 * @exception RodinDBException
+	 *                if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>This element does not exist.</li>
+	 *                <li>The specified attribute is not set for this element.</li>
+	 *                <li>The start and end positions are specified together
+	 *                with a <code>null</code> attribute id.</li>
+	 *                <li>The start and end positions are specified with an
+	 *                attribute id whose kind is not <code>string</code>.</li>
+	 *                <li>The start or end position is negative, but not both.</li>
+	 *                <li>The end position is less than or equal to the start
+	 *                position.</li>
+	 *                </ul>
+	 * @see RodinMarkerUtil
+	 */
+	void createProblemMarker(String attributeId, int charStart, int charEnd,
+			IRodinProblem problem, Object... args) throws RodinDBException;
+
+	/**
 	 * Returns the occurrence count of this internal element, which is always
 	 * <code>1</code>.
 	 * 
