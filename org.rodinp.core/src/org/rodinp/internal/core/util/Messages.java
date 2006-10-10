@@ -47,6 +47,7 @@ public final class Messages {
 	public static String operation_copyResourceProgress;
 	public static String operation_createFileProgress;
 	public static String operation_createInternalElementProgress;
+	public static String operation_createProblemMarkerProgress;
 	public static String operation_deleteElementProgress;
 	public static String operation_deleteResourceProgress;
 	public static String operation_moveElementProgress;
@@ -66,6 +67,7 @@ public final class Messages {
 	
 	public static String savedState_jobName;
 
+	public static String status_attribute_doesNotExist;
 	public static String status_cannotUseDeviceOnPath;
 	public static String status_coreException;
 	public static String status_invalidContents;
