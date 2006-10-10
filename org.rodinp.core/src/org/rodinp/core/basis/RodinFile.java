@@ -30,6 +30,7 @@ import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.MoveResourceElementsOperation;
 import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
@@ -259,7 +260,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (container == null) {
 			throw new IllegalArgumentException(Messages.operation_nullContainer); 
 		}
-		runOperation(new CopyResourceElementsOperation(this, container, replace),
+		runOperation(new MoveResourceElementsOperation(this, container, replace),
 				sibling, rename, monitor);
 	}
 
