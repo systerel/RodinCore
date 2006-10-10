@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -26,7 +25,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
-import org.rodinp.core.builder.TempMarkerHelper;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
 
@@ -324,10 +322,12 @@ public class Graph implements Serializable, Iterable<Node> {
 			Exception e) {
 		Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
 		RodinBuilder.deleteMarkers(file);
-		TempMarkerHelper.addMarker(
+		MarkerHelper.addMarker(
 				file, 
-				IMarker.SEVERITY_ERROR, 
-				Messages.bind(Messages.build_ToolError, toolDescription.getName()));
+				false,
+				Messages.build_ToolError, 
+				toolDescription.getName()
+		);
 		node.setDated(false); // do not run defect tools unnecessarily often
 		node.setPhantom(true);
 	}
@@ -339,10 +339,12 @@ public class Graph implements Serializable, Iterable<Node> {
 			Exception e) {
 		Util.log(e, " while extracting from " + file.getName()); //$NON-NLS-1$
 		RodinBuilder.deleteMarkers(file);
-		TempMarkerHelper.addMarker(
+		MarkerHelper.addMarker(
 				file, 
-				IMarker.SEVERITY_ERROR, 
-				Messages.bind(Messages.build_ExtractorError, extractorDescription.getName()));
+				false,
+				Messages.build_ExtractorError,
+				extractorDescription.getName()
+		);
 		node.setPhantom(true);
 	}
 	

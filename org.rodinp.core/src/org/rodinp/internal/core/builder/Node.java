@@ -15,13 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.rodinp.core.builder.TempMarkerHelper;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.util.Messages;
 
 /**
  * @author Stefan Hallerstede
@@ -286,7 +285,11 @@ public class Node implements Serializable {
 				IFile originFile = link.origin.getFile();
 				link.origin.dated = true;
 				if(originFile != null)
-					TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency cycle"); //$NON-NLS-1$
+					MarkerHelper.addMarker(
+							originFile,
+							true,
+							Messages.build_resourceInCycle
+					);
 				else if(Graph.DEBUG)
 					System.out.println(getClass().getName() + ": File not found: " + link.origin.getName()); //$NON-NLS-1$
 			}
@@ -307,7 +310,12 @@ public class Node implements Serializable {
 				if(link.source.toolId == null || link.source.toolId.equals("")) {
 					IFile originFile = link.origin.getFile();
 					if(originFile != null)
-						TempMarkerHelper.addMarker(originFile, IMarker.SEVERITY_ERROR, "Resource in dependency does not exist: " + link.source.getName()); //$NON-NLS-1$
+						MarkerHelper.addMarker(
+								originFile, 
+								false,
+								Messages.build_resourceDoesNotExist,
+								link.source.getName()
+						);
 				}
 		}
 	}

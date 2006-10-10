@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.rodinp.core.IRodinDBMarker;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Util;
 
@@ -124,7 +124,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	protected static void deleteMarkers(IFile file) {
 		try {
 			if(file.exists())
-				file.deleteMarkers(IRodinDBMarker.RODIN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				file.deleteMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			Util.log(e, "when deleting markers");
 		}
