@@ -57,7 +57,7 @@
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent value="true"/>
-      <attribute name="id"/>
+      <attribute name="code"/>
       <attribute name="arguments"/>
       <attribute name="element"/>
       <attribute name="attributeId"/>
