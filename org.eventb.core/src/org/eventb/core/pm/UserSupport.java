@@ -344,11 +344,11 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	public void applyTacticToHypotheses(final ITactic t,
-			final Set<Hypothesis> hyps) {
+			final Set<Hypothesis> hyps, final IProgressMonitor monitor) {
 		batchOperation(new Runnable() {
 			public void run() {
 				addAllToCached(hyps);
-				applyTactic(t, null);
+				applyTactic(t, monitor);
 			}
 		});
 
@@ -361,10 +361,10 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	public void applyTactic(final ITactic t, final IProgressMonitor pm) {
+	public void applyTactic(final ITactic t, final IProgressMonitor monitor) {
 		batchOperation(new Runnable() {
 			public void run() {
-				internalApplyTactic(t, new ProofMonitor(pm));
+				internalApplyTactic(t, new ProofMonitor(monitor));
 				IProofTreeNode currentNode = currentPS.getCurrentNode();
 				IProofTreeNode newNode = currentPS
 						.getNextPendingSubgoal(currentNode);
@@ -420,10 +420,10 @@ public class UserSupport implements IElementChangedListener,
 		}
 	}
 
-	public void prune() throws RodinDBException {
+	public void prune(final IProgressMonitor monitor) throws RodinDBException {
 		batchOperation(new Runnable() {
 			public void run() {
-				internalPrune(null);
+				internalPrune(new ProofMonitor(monitor));
 				IProofTreeNode currentNode = currentPS.getCurrentNode();
 				IProofTreeNode newNode = currentPS
 						.getNextPendingSubgoal(currentNode);
@@ -771,11 +771,11 @@ public class UserSupport implements IElementChangedListener,
 		return null;
 	}
 
-	public void back(IProofMonitor pm) throws RodinDBException {
+	public void back(IProgressMonitor monitor) throws RodinDBException {
 		// TODO Batch operation.
 		if (currentPS.getCurrentNode().getParent() != null) {
 			selectNode(currentPS.getCurrentNode().getParent());
-			prune();
+			prune(monitor);
 		}
 	}
 

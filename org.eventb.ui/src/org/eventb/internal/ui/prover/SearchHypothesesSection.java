@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -79,7 +80,7 @@ public class SearchHypothesesSection extends HypothesesSection {
 
 				ProverUI editor = (ProverUI) page.getEditor();
 				ITactic t = Tactics.mngHyp(ActionType.SELECT, selected);
-				editor.getUserSupport().applyTacticToHypotheses(t, selected);
+				editor.getUserSupport().applyTacticToHypotheses(t, selected, new NullProgressMonitor());
 				// TreeViewer viewer = editor.getProofTreeUI().getViewer();
 				// ISelection selection = viewer.getSelection();
 				// Object obj = ((IStructuredSelection) selection)

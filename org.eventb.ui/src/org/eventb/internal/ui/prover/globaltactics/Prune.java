@@ -37,7 +37,7 @@ public class Prune implements IGlobalExpertTactic {
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
-		userSupport.prune();
+		userSupport.prune(monitor);
 	}
 
 }

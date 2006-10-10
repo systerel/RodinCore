@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -305,7 +306,7 @@ public class HypothesisRow {
 							ProverUIUtils.debug("Input: \"" + input + "\"");
 
 					userSupport.applyTacticToHypotheses(tactic.getTactic(node,
-							hyp, inputs), hypSet);
+							hyp, inputs), hypSet, new NullProgressMonitor());
 				}
 
 			});
