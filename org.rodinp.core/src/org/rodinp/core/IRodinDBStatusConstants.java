@@ -259,4 +259,13 @@ public interface IRodinDBStatusConstants {
 	 */
 	int ATTRIBUTE_DOES_NOT_EXIST = 997;
 	
+	/**
+	 * Status indicating that an attempt has been made to store an invalid
+	 * location for a problem marker (illegal combination of element, attribute
+	 * id, start and end positions).
+	 * 
+	 * @see RodinMarkerUtil gives the validity rules.
+	 */
+	int INVALID_MARKER_LOCATION = 998;
+	
 }
