@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -53,29 +52,6 @@ import org.rodinp.internal.core.util.Util;
  */
 public abstract class InternalElement extends RodinElement implements IInternalElement {
 	
-	/**
-	 * Returns a handle to the an internal element which has the same relative
-	 * path as the given one, but relative to the given file.
-	 * 
-	 * @param element
-	 *            base element
-	 * @param newFile
-	 *            file in which to construct the new handle
-	 * @return the element in the given file and with the same relative path
-	 *         inside its file as the given element
-	 */
-	protected static final IInternalParent getSimilarElement(
-			IInternalParent element, RodinFile newFile) {
-		if (element instanceof RodinFile) {
-			return newFile;
-		}
-		final IInternalParent parent = (IInternalParent) element.getParent();
-		final IInternalParent newParent = getSimilarElement(parent, newFile);
-		final String type = element.getElementType();
-		final String name = element.getElementName();
-		return newParent.getInternalElement(type, name);
-	}
-
 	/* Name of this internal element */
 	private String name;
 	
@@ -290,7 +266,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		
 		// Recreate this handle in the mutable version of its file.
 		final RodinFile newFile = file.getMutableCopy();
-		return (InternalElement) getSimilarElement(this, newFile);
+		return (InternalElement) Util.getSimilarElement(this, newFile);
 	}
 
 	@Deprecated
@@ -337,7 +313,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		
 		// Recreate this handle in the snapshot version of its file.
 		final RodinFile newFile = file.getSnapshot();
-		return (InternalElement) getSimilarElement(this, newFile);
+		return (InternalElement) Util.getSimilarElement(this, newFile);
 	}
 
 	public String getStringAttribute(String attrName, IProgressMonitor monitor)
