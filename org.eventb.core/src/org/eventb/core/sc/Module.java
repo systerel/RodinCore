@@ -16,7 +16,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinDBMarker;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -80,7 +80,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	
 	private void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
 		try {
-			IMarker marker = rodinFile.getResource().createMarker(IRodinDBMarker.RODIN_PROBLEM_MARKER);
+			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);
 			
 			// TODO: correctly implement marker location
 			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());

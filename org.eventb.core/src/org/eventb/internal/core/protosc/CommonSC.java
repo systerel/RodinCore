@@ -23,7 +23,7 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinDBMarker;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -73,7 +73,7 @@ public class CommonSC implements ISCProblemList {
 	
 	protected void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
 		try {
-			IMarker marker = rodinFile.getResource().createMarker(IRodinDBMarker.RODIN_PROBLEM_MARKER);
+			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);
 			
 			// TODO: correctly implement marker location
 			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
