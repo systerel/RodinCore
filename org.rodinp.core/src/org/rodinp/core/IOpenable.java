@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * elements. Opening an element may provide access to direct children and other
  * descendants, but does not automatically open any descendents which are
  * themselves {@link IOpenable}. For example, opening a file provides access to
- * all its constituent elements, but opening a project does not open all files
+ * all its internal elements, but opening a project does not open all files
  * in the project.
  * </p>
  * <p>
@@ -53,7 +53,7 @@ public interface IOpenable {
 	 * @exception RodinDBException
 	 *                if an error occurs closing this element
 	 */
-	public void close() throws RodinDBException;
+	void close() throws RodinDBException;
 
 	/**
 	 * Returns <code>true</code> if this element is open and:
