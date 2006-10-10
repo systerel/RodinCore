@@ -168,7 +168,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			}
 			IEventBInputText axiomNameText = new EventBText(toolkit.createText(
 					body, axmPrefix + axmIndex));
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			axiomNameText.getWidget().setLayoutData(gd);
 			axiomNameText.getWidget().addModifyListener(
 					new DirtyStateListener());

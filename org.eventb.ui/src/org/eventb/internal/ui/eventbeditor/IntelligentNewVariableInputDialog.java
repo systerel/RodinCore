@@ -206,7 +206,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			IEventBInputText invariantNameText = new EventBText(toolkit
 					.createText(body, invPrefix + invIndex));
 
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			invariantNameText.getWidget().setLayoutData(gd);
 			invariantNameText.getWidget().addModifyListener(
 					new DirtyStateListener());
