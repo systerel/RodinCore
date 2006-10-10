@@ -8,8 +8,20 @@
 
 package org.rodinp.core.tests;
 
-import static org.rodinp.core.tests.AttributeTests.*;
-import static org.rodinp.core.IRodinDBStatusConstants.*;
+import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
+import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
+import static org.rodinp.core.tests.AttributeTests.fBool;
+import static org.rodinp.core.tests.AttributeTests.fHandle;
+import static org.rodinp.core.tests.AttributeTests.fInt;
+import static org.rodinp.core.tests.AttributeTests.fLong;
+import static org.rodinp.core.tests.AttributeTests.fString;
+import static org.rodinp.core.tests.AttributeTests.setBoolAttrPositive;
+import static org.rodinp.core.tests.AttributeTests.setHandleAttrPositive;
+import static org.rodinp.core.tests.AttributeTests.setIntAttrPositive;
+import static org.rodinp.core.tests.AttributeTests.setLongAttrPositive;
+import static org.rodinp.core.tests.AttributeTests.setStringAttrPositive;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,12 +63,8 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	public void tearDown() throws Exception {
-		deleteProject(rodinProject.getElementName());
-		getWorkspaceRoot().deleteMarkers(
-				IMarker.PROBLEM,
-				true,
-				IResource.DEPTH_INFINITE
-		);
+		// Clean up the workspace
+		getWorkspaceRoot().delete(true, true, null);
 		super.tearDown();
 	}
 
@@ -75,8 +83,11 @@ public class MarkerTests extends ModifyingResourceTests {
 		for (Map.Entry entry: attrs.entrySet()) {
 			final Object key = entry.getKey();
 			final Object value = entry.getValue();
-			final Object actual = actualAttrs.get(key);
-			assertEquals("Unexpected marker attribute " + key, value, actual);
+			if (value != null) {
+				final Object actual = actualAttrs.get(key);
+				assertEquals("Unexpected marker attribute " + key,
+						value, actual);
+			}
 		}
 		if (attrs.size() != actualAttrs.size()) {
 			Set<String> keys = new HashSet<String>(actualAttrs.keySet());
@@ -86,14 +97,17 @@ public class MarkerTests extends ModifyingResourceTests {
 		}
 	}
 
-	private void assertNoMarker() throws Exception {
+	private void assertNoMarker(IResource resource) throws Exception {
 
-		final IResource resource = getWorkspaceRoot();
 		final IMarker[] markers = resource.findMarkers(
 				null,
 				false,
-				IResource.DEPTH_ZERO);
+				IResource.DEPTH_INFINITE);
 		assertEquals("No marker expected", 0, markers.length);
+	}
+
+	private void assertNoMarker() throws Exception {
+		assertNoMarker(getWorkspaceRoot());
 	}
 
 	private IMarker getMarker(IRodinElement elem, String markerType)
@@ -125,7 +139,8 @@ public class MarkerTests extends ModifyingResourceTests {
 		}
 		attrs.put(RodinMarkerUtil.ARGUMENTS, builder.toString());
 		if (elem instanceof IInternalElement) {
-			attrs.put(RodinMarkerUtil.ELEMENT, elem.getHandleIdentifier());
+			// We don't want to check the element exactly (in case of file renaming).
+			attrs.put(RodinMarkerUtil.ELEMENT, null);
 		}
 		if (attrId != null) {
 			attrs.put(RodinMarkerUtil.ATTRIBUTE_ID, attrId);
@@ -138,7 +153,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	}
 	
 	private void assertProblemMarker(IRodinElement elem, String attrId,
-			int charStart, int charEnd, IRodinProblem pb, Object[] args)
+			int charStart, int charEnd, IRodinProblem pb, Object... args)
 			throws Exception {
 		
 		final IMarker marker = getMarker(elem,
@@ -552,10 +567,169 @@ public class MarkerTests extends ModifyingResourceTests {
 		createMarkerPositive(ne, (String) null, -5, -2, TestProblem.err0);
 	}
 	
-	// TODO check full marker + move of the file to other project
+	/**
+	 * Ensures that the data stored in a marker on a top-level internal element
+	 * is still relevant after moving its file.
+	 */
+	public void testTopMarkerMoveFile() throws Exception {
+		 IRodinProject rp2 = createRodinProject("P2");
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 setStringAttrPositive(top, fString, "foo");
+		 rf.save(null, false);
+		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
+		
+		 rf.move(rp2, null, null, false, null);
+		 IRodinFile rf2 = getRodinFile(rp2, "x.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 assertProblemMarker(top2, fString, 0, 3, TestProblem.err0);
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a non top-level internal
+	 * element is still relevant after moving its file.
+	 */
+	public void testIntMarkerMoveFile() throws Exception {
+		 IRodinProject rp2 = createRodinProject("P2");
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 IInternalElement ne = createNEPositive(top, "ne11", null);
+		 setStringAttrPositive(ne, fString, "bar");
+		 rf.save(null, false);
+		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
+		
+		 rf.move(rp2, null, null, false, null);
+		 IRodinFile rf2 = getRodinFile(rp2, "x.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 IInternalElement ne2 = getNamedElement(top2, "ne11");
+		 assertProblemMarker(ne2, fString, 0, 1, TestProblem.warn1, "baz");
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a top-level internal element
+	 * is still relevant after moving its file with renaming.
+	 */
+	public void testTopMarkerMoveFileRenaming() throws Exception {
+		 IRodinProject rp2 = createRodinProject("P2");
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 setStringAttrPositive(top, fString, "foo");
+		 rf.save(null, false);
+		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
+		
+		 rf.move(rp2, null, "y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rp2, "y.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 assertProblemMarker(top2, fString, 0, 3, TestProblem.err0);
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a non top-level internal
+	 * element is still relevant after moving its file with renaming.
+	 */
+	public void testIntMarkerMoveFileRenaming() throws Exception {
+		 IRodinProject rp2 = createRodinProject("P2");
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 IInternalElement ne = createNEPositive(top, "ne11", null);
+		 setStringAttrPositive(ne, fString, "bar");
+		 rf.save(null, false);
+		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
+		
+		 rf.move(rp2, null, "y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rp2, "y.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 IInternalElement ne2 = getNamedElement(top2, "ne11");
+		 assertProblemMarker(ne2, fString, 0, 1, TestProblem.warn1, "baz");
+	}
+	
+	/**
+	 * Ensures that a marker on a top-level internal element is not copied with
+	 * its Rodin file.
+	 */
+	public void testTopMarkerCopyFile() throws Exception {
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 setStringAttrPositive(top, fString, "foo");
+		 rf.save(null, false);
+		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
+		
+		 rf.copy(rodinProject, null, "y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rodinProject, "y.test");
+		 assertNoMarker(rf2.getCorrespondingResource());
+	}
+	
+	/**
+	 * Ensures that a marker on a non top-level internal element is not copied
+	 * with its Rodin file.
+	 */
+	public void testIntMarkerCopyFile() throws Exception {
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 IInternalElement ne = createNEPositive(top, "ne11", null);
+		 setStringAttrPositive(ne, fString, "bar");
+		 rf.save(null, false);
+		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
+		
+		 rf.copy(rodinProject, null, "y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rodinProject, "y.test");
+		 assertNoMarker(rf2.getCorrespondingResource());
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a top-level internal element
+	 * is still relevant after renaming its project.
+	 */
+	public void testTopMarkerRenameProject() throws Exception {
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 setStringAttrPositive(top, fString, "foo");
+		 rf.save(null, false);
+		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 
-	// TODO check full marker + rename of the file
-
+		 IRodinProject rp2 = getRodinProject("P2");
+		 rodinProject.getProject().move(rp2.getPath(), false, null);
+		 IRodinFile rf2 = getRodinFile(rp2, "x.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 assertProblemMarker(top2, fString, 0, 3, TestProblem.err0);
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a top-level internal element
+	 * is still relevant after renaming its file.
+	 */
+	public void testTopMarkerRenameFile() throws Exception {
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 setStringAttrPositive(top, fString, "foo");
+		 rf.save(null, false);
+		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
+		
+		 rf.rename("y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rodinProject, "y.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 assertProblemMarker(top2, fString, 0, 3, TestProblem.err0);
+	}
+	
+	/**
+	 * Ensures that the data stored in a marker on a non top-level internal
+	 * element is still relevant after renaming its file.
+	 */
+	public void testIntMarkerRenameFile() throws Exception {
+		 IRodinFile rf = createRodinFile("P/x.test");
+		 IInternalElement top = createNEPositive(rf, "ne1", null);
+		 IInternalElement ne = createNEPositive(top, "ne11", null);
+		 setStringAttrPositive(ne, fString, "bar");
+		 rf.save(null, false);
+		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
+		
+		 rf.rename("y.test", false, null);
+		 IRodinFile rf2 = getRodinFile(rodinProject, "y.test");
+		 IInternalElement top2 = getNamedElement(rf2, "ne1");
+		 IInternalElement ne2 = getNamedElement(top2, "ne11");
+		 assertProblemMarker(ne2, fString, 0, 1, TestProblem.warn1, "baz");
+	}
+	
 	/**
 	 * Ensure that mapping from IRodinProblem to error code works in both ways.
 	 */
