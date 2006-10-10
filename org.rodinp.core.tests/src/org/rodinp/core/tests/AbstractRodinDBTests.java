@@ -343,7 +343,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Creates an operation to delete the given elements, asserts
 	 * the operation is successful, and ensures the elements are no
-	 * longer present in the model.
+	 * longer present in the database.
 	 */
 	public void assertDeletion(IRodinElement[] elementsToDelete) throws RodinDBException {
 		IRodinElement elementToDelete = null;
@@ -393,7 +393,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Creates an operation to delete the given element, asserts
 	 * the operation is successfull, and ensures the element is no
-	 * longer present in the model.
+	 * longer present in the database.
 	 */
 	public void assertDeletion(IRodinElement elementToDelete) throws RodinDBException {
 		assertDeletion(new IRodinElement[] {elementToDelete});
@@ -720,7 +720,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	
 	/**
 	 * Returns the Rodin Project with the given name in this test
-	 * suite's model. This is a convenience method.
+	 * suite's database. This is a convenience method.
 	 */
 	public IRodinProject getRodinProject(String name) {
 		IProject project = getProject(name);
