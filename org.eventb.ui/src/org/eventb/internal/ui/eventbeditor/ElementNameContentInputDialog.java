@@ -166,7 +166,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 					scrolledForm.getBody(), prefix + index));
 			try {
 				index = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), type, prefix, index);
+						.getRodinInput(), type, prefix, index + 1);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
