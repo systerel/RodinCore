@@ -304,6 +304,11 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 			case NO_LOCAL_CONTENTS:
 				return Messages.bind(Messages.status_noLocalContents, getPath()
 						.toString());
+				
+			case ATTRIBUTE_DOES_NOT_EXIST:
+				return Messages.bind(Messages.status_attribute_doesNotExist,
+						((RodinElement) elements[0]).toStringWithAncestors(),
+						string);
 
 			}
 			if (string != null) {
@@ -417,7 +422,7 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 			return "RodinDBStatus[OK]"; //$NON-NLS-1$
 		}
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Rodin Model Status ["); //$NON-NLS-1$
+		buffer.append("Rodin Database Status ["); //$NON-NLS-1$
 		buffer.append(getMessage());
 		buffer.append("]"); //$NON-NLS-1$
 		return buffer.toString();
