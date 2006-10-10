@@ -13,6 +13,7 @@ package org.rodinp.core;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.internal.core.util.Util;
 
@@ -246,16 +247,25 @@ public final class RodinMarkerUtil {
 	 */
 	public static IInternalElement getElement(IMarker marker) {
 		checkRodinProblemMarker(marker);
-		String handleId = marker.getAttribute(ELEMENT, null);
+		final String handleId = marker.getAttribute(ELEMENT, null);
 		if (handleId == null) {
 			return null;
 		}
-		IRodinElement elem = RodinCore.create(handleId);
+		final IRodinElement elem = RodinCore.create(handleId);
 		if (!(elem instanceof IInternalElement)) {
 			return null;
 		}
-		// TODO Transpose element to right file
-		return (IInternalElement) elem;
+		final IInternalElement ie = (IInternalElement) elem;
+		final IResource resource = marker.getResource();
+		if (resource.equals(ie.getUnderlyingResource())) {
+			return ie;
+		}
+		// Transpose element to correct file (marker has moved)
+		final IRodinElement dest = RodinCore.create(resource);
+		if (dest instanceof IRodinFile) {
+			return Util.getSimilarElement(ie, (IRodinFile) dest);
+		}
+		return null;
 	}
 	
 	/**
