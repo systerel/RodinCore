@@ -17,6 +17,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
@@ -115,10 +116,18 @@ public class Refines implements IObjectActionDelegate {
 								IRodinElement[] refinesEvents = newElement
 										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
 								for (IRodinElement refinesEvent : refinesEvents)
-									((IInternalElement) refinesEvent).delete(
+									((IRefinesEvent) refinesEvent).delete(
 											true, monitor);
 
-								// INITILISATION does not have RefineEvents Element
+								// Need to remove the existing Witness elements
+								IRodinElement[] witnesses = newElement
+										.getChildrenOfType(IWitness.ELEMENT_TYPE);
+								for (IRodinElement witness : witnesses)
+									((IWitness) witness).delete(
+											true, monitor);
+
+								// INITILISATION does not have RefineEvents
+								// Element
 								if (!label.equals(IEvent.INITIALISATION)) {
 									IRefinesEvent refinesEvent = (IRefinesEvent) newElement
 											.createInternalElement(
