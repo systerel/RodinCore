@@ -15,6 +15,7 @@ package org.eventb.internal.ui.searchhypothesis;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -324,14 +325,14 @@ public class SearchHypothesisPage extends Page implements
 								MessageDialog.openInformation(SearchHypothesisPage.this
 										.getSite().getShell(), "Out of Date",
 										"The Proof Obligation is deleted.");
-								userSupport.nextUndischargedPO(true);
+								userSupport.nextUndischargedPO(true, new NullProgressMonitor());
 							} catch (RodinDBException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						} else {
 							try {
-								userSupport.setCurrentPO(null);
+								userSupport.setCurrentPO(null, new NullProgressMonitor());
 							} catch (RodinDBException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

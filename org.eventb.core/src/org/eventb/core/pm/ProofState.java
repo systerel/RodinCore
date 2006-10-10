@@ -22,6 +22,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -45,11 +46,11 @@ import org.rodinp.core.RodinDBException;
 public class ProofState {
 
 	// The PR sequent associated with this proof obligation.
-	private IPRSequent prSequent;
+	IPRSequent prSequent;
 
 	// The current proof tree, this might be different from the proof tree in
 	// the disk, can be null when it is not initialised.
-	private IProofTree pt;
+	IProofTree pt;
 
 	// The current proof node, can be null when the proof tree is uninitialised.
 	private IProofTreeNode current;
@@ -69,7 +70,7 @@ public class ProofState {
 		// loadProofTree();
 	}
 
-	public void loadProofTree() throws RodinDBException {
+	public void loadProofTree(IProgressMonitor monitor) throws RodinDBException {
 		//pt = prSequent.rebuildProofTree();
 
 		// Construct the proof tree from the
@@ -85,7 +86,7 @@ public class ProofState {
 		{
 			final IPRProofTreeNode root = prProofTree.getRoot();
 			if (root != null){
-				IProofSkeleton skel = root.getSkeleton(null);
+				IProofSkeleton skel = root.getSkeleton(monitor);
 				ProofBuilder.rebuild(pt.getRoot(),skel);
 			}
 		}
@@ -167,18 +168,18 @@ public class ProofState {
 		return dirty;
 	}
 
-	public void doSave() throws CoreException {
+	public void doSave(IProgressMonitor monitor) throws CoreException {
 		UserSupportUtils.debug("Saving: " + prSequent.getElementName());
 		
 		// TODO add lock for po and pr file
 		
 		RodinCore.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor mon) throws CoreException {
 				prSequent.getProofTree().setProofTree(pt);
 				prSequent.updateStatus();
 				// PRUtil.updateProofTree(PRSequent.this, pt);
 			}
-		}, prSequent.getSchedulingRule() ,null);
+		}, prSequent.getSchedulingRule() , monitor);
 		
 		// prSequent.updateProofTree(pt);
 		
@@ -202,7 +203,7 @@ public class ProofState {
 	}
 
 	// Pre: Must be initalised and not currently saving.
-	public void proofReuse() throws RodinDBException {
+	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
 		
@@ -210,7 +211,7 @@ public class ProofState {
 		IProofTree newTree = ProverFactory.makeProofTree(newSeq);
 		
 		if (Lib.proofReusable(pt.getProofDependencies(), newSeq)) {
-			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(), null);
+			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(), monitor);
 			pt = newTree;
 			current = getNextPendingSubgoal();
 			if (current == null) {

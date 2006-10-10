@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -106,7 +107,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPRFile) RodinCore.create(inputFile);
 			try {
-				UserSupportManager.setInput(userSupport, prFile);
+				UserSupportManager.setInput(userSupport, prFile, new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -123,12 +124,12 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @param prSequent
 	 *            current pr Sequent
 	 */
-	public void setCurrentPO(IPRSequent prSequent) {
+	public void setCurrentPO(IPRSequent prSequent, IProgressMonitor monitor) {
 		ProofState proofState = userSupport.getCurrentPO();
 		if (proofState != null && proofState.getPRSequent().equals(prSequent))
 			return;
 		try {
-			userSupport.setCurrentPO(prSequent);
+			userSupport.setCurrentPO(prSequent, monitor);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -282,7 +283,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 					public void run(IProgressMonitor monitor)
 							throws CoreException {
 						for (Object result : results) {
-							((ProofState) result).doSave();
+							((ProofState) result).doSave(monitor);
 						}
 						// Save the file from the database to disk
 						prFile.save(monitor, true);
@@ -380,7 +381,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 		ProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
 			try {
-				userSupport.setCurrentPO(currentPO.getPRSequent());
+				userSupport.setCurrentPO(currentPO.getPRSequent(), new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

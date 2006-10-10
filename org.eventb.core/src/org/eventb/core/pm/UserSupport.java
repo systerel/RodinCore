@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
@@ -219,7 +220,8 @@ public class UserSupport implements IElementChangedListener,
 	}
 
 	// Should be called by the UserSupportManager?
-	public void setInput(IPRFile prFile) throws RodinDBException {
+	public void setInput(IPRFile prFile, IProgressMonitor monitor)
+			throws RodinDBException {
 		this.prFile = prFile;
 		proofStates = new LinkedList<ProofState>();
 		try {
@@ -231,21 +233,23 @@ public class UserSupport implements IElementChangedListener,
 			e.printStackTrace();
 		}
 		// outOfDate = false;
-		nextUndischargedPO(true);
+		nextUndischargedPO(true, monitor);
 	}
 
-	public void setCurrentPO(IPRSequent prSequent) throws RodinDBException {
+	public void setCurrentPO(IPRSequent prSequent, IProgressMonitor monitor)
+			throws RodinDBException {
 		if (prSequent == null)
-			setProofState(null);
+			setProofState(null, monitor);
 		for (ProofState ps : proofStates) {
 			if (ps.getPRSequent().equals(prSequent)) {
-				setProofState(ps);
+				setProofState(ps, monitor);
 				return;
 			}
 		}
 	}
 
-	public void nextUndischargedPO(boolean force) throws RodinDBException {
+	public void nextUndischargedPO(boolean force, IProgressMonitor monitor)
+			throws RodinDBException {
 		int index;
 		if (currentPS == null) {
 			index = -1;
@@ -255,7 +259,7 @@ public class UserSupport implements IElementChangedListener,
 		for (int i = 1; i <= proofStates.size(); i++) {
 			ProofState ps = proofStates.get((index + i) % proofStates.size());
 			if (!ps.isClosed()) {
-				setProofState(ps);
+				setProofState(ps, monitor);
 				return;
 			}
 		}
@@ -264,11 +268,12 @@ public class UserSupport implements IElementChangedListener,
 		ProofStateDelta newDelta = new ProofStateDelta(this);
 		newDelta.addInformation(info);
 		if (force) {
-			setCurrentPO(null);
+			setCurrentPO(null, monitor);
 		}
 	}
 
-	public void prevUndischargedPO(boolean force) throws RodinDBException {
+	public void prevUndischargedPO(boolean force, IProgressMonitor monitor)
+			throws RodinDBException {
 		int index;
 		if (currentPS == null) {
 			index = -1;
@@ -280,7 +285,7 @@ public class UserSupport implements IElementChangedListener,
 			ProofState ps = proofStates.get((proofStates.size() + index - i)
 					% proofStates.size());
 			if (!ps.isClosed()) {
-				setProofState(ps);
+				setProofState(ps, monitor);
 				return;
 			}
 		}
@@ -292,34 +297,35 @@ public class UserSupport implements IElementChangedListener,
 		fireProofStateDelta(newDelta);
 	}
 
-	private void setProofState(ProofState ps) throws RodinDBException {
-//		if (currentPS != ps) {
-			if (currentPS != null && !currentPS.isUninitialised())
-				currentPS.getProofTree().removeChangeListener(this);
+	private void setProofState(ProofState ps, IProgressMonitor monitor)
+			throws RodinDBException {
+		// if (currentPS != ps) {
+		if (currentPS != null && !currentPS.isUninitialised())
+			currentPS.getProofTree().removeChangeListener(this);
 
-			UserSupportUtils.debug("New Proof Sequent: " + ps);
-			if (ps == null) {
-				currentPS = null;
+		UserSupportUtils.debug("New Proof Sequent: " + ps);
+		if (ps == null) {
+			currentPS = null;
 
-				ProofStateDelta newDelta = new ProofStateDelta(this);
-				newDelta.setNewProofState(null);
-				// newDelta.addInformation("Select a new proof obligation");
-				fireProofStateDelta(newDelta);
+			ProofStateDelta newDelta = new ProofStateDelta(this);
+			newDelta.setNewProofState(null);
+			// newDelta.addInformation("Select a new proof obligation");
+			fireProofStateDelta(newDelta);
 
-			} else {
-				currentPS = ps;
-				if (ps.getProofTree() == null) {
-					ps.loadProofTree();
-				}
-				ps.getProofTree().addChangeListener(this);
-
-				ProofStateDelta newDelta = new ProofStateDelta(this);
-				newDelta.setNewProofState(ps);
-				newDelta.addInformation("Select a new proof obligation");
-				fireProofStateDelta(newDelta);
-
+		} else {
+			currentPS = ps;
+			if (ps.getProofTree() == null) {
+				ps.loadProofTree(monitor);
 			}
-//		}
+			ps.getProofTree().addChangeListener(this);
+
+			ProofStateDelta newDelta = new ProofStateDelta(this);
+			newDelta.setNewProofState(ps);
+			newDelta.addInformation("Select a new proof obligation");
+			fireProofStateDelta(newDelta);
+
+		}
+		// }
 		return;
 	}
 
@@ -473,6 +479,7 @@ public class UserSupport implements IElementChangedListener,
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(final ElementChangedEvent event) {
+		final IProgressMonitor monitor = new NullProgressMonitor();
 		c++;
 		UserSupportUtils.debug("Element changed " + c + " : "
 				+ event.getDelta());
@@ -482,7 +489,7 @@ public class UserSupport implements IElementChangedListener,
 
 			public void run() {
 				try {
-					processDelta(event.getDelta());
+					processDelta(event.getDelta(), monitor);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
@@ -567,19 +574,19 @@ public class UserSupport implements IElementChangedListener,
 
 	}
 
-	protected void processDelta(IRodinElementDelta elementChangedDelta)
-			throws RodinDBException {
+	protected void processDelta(IRodinElementDelta elementChangedDelta,
+			IProgressMonitor monitor) throws RodinDBException {
 		IRodinElement element = elementChangedDelta.getElement();
 		if (element instanceof IRodinProject) {
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
-				processDelta(d);
+				processDelta(d, monitor);
 			}
 		} else if (element instanceof IPRFile) {
 			if (prFile.equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
-					processDelta(d);
+					processDelta(d, monitor);
 				}
 			}
 		} else if (element instanceof IPRSequent) {
@@ -617,7 +624,7 @@ public class UserSupport implements IElementChangedListener,
 					else if (state.isSequentDischarged()) {
 						UserSupportUtils.debug("Proof Discharged in file");
 						state.getProofTree().removeChangeListener(this);
-						state.loadProofTree();
+						state.loadProofTree(monitor);
 						state.getProofTree().addChangeListener(this);
 						if (state == currentPS) {
 							UserSupportUtils.debug("Is the current node");
@@ -632,7 +639,8 @@ public class UserSupport implements IElementChangedListener,
 
 					else if (state.isProofReusable()) {
 						state.getProofTree().removeChangeListener(this);
-						state.proofReuse();
+						// TODO Fixed this
+						// state.proofReuse();
 						state.getProofTree().addChangeListener(this);
 						if (state == currentPS) {
 							UserSupportUtils.debug("Is the current node");
@@ -646,8 +654,8 @@ public class UserSupport implements IElementChangedListener,
 
 					} else {
 						UserSupportUtils.debug("Cannot be reused");
-						// Trash the current proof tree and then re-build 
-//						state.unloadProofTree();
+						// Trash the current proof tree and then re-build
+						// state.unloadProofTree();
 						if (!state.isDirty()) {
 							if (state != currentPS) {
 								state.getProofTree().removeChangeListener(this);
@@ -659,24 +667,23 @@ public class UserSupport implements IElementChangedListener,
 								newDelta
 										.addInformation("Current proof cannot be reused");
 								fireProofStateDelta(newDelta);
-							}
-							else {
-//								state.getProofTree().removeChangeListener(this);
-//								state.reloadProofTree();
-//								state.getProofTree().addChangeListener(this);
-//								if (state == currentPS) {
-									UserSupportUtils.debug("Is the current node");
-									state.getProofTree().removeChangeListener(this);
-									state.unloadProofTree();
-									ProofStateDelta newDelta = new ProofStateDelta(
-											UserSupport.this);
-									newDelta.setNewProofState(currentPS);
+							} else {
+								// state.getProofTree().removeChangeListener(this);
+								// state.reloadProofTree();
+								// state.getProofTree().addChangeListener(this);
+								// if (state == currentPS) {
+								UserSupportUtils.debug("Is the current node");
+								state.getProofTree().removeChangeListener(this);
+								state.unloadProofTree();
+								ProofStateDelta newDelta = new ProofStateDelta(
+										UserSupport.this);
+								newDelta.setNewProofState(currentPS);
 
-									newDelta
-											.addInformation("Current proof cannot be reused");
-									fireProofStateDelta(newDelta);
-//								}
-								
+								newDelta
+										.addInformation("Current proof cannot be reused");
+								fireProofStateDelta(newDelta);
+								// }
+
 							}
 						}
 					}
@@ -687,7 +694,8 @@ public class UserSupport implements IElementChangedListener,
 		} else if (element instanceof IPRProofTree) {
 			IPRProofTree proofTree = (IPRProofTree) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPRSequent prSequent = prFile.getSequent(proofTree.getElementName());
+			IPRSequent prSequent = prFile
+					.getSequent(proofTree.getElementName());
 
 			ProofState state = getProofState(prSequent);
 
@@ -705,7 +713,7 @@ public class UserSupport implements IElementChangedListener,
 				UserSupportUtils.debug("Proof Discharged in file");
 
 				state.getProofTree().removeChangeListener(this);
-				state.loadProofTree();
+				state.loadProofTree(monitor);
 				state.getProofTree().addChangeListener(this);
 
 				if (state == currentPS) {
@@ -750,7 +758,7 @@ public class UserSupport implements IElementChangedListener,
 		} else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
-				processDelta(d);
+				processDelta(d, monitor);
 			}
 		}
 	}

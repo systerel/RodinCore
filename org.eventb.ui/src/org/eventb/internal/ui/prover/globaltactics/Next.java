@@ -37,7 +37,7 @@ public class Next implements IGlobalExpertTactic {
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
-		userSupport.nextUndischargedPO(false);
+		userSupport.nextUndischargedPO(false, monitor);
 	}
 
 }

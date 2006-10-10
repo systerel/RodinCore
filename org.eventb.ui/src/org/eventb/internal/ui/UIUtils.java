@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -181,7 +182,7 @@ public class UIUtils {
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (!(obj instanceof IPRFile))
-				editor.setCurrentPO((IPRSequent) obj);
+				editor.setCurrentPO((IPRSequent) obj, new NullProgressMonitor());
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");
 			e.printStackTrace();

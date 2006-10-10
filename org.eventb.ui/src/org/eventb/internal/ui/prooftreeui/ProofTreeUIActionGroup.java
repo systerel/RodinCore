@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.prooftreeui;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -153,7 +154,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			public void run() {
 				try {
 					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
-							.nextUndischargedPO(false);
+							.nextUndischargedPO(false, new NullProgressMonitor());
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}
@@ -169,7 +170,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			public void run() {
 				try {
 					ProofTreeUIActionGroup.this.proofTreeUI.getUserSupport()
-							.prevUndischargedPO(false);
+							.prevUndischargedPO(false, new NullProgressMonitor());
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}

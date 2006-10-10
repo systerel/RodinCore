@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -227,14 +228,14 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 								MessageDialog.openInformation(ProofsPage.this
 										.getSite().getShell(), "Out of Date",
 										"The Proof Obligation is deleted.");
-								userSupport.nextUndischargedPO(true);
+								userSupport.nextUndischargedPO(true, new NullProgressMonitor());
 							} catch (RodinDBException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						} else {
 							try {
-								userSupport.setCurrentPO(null);
+								userSupport.setCurrentPO(null, new NullProgressMonitor());
 							} catch (RodinDBException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

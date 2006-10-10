@@ -34,7 +34,7 @@ public class Previous implements IGlobalExpertTactic {
 	}
 
 	public void apply(UserSupport userSupport, String input, IProgressMonitor monitor) throws RodinDBException {
-		userSupport.prevUndischargedPO(false);
+		userSupport.prevUndischargedPO(false, monitor);
 	}
 
 }

@@ -15,6 +15,7 @@ package org.eventb.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.IPRFile;
@@ -89,9 +90,9 @@ public class UserSupportManager {
 
 	}
 
-	public static void setInput(UserSupport userSupport, IPRFile prFile)
-			throws RodinDBException {
-		userSupport.setInput(prFile);
+	public static void setInput(UserSupport userSupport, IPRFile prFile,
+			IProgressMonitor monitor) throws RodinDBException {
+		userSupport.setInput(prFile, monitor);
 		notifyUSManagerListener(userSupport, CHANGED);
 	}
 }
