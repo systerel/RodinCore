@@ -21,7 +21,13 @@ import org.rodinp.internal.core.util.Util;
  * @author Laurent Voisin
  */
 public abstract class AttributeTypeDescription {
-	
+
+	public static final String KIND_BOOLEAN = "boolean";
+	public static final String KIND_HANDLE = "handle";
+	public static final String KIND_INTEGER = "integer";
+	public static final String KIND_LONG = "long";
+	public static final String KIND_STRING = "string";
+
 	private static class BoolAttributeTypeDescr extends AttributeTypeDescription {
 
 		protected BoolAttributeTypeDescr(String id, String name) {
@@ -31,6 +37,11 @@ public abstract class AttributeTypeDescription {
 		@Override
 		public boolean getBoolValue(String rawValue) {
 			return Boolean.valueOf(rawValue);
+		}
+
+		@Override
+		public String getKind() {
+			return KIND_BOOLEAN;
 		}
 
 		@Override
@@ -57,6 +68,11 @@ public abstract class AttributeTypeDescription {
 		}
 
 		@Override
+		public String getKind() {
+			return KIND_HANDLE;
+		}
+
+		@Override
 		public String toString(IRodinElement value) throws RodinDBException {
 			return value.getHandleIdentifier();
 		}
@@ -76,6 +92,11 @@ public abstract class AttributeTypeDescription {
 			} catch (NumberFormatException e) {
 				throw newInvalidValueException();
 			}
+		}
+
+		@Override
+		public String getKind() {
+			return KIND_INTEGER;
 		}
 
 		@Override
@@ -101,6 +122,11 @@ public abstract class AttributeTypeDescription {
 		}
 
 		@Override
+		public String getKind() {
+			return KIND_LONG;
+		}
+
+		@Override
 		public String toString(long value) throws RodinDBException {
 			return Long.toString(value);
 		}
@@ -119,6 +145,11 @@ public abstract class AttributeTypeDescription {
 		}
 
 		@Override
+		public String getKind() {
+			return KIND_STRING;
+		}
+
+		@Override
 		public String toString(String value) throws RodinDBException {
 			return value;
 		}
@@ -130,19 +161,19 @@ public abstract class AttributeTypeDescription {
 		final String id = nameSpace + "." + ice.getAttributeAsIs("id");
 		final String name = ice.getAttribute("name");
 		final String kind = ice.getAttributeAsIs("kind");
-		if ("boolean".equals(kind)) {
+		if (KIND_BOOLEAN.equals(kind)) {
 			return new BoolAttributeTypeDescr(id, name);
 		}
-		if ("handle".equals(kind)) {
+		if (KIND_HANDLE.equals(kind)) {
 			return new HandleAttributeTypeDescr(id, name);
 		}
-		if ("integer".equals(kind)) {
+		if (KIND_INTEGER.equals(kind)) {
 			return new IntAttributeTypeDescr(id, name);
 		}
-		if ("long".equals(kind)) {
+		if (KIND_LONG.equals(kind)) {
 			return new LongAttributeTypeDescr(id, name);
 		}
-		if ("string".equals(kind)) {
+		if (KIND_STRING.equals(kind)) {
 			return new StringAttributeTypeDescr(id, name);
 		}
 		Util.log(null,
@@ -179,6 +210,11 @@ public abstract class AttributeTypeDescription {
 		throw newInvalidKindException();
 	}
 
+	/**
+	 * @return the kind of this attribute type
+	 */
+	public abstract String getKind(); 
+	
 	public long getLongValue(String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
 	}
