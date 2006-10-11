@@ -24,6 +24,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
@@ -224,6 +225,16 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 	
 	@Override
+	public boolean hasUnsavedChanges() {
+		if (isReadOnly()) {
+			return false;
+		}
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		Buffer buffer = manager.getBuffer(this);
+		return buffer != null && buffer.hasUnsavedChanges();
+	}
+
+	@Override
 	public final boolean isConsistent() {
 		return ! hasUnsavedChanges();
 	}
@@ -237,11 +248,11 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return snapshot;
 	}
 	
-	@Override
-	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
-		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
-		super.makeConsistent(monitor);
-	}
+//	@Override
+//	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
+//		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
+//		super.makeConsistent(monitor);
+//	}
 
 	public final void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
