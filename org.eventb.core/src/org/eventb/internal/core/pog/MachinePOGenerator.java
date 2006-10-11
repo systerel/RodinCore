@@ -44,8 +44,8 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 
-		IPOFile poFile = (IPOFile) RodinCore.create(file);
-		ISCMachineFile scMachineFile = poFile.getSCMachine();
+		IPOFile poFile = (IPOFile) RodinCore.create(file).getMutableCopy();
+		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachine().getSnapshot();
 		
 		try {
 			
