@@ -44,6 +44,33 @@ import org.rodinp.internal.core.util.Util;
 public abstract class RodinElement extends PlatformObject implements
 		IRodinElement {
 
+	private static class NoResourceSchedulingRule implements ISchedulingRule {
+		public IPath path;
+
+		public NoResourceSchedulingRule(IPath path) {
+			this.path = path;
+		}
+
+		public boolean contains(ISchedulingRule rule) {
+			if (rule instanceof NoResourceSchedulingRule) {
+				return this.path
+						.isPrefixOf(((NoResourceSchedulingRule) rule).path);
+			} else {
+				return false;
+			}
+		}
+
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof NoResourceSchedulingRule) {
+				IPath otherPath = ((NoResourceSchedulingRule) rule).path;
+				return this.path.isPrefixOf(otherPath)
+						|| otherPath.isPrefixOf(this.path);
+			} else {
+				return false;
+			}
+		}
+	}
+
 	// Escape character in mementos
 	public static final char REM_ESCAPE = '\\';
 
@@ -387,32 +414,6 @@ public abstract class RodinElement extends PlatformObject implements
 	public ISchedulingRule getSchedulingRule() {
 		IResource resource = getResource();
 		if (resource == null) {
-			class NoResourceSchedulingRule implements ISchedulingRule {
-				public IPath path;
-
-				public NoResourceSchedulingRule(IPath path) {
-					this.path = path;
-				}
-
-				public boolean contains(ISchedulingRule rule) {
-					if (rule instanceof NoResourceSchedulingRule) {
-						return this.path
-								.isPrefixOf(((NoResourceSchedulingRule) rule).path);
-					} else {
-						return false;
-					}
-				}
-
-				public boolean isConflicting(ISchedulingRule rule) {
-					if (rule instanceof NoResourceSchedulingRule) {
-						IPath otherPath = ((NoResourceSchedulingRule) rule).path;
-						return this.path.isPrefixOf(otherPath)
-								|| otherPath.isPrefixOf(this.path);
-					} else {
-						return false;
-					}
-				}
-			}
 			return new NoResourceSchedulingRule(getPath());
 		} else {
 			return resource;
