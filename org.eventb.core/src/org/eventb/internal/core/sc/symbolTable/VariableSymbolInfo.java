@@ -86,6 +86,10 @@ public class VariableSymbolInfo
 	public void createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws RodinDBException {
+		
+		if (parent == null)
+			return;
+		
 		ISCVariable variable = 
 			(ISCVariable) parent.createInternalElement(
 					ISCVariable.ELEMENT_TYPE, getSymbol(), null, monitor);

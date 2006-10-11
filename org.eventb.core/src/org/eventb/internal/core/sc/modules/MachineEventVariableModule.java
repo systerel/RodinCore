@@ -59,15 +59,13 @@ public class MachineEventVariableModule extends IdentifierModule {
 		
 		IVariable[] variables = event.getVariables();
 		
-		if(variables.length == 0)
-			return;
-		
-		fetchSymbols(
-				variables,
-				target,
-				modules,
-				repository, 
-				monitor);
+		if(variables.length != 0)
+			fetchSymbols(
+					variables,
+					target,
+					modules,
+					repository, 
+					monitor);
 		
 		patchTypeEnvironment();
 	}

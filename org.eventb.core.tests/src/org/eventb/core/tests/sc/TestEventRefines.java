@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestEventRefines extends BasicTest {
 	
-	public void testEvents_00() throws Exception {
+	public void testEvents_00_refines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -44,7 +44,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_01() throws Exception {
+	public void testEvents_01_split2() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -72,7 +72,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_02() throws Exception {
+	public void testEvents_02_localTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -98,7 +98,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_03() throws Exception {
+	public void testEvents_03_localTypeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -124,7 +124,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_04() throws Exception {
+	public void testEvents_04_localDefaultWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1", "L3"), 
@@ -158,7 +158,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_05() throws Exception {
+	public void testEvents_05_globalDefaultWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
@@ -196,7 +196,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_06() throws Exception {
+	public void testEvents_06_globalDefaultWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
@@ -237,7 +237,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_07() throws Exception {
+	public void testEvents_07_localTypesAndWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1", "L3"), 
@@ -271,7 +271,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_08() throws Exception {
+	public void testEvents_08_split3() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -300,7 +300,7 @@ public class TestEventRefines extends BasicTest {
 		refinesEvents(events[2], "evt");
 	}
 
-	public void testEvents_09() throws Exception {
+	public void testEvents_09_merge2() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -325,7 +325,7 @@ public class TestEventRefines extends BasicTest {
 		refinesEvents(events[0], "evt", "fvt");
 	}
 	
-	public void testEvents_10() throws Exception {
+	public void testEvents_10_inherited() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -347,7 +347,7 @@ public class TestEventRefines extends BasicTest {
 		refinesEvents(events[0], "evt");
 	}
 
-	public void testEvents_11() throws Exception {
+	public void testEvents_11_InheritedRefinesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -373,7 +373,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_12() throws Exception {
+	public void testEvents_12_inheritedSplitConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -401,7 +401,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}	
 	
-	public void testEvents_13() throws Exception {
+	public void testEvents_13_mergeMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -431,7 +431,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}	
 	
-	public void testEvents_14() throws Exception {
+	public void testEvents_14_inheritedRefinesMergeOK() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -466,7 +466,7 @@ public class TestEventRefines extends BasicTest {
 		refinesEvents(events[3]);
 	}	
 	
-	public void testEvents_15() throws Exception {
+	public void testEvents_15_inheritedRefinesMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		abs.save(null, true);
@@ -492,7 +492,7 @@ public class TestEventRefines extends BasicTest {
 		getSCEvents(file, "ivt");
 	}	
 	
-	public void testEvents_16() throws Exception {
+	public void testEvents_16_initialisationDefaultRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, IEvent.INITIALISATION);
@@ -516,7 +516,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_17() throws Exception {
+	public void testEvents_17_initialisationRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, IEvent.INITIALISATION);
@@ -540,7 +540,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_18() throws Exception {
+	public void testEvents_18_initialisationInherited() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, IEvent.INITIALISATION);
@@ -564,7 +564,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_19() throws Exception {
+	public void testEvents_19_initialisationNotRefined() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, IEvent.INITIALISATION);
@@ -589,7 +589,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_20() throws Exception {
+	public void testEvents_20_multipleRefineProblems() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -623,7 +623,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 	
-	public void testEvents_21() throws Exception {
+	public void testEvents_21_mergeLocalAbstractTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
@@ -652,7 +652,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_22() throws Exception {
+	public void testEvents_22_mergeLocalAbstractTypesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"), makeSList(), makeSList());
@@ -681,7 +681,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_23() throws Exception {
+	public void testEvents_23_mergeAbstractActionsIdentical() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p", "q");
@@ -721,7 +721,7 @@ public class TestEventRefines extends BasicTest {
 		
 	}
 
-	public void testEvents_24() throws Exception {
+	public void testEvents_24_mergeAbstractActionsDiffer() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p", "q");
@@ -759,6 +759,87 @@ public class TestEventRefines extends BasicTest {
 		
 		getSCEvents(file, "fvt");
 		
+	}
+	
+	public void testEvents_25_localWitnessRefines() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1"), makeSList("p:∈{x}"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "p");
+		IEvent fvt = addEvent(mac, "fvt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("p:∈{p}"));
+		addEventRefines(fvt, "evt");
+		addEventWitnesses(fvt, makeSList("x"), makeSList("x=p"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+		typeEnvironment.addName("y", factory.makeIntegerType());
+		
+		ISCEvent[] events = getSCEvents(file, "fvt");
+		containsWitnesses(events[0], typeEnvironment, makeSList("x"), makeSList("x=p"));
+	}
+	
+	public void testEvents_26_localWitnessSplit() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "p");
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1"), makeSList("p:∈{x}"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "p");
+		IEvent evt = addEvent(mac, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x∈ℕ"), 
+				makeSList("A1"), makeSList("p:∈{x}"));
+		addEventRefines(evt, "evt");
+		IEvent fvt = addEvent(mac, "fvt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("p:∈{p}"));
+		addEventRefines(fvt, "evt");
+		addEventWitnesses(fvt, makeSList("x"), makeSList("x=p"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+		typeEnvironment.addName("y", factory.makeIntegerType());
+		
+		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
+		containsWitnesses(events[1], typeEnvironment, makeSList("x"), makeSList("x=p"));
 	}
 
 }

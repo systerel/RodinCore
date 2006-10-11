@@ -107,6 +107,9 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 			Predicate[] predicates,
 			IProgressMonitor monitor) throws RodinDBException {
 		
+		if (parent == null)
+			return;
+		
 		int index = 0;
 		
 		for (int i=0; i<guards.length; i++) {
