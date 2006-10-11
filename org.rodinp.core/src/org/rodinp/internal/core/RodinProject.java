@@ -11,7 +11,6 @@
 package org.rodinp.internal.core;
 
 import java.io.File;
-import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
@@ -28,6 +27,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
+import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 
 /**
@@ -82,8 +82,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	 */
 	@Override
 	protected boolean buildStructure(OpenableElementInfo info,
-			IProgressMonitor pm,
-			Map<IRodinElement, RodinElementInfo> newElements,
+			IProgressMonitor pm, OpenableMap newElements,
 			IResource underlyingResource) throws RodinDBException {
 	
 		// check whether the java project can be opened
@@ -98,7 +97,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	}
 
 	@Override
-	public void closing(RodinElementInfo info) {
+	public void closing(OpenableElementInfo info) {
 		super.closing(info);
 	}
 	/**
@@ -238,17 +237,11 @@ public class RodinProject extends Openable implements IRodinProject {
 		return this.project.getName();
 	}
 	
-	/**
-	 * @see IRodinElement
-	 */
 	@Override
 	public String getElementType() {
 		return RODIN_PROJECT;
 	}
 
-	/*
-	 * @see RodinElement
-	 */
 	@Override
 	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
@@ -360,9 +353,6 @@ public class RodinProject extends Openable implements IRodinProject {
 //		return projectOptions;
 //	}
 
-	/**
-	 * @see IRodinElement
-	 */
 	public IPath getPath() {
 		return this.project.getFullPath();
 	}
