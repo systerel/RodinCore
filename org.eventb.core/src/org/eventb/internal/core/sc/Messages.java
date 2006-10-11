@@ -54,8 +54,6 @@ public final class Messages {
 	
     // error messages of the static checker addressed to the user
 	
-	public static String scuser_OnlyOneEventRefinesClauseProblem;
-	
 	public static String scuser_InvalidIdentifierName;
 	
     public static String scuser_AbstractContextNotFound;
@@ -97,7 +95,8 @@ public final class Messages {
     public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
     public static String scuser_InconsistentAbstractConvergence;
-    public static String scuser_OrdinaryConvergentFaultyConvergence;
+    public static String scuser_ConvergentFaultyConvergence;
+    public static String scuser_OrdinaryFaultyConvergence;
     public static String scuser_AnticipatedFaultyConvergence;
     public static String scuser_AnticipatedEventNoVariant;
     public static String scuser_ConvergentEventNoVariant;
@@ -115,10 +114,9 @@ public final class Messages {
    
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
-    public static String scuser_AbstractEventLabelProblem;
+    public static String scuser_WasAbstractEventLabelProblem;
     public static String scuser_ObsoleteEventLabelProblem;
     public static String scuser_InconsistentEventLabelProblem;
-    public static String scuser_ObsoleteVariableNameProblem;
     public static String scuser_VariableHasDisappearedError;
     public static String scuser_VariableIsLocalInAbstractMachine;
     public static String scuser_AssignedIdentifierNotVariable;

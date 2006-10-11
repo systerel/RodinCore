@@ -98,11 +98,16 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 			if (!ok) {
 				switch (abstractConvergence) {
 				case IEventConvergence.ORDINARY:
+					issueMarker(
+							IMarkerDisplay.SEVERITY_WARNING, 
+							element, 
+							Messages.scuser_OrdinaryFaultyConvergence);
+					break;
 				case IEventConvergence.CONVERGENT:
 					issueMarker(
 							IMarkerDisplay.SEVERITY_WARNING, 
 							element, 
-							Messages.scuser_OrdinaryConvergentFaultyConvergence);
+							Messages.scuser_ConvergentFaultyConvergence);
 					break;
 				default:
 					issueMarker(

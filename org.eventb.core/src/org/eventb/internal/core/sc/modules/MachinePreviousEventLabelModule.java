@@ -56,7 +56,7 @@ public class MachinePreviousEventLabelModule extends AcceptorModule {
 				issueMarker(
 						IMarkerDisplay.SEVERITY_WARNING, 
 						element, 
-						Messages.scuser_AbstractEventLabelProblem, 
+						Messages.scuser_WasAbstractEventLabelProblem, 
 						label);
 			}
 		}
