@@ -46,8 +46,8 @@ import org.rodinp.internal.core.util.Util;
  */
 public class DeltaProcessor {
 
-	public static boolean DEBUG = false;
-	public static boolean VERBOSE = false;
+	/*package*/ static boolean DEBUG = false;
+	/*package*/ static boolean VERBOSE = false;
 
 	// must not collide with ElementChangedEvent event masks
 	public static final int DEFAULT_CHANGE_EVENT = 0;
@@ -239,6 +239,7 @@ public class DeltaProcessor {
 	private void contentChanged(Openable element) {
 
 		close(element);
+		removeFromBufferCache(element, false);
 		int flags = IRodinElementDelta.F_CONTENT;
 		currentDelta().changed(element, flags);
 	}
@@ -394,13 +395,13 @@ public class DeltaProcessor {
 			// regular element removal
 			close(element);
 			removeFromParentInfo(element);
-			removeFromBufferCache(element);
+			removeFromBufferCache(element, true);
 			currentDelta().removed(element);
 		} else {
 			// element is moved
 			close(element);
 			removeFromParentInfo(element);
-			removeFromBufferCache(element);
+			removeFromBufferCache(element, true);
 			
 			IPath movedToPath = delta.getMovedToPath();
 			IResource res = delta.getResource();
@@ -427,7 +428,8 @@ public class DeltaProcessor {
 			
 			// create the moved To element
 			Openable movedToElement = 
-				elementType != IRodinElement.RODIN_PROJECT && movedToType == IRodinElement.RODIN_PROJECT ? 
+				elementType != IRodinElement.RODIN_PROJECT
+				&& movedToType == IRodinElement.RODIN_PROJECT ? 
 					null : // outside classpath
 					this.createElement(movedToRes, movedToType);
 			if (movedToElement == null) {
@@ -747,11 +749,11 @@ public class DeltaProcessor {
 	/*
 	 * Removes any buffer associated to the given element. 
 	 */
-	private void removeFromBufferCache(Openable child) {
+	private void removeFromBufferCache(Openable child, boolean force) {
 		if (child instanceof RodinFile) {
 			final RodinFile rodinFile = (RodinFile) child;
 			final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
-			rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), true);
+			rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), force);
 		}
 	}
 
