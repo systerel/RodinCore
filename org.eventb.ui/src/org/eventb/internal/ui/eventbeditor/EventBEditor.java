@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -35,6 +36,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.core.EventBPlugin;
@@ -62,6 +64,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * @author htson
@@ -69,7 +72,7 @@ import org.rodinp.core.RodinDBException;
  *         Abstract Event-B specific form editor for machines, contexts.
  */
 public abstract class EventBEditor extends FormEditor implements
-		IElementChangedListener {
+		IElementChangedListener, IGotoMarker {
 
 	private String lastActivePageID = null;
 
@@ -485,7 +488,7 @@ public abstract class EventBEditor extends FormEditor implements
 						if (fpage.isDirty()) {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Saving "
-									+ fpage.toString());
+										+ fpage.toString());
 							fpage.doSave(monitor);
 						}
 					}
@@ -829,6 +832,13 @@ public abstract class EventBEditor extends FormEditor implements
 			((EventBFormPage) page).selectElement(element);
 		}
 
+	}
+
+	public void gotoMarker(IMarker marker) {
+		IInternalElement element = RodinMarkerUtil.getElement(marker);
+		if (element != null) {
+			this.setSelection(element);
+		}
 	}
 
 }
