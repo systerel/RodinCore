@@ -35,7 +35,7 @@ public final class RodinMarkerUtil {
 	 * those markers in the workspace that flag problems detected by Rodin
 	 * tools.
 	 */
-	public static String RODIN_PROBLEM_MARKER = 
+	public static final String RODIN_PROBLEM_MARKER = 
 		RodinCore.PLUGIN_ID + ".problem"; //$NON-NLS-1$
 
 	/**
@@ -45,7 +45,7 @@ public final class RodinMarkerUtil {
 	 * problem. The error code must be unique (i.e., prefixed with the
 	 * contributing plug-in identifier).
 	 */
-	public static String ERROR_CODE = "code"; //$NON-NLS-1$
+	public static final String ERROR_CODE = "code"; //$NON-NLS-1$
 
 	/**
 	 * Arguments marker attribute (value <code>"arguments"</code>). This
@@ -60,7 +60,7 @@ public final class RodinMarkerUtil {
 	 * </ul>
 	 * </p>
 	 */
-	public static String ARGUMENTS = "arguments"; //$NON-NLS-1$
+	public static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
 
 	/**
 	 * Element marker attribute (value <code>"element"</code>). This
@@ -71,7 +71,7 @@ public final class RodinMarkerUtil {
 	 * {@link #ATTRIBUTE_ID} is specified.
 	 * </p>
 	 */
-	public static String ELEMENT = "element"; //$NON-NLS-1$
+	public static final String ELEMENT = "element"; //$NON-NLS-1$
 
 	/**
 	 * Attribute id marker attribute (value <code>"attributeId"</code>). This
@@ -82,7 +82,7 @@ public final class RodinMarkerUtil {
 	 * {@link #CHAR_START} or {@link #CHAR_END} is specified.
 	 * </p>
 	 */
-	public static String ATTRIBUTE_ID = "attributeId"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_ID = "attributeId"; //$NON-NLS-1$
 
 	/**
 	 * Character start marker attribute (value <code>"charStart"</code>).
@@ -99,7 +99,7 @@ public final class RodinMarkerUtil {
 	 * <code>CHAR_START</code>.
 	 * </p>
 	 */
-	public static String CHAR_START = "charStart"; //$NON-NLS-1$
+	public static final String CHAR_START = "charStart"; //$NON-NLS-1$
 
 	/**
 	 * Character end marker attribute (value <code>"charEnd"</code>).
@@ -116,7 +116,7 @@ public final class RodinMarkerUtil {
 	 * <code>CHAR_START</code>.
 	 * </p>
 	 */
-	public static String CHAR_END = "charEnd"; //$NON-NLS-1$
+	public static final String CHAR_END = "charEnd"; //$NON-NLS-1$
 
 	/**
 	 * Build problem marker type (value
@@ -124,7 +124,7 @@ public final class RodinMarkerUtil {
 	 * recognize those markers in the workspace that flag problems detected by
 	 * the Rodin builder while computing the dependency graph.
 	 */
-	public static String BUILDPATH_PROBLEM_MARKER = 
+	public static final String BUILDPATH_PROBLEM_MARKER = 
 		RodinCore.PLUGIN_ID + ".buildProblem"; //$NON-NLS-1$
 
 	/**
@@ -132,9 +132,9 @@ public final class RodinMarkerUtil {
 	 * Used only on build problem markers. The value of this attribute is either
 	 * <code>true</code> or <code>false</code>.
 	 */
-	public static String CYCLE_DETECTED = "cycleDetected"; //$NON-NLS-1$
+	public static final String CYCLE_DETECTED = "cycleDetected"; //$NON-NLS-1$
 
-	private static String[] NO_STRING = new String[0]; 
+	private static final String[] NO_STRING = new String[0]; 
 	
 	private static void checkRodinProblemMarker(IMarker marker) {
 		try {
