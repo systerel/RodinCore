@@ -33,7 +33,7 @@ public class DBUpdater {
 	 */
 	private static void addToParentInfo(Openable child) {
 
-		Openable parent = (Openable) child.getParent();
+		Openable parent = child.getParent();
 		if (parent != null && parent.isOpen()) {
 			try {
 				RodinElementInfo info = parent.getElementInfo();
@@ -158,7 +158,7 @@ public class DBUpdater {
 	 */
 	private static void removeFromParentInfo(Openable child) {
 
-		Openable parent = (Openable) child.getParent();
+		Openable parent = child.getParent();
 		if (parent != null && parent.isOpen()) {
 			try {
 				RodinElementInfo info = parent.getElementInfo();
