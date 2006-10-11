@@ -348,7 +348,13 @@ public class RodinDBManager implements ISaveParticipant {
 	}
 
 	/**
-	 *  Returns the info for the element.
+	 * Returns the info for the given element, if it's open (has been loaded
+	 * into the database). Otherwise returns <code>null</code>.
+	 * 
+	 * @param element
+	 *            the element for which info is asked
+	 * @return the info associated to the given element, or <code>null</code>
+	 *         is the given element is not opened
 	 */
 	public synchronized OpenableElementInfo getInfo(Openable element) {
 		OpenableMap tempCache = this.temporaryCache.get();
