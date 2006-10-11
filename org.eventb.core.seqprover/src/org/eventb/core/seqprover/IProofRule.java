@@ -18,6 +18,7 @@ import org.eventb.core.seqprover.HypothesesManagement.Action;
  * This interface is not intended to be implemented by clients. Objects of this type 
  * are typically generated inside reasoners by calling a factory method.
  * </p>
+ * @see IAnticident
  * @see org.eventb.core.seqprover.IReasoner
  * @see org.eventb.core.seqprover.ProverFactory
  * 
@@ -68,6 +69,10 @@ public interface IProofRule extends IReasonerOutput{
 	 * <p>
 	 * An anticident contains a goal, added hypotheses, added free identifiers, and hypothesis
 	 * selection information.
+	 * </p>
+	 * <p>
+	 * Typically, an andicident records the changes made by a reasoner on the sequent
+	 * to be proven. 
 	 * </p>
 	 * <p>
 	 * This interface is not intended to be implemented by clients. Objects of this type 
