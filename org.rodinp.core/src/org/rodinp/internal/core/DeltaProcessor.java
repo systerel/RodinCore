@@ -105,7 +105,7 @@ public class DeltaProcessor {
 	 * Adds the given child handle to its parent's cache of children. 
 	 */
 	private void addToParentInfo(Openable child) {
-		Openable parent = (Openable) child.getParent();
+		Openable parent = child.getParent();
 		if (parent != null && parent.isOpen()) {
 			try {
 				RodinElementInfo info = parent.getElementInfo();
@@ -761,7 +761,7 @@ public class DeltaProcessor {
 	 * this has no effect. 
 	 */
 	private void removeFromParentInfo(Openable child) {
-		Openable parent = (Openable) child.getParent();
+		Openable parent = child.getParent();
 		if (parent != null && parent.isOpen()) {
 			try {
 				RodinElementInfo info = parent.getElementInfo();
