@@ -264,7 +264,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				System.out.println(getClass().getName() + ": Root node changed: " + node.getName());
 //			node.setDated(false);
 
-			RodinBuilder.deleteMarkers(file);
+			MarkerHelper.deleteBuildMarkers(file);
 			
 			changed = true;
 			
@@ -285,7 +285,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				Util.log(null, "Unknown tool: " + toolName + " for node " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
-			RodinBuilder.deleteMarkers(file);
+			MarkerHelper.deleteBuildMarkers(file);
 			try {
 				
 				FileRunnable runnable = new FileRunnable(tool, file);
@@ -321,7 +321,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			String toolName, 
 			Exception e) {
 		Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
-		RodinBuilder.deleteMarkers(file);
+		MarkerHelper.deleteBuildMarkers(file);
 		MarkerHelper.addMarker(
 				file, 
 				false,
@@ -338,7 +338,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			ExtractorDescription extractorDescription, 
 			Exception e) {
 		Util.log(e, " while extracting from " + file.getName()); //$NON-NLS-1$
-		RodinBuilder.deleteMarkers(file);
+		MarkerHelper.deleteBuildMarkers(file);
 		MarkerHelper.addMarker(
 				file, 
 				false,
@@ -534,7 +534,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				//	delete markers of all resources that could not be ordered
 				IFile file = node.getFile();
 				if(file != null)
-					RodinBuilder.deleteMarkers(file);
+					MarkerHelper.deleteBuildMarkers(file);
 				else if(Graph.DEBUG)
 					System.out.println(getClass().getName() + ": File not found: " + node.getPath().toString()); //$NON-NLS-1$
 

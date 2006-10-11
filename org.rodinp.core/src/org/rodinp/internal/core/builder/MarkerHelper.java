@@ -10,9 +10,11 @@ package org.rodinp.internal.core.builder;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IMarker.SEVERITY;
 import static org.eclipse.core.resources.IMarker.SEVERITY_ERROR;
+import static org.eclipse.core.resources.IResource.DEPTH_ZERO;
 import static org.rodinp.core.RodinMarkerUtil.CYCLE_DETECTED;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -55,6 +57,22 @@ public class MarkerHelper {
 			marker.setAttribute(MESSAGE, message);
 		} catch (CoreException e) {
 			Util.log(e, "when adding a build problem marker");
+		}
+	}
+
+	/**
+	 * Deletes all build problem markers on the given file.
+	 * 
+	 * @param file
+	 *            file to clean up
+	 */
+	public static void deleteBuildMarkers(IFile file) {
+		try {
+			if (file.exists()) {
+				file.deleteMarkers(RODIN_PROBLEM_MARKER, false, DEPTH_ZERO);
+			}
+		} catch (CoreException e) {
+			Util.log(e, "when deleting markers in builder");
 		}
 	}
 
