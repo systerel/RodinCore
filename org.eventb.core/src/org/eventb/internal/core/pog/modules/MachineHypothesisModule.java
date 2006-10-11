@@ -44,7 +44,6 @@ import org.eventb.internal.core.pog.MachineVariableTable;
 import org.eventb.internal.core.sc.TypingState;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
