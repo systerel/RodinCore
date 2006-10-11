@@ -11,7 +11,6 @@
 package org.rodinp.internal.core;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -31,6 +30,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
+import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 
@@ -59,8 +59,7 @@ public class RodinDB extends Openable implements IRodinDB {
 
 	@Override
 	protected boolean buildStructure(OpenableElementInfo info,
-			IProgressMonitor pm,
-			Map<IRodinElement, RodinElementInfo> newElements,
+			IProgressMonitor pm, OpenableMap newElements,
 			IResource underlyingResource) {
 
 		// determine my children
@@ -121,7 +120,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * Returns a new element info for this element.
 	 */
 	@Override
-	protected RodinElementInfo createElementInfo() {
+	protected RodinDBInfo createElementInfo() {
 		return new RodinDBInfo();
 	}
 

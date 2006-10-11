@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * Strongly inspired by org.eclipse.jdt.internal.core.JavaModelManager.java which is
  * 
  * Copyright (c) 2000, 2005 IBM Corporation and others.
@@ -114,7 +114,8 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * Shortcut class to use instead of the long fully parameterized HashMap.
 	 */
-	public static final class ElementMap extends HashMap<IRodinElement, RodinElementInfo> {
+	public static final class OpenableMap extends
+			HashMap<Openable, OpenableElementInfo> {
 		private static final long serialVersionUID = -2261316668279408019L;
 	}
 	
@@ -198,7 +199,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/*
 	 * Temporary cache of newly opened elements
 	 */
-	private ThreadLocal<ElementMap> temporaryCache = new ThreadLocal<ElementMap>();
+	private ThreadLocal<OpenableMap> temporaryCache = new ThreadLocal<OpenableMap>();
 
 	/**
 	 * Holds the state used for delta processing.
@@ -349,10 +350,10 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 *  Returns the info for the element.
 	 */
-	public synchronized RodinElementInfo getInfo(IRodinElement element) {
-		ElementMap tempCache = this.temporaryCache.get();
+	public synchronized OpenableElementInfo getInfo(Openable element) {
+		OpenableMap tempCache = this.temporaryCache.get();
 		if (tempCache != null) {
-			RodinElementInfo result = tempCache.get(element);
+			OpenableElementInfo result = tempCache.get(element);
 			if (result != null) {
 				return result;
 			}
@@ -435,10 +436,10 @@ public class RodinDBManager implements ISaveParticipant {
 	 * Returns the temporary cache for newly opened elements for the current thread.
 	 * Creates it if not already created.
 	 */
-	public ElementMap getTemporaryCache() {
-		ElementMap result = this.temporaryCache.get();
+	public OpenableMap getTemporaryCache() {
+		OpenableMap result = this.temporaryCache.get();
 		if (result == null) {
-			result = new ElementMap();
+			result = new OpenableMap();
 			this.temporaryCache.set(result);
 		}
 		return result;
@@ -502,10 +503,10 @@ public class RodinDBManager implements ISaveParticipant {
 	 *  Returns the info for this element without
 	 *  disturbing the cache ordering.
 	 */
-	public synchronized RodinElementInfo peekAtInfo(IRodinElement element) {
-		HashMap<IRodinElement, RodinElementInfo> tempCache = this.temporaryCache.get();
+	public synchronized OpenableElementInfo peekAtInfo(Openable element) {
+		OpenableMap tempCache = this.temporaryCache.get();
 		if (tempCache != null) {
-			RodinElementInfo result = tempCache.get(element);
+			OpenableElementInfo result = tempCache.get(element);
 			if (result != null) {
 				return result;
 			}
@@ -527,17 +528,17 @@ public class RodinDBManager implements ISaveParticipant {
 	 * added to the cache. If it is the case, another thread has opened the element (or one of
 	 * its ancestors). So returns without updating the cache.
 	 */
-	public synchronized void putInfos(IRodinElement openedElement, 
-			Map<IRodinElement, RodinElementInfo> newElements) {
+	public synchronized void putInfos(Openable openedElement, 
+			OpenableMap newElements) {
 		// remove children
 		RodinElementInfo existingInfo = this.cache.peekAtInfo(openedElement);
 		if (openedElement instanceof IParent && existingInfo != null) {
 			closeChildren(existingInfo);
 		}
 		
-		for (IRodinElement element: newElements.keySet()) {
-			RodinElementInfo info = newElements.get(element);
-			this.cache.putInfo(element, info);
+		for (Map.Entry<Openable, OpenableElementInfo> entry:
+				newElements.entrySet()) {
+			this.cache.putInfo(entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -601,8 +602,8 @@ public class RodinDBManager implements ISaveParticipant {
 	 * from the cache.
 	 * Returns the info for the given element, or null if it was already closed.
 	 */
-	public synchronized RodinElementInfo removeInfoAndChildren(RodinElement element) {
-		RodinElementInfo info = this.cache.peekAtInfo(element);
+	public synchronized RodinElementInfo removeInfoAndChildren(Openable element) {
+		OpenableElementInfo info = this.cache.peekAtInfo(element);
 		if (info != null) {
 			boolean wasVerbose = false;
 			try {
@@ -612,9 +613,7 @@ public class RodinDBManager implements ISaveParticipant {
 					wasVerbose = true;
 					VERBOSE = false;
 				}
-				if (element instanceof Openable) {
-					((Openable) element).closing(info);
-				}
+				element.closing(info);
 				if (element instanceof IParent && info != null) {
 					closeChildren(info);
 				}
