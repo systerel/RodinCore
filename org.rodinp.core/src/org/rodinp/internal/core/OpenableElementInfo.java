@@ -10,11 +10,24 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import org.rodinp.core.basis.Openable;
+import org.rodinp.core.basis.RodinElement;
+
 
 /** Element info for IOpenable elements. */
 public abstract class OpenableElementInfo extends RodinElementInfo {
 	
 	private boolean knownStructure = false;
+
+	public boolean hasUnsavedChanges() {
+		for (RodinElement child: getChildren()) {
+			Openable openable = (Openable) child;
+			if (openable.hasUnsavedChanges()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean isStructureKnown() {
 		return knownStructure;

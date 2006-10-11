@@ -224,14 +224,6 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 	
 	@Override
-	public final boolean hasUnsavedChanges() {
-		RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		RodinFileElementInfo info =
-			(RodinFileElementInfo) manager.peekAtInfo(this);
-		return info != null && info.hasUnsavedChanges();
-	}
-
-	@Override
 	public final boolean isConsistent() {
 		return ! hasUnsavedChanges();
 	}

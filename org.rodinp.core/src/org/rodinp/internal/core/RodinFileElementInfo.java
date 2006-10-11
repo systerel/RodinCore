@@ -257,6 +257,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return buffer.hasAttribute(domElement, attrName);
 	}
 
+	@Override
 	public synchronized boolean hasUnsavedChanges() {
 		return buffer.hasUnsavedChanges();
 	}

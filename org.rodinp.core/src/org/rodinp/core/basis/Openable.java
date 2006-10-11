@@ -194,15 +194,12 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * @see IOpenable
 	 */
 	public boolean hasUnsavedChanges() {
-
-		if (isReadOnly() || !isOpen()) {
+		if (isReadOnly()) {
 			return false;
 		}
-		// TODO define how we record that an openable has changed
-		// For projects and folders, should go down recursively on children
-		// looking for a file element with unsaved changes.
-		
-		return false;
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		OpenableElementInfo info = manager.getInfo(this);
+		return info != null && info.hasUnsavedChanges();
 	}
 
 	/**
