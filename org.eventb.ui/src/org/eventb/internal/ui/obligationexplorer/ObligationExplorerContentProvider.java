@@ -249,6 +249,14 @@ public class ObligationExplorerContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object parent) {
+		if (parent instanceof IParent) {
+			try {
+				return ((IParent) parent).hasChildren();
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return getChildren(parent).length != 0;
 	}
 
