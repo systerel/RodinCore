@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.rodinp.core.basis;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -28,6 +25,7 @@ import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
+import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 
 /**
  * Abstract class for implementations of Rodin elements which are IOpenable.
@@ -53,7 +51,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 */
 	protected abstract boolean buildStructure(OpenableElementInfo info,
 			IProgressMonitor pm,
-			Map<IRodinElement, RodinElementInfo> newElements,
+			OpenableMap newElements,
 			IResource underlyingResource) throws RodinDBException;
 
 	/*
@@ -64,10 +62,17 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		return !hasUnsavedChanges();
 	}
 
+	/*
+	 * @see IOpenable
+	 */
+	public void close() throws RodinDBException {
+		RodinDBManager.getRodinDBManager().removeInfoAndChildren(this);
+	}
+
 	/**
 	 * This element is being closed. Do any necessary cleanup.
 	 */
-	public void closing(RodinElementInfo info) {
+	public void closing(OpenableElementInfo info) {
 		// TODO what cleanup to do?
 	}
 
@@ -75,7 +80,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * Returns a new element info for this element.
 	 */
 	@Override
-	protected abstract RodinElementInfo createElementInfo();
+	protected abstract OpenableElementInfo createElementInfo();
 
 	/**
 	 * @see IRodinElement
@@ -90,9 +95,8 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		return super.exists();
 	}
 
-	@Override
-	protected void generateInfos(RodinElementInfo info, 
-			HashMap<IRodinElement, RodinElementInfo> newElements,
+	protected void generateInfos(OpenableElementInfo info, 
+			OpenableMap newElements,
 			IProgressMonitor monitor) throws RodinDBException {
 
 		if (RodinDBManager.VERBOSE) {
@@ -114,10 +118,9 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		// build the structure of the openable (this will open the buffer if
 		// needed)
 		try {
-			OpenableElementInfo openableElementInfo = (OpenableElementInfo) info;
-			boolean isStructureKnown = buildStructure(openableElementInfo,
+			boolean isStructureKnown = buildStructure(info,
 					monitor, newElements, getResource());
-			openableElementInfo.setIsStructureKnown(isStructureKnown);
+			info.setIsStructureKnown(isStructureKnown);
 		} catch (RodinDBException e) {
 			newElements.remove(this);
 			throw e;
@@ -147,15 +150,11 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 *                if the element is not present or not accessible
 	 */
 	@Override
-	public RodinElementInfo getElementInfo(IProgressMonitor monitor)
+	public OpenableElementInfo getElementInfo(IProgressMonitor monitor)
 			throws RodinDBException {
 
-		RodinElementInfo info = null;
-		try {
-			info = super.getElementInfo(monitor);
-		} catch (RodinDBException e) {
-			// taken care below
-		}
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		OpenableElementInfo info = manager.getInfo(this);
 		if (info != null)
 			return info;
 		return openWhenClosed(createElementInfo(), monitor);
@@ -167,6 +166,28 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	@Override
 	public Openable getOpenable() {
 		return this;
+	}
+
+	@Override
+	public Openable getParent() {
+		return (Openable) super.getParent();
+	}
+	
+	/*
+	 * @see IParent
+	 */
+	@Override
+	public boolean hasChildren() throws RodinDBException {
+		// if I am not open, return true to avoid opening (case of a Rodin
+		// project, a compilation unit or a class file).
+		// also see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52474
+		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		OpenableElementInfo elementInfo = manager.getInfo(this);
+		if (elementInfo != null) {
+			return elementInfo.getChildren().length > 0;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -263,8 +284,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/**
 	 * Open the parent element if necessary.
 	 */
-	protected void openParent(Object childInfo, 
-			HashMap<IRodinElement, RodinElementInfo> newElements,
+	protected void openParent(Object childInfo, OpenableMap newElements,
 			IProgressMonitor pm) throws RodinDBException {
 
 		Openable openableParent = getOpenableParent();
@@ -272,6 +292,35 @@ public abstract class Openable extends RodinElement implements IOpenable {
 			openableParent.generateInfos(openableParent.createElementInfo(),
 					newElements, pm);
 		}
+	}
+
+	/*
+	 * Opens an <code>Openable</code> that is known to be closed (no check for
+	 * <code>isOpen()</code>). Returns the created element info.
+	 */
+	protected OpenableElementInfo openWhenClosed(OpenableElementInfo info,
+			IProgressMonitor monitor) throws RodinDBException {
+
+		RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		boolean hadTemporaryCache = manager.hasTemporaryCache();
+		try {
+			OpenableMap newElements = manager.getTemporaryCache();
+			generateInfos(info, newElements, monitor);
+			if (info == null) {
+				info = newElements.get(this);
+			}
+			if (info == null) {
+				throw newNotPresentException();
+			}
+			if (!hadTemporaryCache) {
+				manager.putInfos(this, newElements);
+			}
+		} finally {
+			if (!hadTemporaryCache) {
+				manager.resetTemporaryCache();
+			}
+		}
+		return info;
 	}
 
 	/**
@@ -308,4 +357,11 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		}
 	}
 
+	@Override
+	public RodinElementInfo toStringInfo(int tab, StringBuilder buffer) {
+		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		RodinElementInfo info = manager.peekAtInfo(this);
+		this.toStringInfo(tab, buffer, info);
+		return info;
+	}
 }

@@ -11,7 +11,6 @@
 package org.rodinp.core.basis;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IOpenable;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinDBStatus;
@@ -32,7 +30,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.MultiOperation;
-import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinProject;
@@ -106,13 +103,6 @@ public abstract class RodinElement extends PlatformObject implements
 		this.parent = (RodinElement) parent;
 	}
 
-	/**
-	 * @see IOpenable
-	 */
-	public void close() throws RodinDBException {
-		RodinDBManager.getRodinDBManager().removeInfoAndChildren(this);
-	}
-
 	/*
 	 * Returns a new element info for this element.
 	 */
@@ -184,14 +174,6 @@ public abstract class RodinElement extends PlatformObject implements
 		}
 		return false;
 	}
-
-	/**
-	 * Generates the element infos for this element, its ancestors (if they are not opened) and its children (if it is an Openable).
-	 * Puts the newly created element info in the given map.
-	 */
-	protected abstract void generateInfos(RodinElementInfo info, 
-			HashMap<IRodinElement, RodinElementInfo> newElements,
-			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * @see IRodinElement
@@ -273,16 +255,9 @@ public abstract class RodinElement extends PlatformObject implements
 	 * @exception RodinDBException
 	 *                if the element is not present or not accessible
 	 */
-	public RodinElementInfo getElementInfo(IProgressMonitor monitor)
-			throws RodinDBException {
-
-		RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		RodinElementInfo info = manager.getInfo(this);
-		if (info != null)
-			return info;
-		throw newNotPresentException();
-	}
-
+	public abstract RodinElementInfo getElementInfo(IProgressMonitor monitor)
+			throws RodinDBException;
+	
 	/**
 	 * @see IRodinElement
 	 */
@@ -444,20 +419,10 @@ public abstract class RodinElement extends PlatformObject implements
 		}
 	}
 
-	/**
+	/*
 	 * @see IParent
 	 */
-	public boolean hasChildren() throws RodinDBException {
-		// if I am not open, return true to avoid opening (case of a Rodin
-		// project, a compilation unit or a class file).
-		// also see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52474
-		RodinElementInfo elementInfo = RodinDBManager.getRodinDBManager().getInfo(this);
-		if (elementInfo != null) {
-			return elementInfo.getChildren().length > 0;
-		} else {
-			return true;
-		}
-	}
+	public abstract boolean hasChildren() throws RodinDBException;
 
 	/**
 	 * Returns the hash code for this Rodin element. By default, the hash code
@@ -489,34 +454,6 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	public boolean isReadOnly() {
 		return false;
-	}
-
-	/*
-	 * Opens an <code>Openable</code> that is known to be closed (no check for
-	 * <code>isOpen()</code>). Returns the created element info.
-	 */
-	protected RodinElementInfo openWhenClosed(RodinElementInfo info, IProgressMonitor monitor)
-			throws RodinDBException {
-		RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		boolean hadTemporaryCache = manager.hasTemporaryCache();
-		try {
-			HashMap<IRodinElement, RodinElementInfo> newElements = manager.getTemporaryCache();
-			generateInfos(info, newElements, monitor);
-			if (info == null) {
-				info = newElements.get(this);
-			}
-			if (info == null) {
-				throw newNotPresentException();
-			}
-			if (!hadTemporaryCache) {
-				manager.putInfos(this, newElements);
-			}
-		} finally {
-			if (!hadTemporaryCache) {
-				manager.resetTemporaryCache();
-			}
-		}
-		return info;
 	}
 
 	/**
@@ -637,15 +574,10 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * Debugging purposes
 	 */
-	public RodinElementInfo toStringInfo(int tab, StringBuilder buffer) {
-		RodinElementInfo info = RodinDBManager.getRodinDBManager().peekAtInfo(this);
-		this.toStringInfo(tab, buffer, info);
-		return info;
-	}
+	public abstract RodinElementInfo toStringInfo(int tab, StringBuilder buffer);
 
 	/**
 	 * Debugging purposes
-	 * 
 	 */
 	protected void toStringInfo(int tab, StringBuilder buffer, RodinElementInfo info) {
 		buffer.append(this.tabString(tab));

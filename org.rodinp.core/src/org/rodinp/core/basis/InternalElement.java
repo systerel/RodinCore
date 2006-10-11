@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.rodinp.core.basis;
 
-import java.util.HashMap;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -31,9 +29,7 @@ import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.MoveElementsOperation;
 import org.rodinp.internal.core.RemoveElementAttributeOperation;
 import org.rodinp.internal.core.RenameElementsOperation;
-import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
-import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
@@ -110,20 +106,6 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteElementsOperation(this, force).runOperation(monitor);
-	}
-
-	@Override
-	protected void generateInfos(RodinElementInfo info,
-			HashMap<IRodinElement, RodinElementInfo> newElements,
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		Openable openableParent = getOpenableParent();
-		if (openableParent == null) return;
-
-		RodinElementInfo openableParentInfo = RodinDBManager.getRodinDBManager().getInfo(openableParent);
-		if (openableParentInfo == null) {
-			openableParent.generateInfos(openableParent.createElementInfo(), newElements, monitor);
-		}
 	}
 
 	public String[] getAttributeNames(IProgressMonitor monitor)
@@ -424,8 +406,8 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	}
 
 	@Override
-	public RodinElementInfo toStringInfo(int tab, StringBuilder buffer) {
-		RodinElementInfo info = null;
+	public InternalElementInfo toStringInfo(int tab, StringBuilder buffer) {
+		InternalElementInfo info = null;
 		try {
 			RodinFile rf = getOpenableParent();
 			RodinFileElementInfo rfInfo = (RodinFileElementInfo) rf.getElementInfo();

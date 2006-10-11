@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.rodinp.core.basis;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -35,9 +33,9 @@ import org.rodinp.internal.core.OpenableElementInfo;
 import org.rodinp.internal.core.RenameResourceElementsOperation;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.RodinDBStatus;
-import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.SaveRodinFileOperation;
+import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 
@@ -81,9 +79,9 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 
 	@Override
 	protected final boolean buildStructure(OpenableElementInfo info,
-			IProgressMonitor pm,
-			Map<IRodinElement, RodinElementInfo> newElements,
+			IProgressMonitor pm, OpenableMap newElements,
 			IResource underlyingResource) throws RodinDBException {
+
 		if (! file.exists()) {
 			throw newNotPresentException();
 		}
@@ -102,7 +100,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public void closing(RodinElementInfo info) {
+	public void closing(OpenableElementInfo info) {
 		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
 		rodinDBManager.removeBuffer(this.getSnapshot(), true);
 		synchronized (info) {
@@ -125,7 +123,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	protected final RodinElementInfo createElementInfo() {
+	protected final RodinFileElementInfo createElementInfo() {
 		return new RodinFileElementInfo();
 	}
 
