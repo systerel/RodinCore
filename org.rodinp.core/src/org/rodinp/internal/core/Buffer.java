@@ -95,7 +95,7 @@ public class Buffer {
 	
 	private static String[] NO_ATTRIBUTE_NAMES = new String[0];
 
-	private boolean changed;
+	private volatile boolean changed;
 
 	private Document domDocument;
 	
