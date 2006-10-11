@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static org.rodinp.core.IRodinElement.RODIN_DATABASE;
+import static org.rodinp.core.IRodinElement.RODIN_PROJECT;
+
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinFile;
 
@@ -24,68 +24,58 @@ import org.rodinp.core.basis.RodinFile;
  */
 public class RodinDBCache {
 
-	public static final int BASE_VALUE = 20;
+	private static final int BASE_VALUE = 20;
 
 	// average 25552 bytes per project.
-	public static final int DEFAULT_PROJECT_SIZE = 5;
+	private static final int DEFAULT_PROJECT_SIZE = 5;
 
 	// average 6629 bytes per openable (includes members)
 	// -> maximum size : 662900*BASE_VALUE bytes
-	public static final int DEFAULT_OPENABLE_SIZE = BASE_VALUE * 100;
+	private static final int DEFAULT_OPENABLE_SIZE = BASE_VALUE * 100;
 
-	// average 20 members per openable
-	public static final int DEFAULT_MEMBER_SIZE = BASE_VALUE * 100 * 20;
-
-	public static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
+	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
 	
 	/**
 	 * Active Rodin Model Info
 	 */
-	protected RodinDBInfo modelInfo;
+	private RodinDBInfo modelInfo;
 
 	/**
 	 * Cache of open projects.
 	 */
-	protected HashMap<IRodinProject, RodinElementInfo> projectCache;
+	private HashMap<RodinProject, RodinProjectElementInfo> projectCache;
 
 	/**
 	 * Cache of open Rodin files
 	 */
-	protected OpenableCache openableCache;
+	private OpenableCache openableCache;
 
-	/**
-	 * Cache of open members of openable Rodin elements
-	 */
-	protected Map<IRodinElement, RodinElementInfo> memberCache;
-	
 	/**
 	 * Cache of Rodin file buffers
 	 */
-	protected BufferCache bufferCache;
+	private BufferCache bufferCache;
 
 	public RodinDBCache() {
 		// NB: Don't use a LRUCache for projects as they are constantly reopened
 		// (e.g. during delta processing)
-		this.projectCache = new HashMap<IRodinProject, RodinElementInfo>(DEFAULT_PROJECT_SIZE);
+		this.projectCache = new HashMap<RodinProject, RodinProjectElementInfo>(
+				DEFAULT_PROJECT_SIZE);
 		this.openableCache = new OpenableCache(DEFAULT_OPENABLE_SIZE);
-		this.memberCache = new HashMap<IRodinElement, RodinElementInfo>(DEFAULT_MEMBER_SIZE);
 		this.bufferCache = new BufferCache(DEFAULT_BUFFER_SIZE);
 	}
 
 	/**
 	 * Returns the info for the element.
 	 */
-	public RodinElementInfo getInfo(IRodinElement element) {
+	public OpenableElementInfo getInfo(Openable element) {
 		String elementType = element.getElementType();
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == RODIN_DATABASE) {
 			return this.modelInfo;
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
-			return this.projectCache.get(element);
-		} else if (element instanceof Openable) {
-			return this.openableCache.get((Openable) element);
-		} else {
-			return this.memberCache.get(element);
 		}
+		if (elementType == RODIN_PROJECT) {
+			return this.projectCache.get(element);
+		}
+		return this.openableCache.get(element);
 	}
 
 	/**
@@ -98,17 +88,15 @@ public class RodinDBCache {
 	/**
 	 * Returns the info for this element without disturbing the cache ordering.
 	 */
-	protected RodinElementInfo peekAtInfo(IRodinElement element) {
+	public OpenableElementInfo peekAtInfo(Openable element) {
 		String elementType = element.getElementType();
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == RODIN_DATABASE) {
 			return this.modelInfo;
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
-			return this.projectCache.get(element);
-		} else if (element instanceof Openable) {
-			return this.openableCache.peek((Openable) element);
-		} else {
-			return this.memberCache.get(element);
 		}
+		if (elementType == RODIN_PROJECT) {
+			return this.projectCache.get(element);
+		}
+		return this.openableCache.peek(element);
 	}
 
 	/**
@@ -121,32 +109,31 @@ public class RodinDBCache {
 	/**
 	 * Remember the info for the element.
 	 */
-	protected void putInfo(IRodinElement element, RodinElementInfo info) {
+	public void putInfo(Openable element, OpenableElementInfo info) {
 		String elementType = element.getElementType();
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == RODIN_DATABASE) {
 			this.modelInfo = (RodinDBInfo) info;
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
-			this.projectCache.put((IRodinProject) element, info);
-		} else if (element instanceof Openable) {
-			this.openableCache.put((Openable) element, info);
+		} else if (elementType == RODIN_PROJECT) {
+			this.projectCache.put(
+					(RodinProject) element,
+					(RodinProjectElementInfo) info
+			);
 		} else {
-			this.memberCache.put(element, info);
+			this.openableCache.put(element, info);
 		}
 	}
 
 	/**
 	 * Removes the info of the element from the cache.
 	 */
-	protected void removeInfo(IRodinElement element) {
+	public void removeInfo(Openable element) {
 		String elementType = element.getElementType();
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == RODIN_DATABASE) {
 			this.modelInfo = null;
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
+		} else if (elementType == RODIN_PROJECT) {
 			this.projectCache.remove(element);
-		} else if (element instanceof RodinFile) {
-			this.openableCache.remove((Openable) element);
 		} else {
-			this.memberCache.remove(element);
+			this.openableCache.remove(element);
 		}
 	}
 
@@ -155,7 +142,7 @@ public class RodinDBCache {
 	 * <code>force</code> is <code>true</code>, always remove the buffer,
 	 * otherwise remove the buffer only if it has not been modified yet.
 	 */
-	protected void removeBuffer(RodinFile rodinFile, boolean force) {
+	public void removeBuffer(RodinFile rodinFile, boolean force) {
 		if (force) {
 			this.bufferCache.remove(rodinFile);
 		} else {
