@@ -600,7 +600,7 @@ public class RodinElementDelta extends SimpleDelta implements
 		for (int i = 0; i < depth; i++) {
 			buffer.append('\t');
 		}
-		buffer.append(((RodinElement) getElement()).toDebugString());
+		buffer.append(((RodinElement) getElement()).toString());
 		toDebugString(buffer);
 		IRodinElementDelta[] children = getAffectedChildren();
 		if (children != null) {

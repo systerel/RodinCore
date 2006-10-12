@@ -499,7 +499,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	public String toDebugString() {
 		StringBuilder buffer = new StringBuilder();
-		this.toStringInfo(0, buffer, NO_INFO);
+		toString(0, buffer);
 		return buffer.toString();
 	}
 
@@ -509,7 +509,7 @@ public abstract class RodinElement extends PlatformObject implements
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		toString(0, buffer);
+		this.toStringInfo(0, buffer, NO_INFO);
 		return buffer.toString();
 	}
 
