@@ -213,7 +213,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			}
 			if(node != null) {
 				// TODO management of markers should be connected to extraction
-				MarkerHelper.deleteBuildMarkers((IFile) resource);
+				MarkerHelper.deleteAllProblemMarkers(resource);
 				// TODO implement editable and non-editable resource options in builder graph.
 				// some resources, e.g., files maintained by the prover are derived and editable;
 				// other resources may be editable or non-editable, e.g., Event-B models that may
@@ -267,6 +267,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				System.out.println("BUILDER: Starting cleaning");
 			}
         	cleanGraph(progressManager, 100);
+        	MarkerHelper.deleteAllProblemMarkers(getProject());
         } catch (CoreException e) {
 			Util.log(e, "during builder clean");
 		} catch (OperationCanceledException e) {
