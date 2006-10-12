@@ -13,8 +13,6 @@ package org.rodinp.internal.core;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -61,17 +59,4 @@ public class RenameElementsOperation extends MoveElementsOperation {
 		return RodinDBStatus.VERIFIED_OK;
 	}
 
-	@Override
-	protected void verify(IRodinElement element) throws RodinDBException {
-		if (element == null || !element.exists())
-			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
-
-		if (element.isReadOnly())
-			error(IRodinDBStatusConstants.READ_ONLY, element);
-
-		if (!(element instanceof InternalElement))
-			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
-
-		verifyRenaming(element);
-	}
 }

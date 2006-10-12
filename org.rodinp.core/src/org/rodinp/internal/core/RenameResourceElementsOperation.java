@@ -9,10 +9,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
@@ -46,14 +43,4 @@ public class RenameResourceElementsOperation extends
 		return true;
 	}
 
-	@Override
-	protected void verify(IRodinElement element) throws RodinDBException {
-		super.verify(element);
-
-		if (!(element instanceof IRodinFile)) {
-			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
-		}
-		// check here for primary working copy when they're introduced.
-		verifyRenaming(element);
-	}
 }
