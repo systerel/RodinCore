@@ -17,8 +17,6 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IEventConvergence extends IInternalElement {
 
-	public static String CONVERGENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".convergence";
-	
 	int ORDINARY = 0;
 	int CONVERGENT = 1; 
 	int ANTICIPATED = 2;

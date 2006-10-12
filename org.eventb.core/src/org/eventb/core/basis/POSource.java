@@ -9,7 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOSource;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -22,8 +22,6 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class POSource extends InternalElement implements IPOSource {
 	
-	public static String ROLE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".role";
-
 	public POSource(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -36,7 +34,7 @@ public class POSource extends InternalElement implements IPOSource {
 		return ELEMENT_TYPE;
 	}
 	public String getSourceRole(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(ROLE_ATTRIBUTE, monitor);
+		return getStringAttribute(EventBAttributes.ROLE_ATTRIBUTE, monitor);
 	}
 	
 	public String getSourceHandleIdentifier() throws RodinDBException {
@@ -52,7 +50,7 @@ public class POSource extends InternalElement implements IPOSource {
 	}
 
 	public void setSourceRole(String role, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(ROLE_ATTRIBUTE, role, monitor);
+		setStringAttribute(EventBAttributes.ROLE_ATTRIBUTE, role, monitor);
 	}
 
 }

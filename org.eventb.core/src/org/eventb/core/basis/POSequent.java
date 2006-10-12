@@ -10,7 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOHint;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -37,8 +37,6 @@ import org.rodinp.core.basis.InternalElement;
  *
  */
 public class POSequent extends InternalElement implements IPOSequent {
-
-	public static String DESCRIPTION_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 
 	/**
 	 * @param name
@@ -90,7 +88,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPODescription#getName()
 	 */
 	public String getDescription(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(DESCRIPTION_ATTRIBUTE, monitor);
+		return getStringAttribute(EventBAttributes.DESCRIPTION_ATTRIBUTE, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -117,7 +115,7 @@ public class POSequent extends InternalElement implements IPOSequent {
 	 * @see org.eventb.core.IPOSequent#setDescriptionName(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setDescription(String description, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(DESCRIPTION_ATTRIBUTE, description, monitor);
+		setStringAttribute(EventBAttributes.DESCRIPTION_ATTRIBUTE, description, monitor);
 	}
 
 }

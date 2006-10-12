@@ -9,7 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -31,9 +31,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	
-	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden"; 
-	public static String PRESERVED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".preserved"; 
-
 	public SCVariable(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -44,19 +41,19 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	}
 
 	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
-		setBooleanAttribute(FORBIDDEN_ATTRIBUTE, value, monitor);
+		setBooleanAttribute(EventBAttributes.FORBIDDEN_ATTRIBUTE, value, monitor);
 	}
 
 	public boolean isForbidden(IProgressMonitor monitor) throws RodinDBException {
-		return getBooleanAttribute(FORBIDDEN_ATTRIBUTE, monitor);
+		return getBooleanAttribute(EventBAttributes.FORBIDDEN_ATTRIBUTE, monitor);
 	}
 
 	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
-		setBooleanAttribute(PRESERVED_ATTRIBUTE, value, monitor);
+		setBooleanAttribute(EventBAttributes.PRESERVED_ATTRIBUTE, value, monitor);
 	}
 
 	public boolean isPreserved(IProgressMonitor monitor) throws RodinDBException {
-		return getBooleanAttribute(PRESERVED_ATTRIBUTE, monitor);
+		return getBooleanAttribute(EventBAttributes.PRESERVED_ATTRIBUTE, monitor);
 	}
 
 }
