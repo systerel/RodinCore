@@ -159,11 +159,6 @@ public class RodinProject extends Openable implements IRodinProject {
 		return this.project.equals(other.project);
 	}
 
-	@Override
-	public boolean exists() {
-		return hasRodinNature(this.project);
-	}	
-
 	@Deprecated
 	public IRodinElement findElement(IPath path) throws RodinDBException {
 		if (path == null || path.isAbsolute()) {

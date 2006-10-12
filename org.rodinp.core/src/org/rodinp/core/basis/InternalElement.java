@@ -108,6 +108,17 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		new DeleteElementsOperation(this, force).runOperation(monitor);
 	}
 
+	@Override
+	public boolean exists() {
+		try {
+			getElementInfo();
+			return true;
+		} catch (RodinDBException e) {
+			// element doesn't exist
+			return false;
+		}
+	}
+
 	public String[] getAttributeNames(IProgressMonitor monitor)
 			throws RodinDBException {
 		return getFileInfo(monitor).getAttributeNames(this);

@@ -189,18 +189,7 @@ public abstract class RodinElement extends PlatformObject implements
 		}
 	}
 
-	/**
-	 * @see IRodinElement
-	 */
-	public boolean exists() {
-		try {
-			getElementInfo();
-			return true;
-		} catch (RodinDBException e) {
-			// element doesn't exist: return false
-		}
-		return false;
-	}
+	public abstract boolean exists();
 
 	/**
 	 * @see IRodinElement

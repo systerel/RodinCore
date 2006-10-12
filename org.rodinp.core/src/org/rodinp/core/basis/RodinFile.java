@@ -165,6 +165,14 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
+	public boolean exists() {
+		if (snapshot) {
+			return getMutableCopy().exists();
+		}
+		return super.exists();
+	}
+
+	@Override
 	public final String getElementName() {
 		return file.getName();
 	}
