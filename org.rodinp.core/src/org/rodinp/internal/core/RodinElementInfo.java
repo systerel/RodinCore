@@ -47,6 +47,15 @@ public class RodinElementInfo {
 		}
 	}
 
+	public boolean containsChild(RodinElement element) {
+		RodinElement[] cachedChildren = children;
+		for (RodinElement child: cachedChildren) {
+			if (child.equals(element))
+				return true;
+		}
+		return false;
+	}
+	
 	public RodinElement[] getChildren() {
 		return this.children;
 	}
