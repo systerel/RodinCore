@@ -256,11 +256,12 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return snapshot;
 	}
 	
-//	@Override
-//	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
-//		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
-//		super.makeConsistent(monitor);
-//	}
+	@Override
+	public void makeConsistent(IProgressMonitor monitor) throws RodinDBException {
+		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
+		close();
+		super.makeConsistent(monitor);
+	}
 
 	public final void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
