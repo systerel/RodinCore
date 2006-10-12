@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
@@ -76,15 +77,22 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 		rodinFile.close();
 		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
 		rodinDBManager.removeBuffer(rodinFile.getMutableCopy(), true);
+		// Also remove the element from its parent, if open
+		Openable parent = rodinFile.getParent();
+		OpenableElementInfo parentInfo = rodinDBManager.getInfo(parent);
+		if (parentInfo != null) {
+			parentInfo.removeChild(rodinFile);
+		}
 	}
 
 	@Override
 	protected void verify(IRodinElement element) throws RodinDBException {
-		if (element == null || !element.exists())
-			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
-
 		if (! (element instanceof RodinFile)) {
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
 		}
+
+		if (element == null || !element.exists())
+			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 	}
+
 }

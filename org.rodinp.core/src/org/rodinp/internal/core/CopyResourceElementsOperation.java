@@ -270,16 +270,16 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 	 */
 	@Override
 	protected void verify(IRodinElement element) throws RodinDBException {
+		if (! (element instanceof RodinFile)) {
+			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+		}
+		
 		if (element == null || !element.exists())
 			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 			
 		if (element.isReadOnly() && (isRename() || isMove()))
 			error(IRodinDBStatusConstants.READ_ONLY, element);
 
-		if (! (element instanceof RodinFile)) {
-			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
-		}
-	
 		RodinElement dest = (RodinElement) getDestinationParent(element);
 		verifyDestination(element, dest);
 		if (this.renamings != null) {

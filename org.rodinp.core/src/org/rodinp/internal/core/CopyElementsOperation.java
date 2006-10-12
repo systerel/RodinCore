@@ -219,11 +219,11 @@ public class CopyElementsOperation extends MultiOperation {
 	 */
 	@Override
 	protected void verify(IRodinElement element) throws RodinDBException {
-		if (element == null || !element.exists())
-			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
-		
 		if (! (element instanceof InternalElement))
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+		
+		if (element == null || !element.exists())
+			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 		
 		if (element.isReadOnly() && (isRename() || isMove()))
 			error(IRodinDBStatusConstants.READ_ONLY, element);
