@@ -43,6 +43,7 @@ import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IOpenable;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinDBStatus;
@@ -163,6 +164,59 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			fail(message);
 	}
 	
+	/*
+	 * Assert existence of the given element. As a side-effect, checks that the
+	 * existence test doesn't change the open status of the element, if it's
+	 * openable.
+	 */
+	protected static void assertExists(String message, IRodinElement element) {
+		final IOpenable openable;
+		final boolean isOpen;
+		if (element instanceof IOpenable) {
+			openable = (IOpenable) element;
+			isOpen = openable.isOpen();
+		} else {
+			openable = null;
+			isOpen = false;
+		}
+		assertTrue(message, element.exists());
+		if (openable != null) {
+			assertEquals("Open status of element changed during existence test",
+					isOpen, openable.isOpen());
+		}
+	}
+	
+	/*
+	 * Assert non-existence of the given element. As a side-effect, checks that
+	 * the existence test doesn't change the open status of the element, if it's
+	 * openable.
+	 */
+	protected static void assertNotExists(String message, IRodinElement element) {
+		assertFalse(message, element.exists());
+		if (element instanceof IOpenable) {
+			final IOpenable openable = (IOpenable) element;
+			assertFalse("Inexistent element should not be open",
+					openable.isOpen());
+		}
+	}
+	
+	/**
+	 * Wait for autobuild notification to occur
+	 */
+	public static void waitForAutoBuild() {
+		boolean wasInterrupted = false;
+		do {
+			try {
+				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				wasInterrupted = false;
+			} catch (OperationCanceledException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				wasInterrupted = true;
+			}
+		} while (wasInterrupted);
+	}
+
 	protected DeltaListener deltaListener = new DeltaListener();
 	 
 	
@@ -288,7 +342,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	public void assertContents(String message, String expectedContents,
 			IInternalElement element) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals(message, expectedContents, element.getContents());
 	}
 	
@@ -298,7 +352,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	public void assertContentsChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setContents(newContents);
 		assertContents("Contents should have changed", newContents, element);
 	}
@@ -309,7 +363,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	public void assertContentsNotChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertTrue("Element should be read-only", element.isReadOnly());
 		String oldContents = element.getContents();
 		assertDiffers("Old and new contents should differ",
@@ -329,7 +383,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	public void assertCreation(IRodinElement[] newElements) {
 		for (int i = 0; i < newElements.length; i++) {
 			IRodinElement newElement = newElements[i];
-			assertTrue("Element should be present after creation", newElement.exists());
+			assertExists("Element should be present after creation", newElement);
 		}
 	}
 
@@ -349,14 +403,16 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		IRodinElement elementToDelete = null;
 		for (int i = 0; i < elementsToDelete.length; i++) {
 			elementToDelete = elementsToDelete[i];
-			assertTrue("Element must be present to be deleted", elementToDelete.exists());
+			assertExists("Element must be present to be deleted", elementToDelete);
 		}
 	
 		getRodinDB().delete(elementsToDelete, false, null);
 		
 		for (int i = 0; i < elementsToDelete.length; i++) {
 			elementToDelete = elementsToDelete[i];
-			assertTrue("Element should not be present after deletion: " + elementToDelete, !elementToDelete.exists());
+			assertNotExists(
+					"Element should not be present after deletion: " + elementToDelete,
+					elementToDelete);
 		}
 	}
 
@@ -1011,23 +1067,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	
 	protected void tearDown() throws Exception {
 		super.tearDown();
-	}
-
-	/**
-	 * Wait for autobuild notification to occur
-	 */
-	public static void waitForAutoBuild() {
-		boolean wasInterrupted = false;
-		do {
-			try {
-				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-				wasInterrupted = false;
-			} catch (OperationCanceledException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				wasInterrupted = true;
-			}
-		} while (wasInterrupted);
 	}
 
 //	public static void waitUntilIndexesReady() {
