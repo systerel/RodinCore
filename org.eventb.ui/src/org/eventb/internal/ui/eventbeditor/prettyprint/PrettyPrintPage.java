@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -28,6 +27,8 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
@@ -35,7 +36,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class PrettyPrintPage extends FormPage implements
+public class PrettyPrintPage extends EventBEditorPage implements
 		IElementChangedListener {
 
 	// Title, tab title and ID of the page.
@@ -49,9 +50,14 @@ public class PrettyPrintPage extends FormPage implements
 
 	private IEventBFormText formText;
 
-	public PrettyPrintPage(FormEditor editor) {
-		super(editor, PAGE_ID, PAGE_TAB_TITLE);
-		((EventBEditor) editor).addElementChangedListener(this);
+	public PrettyPrintPage() {
+		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE);
+	}
+
+	@Override
+	public void initialize(FormEditor editor) {
+		super.initialize(editor);
+		((IEventBEditor) editor).addElementChangedListener(this);
 	}
 
 	/*
@@ -62,7 +68,6 @@ public class PrettyPrintPage extends FormPage implements
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		form = managedForm.getForm();
-		form.setText(PAGE_TITLE);
 		Composite body = form.getBody();
 		body.setLayout(new FillLayout());
 
@@ -433,7 +438,7 @@ public class PrettyPrintPage extends FormPage implements
 	public void dispose() {
 		if (formText != null)
 			formText.dispose();
-		((EventBEditor) this.getEditor()).removeElementChangedListener(this);
+		((IEventBEditor) this.getEditor()).removeElementChangedListener(this);
 		super.dispose();
 	}
 

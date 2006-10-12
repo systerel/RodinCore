@@ -86,14 +86,14 @@
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBMachineEditorContributor"
             extensions="bum"
             icon="icons/full/obj16/mch_obj.gif"
-            id="org.eventb.ui.editors.EventBMachineEditor"
+            id="org.eventb.ui.editors.machine"
             name="Event-B Machine Editor"/>
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
             extensions="buc"
             icon="icons/full/obj16/ctx_obj.gif"
-            id="org.eventb.ui.editors.EventBContextEditor"
+            id="org.eventb.ui.editors.context"
             name="Event-B Context Editor"/>
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
@@ -103,6 +103,11 @@
             id="org.eventb.ui.editors.ProverUI"
             name="Prover User Interface"/>
    </extension>
+   <extension-point id="editorPages" name="%editorPagesName" schema="schema/editorPages.exsd"/>
+   <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
+   <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
+   <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
+   <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -121,44 +126,90 @@
             id="org.eventb.ui.wizards.NewComponent"
             name="New Event-B Component"/>
    </extension>
-   <extension-point id="machinePages" name="%machinePagesName" schema="schema/machinePages.exsd"/>
-   <extension-point id="contextPages" name="Event-B Context Form Page" schema="schema/contextPages.exsd"/>
-   <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
-   <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
-   <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
-   <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
+  
    <extension
-         point="org.eventb.ui.machinePages">
+         point="org.eventb.ui.editorPages">
       <page
             class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
-            name="Dependencies"/>
+            id="org.eventb.ui.dependencies"
+            name="Dependencies"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.VariablePage"
-            name="Variables"/>
+            id="org.eventb.ui.variables"
+            name="Variables"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.InvariantPage"
-            name="Invariants"/>
+            id="org.eventb.ui.invariants"
+            name="Invariants"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
+            id="org.eventb.ui.carriersets"
+            name="Carrier Sets">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.TheoremPage"
-            name="Theorems"/>
+            id="org.eventb.ui.theorems"
+            name="Theorems"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.EventPage"
-            name="Events"/>
+            id="org.eventb.ui.events"
+            name="Events"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
-            name="Synthetic View"/>
+            id="org.eventb.ui.synthetic"
+            name="Synthetic View"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
-            name="Pretty Print"/>
-   </extension>
-   <extension
-         point="org.eventb.ui.contextPages">
-      <page class="org.eventb.internal.ui.eventbeditor.DependenciesPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.ConstantPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.AxiomPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.TheoremPage"/>
-      <page class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"/>
+            id="org.eventb.ui.prettyprint"
+            name="Pretty Print"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.ConstantPage"
+            id="org.eventb.ui.constants"
+            name="Constants">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.AxiomPage"
+            id="org.eventb.ui.axioms"
+            name="Axioms">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -177,14 +228,14 @@
          point="org.eclipse.ui.editorActions">
       <editorContribution
             id="org.eventb.ui.machineContribution"
-            targetID="org.eventb.ui.editors.EventBMachineEditor">
+            targetID="org.eventb.ui.editors.MachineEditor">
          <menu
                id="org.eventb.ui.eventBMenu"
                label="Event-B">
             <groupMarker name="New"/>
          </menu>
-         <action
-               actionID="org.eventb.ui.actions.newEvents"
+         <action 
+         	   actionID="org.eventb.ui.editors.machinentb.ui.actions.newEvents"
                class="org.eventb.internal.ui.eventbeditor.actions.NewEvent"
                icon="icons/full/ctool16/newevt_edit.gif"
                id="org.eventb.ui.actions.newevent"
@@ -224,6 +275,16 @@
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="Create new invariants for the machine"/>
          <action
+               actionID="org.eventb.ui.actions.newVariant"
+               class="org.eventb.internal.ui.eventbeditor.actions.NewVariant"
+               icon="icons/full/ctool16/newvariant_edit.gif"
+               id="org.eventb.ui.actions.newvariant"
+               label="New Variant"
+               menubarPath="org.eventb.ui.eventBMenu/New"
+               style="push"
+               toolbarPath="org.eventb.ui.eventBEditor"
+               tooltip="Create new variant for the machine"/>
+         <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="Automatic Invariant Naming"
@@ -256,14 +317,14 @@
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
-            targetID="org.eventb.ui.editors.EventBContextEditor">
+            targetID="org.eventb.ui.editors.ContextEditor">
          <menu
                id="org.eventb.ui.eventBMenu"
                label="Event-B">
             <groupMarker name="New"/>
          </menu>
          <action
-               actionID="org.eventb.ui.actions.newCarrierSets"
+               actionID="org.eventb.ui.editors.context.actions.newCarrierSets"
                class="org.eventb.internal.ui.eventbeditor.actions.NewCarrierSets"
                icon="icons/full/ctool16/newset_edit.gif"
                id="org.eventb.ui.actions.newcarriersets"
@@ -658,6 +719,10 @@
             class="org.eventb.core.IWitness"
             icon="icons/unattempted.gif"
             name="Witness"/>
+      <element
+            class="org.eventb.core.IVariant"
+            icon="icons/sample.gif"
+            name="Variant"/>
    </extension>
 
 </plugin>

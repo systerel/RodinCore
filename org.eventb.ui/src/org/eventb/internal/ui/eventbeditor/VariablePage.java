@@ -16,8 +16,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -41,8 +41,8 @@ public class VariablePage extends EventBFormPage {
 	 * @param editor
 	 *            The form editor that holds the page
 	 */
-	public VariablePage(FormEditor editor) {
-		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
+	public VariablePage() {
+		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
 	}
 
 	/*
@@ -54,7 +54,7 @@ public class VariablePage extends EventBFormPage {
 	 */
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			EventBEditor editor) {
+			IEventBEditor editor) {
 		VariableMasterSection part = new VariableMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
 				(EventBEditor) this.getEditor());

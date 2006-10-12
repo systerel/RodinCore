@@ -54,6 +54,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -72,7 +73,7 @@ import org.rodinp.core.RodinMarkerUtil;
  *         Abstract Event-B specific form editor for machines, contexts.
  */
 public abstract class EventBEditor extends FormEditor implements
-		IElementChangedListener, IGotoMarker {
+		IElementChangedListener, IGotoMarker, IEventBEditor {
 
 	private String lastActivePageID = null;
 
@@ -201,12 +202,8 @@ public abstract class EventBEditor extends FormEditor implements
 	// List of status changed listener (when elements are saved).
 	private Collection<IStatusChangedListener> statusListeners;
 
-	/**
-	 * Add an element to be new.
-	 * <p>
-	 * 
-	 * @param element
-	 *            a Rodin element
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addNewElement(org.rodinp.core.IRodinElement)
 	 */
 	public void addNewElement(IRodinElement element) {
 		newElements.add(element);
@@ -220,35 +217,22 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 	}
 
-	/**
-	 * Add a new status changed listener.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            a status changed listener
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
 	public void addStatusListener(IStatusChangedListener listener) {
 		statusListeners.add(listener);
 	}
 
-	/**
-	 * Remove a status changed listener.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            a status changed listener
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
 	public void removeStatusListener(IStatusChangedListener listener) {
 		statusListeners.remove(listener);
 	}
 
-	/**
-	 * Check if an element is new (unsaved).
-	 * <p>
-	 * 
-	 * @param element
-	 *            a Rodin element
-	 * @return <code>true</code> if the element is new (unsaved)
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#isNewElement(org.rodinp.core.IRodinElement)
 	 */
 	public boolean isNewElement(IRodinElement element) {
 		return newElements.contains(element);
@@ -265,12 +249,8 @@ public abstract class EventBEditor extends FormEditor implements
 		statusListeners = new HashSet<IStatusChangedListener>();
 	}
 
-	/**
-	 * Add a new element changed listener.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            an element changed listener
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
 	public void addElementChangedListener(IElementChangedListener listener) {
 		synchronized (listeners) {
@@ -279,12 +259,8 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 	}
 
-	/**
-	 * Remove an element changed listener.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            an element changed listener
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
 		synchronized (listeners) {
@@ -562,13 +538,8 @@ public abstract class EventBEditor extends FormEditor implements
 	// }
 	// return false;
 	// }
-	/**
-	 * Set the selection in the editor.
-	 * <p>
-	 * 
-	 * @param ssel
-	 *            the current selecting element. It can be an IRodinElement or a
-	 *            TreeNode (from the ProjectExplorer).
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#edit(java.lang.Object)
 	 */
 	public void edit(Object ssel) {
 		if (ssel instanceof IRodinElement) {
@@ -771,6 +742,9 @@ public abstract class EventBEditor extends FormEditor implements
 			lastActivePageID = page.getId();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
+	 */
 	public void setSelection(IInternalElement element) {
 		if (element instanceof IRodinElement) {
 			elementSelect((IRodinElement) element);

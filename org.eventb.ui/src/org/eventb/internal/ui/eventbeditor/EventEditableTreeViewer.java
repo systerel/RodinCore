@@ -29,6 +29,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -144,7 +145,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style used to create the tree viewer
 	 */
-	public EventEditableTreeViewer(EventBEditor editor, Composite parent,
+	public EventEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new EventContentProvider());

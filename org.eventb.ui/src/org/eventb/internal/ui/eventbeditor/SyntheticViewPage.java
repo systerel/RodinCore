@@ -16,9 +16,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IMachineFile;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -41,8 +41,8 @@ public class SyntheticViewPage extends EventBFormPage {
 	 * @param editor
 	 *            The form editor that holds the page
 	 */
-	public SyntheticViewPage(FormEditor editor) {
-		super(editor, PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
+	public SyntheticViewPage() {
+		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
 	}
 
 	/*
@@ -54,7 +54,7 @@ public class SyntheticViewPage extends EventBFormPage {
 	 */
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			EventBEditor editor) {
+			IEventBEditor editor) {
 		EventBPartWithButtons part;
 		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachineFile)
 			part = new SyntheticMachineViewSection(managedForm, parent,

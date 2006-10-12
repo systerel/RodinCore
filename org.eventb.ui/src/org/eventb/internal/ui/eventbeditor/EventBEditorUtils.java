@@ -37,6 +37,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
@@ -50,6 +51,7 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixThmName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
+import org.eventb.internal.ui.eventbeditor.actions.PrefixVariantName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixWitName;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -77,6 +79,8 @@ public class EventBEditorUtils {
 	private static IVariable newVar;
 
 	private static IInvariant newInv;
+
+	private static IVariant newVariant;
 
 	private static ITheorem newThm;
 
@@ -1185,6 +1189,54 @@ public class EventBEditorUtils {
 						newInv.setLabel(name, monitor);
 						newInv.setPredicateString(content);
 						editor.addNewElement(newInv);
+					}
+				}
+
+			}, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Utility method to create a new variant using a modal dialog.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method.
+	 * @param rodinFile
+	 *            the Rodin file that the new invariants will be created in
+	 */
+	public static void newVariant(final EventBEditor editor,
+			final IRodinFile rodinFile) {
+		try {
+			String variantPrefix = UIUtils.getPrefix(editor,
+					PrefixVariantName.QUALIFIED_NAME, PrefixVariantName.DEFAULT_PREFIX);
+
+			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
+					Display.getCurrent().getActiveShell(), "New Variant",
+					"Expression", variantPrefix);
+
+			dialog.open();
+			final Collection<String> expressions = dialog.getAttributes();
+			RodinCore.run(new IWorkspaceRunnable() {
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+
+					String prefix = UIUtils.getNamePrefix(editor,
+							PrefixVariantName.QUALIFIED_NAME,
+							PrefixVariantName.DEFAULT_PREFIX);
+					int index = UIUtils.getFreeElementNameIndex(editor,
+							rodinFile, IVariant.ELEMENT_TYPE, prefix);
+					for (String expression : expressions) {
+						newVariant = (IVariant) rodinFile.createInternalElement(
+								IVariant.ELEMENT_TYPE, prefix + index, null,
+								monitor);
+						index = UIUtils.getFreeElementNameIndex(editor,
+								rodinFile, IVariant.ELEMENT_TYPE, prefix,
+								index + 1);
+						newVariant.setExpressionString(expression);
+						editor.addNewElement(newVariant);
 					}
 				}
 

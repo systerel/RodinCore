@@ -12,13 +12,10 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
-import java.lang.reflect.Constructor;
-
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.EventBUIPlugin;
-import org.eventb.internal.ui.ExtensionLoader;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.EventBEditorPage;
 
 /**
  * @author htson
@@ -39,7 +36,7 @@ public class EventBMachineEditor extends EventBEditor {
 	 * <code>"org.eventb.internal.ui.editors.EventBMachineEditor"</code>).
 	 */
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".editors.EventBMachineEditor";
+			+ ".editors.machine";
 
 	/**
 	 * Default constructor.
@@ -48,27 +45,24 @@ public class EventBMachineEditor extends EventBEditor {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
 	protected void addPages() {
-		Constructor[] constructors = new Constructor[0];
+		EventBEditorPage[] pages = EditorPagesRegistry.getDefault().getPages(
+				EDITOR_ID);
 
-		constructors = ExtensionLoader.getMachinePages();
-
-		try {
-			// Create the pages
-			for (int i = 0; i < constructors.length; i++) {
-				Object[] objects = { this };
-				addPage((IFormPage) constructors[i].newInstance(objects));
+		for (EventBEditorPage page : pages) {
+			page.initialize(this);
+			try {
+				addPage(page);
+			} catch (PartInitException e) {
+				if (EventBEditorUtils.DEBUG)
+					e.printStackTrace();
+				UIUtils.log(e, "Failed to initialise page " + page.getId());
 			}
-		} catch (PartInitException e) {
-			// TODO Handle exception
-			MessageDialog.openError(null, "Event-B Editor",
-					"Error creating pages for Event-B Editor");
-		} catch (Exception e) {
-			// TODO Handle exception
-			e.printStackTrace();
 		}
 	}
 

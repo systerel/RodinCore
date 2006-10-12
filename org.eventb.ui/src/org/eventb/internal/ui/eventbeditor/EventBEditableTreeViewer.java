@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -50,7 +51,7 @@ import org.rodinp.core.IRodinFile;
 public abstract class EventBEditableTreeViewer extends TreeViewer {
 	private TreeEditor treeEditor;
 
-	protected EventBEditor editor;
+	protected IEventBEditor editor;
 
 	// Number of columns for this Tree Viewer. Should be consistance with the
 	// abstract method createTreeColumns().
@@ -196,7 +197,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param style
 	 *            The style used to creat the part
 	 */
-	public EventBEditableTreeViewer(EventBEditor editor, Composite parent,
+	public EventBEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(parent, style);
 		this.editor = editor;

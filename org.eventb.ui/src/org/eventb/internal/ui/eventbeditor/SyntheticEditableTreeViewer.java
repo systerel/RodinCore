@@ -33,6 +33,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -149,7 +150,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            the style to create the viewer
 	 */
-	public SyntheticEditableTreeViewer(EventBEditor editor, Composite parent,
+	public SyntheticEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new SyntheticContentProvider());
@@ -242,6 +243,11 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
 					if (!assignmentElement.getAssignmentString().equals(text)) {
 						assignmentElement.setAssignmentString(text);
+					}
+				} else if (element instanceof IExpressionElement) {
+					IExpressionElement expressionElement = (IExpressionElement) element;
+					if (!expressionElement.getExpressionString().equals(text)) {
+						expressionElement.setExpressionString(text);
 					}
 				}
 			} catch (RodinDBException e) {

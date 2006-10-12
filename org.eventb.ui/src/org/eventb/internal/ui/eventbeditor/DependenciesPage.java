@@ -17,11 +17,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -30,7 +29,7 @@ import org.rodinp.core.IRodinFile;
  *         An implementation of the Event-B Form Page for editing the
  *         dependencies (e.g. Sees, refines clause).
  */
-public class DependenciesPage extends FormPage {
+public class DependenciesPage extends EventBEditorPage {
 
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = "Dependencies"; //$NON-NLS-1$
@@ -45,8 +44,8 @@ public class DependenciesPage extends FormPage {
 	 * @param editor
 	 *            The form editor that holds the page
 	 */
-	public DependenciesPage(FormEditor editor) {
-		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
+	public DependenciesPage() {
+		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE); //$NON-NLS-1$
 	}
 
 	/*
@@ -57,7 +56,7 @@ public class DependenciesPage extends FormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PAGE_TITLE); //$NON-NLS-1$
+
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;

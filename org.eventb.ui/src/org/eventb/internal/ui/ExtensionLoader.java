@@ -46,7 +46,7 @@ public class ExtensionLoader {
 	private static Constructor[] machinePages = null;
 
 	private static final String MACHINE_PAGE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".machinePages";
+			+ ".editorPages";
 
 	/*
 	 * Array of constructors for context pages.

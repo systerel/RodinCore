@@ -48,6 +48,7 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
@@ -63,6 +64,7 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
@@ -139,6 +141,9 @@ public class UIUtils {
 
 				if (obj instanceof IExtendsContext)
 					return ((IExtendsContext) obj).getAbstractContextName();
+				if (obj instanceof IVariant)
+					return "Variant";
+				
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
@@ -213,7 +218,7 @@ public class UIUtils {
 				} else if (component instanceof IContextFile) {
 					editorId = EventBContextEditor.EDITOR_ID;
 				}
-				EventBEditor editor = (EventBEditor) EventBUIPlugin
+				IEventBEditor editor = (IEventBEditor) EventBUIPlugin
 						.getActivePage().openEditor(fileInput, editorId);
 				editor.edit(obj);
 			} catch (PartInitException e) {
@@ -655,13 +660,13 @@ public class UIUtils {
 		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementNameIndex(EventBEditor editor,
+	public static int getFreeElementNameIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix)
 			throws RodinDBException {
 		return getFreeElementNameIndex(editor, parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementNameIndex(EventBEditor editor,
+	public static int getFreeElementNameIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix, int beginIndex)
 			throws RodinDBException {
 
@@ -684,13 +689,13 @@ public class UIUtils {
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementLabelIndex(EventBEditor editor,
+	public static int getFreeElementLabelIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix)
 			throws RodinDBException {
 		return getFreeElementLabelIndex(editor, parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementLabelIndex(EventBEditor editor,
+	public static int getFreeElementLabelIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix, int beginIndex)
 			throws RodinDBException {
 
@@ -720,13 +725,13 @@ public class UIUtils {
 				+ getFreeElementIdentifierIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementIdentifierIndex(EventBEditor editor,
+	public static int getFreeElementIdentifierIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix)
 			throws RodinDBException {
 		return getFreeElementIdentifierIndex(editor, parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementIdentifierIndex(EventBEditor editor,
+	public static int getFreeElementIdentifierIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix, int beginIndex)
 			throws RodinDBException {
 

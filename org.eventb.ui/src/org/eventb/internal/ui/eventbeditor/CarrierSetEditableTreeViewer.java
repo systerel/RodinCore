@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextFile;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -138,7 +139,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            The style used to create this tree viewer
 	 */
-	public CarrierSetEditableTreeViewer(EventBEditor editor, Composite parent,
+	public CarrierSetEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new CarrierSetContentProvider());

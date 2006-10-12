@@ -15,10 +15,10 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -27,10 +27,10 @@ import org.rodinp.core.IRodinElement;
  *         An abstract class which extends </class>FormPage<class> for editing
  *         Rodin elements.
  */
-public abstract class EventBFormPage extends FormPage {
+public abstract class EventBFormPage extends EventBEditorPage {
 
 	// Title of the page.
-	private String pageTitle;
+//	private String pageTitle;
 
 	private EventBPartWithButtons part;
 
@@ -47,10 +47,10 @@ public abstract class EventBFormPage extends FormPage {
 	 * @param pageTabTitle
 	 *            The tab title of the page
 	 */
-	public EventBFormPage(FormEditor editor, String pageID, String pageTitle,
+	public EventBFormPage(String pageID, String pageTitle,
 			String pageTabTitle) {
-		super(editor, pageID, pageTabTitle); //$NON-NLS-1$
-		this.pageTitle = pageTitle;
+		super(pageID, pageTabTitle, pageTitle); //$NON-NLS-1$
+//		this.pageTitle = pageTitle;
 	}
 
 	/*
@@ -62,7 +62,6 @@ public abstract class EventBFormPage extends FormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 
-		form.setText(pageTitle); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -72,7 +71,7 @@ public abstract class EventBFormPage extends FormPage {
 		body.setLayout(layout);
 
 		part = createMasterSection(managedForm, body, Section.TITLE_BAR
-				| Section.DESCRIPTION, (EventBEditor) this.getEditor());
+				| Section.DESCRIPTION, (IEventBEditor) this.getEditor());
 		managedForm.addPart(part);
 
 		// createMirrorSections(body, managedForm);
@@ -107,7 +106,7 @@ public abstract class EventBFormPage extends FormPage {
 	 */
 	protected abstract EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
-			EventBEditor editor);
+			IEventBEditor editor);
 
 	/**
 	 * Setting the selection within the page.

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.basis.MachineFile;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -130,7 +131,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 
 	}
 
-	public VariableEditableTreeViewer(EventBEditor editor, Composite parent,
+	public VariableEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new VariableContentProvider());

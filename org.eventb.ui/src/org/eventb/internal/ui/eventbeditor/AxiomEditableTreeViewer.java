@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -139,7 +140,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @param style
 	 *            The style used to create the tree viewer
 	 */
-	public AxiomEditableTreeViewer(EventBEditor editor, Composite parent,
+	public AxiomEditableTreeViewer(IEventBEditor editor, Composite parent,
 			int style) {
 		super(editor, parent, style);
 		this.setContentProvider(new AxiomContentProvider());

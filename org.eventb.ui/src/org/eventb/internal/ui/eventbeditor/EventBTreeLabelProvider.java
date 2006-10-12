@@ -34,8 +34,10 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
+import org.eventb.core.IVariant;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -52,7 +54,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	// provider.
 
 	// The associated Event-B Editor
-	private EventBEditor editor;
+	private IEventBEditor editor;
 
 	// The font used in the tree viewer
 	private Font font = null;
@@ -66,7 +68,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @param editor
 	 *            An Event-B Editor
 	 */
-	public EventBTreeLabelProvider(EventBEditor editor, TreeViewer viewer) {
+	public EventBTreeLabelProvider(IEventBEditor editor, TreeViewer viewer) {
 		this.editor = editor;
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);
@@ -109,6 +111,9 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 
 				if (element instanceof IIdentifierElement)
 					return ((IIdentifierElement) element).getIdentifierString();
+				
+				if (element instanceof IVariant)
+					return "Variant";
 
 				// if (rodinElement instanceof IInternalElement)
 				// return ((IInternalElement)
