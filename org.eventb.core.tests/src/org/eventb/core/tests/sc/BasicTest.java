@@ -14,8 +14,10 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -70,6 +72,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * Abstract class for builder tests.
@@ -103,7 +106,20 @@ public abstract class BasicTest extends TestCase {
 	protected ITypeEnvironment emptyEnv = factory.makeTypeEnvironment();
 
 	protected void runBuilder() throws CoreException {
-		rodinProject.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		final IProject project = rodinProject.getProject();
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		IMarker[] buildPbs= project.findMarkers(
+				RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER,
+				true,
+				IResource.DEPTH_INFINITE
+		);
+		if (buildPbs.length != 0) {
+			for (IMarker marker: buildPbs) {
+				System.out.println("Build problem for " + marker.getResource());
+				System.out.println("  " + marker.getAttribute(IMarker.MESSAGE));
+			}
+			fail("Build produced build problems, see console");
+		}
 	}
 
 	protected ISCContextFile runSC(IContextFile context) throws CoreException {
