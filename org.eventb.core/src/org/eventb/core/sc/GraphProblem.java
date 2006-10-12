@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinProblem;
  * @author Stefan Hallerstede
  *
  */
-public enum SCProblem implements IRodinProblem {
+public enum GraphProblem implements IRodinProblem {
 
 	InvalidIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_InvalidIdentifierName),
 	AbstractContextNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractContextNotFound),
@@ -103,7 +103,7 @@ public enum SCProblem implements IRodinProblem {
 	
 	private final int severity;
 
-	private SCProblem(int severity, String message) {
+	private GraphProblem(int severity, String message) {
 		this.severity = severity;
 		this.message = message;
 		this.errorCode = EventBPlugin.PLUGIN_ID + name();
