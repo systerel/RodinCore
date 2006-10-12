@@ -110,11 +110,16 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 
 	@Override
 	public boolean exists() {
+		RodinFile rodinFile = getRodinFile();
+		if (!rodinFile.exists()) {
+			return false;
+		}
 		try {
-			getElementInfo();
-			return true;
+			RodinFileElementInfo fileInfo = 
+				(RodinFileElementInfo) rodinFile.getElementInfo();
+			return fileInfo.containsDescendant(this);
 		} catch (RodinDBException e) {
-			// element doesn't exist
+			// file doesn't exist or is not parseable
 			return false;
 		}
 	}
