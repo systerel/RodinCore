@@ -2,10 +2,8 @@ package org.rodinp.core.tests;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -19,6 +17,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.core.tests.basis.NamedElement;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
@@ -33,8 +32,8 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		rodinProject = createRodinProject("foo");
-		rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		rodinProject = createRodinProject("P");
+		rodinFile = rodinProject.createRodinFile("x.test", true, null);
 	}
 
 	@Override
@@ -56,8 +55,9 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertEquals(expChildren.length != 0, parent.hasChildren());
 	}
 	
-	private void checkEmpty(IInternalElement... children) throws RodinDBException {
-		for (IInternalElement child: children) {
+	private void checkEmpty(IInternalElement... children)
+			throws RodinDBException {
+		for (IInternalElement child : children) {
 			assertFalse(child.hasChildren());
 		}
 	}
@@ -111,14 +111,14 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(e1, e11, e12);
 
 		assertEquals("Unexpected file contents",
-				"toto.test [in foo]\n"
+				"x.test [in P]\n"
 				+ "  e0[org.rodinp.core.tests.namedElement]\n"
 				+ "  e1[org.rodinp.core.tests.namedElement]\n"
 				+ "    e11[org.rodinp.core.tests.namedElement]\n"
 				+ "    e12[org.rodinp.core.tests.namedElement]\n"
 				+ "  e2[org.rodinp.core.tests.namedElement]\n"
 				+ "  e3[org.rodinp.core.tests.namedElement]",
-				rodinFile.toString());
+				((RodinFile) rodinFile).toDebugString());
 		
 		// rodinFile.save(null, true);
 		// showFile(rodinFile.getResource());
@@ -126,7 +126,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		// Cleanup
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		rodinFile = rodinProject.createRodinFile("x.test", true, null);
 		assertNotExists("Internal element should not exist", e0);
 		assertNotExists("Internal element should not exist", e1);
 		assertNotExists("Internal element should not exist", e11);
@@ -261,8 +261,8 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 
 		// Once the workable is finished, the database gets the resource delta
 		assertDeltas("Should report an unknown change to the file",
-				"foo[*]: {CHILDREN}\n" + 
-				"	toto.test[*]: {CONTENT}"
+				"P[*]: {CHILDREN}\n" + 
+				"	x.test[*]: {CONTENT}"
 		);
 
 		checkEmptyChildren(rodinFile);
@@ -303,7 +303,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		// Cleanup
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		rodinFile = rodinProject.createRodinFile("x.test", true, null);
 		assertNotExists("Internal element should not exist", e1);
 		checkChildren(rodinFile);
 	}
@@ -336,7 +336,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		// Cleanup
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("toto.test", true, null);
+		rodinFile = rodinProject.createRodinFile("x.test", true, null);
 		assertNotExists("Internal element should not exist", e1);
 		checkChildren(rodinFile);
 	}
@@ -361,9 +361,11 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	@SuppressWarnings("unused")
-	private void showFile(IFile file) throws CoreException, UnsupportedEncodingException, IOException {
+	private void showFile(IFile file) throws Exception {
 		InputStream contents = file.getContents();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(contents, "UTF-8"));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(contents, "UTF-8")
+		);
 		String line;
 		while ((line = reader.readLine()) != null) {
 			System.out.println(line);
@@ -371,4 +373,43 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		reader.close();
 	}
 
+	/*
+	 * Ensures that creating again an existing file empties it.
+	 */
+	public void testRecreateFile() throws Exception {
+		checkEmptyChildren(rodinFile);
+		IInternalElement ne = createNEPositive(rodinFile, "foo", null);
+		rodinFile.save(null, false);
+		checkEmptyChildren(rodinFile, ne);
+		
+		// Recreate the file
+		rodinProject.createRodinFile(rodinFile.getElementName(), true, null);
+		checkEmptyChildren(rodinFile);
+		createNEPositive(rodinFile, ne.getElementName(), null);
+		checkEmptyChildren(rodinFile, ne);
+	}
+	
+	/*
+	 * Ensures that creating again an existing file empties it, even when done
+	 * inside a runnable.
+	 */
+	public void testRecreateFileInRunnable() throws Exception {
+		checkEmptyChildren(rodinFile);
+		final IInternalElement ne = createNEPositive(rodinFile, "foo", null);
+		rodinFile.save(null, false);
+		checkEmptyChildren(rodinFile, ne);
+		
+		// Recreate the file
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				rodinProject.createRodinFile(rodinFile.getElementName(), true, null);
+				checkEmptyChildren(rodinFile);
+				createNEPositive(rodinFile, ne.getElementName(), null);
+				checkEmptyChildren(rodinFile, ne);
+			}
+		};
+		getWorkspace().run(runnable, null);
+		checkEmptyChildren(rodinFile, ne);
+	}
+	
 }
