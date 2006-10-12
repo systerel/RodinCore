@@ -10,11 +10,11 @@ package org.rodinp.internal.core.builder;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IMarker.SEVERITY;
 import static org.eclipse.core.resources.IMarker.SEVERITY_ERROR;
-import static org.eclipse.core.resources.IResource.DEPTH_ZERO;
+import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
+import static org.rodinp.core.RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER;
 import static org.rodinp.core.RodinMarkerUtil.CYCLE_DETECTED;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -50,7 +50,7 @@ public class MarkerHelper {
 			String messageId, Object... args) {
 
 		try {
-			IMarker marker = resource.createMarker(RODIN_PROBLEM_MARKER);
+			IMarker marker = resource.createMarker(BUILDPATH_PROBLEM_MARKER);
 			marker.setAttribute(SEVERITY, SEVERITY_ERROR);
 			marker.setAttribute(CYCLE_DETECTED, cycle);
 			String message = Messages.bind(messageId, args);
@@ -61,15 +61,23 @@ public class MarkerHelper {
 	}
 
 	/**
-	 * Deletes all build problem markers on the given file.
+	 * Deletes all problem markers (regular and build) on the given resource,
+	 * and all contained resources.
 	 * 
-	 * @param file
-	 *            file to clean up
+	 * @param resource
+	 *            resource to clean up recursively
 	 */
-	public static void deleteBuildMarkers(IFile file) {
+	public static void deleteAllProblemMarkers(IResource resource) {
 		try {
-			if (file.exists()) {
-				file.deleteMarkers(RODIN_PROBLEM_MARKER, false, DEPTH_ZERO);
+			if (resource.exists()) {
+				resource.deleteMarkers(
+						RODIN_PROBLEM_MARKER,
+						false,
+						DEPTH_INFINITE);
+				resource.deleteMarkers(
+						BUILDPATH_PROBLEM_MARKER,
+						false,
+						DEPTH_INFINITE);
 			}
 		} catch (CoreException e) {
 			Util.log(e, "when deleting markers in builder");
