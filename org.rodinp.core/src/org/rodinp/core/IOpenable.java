@@ -95,9 +95,11 @@ public interface IOpenable {
 	boolean isConsistent() throws RodinDBException;
 
 	/**
-	 * Returns whether this openable is open. This is a handle-only method.
+	 * Returns whether this openable is open. If this openable doesn't exist,
+	 * this method will always return <code>false</code> (as it can't be
+	 * opened).
 	 * 
-	 * @return true if this openable is open, false otherwise
+	 * @return <code>true</code> iff this openable is open
 	 */
 	boolean isOpen();
 

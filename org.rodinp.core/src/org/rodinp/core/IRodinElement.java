@@ -90,7 +90,15 @@ public interface IRodinElement extends IAdaptable {
 	 * a stable snapshot file never shows up among the children of its parent
 	 * element.
 	 * </p>
-	 * 
+	 * <p>
+	 * The fact that an openable element exists gives no guarantee upon whether
+	 * it can be opened.  For instance, a malformed Rodin file may exist, while
+	 * it can never be opened by the database (because it contains invalid XML). 
+	 * </p>
+	 * <p>
+	 * A call to this method might open the ancestors of this element, but will
+	 * never open this element itself.
+	 * </p>
 	 * @return <code>true</code> if this element exists in the Rodin database,
 	 *         and <code>false</code> if this element does not exist
 	 */
