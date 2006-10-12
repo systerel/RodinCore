@@ -85,6 +85,10 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		info.setChildren(childrenMap.keySet());
 	}
 
+	public synchronized boolean containsDescendant(InternalElement element) {
+		return getDOMElement(element) != null;
+	}
+
 	// dest must be an element of the Rodin file associated to this info.
 	// TODO check for sourceInfo parameter removal
 	public synchronized void copy(InternalElement source,
