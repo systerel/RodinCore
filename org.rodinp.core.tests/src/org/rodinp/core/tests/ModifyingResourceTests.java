@@ -93,11 +93,11 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		
 		final String type = NamedElement.ELEMENT_TYPE;
 		final IInternalElement element = parent.getInternalElement(type, name);
-		assertTrue("Parent should exist", parent.exists());
-		assertFalse("Element to create should not exist", element.exists());
+		assertExists("Parent should exist", parent);
+		assertNotExists("Element to create should not exist", element);
 		IRodinElement result = 
 				parent.createInternalElement(type, name, nextSibling, null);
-		assertTrue("Created element should exist", element.exists());
+		assertExists("Created element should exist", element);
 		return (NamedElement) result;
 	}
 
@@ -126,7 +126,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 			} catch (RodinDBException e) {
 				assertNameCollisionErrorFor(e, element);
 			}
-			assertTrue("Conflicting element should still exist", element.exists());
+			assertExists("Conflicting element should still exist", element);
 			return;
 		}
 		fail("Unexpected failure of createNENegative");

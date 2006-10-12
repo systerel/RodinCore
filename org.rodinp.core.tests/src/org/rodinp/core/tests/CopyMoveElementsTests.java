@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * Strongly inspired by org.eclipse.jdt.core.tests.model.CopyMoveElementsTests.java which is
  * 
  * Copyright (c) 2000, 2005 IBM Corporation and others.
@@ -220,7 +220,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		copyPositive(neSource, rfDest, null, null, false);
 		NamedElement neDest = getNamedElement(rfDest, "foo");
 		NamedElement childDest = getNamedElement(neDest, "bar");
-		assertTrue("Children not copied with parent", childDest.exists());
+		assertExists("Children not copied with parent", childDest);
 	}
 
 	/**
@@ -440,7 +440,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			);
 			
 			IRodinElement copy= generateHandle(nesSource[0], null, rfDest);
-			assertTrue("Copy should exist", copy.exists());
+			assertExists("Copy should exist", copy);
 		} finally {
 			stopDeltas();
 		}
@@ -486,7 +486,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			);
 			
 			IRodinElement copy= generateHandle(nesSource[0], null, rfDest);
-			assertTrue("Copy should exist", copy.exists());
+			assertExists("Copy should exist", copy);
 		} finally {
 			stopDeltas();
 			this.deleteProject("P2");
@@ -787,7 +787,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		movePositive(neSource, rfDest, null, null, false);
 		NamedElement neDest = getNamedElement(rfDest, "foo");
 		NamedElement childDest = getNamedElement(neDest, "bar");
-		assertTrue("Children not moved with parent", childDest.exists());
+		assertExists("Children not moved with parent", childDest);
 	}
 
 	/**
@@ -994,7 +994,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			);
 			
 			IRodinElement move= generateHandle(nesSource[0], null, rfDest);
-			assertTrue("Move should exist", move.exists());
+			assertExists("Move should exist", move);
 		} finally {
 			stopDeltas();
 		}
@@ -1043,7 +1043,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			);
 			
 			IRodinElement move= generateHandle(nesSource[0], null, rfDest);
-			assertTrue("Move should exist", move.exists());
+			assertExists("Move should exist", move);
 		} finally {
 			stopDeltas();
 			this.deleteProject("P2");
@@ -1260,7 +1260,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		renamePositive(neSource, "baz", false);
 		NamedElement neDest = getNamedElement(rfSource, "baz");
 		NamedElement childDest = getNamedElement(neDest, "bar");
-		assertTrue("Children not renamed with parent", childDest.exists());
+		assertExists("Children not renamed with parent", childDest);
 	}
 	
 	/**
@@ -1286,12 +1286,12 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		renamePositive(neSource, "baz", false);
 		NamedElement neDest = getNamedElement(rfSource, "baz");
 		NamedElement childDest = getNamedElement(neDest, "bar");
-		assertTrue("Children not renamed with parent", childDest.exists());
+		assertExists("Children not renamed with parent", childDest);
 
 		renamePositive(neDest, "foo", false);
 		NamedElement neDest2 = getNamedElement(rfSource, "foo");
 		NamedElement childDest2 = getNamedElement(neDest2, "bar");
-		assertTrue("Children not renamed with parent", childDest2.exists());
+		assertExists("Children not renamed with parent", childDest2);
 	}
 	
 	/**
@@ -1353,7 +1353,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			);
 			
 			IRodinElement rename= generateHandle(nesSource[0], "fun", rfSource);
-			assertTrue("Rename should exist", rename.exists());
+			assertExists("Rename should exist", rename);
 		} finally {
 			stopDeltas();
 		}

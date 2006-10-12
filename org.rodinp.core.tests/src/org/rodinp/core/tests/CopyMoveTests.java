@@ -71,7 +71,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 		// if forcing, ensure that a name collision exists
 		if (force) {
 			IRodinElement collision = generateHandle(element, rename, container);
-			assertTrue("Collision does not exist", collision.exists());
+			assertExists("Collision does not exist", collision);
 		}
 		
 		IRodinElement copy;
@@ -82,11 +82,11 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			element.copy(container, sibling, rename, force, null);
 			
 			// ensure the original element still exists
-			assertTrue("The original element must still exist", element.exists());
+			assertExists("The original element must still exist", element);
 			
 			// generate the new element	handle
 			copy = generateHandle(element, rename, container);
-			assertTrue("Copy should exist", copy.exists());
+			assertExists("Copy should exist", copy);
 			
 			//ensure correct position
 			if (element instanceof IInternalElement) {
@@ -185,8 +185,9 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 	public void moveNegative(IRodinElement[] elements, IRodinElement[] destinations, IRodinElement[] siblings, String[] renames, boolean force, int failureCode) {
 		try {
 			getRodinDB().move(elements, destinations, siblings, renames, force, null);
-		} catch (RodinDBException jme) {
-			assertTrue("Code not correct for RodinDBException: " + jme, jme.getStatus().getCode() == failureCode);
+		} catch (RodinDBException rde) {
+			assertEquals("Code not correct for RodinDBException: " + rde,
+					failureCode, rde.getStatus().getCode());
 			return;
 		}
 		assertTrue("The move should have failed for for multiple elements: ", false);
@@ -262,7 +263,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				} else {
 					collision = generateHandle(e, names[i], destinations[i]);
 				}
-				assertTrue("Collision does not exist", collision.exists());
+				assertExists("Collision does not exist", collision);
 			}
 		}
 		
@@ -281,9 +282,9 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				}
 				// ensure the original element no longer exists, unless moving within the same container
 				if (!destinations[i].equals(element.getParent())) {
-					assertTrue("The original element must not exist", !element.exists());
+					assertNotExists("The original element must not exist", element);
 				}
-				assertTrue("Moved element should exist", moved.exists());
+				assertExists("Moved element should exist", moved);
 				
 				//ensure correct position
 				if (element instanceof IInternalElement) {
@@ -387,7 +388,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				IRodinElement e = elements[i];
 				assertNotNull("New name is null", names[i]);
 				IRodinElement collision = generateHandle(e, names[i], e.getParent());
-				assertTrue("Collision does not exist", collision.exists());
+				assertExists("Collision does not exist", collision);
 			}
 		}
 		
@@ -402,8 +403,8 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 				IRodinElement renamed = generateHandle(element, names[i], parent);
 				
 				// ensure the original element no longer exists
-				assertTrue("The original element must not exist", !element.exists());
-				assertTrue("Renamed element should exist", renamed.exists());
+				assertNotExists("The original element must not exist", element);
+				assertExists("Renamed element should exist", renamed);
 				
 				IRodinElementDelta destDelta = null;
 				destDelta = getDeltaFor(parent, true);
@@ -444,7 +445,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			src.move(src.getParent(), nextSibling, null, false, null);
 			
 			// ensure the original element still exists
-			assertTrue("Reordered element should exist", src.exists());
+			assertExists("Reordered element should exist", src);
 				
 			//ensure correct position
 			ensureCorrectPositioning((IParent) src.getParent(), nextSibling, src);

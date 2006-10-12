@@ -1,7 +1,5 @@
 package org.rodinp.core.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -14,7 +12,11 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class TestRodinDB extends TestCase {
+public class TestRodinDB extends AbstractRodinDBTests {
+
+	public TestRodinDB(String name) {
+		super(name);
+	}
 
 	/*
 	 * Test an empty database.
@@ -35,7 +37,7 @@ public class TestRodinDB extends TestCase {
 		// last handle-only method
 		
 		// Opening methods.
-		assertTrue(db.exists());
+		assertExists("Database should exist", db);
 		assertTrue(db.isOpen());
 		assertTrue(db.contains(workspaceRoot));
 		assertEquals("No project initially", 0, db.getNonRodinResources().length);
@@ -55,7 +57,7 @@ public class TestRodinDB extends TestCase {
 		assertNotNull(rodinProject);
 		assertEquals("foo", rodinProject.getElementName());
 		assertEquals(db, rodinProject.getParent());
-		assertFalse(rodinProject.exists());
+		assertNotExists("Project should not exist", rodinProject);
 
 		// Actually create the project
 		IProject project = rodinProject.getProject();
@@ -63,7 +65,7 @@ public class TestRodinDB extends TestCase {
 		assertEquals("One non Rodin project", 1, db.getNonRodinResources().length);
 		assertEquals("One non Rodin project", project, db.getNonRodinResources()[0]);
 		assertEquals("No children", 0, db.getChildren().length);
-		assertFalse(rodinProject.exists());
+		assertNotExists("Project should not exist", rodinProject);
 		
 		// Set the Rodin nature
 		project.open(null);
@@ -74,7 +76,7 @@ public class TestRodinDB extends TestCase {
 		IRodinElement[] childrens = db.getChildren();
 		assertEquals(1, childrens.length);
 		assertEquals(rodinProject, childrens[0]);
-		assertTrue(rodinProject.exists());
+		assertExists("Project should exist", rodinProject);
 
 		// Test a memento of the project
 		String memento = rodinProject.getHandleIdentifier();
@@ -87,13 +89,13 @@ public class TestRodinDB extends TestCase {
 		assertEquals("One non Rodin project", 1, db.getNonRodinResources().length);
 		assertEquals("One non Rodin project", project, db.getNonRodinResources()[0]);
 		assertEquals("No children", 0, db.getChildren().length);
-		assertFalse(rodinProject.exists());
+		assertNotExists("Project should not exist", rodinProject);
 		
 		// Remove the project
 		project.delete(true, true, null);
 		assertEquals("No project left", 0, db.getNonRodinResources().length);
 		assertEquals("No project left", 0, db.getRodinProjects().length);
-		assertFalse(rodinProject.exists());
+		assertNotExists("Project should not exist", rodinProject);
 	}
 
 }

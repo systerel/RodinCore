@@ -53,7 +53,7 @@ public class DeleteTests extends ModifyingResourceTests {
 			
 			startDeltas();
 			file.delete(false, null);
-			assertTrue("Should be able to delete a Rodin file", ! file.exists());
+			assertNotExists("Should be able to delete a Rodin file", file);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
@@ -80,12 +80,12 @@ public class DeleteTests extends ModifyingResourceTests {
 					new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							file.delete(true, null);
-							assertTrue("Should be able to delete a Rodin file", ! file.exists());
+							assertNotExists("Should be able to delete a Rodin file", file);
 						}
 					},
 					null
 			);
-			assertTrue("Should be able to delete a Rodin file", ! file.exists());
+			assertNotExists("Should be able to delete a Rodin file", file);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
@@ -108,7 +108,7 @@ public class DeleteTests extends ModifyingResourceTests {
 			
 			startDeltas();
 			assertDeletion(ne);
-			assertTrue("Should be able to delete an internal element", ! ne.exists());
+			assertNotExists("Should be able to delete an internal element", ne);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
@@ -134,9 +134,9 @@ public class DeleteTests extends ModifyingResourceTests {
 			
 			startDeltas();
 			assertDeletion(ne1);
-			assertTrue("Should be able to delete an internal element",  ! ne1.exists());
-			assertTrue("A deleted element children should not exist",   ! ne2.exists());
-			assertTrue("A deleted element descendant should not exist", ! ne3.exists());
+			assertNotExists("Should be able to delete an internal element",  ne1);
+			assertNotExists("A deleted element children should not exist",   ne2);
+			assertNotExists("A deleted element descendant should not exist", ne3);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
@@ -161,8 +161,8 @@ public class DeleteTests extends ModifyingResourceTests {
 			
 			startDeltas();
 			assertDeletion(ne2);
-			assertTrue("Parent of deleted element should still exist",    ne1.exists());
-			assertTrue("Should be able to delete an internal element",  ! ne2.exists());
+			assertExists("Parent of deleted element should still exist", ne1);
+			assertNotExists("Should be able to delete an internal element", ne2);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
@@ -190,10 +190,10 @@ public class DeleteTests extends ModifyingResourceTests {
 			
 			startDeltas();
 			assertDeletion(ne2);
-			assertTrue("Parent of deleted element should still exist",    ne1.exists());
-			assertTrue("Should be able to delete an internal element",  ! ne2.exists());
-			assertTrue("A deleted element descendant should not exist", ! ne3.exists());
-			assertTrue("A deleted element descendant should not exist", ! ne4.exists());
+			assertExists("Parent of deleted element should still exist", ne1);
+			assertNotExists("Should be able to delete an internal element", ne2);
+			assertNotExists("A deleted element descendant should not exist", ne3);
+			assertNotExists("A deleted element descendant should not exist", ne4);
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 

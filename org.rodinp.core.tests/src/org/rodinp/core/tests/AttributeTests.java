@@ -76,7 +76,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertAttributeNames(IInternalElement element,
 			String... expectedNames) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		String[] actualNames = element.getAttributeNames(null);
 		Set<String> expected = new HashSet<String>(Arrays.asList(expectedNames));
 		Set<String> actual = new HashSet<String>(Arrays.asList(actualNames));
@@ -95,7 +95,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertBooleanValue(IInternalElement element, String name,
 			boolean expected) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
 				element.getBooleanAttribute(name, null));
 	}
@@ -103,7 +103,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertHandleValue(IInternalElement element, String name,
 			IRodinElement expected) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
 				element.getHandleAttribute(name, null));
 	}
@@ -111,7 +111,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertIntegerValue(IInternalElement element, String name,
 			int expected) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
 				element.getIntegerAttribute(name, null));
 	}
@@ -119,7 +119,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertLongValue(IInternalElement element, String name,
 			long expected) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
 				element.getLongAttribute(name, null));
 	}
@@ -127,7 +127,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void assertStringValue(IInternalElement element, String name,
 			String expected) throws RodinDBException {
 		
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		assertEquals("Unexpected attribute value", expected,
 				element.getStringAttribute(name, null));
 	}
@@ -135,7 +135,7 @@ public class AttributeTests extends ModifyingResourceTests {
 //	private void assertNoAttribute(IInternalElement element, String name)
 //			throws RodinDBException {
 //		
-//		assertTrue("Element should exist", element.exists());
+//		assertExists("Element should exist", element);
 //		try {
 //			if (fBool.equals(name)) {
 //				element.getBooleanAttribute(name, null);
@@ -164,7 +164,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	static void removeAttrPositive(IInternalElement element, String name)
 			throws RodinDBException {
 
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.removeAttribute(name, null);
 		assertFalse("Attribute should have been removed", 
 				element.hasAttribute(name, null));
@@ -183,7 +183,7 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static void setBoolAttrPositive(IInternalElement element, String name,
 			boolean newValue) throws RodinDBException {
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setBooleanAttribute(name, newValue, null);
 		assertTrue("Attribute should have been created", 
 				element.hasAttribute(name, null));
@@ -193,7 +193,7 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static void setHandleAttrPositive(IInternalElement element, String name,
 			IRodinElement newValue) throws RodinDBException {
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setHandleAttribute(name, newValue, null);
 		assertTrue("Attribute should have been created", 
 				element.hasAttribute(name, null));
@@ -203,7 +203,7 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static void setIntAttrPositive(IInternalElement element, String name,
 			int newValue) throws RodinDBException {
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setIntegerAttribute(name, newValue, null);
 		assertTrue("Attribute should have been created", 
 				element.hasAttribute(name, null));
@@ -213,7 +213,7 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static void setLongAttrPositive(IInternalElement element, String name,
 			long newValue) throws RodinDBException {
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setLongAttribute(name, newValue, null);
 		assertTrue("Attribute should have been created", 
 				element.hasAttribute(name, null));
@@ -223,7 +223,7 @@ public class AttributeTests extends ModifyingResourceTests {
 
 	static void setStringAttrPositive(IInternalElement element, String name,
 			String newValue) throws RodinDBException {
-		assertTrue("Element should exist", element.exists());
+		assertExists("Element should exist", element);
 		element.setStringAttribute(name, newValue, null);
 		assertTrue("Attribute should have been created", 
 				element.hasAttribute(name, null));
@@ -332,7 +332,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final NamedElement e1 = getNamedElement(rf, "foo"); 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertFalse("Element should not exist", e1.exists());
+		assertNotExists("Element should not exist", e1);
 
 		removeAttrNegative(e1, fBool, code);
 	}
@@ -345,7 +345,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final NamedElement e1 = getNamedElement(rf, "foo"); 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertFalse("Element should not exist", e1.exists());
+		assertNotExists("Element should not exist", e1);
 
 		setBoolAttrNegative(e1, fBool, true, code);
 		setHandleAttrNegative(e1, fHandle, rf, code);

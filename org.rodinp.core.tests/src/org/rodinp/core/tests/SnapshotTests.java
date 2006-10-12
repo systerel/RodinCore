@@ -98,8 +98,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	private void testSnapshotExists(IInternalParent mutable) {
 		final IInternalParent snapshot = mutable.getSnapshot();
-		assertTrue("Mutable should exist", mutable.exists());
-		assertTrue("Snapshot should exist", snapshot.exists());
+		assertExists("Mutable should exist", mutable);
+		assertExists("Snapshot should exist", snapshot);
 	}
 
 	/**
@@ -126,8 +126,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	private void testSnapshotNotExists(IInternalParent mutable) {
 		final IInternalParent snapshot = mutable.getSnapshot();
-		assertFalse("Mutable should not exist", mutable.exists());
-		assertFalse("Snapshot should not exist", snapshot.exists());
+		assertNotExists("Mutable should not exist", mutable);
+		assertNotExists("Snapshot should not exist", snapshot);
 	}
 	
 	/**
