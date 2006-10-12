@@ -223,4 +223,31 @@ public class TestRefines extends BasicTest {
 		
 	}
 
+	/*
+	 * POG attempts to store twice the predicate set "ALLHYP", once for the
+	 * well-definedness PO of the guard, and then once at the end of the
+	 * machine.
+	 */
+	public void testEvents_04() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList(), makeSList());
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("G"), makeSList("0 ≤ min({0})"), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		ref.save(null, true);
+		runBuilder();
+		
+		IPOFile po = ref.getPOFile();
+		containsIdentifiers(po);
+		getSequent(po, "evt/G/WD");
+	}
 }
