@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * This class is only used internally to be able to reuse the
@@ -24,7 +25,12 @@ public class VariantSymbolInfo extends LabelSymbolInfo {
 	}
 
 	@Override
-	public String getLabelConflictMessage() {
+	public IRodinProblem getConflictWarning() {
+		return null;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
 		return null;
 	}
 

@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -17,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -26,16 +26,21 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class ExpressionModule extends LabeledFormulaModule {
 
+	@Override
+	protected String getFormulaAttributeId() {
+		return EventBAttributes.EXPRESSION_ATTRIBUTE;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected boolean parseFormula(int index,
-			IInternalElement[] formulaElements, Formula[] formulas,
+	protected Formula parseFormula(
+			IInternalElement formulaElement,
 			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException {
 		
-		IExpressionElement expressionElement = (IExpressionElement) formulaElements[index];
+		IExpressionElement expressionElement = (IExpressionElement) formulaElement;
 
 		String expressionString = expressionElement.getExpressionString();
 		
@@ -44,13 +49,11 @@ public abstract class ExpressionModule extends LabeledFormulaModule {
 		IParseResult parseResult = factory.parseExpression(expressionString);
 		
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_ERROR, expressionElement, parseResult);
+			issueASTProblemMarkers(expressionElement, getFormulaAttributeId(), parseResult);
 			
-			return false;
+			return null;
 		}
 		Expression expression = parseResult.getParsedExpression();
-		
-		formulas[index] = expression;
 		
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
@@ -58,10 +61,10 @@ public abstract class ExpressionModule extends LabeledFormulaModule {
 		IResult legibilityResult = expression.isLegible(freeIdentifierContext);
 		
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_WARNING, expressionElement, legibilityResult);
+			issueASTProblemMarkers(expressionElement, getFormulaAttributeId(), legibilityResult);
 		}
 		
-		return true;
+		return expression;
 	}
 
 }

@@ -9,11 +9,13 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -22,8 +24,8 @@ import org.rodinp.core.IRodinElement;
 public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModule {
 	
 	@Override
-	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_VariantFreeIdentifierError;
+	protected IRodinProblem declaredFreeIdentifierError() {
+		return GraphProblem.VariantFreeIdentifierError;
 	}
 
 	/* (non-Javadoc)
@@ -31,7 +33,7 @@ public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModu
 	 */
 	@Override
 	protected IIdentifierSymbolInfo getSymbolInfo(
-			IRodinElement element, 
+			IInternalElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
@@ -42,6 +44,11 @@ public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModu
 				return null;
 		}
 		return symbolInfo;
+	}
+
+	@Override
+	protected String getAttributeId() {
+		return EventBAttributes.EXPRESSION_ATTRIBUTE;
 	}
 
 }

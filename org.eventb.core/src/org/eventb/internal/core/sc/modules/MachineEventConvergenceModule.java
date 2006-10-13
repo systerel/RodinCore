@@ -11,16 +11,17 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventConvergence;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IEventRefinesInfo;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.IVariantInfo;
 import org.eventb.core.sc.ProcessorModule;
-import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -54,9 +55,9 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 		List<IAbstractEventInfo> abstractEventInfos = eventRefinesInfo.getAbstractEventInfos();
 		if (abstractEventInfos.size() != 0) { // not a new event
 			convergence = 
-				checkAbstractConvergence(element, convergence, abstractEventInfos, null);
+				checkAbstractConvergence(event, convergence, abstractEventInfos, null);
 		}
-		convergence = checkVariantConvergence(element, convergence);
+		convergence = checkVariantConvergence(event, convergence);
 		saveConvergence((ISCEvent) target, convergence, null);
 	}
 	
@@ -70,7 +71,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	}
 	
 	int checkAbstractConvergence(
-			IRodinElement element, 
+			IInternalElement element, 
 			int convergence,
 			List<IAbstractEventInfo> abstractEventInfos, 
 			IProgressMonitor monitor) throws CoreException {
@@ -84,10 +85,10 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 				ok = false;
 		}
 		if (!ok) {
-			issueMarker(
-					IMarkerDisplay.SEVERITY_WARNING, 
+			createProblemMarker(
 					element, 
-					Messages.scuser_InconsistentAbstractConvergence);
+					EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+					GraphProblem.InconsistentAbstractConvergenceWarning);
 			return IEventConvergence.ORDINARY;
 		} else {
 			ok = false;
@@ -98,22 +99,22 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 			if (!ok) {
 				switch (abstractConvergence) {
 				case IEventConvergence.ORDINARY:
-					issueMarker(
-							IMarkerDisplay.SEVERITY_WARNING, 
+					createProblemMarker(
 							element, 
-							Messages.scuser_OrdinaryFaultyConvergence);
+							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+							GraphProblem.OrdinaryFaultyConvergenceWarning);
 					break;
 				case IEventConvergence.CONVERGENT:
-					issueMarker(
-							IMarkerDisplay.SEVERITY_WARNING, 
+					createProblemMarker(
 							element, 
-							Messages.scuser_ConvergentFaultyConvergence);
+							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+							GraphProblem.ConvergentFaultyConvergenceWarning);
 					break;
 				default:
-					issueMarker(
-							IMarkerDisplay.SEVERITY_WARNING, 
+					createProblemMarker(
 							element, 
-							Messages.scuser_AnticipatedFaultyConvergence);
+							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+							GraphProblem.AnticipatedFaultyConvergence);
 				}
 				return IEventConvergence.ORDINARY;
 			}
@@ -122,15 +123,21 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	}
 
 	int checkVariantConvergence(
-			IRodinElement element, 
+			IInternalElement element, 
 			int convergence) throws CoreException {
 		
 		if (variantInfo.getExpression() == null)
 			if (convergence == IEventConvergence.ANTICIPATED) {
-				issueMarker(IMarkerDisplay.SEVERITY_WARNING, element, Messages.scuser_AnticipatedEventNoVariant);
+				createProblemMarker(
+						element, 
+						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+						GraphProblem.AnticipatedEventNoVariant);
 				return IEventConvergence.ORDINARY;
 			} else if (convergence == IEventConvergence.CONVERGENT) {
-				issueMarker(IMarkerDisplay.SEVERITY_WARNING, element, Messages.scuser_ConvergentEventNoVariant);
+				createProblemMarker(
+						element, 
+						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+						GraphProblem.ConvergentEventNoVariant);
 				return IEventConvergence.ORDINARY;
 			}
 		return convergence;

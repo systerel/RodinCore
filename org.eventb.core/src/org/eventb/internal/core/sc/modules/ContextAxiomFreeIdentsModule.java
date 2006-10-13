@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import org.eventb.internal.core.sc.Messages;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.sc.GraphProblem;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -19,8 +21,13 @@ public class ContextAxiomFreeIdentsModule extends ContextFormulaFreeIdentsModule
 	 * @see org.eventb.internal.core.sc.modules.FormulaFreeIdentsModule#declaredFreeIdentifierErrorMessage()
 	 */
 	@Override
-	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_AxiomFreeIdentifierError;
+	protected IRodinProblem declaredFreeIdentifierError() {
+		return GraphProblem.AxiomFreeIdentifierError;
+	}
+
+	@Override
+	protected String getAttributeId() {
+		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}
 
 }

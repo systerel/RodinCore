@@ -8,11 +8,13 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -55,11 +57,6 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 		this.disappearing = true;
 	}
 
-	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_EventLabelConflict;
-	}
-
 	public void setRefinesInfo(IEventRefinesInfo refinesInfo) {
 		this.refinesInfo = refinesInfo;
 	}
@@ -74,6 +71,16 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 
 	public void setInherited() throws CoreException {
 		inherited = true;
+	}
+
+	@Override
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.EventLabelConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		return GraphProblem.EventLabelConflictError;
 	}
 	
 }

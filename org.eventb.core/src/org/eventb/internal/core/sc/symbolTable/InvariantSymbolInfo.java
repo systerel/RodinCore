@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IInvariantSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -27,8 +28,13 @@ public class InvariantSymbolInfo
 	}
 	
 	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_InvariantLabelConflict;
+	public IRodinProblem getConflictError() {
+		return GraphProblem.InvariantLabelConflictError;
+	}
+
+	@Override
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.InvariantLabelConflictWarning;
 	}
 
 }

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
@@ -25,7 +25,7 @@ public abstract class MachineFormulaFreeIdentsModule extends FormulaFreeIdentsMo
 	 */
 	@Override
 	protected IIdentifierSymbolInfo getSymbolInfo(
-			IRodinElement element, 
+			IInternalElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);

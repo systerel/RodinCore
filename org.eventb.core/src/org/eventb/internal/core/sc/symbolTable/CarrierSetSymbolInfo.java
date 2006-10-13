@@ -9,10 +9,11 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCCarrierSet;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.ICarrierSetSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,13 +39,19 @@ public class CarrierSetSymbolInfo
 	}
 
 	@Override
-	public String getNameImportConflictMessage() {
-		return Messages.scuser_CarrierSetNameImportConflict;
+	public IRodinProblem getConflictWarning() {
+		if (isImported())
+			return GraphProblem.CarrierSetNameImportConflictWarning;
+		else
+			return GraphProblem.CarrierSetNameConflictWarning;
 	}
 
 	@Override
-	public String getNameConflictMessage() {
-		return Messages.scuser_CarrierSetNameConflict;
+	public IRodinProblem getConflictError() {
+		if (isImported())
+			return GraphProblem.CarrierSetNameImportConflictError;
+		else
+			return GraphProblem.CarrierSetNameConflictError;
 	}
 
 	public void createSCElement(
@@ -58,8 +65,8 @@ public class CarrierSetSymbolInfo
 	}
 
 	@Override
-	public String getUntypedErrorMessage() {
-		return Messages.scuser_UntypedCarrierSetError;
+	public IRodinProblem getUntypedError() {
+		return GraphProblem.UntypedCarrierSetError;
 	}
 
 }

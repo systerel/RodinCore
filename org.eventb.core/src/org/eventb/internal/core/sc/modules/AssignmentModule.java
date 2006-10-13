@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Formula;
@@ -17,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -26,18 +26,21 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class AssignmentModule extends LabeledFormulaModule {
 
+	@Override
+	protected String getFormulaAttributeId() {
+		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected boolean parseFormula(
-			int index, 
-			IInternalElement[] formulaElements, 
-			Formula[] formulas, 
+	protected Formula parseFormula(
+			IInternalElement formulaElement, 
 			Collection<FreeIdentifier> freeIdentifierContext, 
 			FormulaFactory factory) throws CoreException {
 		
-		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElements[index];
+		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElement;
 		
 		String assignmentString = assignmentElement.getAssignmentString();
 		
@@ -46,14 +49,12 @@ public abstract class AssignmentModule extends LabeledFormulaModule {
 		IParseResult parseResult = factory.parseAssignment(assignmentString);
 		
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_ERROR, assignmentElement, parseResult);
+			issueASTProblemMarkers(assignmentElement, EventBAttributes.ASSIGNMENT_ATTRIBUTE, parseResult);
 			
-			return false;
+			return null;
 		}
 		
 		Assignment assignment = parseResult.getParsedAssignment();
-		
-		formulas[index] = assignment;
 		
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
@@ -61,10 +62,10 @@ public abstract class AssignmentModule extends LabeledFormulaModule {
 		IResult legibilityResult = assignment.isLegible(freeIdentifierContext);
 		
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_WARNING, assignmentElement, legibilityResult);
+			issueASTProblemMarkers(assignmentElement, EventBAttributes.ASSIGNMENT_ATTRIBUTE, legibilityResult);
 		}
 		
-		return true;
+		return assignment;
 	}
 
 }

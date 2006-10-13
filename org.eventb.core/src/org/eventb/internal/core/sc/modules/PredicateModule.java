@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.Formula;
@@ -19,7 +20,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 
@@ -29,18 +29,21 @@ import org.rodinp.core.IInternalParent;
  */
 public abstract class PredicateModule extends LabeledFormulaModule {
 	
+	@Override
+	protected String getFormulaAttributeId() {
+		return EventBAttributes.PREDICATE_ATTRIBUTE;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected boolean parseFormula(
-			int index, 
-			IInternalElement[] formulaElements, 
-			Formula[] formulas, 
+	protected Formula parseFormula(
+			IInternalElement formulaElement, 
 			Collection<FreeIdentifier> freeIdentifierContext, 
 			FormulaFactory factory) throws CoreException {
 		
-		IPredicateElement predicateElement = (IPredicateElement) formulaElements[index];
+		IPredicateElement predicateElement = (IPredicateElement) formulaElement;
 
 		String predicateString = predicateElement.getPredicateString();
 		
@@ -49,13 +52,11 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 		IParseResult parseResult = factory.parsePredicate(predicateString);
 		
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_ERROR, predicateElement, parseResult);
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeId(), parseResult);
 			
-			return false;
+			return null;
 		}
 		Predicate predicate = parseResult.getParsedPredicate();
-		
-		formulas[index] = predicate;
 		
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
@@ -63,10 +64,10 @@ public abstract class PredicateModule extends LabeledFormulaModule {
 		IResult legibilityResult = predicate.isLegible(freeIdentifierContext);
 		
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_WARNING, predicateElement, legibilityResult);
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeId(), legibilityResult);
 		}
 		
-		return true;
+		return predicate;
 	}
 	
 	protected void copySCPredicates(

@@ -18,9 +18,9 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.IVariantInfo;
@@ -149,23 +149,22 @@ public class MachineVariantModule extends ExpressionModule {
 
 	@Override
 	protected ITypeEnvironment typeCheckFormula(
-			int index, 
-			IInternalElement[] formulaElements, 
-			Formula[] formulas, 
+			IInternalElement formulaElement, 
+			Formula formula, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		ITypeEnvironment inferredEnvironment =
-			super.typeCheckFormula(index, formulaElements, formulas, typeEnvironment);
+			super.typeCheckFormula(formulaElement, formula, typeEnvironment);
 		if (inferredEnvironment == null)
 			return null;
 		else {
-			Expression expression = (Expression) formulas[0];
+			Expression expression = (Expression) formula;
 			Type type = expression.getType();
 			boolean ok = type.equals(factory.makeIntegerType()) || type.getBaseType() != null;
 			if (!ok) {
-				issueMarker(
-						IMarkerDisplay.SEVERITY_ERROR, 
-						formulaElements[0], 
-						Messages.scuser_InvalidVariantTypeError, 
+				createProblemMarker(
+						formulaElement, 
+						getFormulaAttributeId(), 
+						GraphProblem.InvalidVariantTypeError, 
 						type.toString());
 				return null;
 			} else

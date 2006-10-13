@@ -7,8 +7,10 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eclipse.core.resources.IMarker;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -16,22 +18,42 @@ import org.rodinp.core.IRodinElement;
  */
 public interface IMarkerDisplay {
 	
-	static int SEVERITY_ERROR = IMarker.SEVERITY_ERROR;
-	
-	static int SEVERITY_WARNING = IMarker.SEVERITY_WARNING;
-	
-	void issueMarker(
-			int severity, 
+	void createProblemMarker(
 			IRodinElement element, 
-			String message, 
-			Object... objects);
+			IRodinProblem problem, 
+			Object... args)
+		throws RodinDBException;
 	
-	void issueMarkerWithLocation(
-			int severity, 
-			IRodinElement element, 
-			String message, 
-			int startLocation,
-			int endLocation,
-			Object... objects);
+	void createProblemMarker(
+			IInternalElement element, 
+			String attributeId, 
+			IRodinProblem problem,
+			Object... args) throws RodinDBException;
+	
+	void createProblemMarker(
+			IInternalElement element, 
+			String attributeId, 
+			int charStart, 
+			int charEnd,
+			IRodinProblem problem, 
+			Object... args) throws RodinDBException;
+	
+//	static int SEVERITY_ERROR = IMarker.SEVERITY_ERROR;
+//	
+//	static int SEVERITY_WARNING = IMarker.SEVERITY_WARNING;
+//	
+//	void issueMarker(
+//			int severity, 
+//			IRodinElement element, 
+//			String message, 
+//			Object... objects);
+//	
+//	void issueMarkerWithLocation(
+//			int severity, 
+//			IRodinElement element, 
+//			String message, 
+//			int startLocation,
+//			int endLocation,
+//			Object... objects);
 
 }

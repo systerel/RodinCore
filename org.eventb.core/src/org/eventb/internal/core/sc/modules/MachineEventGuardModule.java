@@ -20,17 +20,16 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IEventLabelSymbolTable;
 import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -92,10 +91,10 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 		if (event.getLabel(monitor).contains(IEvent.INITIALISATION))
 			if (guards.length > 0) {
 				for (IGuard guard : guards)
-					issueMarker(
-							IMarkerDisplay.SEVERITY_ERROR, 
+					createProblemMarker(
 							guard, 
-							Messages.scuser_InitialisationGuardError);
+							getFormulaAttributeId(), 
+							GraphProblem.InitialisationGuardError);
 				return false;
 			}
 		return true;
@@ -134,16 +133,15 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 	 */
 	@Override
 	protected ITypeEnvironment typeCheckFormula(
-			int index, 
-			IInternalElement[] formulaElements, 
-			Formula[] formulas, 
+			IInternalElement formulaElement, 
+			Formula formula, 
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
 		// local variables must not change their type from an abstract machine
 		// to a concrete machine
 		
 		ITypeEnvironment inferredTypeEnvironment =
-			super.typeCheckFormula(index, formulaElements, formulas, typeEnvironment);
+			super.typeCheckFormula(formulaElement, formula, typeEnvironment);
 		
 		if (inferredTypeEnvironment == null)
 			return null;
@@ -169,8 +167,10 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 			
 				ok = false;
 						
-				issueMarker(IMarkerDisplay.SEVERITY_ERROR, formulaElements[index], 
-						Messages.scuser_LocalVariableChangedTypeError, 
+				createProblemMarker(
+						formulaElement, 
+						getFormulaAttributeId(), 
+						GraphProblem.LocalVariableChangedTypeError, 
 						name, type.toString(), identifier.getType().toString());
 			}
 		}

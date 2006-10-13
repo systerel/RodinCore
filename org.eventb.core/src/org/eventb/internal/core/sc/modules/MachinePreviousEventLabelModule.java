@@ -9,14 +9,14 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -40,23 +40,24 @@ public class MachinePreviousEventLabelModule extends AcceptorModule {
 			IRodinElement element,
 			IStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		String label = ((ILabeledElement) element).getLabel(monitor);
+		ILabeledElement labeledElement = (ILabeledElement) element;
+		String label = labeledElement.getLabel(monitor);
 		IAbstractEventInfo abstractEventInfo = 
 			abstractEventTable.getAbstractEventInfo(label);
 		if (abstractEventInfo != null) {
 			if (element instanceof IEvent) {
 				if (abstractEventInfo.isForbidden()) {
-					issueMarker(
-							IMarkerDisplay.SEVERITY_WARNING, 
-							element, 
-							Messages.scuser_ObsoleteEventLabelProblem, 
+					createProblemMarker(
+							labeledElement,
+							EventBAttributes.LABEL_ATTRIBUTE,
+							GraphProblem.ObsoleteEventLabelWarning,
 							label);
 				}
 			} else {
-				issueMarker(
-						IMarkerDisplay.SEVERITY_WARNING, 
-						element, 
-						Messages.scuser_WasAbstractEventLabelProblem, 
+				createProblemMarker(
+						labeledElement,
+						EventBAttributes.LABEL_ATTRIBUTE,
+						GraphProblem.WasAbstractEventLabelWarning,
 						label);
 			}
 		}

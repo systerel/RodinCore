@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
-import org.eventb.core.sc.IMarkerDisplay;
 
 
 /**
@@ -15,6 +14,5 @@ import org.eventb.core.sc.IMarkerDisplay;
  *
  */
 public interface ILabelSymbolInfo extends ISymbolInfo {
-	
-	void issueLabelConflictMarker(IMarkerDisplay markerDisplay);
+// empty
 }

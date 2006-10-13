@@ -8,7 +8,9 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 
 /**
@@ -80,4 +82,12 @@ public interface ISymbolInfo extends Comparable {
 	 * Turns the symbol immutable
 	 */
 	void setImmutable();
+	
+	/**
+	 * Creates a suitable marker for collisions in the symbol table.
+	 * 
+	 * @param markerDisplay a place to put the marker
+	 * @throws RodinDBException if there was problem creating the marker
+	 */
+	void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException;
 }

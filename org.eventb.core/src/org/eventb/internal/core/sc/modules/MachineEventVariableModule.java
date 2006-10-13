@@ -16,15 +16,14 @@ import org.eventb.core.IVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IEventRefinesInfo;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -99,10 +98,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 		variableSymbolInfo.setLocal();
 		if (super.insertIdentifierSymbol(element, newSymbolInfo)) {
 			if (isInitialisation) {
-				issueMarker(
-						IMarkerDisplay.SEVERITY_ERROR, 
-						element, 
-						Messages.scuser_InitialisationVariableError);
+				createProblemMarker(element, GraphProblem.InitialisationVariableError);
 				newSymbolInfo.setError();
 				return false;
 			} else

@@ -14,6 +14,7 @@ package org.eventb.core;
  */
 public final class EventBAttributes {
 
+	
 	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
 	public static String COMMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".comment";
@@ -23,7 +24,15 @@ public final class EventBAttributes {
 	public static String ROLE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".role";
 	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden";
 	public static String PRESERVED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".preserved";
-	public static final String CONVERGENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".convergence";
+	public static String CONVERGENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".convergence";
+	public static String PREDICATE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".predicate";
+	public static String EXPRESSION_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".expression";
+	public static String ASSIGNMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".assignment";
+	public static String TYPE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".type";
+	public static String REFINES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".refines";
+	public static String EXTENDS_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".extends";
+	public static String SEES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".sees";
+	public static String IDENTIFIER_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".identifier";
 
 	private EventBAttributes() {
 		// Non-instantiable class

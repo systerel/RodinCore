@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IAxiomSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -27,8 +28,13 @@ public class AxiomSymbolInfo
 	}
 
 	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_AxiomLabelConflict;
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.AxiomLabelConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		return GraphProblem.AxiomLabelConflictError;
 	}
 	
 }

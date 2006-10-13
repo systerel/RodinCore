@@ -10,11 +10,13 @@ package org.eventb.internal.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -73,16 +75,6 @@ public class VariableSymbolInfo
 		this.preserved = true;
 	}
 
-	@Override
-	public String getNameImportConflictMessage() {
-		return Messages.scuser_VariableNameImportConflict;
-	}
-
-	@Override
-	public String getNameConflictMessage() {
-		return Messages.scuser_VariableNameConflict;
-	}
-
 	public void createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws RodinDBException {
@@ -102,8 +94,8 @@ public class VariableSymbolInfo
 	}
 
 	@Override
-	public String getUntypedErrorMessage() {
-		return Messages.scuser_UntypedVariableError;
+	public IRodinProblem getUntypedError() {
+		return GraphProblem.UntypedVariableError;
 	}
 
 	public void setLocal() throws CoreException {
@@ -125,4 +117,21 @@ public class VariableSymbolInfo
 	public boolean isFresh() {
 		return fresh;
 	}
+
+	@Override
+	public IRodinProblem getConflictWarning() {
+		if (isImported())
+			return GraphProblem.VariableNameImportConflictWarning;
+		else
+			return GraphProblem.VariableNameConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		if (isImported())
+			return GraphProblem.VariableNameImportConflictError;
+		else
+			return GraphProblem.VariableNameConflictError;
+	}
+	
 }

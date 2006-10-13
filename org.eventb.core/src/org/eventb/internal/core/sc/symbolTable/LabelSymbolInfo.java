@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.rodinp.core.IRodinElement;
 
@@ -27,18 +27,8 @@ public abstract class LabelSymbolInfo
 		
 	}
 
-	public void issueLabelConflictMarker(IMarkerDisplay markerDisplay) {
-		int severity = (isMutable()) ? 
-				IMarkerDisplay.SEVERITY_ERROR : 
-				IMarkerDisplay.SEVERITY_WARNING;
-		
-		markerDisplay.issueMarker(
-				severity,
-				getReferenceElement(), 
-				getLabelConflictMessage(), 
-				getSymbol());
+	@Override
+	public String getSymbolAttributeId() {
+		return EventBAttributes.LABEL_ATTRIBUTE;
 	}
-	
-	public abstract String getLabelConflictMessage();
-
 }

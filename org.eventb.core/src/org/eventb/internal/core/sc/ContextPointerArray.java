@@ -16,6 +16,7 @@ import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.IContextPointerArray;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -28,7 +29,7 @@ public class ContextPointerArray implements IContextPointerArray {
 	
 	private final int pointerType;
 	
-	private final IRodinElement[] contextPointers;
+	private final IInternalElement[] contextPointers;
 	
 	private final ISCContextFile[] contextFiles;
 	
@@ -44,7 +45,7 @@ public class ContextPointerArray implements IContextPointerArray {
 
 	public ContextPointerArray(
 			int pointerType,
-			IRodinElement[] contextPointers, 
+			IInternalElement[] contextPointers, 
 			ISCContextFile[] contextFiles) {
 		
 		assert contextPointers.length == contextFiles.length;
@@ -118,7 +119,7 @@ public class ContextPointerArray implements IContextPointerArray {
 		return (i == null) ? -1 : i;
 	}
 
-	public IRodinElement getContextPointer(int index) {
+	public IInternalElement getContextPointer(int index) {
 		return contextPointers[index];
 	}
 

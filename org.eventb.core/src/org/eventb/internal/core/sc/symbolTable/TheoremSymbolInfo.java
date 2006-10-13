@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.ITheoremSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -27,8 +28,13 @@ public class TheoremSymbolInfo
 	}
 	
 	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_TheoremLabelConflict;
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.TheoremLabelConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		return GraphProblem.TheoremLabelConflictError;
 	}
 
 }

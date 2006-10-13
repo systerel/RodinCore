@@ -9,16 +9,18 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ICurrentEvent;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -44,15 +46,15 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 
 	@Override
 	protected IIdentifierSymbolInfo getSymbolInfo(
-			IRodinElement element, 
+			IInternalElement element, 
 			FreeIdentifier freeIdentifier, 
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
-		if (isInitialisation && symbolInfo instanceof IVariableSymbolInfo) {
-			issueMarker(
-					IMarkerDisplay.SEVERITY_ERROR, 
+		if (isInitialisation && symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
+			createProblemMarker(
 					element, 
-					Messages.scuser_InitialisationActionRHSError, 
+					getAttributeId(), 
+					GraphProblem.InitialisationActionRHSError,
 					freeIdentifier.getName());
 			return null;
 		}
@@ -69,13 +71,16 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			IProgressMonitor monitor) throws CoreException {
 		boolean ok = super.accept(element, repository, monitor);
 		
-		ok &= checkAssignedIdentifiers(element, (Assignment) parsedFormula.getFormula(), monitor);
+		ok &= checkAssignedIdentifiers(
+				(IInternalElement) element, 
+				(Assignment) parsedFormula.getFormula(), 
+				monitor);
 		
 		return ok;
 	}
 	
 	private boolean checkAssignedIdentifiers(
-			IRodinElement element, 
+			IInternalElement element, 
 			Assignment assignment, 
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -88,21 +93,33 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isForbidden()) {
-					issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-							Messages.scuser_UndeclaredFreeIdentifierError, name);
+					createProblemMarker(
+							element, 
+							getAttributeId(), 
+							GraphProblem.UndeclaredFreeIdentifierError,
+							name);
 					return false;
 				} else if (variableSymbolInfo.isImported() && !variableSymbolInfo.isConcrete()) {
-					issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-							Messages.scuser_VariableHasDisappearedError, name);
+					createProblemMarker(
+							element, 
+							getAttributeId(), 
+							GraphProblem.VariableHasDisappearedError,
+							name);
 					return false;
 				} else if (variableSymbolInfo.isLocal()) {
-					issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-							Messages.scuser_AssignmentToLocalVariable, name);
+					createProblemMarker(
+							element, 
+							getAttributeId(), 
+							GraphProblem.AssignmentToLocalVariableError,
+							name);
 					return false;
 				}
 			} else {
-				issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-						Messages.scuser_AssignedIdentifierNotVariable, name);
+				createProblemMarker(
+						element, 
+						getAttributeId(), 
+						GraphProblem.AssignedIdentifierNotVariableError,
+						name);
 				return false;
 			}
 		}
@@ -110,8 +127,8 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 	}
 
 	@Override
-	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_InitialisationActionRHSError;
+	protected IRodinProblem declaredFreeIdentifierError() {
+		return GraphProblem.InitialisationActionRHSError;
 	}
 
 	@Override
@@ -119,6 +136,11 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		FreeIdentifier[] freeIdentifiers =
 			((Assignment) parsedFormula.getFormula()).getUsedIdentifiers();
 		return freeIdentifiers;
+	}
+
+	@Override
+	protected String getAttributeId() {
+		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 	}
 
 }

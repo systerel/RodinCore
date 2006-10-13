@@ -8,11 +8,15 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 
 /**
@@ -127,4 +131,24 @@ public abstract class SymbolInfo implements ISymbolInfo {
 		sourceElement = source;
 	}
 	
+	public void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
+		if (isMutable())
+			markerDisplay.createProblemMarker(
+					(IInternalElement) getReferenceElement(), 
+					getSymbolAttributeId(), 
+					getConflictError(), 
+					getSymbol());
+		else
+			markerDisplay.createProblemMarker(
+					(IInternalElement) getReferenceElement(), 
+					getSymbolAttributeId(), 
+					getConflictWarning(), 
+					getSymbol());
+	}
+	
+	public abstract IRodinProblem getConflictWarning();
+	public abstract IRodinProblem getConflictError();
+	
+	public abstract String getSymbolAttributeId();
+
 }

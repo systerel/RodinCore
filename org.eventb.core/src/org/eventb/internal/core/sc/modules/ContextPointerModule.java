@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
@@ -22,15 +23,14 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IContextPointerArray;
 import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
@@ -87,18 +87,19 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
 			
 			if (!scCF.exists()) {
-				String message = null;
 				if (contextPointerArray.getContextPointerType() == IContextPointerArray.EXTENDS_POINTER)
-					message = Messages.scuser_AbstractContextNotFound;
+					createProblemMarker(
+							contextPointerArray.getContextPointer(index), 
+							EventBAttributes.EXTENDS_ATTRIBUTE,
+							GraphProblem.AbstractContextNotFoundError);
 				else if (contextPointerArray.getContextPointerType() == IContextPointerArray.SEES_POINTER)
-					message = Messages.scuser_SeenContextNotFound;
+					createProblemMarker(
+							contextPointerArray.getContextPointer(index), 
+							EventBAttributes.SEES_ATTRIBUTE,
+							GraphProblem.SeenContextNotFoundError);
 				else
 					assert false;
 				
-				issueMarker(
-						IMarkerDisplay.SEVERITY_ERROR, 
-						contextPointerArray.getContextPointer(index), 
-						message);
 				contextPointerArray.setError(index);
 				continue;
 			}
@@ -209,7 +210,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
 		} catch (CoreException e) {
 			
-			newSymbolInfo.issueNameConflictMarker(this);
+			newSymbolInfo.createConflictMarker(this);
 			
 			contextPointerArray.setError(index);
 
@@ -223,7 +224,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			if(symbolInfo.hasError())
 				return; // the element in the symbol table has already an associated error message
 			
-			symbolInfo.issueNameConflictMarker(this);
+			symbolInfo.createConflictMarker(this);
 			
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();

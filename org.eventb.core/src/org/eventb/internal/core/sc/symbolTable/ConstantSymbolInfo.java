@@ -9,10 +9,11 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCConstant;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -37,16 +38,6 @@ public class ConstantSymbolInfo
 		super(symbol, link, element, component);
 	}
 
-	@Override
-	public String getNameImportConflictMessage() {
-		return Messages.scuser_ConstantNameImportConflict;
-	}
-
-	@Override
-	public String getNameConflictMessage() {
-		return Messages.scuser_ConstantNameConflict;
-	}
-
 	public void createSCElement(
 			IInternalParent parent, 
 			IProgressMonitor monitor) throws RodinDBException {
@@ -58,8 +49,24 @@ public class ConstantSymbolInfo
 	}
 
 	@Override
-	public String getUntypedErrorMessage() {
-		return Messages.scuser_UntypedConstantError;
+	public IRodinProblem getConflictWarning() {
+		if (isImported())
+			return GraphProblem.ConstantNameImportConflictWarning;
+		else
+			return GraphProblem.ConstantNameConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		if (isImported())
+			return GraphProblem.ConstantNameImportConflictError;
+		else
+			return GraphProblem.ConstantNameConflictError;
+	}
+
+	@Override
+	public IRodinProblem getUntypedError() {
+		return GraphProblem.UntypedConstantError;
 	}
 
 }

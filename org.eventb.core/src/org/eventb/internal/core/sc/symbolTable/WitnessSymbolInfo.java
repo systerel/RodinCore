@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IWitnessSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -25,8 +26,13 @@ public class WitnessSymbolInfo extends LabelSymbolInfo implements IWitnessSymbol
 	}
 
 	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_WitnessLabelConflict;
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.WitnessLabelConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		return GraphProblem.WitnessLabelConflictError;
 	}
 
 }

@@ -44,7 +44,7 @@ public class ContextSaveIdentifiersModule extends ProcessorModule {
 				
 				if(type == null) { // identifier could not be typed
 					
-					identifierSymbolInfo.issueUntypedErrorMarker(this);
+					identifierSymbolInfo.createUntypedErrorMarker(this);
 					
 					identifierSymbolInfo.setError();
 					

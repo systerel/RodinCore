@@ -78,18 +78,11 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	void createSCElement(IInternalParent parent, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
-	 * Attaches an appropriate name conflict error messages to the source element associated
-	 * with this symbol. This can be a pointer or the element corresponding to the symbol itself.
-	 * @param markerDisplay the marker display to use
-	 */
-	void issueNameConflictMarker(IMarkerDisplay markerDisplay);
-	
-	/**
 	 * Attaches an appropriate error message to the source element if this identifier 
 	 * could not be typed. This message only makes sense for identifiers that have not
 	 * been imported.
 	 * @param markerDisplay the marker display to use
 	 */
-	void issueUntypedErrorMarker(IMarkerDisplay markerDisplay);
+	void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws RodinDBException;
 
 }

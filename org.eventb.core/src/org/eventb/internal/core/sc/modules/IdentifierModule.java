@@ -9,12 +9,14 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IIdentifierSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
@@ -22,9 +24,9 @@ import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -44,7 +46,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 
 	protected static FreeIdentifier parseIdentifier(
 			String name, 
-			IRodinElement element,
+			IInternalElement element,
 			FormulaFactory factory,
 			IMarkerDisplay display) throws RodinDBException {
 		
@@ -55,15 +57,13 @@ public abstract class IdentifierModule extends ProcessorModule {
 				FreeIdentifier identifier = (FreeIdentifier) expr;
 				if (name.equals(identifier.getName()))
 					return identifier;
-				else
-					display.issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-							Messages.scuser_InvalidIdentifierName);
-			} else
-				display.issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-						Messages.scuser_InvalidIdentifierName);
-		} else
-			display.issueMarker(IMarkerDisplay.SEVERITY_ERROR, element, 
-					Messages.scuser_InvalidIdentifierName);
+			}
+		}
+		display.createProblemMarker(
+				element, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+				GraphProblem.InvalidIdentifierError);
+		
 		return null;
 		
 	}
@@ -149,12 +149,12 @@ public abstract class IdentifierModule extends ProcessorModule {
 			IIdentifierSymbolInfo symbolInfo = 
 				(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
 			
-			newSymbolInfo.issueNameConflictMarker(this);
+			newSymbolInfo.createConflictMarker(this);
 			
 			if(symbolInfo.hasError())
 				return false; // do not produce too many error messages
 			
-			symbolInfo.issueNameConflictMarker(this);
+			symbolInfo.createConflictMarker(this);
 			
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();

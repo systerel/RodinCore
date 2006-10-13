@@ -11,13 +11,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IParsedFormula;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -51,25 +52,25 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 		
 		boolean ok = true;	
 		
+		IInternalElement internalElement = (IInternalElement) element;
+		
 		FreeIdentifier[] freeIdentifiers = getFreeIdentifiers();
 		
 		for (FreeIdentifier freeIdentifier : freeIdentifiers) {
 			
-			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(element, freeIdentifier, monitor);
+			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(internalElement, freeIdentifier, monitor);
 			
 			if (symbolInfo == null || symbolInfo.hasError() || !symbolInfo.isVisible()) {
 				ok = false;
-				String message = 
+				IRodinProblem problem = 
 					symbolInfo == null && symbolTable.containsKey(freeIdentifier.getName()) ?
-					declaredFreeIdentifierErrorMessage() :
-					Messages.scuser_UndeclaredFreeIdentifierError;
-				issueMarkerWithLocation(
-						IMarkerDisplay.SEVERITY_ERROR, 
-						element, 
-						message, 
-						freeIdentifier.getSourceLocation().getStart(), 
-						freeIdentifier.getSourceLocation().getEnd(), 
-						freeIdentifier.getName());
+					declaredFreeIdentifierError() :
+					GraphProblem.UndeclaredFreeIdentifierError;
+					createProblemMarker(
+							(IInternalElement) element, getAttributeId(), 
+							freeIdentifier.getSourceLocation().getStart(), 
+							freeIdentifier.getSourceLocation().getEnd(), 
+							problem, freeIdentifier.getName());
 			}
 		}
 		return ok;
@@ -81,10 +82,12 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 		return freeIdentifiers;
 	}
 	
-	protected abstract String declaredFreeIdentifierErrorMessage();
+	protected abstract IRodinProblem declaredFreeIdentifierError();
+	
+	protected abstract String getAttributeId();
 
 	protected IIdentifierSymbolInfo getSymbolInfo(
-			IRodinElement element, 
+			IInternalElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
 		IIdentifierSymbolInfo symbolInfo = (IIdentifierSymbolInfo) 

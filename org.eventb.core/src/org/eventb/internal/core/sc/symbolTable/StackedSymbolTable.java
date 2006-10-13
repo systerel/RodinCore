@@ -26,6 +26,7 @@ public class StackedSymbolTable extends SymbolTable {
 		this.parentTable = parentTable;
 	}
 	
+	@Override
 	public ISymbolTable getParentTable() {
 		return parentTable;
 	}

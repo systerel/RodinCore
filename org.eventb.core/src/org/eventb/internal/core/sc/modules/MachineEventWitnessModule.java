@@ -11,6 +11,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCWitness;
@@ -21,16 +22,15 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IEventLabelSymbolTable;
 import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.rodinp.core.IInternalParent;
@@ -131,14 +131,17 @@ public class MachineEventWitnessModule extends PredicateModule {
 						predicates[i], 
 						monitor);
 			} else {
-				issueMarker(IMarkerDisplay.SEVERITY_ERROR, witnesses[i], 
-						Messages.scuser_WitnessLabelNeedLess);
+				createProblemMarker(
+						witnesses[i], 
+						EventBAttributes.LABEL_ATTRIBUTE, 
+						GraphProblem.WitnessLabelNeedLessError);
 			}
 		}
 		
 		for (String name : witnessNames) {
-			issueMarker(IMarkerDisplay.SEVERITY_WARNING, event, 
-					Messages.scuser_WitnessLabelMissing, name);
+			createProblemMarker(
+					event, 
+					GraphProblem.WitnessLabelMissingWarning);
 			createSCWitness(
 					parent, 
 					WITNESS_NAME_PREFIX + index++, 

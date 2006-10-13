@@ -7,8 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.internal.core.sc.Messages;
+import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -20,12 +21,14 @@ public class GuardSymbolInfo extends LabelSymbolInfo {
 		super(symbol, element, component);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo#getLabelConflictMessage()
-	 */
 	@Override
-	public String getLabelConflictMessage() {
-		return Messages.scuser_GuardLabelConflict;
+	public IRodinProblem getConflictWarning() {
+		return GraphProblem.GuardLabelConflictWarning;
+	}
+
+	@Override
+	public IRodinProblem getConflictError() {
+		return GraphProblem.GuardLabelConflictError;
 	}
 
 }

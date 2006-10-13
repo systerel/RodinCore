@@ -44,7 +44,7 @@ public class MachineSaveIdentifiersModule extends ProcessorModule {
 				
 				if(type == null) { // identifier could not be typed
 					
-					identifierSymbolInfo.issueUntypedErrorMarker(this);
+					identifierSymbolInfo.createUntypedErrorMarker(this);
 					
 					identifierSymbolInfo.setError();
 					

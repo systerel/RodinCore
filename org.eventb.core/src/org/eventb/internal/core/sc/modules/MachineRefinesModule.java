@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCAction;
@@ -27,11 +28,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
@@ -339,10 +340,10 @@ public class MachineRefinesModule extends ProcessorModule {
 			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine();
 		
 		if (scMachineFile != null && !scMachineFile.exists()) {
-			issueMarker(
-					IMarkerDisplay.SEVERITY_ERROR, 
+			createProblemMarker(
 					refinesMachine, 
-					Messages.scuser_AbstractMachineNotFound);
+					EventBAttributes.REFINES_ATTRIBUTE, 
+					GraphProblem.AbstractMachineNotFoundError);
 			
 			scMachineFile = null;
 		}

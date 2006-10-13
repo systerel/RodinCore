@@ -8,12 +8,16 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -22,6 +26,11 @@ import org.rodinp.core.IRodinElement;
 public abstract class IdentifierSymbolInfo 
 	extends SymbolInfo 
 	implements IIdentifierSymbolInfo {
+
+	@Override
+	public String getSymbolAttributeId() {
+		return EventBAttributes.IDENTIFIER_ATTRIBUTE;
+	}
 
 	public IdentifierSymbolInfo(
 			String symbol, 
@@ -93,41 +102,18 @@ public abstract class IdentifierSymbolInfo
 		return pointer;
 	}
 	
-	public void issueNameConflictMarker(IMarkerDisplay markerDisplay) {
-		int severity = (isMutable()) ? 
-				IMarkerDisplay.SEVERITY_ERROR : 
-				IMarkerDisplay.SEVERITY_WARNING;
-		
-		if (isImported())
-			markerDisplay.issueMarker(
-					severity,
-					getReferenceElement(), 
-					getNameImportConflictMessage(),
-					getSymbol(), getComponentName());
-		else
-			markerDisplay.issueMarker(
-					severity,
-					getReferenceElement(), 
-					getNameConflictMessage(), 
-					getSymbol());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#issueUntypedErrorMarker(org.eventb.core.sc.IMarkerDisplay)
 	 */
-	public void issueUntypedErrorMarker(IMarkerDisplay markerDisplay) {
+	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
 		
-		markerDisplay.issueMarker(
-				IMarkerDisplay.SEVERITY_ERROR,
-				getReferenceElement(), 
-				getUntypedErrorMessage(),
+		markerDisplay.createProblemMarker(
+				(IInternalElement) getReferenceElement(), 
+				getSymbolAttributeId(), 
+				getUntypedError(), 
 				getSymbol());
 		
 	}
 
-	public abstract String getNameImportConflictMessage();
-
-	public abstract String getNameConflictMessage();
-	
-	public abstract String getUntypedErrorMessage();
+	public abstract IRodinProblem getUntypedError();
 }

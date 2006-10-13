@@ -9,15 +9,17 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -41,7 +43,7 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	 */
 	@Override
 	protected IIdentifierSymbolInfo getSymbolInfo(
-			IRodinElement element, 
+			IInternalElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
 		boolean primed = freeIdentifier.isPrimed();
@@ -76,8 +78,13 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	}
 
 	@Override
-	protected String declaredFreeIdentifierErrorMessage() {
-		return Messages.scuser_WitnessFreeIdentifierError;
+	protected IRodinProblem declaredFreeIdentifierError() {
+		return GraphProblem.WitnessFreeIdentifierError;
+	}
+
+	@Override
+	protected String getAttributeId() {
+		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}
 
 }

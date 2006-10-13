@@ -20,18 +20,20 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IParsedFormula;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
+import org.eventb.core.sc.ParseProblem;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -70,20 +72,23 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		super.endModule(element, repository, monitor);
 	}
 
-	protected void issueASTProblemMarkers(int severity, IRodinElement element, IResult result) {
+	protected void issueASTProblemMarkers(
+			IInternalElement element, 
+			String attributeId, 
+			IResult result) throws RodinDBException {
 		
-		for (ASTProblem problem : result.getProblems()) {
-			SourceLocation location = problem.getSourceLocation();
-			ProblemKind problemKind = problem.getMessage();
-			Object[] args = problem.getArgs();
+		for (ASTProblem parserProblem : result.getProblems()) {
+			SourceLocation location = parserProblem.getSourceLocation();
+			ProblemKind problemKind = parserProblem.getMessage();
+			Object[] args = parserProblem.getArgs();
 			
-			String message;
+			IRodinProblem problem;
 			Object[] objects; // parameters for the marker
 			
 			switch (problemKind) {
 			
 			case FreeIdentifierHasBoundOccurences:
-				message = Messages.scuser_FreeIdentifierHasBoundOccurences;
+				problem = ParseProblem.FreeIdentifierHasBoundOccurencesWarning;
 				objects = new Object[] {
 					args[0]
 				};				
@@ -95,7 +100,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				continue;
 
 			case BoundIdentifierIsAlreadyBound:
-				message = Messages.scuser_BoundIdentifierIsAlreadyBound;
+				problem = ParseProblem.BoundIdentifierIsAlreadyBoundWarning;
 				objects = new Object[] {
 					args[0]
 				};
@@ -103,23 +108,23 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				
 			case BoundIdentifierIndexOutOfBounds:
 				// internal error
-				message = Messages.scuser_InternalError;
+				problem = ParseProblem.InternalError;
 				objects = new Object[0];
 				break;
 				
 			case Circularity:
-				message = Messages.scuser_Circularity;
+				problem = ParseProblem.CircularityError;
 				objects = new Object[0];
 				break;
 				
 			case InvalidTypeExpression:
 				// internal error
-				message = Messages.scuser_InternalError;
+				problem = ParseProblem.InternalError;
 				objects = new Object[0];
 				break;
 				
 			case LexerError:
-				message = Messages.scuser_LexerError;
+				problem = ParseProblem.LexerError;
 				objects = new Object[] {
 						args[0]
 				};			
@@ -127,13 +132,13 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				
 			case LexerException:
 				// internal error
-				message = Messages.scuser_InternalError;
+				problem = ParseProblem.InternalError;
 				objects = new Object[0];
 				break;
 				
 			case ParserException:
 				// internal error
-				message = Messages.scuser_InternalError;
+				problem = ParseProblem.InternalError;
 				objects = new Object[0];
 				break;
 				
@@ -142,19 +147,19 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				// TODO: prepare detailed error messages "args[0]" obtained from the parser for 
 				//       internationalisation
 				
-				message = Messages.scuser_SyntaxError;
+				problem = ParseProblem.SyntaxError;
 				objects = new Object[] {
 						args[0]
 				};						
 				break;
 				
 			case TypeCheckFailure:
-				message = Messages.scuser_TypeCheckFailure;
+				problem = ParseProblem.TypeCheckError;
 				objects = new Object[0];			
 				break;
 				
 			case TypesDoNotMatch:
-				message = Messages.scuser_TypesDoNotMatch;
+				problem = ParseProblem.TypesDoNotMatchError;
 				objects = new Object[] {
 						args[0],
 						args[1]
@@ -162,70 +167,57 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				break;
 				
 			case TypeUnknown:
-				message = Messages.scuser_TypeUnknown;
+				problem = ParseProblem.TypeUnknownError;
 				objects = new Object[0];			
 				break;
 				
 			default:
 				
-				message = Messages.scuser_InternalError;
+				problem = ParseProblem.InternalError;
 				objects = new Object[0];
 				
 				break;
 			}
 			
 			if (location == null) {
-				issueMarker(
-						severity, 
-						element, 
-						message, 
-						objects);
+				createProblemMarker(element, attributeId, problem, objects);
 			} else {	
-				issueMarkerWithLocation(
-						severity, 
-						element, 
-						message, 
+				createProblemMarker(
+						element, attributeId, 
 						location.getStart(), 
-						location.getEnd(), 
-						objects);
+						location.getEnd(), problem, objects);
 			}
 		}
 	}
 
 	/**
-	 * @param index the index of the formula to be parsed
-	 * @param formulaElements the formula elements
-	 * @param formulas the parsed formulas
+	 * @param formulaElement the formula element
 	 * @param freeIdentifierContext the free identifier context of this predicate
 	 * (@see org.eventb.core.ast.Formula#isLegible(Collection))
 	 * @param factory the formula factory to use 
-	 * @return <code>true</code>, iff the formula was successfully parsed
+	 * @return parsed formula, iff the formula was successfully parsed, <code>null</code> otherwise
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
-	protected abstract boolean parseFormula(
-			int index,
-			IInternalElement[] formulaElements,
-			Formula[] formulas,
+	protected abstract Formula parseFormula(
+			IInternalElement formulaElement,
 			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException;
 	
 	/**
-	 * @param index the index of the formula to be parsed
-	 * @param formulaElements the formula elements
-	 * @param formulas the parsed formulas
+	 * @param formulaElement the formula element
+	 * @param formula the parsed formula
 	 * @return the inferred type environment
 	 * @throws CoreException if there was a problem accessing the database or the symbol table
 	 */
 	protected ITypeEnvironment typeCheckFormula(
-			int index,
-			IInternalElement[] formulaElements,
-			Formula[] formulas,
+			IInternalElement formulaElement,
+			Formula formula,
 			ITypeEnvironment typeEnvironment) throws CoreException {
 		
-		ITypeCheckResult typeCheckResult = formulas[index].typeCheck(typeEnvironment);
+		ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnvironment);
 		
 		if (!typeCheckResult.isSuccess()) {
-			issueASTProblemMarkers(IMarkerDisplay.SEVERITY_ERROR, formulaElements[index], typeCheckResult);
+			issueASTProblemMarkers(formulaElement, getFormulaAttributeId(), typeCheckResult);
 			
 			return null;
 		}
@@ -233,6 +225,8 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		return typeCheckResult.getInferredEnvironment();
 
 	}
+	
+	protected abstract String getFormulaAttributeId();
 
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
@@ -245,10 +239,10 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 		ITypeEnvironment.IIterator iterator = inferredEnvironment.getIterator();
 		while (iterator.hasNext()) {
 			iterator.advance();
-			issueMarker(
-					IMarkerDisplay.SEVERITY_ERROR, 
+			createProblemMarker(
 					formulaElement, 
-					Messages.scuser_UntypedIdentifierError, 
+					getFormulaAttributeId(), 
+					GraphProblem.UntypedIdentifierError, 
 					iterator.getName());
 		}
 		return false;
@@ -294,12 +288,12 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 					component,
 					null);
 			
-			boolean ok = parseFormula(
-					i,
-					formulaElements,
-					formulas,
+			formulas[i] = parseFormula(
+					formulaElements[i],
 					freeIdentifiers,
 					factory);
+			
+			boolean ok = formulas[i] != null;
 			
 			if (ok) {
 				
@@ -314,7 +308,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 				}
 				
 				ITypeEnvironment inferredEnvironment = 
-					typeCheckFormula(i, formulaElements, formulas, typeEnvironment);
+					typeCheckFormula(formulaElements[i], formulas[i], typeEnvironment);
 				
 				ok &= inferredEnvironment != null;
 			

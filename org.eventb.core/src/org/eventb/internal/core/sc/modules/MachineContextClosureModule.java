@@ -12,13 +12,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IContextPointerArray;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
 import org.eventb.internal.core.sc.StaticChecker;
@@ -70,9 +71,10 @@ public class MachineContextClosureModule extends ProcessorModule {
 				continue;
 			else {
 				
-				issueMarker(
-						IMarkerDisplay.SEVERITY_WARNING, 
+				createProblemMarker(
 						refinesMachine, 
+						EventBAttributes.REFINES_ATTRIBUTE, 
+						GraphProblem.ContextOnlyInAbstractMachineWarning,
 						StaticChecker.getStrippedComponentName(name));
 				
 				// repair

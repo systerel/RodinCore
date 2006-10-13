@@ -68,12 +68,12 @@ public abstract class LabeledElementModule extends ProcessorModule {
 			ILabelSymbolInfo symbolInfo = 
 				(ILabelSymbolInfo) labelSymbolTable.getSymbolInfo(label);
 			
-			newSymbolInfo.issueLabelConflictMarker(this);
+			newSymbolInfo.createConflictMarker(this);
 			
 			if(symbolInfo.hasError())
 				return null; // do not produce too many error messages
 			
-			symbolInfo.issueLabelConflictMarker(this);
+			symbolInfo.createConflictMarker(this);
 			
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();

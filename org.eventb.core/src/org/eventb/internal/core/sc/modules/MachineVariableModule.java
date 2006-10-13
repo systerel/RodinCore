@@ -86,12 +86,12 @@ public class MachineVariableModule extends IdentifierModule {
 				return true;
 			}
 			
-			newSymbolInfo.issueNameConflictMarker(this);
+			newSymbolInfo.createConflictMarker(this);
 			
 			if(symbolInfo.hasError())
 				return false; // do not produce too many error messages
 			
-			symbolInfo.issueNameConflictMarker(this);
+			symbolInfo.createConflictMarker(this);
 			
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();

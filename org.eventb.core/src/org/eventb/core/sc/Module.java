@@ -16,10 +16,11 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * 
@@ -32,26 +33,57 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class Module implements IModule, IMarkerDisplay {
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarkerWithInterval(int, org.rodinp.core.IRodinElement, java.lang.String, int, int, java.lang.Object...)
-	 */
-	public void issueMarkerWithLocation(int severity, IRodinElement element, String message, int startLocation, int endLocation, Object... objects) {
-		// TODO complete when markers are available
-		
-		issueMarker(severity, element, message, objects);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarker(int, org.rodinp.core.IRodinElement, java.lang.String, java.lang.Object[])
-	 */
-	public void issueMarker(int severity, IRodinElement element, String message, Object... objects) {
-		addMarker(
-				(IRodinFile) element.getOpenable(), 
-				element, 
-				Messages.bind(message, objects), 
-				severity);
+	
+	public void createProblemMarker(
+			IRodinElement element, 
+			IRodinProblem problem, 
+			Object... args)
+		throws RodinDBException {
+		element.createProblemMarker(problem, args);
 	}
 	
+	public void createProblemMarker(
+			IInternalElement element, 
+			String attributeId, 
+			IRodinProblem problem,
+			Object... args) throws RodinDBException {
+		createProblemMarker(element, problem, args);
+// TODO:
+//		element.createProblemMarker(attributeId, problem, args);
+	}
+	
+	public void createProblemMarker(
+			IInternalElement element, 
+			String attributeId, 
+			int charStart, 
+			int charEnd,
+			IRodinProblem problem, 
+			Object... args) throws RodinDBException {
+		createProblemMarker(element, problem, args);
+// TODO:		
+//		element.createProblemMarker(attributeId, charStart, charEnd, problem, args);
+	}
+	
+//	/* (non-Javadoc)
+//	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarkerWithInterval(int, org.rodinp.core.IRodinElement, java.lang.String, int, int, java.lang.Object...)
+//	 */
+//	public void issueMarkerWithLocation(int severity, IRodinElement element, String message, int startLocation, int endLocation, Object... objects) {
+//		// TODO complete when markers are available
+//		
+//		issueMarker(severity, element, message, objects);
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see org.eventb.core.sc.IMarkerDisplay#issueMarker(int, org.rodinp.core.IRodinElement, java.lang.String, java.lang.Object[])
+//	 */
+//	public void issueMarker(int severity, IRodinElement element, String message, Object... objects) {
+//		addMarker(
+//				(IRodinFile) element.getOpenable(), 
+//				element, 
+//				Messages.bind(message, objects), 
+//				severity);
+//	}
+//	
 	private String printSymbol(IRodinElement element) {
 		try {
 			if (element instanceof ILabeledElement) {
@@ -78,25 +110,25 @@ public abstract class Module implements IModule, IMarkerDisplay {
 		return result;
 	}
 	
-	private void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
-		try {
-			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);
-			
-			// TODO: correctly implement marker location
-			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
-			marker.setAttribute(IMarker.MESSAGE, "(" + printElement(element) + ") " + message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			
-			if (StaticChecker.DEBUG) {
-				System.out.print(element.getPath().toString() + " : ");
-				System.out.print("(" + printElement(element) + ") " + message);
-				System.out.println(severity == SEVERITY_ERROR ? " ERROR" : " WARNING");
-			}
-		} catch(CoreException e) {
-			// can safely ignore
-		}
-	}
-	
+//	private void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
+//		try {
+//			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);
+//			
+//			// TODO: correctly implement marker location
+//			marker.setAttribute(IMarker.LOCATION, element.getPath().toString());
+//			marker.setAttribute(IMarker.MESSAGE, "(" + printElement(element) + ") " + message);
+//			marker.setAttribute(IMarker.SEVERITY, severity);
+//			
+//			if (StaticChecker.DEBUG) {
+//				System.out.print(element.getPath().toString() + " : ");
+//				System.out.print("(" + printElement(element) + ") " + message);
+//				System.out.println(severity == SEVERITY_ERROR ? " ERROR" : " WARNING");
+//			}
+//		} catch(CoreException e) {
+//			// can safely ignore
+//		}
+//	}
+//	
 	protected void initAcceptorModules(
 			IAcceptorModule[] modules,
 			IStateRepository repository, 

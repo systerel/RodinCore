@@ -9,12 +9,12 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.sc.AcceptorModule;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.IStateRepository;
-import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IRodinElement;
 
@@ -53,10 +53,10 @@ public class MachineVariableFromLocalModule extends AcceptorModule {
 				StaticChecker.getStrippedComponentName(
 						abstractEventTable.getMachineFile().getElementName());
 			
-			issueMarker(
-					IMarkerDisplay.SEVERITY_ERROR, 
-					element, 
-					Messages.scuser_VariableIsLocalInAbstractMachine, 
+			createProblemMarker(
+					identifierElement, 
+					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+					GraphProblem.VariableIsLocalInAbstractMachineError, 
 					variableName,
 					abstractName);
 			

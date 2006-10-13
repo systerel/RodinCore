@@ -13,6 +13,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -41,7 +42,7 @@ public interface IContextPointerArray extends IState {
 	 */
 	int getPointerIndex(String contextName);
 	
-	IRodinElement getContextPointer(int index);
+	IInternalElement getContextPointer(int index);
 	
 	ISCContextFile getSCContextFile(int index);
 	
