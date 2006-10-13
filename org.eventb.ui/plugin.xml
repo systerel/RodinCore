@@ -108,6 +108,101 @@
    <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
    <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
    <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
+  
+   <extension
+         point="org.eventb.ui.editorPages">
+      <page
+            class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
+            id="org.eventb.ui.dependencies"
+            name="Dependencies"
+            priority="0"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.VariablePage"
+            id="org.eventb.ui.variables"
+            name="Variables"
+            priority="1"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.InvariantPage"
+            id="org.eventb.ui.invariants"
+            name="Invariants"
+            priority="2"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
+            id="org.eventb.ui.carriersets"
+            name="Carrier Sets"
+            priority="2">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.AxiomPage"
+            id="org.eventb.ui.axioms"
+            name="Axioms"
+            priority="4">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.TheoremPage"
+            id="org.eventb.ui.theorems"
+            name="Theorems"
+            priority="5"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.EventPage"
+            id="org.eventb.ui.events"
+            name="Events"
+            priority="6"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
+            id="org.eventb.ui.synthetic"
+            name="Synthetic View"
+            priority="7"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.ConstantPage"
+            id="org.eventb.ui.constants"
+            name="Constants"
+            priority="3">
+         <target id="org.eventb.ui.editors.context"/>
+      </page>
+      <page
+            class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
+            id="org.eventb.ui.prettyprint"
+            name="Pretty Print"
+            priority="8"
+            target="machine">
+         <target
+               id="org.eventb.ui.editors.machine"/>
+         <target
+               id="org.eventb.ui.editors.context"/>
+      </page>
+   </extension>
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -125,91 +220,6 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.wizards.NewComponent"
             name="New Event-B Component"/>
-   </extension>
-  
-   <extension
-         point="org.eventb.ui.editorPages">
-      <page
-            class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
-            id="org.eventb.ui.dependencies"
-            name="Dependencies"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target
-               id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.VariablePage"
-            id="org.eventb.ui.variables"
-            name="Variables"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.InvariantPage"
-            id="org.eventb.ui.invariants"
-            name="Invariants"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
-            id="org.eventb.ui.carriersets"
-            name="Carrier Sets">
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.TheoremPage"
-            id="org.eventb.ui.theorems"
-            name="Theorems"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target
-               id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.EventPage"
-            id="org.eventb.ui.events"
-            name="Events"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
-            id="org.eventb.ui.synthetic"
-            name="Synthetic View"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
-            id="org.eventb.ui.prettyprint"
-            name="Pretty Print"
-            target="machine">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target
-               id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.ConstantPage"
-            id="org.eventb.ui.constants"
-            name="Constants">
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
-            class="org.eventb.internal.ui.eventbeditor.AxiomPage"
-            id="org.eventb.ui.axioms"
-            name="Axioms">
-         <target id="org.eventb.ui.editors.context"/>
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

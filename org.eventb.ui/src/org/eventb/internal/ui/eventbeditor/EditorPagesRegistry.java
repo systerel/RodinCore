@@ -15,7 +15,7 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -43,21 +43,22 @@ public class EditorPagesRegistry {
 
 	private class PagesInfo {
 
-		Collection<PageInfo> infos;
+		ArrayList<PageInfo> infos;
 
 		PagesInfo() {
 			infos = new ArrayList<PageInfo>();
 		}
 
 		public EventBEditorPage[] getPages() {
-			Collection<EventBEditorPage> pages = new Vector<EventBEditorPage>();
+			Collection<EventBEditorPage> pages = new LinkedList<EventBEditorPage>();
 			for (PageInfo info : infos) {
 				try {
 					pages.add(info.createPage());
 				} catch (CoreException e) {
 					if (EventBEditorUtils.DEBUG)
 						e.printStackTrace();
-					UIUtils.log(e, "Cannot create a page of type " + info.getPageClass());
+					UIUtils.log(e, "Cannot create a page of type "
+							+ info.getPageClass());
 				}
 			}
 			return pages.toArray(new EventBEditorPage[pages.size()]);
@@ -67,6 +68,24 @@ public class EditorPagesRegistry {
 			infos.add(info);
 		}
 
+		public void sortPages() {
+			boolean sorted = false;
+			int size = infos.size();
+			while (!sorted) {
+				sorted = true;
+				for (int i = 0; i < size - 1; i++) {
+					PageInfo curr = infos.get(i);
+					PageInfo next = infos.get(i + 1);
+					if (curr.getPriority() > next.getPriority()) {
+						// Swap element
+						infos.set(i, next);
+						infos.set(i + 1, curr);
+						sorted = false;
+					}
+				}
+			}
+		}
+
 	}
 
 	private class PageInfo {
@@ -74,6 +93,18 @@ public class EditorPagesRegistry {
 
 		PageInfo(IConfigurationElement configuration) {
 			this.configuration = configuration;
+		}
+
+		public int getPriority() {
+			try {
+				return Integer.parseInt(configuration
+						.getAttributeAsIs("priority"));
+			} catch (NumberFormatException e) {
+				UIUtils.log(e,
+						"Priority must be an integer, assign default priority (10000) to page "
+								+ configuration.getAttributeAsIs("id"));
+				return 10000; // Lowest priority
+			}
 		}
 
 		public String getPageClass() {
@@ -129,9 +160,21 @@ public class EditorPagesRegistry {
 			}
 		}
 
+		// Sort the pages for each target
+		sortPages();
+
 	}
 
-	private void addPage(String targetID, PageInfo info) {
+	private synchronized void sortPages() {
+		assert registry != null;
+
+		for (String targetID : registry.keySet()) {
+			PagesInfo infos = registry.get(targetID);
+			infos.sortPages();
+		}
+	}
+
+	private synchronized void addPage(String targetID, PageInfo info) {
 		assert registry != null;
 
 		PagesInfo infos = registry.get(targetID);
