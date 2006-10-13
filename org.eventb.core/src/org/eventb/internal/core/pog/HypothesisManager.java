@@ -79,7 +79,11 @@ public abstract class HypothesisManager implements IHypothesisManager {
 		
 		int index = 0;
 		
-		for (int i=0; i<predicateTable.length; i++) {
+		// we start at index 1 because the root hypothesis set is created
+		// by the layer above this hypothesis manager.
+		// It is easier to keep the root hypothesis in the table because
+		// it makes indices of hypotheses and predicates correspond.
+		for (int i=1; i<predicateTable.length; i++) {
 			
 			if (hypothesisNames[i] == null)
 				continue;
