@@ -64,6 +64,7 @@ public final class POLoader {
 		return readPO(poSeq);
 	}
 	
+	// lock the PO file before reading
 	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		if (! poSeq.exists()) return null;
 		IPOFile poFile = (IPOFile) poSeq.getOpenable();
