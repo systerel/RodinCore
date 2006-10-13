@@ -14,8 +14,8 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -36,7 +36,7 @@ public class VariableSymbolInfo
 	public VariableSymbolInfo(
 			String symbol, 
 			String link, 
-			IRodinElement element, 
+			IInternalElement element, 
 			String component) {
 		super(symbol, link, element, component);
 		

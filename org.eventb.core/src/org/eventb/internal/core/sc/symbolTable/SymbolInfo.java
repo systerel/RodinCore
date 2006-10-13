@@ -14,7 +14,6 @@ import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -31,13 +30,13 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	
 	private boolean mutable;
 	
-	private final IRodinElement refElement;
+	private final IInternalElement refElement;
 	
-	private IRodinElement sourceElement;
+	private IInternalElement sourceElement;
 
 	protected final String component; 
 	
-	public SymbolInfo(String symbol, IRodinElement element, String component) {
+	public SymbolInfo(String symbol, IInternalElement element, String component) {
 		refElement = element;
 		sourceElement = element;
 		this.component = component;
@@ -66,7 +65,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.ISymbolInfo#getSourceElement()
 	 */
-	public IRodinElement getReferenceElement() {
+	public IInternalElement getReferenceElement() {
 		return refElement;
 	}
 	
@@ -120,27 +119,27 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
-	public IRodinElement getSourceElement() {
+	public IInternalElement getSourceElement() {
 		return sourceElement;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#setSourceElement(org.rodinp.core.IRodinElement)
 	 */
-	public void setSourceElement(IRodinElement source) {
+	public void setSourceElement(IInternalElement source) {
 		sourceElement = source;
 	}
 	
 	public void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
 		if (isMutable())
 			markerDisplay.createProblemMarker(
-					(IInternalElement) getReferenceElement(), 
+					getReferenceElement(), 
 					getSymbolAttributeId(), 
 					getConflictError(), 
 					getSymbol());
 		else
 			markerDisplay.createProblemMarker(
-					(IInternalElement) getReferenceElement(), 
+					getReferenceElement(), 
 					getSymbolAttributeId(), 
 					getConflictWarning(), 
 					getSymbol());

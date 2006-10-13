@@ -9,9 +9,11 @@ package org.eventb.core.sc.symbolTable;
 
 
 /**
+ * Marker interface for invariant labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IInvariantSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for invariant labels
 }

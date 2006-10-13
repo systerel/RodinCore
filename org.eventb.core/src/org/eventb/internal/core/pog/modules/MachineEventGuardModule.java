@@ -26,8 +26,6 @@ import org.eventb.core.pog.IAbstractEventGuardTable;
 import org.eventb.core.pog.IConcreteEventGuardTable;
 import org.eventb.core.pog.IEventHypothesisManager;
 import org.eventb.core.pog.IIdentifierTable;
-import org.eventb.core.pog.IModule;
-import org.eventb.core.pog.IModuleManager;
 import org.eventb.core.pog.IWitnessTable;
 import org.eventb.core.pog.Module;
 import org.eventb.core.pog.POGHint;
@@ -36,7 +34,6 @@ import org.eventb.core.pog.POGSource;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
-import org.eventb.internal.core.pog.ModuleManager;
 import org.eventb.internal.core.pog.WitnessTable;
 import org.rodinp.core.IRodinElement;
 
@@ -53,12 +50,12 @@ public class MachineEventGuardModule extends Module {
 	private List<POGPredicate> emptyPredicates;
 	private POGHint[] emptyHints;
 
-	private IModule[] modules;
-
-	public MachineEventGuardModule() {
-		IModuleManager manager = ModuleManager.getModuleManager();
-		modules = manager.getProcessorModules(MACHINE_EVENT_GUARD_MODULE);
-	}
+//	private IModule[] modules;
+//
+//	public MachineEventGuardModule() {
+//		IModuleManager manager = ModuleManager.getModuleManager();
+//		modules = manager.getProcessorModules(MACHINE_EVENT_GUARD_MODULE);
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

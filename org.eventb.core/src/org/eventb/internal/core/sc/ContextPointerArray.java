@@ -17,7 +17,6 @@ import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.IContextPointerArray;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede

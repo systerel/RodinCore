@@ -11,8 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IConstantSymbolInfo;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -33,7 +33,7 @@ public class ConstantSymbolInfo
 	public ConstantSymbolInfo(
 			String symbol, 
 			String link, 
-			IRodinElement element, 
+			IInternalElement element, 
 			String component) {
 		super(symbol, link, element, component);
 	}

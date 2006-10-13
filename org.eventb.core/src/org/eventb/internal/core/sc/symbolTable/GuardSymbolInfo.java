@@ -8,7 +8,7 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.GraphProblem;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 
 /**
@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinProblem;
  */
 public class GuardSymbolInfo extends LabelSymbolInfo {
 
-	public GuardSymbolInfo(String symbol, IRodinElement element, String component) {
+	public GuardSymbolInfo(String symbol, IInternalElement element, String component) {
 		super(symbol, element, component);
 	}
 

@@ -7,20 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * 
@@ -84,32 +77,32 @@ public abstract class Module implements IModule, IMarkerDisplay {
 //				severity);
 //	}
 //	
-	private String printSymbol(IRodinElement element) {
-		try {
-			if (element instanceof ILabeledElement) {
-				ILabeledElement labeledElement = (ILabeledElement) element;
-				return labeledElement.getLabel(null);
-			} else if (element instanceof IIdentifierElement) {
-				IIdentifierElement identifierElement = (IIdentifierElement) element;
-				return identifierElement.getIdentifierString();
-			} else
-				return element.getElementName();
-		} catch (RodinDBException e) {
-			return "";
-		}
-	}
-		
-	private String printElement(IRodinElement element) {
-		String elementType = element.getElementType();
-		String result = elementType.substring(elementType.lastIndexOf('.')+1);
-		IRodinElement parent = element.getParent();
-		if(parent instanceof IInternalElement)
-			result = result + " " + printSymbol(element) + " in " + printElement(parent);
-		else
-			result = result + " " + printSymbol(element); 
-		return result;
-	}
-	
+//	private String printSymbol(IRodinElement element) {
+//		try {
+//			if (element instanceof ILabeledElement) {
+//				ILabeledElement labeledElement = (ILabeledElement) element;
+//				return labeledElement.getLabel(null);
+//			} else if (element instanceof IIdentifierElement) {
+//				IIdentifierElement identifierElement = (IIdentifierElement) element;
+//				return identifierElement.getIdentifierString();
+//			} else
+//				return element.getElementName();
+//		} catch (RodinDBException e) {
+//			return "";
+//		}
+//	}
+//		
+//	private String printElement(IRodinElement element) {
+//		String elementType = element.getElementType();
+//		String result = elementType.substring(elementType.lastIndexOf('.')+1);
+//		IRodinElement parent = element.getParent();
+//		if(parent instanceof IInternalElement)
+//			result = result + " " + printSymbol(element) + " in " + printElement(parent);
+//		else
+//			result = result + " " + printSymbol(element); 
+//		return result;
+//	}
+//	
 //	private void addMarker(IRodinFile rodinFile, IRodinElement element, String message, int severity) {
 //		try {
 //			IMarker marker = rodinFile.getResource().createMarker(RodinMarkerUtil.RODIN_PROBLEM_MARKER);

@@ -8,9 +8,11 @@
 package org.eventb.core.sc.symbolTable;
 
 /**
+ * Marker interface for action labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IActionSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for action labels
 }

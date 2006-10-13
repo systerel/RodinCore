@@ -13,7 +13,7 @@ import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 
 /**
@@ -25,7 +25,7 @@ public class EventSymbolInfo extends LabelSymbolInfo implements
 	
 	public EventSymbolInfo(
 			String symbol, 
-			IRodinElement element, 
+			IInternalElement element, 
 			String component) {
 		super(symbol, element, component);
 		inherited = false;

@@ -9,7 +9,7 @@ package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 
@@ -38,7 +38,7 @@ public interface ISymbolInfo extends Comparable {
 	 * 
 	 * @return the reference element of this symbol info
 	 */
-	IRodinElement getReferenceElement();
+	IInternalElement getReferenceElement();
 	
 	/**
 	 * Returns the source element. By default this returns the reference element unless
@@ -46,14 +46,14 @@ public interface ISymbolInfo extends Comparable {
 	 * 
 	 * @return the source element of this symbol info
 	 */
-	IRodinElement getSourceElement();
+	IInternalElement getSourceElement();
 	
 	/**
 	 * Sets the source element for this symbol.
 	 * 
 	 * @param source the source element
 	 */
-	void setSourceElement(IRodinElement source);
+	void setSourceElement(IInternalElement source);
 	
 	/**
 	 * Returns whether this symbol is errorneous.

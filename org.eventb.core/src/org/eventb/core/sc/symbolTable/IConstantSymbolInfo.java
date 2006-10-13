@@ -9,6 +9,7 @@ package org.eventb.core.sc.symbolTable;
 
 
 /**
+ * Marker interface for constant identifiers.
  * <code>IConstantSymbolInfo</code> is an {@link org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo} that
  * corresponds to an Event-B constant.
  * 
@@ -16,5 +17,5 @@ package org.eventb.core.sc.symbolTable;
  *
  */
 public interface IConstantSymbolInfo extends IIdentifierSymbolInfo {
-
+	// marker interface for constant identifiers
 }

@@ -30,7 +30,7 @@ public class MachinePredicateModule extends Module {
 			IProgressMonitor monitor)
 			throws CoreException {
 
-		
+		// TODO: implement!
 		
 	}
 

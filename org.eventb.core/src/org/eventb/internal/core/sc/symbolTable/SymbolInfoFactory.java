@@ -26,7 +26,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
@@ -42,7 +42,7 @@ public final class SymbolInfoFactory {
 			String symbol,
 			String pointer,
 			ISCCarrierSet set, 
-			IRodinElement contextPointer,
+			IInternalElement contextPointer,
 			String component) {
 		return new CarrierSetSymbolInfo(symbol, pointer, contextPointer, component);
 	}
@@ -51,7 +51,7 @@ public final class SymbolInfoFactory {
 			String symbol,
 			String pointer,
 			ISCConstant constant, 
-			IRodinElement contextPointer,
+			IInternalElement contextPointer,
 			String component) {
 		return new ConstantSymbolInfo(symbol, pointer, contextPointer, component);
 	}
@@ -60,7 +60,7 @@ public final class SymbolInfoFactory {
 			String symbol,
 			String pointer,
 			ISCVariable variable, 
-			IRodinElement contextPointer,
+			IInternalElement contextPointer,
 			String component) {
 		return new VariableSymbolInfo(symbol, pointer, contextPointer, component);
 	}
@@ -89,7 +89,7 @@ public final class SymbolInfoFactory {
 	static public IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String symbol,
 			ISCIdentifierElement element, 
-			IRodinElement pointerElement,
+			IInternalElement pointerElement,
 			String component) {
 		
 		if (element instanceof ISCCarrierSet) {

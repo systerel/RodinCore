@@ -9,9 +9,11 @@ package org.eventb.core.sc.symbolTable;
 
 
 /**
+ * Marker interface for action labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IAxiomSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for axiom labels
 }

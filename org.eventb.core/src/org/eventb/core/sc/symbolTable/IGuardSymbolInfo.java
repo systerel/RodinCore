@@ -8,9 +8,11 @@
 package org.eventb.core.sc.symbolTable;
 
 /**
+ * Marker interface for guard labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IGuardSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for guard labels
 }

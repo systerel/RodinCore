@@ -15,7 +15,6 @@ import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -35,7 +34,7 @@ public abstract class IdentifierSymbolInfo
 	public IdentifierSymbolInfo(
 			String symbol, 
 			String pointer,
-			IRodinElement element, 
+			IInternalElement element, 
 			String component) {
 		super(symbol, element, component);
 		
@@ -108,7 +107,7 @@ public abstract class IdentifierSymbolInfo
 	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
 		
 		markerDisplay.createProblemMarker(
-				(IInternalElement) getReferenceElement(), 
+				getReferenceElement(), 
 				getSymbolAttributeId(), 
 				getUntypedError(), 
 				getSymbol());

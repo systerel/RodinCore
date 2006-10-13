@@ -8,9 +8,11 @@
 package org.eventb.core.sc.symbolTable;
 
 /**
+ * Marker interface for witness labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface IWitnessSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for witness labels
 }

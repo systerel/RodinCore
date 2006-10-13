@@ -9,6 +9,7 @@ package org.eventb.core.sc.symbolTable;
 
 
 /**
+ * Marker interface for carrier set identifiers.
  * <code>CarrierSetSymbolInfo</code> is an {@link org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo} that
  * corresponds to an Event-B carrier set.
 
@@ -16,5 +17,5 @@ package org.eventb.core.sc.symbolTable;
  *
  */
 public interface ICarrierSetSymbolInfo extends IIdentifierSymbolInfo {
-
+	// marker interface for carrier set identifiers
 }

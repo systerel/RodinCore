@@ -42,6 +42,7 @@ import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -218,7 +219,7 @@ public class MachineRefinesModule extends ProcessorModule {
 
 	protected IIdentifierSymbolInfo fetchSymbol(
 			ISCIdentifierElement identifier, 
-			IRodinElement pointerElement, 
+			IInternalElement pointerElement, 
 			IIdentifierSymbolTable identifierSymbolTable,
 			FormulaFactory factory,
 			String component) throws CoreException {

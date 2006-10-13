@@ -9,9 +9,11 @@ package org.eventb.core.sc.symbolTable;
 
 
 /**
+ * Marker interface for theorem labels.
+ * 
  * @author Stefan Hallerstede
  *
  */
 public interface ITheoremSymbolInfo extends ILabelSymbolInfo {
-
+	// marker interface for theorem labels
 }
