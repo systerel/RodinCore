@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,7 +37,7 @@ public class EditorPagesRegistry {
 
 	private static EditorPagesRegistry instance;
 
-	private HashMap<String, PagesInfo> registry;
+	private Map<String, PagesInfo> registry;
 
 	private static final String EDITORPAGE_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editorPages";
@@ -127,7 +128,7 @@ public class EditorPagesRegistry {
 		return instance;
 	}
 
-	public EventBEditorPage[] getPages(String editorID) {
+	public synchronized EventBEditorPage[] getPages(String editorID) {
 		if (registry == null)
 			loadRegistry();
 		PagesInfo info = registry.get(editorID);
@@ -178,12 +179,10 @@ public class EditorPagesRegistry {
 		assert registry != null;
 
 		PagesInfo infos = registry.get(targetID);
-
 		if (infos == null) {
 			infos = new PagesInfo();
 			registry.put(targetID, infos);
 		}
-
 		infos.addPage(info);
 	}
 

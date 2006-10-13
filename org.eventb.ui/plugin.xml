@@ -87,21 +87,21 @@
             extensions="bum"
             icon="icons/full/obj16/mch_obj.gif"
             id="org.eventb.ui.editors.machine"
-            name="Event-B Machine Editor"/>
+            name="%eventBMachineEditorName"/>
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
             extensions="buc"
             icon="icons/full/obj16/ctx_obj.gif"
             id="org.eventb.ui.editors.context"
-            name="Event-B Context Editor"/>
+            name="%eventBContextEditorName"/>
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
             contributorClass="org.eventb.internal.ui.prover.ProverUIContributor"
             extensions="bpr"
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.ProverUI"
-            name="Prover User Interface"/>
+            name="%eventBProofEditorName"/>
    </extension>
    <extension-point id="editorPages" name="%editorPagesName" schema="schema/editorPages.exsd"/>
    <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
@@ -114,7 +114,7 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
             id="org.eventb.ui.dependencies"
-            name="Dependencies"
+            name="%dependenciesPageName"
             priority="0"
             target="machine">
          <target
@@ -125,7 +125,7 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.VariablePage"
             id="org.eventb.ui.variables"
-            name="Variables"
+            name="%variablesPageName"
             priority="1"
             target="machine">
          <target
@@ -134,7 +134,7 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.InvariantPage"
             id="org.eventb.ui.invariants"
-            name="Invariants"
+            name="%invariantsPageName"
             priority="2"
             target="machine">
          <target
@@ -143,21 +143,21 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
             id="org.eventb.ui.carriersets"
-            name="Carrier Sets"
+            name="%carrierSetsPageName"
             priority="2">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.AxiomPage"
             id="org.eventb.ui.axioms"
-            name="Axioms"
+            name="%axiomsPageName"
             priority="4">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.TheoremPage"
             id="org.eventb.ui.theorems"
-            name="Theorems"
+            name="%theoremsPageName"
             priority="5"
             target="machine">
          <target
@@ -168,7 +168,7 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.EventPage"
             id="org.eventb.ui.events"
-            name="Events"
+            name="%eventsPageName"
             priority="6"
             target="machine">
          <target
@@ -177,7 +177,7 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
             id="org.eventb.ui.synthetic"
-            name="Synthetic View"
+            name="%syntheticViewPageName"
             priority="7"
             target="machine">
          <target
@@ -187,14 +187,14 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.ConstantPage"
             id="org.eventb.ui.constants"
-            name="Constants"
+            name="%constantsPageName"
             priority="3">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
             id="org.eventb.ui.prettyprint"
-            name="Pretty Print"
+            name="%prettyPrintPageName"
             priority="8"
             target="machine">
          <target

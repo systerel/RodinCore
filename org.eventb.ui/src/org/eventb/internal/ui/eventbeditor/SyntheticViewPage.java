@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
@@ -29,11 +30,11 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class SyntheticViewPage extends EventBFormPage {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Synthetic View"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID + ".syntheticviewpage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Synthetic View";
+	public static final String PAGE_TITLE = Messages.getString("org.eventb.ui.syntheticviewpage.title"); //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "Synthetic";
+	public static final String PAGE_TAB_TITLE = Messages.getString("org.eventb.ui.syntheticviewpage.tabtitle"); //$NON-NLS-1$
 
 	/**
 	 * Constructor.

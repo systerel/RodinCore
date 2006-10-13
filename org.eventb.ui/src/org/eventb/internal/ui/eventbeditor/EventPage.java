@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
@@ -28,11 +29,14 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class EventPage extends EventBFormPage {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Events"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".eventpage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Events";
+	public static final String PAGE_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".eventpage.title"); //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "Events";
+	public static final String PAGE_TAB_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".eventpage.tabtitle"); //$NON-NLS-1$
 
 	/**
 	 * Constructor.

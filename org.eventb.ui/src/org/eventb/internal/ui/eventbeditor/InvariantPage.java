@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
@@ -28,11 +29,14 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class InvariantPage extends EventBFormPage {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Invariants"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".invariantpage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Invariants";
+	public static final String PAGE_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".invariantpage.title"); //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "Invariants";
+	public static final String PAGE_TAB_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".invariantpage.tabtitle"); //$NON-NLS-1$
 
 	/**
 	 * Constructor.

@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.rodinp.core.IRodinFile;
 
@@ -32,11 +33,14 @@ import org.rodinp.core.IRodinFile;
 public class DependenciesPage extends EventBEditorPage {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Dependencies"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".dependencypage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Dependencies";
+	public static final String PAGE_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".dependencypage.title"); //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "Dependencies";
+	public static final String PAGE_TAB_TITLE = Messages
+			.getString(EventBUIPlugin.PLUGIN_ID + ".dependencypage.tabtitle"); //$NON-NLS-1$
 
 	/**
 	 * Constructor.
@@ -65,8 +69,9 @@ public class DependenciesPage extends EventBEditorPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		IRodinFile rodinFile = ((EventBEditor) this.getEditor()).getRodinInput(); 
-		
+		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
+				.getRodinInput();
+
 		if (rodinFile instanceof IMachineFile) {
 			SectionPart part = new RefinesSection(this.getEditor(), this
 					.getManagedForm().getToolkit(), body);
@@ -75,21 +80,20 @@ public class DependenciesPage extends EventBEditorPage {
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-			part = new SeesSection(this.getEditor(), this
-					.getManagedForm().getToolkit(), body);
+			part = new SeesSection(this.getEditor(), this.getManagedForm()
+					.getToolkit(), body);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
-			
+
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
-			
-		}
-		else if (rodinFile instanceof IContextFile) {
+
+		} else if (rodinFile instanceof IContextFile) {
 			SectionPart part = new ExtendsSection(this.getEditor(), this
 					.getManagedForm().getToolkit(), body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
-			
+
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 		}
