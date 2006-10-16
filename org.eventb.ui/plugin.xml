@@ -238,7 +238,7 @@
          point="org.eclipse.ui.editorActions">
       <editorContribution
             id="org.eventb.ui.machineContribution"
-            targetID="org.eventb.ui.editors.MachineEditor">
+            targetID="org.eventb.ui.editors.machine">
          <menu
                id="org.eventb.ui.eventBMenu"
                label="Event-B">
@@ -327,7 +327,7 @@
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
-            targetID="org.eventb.ui.editors.ContextEditor">
+            targetID="org.eventb.ui.editors.context">
          <menu
                id="org.eventb.ui.eventBMenu"
                label="Event-B">
