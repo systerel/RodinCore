@@ -104,11 +104,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	public void closing(OpenableElementInfo info) {
 		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
 		rodinDBManager.removeBuffer(this.getSnapshot(), true);
-		synchronized (info) {
-			if (! ((RodinFileElementInfo) info).hasUnsavedChanges()) {
-				rodinDBManager.removeBuffer(this, true);
-			}
-		}
+		rodinDBManager.removeBuffer(this.getMutableCopy(), false);
 		super.closing(info);
 	}
 
