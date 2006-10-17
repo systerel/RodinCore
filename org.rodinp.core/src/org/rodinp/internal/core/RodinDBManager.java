@@ -620,7 +620,7 @@ public class RodinDBManager implements ISaveParticipant {
 					VERBOSE = false;
 				}
 				element.closing(info);
-				if (element instanceof IParent && info != null) {
+				if (!(element instanceof RodinFile) && info != null) {
 					closeChildren(info);
 				}
 				this.cache.removeInfo(element);
