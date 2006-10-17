@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.projectexplorer;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;

@@ -13,8 +13,8 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.ui.PartInitException;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 
 /**

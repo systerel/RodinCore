@@ -64,6 +64,7 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixSetName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;

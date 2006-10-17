@@ -26,9 +26,9 @@ import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBImageDescriptor;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

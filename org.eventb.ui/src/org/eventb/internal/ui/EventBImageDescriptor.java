@@ -14,6 +14,7 @@ package org.eventb.internal.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

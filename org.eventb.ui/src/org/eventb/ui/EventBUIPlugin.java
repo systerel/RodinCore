@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.ui;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,6 +22,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
@@ -95,9 +97,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * Workspace.
 	 */
 	public EventBUIPlugin() {
+		super();
 		plugin = this;
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		database = RodinCore.create(root);
 	}
 
 	/**
@@ -118,6 +119,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 
 		configureDebugOptions();
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		database = RodinCore.create(root);
 	}
 
 	/**

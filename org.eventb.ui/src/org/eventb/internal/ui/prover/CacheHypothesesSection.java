@@ -32,8 +32,8 @@ import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.HypothesisRow;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

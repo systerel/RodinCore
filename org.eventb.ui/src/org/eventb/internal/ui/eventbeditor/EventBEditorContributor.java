@@ -26,7 +26,7 @@ import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

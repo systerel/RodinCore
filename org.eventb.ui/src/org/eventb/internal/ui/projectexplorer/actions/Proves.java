@@ -8,9 +8,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.WorkbenchException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.perspectives.ProvingPerspective;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 

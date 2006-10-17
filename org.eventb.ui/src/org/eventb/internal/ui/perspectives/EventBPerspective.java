@@ -15,7 +15,6 @@ package org.eventb.internal.ui.perspectives;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.eventbeditor.AxiomMirror;
 import org.eventb.internal.ui.eventbeditor.CarrierSetMirror;
 import org.eventb.internal.ui.eventbeditor.ConstantMirror;
@@ -25,6 +24,7 @@ import org.eventb.internal.ui.eventbeditor.TheoremMirror;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

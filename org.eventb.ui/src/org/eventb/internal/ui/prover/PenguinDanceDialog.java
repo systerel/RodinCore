@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
 
 /**

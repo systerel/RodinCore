@@ -23,8 +23,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

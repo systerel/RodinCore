@@ -58,7 +58,7 @@ import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

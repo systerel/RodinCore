@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.rodinp.core.IRodinFile;
 

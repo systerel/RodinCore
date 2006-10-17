@@ -15,13 +15,13 @@ package org.eventb.internal.ui.perspectives;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eventb.internal.ui.EventBUIPlugin;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.proofinformation.ProofInformation;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesis;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson

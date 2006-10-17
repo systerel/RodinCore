@@ -2,7 +2,7 @@ package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
-import org.eventb.internal.ui.EventBUIPlugin;
+import org.eventb.ui.EventBUIPlugin;
 
 public class PrefixWitName extends PrefixElementName {
 

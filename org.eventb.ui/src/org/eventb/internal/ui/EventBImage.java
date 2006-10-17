@@ -26,6 +26,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

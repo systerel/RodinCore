@@ -28,6 +28,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.eventb.ui.prover.IGlobalSimpleTactic;
 import org.osgi.framework.Bundle;
