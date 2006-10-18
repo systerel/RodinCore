@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="reasoners" name="Reasoner" schema="schema/reasoners.exsd"/>
+   <extension-point
+         id="reasoners" 
+         name="%point.reasoners" 
+         schema="schema/reasoners.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
