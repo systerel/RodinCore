@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.ide"
       label="%featureName"
-      version="0.5.5"
+      version="0.6.0"
       provider-name="%providerName"
       image="rodin_update_120.jpg">
 
