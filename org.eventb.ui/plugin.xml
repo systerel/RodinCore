@@ -1,83 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point
+      id="editorPages" 
+      name="%point.editorPagesName" 
+      schema="schema/editorPages.exsd"/>
+   <extension-point
+      id="globalProofTactics" 
+      name="%point.globalProofTacticsName" 
+      schema="schema/globalProofTactics.exsd"/>
+   <extension-point
+      id="hypothesisProofTactics" 
+      name="%point.hypothesisProofTacticsName" 
+      schema="schema/hypothesisProofTactics.exsd"/>
+   <extension-point
+      id="goalProofTactics" 
+      name="%point.goalProofTacticsName" 
+      schema="schema/goalProofTactics.exsd"/>
+   <extension-point 
+      id="elementui" 
+      name="%point.elementUIName" 
+      schema="schema/elementui.exsd"/>
+  
    <extension
          point="org.eclipse.ui.views">
       <category
             id="org.eventb.ui"
-            name="Event-B"/>
-            <view
+            name="%view.category.eventB"/>
+      <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.obligationexplorer.ObligationExplorer"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ObligationExplorer"
-            name="Obligation Explorer"/>
+            name="%view.ObligationExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofcontrol.ProofControl"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofControl"
-            name="Proof Control"/>
+            name="%view.ProofControl"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofinformation.ProofInformation"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofInformation"
-            name="Proof Information"/>
+            name="%view.ProofInformation"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.projectexplorer.ProjectExplorer"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProjectExplorer"
-            name="Project Explorer"/>
+            name="%view.ProjectExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ProofTreeUI"
-            name="Proof Tree UI"/>
+            name="%view.ProofTreeUI"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.InvariantMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.InvariantMirror"
-            name="Invariant Mirror"/>
+            name="%view.InvariantMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.TheoremMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.TheoremMirror"
-            name="Theorem Mirror"/>
+            name="%view.TheoremMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.AxiomMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.AxiomMirror"
-            name="Axiom Mirror"/>
+            name="%view.AxiomMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.CarrierSetMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.CarrierSetMirror"
-            name="Carrier Set Mirror"/>
+            name="%view.CarrierSetMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.ConstantMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.ConstantMirror"
-            name="Constant Mirror"/>
+            name="%view.ConstantMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.eventbeditor.EventMirror"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.EventMirror"
-            name="Event Mirror"/>
+            name="%view.EventMirror"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.searchhypothesis.SearchHypothesis"
             icon="icons/sample.gif"
             id="org.eventb.ui.views.SearchHypothesis"
-            name="Search Hypothesis"/>
+            name="%view.SearchHypothesis"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -87,36 +108,29 @@
             extensions="bum"
             icon="icons/full/obj16/mch_obj.gif"
             id="org.eventb.ui.editors.machine"
-            name="%eventBMachineEditorName"/>
+            name="%editor.Machine"/>
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
             extensions="buc"
             icon="icons/full/obj16/ctx_obj.gif"
             id="org.eventb.ui.editors.context"
-            name="%eventBContextEditorName"/>
+            name="%editor.Context"/>
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
             contributorClass="org.eventb.internal.ui.prover.ProverUIContributor"
             extensions="bpr"
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.ProverUI"
-            name="%eventBProofEditorName"/>
+            name="%editor.Proof"/>
    </extension>
-   <extension-point id="editorPages" name="%editorPagesName" schema="schema/editorPages.exsd"/>
-   <extension-point id="globalProofTactics" name="Global Proof Tactic" schema="schema/globalProofTactics.exsd"/>
-   <extension-point id="hypothesisProofTactics" name="Hypothesis Proof Tactics" schema="schema/hypothesisProofTactics.exsd"/>
-   <extension-point id="goalProofTactics" name="Goal Proof Tactics" schema="schema/goalProofTactics.exsd"/>
-   <extension-point id="elementui" name="Event-B Element UI" schema="schema/elementui.exsd"/>
-  
    <extension
          point="org.eventb.ui.editorPages">
       <page
             class="org.eventb.internal.ui.eventbeditor.DependenciesPage"
             id="org.eventb.ui.dependencies"
-            name="%dependenciesPageName"
-            priority="0"
-            target="machine">
+            name="%editorPage.dependencies"
+            priority="0">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target
@@ -125,41 +139,38 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.VariablePage"
             id="org.eventb.ui.variables"
-            name="%variablesPageName"
-            priority="1"
-            target="machine">
+            name="%editorPage.variables"
+            priority="1">
          <target
                id="org.eventb.ui.editors.machine"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.InvariantPage"
             id="org.eventb.ui.invariants"
-            name="%invariantsPageName"
-            priority="2"
-            target="machine">
+            name="%editorPage.invariants"
+            priority="2">
          <target
                id="org.eventb.ui.editors.machine"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.CarrierSetPage"
             id="org.eventb.ui.carriersets"
-            name="%carrierSetsPageName"
+            name="%editorPage.carrierSets"
             priority="2">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.AxiomPage"
             id="org.eventb.ui.axioms"
-            name="%axiomsPageName"
+            name="%editorPage.axioms"
             priority="4">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.TheoremPage"
             id="org.eventb.ui.theorems"
-            name="%theoremsPageName"
-            priority="5"
-            target="machine">
+            name="%editorPage.theorems"
+            priority="5">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target
@@ -168,18 +179,16 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.EventPage"
             id="org.eventb.ui.events"
-            name="%eventsPageName"
-            priority="6"
-            target="machine">
+            name="%editorPage.events"
+            priority="6">
          <target
                id="org.eventb.ui.editors.machine"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.SyntheticViewPage"
             id="org.eventb.ui.synthetic"
-            name="%syntheticViewPageName"
-            priority="7"
-            target="machine">
+            name="%editorPage.synthetic"
+            priority="7">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target id="org.eventb.ui.editors.context"/>
@@ -187,16 +196,15 @@
       <page
             class="org.eventb.internal.ui.eventbeditor.ConstantPage"
             id="org.eventb.ui.constants"
-            name="%constantsPageName"
+            name="%editorPage.constants"
             priority="3">
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
             class="org.eventb.internal.ui.eventbeditor.prettyprint.PrettyPrintPage"
             id="org.eventb.ui.prettyprint"
-            name="%prettyPrintPageName"
-            priority="8"
-            target="machine">
+            name="%editorPage.prettyprint"
+            priority="8">
          <target
                id="org.eventb.ui.editors.machine"/>
          <target
@@ -207,41 +215,41 @@
          point="org.eclipse.ui.newWizards">
       <category
             id="org.eventb.ui.wizards"
-            name="Event-B Wizards"/>
+            name="%newWizard.category.eventB"/>
       <wizard
             category="org.eventb.ui.wizards"
             class="org.eventb.internal.ui.wizards.NewProjectWizard"
             icon="icons/sample.gif"
             id="org.eventb.ui.wizards.NewProject"
-            name="New Event-B Project"/>
+            name="%newWizard.project"/>
       <wizard
             category="org.eventb.ui.wizards"
             class="org.eventb.internal.ui.wizards.NewComponentWizard"
             icon="icons/sample.gif"
             id="org.eventb.ui.wizards.NewComponent"
-            name="New Event-B Component"/>
+            name="%newWizard.component"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.eventb.internal.ui.perspectives.EventBPerspective"
             id="org.eventb.ui.perspective.eventb"
-            name="Event-B"/>
+            name="%perspective.eventb"/>
       <perspective
             class="org.eventb.internal.ui.perspectives.ProvingPerspective"
             id="org.eventb.ui.perspective.proving"
-            name="Proving"/>
+            name="%perspective.proving"/>
    </extension>
    <extension
          id="org.eventb.ui.eventbeditorActions"
-         name="Event-B Editor Actions"
+         name="%editorAction.name"
          point="org.eclipse.ui.editorActions">
       <editorContribution
             id="org.eventb.ui.machineContribution"
             targetID="org.eventb.ui.editors.machine">
          <menu
                id="org.eventb.ui.eventBMenu"
-               label="Event-B">
+               label="%editorAction.menu.eventB">
             <groupMarker name="New"/>
          </menu>
          <action 
@@ -249,88 +257,88 @@
                class="org.eventb.internal.ui.eventbeditor.actions.NewEvent"
                icon="icons/full/ctool16/newevt_edit.gif"
                id="org.eventb.ui.actions.newevent"
-               label="New Event"
+               label="%editorAction.newevent.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create a new event for the machine"/>
+               tooltip="%editorAction.newevent.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newTheorems"
                class="org.eventb.internal.ui.eventbeditor.actions.NewTheorems"
                icon="icons/full/ctool16/newthm_edit.gif"
                id="org.eventb.ui.actions.newtheorems"
-               label="New Theorems"
+               label="%editorAction.newtheorems.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new theorems for the machine"/>
+               tooltip="%editorAction.newtheorems.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newVariable"
                class="org.eventb.internal.ui.eventbeditor.actions.NewVariable"
                icon="icons/full/ctool16/newvar_edit.gif"
                id="org.eventb.ui.actions.newvariable"
-               label="New Variable"
+               label="%editorAction.newvariable.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create a new variable for the machine"/>
+               tooltip="%editorAction.newvariable.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newInvariants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewInvariants"
                icon="icons/full/ctool16/newinv_edit.gif"
                id="org.eventb.ui.actions.newinvariants"
-               label="New Invariants"
+               label="%editorAction.newinvariants.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new invariants for the machine"/>
+               tooltip="%editorAction.newinvariants.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newVariant"
                class="org.eventb.internal.ui.eventbeditor.actions.NewVariant"
                icon="icons/full/ctool16/newvariant_edit.gif"
                id="org.eventb.ui.actions.newvariant"
-               label="New Variant"
+               label="%editorAction.newvariant.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new variant for the machine"/>
+               tooltip="%editorAction.newvariant.tooltip"/>
+         <menu
+               id="org.eventb.ui.refactoring"
+               label="%editorAction.menu.refactoring">
+            <groupMarker name="InvName"/>
+            <groupMarker name="ThmName"/>
+         </menu>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
-               label="Automatic Invariant Naming"
+               label="%editorAction.autoInvNaming.label"
                menubarPath="org.eventb.ui.refactoring/InvName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixInvName"
                id="org.eventb.ui.actions.PrefixInvNaming"
-               label="Set Prefix Invariant Name"
+               label="%editorAction.PrefixInvNaming.label"
                menubarPath="org.eventb.ui.refactoring/InvName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
-               label="Automatic Theorem Naming"
+               label="%editorAction.autoThmNaming.label"
                menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
                id="org.eventb.ui.actions.PrefixThmNaming"
-               label="Set Prefix Theorem Name"
+               label="%editorAction.PrefixThmNaming.label"
                menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
-         <menu
-               id="org.eventb.ui.refactoring"
-               label="Refactoring">
-            <groupMarker name="InvName"/>
-            <groupMarker name="ThmName"/>
-         </menu>
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
             targetID="org.eventb.ui.editors.context">
          <menu
                id="org.eventb.ui.eventBMenu"
-               label="Event-B">
+               label="%editorAction.menu.eventB">
             <groupMarker name="New"/>
          </menu>
          <action
@@ -338,79 +346,79 @@
                class="org.eventb.internal.ui.eventbeditor.actions.NewCarrierSets"
                icon="icons/full/ctool16/newset_edit.gif"
                id="org.eventb.ui.actions.newcarriersets"
-               label="New Carrier Sets"
+               label="%editorAction.newcarriersets.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new carrier sets for the context"/>
+               tooltip="%editorAction.newcarriersets.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newEnumeratedSet"
                class="org.eventb.internal.ui.eventbeditor.actions.NewEnumeratedSet"
                icon="icons/full/ctool16/newenuset_edit.gif"
-               id="org.eventb.ui.actions.newcarriersets"
-               label="New Enumerated Set"
+               id="org.eventb.ui.actions.newenumeratedset"
+               label="%editorAction.newenumeratedset.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create a new enumerated set for the context"/>
+               tooltip="%editorAction.newenumeratedset.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newConstants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewConstants"
                icon="icons/full/ctool16/newcst_edit.gif"
                id="org.eventb.ui.actions.newconstants"
-               label="New Constants"
+               label="%editorAction.newconstants.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new contstants for the context"/>
+               tooltip="%editorAction.newconstants.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newAxioms"
                class="org.eventb.internal.ui.eventbeditor.actions.NewAxioms"
                icon="icons/full/ctool16/newaxm_edit.gif"
                id="org.eventb.ui.actions.newaxioms"
-               label="New Axioms"
+               label="%editorAction.newaxioms.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new axioms for the context"/>
+               tooltip="%editorAction.newaxioms.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newTheorems"
                class="org.eventb.internal.ui.eventbeditor.actions.NewTheorems"
                icon="icons/full/ctool16/newthm_edit.gif"
                id="org.eventb.ui.actions.newtheorems"
-               label="New Theorems"
+               label="%editorAction.newtheorems.label"
                menubarPath="org.eventb.ui.eventBMenu/New"
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="Create new theorems for the context"/>
+               tooltip="%editorAction.newtheorems.tooltip"/>
          <menu
                id="org.eventb.ui.refactoring"
-               label="Refactoring">
+               label="%editorAction.menu.refactoring">
             <groupMarker name="AxmName"/>
             <groupMarker name="ThmName"/>
          </menu>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
-               label="Automatic Theorem Naming"
+               label="%editorAction.autoThmNaming.label"
                menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
                id="org.eventb.ui.actions.PrefixThmNaming"
-               label="Set Prefix Theorem Name"
+               label="%editorAction.PrefixThmNaming.label"
                menubarPath="org.eventb.ui.refactoring/ThmName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
                id="org.eventb.ui.actions.autoAxmNaming"
-               label="Automatic Axiom Naming"
+               label="%editorAction.autoAxmNaming.label"
                menubarPath="org.eventb.ui.refactoring/AxmName"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName"
                id="org.eventb.ui.actions.PrefixAxmNaming"
-               label="Set Prefix Axiom Name"
+               label="%editorAction.PrefixAxmNaming"
                menubarPath="org.eventb.ui.refactoring/AxmName"
                style="push"/>
       </editorContribution>
@@ -418,9 +426,9 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            description="Set of actions for Event-B Editor"
+            description="%actionSet.eventB.description"
             id="org.eventb.ui.eventBEditor"
-            label="Event-B"
+            label="%actionSet.eventB.label"
             visible="false">
       </actionSet>
    </extension>
@@ -434,17 +442,17 @@
                enablesFor="1"
                icon="icons/full/ctool16/refines.gif"
                id="org.eventb.ui.refines"
-               label="&amp;Refine"
+               label="%popupMenu.refines.label"
                menubarPath="modelling"
-               tooltip="Refine the machine"/>
+               tooltip="%popupMenu.refines.tooltip"/>
          <action
                class="org.eventb.internal.ui.projectexplorer.actions.Proves"
                enablesFor="1"
                icon="icons/discharged.gif"
                id="org.eventb.ui.proveMachine"
-               label="&amp;Prove"
+               label="%popupMenu.proveMachine.label"
                menubarPath="proving"
-               tooltip="Prove the obligations related to this machine"/>
+               tooltip="%popupMenu.proveMachine.tooltip"/>
       </objectContribution>
       <objectContribution
             id="org.eventb.ui.ContextFile"
@@ -454,17 +462,17 @@
                enablesFor="1"
                icon="icons/full/ctool16/refines.gif"
                id="org.eventb.ui.extends"
-               label="&amp;Extend"
+               label="%popupMenu.extend.label"
                menubarPath="modelling"
-               tooltip="Extends the context"/>
+               tooltip="%popupMenu.extend.tooltip"/>
          <action
                class="org.eventb.internal.ui.projectexplorer.actions.Proves"
                enablesFor="1"
                icon="icons/discharged.gif"
                id="org.eventb.ui.proveContext"
-               label="&amp;Prove"
+               label="%popupMenu.proveContext.label"
                menubarPath="proving"
-               tooltip="Prove the obligations related to this context"/>
+               tooltip="%popupMenu.proveContext.tooltip"/>
       </objectContribution>
       <viewerContribution
             id="org.eventb.ui.ProjectExplorer"
@@ -474,9 +482,9 @@
                enablesFor="+"
                icon="icons/delete.gif"
                id="org.eventb.ui.Delete"
-               label="&amp;Delete"
+               label="%popupMenu.delete.label"
                menubarPath="modelling"
-               tooltip="Delete element(s)"/>
+               tooltip="%popupMenu.delete.tooltip"/>
       </viewerContribution>
    </extension>
    <extension
@@ -573,51 +581,52 @@
          point="org.eventb.ui.hypothesisProofTactics">
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.Falsify"
-            hint="Contradiction"
+            hint="%hypothesisProofTactics.falsify.tooltip"
             icon="icons/full/ctool16/falsify_prover.gif"
             id="Falsify"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ImpE1"
-            hint="Implication elemination from left to right"
+            hint="%hypothesisProofTactics.ImpE1.tooltip"
             icon="icons/full/ctool16/impE1_prover.gif"
             id="Implication Elemination 1"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ImpE2"
-            hint="Implication elemination from right to left"
+            hint="%hypothesisProofTactics.ImpE2.tooltip"
             icon="icons/full/ctool16/impE2_prover.gif"
             id="Implication Elemination 2"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ConjE"
-            hint="Conjuntion elemination"
+            hint="%hypothesisProofTactics.ConjE.tooltip"
             icon="icons/full/ctool16/conjE_prover.gif"
             id="Conjunction Elemination"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.DisjE"
-            hint="Disjunction elemination"
+            hint="%hypothesisProofTactics.DisjE.tooltip"
             icon="icons/full/ctool16/disjE_prover.gif"
             id="Disjunction Elemination"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.NegE"
+            hint="%hypothesisProofTactics.NegE.tooltip"
             icon="icons/full/ctool16/negE_prover.gif"
             id="Remove Negation"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.AllD"
-            hint="Instantiate universally quantified variables"
+            hint="%hypothesisProofTactics.AllD.tooltip"
             icon="icons/full/ctool16/allD_prover.gif"
             id="Forall Instantiation"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ExE"
-            hint="Free existential variables"
+            hint="%hypothesisProofTactics.ExE.tooltip"
             icon="icons/full/ctool16/exE_prover.gif"
             id="Exists Instantiation"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.Eq1"
-            hint="Equality from left to right"
+            hint="%hypothesisProofTactics.Eq1.tooltip"
             icon="icons/full/ctool16/eq1_prover.gif"
             id="Equality 1"/>
       <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.Eq2"
-            hint="Equality from right to left"
+            hint="%hypothesisProofTactics.Eq2.tooltip"
             icon="icons/full/ctool16/eq2_prover.gif"
             id="Equality 2"/>
    </extension>
