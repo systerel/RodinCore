@@ -46,29 +46,30 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * The identifier of the Event-B UI plug-in (value
 	 * <code>"org.eventb.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eventb.ui";
+	public static final String PLUGIN_ID = "org.eventb.ui"; //$NON-NLS-1$
 
-	private static final String GLOBAL_TRACE = PLUGIN_ID + "/debug";
+	// Trace Options
+	private static final String GLOBAL_TRACE = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 
 	private static final String EVENTBEDITOR_TRACE = PLUGIN_ID
-			+ "/debug/eventbeditor";
+			+ "/debug/eventbeditor"; //$NON-NLS-1$
 
 	private static final String PROJECTEXPLORER_TRACE = PLUGIN_ID
-			+ "/debug/projectexplorer";
+			+ "/debug/projectexplorer"; //$NON-NLS-1$
 
 	private static final String OBLIGATIONEXPLORER_TRACE = PLUGIN_ID
-			+ "/debug/obligationexplorer";
+			+ "/debug/obligationexplorer"; //$NON-NLS-1$
 
-	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui";
+	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui"; //$NON-NLS-1$
 
 	private static final String PROOFCONTROL_TRACE = PLUGIN_ID
-			+ "/debug/proofcontrol";
+			+ "/debug/proofcontrol"; //$NON-NLS-1$
 
 	private static final String PROOFTREEUI_TRACE = PLUGIN_ID
-			+ "/debug/prooftreeui";
+			+ "/debug/prooftreeui"; //$NON-NLS-1$
 
 	private static final String PROOFINFORMATION_TRACE = PLUGIN_ID
-			+ "/debug/proofinformation";
+			+ "/debug/proofinformation"; //$NON-NLS-1$
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -120,6 +121,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 		configureDebugOptions();
 
+		// Stored the database instance starting at the root workspace
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		database = RodinCore.create(root);
 	}
@@ -191,7 +193,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
-		// Initialise from EventBImage
 		EventBImage.initializeImageRegistry(reg);
 		super.initializeImageRegistry(reg);
 	}
