@@ -19,46 +19,26 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IInvariant;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.ElementLabelProvider;
+import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -103,130 +83,6 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	}
 
 	/**
-	 * @author htson
-	 *         <p>
-	 *         This class sorts the projects by name and internal elements by
-	 *         types
-	 */
-	private class ProjectsSorter extends ViewerSorter {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (e1 instanceof IMachineFile && e2 instanceof IMachineFile) {
-				IMachineFile m1 = (IMachineFile) e1;
-				IMachineFile m2 = (IMachineFile) e2;
-				String name1 = EventBPlugin.getComponentName(m1
-						.getElementName());
-				String name2 = EventBPlugin.getComponentName(m2
-						.getElementName());
-				return name1.compareTo(name2);
-			}
-			if (e1 instanceof IContextFile && e2 instanceof IContextFile) {
-				IContextFile m1 = (IContextFile) e1;
-				IContextFile m2 = (IContextFile) e2;
-				String name1 = EventBPlugin.getComponentName(m1
-						.getElementName());
-				String name2 = EventBPlugin.getComponentName(m2
-						.getElementName());
-				return name1.compareTo(name2);
-			}
-
-			if (e1 instanceof IRodinProject) {
-				return super.compare(viewer, e1, e2);
-			} else {
-				int cat1 = category(e1);
-				int cat2 = category(e2);
-				return cat1 - cat2;
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-		 */
-		public int category(Object element) {
-			if (element instanceof IVariable)
-				return 1;
-			if (element instanceof IGuard)
-				return 2;
-			if (element instanceof IAction)
-				return 3;
-
-			return 0;
-		}
-	}
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         Providing the label for object in the tree.
-	 */
-	private class ViewLabelProvider extends LabelProvider {
-
-		public String getText(Object obj) {
-			if (obj instanceof IRodinProject)
-				return ((IRodinProject) obj).getElementName();
-			if (obj instanceof IRodinFile) {
-				String name = ((IRodinFile) obj).getElementName();
-				return EventBPlugin.getComponentName(name);
-			}
-			try {
-				if (obj instanceof IIdentifierElement)
-					return ((IIdentifierElement) obj).getIdentifierString();
-				if (obj instanceof ILabeledElement)
-					return ((ILabeledElement) obj).getLabel(null);
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			return obj.toString();
-		}
-
-		public Image getImage(Object obj) {
-			if (obj instanceof IRodinElement)
-				return EventBImage.getRodinImage((IRodinElement) obj);
-			if (obj instanceof TreeNode)
-				return (getTreeNodeImage((TreeNode) obj));
-			return null;
-		}
-	}
-
-	/**
-	 * Getting the impage corresponding to a tree node.
-	 * <p>
-	 * 
-	 * @param element
-	 *            A Tree node
-	 * @return The image for displaying corresponding to the tree node
-	 */
-	private Image getTreeNodeImage(TreeNode node) {
-
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-
-		if (node.isType(IVariable.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_VARIABLES);
-		if (node.isType(IInvariant.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_INVARIANTS);
-		if (node.isType(ITheorem.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_THEOREMS);
-		if (node.isType(IEvent.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_EVENTS);
-		if (node.isType(ICarrierSet.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_CARRIER_SETS);
-		if (node.isType(IConstant.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_CONSTANTS);
-		if (node.isType(IAxiom.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_AXIOMS);
-
-		return null;
-	}
-
-	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 * <p>
@@ -236,8 +92,8 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
-		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new ProjectsSorter());
+		viewer.setLabelProvider(new ElementLabelProvider());
+		viewer.setSorter(new ElementSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 		makeActions();
 		hookContextMenu();

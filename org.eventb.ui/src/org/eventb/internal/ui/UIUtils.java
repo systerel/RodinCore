@@ -24,8 +24,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -38,17 +36,13 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
-import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRSequent;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
-import org.eventb.core.IVariant;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
@@ -117,45 +111,6 @@ public class UIUtils {
 			return ((IRodinElement) node).getOpenable();
 
 		return null;
-	}
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         Class which provide the label for Rodin elements.
-	 */
-	public static class ElementLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			try {
-				if (obj instanceof IIdentifierElement)
-
-					return ((IIdentifierElement) obj).getIdentifierString();
-
-				if (obj instanceof ILabeledElement)
-					return ((ILabeledElement) obj).getLabel(null);
-
-				if (obj instanceof ISeesContext)
-					return ((ISeesContext) obj).getSeenContextName();
-
-				if (obj instanceof IRefinesMachine)
-					return ((IRefinesMachine) obj).getAbstractMachineName();
-
-				if (obj instanceof IExtendsContext)
-					return ((IExtendsContext) obj).getAbstractContextName();
-				if (obj instanceof IVariant)
-					return "Variant";
-				
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
-			return "";
-		}
-
-		public Image getImage(Object obj) {
-			if (obj instanceof IRodinElement)
-				return EventBImage.getRodinImage((IRodinElement) obj);
-			return null;
-		}
 	}
 
 	/**

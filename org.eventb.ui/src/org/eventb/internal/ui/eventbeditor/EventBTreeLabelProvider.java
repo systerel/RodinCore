@@ -25,21 +25,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.core.IAssignmentElement;
-import org.eventb.core.IExpressionElement;
-import org.eventb.core.IExtendsContext;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IPredicateElement;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISeesContext;
-import org.eventb.core.IVariant;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.ElementUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -49,9 +39,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBTreeLabelProvider implements ITableLabelProvider,
 		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
-
-	// TODO: The font should associated with the viewer that used this label
-	// provider.
 
 	// The associated Event-B Editor
 	private IEventBEditor editor;
@@ -95,52 +82,52 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		try {
-			if (columnIndex == 0) {
-				if (element instanceof ISeesContext)
-					return ((ISeesContext) element).getSeenContextName();
-				if (element instanceof IRefinesMachine)
-					return ((IRefinesMachine) element).getAbstractMachineName();
-				if (element instanceof IExtendsContext)
-					return ((IExtendsContext) element).getAbstractContextName();
-				if (element instanceof IRefinesEvent)
-					return ((IRefinesEvent) element).getAbstractEventLabel();
+		// try {
 
-				if (element instanceof ILabeledElement)
-					return ((ILabeledElement) element).getLabel(null);
+		if (columnIndex == 0) {
+			return ElementUIRegistry.getDefault().getPrimaryLabel(element);
+			/*
+			 * if (element instanceof ISeesContext) return ((ISeesContext)
+			 * element).getSeenContextName(); if (element instanceof
+			 * IRefinesMachine) return ((IRefinesMachine)
+			 * element).getAbstractMachineName(); if (element instanceof
+			 * IExtendsContext) return ((IExtendsContext)
+			 * element).getAbstractContextName(); if (element instanceof
+			 * IRefinesEvent) return ((IRefinesEvent)
+			 * element).getAbstractEventLabel();
+			 * 
+			 * if (element instanceof ILabeledElement) return ((ILabeledElement)
+			 * element).getLabel(null);
+			 * 
+			 * if (element instanceof IIdentifierElement) return
+			 * ((IIdentifierElement) element).getIdentifierString();
+			 * 
+			 * if (element instanceof IVariant) return "Variant";
+			 */
 
-				if (element instanceof IIdentifierElement)
-					return ((IIdentifierElement) element).getIdentifierString();
-				
-				if (element instanceof IVariant)
-					return "Variant";
-
-				// if (rodinElement instanceof IInternalElement)
-				// return ((IInternalElement)
-				// rodinElement).getElementName();
-
-				return "";
-			}
-
-			if (columnIndex == 1) {
-				try {
-					if (element instanceof IAssignmentElement)
-						return ((IAssignmentElement) element)
-								.getAssignmentString();
-					if (element instanceof IPredicateElement)
-						return ((IPredicateElement) element)
-								.getPredicateString();
-					if (element instanceof IExpressionElement)
-						return ((IExpressionElement) element)
-								.getExpressionString();
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				return "";
-			}
-		} catch (RodinDBException e) {
-			e.printStackTrace();
+			// if (rodinElement instanceof IInternalElement)
+			// return ((IInternalElement)
+			// rodinElement).getElementName();
+			// return "";
 		}
+
+		if (columnIndex == 1) {
+			return ElementUIRegistry.getDefault().getSecondaryLabel(element);
+			// try {
+			// if (element instanceof IAssignmentElement)
+			// return ((IAssignmentElement) element).getAssignmentString();
+			// if (element instanceof IPredicateElement)
+			// return ((IPredicateElement) element).getPredicateString();
+			// if (element instanceof IExpressionElement)
+			// return ((IExpressionElement) element).getExpressionString();
+			// } catch (RodinDBException e) {
+			// e.printStackTrace();
+			//			}
+			//			return "";
+		}
+		// } catch (RodinDBException e) {
+		// e.printStackTrace();
+		// }
 
 		return element.toString();
 

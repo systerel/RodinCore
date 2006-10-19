@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.ui.ElementUIRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -272,50 +272,58 @@ public class EventBImage {
 	 * @return The image for displaying corresponding to the input element
 	 */
 	public static Image getRodinImage(IRodinElement element) {
-		Collection<ElementUI> elementUIs = ElementUILoader.getElementUIs();
+		ImageDescriptor desc = ElementUIRegistry.getDefault()
+				.getImageDescriptor(element);
+		if (desc == null)
+			return null;
 
-		for (ElementUI elementUI : elementUIs) {
-			Class clazz = elementUI.getElementClass();
-			if (clazz.isInstance(element)) {
-				String pluginID = elementUI.getPluginID();
-				String path = elementUI.getPath();
+		// Compute the key
+		// key = desc:Description:overlay
+		// overlay = comment + error
 
-				// Compute the key
-				// key = element:pluginID:path:overlay
-				// overlay = comment + error
-				String key = "element:" + pluginID + ":" + path;
+		String key = "desc:" + desc;
 
-				String overlay = "0";
-				if (element instanceof ICommentedElement) {
-					ICommentedElement commentedElement = (ICommentedElement) element;
-					try {
-						String comment = commentedElement
-								.getComment(new NullProgressMonitor());
-						if (!comment.equals(""))
-							overlay = "1";
-					} catch (RodinDBException e) {
-						// Do nothing
-					}
-				}
-				key += ":" + overlay;
-
-				Image image = images.get(key);
-				if (image == null) {
-					if (UIUtils.DEBUG)
-						System.out.println("Create a new image: " + key);
-					OverlayIcon icon = new OverlayIcon(getImageDescriptor(
-							pluginID, path));
-					if (overlay == "1")
-						icon
-								.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
-					image = icon.createImage();
-					images.put(key, image);
-				}
-				return image;
+		String overlay = "0";
+		if (element instanceof ICommentedElement) {
+			ICommentedElement commentedElement = (ICommentedElement) element;
+			try {
+				String comment = commentedElement
+						.getComment(new NullProgressMonitor());
+				if (!comment.equals(""))
+					overlay = "1";
+			} catch (RodinDBException e) {
+				// Do nothing
 			}
 		}
+		key += ":" + overlay;
 
-		return null;
+		Image image = images.get(key);
+		if (image == null) {
+			if (UIUtils.DEBUG)
+				System.out.println("Create a new image: " + key);
+			OverlayIcon icon = new OverlayIcon(desc);
+			if (overlay == "1")
+				icon.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
+			image = icon.createImage();
+			images.put(key, image);
+		}
+		return image;
+
+		// Collection<ElementUI> elementUIs = ElementUIRegistry.getElementUIs();
+
+		// for (ElementUI elementUI : elementUIs) {
+		// Class clazz = elementUI.getElementClass();
+		// if (clazz.isInstance(element)) {
+		// String pluginID = elementUI.getPluginID();
+		// String path = elementUI.getPath();
+		//
+		//		
+		// // String key = "element:" + pluginID + ":" + path;
+		//
+		// }
+		// }
+		//
+		// return null;
 	}
 
 	private static final String getProofTreeNodeImageBasePath(
@@ -387,7 +395,8 @@ public class EventBImage {
 
 		final IPRProofTree prProofTree = prSequent.getProofTree();
 
-		if (prProofTree == null || (! prProofTree.exists()) || (!prProofTree.proofAttempted()))
+		if (prProofTree == null || (!prProofTree.exists())
+				|| (!prProofTree.proofAttempted()))
 			base_path = IMG_UNATTEMPTED_PATH;
 		// return registry.get(EventBImage.IMG_UNATTEMPTED);
 

@@ -23,7 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.UIUtils.ElementLabelProvider;
+import org.eventb.ui.ElementLabelProvider;
+import org.eventb.ui.ElementSorter;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -204,7 +205,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 
 		TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new EventBContentOutlineProvider());
-		viewer.setSorter(new RodinElementSorter());
+		viewer.setSorter(new ElementSorter());
 		viewer.setLabelProvider(new ElementLabelProvider());
 		viewer.addSelectionChangedListener(this);
 

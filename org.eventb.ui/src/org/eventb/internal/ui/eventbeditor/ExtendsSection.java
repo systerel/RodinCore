@@ -47,6 +47,7 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
+import org.eventb.ui.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -188,7 +189,7 @@ public class ExtendsSection extends SectionPart implements
 
 		viewer = new TableViewer(comp);
 		viewer.setContentProvider(new ExtendedContextContentProvider());
-		viewer.setLabelProvider(new UIUtils.ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider());
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
 

@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -81,6 +80,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -577,25 +577,7 @@ public class ObligationExplorer extends ViewPart implements
 				| SWT.V_SCROLL);
 		viewer.setContentProvider(new ObligationExplorerContentProvider(this));
 		viewer.setLabelProvider(new ObligationLabelProvider());
-		viewer.setSorter(new ViewerSorter() {
-
-			@Override
-			public int category(Object element) {
-				return super.category(element);
-			}
-
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof IRodinProject) {
-					return super.compare(viewer, e1, e2);
-				} else {
-					int cat1 = category(e1);
-					int cat2 = category(e2);
-					return cat1 - cat2;
-				}
-			}
-
-		});
+		viewer.setSorter(new ElementSorter());
 		viewer.addFilter(new ObligationTextFilter());
 		viewer.addFilter(new DischargedFilter());
 		FormData textData = new FormData();

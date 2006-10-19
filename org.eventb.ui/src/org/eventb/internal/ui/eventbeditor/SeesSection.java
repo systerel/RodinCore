@@ -47,6 +47,7 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixSeesContextName;
+import org.eventb.ui.ElementLabelProvider;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -190,7 +191,7 @@ public class SeesSection extends SectionPart implements
 
 		viewer = new TableViewer(comp);
 		viewer.setContentProvider(new SeenContextContentProvider());
-		viewer.setLabelProvider(new UIUtils.ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider());
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
 
