@@ -72,7 +72,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  the name of a class that must extend &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt; and also must have a default contructor. The default constructor will be used to create the page.
+                  the name of a class which will be used to create the page. The class must extend &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt; and also must have a default contructor since the Event-B Editor used this to create the page
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -82,7 +82,7 @@
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  the pripority for organising the page in an Event-B Editor. The priority must be a natural number and the highest priority is 0.
+                  the priority for organising the page in an Event-B Editor. The priority must be a natural number and the highest priority is 0.
                </documentation>
             </annotation>
          </attribute>
