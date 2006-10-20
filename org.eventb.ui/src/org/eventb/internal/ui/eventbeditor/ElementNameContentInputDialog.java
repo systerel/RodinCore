@@ -134,19 +134,19 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			}
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
-			text.getWidget().setLayoutData(gd);
-			text.getWidget().addModifyListener(new DirtyStateListener());
+			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			EventBMath textMath = new EventBMath(toolkit.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 150;
-			textMath.getWidget().setLayoutData(gd);
+			textMath.getTextWidget().setLayoutData(gd);
 			contentTexts.add(textMath);
-			textMath.getWidget().setFocus();
-			textMath.getWidget().addModifyListener(new DirtyStateListener());
+			textMath.getTextWidget().setFocus();
+			textMath.getTextWidget().addModifyListener(new DirtyStateListener());
 			if (focusText == null)
-				focusText = textMath.getWidget();
+				focusText = textMath.getTextWidget();
 		}
 
 		focusText.setFocus();
@@ -173,16 +173,16 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			}
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 50;
-			text.getWidget().setLayoutData(gd);
-			text.getWidget().addModifyListener(new DirtyStateListener());
+			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			nameTexts.add(text);
 
 			text = new EventBMath(toolkit
 					.createText(scrolledForm.getBody(), ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.widthHint = 150;
-			text.getWidget().setLayoutData(gd);
-			text.getWidget().addModifyListener(new DirtyStateListener());
+			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			contentTexts.add(text);
 
 			updateSize();
@@ -193,11 +193,11 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 			Object[] contentsList = contentTexts.toArray();
 			for (int i = 0; i < namesList.length; i++) {
 				IEventBInputText contentText = (IEventBInputText) contentsList[i];
-				Text textWidget = contentText.getWidget();
+				Text textWidget = contentText.getTextWidget();
 				String text = textWidget.getText();
 				if (dirtyTexts.contains(textWidget)) {
 					IEventBInputText nameText = (IEventBInputText) namesList[i];
-					names.add(nameText.getWidget().getText());
+					names.add(nameText.getTextWidget().getText());
 					contents.add(text);
 				}
 			}

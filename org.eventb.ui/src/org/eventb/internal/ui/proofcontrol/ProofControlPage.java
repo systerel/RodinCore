@@ -266,7 +266,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											+ ProofControlPage.this.editor
 													.getRodinInput()
 													.getElementName());
-								Text textWidget = textInput.getWidget();
+								Text textWidget = textInput.getTextWidget();
 								final UserSupport userSupport = editor
 										.getUserSupport();
 								if (tactic instanceof IGlobalExpertTactic) {
@@ -333,7 +333,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							ProofControlUtils.debug("File "
 									+ ProofControlPage.this.editor
 											.getRodinInput().getElementName());
-						Text textWidget = textInput.getWidget();
+						Text textWidget = textInput.getTextWidget();
 						try {
 
 							final IGlobalTactic tactic2 = globalTacticToolItem
@@ -695,7 +695,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		// A text field
 		textInput = new EventBMath(toolkit.createText(body, "", SWT.MULTI));
 
-		textInput.getWidget().addModifyListener(new ModifyListener() {
+		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
 				if (ProofControlUtils.DEBUG)
@@ -709,10 +709,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 50;
 		gd.widthHint = 200;
-		textInput.getWidget().setLayoutData(gd);
-		textInput.getWidget().addModifyListener(new ModifyListener() {
+		textInput.getTextWidget().setLayoutData(gd);
+		textInput.getTextWidget().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				currentInput = textInput.getWidget().getText();
+				currentInput = textInput.getTextWidget().getText();
 				ProofState currentPO = editor.getUserSupport().getCurrentPO();
 				if (currentPO == null)
 					updateToolItems(null);
@@ -725,7 +725,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				textInput.getWidget().setText(historyCombo.getText());
+				textInput.getTextWidget().setText(historyCombo.getText());
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -901,11 +901,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	private void updateToolItems(IProofTreeNode node) {
 		for (GlobalTacticDropdownToolItem item : dropdownItems) {
-			item.updateStatus(node, textInput.getWidget().getText());
+			item.updateStatus(node, textInput.getTextWidget().getText());
 		}
 
 		for (GlobalTacticToolItem item : toolItems) {
-			item.updateStatus(node, textInput.getWidget().getText());
+			item.updateStatus(node, textInput.getTextWidget().getText());
 		}
 
 		return;

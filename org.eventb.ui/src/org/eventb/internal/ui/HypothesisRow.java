@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2006 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -49,8 +49,8 @@ import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
 /**
  * @author htson
  *         <p>
- *         An abstract class to create an input row (a label and a text field)
- *         for editing Rodin elements (e.g. name, content, attribute, etc.).
+ *         A class to create a row containing a hypothesis and the set of proof
+ *         buttons which is applicable to the hypothesis
  */
 public class HypothesisRow {
 
@@ -248,6 +248,9 @@ public class HypothesisRow {
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
 
+	/*
+	 * Creating a null hyperlink
+	 */
 	private void createNullHyperlinks() {
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("Create Null Image");

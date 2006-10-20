@@ -27,6 +27,6 @@ public interface IEventBInputText extends IEventBControl {
 	 * 
 	 * @return the Text Widget contains inside this Event-B Input Text
 	 */
-	public Text getWidget();
+	public Text getTextWidget();
 
 }

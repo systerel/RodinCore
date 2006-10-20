@@ -113,8 +113,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
-		nameText.getWidget().setLayoutData(gd);
-		nameText.getWidget().addModifyListener(new DirtyStateListener());
+		nameText.getTextWidget().setLayoutData(gd);
+		nameText.getTextWidget().addModifyListener(new DirtyStateListener());
 
 		label = toolkit.createLabel(body, "Axiom");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -124,22 +124,22 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		gd.widthHint = 50;
-		axiomNameText.getWidget().setLayoutData(gd);
-		axiomNameText.getWidget().addModifyListener(new DirtyStateListener());
+		axiomNameText.getTextWidget().setLayoutData(gd);
+		axiomNameText.getTextWidget().addModifyListener(new DirtyStateListener());
 
 		IEventBInputText axiomPredicateText = new EventBMath(toolkit
 				.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 150;
-		axiomPredicateText.getWidget().setLayoutData(gd);
-		axiomPredicateText.getWidget().addModifyListener(
+		axiomPredicateText.getTextWidget().setLayoutData(gd);
+		axiomPredicateText.getTextWidget().addModifyListener(
 				new DirtyStateListener());
-		nameText.getWidget().addModifyListener(
-				new GuardListener(axiomPredicateText.getWidget()));
+		nameText.getTextWidget().addModifyListener(
+				new GuardListener(axiomPredicateText.getTextWidget()));
 
 		axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
 
-		nameText.getWidget().setText(defaultName);
+		nameText.getTextWidget().setText(defaultName);
 
 	}
 
@@ -169,23 +169,23 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			IEventBInputText axiomNameText = new EventBText(toolkit.createText(
 					body, axmPrefix + axmIndex));
 			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-			axiomNameText.getWidget().setLayoutData(gd);
-			axiomNameText.getWidget().addModifyListener(
+			axiomNameText.getTextWidget().setLayoutData(gd);
+			axiomNameText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
 
 			IEventBInputText axiomPredicateText = new EventBMath(toolkit
 					.createText(body, ""));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			axiomPredicateText.getWidget().setLayoutData(gd);
-			axiomPredicateText.getWidget().addModifyListener(
+			axiomPredicateText.getTextWidget().setLayoutData(gd);
+			axiomPredicateText.getTextWidget().addModifyListener(
 					new DirtyStateListener());
 
 			axiomPairTexts.add(new Pair(axiomNameText, axiomPredicateText));
 
 			updateSize();
 		} else if (buttonId == IDialogConstants.OK_ID) {
-			if (dirtyTexts.contains(nameText.getWidget()))
-				name = nameText.getWidget().getText();
+			if (dirtyTexts.contains(nameText.getTextWidget()))
+				name = nameText.getTextWidget().getText();
 			else
 				name = null;
 			axioms = new ArrayList<Pair>();
@@ -194,9 +194,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 						.getSecond();
 				IEventBInputText axiomNameText = (IEventBInputText) pair
 						.getFirst();
-				if (dirtyTexts.contains(axiomPredicateText.getWidget())) {
-					String name = axiomNameText.getWidget().getText();
-					String pred = axiomPredicateText.getWidget().getText();
+				if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
+					String name = axiomNameText.getTextWidget().getText();
+					String pred = axiomPredicateText.getTextWidget().getText();
 					axioms.add(new Pair(name, pred));
 				}
 			}

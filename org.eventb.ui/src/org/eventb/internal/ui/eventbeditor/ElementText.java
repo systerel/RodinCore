@@ -63,7 +63,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
 		public void handleEvent(Event event) {
-			Text textWidget = text.getWidget();
+			Text textWidget = text.getTextWidget();
 			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
@@ -182,7 +182,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	 */
 	public ElementText(IEventBInputText text, TreeEditor editor, Tree tree,
 			TreeItem item, IRodinElement element, int column, int delay) {
-		super(text.getWidget(), delay);
+		super(text.getTextWidget(), delay);
 		this.text = text;
 		this.element = element;
 		this.editor = editor;
@@ -193,7 +193,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		boolean isCarbon = SWT.getPlatform().equals("carbon");
 		inset = isCarbon ? 0 : 1;
 		Listener textListener = new ElementTextListener();
-		Text textWidget = text.getWidget();
+		Text textWidget = text.getTextWidget();
 		textWidget.addListener(SWT.FocusOut, textListener);
 		textWidget.addListener(SWT.Traverse, textListener);
 		textWidget.addListener(SWT.Verify, textListener);
@@ -207,7 +207,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	 */
 	@Override
 	protected void response() {
-		Text textWidget = text.getWidget();
+		Text textWidget = text.getTextWidget();
 		String contents = textWidget.getText();
 		commit(element, column, contents);
 	}

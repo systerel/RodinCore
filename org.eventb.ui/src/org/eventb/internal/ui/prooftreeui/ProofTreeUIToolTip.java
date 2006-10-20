@@ -193,7 +193,7 @@ public class ProofTreeUIToolTip {
 			 */
 			public void run() {
 				if (lastModify == time) {
-					Text textWidget = text.getWidget();
+					Text textWidget = text.getTextWidget();
 					if (!textWidget.isDisposed()) {
 						userSupport.setComment(textWidget.getText(), node);
 					}
@@ -211,7 +211,7 @@ public class ProofTreeUIToolTip {
 			// TODO Auto-generated method stub
 			switch (event.type) {
 			case SWT.FocusOut:
-				userSupport.setComment(text.getWidget().getText(), node);
+				userSupport.setComment(text.getTextWidget().getText(), node);
 				text.dispose();
 				helpShell.dispose();
 				break;
@@ -228,7 +228,7 @@ public class ProofTreeUIToolTip {
 
 		public void modifyText(ModifyEvent e) {
 			lastModify = e.time;
-			text.getWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
+			text.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));
 		}
 	}
 

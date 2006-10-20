@@ -42,20 +42,9 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.IEventBInputText#setFocus()
-	 */
-	public void setFocus() {
-		Text text = (Text) getControl();
-		text.setFocus();
-		text.selectAll();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.internal.ui.IEventBInputText#getTextWidget()
 	 */
-	public Text getWidget() {
+	public Text getTextWidget() {
 		return (Text) getControl();
 	}
 

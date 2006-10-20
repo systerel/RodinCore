@@ -20,6 +20,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author htson
  *         <p>
  *         Class for Images' descriptors that are used in the Event-B UI.
+ * @deprecated
  */
 public class EventBImageDescriptor extends ImageDescriptor {
 

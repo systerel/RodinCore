@@ -102,7 +102,7 @@ public class CommentToolTip {
 
 		public TextListener(IEventBInputText text, int delay,
 				ICommentedElement element) {
-			super(text.getWidget(), delay);
+			super(text.getTextWidget(), delay);
 			this.text = text;
 			this.element = element;
 			try {
@@ -142,7 +142,7 @@ public class CommentToolTip {
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
 			try {
-				element.setComment(text.getWidget().getText(), null);
+				element.setComment(text.getTextWidget().getText(), null);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

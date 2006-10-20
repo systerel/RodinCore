@@ -103,8 +103,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		EventBMath text = new EventBMath(toolkit.createText(body, defaultPrefix));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getWidget().setLayoutData(gd);
-		text.getWidget().addModifyListener(new DirtyStateListener());
+		text.getTextWidget().setLayoutData(gd);
+		text.getTextWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
@@ -113,8 +113,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getWidget().setLayoutData(gd);
-		text.getWidget().addModifyListener(new DirtyStateListener());
+		text.getTextWidget().setLayoutData(gd);
+		text.getTextWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 		label = toolkit.createLabel(body, message);
@@ -124,8 +124,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		text = new EventBMath(toolkit.createText(body, ""));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		gd.widthHint = 100;
-		text.getWidget().setLayoutData(gd);
-		text.getWidget().addModifyListener(new DirtyStateListener());
+		text.getTextWidget().setLayoutData(gd);
+		text.getTextWidget().addModifyListener(new DirtyStateListener());
 		texts.add(text);
 
 	}
@@ -145,8 +145,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 			EventBMath text = new EventBMath(toolkit.createText(scrolledForm
 					.getBody(), ""));
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-			text.getWidget().setLayoutData(gd);
-			text.getWidget().addModifyListener(new DirtyStateListener());
+			text.getTextWidget().setLayoutData(gd);
+			text.getTextWidget().addModifyListener(new DirtyStateListener());
 			texts.add(text);
 
 			gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -155,8 +155,8 @@ public class ElementAttributeInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.OK_ID) {
 			attributes = new ArrayList<String>();
 			for (IEventBInputText text : texts) {
-				String inputText = text.getWidget().getText();
-				if (dirtyTexts.contains(text.getWidget()))
+				String inputText = text.getTextWidget().getText();
+				if (dirtyTexts.contains(text.getTextWidget()))
 					attributes.add(inputText);
 			}
 		}

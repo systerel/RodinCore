@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.forms.widgets.FormText;
 
 /**
@@ -20,7 +19,7 @@ import org.eclipse.ui.forms.widgets.FormText;
  *         <p>
  *         This is the interface for Event-B FormText
  */
-public interface IEventBFormText extends IPropertyChangeListener {
+public interface IEventBFormText {
 
 	/**
 	 * Getting the actual FormText contains inside this Event-B FormText
@@ -30,5 +29,10 @@ public interface IEventBFormText extends IPropertyChangeListener {
 	 */
 	public FormText getFormText();
 	
+	/**
+	 * Dispose the control, should remove any extra resources/listeners that are
+	 * located to this Event-B Form Text
+	 */
 	public void dispose();
+	
 }
