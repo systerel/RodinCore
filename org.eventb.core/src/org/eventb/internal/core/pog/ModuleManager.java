@@ -11,10 +11,15 @@ import java.util.Hashtable;
 
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
-import org.eventb.internal.core.pog.modules.MachineEventActionModule;
+import org.eventb.internal.core.pog.modules.MachineEventActionBasicModule;
+import org.eventb.internal.core.pog.modules.MachineEventActionBodySimModule;
+import org.eventb.internal.core.pog.modules.MachineEventActionFrameSimModule;
+import org.eventb.internal.core.pog.modules.MachineEventEstablishInvariantModule;
 import org.eventb.internal.core.pog.modules.MachineEventGuardModule;
+import org.eventb.internal.core.pog.modules.MachineEventHypothesisModule;
 import org.eventb.internal.core.pog.modules.MachineEventModule;
+import org.eventb.internal.core.pog.modules.MachineEventPreserveInvariantModule;
+import org.eventb.internal.core.pog.modules.MachineEventStrengthenGuardModule;
 import org.eventb.internal.core.pog.modules.MachineHypothesisModule;
 
 
@@ -61,7 +66,12 @@ public class ModuleManager implements IModuleManager {
 						return new IModule[] {
 								new MachineEventHypothesisModule(),
 								new MachineEventGuardModule(),
-								new MachineEventActionModule()
+								new MachineEventActionBasicModule(),
+								new MachineEventEstablishInvariantModule(),
+								new MachineEventPreserveInvariantModule(),
+								new MachineEventActionBodySimModule(),
+								new MachineEventActionFrameSimModule(),
+								new MachineEventStrengthenGuardModule()
 						};
 					}
 

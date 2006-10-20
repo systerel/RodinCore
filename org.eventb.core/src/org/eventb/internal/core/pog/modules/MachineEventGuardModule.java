@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,37 +17,27 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IAbstractEventGuardTable;
 import org.eventb.core.pog.IConcreteEventGuardTable;
 import org.eventb.core.pog.IEventHypothesisManager;
 import org.eventb.core.pog.IIdentifierTable;
-import org.eventb.core.pog.IWitnessTable;
-import org.eventb.core.pog.Module;
-import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
 import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ITypingState;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
-import org.eventb.internal.core.pog.WitnessTable;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventGuardModule extends Module {
+public class MachineEventGuardModule extends UtilityModule {
 
 	public static final String MACHINE_EVENT_GUARD_MODULE = 
 		EventBPlugin.PLUGIN_ID + ".machineEventGuardModule";
-
-	private Predicate btrue;
-	private List<POGPredicate> emptyPredicates;
-	private POGHint[] emptyHints;
 
 //	private IModule[] modules;
 //
@@ -100,12 +89,8 @@ public class MachineEventGuardModule extends Module {
 	}
 	
 	IEventHypothesisManager eventHypothesisManager;
-	ITypeEnvironment eventTypeEnvironment;
 	IConcreteEventGuardTable eventGuardTable;
-	IAbstractEventGuardTable abstractEventGuardTable;
 	IIdentifierTable eventIdentifierTable;
-	IWitnessTable witnessTable;
-	FormulaFactory factory;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -113,30 +98,22 @@ public class MachineEventGuardModule extends Module {
 	@Override
 	public void initModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
-		ISCEvent event = (ISCEvent) element;
 		eventHypothesisManager = 
 			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
-		eventTypeEnvironment =
+		ITypeEnvironment eventTypeEnvironment =
 			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
 		eventGuardTable = 
 			(IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
 		eventIdentifierTable =
 			(IIdentifierTable) repository.getState(IIdentifierTable.STATE_TYPE);
-		factory = repository.getFormulaFactory();
-		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		emptyPredicates = new ArrayList<POGPredicate>(0);
 
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
-		abstractEventGuardTable = 
+		IAbstractEventGuardTable abstractEventGuardTable = 
 			new AbstractEventGuardTable(
 					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards()),
 					eventTypeEnvironment, 
 					factory);
 		repository.setState(abstractEventGuardTable);
-		
-		witnessTable = 
-			new WitnessTable(event.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
-		repository.setState(witnessTable);
 	}
 	
 	/* (non-Javadoc)
@@ -145,12 +122,8 @@ public class MachineEventGuardModule extends Module {
 	@Override
 	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
-		eventTypeEnvironment = null;
 		eventGuardTable = null;
 		eventIdentifierTable = null;
-		witnessTable = null;
-		factory = null;
-		btrue = null;
 		super.endModule(element, target, repository, monitor);
 	}
 
