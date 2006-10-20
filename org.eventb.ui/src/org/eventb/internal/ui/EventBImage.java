@@ -12,9 +12,6 @@
 
 package org.eventb.internal.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -40,9 +37,9 @@ public class EventBImage {
 	/**
 	 * Image IDs for RODIN Elements
 	 */
-	public static final String IMG_MACHINE = "IMachine";
+	public static final String IMG_MACHINE = "Machine";
 
-	public static final String IMG_CONTEXT = "IContext";
+	public static final String IMG_CONTEXT = "Context";
 
 	public static final String IMG_VARIABLES = "Variables";
 
@@ -145,15 +142,13 @@ public class EventBImage {
 
 	public static final String IMG_NULL_PATH = "icons/full/ctool16/null.gif";
 
-	private static Map<String, Image> images = new HashMap<String, Image>();
-
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path.
+	 * Returns an image descriptor for the image file within the Event-B UI
+	 * Plugin at the given plug-in relative path
 	 * <p>
 	 * 
 	 * @param path
-	 *            relative path of the image
+	 *            relative path of the image within this Event-B UI Plugin
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
@@ -161,8 +156,8 @@ public class EventBImage {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path.
+	 * Returns an image descriptor for the image file at the given plug-in and
+	 * the relative path within the plugin
 	 * <p>
 	 * 
 	 * @param path
@@ -175,7 +170,7 @@ public class EventBImage {
 	}
 
 	/**
-	 * Initialialise the image registry. Additional image should be added here.
+	 * Initialialise the image registry. Additional image should be added here
 	 * <p>
 	 * 
 	 * @param registry
@@ -215,56 +210,58 @@ public class EventBImage {
 	}
 
 	/**
-	 * Register the image with the image registry. This method is used in the
-	 * initialisation of the image registry.
+	 * Register an image with the image registry
 	 * <p>
 	 * 
 	 * @param registry
-	 *            the registry
+	 *            the image registry
 	 * @param key
-	 *            the key to retrieve the image
-	 * @param fileName
-	 *            the name of the image file in folder "icons"
+	 *            the key to retrieve the image later
+	 * @param path
+	 *            the path to the location of the image file within this Event-B
+	 *            UI plugin
 	 */
 	public static void registerImage(ImageRegistry registry, String key,
-			String fileName) {
-		ImageDescriptor desc = getImageDescriptor(fileName);
+			String path) {
+		ImageDescriptor desc = getImageDescriptor(path);
 		registry.put(key, desc);
 	}
 
+	/**
+	 * Register an image with the image registry
+	 * <p>
+	 * 
+	 * @param registry
+	 *            the image reigstry
+	 * @param key
+	 *            the key to retrieve the image later
+	 * @param pluginID
+	 *            the id of the plugin where the image can be found
+	 * @param path
+	 *            the path to the location of the image file within the plugin
+	 */
 	public static void registerImage(ImageRegistry registry, String key,
-			String pluginID, String fileName) {
-		ImageDescriptor desc = getImageDescriptor(pluginID, fileName);
+			String pluginID, String path) {
+		ImageDescriptor desc = getImageDescriptor(pluginID, path);
 		registry.put(key, desc);
 	}
 
-	// public static Image getOverlayIcon(String name) {
-	// if (name.equals("IMG_REFINES_MACHINE")) {
-	// OverlayIcon icon = new OverlayIcon(
-	// getImageDescriptor(IMG_MACHINE_PATH));
-	// icon.addTopRight(getImageDescriptor(IMG_REFINE_OVERLAY_PATH));
-	// icon.addBottomLeft(getImageDescriptor(IMG_ERROR_OVERLAY_PATH));
-	// Image image = icon.createImage();
-	// // images.put(image);
-	// return image;
-	// }
-	// return null;
-	// }
-
-	public static void disposeImages() {
-		for (Image image : images.values()) {
-			image.dispose();
-		}
-		images = new HashMap<String, Image>();
-	}
-
+	/**
+	 * Get an image from the image registry with a given key
+	 * <p>
+	 * 
+	 * @param key
+	 *            a key (String)
+	 * @return an image associated with the input key or null if it does not
+	 *         exist
+	 */
 	public static Image getImage(String key) {
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		return registry.get(key);
 	}
 
 	/**
-	 * Getting the impage corresponding to a Rodin element.
+	 * Getting an impage corresponding to a Rodin element.
 	 * <p>
 	 * 
 	 * @param element
@@ -280,9 +277,7 @@ public class EventBImage {
 		// Compute the key
 		// key = desc:Description:overlay
 		// overlay = comment + error
-
 		String key = "desc:" + desc;
-
 		String overlay = "0";
 		if (element instanceof ICommentedElement) {
 			ICommentedElement commentedElement = (ICommentedElement) element;
@@ -297,7 +292,8 @@ public class EventBImage {
 		}
 		key += ":" + overlay;
 
-		Image image = images.get(key);
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		Image image = registry.get(key);
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
@@ -305,28 +301,21 @@ public class EventBImage {
 			if (overlay == "1")
 				icon.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
-			images.put(key, image);
+			registry.put(key, image);
 		}
 		return image;
 
-		// Collection<ElementUI> elementUIs = ElementUIRegistry.getElementUIs();
-
-		// for (ElementUI elementUI : elementUIs) {
-		// Class clazz = elementUI.getElementClass();
-		// if (clazz.isInstance(element)) {
-		// String pluginID = elementUI.getPluginID();
-		// String path = elementUI.getPath();
-		//
-		//		
-		// // String key = "element:" + pluginID + ":" + path;
-		//
-		// }
-		// }
-		//
-		// return null;
 	}
 
-	private static final String getProofTreeNodeImageBasePath(
+	/**
+	 * Get the path of base image corresponding to a proof tree node
+	 * <p>
+	 * 
+	 * @param node
+	 *            a proof tree node
+	 * @return the path of the base image corresponding to the input node
+	 */
+	private static final String getProofTreeNodeBaseImagePath(
 			IProofTreeNode node) {
 
 		int confidence = node.getConfidence();
@@ -343,26 +332,16 @@ public class EventBImage {
 		return IMG_NULL_PATH;
 	}
 
+	/**
+	 * Get the image corresponding to a proof tree node
+	 * <p>
+	 * 
+	 * @param node
+	 *            a proof tree node
+	 * @return the image corresponding to the input node
+	 */
 	public static Image getProofTreeNodeImage(IProofTreeNode node) {
-		// String base_path = "";
-		//
-		// if (node.isOpen())
-		// base_path = IMG_PENDING_PATH;
-		// else if (!node.isClosed())
-		// base_path = IMG_APPLIED_PATH;
-		// // return registry.get(EventBImage.IMG_APPLIED);
-		// else {
-		// int confidence = node.getConfidence();
-		//
-		// if (confidence <= IConfidence.REVIEWED_MAX)
-		// base_path = IMG_REVIEWED_PATH;
-		// // return registry.get(EventBImage.IMG_REVIEWED);
-		// if (confidence <= IConfidence.DISCHARGED_MAX)
-		// base_path = IMG_DISCHARGED_PATH;
-		// // return registry.get(EventBImage.IMG_DISCHARGED);
-		// }
-
-		String base_path = getProofTreeNodeImageBasePath(node);
+		String base_path = getProofTreeNodeBaseImagePath(node);
 
 		// Compute the key
 		// key = "node":pluginID:base_path:overlay
@@ -375,7 +354,10 @@ public class EventBImage {
 		}
 		key += ":" + comment;
 
-		Image image = images.get(key);
+		// Return the image if it exists, otherwise create a new image and
+		// register with the registry.
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		Image image = registry.get(key);
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
@@ -383,51 +365,112 @@ public class EventBImage {
 			if (comment == "1")
 				icon.addTopLeft(getImageDescriptor(IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
-			images.put(key, image);
+			registry.put(key, image);
 		}
 		return image;
 	}
 
-	public static Image getPRSequentImage(IPRSequent prSequent)
-			throws RodinDBException {
+	/**
+	 * Get the image corresponding with a PRSequent
+	 * 
+	 * @param prSequent
+	 *            a PRSequent
+	 * @return the image corresponding to the input sequent
+	 * @throws RodinDBException
+	 */
+	public static Image getPRSequentImage(IPRSequent prSequent) {
 		String base_path = "";
 		String auto = "0";
 
-		final IPRProofTree prProofTree = prSequent.getProofTree();
+		final IPRProofTree prProofTree;
+		try {
+			prProofTree = prSequent.getProofTree();
+		} catch (RodinDBException e) {
+			String message = "Cannot get the proof tree associated with the sequent "
+					+ prSequent.getElementName();
+			if (UIUtils.DEBUG) {
+				System.out.println(message);
+				e.printStackTrace();
+			}
+			UIUtils.log(e, message);
+			return null;
+		}
 
-		if (prProofTree == null || (!prProofTree.exists())
-				|| (!prProofTree.proofAttempted()))
+		boolean isAttempted;
+		try {
+			isAttempted = prProofTree.proofAttempted();
+		} catch (RodinDBException e) {
+			String message = "Cannot check if the proof tree of the sequent "
+					+ prSequent.getElementName() + " is attempted or not";
+			if (UIUtils.DEBUG) {
+				System.out.println(message);
+				e.printStackTrace();
+			}
+			UIUtils.log(e, message);
+			return null;
+		}
+
+		if (prProofTree == null || (!prProofTree.exists()) || (!isAttempted))
 			base_path = IMG_UNATTEMPTED_PATH;
-		// return registry.get(EventBImage.IMG_UNATTEMPTED);
 
 		else {
-			int confidence = prProofTree.getConfidence();
-			if (prProofTree.isAutomaticallyGenerated()) {
+			int confidence;
+			try {
+				confidence = prProofTree.getConfidence();
+			} catch (RodinDBException e) {
+				String message = "Cannot get the confident level the proof tree of the sequent "
+						+ prSequent.getElementName();
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+					e.printStackTrace();
+				}
+				UIUtils.log(e, message);
+				return null;
+			}
+			boolean isAutomatic;
+			try {
+				isAutomatic = prProofTree.isAutomaticallyGenerated();
+			} catch (RodinDBException e) {
+				String message = "Cannot check if the proof tree of the sequent "
+						+ prSequent.getElementName()
+						+ " is automatically generated or not";
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+					e.printStackTrace();
+				}
+				UIUtils.log(e, message);
+				return null;
+			}
+			if (isAutomatic) {
 				auto = "1";
 			}
-			if (prSequent.isProofBroken()) {
-
+			boolean isProofBroken;
+			try {
+				isProofBroken = prSequent.isProofBroken();
+			} catch (RodinDBException e) {
+				String message = "Cannot check if the proof tree of the sequent "
+						+ prSequent.getElementName() + " is brocken or not";
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+					e.printStackTrace();
+				}
+				UIUtils.log(e, message);
+				return null;
+			}
+			if (isProofBroken) {
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_BROKEN_PATH;
-				// return registry.get(EventBImage.IMG_PENDING_BROKEN);
 				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_BROKEN_PATH;
-				// return registry.get(EventBImage.IMG_REVIEWED_BROKEN);
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_BROKEN_PATH;
-				// return registry.get(EventBImage.IMG_DISCHARGED_BROKEN);
-
 			} else {
-
 				if (confidence == IConfidence.PENDING)
 					base_path = IMG_PENDING_PATH;
-				// return registry.get(EventBImage.IMG_PENDING);
 				else if (confidence <= IConfidence.REVIEWED_MAX)
 					base_path = IMG_REVIEWED_PATH;
-				// return registry.get(EventBImage.IMG_REVIEWED);
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					base_path = IMG_DISCHARGED_PATH;
-				// return registry.get(EventBImage.IMG_DISCHARGED);
 			}
 		}
 
@@ -436,7 +479,10 @@ public class EventBImage {
 		// overlay = auto
 		String key = "prsequent:" + base_path + ":" + auto;
 
-		Image image = images.get(key);
+		// Return the image if it exists, otherwise create a new image and
+		// register with the registry.
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		Image image = registry.get(key);
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
@@ -444,9 +490,8 @@ public class EventBImage {
 			if (auto == "1")
 				icon.addTopRight(getImageDescriptor(IMG_AUTO_OVERLAY_PATH));
 			image = icon.createImage();
-			images.put(key, image);
+			registry.put(key, image);
 		}
 		return image;
 	}
-
 }
