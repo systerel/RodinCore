@@ -12,13 +12,8 @@
 
 package org.eventb.internal.ui;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.FormText;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -26,10 +21,7 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
  *         This is the decorator class to the FormText that used the Event-B
  *         Math Font.
  */
-public class EventBFormText implements IEventBFormText {
-
-	// The actual FormText.
-	FormText formText;
+public class EventBFormText extends EventBControl implements IEventBFormText {
 
 	/**
 	 * Constructor.
@@ -40,35 +32,16 @@ public class EventBFormText implements IEventBFormText {
 	 * 
 	 */
 	public EventBFormText(FormText formText) {
-		this.formText = formText;
+		super(formText);
 
-		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		formText.setFont(font);
-
-		// Set the hyperlink style to underline only
-		// when the mouse is over the link
-		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(Display
-				.getCurrent());
+		// Set the hyperlink style to underline only when the mouse is over the
+		// link
+		HyperlinkSettings hyperlinkSettings = new HyperlinkSettings(formText
+				.getDisplay());
 		hyperlinkSettings
 				.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		formText.setHyperlinkSettings(hyperlinkSettings);
 
-		// Register as a listener to the font registry
-		JFaceResources.getFontRegistry().addListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			formText.setFont(font);
-		}
 	}
 
 	/*
@@ -77,12 +50,7 @@ public class EventBFormText implements IEventBFormText {
 	 * @see org.eventb.internal.ui.IEventBFormText#getFormText()
 	 */
 	public FormText getFormText() {
-		return formText;
+		return (FormText) getControl();
 	}
 
-	public void dispose() {
-		JFaceResources.getFontRegistry().removeListener(this);
-		formText.dispose();
-	}
-	
 }
