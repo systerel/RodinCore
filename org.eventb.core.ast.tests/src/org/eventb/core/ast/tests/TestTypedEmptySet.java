@@ -269,6 +269,13 @@ public class TestTypedEmptySet extends TestCase {
 		doTest(mRelationalPredicate(Formula.NOTSUBSET, eS, eS));
 		doTest(mRelationalPredicate(Formula.SUBSETEQ, eS, eS));
 		doTest(mRelationalPredicate(Formula.NOTSUBSETEQ, eS, eS));
+
+		//-------------------------------------
+		//  Ensure no capture of given set name
+		//-------------------------------------
+		BoundIdentDecl bd_S = mBoundIdentDecl("S", POW(ty_S));
+		doTest(mQuantifiedPredicate(Formula.EXISTS, mList(bd_S),
+				mRelationalPredicate(Formula.EQUAL, b0S, eS)));
 	}
 	
 	private void doTest(Predicate pred) {

@@ -3,13 +3,13 @@
  */
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -32,6 +32,7 @@ public class TestWD extends TestCase {
 	
 	private static IntegerType INTEGER = ff.makeIntegerType();
 	private static BooleanType BOOL = ff.makeBooleanType();
+	private static GivenType S = ff.makeGivenType("S");
 
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -42,22 +43,13 @@ public class TestWD extends TestCase {
 	}
 	
 	ITypeEnvironment defaultTEnv = mTypeEnvironment(
-			mList(
-					"x",
-					"y",
-					"A",
-					"B",
-					"f",
-					"Y"
-			),
-			mList(
-					INTEGER,
-					INTEGER,
-					POW(INTEGER),
-					POW(INTEGER),
-					POW(CPROD(INTEGER,INTEGER)),
-					POW(BOOL)
-			)
+			"x", INTEGER,
+			"y", INTEGER,
+			"A", POW(INTEGER),
+			"B", POW(INTEGER),
+			"f", POW(CPROD(INTEGER,INTEGER)),
+			"Y", POW(BOOL),
+			"S", POW(S)
 	);
 	
 	private abstract class TestFormula {
@@ -222,6 +214,11 @@ public class TestWD extends TestCase {
 			), new TestPredicate(
 					"a = max(A)",
 					"A ≠ ∅ ∧ (∃b·∀x·x∈A ⇒ b≥x)"
+			// Ensure that a type name doesn't get captured
+			// when computing a WD lemma
+			), new TestPredicate(
+					"T ⊆ S ∧ g ∈ ℤ → T ⇒ (∃S·g(S) ∈ T)",
+					"T ⊆ S ∧ g ∈ ℤ → T ⇒ (∀S0·S0 ∈ dom(g) ∧ g∼;({S0} ◁ g) ⊆ id(S))"
 			),
 	};
 	
