@@ -50,6 +50,23 @@ public abstract class Type {
 	// Build the string image of this type
 	protected abstract void buildString(StringBuilder buffer);
 
+    /**
+	 * Indicates whether the given object denotes the same type as this one.
+	 * <p>
+	 * Comparison is done using deep equality, not reference equality.
+	 * </p>
+	 * 
+	 * @param obj
+	 *            the object with which to compare
+	 * @return <code>true</code> if this type denotes the same type as the obj
+	 *         argument, <code>false</code> otherwise
+	 */
+	@Override
+	public abstract boolean equals(Object obj);
+	
+	@Override
+	public abstract int hashCode();
+	
 	/**
 	 * Returns whether this type is non-generic (doesn't contain any type variables).
 	 * 
