@@ -44,7 +44,7 @@
             id="org.eventb.eventBKeyboard.braveSansMono"
             isEditable="false"
             label="%eventBKeyboardBraveSansMono.label"
-            value="Brave Sans Mono-regular-12">
+            value="Brave Sans Mono-regular-10">
          <description>
             %eventBKeyboardBraveSansMono.description
          </description>
