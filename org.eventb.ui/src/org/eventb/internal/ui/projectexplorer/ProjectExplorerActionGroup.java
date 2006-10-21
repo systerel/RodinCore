@@ -28,6 +28,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -79,7 +80,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		newProjectAction.setText("&Project");
 		newProjectAction.setToolTipText("Create new project");
 		newProjectAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_PROJECT_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_PROJECT_PATH));
 
 		newComponentAction = new Action() {
 			public void run() {
@@ -103,11 +104,9 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		newComponentAction.setText("&Component");
 		newComponentAction.setToolTipText("Create new component");
 		newComponentAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_COMPONENT_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_COMPONENT_PATH));
 
-		
 	}
-
 
 	/**
 	 * Dynamically fill the context menu (depends on the selection).
@@ -137,13 +136,13 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 			menu.add(new Separator("modelling"));
 			menu.add(new Separator("proving"));
 			menu.add(new Separator());
-//			menu.add(refreshAction);
-			
+			// menu.add(refreshAction);
+
 			menu.add(new Separator());
 			drillDownAdapter.addNavigationActions(menu);
 
 			// Other plug-ins can contribute there actions here
-			
+
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);
 		}

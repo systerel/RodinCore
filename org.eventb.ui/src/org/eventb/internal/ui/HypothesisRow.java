@@ -45,6 +45,7 @@ import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.hypothesisTactics.HypothesisTacticUI;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -259,7 +260,7 @@ public class HypothesisRow {
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		toolkit.adapt(hyperlink, true, true);
-		hyperlink.setImage(EventBImage.getImage(EventBImage.IMG_NULL));
+		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
 		hyperlink.setBackground(background);
 		hyperlink.setEnabled(false);
 		return;

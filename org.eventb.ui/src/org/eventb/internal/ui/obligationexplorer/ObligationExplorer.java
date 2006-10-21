@@ -82,6 +82,7 @@ import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -323,36 +324,36 @@ public class ObligationExplorer extends ViewPart implements
 								if (tree != null && proofState.isDirty()) {
 									if (!tree.proofAttempted())
 										return registry
-												.get(EventBImage.IMG_UNATTEMPTED);
+												.get(IEventBSharedImages.IMG_UNATTEMPTED);
 
 									int confidence = tree.getConfidence();
 
 									if (confidence == IConfidence.PENDING) {
 										if (false && prSequent.isProofBroken())
 											return registry
-													.get(EventBImage.IMG_PENDING_BROKEN);
+													.get(IEventBSharedImages.IMG_PENDING_BROKEN);
 										else
 											return registry
-													.get(EventBImage.IMG_PENDING);
+													.get(IEventBSharedImages.IMG_PENDING);
 									}
 									if (confidence <= IConfidence.REVIEWED_MAX) {
 										if (false && prSequent.isProofBroken())
 											return registry
-													.get(EventBImage.IMG_REVIEWED_BROKEN);
+													.get(IEventBSharedImages.IMG_REVIEWED_BROKEN);
 										else
 											return registry
-													.get(EventBImage.IMG_REVIEWED);
+													.get(IEventBSharedImages.IMG_REVIEWED);
 									}
 									if (confidence <= IConfidence.DISCHARGED_MAX) {
 										if (false && prSequent.isProofBroken())
 											return registry
-													.get(EventBImage.IMG_DISCHARGED_BROKEN);
+													.get(IEventBSharedImages.IMG_DISCHARGED_BROKEN);
 										else
 											return registry
-													.get(EventBImage.IMG_DISCHARGED);
+													.get(IEventBSharedImages.IMG_DISCHARGED);
 									}
 									return registry
-											.get(EventBImage.IMG_DEFAULT);
+											.get(IEventBSharedImages.IMG_DEFAULT);
 								}
 							}
 						}
@@ -367,9 +368,9 @@ public class ObligationExplorer extends ViewPart implements
 			if (obj instanceof IPRFile) {
 				IPRFile prFile = (IPRFile) obj;
 				if (prFile.getMachine().exists())
-					return registry.get(EventBImage.IMG_MACHINE);
+					return registry.get(IEventBSharedImages.IMG_MACHINE);
 				else if (prFile.getContext().exists())
-					return registry.get(EventBImage.IMG_CONTEXT);
+					return registry.get(IEventBSharedImages.IMG_CONTEXT);
 			}
 			if (obj instanceof IRodinElement)
 				return EventBImage.getRodinImage((IRodinElement) obj);
@@ -485,7 +486,7 @@ public class ObligationExplorer extends ViewPart implements
 		ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 		discharge = new ToolItem(toolBar, SWT.CHECK);
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		discharge.setImage(registry.get(EventBImage.IMG_DISCHARGED));
+		discharge.setImage(registry.get(IEventBSharedImages.IMG_DISCHARGED));
 		discharge.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {

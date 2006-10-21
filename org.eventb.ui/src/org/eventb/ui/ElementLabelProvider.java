@@ -72,19 +72,19 @@ public class ElementLabelProvider extends LabelProvider {
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 
 		if (node.isType(IVariable.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_VARIABLES);
+			return registry.get(IEventBSharedImages.IMG_VARIABLES);
 		if (node.isType(IInvariant.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_INVARIANTS);
+			return registry.get(IEventBSharedImages.IMG_INVARIANTS);
 		if (node.isType(ITheorem.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_THEOREMS);
+			return registry.get(IEventBSharedImages.IMG_THEOREMS);
 		if (node.isType(IEvent.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_EVENTS);
+			return registry.get(IEventBSharedImages.IMG_EVENTS);
 		if (node.isType(ICarrierSet.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_CARRIER_SETS);
+			return registry.get(IEventBSharedImages.IMG_CARRIER_SETS);
 		if (node.isType(IConstant.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_CONSTANTS);
+			return registry.get(IEventBSharedImages.IMG_CONSTANTS);
 		if (node.isType(IAxiom.ELEMENT_TYPE))
-			return registry.get(EventBImage.IMG_AXIOMS);
+			return registry.get(IEventBSharedImages.IMG_AXIOMS);
 
 		return null;
 	}

@@ -27,6 +27,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -155,7 +156,7 @@ public class EventBEditorContributor extends
 		rename.setText("New Variables");
 		rename.setToolTipText("Create new variables for the component");
 		rename.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 	}
 

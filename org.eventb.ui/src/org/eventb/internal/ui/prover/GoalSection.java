@@ -43,6 +43,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.Lib;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.goaltactics.GoalTacticUI;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -365,7 +366,7 @@ public class GoalSection extends SectionPart {
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		toolkit.adapt(hyperlink, true, true);
-		hyperlink.setImage(EventBImage.getImage(EventBImage.IMG_NULL));
+		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
 		hyperlink.setEnabled(false);
 		return;
 	}

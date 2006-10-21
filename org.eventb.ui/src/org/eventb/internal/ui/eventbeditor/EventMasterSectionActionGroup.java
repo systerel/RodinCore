@@ -29,6 +29,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -88,7 +89,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addEvent.setText("New &Event");
 		addEvent.setToolTipText("Create a new event");
 		addEvent.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Add a local variable.
 		addLocalVariable = new Action() {
@@ -99,7 +100,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addLocalVariable.setText("New &Local Variable");
 		addLocalVariable.setToolTipText("Create a new (local) variable");
 		addLocalVariable.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add a guard.
 		addGuard = new Action() {
@@ -110,7 +111,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addGuard.setText("New &Guard");
 		addGuard.setToolTipText("Create a new guard");
 		addGuard.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_GUARD_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_GUARD_PATH));
 
 		// Add an action.
 		addAction = new Action() {
@@ -121,7 +122,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addAction.setText("New &Action");
 		addAction.setToolTipText("Create a new action");
 		addAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_ACTION_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_ACTION_PATH));
 
 		// Add a refines event.
 		addRefinesEvent = new Action() {
@@ -132,7 +133,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addRefinesEvent.setText("New &Refine Event");
 		addRefinesEvent.setToolTipText("Create a new refines event");
 		addRefinesEvent.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 		
 		// Add a refines event.
 		addWitness = new Action() {
@@ -143,7 +144,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		addWitness.setText("New &Witness");
 		addWitness.setToolTipText("Create a new witness");
 		addWitness.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_EVENT_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
@@ -165,7 +166,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		handleUp.setText("&Up");
 		handleUp.setToolTipText("Move the element up");
 		handleUp.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 
 		// Handle the down action.
 		handleDown = new Action() {
@@ -176,7 +177,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 		handleDown.setText("D&own");
 		handleDown.setToolTipText("Move the element down");
 		handleDown.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_DOWN_PATH));
 	}
 
 	/**

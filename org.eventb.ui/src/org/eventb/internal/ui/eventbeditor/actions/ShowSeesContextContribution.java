@@ -10,6 +10,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -50,7 +51,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 		menuItem.setText(EventBPlugin.getComponentName(contextFile
 				.getElementName()));
-		menuItem.setImage(EventBImage.getImage(EventBImage.IMG_CONTEXT));
+		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_CONTEXT));
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

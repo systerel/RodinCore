@@ -11,6 +11,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -44,7 +45,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 		menuItem.setText(EventBPlugin.getComponentName(abstractFile
 				.getElementName()));
-		menuItem.setImage(EventBImage.getImage(EventBImage.IMG_REFINES));
+		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		final IRodinElement inv;
 		IRodinElement[] invs = abstractFile

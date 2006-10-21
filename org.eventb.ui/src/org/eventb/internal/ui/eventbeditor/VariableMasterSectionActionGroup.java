@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -69,7 +70,7 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 		addVariable.setText("New &Variable");
 		addVariable.setToolTipText("Create a new variable");
 		addVariable.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_VARIABLES_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
@@ -91,7 +92,7 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 		handleUp.setText("&Up");
 		handleUp.setToolTipText("Move the element up");
 		handleUp.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 
 		// Handle the down action.
 		handleDown = new Action() {
@@ -102,7 +103,7 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 		handleDown.setText("D&own");
 		handleDown.setToolTipText("Move the element down");
 		handleDown.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_DOWN_PATH));
 	}
 
 	/**

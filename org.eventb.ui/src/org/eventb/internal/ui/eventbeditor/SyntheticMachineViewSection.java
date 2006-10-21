@@ -32,6 +32,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -191,7 +192,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			}
 		};
 		upAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 		form.getToolBarManager().add(upAction);
 		form.updateToolBar();
 
@@ -208,7 +209,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			}
 		};
 		downAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_DOWN_PATH));
 		form.getToolBarManager().add(downAction);
 		form.updateToolBar();
 

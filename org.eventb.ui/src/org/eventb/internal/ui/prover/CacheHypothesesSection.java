@@ -31,9 +31,9 @@ import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tactics.Tactics;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.HypothesisRow;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -130,14 +130,14 @@ public class CacheHypothesesSection extends HypothesesSection {
 		ds = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(ds, true, true);
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		ds.setImage(registry.get(EventBImage.IMG_PENDING));
+		ds.setImage(registry.get(IEventBSharedImages.IMG_PENDING));
 		ds.addHyperlinkListener(new CachedHyperlinkAdapter());
 		ds.setBackground(section.getTitleBarGradientBackground());
 		ds.setToolTipText("Deselect checked hypotheses");
 		
 		sl = new ImageHyperlink(composite, SWT.CENTER);
 		toolkit.adapt(sl, true, true);
-		sl.setImage(registry.get(EventBImage.IMG_DISCHARGED));
+		sl.setImage(registry.get(IEventBSharedImages.IMG_DISCHARGED));
 		sl.addHyperlinkListener(new CachedHyperlinkAdapter());
 		sl.setBackground(section.getTitleBarGradientBackground());
 		sl.setToolTipText("Select checked hypotheses");

@@ -11,6 +11,7 @@ import org.eventb.core.IEvent;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -53,7 +54,7 @@ public class ShowAbstractEventContribution extends ContributionItem {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 		menuItem.setText(EventBPlugin.getComponentName(abstractFile
 				.getElementName()));
-		menuItem.setImage(EventBImage.getImage(EventBImage.IMG_REFINES));
+		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

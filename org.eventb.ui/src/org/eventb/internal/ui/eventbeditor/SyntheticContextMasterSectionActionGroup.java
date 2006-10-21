@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.IEventBSharedImages;
 
 /**
  * @author htson
@@ -75,7 +76,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		addTheorem.setText("New &Theorem");
 		addTheorem.setToolTipText("Create a new theorem");
 		addTheorem.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_THEOREMS_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_THEOREMS_PATH));
 
 		// Add a carrier set.
 		addSet = new Action() {
@@ -86,7 +87,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		addSet.setText("New Carrier &Set");
 		addSet.setToolTipText("Create a new carrier set");
 		addSet.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_CARRIER_SETS_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_CARRIER_SETS_PATH));
 
 		// Add a constant.
 		addConstant = new Action() {
@@ -97,7 +98,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		addConstant.setText("New &Constant");
 		addConstant.setToolTipText("Create a new constant");
 		addConstant.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_CONSTANTS_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_CONSTANTS_PATH));
 
 		// Add an axiom.
 		addAxiom = new Action() {
@@ -108,7 +109,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		addAxiom.setText("New &Axiom");
 		addAxiom.setToolTipText("Create a new axiom");
 		addAxiom.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_NEW_AXIOMS_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_AXIOMS_PATH));
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
@@ -130,7 +131,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		handleUp.setText("&Up");
 		handleUp.setToolTipText("Move the element up");
 		handleUp.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_UP_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 
 		// Handle the down action.
 		handleDown = new Action() {
@@ -141,7 +142,7 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		handleDown.setText("D&own");
 		handleDown.setToolTipText("Move the element down");
 		handleDown.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_DOWN_PATH));
 	}
 
 	/**

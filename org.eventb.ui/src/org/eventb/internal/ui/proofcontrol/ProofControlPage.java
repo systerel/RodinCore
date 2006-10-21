@@ -85,6 +85,7 @@ import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.eventb.ui.prover.IGlobalSimpleTactic;
 import org.eventb.ui.prover.IGlobalTactic;
@@ -343,15 +344,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							if (tactic2 instanceof IGlobalExpertTactic) {
 								applyGlobalExpertTactic(
 										(IGlobalExpertTactic) tactic2,
-										userSupport,
-										globalTacticToolItem.isInterruptable()
-								);
+										userSupport, globalTacticToolItem
+												.isInterruptable());
 							} else if (tactic2 instanceof IGlobalSimpleTactic) {
 								applyGlobalSimpleTactic(
 										(IGlobalSimpleTactic) tactic2,
-										userSupport, 
-										globalTacticToolItem.isInterruptable()
-								);
+										userSupport, globalTacticToolItem
+												.isInterruptable());
 							}
 						} catch (RodinDBException e1) {
 							// TODO Auto-generated catch block
@@ -406,7 +405,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	}
 
-
 	// Applies a global tactic to the current proof tree node.
 	private void applyGlobalExpertTactic(final IGlobalExpertTactic get,
 			final UserSupport userSupport, final boolean interruptable)
@@ -437,8 +435,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private void applyGlobalSimpleTactic(final IGlobalSimpleTactic gst,
 			final UserSupport userSupport, boolean interruptable) {
 
-		final IProofTreeNode proofTreeNode =
-			userSupport.getCurrentPO().getCurrentNode();
+		final IProofTreeNode proofTreeNode = userSupport.getCurrentPO()
+				.getCurrentNode();
 		final ITactic proofTactic = gst.getTactic(proofTreeNode, currentInput);
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
@@ -865,7 +863,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		expertMode.setToolTipText("Expert mode switch");
 
 		expertMode.setImageDescriptor(EventBImage
-				.getImageDescriptor(EventBImage.IMG_EXPERT_MODE_PATH));
+				.getImageDescriptor(IEventBSharedImages.IMG_EXPERT_MODE_PATH));
 
 	}
 
@@ -935,7 +933,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					}
 					ProofControlUtils.debug("****************************");
 				}
-				
+
 				int size = information.size();
 				if (size != 0)
 					setFormTextInformation(information.get(size - 1).toString());
