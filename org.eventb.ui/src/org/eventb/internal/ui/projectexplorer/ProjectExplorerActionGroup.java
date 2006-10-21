@@ -25,7 +25,6 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.eventb.ui.EventBUIPlugin;
@@ -79,8 +78,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		};
 		newProjectAction.setText("&Project");
 		newProjectAction.setToolTipText("Create new project");
-		newProjectAction.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+		newProjectAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_PROJECT_PATH));
 
 		newComponentAction = new Action() {
 			public void run() {
@@ -103,8 +102,8 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		};
 		newComponentAction.setText("&Component");
 		newComponentAction.setToolTipText("Create new component");
-		newComponentAction.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_COMPONENT));
+		newComponentAction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_NEW_COMPONENT_PATH));
 
 		
 	}

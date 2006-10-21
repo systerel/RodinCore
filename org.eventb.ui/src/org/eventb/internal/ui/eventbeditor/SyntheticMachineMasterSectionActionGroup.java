@@ -30,7 +30,6 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -184,8 +183,8 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		handleUp.setText("&Up");
 		handleUp.setToolTipText("Move the element up");
-		handleUp.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+		handleUp.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_UP_PATH));
 
 		// Handle the down action.
 		handleDown = new Action() {
@@ -195,8 +194,8 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		handleDown.setText("D&own");
 		handleDown.setToolTipText("Move the element down");
-		handleDown.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+		handleDown.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
 
 		// Handle ShowAbstraction action.
 		showAbstraction = new Action() {
@@ -279,8 +278,8 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		showAbstraction.setText("Abstraction");
 		showAbstraction.setToolTipText("Show the corresponding abstract event");
-		showAbstraction.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_REFINES));
+		showAbstraction.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_REFINES_PATH));
 	}
 
 	/**

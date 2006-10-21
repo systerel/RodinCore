@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;

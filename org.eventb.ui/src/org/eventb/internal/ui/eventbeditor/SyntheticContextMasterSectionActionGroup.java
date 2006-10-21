@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBImageDescriptor;
 
 /**
  * @author htson
@@ -130,8 +129,8 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		};
 		handleUp.setText("&Up");
 		handleUp.setToolTipText("Move the element up");
-		handleUp.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+		handleUp.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_UP_PATH));
 
 		// Handle the down action.
 		handleDown = new Action() {
@@ -141,8 +140,8 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		};
 		handleDown.setText("D&own");
 		handleDown.setToolTipText("Move the element down");
-		handleDown.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_NEW_PROJECT));
+		handleDown.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_DOWN_PATH));
 	}
 
 	/**

@@ -4,7 +4,6 @@ import org.eclipse.jface.action.Action;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IInvariant;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBImageDescriptor;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -18,8 +17,8 @@ public class ShowAbstractInvariant extends Action {
 		this.setText(EventBPlugin.getComponentName(abstractFile
 				.getElementName()));
 		this.setToolTipText("Show the abstract invariant");
-		this.setImageDescriptor(new EventBImageDescriptor(
-				EventBImage.IMG_REFINES));
+		this.setImageDescriptor(EventBImage
+				.getImageDescriptor(EventBImage.IMG_REFINES_PATH));
 	}
 
 	public void run() {

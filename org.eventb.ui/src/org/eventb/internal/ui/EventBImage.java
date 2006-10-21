@@ -90,6 +90,10 @@ public class EventBImage {
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
+	public static final String IMG_NEW_PROJECT_PATH = "icons/full/clcl16/newprj_wiz.gif";
+
+	public static final String IMG_NEW_COMPONENT_PATH = "icons/full/clcl16/newcomp_wiz.gif";
+
 	public static final String IMG_NEW_VARIABLES_PATH = "icons/full/ctool16/newvar_edit.gif";
 
 	public static final String IMG_NEW_INVARIANTS_PATH = "icons/full/ctool16/newinv_edit.gif";
@@ -139,6 +143,8 @@ public class EventBImage {
 	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged_broken.gif";
 
 	public static final String IMG_UNATTEMPTED_PATH = "icons/unattempted.gif";
+
+	public static final String IMG_REFINES_PATH = "icons/full/ctool16/refines.gif";
 
 	public static final String IMG_NULL_PATH = "icons/full/ctool16/null.gif";
 
