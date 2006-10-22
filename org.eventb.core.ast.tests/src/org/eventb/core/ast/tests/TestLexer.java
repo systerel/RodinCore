@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.internal.core.parser.ParseResult;
@@ -158,8 +159,8 @@ public class TestLexer extends TestCase {
         public void testInvalidStrings() {
         	FormulaFactory ff = FormulaFactory.getDefault();
         	for (String string : invalidStrings) {
-    			final ParseResult result = new ParseResult(ff);
-    			Scanner scanner = new Scanner(string, result);
+    			final IParseResult result = new ParseResult(ff);
+    			Scanner scanner = new Scanner(string, (ParseResult) result);
     			Token t = scanner.Scan();
     			assertTrue("Scanner should have succeeded", result.isSuccess());
     			assertTrue(t.kind == 0);	// _EOF
