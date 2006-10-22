@@ -52,7 +52,7 @@ public class TestSubstituteFormula extends TestCase {
 	}
 	
 	/* Abstract class for tests */
-	private static abstract class TestItem {
+	static abstract class TestItem {
 		abstract void doTest();
 
 		protected void typeCheck(Formula form) {
