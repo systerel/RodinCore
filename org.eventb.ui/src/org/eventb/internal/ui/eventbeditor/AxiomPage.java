@@ -32,7 +32,7 @@ public class AxiomPage extends EventBFormPage {
 	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID + ".axiompage"; //$NON-NLS-1$
 
 	public static final String PAGE_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + "axiompage.title"); //$NON-NLS-1$
+			.getString(EventBUIPlugin.PLUGIN_ID + ".axiompage.title"); //$NON-NLS-1$
 
 	public static final String PAGE_TAB_TITLE = Messages
 			.getString(EventBUIPlugin.PLUGIN_ID + ".axiompage.tabtitle"); //$NON-NLS-1$
