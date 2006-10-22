@@ -13,8 +13,12 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
@@ -27,6 +31,7 @@ import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -84,7 +89,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				String id = (String) e.getHref();
 				IRodinElement element = RodinCore.create(id);
-				if (element.exists())
+				if (element != null && element.exists())
 					UIUtils.linkToEventBEditor(element);
 				// UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
 				// UIUtils.activateView(ProjectExplorer.VIEW_ID);
@@ -104,15 +109,18 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		formString = "<form>";
 		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
 				.getRodinInput();
+		addComponentName(rodinFile);
+		addComponentDependencies(rodinFile, monitor);
 		if (rodinFile instanceof IMachineFile) {
-			addMachineName(rodinFile);
-			addMachineDependencies(rodinFile, monitor);
 			addVariables(rodinFile, monitor);
 			addInvariants(rodinFile, monitor);
 			addTheorems(rodinFile, monitor);
 			addEvents(rodinFile, monitor);
 		} else if (rodinFile instanceof IContextFile) {
-
+			addCarrierSets(rodinFile, monitor);
+			addConstants(rodinFile, monitor);
+			addAxioms(rodinFile, monitor);
+			addTheorems(rodinFile, monitor);
 		}
 		formString += "<li style=\"text\" value=\"\"></li>";
 		formString += "<li style=\"text\" value=\"\"><b>END</b></li>";
@@ -122,18 +130,21 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		form.reflow(true);
 	}
 
-	private void addMachineName(IRodinFile rodinFile) {
+	private void addComponentName(IRodinFile rodinFile) {
 		// Print the Machine/Context name
 		String componentName = EventBPlugin.getComponentName(rodinFile
 				.getElementName());
-		formString += "<li style=\"text\" value=\"\"><b>MACHINE</b> ";
+		if (rodinFile instanceof IMachineFile)
+			formString += "<li style=\"text\" value=\"\"><b>MACHINE</b> ";
+		else if (rodinFile instanceof IContextFile)
+			formString += "<li style=\"text\" value=\"\"><b>CONTEXT</b> ";
 		formString += UIUtils.makeHyperlink(rodinFile.getHandleIdentifier(),
 				componentName);
 		formString += "</li>";
 		return;
 	}
 
-	private void addMachineDependencies(IRodinFile rodinFile,
+	private void addComponentDependencies(IRodinFile rodinFile,
 			IProgressMonitor monitor) {
 		if (rodinFile instanceof IMachineFile) {
 			// REFINES clause
@@ -146,46 +157,69 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					String name = refine.getAbstractMachineName();
 					formString += "<li style=\"text\" value=\"\"></li>";
 					formString += "<li style=\"text\" value=\"\"><b>REFINES</b> ";
-					formString += UIUtils.makeHyperlink(name, name);
+					formString += UIUtils.makeHyperlink(EventBPlugin
+							.getMachineFileName(name), name);
 					formString += "</li>";
 				}
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				EventBEditorUtils.debugAndLogError(e,
+						"Cannot get refines machine of "
+								+ rodinFile.getElementName());
 			}
 
-			// SEES clause
-			IRodinElement[] seeContexts;
-			try {
-				seeContexts = rodinFile
-						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			}
-
-			int length = seeContexts.length;
-			if (length != 0) {
-				formString += "<li style=\"text\" value=\"\"></li>";
-				formString += "<li style=\"text\" value=\"\"><b>SEES</b> ";
-				for (int i = 0; i < length; i++) {
-					try {
-						if (i != 0)
-							formString += ", ";
-						formString += UIUtils.makeHyperlink(rodinFile
-								.getHandleIdentifier(),
-								((SeesContext) seeContexts[i])
-										.getSeenContextName());
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				formString += "</li>";
-			}
 		} else if (rodinFile instanceof IContextFile) {
+			// EXTENDS clause
+			IRodinElement[] extendz;
+			try {
+				extendz = rodinFile
+						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
+				if (extendz.length != 0) {
+					IExtendsContext extend = (IExtendsContext) extendz[0];
+					String name = extend.getAbstractContextName();
+					formString += "<li style=\"text\" value=\"\"></li>";
+					formString += "<li style=\"text\" value=\"\"><b>REFINES</b> ";
+					formString += UIUtils.makeHyperlink(EventBPlugin
+							.getContextFileName(name), name);
+					formString += "</li>";
+				}
+			} catch (RodinDBException e) {
+				EventBEditorUtils.debugAndLogError(e,
+						"Cannot get extends context of "
+								+ rodinFile.getElementName());
+			}
 
+		}
+
+		// SEES clause for both context and machine
+		IRodinElement[] seeContexts;
+		try {
+			seeContexts = rodinFile
+					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get sees machine of "
+					+ rodinFile.getElementName());
+			return;
+		}
+
+		int length = seeContexts.length;
+		if (length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
+			formString += "<li style=\"text\" value=\"\"><b>SEES</b> ";
+			for (int i = 0; i < length; i++) {
+				try {
+					if (i != 0)
+						formString += ", ";
+					formString += UIUtils
+							.makeHyperlink(rodinFile.getHandleIdentifier(),
+									((SeesContext) seeContexts[i])
+											.getSeenContextName());
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get seen context name of "
+									+ seeContexts[i].getElementName());
+				}
+			}
+			formString += "</li>";
 		}
 	}
 
@@ -194,8 +228,8 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		try {
 			vars = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBEditorUtils.debugAndLogError(e, "Cannot get variables for "
+					+ rodinFile.getElementName());
 			return;
 		}
 		if (vars.length != 0) {
@@ -215,9 +249,11 @@ public class PrettyPrintPage extends EventBEditorPage implements
 
 				try {
 					String comment = var.getComment(monitor);
-					formString += "   /* " + UIUtils.XMLWrapUp(comment) + " */";
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
 				} catch (RodinDBException e) {
-					// Do nothing
+					// There is no comment attached to this variable
 				}
 				formString += "</li>";
 			}
@@ -252,10 +288,131 @@ public class PrettyPrintPage extends EventBEditorPage implements
 
 				try {
 					String comment = inv.getComment(monitor);
-					formString += "      /* " + UIUtils.XMLWrapUp(comment)
-							+ " */";
+					if (!comment.equals(""))
+						formString += "      /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
 				} catch (RodinDBException e) {
-					// Do nothing
+					// There is no comment attached to this invariant
+				}
+				formString += "</li>";
+			}
+		}
+	}
+
+	private void addCarrierSets(IRodinFile rodinFile, IProgressMonitor monitor) {
+		IRodinElement[] sets;
+		try {
+			sets = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils
+					.debugAndLogError(e, "Cannot get carrier sets for "
+							+ rodinFile.getElementName());
+			return;
+		}
+		if (sets.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
+			formString += "<li style=\"text\" value=\"\"><b>SETS</b>";
+			formString += "</li>";
+			for (IRodinElement child : sets) {
+				ICarrierSet set = (ICarrierSet) child;
+				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
+				try {
+					formString += UIUtils.makeHyperlink(set
+							.getHandleIdentifier(), set.getIdentifierString());
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the identifier string for "
+									+ set.getElementName());
+					e.printStackTrace();
+				}
+
+				try {
+					String comment = set.getComment(monitor);
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
+				} catch (RodinDBException e) {
+					// There is no comment attached to this carrier set
+				}
+				formString += "</li>";
+			}
+		}
+	}
+
+	private void addConstants(IRodinFile rodinFile, IProgressMonitor monitor) {
+		IRodinElement[] csts;
+		try {
+			csts = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils
+					.debugAndLogError(e, "Cannot get carrier sets for "
+							+ rodinFile.getElementName());
+			return;
+		}
+		if (csts.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
+			formString += "<li style=\"text\" value=\"\"><b>CONSTANTS</b>";
+			formString += "</li>";
+			for (IRodinElement child : csts) {
+				IConstant cst = (IConstant) child;
+				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
+				try {
+					formString += UIUtils.makeHyperlink(cst
+							.getHandleIdentifier(), cst.getIdentifierString());
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the identifier string for "
+									+ cst.getElementName());
+					e.printStackTrace();
+				}
+
+				try {
+					String comment = cst.getComment(monitor);
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
+				} catch (RodinDBException e) {
+					// There is no comment attached to this carrier set
+				}
+				formString += "</li>";
+			}
+		}
+	}
+
+	private void addAxioms(IRodinFile rodinFile, IProgressMonitor monitor) {
+		IRodinElement[] axms;
+		try {
+			axms = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get axioms for "
+					+ rodinFile.getElementName());
+			return;
+		}
+		if (axms.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
+			formString += "<li style=\"text\" value=\"\"><b>AXIOMS</b>";
+			formString += "</li>";
+			for (IRodinElement child : axms) {
+				IAxiom axm = (IAxiom) child;
+				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
+				try {
+					formString += UIUtils.makeHyperlink(axm
+							.getHandleIdentifier(), axm.getLabel(monitor));
+					formString += ": "
+							+ UIUtils.XMLWrapUp(axm.getPredicateString());
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the detail for axioms "
+									+ axm.getElementName());
+				}
+
+				try {
+					String comment = axm.getComment(monitor);
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
+				} catch (RodinDBException e) {
+					// There is no comment attached to this theorem
 				}
 				formString += "</li>";
 			}
@@ -267,8 +424,8 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		try {
 			thms = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBEditorUtils.debugAndLogError(e, "Cannot get theorems for "
+					+ rodinFile.getElementName());
 			return;
 		}
 		if (thms.length != 0) {
@@ -284,15 +441,18 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += ": "
 							+ UIUtils.XMLWrapUp(thm.getPredicateString());
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the detail for theorem "
+									+ thm.getElementName());
 				}
 
 				try {
 					String comment = thm.getComment(monitor);
-					formString += "   /* " + UIUtils.XMLWrapUp(comment) + " */";
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
 				} catch (RodinDBException e) {
-					// Do nothing
+					// There is no comment attached to this theorem
 				}
 				formString += "</li>";
 			}
@@ -322,8 +482,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 									evt.getLabel(monitor)) + "</li>";
 					try {
 						String comment = evt.getComment(monitor);
-						formString += "   /* " + UIUtils.XMLWrapUp(comment)
-								+ " */";
+						if (!comment.equals(""))
+							formString += "   /* " + UIUtils.XMLWrapUp(comment)
+									+ " */";
 					} catch (RodinDBException e) {
 						// Do nothing
 					}
@@ -358,8 +519,10 @@ public class PrettyPrintPage extends EventBEditorPage implements
 
 							try {
 								String comment = var.getComment(monitor);
-								formString += "   /* "
-										+ UIUtils.XMLWrapUp(comment) + " */";
+								if (!comment.equals(""))
+									formString += "   /* "
+											+ UIUtils.XMLWrapUp(comment)
+											+ " */";
 							} catch (RodinDBException e) {
 								// Do nothing
 							}
@@ -389,8 +552,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 								+ UIUtils.XMLWrapUp(guard.getPredicateString());
 						try {
 							String comment = guard.getComment(monitor);
-							formString += "   /* " + UIUtils.XMLWrapUp(comment)
-									+ " */";
+							if (!comment.equals(""))
+								formString += "   /* "
+										+ UIUtils.XMLWrapUp(comment) + " */";
 						} catch (RodinDBException e) {
 							// Do nothing
 						}
@@ -416,8 +580,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 										.getAssignmentString());
 						try {
 							String comment = action.getComment(monitor);
-							formString += "   /* " + UIUtils.XMLWrapUp(comment)
-									+ " */";
+							if (!comment.equals(""))
+								formString += "   /* "
+										+ UIUtils.XMLWrapUp(comment) + " */";
 						} catch (RodinDBException e) {
 							// Do nothing
 						}

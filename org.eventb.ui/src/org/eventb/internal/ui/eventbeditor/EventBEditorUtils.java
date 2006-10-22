@@ -1412,4 +1412,11 @@ public class EventBEditorUtils {
 		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);
 	}
 
+	public static void debugAndLogError(Throwable e, String message) {
+		if (DEBUG) {
+			debug(message);
+			e.printStackTrace();
+		}
+		UIUtils.log(e, message);
+	}
 }
