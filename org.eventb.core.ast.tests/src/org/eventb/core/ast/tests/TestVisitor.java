@@ -63,6 +63,8 @@ public class TestVisitor extends TestCase {
 
 		private int count;
 		
+		CounterVisitor() { super(); }
+		
 		int getCount() {
 			return count;
 		}

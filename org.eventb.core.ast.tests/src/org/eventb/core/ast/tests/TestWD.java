@@ -1,6 +1,10 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2005-2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -54,7 +58,7 @@ public class TestWD extends TestCase {
 	
 	private abstract class TestFormula {
 		// base class of various tests
-		
+		TestFormula() { super(); }
 		public abstract void test();
 	}
 	
@@ -99,7 +103,7 @@ public class TestWD extends TestCase {
 		String input;
 		String expected;
 		ITypeEnvironment env;
-		private TestAssignment(String in, String exp) {
+		TestAssignment(String in, String exp) {
 			input = in;
 			expected = exp;
 			env = defaultTEnv;
