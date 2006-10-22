@@ -21,15 +21,15 @@ import org.eventb.core.seqprover.tests.TestLib;
  */
 public class ReasonerRegistryTest extends TestCase {
 
-	private final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
-
-	private int count = 0;
+	private static int count = 0;
 	
 	// Each call returns a new dummy id, not used before.
-	private String getDummyId() {
+	private static String getDummyId() {
 		return "dummy_id_" + (++ count);
 	}
 	
+	private final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
+
 	/**
 	 * Asserts that the given reasoner id has been registered. This is checked
 	 * using both inquiry methods {@link IReasonerRegistry#isRegistered(String)}
