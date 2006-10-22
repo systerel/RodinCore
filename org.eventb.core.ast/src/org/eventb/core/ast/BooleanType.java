@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Denotes the predefined boolean type which corresponds to the set of boolean values.
  * 
@@ -25,6 +27,11 @@ public class BooleanType extends Type {
 		super(true);
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		// Nothing to do
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		return factory.makeAtomicExpression(Formula.BOOL, null);
@@ -45,5 +52,5 @@ public class BooleanType extends Type {
 	public int hashCode() {
 		return HASH_CODE;
 	}
-	
+
 }

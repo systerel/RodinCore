@@ -536,4 +536,11 @@ public class AssociativeExpression extends Expression {
 		}
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		for (Expression child: children) {
+			child.addGivenTypes(set);
+		}
+	}
+
 }

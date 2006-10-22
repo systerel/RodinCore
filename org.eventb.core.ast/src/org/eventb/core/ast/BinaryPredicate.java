@@ -261,4 +261,10 @@ public class BinaryPredicate extends Predicate {
 		return ff.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		left.addGivenTypes(set);
+		right.addGivenTypes(set);
+	}
+
 }

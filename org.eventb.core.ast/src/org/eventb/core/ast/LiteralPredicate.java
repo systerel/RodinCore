@@ -126,4 +126,9 @@ public class LiteralPredicate extends Predicate {
 		return this;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		// Nothing to do
+	}
+
 }

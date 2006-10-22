@@ -297,4 +297,11 @@ public class BecomesEqualTo extends Assignment {
 		return result;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		for (Expression value: values) {
+			value.addGivenTypes(set);
+		}
+	}
+
 }

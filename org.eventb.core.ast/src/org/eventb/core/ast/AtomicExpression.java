@@ -234,4 +234,9 @@ public class AtomicExpression extends Expression {
 		}
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		getType().addGivenTypes(set);
+	}
+
 }

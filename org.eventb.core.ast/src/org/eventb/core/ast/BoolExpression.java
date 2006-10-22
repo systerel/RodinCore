@@ -163,4 +163,9 @@ public class BoolExpression extends Expression {
 		return ff.makeBoolExpression(newChild, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		child.addGivenTypes(set);
+	}
+
 }

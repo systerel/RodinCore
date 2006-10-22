@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Denotes a type defined by the user. For instance, this type can correspond to
  * a carrier-set declared in a context.
@@ -27,6 +29,11 @@ public class GivenType extends Type {
 		this.name = name;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		set.add(this);
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		return factory.makeFreeIdentifier(

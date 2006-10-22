@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Denotes a product type.
  * 
@@ -30,6 +32,12 @@ public class ProductType extends Type {
 		this.right = right;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		left.addGivenTypes(set);
+		right.addGivenTypes(set);
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		Expression leftExpr = left.toExpression(factory);

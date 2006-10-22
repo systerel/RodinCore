@@ -878,4 +878,10 @@ public class BinaryExpression extends Expression {
 		}
 	}
 	
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		left.addGivenTypes(set);
+		right.addGivenTypes(set);
+	}
+
 }

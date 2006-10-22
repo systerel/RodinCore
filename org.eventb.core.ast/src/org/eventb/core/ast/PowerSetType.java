@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Denotes a power-set type.
  * 
@@ -26,6 +28,11 @@ public class PowerSetType extends Type {
 		this.base = base;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		base.addGivenTypes(set);
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		Expression baseExpr = base.toExpression(factory);

@@ -724,6 +724,15 @@ public class QuantifiedExpression extends Expression {
 		return ff.makeQuantifiedExpression(getTag(), quantifiedIdentifiers, newPred, newExpr, getSourceLocation(), form);
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		for (BoundIdentDecl decl: quantifiedIdentifiers) {
+			decl.addGivenTypes(set);
+		}
+		expr.addGivenTypes(set);
+		pred.addGivenTypes(set);
+	}
+
 	// TODO add instantiation of condition
 
 	// TODO add instantiation of subexpression

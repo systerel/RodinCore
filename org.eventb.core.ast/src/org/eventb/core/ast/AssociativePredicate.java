@@ -309,4 +309,11 @@ public class AssociativePredicate extends Predicate {
 		return ff.makeAssociativePredicate(getTag(), newChildren, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		for (Predicate child: children) {
+			child.addGivenTypes(set);
+		}
+	}
+
 }

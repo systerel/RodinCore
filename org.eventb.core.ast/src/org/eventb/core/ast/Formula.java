@@ -9,6 +9,7 @@ import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1822,5 +1823,37 @@ public abstract class Formula<T extends Formula<T>> {
 		final Substitution subst = new BoundIdentifierShifter(offset, factory);
 		return applySubstitution(subst);
 	}
+	
+	/**
+	 * Returns a set of all given types which are used for typing this formula.
+	 * This method traverses recursively this formula, searching for all
+	 * occurrences of given types in the types of sub-expressions.
+	 * <p>
+	 * This formula must be type-checked when calling this method.
+	 * </p>
+	 * 
+	 * @return a set containing all given types which are used in this formula
+	 *         types
+	 */
+	public final Set<GivenType> getGivenTypes() {
+		assert isTypeChecked();
+		final HashSet<GivenType> result = new HashSet<GivenType>();
+
+		// First process all free and bound identifiers now (rather than
+		// processing each occurrence later)
+		for (FreeIdentifier ident: getFreeIdentifiers()) {
+			ident.getType().addGivenTypes(result);
+		}
+		for (BoundIdentifier ident: getBoundIdentifiers()) {
+			ident.getType().addGivenTypes(result);
+		}
+
+		// Then, traverse the formula looking for locally used given types
+		this.addGivenTypes(result);
+
+		return result;
+	}
+
+	protected abstract void addGivenTypes(Set<GivenType> set);
 	
 }

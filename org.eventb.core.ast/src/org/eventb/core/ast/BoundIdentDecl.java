@@ -193,4 +193,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		return this;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		type.addGivenTypes(set);
+	}
+
 }

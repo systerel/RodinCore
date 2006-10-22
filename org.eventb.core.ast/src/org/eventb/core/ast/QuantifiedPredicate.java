@@ -376,4 +376,12 @@ public class QuantifiedPredicate extends Predicate {
 		return ff.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		for (BoundIdentDecl decl: quantifiedIdentifiers) {
+			decl.addGivenTypes(set);
+		}
+		pred.addGivenTypes(set);
+	}
+
 }

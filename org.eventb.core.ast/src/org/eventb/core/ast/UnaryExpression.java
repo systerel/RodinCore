@@ -607,4 +607,9 @@ public class UnaryExpression extends Expression {
 		return factory.makePowerSetType(childAsType);
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		child.addGivenTypes(set);
+	}
+
 }

@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Common protocol for event-B types.
  * <p>
@@ -166,5 +168,7 @@ public abstract class Type {
 	public Type getBaseType() {
 		return null;
 	}
+
+	protected abstract void addGivenTypes(Set<GivenType> set);
 
 }

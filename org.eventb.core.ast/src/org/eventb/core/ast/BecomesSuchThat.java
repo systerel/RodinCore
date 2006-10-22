@@ -323,4 +323,9 @@ public class BecomesSuchThat extends Assignment {
 		return condition.getFreeIdentifiers();
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		condition.addGivenTypes(set);
+	}
+
 }

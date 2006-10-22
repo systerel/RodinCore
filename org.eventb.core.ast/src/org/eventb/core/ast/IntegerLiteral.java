@@ -146,4 +146,9 @@ public class IntegerLiteral extends Expression {
 		return this;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		// Nothing to do
+	}
+
 }

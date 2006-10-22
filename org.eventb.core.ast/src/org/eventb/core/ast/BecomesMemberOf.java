@@ -206,4 +206,9 @@ public class BecomesMemberOf extends Assignment {
 		return setExpr.getFreeIdentifiers();
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		setExpr.addGivenTypes(set);
+	}
+
 }

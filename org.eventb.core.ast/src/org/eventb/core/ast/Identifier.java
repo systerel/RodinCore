@@ -4,6 +4,8 @@
  */
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 
 
 
@@ -17,6 +19,11 @@ public abstract class Identifier extends Expression {
 	
 	protected Identifier(int tag, SourceLocation location, int hashCode) {
 		super(tag, location, hashCode);
+	}
+
+	@Override
+	protected final void addGivenTypes(Set<GivenType> set) {
+		// Already done at the global level, nothing to do locally
 	}
 
 }

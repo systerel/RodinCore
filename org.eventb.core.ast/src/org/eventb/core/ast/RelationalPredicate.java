@@ -337,4 +337,10 @@ public class RelationalPredicate extends Predicate {
 		return ff.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		left.addGivenTypes(set);
+		right.addGivenTypes(set);
+	}
+
 }

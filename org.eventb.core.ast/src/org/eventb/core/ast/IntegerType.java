@@ -8,6 +8,8 @@
 
 package org.eventb.core.ast;
 
+import java.util.Set;
+
 /**
  * Denotes the predefined integer type which corresponds to the set of all integers.
  * 
@@ -25,6 +27,11 @@ public class IntegerType extends Type {
 		super(true);
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		// Nothing to do
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		return factory.makeAtomicExpression(Formula.INTEGER, null);

@@ -8,8 +8,11 @@
 
 package org.eventb.internal.core.typecheck;
 
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 
@@ -39,6 +42,11 @@ public class TypeVariable extends Type {
 		this.location = location;
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		assert false;
+	}
+	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		assert false;

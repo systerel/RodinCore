@@ -170,4 +170,9 @@ public class UnaryPredicate extends Predicate {
 		return ff.makeUnaryPredicate(getTag(), newChild, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		child.addGivenTypes(set);
+	}
+
 }

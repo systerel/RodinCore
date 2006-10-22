@@ -280,4 +280,16 @@ public class SetExtension extends Expression {
 		return ff.makeSetExtension(newMembers, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		if (members.length == 0) {
+			// Special case when the set is actually empty
+			getType().addGivenTypes(set);
+		} else {
+			for (Expression member: members) {
+				member.addGivenTypes(set);
+			}
+		}
+	}
+
 }

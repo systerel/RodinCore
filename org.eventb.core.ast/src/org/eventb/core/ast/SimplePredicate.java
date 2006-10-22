@@ -171,4 +171,9 @@ public class SimplePredicate extends Predicate {
 		return ff.makeSimplePredicate(getTag(), newChild, getSourceLocation());
 	}
 
+	@Override
+	protected void addGivenTypes(Set<GivenType> set) {
+		child.addGivenTypes(set);
+	}
+
 }
