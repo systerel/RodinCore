@@ -20,15 +20,15 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -74,6 +73,7 @@ import org.eventb.core.pm.UserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeDelta;
+import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
@@ -98,7 +98,7 @@ import org.rodinp.core.RodinDBException;
 public class ObligationExplorer extends ViewPart implements
 		ISelectionChangedListener, IUSManagerListener,
 		IProofStateChangedListener {
-	private TreeColumn column;
+//	private TreeColumn column;
 
 	/**
 	 * The plug-in identifier of the Obligation Explorer (value
@@ -106,8 +106,8 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.ObligationExplorer";
-
-	private static final int MAX_WIDTH = 500;
+//
+//	private static final int MAX_WIDTH = 500;
 
 	// The tree viewer to display the structure of projects, components, etc.
 	private TreeViewer viewer;
@@ -299,14 +299,19 @@ public class ObligationExplorer extends ViewPart implements
 	 *         <p>
 	 *         This class provides the label for object in the tree.
 	 */
-	private class ObligationLabelProvider implements ITableLabelProvider,
-			ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
+	private class ObligationLabelProvider extends LabelProvider implements
+			IFontProvider, IColorProvider, IPropertyChangeListener {
 
-		public Image getColumnImage(Object obj, int columnIndex) {
+		public ObligationLabelProvider() {
+			JFaceResources.getFontRegistry().addListener(this);
+		}
+
+		@Override
+		public Image getImage(Object element) {
 			ImageRegistry registry = EventBUIPlugin.getDefault()
 					.getImageRegistry();
-			if (obj instanceof IPRSequent) {
-				IPRSequent prSequent = (IPRSequent) obj;
+			if (element instanceof IPRSequent) {
+				IPRSequent prSequent = (IPRSequent) element;
 				try {
 
 					// Try to synchronize with the proof tree in memory
@@ -318,7 +323,7 @@ public class ObligationExplorer extends ViewPart implements
 						Collection<ProofState> proofStates = userSupport
 								.getPOs();
 						for (ProofState proofState : proofStates) {
-							if (proofState.getPRSequent().equals(obj)) {
+							if (proofState.getPRSequent().equals(element)) {
 								IProofTree tree = proofState.getProofTree();
 
 								if (tree != null && proofState.isDirty()) {
@@ -365,19 +370,22 @@ public class ObligationExplorer extends ViewPart implements
 					e.printStackTrace();
 				}
 			}
-			if (obj instanceof IPRFile) {
-				IPRFile prFile = (IPRFile) obj;
+			if (element instanceof IPRFile) {
+				IPRFile prFile = (IPRFile) element;
 				if (prFile.getMachine().exists())
 					return registry.get(IEventBSharedImages.IMG_MACHINE);
 				else if (prFile.getContext().exists())
 					return registry.get(IEventBSharedImages.IMG_CONTEXT);
 			}
-			if (obj instanceof IRodinElement)
-				return EventBImage.getRodinImage((IRodinElement) obj);
+			if (element instanceof IRodinElement)
+				return EventBImage.getRodinImage((IRodinElement) element);
 			return null;
 		}
 
-		public String getColumnText(Object obj, int columnIndex) {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object obj) {
 			if (ObligationExplorerUtils.DEBUG)
 				ObligationExplorerUtils.debug("Label for: " + obj);
 			if (obj instanceof IRodinProject) {
@@ -412,46 +420,30 @@ public class ObligationExplorer extends ViewPart implements
 			return obj.toString();
 		}
 
-		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
 		public void dispose() {
-			// TODO Auto-generated method stub
-
+			JFaceResources.getFontRegistry().removeListener(this);
+			super.dispose();
 		}
 
-		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
-			return false;
+		public Font getFont(Object element) {
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		}
 
-		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public Font getFont(Object element, int columnIndex) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Color getForeground(Object element, int columnIndex) {
+		public Color getForeground(Object element) {
 			Display display = Display.getCurrent();
 			return display.getSystemColor(SWT.COLOR_BLACK);
 		}
 
-		public Color getBackground(Object obj, int columnIndex) {
+		public Color getBackground(Object element) {
 			Display display = Display.getCurrent();
 			Color white = display.getSystemColor(SWT.COLOR_WHITE);
 			Color yellow = display.getSystemColor(SWT.COLOR_YELLOW);
-			if (obj instanceof IRodinProject)
+			if (element instanceof IRodinProject)
 				return white;
-			if (obj instanceof IRodinFile) {
+			if (element instanceof IRodinFile) {
 				return white;
 			}
-			if (obj instanceof IPRSequent) {
+			if (element instanceof IPRSequent) {
 				// UIUtils.debugObligationExplorer("Label for: " + obj);
 
 				// Find the label in the list of UserSupport.
@@ -462,7 +454,7 @@ public class ObligationExplorer extends ViewPart implements
 					// userSupport);
 					Collection<ProofState> proofStates = userSupport.getPOs();
 					for (ProofState proofState : proofStates) {
-						if (proofState.getPRSequent().equals(obj)) {
+						if (proofState.getPRSequent().equals(element)) {
 							if (proofState.isDirty())
 								return yellow;
 							else
@@ -477,9 +469,15 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
-			// TODO Auto-generated method stub
-
+			if (event.getProperty()
+					.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+				if (event.getProperty().equals(
+						PreferenceConstants.EVENTB_MATH_FONT)) {
+					viewer.refresh();
+				}
+			}
 		}
+		
 	}
 
 	CoolItem createToolItem(CoolBar coolBar) {
@@ -496,8 +494,8 @@ public class ObligationExplorer extends ViewPart implements
 							+ exclude.getSelection());
 				}
 				viewer.refresh();
-				column.pack();
-				column.setWidth(MAX_WIDTH);
+//				column.pack();
+//				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -516,8 +514,8 @@ public class ObligationExplorer extends ViewPart implements
 							+ exclude.getSelection());
 				}
 				viewer.refresh();
-				column.pack();
-				column.setWidth(MAX_WIDTH);
+//				column.pack();
+//				column.setWidth(MAX_WIDTH);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -589,10 +587,10 @@ public class ObligationExplorer extends ViewPart implements
 		viewer.getControl().setLayoutData(textData);
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
-		column = new TreeColumn(tree, SWT.LEFT);
+//		column = new TreeColumn(tree, SWT.LEFT);
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
-		column.pack();
-		column.setWidth(MAX_WIDTH);
+//		column.pack();
+//		column.setWidth(MAX_WIDTH);
 
 		// Sync with the current active ProverUI
 		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
@@ -696,8 +694,8 @@ public class ObligationExplorer extends ViewPart implements
 	 */
 	public void refresh() {
 		viewer.refresh();
-		column.pack();
-		column.setWidth(MAX_WIDTH);
+//		column.pack();
+//		column.setWidth(MAX_WIDTH);
 	}
 
 	/*
@@ -805,8 +803,8 @@ public class ObligationExplorer extends ViewPart implements
 				if (viewer.getControl().isDisposed())
 					return;
 				viewer.refresh(userSupport.getInput(), true);
-				column.pack();
-				column.setWidth(MAX_WIDTH);
+//				column.pack();
+//				column.setWidth(MAX_WIDTH);
 				if (delta.isNewProofState()) {
 
 					if (ps != null) {
@@ -823,8 +821,8 @@ public class ObligationExplorer extends ViewPart implements
 						ProofState state = userSupport.getCurrentPO();
 						IPRSequent prSequent = state.getPRSequent();
 						viewer.refresh(prSequent, true);
-						column.pack();
-						column.setWidth(MAX_WIDTH);
+//						column.pack();
+//						column.setWidth(MAX_WIDTH);
 					}
 				}
 			}
