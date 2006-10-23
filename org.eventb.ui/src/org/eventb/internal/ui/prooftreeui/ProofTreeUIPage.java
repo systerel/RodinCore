@@ -22,18 +22,15 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -42,10 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
@@ -68,7 +62,7 @@ import org.eventb.ui.EventBUIPlugin;
 public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		ISelectionChangedListener, IProofStateChangedListener {
 
-	private static final int MAX_WIDTH = 1500;
+//	private static final int MAX_WIDTH = 1500;
 
 	// The contained tree viewer.
 	private TreeViewer viewer;
@@ -83,7 +77,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	// TODO Change to Rule class?
 	private Object[] filters = {}; // Default filters
 
-	private TreeColumn elementColumn;
+	// private TreeColumn elementColumn;
 
 	// The current editting element.
 	private Object fInput;
@@ -100,41 +94,44 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 *         <p>
 	 *         This class provides the labels for elements in the tree viewer.
 	 */
-	class ProofTreeLabelProvider implements ITableLabelProvider,
-			ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
-
-		private Font font = null;
+	private class ProofTreeLabelProvider extends LabelProvider implements
+			IFontProvider, IPropertyChangeListener {
 
 		public ProofTreeLabelProvider() {
-			// Register as a listener to the font registry
 			JFaceResources.getFontRegistry().addListener(this);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-		 *      int)
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Font getFont(Object element) {
+			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		}
+
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty()
+					.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+				if (event.getProperty().equals(
+						PreferenceConstants.EVENTB_MATH_FONT)) {
+					viewer.refresh();
+				}
+			}
+		}
+
+		@Override
+		public void dispose() {
+			JFaceResources.getFontRegistry().removeListener(this);
+			super.dispose();
+		}
+
+		@Override
+		public Image getImage(Object element) {
 			if (element instanceof IProofTreeNode) {
 				return EventBImage
 						.getProofTreeNodeImage((IProofTreeNode) element);
 			}
-
-			// TODO Removed?
-			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					imageKey);
+			return super.getImage(element);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-		 *      int)
-		 */
-		public String getColumnText(Object element, int columnIndex) {
+		@Override
+		public String getText(Object element) {
 			if (element instanceof IProofTreeNode) {
 				IProofTreeNode proofTree = (IProofTreeNode) element;
 
@@ -146,99 +143,159 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					return proofTree.getSequent().goal().toString();
 				}
 			}
-			return element.toString();
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			// TODO Auto-generated method stub
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-		 *      java.lang.String)
-		 */
-		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
-		 *      int)
-		 */
-		public Color getBackground(Object element, int columnIndex) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_WHITE);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
-		 *      int)
-		 */
-		public Color getForeground(Object element, int columnIndex) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_BLACK);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
-		 *      int)
-		 */
-		public Font getFont(Object element, int columnIndex) {
-			// UIUtils.debug("Get fonts");
-			if (font == null) {
-				font = JFaceResources
-						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			}
-			return font;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-		 */
-		public void propertyChange(PropertyChangeEvent event) {
-			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			ProofTreeUIPage.this.getViewer().refresh();
+			return super.getText(element);
 		}
 
 	}
+
+	// class ProofTreeLabelProvider implements ITableLabelProvider,
+	// ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
+	//
+	// private Font font = null;
+	//
+	// public ProofTreeLabelProvider() {
+	// // Register as a listener to the font registry
+	// JFaceResources.getFontRegistry().addListener(this);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
+	// * int)
+	// */
+	// public Image getColumnImage(Object element, int columnIndex) {
+	// if (element instanceof IProofTreeNode) {
+	// return EventBImage
+	// .getProofTreeNodeImage((IProofTreeNode) element);
+	// }
+	//
+	// // TODO Removed?
+	// String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+	// return PlatformUI.getWorkbench().getSharedImages().getImage(
+	// imageKey);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+	// * int)
+	// */
+	// public String getColumnText(Object element, int columnIndex) {
+	// if (element instanceof IProofTreeNode) {
+	// IProofTreeNode proofTree = (IProofTreeNode) element;
+	//
+	// if (!proofTree.isOpen()) {
+	// return proofTree.getRule().getDisplayName();
+	// // TODO : maybe make this an option.
+	// // + proofTree.getSequent().goal();
+	// } else {
+	// return proofTree.getSequent().goal().toString();
+	// }
+	// }
+	// return element.toString();
+	//
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	// */
+	// public void addListener(ILabelProviderListener listener) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	// */
+	// public void dispose() {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+	// * java.lang.String)
+	// */
+	// public boolean isLabelProperty(Object element, String property) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	// */
+	// public void removeListener(ILabelProviderListener listener) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
+	// * int)
+	// */
+	// public Color getBackground(Object element, int columnIndex) {
+	// Display display = Display.getCurrent();
+	// return display.getSystemColor(SWT.COLOR_WHITE);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
+	// * int)
+	// */
+	// public Color getForeground(Object element, int columnIndex) {
+	// Display display = Display.getCurrent();
+	// return display.getSystemColor(SWT.COLOR_BLACK);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
+	// * int)
+	// */
+	// public Font getFont(Object element, int columnIndex) {
+	// // UIUtils.debug("Get fonts");
+	// if (font == null) {
+	// font = JFaceResources
+	// .getFont(PreferenceConstants.EVENTB_MATH_FONT);
+	// }
+	// return font;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	// */
+	// public void propertyChange(PropertyChangeEvent event) {
+	// font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+	// ProofTreeUIPage.this.getViewer().refresh();
+	// }
+	//
+	// }
 
 	/**
 	 * Creates a content outline page using the given editor. Register as a
@@ -284,7 +341,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		gd.horizontalSpan = 1;
 		tree.setLayoutData(gd);
 
-		elementColumn = new TreeColumn(tree, SWT.LEFT);
+		// elementColumn = new TreeColumn(tree, SWT.LEFT);
 		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
 				.getShell(), userSupport);
 		handler.activateHoverHelp(viewer.getControl());
@@ -362,8 +419,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		if (fInput != null)
 			update();
-		elementColumn.pack();
-		elementColumn.setWidth(MAX_WIDTH);
+		// elementColumn.pack();
+		// elementColumn.setWidth(MAX_WIDTH);
 
 	}
 
@@ -394,8 +451,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				// viewer.refresh();
 				if (fInput != null) {
 					viewer.setExpandedElements(elements);
-					elementColumn.pack();
-					elementColumn.setWidth(MAX_WIDTH);
+					// elementColumn.pack();
+					// elementColumn.setWidth(MAX_WIDTH);
 					// UIUtils.debug("Width: " + elementColumn.getWidth());
 					viewer.refresh();
 					viewer.setSelection(new StructuredSelection(userSupport
@@ -700,8 +757,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		// byUserSupport = true;
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Proof Tree UI for "
-				+ ProofTreeUIPage.this.userSupport.getInput().getElementName()
-				+ ": State Changed: " + delta.toString());
+					+ ProofTreeUIPage.this.userSupport.getInput()
+							.getElementName() + ": State Changed: "
+					+ delta.toString());
 
 		Display display = EventBUIPlugin.getDefault().getWorkbench()
 				.getDisplay();
@@ -714,16 +772,16 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						page.setInput(ps.getProofTree());
 						IProofTreeNode currentNode = ps.getCurrentNode();
 						page.getViewer().expandAll();
-						elementColumn.pack();
-						elementColumn.setWidth(MAX_WIDTH);
+						// elementColumn.pack();
+						// elementColumn.setWidth(MAX_WIDTH);
 						if (currentNode != null)
 							page.getViewer().setSelection(
 									new StructuredSelection(currentNode));
 					} else {
 						ProofTreeUIPage page = ProofTreeUIPage.this;
 						page.setInput(null);
-						elementColumn.pack();
-						elementColumn.setWidth(MAX_WIDTH);
+						// elementColumn.pack();
+						// elementColumn.setWidth(MAX_WIDTH);
 					}
 				} else if (ps != null && delta.isDeleted()) {
 					// Do nothing
@@ -732,8 +790,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					// ProofTreeUI.debug("Proof Tree UI: " + proofTreeDelta);
 					if (proofTreeDelta != null) {
 						viewer.refresh();
-						elementColumn.pack();
-						elementColumn.setWidth(MAX_WIDTH);
+						// elementColumn.pack();
+						// elementColumn.setWidth(MAX_WIDTH);
 						IProofTreeNode node = delta.getNewProofTreeNode();
 						if (node != null) {
 							viewer.setSelection(new StructuredSelection(node),
