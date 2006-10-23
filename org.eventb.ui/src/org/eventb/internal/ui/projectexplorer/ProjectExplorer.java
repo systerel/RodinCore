@@ -92,7 +92,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider {
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
-		viewer.setLabelProvider(new ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider(viewer));
 		viewer.setSorter(new ElementSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 		makeActions();

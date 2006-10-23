@@ -191,7 +191,7 @@ public class SeesSection extends SectionPart implements
 
 		viewer = new TableViewer(comp);
 		viewer.setContentProvider(new SeenContextContentProvider());
-		viewer.setLabelProvider(new ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider(viewer));
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
 

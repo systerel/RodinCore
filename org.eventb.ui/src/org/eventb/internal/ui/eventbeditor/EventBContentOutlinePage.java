@@ -206,7 +206,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new EventBContentOutlineProvider());
 		viewer.setSorter(new ElementSorter());
-		viewer.setLabelProvider(new ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider(viewer));
 		viewer.addSelectionChangedListener(this);
 
 		if (fInput != null)

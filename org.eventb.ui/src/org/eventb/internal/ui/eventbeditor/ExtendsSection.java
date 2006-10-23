@@ -189,7 +189,7 @@ public class ExtendsSection extends SectionPart implements
 
 		viewer = new TableViewer(comp);
 		viewer.setContentProvider(new ExtendedContextContentProvider());
-		viewer.setLabelProvider(new ElementLabelProvider());
+		viewer.setLabelProvider(new ElementLabelProvider(viewer));
 		viewer.setInput(rodinFile);
 		viewer.addSelectionChangedListener(this);
 
