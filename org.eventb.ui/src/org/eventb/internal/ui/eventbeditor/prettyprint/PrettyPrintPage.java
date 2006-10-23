@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.prettyprint;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,16 +34,20 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
+import org.eventb.core.IWitness;
 import org.eventb.core.basis.SeesContext;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.Messages;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -41,24 +57,46 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *         <p>
+ *         This class extends the
+ *         <code>org.eventbui.eventbeditor.EventBEditorPage</code> class and
+ *         provides a pretty print page for Event-B Editor
+ */
 public class PrettyPrintPage extends EventBEditorPage implements
 		IElementChangedListener {
 
 	// Title, tab title and ID of the page.
 	public static final String PAGE_ID = "Pretty Print"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Pretty Print";
+	public static final String PAGE_TITLE = Messages
+			.getString("org.eventb.ui.prettyprintpage.title"); //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "Pretty Print";
+	public static final String PAGE_TAB_TITLE = Messages
+			.getString("org.eventb.ui.prettyprintpage.tabtitle"); //$NON-NLS-1$
 
+	// The scrolled form
 	private ScrolledForm form;
 
+	// The form text
 	private IEventBFormText formText;
 
+	// The content string of the form text
+	private String formString;
+
+	/**
+	 * Constructor: This default constructor will be used to create the page
+	 */
 	public PrettyPrintPage() {
 		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
+	 */
 	@Override
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
@@ -79,7 +117,6 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		FormText widget = managedForm.getToolkit().createFormText(body, true);
 
 		widget.addHyperlinkListener(new HyperlinkAdapter() {
-
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -91,10 +128,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 				IRodinElement element = RodinCore.create(id);
 				if (element != null && element.exists())
 					UIUtils.linkToEventBEditor(element);
-				// UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
-				// UIUtils.activateView(ProjectExplorer.VIEW_ID);
 			}
-
 		});
 
 		formText = new EventBFormText(widget);
@@ -103,8 +137,15 @@ public class PrettyPrintPage extends EventBEditorPage implements
 
 	}
 
-	String formString;
-
+	/**
+	 * This private helper method is use to set the content string of the form
+	 * text. The content string is set according to the type of the rodin input
+	 * file and the content of that file
+	 * <p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void setFormText(IProgressMonitor monitor) {
 		formString = "<form>";
 		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
@@ -116,6 +157,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 			addInvariants(rodinFile, monitor);
 			addTheorems(rodinFile, monitor);
 			addEvents(rodinFile, monitor);
+			addVariant(rodinFile, monitor);
 		} else if (rodinFile instanceof IContextFile) {
 			addCarrierSets(rodinFile, monitor);
 			addConstants(rodinFile, monitor);
@@ -130,6 +172,13 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		form.reflow(true);
 	}
 
+	/**
+	 * This private helper method adds the component name to the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 */
 	private void addComponentName(IRodinFile rodinFile) {
 		// Print the Machine/Context name
 		String componentName = EventBPlugin.getComponentName(rodinFile
@@ -144,6 +193,16 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		return;
 	}
 
+	/**
+	 * This private helper method adds component's dependency information to the
+	 * content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addComponentDependencies(IRodinFile rodinFile,
 			IProgressMonitor monitor) {
 		if (rodinFile instanceof IMachineFile) {
@@ -223,6 +282,16 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about variables
+	 * to the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addVariables(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] vars;
 		try {
@@ -243,8 +312,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += UIUtils.makeHyperlink(var
 							.getHandleIdentifier(), var.getIdentifierString());
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the identifier string for variable "
+									+ var.getElementName());
 				}
 
 				try {
@@ -260,13 +330,23 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about invariants
+	 * to the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addInvariants(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] invs;
 		try {
 			invs = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBEditorUtils.debugAndLogError(e, "Cannot get invariants for "
+					+ rodinFile.getElementName());
 			return;
 		}
 		if (invs.length != 0) {
@@ -282,8 +362,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += ": "
 							+ UIUtils.XMLWrapUp(inv.getPredicateString());
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get details for invariant "
+									+ inv.getElementName());
 				}
 
 				try {
@@ -299,6 +380,16 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about carrier
+	 * sets to the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addCarrierSets(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] sets;
 		try {
@@ -321,7 +412,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 							.getHandleIdentifier(), set.getIdentifierString());
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
-							"Cannot get the identifier string for "
+							"Cannot get the identifier string for carrier set "
 									+ set.getElementName());
 					e.printStackTrace();
 				}
@@ -339,14 +430,23 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about constants
+	 * to the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addConstants(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] csts;
 		try {
 			csts = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			EventBEditorUtils
-					.debugAndLogError(e, "Cannot get carrier sets for "
-							+ rodinFile.getElementName());
+			EventBEditorUtils.debugAndLogError(e, "Cannot get constants for "
+					+ rodinFile.getElementName());
 			return;
 		}
 		if (csts.length != 0) {
@@ -361,7 +461,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 							.getHandleIdentifier(), cst.getIdentifierString());
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
-							"Cannot get the identifier string for "
+							"Cannot get the identifier string for constant "
 									+ cst.getElementName());
 					e.printStackTrace();
 				}
@@ -379,6 +479,16 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about axioms to
+	 * the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addAxioms(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] axms;
 		try {
@@ -402,7 +512,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 							+ UIUtils.XMLWrapUp(axm.getPredicateString());
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
-							"Cannot get the detail for axioms "
+							"Cannot get details for axiom "
 									+ axm.getElementName());
 				}
 
@@ -419,6 +529,16 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about theorems to
+	 * the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addTheorems(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] thms;
 		try {
@@ -442,7 +562,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 							+ UIUtils.XMLWrapUp(thm.getPredicateString());
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
-							"Cannot get the detail for theorem "
+							"Cannot get details for theorem "
 									+ thm.getElementName());
 				}
 
@@ -459,13 +579,23 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about events to
+	 * the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
 	private void addEvents(IRodinFile rodinFile, IProgressMonitor monitor) {
 		IRodinElement[] evts;
 		try {
 			evts = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventBEditorUtils.debugAndLogError(e, "Cannot get events for "
+					+ rodinFile.getElementName());
 			return;
 		}
 
@@ -480,125 +610,255 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += "<li style=\"text\" value=\"\" bindent = \"20\">"
 							+ UIUtils.makeHyperlink(evt.getHandleIdentifier(),
 									evt.getLabel(monitor)) + "</li>";
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the label for event "
+									+ evt.getElementName());
+					continue;
+				}
+
+				try {
+					String comment = evt.getComment(monitor);
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
+				} catch (RodinDBException e) {
+					// There is no comment attached to this event
+				}
+
+				IRodinElement[] lvars;
+				IRodinElement[] guards;
+				IRodinElement[] actions;
+				IRodinElement[] refinesEvents;
+				IRodinElement[] witnesses;
+				try {
+					refinesEvents = evt
+							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
+					lvars = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					guards = evt.getChildrenOfType(IGuard.ELEMENT_TYPE);
+					witnesses = evt.getChildrenOfType(IWitness.ELEMENT_TYPE);
+					actions = evt.getChildrenOfType(IAction.ELEMENT_TYPE);
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the children for event "
+									+ evt.getElementName());
+					continue;
+				}
+
+				if (refinesEvents.length != 0) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent = \"40\">";
+					formString = formString + "<b>REFINES</b></li>";
+					for (IRodinElement child : refinesEvents) {
+						IRefinesEvent refinesEvent = (IRefinesEvent) child;
+						formString += "<li style=\"text\" value=\"\" bindent = \"60\">";
+						try {
+							formString += UIUtils.makeHyperlink(refinesEvent
+									.getHandleIdentifier(), refinesEvent
+									.getAbstractEventLabel());
+						} catch (RodinDBException e) {
+							EventBEditorUtils.debugAndLogError(e,
+									"Cannot get the abstract event label for refines event "
+											+ refinesEvent.getElementName());
+						}
+
+						formString += "</li>";
+					}
+				}
+
+				if (lvars.length != 0) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent = \"40\">";
+					formString = formString + "<b>ANY</b></li>";
+					for (IRodinElement child : lvars) {
+						IVariable var = (IVariable) child;
+						formString += "<li style=\"text\" value=\"\" bindent = \"60\">";
+						try {
+							formString += UIUtils.makeHyperlink(var
+									.getHandleIdentifier(), var
+									.getIdentifierString());
+						} catch (RodinDBException e) {
+							EventBEditorUtils.debugAndLogError(e,
+									"Cannot get the identifier string for local variable "
+											+ var.getElementName());
+						}
+
+						try {
+							String comment = var.getComment(monitor);
+							if (!comment.equals(""))
+								formString += "   /* "
+										+ UIUtils.XMLWrapUp(comment) + " */";
+						} catch (RodinDBException e) {
+							// There is no comment attached to this local
+							// variable
+						}
+						formString += "</li>";
+					}
+					formString += "<li style=\"text\" value=\"\" bindent = \"40\"><b>WHERE</b></li>";
+				} else {
+					if (guards.length != 0) {
+						formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
+						formString += "<b>WHEN</b></li>";
+					} else {
+						formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
+						formString += "<b>BEGIN</b></li>";
+					}
+
+				}
+
+				for (IRodinElement child : guards) {
+					IGuard guard = (IGuard) child;
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"60\">";
 					try {
-						String comment = evt.getComment(monitor);
+						formString = formString
+								+ UIUtils.makeHyperlink(guard
+										.getHandleIdentifier(), guard
+										.getLabel(monitor)) + ": "
+								+ UIUtils.XMLWrapUp(guard.getPredicateString());
+					} catch (RodinDBException e) {
+						EventBEditorUtils.debugAndLogError(e,
+								"Cannot get details for guard "
+										+ guard.getElementName());
+					}
+					try {
+						String comment = guard.getComment(monitor);
 						if (!comment.equals(""))
 							formString += "   /* " + UIUtils.XMLWrapUp(comment)
 									+ " */";
 					} catch (RodinDBException e) {
-						// Do nothing
+						// There is no comment attached to this event
 					}
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					continue;
+					formString = formString + "</li>";
 				}
-				try {
-					IRodinElement[] lvars;
-					lvars = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
-					IRodinElement[] guards = evt
-							.getChildrenOfType(IGuard.ELEMENT_TYPE);
-					IRodinElement[] actions = evt
-							.getChildrenOfType(IAction.ELEMENT_TYPE);
 
-					if (lvars.length != 0) {
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent = \"40\">";
-						formString = formString + "<b>ANY</b></li>";
-						for (IRodinElement child : lvars) {
-							IVariable var = (IVariable) child;
-							formString += "<li style=\"text\" value=\"\" bindent = \"60\">";
-							try {
-								formString += UIUtils.makeHyperlink(var
-										.getHandleIdentifier(), var
-										.getIdentifierString());
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-
-							try {
-								String comment = var.getComment(monitor);
-								if (!comment.equals(""))
-									formString += "   /* "
-											+ UIUtils.XMLWrapUp(comment)
-											+ " */";
-							} catch (RodinDBException e) {
-								// Do nothing
-							}
-							formString += "</li>";
-						}
-						formString += "<li style=\"text\" value=\"\" bindent = \"40\"><b>WHERE</b></li>";
-					} else {
-						if (guards.length != 0) {
-							formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
-							formString += "<b>WHEN</b></li>";
-						} else {
-							formString += "<li style=\"text\" value=\"\" bindent = \"40\">";
-							formString += "<b>BEGIN</b></li>";
-						}
-
-					}
-
-					for (IRodinElement child : guards) {
-						IGuard guard = (IGuard) child;
+				if (witnesses.length != 0) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent = \"40\">";
+					formString = formString + "<b>WITNESSES</b></li>";
+					for (IRodinElement child : witnesses) {
+						IWitness witness = (IWitness) child;
 						formString = formString
 								+ "<li style=\"text\" value=\"\" bindent=\"60\">";
-						formString = formString
-								+ UIUtils.makeHyperlink(guard
-										.getHandleIdentifier(), guard
-										.getLabel(new NullProgressMonitor()))
-								+ ": "
-								+ UIUtils.XMLWrapUp(guard.getPredicateString());
 						try {
-							String comment = guard.getComment(monitor);
+							formString = formString
+									+ UIUtils.makeHyperlink(witness
+											.getHandleIdentifier(), witness
+											.getLabel(monitor))
+									+ ": "
+									+ UIUtils.XMLWrapUp(witness
+											.getPredicateString());
+						} catch (RodinDBException e) {
+							EventBEditorUtils.debugAndLogError(e,
+									"Cannot get details for guard "
+											+ witness.getElementName());
+						}
+						try {
+							String comment = witness.getComment(monitor);
 							if (!comment.equals(""))
 								formString += "   /* "
 										+ UIUtils.XMLWrapUp(comment) + " */";
 						} catch (RodinDBException e) {
-							// Do nothing
+							// There is no comment attached to this event
 						}
 						formString = formString + "</li>";
 					}
+				}
 
-					if (guards.length != 0) {
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent=\"40\">";
-						formString = formString + "<b>THEN</b></li>";
-					}
+				if (guards.length != 0) {
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+					formString = formString + "<b>THEN</b></li>";
+				}
 
-					for (IRodinElement child : actions) {
-						IAction action = (IAction) child;
-						formString = formString
-								+ "<li style=\"text\" value=\"\" bindent=\"60\">";
+				for (IRodinElement child : actions) {
+					IAction action = (IAction) child;
+					formString = formString
+							+ "<li style=\"text\" value=\"\" bindent=\"60\">";
+					try {
 						formString = formString
 								+ UIUtils.makeHyperlink(action
 										.getHandleIdentifier(), action
-										.getLabel(new NullProgressMonitor()))
+										.getLabel(monitor))
 								+ ": "
 								+ UIUtils.XMLWrapUp(action
 										.getAssignmentString());
-						try {
-							String comment = action.getComment(monitor);
-							if (!comment.equals(""))
-								formString += "   /* "
-										+ UIUtils.XMLWrapUp(comment) + " */";
-						} catch (RodinDBException e) {
-							// Do nothing
-						}
-						formString = formString + "</li>";
+					} catch (RodinDBException e) {
+						EventBEditorUtils.debugAndLogError(e,
+								"Cannot get details for action "
+										+ action.getElementName());
 					}
-					formString = formString
-							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
-					formString = formString + "<b>END</b></li>";
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					try {
+						String comment = action.getComment(monitor);
+						if (!comment.equals(""))
+							formString += "   /* " + UIUtils.XMLWrapUp(comment)
+									+ " */";
+					} catch (RodinDBException e) {
+						// There is no comment attached to this event
+					}
+					formString = formString + "</li>";
 				}
+				formString = formString
+						+ "<li style=\"text\" value=\"\" bindent=\"40\">";
+				formString = formString + "<b>END</b></li>";
 			}
 		}
 	}
 
+	/**
+	 * This private helper method adds component's information about variants to
+	 * the content string
+	 * <p>
+	 * 
+	 * @param rodinFile
+	 *            the rodin input file
+	 * @param monitor
+	 *            a progress monitor
+	 */
+	private void addVariant(IRodinFile rodinFile, IProgressMonitor monitor) {
+		IRodinElement[] variants;
+		try {
+			variants = rodinFile.getChildrenOfType(IVariant.ELEMENT_TYPE);
+		} catch (RodinDBException e) {
+			EventBEditorUtils.debugAndLogError(e, "Cannot get variants for "
+					+ rodinFile.getElementName());
+			return;
+		}
+		if (variants.length != 0) {
+			formString += "<li style=\"text\" value=\"\"></li>";
+			formString += "<li style=\"text\" value=\"\"><b>VARIANT</b>";
+			formString += "</li>";
+			for (IRodinElement child : variants) {
+				IVariant variant = (IVariant) child;
+				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
+				try {
+					formString += UIUtils.makeHyperlink(variant
+							.getHandleIdentifier(), variant
+							.getExpressionString());
+				} catch (RodinDBException e) {
+					EventBEditorUtils.debugAndLogError(e,
+							"Cannot get the expression string for variant "
+									+ variant.getElementName());
+				}
+
+				try {
+					String comment = variant.getComment(monitor);
+					if (!comment.equals(""))
+						formString += "   /* " + UIUtils.XMLWrapUp(comment)
+								+ " */";
+				} catch (RodinDBException e) {
+					// There is no comment attached to this variant
+				}
+				formString += "</li>";
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
 	@Override
 	public void dispose() {
 		if (formText != null)
@@ -622,6 +882,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		display.syncExec(new Runnable() {
 
 			public void run() {
+				// Reset the content string of the form text
 				setFormText(new NullProgressMonitor());
 			}
 
