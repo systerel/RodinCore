@@ -21,9 +21,9 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.basis.ASTLib;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ProverFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -40,7 +40,7 @@ public class POUtil {
 	
 	public static Map<String, IProverSequent> readPOs(IPOFile poFile) throws RodinDBException {
 		// read in the global type environment
-		ITypeEnvironment globalTypeEnv = Lib.ff.makeTypeEnvironment();
+		ITypeEnvironment globalTypeEnv = ASTLib.makeTypeEnvironment();
 		addIdents(poFile.getIdentifiers(), globalTypeEnv);
 		
 		Map<String, IProverSequent> result 
@@ -74,10 +74,10 @@ public class POUtil {
 
 
 	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
-			Predicate pred =  Lib.parsePredicate(poPred.getContents());
+			Predicate pred =  ASTLib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
-			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
+			boolean wellTyped = ASTLib.typeCheckClosed(pred,typeEnv);
 			// if (!wellTyped) System.out.println("Pred : " + poPred.getContents() +" NOT WELL TYPED");
 			assert wellTyped;
 			return pred;
@@ -87,7 +87,7 @@ public class POUtil {
 	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
 		for (IPOIdentifier poIdent: poIdents){
 			String name = poIdent.getName();
-			Type type = Lib.parseType(poIdent.getType());
+			Type type = ASTLib.parseType(poIdent.getType());
 			assert (name!=null && type !=null);
 			typeEnv.addName(name,type);
 		}

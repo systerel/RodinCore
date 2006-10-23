@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.ISimplifier;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 

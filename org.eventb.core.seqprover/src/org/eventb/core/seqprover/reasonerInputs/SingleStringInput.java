@@ -44,9 +44,7 @@ public class SingleStringInput implements IReasonerInput{
 		reasonerInputSerializer.putString("singleString",string);
 	}
 
-	public void applyHints(ReplayHints hints) {
-		// TODO Auto-generated method stub
-		
+	public void applyHints(ReplayHints hints) {	
 	}
 
 }

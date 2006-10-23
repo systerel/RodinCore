@@ -1,24 +1,14 @@
 package org.eventb.internal.ui.prover.goaltactics;
 
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.tactics.ITactic;
-import org.eventb.core.seqprover.tactics.Tactics;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IGoalTactic;
 
 public class Contradiction implements IGoalTactic {
 
 	public boolean isApplicable(IProofTreeNode node) {
-		Predicate goal = node.getSequent().goal();
-		if (goal.equals(Lib.False)) return false;
-		Predicate negGoal = Lib.makeNeg(goal);
-		if (negGoal.equals(Lib.True)) return false;
-		if (Hypothesis.containsPredicate(
-				node.getSequent().selectedHypotheses(),
-				negGoal));
-		return true;
+		return Tactics.contradictGoal_applicable(node);
 	}
 
 	public ITactic getTactic(IProofTreeNode node, String[] inputs) {

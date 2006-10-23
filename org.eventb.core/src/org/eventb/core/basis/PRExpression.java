@@ -14,7 +14,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Lib;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -46,14 +45,14 @@ public class PRExpression extends InternalElement implements IPRExpression {
 		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
 		// this.getChildrenOfType(IPair.ELEMENT_TYPE);
 		for (IRodinElement pair : this.getChildrenOfType(IPair.ELEMENT_TYPE)) {
-			Type type = Lib.parseType(((IPair)pair).getContents());
+			Type type = ASTLib.parseType(((IPair)pair).getContents());
 			assert type != null;
 			typEnv.addName(pair.getElementName(),type);
 		}
-		Expression expr = Lib.parseExpression(this.getContents());
+		Expression expr = ASTLib.parseExpression(this.getContents());
 		assert expr != null;
 		// attn : wellTyped does type checking!
-		boolean wellTyped = Lib.typeCheckClosed(expr,typEnv);
+		boolean wellTyped = ASTLib.typeCheckClosed(expr,typEnv);
 		assert wellTyped;
 		return expr;
 	}

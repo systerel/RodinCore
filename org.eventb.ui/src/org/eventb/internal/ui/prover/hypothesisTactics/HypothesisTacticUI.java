@@ -3,7 +3,7 @@ package org.eventb.internal.ui.prover.hypothesisTactics;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.ui.prover.IHypothesisTactic;
 
 public class HypothesisTacticUI {

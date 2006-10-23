@@ -14,7 +14,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -99,7 +99,7 @@ public class PRSequent extends InternalElement implements IPRSequent {
 		IProverSequent seq =  POLoader.readPO(getPOSequent());
 		final IPRProofTree proofTree = getProofTree();
 		IProofDependencies deps = proofTree.getProofDependencies();
-		boolean validity = Lib.proofReusable(deps,seq);
+		boolean validity = ProverLib.proofReusable(deps,seq);
 		setProofBroken(! validity);
 	}
 	

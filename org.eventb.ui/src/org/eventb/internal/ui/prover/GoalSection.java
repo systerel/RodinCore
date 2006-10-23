@@ -33,6 +33,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -40,7 +41,6 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.goaltactics.GoalTacticUI;
 import org.eventb.ui.IEventBSharedImages;
@@ -56,7 +56,9 @@ public class GoalSection extends SectionPart {
 	private static final String SECTION_TITLE = "Goal";
 
 	private static final String SECTION_DESCRIPTION = "The current goal";
-
+	
+	private static final FormulaFactory formulaFactory = FormulaFactory.getDefault();
+	
 	private FormPage page;
 
 	private FormToolkit toolkit;
@@ -196,7 +198,7 @@ public class GoalSection extends SectionPart {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			actualString = goal.toString();
-			IParseResult parseResult = Lib.ff.parsePredicate(actualString);
+			IParseResult parseResult = formulaFactory.parsePredicate(actualString);
 			assert parseResult.isSuccess();
 			parsedPred = parseResult.getParsedPredicate();
 

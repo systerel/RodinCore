@@ -14,7 +14,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Lib;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -47,14 +46,14 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		// this.getChildrenOfType(IPair.ELEMENT_TYPE);
 		IRodinElement[] pairs = this.getChildrenOfType(IPair.ELEMENT_TYPE);
 		for (IRodinElement pair : pairs) {
-			Type type = Lib.parseType(((IPair)pair).getContents());
+			Type type = ASTLib.parseType(((IPair)pair).getContents());
 			assert type != null;
 			typEnv.addName(pair.getElementName(),type);
 		}
-		Predicate pred = Lib.parsePredicate(this.getContents());
+		Predicate pred = ASTLib.parsePredicate(this.getContents());
 		assert pred != null;
 		// attn : wellTyped does type checking!
-		boolean wellTyped = Lib.typeCheckClosed(pred,typEnv);
+		boolean wellTyped = ASTLib.typeCheckClosed(pred,typEnv);
 		assert wellTyped;
 		return pred;
 	}
@@ -76,6 +75,5 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		this.setContents(p.toStringWithTypes());
 		return;
 	}
-
 
 }

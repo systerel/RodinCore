@@ -15,7 +15,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.Lib;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -38,7 +37,7 @@ public class PRTypeEnvironment extends InternalElement implements IPRTypeEnviron
 	public ITypeEnvironment getTypeEnvironment() throws RodinDBException {
 		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
 		for (IRodinElement pair : this.getChildrenOfType(IPair.ELEMENT_TYPE)) {
-			Type type = Lib.parseType(((IPair)pair).getContents());
+			Type type = ASTLib.parseType(((IPair)pair).getContents());
 			assert type != null;
 			typEnv.addName(pair.getElementName(),type);
 		}
@@ -50,7 +49,7 @@ public class PRTypeEnvironment extends InternalElement implements IPRTypeEnviron
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
 			String name = ((IPair)children[i]).getElementName();
-			Type type = Lib.parseType(((IPair)children[i]).getContents());
+			Type type = ASTLib.parseType(((IPair)children[i]).getContents());
 			assert type != null;
 			freeIdents[i] = FormulaFactory.getDefault().makeFreeIdentifier(name,null,type);
 			assert freeIdents[i].isTypeChecked();

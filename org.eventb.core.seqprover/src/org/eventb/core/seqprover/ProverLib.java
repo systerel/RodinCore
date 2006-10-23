@@ -1,7 +1,11 @@
 package org.eventb.core.seqprover;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
+import org.eventb.core.seqprover.HypothesesManagement.Action;
+import org.eventb.core.seqprover.HypothesesManagement.ActionType;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
 
 public class ProverLib {
@@ -25,7 +29,7 @@ public class ProverLib {
 		if (pn1.getConfidence() != pn2.getConfidence()) return false;
 		if (! pn1.getComment().equals(pn2.getComment())) return false;
 		// maybe remove this check and add it to the proof tree deepEquals
-		if (! Lib.identical(pn1.getSequent(),pn2.getSequent())) return false;
+		if (! ProverLib.deepEquals(pn1.getSequent(),pn2.getSequent())) return false;
 		
 		if (pn1.hasChildren())
 		{
@@ -65,6 +69,73 @@ public class ProverLib {
 	// ignore reasoner input for the moment
 	private static boolean deepEquals(IReasonerInput input, IReasonerInput input2) {
 		// TODO Auto-generated method stub
+		return true;
+	}
+
+	public static boolean deepEquals(IProverSequent S1,IProverSequent S2){
+		if (! S1.goal().equals(S2.goal())) return false;
+		if (! S1.selectedHypotheses().equals(S2.selectedHypotheses())) return false;
+		if (! S1.hiddenHypotheses().equals(S2.hiddenHypotheses())) return false;
+		if (! S1.visibleHypotheses().equals(S2.visibleHypotheses())) return false;
+		if (! S1.hypotheses().equals(S2.hypotheses())) return false;
+		if (! S1.typeEnvironment().equals(S2.typeEnvironment())) return false;
+		return true;
+	}
+
+	public static Action deselect(Set<Hypothesis> toDeselect){
+		return new Action(ActionType.DESELECT,toDeselect);
+	}
+
+	public static Action select(Set<Hypothesis> toSelect){
+		return new Action(ActionType.SELECT,toSelect);
+	}
+
+	public static Action hide(Set<Hypothesis> toHide){
+		return new Action(ActionType.HIDE,toHide);
+	}
+
+	public static Action show(Set<Hypothesis> toShow){
+		return new Action(ActionType.SHOW,toShow);
+	}
+
+	public static Action deselect(Hypothesis toDeselect){
+		return new Action(ActionType.DESELECT,toDeselect);
+	}
+
+	public static Action hide(Hypothesis toHide){
+		return new Action(ActionType.HIDE,toHide);
+	}
+
+	public static boolean isValid(int confidence){
+		return 
+		(confidence >= IConfidence.PENDING) && 
+		(confidence <= IConfidence.DISCHARGED_MAX);	
+	}
+
+	public static boolean isPending(int confidence){
+		return (confidence == IConfidence.PENDING);
+	}
+
+	public static boolean isReviewed(int confidence){
+		return 
+		(confidence > IConfidence.PENDING) && 
+		(confidence <= IConfidence.REVIEWED_MAX);		
+	}
+
+	public static boolean isDischarged(int confidence){
+		return 
+		(confidence > IConfidence.REVIEWED_MAX) && 
+		(confidence <= IConfidence.DISCHARGED_MAX);		
+	}
+
+	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
+		if (! proofDependencies.hasDeps()) return true;
+		if (! sequent.goal().equals(proofDependencies.getGoal())) return false;
+		if (! sequent.hypotheses().containsAll(proofDependencies.getUsedHypotheses())) return false;
+		if (! sequent.typeEnvironment().containsAll(proofDependencies.getUsedFreeIdents())) return false;
+		if (! Collections.disjoint(
+				sequent.typeEnvironment().getNames(),
+				proofDependencies.getIntroducedFreeIdents().getNames())) return false;	
 		return true;
 	}
 

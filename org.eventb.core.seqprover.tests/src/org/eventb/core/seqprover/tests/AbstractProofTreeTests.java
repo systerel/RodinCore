@@ -25,8 +25,8 @@ import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 
 /**
  * Common implementation for tests related to proof trees.
@@ -130,7 +130,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 */
 	public void assertNodeReviewed(IProofTreeNode node) {
 		assertNodeClosed(node);
-		assertTrue(Lib.isReviewed(node.getConfidence()));
+		assertTrue(ProverLib.isReviewed(node.getConfidence()));
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public abstract class AbstractProofTreeTests extends TestCase implements
 	 */
 	public void assertNodeDischarged(IProofTreeNode node) {
 		assertNodeClosed(node);
-		assertTrue(Lib.isDischarged(node.getConfidence()));
+		assertTrue(ProverLib.isDischarged(node.getConfidence()));
 	}
 
 	/**

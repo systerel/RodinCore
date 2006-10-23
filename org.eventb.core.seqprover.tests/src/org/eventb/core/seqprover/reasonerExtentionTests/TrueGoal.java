@@ -5,11 +5,11 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.core.seqprover.tactics.ITactic;
 import org.eventb.core.seqprover.tests.SequentProverTests;
 
 public class TrueGoal extends EmptyInputReasoner{

@@ -15,7 +15,7 @@ package org.eventb.internal.ui.prover.globaltactics;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.tactics.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.rodinp.core.RodinDBException;
 

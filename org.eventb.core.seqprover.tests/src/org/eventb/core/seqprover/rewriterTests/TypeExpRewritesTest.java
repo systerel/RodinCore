@@ -2,10 +2,10 @@ package org.eventb.core.seqprover.rewriterTests;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.seqprover.Lib;
-import org.eventb.core.seqprover.reasoners.rewriter.Rewriter;
-import org.eventb.core.seqprover.reasoners.rewriter.TypeExpRewrites;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeExpRewrites;
 
 public class TypeExpRewritesTest extends TestCase {
 

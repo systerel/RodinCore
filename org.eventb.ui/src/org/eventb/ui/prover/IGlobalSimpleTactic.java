@@ -13,7 +13,7 @@
 package org.eventb.ui.prover;
 
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.RodinDBException;
 
 /**

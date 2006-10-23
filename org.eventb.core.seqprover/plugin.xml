@@ -8,51 +8,51 @@
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.AllD"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AllD"
             id="allD"
             name="%allDName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.AllI"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AllI"
             id="allI"
             name="%allIName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ConjE"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ConjE"
             id="conjE"
             name="%conjEName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ConjI"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ConjI"
             id="conjI"
             name="%conjIName"/>
        <reasoner
-             class="org.eventb.core.seqprover.reasoners.Contr"
+             class="org.eventb.internal.core.seqprover.eventbExtensions.Contr"
              id="contr"
              name="%contrName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.Cut"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.Cut"
             id="cut"
             name="%cutName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.DisjE"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.DisjE"
             id="disjE"
             name="%disjEName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.DoCase"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.DoCase"
             id="doCase"
             name="%doCaseName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.Eq"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.Eq"
             id="eq"
             name="%eqName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ExE"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ExE"
             id="exE"
             name="%exEName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ExI"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ExI"
             id="exI"
             name="%exIName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.FalseHyp"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp"
             id="falseHyp"
             name="%falseHypName"/>
       <reasoner
@@ -60,11 +60,11 @@
             id="hyp"
             name="%hypName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ImpE"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ImpE"
             id="impE"
             name="%impEName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.ImpI"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ImpI"
             id="impI"
             name="%impIName"/>
       <reasoner
@@ -76,15 +76,15 @@
             id="review"
             name="%reviewName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.RewriteGoal"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.RewriteGoal"
             id="rewriteGoal"
             name="%rewriteGoalName"/>
       <reasoner
-            class="org.eventb.core.seqprover.reasoners.RewriteHyp"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.RewriteHyp"
             id="rewriteHyp"
             name="%rewriteHypName"/>
        <reasoner
-            class="org.eventb.core.seqprover.reasoners.TrueGoal"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal"
             id="trueGoal"
             name="%trueGoalName"/>
    </extension>

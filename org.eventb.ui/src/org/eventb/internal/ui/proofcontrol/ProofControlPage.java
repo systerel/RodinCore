@@ -69,7 +69,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBImage;

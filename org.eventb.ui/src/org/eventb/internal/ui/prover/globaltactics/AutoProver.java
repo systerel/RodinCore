@@ -13,7 +13,7 @@
 package org.eventb.internal.ui.prover.globaltactics;
 
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.tactics.ITactic;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.ui.prover.IGlobalSimpleTactic;
 
 /**

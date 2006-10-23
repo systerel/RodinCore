@@ -10,11 +10,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
-import org.eventb.core.seqprover.rules.ProofRule;
-import org.eventb.core.seqprover.rules.ProofTree;
-import org.eventb.core.seqprover.rules.ReasonerFailure;
-import org.eventb.core.seqprover.rules.ProofRule.Anticident;
-import org.eventb.core.seqprover.sequent.ProverSequent;
+import org.eventb.internal.core.seqprover.ProofRule;
+import org.eventb.internal.core.seqprover.ProofTree;
+import org.eventb.internal.core.seqprover.ProverSequent;
+import org.eventb.internal.core.seqprover.ReasonerFailure;
+import org.eventb.internal.core.seqprover.ProofRule.Anticident;
 
 /**
  * Static class with factory methods required to construct various data structures

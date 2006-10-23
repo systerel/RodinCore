@@ -26,8 +26,8 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
@@ -210,7 +210,7 @@ public class ProofState {
 		IProverSequent newSeq = POLoader.readPO(prSequent.getPOSequent());
 		IProofTree newTree = ProverFactory.makeProofTree(newSeq);
 		
-		if (Lib.proofReusable(pt.getProofDependencies(), newSeq)) {
+		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(), monitor);
 			pt = newTree;
 			current = getNextPendingSubgoal();
@@ -235,7 +235,7 @@ public class ProofState {
 
 	public boolean isProofReusable() throws RodinDBException {
 		IProverSequent seq = POLoader.readPO(prSequent.getPOSequent());
-		return Lib.proofReusable(pt.getProofDependencies(), seq);
+		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
 	}
 
 	public void reloadProofTree() throws RodinDBException {

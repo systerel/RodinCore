@@ -15,9 +15,9 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.basis.ASTLib;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.core.seqprover.ProverFactory;
 import org.rodinp.core.RodinDBException;
 
@@ -31,7 +31,7 @@ public final class POLoader {
 	public static Map<String, IProverSequent> readPOs(final IPOFile poFile) throws RodinDBException {
 		final IPOSequent[] poSequents = poFile.getSequents();
 		Map<String, IProverSequent> result = new HashMap<String, IProverSequent>(poSequents.length);
-		ITypeEnvironment globalTypeEnv = Lib.ff.makeTypeEnvironment();
+		ITypeEnvironment globalTypeEnv = ASTLib.makeTypeEnvironment();
 		addIdents(poFile.getIdentifiers(), globalTypeEnv);		
 		for (IPOSequent poSeq:poSequents){
 			String name = poSeq.getName();
@@ -68,7 +68,7 @@ public final class POLoader {
 	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		if (! poSeq.exists()) return null;
 		IPOFile poFile = (IPOFile) poSeq.getOpenable();
-		ITypeEnvironment typeEnv = Lib.ff.makeTypeEnvironment();
+		ITypeEnvironment typeEnv = ASTLib.makeTypeEnvironment();
 		addIdents(poFile.getIdentifiers(), typeEnv);
 		addIdents(poSeq.getIdentifiers(),typeEnv);
 		Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(),typeEnv);
@@ -110,10 +110,10 @@ public final class POLoader {
 
 
 	private static Predicate readPredicate(IPOPredicate poPred, ITypeEnvironment typeEnv) throws RodinDBException {
-			Predicate pred =  Lib.parsePredicate(poPred.getContents());
+			Predicate pred =  ASTLib.parsePredicate(poPred.getContents());
 			// System.out.println("Pred : " + poPred.getContents() +" Parsed : "+ pred);
 			assert pred != null;
-			boolean wellTyped = Lib.typeCheckClosed(pred,typeEnv);
+			boolean wellTyped = ASTLib.typeCheckClosed(pred,typeEnv);
 			assert wellTyped;
 			return pred;
 	}
@@ -122,7 +122,7 @@ public final class POLoader {
 	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
 		for (IPOIdentifier poIdent: poIdents){
 			String name = poIdent.getName();
-			Type type = Lib.parseType(poIdent.getType());
+			Type type = ASTLib.parseType(poIdent.getType());
 			assert (name!=null && type !=null);
 			typeEnv.addName(name,type);
 		}

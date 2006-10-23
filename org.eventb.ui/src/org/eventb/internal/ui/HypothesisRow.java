@@ -33,6 +33,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -40,7 +41,6 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.Lib;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProverUIUtils;
@@ -54,6 +54,8 @@ import org.eventb.ui.IEventBSharedImages;
  *         buttons which is applicable to the hypothesis
  */
 public class HypothesisRow {
+
+	private static final FormulaFactory formulaFactory = FormulaFactory.getDefault();
 
 	// Set of composites and button.
 	private Button checkBox;
@@ -138,7 +140,7 @@ public class HypothesisRow {
 
 		Predicate pred = hyp.getPredicate();
 		actualString = pred.toString();
-		IParseResult parseResult = Lib.ff.parsePredicate(actualString);
+		IParseResult parseResult = formulaFactory.parsePredicate(actualString);
 		assert parseResult.isSuccess();
 		parsedPred = parseResult.getParsedPredicate();
 

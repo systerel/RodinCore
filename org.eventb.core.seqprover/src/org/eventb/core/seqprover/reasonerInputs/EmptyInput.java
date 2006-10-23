@@ -19,13 +19,9 @@ public class EmptyInput implements IReasonerInput{
 	}
 
 	public void serialize(IReasonerInputSerializer reasonerInputSerializer) throws SerializeException {
-		// TODO Auto-generated method stub
-		
 	}
 
-	public void applyHints(ReplayHints hints) {
-		// TODO Auto-generated method stub
-		
+	public void applyHints(ReplayHints hints) {	
 	}
 	
 }

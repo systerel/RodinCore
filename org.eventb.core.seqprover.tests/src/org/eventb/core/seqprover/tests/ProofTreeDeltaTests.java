@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.tactics.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
  * Unit tests for deltas fired when modifying proof trees.
