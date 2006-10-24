@@ -47,7 +47,8 @@ import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.eventbeditor.Messages;
+import org.eventb.internal.ui.utils.Messages;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -68,13 +69,12 @@ public class PrettyPrintPage extends EventBEditorPage implements
 		IElementChangedListener {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = "Pretty Print"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".prettyprintpage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = Messages
-			.getString("org.eventb.ui.prettyprintpage.title"); //$NON-NLS-1$
+	public static final String PAGE_TITLE = Messages.editorPage_prettyPrint_title;
 
-	public static final String PAGE_TAB_TITLE = Messages
-			.getString("org.eventb.ui.prettyprintpage.tabtitle"); //$NON-NLS-1$
+	public static final String PAGE_TAB_TITLE = Messages.editorPage_prettyPrint_tabTitle;
 
 	// The scrolled form
 	private ScrolledForm form;

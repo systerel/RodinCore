@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
@@ -29,13 +30,12 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class AxiomPage extends EventBFormPage {
 
 	// Title, tab title and ID of the page.
-	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID + ".axiompage"; //$NON-NLS-1$
+	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".axiompage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".axiompage.title"); //$NON-NLS-1$
+	public static final String PAGE_TITLE = Messages.editorPage_axiomPage_title;
 
-	public static final String PAGE_TAB_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".axiompage.tabtitle"); //$NON-NLS-1$
+	public static final String PAGE_TAB_TITLE = Messages.editorPage_axiomPage_tabTitle;
 
 	/**
 	 * Constructor.

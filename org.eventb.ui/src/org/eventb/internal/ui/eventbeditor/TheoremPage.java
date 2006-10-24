@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
@@ -33,10 +34,10 @@ public class TheoremPage extends EventBFormPage {
 			+ ".theorempage"; //$NON-NLS-1$
 
 	public static final String PAGE_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".theorempage.title"); //$NON-NLS-1$
+			.editorPage_theoremPage_title;
 
 	public static final String PAGE_TAB_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".theorempage.tabtitle"); //$NON-NLS-1$
+			.editorPage_theoremPage_tabTitle;
 
 	/**
 	 * Constructor.

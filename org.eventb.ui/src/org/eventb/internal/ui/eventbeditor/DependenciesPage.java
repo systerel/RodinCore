@@ -20,6 +20,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.rodinp.core.IRodinFile;
@@ -36,11 +37,9 @@ public class DependenciesPage extends EventBEditorPage {
 	public static final String PAGE_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".dependencypage"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".dependencypage.title"); //$NON-NLS-1$
+	public static final String PAGE_TITLE = Messages.editorPage_dependencyPage_title;
 
-	public static final String PAGE_TAB_TITLE = Messages
-			.getString(EventBUIPlugin.PLUGIN_ID + ".dependencypage.tabtitle"); //$NON-NLS-1$
+	public static final String PAGE_TAB_TITLE = Messages.editorPage_dependencyPage_tabTitle;
 
 	/**
 	 * Constructor.
