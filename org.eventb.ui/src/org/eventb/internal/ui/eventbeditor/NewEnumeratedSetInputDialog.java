@@ -111,7 +111,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 
 			IEventBInputText elementText = new EventBMath(toolkit.createText(
 					body, ""));
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			gd.widthHint = 150;
 			elementText.getTextWidget().setLayoutData(gd);
 			elementText.getTextWidget().addModifyListener(
@@ -135,7 +135,7 @@ public class NewEnumeratedSetInputDialog extends EventBInputDialog {
 		} else if (buttonId == IDialogConstants.YES_ID) {
 			Composite body = scrolledForm.getBody();
 			Label label = toolkit.createLabel(body, "Element");
-			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			GridData gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 			label.setLayoutData(gd);
 
 			IEventBInputText elementText = new EventBMath(toolkit.createText(

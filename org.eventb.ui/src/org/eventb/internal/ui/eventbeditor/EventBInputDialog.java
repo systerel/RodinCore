@@ -42,6 +42,10 @@ public abstract class EventBInputDialog extends Dialog {
 
 	private String title;
 
+	private final int MAX_WIDTH = 800;
+
+	private final int MAX_HEIGHT = 500;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -157,17 +161,17 @@ public abstract class EventBInputDialog extends Dialog {
 	}
 
 	protected void updateSize() {
-		Point curr = this.getContents().getParent().getSize();
-		Point pt = this.getContents().getParent().computeSize(SWT.DEFAULT,
+		Composite parent = this.getContents().getParent();
+		Point curr = parent.getSize();
+		Point pt = parent.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT);
 
 		if (curr.x < pt.x || curr.y < pt.y) {
 			int x = curr.x < pt.x ? pt.x : curr.x;
 			int y = curr.y < pt.y ? pt.y : curr.y;
-			this.getContents().getParent().setSize(x, y);
-		} else {
-			scrolledForm.reflow(true);
+			if (x <= MAX_WIDTH && y <= MAX_HEIGHT)
+				parent.setSize(x, y);
 		}
+		scrolledForm.reflow(true);
 	}
-
 }
