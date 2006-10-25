@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.IRodinElement;
@@ -67,7 +68,8 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
-				commit(element, column, contents);
+				commit(element, column, Text2EventBMathTranslator
+						.translate(contents));
 				textWidget.getParent().dispose();
 				text.dispose();
 				break;
@@ -105,7 +107,8 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
-					commit(element, column, contents);
+					commit(element, column, Text2EventBMathTranslator
+							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();
 					event.doit = false;
@@ -117,14 +120,16 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
-					commit(element, column, contents);
+					commit(element, column, Text2EventBMathTranslator
+							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();
 					nextEditableCell();
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_PREVIOUS:
-					commit(element, column, contents);
+					commit(element, column, Text2EventBMathTranslator
+							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();
 					prevEditableCell();
