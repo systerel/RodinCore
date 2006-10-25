@@ -12,8 +12,11 @@
 
 package org.eventb.internal.ui;
 
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.eventBKeyboard.EventBTextModifyListener;
+import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 
 /**
  * @author htson
@@ -34,9 +37,21 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	 * @param style
 	 *            the style used to create the Text
 	 */
-	public EventBMath(Text text) {
+	public EventBMath(final Text text) {
 		super(text);
 		text.addModifyListener(new EventBTextModifyListener());
+		text.addFocusListener(new FocusListener() {
+
+			public void focusGained(FocusEvent e) {
+				// Do nothing
+			}
+
+			public void focusLost(FocusEvent e) {
+				text.setText(Text2EventBMathTranslator
+						.translate(text.getText()));
+			}
+
+		});
 	}
 
 	/*
