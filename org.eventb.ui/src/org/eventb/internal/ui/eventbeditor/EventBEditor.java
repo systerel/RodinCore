@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -202,7 +203,9 @@ public abstract class EventBEditor extends FormEditor implements
 	// List of status changed listener (when elements are saved).
 	private Collection<IStatusChangedListener> statusListeners;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addNewElement(org.rodinp.core.IRodinElement)
 	 */
 	public void addNewElement(IRodinElement element) {
@@ -217,21 +220,27 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
 	public void addStatusListener(IStatusChangedListener listener) {
 		statusListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
 	public void removeStatusListener(IStatusChangedListener listener) {
 		statusListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#isNewElement(org.rodinp.core.IRodinElement)
 	 */
 	public boolean isNewElement(IRodinElement element) {
@@ -249,7 +258,9 @@ public abstract class EventBEditor extends FormEditor implements
 		statusListeners = new HashSet<IStatusChangedListener>();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
 	public void addElementChangedListener(IElementChangedListener listener) {
@@ -259,7 +270,9 @@ public abstract class EventBEditor extends FormEditor implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
@@ -342,9 +355,13 @@ public abstract class EventBEditor extends FormEditor implements
 
 		saveDefaultPage();
 
-		try { // Close the associated RodinFile
-			this.getRodinInput().close();
+		try { // Make the associated RodinFile consistent if it is has some
+				// unsaved change
+			IRodinFile rodinInput = this.getRodinInput();
+			if (rodinInput.hasUnsavedChanges())
+				rodinInput.makeConsistent(new NullProgressMonitor());
 		} catch (RodinDBException e) {
+			// TODO Log the error
 			e.printStackTrace();
 		}
 		RodinCore.removeElementChangedListener(this);
@@ -538,7 +555,9 @@ public abstract class EventBEditor extends FormEditor implements
 	// }
 	// return false;
 	// }
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#edit(java.lang.Object)
 	 */
 	public void edit(Object ssel) {
@@ -742,7 +761,9 @@ public abstract class EventBEditor extends FormEditor implements
 			lastActivePageID = page.getId();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
 	 */
 	public void setSelection(IInternalElement element) {
