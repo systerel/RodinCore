@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.ui.prover.PredicateUtil;
 
 public class TestPrettyPrintPredicate extends TestCase {

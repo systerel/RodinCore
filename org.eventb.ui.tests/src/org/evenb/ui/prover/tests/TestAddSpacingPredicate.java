@@ -2,7 +2,7 @@ package org.evenb.ui.prover.tests;
 
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.Lib;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.ui.prover.PredicateUtil;
 
 import junit.framework.TestCase;
