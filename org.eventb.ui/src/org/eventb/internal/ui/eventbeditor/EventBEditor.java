@@ -50,9 +50,11 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -667,6 +669,14 @@ public abstract class EventBEditor extends FormEditor implements
 			this.setActivePage(EventPage.PAGE_ID);
 		}
 
+		else if (element instanceof IRefinesEvent) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+
+		else if (element instanceof IWitness) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EventBFormPage) {
@@ -821,6 +831,14 @@ public abstract class EventBEditor extends FormEditor implements
 			this.setActivePage(EventPage.PAGE_ID);
 		}
 
+		else if (element instanceof IRefinesEvent) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+		
+		else if (element instanceof IWitness) {
+			this.setActivePage(EventPage.PAGE_ID);
+		}
+		
 		// select the element within the page
 		IFormPage page = this.getActivePageInstance();
 		if (page instanceof EventBFormPage) {
@@ -830,9 +848,19 @@ public abstract class EventBEditor extends FormEditor implements
 	}
 
 	public void gotoMarker(IMarker marker) {
-		IInternalElement element = RodinMarkerUtil.getElement(marker);
+		IInternalElement element;
+		try {
+			element = RodinMarkerUtil.getElement(marker);
+		}
+		catch (IllegalArgumentException e) {
+			if (EventBEditorUtils.DEBUG) {
+				EventBEditorUtils.debug("Not a Rodin Marker");
+				e.printStackTrace();
+			}
+			return;
+		}
 		if (element != null) {
-			this.setSelection(element);
+			this.edit(element);
 		}
 	}
 

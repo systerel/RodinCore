@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -123,7 +124,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	public void setSelection(IRodinElement element) {
 		StructuredViewer viewer = (StructuredViewer) this.getViewer();
 		viewer.reveal(element);
-//		viewer.setSelection(new StructuredSelection(element));
+		viewer.setSelection(new StructuredSelection(element));
 //		edit(element);
 	}
 

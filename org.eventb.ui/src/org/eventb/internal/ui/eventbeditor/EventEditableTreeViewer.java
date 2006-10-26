@@ -29,6 +29,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -271,6 +272,10 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		if (element instanceof IVariable)
 			selectItem(item, 0);
 		else if (element instanceof IEvent)
+			selectItem(item, 0);
+		else if (element instanceof IWitness)
+			selectItem(item, 0);
+		else if (element instanceof IRefinesEvent)
 			selectItem(item, 0);
 		else
 			selectItem(item, 1);
