@@ -18,6 +18,7 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRSequent;
@@ -70,15 +71,19 @@ public class ProofState {
 		// loadProofTree();
 	}
 
-	public void loadProofTree(IProgressMonitor monitor) throws RodinDBException {
-		//pt = prSequent.rebuildProofTree();
+	/*
+	 * Creates the initial proof tree for this proof obligation. 
+	 */
+	private IProofTree createProofTree() throws RodinDBException {
+		final IPOSequent poSequent = prSequent.getPOSequent();
+		IProverSequent newSeq = POLoader.readPO(poSequent);
+		return ProverFactory.makeProofTree(newSeq, poSequent);
+	}
 
-		// Construct the proof tree from the
-		// file.
-		
-		// load the PO from the po file and create a proof tree with it
-		IProverSequent seq = POLoader.readPO(prSequent.getPOSequent());
-		pt = ProverFactory.makeProofTree(seq);
+	public void loadProofTree(IProgressMonitor monitor) throws RodinDBException {
+
+		// Construct the proof tree from the PO file.
+		pt = createProofTree();
 		
 		// If a proof exists in the PR file rebuild it.
 		final IPRProofTree prProofTree = prSequent.getProofTree();
@@ -207,9 +212,8 @@ public class ProofState {
 		// if (isSavingOrUninitialised()) return false;
 		// if (pt == null) return false; // No proof tree, no reusable.
 		
-		IProverSequent newSeq = POLoader.readPO(prSequent.getPOSequent());
-		IProofTree newTree = ProverFactory.makeProofTree(newSeq);
-		
+		IProofTree newTree = createProofTree();
+		IProverSequent newSeq = newTree.getSequent();
 		if (ProverLib.proofReusable(pt.getProofDependencies(), newSeq)) {
 			(BasicTactics.pasteTac(pt.getRoot())).apply(newTree.getRoot(), monitor);
 			pt = newTree;
@@ -241,10 +245,8 @@ public class ProofState {
 	public void reloadProofTree() throws RodinDBException {
 		
 		// Construct the proof tree from the file.
-		IProverSequent newSeq = POLoader.readPO(prSequent.getPOSequent());
-		pt = ProverFactory.makeProofTree(newSeq);
-		
-		
+		pt = createProofTree();
+
 		// Current node is the next pending subgoal or the root of the proof
 		// tree if there are no pending subgoal.
 		current = getNextPendingSubgoal();
