@@ -66,10 +66,10 @@ public final class ProofTree implements IProofTree {
 	 * {@link org.eventb.core.seqprover.SequentProver}.
 	 */
 	protected ProofTree(ProofTreeNode node) {
-		origin = node.getProofTree().getOrigin();
-		node.setProofTree(this);
-		root = node;
 		deltaProcessor = new DeltaProcessor(this);
+		origin = null;
+		root = node;
+		node.setProofTree(this);
 	}
 
 	/* (non-Javadoc)
