@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
@@ -91,7 +92,11 @@ public class AutoProver {
 			pm.worked(1);
 			
 			if (po.isProofBroken() || (!proofTree.isClosed())) {
-				IProofTree tree = ProverFactory.makeProofTree(POLoader.readPO(po.getPOSequent()));
+				final IPOSequent poSequent = po.getPOSequent();
+				IProofTree tree = ProverFactory.makeProofTree(
+						POLoader.readPO(poSequent),
+						poSequent
+				);
 
 				pm.subTask("proving");
 				autoTactic().apply(tree.getRoot(), new ProofMonitor(pm));

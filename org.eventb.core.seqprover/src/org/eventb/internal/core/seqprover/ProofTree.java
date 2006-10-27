@@ -38,6 +38,11 @@ public final class ProofTree implements IProofTree {
 	final DeltaProcessor deltaProcessor;
 	
 	/**
+	 * The origin of the root sequent
+	 */
+	final Object origin;
+
+	/**
 	 * The root Proof Tree Node
 	 */
 	final ProofTreeNode root;
@@ -48,9 +53,10 @@ public final class ProofTree implements IProofTree {
 	 * Clients must not call this constructor, but rather the factory method in
 	 * {@link org.eventb.core.seqprover.SequentProver}.
 	 */
-	public ProofTree(IProverSequent sequent) {
-		root = new ProofTreeNode(this, sequent);
-		deltaProcessor = new DeltaProcessor(this);
+	public ProofTree(IProverSequent sequent, Object origin) {
+		this.deltaProcessor = new DeltaProcessor(this);
+		this.origin = origin;
+		this.root = new ProofTreeNode(this, sequent);
 	}
 	
 	/**
@@ -60,6 +66,7 @@ public final class ProofTree implements IProofTree {
 	 * {@link org.eventb.core.seqprover.SequentProver}.
 	 */
 	protected ProofTree(ProofTreeNode node) {
+		origin = node.getProofTree().getOrigin();
 		node.setProofTree(this);
 		root = node;
 		deltaProcessor = new DeltaProcessor(this);
@@ -70,6 +77,10 @@ public final class ProofTree implements IProofTree {
 	 */
 	public void addChangeListener(IProofTreeChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
+	}
+
+	public Object getOrigin() {
+		return origin;
 	}
 
 	/* (non-Javadoc)

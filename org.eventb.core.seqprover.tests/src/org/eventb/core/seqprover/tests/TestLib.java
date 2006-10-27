@@ -65,7 +65,7 @@ public class TestLib {
 	}
 	
 	public static IProofTreeNode genProofTreeNode(String str){
-		return ProverFactory.makeProofTree(genSeq(str)).getRoot();
+		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
 		// return (new ProofTree(genSeq(str))).getRoot();
 	}
 	

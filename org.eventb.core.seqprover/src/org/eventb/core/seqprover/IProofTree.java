@@ -23,6 +23,10 @@ package org.eventb.core.seqprover;
  * register a listener to observe changes to the proof tree.
  * </p>
  * <p>
+ * Proof trees are created through the prover factory using
+ * {@link ProverFactory#makeProofTree(IProverSequent, Object)}.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -62,6 +66,13 @@ public interface IProofTree {
 	 */
 	boolean proofAttempted();
 
+
+	/**
+	 * Returns the origin of the root node of this proof tree.
+	 * 
+	 * @return the origin of this proof tree, might be <code>null</code>
+	 */
+	Object getOrigin();
 
 	/**
 	 * Returns the root node of this proof tree.

@@ -90,7 +90,7 @@ public class AutoPOMTest extends BuilderTest {
 		
 		// Try an interactive proof on the last one
 		IProverSequent seq = POLoader.readPO(prs[prs.length-1].getPOSequent());
-		IProofTree proofTree = ProverFactory.makeProofTree(seq);
+		IProofTree proofTree = ProverFactory.makeProofTree(seq, null);
 		
 		Tactics.lasoo().apply(proofTree.getRoot(), null);
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
@@ -100,14 +100,17 @@ public class AutoPOMTest extends BuilderTest {
 		prs[prs.length-1].updateStatus();
 		
 		IProofSkeleton skel = prs[prs.length-1].getProofTree().getRoot().getSkeleton(null);
-		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq);
+		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
 		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
 		
 		// System.out.println(loadedProofTree.getRoot());
 		assertTrue(ProverLib.deepEquals(proofTree,loadedProofTree));
 		loadedProofTree.getRoot().pruneChildren();
 		assertFalse(ProverLib.deepEquals(proofTree,loadedProofTree));
-		assertTrue(ProverLib.deepEquals(ProverFactory.makeProofTree(seq),loadedProofTree));
+		assertTrue(ProverLib.deepEquals(
+				ProverFactory.makeProofTree(seq, null),
+				loadedProofTree)
+		);
 	}
 	
 

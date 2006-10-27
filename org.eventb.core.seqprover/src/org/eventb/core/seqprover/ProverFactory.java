@@ -111,12 +111,13 @@ public final class ProverFactory {
 	 * 
 	 * @param sequent
 	 *            the sequent to prove
+	 * @param origin
+	 *            an object describing the origin of the sequent, might be
+	 *            <code>null</code>
 	 * @return a new proof tree for the given sequent
 	 */
-	public static IProofTree makeProofTree(IProverSequent sequent) {
-		return new ProofTree(sequent);
+	public static IProofTree makeProofTree(IProverSequent sequent, Object origin) {
+		return new ProofTree(sequent, origin);
 	}
-
-	
 
 }

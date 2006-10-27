@@ -29,7 +29,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testInitialTree() {
 		IProverSequent sequent = makeSimpleSequent("⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		
 		assertNodeOpen(tree.getRoot());
 	}
@@ -39,7 +39,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testDischargedTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -62,7 +62,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testPendingTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -81,7 +81,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testMixedTree() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -124,7 +124,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testApplyRuleFailure() {
 		IProverSequent sequent = makeSimpleSequent("⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 		
 		Object error = Tactics.tautology().apply(root, null);
@@ -137,7 +137,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testPrunePending() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -176,7 +176,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testPruneDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊤");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -220,7 +220,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testCopyPending() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 
 		Tactics.impI().apply(root, null);
@@ -259,11 +259,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testGraftFailure() {
 		IProverSequent sequent = makeSimpleSequent("⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode treeRoot = tree.getRoot();
 
 		sequent = makeSimpleSequent("⊤");
-		IProofTree graft = ProverFactory.makeProofTree(sequent);
+		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
 		Tactics.tautology().apply(graftRoot, null);
@@ -285,11 +285,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testGraftPending() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊥");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode treeRoot = tree.getRoot();
 
 		sequent = makeSimpleSequent("⊤ ∧ ⊥");
-		IProofTree graft = ProverFactory.makeProofTree(sequent);
+		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
 		Tactics.conjI().apply(graftRoot, null);
@@ -315,11 +315,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	public void testGraftDischarged() {
 		IProverSequent sequent = makeSimpleSequent("⊤ ∧ ⊤");
-		IProofTree tree = ProverFactory.makeProofTree(sequent);
+		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode treeRoot = tree.getRoot();
 
 		sequent = makeSimpleSequent("⊤ ∧ ⊤");
-		IProofTree graft = ProverFactory.makeProofTree(sequent);
+		IProofTree graft = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode graftRoot = graft.getRoot();
 		
 		Tactics.conjI().apply(graftRoot, null);
@@ -342,7 +342,9 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertSame(ch2.getProofTree(),tree);
 		assertNodeClosed(treeRoot);
 	}
-	
+
+
+	// TODO split in four tests below
 	/**
 	 * Checks that proof dependency information has been properly generated.
 	 */
@@ -353,7 +355,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2;; x=1 |- x=1");
-		proofTree = ProverFactory.makeProofTree(sequent);
+		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.hyp().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
@@ -364,7 +366,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
-		proofTree = ProverFactory.makeProofTree(sequent);
+		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.impI().apply(proofTree.getRoot(), null);
 		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		proofDependencies = proofTree.getProofDependencies();
@@ -379,7 +381,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		
 		// test getUsedFreeIdents
 		sequent = TestLib.genSeq("y=2;; 1=1 |- 1=1");
-		proofTree = ProverFactory.makeProofTree(sequent);
+		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.lemma("y=2").apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
@@ -390,7 +392,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		
 		//	 test getIntroducedFreeIdents
 		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
-		proofTree = ProverFactory.makeProofTree(sequent);
+		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.allI().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
