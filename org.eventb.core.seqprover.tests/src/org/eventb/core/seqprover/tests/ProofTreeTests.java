@@ -402,4 +402,23 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getIntroducedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
 	}
 
+	/**
+	 * Ensures that the origin of a proof tree is tracked.
+	 */
+	public void testOriginTracking() {
+		final String origin = "here";
+		final IProverSequent sequent = makeSimpleSequent("⊥");
+		final IProofTree tree = ProverFactory.makeProofTree(sequent, origin);
+		assertSame(origin, tree.getOrigin());
+	}
+
+	/**
+	 * Ensures that the origin of a proof tree can be <code>null</code>.
+	 */
+	public void testNullOriginTracking() {
+		final IProverSequent sequent = makeSimpleSequent("⊥");
+		final IProofTree tree = ProverFactory.makeProofTree(sequent, null);
+		assertNull(tree.getOrigin());
+	}
+
 }
