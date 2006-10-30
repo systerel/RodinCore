@@ -261,9 +261,7 @@ public class Tactics {
 		return Lib.isConj(hyp.getPredicate());
 	}
 	
-	
-	// TODO : remove use contrapositive
-	public static ITactic impE(Hypothesis impHyp, boolean useContrapositive){
+	public static ITactic impE(Hypothesis impHyp){
 		return BasicTactics.reasonerTac(new ImpE(),new SinglePredInput(impHyp));
 	}
 	
@@ -279,8 +277,7 @@ public class Tactics {
 		return Lib.isDisj(hyp.getPredicate());
 	}
 
-	// TODO : remove use reflexive
-	public static ITactic eqE(Hypothesis eqHyp,boolean useReflexive){
+	public static ITactic eqE(Hypothesis eqHyp){
 		return BasicTactics.reasonerTac(new Eq(),new SinglePredInput(eqHyp));
 	}
 	

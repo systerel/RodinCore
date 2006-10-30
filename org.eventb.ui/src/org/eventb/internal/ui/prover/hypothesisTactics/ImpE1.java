@@ -9,7 +9,7 @@ import org.eventb.ui.prover.IHypothesisTactic;
 public class ImpE1 implements IHypothesisTactic {
 
 	public ITactic getTactic(IProofTreeNode node, Hypothesis hyp, String[] inputs) {
-		return Tactics.impE(hyp, false);
+		return Tactics.impE(hyp);
 				
 	}
 

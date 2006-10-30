@@ -755,11 +755,6 @@
             icon="icons/full/ctool16/impE1_prover.gif"
             id="Implication Elemination 1"/>
       <tactic
-            class="org.eventb.internal.ui.prover.hypothesisTactics.ImpE2"
-            hint="%hypothesisProofTactics.ImpE2.tooltip"
-            icon="icons/full/ctool16/impE2_prover.gif"
-            id="Implication Elemination 2"/>
-      <tactic
             class="org.eventb.internal.ui.prover.hypothesisTactics.ConjE"
             hint="%hypothesisProofTactics.ConjE.tooltip"
             icon="icons/full/ctool16/conjE_prover.gif"
@@ -789,11 +784,6 @@
             hint="%hypothesisProofTactics.Eq1.tooltip"
             icon="icons/full/ctool16/eq1_prover.gif"
             id="Equality 1"/>
-      <tactic
-            class="org.eventb.internal.ui.prover.hypothesisTactics.Eq2"
-            hint="%hypothesisProofTactics.Eq2.tooltip"
-            icon="icons/full/ctool16/eq2_prover.gif"
-            id="Equality 2"/>
    </extension>
    <extension
          point="org.eventb.ui.goalProofTactics">
