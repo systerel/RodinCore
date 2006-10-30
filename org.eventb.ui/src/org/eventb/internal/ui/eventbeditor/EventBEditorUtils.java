@@ -1212,32 +1212,27 @@ public class EventBEditorUtils {
 					PrefixVariantName.QUALIFIED_NAME,
 					PrefixVariantName.DEFAULT_PREFIX);
 
-			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
-					Display.getCurrent().getActiveShell(), "New Variant",
+			NewVariantInputDialog dialog = new NewVariantInputDialog(Display
+					.getCurrent().getActiveShell(), "New Variant",
 					"Expression", variantPrefix);
 
 			dialog.open();
-			final Collection<String> expressions = dialog.getAttributes();
+			final String expression = dialog.getAttributes();
 			RodinCore.run(new IWorkspaceRunnable() {
-
 				public void run(IProgressMonitor monitor) throws CoreException {
-
 					String prefix = UIUtils.getNamePrefix(editor,
 							PrefixVariantName.QUALIFIED_NAME,
 							PrefixVariantName.DEFAULT_PREFIX);
 					int index = UIUtils.getFreeElementNameIndex(editor,
 							rodinFile, IVariant.ELEMENT_TYPE, prefix);
-					for (String expression : expressions) {
-						newVariant = (IVariant) rodinFile
-								.createInternalElement(IVariant.ELEMENT_TYPE,
-										prefix + index, null, monitor);
-						index = UIUtils.getFreeElementNameIndex(rodinFile,
-								IVariant.ELEMENT_TYPE, prefix, index + 1);
-						newVariant.setExpressionString(expression);
-						editor.addNewElement(newVariant);
-					}
+					newVariant = (IVariant) rodinFile.createInternalElement(
+							IVariant.ELEMENT_TYPE, prefix + index, null,
+							monitor);
+					index = UIUtils.getFreeElementNameIndex(rodinFile,
+							IVariant.ELEMENT_TYPE, prefix, index + 1);
+					newVariant.setExpressionString(expression);
+					editor.addNewElement(newVariant);
 				}
-
 			}, null);
 		} catch (CoreException e) {
 			e.printStackTrace();
