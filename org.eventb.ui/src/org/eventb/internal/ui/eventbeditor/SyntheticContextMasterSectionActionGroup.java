@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 
@@ -30,13 +29,8 @@ import org.eventb.ui.IEventBSharedImages;
  *         This class provides the actions that will be used with the Synthetic
  *         Context Editable Tree Viewer.
  */
-public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
-
-	// The Event-B Editor.
-	private EventBEditor editor;
-
-	// The tree viewer in the master section
-	private TreeViewer viewer;
+public class SyntheticContextMasterSectionActionGroup extends
+		MasterSectionActionGroup {
 
 	// Some actions
 	protected Action addTheorem;
@@ -64,9 +58,8 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 	 */
 	public SyntheticContextMasterSectionActionGroup(EventBEditor eventBEditor,
 			TreeViewer treeViewer) {
-		this.editor = eventBEditor;
-		this.viewer = treeViewer;
-
+		super(eventBEditor, treeViewer);
+		
 		// Add a theorem.
 		addTheorem = new Action() {
 			public void run() {
@@ -86,8 +79,9 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		};
 		addSet.setText("New Carrier &Set");
 		addSet.setToolTipText("Create a new carrier set");
-		addSet.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_CARRIER_SETS_PATH));
+		addSet
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_CARRIER_SETS_PATH));
 
 		// Add a constant.
 		addConstant = new Action() {
@@ -97,8 +91,9 @@ public class SyntheticContextMasterSectionActionGroup extends ActionGroup {
 		};
 		addConstant.setText("New &Constant");
 		addConstant.setToolTipText("Create a new constant");
-		addConstant.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_CONSTANTS_PATH));
+		addConstant
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_CONSTANTS_PATH));
 
 		// Add an axiom.
 		addAxiom = new Action() {

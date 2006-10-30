@@ -12,14 +12,19 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.ActionContext;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -47,6 +52,9 @@ import org.rodinp.core.RodinDBException;
  *         editting elements of Event-B construct in a synthetic way.
  */
 public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
+
+	// Group of action that is used.
+	private MainActionGroup groupActionSet;
 
 	/**
 	 * @author htson
@@ -157,6 +165,42 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setContentProvider(new SyntheticContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
 		this.setSorter(new ElementSorter());
+		makeActions();
+		// Fill the action bars and update the global action handlers'
+		// enabled state to match the current selection.
+//		groupActionSet.fillActionBars(this.editor.getSite().get);
+//		updateActionBars(this.getSelection());
+
+		hookContextMenu();
+
+	}
+
+	/**
+	 * Creat the actions.
+	 */
+	private void makeActions() {
+		groupActionSet = new MainActionGroup(editor, this);
+	}
+
+	/**
+	 * Hook the actions to the context menu.
+	 */
+	private void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				ActionContext context = new ActionContext(
+						SyntheticEditableTreeViewer.this.getSelection());
+//				context.setInput(getCurrentProject());
+				groupActionSet.setContext(context);
+				groupActionSet.fillContextMenu(manager);
+				groupActionSet.setContext(null);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(getControl());
+		getControl().setMenu(menu);
+		// .getSite().registerContextMenu(menuMgr, this);
 	}
 
 	/*

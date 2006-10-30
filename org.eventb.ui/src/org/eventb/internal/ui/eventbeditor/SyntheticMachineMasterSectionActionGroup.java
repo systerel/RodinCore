@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
@@ -43,13 +42,8 @@ import org.rodinp.core.RodinDBException;
  *         This class provides the actions that will be used with the Synthetic
  *         Machine Editable Tree Viewer.
  */
-public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
-
-	// The Event-B Editor.
-	private EventBEditor editor;
-
-	// The tree viewer in the master section
-	private TreeViewer viewer;
+public class SyntheticMachineMasterSectionActionGroup extends
+		MasterSectionActionGroup {
 
 	// Some actions
 	protected Action addVariable;
@@ -85,8 +79,7 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 	 */
 	public SyntheticMachineMasterSectionActionGroup(EventBEditor eventBEditor,
 			TreeViewer treeViewer) {
-		this.editor = eventBEditor;
-		this.viewer = treeViewer;
+		super(eventBEditor, treeViewer);
 
 		// Add a variable.
 		addVariable = new Action() {
@@ -96,8 +89,9 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		addVariable.setText("New &Variable");
 		addVariable.setToolTipText("Create a new variable");
-		addVariable.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
+		addVariable
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add an invariant.
 		addInvariant = new Action() {
@@ -107,8 +101,9 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		addInvariant.setText("New &Invariant");
 		addInvariant.setToolTipText("Create a new invariant");
-		addInvariant.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_INVARIANTS_PATH));
+		addInvariant
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_INVARIANTS_PATH));
 
 		// Add a theorem.
 		addTheorem = new Action() {
@@ -140,8 +135,9 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 		};
 		addLocalVariable.setText("New &Local Variable");
 		addLocalVariable.setToolTipText("Create a new (local) variable");
-		addLocalVariable.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
+		addLocalVariable
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add a guard.
 		addGuard = new Action() {
@@ -334,6 +330,15 @@ public class SyntheticMachineMasterSectionActionGroup extends ActionGroup {
 				menu.add(delete);
 			}
 		}
+
+		// IStructuredSelection selection = (IStructuredSelection) getContext()
+		// .getSelection();
+
+		// boolean anyResourceSelected = !selection.isEmpty()
+		// && ResourceSelectionUtil.allResourcesAreOfType(selection,
+		// IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		//
+
 		// Other plug-ins can contribute there actions here
 		// These actions are added by extending the extension point
 		// org.eventb.ui.popup

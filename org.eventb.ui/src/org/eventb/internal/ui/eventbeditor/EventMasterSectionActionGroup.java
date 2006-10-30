@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.core.IEvent;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -39,13 +38,7 @@ import org.rodinp.core.IRodinFile;
  *         This class provides the actions that will be used with the Event
  *         Editable Tree Viewer.
  */
-public class EventMasterSectionActionGroup extends ActionGroup {
-
-	// The Event-B Editor.
-	private EventBEditor editor;
-
-	// The tree viewer in the master section
-	private TreeViewer viewer;
+public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 	// Some actions
 	protected Action addEvent;
@@ -77,8 +70,7 @@ public class EventMasterSectionActionGroup extends ActionGroup {
 	 */
 	public EventMasterSectionActionGroup(EventBEditor eventBEditor,
 			TreeViewer treeViewer) {
-		this.editor = eventBEditor;
-		this.viewer = treeViewer;
+		super(eventBEditor, treeViewer);
 
 		// Add an event.
 		addEvent = new Action() {

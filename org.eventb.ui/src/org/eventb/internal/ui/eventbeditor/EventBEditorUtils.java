@@ -629,7 +629,7 @@ public class EventBEditorUtils {
 
 							newEvt.setConvergence(IEvent.ORDINARY, monitor);
 							newEvt.setInherited(false, monitor);
-							
+
 							String namePrefix = UIUtils.getNamePrefix(editor,
 									PrefixVarName.QUALIFIED_NAME,
 									PrefixVarName.DEFAULT_PREFIX);
@@ -653,7 +653,7 @@ public class EventBEditorUtils {
 												namePrefix + nameIndex, null,
 												monitor);
 								nameIndex = UIUtils.getFreeElementNameIndex(
-										editor, newEvt, IVariable.ELEMENT_TYPE,
+										newEvt, IVariable.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 
 								newVar.setIdentifierString(prefix + index);
@@ -680,7 +680,7 @@ public class EventBEditorUtils {
 										IGuard.ELEMENT_TYPE, namePrefix
 												+ nameIndex, null, monitor);
 								nameIndex = UIUtils.getFreeElementNameIndex(
-										editor, newEvt, IGuard.ELEMENT_TYPE,
+										newEvt, IGuard.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 								newGrd.setLabel(prefix + index, monitor);
 								index = UIUtils.getFreeElementLabelIndex(
@@ -710,7 +710,7 @@ public class EventBEditorUtils {
 												namePrefix + nameIndex, null,
 												monitor);
 								nameIndex = UIUtils.getFreeElementNameIndex(
-										editor, newEvt, IAction.ELEMENT_TYPE,
+										newEvt, IAction.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 								newAct.setLabel(prefix + index, monitor);
 								index = UIUtils.getFreeElementLabelIndex(
@@ -963,9 +963,8 @@ public class EventBEditorUtils {
 												invPrefix + invIndex, null,
 												monitor);
 								invIndex = UIUtils.getFreeElementNameIndex(
-										editor, rodinFile,
-										IInvariant.ELEMENT_TYPE, invPrefix,
-										invIndex + 1);
+										rodinFile, IInvariant.ELEMENT_TYPE,
+										invPrefix, invIndex + 1);
 								newInv.setLabel((String) pair.getFirst(),
 										monitor);
 								newInv.setPredicateString((String) pair
@@ -1110,7 +1109,7 @@ public class EventBEditorUtils {
 														+ axmIndex, null,
 												monitor);
 								axmIndex = UIUtils.getFreeElementNameIndex(
-										editor, rodinFile, IAxiom.ELEMENT_TYPE,
+										rodinFile, IAxiom.ELEMENT_TYPE,
 										axmName, axmIndex + 1);
 								newAxm.setLabel((String) pair.getFirst(),
 										monitor);
@@ -1183,9 +1182,8 @@ public class EventBEditorUtils {
 						newInv = (IInvariant) rodinFile.createInternalElement(
 								IInvariant.ELEMENT_TYPE, prefix + index, null,
 								monitor);
-						index = UIUtils.getFreeElementNameIndex(editor,
-								rodinFile, IInvariant.ELEMENT_TYPE, prefix,
-								index + 1);
+						index = UIUtils.getFreeElementNameIndex(rodinFile,
+								IInvariant.ELEMENT_TYPE, prefix, index + 1);
 						newInv.setLabel(name, monitor);
 						newInv.setPredicateString(content);
 						editor.addNewElement(newInv);
@@ -1211,7 +1209,8 @@ public class EventBEditorUtils {
 			final IRodinFile rodinFile) {
 		try {
 			String variantPrefix = UIUtils.getPrefix(editor,
-					PrefixVariantName.QUALIFIED_NAME, PrefixVariantName.DEFAULT_PREFIX);
+					PrefixVariantName.QUALIFIED_NAME,
+					PrefixVariantName.DEFAULT_PREFIX);
 
 			ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Variant",
@@ -1229,12 +1228,11 @@ public class EventBEditorUtils {
 					int index = UIUtils.getFreeElementNameIndex(editor,
 							rodinFile, IVariant.ELEMENT_TYPE, prefix);
 					for (String expression : expressions) {
-						newVariant = (IVariant) rodinFile.createInternalElement(
-								IVariant.ELEMENT_TYPE, prefix + index, null,
-								monitor);
-						index = UIUtils.getFreeElementNameIndex(editor,
-								rodinFile, IVariant.ELEMENT_TYPE, prefix,
-								index + 1);
+						newVariant = (IVariant) rodinFile
+								.createInternalElement(IVariant.ELEMENT_TYPE,
+										prefix + index, null, monitor);
+						index = UIUtils.getFreeElementNameIndex(rodinFile,
+								IVariant.ELEMENT_TYPE, prefix, index + 1);
 						newVariant.setExpressionString(expression);
 						editor.addNewElement(newVariant);
 					}
@@ -1284,9 +1282,8 @@ public class EventBEditorUtils {
 						newThm = (ITheorem) rodinFile.createInternalElement(
 								ITheorem.ELEMENT_TYPE, prefix + index, null,
 								monitor);
-						index = UIUtils.getFreeElementNameIndex(editor,
-								rodinFile, ITheorem.ELEMENT_TYPE, prefix,
-								index + 1);
+						index = UIUtils.getFreeElementNameIndex(rodinFile,
+								ITheorem.ELEMENT_TYPE, prefix, index + 1);
 						newThm.setLabel(name, monitor);
 						newThm.setPredicateString(content);
 						editor.addNewElement(newThm);
@@ -1336,9 +1333,8 @@ public class EventBEditorUtils {
 						newAxm = (IAxiom) rodinFile.createInternalElement(
 								IAxiom.ELEMENT_TYPE, prefix + index, null,
 								monitor);
-						index = UIUtils.getFreeElementNameIndex(editor,
-								rodinFile, IAxiom.ELEMENT_TYPE, prefix,
-								index + 1);
+						index = UIUtils.getFreeElementNameIndex(rodinFile,
+								IAxiom.ELEMENT_TYPE, prefix, index + 1);
 						newAxm.setLabel(name, monitor);
 						newAxm.setPredicateString(content);
 						editor.addNewElement(newAxm);

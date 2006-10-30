@@ -1,11 +1,13 @@
 package org.eventb.ui.eventbeditor;
 
+import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.eventbeditor.IStatusChangedListener;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
-public interface IEventBEditor {
+public interface IEventBEditor extends IEditorPart {
 
 	/**
 	 * Add an element to be new.
@@ -112,4 +114,5 @@ public interface IEventBEditor {
 
 	public abstract void setSelection(IInternalElement element);
 
+	public abstract IRodinFile getRodinInput();
 }

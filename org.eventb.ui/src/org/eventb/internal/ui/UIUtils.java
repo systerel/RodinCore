@@ -82,19 +82,15 @@ public class UIUtils {
 
 	public static void log(Throwable exc, String message) {
 		Throwable nestedException;
-		if (exc instanceof RodinDBException 
-				&& (nestedException = ((RodinDBException)exc).getException()) != null) {
+		if (exc instanceof RodinDBException
+				&& (nestedException = ((RodinDBException) exc).getException()) != null) {
 			exc = nestedException;
 		}
-		IStatus status= new Status(
-			IStatus.ERROR, 
-			EventBUIPlugin.PLUGIN_ID, 
-			IStatus.ERROR, 
-			message, 
-			exc); 
+		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, exc);
 		EventBUIPlugin.getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Method to return the openable for an object (IRodinElement or TreeNode).
 	 * <p>
@@ -134,8 +130,8 @@ public class UIUtils {
 				.isTrue(component != null,
 						"component must be initialised by now");
 		try {
-//			if (ObligationExplorer.DEBUG)
-//				("Link to : " + obj);
+			// if (ObligationExplorer.DEBUG)
+			// ("Link to : " + obj);
 
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
@@ -143,7 +139,9 @@ public class UIUtils {
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (!(obj instanceof IPRFile))
-				editor.setCurrentPO((IPRSequent) obj, new NullProgressMonitor());
+				editor
+						.setCurrentPO((IPRSequent) obj,
+								new NullProgressMonitor());
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");
 			e.printStackTrace();
@@ -348,14 +346,14 @@ public class UIUtils {
 								monitor);
 						evt.setLabel(name, monitor);
 						editor.addNewElement(evt);
-						
+
 						evt.setConvergence(IEvent.ORDINARY, monitor);
 						evt.setInherited(false, monitor);
-						
+
 						String varPrefix = getNamePrefix(editor,
 								PrefixVarName.QUALIFIED_NAME,
 								PrefixVarName.DEFAULT_PREFIX);
-						
+
 						int varIndex = getFreeElementNameIndex(editor, evt,
 								IVariable.ELEMENT_TYPE, varPrefix);
 						for (String varName : varNames) {
@@ -365,7 +363,7 @@ public class UIUtils {
 													+ varIndex, null, monitor);
 							var.setIdentifierString(varName);
 							editor.addNewElement(var);
-							varIndex = getFreeElementNameIndex(editor, evt,
+							varIndex = getFreeElementNameIndex(evt,
 									IVariable.ELEMENT_TYPE, varPrefix,
 									varIndex + 1);
 						}
@@ -382,7 +380,7 @@ public class UIUtils {
 							grd.setLabel(grdNames[i], monitor);
 							grd.setPredicateString(grdPredicates[i]);
 							editor.addNewElement(grd);
-							grdIndex = getFreeElementNameIndex(editor, evt,
+							grdIndex = getFreeElementNameIndex(evt,
 									IGuard.ELEMENT_TYPE, grdPrefix,
 									grdIndex + 1);
 						}
@@ -399,7 +397,7 @@ public class UIUtils {
 							act.setLabel(actNames[i], monitor);
 							act.setAssignmentString(actSubstitutions[i]);
 							editor.addNewElement(act);
-							actIndex = getFreeElementNameIndex(editor, evt,
+							actIndex = getFreeElementNameIndex(evt,
 									IAction.ELEMENT_TYPE, actPrefix, grdIndex);
 						}
 					}
@@ -447,7 +445,7 @@ public class UIUtils {
 												+ setIndex, null, monitor);
 						set.setIdentifierString(name);
 						editor.addNewElement(set);
-						setIndex = getFreeElementNameIndex(editor, rodinFile,
+						setIndex = getFreeElementNameIndex(rodinFile,
 								ICarrierSet.ELEMENT_TYPE, setPrefix,
 								setIndex + 1);
 					}
@@ -533,10 +531,10 @@ public class UIUtils {
 										cstPrefix + cstIndex, null, monitor);
 						cst.setIdentifierString(element);
 						editor.addNewElement(cst);
-						cstIndex = getFreeElementNameIndex(editor, rodinFile,
+						cstIndex = getFreeElementNameIndex(rodinFile,
 								IConstant.ELEMENT_TYPE, cstPrefix, cstIndex + 1);
 
-						nameIndex = getFreeElementNameIndex(editor, rodinFile,
+						nameIndex = getFreeElementNameIndex(rodinFile,
 								IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 						labelIndex = getFreeElementLabelIndex(editor,
 								rodinFile, IAxiom.ELEMENT_TYPE, labelPrefix,
@@ -562,9 +560,8 @@ public class UIUtils {
 						counter++;
 						for (int i = counter; i < elements.size(); i++) {
 							String element2 = elementsArray[i];
-							nameIndex = getFreeElementNameIndex(editor,
-									rodinFile, IAxiom.ELEMENT_TYPE, namePrefix,
-									nameIndex);
+							nameIndex = getFreeElementNameIndex(rodinFile,
+									IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 							labelIndex = getFreeElementLabelIndex(editor,
 									rodinFile, IAxiom.ELEMENT_TYPE,
 									labelPrefix, labelIndex);
@@ -619,12 +616,11 @@ public class UIUtils {
 	public static int getFreeElementNameIndex(IEventBEditor editor,
 			IInternalParent parent, String type, String prefix)
 			throws RodinDBException {
-		return getFreeElementNameIndex(editor, parent, type, prefix, 1);
+		return getFreeElementNameIndex(parent, type, prefix, 1);
 	}
 
-	public static int getFreeElementNameIndex(IEventBEditor editor,
-			IInternalParent parent, String type, String prefix, int beginIndex)
-			throws RodinDBException {
+	public static int getFreeElementNameIndex(IInternalParent parent,
+			String type, String prefix, int beginIndex) throws RodinDBException {
 
 		IRodinElement[] elements = parent.getChildrenOfType(type);
 

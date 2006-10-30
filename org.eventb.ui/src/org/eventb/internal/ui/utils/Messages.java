@@ -28,6 +28,11 @@ public class Messages {
 	public static String editorPage_synthethicViewPage_title;
 	public static String editorPage_synthethicViewPage_tabTitle;
 	
+	public static String editorAction_paste_title;
+	public static String editorAction_paste_toolTip;
+	public static String editorAction_copy_title;
+	public static String editorAction_copy_toolTip;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
