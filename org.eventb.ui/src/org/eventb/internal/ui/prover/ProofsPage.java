@@ -361,6 +361,8 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		// + weights[i]);
 		// }
 
+		
+		
 		if (totalHeight < 1) { // Not initialised yet
 			weights[0] = 0;
 			// UIUtils.debugProverUI("Client area: " +
@@ -369,11 +371,12 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 			form.reflow(true);
 		} else {
 			int sum = 0;
-			for (int i = 1; i < 5; i++) {
+			// Do not resize the goalSection			
+			for (int i = 1; i < 4; i++) {
 				sum += weights[i];
 			}
 
-			if (sum < totalHeight) {
+			if (sum < totalHeight - weights[4]) {
 				weights[0] = totalHeight - sum;
 				// ProverUIUtils.debugProverUI("Client area: "
 				// + sashForm.getClientArea());
@@ -383,9 +386,10 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				sashForm.setWeights(weights);
 				form.reflow(true);
 			} else {
+				
 				weights[0] = 0;
-				for (int i = 1; i < 5; i++) {
-					weights[i] = weights[i] * totalHeight / sum;
+				for (int i = 1; i < 4; i++) {
+					weights[i] = weights[i] * (totalHeight - weights[4])/ sum;
 				}
 				Rectangle rect = sashForm.computeTrim(0, 0, totalWidth,
 						totalHeight);
