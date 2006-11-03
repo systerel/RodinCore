@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.ide"
       label="%featureName"
-      version="0.6.0"
+      version="0.6.1"
       provider-name="%providerName"
       image="rodin_update_120.jpg">
 
@@ -19,7 +19,7 @@
    </license>
 
    <requires>
-      <import feature="org.rodinp" version="0.6.0"/>
+      <import feature="org.rodinp" version="0.6.1"/>
       <import feature="org.eclipse.platform" version="3.1.2"/>
    </requires>
 
