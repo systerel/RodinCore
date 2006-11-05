@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
@@ -86,8 +87,8 @@ public class PenguinDanceDialog extends Dialog {
 
 		// look for the image (this will check both the plugin and fragment
 		// folders
-		URL fullPathString = Platform.find(bundle, new Path(
-				"icons/penguins-dancing.gif"));
+		URL fullPathString = FileLocator.find(bundle, new Path(
+				"icons/penguins-dancing.gif"), null);
 		if (fullPathString == null) {
 			try {
 				fullPathString = new URL("icons/penguins-dancing.gif");
@@ -98,7 +99,7 @@ public class PenguinDanceDialog extends Dialog {
 
 		try {
 			browser.setText("<html><body><img align=\"center\" src=\""
-					+ Platform.asLocalURL(fullPathString).getFile()
+					+ FileLocator.toFileURL(fullPathString).getFile()
 					+ "\" alt=\"Penguin tumbler\"></body></html>");
 		} catch (IOException e) {
 			e.printStackTrace();

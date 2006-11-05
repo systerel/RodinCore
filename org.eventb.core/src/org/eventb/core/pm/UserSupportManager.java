@@ -17,7 +17,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.IPRFile;
 import org.rodinp.core.RodinDBException;
 
@@ -77,7 +77,7 @@ public class UserSupportManager {
 					.size()]);
 		}
 		for (final IUSManagerListener listener : safeCopy) {
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// do nothing, will be logged by the platform
 				}
