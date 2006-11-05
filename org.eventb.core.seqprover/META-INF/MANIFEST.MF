@@ -8,7 +8,7 @@ Bundle-Vendor: %pluginProvider
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eventb.core.ast;visibility:=reexport
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.eventb.core.seqprover,
  org.eventb.core.seqprover.eventbExtensions,
  org.eventb.core.seqprover.proofBuilder,
