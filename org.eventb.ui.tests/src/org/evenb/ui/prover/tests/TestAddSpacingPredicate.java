@@ -49,11 +49,11 @@ public class TestAddSpacingPredicate extends TestCase {
 	}
 
 	public void testLiteralPredicate() {
-
+		// TODO implement this test
 	}
 
 	public void testQuantifiedPredicate() {
-
+		// TODO implement this test
 	}
 
 	public void testRelationalPred() {
@@ -74,7 +74,7 @@ public class TestAddSpacingPredicate extends TestCase {
 	}
 
 	public void testSimplePredicate() {
-
+		// TODO implement this test
 	}
 
 	public void testUnaryPredicate() {
