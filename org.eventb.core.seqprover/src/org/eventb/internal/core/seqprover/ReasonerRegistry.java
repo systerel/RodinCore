@@ -103,17 +103,17 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		for (IConfigurationElement element: xPoint.getConfigurationElements()) {
 			final ReasonerInfo info = new ReasonerInfo(element);
 			final String id = info.getReasonerID();
-			ReasonerInfo oldInfo = registry.put(id, info);
-			if (oldInfo != null) {
-				registry.put(id, oldInfo);
-				Util.log(null,
-						"Duplicate reasoner extension " + id + " ignored"
-				);
-				if (DEBUG) System.out.println(
-						"Duplicate reasoner extension "+ id + " ignored");
-			} else {
-				if (DEBUG) System.out.println(
-						"Registered reasoner extension " + id);
+			if (id != null) {
+				ReasonerInfo oldInfo = registry.put(id, info);
+				if (oldInfo != null) {
+					registry.put(id, oldInfo);
+					Util.log(null,
+							"Duplicate reasoner extension " + id + " ignored"
+					);
+				} else {
+					if (DEBUG) System.out.println(
+							"Registered reasoner extension " + id);
+				}
 			}
 		}
 	}
@@ -138,9 +138,15 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		
 		public ReasonerInfo(IConfigurationElement element) {
 			this.configurationElement = element;
-			final String bundleName = element.getNamespace();
-			final String localId = element.getAttributeAsIs("id");
-			this.id = bundleName + "." + localId;
+			final String localId = element.getAttribute("id");
+			if (localId.indexOf('.') != -1) {
+				this.id = null;
+				Util.log(null,
+						"Invalid id: " + localId + " (must not contain a dot)");
+			} else {
+				final String nameSpace = element.getNamespaceIdentifier();
+				this.id = nameSpace + "." + localId;
+			}
 			this.name = element.getAttribute("name");
 		}
 		
@@ -166,7 +172,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 					configurationElement.createExecutableExtension("class");
 			} catch (Exception e) {
 				final String className = 
-					configurationElement.getAttributeAsIs("class");
+					configurationElement.getAttribute("class");
 				Util.log(e,
 						"Error instantiating class " + className +
 						" for reasoner " + id);
