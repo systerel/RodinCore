@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -130,7 +130,7 @@ public class DeltaProcessor {
 		
 		// wrap callback with Safe runnable for subsequent listeners
 		// to be called when some are causing grief
-		Platform.run(new ISafeRunnable() {
+		SafeRunner.run(new ISafeRunnable() {
 			public void handleException(Throwable exception) {
 				Util.log(exception, 
 						"Exception within proof tree change notification"); //$NON-NLS-1$
