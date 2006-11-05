@@ -57,7 +57,7 @@ public class TextInsertTest extends TestCase {
 		assertEquals("MULTI: ", "a*e", multi.getText());
 	}
 
-	private class TestListener implements ModifyListener {
+	class TestListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
 			Text text = (Text) e.widget;

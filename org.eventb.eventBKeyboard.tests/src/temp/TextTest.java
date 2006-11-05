@@ -56,7 +56,7 @@ public class TextTest extends TestCase {
 
 	}
 
-	private class TestListener implements ModifyListener {
+	class TestListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
 			Text text = (Text) e.widget;

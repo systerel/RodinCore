@@ -39,7 +39,7 @@ public class TextInsert {
 
 	}
 
-	private static class TestListener implements ModifyListener {
+	static class TestListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
 			Text text = (Text) e.widget;
