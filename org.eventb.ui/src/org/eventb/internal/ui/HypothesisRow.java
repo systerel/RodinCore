@@ -118,8 +118,7 @@ public class HypothesisRow {
 		if (odd)
 			background = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
 		else
-			background = Display.getDefault().getSystemColor(
-					SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+			background = new Color(Display.getDefault(), 225, 255, 255);
 
 		buttonComposite = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
