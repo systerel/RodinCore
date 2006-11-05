@@ -2,9 +2,6 @@
 <projectDescription>
 	<name>org.eventb.ui</name>
 	<comment></comment>
-	<projects>
-		<project>org.eventb.eventBKeyboard</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
