@@ -8,8 +8,9 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.rodinp.core,
  org.rodinp.core.basis,
  org.rodinp.core.builder,
  org.rodinp.internal.core
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

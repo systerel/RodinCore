@@ -14,3 +14,4 @@ Export-Package: org.eventb.core.seqprover,
  org.eventb.core.seqprover.proofBuilder,
  org.eventb.core.seqprover.tactics,
  org.eventb.internal.core.seqprover.eventbExtensions.rewriters;x-friends:="org.eventb.core.seqprover.tests"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

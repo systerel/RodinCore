@@ -8,7 +8,8 @@ Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.eventb.eventBKeyboard,
  org.eventb.eventBKeyboard.internal.views;x-friends:="org.eventb.eventBKeyboard.tests",
  org.eventb.eventBKeyboard.preferences
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
