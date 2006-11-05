@@ -132,4 +132,16 @@ public class ReasonerRegistryTest extends TestCase {
 		assertFalse(registry.isDummyReasoner(trueGoal));
 	}
 
+	/**
+	 * Ensures that the erroneous id contributed through "plugin.xml" has been
+	 * ignored.
+	 */
+	public void testErroneousId() {
+		String[] ids = registry.getRegisteredIDs();
+		for (String id: ids) {
+			assertFalse("Erroneous reasoner id should not be registered",
+					id.contains("erroneous"));
+		}
+	}
+	
 }

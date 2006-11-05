@@ -7,6 +7,10 @@
             class="org.eventb.core.seqprover.reasonerExtentionTests.TrueGoal"
             id="trueGoal"
             name="⊤ goal"/>
+      <reasoner
+            class="org.eventb.core.seqprover.reasonerExtentionTests.TrueGoal"
+            id="erroneous.id"
+            name="Erroneous id (contains a dot)"/>
    </extension>
 
 </plugin>
