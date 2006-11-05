@@ -10,11 +10,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core;visibility:=reexport,
  org.eventb.core.ast;visibility:=reexport,
  org.eventb.core.seqprover;visibility:=reexport,
- com.b4free.rodin.core
-Eclipse-AutoStart: true
+ com.b4free.rodin.core;visibility:=reexport
+Eclipse-LazyStart: true
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
- org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
  org.eventb.core.pm,
+ org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.protopog;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.protosc;x-friends:="org.eventb.core.tests"
