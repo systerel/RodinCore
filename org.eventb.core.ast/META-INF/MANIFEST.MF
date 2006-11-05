@@ -7,3 +7,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eventb.core.ast,
  org.eventb.internal.core.parser;x-friends:="org.eventb.core.ast.tests"
+Eclipse-LazyStart: true
