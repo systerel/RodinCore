@@ -106,7 +106,6 @@ public class TestLocation extends TestCase {
 	public void testPredicate3() {
 		//                   0123     4
 		String predString = "{1}\u2282\u2115";
-		System.out.println("Predicate: " + predString);
 		IParseResult parseResult = ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
@@ -124,7 +123,6 @@ public class TestLocation extends TestCase {
 	public void testPredicate4() {
 		//                   0123 4
 		String predString = "∅∈∅↔S";
-		System.out.println("Predicate: " + predString);
 		IParseResult parseResult = ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
@@ -142,7 +140,6 @@ public class TestLocation extends TestCase {
 	public void testPredicate5() {
 		//                   0123456789012345678901234
 		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id(ℤ)";
-		System.out.println("Predicate: " + predString);
 		IParseResult parseResult = ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
@@ -162,7 +159,6 @@ public class TestLocation extends TestCase {
 	public void testPredicate6() {
 		//                   0123456789012345
 		String predString = "f∼;({a}◁f)⊆id(ℤ)";
-		System.out.println("Predicate: " + predString);
 		IParseResult parseResult = ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
@@ -179,7 +175,6 @@ public class TestLocation extends TestCase {
 	
 	public void testPredicate7() {
 		String predString = "f(a)⊆S";
-		System.out.println("Predicate: " + predString);
 		IParseResult parseResult = ff.parsePredicate(predString);
 		assertTrue("Parse Successful", parseResult.isSuccess());
 		Predicate parsedPred = parseResult.getParsedPredicate();
