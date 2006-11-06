@@ -69,13 +69,13 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   the name of a class which will be used to create the page. The class must extend &lt;samp&gt;org.eventb.ui.eventbeditor.EventBEditorPage&lt;/samp&gt; and also must have a default contructor since the Event-B Editor used this to create the page
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.eventbeditor.EventBEditorPage"/>
                </appInfo>
             </annotation>
          </attribute>
