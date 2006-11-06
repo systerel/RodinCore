@@ -1,4 +1,4 @@
-package org.eventb.core.testpom;
+package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
-import org.eventb.core.testscpog.BuilderTest;
+import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IInternalParent;
