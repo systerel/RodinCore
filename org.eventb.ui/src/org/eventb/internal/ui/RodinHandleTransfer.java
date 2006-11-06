@@ -60,6 +60,7 @@ public class RodinHandleTransfer extends ByteArrayTransfer {
 	/*
 	 * Method declared on Transfer.
 	 */
+	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
 		return fromByteArray(bytes);
@@ -98,7 +99,7 @@ public class RodinHandleTransfer extends ByteArrayTransfer {
 		 * child
 		 */
 		String id = dataIn.readUTF();
-		IRodinElement element = RodinCore.create(id);
+		IRodinElement element = RodinCore.valueOf(id);
 		return element;
 		// int n = dataIn.readInt();
 		//
@@ -112,6 +113,7 @@ public class RodinHandleTransfer extends ByteArrayTransfer {
 	/*
 	 * Method declared on Transfer.
 	 */
+	@Override
 	protected void javaToNative(Object object, TransferData transferData) {
 		if (!checkRodinElement(object) || !isSupportedType(transferData)) {
 			DND.error(DND.ERROR_INVALID_DATA);
@@ -145,7 +147,7 @@ public class RodinHandleTransfer extends ByteArrayTransfer {
 
 			/* write markers */
 			for (int i = 0; i < elements.length; i++) {
-				writeHandle((IRodinElement) elements[i], out);
+				writeHandle(elements[i], out);
 			}
 			out.close();
 			bytes = byteOut.toByteArray();

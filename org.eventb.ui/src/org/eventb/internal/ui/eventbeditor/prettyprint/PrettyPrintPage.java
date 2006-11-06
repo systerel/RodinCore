@@ -108,6 +108,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		form = managedForm.getForm();
@@ -125,7 +126,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String id = (String) e.getHref();
-				IRodinElement element = RodinCore.create(id);
+				IRodinElement element = RodinCore.valueOf(id);
 				if (element != null && element.exists())
 					UIUtils.linkToEventBEditor(element);
 			}

@@ -116,6 +116,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
@@ -123,7 +124,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 		// Stored the database instance starting at the root workspace
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		database = RodinCore.create(root);
+		database = RodinCore.valueOf(root);
 	}
 
 	/**
@@ -170,6 +171,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;

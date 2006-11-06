@@ -105,7 +105,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	protected void setInput(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
-			prFile = (IPRFile) RodinCore.create(inputFile);
+			prFile = (IPRFile) RodinCore.valueOf(inputFile);
 			try {
 				UserSupportManager.setInput(userSupport, prFile, new NullProgressMonitor());
 			} catch (RodinDBException e) {
@@ -151,6 +151,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
+	@Override
 	protected void addPages() {
 		try {
 			addPage(new ProofsPage(this));
@@ -169,6 +170,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		userSupport.removeStateChangedListeners(this);
 		UserSupportManager.disposeUserSupport(userSupport);
@@ -188,6 +190,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 *            <p>
 	 * @return an adapter for the required type or <code>null</code>
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IProofTreeUIPage.class.equals(required)) {
 			if (fProofTreeUI == null) {
@@ -228,6 +231,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -237,6 +241,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		MessageDialog.openInformation(null, null, "Saving");
 	}
@@ -246,6 +251,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// try {
 		// TODO Commit the information in the UI to the database
@@ -275,18 +281,18 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		if (results != null && results.length != 0) {
 
-			final IPRFile prFile = this.getRodinInput();
+			final IPRFile localPRFile = this.getRodinInput();
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 
-					public void run(IProgressMonitor monitor)
+					public void run(IProgressMonitor pm)
 							throws CoreException {
 						for (Object result : results) {
-							((ProofState) result).doSave(monitor);
+							((ProofState) result).doSave(pm);
 						}
 						// Save the file from the database to disk
-						prFile.save(monitor, true);
+						localPRFile.save(pm, true);
 					}
 
 				}, null);
@@ -432,7 +438,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 			IFile inputFile = editorInput.getFile();
 
-			prFile = (IPRFile) RodinCore.create(inputFile);
+			prFile = (IPRFile) RodinCore.valueOf(inputFile);
 		}
 		return prFile;
 	}
@@ -456,6 +462,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return this.userSupport.hasUnsavedChanges();
 		// try {

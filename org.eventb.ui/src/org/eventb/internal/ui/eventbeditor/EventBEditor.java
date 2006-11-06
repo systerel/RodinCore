@@ -90,7 +90,7 @@ public abstract class EventBEditor extends FormEditor implements
 			ISelectionProvider {
 		private ISelection globalSelection;
 
-		private ListenerList listeners;
+		private ListenerList listenerList;
 
 		private FormEditor formEditor;
 
@@ -102,7 +102,7 @@ public abstract class EventBEditor extends FormEditor implements
 		 *            the Form Eidtor contains this provider.
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
-			listeners = new ListenerList();
+			listenerList = new ListenerList();
 			this.formEditor = formEditor;
 		}
 
@@ -158,7 +158,7 @@ public abstract class EventBEditor extends FormEditor implements
 		 *            the selection changed event
 		 */
 		public void fireSelectionChanged(final SelectionChangedEvent event) {
-			Object[] listeners = this.listeners.getListeners();
+			Object[] listeners = this.listenerList.getListeners();
 			for (int i = 0; i < listeners.length; ++i) {
 				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
 				SafeRunner.run(new SafeRunnable() {
@@ -176,7 +176,7 @@ public abstract class EventBEditor extends FormEditor implements
 		 */
 		public void addSelectionChangedListener(
 				ISelectionChangedListener listener) {
-			listeners.add(listener);
+			listenerList.add(listener);
 		}
 
 		/*
@@ -186,7 +186,7 @@ public abstract class EventBEditor extends FormEditor implements
 		 */
 		public void removeSelectionChangedListener(
 				ISelectionChangedListener listener) {
-			listeners.remove(listener);
+			listenerList.remove(listener);
 		}
 	}
 
@@ -318,16 +318,15 @@ public abstract class EventBEditor extends FormEditor implements
 	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite,
 	 *      org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
 		RodinCore.addElementChangedListener(this);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
-		IRodinFile rodinFile = this.getRodinInput();
-
-		this.setPartName(EventBPlugin.getComponentName(rodinFile
-				.getElementName()));
+		final String fileName = getRodinInput().getElementName();
+		this.setPartName(EventBPlugin.getComponentName(fileName));
 	}
 
 	/*
@@ -335,6 +334,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		try {
 			return this.getRodinInput().hasUnsavedChanges();
@@ -349,6 +349,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * <code>AbstractTextEditor</code> method performs any extra disposal
 	 * actions required by the Event-B editor.
 	 */
+	@Override
 	public void dispose() {
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Dispose");
@@ -428,6 +429,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 *            <p>
 	 * @return an adapter for the required type or <code>null</code>
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
@@ -446,6 +448,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -455,6 +458,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		// TODO Do save as
 		MessageDialog.openInformation(null, null, "Saving");
@@ -471,6 +475,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
 			if (EventBEditorUtils.DEBUG)
@@ -698,7 +703,7 @@ public abstract class EventBEditor extends FormEditor implements
 
 			IFile inputFile = editorInput.getFile();
 
-			rodinFile = (IRodinFile) RodinCore.create(inputFile);
+			rodinFile = RodinCore.valueOf(inputFile);
 		}
 		return rodinFile;
 	}
@@ -777,10 +782,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
 	 */
 	public void setSelection(IInternalElement element) {
-		if (element instanceof IRodinElement) {
-			elementSelect((IRodinElement) element);
-			return;
-		}
+		elementSelect(element);
 	}
 
 	private void elementSelect(IRodinElement element) {

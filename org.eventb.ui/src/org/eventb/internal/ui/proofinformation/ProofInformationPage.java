@@ -92,6 +92,7 @@ public class ProofInformationPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 
@@ -131,7 +132,7 @@ public class ProofInformationPage extends Page implements
 				if (ProofInformationUtils.DEBUG)
 					ProofInformationUtils.debug("ID unchecked model " + id);
 
-				IRodinElement element = RodinCore.create(id);
+				IRodinElement element = RodinCore.valueOf(id);
 				if (ProofInformationUtils.DEBUG) {
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
@@ -284,7 +285,7 @@ public class ProofInformationPage extends Page implements
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					String id = (String) e.getHref();
-					IRodinElement element = RodinCore.create(id);
+					IRodinElement element = RodinCore.valueOf(id);
 					UIUtils.linkToEventBEditor(element);
 					UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
 					UIUtils.activateView(ProjectExplorer.VIEW_ID);
@@ -304,6 +305,7 @@ public class ProofInformationPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		scrolledForm.setFocus();
 	}
