@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -101,9 +102,10 @@ public class ElementUIRegistry {
 		 * @return the newly created image descriptor
 		 */
 		private ImageDescriptor createImageDescriptor() {
-			String iconName = configuration.getAttributeAsIs("icon"); //$NON-NLS-1$
-			String namespace = configuration.getNamespace();
-			ImageDescriptor desc = EventBImage.getImageDescriptor(namespace,
+			IContributor contributor = configuration.getContributor();
+			String iconName = configuration.getAttribute("icon"); //$NON-NLS-1$
+			ImageDescriptor desc = EventBImage.getImageDescriptor(
+					contributor.getName(),
 					iconName);
 			return desc;
 		}
@@ -129,7 +131,7 @@ public class ElementUIRegistry {
 		 * @return the priority corresponding to the input object
 		 */
 		public int getPriority(Object obj) {
-			String priorityString = configuration.getAttributeAsIs("priority"); //$NON-NLS-1$
+			String priorityString = configuration.getAttribute("priority"); //$NON-NLS-1$
 			try {
 				return Integer.parseInt(priorityString);
 			} catch (NumberFormatException e) {
@@ -161,7 +163,7 @@ public class ElementUIRegistry {
 		 *         names
 		 */
 		private String getLabel(Object obj, String attribute, String provider) {
-			String labelAttribute = configuration.getAttributeAsIs(attribute);
+			String labelAttribute = configuration.getAttribute(attribute);
 			if (labelAttribute != null) {
 				if (obj instanceof IInternalElement) {
 					IInternalElement element = (IInternalElement) obj;
@@ -190,7 +192,7 @@ public class ElementUIRegistry {
 						System.out
 								.println("Cannot instantiate the label provider class "
 										+ configuration
-												.getAttributeAsIs("secondLabelProvider"));
+												.getAttribute("secondLabelProvider"));
 						e.printStackTrace();
 					}
 				}
@@ -256,9 +258,9 @@ public class ElementUIRegistry {
 				.getConfigurationElements();
 
 		for (IConfigurationElement configuration : configurations) {
-			String namespace = configuration.getNamespace();
+			String namespace = configuration.getContributor().getName();
 			Bundle bundle = Platform.getBundle(namespace);
-			String className = configuration.getAttributeAsIs("class"); //$NON-NLS-1$
+			String className = configuration.getAttribute("class"); //$NON-NLS-1$
 			try {
 				Class clazz = bundle.loadClass(className);
 				ElementUIInfo oldInfo = registry.put(clazz, new ElementUIInfo(
@@ -270,7 +272,7 @@ public class ElementUIRegistry {
 								.println("Configuration is already exists for class "
 										+ className
 										+ ", ignore configuration with id "
-										+ configuration.getAttributeAsIs("id")); // $NON-NLS-3$
+										+ configuration.getAttribute("id")); // $NON-NLS-3$
 					}
 				} else {
 					if (UIUtils.DEBUG) {
