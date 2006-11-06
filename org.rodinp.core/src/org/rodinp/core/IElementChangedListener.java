@@ -11,19 +11,21 @@
 package org.rodinp.core;
 
 /**
- * An element changed listener receives notification of changes to Rodin elements
- * maintained by the Rodin database.
+ * An element changed listener receives notification of changes to Rodin
+ * elements maintained by the Rodin database.
  * <p>
  * This interface may be implemented by clients.
  * </p>
  */
 public interface IElementChangedListener {
-	
-/**
- * Notifies that one or more attributes of one or more Rodin elements have changed.
- * The specific details of the change are described by the given event.
- *
- * @param event the change event
- */
-public void elementChanged(ElementChangedEvent event);
+
+	/**
+	 * Notifies that one or more Rodin elements have changed. The specific
+	 * details of the change are described by the given event.
+	 * 
+	 * @param event
+	 *            the change event
+	 */
+	void elementChanged(ElementChangedEvent event);
+
 }
