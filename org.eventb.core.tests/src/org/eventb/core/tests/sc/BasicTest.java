@@ -442,7 +442,7 @@ public abstract class BasicTest extends TestCase {
 		IProjectDescription pDescription = project.getDescription();
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.create(project);
+		rodinProject = RodinCore.valueOf(project);
 		
 		// Turn off automatic provers
 		AutoProver.disable();

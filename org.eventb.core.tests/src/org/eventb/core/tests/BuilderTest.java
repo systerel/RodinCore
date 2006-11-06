@@ -325,7 +325,7 @@ public abstract class BuilderTest extends TestCase {
 	protected IRodinElement getSourceElement(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
 		IPOSource[] sources = poSequent.getSources();
 		String memento = sources[sourceIdx].getSourceHandleIdentifier();
-		return RodinCore.create(memento);
+		return RodinCore.valueOf(memento);
 	}
 	
 	protected String getSourceName(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
@@ -400,7 +400,7 @@ public abstract class BuilderTest extends TestCase {
 		IProjectDescription pDescription = project.getDescription();
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.create(project);
+		rodinProject = RodinCore.valueOf(project);
 		
 		// Turn off automatic provers
 		AutoProver.disable();
