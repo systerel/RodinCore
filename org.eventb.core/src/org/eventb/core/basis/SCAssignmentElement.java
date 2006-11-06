@@ -43,13 +43,6 @@ public abstract class SCAssignmentElement extends SCTraceableLabeledElement
 		super(name, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ISCAssignmentElement#getAssignmentString()
-	 */
-	public String getAssignmentString() throws RodinDBException {
-		return getContents();
-	}
-
 	public Assignment getAssignment(FormulaFactory factory) throws RodinDBException {
 		
 		String contents = getAssignmentString();
