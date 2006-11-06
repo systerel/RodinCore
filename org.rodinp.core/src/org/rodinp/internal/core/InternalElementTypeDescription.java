@@ -26,7 +26,7 @@ public class InternalElementTypeDescription extends ElementTypeDescription<Inter
 	public InternalElementTypeDescription(IConfigurationElement configurationElement) {
 		super(configurationElement);
 		
-		String value = configurationElement.getAttributeAsIs("named"); 
+		String value = configurationElement.getAttribute("named"); 
 		this.named = value == null || value.equalsIgnoreCase(Boolean.TRUE.toString());
 	}
 

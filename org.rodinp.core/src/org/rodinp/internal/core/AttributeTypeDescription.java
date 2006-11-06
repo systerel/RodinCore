@@ -157,10 +157,10 @@ public abstract class AttributeTypeDescription {
 	}
 
 	public static AttributeTypeDescription valueOf(IConfigurationElement ice) {
-		final String nameSpace = ice.getNamespace();
-		final String id = nameSpace + "." + ice.getAttributeAsIs("id");
+		final String nameSpace = ice.getNamespaceIdentifier();
+		final String id = nameSpace + "." + ice.getAttribute("id");
 		final String name = ice.getAttribute("name");
-		final String kind = ice.getAttributeAsIs("kind");
+		final String kind = ice.getAttribute("kind");
 		if (KIND_BOOLEAN.equals(kind)) {
 			return new BoolAttributeTypeDescr(id, name);
 		}

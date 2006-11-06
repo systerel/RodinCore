@@ -44,7 +44,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 		IConfigurationElement[] children = configElement.getChildren("inputType");
 		this.inputTypes = new String[children.length];
 		for (int i = 0; i < children.length; i++) {
-			this.inputTypes[i] = children[i].getAttributeAsIs("id").intern();
+			this.inputTypes[i] = children[i].getAttribute("id").intern();
 		}
 	}
 

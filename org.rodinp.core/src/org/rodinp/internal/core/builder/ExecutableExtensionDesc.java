@@ -49,11 +49,11 @@ public class ExecutableExtensionDesc {
 	 *            description of this executable extension in the Eclipse registry
 	 */
 	public ExecutableExtensionDesc(IConfigurationElement configElement) {
-		this.bundleName = configElement.getNamespace();
+		this.bundleName = configElement.getNamespaceIdentifier();
 		this.configElement = configElement;
-		this.id = this.bundleName + "." + configElement.getAttributeAsIs("id");
+		this.id = this.bundleName + "." + configElement.getAttribute("id");
 		this.name = configElement.getAttribute("name");
-		this.className = configElement.getAttributeAsIs("class");
+		this.className = configElement.getAttribute("class");
 	}
 
 	/**

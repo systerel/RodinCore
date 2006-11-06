@@ -28,7 +28,7 @@ public class FileElementTypeDescription extends ElementTypeDescription<RodinFile
 	
 	public FileElementTypeDescription(IConfigurationElement configurationElement) {
 		super(configurationElement);
-		this.contentTypeId = configurationElement.getAttributeAsIs("content-type-id");
+		this.contentTypeId = configurationElement.getAttribute("content-type-id");
 	}
 
 	@Override

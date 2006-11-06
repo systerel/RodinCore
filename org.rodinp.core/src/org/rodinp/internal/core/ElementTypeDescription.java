@@ -41,10 +41,10 @@ public abstract class ElementTypeDescription<T extends RodinElement> {
 	private final String name;
 
 	public ElementTypeDescription(IConfigurationElement configurationElement) {
-		this.bundleName = configurationElement.getNamespace();
-		this.id = (this.bundleName + "." + configurationElement.getAttributeAsIs("id")).intern();
+		this.bundleName = configurationElement.getNamespaceIdentifier();
+		this.id = (this.bundleName + "." + configurationElement.getAttribute("id")).intern();
 		this.name = configurationElement.getAttribute("name");
-		this.className = configurationElement.getAttributeAsIs("class");
+		this.className = configurationElement.getAttribute("class");
 	}
 
 	protected abstract void computeConstructor();

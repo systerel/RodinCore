@@ -53,7 +53,7 @@ import org.xml.sax.SAXParseException;
  */
 public class Buffer {
 	
-	private static class XMLErrorHandler implements ErrorHandler {
+	static class XMLErrorHandler implements ErrorHandler {
 
 		public void error(SAXParseException exception) throws SAXException {
 			throw exception;
@@ -69,7 +69,7 @@ public class Buffer {
 		
 	}
 	
-	private static class XMLErrorListener implements ErrorListener {
+	static class XMLErrorListener implements ErrorListener {
 
 		public void error(TransformerException e) throws TransformerException {
 			throw e;

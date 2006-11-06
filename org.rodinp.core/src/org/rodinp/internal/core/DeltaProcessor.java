@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
@@ -268,7 +268,7 @@ public class DeltaProcessor {
 				} else {
 					// Rodin project may have been been closed or removed (look for
 					// element amongst old Rodin project s list).
-					element =  (Openable) this.manager.getRodinDB().findOldRodinProject(proj);
+					element = this.manager.getRodinDB().findOldRodinProject(proj);
 				}
 			}
 		} else {
@@ -627,7 +627,7 @@ public class DeltaProcessor {
 					start = System.currentTimeMillis();
 				}
 				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
 						Util.log(exception, "Exception occurred in listener of Rodin element change notification"); //$NON-NLS-1$
 					}
