@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -41,6 +40,8 @@ public class EditorPagesRegistry {
 
 	private static final String EDITORPAGE_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editorPages";
+	
+	private static final int DEFAULT_PRIORITY = 10000;
 
 	private class PagesInfo {
 
@@ -53,13 +54,9 @@ public class EditorPagesRegistry {
 		public EventBEditorPage[] getPages() {
 			Collection<EventBEditorPage> pages = new LinkedList<EventBEditorPage>();
 			for (PageInfo info : infos) {
-				try {
-					pages.add(info.createPage());
-				} catch (CoreException e) {
-					if (EventBEditorUtils.DEBUG)
-						e.printStackTrace();
-					UIUtils.log(e, "Cannot create a page of type "
-							+ info.getPageClass());
+				EventBEditorPage page = info.createPage();
+				if (page != null) {
+					pages.add(page);
 				}
 			}
 			return pages.toArray(new EventBEditorPage[pages.size()]);
@@ -89,32 +86,52 @@ public class EditorPagesRegistry {
 
 	}
 
-	private class PageInfo {
-		IConfigurationElement configuration;
+	private final class PageInfo {
+		private final IConfigurationElement configElement;
+		private final String id;
+		private final int priority;
 
-		PageInfo(IConfigurationElement configuration) {
-			this.configuration = configuration;
+		PageInfo(IConfigurationElement configElement) {
+			this.configElement = configElement;
+			// TODO check that id is present.
+			this.id = configElement.getAttribute("id");
+			this.priority = readPriority();
 		}
 
-		public int getPriority() {
+		private int readPriority() {
+			String priorityValue = configElement.getAttribute("priority");
+			if (priorityValue == null) {
+				UIUtils.log(null,
+						"Missing priority attribute (using default),"
+						+ " for editor page extension " + id);
+				return DEFAULT_PRIORITY;
+			}
 			try {
-				return Integer.parseInt(configuration
-						.getAttributeAsIs("priority"));
+				return Integer.parseInt(priorityValue);
 			} catch (NumberFormatException e) {
 				UIUtils.log(e,
-						"Priority must be an integer, assign default priority (10000) to page "
-								+ configuration.getAttributeAsIs("id"));
-				return 10000; // Lowest priority
+						"Illegal priority " + priorityValue
+						+ ", using default instead,"
+						+ " for editor page extension " + id);
+				return DEFAULT_PRIORITY;
 			}
 		}
-
-		public String getPageClass() {
-			return configuration.getAttributeAsIs("class");
+		
+		public int getPriority() {
+			return this.priority;
 		}
 
-		public EventBEditorPage createPage() throws CoreException {
-			return (EventBEditorPage) configuration
-					.createExecutableExtension("class");
+		public EventBEditorPage createPage() {
+			try {
+				return (EventBEditorPage) configElement
+						.createExecutableExtension("class");
+			} catch (Exception e) {
+				if (EventBEditorUtils.DEBUG)
+					e.printStackTrace();
+				UIUtils.log(e,
+						"Failed to create a page for editor extension " + id);
+				return null;
+			}
 		}
 	}
 
@@ -152,11 +169,11 @@ public class EditorPagesRegistry {
 				.getConfigurationElements();
 
 		for (IConfigurationElement configuration : configurations) {
+			PageInfo info = new PageInfo(configuration);
 			IConfigurationElement[] targets = configuration
 					.getChildren("target");
-			PageInfo info = new PageInfo(configuration);
 			for (IConfigurationElement target : targets) {
-				String targetID = target.getAttributeAsIs("id");
+				String targetID = target.getAttribute("id");
 				addPage(targetID, info);
 			}
 		}
