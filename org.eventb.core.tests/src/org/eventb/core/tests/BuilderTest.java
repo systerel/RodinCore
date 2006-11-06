@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.core.testscpog;
+package org.eventb.core.tests;
 
 import junit.framework.TestCase;
 
