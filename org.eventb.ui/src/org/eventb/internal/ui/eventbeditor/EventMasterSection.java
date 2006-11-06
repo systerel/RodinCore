@@ -31,6 +31,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -82,7 +83,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 *            an Event-B Editor
 	 */
 	public EventMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, EventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -98,6 +99,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
 						.getViewer());
@@ -108,6 +110,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		filterVarAction.setToolTipText("Filter variable elements");
 
 		final Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
 						.getViewer());
@@ -125,6 +128,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IVariable) {
@@ -156,6 +160,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
+	@Override
 	protected void updateButtons() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
@@ -218,27 +223,28 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
-		EventMasterSectionActionGroup groupActionSet = (EventMasterSectionActionGroup) this
+		EventMasterSectionActionGroup actionSet = (EventMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_EVT_INDEX:
-			groupActionSet.addEvent.run();
+			actionSet.addEvent.run();
 			break;
 		case ADD_VAR_INDEX:
-			groupActionSet.addLocalVariable.run();
+			actionSet.addLocalVariable.run();
 			break;
 		case ADD_GRD_INDEX:
-			groupActionSet.addGuard.run();
+			actionSet.addGuard.run();
 			break;
 		case ADD_ACT_INDEX:
-			groupActionSet.addAction.run();
+			actionSet.addAction.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}
@@ -250,6 +256,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new EventEditableTreeViewer(editor, parent, SWT.MULTI
@@ -280,6 +287,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
@@ -301,6 +309,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
@@ -311,6 +320,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new EventMasterSectionActionGroup(editor, (TreeViewer) this
 				.getViewer());

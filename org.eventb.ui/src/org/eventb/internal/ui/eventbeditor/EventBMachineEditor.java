@@ -16,13 +16,14 @@ import org.eclipse.ui.PartInitException;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
  *         <p>
  *         A subclass of Event-B Editor for editting Event-B machines.
  */
-public class EventBMachineEditor extends EventBEditor {
+public class EventBMachineEditor extends EventBEditor implements IEventBEditor {
 
 	// Set of mirror pages.
 	private EventBMirrorPage invariantMirrorPage;
@@ -50,11 +51,12 @@ public class EventBMachineEditor extends EventBEditor {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
+	@Override
 	protected void addPages() {
-		EventBEditorPage[] pages = EditorPagesRegistry.getDefault().getPages(
+		EventBEditorPage[] editorPages = EditorPagesRegistry.getDefault().getPages(
 				EDITOR_ID);
 
-		for (EventBEditorPage page : pages) {
+		for (EventBEditorPage page : editorPages) {
 			page.initialize(this);
 			try {
 				addPage(page);
@@ -71,6 +73,7 @@ public class EventBMachineEditor extends EventBEditor {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IInvariantMirrorPage.class.equals(required)) {
 			if (invariantMirrorPage == null) {
@@ -98,6 +101,7 @@ public class EventBMachineEditor extends EventBEditor {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (invariantMirrorPage != null)
 			invariantMirrorPage.dispose();

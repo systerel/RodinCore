@@ -21,6 +21,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.internal.ui.EventBFormText;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -36,7 +37,7 @@ public abstract class EventBMirrorPage extends Page implements
 		IEventBMirrorPage {
 
 	// The associated Event-B Editor
-	protected EventBEditor editor;
+	protected IEventBEditor editor;
 
 	ScrolledForm form;
 
@@ -64,7 +65,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * @param editor
 	 *            the editor
 	 */
-	public EventBMirrorPage(EventBEditor editor) {
+	public EventBMirrorPage(IEventBEditor editor) {
 		super();
 		this.editor = editor;
 		editor.addElementChangedListener(this);
@@ -75,6 +76,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
@@ -102,6 +104,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return form;
 	}
@@ -111,6 +114,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		form.setFocus();
 	}
@@ -137,6 +141,7 @@ public abstract class EventBMirrorPage extends Page implements
 	 * 
 	 * @see org.eclipse.ui.part.Page#dispose()
 	 */
+	@Override
 	public void dispose() {
 		formText.dispose();
 		editor.removeElementChangedListener(this);

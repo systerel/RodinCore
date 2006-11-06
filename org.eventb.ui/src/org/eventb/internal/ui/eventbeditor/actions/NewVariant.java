@@ -6,18 +6,18 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IVariant;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class NewVariant implements IEditorActionDelegate {
 
-	EventBEditor editor;
+	IEventBEditor editor;
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof EventBEditor)
-			editor = (EventBEditor) targetEditor;
+		if (targetEditor instanceof IEventBEditor)
+			editor = (IEventBEditor) targetEditor;
 	}
 
 	public void run(IAction action) {

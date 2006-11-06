@@ -25,6 +25,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.ElementLabelProvider;
 import org.eventb.ui.ElementSorter;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -68,14 +69,6 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 
 			invisibleRoot = null;
 			return;
-		}
-
-		/*
-		 * (non-Javadoc) When the tree is dispose, do nothing.
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
 		}
 
 		/*
@@ -155,8 +148,11 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 					.getAffectedChildren();
 			for (int i = 0; i < elements.length; i++) {
 				if ((elements[i].getKind() & IRodinElementDelta.ADDED) != 0) {
+					// TODO Element added
 				} else if ((elements[i].getKind() & IRodinElementDelta.REMOVED) != 0) {
+					// TODO Element removed
 				} else if ((elements[i].getKind() & IRodinElementDelta.CHANGED) != 0) {
+					// TODO Element chaged
 				}
 				UIUtils.syncPostRunnable(new Runnable() {
 					/*
@@ -170,13 +166,18 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 				}, EventBContentOutlinePage.this.getControl());
 			}
 		}
+
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	// The current editting element.
 	private Object fInput;
 
 	// The current associated editor.
-	private EventBEditor fEditor;
+	IEventBEditor fEditor;
 
 	/**
 	 * Creates a content outline page using the given editor. Register as a
@@ -186,7 +187,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 * @param editor
 	 *            the editor
 	 */
-	public EventBContentOutlinePage(EventBEditor editor) {
+	public EventBContentOutlinePage(IEventBEditor editor) {
 		super();
 		fEditor = editor;
 	}
@@ -199,6 +200,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 * @param parent
 	 *            the parent composite of the control
 	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		super.createControl(parent);
@@ -222,6 +224,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 * @param event
 	 *            the selection event
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		ISelection selection = event.getSelection();

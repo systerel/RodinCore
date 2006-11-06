@@ -23,6 +23,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -43,9 +44,6 @@ public class DependenciesPage extends EventBEditorPage {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public DependenciesPage() {
 		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE); //$NON-NLS-1$
@@ -56,6 +54,7 @@ public class DependenciesPage extends EventBEditorPage {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -68,18 +67,19 @@ public class DependenciesPage extends EventBEditorPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
+		IEventBEditor eventBEditor = (IEventBEditor) this.getEditor();
+		IRodinFile rodinFile = eventBEditor
 				.getRodinInput();
 
 		if (rodinFile instanceof IMachineFile) {
-			SectionPart part = new RefinesSection(this.getEditor(), this
+			SectionPart part = new RefinesSection(eventBEditor, this
 					.getManagedForm().getToolkit(), body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 150;
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-			part = new SeesSection(this.getEditor(), this.getManagedForm()
+			part = new SeesSection(eventBEditor, this.getManagedForm()
 					.getToolkit(), body);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
@@ -88,7 +88,7 @@ public class DependenciesPage extends EventBEditorPage {
 			managedForm.addPart(part);
 
 		} else if (rodinFile instanceof IContextFile) {
-			SectionPart part = new ExtendsSection(this.getEditor(), this
+			SectionPart part = new ExtendsSection(eventBEditor, this
 					.getManagedForm().getToolkit(), body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;

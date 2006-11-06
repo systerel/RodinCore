@@ -33,6 +33,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -74,7 +75,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 */
 	public SyntheticMachineViewSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			EventBEditor editor) {
+			IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -97,6 +98,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		final Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
@@ -107,6 +109,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		filterVarAction.setToolTipText("Filter global variable elements");
 
 		final Action filterGrdAction = new Action("grd", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
@@ -117,6 +120,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		filterGrdAction.setToolTipText("Filter guard elements");
 
 		final Action filterInvAction = new Action("inv", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
@@ -127,6 +131,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		filterInvAction.setToolTipText("Filter invariant elements");
 
 		final Action filterLVarAction = new Action("lvar", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
 						.getViewer());
@@ -144,6 +149,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IVariable) {
@@ -177,7 +183,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		form.getToolBarManager().add(filterInvAction);
 		form.getToolBarManager().add(filterLVarAction);
 
-		final SyntheticMachineMasterSectionActionGroup groupActionSet = (SyntheticMachineMasterSectionActionGroup) this
+		final SyntheticMachineMasterSectionActionGroup actionSet = (SyntheticMachineMasterSectionActionGroup) this
 				.getActionGroup();
 		upAction = new Action("Up", Action.AS_PUSH_BUTTON) {
 
@@ -188,7 +194,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
-				groupActionSet.handleUp.run();
+				actionSet.handleUp.run();
 			}
 		};
 		upAction.setImageDescriptor(EventBImage
@@ -205,7 +211,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
-				groupActionSet.handleDown.run();
+				actionSet.handleDown.run();
 			}
 		};
 		downAction.setImageDescriptor(EventBImage
@@ -247,6 +253,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	/**
 	 * Update the expanded of buttons.
 	 */
+	@Override
 	protected void updateButtons() {
 		// Tree tree = ((TreeViewer) getViewer()).getTree();
 		// TreeItem[] items = tree.getSelection();
@@ -287,6 +294,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 * @param index
 	 *            The index of selected button
 	 */
+	@Override
 	protected void buttonSelected(int index) {
 		// switch (index) {
 		// case ADD_VAR_INDEX:
@@ -334,6 +342,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
@@ -353,6 +362,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new SyntheticEditableTreeViewer(editor, parent, SWT.MULTI
@@ -364,6 +374,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		editor.removeStatusListener(this);
 		super.dispose();
@@ -374,6 +385,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new SyntheticMachineMasterSectionActionGroup(editor,
 				(TreeViewer) this.getViewer());

@@ -39,10 +39,6 @@ public class VariablePage extends EventBFormPage {
 
 	/**
 	 * Constructor.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public VariablePage() {
 		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
@@ -55,12 +51,13 @@ public class VariablePage extends EventBFormPage {
 	 *      org.eclipse.swt.widgets.Composite, int,
 	 *      org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
+	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		VariableMasterSection part = new VariableMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(EventBEditor) this.getEditor());
+				(IEventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

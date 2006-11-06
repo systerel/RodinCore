@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -27,6 +26,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -37,7 +37,7 @@ import org.rodinp.core.IRodinElement;
 public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 		implements IStatusChangedListener {
 
-	private ActionGroup groupActionSet;
+	ActionGroup groupActionSet;
 
 	/**
 	 * Create a new Tree Viewer
@@ -77,7 +77,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 */
 	public EventBTreePartWithButtons(final IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			EventBEditor editor, String[] buttonLabels, String title,
+			IEventBEditor editor, String[] buttonLabels, String title,
 			String description) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels, title,
 				description);
@@ -111,6 +111,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Viewer createViewer(IManagedForm managedForm,
 			FormToolkit toolkit, Composite parent) {
 		return createTreeViewer(managedForm, toolkit, parent);
@@ -121,6 +122,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#setSelection(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	public void setSelection(IRodinElement element) {
 		StructuredViewer viewer = (StructuredViewer) this.getViewer();
 		viewer.reveal(element);
@@ -173,10 +175,10 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 			}
 		});
 		Viewer viewer = getViewer();
-		Menu menu = menuMgr.createContextMenu(((Viewer) viewer).getControl());
-		((Viewer) viewer).getControl().setMenu(menu);
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
 		this.editor.getSite().registerContextMenu(menuMgr,
-				(ISelectionProvider) viewer);
+				viewer);
 	}
 
 	@Override

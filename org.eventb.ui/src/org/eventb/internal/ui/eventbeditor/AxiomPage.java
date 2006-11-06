@@ -39,9 +39,6 @@ public class AxiomPage extends EventBFormPage {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public AxiomPage() {
 		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
@@ -52,13 +49,14 @@ public class AxiomPage extends EventBFormPage {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBFormPage#createMasterSection(org.eclipse.ui.forms.IManagedForm,
 	 *      org.eclipse.swt.widgets.Composite, int,
-	 *      org.eventb.internal.ui.eventbeditor.EventBEditor)
+	 *      org.eventb.ui.eventbeditor.IEventBEditor)
 	 */
+	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		AxiomMasterSection part = new AxiomMasterSection(managedForm, parent,
-				managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this
+				managedForm.getToolkit(), Section.NO_TITLE, (IEventBEditor) this
 						.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;

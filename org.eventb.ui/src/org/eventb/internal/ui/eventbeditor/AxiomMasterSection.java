@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -66,7 +67,7 @@ public class AxiomMasterSection extends EventBTreePartWithButtons {
 	 *            The Event-B Editor
 	 */
 	public AxiomMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, EventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}

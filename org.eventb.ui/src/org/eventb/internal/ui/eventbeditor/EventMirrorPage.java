@@ -20,6 +20,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -40,7 +41,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 	 * @param editor
 	 *            an Event-B Editor
 	 */
-	public EventMirrorPage(EventBEditor editor) {
+	public EventMirrorPage(IEventBEditor editor) {
 		super(editor);
 	}
 
@@ -49,6 +50,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#getFormString()
 	 */
+	@Override
 	protected String getFormString() {
 		String formString = "<form>";
 
@@ -139,10 +141,12 @@ public class EventMirrorPage extends EventBMirrorPage implements
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#createHyperlinkListener()
 	 */
+	@Override
 	protected HyperlinkAdapter createHyperlinkListener() {
 		// TODO Using name is not enough since local guards can have same name
 		// in different event.
 		return (new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {

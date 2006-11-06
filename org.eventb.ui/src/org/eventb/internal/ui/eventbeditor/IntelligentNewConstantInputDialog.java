@@ -27,6 +27,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -51,7 +52,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 	private Collection<Pair> axiomPairTexts;
 
-	private EventBEditor editor;
+	private IEventBEditor editor;
 
 	/**
 	 * Constructor.
@@ -64,7 +65,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * @param defaultName
 	 *            the default variable name
 	 */
-	public IntelligentNewConstantInputDialog(EventBEditor editor,
+	public IntelligentNewConstantInputDialog(IEventBEditor editor,
 			Shell parentShell, String title, String defaultName,
 			String axmPrefix, int axmIndex) {
 		super(parentShell, title);
@@ -80,6 +81,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "&More Axm.", true);
 
@@ -95,6 +97,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -148,6 +151,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			name = null;
@@ -195,9 +199,9 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 				IEventBInputText axiomNameText = (IEventBInputText) pair
 						.getFirst();
 				if (dirtyTexts.contains(axiomPredicateText.getTextWidget())) {
-					String name = axiomNameText.getTextWidget().getText();
+					String axmName = axiomNameText.getTextWidget().getText();
 					String pred = axiomPredicateText.getTextWidget().getText();
-					axioms.add(new Pair(name, pred));
+					axioms.add(new Pair(axmName, pred));
 				}
 			}
 		}

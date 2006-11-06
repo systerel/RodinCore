@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -66,7 +67,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 *            an Event-B Editor
 	 */
 	public VariableMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, EventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}
@@ -78,6 +79,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new VariableEditableTreeViewer(editor, parent, SWT.MULTI
@@ -89,6 +91,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
+	@Override
 	protected void updateButtons() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
@@ -125,21 +128,22 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
-		VariableMasterSectionActionGroup groupActionSet = (VariableMasterSectionActionGroup) this
+		VariableMasterSectionActionGroup actionSet = (VariableMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
-			groupActionSet.addVariable.run();
+			actionSet.addVariable.run();
 			break;
 		case DELETE_INDEX:
-			groupActionSet.delete.run();
+			actionSet.delete.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}
@@ -167,6 +171,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
@@ -179,6 +184,7 @@ public class VariableMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new VariableMasterSectionActionGroup(editor, (TreeViewer) this
 				.getViewer());

@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -48,6 +47,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixSeesContextName;
 import org.eventb.ui.ElementLabelProvider;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -71,8 +71,8 @@ public class SeesSection extends SectionPart implements
 
 	private static final String SECTION_DESCRIPTION = "Select the seen contexts of this machine";
 
-	// The Form editor contains this section.
-	private FormEditor editor;
+	// The Event B editor contains this section.
+	private IEventBEditor editor;
 
 	// Buttons.
 	private Button removeButton;
@@ -82,14 +82,14 @@ public class SeesSection extends SectionPart implements
 	private Button addButton;
 
 	// The table viewer
-	private TableViewer viewer;
+	TableViewer viewer;
 
-	private Combo contextCombo;
+	Combo contextCombo;
 
 	// The seen internal element.
 	// private IInternalElement seen;
 
-	private IRodinFile rodinFile;
+	IRodinFile rodinFile;
 
 	/**
 	 * Constructor.
@@ -97,22 +97,20 @@ public class SeesSection extends SectionPart implements
 	 * 
 	 * @param editor
 	 *            The Form editor contains this section
-	 * @param page
-	 *            The Dependencies page contains this section
 	 * @param parent
 	 *            The composite parent
 	 */
-	public SeesSection(FormEditor editor, FormToolkit toolkit, Composite parent) {
+	public SeesSection(IEventBEditor editor, FormToolkit toolkit, Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
-		rodinFile = ((EventBEditor) editor).getRodinInput();
+		rodinFile = editor.getRodinInput();
 
 		createClient(getSection(), toolkit);
 		RodinCore.addElementChangedListener(this);
 	}
 
-	private class SeenContextContentProvider implements
+	class SeenContextContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -125,11 +123,11 @@ public class SeesSection extends SectionPart implements
 		}
 
 		public void dispose() {
-
+			// TODO To check
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
+		public void inputChanged(Viewer viewer1, Object oldInput, Object newInput) {
+			// TODO To check
 		}
 
 	}
@@ -158,6 +156,7 @@ public class SeesSection extends SectionPart implements
 		removeButton.setLayoutData(gd);
 
 		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection sel = viewer.getSelection();
 				if (sel instanceof IStructuredSelection) {
@@ -227,6 +226,7 @@ public class SeesSection extends SectionPart implements
 		addButton = new Button(comp, SWT.PUSH);
 		addButton.setText("Add");
 		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -279,12 +279,11 @@ public class SeesSection extends SectionPart implements
 	 * @param context
 	 *            name of the context
 	 */
-	private void addSeenContext(String context) {
+	void addSeenContext(String context) {
 		try {
-			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
 					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
-							(EventBEditor) editor, rodinFile,
+							editor, rodinFile,
 							ISeesContext.ELEMENT_TYPE,
 							PrefixSeesContextName.QUALIFIED_NAME,
 							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
@@ -303,7 +302,7 @@ public class SeesSection extends SectionPart implements
 		try {
 			ISeesContext seen = (ISeesContext) rodinFile.createInternalElement(
 					ISeesContext.ELEMENT_TYPE, UIUtils.getFreeElementName(
-							(EventBEditor) editor, rodinFile,
+							editor, rodinFile,
 							ISeesContext.ELEMENT_TYPE,
 							PrefixSeesContextName.QUALIFIED_NAME,
 							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
@@ -369,7 +368,7 @@ public class SeesSection extends SectionPart implements
 		});
 	}
 
-	private void initContextCombo() {
+	void initContextCombo() {
 		contextCombo.removeAll();
 		try {
 			IRodinElement[] contexts = ((IParent) rodinFile.getParent())
@@ -403,7 +402,7 @@ public class SeesSection extends SectionPart implements
 		}
 	}
 
-	private void updateButtons() {
+	void updateButtons() {
 		removeButton.setEnabled(!viewer.getSelection().isEmpty());
 		String text = contextCombo.getText();
 		if (text.equals("")) {

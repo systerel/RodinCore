@@ -45,7 +45,6 @@ import org.eventb.core.basis.SeesContext;
 import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
@@ -147,9 +146,9 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void setFormText(IProgressMonitor monitor) {
+	void setFormText(IProgressMonitor monitor) {
 		formString = "<form>";
-		IRodinFile rodinFile = ((EventBEditor) this.getEditor())
+		IRodinFile rodinFile = ((IEventBEditor) this.getEditor())
 				.getRodinInput();
 		addComponentName(rodinFile);
 		addComponentDependencies(rodinFile, monitor);

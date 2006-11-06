@@ -41,10 +41,6 @@ public class TheoremPage extends EventBFormPage {
 
 	/**
 	 * Constructor.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public TheoremPage() {
 		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
@@ -57,12 +53,13 @@ public class TheoremPage extends EventBFormPage {
 	 *      org.eclipse.swt.widgets.Composite, int,
 	 *      org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
+	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		TheoremMasterSection part = new TheoremMasterSection(managedForm,
 				parent, managedForm.getToolkit(), Section.NO_TITLE,
-				(EventBEditor) this.getEditor());
+				(IEventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

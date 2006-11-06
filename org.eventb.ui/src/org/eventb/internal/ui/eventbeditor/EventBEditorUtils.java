@@ -53,6 +53,7 @@ import org.eventb.internal.ui.eventbeditor.actions.PrefixVarName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixVariantName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixWitName;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -194,7 +195,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAction(final EventBEditor editor,
+	public static void addAction(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -248,7 +249,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addRefinesEvent(final EventBEditor editor,
+	public static void addRefinesEvent(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -300,7 +301,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addWitness(final EventBEditor editor,
+	public static void addWitness(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -355,7 +356,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addGuard(final EventBEditor editor,
+	public static void addGuard(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -409,7 +410,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addLocalVariable(final EventBEditor editor,
+	public static void addLocalVariable(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -463,7 +464,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addVariable(final EventBEditor editor,
+	public static void addVariable(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -508,7 +509,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addInvariant(final EventBEditor editor,
+	public static void addInvariant(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -555,7 +556,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addTheorem(final EventBEditor editor,
+	public static void addTheorem(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -602,7 +603,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addEvent(final EventBEditor editor,
+	public static void addEvent(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -742,7 +743,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAxiom(final EventBEditor editor,
+	public static void addAxiom(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -786,7 +787,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addConstant(final EventBEditor editor,
+	public static void addConstant(final IEventBEditor editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -831,7 +832,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addSet(final EventBEditor editor, final TreeViewer viewer) {
+	public static void addSet(final IEventBEditor editor, final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				final IRodinFile rodinFile = editor.getRodinInput();
@@ -899,7 +900,7 @@ public class EventBEditorUtils {
 	 *            the Rodin file that the variable and its invariant,
 	 *            initialisation will be created in
 	 */
-	public static void intelligentNewVariable(final EventBEditor editor,
+	public static void intelligentNewVariable(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 
@@ -1059,7 +1060,7 @@ public class EventBEditorUtils {
 	 *            the Rodin file that the variable and its invariant,
 	 *            initialisation will be created in
 	 */
-	public static void intelligentNewConstant(final EventBEditor editor,
+	public static void intelligentNewConstant(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 			String axmPrefix = UIUtils.getPrefix(editor,
@@ -1151,7 +1152,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newInvariants(final EventBEditor editor,
+	public static void newInvariants(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 			String invPrefix = UIUtils.getPrefix(editor,
@@ -1205,7 +1206,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newVariant(final EventBEditor editor,
+	public static void newVariant(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 			String variantPrefix = UIUtils.getPrefix(editor,
@@ -1248,7 +1249,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new theorems will be created in
 	 */
-	public static void newTheorems(final EventBEditor editor,
+	public static void newTheorems(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 			String thmPrefix = UIUtils.getPrefix(editor,
@@ -1300,7 +1301,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new axioms will be created in
 	 */
-	public static void newAxioms(final EventBEditor editor,
+	public static void newAxioms(final IEventBEditor editor,
 			final IRodinFile rodinFile) {
 		try {
 			String axmPrefix = UIUtils.getPrefix(editor,

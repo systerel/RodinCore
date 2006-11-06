@@ -28,6 +28,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -51,7 +52,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 
 	private int index;
 
-	private EventBEditor editor;
+	private IEventBEditor editor;
 
 	private String type;
 
@@ -71,7 +72,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 *            The start counter for the elements.
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
-			String message, EventBEditor editor, String type, String prefix, int index) {
+			String message, IEventBEditor editor, String type, String prefix, int index) {
 		super(parentShell, title);
 		this.message = message;
 		this.prefix = prefix;
@@ -90,6 +91,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "&More", false);
 
@@ -105,6 +107,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createContents() {
 
 		Composite body = scrolledForm.getBody();
@@ -157,6 +160,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			names = new HashSet<String>();
@@ -212,7 +216,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 * @return The list of new names (strings)
 	 */
 	public String[] getNewNames() {
-		return (String[]) names.toArray(new String[names.size()]);
+		return names.toArray(new String[names.size()]);
 	}
 
 	/**
@@ -222,7 +226,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 * @return The list of new contents (strings)
 	 */
 	public String[] getNewContents() {
-		return (String[]) contents.toArray(new String[contents.size()]);
+		return contents.toArray(new String[contents.size()]);
 	}
 
 	@Override

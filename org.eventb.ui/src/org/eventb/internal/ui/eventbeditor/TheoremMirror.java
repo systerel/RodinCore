@@ -19,6 +19,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -41,6 +42,7 @@ public class TheoremMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		MessagePage page = new MessagePage();
 		initPage(page);
@@ -54,6 +56,7 @@ public class TheoremMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		// Try to get a theorem mirror page.
 		Object obj = part.getAdapter(ITheoremMirrorPage.class);
@@ -72,10 +75,11 @@ public class TheoremMirror extends EventBMirror {
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		IWorkbenchPage page = getSite().getPage();
 		if (page != null)
-			if (page.getActiveEditor() instanceof EventBEditor)
+			if (page.getActiveEditor() instanceof IEventBEditor)
 				return page.getActiveEditor();
 
 		return null;

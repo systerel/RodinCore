@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -37,6 +36,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -62,8 +62,8 @@ public class RefinesSection extends SectionPart implements
 
 	private static final String SECTION_DESCRIPTION = "Select the abstraction of this machine";
 
-	// The Form editor contains this section.
-	private FormEditor editor;
+	// The Event B Editor contains this section.
+	IEventBEditor editor;
 
 	private final static String NULL_VALUE = "--- None ---";
 
@@ -75,10 +75,10 @@ public class RefinesSection extends SectionPart implements
 	// private Button openOrCreateButton;
 
 	// The combo box
-	private Combo machineCombo;
+	Combo machineCombo;
 
 	// The refined internal element.
-	private IRefinesMachine refined;
+	IRefinesMachine refined;
 
 	// Flag to indicate if the combo box need to be updated.
 	private boolean refreshCombo;
@@ -94,7 +94,7 @@ public class RefinesSection extends SectionPart implements
 	 * @param parent
 	 *            The composite parent
 	 */
-	public RefinesSection(FormEditor editor, FormToolkit toolkit,
+	public RefinesSection(IEventBEditor editor, FormToolkit toolkit,
 			Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
@@ -297,7 +297,7 @@ public class RefinesSection extends SectionPart implements
 	 * @param machine
 	 *            name of the machine
 	 */
-	private void setRefinedMachine(final String machine) {
+	void setRefinedMachine(final String machine) {
 		if (machine.equals(NULL_VALUE)) {
 			try {
 				if (refined != null) {
@@ -310,7 +310,7 @@ public class RefinesSection extends SectionPart implements
 		} else {
 			if (refined == null) { // Create new element
 				try {
-					final IRodinFile rodinFile = ((EventBEditor) editor)
+					final IRodinFile rodinFile = editor
 							.getRodinInput();
 					RodinCore.run(new IWorkspaceRunnable() { // Batch the
 								// creation
@@ -321,7 +321,7 @@ public class RefinesSection extends SectionPart implements
 													IRefinesMachine.ELEMENT_TYPE,
 													UIUtils
 															.getFreeElementName(
-																	(EventBEditor) editor,
+																	editor,
 																	rodinFile,
 																	IRefinesMachine.ELEMENT_TYPE,
 																	PrefixRefinesMachineName.QUALIFIED_NAME,
@@ -358,7 +358,7 @@ public class RefinesSection extends SectionPart implements
 	// String machine = machineCombo.getText();
 	// setRefinedMachine(machine);
 	//
-	// IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+	// IRodinFile rodinFile = ((IEventBEditor) editor).getRodinInput();
 	//
 	// IRodinProject project = (IRodinProject) rodinFile.getParent();
 	// String machineFileName = EventBPlugin.getMachineFileName(machine);
@@ -408,7 +408,7 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	private void initCombo() {
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+		IRodinFile rodinFile = editor.getRodinInput();
 		machineCombo.add(NULL_VALUE);
 		try {
 			IRodinElement[] machines = ((IParent) rodinFile.getParent())
@@ -431,7 +431,7 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	private void setComboValue() {
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+		IRodinFile rodinFile = editor.getRodinInput();
 		try {
 			IRodinElement[] refinedMachines = rodinFile
 					.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
@@ -464,8 +464,8 @@ public class RefinesSection extends SectionPart implements
 		}
 	}
 
-	private void updateCombo() {
-		IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+	void updateCombo() {
+		IRodinFile rodinFile = editor.getRodinInput();
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Update Combo: "
 					+ rodinFile.getElementName() + " --- " + refreshCombo);
@@ -486,7 +486,7 @@ public class RefinesSection extends SectionPart implements
 	 * @param delta
 	 *            a Rodin Element Delta
 	 */
-	private void processDelta(IRodinElementDelta delta) {
+	void processDelta(IRodinElementDelta delta) {
 		IRodinElement element = delta.getElement();
 
 		if (element instanceof IRodinDB) {
@@ -498,7 +498,7 @@ public class RefinesSection extends SectionPart implements
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) element;
-			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+			IRodinFile rodinFile = editor.getRodinInput();
 
 			if (!rodinFile.getParent().equals(prj)) {
 				return;
@@ -516,7 +516,7 @@ public class RefinesSection extends SectionPart implements
 			if (!(element instanceof IMachineFile)) {
 				return;
 			}
-			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
+			IRodinFile rodinFile = editor.getRodinInput();
 			if (rodinFile.equals(element)) {
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {

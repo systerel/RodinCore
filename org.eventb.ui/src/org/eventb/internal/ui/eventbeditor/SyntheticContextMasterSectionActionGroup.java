@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -56,12 +57,13 @@ public class SyntheticContextMasterSectionActionGroup extends
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public SyntheticContextMasterSectionActionGroup(EventBEditor eventBEditor,
+	public SyntheticContextMasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 		
 		// Add a theorem.
 		addTheorem = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addTheorem(editor, viewer);
 			}
@@ -73,6 +75,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Add a carrier set.
 		addSet = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addSet(editor, viewer);
 			}
@@ -85,6 +88,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Add a constant.
 		addConstant = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addConstant(editor, viewer);
 			}
@@ -97,6 +101,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Add an axiom.
 		addAxiom = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addAxiom(editor, viewer);
 			}
@@ -108,6 +113,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.deleteElements(viewer);
 			}
@@ -119,6 +125,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Handle the up action.
 		handleUp = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleUp(viewer);
 			}
@@ -130,6 +137,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 
 		// Handle the down action.
 		handleDown = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleDown(viewer);
 			}
@@ -146,6 +154,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();

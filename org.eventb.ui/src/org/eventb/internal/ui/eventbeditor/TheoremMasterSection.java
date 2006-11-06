@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -66,7 +67,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 *            an EventB-Editor
 	 */
 	public TheoremMasterSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit, int style, EventBEditor editor) {
+			FormToolkit toolkit, int style, IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 	}
@@ -78,6 +79,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new TheoremEditableTreeViewer(editor, parent, SWT.MULTI
@@ -89,6 +91,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
+	@Override
 	protected void updateButtons() {
 		Tree tree = ((TreeViewer) getViewer()).getTree();
 		TreeItem[] items = tree.getSelection();
@@ -125,21 +128,22 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
-		TheoremMasterSectionActionGroup groupActionSet = (TheoremMasterSectionActionGroup) this
+		TheoremMasterSectionActionGroup actionSet = (TheoremMasterSectionActionGroup) this
 				.getActionGroup();
 		switch (index) {
 		case ADD_INDEX:
-			groupActionSet.addTheorem.run();
+			actionSet.addTheorem.run();
 			break;
 		case DELETE_INDEX:
-			groupActionSet.delete.run();
+			actionSet.delete.run();
 			break;
 		case UP_INDEX:
-			groupActionSet.handleUp.run();
+			actionSet.handleUp.run();
 			break;
 		case DOWN_INDEX:
-			groupActionSet.handleDown.run();
+			actionSet.handleDown.run();
 			break;
 		}
 	}
@@ -167,6 +171,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
@@ -179,6 +184,7 @@ public class TheoremMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new TheoremMasterSectionActionGroup(editor, (TreeViewer) this
 				.getViewer());

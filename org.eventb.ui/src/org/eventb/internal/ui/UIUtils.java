@@ -45,7 +45,6 @@ import org.eventb.core.IPRSequent;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.eventbeditor.NewEnumeratedSetInputDialog;
 import org.eventb.internal.ui.eventbeditor.NewEventInputDialog;
@@ -313,7 +312,7 @@ public class UIUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the event will be created in
 	 */
-	public static void newEvent(final EventBEditor editor,
+	public static void newEvent(final IEventBEditor editor,
 			final IRodinFile rodinFile, IProgressMonitor monitor) {
 		try {
 			String evtName = getFreeElementLabel(editor, rodinFile,
@@ -418,7 +417,7 @@ public class UIUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new carrier sets will be created in
 	 */
-	public static void newCarrierSets(final EventBEditor editor,
+	public static void newCarrierSets(final IEventBEditor editor,
 			final IRodinFile rodinFile, IProgressMonitor monitor) {
 		try {
 			String identifier = getFreeElementIdentifier(editor, rodinFile,
@@ -466,7 +465,7 @@ public class UIUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new carrier sets will be created in
 	 */
-	public static void newEnumeratedSet(final EventBEditor editor,
+	public static void newEnumeratedSet(final IEventBEditor editor,
 			final IRodinFile rodinFile, IProgressMonitor monitor) {
 
 		try {
@@ -584,12 +583,12 @@ public class UIUtils {
 		}
 	}
 
-	public static String getNamePrefix(EventBEditor editor,
+	public static String getNamePrefix(IEventBEditor editor,
 			QualifiedName qualifiedName, String defaultPrefix) {
 		return "internal_" + getPrefix(editor, qualifiedName, defaultPrefix);
 	}
 
-	public static String getPrefix(EventBEditor editor,
+	public static String getPrefix(IEventBEditor editor,
 			QualifiedName qualifiedName, String defaultPrefix) {
 		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
@@ -606,7 +605,7 @@ public class UIUtils {
 		return prefix;
 	}
 
-	public static String getFreeElementName(EventBEditor editor,
+	public static String getFreeElementName(IEventBEditor editor,
 			IInternalParent parent, String type, QualifiedName qualifiedName,
 			String defaultPrefix) throws RodinDBException {
 		String prefix = getNamePrefix(editor, qualifiedName, defaultPrefix);
@@ -634,7 +633,7 @@ public class UIUtils {
 		return i;
 	}
 
-	public static String getFreeElementLabel(EventBEditor editor,
+	public static String getFreeElementLabel(IEventBEditor editor,
 			IInternalParent parent, String type, QualifiedName qualifiedName,
 			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);
@@ -669,7 +668,7 @@ public class UIUtils {
 		return i;
 	}
 
-	public static String getFreeElementIdentifier(EventBEditor editor,
+	public static String getFreeElementIdentifier(IEventBEditor editor,
 			IInternalParent parent, String type, QualifiedName qualifiedName,
 			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, qualifiedName, defaultPrefix);

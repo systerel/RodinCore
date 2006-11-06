@@ -16,6 +16,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -34,7 +35,7 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 	 * @param editor
 	 *            an Event-B Editor
 	 */
-	public TheoremMirrorPage(EventBEditor editor) {
+	public TheoremMirrorPage(IEventBEditor editor) {
 		super(editor);
 	}
 
@@ -43,6 +44,7 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#getFormString()
 	 */
+	@Override
 	protected String getFormString() {
 		String formString = "<form>";
 		try {
@@ -72,8 +74,10 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBMirrorPage#createHyperlinkListener()
 	 */
+	@Override
 	protected HyperlinkAdapter createHyperlinkListener() {
 		return (new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
 					// UIUtils.debug("Event: " + e.toString());

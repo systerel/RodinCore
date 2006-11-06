@@ -67,42 +67,6 @@ public interface IEventBEditor extends IEditorPart {
 			IElementChangedListener listener);
 
 	/**
-	 * Checking if a Rodin element is "original" (created automatically, but is
-	 * not modified).
-	 * <p>
-	 * 
-	 * @param element
-	 *            a Rodin element
-	 * @return <code>true</code> if the element has default created values.
-	 *         <code>false</code> otherwise.
-	 */
-	// private boolean isOriginal(IRodinElement element) {
-	// if (element instanceof IGuard) {
-	// try {
-	// if (((IGuard) element).getContents().equals(
-	// EventBUIPlugin.GRD_DEFAULT)) {
-	// return true;
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// if (element instanceof IAction) {
-	// try {
-	// if (((IAction) element).getContents().equals(
-	// EventBUIPlugin.SUB_DEFAULT)) {
-	// return true;
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	// return false;
-	// }
-	/**
 	 * Set the selection in the editor.
 	 * <p>
 	 * 
@@ -115,4 +79,6 @@ public interface IEventBEditor extends IEditorPart {
 	public abstract void setSelection(IInternalElement element);
 
 	public abstract IRodinFile getRodinInput();
+
+
 }

@@ -7,15 +7,15 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinFile;
 
 public abstract class PrefixElementName implements IEditorActionDelegate {
 
-	EventBEditor editor;
+	IEventBEditor editor;
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		editor = (EventBEditor) targetEditor;
+		editor = (IEventBEditor) targetEditor;
 	}
 
 	public void setPrefix(QualifiedName qualifiedName, String defaultName, String dialogTitle, String message) {

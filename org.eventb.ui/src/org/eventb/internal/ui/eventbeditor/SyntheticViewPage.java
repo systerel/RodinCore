@@ -40,9 +40,6 @@ public class SyntheticViewPage extends EventBFormPage {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public SyntheticViewPage() {
 		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
@@ -55,18 +52,19 @@ public class SyntheticViewPage extends EventBFormPage {
 	 *      org.eclipse.swt.widgets.Composite, int,
 	 *      org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
+	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		EventBPartWithButtons part;
-		if (((EventBEditor) this.getEditor()).getRodinInput() instanceof IMachineFile)
+		if (((IEventBEditor) this.getEditor()).getRodinInput() instanceof IMachineFile)
 			part = new SyntheticMachineViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					(EventBEditor) this.getEditor());
+					(IEventBEditor) this.getEditor());
 		else
 			part = new SyntheticContextViewSection(managedForm, parent,
 					managedForm.getToolkit(), Section.NO_TITLE,
-					(EventBEditor) this.getEditor());
+					(IEventBEditor) this.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;
 		gd.minimumHeight = 150;

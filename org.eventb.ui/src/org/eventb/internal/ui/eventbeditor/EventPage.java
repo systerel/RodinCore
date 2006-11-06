@@ -39,10 +39,6 @@ public class EventPage extends EventBFormPage {
 
 	/**
 	 * Constructor.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            The form editor that holds the page
 	 */
 	public EventPage() {
 		super(PAGE_ID, PAGE_TITLE, PAGE_TAB_TITLE); //$NON-NLS-1$
@@ -55,11 +51,12 @@ public class EventPage extends EventBFormPage {
 	 *      org.eclipse.swt.widgets.Composite, int,
 	 *      org.eventb.internal.ui.eventbeditor.EventBEditor)
 	 */
+	@Override
 	protected EventBPartWithButtons createMasterSection(
 			IManagedForm managedForm, Composite parent, int style,
 			IEventBEditor editor) {
 		EventMasterSection part = new EventMasterSection(managedForm, parent,
-				managedForm.getToolkit(), Section.NO_TITLE, (EventBEditor) this
+				managedForm.getToolkit(), Section.NO_TITLE, (IEventBEditor) this
 						.getEditor());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 200;

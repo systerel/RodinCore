@@ -29,6 +29,7 @@ import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
@@ -68,12 +69,13 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public EventMasterSectionActionGroup(EventBEditor eventBEditor,
+	public EventMasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 
 		// Add an event.
 		addEvent = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addEvent(editor, viewer);
 			}
@@ -85,6 +87,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Add a local variable.
 		addLocalVariable = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addLocalVariable(editor, viewer);
 			}
@@ -96,6 +99,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Add a guard.
 		addGuard = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addGuard(editor, viewer);
 			}
@@ -107,6 +111,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Add an action.
 		addAction = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addAction(editor, viewer);
 			}
@@ -118,6 +123,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Add a refines event.
 		addRefinesEvent = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addRefinesEvent(editor, viewer);
 			}
@@ -129,6 +135,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 		
 		// Add a refines event.
 		addWitness = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addWitness(editor, viewer);
 			}
@@ -140,6 +147,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.deleteElements(viewer);
 			}
@@ -151,6 +159,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Handle the up action.
 		handleUp = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleUp(viewer);
 			}
@@ -162,6 +171,7 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 
 		// Handle the down action.
 		handleDown = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleDown(viewer);
 			}
@@ -178,10 +188,11 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		menu.add(addEvent);
-		IRodinFile file = (IRodinFile) editor.getRodinInput();
+		IRodinFile file = editor.getRodinInput();
 
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {

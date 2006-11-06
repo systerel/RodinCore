@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -33,10 +34,10 @@ import org.eventb.ui.IEventBSharedImages;
 public class InvariantMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	private EventBEditor editor;
+	IEventBEditor editor;
 
 	// The tree viewer in the master section
-	private TreeViewer viewer;
+	TreeViewer viewer;
 
 	// Some actions
 	protected Action addInvariant;
@@ -56,13 +57,14 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public InvariantMasterSectionActionGroup(EventBEditor eventBEditor,
+	public InvariantMasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;
 
 		// Add an invariant.
 		addInvariant = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addInvariant(editor, viewer);
 			}
@@ -75,6 +77,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.deleteElements(viewer);
 			}
@@ -86,6 +89,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 
 		// Handle the up action.
 		handleUp = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleUp(viewer);
 			}
@@ -97,6 +101,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 
 		// Handle the down action.
 		handleDown = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleDown(viewer);
 			}
@@ -113,6 +118,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();

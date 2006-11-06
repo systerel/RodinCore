@@ -9,8 +9,8 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -18,11 +18,11 @@ import org.rodinp.core.RodinCore;
 
 public abstract class AutoElementNaming implements IEditorActionDelegate {
 
-	EventBEditor editor;
+	IEventBEditor editor;
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof EventBEditor)
-			editor = (EventBEditor) targetEditor;
+		if (targetEditor instanceof IEventBEditor)
+			editor = (IEventBEditor) targetEditor;
 	}
 
 	public void rename(final String type, final String prefix) {

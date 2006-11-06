@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 public class MasterSectionActionGroup extends ActionGroup {
 	private Clipboard clipboard;
@@ -18,12 +19,12 @@ public class MasterSectionActionGroup extends ActionGroup {
 	protected PasteAction pasteAction;
 
 	// The Event-B Editor.
-	protected EventBEditor editor;
+	protected IEventBEditor editor;
 
 	// The tree viewer in the master section
 	protected TreeViewer viewer;
 
-	public MasterSectionActionGroup(EventBEditor eventBEditor,
+	public MasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;
@@ -51,6 +52,7 @@ public class MasterSectionActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -68,6 +70,7 @@ public class MasterSectionActionGroup extends ActionGroup {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (clipboard != null) {
 			clipboard.dispose();

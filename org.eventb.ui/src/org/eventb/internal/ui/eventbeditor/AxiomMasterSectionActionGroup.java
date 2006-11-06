@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -33,7 +34,7 @@ import org.eventb.ui.IEventBSharedImages;
 public class AxiomMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	private EventBEditor editor;
+	private IEventBEditor editor;
 
 	// The tree viewer in the master section
 	private TreeViewer viewer;
@@ -56,7 +57,7 @@ public class AxiomMasterSectionActionGroup extends ActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public AxiomMasterSectionActionGroup(EventBEditor eventBEditor,
+	public AxiomMasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;

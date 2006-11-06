@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -48,6 +47,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixExtendsContextName;
 import org.eventb.ui.ElementLabelProvider;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -72,7 +72,7 @@ public class ExtendsSection extends SectionPart implements
 	private static final String SECTION_DESCRIPTION = "Select abstract contexts of this context";
 
 	// The Form editor contains this section.
-	private FormEditor editor;
+	private IEventBEditor editor;
 
 	// Buttons.
 	private Button removeButton;
@@ -82,14 +82,14 @@ public class ExtendsSection extends SectionPart implements
 	private Button addButton;
 
 	// The table viewer
-	private TableViewer viewer;
+	TableViewer viewer;
 
-	private Combo contextCombo;
+	Combo contextCombo;
 
 	// The seen internal element.
 	// private IInternalElement seen;
 
-	private IRodinFile rodinFile;
+	IRodinFile rodinFile;
 
 	/**
 	 * Constructor.
@@ -97,23 +97,21 @@ public class ExtendsSection extends SectionPart implements
 	 * 
 	 * @param editor
 	 *            The Form editor contains this section
-	 * @param page
-	 *            The Dependencies page contains this section
 	 * @param parent
 	 *            The composite parent
 	 */
-	public ExtendsSection(FormEditor editor, FormToolkit toolkit,
+	public ExtendsSection(IEventBEditor editor, FormToolkit toolkit,
 			Composite parent) {
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
-		rodinFile = ((EventBEditor) editor).getRodinInput();
+		rodinFile = editor.getRodinInput();
 
 		createClient(getSection(), toolkit);
 		RodinCore.addElementChangedListener(this);
 	}
 
-	private class ExtendedContextContentProvider implements
+	class ExtendedContextContentProvider implements
 			IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -127,11 +125,11 @@ public class ExtendsSection extends SectionPart implements
 		}
 
 		public void dispose() {
-
+			// TODO Empty default
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
+		public void inputChanged(Viewer viewer1, Object oldInput, Object newInput) {
+			// TODO Empty default
 		}
 
 	}
@@ -160,6 +158,7 @@ public class ExtendsSection extends SectionPart implements
 		removeButton.setLayoutData(gd);
 
 		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection sel = viewer.getSelection();
 				if (sel instanceof IStructuredSelection) {
@@ -228,6 +227,7 @@ public class ExtendsSection extends SectionPart implements
 		addButton = new Button(comp, SWT.PUSH);
 		addButton.setText("Add");
 		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -247,12 +247,11 @@ public class ExtendsSection extends SectionPart implements
 	 * @param context
 	 *            name of the context
 	 */
-	private void addExtendedContext(String context) {
+	void addExtendedContext(String context) {
 		try {
-			IRodinFile rodinFile = ((EventBEditor) editor).getRodinInput();
 			IExtendsContext extended = (IExtendsContext) rodinFile
 					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName((EventBEditor) editor,
+							UIUtils.getFreeElementName(editor,
 									rodinFile, IExtendsContext.ELEMENT_TYPE,
 									PrefixExtendsContextName.QUALIFIED_NAME,
 									PrefixExtendsContextName.DEFAULT_PREFIX),
@@ -272,7 +271,7 @@ public class ExtendsSection extends SectionPart implements
 		try {
 			IExtendsContext extended = (IExtendsContext) rodinFile
 					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName((EventBEditor) editor,
+							UIUtils.getFreeElementName(editor,
 									rodinFile, IExtendsContext.ELEMENT_TYPE,
 									PrefixExtendsContextName.QUALIFIED_NAME,
 									PrefixExtendsContextName.DEFAULT_PREFIX),
@@ -328,7 +327,7 @@ public class ExtendsSection extends SectionPart implements
 		});
 	}
 
-	private void initContextCombo() {
+	void initContextCombo() {
 		contextCombo.removeAll();
 		try {
 			IRodinElement[] contexts = ((IParent) rodinFile.getParent())
@@ -361,7 +360,7 @@ public class ExtendsSection extends SectionPart implements
 		}
 	}
 
-	private void updateButtons() {
+	void updateButtons() {
 		removeButton.setEnabled(!viewer.getSelection().isEmpty());
 		String text = contextCombo.getText();
 		if (text.equals("")) {

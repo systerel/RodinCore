@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 
@@ -42,7 +43,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	private Button[] buttons;
 
 	// The associated Event-B Editor
-	protected EventBEditor editor;
+	protected IEventBEditor editor;
 
 	// A viewer.
 	private Viewer viewer;
@@ -116,7 +117,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	 */
 	public EventBPartWithButtons(final IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			EventBEditor editor, String[] buttonLabels, String title,
+			IEventBEditor editor, String[] buttonLabels, String title,
 			String description) {
 		super(parent, toolkit, style);
 		this.editor = editor;

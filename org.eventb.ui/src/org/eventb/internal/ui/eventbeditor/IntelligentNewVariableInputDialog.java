@@ -27,6 +27,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -62,7 +63,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private IEventBInputText initSubstitutionText;
 
-	private EventBEditor editor;
+	private IEventBEditor editor;
 
 	/**
 	 * Constructor.
@@ -74,10 +75,10 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 *            the title of the dialog
 	 * @param defaultName
 	 *            the default variable name
-	 * @param defaultInvariantName
-	 *            the default invariant name
+	 * @param defaultInitName
+	 *            the default init name
 	 */
-	public IntelligentNewVariableInputDialog(EventBEditor editor,
+	public IntelligentNewVariableInputDialog(IEventBEditor editor,
 			Shell parentShell, String title, String defaultName,
 			String invPrefix, int invIndex, String defaultInitName) {
 		super(parentShell, title);
@@ -94,6 +95,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.YES_ID, "&More Inv.", true);
 
@@ -109,6 +111,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 
@@ -182,6 +185,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			name = null;
@@ -234,9 +238,9 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 				IEventBInputText invariantNameText = (IEventBInputText) pair
 						.getFirst();
 				if (dirtyTexts.contains(invariantPredicateText.getTextWidget())) {
-					String name = invariantNameText.getTextWidget().getText();
+					String invName = invariantNameText.getTextWidget().getText();
 					String pred = invariantPredicateText.getTextWidget().getText();
-					invariants.add(new Pair(name, pred));
+					invariants.add(new Pair(invName, pred));
 				}
 			}
 			if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {

@@ -31,6 +31,7 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -77,12 +78,13 @@ public class SyntheticMachineMasterSectionActionGroup extends
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public SyntheticMachineMasterSectionActionGroup(EventBEditor eventBEditor,
+	public SyntheticMachineMasterSectionActionGroup(IEventBEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 
 		// Add a variable.
 		addVariable = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addVariable(editor, viewer);
 			}
@@ -95,6 +97,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add an invariant.
 		addInvariant = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addInvariant(editor, viewer);
 			}
@@ -107,6 +110,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add a theorem.
 		addTheorem = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addTheorem(editor, viewer);
 			}
@@ -118,6 +122,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add an event.
 		addEvent = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addEvent(editor, viewer);
 			}
@@ -129,6 +134,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add a local variable.
 		addLocalVariable = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addLocalVariable(editor, viewer);
 			}
@@ -141,6 +147,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add a guard.
 		addGuard = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addGuard(editor, viewer);
 			}
@@ -152,6 +159,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Add an action.
 		addAction = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.addAction(editor, viewer);
 			}
@@ -163,6 +171,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.deleteElements(viewer);
 			}
@@ -174,6 +183,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Handle the up action.
 		handleUp = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleUp(viewer);
 			}
@@ -185,6 +195,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Handle the down action.
 		handleDown = new Action() {
+			@Override
 			public void run() {
 				EventBEditorUtils.handleDown(viewer);
 			}
@@ -196,6 +207,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 		// Handle ShowAbstraction action.
 		showAbstraction = new Action() {
+			@Override
 			public void run() {
 				IStructuredSelection ssel = (IStructuredSelection) viewer
 						.getSelection();
@@ -285,6 +297,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();

@@ -16,13 +16,14 @@ import org.eclipse.ui.PartInitException;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
  *         <p>
  *         Event-B specific form editor for machines.
  */
-public class EventBContextEditor extends EventBEditor {
+public class EventBContextEditor extends EventBEditor implements IEventBEditor {
 
 	/**
 	 * The plug-in identifier of the Event-B Context Editor (value
@@ -52,11 +53,12 @@ public class EventBContextEditor extends EventBEditor {
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
+	@Override
 	protected void addPages() {
-		EventBEditorPage[] pages = EditorPagesRegistry.getDefault().getPages(
+		EventBEditorPage[] editorPages = EditorPagesRegistry.getDefault().getPages(
 				EDITOR_ID);
 
-		for (EventBEditorPage page : pages) {
+		for (EventBEditorPage page : editorPages) {
 			page.initialize(this);
 			try {
 				addPage(page);
@@ -73,6 +75,7 @@ public class EventBContextEditor extends EventBEditor {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (ITheoremMirrorPage.class.equals(required)) {
 			if (theoremMirrorPage == null) {
@@ -106,6 +109,7 @@ public class EventBContextEditor extends EventBEditor {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (theoremMirrorPage != null)
 			theoremMirrorPage.dispose();

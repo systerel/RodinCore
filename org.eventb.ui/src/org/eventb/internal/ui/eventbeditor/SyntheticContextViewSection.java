@@ -33,6 +33,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
 
@@ -73,7 +74,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 */
 	public SyntheticContextViewSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit, int style,
-			EventBEditor editor) {
+			IEventBEditor editor) {
 		super(managedForm, parent, toolkit, style, editor, buttonLabels,
 				SECTION_TITLE, SECTION_DESCRIPTION);
 
@@ -97,6 +98,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		final Action filterSetAtion = new Action("set", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
 						.getViewer());
@@ -107,6 +109,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		filterSetAtion.setToolTipText("Filter set elements");
 
 		final Action filterCstAction = new Action("cst", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
 						.getViewer());
@@ -117,6 +120,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		filterCstAction.setToolTipText("Filter constant elements");
 
 		final Action filterAxmAtion = new Action("axm", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
 						.getViewer());
@@ -127,6 +131,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		filterAxmAtion.setToolTipText("Filter axiom elements");
 		
 		final Action filterThmAtion = new Action("thm", Action.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
 						.getViewer());
@@ -144,6 +149,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IConstant) {
@@ -173,7 +179,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		form.getToolBarManager().add(filterThmAtion);
 		form.updateToolBar();
 
-		final SyntheticContextMasterSectionActionGroup groupActionSet = (SyntheticContextMasterSectionActionGroup) this
+		final SyntheticContextMasterSectionActionGroup actionSet = (SyntheticContextMasterSectionActionGroup) this
 				.getActionGroup();
 
 		upAction = new Action("Up", Action.AS_PUSH_BUTTON) {
@@ -185,7 +191,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
-				groupActionSet.handleUp.run();
+				actionSet.handleUp.run();
 			}
 		};
 		upAction.setImageDescriptor(EventBImage
@@ -202,7 +208,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
-				groupActionSet.handleDown.run();
+				actionSet.handleDown.run();
 			}
 		};
 		downAction.setImageDescriptor(EventBImage
@@ -247,6 +253,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#updateButtons()
 	 */
+	@Override
 	protected void updateButtons() {
 		// Tree tree = ((TreeViewer) getViewer()).getTree();
 		// TreeItem[] items = tree.getSelection();
@@ -286,6 +293,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBPartWithButtons#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
 		// switch (index) {
 		// case ADD_SET_INDEX:
@@ -353,6 +361,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
 		return new SyntheticEditableTreeViewer(editor, parent, SWT.MULTI
@@ -364,6 +373,7 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBTreePartWithButtons#createActionGroup()
 	 */
+	@Override
 	protected ActionGroup createActionGroup() {
 		return new SyntheticContextMasterSectionActionGroup(editor,
 				(TreeViewer) this.getViewer());
