@@ -155,10 +155,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return attributeTypeDescription.getBoolValue(rawValue);
 	}
 
+	@Deprecated
 	public String getContents() throws RodinDBException {
 		return getContents(null);
 	}
 
+	@Deprecated
 	public String getContents(IProgressMonitor monitor) throws RodinDBException {
 		return getFileInfo(monitor).getDescendantContents(this);
 	}
@@ -381,10 +383,12 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		setAttributeRawValue(attrName, newRawValue, monitor);
 	}
 
+	@Deprecated
 	public void setContents(String contents) throws RodinDBException {
 		setContents(contents, null);
 	}
 
+	@Deprecated
 	public void setContents(String contents, IProgressMonitor monitor) throws RodinDBException {
 		new ChangeElementContentsOperation(this, contents).runOperation(monitor);
 	}
