@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -787,23 +786,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return getWorkspaceRoot().getProject(project);
 	}
 
-	/**
-	 * Returns the OS path to the directory that contains this plugin.
-	 */
-	protected String getPluginDirectoryPath() {
-		try {
-			URL platformURL = Platform.getBundle("org.rodinp.core.tests").getEntry("/");
-			return new File(Platform.asLocalURL(platformURL).getFile()).getAbsolutePath();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public String getSourceWorkspacePath() {
-		return getPluginDirectoryPath() +  java.io.File.separator + "workspace";
-	}
-	
 //	public ICompilationUnit getWorkingCopy(String path, boolean computeProblems) throws RodinDBException {
 //		return getWorkingCopy(path, "", computeProblems);
 //	}	
