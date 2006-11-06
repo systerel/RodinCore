@@ -28,11 +28,13 @@ public interface IAttributedElement {
 	 * this element. If this element doesn't carry any attribute, an empty array
 	 * is returned.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * 
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
@@ -45,7 +47,8 @@ public interface IAttributedElement {
 	 * Returns the value of the attribute with the given name and carried by
 	 * this element.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>boolean</code>
@@ -55,7 +58,8 @@ public interface IAttributedElement {
 	 * @param name
 	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -70,7 +74,8 @@ public interface IAttributedElement {
 	 * Returns the value of the attribute with the given name and carried by
 	 * this element.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>handle</code>
@@ -80,7 +85,8 @@ public interface IAttributedElement {
 	 * @param name
 	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -95,7 +101,8 @@ public interface IAttributedElement {
 	 * Returns the value of the attribute with the given name and carried by
 	 * this element.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>integer</code>
@@ -105,7 +112,8 @@ public interface IAttributedElement {
 	 * @param name
 	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -120,7 +128,8 @@ public interface IAttributedElement {
 	 * Returns the value of the attribute with the given name and carried by
 	 * this element.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>long</code>
@@ -130,7 +139,8 @@ public interface IAttributedElement {
 	 * @param name
 	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -145,7 +155,8 @@ public interface IAttributedElement {
 	 * Returns the value of the attribute with the given name and carried by
 	 * this element.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>string</code>
@@ -155,7 +166,8 @@ public interface IAttributedElement {
 	 * @param name
 	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element or the specified attribute does not exist
 	 *                or if an exception occurs while accessing its
@@ -169,13 +181,15 @@ public interface IAttributedElement {
 	/**
 	 * Tells whether this element carries an attribute with the given name.
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * 
 	 * @param name
-	 *            name of the attribute to test for existence
+	 *            name of the attribute
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
@@ -192,13 +206,15 @@ public interface IAttributedElement {
 	 * No exception is thrown.
 	 * </p>
 	 * <p>
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * 
 	 * @param name
 	 *            name of the attribute to test for existence
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource
@@ -210,7 +226,8 @@ public interface IAttributedElement {
 	 * Sets the value of the attribute with the given name to the given value.
 	 * <p>
 	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>boolean</code>
@@ -222,7 +239,8 @@ public interface IAttributedElement {
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource or if the given
@@ -235,7 +253,8 @@ public interface IAttributedElement {
 	 * Sets the value of the attribute with the given name to the given value.
 	 * <p>
 	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>handle</code>
@@ -247,7 +266,8 @@ public interface IAttributedElement {
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource or if the given
@@ -260,7 +280,8 @@ public interface IAttributedElement {
 	 * Sets the value of the attribute with the given name to the given value.
 	 * <p>
 	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>integer</code>
@@ -272,7 +293,8 @@ public interface IAttributedElement {
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource or if the given
@@ -285,7 +307,8 @@ public interface IAttributedElement {
 	 * Sets the value of the attribute with the given name to the given value.
 	 * <p>
 	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>long</code>
@@ -297,7 +320,8 @@ public interface IAttributedElement {
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource or if the given
@@ -310,7 +334,8 @@ public interface IAttributedElement {
 	 * Sets the value of the attribute with the given name to the given value.
 	 * <p>
 	 * If the specified attribute didn't exist, it is created automatically. 
-	 * The file containing this element is opened if it was not already.
+	 * The file containing this element is opened using the given progress
+	 * monitor, if it was not already open.
 	 * </p>
 	 * <p>
 	 * The attribute name must have been declared with the <code>string</code>
@@ -322,7 +347,8 @@ public interface IAttributedElement {
 	 * @param newValue
 	 *            value to set
 	 * @param monitor
-	 *            progress monitor to use for opening the file
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
 	 *                while accessing its corresponding resource or if the given
