@@ -103,7 +103,10 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                accessing its underlying resource
 	 *                </ul>
 	 * @return the contents of this element.
+	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
+	 *             regular attributes (see {@link IAttributedElement}.
 	 */
+	@Deprecated
 	String getContents() throws RodinDBException;
 
 	/**
@@ -121,7 +124,10 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                accessing its underlying resource
 	 *                </ul>
 	 * @return the contents of this element.
+	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
+	 *             regular attributes (see {@link IAttributedElement}.
 	 */
+	@Deprecated
 	String getContents(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
@@ -138,7 +144,10 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                <li> A <code>CoreException</code> occurred while
 	 *                accessing its underlying resource
 	 *                </ul>
+	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
+	 *             regular attributes (see {@link IAttributedElement}.
 	 */
+	@Deprecated
 	void setContents(String contents) throws RodinDBException;
 
 	/**
@@ -157,7 +166,10 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *                <li> A <code>CoreException</code> occurred while
 	 *                accessing its underlying resource
 	 *                </ul>
+	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
+	 *             regular attributes (see {@link IAttributedElement}.
 	 */
+	@Deprecated
 	void setContents(String contents, IProgressMonitor monitor)
 			throws RodinDBException;
 
