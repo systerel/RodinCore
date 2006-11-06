@@ -25,7 +25,7 @@ public class SCTool {
 	public static boolean SHOW_EXTRACT = false;
 	public static boolean SHOW_REMOVE = false;
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 	public static boolean RUN_SC = false;
 
