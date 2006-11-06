@@ -85,7 +85,7 @@ public class ProverUIUtils {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					String namespace = element.getNamespace();
+					String namespace = element.getContributor().getName();
 					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
@@ -165,7 +165,7 @@ public class ProverUIUtils {
 				String name = element.getName();
 
 				if (name.equals("tactic")) {
-					String namespace = element.getNamespace();
+					String namespace = element.getContributor().getName();
 					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");

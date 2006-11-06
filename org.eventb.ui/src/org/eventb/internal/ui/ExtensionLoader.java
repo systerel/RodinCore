@@ -78,8 +78,7 @@ public class ExtensionLoader {
 				String name = element.getName();
 
 				if (name.equals("experttactic")) {
-					// TODO Is this the same as Plugin ID?
-					String namespace = element.getNamespace();
+					String namespace = element.getContributor().getName();
 					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
@@ -115,8 +114,7 @@ public class ExtensionLoader {
 						e.printStackTrace();
 					}
 				} else if (name.equals("simpletactic")) {
-					// TODO Is this the same as Plugin ID?
-					String namespace = element.getNamespace();
+					String namespace = element.getContributor().getName();
 					Bundle bundle = Platform.getBundle(namespace);
 					try {
 						String ID = element.getAttribute("id");
