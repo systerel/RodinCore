@@ -112,30 +112,34 @@ public class RodinDBManager implements ISaveParticipant {
 	
 	/**
 	 * Returns the Rodin element corresponding to the given resource, or
-	 * <code>null</code> if unable to associate the given resource
-	 * with a Rodin element.
+	 * <code>null</code> if unable to associate the given resource with a
+	 * Rodin element.
 	 * <p>
-	 * The resource must be one of:<ul>
-	 *	<li>a project - the element returned is the corresponding <code>IRodinProject</code></li>
-	 *	<li>a Rodin file - the element returned is the corresponding <code>RodinFile</code></li>
-	 *  <li>the workspace root resource - the element returned is the <code>IRodinDB</code></li>
-	 *	</ul>
+	 * The resource must be one of:
+	 * <ul>
+	 * <li>a project - the element returned is the corresponding
+	 * <code>IRodinProject</code></li>
+	 * <li>a Rodin file - the element returned is the corresponding
+	 * <code>IRodinFile</code></li>
+	 * <li>the workspace root resource - the element returned is the
+	 * <code>IRodinDB</code></li>
+	 * </ul>
 	 * <p>
-	 * Creating a Rodin element has the side effect of creating and opening all of the
-	 * element's parents if they are not yet open.
+	 * Calling this method has the side effect of creating and opening all of
+	 * the element's parents if they are not yet open.
 	 */
-	public static IRodinElement create(IResource resource, IRodinProject project) {
+	public static IRodinElement valueOf(IResource resource, IRodinProject project) {
 		if (resource == null) {
 			return null;
 		}
 		int type = resource.getType();
 		switch (type) {
 			case IResource.PROJECT :
-				return RodinCore.create((IProject) resource);
+				return RodinCore.valueOf((IProject) resource);
 			case IResource.FILE :
-				return create((IFile) resource, project);
+				return valueOf((IFile) resource, project);
 			case IResource.ROOT :
-				return RodinCore.create((IWorkspaceRoot) resource);
+				return RodinCore.valueOf((IWorkspaceRoot) resource);
 			default :
 				return null;
 		}
@@ -150,28 +154,18 @@ public class RodinDBManager implements ISaveParticipant {
 	 * Rodin content type.
 	 * </p>
 	 * <p>
-	 * Creating a Rodin element has the side effect of creating and opening all
+	 * Calling this method has the side effect of creating and opening all
 	 * of the element's parents if they are not yet open.
 	 * </p>
 	 */
-	public static RodinElement create(IFile file, IRodinProject project) {
-		return createRodinFileFrom(file, project);
-	}
-
-	/**
-	 * Creates and returns a Rodin file element for the given file, its project
-	 * being the given project. Returns <code>null</code> if unable to
-	 * recognize the file type or the file is not a direct child of its project.
-	 */
-	public static RodinFile createRodinFileFrom(IFile file, IRodinProject project) {
-
+	public static RodinElement valueOf(IFile file, IRodinProject project) {
 		if (file == null) return null;
 
 		if (file.getParent() != file.getProject())
 			return null;
 
 		if (project == null) {
-			project = RodinCore.create(file.getProject());
+			project = RodinCore.valueOf(file.getProject());
 		}
 		
 		return (RodinFile) project.getRodinFile(file.getName());
@@ -422,7 +416,7 @@ public class RodinDBManager implements ISaveParticipant {
 		RodinDBManager.PerProjectInfo info = getPerProjectInfo(project, false /* don't create info */);
 		if (info == null) {
 			if (!RodinProject.hasRodinNature(project)) {
-				throw ((RodinProject)RodinCore.create(project)).newNotPresentException();
+				throw ((RodinProject)RodinCore.valueOf(project)).newNotPresentException();
 			}
 			info = getPerProjectInfo(project, true /* create info */);
 		}

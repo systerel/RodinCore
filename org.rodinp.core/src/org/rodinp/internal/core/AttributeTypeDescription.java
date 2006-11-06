@@ -59,7 +59,7 @@ public abstract class AttributeTypeDescription {
 
 		@Override
 		public IRodinElement getHandleValue(String rawValue) throws RodinDBException {
-			IRodinElement result = RodinCore.create(rawValue);
+			IRodinElement result = RodinCore.valueOf(rawValue);
 			if (result == null) {
 				Util.log(null, "Can't parse handle value for attribute " + id);
 				throw newInvalidValueException();

@@ -144,7 +144,7 @@ public class DeltaProcessor {
 				//     - if the project is added or changed this is a noop for projectsBeingDeleted
 				//     - if the project is closed, it has already lost its Rodin nature
 				IProject project = (IProject)resource;
-				RodinProject rodinProject = (RodinProject)RodinCore.create(project);
+				RodinProject rodinProject = (RodinProject)RodinCore.valueOf(project);
 				switch (delta.getKind()) {
 					case IResourceDelta.ADDED :
 						if (RodinProject.hasRodinNature(project)) {
@@ -176,7 +176,7 @@ public class DeltaProcessor {
 										this.addToParentInfo(rodinProject);
 									} else {
 										// remove classpath cache so that initializeRoots() will not consider the project has a classpath
-										this.manager.removePerProjectInfo((RodinProject)RodinCore.create(project));
+										this.manager.removePerProjectInfo((RodinProject)RodinCore.valueOf(project));
 										// close project
 										try {
 											rodinProject.close();
@@ -202,7 +202,7 @@ public class DeltaProcessor {
 
 					case IResourceDelta.REMOVED : 
 						// remove classpath cache so that initializeRoots() will not consider the project has a classpath
-						this.manager.removePerProjectInfo((RodinProject)RodinCore.create(resource));
+						this.manager.removePerProjectInfo((RodinProject)RodinCore.valueOf(resource));
 						break;
 				}
 				break;
@@ -264,7 +264,7 @@ public class DeltaProcessor {
 				}
 				IProject proj = (IProject)resource;
 				if (RodinProject.hasRodinNature(proj)) {
-					element = RodinCore.create(proj);
+					element = RodinCore.valueOf(proj);
 				} else {
 					// Rodin project may have been been closed or removed (look for
 					// element amongst old Rodin project s list).
@@ -272,7 +272,7 @@ public class DeltaProcessor {
 				}
 			}
 		} else {
-			element = RodinCore.create(resource);
+			element = RodinCore.valueOf(resource);
 		}
 		if (element == null) return null;
 		this.currentElement = (Openable) element;
@@ -299,7 +299,7 @@ public class DeltaProcessor {
 			// deleted without interferences from the index manager
 			// this.manager.indexManager.discardJobs(project.getName());
 
-			RodinProject rodinProject = (RodinProject)RodinCore.create(project);
+			RodinProject rodinProject = (RodinProject)RodinCore.valueOf(project);
 			rodinProject.close();
 			
 			// Also update cache of old projects
@@ -869,7 +869,7 @@ public class DeltaProcessor {
 	private void traverseProjectDelta(IResourceDelta delta, String elementType) {
 		
 		IProject project = (IProject) delta.getResource();
-		RodinProject rodinProject = (RodinProject) RodinCore.create(project);
+		RodinProject rodinProject = (RodinProject) RodinCore.valueOf(project);
 		
 		// process current delta
 		boolean processChildren = this.updateCurrentDeltaAndIndex(delta, elementType);

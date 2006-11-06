@@ -251,7 +251,7 @@ public final class RodinMarkerUtil {
 		if (handleId == null) {
 			return null;
 		}
-		final IRodinElement elem = RodinCore.create(handleId);
+		final IRodinElement elem = RodinCore.valueOf(handleId);
 		if (!(elem instanceof IInternalElement)) {
 			return null;
 		}
@@ -261,7 +261,7 @@ public final class RodinMarkerUtil {
 			return ie;
 		}
 		// Transpose element to correct file (marker has moved)
-		final IRodinElement dest = RodinCore.create(resource);
+		final IRodinElement dest = RodinCore.valueOf(resource);
 		if (dest instanceof IRodinFile) {
 			return Util.getSimilarElement(ie, (IRodinFile) dest);
 		}

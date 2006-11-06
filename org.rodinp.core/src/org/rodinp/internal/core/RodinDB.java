@@ -290,6 +290,13 @@ public class RodinDB extends Openable implements IRodinDB {
 	}
 
 	/**
+	 * Returns the workspace root associated with this object.
+	 */
+	public IWorkspaceRoot getWorkspaceRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
+	/**
 	 * Configures and runs the <code>MultiOperation</code>.
 	 */
 	public void runOperation(MultiOperation op, IRodinElement[] elements,

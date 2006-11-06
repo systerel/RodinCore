@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <code>RodinCore.create(project)</code>.
  * </p>
  * 
- * @see RodinCore#create(org.eclipse.core.resources.IProject)
+ * @see RodinCore#valueOf(IProject)
  */
 public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 

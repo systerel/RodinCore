@@ -25,7 +25,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IRodinElement.class.equals(adapterType)) {
-			return RodinCore.create((IResource) adaptableObject);
+			return RodinCore.valueOf((IResource) adaptableObject);
 		}
 		return null;
 	}

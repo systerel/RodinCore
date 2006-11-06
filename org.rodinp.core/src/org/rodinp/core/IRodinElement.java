@@ -167,7 +167,7 @@ public interface IRodinElement extends IAdaptable {
 	 * </p>
 	 * 
 	 * @return the string handle identifier
-	 * @see RodinCore#create(java.lang.String)
+	 * @see RodinCore#valueOf(java.lang.String)
 	 */
 	String getHandleIdentifier();
 

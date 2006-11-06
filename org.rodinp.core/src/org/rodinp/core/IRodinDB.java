@@ -13,6 +13,7 @@ package org.rodinp.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <code>RodinCore.create(workspace.getRoot())</code>.
  * </p>
  * 
- * @see RodinCore#create(org.eclipse.core.resources.IWorkspaceRoot)
+ * @see RodinCore#valueOf(IWorkspaceRoot)
  */
 public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 
@@ -190,6 +191,13 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 * @return the workspace associated with this Rodin database
 	 */
 	IWorkspace getWorkspace();
+
+	/**
+	 * Returns the workspace root associated with this Rodin database.
+	 * 
+	 * @return the workspace root associated with this Rodin database
+	 */
+	IWorkspaceRoot getWorkspaceRoot();
 
 	/**
 	 * Moves the given elements to the specified container(s). If one container
