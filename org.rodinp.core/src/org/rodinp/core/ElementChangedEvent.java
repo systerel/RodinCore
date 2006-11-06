@@ -47,27 +47,10 @@ public class ElementChangedEvent extends EventObject {
 	 */
 	public static final int POST_CHANGE = 1;
 
-	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
-	 * report of creations, deletions, and modifications
-	 * to one or more Rodin element(s) expressed as a hierarchical
-	 * Rodin element delta as returned by <code>getDelta</code>.
-	 *
-	 * Note: this notification occurs as a result of a working copy reconcile
-	 * operation.
-	 *
-	 * @see IRodinElementDelta
-	 * @see org.eclipse.core.resources.IResourceChangeEvent
-	 * @see #getDelta()
-	 */
-	public static final int 	POST_RECONCILE = 4;	
-	
 	/*
 	 * Event type indicating the nature of this event. 
 	 * It can be a combination either:
 	 *  - POST_CHANGE
-	 *  - PRE_AUTO_BUILD
-	 *  - POST_RECONCILE
 	 */
 	private int type; 
 	
@@ -99,7 +82,6 @@ public class ElementChangedEvent extends EventObject {
 	 * 
 	 * @return one of the event type constants
 	 * @see #POST_CHANGE
-	 * @see #POST_RECONCILE
 	 */
 	public int getType() {
 		return this.type;

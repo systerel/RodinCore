@@ -112,7 +112,7 @@ public class RodinCore extends Plugin {
 	 * @see ElementChangedEvent
 	 */
 	public static void addElementChangedListener(IElementChangedListener listener) {
-		addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE | ElementChangedEvent.POST_RECONCILE);
+		addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE);
 	}
 
 	/**
