@@ -21,6 +21,7 @@ public class RodinIntroPart extends IntroPart {
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IntroPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		// TODO Auto-generated method stub
 //		container = new Composite(parent, SWT.no);
@@ -68,6 +69,7 @@ public class RodinIntroPart extends IntroPart {
 	 * 
 	 * @see org.eclipse.ui.part.IntroPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
