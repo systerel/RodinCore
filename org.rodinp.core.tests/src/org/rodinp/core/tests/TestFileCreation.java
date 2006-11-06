@@ -67,7 +67,7 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		// Test a memento of the file
 		String memento = rodinFile.getHandleIdentifier();
 		assertEquals("/foo/toto.test", memento);
-		IRodinElement element = RodinCore.create(memento);
+		IRodinElement element = RodinCore.valueOf(memento);
 		assertEquals(rodinFile, element);
 		
 		// Then delete it
@@ -152,7 +152,7 @@ public class TestFileCreation extends AbstractRodinDBTests {
 		// Test a memento of the file
 		String memento = rodinFile.getHandleIdentifier();
 		assertEquals("/foo/toto.test", memento);
-		IRodinElement element = RodinCore.create(memento);
+		IRodinElement element = RodinCore.valueOf(memento);
 		assertEquals(rodinFile, element);
 		
 		// Then delete it

@@ -21,7 +21,6 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
 /**
  * Tests for the adapter factories provided by the Rodin Database.
@@ -58,7 +57,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		
 		IWorkspaceRoot root = ws.getRoot();
-		IRodinDB rodinDB = RodinCore.create(root);
+		IRodinDB rodinDB = getRodinDB();
 		assertAdapterPositive(root, IRodinElement.class, rodinDB);
 		
 		IProject project = root.getProject("P");

@@ -43,7 +43,7 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		
 		graph.openGraph();
 		
-		IMachine mch = (IMachine) RodinCore.create(file);
+		IMachine mch = (IMachine) RodinCore.valueOf(file);
 		
 		ISCMachine smch = mch.getCheckedVersion();
 		IFile scFile = smch.getResource();
@@ -71,7 +71,7 @@ public class MSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(MSC, "run", file);
 
-		ISCMachine target = (ISCMachine) RodinCore.create(file);
+		ISCMachine target = (ISCMachine) RodinCore.valueOf(file);
 		IMachine mch = target.getUncheckedVersion(); 
 		
 		// First clean up target

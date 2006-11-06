@@ -35,7 +35,7 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		
 		graph.openGraph();
 		
-		IContext ctx = (IContext) RodinCore.create(file);
+		IContext ctx = (IContext) RodinCore.valueOf(file);
 		
 		ISCContext sctx = ctx.getCheckedVersion();
 		IFile scFile = sctx.getResource();
@@ -57,7 +57,7 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(CSC, "run", file);
 
-		ISCContext target = (ISCContext) RodinCore.create(file);
+		ISCContext target = (ISCContext) RodinCore.valueOf(file);
 		IContext ctx = target.getUncheckedVersion(); 
 		
 		// First clean up target

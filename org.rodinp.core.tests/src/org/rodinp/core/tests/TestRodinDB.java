@@ -24,7 +24,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 	public final void testRodinDBEmpty() throws CoreException, RodinDBException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		IRodinDB db = RodinCore.create(workspaceRoot);
+		IRodinDB db = getRodinDB();
 
 		// Test handle-only methods
 		assertNotNull(db);
@@ -32,6 +32,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 		assertEquals("", db.getElementName());
 		assertEquals(IRodinElement.RODIN_DATABASE, db.getElementType());
 		assertEquals(workspace, db.getWorkspace());
+		assertEquals(workspaceRoot, db.getWorkspaceRoot());
 		assertEquals(workspaceRoot, db.getCorrespondingResource());
 		assertFalse(db.isReadOnly());
 		// last handle-only method
@@ -50,7 +51,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 	 * Test project creation and deletion.
 	 */
 	public final void testRodinProject() throws CoreException, RodinDBException {
-		IRodinDB db = RodinCore.create(ResourcesPlugin.getWorkspace().getRoot());
+		IRodinDB db = getRodinDB();
 
 		// Creating a project handle
 		IRodinProject rodinProject = db.getRodinProject("foo"); 
@@ -81,7 +82,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 		// Test a memento of the project
 		String memento = rodinProject.getHandleIdentifier();
 		assertEquals("/foo", memento);
-		IRodinElement element = RodinCore.create(memento);
+		IRodinElement element = RodinCore.valueOf(memento);
 		assertEquals(rodinProject, element);
 		
 		// When closed, the Rodin nature is not visible anymore.

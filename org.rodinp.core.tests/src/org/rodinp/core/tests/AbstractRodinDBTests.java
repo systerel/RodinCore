@@ -698,7 +698,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	}
 	
 	protected IRodinFile getRodinFile(String path) {
-		return RodinCore.create(getFile(path));
+		return RodinCore.valueOf(getFile(path));
 	}
 	
 	/**
@@ -770,7 +770,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * Returns the Rodin Model this test suite is running on.
 	 */
 	public IRodinDB getRodinDB() {
-		return RodinCore.create(getWorkspaceRoot());
+		return RodinCore.valueOf(getWorkspaceRoot());
 	}
 	
 	/**
@@ -779,7 +779,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 */
 	public IRodinProject getRodinProject(String name) {
 		IProject project = getProject(name);
-		return RodinCore.create(project);
+		return RodinCore.valueOf(project);
 	}
 	
 	protected IProject getProject(String project) {

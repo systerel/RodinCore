@@ -30,7 +30,7 @@ public class MementoTests extends ModifyingResourceTests {
 			System.out.println(",");
 		}
 		assertEquals("Unexpected memento for " + element, expected, actual);
-		IRodinElement restored = RodinCore.create(actual);
+		IRodinElement restored = RodinCore.valueOf(actual);
 		assertEquals("Unexpected restored element", element, restored);
 	}
 
@@ -64,7 +64,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * (regression test for JDT bug 81762 [model] AIOOB in breakpoints view)
 	 */
 	public void testInvalidMemento() {
-		IRodinElement element = RodinCore.create("/P/");
+		IRodinElement element = RodinCore.valueOf("/P/");
 		assertElementEquals("Unexpected element", "P", element);
 	}
 
@@ -91,7 +91,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a bogus memento cannot be restored.
 	 */
 	public void testRestoreBogusMemento() {
-		IRodinElement restored = RodinCore.create("bogus");
+		IRodinElement restored = RodinCore.valueOf("bogus");
 		assertNull("should not be able to restore a bogus memento", restored);
 	}
 
@@ -101,7 +101,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 */
 	public void testRestoreWrongInternalType() {
 		String bogusType = "org.rodinp.core.tests.bogus";
-		IRodinElement restored = RodinCore.create(
+		IRodinElement restored = RodinCore.valueOf(
 				"/P/X.test|"
 				+ bogusType
 				+ "#foo"
@@ -114,7 +114,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * NullPointerException.  Regression test for bug 1529854.
 	 */
 	public void testRestoreWrongFileType() {
-		IRodinElement restored = RodinCore.create(
+		IRodinElement restored = RodinCore.valueOf(
 				"/P/X.bogus"
 		);
 		assertNull("should not be able to restore a bogus memento", restored);

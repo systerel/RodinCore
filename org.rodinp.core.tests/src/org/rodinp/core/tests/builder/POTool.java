@@ -49,7 +49,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		
 		graph.openGraph();
 		
-		ISCProvable prv = (ISCProvable) RodinCore.create(file);
+		ISCProvable prv = (ISCProvable) RodinCore.valueOf(file);
 		
 		IPOFile po = prv.getPOFile();
 		graph.addNode(po.getResource(), ID);
@@ -62,7 +62,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 		if (SHOW_RUN)
 			ToolTrace.addTrace(name, "run", file);
 	
-		IPOFile target = (IPOFile) RodinCore.create(file);
+		IPOFile target = (IPOFile) RodinCore.valueOf(file);
 		ISCContext ctx = target.getCheckedContext();
 		
 		// First clean up target
@@ -82,7 +82,7 @@ public abstract class POTool extends SCTool implements IExtractor, IAutomaticToo
 			ToolTrace.addTrace(name, "remove", file);
 	
 		if (AbstractBuilderTest.getComponentName(file.getName()).equals(AbstractBuilderTest.getComponentName(origin.getName())))
-			RodinCore.create(file).delete(true, monitor);
+			RodinCore.valueOf(file).delete(true, monitor);
 	}
 
 }
