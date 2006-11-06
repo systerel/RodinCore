@@ -11,7 +11,6 @@ package org.eventb.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -30,12 +29,11 @@ class CommonAttributesUtil {
 	}
 
 	public static IRodinElement getSource(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		String handleID = element.getStringAttribute(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
-		return RodinCore.create(handleID);
+		return element.getHandleAttribute(EventBAttributes.SOURCE_ATTRIBUTE, monitor);
 	}
 	
 	public static void setSource(InternalElement element, IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
-		element.setStringAttribute(EventBAttributes.SOURCE_ATTRIBUTE, source.getHandleIdentifier(), monitor);
+		element.setHandleAttribute(EventBAttributes.SOURCE_ATTRIBUTE, source, monitor);
 	}
 	
 	public static String getComment(InternalElement element, IProgressMonitor monitor) throws RodinDBException {

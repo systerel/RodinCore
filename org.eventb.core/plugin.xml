@@ -330,7 +330,7 @@
             name="%eventBLabelAttribute"/>
       <attributeType
             id="source"
-            kind="string"
+            kind="handle"
             name="%eventBSourceAttribute"/>
       <attributeType
             id="forbidden"
