@@ -107,8 +107,9 @@ public interface IOpenable {
 	 * Makes this element consistent with its underlying resource by updating
 	 * the element's structure and attributes as necessary.
 	 * 
-	 * @param progress
-	 *            the given progress monitor
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if the element is unable to access the contents of its
 	 *                underlying resource. Reasons include:
@@ -118,7 +119,7 @@ public interface IOpenable {
 	 *                </ul>
 	 * @see IOpenable#isConsistent()
 	 */
-	void makeConsistent(IProgressMonitor progress) throws RodinDBException;
+	void makeConsistent(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Opens this element and all parent elements that are not already open. For
@@ -131,8 +132,9 @@ public interface IOpenable {
 	 * automatically as elements are accessed.
 	 * </p>
 	 * 
-	 * @param progress
-	 *            the given progress monitor
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if an error occurs accessing the contents of its
 	 *                underlying resource. Reasons include:
@@ -141,7 +143,7 @@ public interface IOpenable {
 	 *                (ELEMENT_DOES_NOT_EXIST)</li>
 	 *                </ul>
 	 */
-	public void open(IProgressMonitor progress) throws RodinDBException;
+	public void open(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Saves any changes in this element to its underlying resource via a
@@ -162,8 +164,9 @@ public interface IOpenable {
 	 * As a result of this operation, the element is consistent with its
 	 * underlying resource.
 	 * 
-	 * @param progress
-	 *            the given progress monitor
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @param force
 	 *            it controls how this method deals with cases where the
 	 *            workbench is not completely in sync with the local file system
@@ -176,7 +179,7 @@ public interface IOpenable {
 	 *                <li>This Rodin element is read-only (READ_ONLY)</li>
 	 *                </ul>
 	 */
-	public void save(IProgressMonitor progress, boolean force)
+	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException;
 
 }
