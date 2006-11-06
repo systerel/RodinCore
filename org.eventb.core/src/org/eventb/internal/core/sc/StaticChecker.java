@@ -85,7 +85,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
 			if (s.equals(t)) {
-				RodinCore.create(file).delete(true, monitor);
+				RodinCore.valueOf(file).delete(true, monitor);
 			}
 		} finally {
 			monitor.done();

@@ -44,7 +44,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 
-		IPOFile poFile = (IPOFile) RodinCore.create(file).getMutableCopy();
+		IPOFile poFile = (IPOFile) RodinCore.valueOf(file).getMutableCopy();
 		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachine().getSnapshot();
 		
 		try {
@@ -89,7 +89,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
-		ISCMachineFile source = (ISCMachineFile) RodinCore.create(file);
+		ISCMachineFile source = (ISCMachineFile) RodinCore.valueOf(file);
 		IPOFile target = source.getMachineFile().getPOFile();
 		
 		graph.openGraph();

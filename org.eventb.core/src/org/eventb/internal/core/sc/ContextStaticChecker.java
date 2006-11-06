@@ -52,7 +52,7 @@ public class ContextStaticChecker extends StaticChecker {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCContextFile scContextFile = (ISCContextFile) RodinCore.create(file).getMutableCopy();
+		ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file).getMutableCopy();
 		IContextFile contextFile = (IContextFile) scContextFile.getContextFile().getSnapshot();
 		
 		int size = contextFile.getChildren().length + 3;
@@ -104,7 +104,7 @@ public class ContextStaticChecker extends StaticChecker {
 			
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
 		
-			IContextFile source = (IContextFile) RodinCore.create(file);
+			IContextFile source = (IContextFile) RodinCore.valueOf(file);
 			ISCContextFile target = source.getSCContextFile();
 		
 			graph.openGraph();

@@ -53,7 +53,7 @@ public class MachineStaticChecker extends StaticChecker {
 	public boolean run(IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.create(file).getMutableCopy();
+		ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.valueOf(file).getMutableCopy();
 		IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
 		
 		int size = machineFile.getChildren().length + 3;
@@ -108,7 +108,7 @@ public class MachineStaticChecker extends StaticChecker {
 			
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
 		
-			IMachineFile source = (IMachineFile) RodinCore.create(file);
+			IMachineFile source = (IMachineFile) RodinCore.valueOf(file);
 			ISCMachineFile target = source.getSCMachineFile();
 			ISeesContext[] seen = source.getSeesClauses();
 			IRefinesMachine abstractMachine = source.getRefinesClause();

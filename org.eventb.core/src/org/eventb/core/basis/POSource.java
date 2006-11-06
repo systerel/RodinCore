@@ -46,7 +46,7 @@ public class POSource extends InternalElement implements IPOSource {
 	}
 
 	public IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException {
-		return RodinCore.create(getContents());
+		return RodinCore.valueOf(getContents());
 	}
 
 	public void setSourceRole(String role, IProgressMonitor monitor) throws RodinDBException {

@@ -33,7 +33,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 		
 		// TODO implement context static checker
 		
-		IPOFile target = (IPOFile) RodinCore.create(file).getMutableCopy();
+		IPOFile target = (IPOFile) RodinCore.valueOf(file).getMutableCopy();
 //		ISCContextFile source = (ISCContextFile) target.getSCContext().getSnapshot();
 
 		try {
@@ -58,7 +58,7 @@ public class ContextPOGenerator extends ProofObligationGenerator {
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
-		ISCContextFile source = (ISCContextFile) RodinCore.create(file);
+		ISCContextFile source = (ISCContextFile) RodinCore.valueOf(file);
 		IPOFile target = source.getContextFile().getPOFile();
 				
 		graph.openGraph();

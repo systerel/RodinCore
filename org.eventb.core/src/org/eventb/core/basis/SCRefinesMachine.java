@@ -48,7 +48,7 @@ public class SCRefinesMachine extends SCTraceableElement implements
 
 	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
 		String contents = getContents();
-		IRodinElement target = RodinCore.create(contents);
+		IRodinElement target = RodinCore.valueOf(contents);
 		if (! (target instanceof ISCMachineFile)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesMachineTypeFailure,

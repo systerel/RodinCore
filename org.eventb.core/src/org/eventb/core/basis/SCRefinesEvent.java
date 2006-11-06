@@ -47,7 +47,7 @@ public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefi
 
 	public ISCEvent getAbstractSCEvent() throws RodinDBException {
 		String contents = getContents();
-		IRodinElement target = RodinCore.create(contents);
+		IRodinElement target = RodinCore.valueOf(contents);
 		if (! (target instanceof ISCEvent)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesEventTypeFailure,
