@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * This interface is not intended to be implemented by clients. An instance of
  * one of these handles can be created via
- * <code>RodinCore.create(workspace.getRoot())</code>.
+ * <code>RodinCore.valueOf(workspace.getRoot())</code>.
  * </p>
  * 
  * @see RodinCore#valueOf(IWorkspaceRoot)
@@ -96,7 +96,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *            <code>false</code> to throw an exception in the event of a
 	 *            name collision
 	 * @param monitor
-	 *            a progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if an element could not be copied. Reasons include:
 	 *                <ul>
@@ -130,7 +131,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *            a flag controlling whether underlying resources that are not
 	 *            in sync with the local file system will be tolerated
 	 * @param monitor
-	 *            a progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if an element could not be deleted. Reasons include:
 	 *                <ul>
@@ -236,7 +238,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *            <code>false</code> to throw an exception in the event of a
 	 *            name collision
 	 * @param monitor
-	 *            a progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if an element could not be moved. Reasons include:
 	 *                <ul>
@@ -267,14 +270,15 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 * @param elements
 	 *            the elements to rename
 	 * @param names
-	 *            the list of new names. Must not be <code>null</code>.
-	 *            Must have the same length as <code>elements</code>.
+	 *            the list of new names. Must not be <code>null</code>. Must
+	 *            have the same length as <code>elements</code>.
 	 * @param replace
 	 *            <code>true</code> if an existing element with the target
 	 *            name should be replaced, and <code>false</code> to throw an
 	 *            exception in the event of a name collision
 	 * @param monitor
-	 *            a progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if an element could not be renamed. Reasons include:
 	 *                <ul>

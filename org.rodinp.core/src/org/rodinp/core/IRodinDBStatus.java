@@ -35,10 +35,11 @@ import org.eclipse.core.runtime.IStatus;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eclipse.core.runtime.IStatus
+ * @see IStatus
  * @see IRodinDBStatusConstants
  */
 public interface IRodinDBStatus extends IStatus {
+
 	/**
 	 * Returns any Rodin elements associated with the failure (see specification
 	 * of the status code), or an empty array if no elements are related to this
@@ -73,4 +74,5 @@ public interface IRodinDBStatus extends IStatus {
 	 * @see IRodinDBStatusConstants#ELEMENT_DOES_NOT_EXIST
 	 */
 	boolean isDoesNotExist();
+
 }
