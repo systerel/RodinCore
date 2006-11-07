@@ -167,7 +167,6 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/*
 	 * @see IRodinElement
 	 */
-	@Override
 	public Openable getOpenable() {
 		return this;
 	}

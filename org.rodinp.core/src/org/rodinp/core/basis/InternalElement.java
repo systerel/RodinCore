@@ -274,6 +274,10 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return 1;
 	}
 
+	public Openable getOpenable() {
+		return this.getOpenableParent();
+	}
+
 	/*
 	 * Returns the closest openable ancestor of this element (that is its
 	 * enclosing file element). Should never return <code>null</code>.

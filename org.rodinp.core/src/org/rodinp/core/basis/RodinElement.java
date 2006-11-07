@@ -355,13 +355,6 @@ public abstract class RodinElement extends PlatformObject implements
 		return null;
 	}
 
-	/*
-	 * @see IRodinElement
-	 */
-	public Openable getOpenable() {
-		return this.getOpenableParent();
-	}
-
 	/**
 	 * Return the first instance of IOpenable in the parent hierarchy of this
 	 * element.
