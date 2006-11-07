@@ -105,24 +105,27 @@
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBMachineEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBMachineEditorContributor"
-            extensions="bum"
             icon="icons/full/obj16/mch_obj.gif"
             id="org.eventb.ui.editors.machine"
-            name="%editor.Machine"/>
+            name="%editor.Machine">
+         <contentTypeBinding contentTypeId="org.eventb.core.machineFile"/>
+      </editor>
       <editor
             class="org.eventb.internal.ui.eventbeditor.EventBContextEditor"
             contributorClass="org.eventb.internal.ui.eventbeditor.EventBContextEditorContributor"
-            extensions="buc"
             icon="icons/full/obj16/ctx_obj.gif"
             id="org.eventb.ui.editors.context"
-            name="%editor.Context"/>
+            name="%editor.Context">
+         <contentTypeBinding contentTypeId="org.eventb.core.contextFile"/>
+      </editor>
       <editor
             class="org.eventb.internal.ui.prover.ProverUI"
             contributorClass="org.eventb.internal.ui.prover.ProverUIContributor"
-            extensions="bpr"
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.ProverUI"
-            name="%editor.Proof"/>
+            name="%editor.Proof">
+         <contentTypeBinding contentTypeId="org.eventb.core.prFile"/>
+      </editor>
    </extension>
    <extension
          point="org.eventb.ui.editorPages">
