@@ -122,7 +122,10 @@ public interface IProofTree {
 	
 	/**
 	 * Returns the confidence of this proof tree.
-	 * 
+	 * <p>
+	 * A proof tree is considered unattempted if its root is open and is not 
+	 * commented. Otherwise, it is the confidence of the root proof tree node. 
+	 * </p>
 	 * @return the confidence of this proof tree (see {@see IConfidence})
 	 */
 	int getConfidence();

@@ -15,6 +15,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
@@ -53,7 +54,7 @@ public class AutoProver {
 		// Nothing to do.
 	}
 	
-	protected static void run(IPRFile prFile, IProgressMonitor monitor) throws CoreException {
+	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws CoreException {
 		if (! enabled)
 			return;
 		final IPRSequent[] pos = prFile.getSequents();
@@ -136,25 +137,6 @@ public class AutoProver {
 			pm.done();
 		}
 	}
-	
-//	private void run(IProofTree pt) {
-//		if (! enabled)
-//			return;
-//		B4FreeTactics.autoProver(null,timeOutDelay).apply(pt.getRoot());
-//		
-////		// First try applying an internal tactic
-////		B4FreeTactics.norm().apply(pt.getRoot());
-////		if (pt.isClosed())
-////			return;
-////		
-////		// Then, try with the legacy provers.
-////		// pt.getRoot().pruneChildren();
-////		final int MLforces = ExternalML.Input.FORCE_0 | ExternalML.Input.FORCE_1;
-////		BasicTactics.onAllPending(B4FreeTactics.externalML(MLforces, timeOutDelay, null)).apply(pt.getRoot());
-////		if (! pt.isClosed()) {
-////			BasicTactics.onAllPending(B4FreeTactics.externalPP(false, timeOutDelay, null)).apply(pt.getRoot());
-////		}
-//	}
 	
 	public static ITactic autoTactic(){
 		final int MLforces = 

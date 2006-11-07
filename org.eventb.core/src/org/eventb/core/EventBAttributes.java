@@ -34,6 +34,10 @@ public final class EventBAttributes {
 	public static String SEES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".sees";
 	public static String IDENTIFIER_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".identifier";
 
+	// Attributes related to the PR and PS files
+	public static String CONFIDENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".confidence";
+	public static String PROOF_VALIDITY_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".proofValid";
+	
 	private EventBAttributes() {
 		// Non-instantiable class
 	}

@@ -109,6 +109,18 @@ public class EventBPlugin extends Plugin {
 	public static String getPRFileName(String bareName) {
 		return bareName + ".bpr";
 	}
+	
+	/**
+	 * Returns the name of the Rodin file that contains the proof status 
+	 * for the component of the given name.
+	 * 
+	 * @param bareName
+	 *            name of the component
+	 * @return the name of the file containing proofs for that component
+	 */
+	public static String getPSFileName(String bareName) {
+		return bareName + ".bps";
+	}
 
 	/**
 	 * Returns the name of the Rodin file that contains the checked context with the

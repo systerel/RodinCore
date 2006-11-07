@@ -18,9 +18,12 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -45,7 +48,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			String s = EventBPlugin.getComponentName(file.getName());
 			String t = EventBPlugin.getComponentName(origin.getName());
 			if (s.equals(t)) {
-				RodinCore.create(file).delete(true, monitor);
+				RodinCore.valueOf(file).delete(true, monitor);
 			}			
 		} finally {
 			monitor.done();
@@ -53,8 +56,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
+		
+		// IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
+		
+		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
+		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
 
-		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
 		IPOFile poFile = (IPOFile) prFile.getPOFile().getSnapshot();
 		final String componentName = 
 			EventBPlugin.getComponentName(prFile.getElementName());
@@ -71,6 +78,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			// remove old proof status
 			monitor.subTask("cleaning up");
 			createFreshPRFile(prFile,null);
+			createFreshPSFile(psFile,null);
 			monitor.worked(3);
 			checkCancellation(monitor, prFile);
 			
@@ -89,20 +97,25 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				}
 				
 				final IPRSequent poState = (IPRSequent) prFile.createInternalElement(IPRSequent.ELEMENT_TYPE,name,null,null);
-				
 				poState.updateStatus();
+				
+				final IPSstatus status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
+				status.updateStatus();
+				
 				monitor.worked(1);
 				checkCancellation(monitor, prFile);
 			}
 			
 			monitor.subTask("saving");
-			prFile.save(new SubProgressMonitor(monitor, 2), true);
+			prFile.save(new SubProgressMonitor(monitor, 1), true);
+			psFile.save(new SubProgressMonitor(monitor, 1), true);
+			
 			checkCancellation(monitor, prFile);
 
 			SubProgressMonitor spm = new SubProgressMonitor(monitor, noOfPOs,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
 			);
-			AutoProver.run(prFile, spm);
+			AutoProver.run(prFile, psFile, spm);
 			return true;
 		} finally {
 			monitor.done();
@@ -123,46 +136,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			throw new OperationCanceledException();
 		}
 	}
-
-//	Map<String, IPRProofTree> getOldProofs(IPRFile prFile) throws RodinDBException{
-//		if (prFile.exists())
-//			return prFile.getProofTrees();
-//		return new HashMap<String, IPRProofTree>();
-//	}
-//	
-//	Map<String, Boolean> computeNewValidity(Map<String, IPRProofTree> oldProofs, IPOFile poFile, IProgressMonitor monitor) throws RodinDBException
-//	{
-//		Map<String, IProverSequent> newPOs = POLoader.readPOs(poFile);		
-//		Map<String, Boolean> newValidity = new HashMap<String, Boolean>();
-//		
-//		for (Map.Entry<String, IProverSequent> newPO : newPOs.entrySet()){
-//			String newPOname = newPO.getKey();
-//			IProverSequent newPOseq = newPO.getValue();
-//			IPRProofTree oldProof = oldProofs.get(newPOname);
-//			IProofDependencies oldProofDependencies = null;
-//			if 	(oldProof != null) oldProofDependencies = oldProof.getProofDependencies();
-//			if  (oldProof != null &&
-//					oldProofDependencies != null &&
-//					Lib.proofReusable(oldProofDependencies,newPOseq))
-//				{
-//					newValidity.put(newPOname,true);
-//				}
-//			else
-//				{
-//					if (oldProof == null) 
-//						newValidity.put(newPOname,true);
-//					else
-//						newValidity.put(newPOname,false);
-//				}
-//			monitor.worked(1);
-//		}
-//		return newValidity;
-//	}
-	
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		
-		IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
+		IPRFile prFile = (IPRFile) RodinCore.valueOf(file).getMutableCopy();
 		
 		try {
 		
@@ -192,8 +169,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			monitor.beginTask("Extracting " + file.getName(), 1);
 		
-			IPOFile source = (IPOFile) RodinCore.create(file);
-			IPRFile target = source.getPRFile();
+			IPOFile source = (IPOFile) RodinCore.valueOf(file);
+			// IPRFile target = source.getPRFile();
+			IPSFile target = source.getPSFile();
 		
 			graph.openGraph();
 			graph.addNode(target.getResource(), POMCore.AUTO_POM_TOOL_ID);
@@ -207,29 +185,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-//	void createFreshPRFile(
-//			Map<String, Boolean> newValidity, 
-//			Map<String, IPRProofTree> oldProofs, 
-//			IPOFile poFile,
-//			IPRFile prFile, 
-//			IProgressMonitor monitor) throws CoreException {
-//
-//		if (prFile.exists()) 
-//		{
-//			for (IRodinElement child : prFile.getChildren()){
-//				// do not delete proofs !
-//				if (!(child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)))
-//				((InternalElement)child).delete(true,null);
-//			}			
-//		}
-//		else
-//		{
-//			IRodinProject project = prFile.getRodinProject();
-//			project.createRodinFile(prFile.getElementName(), true, null);
-//		}
-//		copySequents(newValidity,oldProofs, poFile, prFile, monitor);
-//	}
-	
 	private void createFreshPRFile(
 			IPRFile prFile, 
 			IProgressMonitor monitor) throws CoreException {
@@ -249,33 +204,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
-//	private void copySequents(
-//			Map<String, Boolean> newValidity, 
-//			Map<String, IPRProofTree> oldProofs,
-//			IPOFile poFile,
-//			IPRFile prFile,
-//			IProgressMonitor monitor) throws RodinDBException{
-//		IPOSequent[] poSequents = poFile.getSequents();
-//		
-//		for (IPOSequent poSeq : poSequents)
-//		{
-//			IPRSequent prSeq = 
-//				(IPRSequent) prFile.createInternalElement(
-//						IPRSequent.ELEMENT_TYPE, poSeq.getName(), null, monitor);
-//		
-//			assert (newValidity.get(poSeq.getName()) != null);
-//			((PRSequent)prSeq).setProofBroken(! newValidity.get(poSeq.getName()));
-//			
-//			IPRProofTree oldProof = oldProofs.get(prSeq.getName());
-//			if (oldProof == null)
-//			{
-//				// create a fresh proof
-//				IPRProofTree proof =
-//					(IPRProofTree) prFile.createInternalElement(
-//							IPRProofTree.ELEMENT_TYPE,prSeq.getName(), null, monitor);
-//				proof.initialize();
-//			}
-//		}
-//	}
+	private void createFreshPSFile(
+			IPSFile psFile, 
+			IProgressMonitor monitor) throws CoreException {
+		
+		IRodinProject project = psFile.getRodinProject();
+		project.createRodinFile(psFile.getElementName(), true, null);
+	}
 	
 }

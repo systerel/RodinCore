@@ -3,7 +3,8 @@ package org.eventb.core.seqprover;
 
 
 /**
- * Definition and interpretation of confidence of a rule or a proof tree node.
+ * Definition and interpretation of confidence of a rule, a proof tree node, or a
+ * proof tree.
  * 
  * <p>
  * A confidence is an integer value associated to a rule or a proof tree node that 
@@ -28,13 +29,25 @@ package org.eventb.core.seqprover;
 public interface IConfidence {
 
 	/**
-	 * The minimum confidence value. (Reserved)
+	 * The minimum confidence value for proof trees. (Reserved)
 	 * <p>
-	 * Ths confidence value is reserved for pending proof tree nodes and may not be used
+	 * Ths confidence value is reserved for unattempted proof trees and may not be used
 	 * as a confidence level for rules.
 	 * </p>
 	 * <p>
-	 * A confidence value below <code>PENDING</code> is not considered valid.
+	 * A proof tree is considered unattempted if its root is open and is not commented.
+	 * </p>
+	 * <p>
+	 * A confidence value below <code>UNATTEMPTED</code> is not considered valid.
+	 * </p>
+	 */
+	final int UNATTEMPTED = -99;
+	
+	/**
+	 * The minimum confidence value for proof tree nodes. (Reserved)
+	 * <p>
+	 * Ths confidence value is reserved for pending proof tree nodes and may not be used
+	 * as a confidence level for rules.
 	 * </p>
 	 */
 	final int PENDING = 0;

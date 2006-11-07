@@ -116,6 +116,9 @@ public final class ProofTree implements IProofTree {
 	 * @see org.eventb.core.prover.IProofTree#getConfidence()
 	 */
 	public int getConfidence() {
+		if (getRoot().isOpen() && 
+				getRoot().getComment().length() == 0)
+			return IConfidence.UNATTEMPTED;
 		return getRoot().getConfidence();
 	}
 

@@ -67,8 +67,12 @@ public interface IPRFile extends IRodinFile{
 	 */
 	IPOFile getPOFile();
 	
+	@Deprecated
+	// Use IPSstatus in the IPSfile
 	IPRSequent[] getSequents() throws RodinDBException;
 	
+	@Deprecated
+	// Use IPSstatus in the IPSfile
 	IPRSequent getSequent(String name) throws RodinDBException;
 	
 	/**

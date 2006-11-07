@@ -16,6 +16,7 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
+import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IRodinElement;
@@ -95,6 +96,13 @@ public class POFile extends RodinFile implements IPOFile {
 		final String prName = EventBPlugin.getPRFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (IPRFile) project.getRodinFile(prName);
+	}
+	
+	public IPSFile getPSFile() {
+		final String bareName = EventBPlugin.getComponentName(getElementName());
+		final String psName = EventBPlugin.getPSFileName(bareName);
+		final IRodinProject project = (IRodinProject) getParent();
+		return (IPSFile) project.getRodinFile(psName);
 	}
 
 }

@@ -55,6 +55,16 @@ public interface IPOFile extends IRodinFile {
 	 * @return a handle to the proof file of this component
 	 */
 	public IPRFile getPRFile();
+	
+	/**
+	 * Returns a handle to the file containing proof status for this component.
+	 * <p>
+	 * This is a handle-only operation.
+	 * </p>
+	 * 
+	 * @return a handle to the proof file of this component
+	 */
+	public IPSFile getPSFile();
 
 	/**
 	 * Returns a handle to the predicate set with the given name.

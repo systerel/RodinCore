@@ -51,5 +51,15 @@ class CommonAttributesUtil {
 	public static void setSignature(InternalElement element, int signature, IProgressMonitor monitor) throws RodinDBException {
 		element.setIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, signature, monitor);
 	}
+	
+	//	Attributes related to the PR and PS files
 
+	public static int getConfidence(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
+		return element.getIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, monitor);
+	}
+	
+	public static void setConfidence(InternalElement element, int confidence, IProgressMonitor monitor) throws RodinDBException {
+		element.setIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, monitor);
+	}
+	
 }

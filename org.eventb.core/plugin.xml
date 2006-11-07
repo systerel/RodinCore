@@ -39,6 +39,12 @@
             id="prFile"
             name="%eventBprFile"
             priority="normal"/>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="bps"
+            id="psFile"
+            name="%eventBpsFile"
+            priority="normal"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -72,6 +78,11 @@
             content-type-id="org.eventb.core.prFile"
             id="prFile"
             name="%eventBprFile"/>
+      <fileElementType
+            class="org.eventb.core.basis.PSFile"
+            content-type-id="org.eventb.core.psFile"
+            id="psFile"
+            name="%eventBpsFile"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -151,10 +162,6 @@
             class="org.eventb.core.basis.Witness"
             id="witness"
             name="%eventBWitness"/>
-      <internalElementType
-            class="org.eventb.core.basis.PRSequent"
-            id="prSequent"
-            name="%eventBprSequent"/>
       <internalElementType
             class="org.eventb.core.basis.PRProofTree"
             id="prProofTree"
@@ -263,6 +270,14 @@
             class="org.eventb.core.basis.PRHypAction"
             id="prHypAction"
             name="%eventBprHypAction"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRSequent"
+            id="prSequent"
+            name="%eventBprSequent"/>
+      <internalElementType
+            class="org.eventb.core.basis.PSstatus"
+            id="status"
+            name="%eventBpsStatus"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -368,6 +383,14 @@
             id="signature"
             kind="integer"
             name="%eventBSignatureAttribute"/>
+      <attributeType
+            id="confidence"
+            kind="integer"
+            name="%eventBprConfidence"/>
+      <attributeType
+            id="proofValid"
+            kind="boolean"
+            name="%eventBpsValidity"/>
    </extension>
 
 </plugin>
