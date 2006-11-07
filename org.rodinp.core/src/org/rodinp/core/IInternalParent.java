@@ -11,7 +11,7 @@ package org.rodinp.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Common protocol for elements that contain internal elements.
+ * Common protocol for elements that can contain internal elements.
  * <p>
  * Such elements are Rodin files and internal elements themselves (which are
  * descendants of a Rodin file).
@@ -141,7 +141,7 @@ public interface IInternalParent extends IParent, IRodinElement {
 	IInternalParent getMutableCopy();
 
 	/**
-	 * Returns whether this is a handle in a file snapshot or not.
+	 * Returns whether this is a handle in a file snapshot.
 	 * <p>
 	 * This is a handle-only method. The element may or may not be present.
 	 * </p>
