@@ -56,7 +56,7 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	}
 	
 	public IPRProofTree getProofTree(){
-		IPRProofTree proofTree = ((IPSFile)getOpenable()).getProofTree(getName());
+		IPRProofTree proofTree = ((IPRFile)getOpenable()).getProofTree(getName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;

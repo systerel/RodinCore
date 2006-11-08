@@ -8,36 +8,31 @@
 
 package org.eventb.core;
 
-import java.util.Map;
-
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 
-
 /**
- * Common protocol for Event-B Prover (PR) files.
+ * Common protocol for Event-B Proof status files.
  * <p>
- * The structure of the PR file is identical to that if the proof obligation (PO)
- * file, but will additional proof trees included. 
+ * The PS file records the status of the proof (in the PR file) each proof 
+ * obligation (in the PO file)
  * </p>
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @author Stefan Hallerstede
  * @author Farhad Mehta
  *
  */
 public interface IPSFile extends IRodinFile{
 
 	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".psFile"; //$NON-NLS-1$
-
 	
 	/**
 	 * Returns a handle to the unchecked version of the context for which this
-	 * proof file has been generated.
+	 * proof status file has been generated.
 	 * <p>
 	 * This is a handle-only operation.
 	 * </p>
@@ -48,7 +43,7 @@ public interface IPSFile extends IRodinFile{
 
 	/**
 	 * Returns a handle to the unchecked version of the machine for which this
-	 * proof file has been generated.
+	 * proof status file has been generated.
 	 * <p>
 	 * This is a handle-only operation.
 	 * </p>
@@ -79,50 +74,8 @@ public interface IPSFile extends IRodinFile{
 	 */
 	IPRFile getPRFile();
 	
-	@Deprecated
-	// Use IPSstatus in the IPSfile
-	IPSstatus[] getSequents() throws RodinDBException;
+	IPSstatus[] getStatus() throws RodinDBException;
 	
-	@Deprecated
-	// Use IPSstatus in the IPSfile
-	IPSstatus getSequent(String name) throws RodinDBException;
-	
-	/**
-	 * Returns all the proof trees contained in this PR file, indexed according 
-	 * to their name.
-	 * <p>
-	 * The name of a proof tree is identical to the proof obligation (IPRSequent)
-	 * associated to it. In addition
-	 * </p>
-	 * 
-	 * @return map containing all proof trees in this PR file, indexed by name.
-	 * 
-	 * @throws RodinDBException
-	 */
-	Map<String,IPRProofTree> getProofTrees() throws RodinDBException;
-	
-	
-	/**
-	 * Returns the proof tree with the given name from the PR file.
-	 * 
-	 * @param name
-	 * Name of the proof tree to return.
-	 * 
-	 * @return the proof tree with the correcponging name, or <code>null</code> if not
-	 * present.
-	 * 
-	 */
-	IPRProofTree getProofTree(String name);
-	
-	/**
-	 * Creates and returns a new initialised proof tree with the given name.
-	 * 
-	 * @param name
-	 * 				Name of the proof tree to create.
-	 * 
-	 * @return the created proof tree
-	 * 
-	 */
-	IPRProofTree createProofTree(String name) throws RodinDBException;
-	
+	IPSstatus getStatusOf(String name) throws RodinDBException;
+		
 }

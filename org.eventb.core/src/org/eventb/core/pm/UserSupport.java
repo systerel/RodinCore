@@ -225,8 +225,8 @@ public class UserSupport implements IElementChangedListener,
 		this.prFile = prFile;
 		proofStates = new LinkedList<ProofState>();
 		try {
-			for (int i = 0; i < prFile.getSequents().length; i++) {
-				IPSstatus prSequent = prFile.getSequents()[i];
+			for (int i = 0; i < prFile.getStatus().length; i++) {
+				IPSstatus prSequent = prFile.getStatus()[i];
 				proofStates.add(new ProofState(prSequent));
 			}
 		} catch (RodinDBException e) {
@@ -554,7 +554,7 @@ public class UserSupport implements IElementChangedListener,
 		try {
 			int index = 0;
 			ProofState proofState = getProofState(index);
-			for (IPSstatus prSequent : prFile.getSequents()) {
+			for (IPSstatus prSequent : prFile.getStatus()) {
 				UserSupportUtils.debug("Trying: " + prSequent.getElementName());
 				UserSupportUtils.debug("Index: " + index);
 				if (proofState != null) {
@@ -695,7 +695,7 @@ public class UserSupport implements IElementChangedListener,
 			IPRProofTree proofTree = (IPRProofTree) element;
 			// IPRSequent prSequent = proofTree.getSequent();
 			IPSstatus prSequent = prFile
-					.getSequent(proofTree.getElementName());
+					.getStatusOf(proofTree.getElementName());
 
 			ProofState state = getProofState(prSequent);
 

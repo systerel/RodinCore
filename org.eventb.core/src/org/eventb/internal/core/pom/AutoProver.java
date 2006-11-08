@@ -57,7 +57,7 @@ public class AutoProver {
 	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws CoreException {
 		if (! enabled)
 			return;
-		final IPSstatus[] pos = psFile.getSequents();
+		final IPSstatus[] pos = psFile.getStatus();
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);
