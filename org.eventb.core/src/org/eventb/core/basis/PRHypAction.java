@@ -16,6 +16,7 @@ import org.eventb.core.seqprover.HypothesesManagement;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -32,7 +33,7 @@ public class PRHypAction extends InternalElement implements IPRHypAction {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

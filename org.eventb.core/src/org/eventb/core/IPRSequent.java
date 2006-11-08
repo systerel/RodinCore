@@ -10,6 +10,8 @@ package org.eventb.core;
 
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -23,7 +25,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPRSequent extends IInternalElement {
 	
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prSequent"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prSequent"); //$NON-NLS-1$
 
 	/**
 	 * Returns the name of this proof obligation in the RODIN database.
@@ -31,7 +34,7 @@ public interface IPRSequent extends IInternalElement {
 	 * @return the name of this proof obligation.
 	 * 
 	 */
-	public String getName();
+	String getName();
 	
 	/**
 	 * Returns the proof tree associated to this proof obligation from the
@@ -60,6 +63,6 @@ public interface IPRSequent extends IInternalElement {
 	boolean isProofBroken() throws RodinDBException;
 	
 	// lock po & pr files before calling this method
-	public void updateStatus() throws RodinDBException;
+	void updateStatus() throws RodinDBException;
 	
 }

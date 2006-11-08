@@ -8,6 +8,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
  * Common protocol for internal contexts in Event-B statically checked (SC)
@@ -35,7 +37,8 @@ import org.rodinp.core.IInternalElement;
  */
 public interface ISCInternalContext extends IInternalElement, ISCContext {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scInternalContext"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scInternalContext"); //$NON-NLS-1$
 
 	// No additional method
 

@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IVariable;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -31,7 +32,7 @@ public class Variable extends EventBElement implements IVariable {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

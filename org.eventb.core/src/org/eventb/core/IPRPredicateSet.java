@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -19,8 +21,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRPredicateSet extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prPredicateSet"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredicateSet"); //$NON-NLS-1$
 
-	public Set<Predicate> getPredicateSet() throws RodinDBException;
-	public void setPredicateSet(Set<Predicate> p) throws RodinDBException;
+	Set<Predicate> getPredicateSet() throws RodinDBException;
+	void setPredicateSet(Set<Predicate> p) throws RodinDBException;
 }

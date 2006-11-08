@@ -17,6 +17,7 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -44,7 +45,7 @@ public class Event extends EventBElement implements IEvent {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

@@ -8,6 +8,8 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 
 /**
@@ -32,7 +34,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface IWitness extends ICommentedElement, ILabeledElement, IPredicateElement {
 	
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".witness"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".witness"); //$NON-NLS-1$
 	
 	// No additional method
 

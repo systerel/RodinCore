@@ -10,7 +10,9 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,7 +24,9 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOSource extends IInternalElement, ITraceableElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSource"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSource"); //$NON-NLS-1$
 	
 	String getSourceRole(IProgressMonitor monitor) throws RodinDBException;
 	

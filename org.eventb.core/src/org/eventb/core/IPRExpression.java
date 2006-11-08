@@ -10,6 +10,8 @@ package org.eventb.core;
 
 import org.eventb.core.ast.Expression;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 
@@ -18,8 +20,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRExpression extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prExpression"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExpression"); //$NON-NLS-1$
 
-	public Expression getExpression() throws RodinDBException;
-	public void setExpression(Expression e) throws RodinDBException;
+	Expression getExpression() throws RodinDBException;
+	void setExpression(Expression e) throws RodinDBException;
 }

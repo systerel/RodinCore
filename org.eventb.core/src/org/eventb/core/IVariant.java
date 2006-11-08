@@ -8,6 +8,9 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
+
 /**
  * Common protocol for Event-B variants.
  * <p>
@@ -29,7 +32,8 @@ package org.eventb.core;
  */
 public interface IVariant extends ICommentedElement, IExpressionElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variant"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".variant"); //$NON-NLS-1$
 
 	// No additional method
 

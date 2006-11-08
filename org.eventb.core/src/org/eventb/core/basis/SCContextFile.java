@@ -18,6 +18,7 @@ import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCTheorem;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -48,8 +49,8 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 	}
 
 	@Override
-	public String getElementType() {
-		return ISCContextFile.ELEMENT_TYPE;
+	public IFileElementType getElementType() {
+		return ELEMENT_TYPE;
 	}
 
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {

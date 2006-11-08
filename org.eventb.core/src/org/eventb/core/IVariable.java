@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
+
 
 /**
  * Common protocol for Event-B variables (occurring in both machines and
@@ -27,7 +30,8 @@ package org.eventb.core;
  */
 public interface IVariable extends ICommentedElement, IIdentifierElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".variable"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".variable"); //$NON-NLS-1$
 
 	// No additional method
 

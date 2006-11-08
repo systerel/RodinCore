@@ -9,6 +9,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -26,8 +28,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOIdentifier extends IInternalElement, ISCIdentifierElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poIdentifier"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poIdentifier"); //$NON-NLS-1$
 
-	public String getName();	
-	public String getType() throws RodinDBException;
+	String getName();	
+	String getType() throws RodinDBException;
 }

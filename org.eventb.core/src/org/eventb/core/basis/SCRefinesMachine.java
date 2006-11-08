@@ -12,6 +12,7 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -42,7 +43,7 @@ public class SCRefinesMachine extends SCTraceableElement implements
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

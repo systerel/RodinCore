@@ -9,6 +9,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -32,7 +34,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCRefinesMachine extends ITraceableElement, IInternalElement {
 	
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scRefinesMachine"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scRefinesMachine"); //$NON-NLS-1$
 
 	/**
 	 * Returns the abstract SC machine file introduced by this refines clause.

@@ -10,7 +10,9 @@ package org.eventb.core;
 
 import java.util.Map;
 
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 
@@ -32,7 +34,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IPRFile extends IRodinFile{
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prFile"; //$NON-NLS-1$
+	IFileElementType ELEMENT_TYPE = 
+		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$
 	
 	/**
 	 * Returns a handle to the unchecked version of the context for which this

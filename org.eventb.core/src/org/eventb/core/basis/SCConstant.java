@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCConstant;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -39,7 +40,7 @@ public class SCConstant extends SCIdentifierElement implements ISCConstant {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ISCConstant.ELEMENT_TYPE;
 	}
 	

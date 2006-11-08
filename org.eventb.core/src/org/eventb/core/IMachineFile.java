@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -41,7 +43,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IMachineFile extends IRodinFile {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".machineFile"; //$NON-NLS-1$
+	IFileElementType ELEMENT_TYPE =
+		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".machineFile"); //$NON-NLS-1$
 
 	/**
 	 * Returns a handle to the checked version of this machine, that is the file

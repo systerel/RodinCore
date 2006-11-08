@@ -24,6 +24,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.core.Messages;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -55,7 +56,7 @@ public class MachineFile extends EventBFile implements IMachineFile {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

@@ -11,6 +11,7 @@ package org.eventb.core.basis;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -44,7 +45,7 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

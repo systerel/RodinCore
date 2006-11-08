@@ -9,6 +9,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -34,7 +36,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IRefinesEvent extends IInternalElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".refinesEvent"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".refinesEvent"); //$NON-NLS-1$
 
 	/**
 	 * Returns the label of the event that is refined by the event that contains

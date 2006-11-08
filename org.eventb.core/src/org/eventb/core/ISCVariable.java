@@ -11,6 +11,8 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -36,7 +38,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scVariable"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scVariable"); //$NON-NLS-1$
 
 	/**
 	 * A variable name that has been used in an abstraction but not in some refinement

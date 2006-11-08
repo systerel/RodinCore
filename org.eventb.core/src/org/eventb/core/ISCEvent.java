@@ -8,6 +8,8 @@
 
 package org.eventb.core;
 
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -36,7 +38,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISCEvent extends ITraceableElement, ILabeledElement, IEventConvergence {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scEvent"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scEvent"); //$NON-NLS-1$
 
 	/**
 	 * Returns an array of all SC refines clauses of this SC event.

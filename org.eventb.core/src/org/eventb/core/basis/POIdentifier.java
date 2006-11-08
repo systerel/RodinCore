@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IPOIdentifier;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -33,7 +34,7 @@ public class POIdentifier extends SCIdentifierElement implements IPOIdentifier {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

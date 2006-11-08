@@ -10,6 +10,8 @@ package org.eventb.core;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
  * Common protocol for constants in Event-B statically checked (SC) contexts.
@@ -33,7 +35,8 @@ import org.eventb.core.ast.Type;
  */
 public interface ISCConstant extends ITraceableElement, ISCIdentifierElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scConstant"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scConstant"); //$NON-NLS-1$
 
 	// No additional method
 

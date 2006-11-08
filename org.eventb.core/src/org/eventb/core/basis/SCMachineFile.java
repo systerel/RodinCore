@@ -21,6 +21,7 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.internal.core.Messages;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -50,8 +51,8 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	@Override
-	public String getElementType() {
-		return ISCMachineFile.ELEMENT_TYPE;
+	public IFileElementType getElementType() {
+		return ELEMENT_TYPE;
 	}
 
 	public ISCVariable[] getSCVariables() throws RodinDBException {

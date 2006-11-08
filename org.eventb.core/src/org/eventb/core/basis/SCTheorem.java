@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCTheorem;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -39,7 +40,7 @@ public class SCTheorem extends SCPredicateElement implements ISCTheorem {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -8,6 +8,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -30,7 +32,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface ISeesContext extends IInternalElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".seesContext"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".seesContext"); //$NON-NLS-1$
 
 	/**
 	 * Returns the name of the context that is seen by the machine which

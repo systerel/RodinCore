@@ -21,6 +21,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -53,7 +54,7 @@ public class ContextFile extends RodinFile implements IContextFile {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IInvariant;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -34,7 +35,7 @@ public class Invariant extends EventBElement implements IInvariant {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

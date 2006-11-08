@@ -10,6 +10,8 @@ package org.eventb.core;
 
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -17,8 +19,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRHypAction extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prHypAction"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
 
-	public Action getAction() throws RodinDBException;
-	public void setAction(Action hypAction) throws RodinDBException;
+	Action getAction() throws RodinDBException;
+	void setAction(Action hypAction) throws RodinDBException;
 }

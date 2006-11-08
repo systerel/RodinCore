@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IRefinesEvent;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -40,7 +41,7 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

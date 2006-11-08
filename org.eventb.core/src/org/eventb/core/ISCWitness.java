@@ -11,6 +11,8 @@ package org.eventb.core;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
  * Common protocol for Event-B SC witnesses.
@@ -36,6 +38,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public interface ISCWitness extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scWitness"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scWitness"); //$NON-NLS-1$
 
 }

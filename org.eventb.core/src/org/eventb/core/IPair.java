@@ -1,6 +1,8 @@
 package org.eventb.core;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 
 /**
@@ -9,7 +11,8 @@ import org.rodinp.core.IInternalElement;
  */
 
 public interface IPair extends IInternalElement {
-		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".pair"; //$NON-NLS-1$		
+		public IInternalElementType ELEMENT_TYPE =
+			RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".pair"); //$NON-NLS-1$		
 		
 }
 

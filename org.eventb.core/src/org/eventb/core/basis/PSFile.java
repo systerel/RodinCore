@@ -15,6 +15,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -33,7 +34,7 @@ public class PSFile extends RodinFile implements IPSFile {
 	 * @see org.rodinp.core.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

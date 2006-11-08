@@ -17,9 +17,9 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSstatus;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -43,8 +43,8 @@ public class PRFile extends RodinFile implements IPRFile {
 	 * @see org.rodinp.core.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
-		return IPSFile.ELEMENT_TYPE;
+	public IFileElementType getElementType() {
+		return ELEMENT_TYPE;
 	}
 	
 	
@@ -73,6 +73,7 @@ public class PRFile extends RodinFile implements IPRFile {
 		return (IPOFile) project.getRodinFile(poName).getSnapshot();
 	}
 
+	@Deprecated
 	public IPSstatus[] getSequents() throws RodinDBException {
 		IRodinElement[] list = getChildrenOfType(IPSstatus.ELEMENT_TYPE);
 		IPSstatus[] sequents = new PSstatus[list.length];
@@ -82,6 +83,7 @@ public class PRFile extends RodinFile implements IPRFile {
 		return sequents;
 	}
 	
+	@Deprecated
 	public IPSstatus getSequent(String name) {
 		IPSstatus prSeq = (IPSstatus) getInternalElement(IPSstatus.ELEMENT_TYPE,name);
 		if (!prSeq.exists()) return null;

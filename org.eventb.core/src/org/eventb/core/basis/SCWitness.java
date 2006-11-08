@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -39,7 +40,7 @@ public class SCWitness extends SCPredicateElement implements ISCWitness {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

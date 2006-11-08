@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCAction;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -37,7 +38,7 @@ public class SCAction extends SCAssignmentElement implements ISCAction {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

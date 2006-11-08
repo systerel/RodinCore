@@ -9,13 +9,13 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
-import org.eventb.core.IPSstatus;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -24,6 +24,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -39,7 +40,7 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

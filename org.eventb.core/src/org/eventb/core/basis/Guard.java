@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IGuard;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -34,7 +35,7 @@ public class Guard extends EventBElement implements IGuard {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

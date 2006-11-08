@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -37,7 +38,7 @@ public class Theorem extends EventBElement implements ITheorem {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

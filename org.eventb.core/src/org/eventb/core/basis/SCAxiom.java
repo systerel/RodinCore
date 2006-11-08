@@ -9,6 +9,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.ISCAxiom;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -38,7 +39,7 @@ public class SCAxiom extends SCPredicateElement implements ISCAxiom {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

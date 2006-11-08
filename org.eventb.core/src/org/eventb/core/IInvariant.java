@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
+
 /**
  * Common protocol for Event-B invariants.
  * <p>
@@ -28,7 +31,8 @@ package org.eventb.core;
  */
 public interface IInvariant extends ICommentedElement, ILabeledElement, IPredicateElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".invariant"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".invariant"); //$NON-NLS-1$
 
 	// No additional method
 

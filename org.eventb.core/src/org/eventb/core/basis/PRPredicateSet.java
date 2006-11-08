@@ -14,6 +14,7 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -30,7 +31,7 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

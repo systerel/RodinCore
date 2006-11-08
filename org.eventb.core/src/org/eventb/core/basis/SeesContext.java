@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -40,7 +41,7 @@ public class SeesContext extends InternalElement implements ISeesContext {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

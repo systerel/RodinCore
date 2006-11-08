@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.ast.Predicate;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -40,7 +41,7 @@ public class POPredicate extends InternalElement implements IPOPredicate {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

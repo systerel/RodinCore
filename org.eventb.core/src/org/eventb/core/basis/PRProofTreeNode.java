@@ -13,6 +13,7 @@ import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -28,7 +29,7 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

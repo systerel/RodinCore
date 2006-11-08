@@ -11,6 +11,8 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -26,11 +28,13 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOPredicate extends IInternalElement, ITraceableElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poPredicate"; //$NON-NLS-1$
 	
-	public String getName();
-	public String getPredicate() throws RodinDBException;
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicate"); //$NON-NLS-1$
 	
-	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
-	public void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException;
+	String getName();
+	String getPredicate() throws RodinDBException;
+	
+	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
+	void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException;
 }

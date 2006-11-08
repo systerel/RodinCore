@@ -8,6 +8,7 @@
 package org.eventb.core.basis;
 
 import org.eventb.core.IAction;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -37,7 +38,7 @@ public class Action extends EventBElement implements IAction {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 	

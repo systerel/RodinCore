@@ -10,6 +10,8 @@ package org.eventb.core;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 
 /**
  * Common protocol for Event-B SC theorems.
@@ -35,7 +37,8 @@ import org.eventb.core.ast.Predicate;
 public interface ISCTheorem 
 extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".scTheorem"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scTheorem"); //$NON-NLS-1$
 
 	// No additional method
 

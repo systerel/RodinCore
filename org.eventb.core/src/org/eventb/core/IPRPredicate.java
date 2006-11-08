@@ -10,6 +10,8 @@ package org.eventb.core;
 
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -17,8 +19,10 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPRPredicate extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prPredicate"; //$NON-NLS-1$
+	
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredicate"); //$NON-NLS-1$
 
-	public Predicate getPredicate() throws RodinDBException;
-	public void setPredicate(Predicate p) throws RodinDBException;
+	Predicate getPredicate() throws RodinDBException;
+	void setPredicate(Predicate p) throws RodinDBException;
 }

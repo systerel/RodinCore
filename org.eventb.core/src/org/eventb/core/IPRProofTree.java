@@ -3,6 +3,8 @@ package org.eventb.core;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -28,55 +30,57 @@ import org.rodinp.core.RodinDBException;
  */
 
 public interface IPRProofTree extends IInternalElement {
-		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prProofTree"; //$NON-NLS-1$
 		
-		
-		/**
-		 * Returns whether or not this proof tree is closed.
-		 * <p>
-		 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
-		 * </p>
-		 * 
-		 * @return <code>true</code> iff this proof tree is closed
-		 * @throws RodinDBException 
-		 */
-		boolean isClosed() throws RodinDBException;
-		
-		/**
-		 * Returns the root node of this proof tree.
-		 * 
-		 * @return the root node of this proof tree
-		 */
-		public IPRProofTreeNode getRoot() throws RodinDBException;
-		
-		
-		public void initialize() throws RodinDBException;
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTree"); //$NON-NLS-1$
 
-		public void setProofTree(IProofTree proofTree) throws RodinDBException;
-		
-		public boolean proofAttempted() throws RodinDBException;
 
-		/**
-		 * Returns the dependency information for this proof tree.
-		 * (see {@link IProofDependencies})
-		 * 
-		 * @return the dependency information for this proof tree.
-		 * 
-		 * @throws RodinDBException
-		 */
-		IProofDependencies getProofDependencies() throws RodinDBException;
-		
-		/**
-		 * Returns the confidence of this proof tree.
-		 * 
-		 * @return the confidence of this proof tree 
-		 * 			(see {@link org.eventb.core.seqprover.IConfidence})
-		 * @throws RodinDBException 
-		 */
-		int getConfidence() throws RodinDBException;
-		
-		boolean isAutomaticallyGenerated() throws RodinDBException;
+	/**
+	 * Returns whether or not this proof tree is closed.
+	 * <p>
+	 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this proof tree is closed
+	 * @throws RodinDBException 
+	 */
+	boolean isClosed() throws RodinDBException;
 
-		void setAutomaticallyGenerated() throws RodinDBException;
-		
+	/**
+	 * Returns the root node of this proof tree.
+	 * 
+	 * @return the root node of this proof tree
+	 */
+	public IPRProofTreeNode getRoot() throws RodinDBException;
+
+
+	public void initialize() throws RodinDBException;
+
+	public void setProofTree(IProofTree proofTree) throws RodinDBException;
+
+	public boolean proofAttempted() throws RodinDBException;
+
+	/**
+	 * Returns the dependency information for this proof tree.
+	 * (see {@link IProofDependencies})
+	 * 
+	 * @return the dependency information for this proof tree.
+	 * 
+	 * @throws RodinDBException
+	 */
+	IProofDependencies getProofDependencies() throws RodinDBException;
+
+	/**
+	 * Returns the confidence of this proof tree.
+	 * 
+	 * @return the confidence of this proof tree 
+	 * 			(see {@link org.eventb.core.seqprover.IConfidence})
+	 * @throws RodinDBException 
+	 */
+	int getConfidence() throws RodinDBException;
+
+	boolean isAutomaticallyGenerated() throws RodinDBException;
+
+	void setAutomaticallyGenerated() throws RodinDBException;
+
 }

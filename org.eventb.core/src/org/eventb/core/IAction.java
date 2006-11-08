@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
+
 /**
  * Common protocol for Event-B actions.
  * <p>
@@ -28,7 +31,8 @@ package org.eventb.core;
  */
 public interface IAction extends ICommentedElement, ILabeledElement, IAssignmentElement {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".action"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".action"); //$NON-NLS-1$
 
 	// No additional method
 

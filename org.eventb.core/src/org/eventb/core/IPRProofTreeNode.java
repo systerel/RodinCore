@@ -5,6 +5,8 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 
@@ -14,21 +16,23 @@ import org.rodinp.core.RodinDBException;
  */
 
 public interface IPRProofTreeNode extends IInternalElement {
-		public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".prProofTreeNode"; //$NON-NLS-1$
+		
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTreeNode"); //$NON-NLS-1$
 	
-		// TODO : Make this and ProofTreeNode resemble each other.
-		
-		public IPRProofTreeNode[] getChildNodes() throws RodinDBException;
-		
-//		public IPRProofRule getPRRule() throws RodinDBException;
-		
-		public IProofRule getRule() throws RodinDBException;
-		
-		public void setComment(String comment) throws RodinDBException;
-		
-		public String getComment() throws RodinDBException;
+	// TODO : Make this and ProofTreeNode resemble each other.
 
-		public IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
+	IPRProofTreeNode[] getChildNodes() throws RodinDBException;
 
-		public void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException;
+//	public IPRProofRule getPRRule() throws RodinDBException;
+
+	IProofRule getRule() throws RodinDBException;
+
+	void setComment(String comment) throws RodinDBException;
+
+	String getComment() throws RodinDBException;
+
+	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
+
+	void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException;
 }

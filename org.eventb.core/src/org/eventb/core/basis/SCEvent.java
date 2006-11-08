@@ -16,6 +16,7 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -46,7 +47,7 @@ public class SCEvent extends SCTraceableLabeledElement implements ISCEvent {
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ISCEvent.ELEMENT_TYPE;
 	}
 	

@@ -12,6 +12,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -41,7 +42,7 @@ public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefi
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

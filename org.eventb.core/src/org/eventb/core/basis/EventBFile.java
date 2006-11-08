@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
@@ -25,7 +26,9 @@ public abstract class EventBFile extends RodinFile {
 		super(file, parent);
 	}
 
-	protected IRodinElement getSingletonChild(String elementType, String message) throws RodinDBException {
+	protected IRodinElement getSingletonChild(IElementType elementType,
+			String message) throws RodinDBException {
+
 		ArrayList<IRodinElement> list = getFilteredChildrenList(elementType);
 		if(list.size() == 1)
 			return list.get(0);

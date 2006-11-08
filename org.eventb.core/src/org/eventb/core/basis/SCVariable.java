@@ -11,6 +11,7 @@ package org.eventb.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCVariable;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,7 +37,7 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	}
 	
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 

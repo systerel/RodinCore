@@ -8,6 +8,8 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -36,7 +38,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IEvent extends ICommentedElement, ILabeledElement, IEventConvergence {
 
-	String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".event"; //$NON-NLS-1$
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".event"); //$NON-NLS-1$
 	
 	String INITIALISATION = "INITIALISATION";
 

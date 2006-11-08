@@ -21,6 +21,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -36,11 +37,13 @@ public class PRReasonerAnticident extends InternalElement implements IPRReasoner
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	private InternalElement getChild(String childType, String childName) throws RodinDBException{
+	private InternalElement getChild(IInternalElementType childType,
+			String childName) throws RodinDBException {
+
 		InternalElement internalElement = 
 			getInternalElement(childType,childName);
 		assert internalElement != null;

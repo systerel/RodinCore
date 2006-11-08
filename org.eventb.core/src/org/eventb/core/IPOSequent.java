@@ -10,6 +10,8 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -33,14 +35,16 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public interface IPOSequent extends IInternalElement {
-	public String ELEMENT_TYPE = EventBPlugin.PLUGIN_ID + ".poSequent"; //$NON-NLS-1$
 	
-	public String getName();
+	IInternalElementType ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSequent"); //$NON-NLS-1$
+	
+	String getName();
 	
 	@Deprecated
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException;
-	public IPOPredicateSet getHypothesis() throws RodinDBException;
-	public IPOPredicate getGoal() throws RodinDBException;
+	IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	IPOPredicateSet getHypothesis() throws RodinDBException;
+	IPOPredicate getGoal() throws RodinDBException;
 
 	/**
 	 * Returns a more descriptive name of a proof obligation.
