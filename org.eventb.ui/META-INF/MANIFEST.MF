@@ -6,14 +6,14 @@ Bundle-Version: 0.6.1
 Bundle-Activator: org.eventb.ui.EventBUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.ui;visibility:=reexport,
+ org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.ui.ide,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.ui.forms,
+ org.eclipse.ui.forms;visibility:=reexport,
  org.eclipse.ui.views,
  org.eventb.eventBKeyboard,
- org.eventb.core
+ org.eventb.core;visibility:=reexport
 Eclipse-LazyStart: true
 Export-Package: org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.prover;x-friends:="org.eventb.ui.tests",
