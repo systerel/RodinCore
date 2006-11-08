@@ -351,7 +351,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	private void extract(Node node, GraphModifier handler, ProgressManager manager) {
 //		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
 		ExtractorDescription[] descriptions = 
-			getManager().getExtractorDescriptions(node.getFileElementTypeId());
+			getManager().getExtractorDescriptions(node.getFileElementType());
 		if(descriptions == null)
 			return;
 		for(int j = 0; j < descriptions.length; j++) {

@@ -599,7 +599,7 @@ public class RodinDBManager implements ISaveParticipant {
 			boolean wasVerbose = false;
 			try {
 				if (VERBOSE) {
-					String elementType = element.getElementType();
+					String elementType = element.getElementType().toString();
 					System.out.println(Thread.currentThread() + " CLOSING "+ elementType + " " + element.toStringWithAncestors());  //$NON-NLS-1$//$NON-NLS-2$
 					wasVerbose = true;
 					VERBOSE = false;

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -91,7 +92,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	protected NamedElement createNEPositive(IInternalParent parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
-		final String type = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
 		final IInternalElement element = parent.getInternalElement(type, name);
 		assertExists("Parent should exist", parent);
 		assertNotExists("Element to create should not exist", element);
@@ -104,7 +105,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	protected void createNENegative(IInternalParent parent, String name,
 			IInternalElement nextSibling, int failureCode) throws RodinDBException {
 		
-		final String type = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
 		if (parent.isReadOnly()) {
 			assertEquals("Wrong failure code", 
 					IRodinDBStatusConstants.READ_ONLY, failureCode);

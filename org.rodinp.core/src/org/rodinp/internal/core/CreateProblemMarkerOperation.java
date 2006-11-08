@@ -209,8 +209,7 @@ public class CreateProblemMarkerOperation extends RodinDBOperation {
 		}
 		if (withCharPos) {
 			// Check that it's an attribute of kind String
-			ElementTypeManager manager =
-				ElementTypeManager.getElementTypeManager();
+			final ElementTypeManager manager = ElementTypeManager.getInstance();
 			AttributeTypeDescription atd =
 				manager.getAttributeTypeDescription(attributeId);
 			if (atd == null

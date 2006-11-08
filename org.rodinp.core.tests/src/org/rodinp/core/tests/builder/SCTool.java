@@ -31,6 +31,7 @@ public class SCTool {
 
 	private int index = 0;
 
+	@SuppressWarnings("deprecation")
 	protected void copyDataElements(IRodinFile ctx, IRodinFile target) throws RodinDBException {
 		if (DEBUG)
 			System.out.println("Copying " + ctx.getElementName() +

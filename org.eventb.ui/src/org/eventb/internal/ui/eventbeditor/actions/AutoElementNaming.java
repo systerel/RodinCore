@@ -11,6 +11,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -25,7 +26,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 			editor = (IEventBEditor) targetEditor;
 	}
 
-	public void rename(final String type, final String prefix) {
+	public void rename(final IElementType type, final String prefix) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 

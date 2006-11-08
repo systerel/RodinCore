@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author Stefan Hallerstede
@@ -15,7 +17,8 @@ import org.rodinp.core.IRodinFile;
  */
 public interface IPOFile extends IRodinFile {
 
-	public static final String ELEMENT_TYPE = "org.rodinp.core.tests.poFile";
+	public static final IFileElementType ELEMENT_TYPE = 
+		RodinCore.getFileElementType("org.rodinp.core.tests.poFile");
 	
 	ISCContext getCheckedContext();
 	

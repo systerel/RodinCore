@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -247,18 +248,18 @@ public class DeltaProcessor {
 	 * Creates the openables corresponding to this resource.
 	 * Returns null if none was found.
 	 */
-	private Openable createElement(IResource resource, String elementType) {
+	private Openable createElement(IResource resource, IElementType elementType) {
 		if (resource == null) return null;
 		
 		IRodinElement element = null;
-		if (elementType == IRodinElement.RODIN_PROJECT) {
+		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			
 			// note that non-java resources rooted at the project level will also enter this code with
 			// an elementType JAVA_PROJECT (see #elementType(...)).
 			if (resource instanceof IProject){
 				
 				if (this.currentElement != null 
-						&& this.currentElement.getElementType() == IRodinElement.RODIN_PROJECT
+						&& this.currentElement.getElementType() == IRodinProject.ELEMENT_TYPE
 						&& ((IRodinProject)this.currentElement).getProject().equals(resource)) {
 					return this.currentElement;
 				}
@@ -322,9 +323,9 @@ public class DeltaProcessor {
 	 * </ul>
 	 */
 	private void elementAdded(Openable element, IResourceDelta delta) {
-		String elementType = element.getElementType();
+		IElementType elementType = element.getElementType();
 		
-		if (elementType == IRodinElement.RODIN_PROJECT) {
+		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			// project add is handled by RodinProject.configure() because
 			// when a project is created, it does not yet have a java nature
 			if (delta != null && RodinProject.hasRodinNature((IProject)delta.getResource())) {
@@ -364,7 +365,7 @@ public class DeltaProcessor {
 				IPath movedFromPath = delta.getMovedFromPath();
 				IResource res = delta.getResource();
 				IFile movedFromFile = res.getWorkspace().getRoot().getFile(movedFromPath);
-				String movedFromType = this.elementType(movedFromFile);
+				IElementType movedFromType = this.elementType(movedFromFile);
 				Openable movedFromElement = this.createElement(movedFromFile, movedFromType);
 				if (movedFromElement == null) {
 					// moved from a non-Rodin file
@@ -390,7 +391,7 @@ public class DeltaProcessor {
 	 */
 	private void elementRemoved(Openable element, IResourceDelta delta) {
 		
-		String elementType = element.getElementType();
+		IElementType elementType = element.getElementType();
 		if (delta == null || (delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
 			// regular element removal
 			close(element);
@@ -421,15 +422,15 @@ public class DeltaProcessor {
 			}
 
 			// find the element type of the moved from element
-			String movedToType = this.elementType(movedToRes);
+			IElementType movedToType = this.elementType(movedToRes);
 
 			// reset current element as it might be inside a nested root (popUntilPrefixOf() may use the outer root)
 			this.currentElement = null;
 			
 			// create the moved To element
 			Openable movedToElement = 
-				elementType != IRodinElement.RODIN_PROJECT
-				&& movedToType == IRodinElement.RODIN_PROJECT ? 
+				elementType != IRodinProject.ELEMENT_TYPE
+				&& movedToType == IRodinProject.ELEMENT_TYPE ? 
 					null : // outside classpath
 					this.createElement(movedToRes, movedToType);
 			if (movedToElement == null) {
@@ -440,9 +441,9 @@ public class DeltaProcessor {
 			}
 		}
 
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			// this.manager.indexManager.reset();
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
+		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 				this.projectCachesToReset.add((RodinProject) element);
 		} else {
 			RodinProject project = element.getRodinProject();
@@ -453,12 +454,12 @@ public class DeltaProcessor {
 	 * Returns the type of the Rodin element the given delta matches to.
 	 * Returns <code>null</code> if unknown (e.g. a non-Rodin resource)
 	 */
-	private String elementType(IResource res) {
+	private IElementType elementType(IResource res) {
 		if (res instanceof IProject) {
-			return IRodinElement.RODIN_PROJECT;
+			return IRodinProject.ELEMENT_TYPE;
 		} else if (res.getType() == IResource.FILE) {
-			ElementTypeManager elementTypeManager = ElementTypeManager.getElementTypeManager();
-			return elementTypeManager.getFileElementType((IFile) res);
+			final ElementTypeManager etManager = ElementTypeManager.getInstance();
+			return etManager.getFileElementType((IFile) res);
 		} else {
 			return null;
 		}
@@ -655,11 +656,11 @@ public class DeltaProcessor {
 		// reset non-Rodin resources if element was open
 		if (element.isOpen()) {
 			RodinElementInfo info = element.getElementInfo();
-			if (element.getElementType() == IRodinElement.RODIN_DATABASE) {
+			if (element.getElementType() == IRodinDB.ELEMENT_TYPE) {
 					((RodinDBInfo) info).nonRodinResources = null;
 					currentDelta().addResourceDelta(delta);
 					return;
-			} else if (element.getElementType() ==  IRodinElement.RODIN_PROJECT) {
+			} else if (element.getElementType() ==  IRodinProject.ELEMENT_TYPE) {
 					((RodinProjectElementInfo) info).setNonRodinResources(null);
 			}
 		}
@@ -698,14 +699,14 @@ public class DeltaProcessor {
 				IResource res = delta.getResource();
 				
 				// find out the element type
-				String elementType;
+				IElementType elementType;
 				IProject proj = (IProject) res;
 				boolean wasRodinProject = this.manager.getRodinDB().findOldRodinProject(proj) != null;
 				boolean isRodinProject = RodinProject.hasRodinNature(proj);
 				if (!wasRodinProject && !isRodinProject) {
 					elementType = null;
 				} else {
-					elementType = IRodinElement.RODIN_PROJECT; 
+					elementType = IRodinProject.ELEMENT_TYPE; 
 
 					// traverse delta
 					this.traverseProjectDelta(delta, elementType);
@@ -866,7 +867,8 @@ public class DeltaProcessor {
 	 * Converts an <code>IResourceDelta</code> rooted at a Rodin project and
 	 * its children into the corresponding <code>IRodinElementDelta</code>s.
 	 */
-	private void traverseProjectDelta(IResourceDelta delta, String elementType) {
+	private void traverseProjectDelta(IResourceDelta delta,
+			IElementType elementType) {
 		
 		IProject project = (IProject) delta.getResource();
 		RodinProject rodinProject = (RodinProject) RodinCore.valueOf(project);
@@ -891,7 +893,7 @@ public class DeltaProcessor {
 		IResource res = delta.getResource();
 		switch (res.getType()) {
 		case IResource.FILE:
-			String elementType = elementType(res);
+			IElementType elementType = elementType(res);
 			if (elementType != null) {
 				this.updateCurrentDeltaAndIndex(delta, elementType);
 			} else {
@@ -921,7 +923,9 @@ public class DeltaProcessor {
 	 * Returns whether the children of the given delta must be processed.
 	 * @throws a RodinDBException if the delta doesn't correspond to a java element of the given type.
 	 */
-	public boolean updateCurrentDeltaAndIndex(IResourceDelta delta, String elementType) {
+	public boolean updateCurrentDeltaAndIndex(IResourceDelta delta,
+			IElementType elementType) {
+
 		Openable element;
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
@@ -932,7 +936,7 @@ public class DeltaProcessor {
 				}
 				// updateIndex(element, delta);
 				elementAdded(element, delta);
-				return elementType == IRodinElement.RODIN_PROJECT;
+				return elementType == IRodinProject.ELEMENT_TYPE;
 			case IResourceDelta.REMOVED :
 				deltaRes = delta.getResource();
 				element = createElement(deltaRes, elementType);
@@ -951,7 +955,7 @@ public class DeltaProcessor {
 					// clean up previous session containers (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=89850)
 					// this.manager.previousSessionContainers.remove(element);
 				}
-				return elementType == IRodinElement.RODIN_PROJECT;
+				return elementType == IRodinProject.ELEMENT_TYPE;
 			case IResourceDelta.CHANGED :
 				int flags = delta.getFlags();
 				if ((flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.ENCODING) != 0) {
@@ -960,7 +964,7 @@ public class DeltaProcessor {
 					if (element == null) return false;
 					// updateIndex(element, delta);
 					contentChanged(element);
-				} else if (elementType == IRodinElement.RODIN_PROJECT) {
+				} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 					if ((flags & IResourceDelta.OPEN) != 0) {
 						// project has been opened or closed
 						IProject res = (IProject)delta.getResource();

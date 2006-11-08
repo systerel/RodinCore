@@ -67,7 +67,7 @@ public class CSCTool extends SCTool implements IExtractor, IAutomaticTool {
 		target = (ISCContext) target.getRodinProject().createRodinFile(target.getElementName(), true, null);
 		
 		if (FAULTY)
-			target.createInternalElement("NON_EXISTENT_TYPE", "X", null, null);
+			target.createInternalElement(null, "X", null, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);

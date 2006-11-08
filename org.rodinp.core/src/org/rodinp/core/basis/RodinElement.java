@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
@@ -29,6 +30,7 @@ import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.InternalElementTypeDescription;
 import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
@@ -100,20 +102,29 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Internal code shared by implementers of IInternalParent for computing the
 	 * handle to a child from a memento.
 	 */
-	protected static final IRodinElement getInternalHandleFromMemento(MementoTokenizer memento, IInternalParent parent) {
+	protected static final IRodinElement getInternalHandleFromMemento(
+			MementoTokenizer memento, IInternalParent parent) {
+
 		if (! memento.hasMoreTokens()) return parent;
-		String childType = memento.nextToken();
+		String childTypeId = memento.nextToken();
 		if (! memento.hasMoreTokens()) return parent;
 		if (memento.nextToken().charAt(0) != REM_TYPE_SEP) return parent;
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		RodinElement child;
-		if (manager.isNamedInternalElementType(childType)) {
-			if (! memento.hasMoreTokens()) return parent;
-			String childName = memento.nextToken();
-			child = (RodinElement) parent.getInternalElement(childType, childName);
-		} else {
-			child = (RodinElement) parent.getInternalElement(childType, "");
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		final InternalElementTypeDescription childType = 
+			manager.getInternalElementType(childTypeId);
+		if (childType == null) {
+			// Unknown internal type
+			return null;
 		}
+		final String childName;
+		if (childType.isNamed()) {
+			if (! memento.hasMoreTokens()) return parent;
+			childName = memento.nextToken();
+		} else {
+			childName = "";
+		}
+		final RodinElement child =
+			(RodinElement) parent.getInternalElement(childType, childName);
 		if (child == null) {
 			return null;
 		}
@@ -194,7 +205,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
-	public IRodinElement getAncestor(String ancestorType) {
+	public IRodinElement getAncestor(IElementType ancestorType) {
 		IRodinElement element = this;
 		while (element != null) {
 			if (element.getElementType() == ancestorType)
@@ -226,10 +237,11 @@ public abstract class RodinElement extends PlatformObject implements
 	 * specified type.
 	 * 
 	 * @param type
-	 *            the given type (must be a canonical String)
-	 * @see String#intern()
+	 *            the given type
 	 */
-	public ArrayList<IRodinElement> getFilteredChildrenList(String type) throws RodinDBException {
+	public ArrayList<IRodinElement> getFilteredChildrenList(IElementType type)
+			throws RodinDBException {
+
 		IRodinElement[] children = getChildren();
 		int size = children.length;
 		ArrayList<IRodinElement> list = new ArrayList<IRodinElement>(size);
@@ -245,7 +257,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IParent
 	 */
-	public IRodinElement[] getChildrenOfType(String type) throws RodinDBException {
+	public IRodinElement[] getChildrenOfType(IElementType type) throws RodinDBException {
 		List<IRodinElement> list = getFilteredChildrenList(type);
 		if (list.size() == 0)
 			return NO_ELEMENTS;
@@ -282,7 +294,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
-	public abstract String getElementType();
+	public abstract IElementType getElementType();
 
 	/*
 	 * Creates a Rodin element handle from the given memento. The given token is

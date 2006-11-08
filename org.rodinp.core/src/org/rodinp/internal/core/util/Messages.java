@@ -85,6 +85,9 @@ public final class Messages {
 	public static String status_readOnly;
 	public static String status_updateConflict;
 
+	public static String type_database;
+	public static String type_project;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

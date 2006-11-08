@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -16,7 +18,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IMachine extends IRodinFile {
 	
-	public static final String ELEMENT_TYPE = "org.rodinp.core.tests.machine";
+	public static final IFileElementType ELEMENT_TYPE =
+		RodinCore.getFileElementType("org.rodinp.core.tests.machine");
 	
 	ISCMachine getCheckedVersion();
 

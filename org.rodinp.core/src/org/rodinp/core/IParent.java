@@ -36,14 +36,14 @@ public interface IParent {
 	 * type. The order on children is maintained while extracting them.
 	 * 
 	 * @param type
-	 *            type of the children to retrieve. It must be a canonical String.
+	 *            type of the children to retrieve
 	 * @return the immediate children of this element that are of the given type
 	 * @exception RodinDBException
-	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
-	 * @see String#intern()
+	 *                if the given type is invalid, this element does not exist,
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
 	 */
-	IRodinElement[] getChildrenOfType(String type) throws RodinDBException;
+	IRodinElement[] getChildrenOfType(IElementType type) throws RodinDBException;
 
 	/**
 	 * Returns whether this element <b>may</b> have one or more immediate

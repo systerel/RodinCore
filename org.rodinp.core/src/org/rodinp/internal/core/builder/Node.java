@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Messages;
 
@@ -30,7 +31,7 @@ public class Node implements Serializable {
 
 	private static final long serialVersionUID = 2715764862822077579L;
 	private String name; // name of the resource (full name in workspace!)
-	private String fileElementTypeId; // the extension of the resource
+	private IFileElementType fileElementType; // the extension of the resource
 	private LinkedList<Link> pred; // the predecessor list
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
@@ -57,7 +58,7 @@ public class Node implements Serializable {
 	
 	public Node() {
 		name = null;
-		fileElementTypeId = null;
+		fileElementType = null;
 		pred = new LinkedList<Link>();
 		toolId = null;
 		dated = true;
@@ -143,13 +144,14 @@ public class Node implements Serializable {
 		this.path = path;
 		this.name = path.toString();
 		
-		final ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		// TODO fix code below.
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		this.file = workspace.getRoot().getFile(path);
 		if (file != null)
-			this.fileElementTypeId = manager.getFileElementType(file);
+			this.fileElementType = manager.getFileElementType(file);
 		else
-			this.fileElementTypeId = null;
+			this.fileElementType = null;
 	}
 	
 	protected int getInCount() {
@@ -349,10 +351,10 @@ public class Node implements Serializable {
 	}
 
 	/**
-	 * @return Returns the fileElementTypeId.
+	 * @return Returns the fileElementType.
 	 */
-	public String getFileElementTypeId() {
-		return fileElementTypeId;
+	public IFileElementType getFileElementType() {
+		return fileElementType;
 	}
 
 }

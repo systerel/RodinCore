@@ -104,7 +104,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 			IProgressMonitor monitor) throws RodinDBException {
 
 		if (RodinDBManager.VERBOSE) {
-			String element = getElementType();
+			String element = getElementType().toString();
 			System.out.println(Thread.currentThread()
 					+ " OPENING " + element + " " + this.toStringWithAncestors()); //$NON-NLS-1$//$NON-NLS-2$
 		}

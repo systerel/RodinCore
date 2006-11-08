@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.rodinp.core.basis;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -19,22 +20,24 @@ import org.rodinp.core.IRodinElement;
  * </p>
  * 
  * @see org.rodinp.core.IUnnamedInternalElement
- * @deprecated Don't inherit from this class anymore.
+ * @deprecated Don't extend this class anymore.
  */
 @Deprecated
 public abstract class UnnamedInternalElement extends InternalElement implements
 		org.rodinp.core.IUnnamedInternalElement {
 
 	/* Type of this unnamed internal element. */ 
-	private String type;
+	private IInternalElementType type;
 
-	public UnnamedInternalElement(String type, IRodinElement parent) {
+	public UnnamedInternalElement(IInternalElementType type,
+			IRodinElement parent) {
+
 		super("", parent);
 		this.type = type;
 	}
 
 	@Override
-	public final String getElementType() {
+	public final IInternalElementType getElementType() {
 		return type;
 	}
 

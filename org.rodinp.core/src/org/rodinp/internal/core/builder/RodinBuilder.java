@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.util.Util;
 
@@ -42,7 +43,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		
 		state = null;
 		
-		elementTypeManager = ElementTypeManager.getElementTypeManager();
+		elementTypeManager = ElementTypeManager.getInstance();
      }
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
@@ -89,7 +90,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	Node createNode(IResource resource) {
 		if(resource instanceof IFile) {
 			IFile file = (IFile) resource;
-			String elementType = elementTypeManager.getFileElementType(file);
+			IFileElementType elementType = 
+				elementTypeManager.getFileElementType(file);
 			if(elementType == null)
 				return null;
 			Node node = state.graph.getNode(resource.getFullPath());

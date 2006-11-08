@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder.basis;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.tests.builder.IReference;
@@ -25,7 +26,7 @@ public class Reference extends InternalElement implements IReference {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

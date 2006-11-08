@@ -21,6 +21,7 @@ import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesEventName;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixRefinesMachineName;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -162,8 +163,8 @@ public class Refines implements IObjectActionDelegate {
 		this.selection = selection;
 	}
 
-	private void copyChildrenOfType(IRodinFile destination,
-			IRodinFile original, String type, IProgressMonitor monitor)
+	void copyChildrenOfType(IRodinFile destination,
+			IRodinFile original, IElementType type, IProgressMonitor monitor)
 			throws RodinDBException {
 		IRodinElement[] elements = original.getChildrenOfType(type);
 

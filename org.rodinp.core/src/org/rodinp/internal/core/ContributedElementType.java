@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.basis.RodinElement;
 
 /**
- * Implements the internal description of an element type contributed by a plugin.
+ * Base class for contributed element types.
  * 
  * @author Laurent Voisin
  */
-public abstract class ElementTypeDescription<T extends RodinElement> {
+public abstract class ContributedElementType<T extends RodinElement> extends
+		ElementType {
 
 	// Name of the plugin which contributes this element type
 	private final String bundleName;
@@ -33,17 +34,19 @@ public abstract class ElementTypeDescription<T extends RodinElement> {
 	// Constructor to use to create elements of this element type
 	// (cached value)
 	protected Constructor<? extends T> constructor;
+	
+	private static String readId(IConfigurationElement configElement) {
+		String nameSpace = configElement.getNamespaceIdentifier();
+		return nameSpace + "." + configElement.getAttribute("id");
+	}
+	
+	private static String readName(IConfigurationElement configElement) {
+		return configElement.getAttribute("name");
+	}
 
-	// Unique identifier of this element type (fully qualified identifier)
-	private final String id;
-
-	// Human-readable name of this element type
-	private final String name;
-
-	public ElementTypeDescription(IConfigurationElement configurationElement) {
-		this.bundleName = configurationElement.getNamespaceIdentifier();
-		this.id = (this.bundleName + "." + configurationElement.getAttribute("id")).intern();
-		this.name = configurationElement.getAttribute("name");
+	public ContributedElementType(IConfigurationElement configurationElement) {
+		super(readId(configurationElement), readName(configurationElement));
+		this.bundleName = configurationElement.getContributor().getName();
 		this.className = configurationElement.getAttribute("class");
 	}
 
@@ -69,14 +72,6 @@ public abstract class ElementTypeDescription<T extends RodinElement> {
 			computeConstructor();
 		}
 		return constructor;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 }

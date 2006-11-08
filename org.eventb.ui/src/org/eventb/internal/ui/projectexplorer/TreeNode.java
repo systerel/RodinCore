@@ -14,6 +14,7 @@ package org.eventb.internal.ui.projectexplorer;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -33,7 +34,7 @@ public class TreeNode {
 	private IParent parent;
 
 	// The type of the children of this node (IVariable, IInvariant, etc.)
-	private String childrenType;
+	private IInternalElementType childrenType;
 
 	/**
 	 * Constructor.
@@ -46,7 +47,7 @@ public class TreeNode {
 	 * @param type
 	 *            The type of the children
 	 */
-	public TreeNode(String name, IParent parent, String type) {
+	public TreeNode(String name, IParent parent, IInternalElementType type) {
 		this.name = name;
 		this.parent = parent;
 		childrenType = type;
@@ -96,7 +97,7 @@ public class TreeNode {
 							EventBUIPlugin.getActiveWorkbenchShell(),
 							"Resource out of date",
 							"Component "
-									+ ((IParent) parent).toString()
+									+ parent.toString()
 									+ " is out of date with the file system and will be refresh.");
 			ProjectExplorerActionGroup.refreshAction.refreshAll();
 		}
@@ -107,6 +108,7 @@ public class TreeNode {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return name;
 	}
@@ -120,8 +122,8 @@ public class TreeNode {
 	 * @return <code>true</code> if the children of the node has the specified
 	 *         type
 	 */
-	public boolean isType(String type) {
-		return (childrenType.equals(type));
+	public boolean isType(IInternalElementType type) {
+		return childrenType == type;
 	}
 
 }

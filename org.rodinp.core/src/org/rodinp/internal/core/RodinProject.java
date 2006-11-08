@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -233,8 +234,8 @@ public class RodinProject extends Openable implements IRodinProject {
 	}
 	
 	@Override
-	public String getElementType() {
-		return RODIN_PROJECT;
+	public IElementType getElementType() {
+		return ELEMENT_TYPE;
 	}
 
 	@Override
@@ -422,8 +423,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	 * @see IRodinProject
 	 */
 	public RodinFile getRodinFile(String fileName) {
-		final ElementTypeManager manager = 
-			ElementTypeManager.getElementTypeManager();
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		return manager.createRodinFileHandle(this, fileName);
 	}
 

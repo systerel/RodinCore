@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -107,12 +108,12 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 	}
 
 	private ByteArrayInputStream getInitialInputStream(RodinFile rodinFile) {
-		String elementType = rodinFile.getElementType();
+		IElementType elementType = rodinFile.getElementType();
 		StringBuilder buffer = new StringBuilder(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		);
 		buffer.append("<");
-		buffer.append(elementType);
+		buffer.append(elementType.getId());
 		buffer.append("/>");
 		try {
 			return new ByteArrayInputStream(buffer.toString().getBytes("UTF-8"));
@@ -159,7 +160,7 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
 		}
-		ElementTypeManager typeManager = ElementTypeManager.getElementTypeManager();
+		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
 		if (! typeManager.isValidFileName(name)) {
 			return new RodinDBStatus(IRodinDBStatusConstants.INVALID_NAME,
 					name);

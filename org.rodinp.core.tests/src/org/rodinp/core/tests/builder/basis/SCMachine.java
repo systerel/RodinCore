@@ -8,6 +8,7 @@
 package org.rodinp.core.tests.builder.basis;
 
 import org.eclipse.core.resources.IFile;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.tests.builder.IMachine;
 import org.rodinp.core.tests.builder.ISCMachine;
@@ -26,7 +27,7 @@ public class SCMachine extends Component implements ISCMachine {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

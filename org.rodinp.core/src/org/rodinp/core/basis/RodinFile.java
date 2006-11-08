@@ -18,7 +18,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -125,13 +127,13 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	private final RodinFile createNewHandle() {
-		final ElementTypeManager etm =
-			ElementTypeManager.getElementTypeManager();
+		final ElementTypeManager etm = ElementTypeManager.getInstance();
 		return 
 			etm.createRodinFileHandle(getRodinProject(), getElementName());
 	}
 
-	public final InternalElement createInternalElement(String type, String name,
+	public final InternalElement createInternalElement(
+			IInternalElementType type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		
@@ -139,7 +141,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		if (result == null) {
 			IRodinDBStatus status = new RodinDBStatus(
 					IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE,
-					type
+					type.toString()
 			);
 			throw new RodinDBException(status);
 		}
@@ -174,6 +176,9 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
+	public abstract IFileElementType getElementType();
+
+	@Override
 	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {
 		case REM_INTERNAL:
@@ -187,13 +192,17 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 		return REM_EXTERNAL;
 	}
 
-	public final InternalElement getInternalElement(String type, String name) {
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+	public final InternalElement getInternalElement(IInternalElementType type,
+			String name) {
+
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		return manager.createInternalElementHandle(type, name, this);
 	}
 
 	@Deprecated
-	public final InternalElement getInternalElement(String type, String name, int occurrenceCount) {
+	public final InternalElement getInternalElement(IInternalElementType type,
+			String name, int occurrenceCount) {
+
 		if (occurrenceCount != 1) {
 			throw new IllegalArgumentException("Occurrence count must be 1");
 		}

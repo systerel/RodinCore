@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import static org.rodinp.core.IRodinElement.RODIN_DATABASE;
-import static org.rodinp.core.IRodinElement.RODIN_PROJECT;
-
 import java.text.NumberFormat;
 import java.util.HashMap;
 
+import org.rodinp.core.IElementType;
+import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinFile;
 
@@ -68,11 +68,11 @@ public class RodinDBCache {
 	 * Returns the info for the element.
 	 */
 	public OpenableElementInfo getInfo(Openable element) {
-		String elementType = element.getElementType();
-		if (elementType == RODIN_DATABASE) {
+		IElementType elementType = element.getElementType();
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			return this.modelInfo;
 		}
-		if (elementType == RODIN_PROJECT) {
+		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			return this.projectCache.get(element);
 		}
 		return this.openableCache.get(element);
@@ -89,11 +89,11 @@ public class RodinDBCache {
 	 * Returns the info for this element without disturbing the cache ordering.
 	 */
 	public OpenableElementInfo peekAtInfo(Openable element) {
-		String elementType = element.getElementType();
-		if (elementType == RODIN_DATABASE) {
+		IElementType elementType = element.getElementType();
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			return this.modelInfo;
 		}
-		if (elementType == RODIN_PROJECT) {
+		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			return this.projectCache.get(element);
 		}
 		return this.openableCache.peek(element);
@@ -110,10 +110,10 @@ public class RodinDBCache {
 	 * Remember the info for the element.
 	 */
 	public void putInfo(Openable element, OpenableElementInfo info) {
-		String elementType = element.getElementType();
-		if (elementType == RODIN_DATABASE) {
+		IElementType elementType = element.getElementType();
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			this.modelInfo = (RodinDBInfo) info;
-		} else if (elementType == RODIN_PROJECT) {
+		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 			this.projectCache.put(
 					(RodinProject) element,
 					(RodinProjectElementInfo) info
@@ -127,10 +127,10 @@ public class RodinDBCache {
 	 * Removes the info of the element from the cache.
 	 */
 	public void removeInfo(Openable element) {
-		String elementType = element.getElementType();
-		if (elementType == RODIN_DATABASE) {
+		IElementType elementType = element.getElementType();
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			this.modelInfo = null;
-		} else if (elementType == RODIN_PROJECT) {
+		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 			this.projectCache.remove(element);
 		} else {
 			this.openableCache.remove(element);

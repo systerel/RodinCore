@@ -1,5 +1,6 @@
 package org.rodinp.core.tests.builder.basis;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.tests.builder.IData;
@@ -11,7 +12,7 @@ public class Data extends InternalElement implements IData {
 	}
 
 	@Override
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

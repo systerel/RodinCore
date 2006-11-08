@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.RodinCore;
+
 
 /**
  * @author Stefan Hallerstede
@@ -14,7 +17,8 @@ package org.rodinp.core.tests.builder;
  */
 public interface ISCMachine extends ISCProvable {
 
-	public static final String ELEMENT_TYPE = "org.rodinp.core.tests.scMachine";
+	public static final IFileElementType ELEMENT_TYPE = 
+		RodinCore.getFileElementType("org.rodinp.core.tests.scMachine");
 	
 	IMachine getUncheckedVersion();
 

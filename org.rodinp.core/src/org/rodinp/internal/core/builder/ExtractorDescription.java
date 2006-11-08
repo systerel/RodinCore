@@ -9,6 +9,8 @@
 package org.rodinp.internal.core.builder;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IExtractor;
 
 /**
@@ -25,7 +27,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	private final ToolDescription toolDescription;
 	
 	// List of file types that this extractor can parse.
-	private final String[] inputTypes;
+	private final IFileElementType[] inputTypes;
 
 	/**
 	 * Creates a new extractor decription.
@@ -42,9 +44,11 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 		this.toolDescription = toolDescription;
 		
 		IConfigurationElement[] children = configElement.getChildren("inputType");
-		this.inputTypes = new String[children.length];
+		this.inputTypes = new IFileElementType[children.length];
 		for (int i = 0; i < children.length; i++) {
-			this.inputTypes[i] = children[i].getAttribute("id").intern();
+			final String id = children[i].getAttribute("id");
+			// TODO check for existence of the file element type
+			this.inputTypes[i] = RodinCore.getFileElementType(id);
 		}
 	}
 
@@ -71,7 +75,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	 * 
 	 * @return Returns the input types known to this extractor.
 	 */
-	public String[] getInputTypes() {
+	public IFileElementType[] getInputTypes() {
 		return inputTypes;
 	}
 

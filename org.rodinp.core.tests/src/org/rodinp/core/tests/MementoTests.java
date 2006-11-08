@@ -11,6 +11,7 @@
 package org.rodinp.core.tests;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -125,10 +126,10 @@ public class MementoTests extends ModifyingResourceTests {
 	 * restored using its memento.
 	 */
 	public void testTopMemento() {
-		final String type = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 		NamedElement ne = (NamedElement) rf.getInternalElement(type, "foo");
-		assertMemento("/P/X.test|" + type + "#foo", ne);
+		assertMemento("/P/X.test|" + type.getId() + "#foo", ne);
 	}
 
 	/**
@@ -136,13 +137,13 @@ public class MementoTests extends ModifyingResourceTests {
 	 * restored using its memento.
 	 */
 	public void testNonTopMemento() {
-		final String nType = NamedElement.ELEMENT_TYPE;
+		final IInternalElementType nType = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 
 		IInternalElement top = rf.getInternalElement(nType, "foo");
-		String prefix = "/P/X.test|" + nType + "#foo";
+		String prefix = "/P/X.test|" + nType.getId() + "#foo";
 		IInternalElement ne = top.getInternalElement(nType, "bar");
-		assertMemento(prefix + "|" + nType + "#bar", ne);
+		assertMemento(prefix + "|" + nType.getId() + "#bar", ne);
 	}
 
 }

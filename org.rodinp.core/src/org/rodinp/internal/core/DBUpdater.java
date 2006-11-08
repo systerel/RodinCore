@@ -13,7 +13,8 @@ package org.rodinp.internal.core;
 
 import java.util.HashSet;
 
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IElementType;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -67,8 +68,8 @@ public class DBUpdater {
 	 */
 	private void elementAdded(Openable element) {
 
-		String elementType = element.getElementType();
-		if (elementType == IRodinElement.RODIN_PROJECT) {
+		IElementType elementType = element.getElementType();
+		if (elementType == IRodinProject.ELEMENT_TYPE) {
 			// project add is handled by RodinProject.configure() because
 			// when a project is created, it does not yet have a Rodin nature
 			addToParentInfo(element);
@@ -113,11 +114,11 @@ public class DBUpdater {
 			close(element);
 		}
 		removeFromParentInfo(element);
-		String elementType = element.getElementType();
+		IElementType elementType = element.getElementType();
 
-		if (elementType == IRodinElement.RODIN_DATABASE) {
+		if (elementType == IRodinDB.ELEMENT_TYPE) {
 			// RodinDBManager.getRodinDBManager().getIndexManager().reset();
-		} else if (elementType == IRodinElement.RODIN_PROJECT) {
+		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 			RodinDBManager.getRodinDBManager().removePerProjectInfo(
 					(RodinProject) element);
 		} else {
@@ -178,7 +179,7 @@ public class DBUpdater {
 		boolean processChildren = true;
 
 		Openable element = (Openable) delta.getElement();
-		if (element.getElementType() == IRodinElement.RODIN_PROJECT) {
+		if (element.getElementType() == IRodinProject.ELEMENT_TYPE) {
 			project = (IRodinProject) element;
 		}
 		if (element instanceof RodinFile) {

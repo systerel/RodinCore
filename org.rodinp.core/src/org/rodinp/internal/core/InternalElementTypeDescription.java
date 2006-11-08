@@ -11,6 +11,7 @@ package org.rodinp.internal.core;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Util;
@@ -19,7 +20,8 @@ import org.rodinp.internal.core.util.Util;
  * @author lvoisin
  *
  */
-public class InternalElementTypeDescription extends ElementTypeDescription<InternalElement> {
+public class InternalElementTypeDescription extends
+		ContributedElementType<InternalElement> implements IInternalElementType {
 
 	private final boolean named;
 	

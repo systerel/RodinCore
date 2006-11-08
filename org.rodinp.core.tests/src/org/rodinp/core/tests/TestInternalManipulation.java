@@ -271,6 +271,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 
 	
 	// Test creation of some internal elements with contents
+	@SuppressWarnings("deprecation")
 	public void testInternalElementWithContents() throws Exception {
 		// File exists and is empty
 		assertExists("File should exist", rodinFile);
@@ -309,6 +310,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	// Test modification of some internal element with contents
+	@SuppressWarnings("deprecation")
 	public void testChangeContents() throws Exception {
 		// File exists and is empty
 		assertExists("File should exist", rodinFile);

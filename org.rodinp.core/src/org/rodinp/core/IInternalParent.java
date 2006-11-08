@@ -33,7 +33,7 @@ public interface IInternalParent extends IParent, IRodinElement {
 
 	/**
 	 * Creates and returns a new child internal element with the given type and
-	 * name. This element must thus belong to a working copy of a Rodin file.
+	 * name. This element must thus belong to a mutable copy of a Rodin file.
 	 * 
 	 * <p>
 	 * If there already exists a child element with the same type and name, no
@@ -57,9 +57,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *                <ul>
 	 *                <li>This Rodin element does not exist
 	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li>This Rodin element belongs to a primary copy which is
-	 *                always read-only (READ_ONLY)</li>
-	 *                <li>The given type is unknown
+	 *                <li>This Rodin element is read-only (READ_ONLY)</li>
+	 *                <li>The given type is invalid
 	 *                (INVALID_INTERNAL_ELEMENT_TYPE)</li>
 	 *                <li>There already exists a child element with the given
 	 *                type and name (NAME_COLLISION)</li>
@@ -68,7 +67,7 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 * @return a new internal element in this element with the specified type
 	 *         and name
 	 */
-	IInternalElement createInternalElement(String type, String name,
+	IInternalElement createInternalElement(IInternalElementType type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException;
 
@@ -88,7 +87,8 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 * @return the child internal element with the given type and name or
 	 *         <code>null</code> if the given element type is unknown
 	 */
-	IInternalElement getInternalElement(String childType, String childName);
+	IInternalElement getInternalElement(IInternalElementType childType,
+			String childName);
 
 	/**
 	 * Returns a handle to a child internal element with the given type, name.
@@ -115,8 +115,9 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *             count has become deprecated.
 	 */
 	@Deprecated
-	IInternalElement getInternalElement(String childType, String childName,
-			int occurrenceCount) throws IllegalArgumentException;
+	IInternalElement getInternalElement(IInternalElementType childType,
+			String childName, int occurrenceCount)
+			throws IllegalArgumentException;
 	
 	/**
 	 * Returns a handle to this element in the snapshot of its Rodin file.

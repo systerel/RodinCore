@@ -33,6 +33,11 @@ public interface IRodinFile extends IOpenable, IInternalParent,
 	IRodinElement[] findElements(IRodinElement element);
 
 	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinElement#getElementType()
+	 */
+	IFileElementType getElementType();
+	
+	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getResource()
 	 */
 	IFile getResource();

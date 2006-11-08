@@ -80,6 +80,11 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	void createProblemMarker(String attributeId, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException;
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.core.IRodinElement#getElementType()
+	 */
+	IInternalElementType getElementType();
+	
 	/**
 	 * Returns the occurrence count of this internal element, which is always
 	 * <code>1</code>.

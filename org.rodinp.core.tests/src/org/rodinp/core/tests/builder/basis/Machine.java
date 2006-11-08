@@ -8,6 +8,7 @@
 package org.rodinp.core.tests.builder.basis;
 
 import org.eclipse.core.resources.IFile;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -29,7 +30,7 @@ public class Machine extends Component implements IMachine {
 	 * @see org.rodinp.core.basis.RodinElement#getElementType()
 	 */
 	@Override
-	public String getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

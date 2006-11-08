@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
@@ -52,7 +53,7 @@ public class ToolManager {
 	private HashMap<String, ExtractorDescription> extractors;
 	
 	// Map from input type to list of extractor description
-	private HashMap<String, List<ExtractorDescription>> extractorsForType;
+	private HashMap<IFileElementType, List<ExtractorDescription>> extractorsForType;
 	
 	// Map from tool id to tool description
 	private HashMap<String, ToolDescription> tools;
@@ -65,12 +66,14 @@ public class ToolManager {
 	private void add(ExtractorDescription extractorDesc) {
 		final String id = extractorDesc.getId();
 		extractors.put(id, extractorDesc);
-		for (String inputType : extractorDesc.getInputTypes()) {
+		for (IFileElementType inputType : extractorDesc.getInputTypes()) {
 			addExtractorForType(extractorDesc, inputType);
 		}
 	}
 	
-	private void addExtractorForType(ExtractorDescription extractorDesc, String inputType) {
+	private void addExtractorForType(ExtractorDescription extractorDesc,
+			IFileElementType inputType) {
+
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null) {
 			extractorSet = new LinkedList<ExtractorDescription>();
@@ -95,7 +98,7 @@ public class ToolManager {
 		
 		tools = new HashMap<String, ToolDescription>();
 		extractors = new HashMap<String, ExtractorDescription>();
-		extractorsForType = new HashMap<String, List<ExtractorDescription>>();
+		extractorsForType = new HashMap<IFileElementType, List<ExtractorDescription>>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -127,7 +130,7 @@ public class ToolManager {
 		return result;
 	}
 
-	public ExtractorDescription[] getExtractorDescriptions(String inputType) {
+	public ExtractorDescription[] getExtractorDescriptions(IFileElementType inputType) {
 		computeToolList();
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null || extractorSet.size() == 0) {
@@ -161,14 +164,16 @@ public class ToolManager {
 	private void removeExtractor(String id) {
 		final ExtractorDescription extractorDesc = extractors.get(id);
 		if (extractorDesc != null) {
-			for (String inputType : extractorDesc.getInputTypes()) {
+			for (IFileElementType inputType : extractorDesc.getInputTypes()) {
 				removeExtractorForType(inputType, extractorDesc);
 			}
 			extractors.remove(id);
 		}
 	}
 	
-	private void removeExtractorForType(String inputType, ExtractorDescription extractorDesc) {
+	private void removeExtractorForType(IFileElementType inputType,
+			ExtractorDescription extractorDesc) {
+
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet != null) { 
 			extractorSet.remove(extractorDesc);

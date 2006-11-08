@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.basis.InternalElement;
@@ -45,8 +47,18 @@ public class ElementTypeManager {
 	
 	/**
 	 * Returns the singleton ElementTypeManager
+	 * 
+	 * @deprecated Use {@link #getInstance()} instead.
 	 */
+	@Deprecated
 	public final static ElementTypeManager getElementTypeManager() {
+		return MANAGER;
+	}
+
+	/**
+	 * Returns the singleton ElementTypeManager
+	 */
+	public final static ElementTypeManager getInstance() {
 		return MANAGER;
 	}
 
@@ -190,23 +202,23 @@ public class ElementTypeManager {
 	 * @return <code>true</code> iff it is a named internal element type
 	 */
 	public boolean isNamedInternalElementType(String elementType) {
-		InternalElementTypeDescription desc = getInternalElementTypeDescription(elementType);
+		InternalElementTypeDescription desc = getInternalElementType(elementType);
 		return desc != null && desc.isNamed(); 
 	}
 	
 	/**
-	 * Returns the full description of the given internal element type.
+	 * Returns the internal element type with the given id.
 	 * 
-	 * @param elementType
-	 *            the element type to retrieve
-	 * @return the element type description or <code>null</code> if this
-	 *         element type is unknown.
+	 * @param id
+	 *            the id of the element type to retrieve
+	 * @return the element type or <code>null</code> if this
+	 *         element type id is unknown.
 	 */
-	private InternalElementTypeDescription getInternalElementTypeDescription(String elementType) {
+	public InternalElementTypeDescription getInternalElementType(String id) {
 		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}
-		return internalElementTypeIds.get(elementType);
+		return internalElementTypeIds.get(id);
 	}
 	
 	/**
@@ -218,14 +230,21 @@ public class ElementTypeManager {
 	 * @return the file element type associated to the file or <code>null</code>
 	 *         if it is not a Rodin file
 	 */
-	public String getFileElementType(IFile file) {
+	public IFileElementType getFileElementType(IFile file) {
 		FileElementTypeDescription description = getFileElementTypeDescription(file);
 		if (description == null) {
 			return null;		// Not a Rodin file.
 		}
-		return description.getId();
+		return description;
 	}
 
+	public IFileElementType getFileElementType(String id) {
+		if (fileElementTypeIds == null) {
+			computeFileElementTypes();
+		}
+		return fileElementTypeIds.get(id);
+	}
+	
 	/**
 	 * Tells whether the given file name is valid for a Rodin File (that is
 	 * corresponds to a declared file element type).
@@ -250,10 +269,13 @@ public class ElementTypeManager {
 	 *            the new element's parent
 	 * @return a handle on the internal element or <code>null</code> if the
 	 *         element type is unknown
+	 * @deprecated Reimplement directly in the element type.
 	 */
-	public InternalElement createInternalElementHandle(String type, String name, IRodinElement parent) {
+	@Deprecated
+	public InternalElement createInternalElementHandle(IInternalElementType type, String name, IRodinElement parent) {
 		assert name != null;
-		InternalElementTypeDescription description = getInternalElementTypeDescription(type);
+		InternalElementTypeDescription description = 
+			(InternalElementTypeDescription) type;
 		if (description == null) {
 			// TODO create a default node for unknown types
 			// When the type is unknown, this means that the plugin that contributed it is no
@@ -323,5 +345,5 @@ public class ElementTypeManager {
 	public boolean isValidAttributeName(String attributeName) {
 		return getAttributeTypeDescription(attributeName) != null;
 	}
-	
+
 }

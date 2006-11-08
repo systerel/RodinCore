@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -165,8 +166,8 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinElement
 	 */
 	@Override
-	public String getElementType() {
-		return RODIN_DATABASE;
+	public IElementType getElementType() {
+		return ELEMENT_TYPE;
 	}
 
 	/*
@@ -249,7 +250,8 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see IRodinDB
 	 */
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
-		ArrayList<IRodinElement> list = getFilteredChildrenList(RODIN_PROJECT);
+		ArrayList<IRodinElement> list = 
+			getFilteredChildrenList(IRodinProject.ELEMENT_TYPE);
 		return list.toArray(new IRodinProject[list.size()]);
 
 	}

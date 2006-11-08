@@ -13,6 +13,7 @@ package org.rodinp.internal.core.util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -84,7 +85,8 @@ public class Util {
 		final IInternalParent parent = (IInternalParent) element.getParent();
 		final IInternalParent newParent = 
 			internGetSimilarElement(parent, newFile);
-		final String type = element.getElementType();
+		final IInternalElementType type = 
+			(IInternalElementType) element.getElementType();
 		final String name = element.getElementName();
 		return newParent.getInternalElement(type, name);
 	}

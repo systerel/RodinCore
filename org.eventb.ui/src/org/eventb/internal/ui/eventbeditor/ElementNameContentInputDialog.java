@@ -29,6 +29,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -54,7 +55,7 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 
 	private IEventBEditor editor;
 
-	private String type;
+	private IInternalElementType type;
 
 	/**
 	 * Constructor.
@@ -72,7 +73,8 @@ public class ElementNameContentInputDialog extends EventBInputDialog {
 	 *            The start counter for the elements.
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
-			String message, IEventBEditor editor, String type, String prefix, int index) {
+			String message, IEventBEditor editor, IInternalElementType type,
+			String prefix, int index) {
 		super(parentShell, title);
 		this.message = message;
 		this.prefix = prefix;

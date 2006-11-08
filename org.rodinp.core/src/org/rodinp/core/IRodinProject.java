@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.internal.core.ElementType;
 
 /**
  * A Rodin project represents a view of a project resource in terms of Rodin
@@ -39,6 +40,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see RodinCore#valueOf(IProject)
  */
 public interface IRodinProject extends IParent, IRodinElement, IOpenable {
+
+	/**
+	 * The element type of all Rodin projects.
+	 */
+	IElementType ELEMENT_TYPE = ElementType.PROJECT_ELEMENT_TYPE;
 
 	/**
 	 * Returns the <code>IRodinElement</code> corresponding to the given

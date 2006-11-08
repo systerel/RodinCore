@@ -7,18 +7,21 @@
  *******************************************************************************/
 package org.rodinp.core.tests.basis;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.basis.InternalElement;
 
 public class NamedElement extends InternalElement {
 	
-	public static final String ELEMENT_TYPE = "org.rodinp.core.tests.namedElement";
+	public static final IInternalElementType ELEMENT_TYPE = 
+		RodinCore.getInternalElementType("org.rodinp.core.tests.namedElement");
 
 	public NamedElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
-	public String getElementType() {
+	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 

@@ -29,30 +29,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * common special case.
  * </p>
  * <p>
- * All methods that manipulate element types expect that the element type is
- * represented by a canonical String. This restriction should not be a problem
- * for clients, as most of the time the element types manipulated come from
- * constant Strings (which are interned by the Java compiler). However, in case
- * a client needs to dynamically create an element type name, this client needs
- * to make it canonical before passing it to the Rodin database (see
- * {@link String#intern()}).
- * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  */
 public interface IRodinElement extends IAdaptable {
-
-	/**
-	 * Constant representing a Rodin database (workspace level object). A Rodin
-	 * element with this type can be safely cast to <code>IRodinDB</code>.
-	 */
-	String RODIN_DATABASE = RodinCore.PLUGIN_ID + ".database";
-
-	/**
-	 * Constant representing a Rodin project. A Rodin element with this type can
-	 * be safely cast to <code>IRodinProject</code>.
-	 */
-	String RODIN_PROJECT = RodinCore.PLUGIN_ID + ".project";
 
 	/**
 	 * Creates a new Rodin Problem marker for this element.
@@ -113,12 +93,11 @@ public interface IRodinElement extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param ancestorType
-	 *            the given type (must be a canonical String)
+	 *            the type of the ancestor to look up
 	 * @return the first ancestor of this Rodin element that has the given type,
 	 *         or <code>null</code> if no such an ancestor can be found
-	 * @see String#intern()
 	 */
-	IRodinElement getAncestor(String ancestorType);
+	IRodinElement getAncestor(IElementType ancestorType);
 
 	/**
 	 * Returns the resource that corresponds directly to this element, or
@@ -149,14 +128,14 @@ public interface IRodinElement extends IAdaptable {
 	String getElementName();
 
 	/**
-	 * Returns the type of this element as a canonical String.
+	 * Returns the type of this element.
 	 * <p>
 	 * This is a handle-only method.
 	 * </p>
 	 * 
 	 * @return the element type
 	 */
-	String getElementType();
+	IElementType getElementType();
 
 	/**
 	 * Returns a string representation of this element handle. The format of the

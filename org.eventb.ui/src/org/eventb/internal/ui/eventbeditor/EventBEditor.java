@@ -526,16 +526,16 @@ public abstract class EventBEditor extends FormEditor implements
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	/**
-	 * Checking if a Rodin element is "original" (created automatically, but is
-	 * not modified).
-	 * <p>
-	 * 
-	 * @param element
-	 *            a Rodin element
-	 * @return <code>true</code> if the element has default created values.
-	 *         <code>false</code> otherwise.
-	 */
+//	/**
+//	 * Checking if a Rodin element is "original" (created automatically, but is
+//	 * not modified).
+//	 * <p>
+//	 * 
+//	 * @param element
+//	 *            a Rodin element
+//	 * @return <code>true</code> if the element has default created values.
+//	 *         <code>false</code> otherwise.
+//	 */
 	// private boolean isOriginal(IRodinElement element) {
 	// if (element instanceof IGuard) {
 	// try {
@@ -623,7 +623,7 @@ public abstract class EventBEditor extends FormEditor implements
 	 * Set the selection in the editor if the input is a Rodin element.
 	 * <p>
 	 * 
-	 * @param node
+	 * @param element
 	 *            instance of IRodinElement
 	 */
 	private void elementEdit(IRodinElement element) {

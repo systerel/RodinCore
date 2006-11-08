@@ -31,6 +31,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -73,6 +74,7 @@ public class PasteAction extends SelectionListenerAction {
 	/**
 	 * Implementation of method defined on <code>IAction</code>.
 	 */
+	@Override
 	public void run() {
 		// try a resource transfer
 		ResourceTransfer resTransfer = ResourceTransfer.getInstance();
@@ -147,7 +149,7 @@ public class PasteAction extends SelectionListenerAction {
 							pasteInto = file;
 						if (element instanceof IEvent)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "evt"
+									pasteInto, null, "evt"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													IEvent.ELEMENT_TYPE, "evt",
@@ -155,7 +157,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof IInvariant)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "inv"
+									pasteInto, null, "inv"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													IInvariant.ELEMENT_TYPE,
@@ -163,7 +165,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof ITheorem)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "thm"
+									pasteInto, null, "thm"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													ITheorem.ELEMENT_TYPE,
@@ -171,7 +173,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof IVariant)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "variant"
+									pasteInto, null, "variant"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													IVariant.ELEMENT_TYPE,
@@ -179,7 +181,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof IAxiom)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "axm"
+									pasteInto, null, "axm"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													IAxiom.ELEMENT_TYPE, "axm",
@@ -187,7 +189,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof IConstant)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "cst"
+									pasteInto, null, "cst"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													IConstant.ELEMENT_TYPE,
@@ -195,7 +197,7 @@ public class PasteAction extends SelectionListenerAction {
 									new NullProgressMonitor());
 						else if (element instanceof ICarrierSet)
 							((IInternalElement) element).copy(
-									(IRodinElement) pasteInto, null, "set"
+									pasteInto, null, "set"
 											+ UIUtils.getFreeElementNameIndex(
 													pasteInto,
 													ICarrierSet.ELEMENT_TYPE,
@@ -206,6 +208,7 @@ public class PasteAction extends SelectionListenerAction {
 									"element"
 											+ UIUtils.getFreeElementNameIndex(
 													(IInternalParent) parent,
+													(IInternalElementType)
 													element.getElementType(),
 													"element", 1), false,
 									new NullProgressMonitor());
@@ -238,6 +241,7 @@ public class PasteAction extends SelectionListenerAction {
 	 * -Files and folders may be pasted to a single selected folder in open
 	 * project or multiple selected files in the same folder
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (!super.updateSelection(selection))
 			return false;

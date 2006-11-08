@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -75,14 +76,15 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return new InternalElementInfo();
 	}
 	
-	public InternalElement createInternalElement(String type, String childName,
-			IInternalElement nextSibling, IProgressMonitor monitor)
-			throws RodinDBException {
+	public InternalElement createInternalElement(IInternalElementType type,
+			String childName, IInternalElement nextSibling,
+			IProgressMonitor monitor) throws RodinDBException {
 		
 		InternalElement result = getInternalElement(type, childName);
 		if (result == null) {
-			IRodinDBStatus status =
-				new RodinDBStatus(IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE, type);
+			IRodinDBStatus status = new RodinDBStatus(
+					IRodinDBStatusConstants.INVALID_INTERNAL_ELEMENT_TYPE,
+					type.toString());
 			throw new RodinDBException(status);
 		}
 		new CreateInternalElementOperation(result, nextSibling).runOperation(monitor);
@@ -137,8 +139,8 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	private AttributeTypeDescription getAttributeTypeDescription(String attrName)
 			throws RodinDBException {
 		
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
-		AttributeTypeDescription attributeTypeDescription = 
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		final AttributeTypeDescription attributeTypeDescription = 
 			manager.getAttributeTypeDescription(attrName);
 		if (attributeTypeDescription == null) {
 			throw new RodinDBException(new RodinDBStatus(
@@ -183,6 +185,9 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return name;
 	}
 
+	@Override
+	public abstract IInternalElementType getElementType();
+
 	protected RodinFileElementInfo getFileInfo(IProgressMonitor monitor) throws RodinDBException {
 		RodinFile file = getOpenableParent();
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) file.getElementInfo(monitor);
@@ -218,7 +223,7 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 	protected void getHandleMemento(StringBuilder buff) {
 		getParent().getHandleMemento(buff);
 		buff.append(REM_INTERNAL);
-		escapeMementoName(buff, getElementType());
+		escapeMementoName(buff, getElementType().getId());
 		buff.append(REM_TYPE_SEP);
 		escapeMementoName(buff, getElementName());
 	}
@@ -236,13 +241,17 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 		return attributeTypeDescription.getIntValue(rawValue);
 	}
 
-	public InternalElement getInternalElement(String childType, String childName) {
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+	public InternalElement getInternalElement(IInternalElementType childType,
+			String childName) {
+
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		return manager.createInternalElementHandle(childType, childName, this);
 	}
 
 	@Deprecated
-	public InternalElement getInternalElement(String type, String childName, int childOccurrenceCount) {
+	public InternalElement getInternalElement(IInternalElementType type,
+			String childName, int childOccurrenceCount) {
+
 		if (childOccurrenceCount != 1) {
 			throw new IllegalArgumentException("Occurrence count must be 1.");
 		}

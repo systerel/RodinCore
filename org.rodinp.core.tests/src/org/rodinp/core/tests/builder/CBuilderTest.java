@@ -174,24 +174,25 @@ public class CBuilderTest extends AbstractBuilderTest {
 	 */
 	public void testRodinDBProblem() throws Exception {
 		
-		CSCTool.FAULTY = true;
-		
-		IRodinFile ctx = createRodinFile("P/x.ctx");
-		createData(ctx, "one");
-		ctx.save(null, true);
-		
-		IRodinFile cty = createRodinFile("P/y.ctx");
-		createDependency(cty, "x");
-		createData(cty, "two");
-		cty.save(null, true);		
-		runBuilder(
-				"CSC extract /P/y.ctx\n" + 
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc"
-		);
-		
-		CSCTool.FAULTY = false;
-		
+		try {
+			CSCTool.FAULTY = true;
+
+			IRodinFile ctx = createRodinFile("P/x.ctx");
+			createData(ctx, "one");
+			ctx.save(null, true);
+
+			IRodinFile cty = createRodinFile("P/y.ctx");
+			createDependency(cty, "x");
+			createData(cty, "two");
+			cty.save(null, true);		
+			runBuilder(
+					"CSC extract /P/y.ctx\n" + 
+					"CSC extract /P/x.ctx\n" + 
+					"CSC run /P/x.csc"
+			);
+		} finally {
+			CSCTool.FAULTY = false;
+		}
 	}
 
 	
@@ -200,21 +201,23 @@ public class CBuilderTest extends AbstractBuilderTest {
 	 * Proper treatment of database errors while tools are run
 	 */
 	public void testRodinDBProblemInTool() throws Exception {
+		final IRodinFile ctx;
+		try {
+			CSCTool.FAULTY = true;
 		
-		CSCTool.FAULTY = true;
-		
-		IRodinFile ctx = createRodinFile("P/x.ctx");
-		createData(ctx, "one");
-		ctx.save(null, true);
-		
-		IRodinFile cty = createRodinFile("P/y.ctx");
-		createDependency(cty, "x");
-		createData(cty, "two");
-		cty.save(null, true);		
-		runBuilder(null);
-		ToolTrace.flush();
-		
-		CSCTool.FAULTY = false;
+			ctx = createRodinFile("P/x.ctx");
+			createData(ctx, "one");
+			ctx.save(null, true);
+
+			IRodinFile cty = createRodinFile("P/y.ctx");
+			createDependency(cty, "x");
+			createData(cty, "two");
+			cty.save(null, true);		
+			runBuilder(null);
+			ToolTrace.flush();
+		} finally {
+			CSCTool.FAULTY = false;
+		}
 
 		createData(ctx, "three");
 		ctx.save(null, true);

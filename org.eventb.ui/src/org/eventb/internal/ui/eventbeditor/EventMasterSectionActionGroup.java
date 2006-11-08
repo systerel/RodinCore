@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IEvent;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
@@ -227,9 +226,9 @@ public class EventMasterSectionActionGroup extends MasterSectionActionGroup {
 			submenu = new MenuManager("Abstract Event");
 			menu.add(submenu);
 			if (ssel.size() == 1) {
+				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				submenu.add(new ShowAbstractEventContribution(file,
-						(IEvent) UIUtils.getParentOfType((IRodinElement) ssel
-								.getFirstElement(), IEvent.ELEMENT_TYPE)));
+						(IEvent) element.getAncestor(IEvent.ELEMENT_TYPE)));
 			}
 
 			// Abstract invariants

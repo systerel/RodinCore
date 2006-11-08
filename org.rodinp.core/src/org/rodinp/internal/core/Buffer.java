@@ -27,8 +27,10 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
@@ -111,10 +113,10 @@ public class Buffer {
 		this.stamp = IResource.NULL_STAMP;
 	}
 	
-	public Element createElement(String type, String name, Element domParent,
+	public Element createElement(IInternalElementType type, String name, Element domParent,
 			Element domNextSibling) {
 		
-		Element domNewElement = domDocument.createElementNS(null, type);
+		Element domNewElement = domDocument.createElementNS(null, type.getId());
 		domNewElement.setAttributeNS(null, NAME_ATTRIBUTE, name);
 		domParent.insertBefore(domNewElement, domNextSibling);
 		changed = true;
@@ -221,7 +223,7 @@ public class Buffer {
 	
 	private InternalElement getElement(IInternalParent parent,
 			Element domChild) {
-		final String childType = getElementType(domChild);
+		final IInternalElementType childType = getElementType(domChild);
 		final String childName = getElementName(domChild);
 		assert childName != null;
 		return (InternalElement) parent.getInternalElement(childType,
@@ -236,8 +238,10 @@ public class Buffer {
 		return domElement.getAttributeNS(null, NAME_ATTRIBUTE);
 	}
 
-	public String getElementType(Element domElement) {
-		return domElement.getNodeName();
+	public IInternalElementType getElementType(Element domElement) {
+		final String id = domElement.getNodeName();
+		// TODO what if unknown element type?
+		return RodinCore.getInternalElementType(id);
 	}
 	
 	/**

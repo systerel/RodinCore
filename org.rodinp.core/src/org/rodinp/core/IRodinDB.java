@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.internal.core.ElementType;
 
 /**
  * Represents the root Rodin element corresponding to the workspace. Since there
@@ -36,6 +37,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see RodinCore#valueOf(IWorkspaceRoot)
  */
 public interface IRodinDB extends IRodinElement, IOpenable, IParent {
+
+	/**
+	 * The element type of the Rodin database.
+	 */
+	IElementType ELEMENT_TYPE = ElementType.DATABASE_ELEMENT_TYPE;
 
 	/**
 	 * Returns whether this Rodin database contains an

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.osgi.framework.BundleContext;
 import org.rodinp.internal.core.BatchOperation;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
@@ -62,12 +63,6 @@ public class RodinCore extends Plugin {
 	 * (value <code>"org.rodinp.core.rodinbuilder"</code>).
 	 */
 	public static final String BUILDER_ID = PLUGIN_ID + ".rodinbuilder" ; //$NON-NLS-1$
-
-	/**
-	 * The identifier for the Rodin database
-	 * (value <code>"org.rodinp.core.rodindb"</code>).
-	 */
-	public static final String DATABASE_ID = PLUGIN_ID + ".rodindb" ; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the Rodin nature
@@ -264,6 +259,36 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
+	 * Returns the internal element type with the given id. If no internal
+	 * element type with the given id has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the element type
+	 * @return the internal element type with the given id, or <code>null</code>
+	 *         if unknown
+	 */
+	public static IInternalElementType getInternalElementType(String id) {
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		return manager.getInternalElementType(id);
+	}
+
+	/**
+	 * Returns the file element type with the given id. If no file element type
+	 * with the given id has been contributed, this method returns
+	 * <code>null</code>.
+	 * 
+	 * @param id
+	 *            unique identifier of the element type
+	 * @return the file element type with the given id, or <code>null</code>
+	 *         if unknown
+	 */
+	public static IFileElementType getFileElementType(String id) {
+		final ElementTypeManager manager = ElementTypeManager.getInstance();
+		return manager.getFileElementType(id);
+	}
+
+	/**
 	 * Returns the single instance of the Rodin core plug-in runtime class.
 	 * Equivalent to <code>(RodinCore) getPlugin()</code>.
 	 * 
@@ -282,6 +307,7 @@ public class RodinCore extends Plugin {
 		return PLUGIN;
 	}
 
+	@Deprecated
 	public synchronized String intern(String s) {
 		// make sure to copy the string (so that it doesn't hold on the
 		// underlying char[] that might be much bigger than necessary)

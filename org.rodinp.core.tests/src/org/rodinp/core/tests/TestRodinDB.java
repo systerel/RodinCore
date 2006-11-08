@@ -30,7 +30,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 		assertNotNull(db);
 		assertNull(db.getParent());
 		assertEquals("", db.getElementName());
-		assertEquals(IRodinElement.RODIN_DATABASE, db.getElementType());
+		assertEquals(IRodinDB.ELEMENT_TYPE, db.getElementType());
 		assertEquals(workspace, db.getWorkspace());
 		assertEquals(workspaceRoot, db.getWorkspaceRoot());
 		assertEquals(workspaceRoot, db.getCorrespondingResource());

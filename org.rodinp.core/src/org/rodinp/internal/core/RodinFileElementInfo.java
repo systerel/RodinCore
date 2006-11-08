@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -129,7 +130,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		if (nextSibling != null) {
 			domNextSibling = getDOMElementCheckExists(nextSibling);
 		}		
-		final String type = newElement.getElementType();
+		final IInternalElementType type = newElement.getElementType();
 		final String name = newElement.getElementName();
 		Element domNewElement =
 			buffer.createElement(type, name, domParent, domNextSibling);
@@ -148,7 +149,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			throws RodinDBException {
 		Element domElement = getDOMElementCheckExists(element);
 		String[] rawAttrNames = buffer.getAttributeNames(domElement);
-		ElementTypeManager manager = ElementTypeManager.getElementTypeManager();
+		ElementTypeManager manager = ElementTypeManager.getInstance();
 		ArrayList<String> result = new ArrayList<String>(rawAttrNames.length);
 		for (String attrName: rawAttrNames) {
 			if (manager.getAttributeTypeDescription(attrName) != null) {
