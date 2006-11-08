@@ -55,12 +55,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	public boolean run(IFile file, IProgressMonitor monitor) throws CoreException {
 		
-		// IPRFile prFile = (IPRFile) RodinCore.create(file).getMutableCopy();
-		
 		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
 		IPRFile prFile = (IPRFile) psFile.getPRFile().getMutableCopy();
-
-		IPOFile poFile = (IPOFile) prFile.getPOFile().getSnapshot();
+		IPOFile poFile = (IPOFile) psFile.getPOFile().getSnapshot();
+		
 		final String componentName = 
 			EventBPlugin.getComponentName(prFile.getElementName());
 		final int noOfPOs = poFile.getSequents().length;

@@ -271,10 +271,6 @@
             id="prHypAction"
             name="%eventBprHypAction"/>
       <internalElementType
-            class="org.eventb.core.basis.PRSequent"
-            id="prSequent"
-            name="%eventBprSequent"/>
-      <internalElementType
             class="org.eventb.core.basis.PSstatus"
             id="status"
             name="%eventBpsStatus"/>
