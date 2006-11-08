@@ -17,13 +17,11 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -96,8 +94,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 					prFile.createProofTree(name);
 				}
 				
-				final IPRSequent poState = (IPRSequent) prFile.createInternalElement(IPRSequent.ELEMENT_TYPE,name,null,null);
-				poState.updateStatus();
+//				final IPSstatus poState = (IPSstatus) prFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
+//				poState.updateStatus();
 				
 				final IPSstatus status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
 				status.updateStatus();
@@ -139,7 +137,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		
-		IPRFile prFile = (IPRFile) RodinCore.valueOf(file).getMutableCopy();
+		IPSFile prFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
 		
 		try {
 		

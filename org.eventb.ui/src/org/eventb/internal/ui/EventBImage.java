@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.ElementUIRegistry;
@@ -281,7 +281,7 @@ public class EventBImage {
 	 * @return the image corresponding to the input sequent
 	 * @throws RodinDBException
 	 */
-	public static Image getPRSequentImage(IPRSequent prSequent) {
+	public static Image getPRSequentImage(IPSstatus prSequent) {
 		String base_path = "";
 		String auto = "0";
 
@@ -352,7 +352,7 @@ public class EventBImage {
 				}
 				boolean isProofBroken;
 				try {
-					isProofBroken = prSequent.isProofBroken();
+					isProofBroken = (! prSequent.isProofValid());
 				} catch (RodinDBException e) {
 					String message = "Cannot check if the proof tree of the sequent "
 						+ prSequent.getElementName() + " is brocken or not";

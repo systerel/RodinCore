@@ -72,7 +72,7 @@ public interface IContextFile extends IRodinFile {
 	 * 
 	 * @return a handle to the proof file of this context
 	 */
-	IPRFile getPRFile();
+	IPSFile getPRFile();
 
 	/**
 	 * Returns an array of all extends clauses of this context.

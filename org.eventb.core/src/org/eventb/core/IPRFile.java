@@ -69,11 +69,11 @@ public interface IPRFile extends IRodinFile{
 	
 	@Deprecated
 	// Use IPSstatus in the IPSfile
-	IPRSequent[] getSequents() throws RodinDBException;
+	IPSstatus[] getSequents() throws RodinDBException;
 	
 	@Deprecated
 	// Use IPSstatus in the IPSfile
-	IPRSequent getSequent(String name) throws RodinDBException;
+	IPSstatus getSequent(String name) throws RodinDBException;
 	
 	/**
 	 * Returns all the proof trees contained in this PR file, indexed according 

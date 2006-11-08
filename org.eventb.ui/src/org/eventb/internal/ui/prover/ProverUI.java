@@ -32,8 +32,8 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
@@ -82,7 +82,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	private UserSupport userSupport;
 
 	// The associated rodin file handle
-	private IPRFile prFile = null;
+	private IPSFile prFile = null;
 
 	private boolean saving;
 
@@ -105,7 +105,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	protected void setInput(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
-			prFile = (IPRFile) RodinCore.valueOf(inputFile);
+			prFile = (IPSFile) RodinCore.valueOf(inputFile);
 			try {
 				UserSupportManager.setInput(userSupport, prFile, new NullProgressMonitor());
 			} catch (RodinDBException e) {
@@ -124,7 +124,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * @param prSequent
 	 *            current pr Sequent
 	 */
-	public void setCurrentPO(IPRSequent prSequent, IProgressMonitor monitor) {
+	public void setCurrentPO(IPSstatus prSequent, IProgressMonitor monitor) {
 		ProofState proofState = userSupport.getCurrentPO();
 		if (proofState != null && proofState.getPRSequent().equals(prSequent))
 			return;
@@ -281,7 +281,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		if (results != null && results.length != 0) {
 
-			final IPRFile localPRFile = this.getRodinInput();
+			final IPSFile localPRFile = this.getRodinInput();
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
@@ -412,7 +412,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 			if (obligationExplorer != null) {
 				ProofState ps = this.getUserSupport().getCurrentPO();
 				if (ps != null) {
-					IPRSequent prSequent = this.getUserSupport().getCurrentPO()
+					IPSstatus prSequent = this.getUserSupport().getCurrentPO()
 							.getPRSequent();
 					obligationExplorer.externalSetSelection(prSequent);
 					obligationExplorer.getTreeViewer().reveal(prSequent);
@@ -431,14 +431,14 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @return a handle to a Rodin file
 	 */
-	public IPRFile getRodinInput() {
+	public IPSFile getRodinInput() {
 		if (prFile == null) {
 			FileEditorInput editorInput = (FileEditorInput) this
 					.getEditorInput();
 
 			IFile inputFile = editorInput.getFile();
 
-			prFile = (IPRFile) RodinCore.valueOf(inputFile);
+			prFile = (IPSFile) RodinCore.valueOf(inputFile);
 		}
 		return prFile;
 	}
@@ -449,7 +449,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 	 * 
 	 * @return the current PRSequent
 	 */
-	public IPRSequent getCurrentProverSequent() {
+	public IPSstatus getCurrentProverSequent() {
 		ProofState ps = getUserSupport().getCurrentPO();
 		if (ps != null)
 			return ps.getPRSequent();

@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
@@ -14,7 +18,9 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
+import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSstatus;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -38,7 +44,7 @@ public class PSFile extends RodinFile implements IPSFile {
 	 */
 	@Override
 	public String getElementType() {
-		return ELEMENT_TYPE;
+		return IPSFile.ELEMENT_TYPE;
 	}
 	
 	
@@ -70,19 +76,45 @@ public class PSFile extends RodinFile implements IPSFile {
 		return (IPRFile) project.getRodinFile(prName).getSnapshot();
 	}
 	
-	public IPSstatus[] getStatus() throws RodinDBException {
+	public IPSstatus[] getSequents() throws RodinDBException {
 		IRodinElement[] list = getChildrenOfType(IPSstatus.ELEMENT_TYPE);
-		IPSstatus[] statuses = new PSstatus[list.length];
-		for (int i = 0; i < statuses.length; i++) {
-			statuses[i] = (IPSstatus) list[i];
+		IPSstatus[] sequents = new PSstatus[list.length];
+		for (int i = 0; i < sequents.length; i++) {
+			sequents[i] = (IPSstatus) list[i];
 		}
-		return statuses;
+		return sequents;
 	}
 	
-	public IPSstatus getStatus(String name) {
-		IPSstatus status = (IPSstatus) getInternalElement(IPSstatus.ELEMENT_TYPE,name);
-		if (!status.exists()) return null;
-		return status;
+	public IPSstatus getSequent(String name) {
+		IPSstatus prSeq = (IPSstatus) getInternalElement(IPSstatus.ELEMENT_TYPE,name);
+		if (!prSeq.exists()) return null;
+		return prSeq;
 	}
+
+	public Map<String, IPRProofTree> getProofTrees() throws RodinDBException {
+		ArrayList<IRodinElement> list = getFilteredChildrenList(IPRProofTree.ELEMENT_TYPE);
+		HashMap<String, IPRProofTree> proofs = new HashMap<String, IPRProofTree>(list.size());
+		for (IRodinElement element : list){
+			// avoid two proofs with the same name
+			assert (! proofs.containsKey(element.getElementName()));
+			proofs.put(element.getElementName(),(IPRProofTree)element);
+		}
+		return proofs;
+	}
+
+	public IPRProofTree getProofTree(String name) {
+		IInternalElement proofTree = getInternalElement(IPRProofTree.ELEMENT_TYPE,name);
+		if (proofTree.exists()) return (IPRProofTree) proofTree;
+		return null;
+	}
+
+	public IPRProofTree createProofTree(String name) throws RodinDBException {
+		IPRProofTree prProofTree = (IPRProofTree) createInternalElement(
+				IPRProofTree.ELEMENT_TYPE,name, null, null);
+		prProofTree.initialize();
+		return prProofTree;
+	}
+	
+	
 
 }

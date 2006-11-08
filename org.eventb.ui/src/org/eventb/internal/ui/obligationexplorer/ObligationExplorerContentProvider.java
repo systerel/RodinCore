@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.core.IPRFile;
+import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -206,7 +206,7 @@ public class ObligationExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				return prj.getChildrenOfType(IPRFile.ELEMENT_TYPE);
+				return prj.getChildrenOfType(IPSFile.ELEMENT_TYPE);
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 				MessageDialog
@@ -222,8 +222,8 @@ public class ObligationExplorerContentProvider implements
 		}
 
 		try {
-			if (parent instanceof IPRFile) {
-				IPRFile prFile = (IPRFile) parent;
+			if (parent instanceof IPSFile) {
+				IPSFile prFile = (IPSFile) parent;
 				return prFile.getSequents();
 			}
 			if (parent instanceof IRodinDB) {

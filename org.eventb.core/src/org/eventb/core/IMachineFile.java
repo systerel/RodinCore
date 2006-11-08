@@ -73,7 +73,7 @@ public interface IMachineFile extends IRodinFile {
 	 * 
 	 * @return a handle to the proof file of this machine
 	 */
-	IPRFile getPRFile();
+	IPSFile getPRFile();
 
 	/**
 	 * Returns the refines clause of this machine or <code>null</code> if this

@@ -3,9 +3,9 @@ package org.eventb.core.tests.pom;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -72,18 +72,18 @@ public class AutoPOMTest extends BuilderTest {
 	public final void testAutoPOM() throws CoreException {
 		
 		IPOFile poFile = createPOFile();
-		IPRFile prFile = poFile.getPRFile();
+		IPSFile psFile = poFile.getPSFile();
 
 		AutoProver.enable();
 		runBuilder();
 		
 		// Checks that POs in PR files are the same as POs in PO file.
-		checkSameContents(poFile, prFile);
+		checkSameContents(poFile, psFile);
 		
 		// Checks that all POs are discharged except the last one.
-		IPRSequent[] prs = (IPRSequent[]) prFile.getSequents();
+		IPSstatus[] prs = (IPSstatus[]) psFile.getSequents();
 		for (int i = 0; i < prs.length - 1; i++) {
-			IPRSequent prSequent = prs[i];
+			IPSstatus prSequent = prs[i];
 			assertDischarged(prSequent);
 		}
 		assertNotDischarged(prs[prs.length-1]);
@@ -153,14 +153,14 @@ public class AutoPOMTest extends BuilderTest {
 		}
 	}
 
-	private void assertDischarged(IPRSequent prSequent) throws RodinDBException {
+	private void assertDischarged(IPSstatus prSequent) throws RodinDBException {
 		IPRProofTree proofTree = prSequent.getProofTree();
 		assertTrue("PO " + prSequent.getName() + " should be closed",
 				IConfidence.PENDING !=
 				proofTree.getConfidence());
 	}
 
-	private void assertNotDischarged(IPRSequent prSequent) throws RodinDBException {
+	private void assertNotDischarged(IPSstatus prSequent) throws RodinDBException {
 		IPRProofTree proofTree = prSequent.getProofTree();
 		assertEquals("PO " + prSequent.getName() + " should not be discharged",
 				IConfidence.PENDING,

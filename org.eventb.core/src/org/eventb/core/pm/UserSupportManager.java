@@ -18,7 +18,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eventb.core.IPRFile;
+import org.eventb.core.IPSFile;
 import org.rodinp.core.RodinDBException;
 
 public class UserSupportManager {
@@ -90,7 +90,7 @@ public class UserSupportManager {
 
 	}
 
-	public static void setInput(UserSupport userSupport, IPRFile prFile,
+	public static void setInput(UserSupport userSupport, IPSFile prFile,
 			IProgressMonitor monitor) throws RodinDBException {
 		userSupport.setInput(prFile, monitor);
 		notifyUSManagerListener(userSupport, CHANGED);

@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRSequent;
 import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
@@ -57,13 +57,14 @@ public class AutoProver {
 	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws CoreException {
 		if (! enabled)
 			return;
-		final IPRSequent[] pos = prFile.getSequents();
+		final IPSstatus[] pos = psFile.getSequents();
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);
-			for (IPRSequent po : pos) {
+			for (IPSstatus status : pos) {
 				if (monitor.isCanceled()) {
 					prFile.makeConsistent(null);
+					psFile.makeConsistent(null);
 					throw new OperationCanceledException();
 				}
 				IProgressMonitor subMonitor = new SubProgressMonitor(
@@ -71,29 +72,30 @@ public class AutoProver {
 						1, 
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK
 				);
-				dirty |= processPo(prFile, po, subMonitor);
+				dirty |= processPo(prFile, status, subMonitor);
 			}
 			// monitor.worked(1);
 			if (dirty) prFile.save(null, false);
+			if (dirty) psFile.save(null, false);
 		} finally {
 			monitor.done();
 		}
 	}
 
-	private static boolean processPo(IPRFile prFile, IPRSequent po,
+	private static boolean processPo(IPRFile prFile, IPSstatus status,
 			IProgressMonitor pm) throws RodinDBException {
 		
 		try {
-			pm.beginTask(po.getName() + ":", 3);
+			pm.beginTask(status.getName() + ":", 3);
 			
 			pm.subTask("loading");
-			IPRProofTree proofTree = po.getProofTree();
+			IPRProofTree proofTree = status.getProofTree();
 			if (proofTree == null)
-				proofTree = prFile.createProofTree(po.getName());
+				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-			if (po.isProofBroken() || (!proofTree.isClosed())) {
-				final IPOSequent poSequent = po.getPOSequent();
+			if ((!status.isProofValid()) || (!proofTree.isClosed())) {
+				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree tree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),
 						poSequent
@@ -108,7 +110,7 @@ public class AutoProver {
 				if (tree.isClosed()) {
 					// po.updateProofTree(tree);
 					proofTree.setProofTree(tree);
-					po.updateStatus();
+					status.updateStatus();
 					// if (proofTree == null) proofTree = po.getProofTree();
 					proofTree.setAutomaticallyGenerated();
 					prFile.save(null, false);
@@ -124,7 +126,7 @@ public class AutoProver {
 				{
 					// po.updateProofTree(tree);
 					proofTree.setProofTree(tree);
-					po.updateStatus();
+					status.updateStatus();
 					proofTree.setAutomaticallyGenerated();
 					
 					((PRProofTree)proofTree).setAutomaticallyGenerated();

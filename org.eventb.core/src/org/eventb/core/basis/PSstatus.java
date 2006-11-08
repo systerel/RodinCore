@@ -62,15 +62,7 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		return proofTree;
 	}
 
-//	public boolean isProofBroken() throws RodinDBException {
-//		return getContents().equals("ProofBroken");
-//	}
-//
-//	public void setProofBroken(boolean broken) throws RodinDBException {
-//		if (broken) setContents("ProofBroken");
-//		else setContents("ProofValid");
-//	}
-//	
+
 	public boolean isProofValid() throws RodinDBException {
 		return getBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, null);
 	}
@@ -110,3 +102,4 @@ public class PSstatus extends InternalElement implements IPSstatus {
 	}
 	
 }
+

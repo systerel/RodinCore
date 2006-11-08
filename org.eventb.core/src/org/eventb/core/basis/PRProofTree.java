@@ -9,12 +9,12 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
-import org.eventb.core.IPRFile;
+import org.eventb.core.IPSFile;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -83,11 +83,11 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 			this.setConfidence(confidence);
 	}
 	
-	public IPRSequent getSequent() {
-		IInternalElement prSequent = ((IPRFile)getOpenable()).getInternalElement(IPRSequent.ELEMENT_TYPE,this.getElementName());
+	public IPSstatus getSequent() {
+		IInternalElement prSequent = ((IPSFile)getOpenable()).getInternalElement(IPSstatus.ELEMENT_TYPE,this.getElementName());
 		assert prSequent != null;
 		if (! prSequent.exists()) return null;
-		return ((IPRSequent)prSequent);
+		return ((IPSstatus)prSequent);
 	}
 	
 	public boolean isClosed() throws RodinDBException {

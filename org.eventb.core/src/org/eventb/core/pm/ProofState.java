@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
@@ -47,7 +47,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofState {
 
 	// The PR sequent associated with this proof obligation.
-	IPRSequent prSequent;
+	IPSstatus prSequent;
 
 	// The current proof tree, this might be different from the proof tree in
 	// the disk, can be null when it is not initialised.
@@ -66,7 +66,7 @@ public class ProofState {
 	// proof obligation.
 	private boolean dirty;
 
-	public ProofState(IPRSequent ps) {
+	public ProofState(IPSstatus ps) {
 		this.prSequent = ps;
 		// loadProofTree();
 	}
@@ -105,7 +105,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = prSequent.isProofBroken();
+		dirty = ! prSequent.isProofValid();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -118,7 +118,7 @@ public class ProofState {
 		return (prProofTree != null && prProofTree.isClosed());
 	}
 
-	public IPRSequent getPRSequent() {
+	public IPSstatus getPRSequent() {
 		return prSequent;
 	}
 
@@ -256,7 +256,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = prSequent.isProofBroken();
+		dirty = (! prSequent.isProofValid());
 	}
 
 	public void unloadProofTree() {

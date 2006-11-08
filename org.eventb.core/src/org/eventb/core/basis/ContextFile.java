@@ -18,7 +18,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
+import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
@@ -120,11 +120,11 @@ public class ContextFile extends RodinFile implements IContextFile {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IContextFile#getPRFile()
 	 */
-	public IPRFile getPRFile() {
+	public IPSFile getPRFile() {
 		final String bareName = EventBPlugin.getComponentName(getElementName());
 		final String prName = EventBPlugin.getPRFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
-		return (IPRFile) project.getRodinFile(prName);
+		return (IPSFile) project.getRodinFile(prName);
 	}
 
 	/* (non-Javadoc)

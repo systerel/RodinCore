@@ -7,13 +7,13 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPSstatus;
+import org.eventb.core.IPSFileRename;
+import org.eventb.core.IPSstatusRename;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 /**
- * Implementation of Event-B PR proof obligation as an extension of the Rodin database.
+ * Implementation of Event-B proof obligation status as an extension of the Rodin database.
  * <p>
  * This class is intended to be implemented by clients that want to extend this
  * internal element type.
@@ -37,9 +37,9 @@ import org.rodinp.core.basis.InternalElement;
  * @author Farhad Mehta
  *
  */
-public class PRSequent extends InternalElement implements IPRSequent {
+public class PSstatusRename extends InternalElement implements IPSstatusRename {
 
-	public PRSequent(String name, IRodinElement parent) {
+	public PSstatusRename(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 
@@ -48,7 +48,7 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	 */
 	@Override
 	public String getElementType() {
-		return IPSstatus.ELEMENT_TYPE;
+		return ELEMENT_TYPE;
 	}
 	
 	public String getName() {
@@ -56,42 +56,40 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	}
 	
 	public IPRProofTree getProofTree(){
-		IPRProofTree proofTree = ((IPSFile)getOpenable()).getProofTree(getName());
+		IPRProofTree proofTree = ((IPSFileRename)getOpenable()).getPRFile().getProofTree(getName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;
 	}
 
-//	public IProofTree rebuildProofTree() throws RodinDBException {
-//		return PRUtil.rebiuldProofTree(this);
+//	public boolean isProofBroken() throws RodinDBException {
+//		return getContents().equals("ProofBroken");
 //	}
-	
-
-//	public IProofTree makeFreshProofTree() throws RodinDBException {
-//		return PRUtil.makeInitialProofTree(this);
-//	}
-	
-//	public void updateProofTree(final IProofTree pt) throws CoreException {
-//		RodinCore.run(new IWorkspaceRunnable() {
-//			public void run(IProgressMonitor monitor) throws CoreException {
-//				PRUtil.updateProofTree(PRSequent.this, pt);
-//			}
 //
-//		}, null);
+//	public void setProofBroken(boolean broken) throws RodinDBException {
+//		if (broken) setContents("ProofBroken");
+//		else setContents("ProofValid");
 //	}
-
-	public boolean isProofBroken() throws RodinDBException {
-		return getContents().equals("ProofBroken");
+//	
+	public boolean isProofValid() throws RodinDBException {
+		return getBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, null);
 	}
 
-	public void setProofBroken(boolean broken) throws RodinDBException {
-		if (broken) setContents("ProofBroken");
-		else setContents("ProofValid");
+	private void setProofValid(boolean valid) throws RodinDBException {
+		setBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid, null);
 	}
-
+	
+	public int getProofConfidence() throws RodinDBException {
+		return getIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, null);
+	}
+	
+	private void setProofConfidence(int confidence) throws RodinDBException {
+		setIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, null);
+	}
+	
 	public IPOSequent getPOSequent() {
-		IPRFile prFile = (IPRFile) getOpenable();
-		IPOFile poFile = prFile.getPOFile();
+		IPSFileRename psFile = (IPSFileRename) getOpenable();
+		IPOFile poFile = psFile.getPOFile();
 		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getName());
 		if (! poSeq.exists()) return null;
 		return poSeq;
@@ -100,11 +98,15 @@ public class PRSequent extends InternalElement implements IPRSequent {
 	public void updateStatus() throws RodinDBException {
 		IProverSequent seq =  POLoader.readPO(getPOSequent());
 		final IPRProofTree proofTree = getProofTree();
+		if (proofTree == null) {
+			setProofConfidence(IConfidence.UNATTEMPTED);
+			setProofValid(true);
+			return;
+		}
 		IProofDependencies deps = proofTree.getProofDependencies();
-		boolean validity = ProverLib.proofReusable(deps,seq);
-		setProofBroken(! validity);
+		boolean valid = ProverLib.proofReusable(deps,seq);
+		setProofConfidence(proofTree.getConfidence());
+		setProofValid(valid);
 	}
-	
-	
 	
 }

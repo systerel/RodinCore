@@ -40,8 +40,8 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.eventbeditor.ElementAttributeInputDialog;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
@@ -118,13 +118,13 @@ public class UIUtils {
 	public static void linkToProverUI(Object obj) {
 		String editorId = ProverUI.EDITOR_ID;
 
-		IPRFile component = null;
+		IPSFile component = null;
 		if (obj instanceof IRodinProject)
 			return;
-		if (obj instanceof IPRFile)
-			component = (IPRFile) obj;
+		if (obj instanceof IPSFile)
+			component = (IPSFile) obj;
 		else if (obj instanceof IRodinElement)
-			component = (IPRFile) ((IRodinElement) obj).getParent();
+			component = (IPSFile) ((IRodinElement) obj).getParent();
 		Assert
 				.isTrue(component != null,
 						"component must be initialised by now");
@@ -137,9 +137,9 @@ public class UIUtils {
 
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
-			if (!(obj instanceof IPRFile))
+			if (!(obj instanceof IPSFile))
 				editor
-						.setCurrentPO((IPRSequent) obj,
+						.setCurrentPO((IPSstatus) obj,
 								new NullProgressMonitor());
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");

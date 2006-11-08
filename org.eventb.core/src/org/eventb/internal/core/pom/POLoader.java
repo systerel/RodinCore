@@ -10,8 +10,8 @@ import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPRSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSstatus;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -91,8 +91,8 @@ public final class POLoader {
 	
 	// Lock the pofile before calling this method
 	@Deprecated
-	public static IProverSequent makeSequent(final IPRSequent prSeq) throws RodinDBException{
-		IPRFile prFile = (IPRFile) prSeq.getOpenable();
+	public static IProverSequent makeSequent(final IPSstatus prSeq) throws RodinDBException{
+		IPSFile prFile = (IPSFile) prSeq.getOpenable();
 		final IPOFile poFile = prFile.getPOFile();
 		IProverSequent readPO = readPO(poFile,prSeq.getName());
 		return readPO;
