@@ -14,6 +14,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -636,6 +637,17 @@ public abstract class BasicTest extends TestCase {
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
+	}
+	
+	protected void containsMarkers(IRodinFile rodinFile, boolean yes) throws CoreException {
+		IFile file = rodinFile.getResource();
+		IMarker[] markers = 
+			file.findMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		
+		if (yes)
+			assertTrue("should contain markers", markers.length != 0);
+		else
+			assertEquals("should not contain markers", 0, markers.length);
 	}
 
 	protected void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {

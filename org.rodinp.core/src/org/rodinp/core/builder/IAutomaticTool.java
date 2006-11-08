@@ -31,7 +31,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IAutomaticTool {
 	
 	/**
-	 * Runs the tool that updates a file (or a set of files)
+	 * Runs the tool that updates a file (or a set of files).
+	 * The tool must delete all markers from the input file(s) from which
+	 * <code>file</code> is (directly) derived.
 	 * @param file The file to be updated
 	 * @param monitor The progress monitor
 	 * @return True if file has changed, false otherwise

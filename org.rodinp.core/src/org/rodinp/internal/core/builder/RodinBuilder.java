@@ -85,8 +85,6 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	// this is hardcoded for now but bust be replaced by a
-	// request to the repository!
 	Node createNode(IResource resource) {
 		if(resource instanceof IFile) {
 			IFile file = (IFile) resource;
@@ -214,13 +212,6 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				node = createNode(resource);
 			}
 			if(node != null) {
-				// TODO management of markers should be connected to extraction
-				MarkerHelper.deleteAllProblemMarkers(resource);
-				// TODO implement editable and non-editable resource options in builder graph.
-				// some resources, e.g., files maintained by the prover are derived and editable;
-				// other resources may be editable or non-editable, e.g., Event-B models that may
-				// have been entered directly by the user, or created by a tool such as u2b;
-				// in the first case it is editable, in the second it isn't.
 				try {
 					state.graph.builderExtractNode(node, manager);
 				} catch (CoreException e) {

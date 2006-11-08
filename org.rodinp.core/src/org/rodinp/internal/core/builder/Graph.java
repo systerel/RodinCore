@@ -81,9 +81,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		N--;
 	}
 	
-//	transient private IInterrupt progress;
-//	transient private IProgressMonitor monitor;
-	
 	public Node getNode(String name) {
 		return nodes.get(name);
 	}
@@ -141,7 +138,6 @@ public class Graph implements Serializable, Iterable<Node> {
 			int slice = percent / values.size();
 			
 			manager.subTask(Messages.bind(Messages.build_cleaning, project.getName()));
-	//			monitor.beginTask(Messages.bind(Messages.build_cleaning, project.getName()), values.size());
 			
 			for(Node node : values) {
 				try {
@@ -178,8 +174,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		public void builderBuildGraph(ProgressManager manager) throws CoreException {
 			if(Graph.DEBUG)
 				System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
-	//		this.progress = progress;
-	//		this.monitor = monitor;
 			instable = true;
 			while(instable) {
 				topSortInit();
@@ -199,7 +193,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		}
 
 	public void builderExtractNode(Node node, ProgressManager manager) throws CoreException {
-	//		node.markSuccessorsDated();
 			extract(node, new GraphModifier(this, node, manager), manager);
 			if (node.getToolId() == null || node.getToolId() == "")
 				node.setDated(false);
@@ -262,19 +255,9 @@ public class Graph implements Serializable, Iterable<Node> {
 		if (toolName == null || toolName.equals("")) {
 			if(Graph.DEBUG)
 				System.out.println(getClass().getName() + ": Root node changed: " + node.getName());
-//			node.setDated(false);
-
-			MarkerHelper.deleteAllProblemMarkers(file);
 			
 			changed = true;
 			
-//			node.markSuccessorsDated();
-//			try {
-//				extract(node, new GraphHandler(this, node), manager);
-//			} catch (CoreException e){
-//				Util.log(e, "while extracting from " + file.getFullPath()); //$NON-NLS-1$
-//			}
-			//return; // no associated tool
 		} else {
 			if(Graph.DEBUG)
 			 System.out.println(getClass().getName() + 
@@ -285,7 +268,6 @@ public class Graph implements Serializable, Iterable<Node> {
 				Util.log(null, "Unknown tool: " + toolName + " for node " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
-			MarkerHelper.deleteAllProblemMarkers(file);
 			try {
 				
 				FileRunnable runnable = new FileRunnable(tool, file);
@@ -349,7 +331,6 @@ public class Graph implements Serializable, Iterable<Node> {
 	}
 	
 	private void extract(Node node, GraphModifier handler, ProgressManager manager) {
-//		IExtractor[] extractor = getManager().getExtractors(node.getFileElementTypeId());
 		ExtractorDescription[] descriptions = 
 			getManager().getExtractorDescriptions(node.getFileElementType());
 		if(descriptions == null)
@@ -411,7 +392,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(node.isNotDerived())
 			return;
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
-			//getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.clean(node.getFile(), monitor);
 	}
@@ -421,7 +401,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(node.isNotDerived())
 			return;
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
-			//getManager().getTool(node.getToolId());
 		if (tool != null)
 			tool.remove(node.getFile(), origin.getFile(), monitor);
 	}
@@ -431,7 +410,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		// initialize
 		nodeStack = new Stack<Node>();
-//		succStack = new Stack<Position>();
 		
 		nodePreList.addAll(nodePostList);
 		nodePostList = nodePreList;
@@ -512,7 +490,6 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		// first we modify the graph to find out more about the cause of the cycle
 		for(Node node : nodePreList) {
-//				node.setDated(false);
 				node.setCycle(false);
 				if(Graph.DEBUG)
 					System.out.print(" " + node.getName()); //$NON-NLS-1$

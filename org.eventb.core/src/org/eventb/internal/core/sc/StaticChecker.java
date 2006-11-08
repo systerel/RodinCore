@@ -9,6 +9,7 @@
 package org.eventb.internal.core.sc;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -22,6 +23,7 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -110,6 +112,11 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			IProcessorModule[] modules, 
 			IStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
+		
+		file.getResource().deleteMarkers(
+				RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
+				true, 
+				IResource.DEPTH_INFINITE);
 		
 		for(IProcessorModule module : modules) {
 			
