@@ -141,7 +141,8 @@ public class MachineEventWitnessModule extends PredicateModule {
 		for (String name : witnessNames) {
 			createProblemMarker(
 					event, 
-					GraphProblem.WitnessLabelMissingWarning);
+					GraphProblem.WitnessLabelMissingWarning,
+					name);
 			createSCWitness(
 					parent, 
 					WITNESS_NAME_PREFIX + index++, 
