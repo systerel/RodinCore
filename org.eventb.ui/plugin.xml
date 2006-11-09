@@ -433,127 +433,137 @@
             icon="icons/full/obj16/prj_obj.gif"
             labelProvider="org.eventb.internal.ui.RodinProjectLabelProvider"
             name="%element.rodinProject"
-            priority="0"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="0"/>
       <element
             class="org.eventb.core.IMachineFile"
             icon="icons/full/obj16/mch_obj.gif"
             labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"
             name="%element.machineFile"
-            priority="2"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="2"/>
       <element
             class="org.eventb.core.IContextFile"
             icon="icons/full/obj16/ctx_obj.gif"
             labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"
             name="%element.contextFile"
-            priority="1"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="1"/>
       <element
             class="org.eventb.core.ISeesContext"
             icon="icons/full/obj16/ctx_obj.gif"
             labelProvider="org.eventb.internal.ui.SeesContextLabelProvider"
             name="%element.seesContext"
-            priority="2"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="2"/>
       <element
             class="org.eventb.core.IRefinesMachine"
             icon="icons/full/obj16/mch_obj.gif"
             labelProvider="org.eventb.internal.ui.RefinesMachineLabelProvider"
             name="%element.refinesMachine"
-            priority="3"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="3"/>
       <element
             class="org.eventb.core.IExtendsContext"
             icon="icons/full/obj16/ctx_obj.gif"
             labelProvider="org.eventb.internal.ui.ExtendsContextLabelProvider"
             name="%element.extendsContext"
-            priority="3"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="3"/>
       <element
             class="org.eventb.core.IVariable"
             icon="icons/full/obj16/var_obj.gif"
             labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.variable"
-            priority="4"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="4"/>
       <element
             class="org.eventb.core.IInvariant"
             icon="icons/full/obj16/inv_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.invariant"
-            priority="5"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="5">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.ITheorem"
             icon="icons/full/obj16/thm_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.theorem"
-            priority="7"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="7">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IEvent"
             icon="icons/full/obj16/evt_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.event"
-            priority="9"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="9"/>
       <element
             class="org.eventb.core.IRefinesEvent"
             icon="icons/full/obj16/evt_obj.gif"
             labelProvider="org.eventb.internal.ui.RefinesEventLabelProvider"
             name="%element.refinesEvent"
-            priority="0"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="0"/>
       <element
             class="org.eventb.core.IGuard"
             icon="icons/full/obj16/grd_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.guard"
-            priority="5"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="5">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IAction"
             icon="icons/full/obj16/act_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.action"
-            priority="7"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="7">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.AssignmentLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.ICarrierSet"
             icon="icons/full/obj16/set_obj.gif"
             labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.carrierSet"
-            priority="4"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="4"/>
       <element
             class="org.eventb.core.IConstant"
             icon="icons/full/obj16/cst_obj.gif"
             labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.constant"
-            priority="5"
-            secondLabelProvider="org.eventb.ui.NullElementLabelProvider"/>
+            priority="5"/>
       <element
             class="org.eventb.core.IAxiom"
             icon="icons/full/obj16/axm_obj.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.axiom"
-            priority="6"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="6">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IWitness"
             icon="icons/unattempted.gif"
-            labelAttribute="org.eventb.core.label"
+            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.witness"
-            priority="6"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="6">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IVariant"
             icon="icons/sample.gif"
             labelProvider="org.eventb.internal.ui.VariantLabelProvider"
             name="%element.variant"
-            priority="8"
-            secondLabelProvider="org.eventb.internal.ui.ContentElementLabelProvider"/>
+            priority="8">
+         <column
+               id="content"
+               labelProvider="org.eventb.internal.ui.ExpressionLabelProvider"/>
+      </element>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

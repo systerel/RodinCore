@@ -13,6 +13,7 @@
 package org.eventb.ui;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,14 +21,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.osgi.framework.Bundle;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -52,7 +50,7 @@ public class ElementUIRegistry {
 	private static ElementUIRegistry instance;
 
 	// The registry stored Element UI information
-	private HashMap<Class, ElementUIInfo> registry;
+	private Map<Class, ElementUIInfo> registry;
 
 	/**
 	 * @author htson
@@ -64,6 +62,10 @@ public class ElementUIRegistry {
 		// Configuration information related to the element
 		private IConfigurationElement configuration;
 
+		private IElementLabelProvider labelProvider;
+		
+		private HashMap<String, IElementLabelProvider> providers;
+		
 		/**
 		 * The image descriptor for the element (which is lazy loading using
 		 * <code>configuration</code>)
@@ -80,6 +82,7 @@ public class ElementUIRegistry {
 		 */
 		public ElementUIInfo(IConfigurationElement configuration) {
 			this.configuration = configuration;
+			providers = new HashMap<String, IElementLabelProvider>();
 		}
 
 		/**
@@ -104,9 +107,8 @@ public class ElementUIRegistry {
 		private ImageDescriptor createImageDescriptor() {
 			IContributor contributor = configuration.getContributor();
 			String iconName = configuration.getAttribute("icon"); //$NON-NLS-1$
-			ImageDescriptor desc = EventBImage.getImageDescriptor(
-					contributor.getName(),
-					iconName);
+			ImageDescriptor desc = EventBImage.getImageDescriptor(contributor
+					.getName(), iconName);
 			return desc;
 		}
 
@@ -119,7 +121,7 @@ public class ElementUIRegistry {
 		 * @return the label corresponding to the input object
 		 */
 		public String getLabel(Object obj) {
-			return getLabel(obj, "labelAttribute", "labelProvider");
+			return getLabel(obj, "labelProvider");
 		}
 
 		/**
@@ -153,55 +155,30 @@ public class ElementUIRegistry {
 		 * 
 		 * @param obj
 		 *            any object
-		 * @param attribute
-		 *            the string represents the label attribute extension
-		 *            attribute
 		 * @param provider
 		 *            the string repressents the label provider extension
 		 *            attribute
 		 * @return the label according to the input object and the extension
 		 *         names
 		 */
-		private String getLabel(Object obj, String attribute, String provider) {
-			String labelAttribute = configuration.getAttribute(attribute);
-			if (labelAttribute != null) {
-				if (obj instanceof IInternalElement) {
-					IInternalElement element = (IInternalElement) obj;
-					// TODO Should use a generalised method to get an attribute.
-					try {
-						return element.getStringAttribute(labelAttribute,
-								new NullProgressMonitor());
-					} catch (RodinDBException e) {
-						if (UIUtils.DEBUG) {
-							System.out.println("Cannot get attribute "
-									+ labelAttribute + " of " + obj);
-							e.printStackTrace();
-						}
-						UIUtils.log(e, "Cannot get attribute " + labelAttribute
-								+ " of " + obj);
-					}
+		private String getLabel(Object obj, String provider) {
+			if (labelProvider != null)
+				return labelProvider.getLabel(obj);
+			
+			try {
+				labelProvider = (IElementLabelProvider) configuration
+						.createExecutableExtension(provider); //$NON-NLS-1$
+				return labelProvider.getLabel(obj);
+			} catch (CoreException e) {
+				String message = "Cannot instantiate the label provider class "
+						+ configuration.getAttribute("secondLabelProvider");
+				UIUtils.log(e, message);
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+					e.printStackTrace();
 				}
-			} else {
-				// Try to use the label provider
-				try {
-					IElementLabelProvider labelProvider = (IElementLabelProvider) configuration
-							.createExecutableExtension(provider); //$NON-NLS-1$
-					return labelProvider.getLabel(obj);
-				} catch (CoreException e) {
-					if (UIUtils.DEBUG) {
-						System.out
-								.println("Cannot instantiate the label provider class "
-										+ configuration
-												.getAttribute("secondLabelProvider"));
-						e.printStackTrace();
-					}
-				}
+				return DEFAULT_LABEL;
 			}
-			if (UIUtils.DEBUG) {
-				System.out.println("No label information stored for " + obj);
-			}
-			return DEFAULT_LABEL;
-
 		}
 
 		/**
@@ -213,8 +190,35 @@ public class ElementUIRegistry {
 		 *            any object
 		 * @return the secondary label corresponding to the object
 		 */
-		public String getSecondaryLabel(Object obj) {
-			return getLabel(obj, "secondLabelAttribute", "secondLabelProvider");
+		public String getLabelAtColumn(String columnID, Object obj) {
+			IElementLabelProvider provider = providers.get(columnID);
+			if (provider != null) {
+				return provider.getLabel(obj);
+			}
+			
+			IConfigurationElement[] columns = configuration.getChildren();
+			for (IConfigurationElement column : columns) {
+				String id = column.getAttribute("id"); // $NON-NLS-1$
+				if (id.equals(columnID)) {
+					try {
+						provider = (IElementLabelProvider) column
+								.createExecutableExtension("labelProvider");
+						providers.put(columnID, provider);
+						return provider.getLabel(obj);
+					} catch (CoreException e) {
+						String message = "Cannot instantiate the label provider class "
+								+ configuration
+										.getAttribute("labelProvider");
+						UIUtils.log(e, message);
+						if (UIUtils.DEBUG) {
+							System.out.println(message);
+							e.printStackTrace();
+						}
+						return DEFAULT_LABEL;
+					}
+				}
+			}
+			return DEFAULT_LABEL;
 		}
 
 	}
@@ -337,20 +341,6 @@ public class ElementUIRegistry {
 	}
 
 	/**
-	 * Getting the primary label corresponding to an object (which is used in
-	 * the first column of Event-B Table Tree Viewer
-	 * <p>
-	 * 
-	 * @param obj
-	 *            any object
-	 * @return the primary label corresponding to the input object (this is
-	 *         simply the same as the label of the object)
-	 */
-	public String getPrimaryLabel(Object obj) {
-		return getLabel(obj);
-	}
-
-	/**
 	 * Getting the secondary label corresponding to an object (which is used in
 	 * the second column of Event-B Table Tree Viewer
 	 * <p>
@@ -359,14 +349,14 @@ public class ElementUIRegistry {
 	 *            any object
 	 * @return the secondary label corresponding to the input object
 	 */
-	public String getSecondaryLabel(Object obj) {
+	public String getLabelAtColumn(String columnID, Object obj) {
 		if (registry == null)
 			loadRegistry();
 
 		Set<Class> classes = registry.keySet();
 		for (Class clazz : classes) {
 			if (clazz.isInstance(obj))
-				return registry.get(clazz).getSecondaryLabel(obj);
+				return registry.get(clazz).getLabelAtColumn(columnID, obj);
 		}
 
 		return DEFAULT_LABEL;

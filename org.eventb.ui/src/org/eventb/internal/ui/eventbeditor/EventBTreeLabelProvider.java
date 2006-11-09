@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -46,7 +45,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	// The font used in the tree viewer
 	private Font font = null;
 
-	private TreeViewer viewer;
+	private EventBEditableTreeViewer viewer;
 
 	/**
 	 * Constructor.
@@ -55,7 +54,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @param editor
 	 *            An Event-B Editor
 	 */
-	public EventBTreeLabelProvider(IEventBEditor editor, TreeViewer viewer) {
+	public EventBTreeLabelProvider(IEventBEditor editor, EventBEditableTreeViewer viewer) {
 		this.editor = editor;
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);
@@ -85,7 +84,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		// try {
 
 		if (columnIndex == 0) {
-			return ElementUIRegistry.getDefault().getPrimaryLabel(element);
+			return ElementUIRegistry.getDefault().getLabel(element);
 			/*
 			 * if (element instanceof ISeesContext) return ((ISeesContext)
 			 * element).getSeenContextName(); if (element instanceof
@@ -112,22 +111,8 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		}
 
 		if (columnIndex == 1) {
-			return ElementUIRegistry.getDefault().getSecondaryLabel(element);
-			// try {
-			// if (element instanceof IAssignmentElement)
-			// return ((IAssignmentElement) element).getAssignmentString();
-			// if (element instanceof IPredicateElement)
-			// return ((IPredicateElement) element).getPredicateString();
-			// if (element instanceof IExpressionElement)
-			// return ((IExpressionElement) element).getExpressionString();
-			// } catch (RodinDBException e) {
-			// e.printStackTrace();
-			//			}
-			//			return "";
+			return ElementUIRegistry.getDefault().getLabelAtColumn(viewer.getColumnID(columnIndex), element);
 		}
-		// } catch (RodinDBException e) {
-		// e.printStackTrace();
-		// }
 
 		return element.toString();
 
@@ -139,7 +124,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
-
+		// Do nothing
 	}
 
 	/*
@@ -148,7 +133,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-
+		// Do nothing
 	}
 
 	/*
@@ -167,7 +152,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
-
+		// Do nothing
 	}
 
 	/*

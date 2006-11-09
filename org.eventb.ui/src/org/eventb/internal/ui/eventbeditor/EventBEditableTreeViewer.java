@@ -49,7 +49,7 @@ import org.rodinp.core.IRodinFile;
  *         An abstract class contains of an Editable (Table) Tree Viewer.
  */
 public abstract class EventBEditableTreeViewer extends TreeViewer {
-	private TreeEditor treeEditor;
+	TreeEditor treeEditor;
 
 	protected IEventBEditor editor;
 
@@ -63,7 +63,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<IRodinElement> toRefresh;
 
-	private CommentToolTip handler;
+	CommentToolTip handler;
 
 	private KeyListener keyListener;
 
@@ -202,7 +202,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 20;
 		gd.widthHint = 100;
-		Tree tree = this.getTree();
+		final Tree tree = this.getTree();
 		tree.setLayoutData(gd);
 
 		createTreeColumns();
@@ -215,6 +215,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				// TODO Auto-generated method stub
 
@@ -225,8 +226,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 * 
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
+			@Override
 			public void mouseDown(MouseEvent e) {
-				Tree tree = EventBEditableTreeViewer.this.getTree();
 				Control old = treeEditor.getEditor();
 				if (old != null)
 					old.dispose();
@@ -285,7 +286,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		select(tree, treeEditor, item, column);
 	}
 
-	protected void select(final Tree tree, final TreeEditor treeEditor,
+	protected void select(final Tree tree, final TreeEditor treeEditor1,
 			final TreeItem item, final int column) {
 		final Object itemData = item.getData();
 
@@ -301,7 +302,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 		final Text text = new Text(composite, SWT.NONE);
 		text.addKeyListener(keyListener);
 
-		new ElementText(new EventBMath(text), treeEditor, tree, item,
+		new ElementText(new EventBMath(text), treeEditor1, tree, item,
 				(IRodinElement) itemData, column, 1000) {
 			/*
 			 * (non-Javadoc)
@@ -309,9 +310,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 * @see org.eventb.internal.ui.eventbeditor.ElementText#commit(org.rodinp.core.IRodinElement,
 			 *      int, java.lang.String)
 			 */
-			public void commit(IRodinElement element, int column,
+			@Override
+			public void commit(IRodinElement element, int col,
 					String contents) {
-				EventBEditableTreeViewer.this.commit(element, column, contents);
+				EventBEditableTreeViewer.this.commit(element, col, contents);
 			}
 
 			/*
@@ -319,15 +321,16 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 * 
 			 * @see org.eventb.internal.ui.eventbeditor.ElementText#nextEditableCell()
 			 */
+			@Override
 			public void nextEditableCell() {
 				selectNextEditableCell(item, column);
 			}
 
-			private void selectNextEditableCell(TreeItem item, int column) {
-				Rectangle rec = item.getBounds();
+			private void selectNextEditableCell(TreeItem item1, int col) {
+				Rectangle rec = item1.getBounds();
 				// UIUtils.debug("Bound: " + rec);
 
-				if (column == numColumn - 1) {
+				if (col == numColumn - 1) {
 					TreeItem next = tree
 							.getItem(new Point(rec.x + rec.width / 2, rec.y
 									+ rec.height / 2 + tree.getItemHeight()));
@@ -340,10 +343,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 					} else
 						return;
 				} else {
-					if (isNotSelectable(item.getData(), column + 1))
-						selectNextEditableCell(item, column + 1);
+					if (isNotSelectable(item1.getData(), col + 1))
+						selectNextEditableCell(item1, col + 1);
 					else
-						selectItem(item, column + 1);
+						selectItem(item1, col + 1);
 				}
 
 			}
@@ -353,15 +356,16 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 * 
 			 * @see org.eventb.internal.ui.eventbeditor.ElementText#prevEditableCell()
 			 */
+			@Override
 			public void prevEditableCell() {
 				selectPrevEditableCell(item, column);
 			}
 
-			private void selectPrevEditableCell(TreeItem item, int column) {
-				Rectangle rec = item.getBounds();
+			private void selectPrevEditableCell(TreeItem item1, int col) {
+				Rectangle rec = item1.getBounds();
 				// UIUtils.debug("Bound: " + rec);
 
-				if (column == 0) {
+				if (col == 0) {
 					TreeItem next = tree
 							.getItem(new Point(rec.x + rec.width / 2, rec.y
 									+ rec.height / 2 - tree.getItemHeight()));
@@ -374,10 +378,10 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 					} else
 						return;
 				} else {
-					if (isNotSelectable(item.getData(), column - 1))
-						selectPrevEditableCell(item, column - 1);
+					if (isNotSelectable(item1.getData(), col - 1))
+						selectPrevEditableCell(item1, col - 1);
 					else
-						selectItem(item, column - 1);
+						selectItem(item1, col - 1);
 				}
 
 			}
@@ -392,7 +396,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 						- inset * 2, rect.height - inset * 2);
 			}
 		});
-		treeEditor.setEditor(composite, item, column);
+		treeEditor1.setEditor(composite, item, column);
 		text.setText(item.getText(column));
 		text.selectAll();
 		text.setFocus();
@@ -531,12 +535,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * Refresh the nodes.
 	 * <p>
 	 * 
-	 * @param toRefresh
+	 * @param toRefresh1
 	 *            List of node to refresh
 	 * @param updateLabels
 	 *            <code>true</code> if the label need to be updated as well
 	 */
-	private void postRefresh(final Collection<IRodinElement> toRefresh,
+	private void postRefresh(final Collection<IRodinElement> toRefresh1,
 			final boolean updateLabels) {
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {
@@ -544,7 +548,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					ctrl.setRedraw(false);
-					for (IRodinElement element : toRefresh) {
+					for (IRodinElement element : toRefresh1) {
 						viewer.refresh(element);
 					}
 					// refreshViewer(toRefresh);
@@ -610,6 +614,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 				}
 			}
 		}, this.getControl());
+	}
+
+	public String getColumnID(int columnIndex) {
+		// TODO Should be implemented dynamically
+		if (columnIndex == 1) return "content";
+		else return "name";
 	}
 
 }

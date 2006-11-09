@@ -49,13 +49,9 @@
          </appInfo>
       </annotation>
       <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  a unique name that will be used to identify this element UI information
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="column" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -76,14 +72,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="labelAttribute" type="string">
-            <annotation>
-               <documentation>
-                  if the element is a Rodin element, end users can specify which attribute will be used as the label of the element
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="labelProvider" type="string">
+         <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
                   if the label attribute is not specified, the label provider class will be used to find the label for the element. The class must implement the interface &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;
@@ -110,20 +99,25 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="secondLabelAttribute" type="string">
+      </complexType>
+   </element>
+
+   <element name="column">
+      <complexType>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="secondLabelProvider" type="string">
+         <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.IElementLabelProvider"/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
