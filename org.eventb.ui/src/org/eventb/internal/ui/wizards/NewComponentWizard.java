@@ -80,6 +80,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 * 
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		page = new NewComponentWizardPage(selection);
 		addPage(page);
@@ -92,6 +93,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 * 
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		final String projectName = page.getContainerName();
 		final String fileName = page.getComponentName() + "." + page.getType();
@@ -135,7 +137,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 * @throws CoreException
 	 *             a core exception when creating the new file
 	 */
-	private void doFinish(String projectName, final String fileName,
+	void doFinish(String projectName, final String fileName,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + fileName, 2);
@@ -152,15 +154,15 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 
 		RodinCore.run(new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor pMonitor) throws CoreException {
 				final IRodinFile rodinFile = rodinProject.createRodinFile(fileName,
 						false, null);
 				if (rodinFile instanceof IMachineFile) {
 					IEvent init = (IEvent) rodinFile.createInternalElement(IEvent.ELEMENT_TYPE,
-							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, monitor);
-					init.setLabel(IEvent.INITIALISATION, monitor);
-					init.setConvergence(IEvent.ORDINARY, monitor);
-					init.setInherited(false, monitor);
+							"internal_" + PrefixEvtName.DEFAULT_PREFIX + 1, null, pMonitor);
+					init.setLabel(IEvent.INITIALISATION, pMonitor);
+					init.setConvergence(IEvent.ORDINARY, pMonitor);
+					init.setInherited(false, pMonitor);
 				}
 				rodinFile.save(null, true);
 			}
@@ -202,8 +204,8 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+	public void init(IWorkbench workbench, IStructuredSelection sel) {
+		this.selection = sel;
 	}
 
 }

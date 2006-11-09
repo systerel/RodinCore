@@ -106,6 +106,7 @@ public class NewComponentWizardPage extends WizardPage {
 		Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
@@ -246,16 +247,19 @@ public class NewComponentWizardPage extends WizardPage {
 		if (project != null) {
 			final IProject container = project.getProject();
 			containerText.setText(container.getFullPath().toString());
+			componentText.setFocus();
+			componentText.selectAll();
 		}
-		componentText.setFocus();
-		componentText.selectAll();
+		else {
+			containerText.setFocus();
+		}
 	}
 
 	/**
 	 * Uses the standard container selection dialog to choose the new value for
 	 * the container field.
 	 */
-	private void handleBrowse() {
+	void handleBrowse() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
 				"Select new component container");
@@ -270,7 +274,7 @@ public class NewComponentWizardPage extends WizardPage {
 	/**
 	 * Ensures that both text fields are set correctly.
 	 */
-	private void dialogChanged() {
+	void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
 		String componentName = getComponentName();

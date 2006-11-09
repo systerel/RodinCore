@@ -80,12 +80,14 @@ public class NewProjectWizardPage extends WizardPage {
 	 */
 	private void initialize() {
 		projectText.setText("NewProject");
+		projectText.selectAll();
+		projectText.setFocus();
 	}
 
 	/**
 	 * Ensures that input is valid.
 	 */
-	private void dialogChanged() {
+	void dialogChanged() {
 		String projectName = getProjectName();
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(projectName));

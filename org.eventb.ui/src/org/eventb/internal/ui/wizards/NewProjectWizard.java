@@ -70,6 +70,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * 
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		page = new NewProjectWizardPage(selection);
 		addPage(page);
@@ -82,6 +83,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * 
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		final String projectName = page.getProjectName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -122,7 +124,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * @throws CoreException
 	 *             a core exception throws when creating a new project
 	 */
-	private void doFinish(String projectName, IProgressMonitor monitor)
+	void doFinish(String projectName, IProgressMonitor monitor)
 			throws CoreException {
 		// create an empty Rodin project
 		monitor.beginTask("Creating " + projectName, 1);
@@ -141,7 +143,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor pMonitor) throws CoreException {
 					IProject project = rodinProject.getProject();
 					if (!project.exists())
 						project.create(null);
@@ -183,7 +185,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+	public void init(IWorkbench workbench, IStructuredSelection sel) {
+		this.selection = sel;
 	}
 }
