@@ -103,6 +103,15 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		setProofConfidence(proofTree.getConfidence());
 		setProofValid(valid);
 	}
+
+	public boolean autoProverAttempted() throws RodinDBException {
+		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, null);
+	}
+
+	public boolean isAutoProven() throws RodinDBException {
+		if (!autoProverAttempted()) return false;
+		return getBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, null);
+	}
 	
 }
 

@@ -281,7 +281,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 
 		if (results != null && results.length != 0) {
 
-			final IPSFile localPRFile = this.getRodinInput();
+			final IPSFile localPSFile = this.getRodinInput();
 
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
@@ -292,7 +292,8 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 							((ProofState) result).doSave(pm);
 						}
 						// Save the file from the database to disk
-						localPRFile.save(pm, true);
+						localPSFile.save(pm, false);
+						(localPSFile.getPRFile().getMutableCopy()).save(pm, false);
 					}
 
 				}, null);

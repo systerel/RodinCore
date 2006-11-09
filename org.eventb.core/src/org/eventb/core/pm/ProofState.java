@@ -47,7 +47,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofState {
 
 	// The PR sequent associated with this proof obligation.
-	IPSstatus prSequent;
+	IPSstatus status;
 
 	// The current proof tree, this might be different from the proof tree in
 	// the disk, can be null when it is not initialised.
@@ -67,7 +67,7 @@ public class ProofState {
 	private boolean dirty;
 
 	public ProofState(IPSstatus ps) {
-		this.prSequent = ps;
+		this.status = ps;
 		// loadProofTree();
 	}
 
@@ -75,7 +75,7 @@ public class ProofState {
 	 * Creates the initial proof tree for this proof obligation. 
 	 */
 	private IProofTree createProofTree() throws RodinDBException {
-		final IPOSequent poSequent = prSequent.getPOSequent();
+		final IPOSequent poSequent = status.getPOSequent();
 		IProverSequent newSeq = POLoader.readPO(poSequent);
 		return ProverFactory.makeProofTree(newSeq, poSequent);
 	}
@@ -86,7 +86,7 @@ public class ProofState {
 		pt = createProofTree();
 		
 		// If a proof exists in the PR file rebuild it.
-		final IPRProofTree prProofTree = prSequent.getProofTree();
+		final IPRProofTree prProofTree = status.getProofTree();
 		if (prProofTree != null)
 		{
 			final IPRProofTreeNode root = prProofTree.getRoot();
@@ -105,7 +105,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = ! prSequent.isProofValid();
+		dirty = ! status.isProofValid();
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -114,12 +114,12 @@ public class ProofState {
 		if (pt != null)
 			return pt.isClosed();
 		
-		final IPRProofTree prProofTree = prSequent.getProofTree();
+		final IPRProofTree prProofTree = status.getProofTree();
 		return (prProofTree != null && prProofTree.isClosed());
 	}
 
 	public IPSstatus getPRSequent() {
-		return prSequent;
+		return status;
 	}
 
 	public IProofTree getProofTree() {
@@ -174,20 +174,16 @@ public class ProofState {
 	}
 
 	public void doSave(IProgressMonitor monitor) throws CoreException {
-		UserSupportUtils.debug("Saving: " + prSequent.getElementName());
+		UserSupportUtils.debug("Saving: " + status.getElementName());
 		
 		// TODO add lock for po and pr file
 		
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor mon) throws CoreException {
-				prSequent.getProofTree().setProofTree(pt);
-				prSequent.updateStatus();
-				// PRUtil.updateProofTree(PRSequent.this, pt);
+				((IPRProofTree) status.getProofTree().getMutableCopy()).setProofTree(pt);
+				((IPSstatus) status.getMutableCopy()).updateStatus();
 			}
-		}, prSequent.getSchedulingRule() , monitor);
-		
-		// prSequent.updateProofTree(pt);
-		
+		}, status.getSchedulingRule() , monitor);	
 		
 		dirty = false;
 	}
@@ -202,7 +198,7 @@ public class ProofState {
 			return false;
 		else {
 			ProofState proofState = (ProofState) obj;
-			return proofState.getPRSequent().equals(prSequent);
+			return proofState.getPRSequent().equals(status);
 		}
 
 	}
@@ -233,12 +229,12 @@ public class ProofState {
 	}
 
 	public boolean isSequentDischarged() throws RodinDBException {
-		final IPRProofTree prProofTree = prSequent.getProofTree();
+		final IPRProofTree prProofTree = status.getProofTree();
 		return (prProofTree != null && prProofTree.isClosed());
 	}
 
 	public boolean isProofReusable() throws RodinDBException {
-		IProverSequent seq = POLoader.readPO(prSequent.getPOSequent());
+		IProverSequent seq = POLoader.readPO(status.getPOSequent());
 		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
 	}
 
@@ -256,7 +252,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = (! prSequent.isProofValid());
+		dirty = (! status.isProofValid());
 	}
 
 	public void unloadProofTree() {

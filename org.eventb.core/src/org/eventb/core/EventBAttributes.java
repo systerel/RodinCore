@@ -11,6 +11,7 @@ package org.eventb.core;
  * This class lists all attribute names used by the Event-B core plugin.
  * 
  * @author Stefan Hallerstede
+ * @author Farhad Mehta
  */
 public final class EventBAttributes {
 
@@ -37,6 +38,7 @@ public final class EventBAttributes {
 	// Attributes related to the PR and PS files
 	public static String CONFIDENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".confidence";
 	public static String PROOF_VALIDITY_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".proofValid";
+	public static String AUTO_PROOF_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".autoProof";
 	
 	private EventBAttributes() {
 		// Non-instantiable class

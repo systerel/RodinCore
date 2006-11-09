@@ -17,6 +17,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.basis.PRProofTree;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
@@ -90,11 +91,13 @@ public class AutoProver {
 			
 			pm.subTask("loading");
 			IPRProofTree proofTree = status.getProofTree();
-			if (proofTree == null)
-				proofTree = prFile.createProofTree(status.getName());
+//			if (proofTree == null)
+//				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-			if ((!status.isProofValid()) || (!proofTree.isClosed())) {
+//			if ((!status.isProofValid()) || (!proofTree.isClosed())) {
+			if ((!status.isProofValid()) || 
+					(status.getProofConfidence() <= IConfidence.PENDING)) {
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree tree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),

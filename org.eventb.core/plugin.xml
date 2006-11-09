@@ -274,6 +274,10 @@
             class="org.eventb.core.basis.PSstatus"
             id="status"
             name="%eventBpsStatus"/>
+      <internalElementType
+            class="org.eventb.core.basis.Folder"
+            id="folder"
+            name="%eventBfolder"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -387,6 +391,10 @@
             id="proofValid"
             kind="boolean"
             name="%eventBpsValidity"/>
+      <attributeType
+            id="autoProof"
+            kind="boolean"
+            name="%eventBpsAutoProof"/>
    </extension>
 
 </plugin>

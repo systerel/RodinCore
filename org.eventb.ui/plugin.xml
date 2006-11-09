@@ -124,7 +124,7 @@
             icon="icons/sample.gif"
             id="org.eventb.ui.editors.ProverUI"
             name="%editor.Proof">
-         <contentTypeBinding contentTypeId="org.eventb.core.prFile"/>
+         <contentTypeBinding contentTypeId="org.eventb.core.psFile"/>
       </editor>
    </extension>
    <extension

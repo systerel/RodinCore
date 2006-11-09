@@ -31,7 +31,7 @@ import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
 
 /**
- * @author fmehta
+ * @author Farhad Mehta
  *
  */
 public class AutoPOM implements IAutomaticTool, IExtractor {
@@ -73,17 +73,15 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			// remove old proof status
 			monitor.subTask("cleaning up");
-			createFreshPRFile(prFile,null);
-			createFreshPSFile(psFile,null);
+			makeFresh(prFile,psFile,null);
 			monitor.worked(3);
-			checkCancellation(monitor, prFile);
+			checkCancellation(monitor, prFile, psFile);
 			
 			// create new proof status
-			IPOSequent[] prfOblgs = poFile.getSequents();
-			// List<IPRSequent> poStatus = Arrays.asList(prFile.getSequents());
-			for (int i = 0; i < prfOblgs.length; i++) {
+			IPOSequent[] pos = poFile.getSequents();
+			for (int i = 0; i < pos.length; i++) {
 				
-				final String name = prfOblgs[i].getName();
+				final String name = pos[i].getName();
 				monitor.subTask("updating status for " + name);
 				
 				final IPRProofTree prProof = prFile.getProofTree(name);
@@ -91,42 +89,40 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				if (prProof == null) {
 					prFile.createProofTree(name);
 				}
-				
-//				final IPSstatus poState = (IPSstatus) prFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
-//				poState.updateStatus();
-				
+								
 				final IPSstatus status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
 				status.updateStatus();
 				
 				monitor.worked(1);
-				checkCancellation(monitor, prFile);
+				checkCancellation(monitor, prFile, psFile);
 			}
 			
 			monitor.subTask("saving");
 			prFile.save(new SubProgressMonitor(monitor, 1), true);
 			psFile.save(new SubProgressMonitor(monitor, 1), true);
 			
-			checkCancellation(monitor, prFile);
+			checkCancellation(monitor, prFile, psFile);
 
 			SubProgressMonitor spm = new SubProgressMonitor(monitor, noOfPOs,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
 			);
-			AutoProver.run(prFile, psFile, spm);
+			// AutoProver.run(prFile, psFile, spm);
 			return true;
 		} finally {
 			monitor.done();
 		}
 	}
 
-	// TODO harmonize cleanup after cancellation
 	
-	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile) {
+	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile, IPSFile psFile) {
+//		 TODO harmonize cleanup after cancellation
 		if (monitor.isCanceled()) {
-			// Cleanup PR file (may have unsaved changes).
+			// Cleanup PR & PS files (may have unsaved changes).
 			try {
 				prFile.makeConsistent(null);
+				psFile.makeConsistent(null);
 			} catch (RodinDBException e) {
-				Util.log(e, "when reverting changes to proof file "
+				Util.log(e, "when reverting changes to proof and status files for"
 						+ prFile.getElementName());
 			}
 			throw new OperationCanceledException();
@@ -135,27 +131,29 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		
-		IPSFile prFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
-		
-		try {
-		
-			final IRodinElement[] children = prFile.getChildren();
-			
-			monitor.beginTask("Cleaning " + file.getName(), children.length + 5);
-			
-			for (IRodinElement child : children){
-				// do not delete interactive proofs !
-				if ((! child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)) ||
-						((PRProofTree)child).isAutomaticallyGenerated())
-					((InternalElement)child).delete(true,null);
-				monitor.worked(1);
-			}
-			
-			prFile.save(new SubProgressMonitor(monitor,5),true);
-			
-		} finally {
-			monitor.done();
-		}
+		RodinCore.valueOf(file).delete(true, null);
+//		TODO : something for the PR file maybe
+//		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
+//			
+//		try {
+//		
+//			final IRodinElement[] children = psFile.getChildren();
+//			
+//			monitor.beginTask("Cleaning " + file.getName(), children.length + 5);
+//			
+//			for (IRodinElement child : children){
+//				// do not delete interactive proofs !
+//				if ((! child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)) ||
+//						((PRProofTree)child).isAutomaticallyGenerated())
+//					((InternalElement)child).delete(true,null);
+//				monitor.worked(1);
+//			}
+//			
+//			psFile.save(new SubProgressMonitor(monitor,5),true);
+//			
+//		} finally {
+//			monitor.done();
+//		}
 		
 	}
 
@@ -181,31 +179,18 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private void createFreshPRFile(
-			IPRFile prFile, 
-			IProgressMonitor monitor) throws CoreException {
-
-		if (prFile.exists()) 
-		{
-			for (IRodinElement child : prFile.getChildren()){
-				// do not delete proofs !
-				if (!(child.getElementType().equals(IPRProofTree.ELEMENT_TYPE)))
-				((InternalElement)child).delete(true,null);
-			}			
-		}
-		else
-		{
-			IRodinProject project = prFile.getRodinProject();
-			project.createRodinFile(prFile.getElementName(), true, null);
-		}
-	}
-	
-	private void createFreshPSFile(
-			IPSFile psFile, 
-			IProgressMonitor monitor) throws CoreException {
+	private void makeFresh(IPRFile prFile, IPSFile psFile,
+			IProgressMonitor monitor) throws RodinDBException {
 		
-		IRodinProject project = psFile.getRodinProject();
-		project.createRodinFile(psFile.getElementName(), true, null);
+		IRodinProject project = prFile.getRodinProject();
+
+		// Create a new PR file if none exists
+		if (! prFile.exists()) 	
+			project.createRodinFile(prFile.getElementName(), true, monitor);
+		
+		// Create a fresh PS file
+		// TODO : modify once signatures are implemented
+		project.createRodinFile(psFile.getElementName(), true, monitor);
 	}
 	
 }

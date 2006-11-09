@@ -48,7 +48,7 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		//delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
-		setConfidence(IConfidence.PENDING);
+		setConfidence(IConfidence.UNATTEMPTED);
 	}
 	
 
