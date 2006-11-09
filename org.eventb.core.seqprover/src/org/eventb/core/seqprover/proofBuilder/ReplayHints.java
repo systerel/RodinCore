@@ -7,7 +7,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 public class ReplayHints {
 	
@@ -31,7 +31,7 @@ public class ReplayHints {
 		return this.freeVarRename.isEmpty();
 	}
 		
-	public void addHints(IAnticident old,IAnticident current){
+	public void addHints(IAntecedent old,IAntecedent current){
 
 		if (old.getAddedFreeIdents().length == 0) return;
 		

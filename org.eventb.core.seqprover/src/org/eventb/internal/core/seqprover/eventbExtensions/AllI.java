@@ -11,7 +11,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -42,8 +42,8 @@ public class AllI extends EmptyInputReasoner{
 		FreeIdentifier[] freeIdents = (Lib.ff).makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
 		assert boundIdentDecls.length == freeIdents.length;
 		
-		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = ProverFactory.makeAnticident(
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(
 				UnivQ.instantiate(freeIdents,Lib.ff),
 				null,
 				freeIdents,
@@ -61,8 +61,8 @@ public class AllI extends EmptyInputReasoner{
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = "∀ goal (frees "+displayFreeIdents(freeIdents)+")";
 //		
-//		reasonerOutput.anticidents = new Anticident[1];
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident(UnivQ.instantiate(freeIdents,Lib.ff));
+//		reasonerOutput.anticidents = new Antecedent[1];
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent(UnivQ.instantiate(freeIdents,Lib.ff));
 //		reasonerOutput.anticidents[0].addedFreeIdentifiers = freeIdents;
 //		assert reasonerOutput.anticidents[0].goal.isTypeChecked();
 				

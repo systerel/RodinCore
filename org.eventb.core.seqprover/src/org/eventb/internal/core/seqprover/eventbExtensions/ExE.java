@@ -16,7 +16,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -61,8 +61,8 @@ public class ExE extends SinglePredInputReasoner{
 		Predicate instantiatedEx = ExQ.instantiate(freeIdents,Lib.ff);
 		assert instantiatedEx.isTypeChecked();
 		
-		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = ProverFactory.makeAnticident(
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Lib.breakPossibleConjunct(instantiatedEx),
 				freeIdents,
@@ -76,9 +76,9 @@ public class ExE extends SinglePredInputReasoner{
 		
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
-//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents = new Antecedent[1];
 //		
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
 //		
 //		reasonerOutput.display = "∃ hyp (frees "+displayFreeIdents(freeIdents)+")";
 //		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(instantiatedEx);

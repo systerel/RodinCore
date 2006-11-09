@@ -12,7 +12,7 @@ import java.util.Set;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofRule;
-import org.eventb.core.IPRReasonerAnticident;
+import org.eventb.core.IPRReasonerAntecedent;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.Predicate;
@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -81,10 +81,10 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		assert rodinElements[0].getElementName().equals("neededHyps");
 		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(((IPRPredicateSet)rodinElements[0]).getPredicateSet());
 		
-		rodinElements = this.getChildrenOfType(IPRReasonerAnticident.ELEMENT_TYPE);
-		IAnticident[] anticidents = new IAnticident[rodinElements.length];
+		rodinElements = this.getChildrenOfType(IPRReasonerAntecedent.ELEMENT_TYPE);
+		IAntecedent[] anticidents = new IAntecedent[rodinElements.length];
 		for (int i = 0; i < rodinElements.length; i++) {
-			anticidents[i] = ((IPRReasonerAnticident)rodinElements[i]).getAnticident();
+			anticidents[i] = ((IPRReasonerAntecedent)rodinElements[i]).getAnticident();
 		}
 		
 		String display = this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
@@ -105,10 +105,10 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		.setHypSet(proofRule.getNeededHyps());
 		// write out the anticidents (next subgoals)
 		int idx = 1;
-		for (IAnticident anticident : proofRule.getAnticidents()){
-			((IPRReasonerAnticident)this.createInternalElement(
-					IPRReasonerAnticident.ELEMENT_TYPE,
-					"anticident" + idx++,null,null)).setAnticident(anticident);
+		for (IAntecedent antecedent : proofRule.getAntecedents()){
+			((IPRReasonerAntecedent)this.createInternalElement(
+					IPRReasonerAntecedent.ELEMENT_TYPE,
+					"anticident" + idx++,null,null)).setAnticident(antecedent);
 		}
 		
 		// write out display

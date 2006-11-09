@@ -7,7 +7,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -27,13 +27,13 @@ public class TrueGoal extends EmptyInputReasoner{
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
 				seq.goal(),"⊤ goal",
-				new IAnticident[0]);
+				new IAntecedent[0]);
 		
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = "⊤ goal";
 //		
-//		reasonerOutput.anticidents = new Anticident[0];
+//		reasonerOutput.anticidents = new Antecedent[0];
 		
 		return reasonerOutput;
 	}

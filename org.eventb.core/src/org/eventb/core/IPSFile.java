@@ -56,24 +56,24 @@ public interface IPSFile extends IRodinFile{
 	IMachineFile getMachine();
 
 	/**
-	 * Returns a handle to the snapshot of file containing proof obligations for this
+	 * Returns a handle to PO file containing proof obligations for this
 	 * component.
 	 * <p>
 	 * This is a handle-only operation.
 	 * </p>
 	 * 
-	 * @return a handle to snapshot of the PO file of this component
+	 * @return a handle to the PO file of this component
 	 */
 	IPOFile getPOFile();
 	
 	/**
-	 * Returns a handle to the snapshot of file containing proofs for this
+	 * Returns a handle to the PR file containing proofs for this
 	 * component.
 	 * <p>
 	 * This is a handle-only operation.
 	 * </p>
 	 * 
-	 * @return a handle to snapshot of the PO file of this component
+	 * @return a handle to the PR file of this component
 	 */
 	IPRFile getPRFile();
 	

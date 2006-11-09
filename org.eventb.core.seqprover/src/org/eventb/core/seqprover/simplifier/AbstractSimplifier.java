@@ -6,7 +6,7 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 public abstract class AbstractSimplifier implements ISimplifier {
 
@@ -15,8 +15,8 @@ public abstract class AbstractSimplifier implements ISimplifier {
 
 
 	public IProofRule apply(IProofRule rule) {
-		IAnticident[] anticidents = rule.getAnticidents();
-		IAnticident[] simplifiedAnticidents = new IAnticident[anticidents.length];
+		IAntecedent[] anticidents = rule.getAntecedents();
+		IAntecedent[] simplifiedAnticidents = new IAntecedent[anticidents.length];
 		for (int i = 0; i < simplifiedAnticidents.length; i++) {
 			simplifiedAnticidents[i] = apply(anticidents[i]);
 		}
@@ -32,9 +32,9 @@ public abstract class AbstractSimplifier implements ISimplifier {
 				simplifiedAnticidents);
 	}
 
-	private IAnticident apply(IAnticident anticident){
-		Set<Predicate> simplifiedAddedHyps = new HashSet<Predicate>(anticident.getAddedHyps().size());
-		for (Predicate addedHyp : anticident.getAddedHyps()) {
+	private IAntecedent apply(IAntecedent antecedent){
+		Set<Predicate> simplifiedAddedHyps = new HashSet<Predicate>(antecedent.getAddedHyps().size());
+		for (Predicate addedHyp : antecedent.getAddedHyps()) {
 			Predicate simplifiedAddedHyp =  apply(addedHyp);
 			if (simplifiedAddedHyp == null)
 				simplifiedAddedHyps.add(addedHyp);
@@ -42,13 +42,13 @@ public abstract class AbstractSimplifier implements ISimplifier {
 		}
 		// TODO extra transformations for conj hyps
 		
-		Predicate simplifiedGoal = apply(anticident.getGoal());
-		if (simplifiedGoal == null) simplifiedGoal = anticident.getGoal();
-		return ProverFactory.makeAnticident(
+		Predicate simplifiedGoal = apply(antecedent.getGoal());
+		if (simplifiedGoal == null) simplifiedGoal = antecedent.getGoal();
+		return ProverFactory.makeAntecedent(
 				simplifiedGoal,
 				simplifiedAddedHyps,
-				anticident.getAddedFreeIdents(),
-				anticident.getHypAction());
+				antecedent.getAddedFreeIdents(),
+				antecedent.getHypAction());
 	}
 	
 }

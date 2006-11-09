@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
@@ -52,9 +52,9 @@ public class MngHyp implements IReasoner{
 		// input.action.getHyps().retainAll(seq.hypotheses());
 		
 		
-		IAnticident[] anticidents = new IAnticident[1];
+		IAntecedent[] anticidents = new IAntecedent[1];
 		
-		anticidents[0] = ProverFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				null,
 				action);
@@ -69,9 +69,9 @@ public class MngHyp implements IReasoner{
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = "sl/ds";
-//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents = new Antecedent[1];
 //		
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[0].hypAction.add(action);
 //		reasonerOutput.anticidents[0].goal = seq.goal();
 				

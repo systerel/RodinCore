@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -57,8 +57,8 @@ public class Contr extends SinglePredInputReasoner{
 			neededHypotheses.add(falseHyp);
 		}
 			
-		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = ProverFactory.makeAnticident(
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(
 				goal,
 				Lib.breakPossibleConjunct(Lib.makeNeg(seq.goal())),
 				null);
@@ -86,7 +86,7 @@ public class Contr extends SinglePredInputReasoner{
 //		reasonerOutput.goal = seq.goal();
 //
 //		// Generate the anticident
-//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents = new Antecedent[1];
 //		
 //		Predicate goal;
 //		if (falseHypPred.equals(Lib.True))
@@ -94,7 +94,7 @@ public class Contr extends SinglePredInputReasoner{
 //		else
 //			goal = Lib.makeNeg(falseHypPred);
 //		
-//		reasonerOutput.anticidents[0] = new Anticident(goal);		
+//		reasonerOutput.anticidents[0] = new Antecedent(goal);		
 //		reasonerOutput.anticidents[0].addToAddedHyps(Lib.makeNeg(seq.goal()));
 		return reasonerOutput;
 	}

@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -43,13 +43,13 @@ public class ImpE extends SinglePredInputReasoner{
 		// Generate the anticident
 		Predicate toAssume = Lib.impRight(impHypPred);
 		Predicate toShow = Lib.impLeft(impHypPred);
-		IAnticident[] anticidents = new IAnticident[2];
+		IAntecedent[] anticidents = new IAntecedent[2];
 		
-		anticidents[0] = ProverFactory.makeAnticident(toShow);
+		anticidents[0] = ProverFactory.makeAntecedent(toShow);
 		
 		Set<Predicate> addedHyps = Lib.breakPossibleConjunct(toAssume);
 		addedHyps.addAll(Lib.breakPossibleConjunct(toShow));
-		anticidents[1] = ProverFactory.makeAnticident(
+		anticidents[1] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				addedHyps,
 				ProverLib.deselect(impHyp));
@@ -71,12 +71,12 @@ public class ImpE extends SinglePredInputReasoner{
 //		// Generate the anticident
 //		Predicate toAssume = Lib.impRight(impHypPred);
 //		Predicate toShow = Lib.impLeft(impHypPred);
-//		reasonerOutput.anticidents = new Anticident[2];
+//		reasonerOutput.anticidents = new Antecedent[2];
 //		
-//		reasonerOutput.anticidents[0] = new Anticident();
+//		reasonerOutput.anticidents[0] = new Antecedent();
 //		reasonerOutput.anticidents[0].goal = toShow;
 //		
-//		reasonerOutput.anticidents[1] = new Anticident();
+//		reasonerOutput.anticidents[1] = new Antecedent();
 //		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(toShow);
 //		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(toAssume);
 //		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(impHyp));

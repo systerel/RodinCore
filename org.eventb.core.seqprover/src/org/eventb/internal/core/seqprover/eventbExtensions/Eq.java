@@ -15,7 +15,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -68,8 +68,8 @@ public class Eq extends SinglePredInputReasoner{
 		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),(FreeIdentifier)from,to);
 		
 		//	Generate the anticident
-		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = ProverFactory.makeAnticident(
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(
 				rewrittenGoal,
 				rewrittenHyps,
 				ProverLib.deselect(toDeselect));
@@ -95,8 +95,8 @@ public class Eq extends SinglePredInputReasoner{
 //		reasonerOutput.goal = seq.goal();
 //
 //		// Generate the anticident
-//		reasonerOutput.anticidents = new Anticident[1];
-//		reasonerOutput.anticidents[0] = new Anticident(rewrittenGoal);
+//		reasonerOutput.anticidents = new Antecedent[1];
+//		reasonerOutput.anticidents[0] = new Antecedent(rewrittenGoal);
 //		reasonerOutput.anticidents[0].addToAddedHyps(rewrittenHyps);
 //		reasonerOutput.anticidents[0].hypAction.add(Lib.deselect(toDeselect));
 		return reasonerOutput;

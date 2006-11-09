@@ -10,7 +10,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -40,10 +40,10 @@ public class DisjE extends SinglePredInputReasoner{
 		
 		//	 Generate the anticidents
 		Predicate[] disjuncts = Lib.disjuncts(disjHypPred);
-		IAnticident[] anticidents = new IAnticident[disjuncts.length];
+		IAntecedent[] anticidents = new IAntecedent[disjuncts.length];
 		
 		for (int i = 0; i < disjuncts.length; i++) {
-			anticidents[i] = ProverFactory.makeAnticident(
+			anticidents[i] = ProverFactory.makeAntecedent(
 					seq.goal(),
 					Lib.breakPossibleConjunct(disjuncts[i]),
 					ProverLib.deselect(disjHyp));
@@ -65,10 +65,10 @@ public class DisjE extends SinglePredInputReasoner{
 //
 //		// Generate the anticidents
 //		Predicate[] disjuncts = Lib.disjuncts(disjHypPred);
-//		reasonerOutput.anticidents = new Anticident[disjuncts.length];
+//		reasonerOutput.anticidents = new Antecedent[disjuncts.length];
 //		
 //		for (int i = 0; i < disjuncts.length; i++) {
-//			reasonerOutput.anticidents[i] = new Anticident(seq.goal());
+//			reasonerOutput.anticidents[i] = new Antecedent(seq.goal());
 //			reasonerOutput.anticidents[i].addConjunctsToAddedHyps(disjuncts[i]);
 //			reasonerOutput.anticidents[i].hypAction.add(Lib.deselect(disjHyp));
 //		}

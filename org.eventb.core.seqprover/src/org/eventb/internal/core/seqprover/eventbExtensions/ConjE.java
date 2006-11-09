@@ -10,7 +10,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -40,8 +40,8 @@ public class ConjE extends SinglePredInputReasoner{
 		
 		// Generate the successful reasoner output
 		
-		IAnticident[] anticidents = new IAnticident[1];
-		anticidents[0] = ProverFactory.makeAnticident(
+		IAntecedent[] anticidents = new IAntecedent[1];
+		anticidents[0] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Lib.breakPossibleConjunct(conjHypPred),
 				ProverLib.hide(conjHyp));
@@ -60,8 +60,8 @@ public class ConjE extends SinglePredInputReasoner{
 //
 //		// Generate the anticident
 //		// Predicate[] conjuncts = Lib.conjuncts(conjHypPred);
-//		reasonerOutput.anticidents = new Anticident[1];
-//		reasonerOutput.anticidents[0] = new Anticident();
+//		reasonerOutput.anticidents = new Antecedent[1];
+//		reasonerOutput.anticidents[0] = new Antecedent();
 //		reasonerOutput.anticidents[0].addConjunctsToAddedHyps(conjHypPred);
 //		reasonerOutput.anticidents[0].hypAction.add(Lib.hide(conjHyp));
 //		reasonerOutput.anticidents[0].goal = seq.goal();

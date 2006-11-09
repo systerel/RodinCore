@@ -21,21 +21,21 @@ import org.eventb.core.seqprover.HypothesesManagement.Action;
 
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	
-	public static class Anticident implements IAnticident{
+	public static class Antecedent implements IAntecedent{
 		
 		private FreeIdentifier[] addedFreeIdentifiers;
 		private Set <Predicate> addedHypotheses;
 		private List <Action> hypAction;
 		private Predicate goal;
 		
-		public Anticident(Predicate goal){
+		public Antecedent(Predicate goal){
 			addedFreeIdentifiers = new FreeIdentifier[0];
 			addedHypotheses = new HashSet<Predicate>();
 			hypAction = new ArrayList<Action>();
 			this.goal = goal;
 		}
 		
-		public Anticident(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<Action> hypAction) {
+		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<Action> hypAction) {
 			assert goal != null;
 			this.goal = goal;
 			this.addedHypotheses = addedHyps == null ? new HashSet<Predicate>() : addedHyps;
@@ -154,7 +154,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	}
 	
 	private String display;
-	private IAnticident[] anticidents;
+	private IAntecedent[] antecedents;
 	private Set<Hypothesis> neededHypotheses;
 	private Predicate goal;
 	private int reasonerConfidence;
@@ -162,37 +162,37 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing){
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
-		anticidents = null;
+		antecedents = null;
 		neededHypotheses = new HashSet<Hypothesis>();
 		goal = null;
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 	
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, IAnticident[] anticidents){
+	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, IAntecedent[] anticidents){
 		super(generatedBy,generatedUsing);
 		display = generatedBy.getReasonerID();
-		this.anticidents = anticidents;
+		this.antecedents = anticidents;
 		neededHypotheses = new HashSet<Hypothesis>();
 		this.goal = goal;
 		reasonerConfidence = IConfidence.DISCHARGED_MAX;
 	}
 
-	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Hypothesis> neededHyps, Integer confidence, String display, IAnticident[] anticidents) {
+	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Hypothesis> neededHyps, Integer confidence, String display, IAntecedent[] anticidents) {
 		super(generatedBy,generatedUsing);
 		
 		assert goal != null;
 		assert anticidents != null;
 		
 		this.goal = goal;
-		this.anticidents = anticidents;
+		this.antecedents = anticidents;
 		this.neededHypotheses = neededHyps == null ? new HashSet<Hypothesis>() : neededHyps;
 		this.reasonerConfidence = confidence == null ? IConfidence.DISCHARGED_MAX : confidence;
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
 
 	protected void addFreeIdents(ITypeEnvironment typeEnv) {
-		for(IAnticident anticident : anticidents){
-			((Anticident) anticident).addFreeIdents(typeEnv);
+		for(IAntecedent antecedent : antecedents){
+			((Antecedent) antecedent).addFreeIdents(typeEnv);
 		}
 		
 		typeEnv.addAll(goal.getFreeIdentifiers());
@@ -222,12 +222,12 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		// Check if the goal is the same
 		if (! reasonerOutput.goal.equals(seq.goal())) return null;
 		
-		// Generate new anticidents
-		// Anticident[] anticidents = reasonerOutput.anticidents;
+		// Generate new antecedents
+		// Antecedent[] antecedents = reasonerOutput.anticidents;
 		IProverSequent[] anticidents 
-			= new IProverSequent[reasonerOutput.anticidents.length];
+			= new IProverSequent[reasonerOutput.antecedents.length];
 		for (int i = 0; i < anticidents.length; i++) {
-			anticidents[i] = ((Anticident) reasonerOutput.anticidents[i]).genSequent(seq);
+			anticidents[i] = ((Antecedent) reasonerOutput.antecedents[i]).genSequent(seq);
 			if (anticidents[i] == null)
 				// most probably a name clash occured
 				// or an invalid type env.
@@ -246,8 +246,8 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		return goal;
 	}
 
-	public IAnticident[] getAnticidents() {
-		return anticidents;
+	public IAntecedent[] getAntecedents() {
+		return antecedents;
 	}
 
 }

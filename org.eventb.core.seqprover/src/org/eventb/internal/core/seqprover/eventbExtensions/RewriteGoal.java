@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleStringInputReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Rewriter;
@@ -40,9 +40,9 @@ public class RewriteGoal extends SingleStringInputReasoner{
 			return ProverFactory.reasonerFailure(this,input,
 					"Rewriter " + rewriter +" inapplicable for goal "+ seq.goal());
 
-		IAnticident[] anticidents = new IAnticident[1];
+		IAntecedent[] anticidents = new IAntecedent[1];
 		
-		anticidents[0] = ProverFactory.makeAnticident(newGoal);
+		anticidents[0] = ProverFactory.makeAntecedent(newGoal);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
@@ -54,9 +54,9 @@ public class RewriteGoal extends SingleStringInputReasoner{
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = rewriter.getName()+" goal";
-//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents = new Antecedent[1];
 //		
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[0].goal = newGoal;
 				
 		return reasonerOutput;

@@ -12,7 +12,7 @@ import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -64,13 +64,13 @@ public class ExI implements IReasoner{
 		assert instantiatedPred != null;
 		
 		// Generate the anticidents
-		IAnticident[] anticidents = new IAnticident[2];
+		IAntecedent[] anticidents = new IAntecedent[2];
 		
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAnticident(WDpred);
+		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
 		
 		// The instantiated goal
-		anticidents[1] = ProverFactory.makeAnticident(instantiatedPred);
+		anticidents[1] = ProverFactory.makeAntecedent(instantiatedPred);
 
 		// Generate the successful reasoner output
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
@@ -85,14 +85,14 @@ public class ExI implements IReasoner{
 //		reasonerOutput.goal = seq.goal();
 //
 //		// Generate the anticidents
-//		reasonerOutput.anticidents = new Anticident[2];
+//		reasonerOutput.anticidents = new Antecedent[2];
 //		
 //		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[0].goal = WDpred;
 //		
 //		// The instantiated goal
-//		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[1].goal = instantiatedPred;
 				
 		return reasonerOutput;

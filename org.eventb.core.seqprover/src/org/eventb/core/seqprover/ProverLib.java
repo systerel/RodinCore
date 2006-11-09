@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.eventb.core.seqprover.HypothesesManagement.ActionType;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 public class ProverLib {
 
@@ -50,14 +50,14 @@ public class ProverLib {
 		if (! r1.getGoal().equals(r2.getGoal())) return false;
 		if (! r1.getNeededHyps().equals(r2.getNeededHyps())) return false;
 		if (! deepEquals(r1.generatedUsing(),r2.generatedUsing())) return false;
-		if (r1.getAnticidents().length != r2.getAnticidents().length) return false;
-		for (int i = 0; i < r1.getAnticidents().length; i++) {
-			if (! deepEquals(r1.getAnticidents()[i],r1.getAnticidents()[i])) return false;
+		if (r1.getAntecedents().length != r2.getAntecedents().length) return false;
+		for (int i = 0; i < r1.getAntecedents().length; i++) {
+			if (! deepEquals(r1.getAntecedents()[i],r1.getAntecedents()[i])) return false;
 		}
 		return true;
 	}
 
-	private static boolean deepEquals(IAnticident a1, IAnticident a2) {
+	private static boolean deepEquals(IAntecedent a1, IAntecedent a2) {
 		if (a1 == a2) return true;
 		if (! a1.getGoal().equals(a2.getGoal())) return false;
 		if (! a1.getAddedHyps().equals(a2.getAddedHyps())) return false;

@@ -259,9 +259,9 @@
             id="prTypeEnv"
             name="%eventBprTypeEnv"/>
       <internalElementType
-            class="org.eventb.core.basis.PRReasonerAnticident"
+            class="org.eventb.core.basis.PRReasonerAntecedent"
             id="prReasonerAnticident"
-            name="%eventBprReasonerAnticident"/>
+            name="%eventBprReasonerAntecedent"/>
       <internalElementType
             class="org.eventb.core.basis.PRExpression"
             id="prExpression"
@@ -274,10 +274,6 @@
             class="org.eventb.core.basis.PSstatus"
             id="status"
             name="%eventBpsStatus"/>
-      <internalElementType
-            class="org.eventb.core.basis.Folder"
-            id="folder"
-            name="%eventBfolder"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">

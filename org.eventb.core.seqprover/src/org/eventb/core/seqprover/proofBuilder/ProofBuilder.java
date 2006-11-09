@@ -81,7 +81,7 @@ public class ProofBuilder {
 				{
 					// generate hints for continuing the proof
 					newReplayHints = replayHints.clone();
-					newReplayHints.addHints(reuseProofRule.getAnticidents()[i],replayProofRule.getAnticidents()[i]);
+					newReplayHints.addHints(reuseProofRule.getAntecedents()[i],replayProofRule.getAntecedents()[i]);
 				}
 				rebuild(children[i],prChildren[i],newReplayHints);
 			}

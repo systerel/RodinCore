@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.HypothesesManagement.Action;
  * This interface is not intended to be implemented by clients. Objects of this type 
  * are typically generated inside reasoners by calling a factory method.
  * </p>
- * @see IAnticident
+ * @see IAntecedent
  * @see org.eventb.core.seqprover.IReasoner
  * @see org.eventb.core.seqprover.ProverFactory
  * 
@@ -59,9 +59,9 @@ public interface IProofRule extends IReasonerOutput{
 	/**
 	 * Returns the anticidents of this proof rule as returned by the reasoner.
 	 * 
-	 * @return the anticidents of this proof rule (see {@see IAnticident})
+	 * @return the anticidents of this proof rule (see {@see IAntecedent})
 	 */
-	IAnticident[] getAnticidents();
+	IAntecedent[] getAntecedents();
 	
 
 	/**
@@ -83,7 +83,7 @@ public interface IProofRule extends IReasonerOutput{
 	 * 
 	 * @author Farhad Mehta
 	 */
-	public interface IAnticident {
+	public interface IAntecedent {
 		
 		/**
 		 * Returns the goal of this anticident.

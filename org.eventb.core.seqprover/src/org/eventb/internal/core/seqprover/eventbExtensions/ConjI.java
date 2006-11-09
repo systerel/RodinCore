@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -29,10 +29,10 @@ public class ConjI extends EmptyInputReasoner{
 		
 		Predicate[] conjuncts = Lib.conjuncts(seq.goal());
 		
-		IAnticident[] anticidents = new IAnticident[conjuncts.length];
+		IAntecedent[] anticidents = new IAntecedent[conjuncts.length];
 		for (int i = 0; i < anticidents.length; i++) {
 			// Generate one anticident per conjunct
-			anticidents[i] = ProverFactory.makeAnticident(conjuncts[i]);
+			anticidents[i] = ProverFactory.makeAntecedent(conjuncts[i]);
 		}
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
@@ -45,10 +45,10 @@ public class ConjI extends EmptyInputReasoner{
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = "∧ goal";
-//		reasonerOutput.anticidents = new Anticident[conjuncts.length];
+//		reasonerOutput.anticidents = new Antecedent[conjuncts.length];
 //		for (int i = 0; i < reasonerOutput.anticidents.length; i++) {
 //			// Generate one anticident per conjunct
-//			reasonerOutput.anticidents[i] = new ProofRule.Anticident();
+//			reasonerOutput.anticidents[i] = new ProofRule.Antecedent();
 //			reasonerOutput.anticidents[i].goal = conjuncts[i];
 //		}
 		

@@ -10,7 +10,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -49,16 +49,16 @@ public class Cut extends SinglePredInputReasoner {
 		Predicate lemmaWD = Lib.WD(lemma);
 
 		// Generate the anticidents
-		IAnticident[] anticidents = new IAnticident[3];
+		IAntecedent[] anticidents = new IAntecedent[3];
 		
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAnticident(lemmaWD);
+		anticidents[0] = ProverFactory.makeAntecedent(lemmaWD);
 		
 		// The lemma to be proven
-		anticidents[1] = ProverFactory.makeAnticident(lemma);
+		anticidents[1] = ProverFactory.makeAntecedent(lemma);
 		
 		// Proving the original goal with the help of the lemma
-		anticidents[2] = ProverFactory.makeAnticident(
+		anticidents[2] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Collections.singleton(lemma),
 				null);
@@ -77,18 +77,18 @@ public class Cut extends SinglePredInputReasoner {
 //		reasonerOutput.goal = seq.goal();
 //
 //		// Generate the anticidents
-//		reasonerOutput.anticidents = new Anticident[3];
+//		reasonerOutput.anticidents = new Antecedent[3];
 //		
 //		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[0].goal = lemmaWD;
 //		
 //		// The lemma to be proven
-//		reasonerOutput.anticidents[1] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[1].goal = lemma;
 //		
 //		// Proving the original goal with the help of the lemma
-//		reasonerOutput.anticidents[2] = new ProofRule.Anticident();
+//		reasonerOutput.anticidents[2] = new ProofRule.Antecedent();
 //		reasonerOutput.anticidents[2].addConjunctsToAddedHyps(lemma);
 //		reasonerOutput.anticidents[2].goal = seq.goal();
 				

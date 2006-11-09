@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
@@ -62,7 +62,7 @@ public class Review implements IReasoner{
 				hyps,
 				reviewerConfidence,
 				"rv (confidence "+reviewerConfidence+")",
-				new IAnticident[0]);		
+				new IAntecedent[0]);		
 		
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.neededHypotheses = hyps;
@@ -72,7 +72,7 @@ public class Review implements IReasoner{
 //		assert reviewerConfidence <= IConfidence.REVIEWED_MAX;
 //		reasonerOutput.reasonerConfidence = reviewerConfidence;
 //		
-//		reasonerOutput.anticidents = new Anticident[0];
+//		reasonerOutput.anticidents = new Antecedent[0];
 		
 		return reasonerOutput;
 	}

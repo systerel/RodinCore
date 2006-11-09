@@ -9,12 +9,12 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ProofRule;
 import org.eventb.internal.core.seqprover.ProofTree;
 import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
-import org.eventb.internal.core.seqprover.ProofRule.Anticident;
+import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
 
 /**
  * Static class with factory methods required to construct various data structures
@@ -42,7 +42,7 @@ public final class ProverFactory {
 			Set<Hypothesis> neededHyps,
 			Integer confidence,
 			String display,
-			IAnticident[] anticidents) {
+			IAntecedent[] anticidents) {
 		
 		assert goal != null;
 		assert anticidents != null;
@@ -58,7 +58,7 @@ public final class ProverFactory {
 			Predicate goal,
 			Hypothesis neededHyp,
 			String display,
-			IAnticident[] anticidents) {
+			IAntecedent[] anticidents) {
 		return makeProofRule(generatedBy,generatedUsing,goal,Collections.singleton(neededHyp),null, display,anticidents);
 	}
 	
@@ -67,11 +67,11 @@ public final class ProverFactory {
 			IReasonerInput generatedUsing,
 			Predicate goal,
 			String display,
-			IAnticident[] anticidents) {
+			IAntecedent[] anticidents) {
 		return makeProofRule(generatedBy,generatedUsing,goal,null,null,display,anticidents);
 	}
 	
-	public static IAnticident makeAnticident(
+	public static IAntecedent makeAntecedent(
 			Predicate goal,
 			Set<Predicate> addedHyps,
 			FreeIdentifier[] addedFreeIdents,
@@ -79,13 +79,13 @@ public final class ProverFactory {
 		
 		assert goal != null;
 		
-		IAnticident anticident = new Anticident(goal, addedHyps, addedFreeIdents, hypAction);
+		IAntecedent antecedent = new Antecedent(goal, addedHyps, addedFreeIdents, hypAction);
 		
-		return anticident;
+		return antecedent;
 		
 	}
 
-	public static IAnticident makeAnticident(
+	public static IAntecedent makeAntecedent(
 			Predicate goal,
 			Set<Predicate> addedHyps,
 			Action hypAction) {
@@ -93,13 +93,13 @@ public final class ProverFactory {
 		if (hypAction != null){
 			ArrayList<Action> hypActions = new ArrayList<Action>(1);
 			hypActions.add(hypAction);
-			return makeAnticident(goal,addedHyps,null,hypActions);
+			return makeAntecedent(goal,addedHyps,null,hypActions);
 		}
-		return makeAnticident(goal,addedHyps,null,null);
+		return makeAntecedent(goal,addedHyps,null,null);
 	}
 	
-	public static IAnticident makeAnticident(Predicate goal) {
-		return makeAnticident(goal,null,null,null);
+	public static IAntecedent makeAntecedent(Predicate goal) {
+		return makeAntecedent(goal,null,null,null);
 	}
 
 	public static IProverSequent makeSequent(ITypeEnvironment typeEnvironment,Set<Hypothesis> hyps,Predicate goal){

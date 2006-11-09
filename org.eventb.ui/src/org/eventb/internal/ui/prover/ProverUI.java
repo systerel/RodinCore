@@ -293,7 +293,7 @@ public class ProverUI extends FormEditor implements IProofStateChangedListener {
 						}
 						// Save the file from the database to disk
 						localPSFile.save(pm, false);
-						(localPSFile.getPRFile().getMutableCopy()).save(pm, false);
+						localPSFile.getPRFile().save(pm, false);
 					}
 
 				}, null);

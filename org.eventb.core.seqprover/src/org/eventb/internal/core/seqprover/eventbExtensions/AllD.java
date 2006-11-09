@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
@@ -86,11 +86,11 @@ public class AllD implements IReasoner{
 		// Generate the successful reasoner output
 		
 		// Generate the anticidents
-		IAnticident[] anticidents = new IAnticident[2];
+		IAntecedent[] anticidents = new IAntecedent[2];
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAnticident(WDpred);
+		anticidents[0] = ProverFactory.makeAntecedent(WDpred);
 		// The instantiated goal
-		anticidents[1] = ProverFactory.makeAnticident(
+		anticidents[1] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Lib.breakPossibleConjunct(instantiatedPred),
 				ProverLib.deselect(univHyp)
@@ -110,13 +110,13 @@ public class AllD implements IReasoner{
 //		reasonerOutput.goal = seq.goal();
 //
 //		// Generate the anticidents
-//		reasonerOutput.anticidents = new Anticident[2];
+//		reasonerOutput.anticidents = new Antecedent[2];
 //		
 //		// Well definedness condition
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident(WDpred);
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent(WDpred);
 //		
 //		// The instantiated goal
-//		reasonerOutput.anticidents[1] = new ProofRule.Anticident(seq.goal());
+//		reasonerOutput.anticidents[1] = new ProofRule.Antecedent(seq.goal());
 //		reasonerOutput.anticidents[1].addConjunctsToAddedHyps(instantiatedPred);
 //		reasonerOutput.anticidents[1].hypAction.add(Lib.deselect(univHyp));
 //				

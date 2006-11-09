@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -30,14 +30,14 @@ public class FalseHyp extends EmptyInputReasoner{
 				seq.goal(),
 				new Hypothesis(Lib.False),
 				"⊥ hyp",
-				new IAnticident[0]);
+				new IAntecedent[0]);
 		
 //		ProofRule reasonerOutput = new ProofRule(this,input);
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.neededHypotheses.add(new Hypothesis(Lib.False));
 //		reasonerOutput.display = "⊥ hyp";
 //		
-//		reasonerOutput.anticidents = new Anticident[0];
+//		reasonerOutput.anticidents = new Antecedent[0];
 		
 		return reasonerOutput;
 	}

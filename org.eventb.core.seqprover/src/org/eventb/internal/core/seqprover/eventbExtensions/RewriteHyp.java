@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAnticident;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputSerializer.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.CombiInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -61,9 +61,9 @@ public class RewriteHyp implements IReasoner{
 			return ProverFactory.reasonerFailure(this,input,
 					"Rewriter " + rewriter +" inapplicable for hypothesis "+ hyp);
 
-		IAnticident[] anticidents = new IAnticident[1];
+		IAntecedent[] anticidents = new IAntecedent[1];
 		
-		anticidents[0] = ProverFactory.makeAnticident(
+		anticidents[0] = ProverFactory.makeAntecedent(
 				seq.goal(),
 				Collections.singleton(newHyp),
 				ProverLib.deselect(hyp));
@@ -79,9 +79,9 @@ public class RewriteHyp implements IReasoner{
 //		reasonerOutput.goal = seq.goal();
 //		reasonerOutput.display = rewriter.getName()+" hyp ("+hyp.toString()+")";
 //		reasonerOutput.neededHypotheses.add(hyp);
-//		reasonerOutput.anticidents = new Anticident[1];
+//		reasonerOutput.anticidents = new Antecedent[1];
 //		
-//		reasonerOutput.anticidents[0] = new ProofRule.Anticident(seq.goal());
+//		reasonerOutput.anticidents[0] = new ProofRule.Antecedent(seq.goal());
 //		reasonerOutput.anticidents[0].addToAddedHyps(newHyp);
 //		reasonerOutput.anticidents[0].hypAction.add(Lib.deselect(hyp));
 				
