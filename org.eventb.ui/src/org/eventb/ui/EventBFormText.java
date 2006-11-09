@@ -10,10 +10,11 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.ui;
 
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.FormText;
+import org.eventb.internal.ui.EventBControl;
 
 /**
  * @author htson

@@ -71,11 +71,9 @@ import org.eventb.core.pm.UserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBControl;
-import org.eventb.internal.ui.EventBFormText;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.ExtensionLoader;
-import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -84,7 +82,9 @@ import org.eventb.internal.ui.prover.globaltactics.GlobalTacticDropdownUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolItem;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticToolbarUI;
 import org.eventb.internal.ui.prover.globaltactics.GlobalTacticUI;
+import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IGlobalExpertTactic;
 import org.eventb.ui.prover.IGlobalSimpleTactic;
@@ -101,27 +101,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	boolean share;
 
-	private Action expertMode;
+	Action expertMode;
 
-	private IEventBInputText textInput;
+	IEventBInputText textInput;
 
-	private ProverUI editor;
+	ProverUI editor;
 
 	private IEventBFormText formTextInformation;
 
-	private ScrolledForm scrolledForm;
+	ScrolledForm scrolledForm;
 
 	private Collection<GlobalTacticDropdownToolItem> dropdownItems;
 
 	private Collection<GlobalTacticToolItem> toolItems;
 
-	private Combo historyCombo;
+	Combo historyCombo;
 
 	private EventBControl history;
 
 	private Composite pgComp;
 
-	private String currentInput = "";
+	String currentInput = "";
 
 	/**
 	 * Constructor
@@ -162,45 +162,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 	}
 
-	/**
-	 * Runs the predicate prover on the current proof tree node.
-	 * 
-	 * @param restricted
-	 *            <code>true</code> is only selected hypotheses should be
-	 *            passed to PP
-	 */
-	// public static void runPP(final UserSupport userSupport,
-	// final boolean restricted) {
-	// IRunnableWithProgress op = new IRunnableWithProgress() {
-	// public void run(IProgressMonitor monitor)
-	// throws InvocationTargetException {
-	// userSupport
-	// .applyTactic(Tactics.externalPP(restricted, monitor));
-	// }
-	// };
-	// applyTacticWithProgress(op);
-	// }
-	/**
-	 * Runs the mono-lemma prover on the current proof tree node.
-	 * 
-	 * @param forces
-	 *            list of forces to use
-	 */
-	// public static void runML(final UserSupport userSupport, final int forces)
-	// {
-	// IRunnableWithProgress op = new IRunnableWithProgress() {
-	// public void run(IProgressMonitor monitor)
-	// throws InvocationTargetException {
-	// userSupport.applyTactic(Tactics.externalML(forces, monitor));
-	// }
-	// };
-	// applyTacticWithProgress(op);
-	// }
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
@@ -212,32 +173,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		super.dispose();
 	}
 
-	/**
-	 * Helper function to create tool item
-	 * 
-	 * @param parent
-	 *            the parent toolbar
-	 * @param type
-	 *            the type of tool item to create
-	 * @param text
-	 *            the text to display on the tool item
-	 * @param image
-	 *            the image to display on the tool item
-	 * @param hotImage
-	 *            the hot image to display on the tool item
-	 * @param toolTipText
-	 *            the tool tip text for the tool item
-	 * @return ToolItem
-	 */
-	// private ToolItem createToolItem(ToolBar parent, int type, String text,
-	// Image image, Image hotImage, String toolTipText) {
-	// ToolItem item = new ToolItem(parent, type);
-	// item.setText(text);
-	// item.setImage(image);
-	// item.setHotImage(hotImage);
-	// item.setToolTipText(toolTipText);
-	// return item;
-	// }
 	CoolItem createItem(CoolBar coolBar, GlobalTacticToolbarUI toolbar) {
 		if (ProofControlUtils.DEBUG)
 			ProofControlUtils
@@ -406,7 +341,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	// Applies a global tactic to the current proof tree node.
-	private void applyGlobalExpertTactic(final IGlobalExpertTactic get,
+	void applyGlobalExpertTactic(final IGlobalExpertTactic get,
 			final UserSupport userSupport, final boolean interruptable)
 			throws RodinDBException {
 
@@ -432,7 +367,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	// Applies a global tactic to the current proof tree node.
-	private void applyGlobalSimpleTactic(final IGlobalSimpleTactic gst,
+	void applyGlobalSimpleTactic(final IGlobalSimpleTactic gst,
 			final UserSupport userSupport, boolean interruptable) {
 
 		final IProofTreeNode proofTreeNode = userSupport.getCurrentPO()
@@ -606,6 +541,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 
 		public void dropAccept(DropTargetEvent event) {
+			// Do nothing
 		}
 
 		public void drop(DropTargetEvent event) {
@@ -636,6 +572,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 
@@ -777,7 +714,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @param information
 	 *            the string (information from the UserSupport).
 	 */
-	private void setFormTextInformation(String information) {
+	void setFormTextInformation(String information) {
 		if (formTextInformation.getFormText().isDisposed())
 			return;
 		formTextInformation.getFormText().setText(information, false, false);
@@ -826,7 +763,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * @param manager
 	 *            the menu manager
 	 */
-	private void fillContextMenu(IMenuManager manager) {
+	void fillContextMenu(IMenuManager manager) {
 		manager.add(expertMode);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -853,6 +790,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	private void makeActions() {
 		expertMode = new Action("Expert mode switch", SWT.CHECK) {
+			@Override
 			public void run() {
 				if (expertMode.isChecked())
 					UserSupport.setExpertMode(true);
@@ -873,6 +811,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		pgComp.setFocus();
 		// textInput.setFocus();
@@ -897,7 +836,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * Update the status of the toolbar items.
 	 */
-	private void updateToolItems(IProofTreeNode node) {
+	void updateToolItems(IProofTreeNode node) {
 		for (GlobalTacticDropdownToolItem item : dropdownItems) {
 			item.updateStatus(node, textInput.getTextWidget().getText());
 		}

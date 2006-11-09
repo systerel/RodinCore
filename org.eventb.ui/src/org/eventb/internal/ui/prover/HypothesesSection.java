@@ -27,7 +27,7 @@ import org.eventb.core.pm.ProofState;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.HypothesisRow;
-import org.eventb.internal.ui.IEventBFormText;
+import org.eventb.ui.IEventBFormText;
 
 /**
  * @author htson

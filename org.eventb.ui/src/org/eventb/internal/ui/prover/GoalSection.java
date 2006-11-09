@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -59,7 +60,7 @@ public class GoalSection extends SectionPart {
 	
 	private static final FormulaFactory formulaFactory = FormulaFactory.getDefault();
 	
-	private FormPage page;
+	FormPage page;
 
 	private FormToolkit toolkit;
 
@@ -69,7 +70,7 @@ public class GoalSection extends SectionPart {
 
 	private ScrolledForm goalComposite;
 
-	private EventBPredicateText goalText;
+	EventBPredicateText goalText;
 
 	private Predicate parsedPred;
 
@@ -91,8 +92,8 @@ public class GoalSection extends SectionPart {
 	public GoalSection(FormPage page, Composite parent, int style) {
 		super(parent, page.getManagedForm().getToolkit(), style);
 		this.page = page;
-		FormToolkit toolkit = page.getManagedForm().getToolkit();
-		createClient(getSection(), toolkit);
+		toolkit = page.getManagedForm().getToolkit();
+		createClient(getSection());
 	}
 
 	/**
@@ -101,11 +102,8 @@ public class GoalSection extends SectionPart {
 	 * 
 	 * @param section
 	 *            the section that used as the parent of the client
-	 * @param toolkit
-	 *            the FormToolkit used to create the client
 	 */
-	public void createClient(Section section, FormToolkit toolkit) {
-		this.toolkit = toolkit;
+	public void createClient(Section section) {
 		section.setText(SECTION_TITLE);
 		section.setDescription(SECTION_DESCRIPTION);
 		scrolledForm = toolkit.createScrolledForm(section);
@@ -149,12 +147,12 @@ public class GoalSection extends SectionPart {
 
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				true));
+				false));
 
 		goalComposite = toolkit.createScrolledForm(comp);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		goalComposite.setLayoutData(gd);
-		goalComposite.getBody().setLayout(new GridLayout());
+		goalComposite.getBody().setLayout(new FillLayout());
 
 		if (node == null)
 			createNullHyperlinks();
@@ -176,7 +174,7 @@ public class GoalSection extends SectionPart {
 			goalText.dispose();
 		goalText = new EventBPredicateText(toolkit, goalComposite);
 		final StyledText styledText = goalText.getMainTextWidget();
-		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+//		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// int borderWidth = styledText.getBorderWidth();
 		// styledText.setText(" ");
@@ -377,8 +375,6 @@ public class GoalSection extends SectionPart {
 	 * Utility methods to create hyperlinks for applicable tactics.
 	 * <p>
 	 * 
-	 * @param formText
-	 *            the formText parent of these hyperlinks
 	 */
 	private void createHyperlinks(final IProofTreeNode node, boolean enable) {
 		Collection<GoalTacticUI> tactics = ProverUIUtils

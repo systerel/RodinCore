@@ -38,11 +38,11 @@ import org.eventb.core.IVariable;
 import org.eventb.core.pm.IProofStateChangedListener;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.ProofState;
-import org.eventb.internal.ui.EventBFormText;
-import org.eventb.internal.ui.IEventBFormText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.EventBFormText;
+import org.eventb.ui.IEventBFormText;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -54,7 +54,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofInformationPage extends Page implements
 		IProofInformationPage, IProofStateChangedListener {
-	private ScrolledForm scrolledForm;
+	ScrolledForm scrolledForm;
 
 	private ProverUI editor;
 
@@ -122,7 +122,7 @@ public class ProofInformationPage extends Page implements
 	 * @param prSequent
 	 *            the current prSequent
 	 */
-	private void setFormText(IPSstatus prSequent) {
+	void setFormText(IPSstatus prSequent) {
 		try {
 			String formString = "<form>";
 

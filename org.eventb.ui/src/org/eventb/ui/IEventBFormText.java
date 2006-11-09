@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui;
+package org.eventb.ui;
 
 import org.eclipse.ui.forms.widgets.FormText;
 
