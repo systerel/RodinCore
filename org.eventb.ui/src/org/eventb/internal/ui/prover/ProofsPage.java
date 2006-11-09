@@ -62,6 +62,10 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 
 	private static final int MIN_SECTION_HEIGHT = 30;
 
+	private static final int DEFAULT_HEIGHT = 400;
+
+	private static final int DEFAULT_WIDTH = 400;
+
 	// Different sections
 	GoalSection goalSection;
 
@@ -428,13 +432,17 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 		// + weights[i]);
 		// }
 
-		if (totalHeight < 1) { // Not initialised yet
-			weights[0] = 0;
-			// UIUtils.debugProverUI("Client area: " +
-			// sashForm.getClientArea());
-			sashForm.setWeights(weights);
-			form.reflow(true);
-		} else {
+		if (totalHeight < 1) {
+			totalHeight = DEFAULT_HEIGHT;
+			totalWidth = DEFAULT_WIDTH;
+		}
+//		if (totalHeight < 1) { // Not initialised yet
+//			weights[0] = 0;
+//			// UIUtils.debugProverUI("Client area: " +
+//			// sashForm.getClientArea());
+//			sashForm.setWeights(weights);
+//			form.reflow(true);
+//		} else {
 			int sum = 0;
 			// Do not resize the goalSection
 			for (int i = 1; i < 4; i++) {
@@ -519,7 +527,7 @@ public class ProofsPage extends FormPage implements IProofStateChangedListener {
 				// + form.getClientArea());
 				form.reflow(true);
 			}
-		}
+//		}
 
 		flag = false;
 		// for (HypothesisRow row : selectedSection.getRows()) {
