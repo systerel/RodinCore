@@ -19,14 +19,15 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.IAbstractEventGuardTable;
-import org.eventb.core.pog.IConcreteEventGuardTable;
-import org.eventb.core.pog.IEventHypothesisManager;
-import org.eventb.core.pog.IIdentifierTable;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.pog.state.IAbstractEventGuardTable;
+import org.eventb.core.pog.state.IConcreteEventGuardTable;
+import org.eventb.core.pog.state.IEventHypothesisManager;
+import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.ITypingState;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.rodinp.core.IRodinElement;
 
@@ -52,7 +53,7 @@ public class MachineEventGuardModule extends UtilityModule {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -96,7 +97,11 @@ public class MachineEventGuardModule extends UtilityModule {
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		eventHypothesisManager = 
 			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
@@ -120,7 +125,11 @@ public class MachineEventGuardModule extends UtilityModule {
 	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
 		eventGuardTable = null;
 		eventIdentifierTable = null;

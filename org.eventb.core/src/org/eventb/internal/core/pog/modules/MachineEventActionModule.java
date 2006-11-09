@@ -11,11 +11,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.pog.IConcreteEventActionTable;
-import org.eventb.core.pog.IEventHypothesisManager;
-import org.eventb.core.pog.IIdentifierTable;
-import org.eventb.core.pog.IMachineHypothesisManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IConcreteEventActionTable;
+import org.eventb.core.pog.state.IEventHypothesisManager;
+import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -41,7 +42,7 @@ public abstract class MachineEventActionModule extends UtilityModule {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		machineHypothesisManager =
@@ -67,7 +68,11 @@ public abstract class MachineEventActionModule extends UtilityModule {
 	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
 		eventIdentifierTable = null;
 		concreteEventActionTable = null;

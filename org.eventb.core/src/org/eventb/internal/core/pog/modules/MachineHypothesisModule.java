@@ -29,19 +29,20 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IHypothesisManager;
-import org.eventb.core.pog.IMachineInvariantTable;
-import org.eventb.core.pog.IMachineTheoremTable;
-import org.eventb.core.pog.IMachineVariableTable;
-import org.eventb.core.pog.IPredicateTable;
 import org.eventb.core.pog.Module;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IMachineInvariantTable;
+import org.eventb.core.pog.state.IMachineTheoremTable;
+import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.core.pog.state.IPredicateTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.IdentifierTable;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
-import org.eventb.internal.core.sc.TypingState;
+import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -70,7 +71,7 @@ public class MachineHypothesisModule extends Module {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		index = 0;
@@ -135,7 +136,7 @@ public class MachineHypothesisModule extends Module {
 	
 	private void fetchVariables(
 			ISCVariable[] variables, 
-			IStateRepository repository,
+			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineVariableTable variableTable =
@@ -202,7 +203,10 @@ public class MachineHypothesisModule extends Module {
 		}
 	}
 
-	private void savePOPredicate(IPOPredicateSet rootSet, ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException {
+	private void savePOPredicate(
+			IPOPredicateSet rootSet, 
+			ISCPredicateElement element, 
+			IProgressMonitor monitor) throws RodinDBException {
 		IPOPredicate predicate =
 			(IPOPredicate) rootSet.createInternalElement(
 					IPOPredicate.ELEMENT_TYPE, PRD_NAME_PREFIX + index++, null, monitor);
@@ -216,7 +220,7 @@ public class MachineHypothesisModule extends Module {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor)
 		throws CoreException {
 		
@@ -231,7 +235,7 @@ public class MachineHypothesisModule extends Module {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		hypothesisManager.createHypotheses(target, monitor);

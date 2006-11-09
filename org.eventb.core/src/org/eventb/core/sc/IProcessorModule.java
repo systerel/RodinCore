@@ -9,6 +9,8 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -62,7 +64,7 @@ public interface IProcessorModule extends IModule {
 	 */
 	public abstract void initModule(
 			IRodinElement element,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -77,7 +79,7 @@ public interface IProcessorModule extends IModule {
 	public abstract void process(
 			IRodinElement element,
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -91,7 +93,7 @@ public interface IProcessorModule extends IModule {
 	
 	public abstract void endModule(
 			IRodinElement element,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException;
 
 }

@@ -15,7 +15,8 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
@@ -64,7 +65,7 @@ public class MachinePOGenerator extends ProofObligationGenerator {
 			IRodinProject project = (IRodinProject) poFile.getParent();
 			project.createRodinFile(poFile.getElementName(), true, null);
 
-			IStateRepository repository = createRepository(scMachineFile, monitor);
+			IStateRepository<IStatePOG> repository = createRepository(scMachineFile, monitor);
 		
 			runModules(
 					scMachineFile, 

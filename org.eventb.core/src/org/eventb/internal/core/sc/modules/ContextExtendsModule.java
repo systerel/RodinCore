@@ -13,8 +13,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.IContextPointerArray;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IContextPointerArray;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalParent;
@@ -29,7 +30,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		IContextFile contextFile = (IContextFile) element;

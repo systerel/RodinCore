@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
-import org.eventb.core.pog.IIdentifierTable;
+import org.eventb.core.pog.state.IIdentifierTable;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 

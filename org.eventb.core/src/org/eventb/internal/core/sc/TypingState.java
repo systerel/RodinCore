@@ -8,7 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.sc.state.ITypingState;
 
 /**
  * @author Stefan Hallerstede

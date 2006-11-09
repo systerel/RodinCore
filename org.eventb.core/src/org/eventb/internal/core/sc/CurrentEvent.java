@@ -8,7 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import org.eventb.core.IEvent;
-import org.eventb.core.sc.ICurrentEvent;
+import org.eventb.core.sc.state.ICurrentEvent;
 
 /**
  * @author Stefan Hallerstede

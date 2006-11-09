@@ -18,7 +18,8 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.ContextLabelSymbolTable;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -74,7 +75,7 @@ public class ContextStaticChecker extends StaticChecker {
 			IRodinProject project = (IRodinProject) scContextFile.getParent();
 			project.createRodinFile(scContextFile.getElementName(), true, null);
 
-			IStateRepository repository = createRepository(contextFile, monitor);
+			IStateRepository<IStateSC> repository = createRepository(contextFile, monitor);
 		
 			contextFile.open(new SubProgressMonitor(monitor, 1));
 			scContextFile.open(new SubProgressMonitor(monitor, 1));
@@ -132,8 +133,10 @@ public class ContextStaticChecker extends StaticChecker {
 	}
 
 	@Override
-	protected IStateRepository createRepository(IRodinFile file, IProgressMonitor monitor) throws CoreException {
-		IStateRepository repository = super.createRepository(file, monitor);
+	protected IStateRepository<IStateSC> createRepository(
+			IRodinFile file, 
+			IProgressMonitor monitor) throws CoreException {
+		IStateRepository<IStateSC> repository = super.createRepository(file, monitor);
 		final ContextLabelSymbolTable labelSymbolTable = 
 			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
 		repository.setState(labelSymbolTable);		

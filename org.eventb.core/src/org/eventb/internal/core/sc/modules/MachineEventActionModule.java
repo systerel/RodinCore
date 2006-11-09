@@ -26,14 +26,15 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IEventLabelSymbolTable;
-import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IEventLabelSymbolTable;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.rodinp.core.IInternalParent;
@@ -66,7 +67,7 @@ public class MachineEventActionModule extends AssignmentModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -250,7 +251,7 @@ public class MachineEventActionModule extends AssignmentModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		isInitialisation = ((IEvent) element).getLabel(monitor).equals(IEvent.INITIALISATION);
@@ -260,7 +261,7 @@ public class MachineEventActionModule extends AssignmentModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		super.endModule(element, repository, monitor);

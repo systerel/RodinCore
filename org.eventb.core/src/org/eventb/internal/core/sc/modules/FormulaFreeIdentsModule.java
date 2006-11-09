@@ -12,10 +12,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.AcceptorModule;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IParsedFormula;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IParsedFormula;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
@@ -34,7 +35,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 	 */
 	@Override
 	public void initModule(
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		symbolTable = (IIdentifierSymbolTable)
 			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
@@ -47,7 +48,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 	 */
 	public boolean accept(
 			IRodinElement element, 
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		boolean ok = true;	
@@ -99,7 +100,9 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		symbolTable = null;
 		parsedFormula = null;
 	}

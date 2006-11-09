@@ -16,11 +16,12 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IEventConvergence;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IEventRefinesInfo;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.IVariantInfo;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.IVariantInfo;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -36,7 +37,10 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	IEventRefinesInfo eventRefinesInfo;
 
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = (IVariantInfo) repository.getState(IVariantInfo.STATE_TYPE);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
@@ -45,7 +49,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		IEvent event = (IEvent) element;
@@ -144,7 +148,10 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 	}
 	
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		eventRefinesInfo = null;
 		super.endModule(element, repository, monitor);

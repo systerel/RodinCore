@@ -17,7 +17,9 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -151,7 +153,7 @@ public abstract class Module implements IModule {
 			IRodinElement element,
 			IPOFile target,
 			IModule[] modules,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IModule module : modules) {
 			module.initModule(element, target, repository, monitor);
@@ -162,7 +164,7 @@ public abstract class Module implements IModule {
 			IModule[] modules, 
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IModule module : modules) {
 			module.process(element, target, repository, monitor);
@@ -173,7 +175,7 @@ public abstract class Module implements IModule {
 			IRodinElement element,
 			IPOFile target,
 			IModule[] modules, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IModule module : modules) {
 			module.endModule(element, target, repository, monitor);
@@ -183,16 +185,24 @@ public abstract class Module implements IModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
-		
+	public void initModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
+
+		// by default nothing to do
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
+		// by default nothing to do
 		
 	}
 	

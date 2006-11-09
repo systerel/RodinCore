@@ -9,6 +9,8 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -124,7 +126,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 //	
 	protected void initAcceptorModules(
 			IAcceptorModule[] modules,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IAcceptorModule module : modules) {
 			module.initModule(repository, monitor);
@@ -134,7 +136,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	protected void initProcessorModules(
 			IRodinElement element,
 			IProcessorModule[] modules,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : modules) {
 			module.initModule(element, repository, monitor);
@@ -144,7 +146,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	protected boolean acceptModules(
 			IAcceptorModule[] modules, 
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IAcceptorModule module : modules) {
 			IAcceptorModule acceptorModule = module;
@@ -159,7 +161,7 @@ public abstract class Module implements IModule, IMarkerDisplay {
 			IProcessorModule[] modules, 
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : modules) {
 			module.process(element, target, repository, monitor);
@@ -168,17 +170,17 @@ public abstract class Module implements IModule, IMarkerDisplay {
 	
 	protected void endAcceptorModules(
 			IAcceptorModule[] modules, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IAcceptorModule module : modules) {
 			module.endModule(repository, monitor);
 		}
 	}
 
-		protected void endProcessorModules(
+	protected void endProcessorModules(
 			IRodinElement element,
 			IProcessorModule[] modules, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		for (IProcessorModule module : modules) {
 			module.endModule(element, repository, monitor);

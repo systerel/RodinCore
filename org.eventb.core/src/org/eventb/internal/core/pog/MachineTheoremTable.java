@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.pog.IMachineTheoremTable;
+import org.eventb.core.pog.state.IMachineTheoremTable;
 
 /**
  * @author Stefan Hallerstede

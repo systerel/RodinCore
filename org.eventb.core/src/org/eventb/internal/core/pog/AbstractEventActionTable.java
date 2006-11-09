@@ -16,8 +16,8 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IAbstractEventActionTable;
-import org.eventb.core.pog.IMachineVariableTable;
+import org.eventb.core.pog.state.IAbstractEventActionTable;
+import org.eventb.core.pog.state.IMachineVariableTable;
 
 /**
  * @author Stefan Hallerstede

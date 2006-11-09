@@ -9,6 +9,8 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -65,7 +67,7 @@ public interface IAcceptorModule extends IModule {
 	 */
 	public abstract boolean accept(
 			IRodinElement element,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -76,7 +78,7 @@ public interface IAcceptorModule extends IModule {
 	 * @throws CoreException if there was a problem initialising this module
 	 */
 	public abstract void initModule(
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -87,7 +89,7 @@ public interface IAcceptorModule extends IModule {
 	 * @throws CoreException if there was a problem terminating this module
 	 */
 	public abstract void endModule(
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException;
 
 }

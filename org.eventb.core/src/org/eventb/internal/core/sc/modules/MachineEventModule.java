@@ -25,20 +25,21 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IEventRefinesInfo;
-import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMachineLabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.CurrentEvent;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.eventb.internal.core.sc.Messages;
@@ -92,7 +93,7 @@ public class MachineEventModule extends LabeledElementModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineFile machineFile = (IMachineFile) element;
@@ -357,7 +358,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private void processEvents(
 			ISCEvent[] scEvents, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		for (int i=0; i < events.length; i++) {
@@ -391,7 +392,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private IEventSymbolInfo[] fetchEvents(
 			IMachineFile machineFile, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		String machineName = machineFile.getElementName();
@@ -516,7 +517,10 @@ public class MachineEventModule extends LabeledElementModule {
 	 * @see org.eventb.core.sc.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		IMachineFile machineFile = (IMachineFile) element;
 		
@@ -541,7 +545,7 @@ public class MachineEventModule extends LabeledElementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		repository.setState(identifierSymbolTable);
 		repository.setState(typingState);

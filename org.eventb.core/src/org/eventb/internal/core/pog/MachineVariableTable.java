@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.pog.IMachineVariableTable;
+import org.eventb.core.pog.state.IMachineVariableTable;
 
 /**
  * @author Stefan Hallerstede

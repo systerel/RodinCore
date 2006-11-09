@@ -14,11 +14,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.sc.IContextTable;
 import org.eventb.core.sc.IProcessorModule;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.sc.state.IContextTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ITypingState;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolTable;
+import org.eventb.internal.core.state.StateRepository;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -39,13 +41,13 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 
 	private final static int CONTEXT_TABLE_SIZE = 137;
 
-	protected IStateRepository createRepository(
+	protected IStateRepository<IStateSC> createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IStateRepository repository = new StateRepository(factory);
+		final IStateRepository<IStateSC> repository = new StateRepository<IStateSC>(factory);
 		
 		final IdentifierSymbolTable identifierSymbolTable = 
 			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, factory);
@@ -110,7 +112,7 @@ public abstract class StaticChecker  implements IAutomaticTool, IExtractor {
 			IRodinFile file, 
 			IInternalParent target, 
 			IProcessorModule[] modules, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		file.getResource().deleteMarkers(

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.IMachineLabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede

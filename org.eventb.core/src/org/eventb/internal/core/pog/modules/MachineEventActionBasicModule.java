@@ -15,7 +15,8 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -29,9 +30,8 @@ public class MachineEventActionBasicModule extends MachineEventActionModule {
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void process(IRodinElement element, IPOFile target,
-			IStateRepository repository, IProgressMonitor monitor)
+			IStateRepository<IStatePOG> repository, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO Auto-generated method stub
 
 		processConcreteActions(
 				target, 

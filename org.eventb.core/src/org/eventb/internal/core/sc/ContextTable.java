@@ -10,7 +10,7 @@ package org.eventb.internal.core.sc;
 import java.util.Hashtable;
 
 import org.eventb.core.ISCContext;
-import org.eventb.core.sc.IContextTable;
+import org.eventb.core.sc.state.IContextTable;
 
 /**
  * @author Stefan Hallerstede

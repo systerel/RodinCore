@@ -14,9 +14,10 @@ import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -33,7 +34,9 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		factory = repository.getFormulaFactory();
 	}
@@ -72,7 +75,9 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;
 	}

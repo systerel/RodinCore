@@ -15,14 +15,15 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCRefinesEvent;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IEventRefinesInfo;
-import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMachineLabelSymbolTable;
-import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.EventRefinesInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -47,7 +48,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -109,7 +110,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
@@ -136,7 +137,10 @@ public class MachineEventRefinesModule extends ProcessorModule {
 	 * @see org.eventb.core.sc.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		labelSymbolTable = null;
 		abstractEventTable = null;

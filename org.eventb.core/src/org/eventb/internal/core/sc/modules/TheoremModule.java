@@ -13,7 +13,8 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
@@ -30,7 +31,7 @@ public abstract class TheoremModule extends PredicateModule {
 			int offset,
 			ITheorem[] theorems, 
 			IAcceptorModule[] rules,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		Predicate[] predicates = new Predicate[theorems.length];

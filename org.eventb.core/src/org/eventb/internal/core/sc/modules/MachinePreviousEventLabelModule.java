@@ -14,9 +14,10 @@ import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.AcceptorModule;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -28,7 +29,9 @@ public class MachinePreviousEventLabelModule extends AcceptorModule {
 	private IAbstractEventTable abstractEventTable;
 
 	@Override
-	public void initModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = (IAbstractEventTable)
 			repository.getState(IAbstractEventTable.STATE_TYPE);
 	}
@@ -38,7 +41,7 @@ public class MachinePreviousEventLabelModule extends AcceptorModule {
 	 */
 	public boolean accept(
 			IRodinElement element,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		ILabeledElement labeledElement = (ILabeledElement) element;
 		String label = labeledElement.getLabel(monitor);
@@ -69,7 +72,9 @@ public class MachinePreviousEventLabelModule extends AcceptorModule {
 	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
 	}
 

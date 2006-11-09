@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
-import org.eventb.core.sc.IContextLabelSymbolTable;
+import org.eventb.core.sc.state.IContextLabelSymbolTable;
 
 /**
  * @author Stefan Hallerstede

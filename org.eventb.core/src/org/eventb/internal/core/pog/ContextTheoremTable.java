@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.pog.IContextTheoremTable;
+import org.eventb.core.pog.state.IContextTheoremTable;
 
 /**
  * @author Stefan Hallerstede

@@ -9,6 +9,8 @@ package org.eventb.core.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 
 
 /**
@@ -24,7 +26,7 @@ public abstract class AcceptorModule extends Module implements IAcceptorModule {
 	 * @see IModule
 	 */
 	public void initModule(
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		// nothing to do by default
 	}
@@ -35,7 +37,7 @@ public abstract class AcceptorModule extends Module implements IAcceptorModule {
 	 * @see IModule
 	 */
 	public void endModule(
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		// nothing to do by default
 	}

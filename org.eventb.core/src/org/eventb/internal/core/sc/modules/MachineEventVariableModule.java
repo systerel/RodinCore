@@ -17,13 +17,14 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAbstractEventInfo;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IEventRefinesInfo;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -50,7 +51,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -108,14 +109,20 @@ public class MachineEventVariableModule extends IdentifierModule {
 	}
 
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
 		isInitialisation = ((IEvent) element).getLabel(monitor).contains(IEvent.INITIALISATION);
 	}
 
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		eventRefinesInfo = null;
 		super.endModule(element, repository, monitor);
 	}

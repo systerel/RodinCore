@@ -17,9 +17,9 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.IIdentifierTable;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
+import org.eventb.core.pog.state.IIdentifierTable;
 import org.rodinp.core.RodinDBException;
 
 /**

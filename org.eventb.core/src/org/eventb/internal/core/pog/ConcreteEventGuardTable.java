@@ -10,7 +10,7 @@ package org.eventb.internal.core.pog;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IConcreteEventGuardTable;
+import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.rodinp.core.RodinDBException;
 
 /**

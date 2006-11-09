@@ -14,7 +14,8 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.sc.IAcceptorModule;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
@@ -42,7 +43,7 @@ public class ContextConstantModule extends IdentifierModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		IContextFile contextFile = (IContextFile) element;

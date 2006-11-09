@@ -37,23 +37,5 @@ public interface IMarkerDisplay {
 			int charEnd,
 			IRodinProblem problem, 
 			Object... args) throws RodinDBException;
-	
-//	static int SEVERITY_ERROR = IMarker.SEVERITY_ERROR;
-//	
-//	static int SEVERITY_WARNING = IMarker.SEVERITY_WARNING;
-//	
-//	void issueMarker(
-//			int severity, 
-//			IRodinElement element, 
-//			String message, 
-//			Object... objects);
-//	
-//	void issueMarkerWithLocation(
-//			int severity, 
-//			IRodinElement element, 
-//			String message, 
-//			int startLocation,
-//			int endLocation,
-//			Object... objects);
 
 }

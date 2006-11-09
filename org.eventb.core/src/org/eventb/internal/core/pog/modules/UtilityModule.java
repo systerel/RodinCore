@@ -19,7 +19,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.Module;
 import org.eventb.core.pog.POGHint;
 import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -40,7 +41,7 @@ public abstract class UtilityModule extends Module {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
@@ -57,7 +58,7 @@ public abstract class UtilityModule extends Module {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		factory = null;

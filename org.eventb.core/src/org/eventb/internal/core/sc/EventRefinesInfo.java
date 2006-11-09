@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IEventRefinesInfo;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 
 /**

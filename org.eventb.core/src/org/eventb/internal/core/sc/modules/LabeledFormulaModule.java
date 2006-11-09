@@ -22,12 +22,13 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IParsedFormula;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ParseProblem;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IParsedFormula;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -50,7 +51,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		identifierSymbolTable = 
@@ -65,7 +66,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	@Override
 	public void endModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
 		typingState = null;
@@ -264,7 +265,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 			Formula[] formulas,
 			IAcceptorModule[] modules,
 			String component,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		assert formulaElements.length == formulas.length;
@@ -344,7 +345,7 @@ public abstract class LabeledFormulaModule extends LabeledElementModule {
 	
 	private IParsedFormula parsedFormula;
 	
-	private void createParsedState(IStateRepository repository) throws CoreException {
+	private void createParsedState(IStateRepository<IStateSC> repository) throws CoreException {
 		parsedFormula = new ParsedFormula();
 		repository.setState(parsedFormula);
 	}

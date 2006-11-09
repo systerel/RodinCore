@@ -20,11 +20,12 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.ILabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.IVariantInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.eventb.internal.core.sc.VariantInfo;
@@ -57,7 +58,10 @@ public class MachineVariantModule extends ExpressionModule {
 	FormulaFactory factory;
 	
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
 		factory = repository.getFormulaFactory();
@@ -65,7 +69,10 @@ public class MachineVariantModule extends ExpressionModule {
 	}
 
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		factory = null;
 		super.endModule(element, repository, monitor);
@@ -82,9 +89,11 @@ public class MachineVariantModule extends ExpressionModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IInternalParent target,
-			IStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
+	public void process(
+			IRodinElement element, 
+			IInternalParent target,
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
@@ -142,7 +151,7 @@ public class MachineVariantModule extends ExpressionModule {
 
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			IStateRepository<IStateSC> repository) throws CoreException {
 		// this method is never called because fetchLabel() is overriden
 		return null;
 	}

@@ -15,7 +15,7 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.IPredicateTable;
+import org.eventb.core.pog.state.IPredicateTable;
 import org.rodinp.core.RodinDBException;
 
 /**

@@ -8,7 +8,7 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.sc.IEventRefinesInfo;
+import org.eventb.core.sc.state.IEventRefinesInfo;
 
 /**
  * @author Stefan Hallerstede

@@ -20,10 +20,11 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.IIdentifierTable;
-import org.eventb.core.pog.IMachineInvariantTable;
 import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.core.pog.state.IMachineInvariantTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -42,7 +43,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		if (isApplicable())
@@ -107,7 +108,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		abstractEvent = eventHypothesisManager.getFirstAbstractEvent();	
@@ -116,7 +117,11 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	}
 
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		abstractEvent = null;
 		invariantTable = null;
 		super.endModule(element, target, repository, monitor);

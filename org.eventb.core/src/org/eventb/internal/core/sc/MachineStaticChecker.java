@@ -18,7 +18,8 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.IModuleManager;
 import org.eventb.core.sc.IProcessorModule;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -75,7 +76,7 @@ public class MachineStaticChecker extends StaticChecker {
 			IRodinProject project = (IRodinProject) scMachineFile.getParent();
 			project.createRodinFile(scMachineFile.getElementName(), true, null);
 			
-			IStateRepository repository = createRepository(machineFile, monitor);
+			IStateRepository<IStateSC> repository = createRepository(machineFile, monitor);
 			
 			machineFile.open(new SubProgressMonitor(monitor, 1));
 			scMachineFile.open(new SubProgressMonitor(monitor, 1));
@@ -146,8 +147,10 @@ public class MachineStaticChecker extends StaticChecker {
 	}
 
 	@Override
-	protected IStateRepository createRepository(IRodinFile file, IProgressMonitor monitor) throws CoreException {
-		IStateRepository repository = super.createRepository(file, monitor);
+	protected IStateRepository<IStateSC> createRepository(
+			IRodinFile file, 
+			IProgressMonitor monitor) throws CoreException {
+		IStateRepository<IStateSC> repository = super.createRepository(file, monitor);
 		final MachineLabelSymbolTable labelSymbolTable = 
 			new MachineLabelSymbolTable(LABEL_SYMTAB_SIZE);
 		repository.setState(labelSymbolTable);		

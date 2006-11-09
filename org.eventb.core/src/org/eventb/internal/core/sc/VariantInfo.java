@@ -8,7 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.sc.IVariantInfo;
+import org.eventb.core.sc.state.IVariantInfo;
 
 /**
  * @author Stefan Hallerstede

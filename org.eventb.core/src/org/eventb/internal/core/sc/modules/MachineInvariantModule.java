@@ -15,12 +15,13 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.sc.IAbstractEventTable;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IMachineLabelSymbolTable;
 import org.eventb.core.sc.IModuleManager;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.ModuleManager;
 import org.rodinp.core.IInternalParent;
@@ -48,7 +49,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 
@@ -123,7 +124,7 @@ public class MachineInvariantModule extends PredicateWithTypingModule {
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
-			IStateRepository repository) throws CoreException {
+			IStateRepository<IStateSC> repository) throws CoreException {
 		return (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 

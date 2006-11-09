@@ -19,17 +19,18 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IAbstractEventActionTable;
-import org.eventb.core.pog.IConcreteEventActionTable;
-import org.eventb.core.pog.IConcreteEventGuardTable;
-import org.eventb.core.pog.IEventHypothesisManager;
-import org.eventb.core.pog.IIdentifierTable;
-import org.eventb.core.pog.IMachineHypothesisManager;
-import org.eventb.core.pog.IMachineVariableTable;
-import org.eventb.core.pog.IWitnessTable;
 import org.eventb.core.pog.Module;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.pog.state.IAbstractEventActionTable;
+import org.eventb.core.pog.state.IConcreteEventActionTable;
+import org.eventb.core.pog.state.IConcreteEventGuardTable;
+import org.eventb.core.pog.state.IEventHypothesisManager;
+import org.eventb.core.pog.state.IIdentifierTable;
+import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.core.pog.state.IMachineVariableTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.ITypingState;
+import org.eventb.core.pog.state.IWitnessTable;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
@@ -53,8 +54,11 @@ public class MachineEventHypothesisModule extends Module {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOFile target,
-			IStateRepository repository, IProgressMonitor monitor)
+	public void process(
+			IRodinElement element, 
+			IPOFile target,
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor)
 			throws CoreException {
 		// all processing is done in the initModule() method
 
@@ -63,7 +67,7 @@ public class MachineEventHypothesisModule extends Module {
 	private void fetchActionsAndVariables(
 			ISCEvent concreteEvent, 
 			ISCEvent abstractEvent, 
-			IStateRepository repository) throws CoreException {
+			IStateRepository<IStatePOG> repository) throws CoreException {
 		IMachineVariableTable machineVariableTable =
 			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
 		
@@ -92,7 +96,7 @@ public class MachineEventHypothesisModule extends Module {
 	private void setEventHypothesisManager(
 			IMachineHypothesisManager machineHypothesisManager, 
 			ISCEvent event, ISCGuard[] guards, 
-			IStateRepository repository) throws CoreException {
+			IStateRepository<IStatePOG> repository) throws CoreException {
 		eventHypothesisManager = new EventHypothesisManager(
 				event, guards, machineHypothesisManager.getFullHypothesisName());
 		
@@ -103,7 +107,7 @@ public class MachineEventHypothesisModule extends Module {
 
 	private void fetchGuards(
 			ISCGuard[] guards, 
-			IStateRepository repository) throws CoreException {
+			IStateRepository<IStatePOG> repository) throws CoreException {
 		IConcreteEventGuardTable eventGuardTable = 
 			new ConcreteEventGuardTable(guards, eventTypeEnvironment, factory);
 		repository.setState(eventGuardTable);
@@ -130,7 +134,10 @@ public class MachineEventHypothesisModule extends Module {
 		}
 	}
 
-	private void fetchWitnesses(ISCEvent concreteEvent, IStateRepository repository, IProgressMonitor monitor) throws CoreException, RodinDBException {
+	private void fetchWitnesses(
+			ISCEvent concreteEvent, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException, RodinDBException {
 		IWitnessTable witnessTable = 
 			new WitnessTable(concreteEvent.getSCWitnesses(), eventTypeEnvironment, factory, monitor);
 		repository.setState(witnessTable);
@@ -143,7 +150,7 @@ public class MachineEventHypothesisModule extends Module {
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		
@@ -184,7 +191,7 @@ public class MachineEventHypothesisModule extends Module {
 	public void endModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, target, repository, monitor);
 		

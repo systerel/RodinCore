@@ -23,7 +23,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.pog.IWitnessTable;
+import org.eventb.core.pog.state.IWitnessTable;
 
 /**
  * @author Stefan Hallerstede

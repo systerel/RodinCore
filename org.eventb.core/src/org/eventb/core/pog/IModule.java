@@ -10,7 +10,8 @@ package org.eventb.core.pog;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 
 
@@ -73,7 +74,7 @@ public interface IModule {
 	public abstract void initModule(
 			IRodinElement element,
 			IPOFile target,
-			IStateRepository repository,
+			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -88,7 +89,7 @@ public interface IModule {
 	public abstract void process(
 			IRodinElement element,
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
@@ -103,7 +104,7 @@ public interface IModule {
 	public abstract void endModule(
 			IRodinElement element,
 			IPOFile target,
-			IStateRepository repository,
+			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException;
 
 }

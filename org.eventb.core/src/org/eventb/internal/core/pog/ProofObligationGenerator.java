@@ -14,8 +14,9 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.IModule;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.internal.core.sc.StateRepository;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
+import org.eventb.internal.core.state.StateRepository;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -31,13 +32,13 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 	
 	public static boolean DEBUG = false;
 	
-	protected IStateRepository createRepository(
+	protected IStateRepository<IStatePOG> createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final FormulaFactory factory = FormulaFactory.getDefault();
 		
-		final IStateRepository repository = new StateRepository(factory);
+		final IStateRepository<IStatePOG> repository = new StateRepository<IStatePOG>(factory);
 		
 		return repository;
 	}
@@ -64,7 +65,7 @@ public abstract class ProofObligationGenerator  implements IAutomaticTool, IExtr
 			IRodinFile file, 
 			IPOFile target, 
 			IModule[] modules, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		for(IModule module : modules) {

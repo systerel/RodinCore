@@ -29,15 +29,16 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.IAbstractEventInfo;
-import org.eventb.core.sc.IAbstractEventTable;
-import org.eventb.core.sc.IContextTable;
-import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IAbstractEventTable;
+import org.eventb.core.sc.state.IContextTable;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.Messages;
@@ -67,7 +68,7 @@ public class MachineRefinesModule extends ProcessorModule {
 	public void process(
 			IRodinElement element, 
 			IInternalParent target,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -323,7 +324,7 @@ public class MachineRefinesModule extends ProcessorModule {
 	@Override
 	public void initModule(
 			IRodinElement element, 
-			IStateRepository repository, 
+			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
 
 		emptyVariableList = new FreeIdentifier[0];
@@ -360,7 +361,10 @@ public class MachineRefinesModule extends ProcessorModule {
 	 * @see org.eventb.core.sc.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		refinesMachine = null;
 		scMachineFile = null;
 		abstractEventTable = null;

@@ -10,10 +10,11 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.ILabelSymbolTable;
-import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -27,16 +28,23 @@ public abstract class LabeledElementModule extends ProcessorModule {
 	ILabelSymbolTable labelSymbolTable;
 	
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = getLabelSymbolTableFromRepository(repository);
 	}
 	
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = null;
 	}
 
-	protected abstract ILabelSymbolTable getLabelSymbolTableFromRepository(IStateRepository repository) throws CoreException;
+	protected abstract ILabelSymbolTable getLabelSymbolTableFromRepository(
+			IStateRepository<IStateSC> repository) throws CoreException;
 
 	/**
 	 * Adds a new label symbol to the label symbol table.

@@ -15,14 +15,15 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.pog.IMachineHypothesisManager;
 import org.eventb.core.pog.IModule;
 import org.eventb.core.pog.IModuleManager;
 import org.eventb.core.pog.Module;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
+import org.eventb.core.pog.state.IMachineHypothesisManager;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.pog.state.ITypingState;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.pog.ModuleManager;
-import org.eventb.internal.core.sc.TypingState;
+import org.eventb.internal.core.pog.TypingState;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -47,7 +48,7 @@ public class MachineEventModule extends Module {
 	public void process(
 			IRodinElement element, 
 			IPOFile target,
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -83,7 +84,11 @@ public class MachineEventModule extends Module {
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		typingState =
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
@@ -97,7 +102,11 @@ public class MachineEventModule extends Module {
 	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, target, repository, monitor);
 		repository.setState(typingState);
 		typingState = null;

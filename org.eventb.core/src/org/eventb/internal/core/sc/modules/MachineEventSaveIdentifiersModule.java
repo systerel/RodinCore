@@ -10,11 +10,12 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Type;
-import org.eventb.core.sc.IIdentifierSymbolTable;
-import org.eventb.core.sc.IStateRepository;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.symbolTable.VariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -28,8 +29,11 @@ public class MachineEventSaveIdentifiersModule extends ProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IInternalParent target,
-			IStateRepository repository, IProgressMonitor monitor)
+	public void process(
+			IRodinElement element, 
+			IInternalParent target,
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor)
 			throws CoreException {
 		
 		IIdentifierSymbolTable identifierSymbolTable = 

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.pog.IContextAxiomTable;
+import org.eventb.core.pog.state.IContextAxiomTable;
 
 /**
  * @author Stefan Hallerstede

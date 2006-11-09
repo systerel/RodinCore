@@ -9,7 +9,7 @@ package org.eventb.internal.core.pog;
 
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.pog.IEventHypothesisManager;
+import org.eventb.core.pog.state.IEventHypothesisManager;
 import org.rodinp.core.IRodinElement;
 
 /**

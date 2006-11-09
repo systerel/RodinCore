@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
-import org.eventb.core.pog.IMachineInvariantTable;
+import org.eventb.core.pog.state.IMachineInvariantTable;
 
 /**
  * @author Stefan Hallerstede

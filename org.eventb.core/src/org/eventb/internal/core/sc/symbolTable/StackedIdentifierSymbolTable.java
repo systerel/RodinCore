@@ -14,7 +14,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.sc.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 
 /**

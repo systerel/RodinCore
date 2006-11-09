@@ -18,12 +18,13 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IAcceptorModule;
-import org.eventb.core.sc.IIdentifierSymbolTable;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.IStateRepository;
-import org.eventb.core.sc.ITypingState;
 import org.eventb.core.sc.ProcessorModule;
+import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IStateSC;
+import org.eventb.core.sc.state.ITypingState;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.state.IStateRepository;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.sc.symbolTable.SymbolInfoFactory;
 import org.rodinp.core.IInternalElement;
@@ -95,7 +96,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 			IIdentifierElement[] elements,
 			IInternalParent target,
 			IAcceptorModule[] rules,
-			IStateRepository repository,
+			IStateRepository<IStateSC> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
 		final ITypeEnvironment typeEnvironment = typingState.getTypeEnvironment();
@@ -166,7 +167,10 @@ public abstract class IdentifierModule extends ProcessorModule {
 
 
 	@Override
-	public void initModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void initModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		
@@ -178,7 +182,10 @@ public abstract class IdentifierModule extends ProcessorModule {
 
 
 	@Override
-	public void endModule(IRodinElement element, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IStateRepository<IStateSC> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		identifierSymbolTable = null;
 		typingState = null;

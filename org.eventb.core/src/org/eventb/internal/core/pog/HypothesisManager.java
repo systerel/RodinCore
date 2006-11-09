@@ -18,7 +18,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
-import org.eventb.core.pog.IHypothesisManager;
+import org.eventb.core.pog.state.IHypothesisManager;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

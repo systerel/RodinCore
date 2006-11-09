@@ -20,11 +20,12 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.pog.IAbstractEventGuardTable;
-import org.eventb.core.pog.IConcreteEventGuardTable;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.sc.IStateRepository;
+import org.eventb.core.pog.state.IAbstractEventGuardTable;
+import org.eventb.core.pog.state.IConcreteEventGuardTable;
+import org.eventb.core.pog.state.IStatePOG;
+import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -40,8 +41,11 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(IRodinElement element, IPOFile target,
-			IStateRepository repository, IProgressMonitor monitor)
+	public void process(
+			IRodinElement element, 
+			IPOFile target,
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor)
 			throws CoreException {
 		
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
@@ -95,7 +99,7 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	public void initModule(
 			IRodinElement element, 
 			IPOFile target, 
-			IStateRepository repository, 
+			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, target, repository, monitor);
 		concreteEventGuardTable = 
@@ -108,7 +112,11 @@ public class MachineEventStrengthenGuardModule extends MachineEventRefinementMod
 	 * @see org.eventb.core.pog.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(IRodinElement element, IPOFile target, IStateRepository repository, IProgressMonitor monitor) throws CoreException {
+	public void endModule(
+			IRodinElement element, 
+			IPOFile target, 
+			IStateRepository<IStatePOG> repository, 
+			IProgressMonitor monitor) throws CoreException {
 		concreteEventGuardTable = null;
 		abstractEventGuardTable = null;
 		super.endModule(element, target, repository, monitor);
