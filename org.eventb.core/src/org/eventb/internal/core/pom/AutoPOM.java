@@ -19,13 +19,10 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
-import org.eventb.core.basis.PRProofTree;
 import org.eventb.internal.core.Util;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 import org.rodinp.core.builder.IGraph;
@@ -106,7 +103,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			SubProgressMonitor spm = new SubProgressMonitor(monitor, noOfPOs,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
 			);
-			// AutoProver.run(prFile, psFile, spm);
+			AutoProver.run(prFile, psFile, spm);
 			return true;
 		} finally {
 			monitor.done();

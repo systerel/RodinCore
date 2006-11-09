@@ -7,10 +7,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
@@ -25,6 +28,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 
 import com.b4free.rodin.core.B4freeCore;
 
@@ -76,6 +80,7 @@ public class AutoProver {
 				dirty |= processPo(prFile, status, subMonitor);
 			}
 			// monitor.worked(1);
+			dirty = true;
 			if (dirty) prFile.save(null, false);
 			if (dirty) psFile.save(null, false);
 		} finally {
@@ -114,10 +119,11 @@ public class AutoProver {
 					// po.updateProofTree(tree);
 					proofTree.setProofTree(tree);
 					status.updateStatus();
+					setAutoProven(true,status);
 					// if (proofTree == null) proofTree = po.getProofTree();
 					proofTree.setAutomaticallyGenerated();
 					prFile.save(null, false);
-					return false;
+					return true;
 				}
 				// If the auto prover made 'some' progress, and no
 				// proof was previously attempted update the proof
@@ -130,6 +136,7 @@ public class AutoProver {
 					// po.updateProofTree(tree);
 					proofTree.setProofTree(tree);
 					status.updateStatus();
+					setAutoProven(true,status);
 					proofTree.setAutomaticallyGenerated();
 					
 					((PRProofTree)proofTree).setAutomaticallyGenerated();
@@ -137,6 +144,7 @@ public class AutoProver {
 					return true;
 				}
 			}
+			setAutoProven(false,status);
 			return false;
 		} finally {
 			pm.done();
@@ -158,5 +166,10 @@ public class AutoProver {
 						B4freeCore.externalPP(false, timeOutDelay)) // PP
 				);
 	}
+	
+	private static void setAutoProven(boolean autoProven, IPSstatus status) throws RodinDBException {
+		status.setBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, autoProven, null);
+	}
+
 
 }

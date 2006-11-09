@@ -3,6 +3,7 @@ package org.eventb.core.tests.pom;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
@@ -73,12 +74,17 @@ public class AutoPOMTest extends BuilderTest {
 		
 		IPOFile poFile = createPOFile();
 		IPSFile psFile = poFile.getPSFile();
-
+		IPRFile prFile = poFile.getPRFile();
+		
 		AutoProver.enable();
 		runBuilder();
 		
-		// Checks that POs in PR files are the same as POs in PO file.
-		checkSameContents(poFile, psFile);
+		// Checks that status in PS file corresponds POs in PO file.
+		checkPOsConsistent(poFile, psFile);
+
+		
+		// Checks that status in PS file corresponds Proofs in PR file.
+		checkProofsConsistent(prFile, psFile);
 		
 		// Checks that all POs are discharged except the last one.
 		IPSstatus[] prs = (IPSstatus[]) psFile.getStatus();
@@ -114,7 +120,21 @@ public class AutoPOMTest extends BuilderTest {
 	}
 	
 
-	private void checkSameContents(
+	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
+		IPSstatus[] statuses = psFile.getStatus();
+		for (IPSstatus status : statuses) {
+			if (status.getProofConfidence() > IConfidence.UNATTEMPTED)
+			{
+				IPRProofTree prProofTree = status.getProofTree();
+				String name = status.getName();
+				assertNotNull("Proof absent for "+name , prProofTree);
+				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(), status.getProofConfidence());
+			}
+		}
+		
+	}
+
+	private void checkPOsConsistent(
 			IInternalParent poElement,
 			IInternalParent prElement) throws RodinDBException {
 		
@@ -141,7 +161,7 @@ public class AutoPOMTest extends BuilderTest {
 				if (prChild instanceof IPRProofTree) {
 					++ prIdx;
 				} else {
-					checkSameContents(poChild, prChild);
+					checkPOsConsistent(poChild, prChild);
 					++ poIdx;
 					++ prIdx;
 				}
@@ -153,18 +173,31 @@ public class AutoPOMTest extends BuilderTest {
 		}
 	}
 
-	private void assertDischarged(IPSstatus prSequent) throws RodinDBException {
-		IPRProofTree proofTree = prSequent.getProofTree();
-		assertTrue("PO " + prSequent.getName() + " should be closed",
-				IConfidence.PENDING !=
-				proofTree.getConfidence());
+	private void assertDischarged(IPSstatus status) throws RodinDBException {
+		// IPRProofTree proofTree = status.getProofTree();
+		assertTrue("PO " + status.getName() + " should be closed",
+				IConfidence.PENDING <
+				status.getProofConfidence());
+		assertTrue("PR " + status.getName() + " should be valid",
+				status.isProofValid());
+		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",
+				status.autoProverAttempted());
+		assertTrue("PR " + status.getName() + " should be auto proven",
+				status.isAutoProven());
+		
 	}
-
-	private void assertNotDischarged(IPSstatus prSequent) throws RodinDBException {
-		IPRProofTree proofTree = prSequent.getProofTree();
-		assertEquals("PO " + prSequent.getName() + " should not be discharged",
-				IConfidence.PENDING,
-				proofTree.getConfidence());
+	
+	private void assertNotDischarged(IPSstatus status) throws RodinDBException {
+		// IPRProofTree proofTree = status.getProofTree();
+		assertTrue("PO " + status.getName() + " should not be closed",
+				IConfidence.PENDING >=
+				status.getProofConfidence());
+		assertTrue("PR " + status.getName() + " should be valid",
+				status.isProofValid());
+		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",
+				status.autoProverAttempted());
+//		assertFalse("PR " + status.getName() + " should not be auto proven",
+//				status.isAutoProven());
 	}
 	
 	public static String[] mp(String... strings) {

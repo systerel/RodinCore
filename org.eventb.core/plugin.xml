@@ -260,7 +260,7 @@
             name="%eventBprTypeEnv"/>
       <internalElementType
             class="org.eventb.core.basis.PRReasonerAntecedent"
-            id="prReasonerAnticident"
+            id="prReasonerAntecedent"
             name="%eventBprReasonerAntecedent"/>
       <internalElementType
             class="org.eventb.core.basis.PRExpression"
