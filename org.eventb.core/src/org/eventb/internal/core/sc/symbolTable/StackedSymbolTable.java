@@ -17,17 +17,17 @@ import org.eventb.internal.core.sc.Messages;
  * @author Stefan Hallerstede
  *
  */
-public class StackedSymbolTable extends SymbolTable {
+public class StackedSymbolTable<I extends ISymbolInfo> extends SymbolTable<I> {
 
-	protected final ISymbolTable parentTable;
+	protected final ISymbolTable<I> parentTable;
 	
-	public StackedSymbolTable(ISymbolTable parentTable, int size) {
+	public StackedSymbolTable(ISymbolTable<I> parentTable, int size) {
 		super(size);
 		this.parentTable = parentTable;
 	}
 	
 	@Override
-	public ISymbolTable getParentTable() {
+	public ISymbolTable<I> getParentTable() {
 		return parentTable;
 	}
 	
@@ -41,8 +41,8 @@ public class StackedSymbolTable extends SymbolTable {
 	}
 	
 	@Override
-	public ISymbolInfo getSymbolInfo(String symbol) {
-		ISymbolInfo s = super.getSymbolInfo(symbol);
+	public I getSymbolInfo(String symbol) {
+		I s = super.getSymbolInfo(symbol);
 		if (s == null)
 			return parentTable.getSymbolInfo(symbol);
 		else
@@ -50,7 +50,7 @@ public class StackedSymbolTable extends SymbolTable {
 	}
 	
 	@Override
-	public void putSymbolInfo(ISymbolInfo symbolInfo) throws CoreException {
+	public void putSymbolInfo(I symbolInfo) throws CoreException {
 		
 		String symbol = symbolInfo.getSymbol();
 		
@@ -71,7 +71,7 @@ public class StackedSymbolTable extends SymbolTable {
 	}
 	
 	@Override
-	public ISymbolInfo getSymbolInfoFromTop(String symbol) {
+	public I getSymbolInfoFromTop(String symbol) {
 		return super.getSymbolInfoFromTop(symbol);
 	}
 

@@ -33,7 +33,7 @@ public abstract class PredicateWithTypingModule extends PredicateModule {
 			Type type = iterator.getType();
 			
 			IIdentifierSymbolInfo symbolInfo = 
-				(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(name);
+				identifierSymbolTable.getSymbolInfo(name);
 			
 			symbolInfo.setType(type);
 			

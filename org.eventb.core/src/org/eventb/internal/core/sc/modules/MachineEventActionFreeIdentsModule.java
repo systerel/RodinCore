@@ -93,8 +93,7 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 		
 		for (FreeIdentifier identifier : identifiers) {
 			String name = identifier.getName();
-			IIdentifierSymbolInfo symbolInfo = (IIdentifierSymbolInfo)
-				symbolTable.getSymbolInfo(name);
+			IIdentifierSymbolInfo symbolInfo = symbolTable.getSymbolInfo(name);
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isForbidden()) {

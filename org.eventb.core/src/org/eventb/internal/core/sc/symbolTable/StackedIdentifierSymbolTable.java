@@ -15,13 +15,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
+import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class StackedIdentifierSymbolTable extends StackedSymbolTable implements
+public class StackedIdentifierSymbolTable extends StackedSymbolTable<IIdentifierSymbolInfo> implements
 		IIdentifierSymbolTable {
 	
 	private final Set<FreeIdentifier> freeIdentifiers;
@@ -58,7 +58,7 @@ public class StackedIdentifierSymbolTable extends StackedSymbolTable implements
 	 * @see org.eventb.internal.core.sc.symbolTable.StackedSymbolTable#putSymbolInfo(org.eventb.core.sc.symbolTable.ISymbolInfo)
 	 */
 	@Override
-	public void putSymbolInfo(ISymbolInfo symbolInfo) throws CoreException {
+	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo) throws CoreException {
 		super.putSymbolInfo(symbolInfo);
 		freeIdentifiers.add(
 				factory.makeFreeIdentifier(symbolInfo.getSymbol(), null));

@@ -191,7 +191,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			ISCIdentifierElement element) throws RodinDBException {
 		
 		IIdentifierSymbolInfo info = 
-			(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(element.getIdentifierName());
+			identifierSymbolTable.getSymbolInfo(element.getIdentifierName());
 		
 		assert info != null;
 		
@@ -224,7 +224,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			// the new symbol info is discarded now
 			
 			IIdentifierSymbolInfo symbolInfo = 
-				(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(name);
+				identifierSymbolTable.getSymbolInfo(name);
 			
 			symbolList.add(symbolInfo);
 			

@@ -78,7 +78,7 @@ public class MachineVariableModule extends IdentifierModule {
 		} catch (CoreException e) {
 			
 			IIdentifierSymbolInfo symbolInfo = 
-				(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
+				identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
 			
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;

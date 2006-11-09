@@ -8,12 +8,13 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IContextLabelSymbolTable;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class ContextLabelSymbolTable extends SymbolTable implements
+public class ContextLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> implements
 		IContextLabelSymbolTable {
 
 	public ContextLabelSymbolTable(int size) {

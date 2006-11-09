@@ -8,12 +8,13 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventLabelSymbolTable extends SymbolTable implements IEventLabelSymbolTable {
+public class EventLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> implements IEventLabelSymbolTable {
 
 	public EventLabelSymbolTable(int size) {
 		super(size);

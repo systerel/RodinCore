@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Stefan Hallerstede
  *
  */
-public interface ISymbolTable extends Iterable<ISymbolInfo> {
+public interface ISymbolTable<I extends ISymbolInfo> extends Iterable<I> {
 	
 	/**
 	 * Returns whether a symbol is contained in the symbol table.
@@ -30,7 +30,7 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	 * @param symbol the symbol corresponding to the symbol info
 	 * @return the symbol info
 	 */
-	ISymbolInfo getSymbolInfo(String symbol);
+	I getSymbolInfo(String symbol);
 	
 	/**
 	 * This method allows to access only the top level of a stacked symbol table.
@@ -40,7 +40,7 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	 * @param symbol the symbol corresponding to the symbol info
 	 * @return the symbol info
 	 */
-	ISymbolInfo getSymbolInfoFromTop(String symbol);
+	I getSymbolInfoFromTop(String symbol);
 	
 	/**
 	 * Inserts a symbol info into the symbol table. Multiple insertions are not allowed.
@@ -51,7 +51,7 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	 * 
 	 * @see ISymbolInfo#getSymbol()
 	 */
-	void putSymbolInfo(ISymbolInfo symbolInfo) throws CoreException;
+	void putSymbolInfo(I symbolInfo) throws CoreException;
 		
 	/**
 	 * Returns the parent symbol table for a stacked symbol table,
@@ -60,7 +60,7 @@ public interface ISymbolTable extends Iterable<ISymbolInfo> {
 	 * @return the parent symbol table or <code>null</code>
 	 * 
 	 */
-	ISymbolTable getParentTable();
+	ISymbolTable<I> getParentTable();
 		
 	/**
 	 * Turns all symbols of the symbol table immutable

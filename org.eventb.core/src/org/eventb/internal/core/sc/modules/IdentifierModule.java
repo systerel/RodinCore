@@ -148,7 +148,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 		} catch (CoreException e) {
 			
 			IIdentifierSymbolInfo symbolInfo = 
-				(IIdentifierSymbolInfo) identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
+				identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
 			
 			newSymbolInfo.createConflictMarker(this);
 			

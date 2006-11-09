@@ -7,13 +7,14 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ILabelSymbolTable extends ISymbolTable, IStateSC {
+public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, IStateSC {
 
 	// common interface to machine and event symbol tables
 }

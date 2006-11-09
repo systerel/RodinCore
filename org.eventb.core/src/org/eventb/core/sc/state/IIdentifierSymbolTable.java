@@ -11,13 +11,14 @@ import java.util.Collection;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface IIdentifierSymbolTable extends ISymbolTable, IStateSC {
+public interface IIdentifierSymbolTable extends ISymbolTable<IIdentifierSymbolInfo>, IStateSC {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".identifierSymbolTable";
 	

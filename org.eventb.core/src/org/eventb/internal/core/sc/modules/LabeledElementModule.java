@@ -74,7 +74,7 @@ public abstract class LabeledElementModule extends ProcessorModule {
 		} catch (CoreException e) {
 			
 			ILabelSymbolInfo symbolInfo = 
-				(ILabelSymbolInfo) labelSymbolTable.getSymbolInfo(label);
+				labelSymbolTable.getSymbolInfo(label);
 			
 			newSymbolInfo.createConflictMarker(this);
 			

@@ -8,12 +8,13 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineLabelSymbolTable extends SymbolTable implements IMachineLabelSymbolTable {
+public class MachineLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> implements IMachineLabelSymbolTable {
 
 	public MachineLabelSymbolTable(int size) {
 		super(size);

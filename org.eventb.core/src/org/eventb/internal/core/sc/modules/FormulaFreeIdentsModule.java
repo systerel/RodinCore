@@ -91,7 +91,7 @@ public abstract class FormulaFreeIdentsModule extends AcceptorModule {
 			IInternalElement element, 
 			FreeIdentifier freeIdentifier,
 			IProgressMonitor monitor) throws CoreException {
-		IIdentifierSymbolInfo symbolInfo = (IIdentifierSymbolInfo) 
+		IIdentifierSymbolInfo symbolInfo = 
 			symbolTable.getSymbolInfo(freeIdentifier.getName());
 		return symbolInfo;
 	}

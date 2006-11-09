@@ -22,45 +22,45 @@ import org.eventb.internal.core.sc.Messages;
  * @author Stefan Hallerstede
  *
  */
-public class SymbolTable implements ISymbolTable {
+public class SymbolTable<I extends ISymbolInfo> implements ISymbolTable<I> {
 
-	private final Hashtable<String, ISymbolInfo> table;
+	private final Hashtable<String, I> table;
 	
 	// the tableValues variable is a cache that holds the value of table.values()
-	private final Collection<ISymbolInfo> tableValues;
+	private final Collection<I> tableValues;
 	
 	public SymbolTable(int size) {
-		table = new Hashtable<String, ISymbolInfo>(size);
-		tableValues = new TreeSet<ISymbolInfo>();
+		table = new Hashtable<String, I>(size);
+		tableValues = new TreeSet<I>();
 	}
 	
 	public boolean containsKey(String symbol) {
 		return table.containsKey(symbol);
 	}
 	
-	public ISymbolInfo getSymbolInfo(String symbol) {
+	public I getSymbolInfo(String symbol) {
 		return table.get(symbol);
 	}
 	
-	public void putSymbolInfo(ISymbolInfo ISymbolInfo) throws CoreException {
+	public void putSymbolInfo(I symbolInfo) throws CoreException {
 		
-		String key = ISymbolInfo.getSymbol();
+		String key = symbolInfo.getSymbol();
 		
-		ISymbolInfo ocell = table.put(key, ISymbolInfo);
+		I ocell = table.put(key, symbolInfo);
 		if (ocell != null) {
 			// revert to old symbol table and throw exception
 			table.put(key, ocell);
 			throw Util.newCoreException(Messages.symtab_SymbolConflict);
 		}
-		tableValues.add(ISymbolInfo);
+		tableValues.add(symbolInfo);
 	}
 
-	public Iterator<ISymbolInfo> iterator() {
+	public Iterator<I> iterator() {
 		return tableValues.iterator();
 	}
 
 	public void setImmutable() {
-		for(ISymbolInfo info : tableValues) {
+		for(I info : tableValues) {
 			info.setImmutable();
 		}
 	}
@@ -78,11 +78,11 @@ public class SymbolTable implements ISymbolTable {
 		return table.toString();
 	}
 	
-	public ISymbolInfo getSymbolInfoFromTop(String symbol) {
+	public I getSymbolInfoFromTop(String symbol) {
 		return getSymbolInfo(symbol);
 	}
 
-	public ISymbolTable getParentTable() {
+	public ISymbolTable<I> getParentTable() {
 		return null;
 	}
 
