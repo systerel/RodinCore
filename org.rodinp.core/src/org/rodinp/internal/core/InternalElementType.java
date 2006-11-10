@@ -20,12 +20,12 @@ import org.rodinp.internal.core.util.Util;
  * @author lvoisin
  *
  */
-public class InternalElementTypeDescription extends
+public class InternalElementType extends
 		ContributedElementType<InternalElement> implements IInternalElementType {
 
 	private final boolean named;
 	
-	public InternalElementTypeDescription(IConfigurationElement configurationElement) {
+	public InternalElementType(IConfigurationElement configurationElement) {
 		super(configurationElement);
 		
 		String value = configurationElement.getAttribute("named"); 

@@ -77,11 +77,11 @@ public class ElementTypeManager {
 	 *         determine the file type.
 	 */
 	public RodinFile createRodinFileHandle(RodinProject project, String filename) {
-		FileElementTypeDescription description = getFileElementTypeDescription(filename);
-		if (description == null) {
+		FileElementType type = getFileElementTypeFromFileName(filename);
+		if (type == null) {
 			return null;		// Not a Rodin file.
 		}
-		Constructor<? extends RodinFile> constructor = description.getConstructor();
+		Constructor<? extends RodinFile> constructor = type.getConstructor();
 		IFile file = project.getProject().getFile(filename);
 		try {
 			return constructor.newInstance(file, project);
@@ -92,58 +92,44 @@ public class ElementTypeManager {
 		}
 	}
 	
-	private FileElementTypeDescription getFileElementTypeDescription(IFile file) {
-		try {
-			IContentDescription contentDescription = file.getContentDescription();
-			if (contentDescription == null) return null; // Unknown kind of file.
-			IContentType contentType = contentDescription.getContentType();
-			if (contentType == null) return null; // Unknown kind of file.
-			return getFileElementTypeDescription(contentType);
-		} catch (CoreException e) {
-			// Ignore
-		}
-		// Maybe the file doesn't exist, try with its filename
-		return getFileElementTypeDescription(file.getName());
-	}
-	
-	private FileElementTypeDescription getFileElementTypeDescription(String fileName) {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType contentType = contentTypeManager.findContentTypeFor(fileName);
-		if (contentType == null) {
-			return null;		// Not a Rodin file.
-		}
-		return getFileElementTypeDescription(contentType);
-	}
-
-	private FileElementTypeDescription getFileElementTypeDescription(IContentType contentType) {
+	private FileElementType getFileElementType(IContentType contentType) {
 		if (fileContentTypes == null) {
 			computeFileElementTypes();
 		}
 		return fileContentTypes.get(contentType.getId());
 	}
+	
+	private FileElementType getFileElementTypeFromFileName(String fileName) {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType contentType = contentTypeManager.findContentTypeFor(fileName);
+		if (contentType == null) {
+			return null;		// Not a Rodin file.
+		}
+		return getFileElementType(contentType);
+	}
 
 	// Local id of the fileElementTypes extension point of this plugin
 	private static final String FILE_ELEMENT_TYPES_ID = "fileElementTypes";
 	
-	// Access to file element type descriptions using their content type name
-	private HashMap<String, FileElementTypeDescription> fileContentTypes;
+	// Access to file element types using their content type name
+	private HashMap<String, FileElementType> fileContentTypes;
 
-	// Access to file element type descriptions using their unique id
-	private HashMap<String, FileElementTypeDescription> fileElementTypeIds;
+	// Access to file element types using their unique id
+	private HashMap<String, FileElementType> fileElementTypeIds;
 
 	private void computeFileElementTypes() {
-		fileElementTypeIds = new HashMap<String, FileElementTypeDescription>();
-		fileContentTypes = new HashMap<String, FileElementTypeDescription>();
-		fileContentTypes = new HashMap<String, FileElementTypeDescription>();
+		fileElementTypeIds = new HashMap<String, FileElementType>();
+		fileContentTypes = new HashMap<String, FileElementType>();
+		fileContentTypes = new HashMap<String, FileElementType>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			FileElementTypeDescription description = new FileElementTypeDescription(element);
-			fileElementTypeIds.put(description.getId(), description);
-			fileContentTypes.put(description.getContentTypeId(), description);
+			FileElementType type = new FileElementType(element);
+			fileElementTypeIds.put(type.getId(), type);
+			fileContentTypes.put(type.getContentTypeId(), type);
 		}
 	}
 
@@ -164,19 +150,19 @@ public class ElementTypeManager {
 	// Local id of the fileElementTypes extension point of this plugin
 	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 	
-	// Access to internal element type descriptions using their unique id
-	private HashMap<String, InternalElementTypeDescription> internalElementTypeIds;
+	// Access to internal element types using their unique id
+	private HashMap<String, InternalElementType> internalElementTypeIds;
 
 	private void computeInternalElementTypes() {
-		internalElementTypeIds = new HashMap<String, InternalElementTypeDescription>();
+		internalElementTypeIds = new HashMap<String, InternalElementType>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, INTERNAL_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			InternalElementTypeDescription description = new InternalElementTypeDescription(element);
-			internalElementTypeIds.put(description.getId(), description);
+			InternalElementType type = new InternalElementType(element);
+			internalElementTypeIds.put(type.getId(), type);
 		}
 	}
 
@@ -202,8 +188,8 @@ public class ElementTypeManager {
 	 * @return <code>true</code> iff it is a named internal element type
 	 */
 	public boolean isNamedInternalElementType(String elementType) {
-		InternalElementTypeDescription desc = getInternalElementType(elementType);
-		return desc != null && desc.isNamed(); 
+		InternalElementType type = getInternalElementType(elementType);
+		return type != null && type.isNamed(); 
 	}
 	
 	/**
@@ -214,7 +200,7 @@ public class ElementTypeManager {
 	 * @return the element type or <code>null</code> if this
 	 *         element type id is unknown.
 	 */
-	public InternalElementTypeDescription getInternalElementType(String id) {
+	public InternalElementType getInternalElementType(String id) {
 		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}
@@ -231,11 +217,17 @@ public class ElementTypeManager {
 	 *         if it is not a Rodin file
 	 */
 	public IFileElementType getFileElementType(IFile file) {
-		FileElementTypeDescription description = getFileElementTypeDescription(file);
-		if (description == null) {
-			return null;		// Not a Rodin file.
+		try {
+			IContentDescription contentDescription = file.getContentDescription();
+			if (contentDescription == null) return null; // Unknown kind of file.
+			IContentType contentType = contentDescription.getContentType();
+			if (contentType == null) return null; // Unknown kind of file.
+			return getFileElementType(contentType);
+		} catch (CoreException e) {
+			// Ignore
 		}
-		return description;
+		// Maybe the file doesn't exist, try with its filename
+		return getFileElementTypeFromFileName(file.getName());
 	}
 
 	public IFileElementType getFileElementType(String id) {
@@ -254,7 +246,7 @@ public class ElementTypeManager {
 	 * @return <code>true</code> iff the name is valid
 	 */
 	public boolean isValidFileName(String fileName) {
-		return getFileElementTypeDescription(fileName) != null;
+		return getFileElementTypeFromFileName(fileName) != null;
 	}
 	
 	/**
@@ -272,20 +264,17 @@ public class ElementTypeManager {
 	 * @deprecated Reimplement directly in the element type.
 	 */
 	@Deprecated
-	public InternalElement createInternalElementHandle(IInternalElementType type, String name, IRodinElement parent) {
+	public InternalElement createInternalElementHandle(
+			IInternalElementType type, String name, IRodinElement parent) {
+
 		assert name != null;
-		InternalElementTypeDescription description = 
-			(InternalElementTypeDescription) type;
-		if (description == null) {
-			// TODO create a default node for unknown types
-			// When the type is unknown, this means that the plugin that contributed it is no
-			// longer around.  However, we should not erase all information stored by this plugin.
-			// We should rather use a default implementation.
+		if (type == null) {
 			return null;		// Not a valid element type
 		}
-		Constructor<? extends InternalElement> constructor = description.getConstructor();
+		InternalElementType lType = (InternalElementType) type;
+		Constructor<? extends InternalElement> constructor = lType.getConstructor();
 		try {
-			if (description.isNamed()) {
+			if (lType.isNamed()) {
 				return constructor.newInstance(name, parent);
 			} else {
 				return constructor.newInstance(parent);

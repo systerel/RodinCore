@@ -30,7 +30,7 @@ import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.InternalElementTypeDescription;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MultiOperation;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
@@ -110,7 +110,7 @@ public abstract class RodinElement extends PlatformObject implements
 		if (! memento.hasMoreTokens()) return parent;
 		if (memento.nextToken().charAt(0) != REM_TYPE_SEP) return parent;
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final InternalElementTypeDescription childType = 
+		final InternalElementType childType = 
 			manager.getInternalElementType(childTypeId);
 		if (childType == null) {
 			// Unknown internal type

@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
 
-public class FileElementTypeDescription extends
+public class FileElementType extends
 		ContributedElementType<RodinFile> implements IFileElementType {
 
 	// Content type associated to this file element type
@@ -28,7 +28,7 @@ public class FileElementTypeDescription extends
 	// Unique identifier of the associated content type
 	private String contentTypeId;
 	
-	public FileElementTypeDescription(IConfigurationElement configurationElement) {
+	public FileElementType(IConfigurationElement configurationElement) {
 		super(configurationElement);
 		this.contentTypeId = configurationElement.getAttribute("content-type-id");
 	}
