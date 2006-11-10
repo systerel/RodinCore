@@ -8,6 +8,7 @@
 
 package org.rodinp.internal.core;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -50,7 +51,18 @@ public abstract class ContributedElementType<T extends RodinElement> extends
 		this.className = configurationElement.getAttribute("class");
 	}
 
+	protected abstract void computeClass();
+	
 	protected abstract void computeConstructor();
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public T[] getArray(int length) {
+		if (classObject == null) {
+			computeClass();
+		}
+		return (T[]) Array.newInstance(classObject, length);
+	}
 
 	public String getBundleName() {
 		return bundleName;

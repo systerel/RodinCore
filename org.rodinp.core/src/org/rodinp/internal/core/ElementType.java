@@ -11,6 +11,7 @@ package org.rodinp.internal.core;
 import java.util.HashMap;
 
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Messages;
 
@@ -25,11 +26,21 @@ public abstract class ElementType implements IElementType {
 		protected DatabaseElementType() {
 			super(RodinCore.PLUGIN_ID + ".database", Messages.type_database);
 		}
+
+		@Override
+		public RodinDB[] getArray(int length) {
+			return new RodinDB[length];
+		}
 	}
 
 	public static final class ProjectElementType extends ElementType {
 		protected ProjectElementType() {
 			super(RodinCore.PLUGIN_ID + ".project", Messages.type_project);
+		}
+
+		@Override
+		public RodinProject[] getArray(int length) {
+			return new RodinProject[length];
 		}
 	}
 
@@ -75,5 +86,7 @@ public abstract class ElementType implements IElementType {
 	public final String toString() {
 		return id;
 	}
+
+	public abstract IRodinElement[] getArray(int length);
 	
 }

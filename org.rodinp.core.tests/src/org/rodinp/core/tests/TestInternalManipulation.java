@@ -414,4 +414,19 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(rodinFile, ne);
 	}
 	
+	public void testGetChildrenOfType() throws Exception {
+		IRodinElement[] children;
+		
+		checkEmptyChildren(rodinFile);
+		children = rodinFile.getChildrenOfType(NamedElement.ELEMENT_TYPE);
+		assertTrue(children instanceof NamedElement[]);
+		assertEquals("Array should be empty", 0, children.length);
+		
+		final NamedElement ne = createNEPositive(rodinFile, "foo", null);
+		children = rodinFile.getChildrenOfType(NamedElement.ELEMENT_TYPE);
+		assertTrue(children instanceof NamedElement[]);
+		assertEquals("Array should contain one element", 1, children.length);
+		assertEquals("Wrong element", ne, children[0]);
+	}
+	
 }

@@ -29,6 +29,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
+import org.rodinp.internal.core.ElementType;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MultiOperation;
@@ -259,9 +260,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	public IRodinElement[] getChildrenOfType(IElementType type) throws RodinDBException {
 		List<IRodinElement> list = getFilteredChildrenList(type);
-		if (list.size() == 0)
-			return NO_ELEMENTS;
-		return list.toArray(new IRodinElement[list.size()]);
+		return list.toArray(((ElementType) type).getArray(list.size()));
 	}
 
 	

@@ -34,11 +34,22 @@ public class FileElementType extends
 	}
 
 	@Override
-	protected void computeConstructor() {
+	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = clazz.asSubclass(RodinFile.class);
+		} catch (Exception e) {
+			Util.log(e, "Can't find constructor for element type " + getId());
+		}
+	}
+
+	@Override
+	protected void computeConstructor() {
+		if (classObject == null) {
+			computeClass();
+		}
+		try {
 			constructor = classObject.getConstructor(IFile.class, IRodinElement.class);
 		} catch (Exception e) {
 			Util.log(e, "Can't find constructor for element type " + getId());

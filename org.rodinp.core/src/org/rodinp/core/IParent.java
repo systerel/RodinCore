@@ -34,6 +34,14 @@ public interface IParent {
 	/**
 	 * Returns the immediate children of this element that are of the given
 	 * type. The order on children is maintained while extracting them.
+	 * <p>
+	 * The actual component type of the returned array is the class that
+	 * corresponds closest to the given element type. For instance, when passing
+	 * <code>IRodinProject.ELEMENT_TYPE</code> as type, the returned array can
+	 * be safely casted to <code>IRodinProject[]</code>. The same applies for
+	 * contributed element types, where the actual component type of the array
+	 * is the class that was declared in the extension point.
+	 * </p>
 	 * 
 	 * @param type
 	 *            type of the children to retrieve
