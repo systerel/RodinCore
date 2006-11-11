@@ -18,9 +18,6 @@ import org.rodinp.core.RodinDBException;
  * This interface tries to mimic ({@link org.eventb.core.seqprover.IProofTree}) 
  * as much as possible.
  * </p>
- * 
- * 
- * 
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -34,11 +31,19 @@ public interface IPRProofTree extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTree"); //$NON-NLS-1$
 
+	/**
+	 * Returns the confidence of this proof tree.
+	 * 
+	 * @return the confidence of this proof tree 
+	 * 			(see {@link org.eventb.core.seqprover.IConfidence})
+	 * @throws RodinDBException 
+	 */
+	int getConfidence() throws RodinDBException;
 
 	/**
 	 * Returns whether or not this proof tree is closed.
 	 * <p>
-	 * This is a shortcut for <code>getConfidence() != IConfidence.PENDING</code>.
+	 * This is a shortcut for <code>getConfidence() <= IConfidence.PENDING</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this proof tree is closed
@@ -46,6 +51,18 @@ public interface IPRProofTree extends IInternalElement {
 	 */
 	boolean isClosed() throws RodinDBException;
 
+	/**
+	 * Returns whether or not this proof tree is attempted.
+	 * <p>
+	 * This is a shortcut for <code>getConfidence() != IConfidence.UNATTEMPTED</code>.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this proof has been attempted
+	 * @throws RodinDBException 
+	 */
+	public boolean proofAttempted() throws RodinDBException;
+
+	
 	/**
 	 * Returns the root node of this proof tree.
 	 * 
@@ -58,7 +75,6 @@ public interface IPRProofTree extends IInternalElement {
 
 	public void setProofTree(IProofTree proofTree) throws RodinDBException;
 
-	public boolean proofAttempted() throws RodinDBException;
 
 	/**
 	 * Returns the dependency information for this proof tree.
@@ -70,14 +86,6 @@ public interface IPRProofTree extends IInternalElement {
 	 */
 	IProofDependencies getProofDependencies() throws RodinDBException;
 
-	/**
-	 * Returns the confidence of this proof tree.
-	 * 
-	 * @return the confidence of this proof tree 
-	 * 			(see {@link org.eventb.core.seqprover.IConfidence})
-	 * @throws RodinDBException 
-	 */
-	int getConfidence() throws RodinDBException;
 
 	boolean isAutomaticallyGenerated() throws RodinDBException;
 

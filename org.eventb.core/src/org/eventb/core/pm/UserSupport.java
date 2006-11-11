@@ -691,13 +691,15 @@ public class UserSupport implements IElementChangedListener,
 				}
 
 			}
-		} else if (element instanceof IPRProofTree) {
+		} 
+		
+		else if (element instanceof IPRProofTree) {
 			IPRProofTree proofTree = (IPRProofTree) element;
 			// IPRSequent prSequent = proofTree.getSequent();
-			IPSstatus prSequent = prFile
+			IPSstatus status = prFile
 					.getStatusOf(proofTree.getElementName());
 
-			ProofState state = getProofState(prSequent);
+			ProofState state = getProofState(status);
 
 			// do nothing if there is no state corresponding to this
 			if (state == null)
@@ -705,8 +707,9 @@ public class UserSupport implements IElementChangedListener,
 
 			if (state.isUninitialised())
 				return;
-
-			if (!proofTree.isAutomaticallyGenerated())
+			
+			// TODO : Son, why is this next check done? Farhad
+			if (! status.isAutoProven())
 				return;
 
 			if (state.isSequentDischarged()) {
@@ -726,36 +729,9 @@ public class UserSupport implements IElementChangedListener,
 				}
 			}
 
-			// else if (state.isProofReusable()) {
-			// state.getProofTree().removeChangeListener(this);
-			// state.proofReuse();
-			// state.getProofTree().addChangeListener(this);
-			// if (state == currentPS) {
-			// UserSupportUtils.debug("Is the current node");
-			// ProofStateDelta newDelta = new ProofStateDelta(
-			// UserSupport.this);
-			// newDelta.setNewProofState(currentPS);
-			// newDelta.addInformation("Current proof has been reused");
-			// fireProofStateDelta(newDelta);
-			// }
-			//
-			// } else {
-			// UserSupportUtils.debug("Cannot be reused");
-			// state.getProofTree().removeChangeListener(this);
-			// state.reloadProofTree();
-			// state.getProofTree().addChangeListener(this);
-			// if (state == currentPS) {
-			// UserSupportUtils.debug("Is the current node");
-			// ProofStateDelta newDelta = new ProofStateDelta(
-			// UserSupport.this);
-			// newDelta.setNewProofState(currentPS);
-			//
-			// newDelta.addInformation("Current proof cannot be reused");
-			// fireProofStateDelta(newDelta);
-			// }
-			// }
-
-		} else if (element instanceof IParent) {
+		} 
+		
+		else if (element instanceof IParent) {
 			for (IRodinElementDelta d : elementChangedDelta
 					.getAffectedChildren()) {
 				processDelta(d, monitor);

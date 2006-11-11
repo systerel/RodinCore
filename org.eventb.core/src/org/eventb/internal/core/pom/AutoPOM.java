@@ -86,8 +86,18 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				if (prProof == null) {
 					prFile.createProofTree(name);
 				}
-								
-				final IPSstatus status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
+				
+				final IPSstatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatusOf(name);
+				IPSstatus status;
+				if (oldStatus == null)
+				{
+					status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
+				}
+				else
+				{
+					oldStatus.copy(psFile, null, null, true, null);
+					status = psFile.getStatusOf(name);
+				}
 				status.updateStatus();
 				
 				monitor.worked(1);

@@ -8,8 +8,6 @@
 
 package org.eventb.core;
 
-import java.util.Map;
-
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -38,18 +36,13 @@ public interface IPRFile extends IRodinFile{
 	
 	
 	/**
-	 * Returns all the proof trees contained in this PR file, indexed according 
-	 * to their name.
-	 * <p>
-	 * The name of a proof tree is identical to the proof obligation (IPRSequent)
-	 * associated to it. In addition
-	 * </p>
+	 * Returns all the proof trees contained in this PR file.
 	 * 
-	 * @return map containing all proof trees in this PR file, indexed by name.
+	 * @return an array containing all proof trees in this PR file.
 	 * 
 	 * @throws RodinDBException
 	 */
-	Map<String,IPRProofTree> getProofTrees() throws RodinDBException;
+	IPRProofTree[] getProofTrees() throws RodinDBException;
 	
 	
 	/**

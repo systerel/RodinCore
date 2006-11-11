@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
-import javax.net.ssl.SSLEngineResult.Status;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -28,7 +26,6 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 import com.b4free.rodin.core.B4freeCore;
 
@@ -95,7 +92,7 @@ public class AutoProver {
 			pm.beginTask(status.getName() + ":", 3);
 			
 			pm.subTask("loading");
-			IPRProofTree proofTree = status.getProofTree();
+			IPRProofTree prProofTree = status.getProofTree();
 //			if (proofTree == null)
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
@@ -104,42 +101,48 @@ public class AutoProver {
 			if ((!status.isProofValid()) || 
 					(status.getProofConfidence() <= IConfidence.PENDING)) {
 				final IPOSequent poSequent = status.getPOSequent();
-				IProofTree tree = ProverFactory.makeProofTree(
+				IProofTree autoProofTree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),
 						poSequent
 				);
 
 				pm.subTask("proving");
-				autoTactic().apply(tree.getRoot(), new ProofMonitor(pm));
+				autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm));
 				pm.worked(1);
 				
 				pm.subTask("saving");
 				// Update the tree if it was discharged
-				if (tree.isClosed()) {
+				if (autoProofTree.isClosed()) {
 					// po.updateProofTree(tree);
-					proofTree.setProofTree(tree);
+					prProofTree.setProofTree(autoProofTree);
 					status.updateStatus();
 					setAutoProven(true,status);
 					// if (proofTree == null) proofTree = po.getProofTree();
-					proofTree.setAutomaticallyGenerated();
+					prProofTree.setAutomaticallyGenerated();
 					prFile.save(null, false);
 					return true;
 				}
 				// If the auto prover made 'some' progress, and no
 				// proof was previously attempted update the proof
-				if (tree.getRoot().hasChildren() && 
+//				if (autoProofTree.getRoot().hasChildren() && 
+//						(
+//								(! prProofTree.proofAttempted()) 
+//								|| (prProofTree.isAutomaticallyGenerated() && !prProofTree.isClosed())
+//						))
+				if (autoProofTree.getRoot().hasChildren() && 
 						(
-								(! proofTree.proofAttempted()) 
-								|| (proofTree.isAutomaticallyGenerated() && !proofTree.isClosed())
-						))
+								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
+								(status.isAutoProven() && !(status.getProofConfidence() > IConfidence.PENDING))
+						))	
+					
 				{
 					// po.updateProofTree(tree);
-					proofTree.setProofTree(tree);
+					prProofTree.setProofTree(autoProofTree);
 					status.updateStatus();
 					setAutoProven(true,status);
-					proofTree.setAutomaticallyGenerated();
+					prProofTree.setAutomaticallyGenerated();
 					
-					((PRProofTree)proofTree).setAutomaticallyGenerated();
+					((PRProofTree)prProofTree).setAutomaticallyGenerated();
 					// in this case no need to save immediately.
 					return true;
 				}

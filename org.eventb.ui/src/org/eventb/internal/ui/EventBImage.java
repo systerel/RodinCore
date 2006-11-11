@@ -18,7 +18,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ICommentedElement;
-import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -276,21 +275,21 @@ public class EventBImage {
 	/**
 	 * Get the image corresponding with a PRSequent
 	 * 
-	 * @param prSequent
+	 * @param status
 	 *            a PRSequent
 	 * @return the image corresponding to the input sequent
-	 * @throws RodinDBException
 	 */
-	public static Image getPRSequentImage(IPSstatus prSequent) {
+	public static Image getPRSequentImage(IPSstatus status) {
 		String base_path = "";
 		String auto = "0";
 
-		final IPRProofTree prProofTree;
+		
+		int confidence;
 		try {
-			prProofTree = prSequent.getProofTree();
+			confidence = status.getProofConfidence();
 		} catch (RodinDBException e) {
-			String message = "Cannot get the proof tree associated with the sequent "
-					+ prSequent.getElementName();
+			String message = "Cannot get the confidence from the status of"
+				+ status.getElementName();
 			if (UIUtils.DEBUG) {
 				System.out.println(message);
 				e.printStackTrace();
@@ -299,16 +298,18 @@ public class EventBImage {
 			return null;
 		}
 
-		if (prProofTree == null || (!prProofTree.exists()))
+		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
+
+		if (!isAttempted)
 			base_path = IEventBSharedImages.IMG_UNATTEMPTED_PATH;
-		else
-		{
-			boolean isAttempted;
+		else {
+			boolean isAutomatic;
 			try {
-				isAttempted = prProofTree.proofAttempted();
+				isAutomatic = status.isAutoProven();
 			} catch (RodinDBException e) {
 				String message = "Cannot check if the proof tree of the sequent "
-					+ prSequent.getElementName() + " is attempted or not";
+					+ status.getElementName()
+					+ " is automatically generated or not";
 				if (UIUtils.DEBUG) {
 					System.out.println(message);
 					e.printStackTrace();
@@ -316,76 +317,45 @@ public class EventBImage {
 				UIUtils.log(e, message);
 				return null;
 			}
-			
-			if (!isAttempted)
-				base_path = IEventBSharedImages.IMG_UNATTEMPTED_PATH;
-			else {
-				int confidence;
-				try {
-					confidence = prProofTree.getConfidence();
-				} catch (RodinDBException e) {
-					String message = "Cannot get the confident level the proof tree of the sequent "
-						+ prSequent.getElementName();
-					if (UIUtils.DEBUG) {
-						System.out.println(message);
-						e.printStackTrace();
-					}
-					UIUtils.log(e, message);
-					return null;
+			if (isAutomatic) {
+				auto = "1";
+			}
+			boolean isProofBroken;
+			try {
+				isProofBroken = (! status.isProofValid());
+			} catch (RodinDBException e) {
+				String message = "Cannot check if the proof tree of the sequent "
+					+ status.getElementName() + " is brocken or not";
+				if (UIUtils.DEBUG) {
+					System.out.println(message);
+					e.printStackTrace();
 				}
-				boolean isAutomatic;
-				try {
-					isAutomatic = prProofTree.isAutomaticallyGenerated();
-				} catch (RodinDBException e) {
-					String message = "Cannot check if the proof tree of the sequent "
-						+ prSequent.getElementName()
-						+ " is automatically generated or not";
-					if (UIUtils.DEBUG) {
-						System.out.println(message);
-						e.printStackTrace();
-					}
-					UIUtils.log(e, message);
-					return null;
-				}
-				if (isAutomatic) {
-					auto = "1";
-				}
-				boolean isProofBroken;
-				try {
-					isProofBroken = (! prSequent.isProofValid());
-				} catch (RodinDBException e) {
-					String message = "Cannot check if the proof tree of the sequent "
-						+ prSequent.getElementName() + " is brocken or not";
-					if (UIUtils.DEBUG) {
-						System.out.println(message);
-						e.printStackTrace();
-					}
-					UIUtils.log(e, message);
-					return null;
-				}
-				if (isProofBroken) {
-					if (confidence == IConfidence.PENDING)
-						base_path = IEventBSharedImages.IMG_PENDING_BROKEN_PATH;
-					else if (confidence <= IConfidence.REVIEWED_MAX)
-						base_path = IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH;
-					else if (confidence <= IConfidence.DISCHARGED_MAX)
-						base_path = IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH;
-				} else {
-					if (confidence == IConfidence.PENDING)
-						base_path = IEventBSharedImages.IMG_PENDING_PATH;
-					else if (confidence <= IConfidence.REVIEWED_MAX)
-						base_path = IEventBSharedImages.IMG_REVIEWED_PATH;
-					else if (confidence <= IConfidence.DISCHARGED_MAX)
-						base_path = IEventBSharedImages.IMG_DISCHARGED_PATH;
-				}
+				UIUtils.log(e, message);
+				return null;
+			}
+			if (isProofBroken) {
+				if (confidence == IConfidence.PENDING)
+					base_path = IEventBSharedImages.IMG_PENDING_BROKEN_PATH;
+				else if (confidence <= IConfidence.REVIEWED_MAX)
+					base_path = IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH;
+				else if (confidence <= IConfidence.DISCHARGED_MAX)
+					base_path = IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH;
+			} else {
+				if (confidence == IConfidence.PENDING)
+					base_path = IEventBSharedImages.IMG_PENDING_PATH;
+				else if (confidence <= IConfidence.REVIEWED_MAX)
+					base_path = IEventBSharedImages.IMG_REVIEWED_PATH;
+				else if (confidence <= IConfidence.DISCHARGED_MAX)
+					base_path = IEventBSharedImages.IMG_DISCHARGED_PATH;
 			}
 		}
-		
+
+
 		// Compute the key
 		// key = "prsequent":pluginID:base_path:overlay
 		// overlay = auto
 		String key = "prsequent:" + base_path + ":" + auto;
-		
+
 		// Return the image if it exists, otherwise create a new image and
 		// register with the registry.
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
@@ -399,7 +369,7 @@ public class EventBImage {
 			image = icon.createImage();
 			registry.put(key, image);
 		}
-		
+
 		return image;
 	}
 }
