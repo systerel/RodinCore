@@ -84,7 +84,7 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
 					IConstant[] constants = ((IContextFile) rodinFile)
-							.getConstants();
+							.getConstants(null);
 					for (int i = 0; i < constants.length; i++) {
 						if (e.getHref().equals(
 								constants[i].getIdentifierString())) {

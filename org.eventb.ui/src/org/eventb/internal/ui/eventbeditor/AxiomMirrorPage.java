@@ -56,7 +56,7 @@ public class AxiomMirrorPage extends EventBMirrorPage implements
 						+ ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((IAxiom) axiom)
-								.getPredicateString());
+								.getPredicateString(null));
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {

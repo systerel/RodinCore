@@ -83,7 +83,7 @@ public class CarrierSetMirrorPage extends EventBMirrorPage implements
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
 					ICarrierSet[] carrierSets = ((IContextFile) rodinFile)
-							.getCarrierSets();
+							.getCarrierSets(null);
 					for (int i = 0; i < carrierSets.length; i++) {
 						if (e.getHref().equals(
 								carrierSets[i].getIdentifierString())) {

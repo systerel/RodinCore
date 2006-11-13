@@ -57,7 +57,7 @@ public class TheoremMirrorPage extends EventBMirrorPage implements
 								.getLabel(null)) + ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((ITheorem) theorems[i])
-								.getPredicateString());
+								.getPredicateString(null));
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {

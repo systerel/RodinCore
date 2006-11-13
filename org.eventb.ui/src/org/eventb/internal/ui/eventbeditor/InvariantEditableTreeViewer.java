@@ -171,8 +171,8 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!inv.getPredicateString().equals(text)) {
-					inv.setPredicateString(text);
+				if (!inv.getPredicateString(null).equals(text)) {
+					inv.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();

@@ -221,7 +221,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 						if (refines.length == 1) {
 							IRefinesMachine refine = (IRefinesMachine) refines[0];
-							String name = refine.getAbstractMachineName();
+							String name = refine.getAbstractMachineName(null);
 							IRodinProject prj = file.getRodinProject();
 							IMachineFile refinedFile = (IMachineFile) prj
 									.getRodinFile(EventBPlugin

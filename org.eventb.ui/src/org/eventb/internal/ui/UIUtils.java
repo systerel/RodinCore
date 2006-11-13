@@ -378,7 +378,7 @@ public class UIUtils {
 									IGuard.ELEMENT_TYPE, grdPrefix + grdIndex,
 									null, pm);
 							grd.setLabel(grdNames[i], pm);
-							grd.setPredicateString(grdPredicates[i]);
+							grd.setPredicateString(grdPredicates[i], null);
 							editor.addNewElement(grd);
 							grdIndex = getFreeElementNameIndex(evt,
 									IGuard.ELEMENT_TYPE, grdPrefix,
@@ -544,14 +544,14 @@ public class UIUtils {
 								null, pm);
 						axm.setLabel(labelPrefix + labelIndex, pm);
 
-						axm.setPredicateString(element + " \u2208 " + name);
+						axm.setPredicateString(element + " \u2208 " + name, null);
 						axmPred += element;
 						counter++;
 						if (counter != elements.size())
 							axmPred += ", ";
 					}
 					axmPred += "}";
-					newAxm.setPredicateString(axmPred);
+					newAxm.setPredicateString(axmPred, null);
 
 					counter = 0;
 					String[] elementsArray = elements
@@ -571,7 +571,7 @@ public class UIUtils {
 											pm);
 							axm.setLabel(labelPrefix + labelIndex, pm);
 							axm.setPredicateString(element + " \u2260 "
-									+ element2);
+									+ element2, null);
 						}
 					}
 

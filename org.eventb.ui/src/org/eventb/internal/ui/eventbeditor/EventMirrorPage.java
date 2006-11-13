@@ -105,7 +105,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 							+ UIUtils.makeHyperlink(guards[j].getElementName())
 							+ ": "
 							+ UIUtils.XMLWrapUp(((IGuard) guards[j])
-									.getPredicateString());
+									.getPredicateString(null));
 					formString = formString + "</li>";
 				}
 
@@ -120,7 +120,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 							+ "<li style=\"text\" value=\"\" bindent=\"40\">";
 					formString = formString
 							+ UIUtils.makeHyperlink(((IAction) actions[j])
-									.getAssignmentString());
+									.getAssignmentString(null));
 					formString = formString + "</li>";
 				}
 				formString = formString
@@ -150,7 +150,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				IRodinFile rodinFile = editor.getRodinInput();
 				try {
-					IEvent[] events = ((IMachineFile) rodinFile).getEvents();
+					IEvent[] events = ((IMachineFile) rodinFile).getEvents(null);
 					for (int i = 0; i < events.length; i++) {
 						if (e.getHref().equals(events[i].getLabel(null))) {
 							editor.edit(events[i]);
@@ -176,7 +176,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 						for (int j = 0; j < actions.length; j++) {
 							if (e.getHref().equals(
 									((IAction) actions[j])
-											.getAssignmentString())) {
+											.getAssignmentString(null))) {
 								editor.edit(actions[j]);
 							}
 						}

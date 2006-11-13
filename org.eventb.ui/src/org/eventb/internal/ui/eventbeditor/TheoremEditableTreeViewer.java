@@ -171,8 +171,8 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 
 		case 1: // Commit content
 			try {
-				if (!thm.getPredicateString().equals(text)) {
-					thm.setPredicateString(text);
+				if (!thm.getPredicateString(null).equals(text)) {
+					thm.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();

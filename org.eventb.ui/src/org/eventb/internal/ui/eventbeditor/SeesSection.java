@@ -287,7 +287,7 @@ public class SeesSection extends SectionPart implements
 							ISeesContext.ELEMENT_TYPE,
 							PrefixSeesContextName.QUALIFIED_NAME,
 							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
-			seen.setSeenContextName(context);
+			seen.setSeenContextName(context, null);
 			// markDirty();
 		} catch (RodinDBException exception) {
 			exception.printStackTrace();
@@ -306,7 +306,7 @@ public class SeesSection extends SectionPart implements
 							ISeesContext.ELEMENT_TYPE,
 							PrefixSeesContextName.QUALIFIED_NAME,
 							PrefixSeesContextName.DEFAULT_PREFIX), null, null);
-			seen.setSeenContextName(context);
+			seen.setSeenContextName(context, null);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -385,7 +385,7 @@ public class SeesSection extends SectionPart implements
 					if (EventBPlugin.getComponentName(context.getElementName())
 							.equals(
 									((ISeesContext) seenContext)
-											.getSeenContextName())) {
+											.getSeenContextName(null))) {
 						found = true;
 						break;
 					}
@@ -414,7 +414,7 @@ public class SeesSection extends SectionPart implements
 				seenContexts = rodinFile
 						.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 				for (IRodinElement seenContext : seenContexts) {
-					if (((ISeesContext) seenContext).getSeenContextName()
+					if (((ISeesContext) seenContext).getSeenContextName(null)
 							.equals(text)) {
 						addButton.setEnabled(false);
 						return;

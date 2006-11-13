@@ -276,7 +276,7 @@ public class EventBEditorUtils {
 										.createInternalElement(
 												IRefinesEvent.ELEMENT_TYPE,
 												name, null, monitor);
-								newRefEvt.setAbstractEventLabel(abs_name);
+								newRefEvt.setAbstractEventLabel(abs_name, null);
 								editor.addNewElement(newRefEvt);
 							}
 
@@ -331,7 +331,7 @@ public class EventBEditorUtils {
 												null, monitor);
 								newWit.setLabel(label, monitor);
 								newWit
-										.setPredicateString(EventBUIPlugin.PRD_DEFAULT);
+										.setPredicateString(EventBUIPlugin.PRD_DEFAULT, null);
 								editor.addNewElement(newWit);
 							}
 
@@ -385,7 +385,7 @@ public class EventBEditorUtils {
 										monitor);
 								newGrd.setLabel(label, monitor);
 								newGrd
-										.setPredicateString(EventBUIPlugin.GRD_DEFAULT);
+										.setPredicateString(EventBUIPlugin.GRD_DEFAULT, null);
 								editor.addNewElement(newGrd);
 							}
 
@@ -533,7 +533,7 @@ public class EventBEditorUtils {
 											null, monitor);
 							newInv.setLabel(label, monitor);
 							newInv
-									.setPredicateString(EventBUIPlugin.INV_DEFAULT);
+									.setPredicateString(EventBUIPlugin.INV_DEFAULT, null);
 							editor.addNewElement(newInv);
 						}
 
@@ -580,7 +580,7 @@ public class EventBEditorUtils {
 											monitor);
 							newThm.setLabel(label, monitor);
 							newThm
-									.setPredicateString(EventBUIPlugin.THM_DEFAULT);
+									.setPredicateString(EventBUIPlugin.THM_DEFAULT, null);
 							editor.addNewElement(newThm);
 						}
 
@@ -688,7 +688,7 @@ public class EventBEditorUtils {
 										editor, newEvt, IGuard.ELEMENT_TYPE,
 										prefix, index + 1);
 								newGrd
-										.setPredicateString(EventBUIPlugin.GRD_DEFAULT);
+										.setPredicateString(EventBUIPlugin.GRD_DEFAULT, null);
 								editor.addNewElement(newGrd);
 							}
 
@@ -765,7 +765,7 @@ public class EventBEditorUtils {
 									IAxiom.ELEMENT_TYPE, name, null, monitor);
 							newAxm.setLabel(label, monitor);
 							newAxm
-									.setPredicateString(EventBUIPlugin.AXM_DEFAULT);
+									.setPredicateString(EventBUIPlugin.AXM_DEFAULT, null);
 							editor.addNewElement(newAxm);
 						}
 
@@ -969,7 +969,7 @@ public class EventBEditorUtils {
 								newInv.setLabel((String) pair.getFirst(),
 										monitor);
 								newInv.setPredicateString((String) pair
-										.getSecond());
+										.getSecond(), null);
 								editor.addNewElement(newInv);
 							}
 						}
@@ -1115,7 +1115,7 @@ public class EventBEditorUtils {
 								newAxm.setLabel((String) pair.getFirst(),
 										monitor);
 								newAxm.setPredicateString((String) pair
-										.getSecond());
+										.getSecond(), null);
 								editor.addNewElement(newAxm);
 							}
 						}
@@ -1186,7 +1186,7 @@ public class EventBEditorUtils {
 						index = UIUtils.getFreeElementNameIndex(rodinFile,
 								IInvariant.ELEMENT_TYPE, prefix, index + 1);
 						newInv.setLabel(name, monitor);
-						newInv.setPredicateString(content);
+						newInv.setPredicateString(content, null);
 						editor.addNewElement(newInv);
 					}
 				}
@@ -1281,7 +1281,7 @@ public class EventBEditorUtils {
 						index = UIUtils.getFreeElementNameIndex(rodinFile,
 								ITheorem.ELEMENT_TYPE, prefix, index + 1);
 						newThm.setLabel(name, monitor);
-						newThm.setPredicateString(content);
+						newThm.setPredicateString(content, null);
 						editor.addNewElement(newThm);
 					}
 				}
@@ -1332,7 +1332,7 @@ public class EventBEditorUtils {
 						index = UIUtils.getFreeElementNameIndex(rodinFile,
 								IAxiom.ELEMENT_TYPE, prefix, index + 1);
 						newAxm.setLabel(name, monitor);
-						newAxm.setPredicateString(content);
+						newAxm.setPredicateString(content, null);
 						editor.addNewElement(newAxm);
 					}
 				}
@@ -1350,7 +1350,7 @@ public class EventBEditorUtils {
 				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 		if (refines.length == 1) {
 			IRefinesMachine refine = (IRefinesMachine) refines[0];
-			String name = refine.getAbstractMachineName();
+			String name = refine.getAbstractMachineName(null);
 			IRodinProject prj = concreteFile.getRodinProject();
 			return prj.getRodinFile(EventBPlugin.getMachineFileName(name));
 		}
@@ -1378,7 +1378,7 @@ public class EventBEditorUtils {
 			} else {
 				abstractElement = abstractFile.getInternalElement(
 						IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-								.getAbstractEventLabel());
+								.getAbstractEventLabel(null));
 			}
 		}
 		return abstractElement;
@@ -1392,7 +1392,7 @@ public class EventBEditorUtils {
 		if (abs_evts.length != 0) {
 			abs_evt = UIUtils.getFirstChildOfTypeWithLabel(abstractFile,
 					IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-							.getAbstractEventLabel());
+							.getAbstractEventLabel(null));
 		} else {
 			// Do nothing at the moment. Should try to get the event with same
 			// name?

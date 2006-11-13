@@ -92,7 +92,7 @@ public class Refines implements IObjectActionDelegate {
 											"internal_"
 													+ PrefixRefinesMachineName.DEFAULT_PREFIX
 													+ 1, null, monitor);
-							refined.setAbstractMachineName(abstractMachineName);
+							refined.setAbstractMachineName(abstractMachineName, null);
 
 							copyChildrenOfType(newFile, machine,
 									ISeesContext.ELEMENT_TYPE, monitor);
@@ -136,7 +136,7 @@ public class Refines implements IObjectActionDelegate {
 													"internal_"
 															+ PrefixRefinesEventName.DEFAULT_PREFIX
 															+ 1, null, monitor);
-									refinesEvent.setAbstractEventLabel(label);
+									refinesEvent.setAbstractEventLabel(label, null);
 								}
 							}
 							newFile.save(null, true);

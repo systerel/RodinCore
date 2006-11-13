@@ -175,10 +175,10 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		case 1: // Commit predicate
 			try {
 				if (EventBEditorUtils.DEBUG)
-					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString()
+					EventBEditorUtils.debug("Commit content: " + axm.getPredicateString(null)
 							+ " to be : " + text);
-				if (!axm.getPredicateString().equals(text)) {
-					axm.setPredicateString(text);
+				if (!axm.getPredicateString(null).equals(text)) {
+					axm.setPredicateString(text, null);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();

@@ -251,8 +251,8 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					}
 				} else if (element instanceof ISeesContext) {
 					ISeesContext seesContext = (ISeesContext) element;
-					if (!seesContext.getSeenContextName().equals(text)) {
-						seesContext.setSeenContextName(text);
+					if (!seesContext.getSeenContextName(null).equals(text)) {
+						seesContext.setSeenContextName(text, null);
 					}
 				} else if (element instanceof IExtendsContext) {
 					IExtendsContext extendsContext = (IExtendsContext) element;
@@ -261,13 +261,13 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					}
 				} else if (element instanceof IRefinesMachine) {
 					IRefinesMachine refinesMachine = (IRefinesMachine) element;
-					if (!refinesMachine.getAbstractMachineName().equals(text)) {
-						refinesMachine.setAbstractMachineName(text);
+					if (!refinesMachine.getAbstractMachineName(null).equals(text)) {
+						refinesMachine.setAbstractMachineName(text, null);
 					}
 				} else if (element instanceof IRefinesEvent) {
 					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
-						refinesEvent.setAbstractEventLabel(text);
+					if (!refinesEvent.getAbstractEventLabel(null).equals(text)) {
+						refinesEvent.setAbstractEventLabel(text, null);
 					}
 				}
 
@@ -281,17 +281,17 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (element instanceof IPredicateElement) {
 					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString().equals(text)) {
-						predicateElement.setPredicateString(text);
+					if (!predicateElement.getPredicateString(null).equals(text)) {
+						predicateElement.setPredicateString(text, null);
 					}
 				} else if (element instanceof IAssignmentElement) {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString().equals(text)) {
+					if (!assignmentElement.getAssignmentString(null).equals(text)) {
 						assignmentElement.setAssignmentString(text);
 					}
 				} else if (element instanceof IExpressionElement) {
 					IExpressionElement expressionElement = (IExpressionElement) element;
-					if (!expressionElement.getExpressionString().equals(text)) {
+					if (!expressionElement.getExpressionString(null).equals(text)) {
 						expressionElement.setExpressionString(text);
 					}
 				}

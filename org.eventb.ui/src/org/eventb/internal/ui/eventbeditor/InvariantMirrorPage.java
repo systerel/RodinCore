@@ -57,7 +57,7 @@ public class InvariantMirrorPage extends EventBMirrorPage implements
 								.getLabel(null)) + ": ";
 				formString = formString
 						+ UIUtils.XMLWrapUp(((IInvariant) invariants[i])
-								.getPredicateString());
+								.getPredicateString(null));
 				formString = formString + "</li>";
 			}
 		} catch (RodinDBException e) {

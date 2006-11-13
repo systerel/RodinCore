@@ -328,7 +328,7 @@ public class RefinesSection extends SectionPart implements
 																	PrefixRefinesMachineName.DEFAULT_PREFIX),
 													null, monitor);
 
-									refined.setAbstractMachineName(machine);
+									refined.setAbstractMachineName(machine, null);
 								}
 							}, null);
 				} catch (RodinDBException exception) {
@@ -340,8 +340,8 @@ public class RefinesSection extends SectionPart implements
 				}
 			} else { // Change the element
 				try {
-					if (!(refined.getAbstractMachineName().equals(machine))) {
-						refined.setAbstractMachineName(machine);
+					if (!(refined.getAbstractMachineName(null).equals(machine))) {
+						refined.setAbstractMachineName(machine, null);
 					}
 				} catch (RodinDBException exception) {
 					exception.printStackTrace();
@@ -438,7 +438,7 @@ public class RefinesSection extends SectionPart implements
 			if (refinedMachines.length != 0) {
 				refined = (IRefinesMachine) refinedMachines[0];
 				try {
-					machineCombo.setText(refined.getAbstractMachineName());
+					machineCombo.setText(refined.getAbstractMachineName(null));
 					// contextText.setText(refined.getContents());
 				} catch (RodinDBException e) {
 					e.printStackTrace();
@@ -543,7 +543,7 @@ public class RefinesSection extends SectionPart implements
 				// nullButton.setSelection(false);
 				try {
 					machineCombo.setText(((IRefinesMachine) element)
-							.getAbstractMachineName());
+							.getAbstractMachineName(null));
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -553,7 +553,7 @@ public class RefinesSection extends SectionPart implements
 					String machine;
 					try {
 						machine = ((IRefinesMachine) element)
-								.getAbstractMachineName();
+								.getAbstractMachineName(null);
 						if (!machineCombo.getText().equals(machine)) {
 							machineCombo.setText(machine);
 						}

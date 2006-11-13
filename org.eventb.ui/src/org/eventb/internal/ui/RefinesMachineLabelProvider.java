@@ -9,7 +9,7 @@ public class RefinesMachineLabelProvider implements IElementLabelProvider {
 	public String getLabel(Object obj) {
 		if (obj instanceof IRefinesMachine) {
 			try {
-				return ((IRefinesMachine) obj).getAbstractMachineName();
+				return ((IRefinesMachine) obj).getAbstractMachineName(null);
 			} catch (RodinDBException e) {
 				if (UIUtils.DEBUG)
 					e.printStackTrace();
