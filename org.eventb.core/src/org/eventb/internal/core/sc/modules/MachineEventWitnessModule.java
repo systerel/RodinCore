@@ -70,7 +70,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 
 		IEvent event = (IEvent) element;
 		
-		IWitness[] witnesses = event.getWitnesses();
+		IWitness[] witnesses = event.getWitnesses(null);
 		
 		Predicate[] predicates = new Predicate[witnesses.length];
 		
@@ -168,7 +168,7 @@ public class MachineEventWitnessModule extends PredicateModule {
 					null, 
 					monitor);
 		scWitness.setLabel(label, monitor);
-		scWitness.setPredicate(predicate);
+		scWitness.setPredicate(predicate, null);
 		scWitness.setSource(source, monitor);
 	}
 

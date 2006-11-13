@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -34,8 +35,23 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @return the string representation of the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAssignmentString(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	String getAssignmentString()
+			throws RodinDBException;
+
+	/**
+	 * Returns the assignment string contained in this element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the string representation of the assignment of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getAssignmentString(IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -47,8 +63,25 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAssignment(FormulaFactory,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	Assignment getAssignment(FormulaFactory factory)
+			throws RodinDBException;
+
+	/**
+	 * Returns the untyped assignment contained in this element.
+	 * 
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the assignment of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	Assignment getAssignment(FormulaFactory factory, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -56,15 +89,33 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
-	 * 
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * 
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAssignment(FormulaFactory,ITypeEnvironment,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv)
+			throws RodinDBException;
+
+	/**
+	 * Returns the typed assignment contained in this element.
+	 * 
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * @param typenv
+	 *            the type environment to use for building the result
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the assignment of this element
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -74,7 +125,22 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 *            the assignment to set (must be type-checked)
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAssignment(Assignment,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAssignment(Assignment assignment) throws RodinDBException;
+
+	/**
+	 * Sets the assignment contained in this element.
+	 * 
+	 * @param assignment
+	 *            the assignment to set (must be type-checked)
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setAssignment(Assignment assignment, IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
@@ -15,15 +16,15 @@ import org.rodinp.core.RodinCore;
  * Common protocol for Event-B carrier sets.
  * <p>
  * A carrier set has a name that is accessed and manipulated via
- * {@link org.eventb.core.IIdentifierElement}. This interface itself does not
+ * {@link IIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eventb.core.IIdentifierElement#getIdentifierString()
- * @see org.eventb.core.IIdentifierElement#setIdentifierString(String)
+ * @see IIdentifierElement#getIdentifierString(IProgressMonitor)
+ * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
  */

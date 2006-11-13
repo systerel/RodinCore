@@ -8,7 +8,7 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IInternalElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -32,7 +32,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCRefinesMachine extends ITraceableElement, IInternalElement {
+public interface ISCRefinesMachine extends ITraceableElement {
 	
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scRefinesMachine"); //$NON-NLS-1$
@@ -43,8 +43,22 @@ public interface ISCRefinesMachine extends ITraceableElement, IInternalElement {
 	 * @return the abstract SC machine file
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractSCMachine(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
+
+	/**
+	 * Returns the abstract SC machine file introduced by this refines clause.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the abstract SC machine file
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.
@@ -53,7 +67,22 @@ public interface ISCRefinesMachine extends ITraceableElement, IInternalElement {
 	 *            the abstract machine file
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAbstractSCMachine(ISCMachineFile,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAbstractSCMachine(ISCMachineFile abstractSCMachine) throws RodinDBException;
+
+	/**
+	 * Sets the abstract SC machine file introduced by this refines clause.
+	 * 
+	 * @param abstractSCMachine
+	 *            the abstract machine file
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -30,6 +30,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public abstract class IdentifierElement extends InternalElement
 		implements IIdentifierElement {
 	

@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -27,6 +28,8 @@ import org.rodinp.core.RodinDBException;
 public interface IIdentifierElement extends IInternalElement {
 
 	/**
+	 * This method is deprecated; use <code>getIdentifierString(IProgressMonitor)</code> instead.
+	 * 
 	 * Returns the string representation of the identifier contained in this
 	 * element.
 	 * 
@@ -34,9 +37,12 @@ public interface IIdentifierElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	String getIdentifierString() throws RodinDBException;
 
 	/**
+	 * This method is deprecated; use <code>setIdentifierString(String,IProgressMonitor)</code> instead.
+	 * 
 	 * Sets the string representation of the identifier contained in this
 	 * element.
 	 * 
@@ -45,6 +51,34 @@ public interface IIdentifierElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	void setIdentifierString(String identifier) throws RodinDBException;
+
+	/**
+	 * Returns the string representation of the identifier contained in this
+	 * element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the identifier of this element as a string
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getIdentifierString(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the string representation of the identifier contained in this
+	 * element.
+	 * 
+	 * @param identifier
+	 *            the string representation of the identifier
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setIdentifierString(String identifier, IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -36,17 +36,23 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-public interface IEvent extends ICommentedElement, ILabeledElement, IEventConvergence {
+public interface IEvent extends ICommentedElement, ILabeledElement, IConvergenceElement {
 
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".event"); //$NON-NLS-1$
 	
+	/**
+	 * The label of the initialisation event.
+	 */
 	String INITIALISATION = "INITIALISATION";
 
 	/**
 	 * Returns whether the event is inherited, that is whether it is
 	 * automatically generated and maintained.
 	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return <code>true</code> if the event is inherited.
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
@@ -60,6 +66,9 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * </p>
 	 * @param inherited the new value specifying whether this event id
 	 * interited or not.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database, or
 	 * if the event has already children and it is attempted to specify it as inherited.
 	 */
@@ -71,8 +80,21 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * @return an array of all refines clauses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getRefinesClauses(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IRefinesEvent[] getRefinesClauses() throws RodinDBException;
+
+	/**
+	 * Returns an array of all refines clauses of this event.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all refines clauses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IRefinesEvent[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all (local) variables of this event.
@@ -80,8 +102,21 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * @return an array of all variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getVariables(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IVariable[] getVariables() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all (local) variables of this event.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all variables
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array of all witnesses of this event.
@@ -89,8 +124,21 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * @return an array of all witnesses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getWitnesses(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IWitness[] getWitnesses() throws RodinDBException;
+
+	/**
+	 * Returns an array of all witnesses of this event.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all witnesses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IWitness[] getWitnesses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all guards of this event.
@@ -98,8 +146,22 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * @return an array of all guards
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getGuards(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IGuard[] getGuards() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all guards of this event.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return an array of all guards
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IGuard[] getGuards(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all actions of this event.
@@ -107,7 +169,20 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IEventConver
 	 * @return an array of all actions
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getActions(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IAction[] getActions() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all actions of this event.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all actions
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IAction[] getActions(IProgressMonitor monitor) throws RodinDBException;
 
 }

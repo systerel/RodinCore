@@ -109,7 +109,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 				(IPOPredicate) set.createInternalElement(
 						IPOPredicate.ELEMENT_TYPE, 
 						PRD_NAME_PREFIX + index++, null, monitor);
-			predicate.setPredicateString(predicateTable[k].getPredicateString(), monitor);
+			predicate.setPredicateString(predicateTable[k].getPredicateString(null), monitor);
 			predicate.setSource(
 					((ITraceableElement) predicateTable[k]).getSource(monitor), monitor);
 		}

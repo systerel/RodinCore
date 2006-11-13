@@ -8,6 +8,8 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -32,22 +34,28 @@ import org.rodinp.core.RodinDBException;
  *
  * @author Laurent Voisin
  */
-public abstract class SCIdentifierElement extends SCTraceableElement
+public abstract class SCIdentifierElement extends EventBElement
 		implements ISCIdentifierElement {
 
 	/* (non-Javadoc)
-	 * @see org.eventb.core.ISCIdentifierElement#getIdentifierName()
+	 * @see org.eventb.core.ISCIdentifierElement#getIdentifierString()
 	 */
-	public String getIdentifierName() throws RodinDBException {
+	@Override
+	public String getIdentifierString(IProgressMonitor monitor) throws RodinDBException {
 		return getElementName();
 	}
 
+	@Deprecated
+	public String getIdentifierName() throws RodinDBException {
+		return getElementName();
+	}
 	public SCIdentifierElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
 	
-	public Type getType(FormulaFactory factory) throws RodinDBException {
-		String contents = getContents();
+	public Type getType(FormulaFactory factory, IProgressMonitor monitor) 
+	throws RodinDBException {
+		String contents = getStringAttribute(EventBAttributes.TYPE_ATTRIBUTE, monitor);
 		IParseResult parserResult = factory.parseType(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -58,14 +66,24 @@ public abstract class SCIdentifierElement extends SCTraceableElement
 		return parserResult.getParsedType();
 	}
 
-	public void setType(Type type) throws RodinDBException {
-		setContents(type.toString());
+	@Deprecated
+	public Type getType(FormulaFactory factory) throws RodinDBException {
+		return getType(factory, null);
+	}
+	
+	public void setType(Type type, IProgressMonitor monitor) throws RodinDBException {
+		setStringAttribute(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
 	}
 
-	public FreeIdentifier getIdentifier(FormulaFactory factory)
+	@Deprecated
+	public void setType(Type type) throws RodinDBException {
+		setType(type, null);
+	}
+
+	public FreeIdentifier getIdentifier(FormulaFactory factory, IProgressMonitor monitor)
 			throws RodinDBException {
 
-		final Type type = getType(factory);
+		final Type type = getType(factory, null);
 		final String myName = getElementName();
 		if (! factory.isValidIdentifierName(myName)) {
 			throw Util.newRodinDBException(
@@ -75,6 +93,11 @@ public abstract class SCIdentifierElement extends SCTraceableElement
 		}
 		// TODO enquire about what source location to put
 		return factory.makeFreeIdentifier(getElementName(), null, type);
+	}
+	
+	@Deprecated
+	public FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException {
+		return getIdentifier(factory, null);
 	}
 
 }

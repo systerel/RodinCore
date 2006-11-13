@@ -31,7 +31,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventConvergence;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -151,7 +151,7 @@ public abstract class BasicTest extends TestCase {
 			IAxiom axiom = 
 				(IAxiom) rodinFile.createInternalElement(IAxiom.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
-			axiom.setPredicateString(axioms[i]);
+			axiom.setPredicateString(axioms[i], null);
 			axiom.setLabel(names[i], null);
 		}
 	}
@@ -179,7 +179,7 @@ public abstract class BasicTest extends TestCase {
 		IRefinesEvent refines = 
 			(IRefinesEvent) event.createInternalElement(IRefinesEvent.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
-		refines.setAbstractEventLabel(name);
+		refines.setAbstractEventLabel(name, null);
 	}
 
 	public static void addEventWitnesses(IEvent event, String[] labels, String[] predicates) throws RodinDBException {
@@ -187,7 +187,7 @@ public abstract class BasicTest extends TestCase {
 		for (int i=0; i<labels.length; i++) {
 			IWitness witness = (IWitness) event.createInternalElement(IWitness.ELEMENT_TYPE, getUniqueName(), null, null);
 			witness.setLabel(labels[i], null);
-			witness.setPredicateString(predicates[i]);
+			witness.setPredicateString(predicates[i], null);
 		}
 	}
 
@@ -204,7 +204,7 @@ public abstract class BasicTest extends TestCase {
 					getUniqueName(), null, null);
 		event.setLabel(name, null);
 		event.setInherited(false, null);
-		event.setConvergence(IEventConvergence.ORDINARY, null);
+		event.setConvergence(IConvergenceElement.ORDINARY, null);
 		for(int i=0; i<vars.length; i++) {
 			IVariable variable = 
 				(IVariable) event.createInternalElement(IVariable.ELEMENT_TYPE, 
@@ -216,7 +216,7 @@ public abstract class BasicTest extends TestCase {
 			IGuard guard = 
 				(IGuard) event.createInternalElement(IGuard.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			guard.setPredicateString(guards[i]);
+			guard.setPredicateString(guards[i], null);
 			guard.setLabel(guardNames[i], null);
 		}
 		for(int j=0; j<actions.length; j++) {
@@ -241,7 +241,7 @@ public abstract class BasicTest extends TestCase {
 					getUniqueName(), null, null);
 		event.setLabel(name, null);
 		event.setInherited(true, null);
-		event.setConvergence(IEventConvergence.ORDINARY, null);
+		event.setConvergence(IConvergenceElement.ORDINARY, null);
 		return event;
 		
 	}
@@ -255,27 +255,27 @@ public abstract class BasicTest extends TestCase {
 	}
 	
 	public static void setOrdinary(IEvent event) throws RodinDBException {
-		setConvergence(event, IEventConvergence.ORDINARY);
+		setConvergence(event, IConvergenceElement.ORDINARY);
 	}
 
 	public static void setAnticipated(IEvent event) throws RodinDBException {
-		setConvergence(event, IEventConvergence.ANTICIPATED);
+		setConvergence(event, IConvergenceElement.ANTICIPATED);
 	}
 
 	public static void setConvergent(IEvent event) throws RodinDBException {
-		setConvergence(event, IEventConvergence.CONVERGENT);
+		setConvergence(event, IConvergenceElement.CONVERGENT);
 	}
 
 	public static void isOrdinary(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be ordinary", IEventConvergence.ORDINARY, getConvergence(event));
+		assertEquals("event should be ordinary", IConvergenceElement.ORDINARY, getConvergence(event));
 	}
 
 	public static void isAnticipated(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be anticipated", IEventConvergence.ANTICIPATED, getConvergence(event));
+		assertEquals("event should be anticipated", IConvergenceElement.ANTICIPATED, getConvergence(event));
 	}
 
 	public static void isConvergent(ISCEvent event) throws RodinDBException {
-		assertEquals("event should be convergent", IEventConvergence.CONVERGENT, getConvergence(event));
+		assertEquals("event should be convergent", IConvergenceElement.CONVERGENT, getConvergence(event));
 	}
 
 	public static void addInvariants(IRodinFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
@@ -283,7 +283,7 @@ public abstract class BasicTest extends TestCase {
 			IInvariant invariant = 
 				(IInvariant) rodinFile.createInternalElement(IInvariant.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			invariant.setPredicateString(invariants[i]);
+			invariant.setPredicateString(invariants[i], null);
 			invariant.setLabel(names[i], null);
 		}
 	}
@@ -299,14 +299,14 @@ public abstract class BasicTest extends TestCase {
 		ISeesContext sees = 
 			(ISeesContext) rodinFile.createInternalElement(ISeesContext.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
-		sees.setSeenContextName(name);
+		sees.setSeenContextName(name, null);
 	}
 
 	public static void addMachineRefines(IRodinFile rodinFile, String name) throws RodinDBException {
 		IRefinesMachine refines = 
 			(IRefinesMachine) rodinFile.createInternalElement(IRefinesMachine.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
-		refines.setAbstractMachineName(name);
+		refines.setAbstractMachineName(name, null);
 	}
 
 	public static void addContextExtends(IRodinFile rodinFile, String name) throws RodinDBException {
@@ -321,7 +321,7 @@ public abstract class BasicTest extends TestCase {
 			ITheorem theorem = 
 				(ITheorem) rodinFile.createInternalElement(ITheorem.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			theorem.setPredicateString(theorems[i]);
+			theorem.setPredicateString(theorems[i], null);
 			theorem.setLabel(names[i], null);
 		}
 	}
@@ -346,14 +346,14 @@ public abstract class BasicTest extends TestCase {
 	public Set<String> getIdentifierNameSet(ISCIdentifierElement[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCIdentifierElement element : elements)
-			names.add(element.getIdentifierName());
+			names.add(element.getIdentifierString(null));
 		return names;
 	}
 
 	public Set<String> getRefinedNameSet(ISCRefinesEvent[] elements) throws RodinDBException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCRefinesEvent element : elements)
-			names.add(element.getAbstractSCEvent().getLabel(null));
+			names.add(element.getAbstractSCEvent(null).getLabel(null));
 		return names;
 	}
 
@@ -367,21 +367,21 @@ public abstract class BasicTest extends TestCase {
 	public Hashtable<String, String> getActionTable(ISCAction[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCAction action : elements)
-			table.put(action.getLabel(null), action.getAssignmentString());
+			table.put(action.getLabel(null), action.getAssignmentString(null));
 		return table;
 	}
 
 	public Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCPredicateElement predicate : elements)
-			table.put(((ILabeledElement) predicate).getLabel(null), predicate.getPredicateString());
+			table.put(((ILabeledElement) predicate).getLabel(null), predicate.getPredicateString(null));
 		return table;
 	}
 
 	public Set<String> getSCPredicateSet(ISCPredicateElement[] elements) throws RodinDBException {
 		HashSet<String> predicates = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCPredicateElement element : elements)
-			predicates.add(element.getPredicateString());
+			predicates.add(element.getPredicateString(null));
 		return predicates;
 	}
 
@@ -455,19 +455,19 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void numberOfAxioms(ISCContextFile file, int num) throws RodinDBException {
-		ISCAxiom[] axioms = file.getSCAxioms();
+		ISCAxiom[] axioms = file.getSCAxioms(null);
 		
 		assertEquals("wrong number of axioms", num, axioms.length);
 	}
 
 	protected void numberOfInvariants(ISCMachineFile file, int num) throws RodinDBException {
-		ISCInvariant[] invariants = file.getSCInvariants();
+		ISCInvariant[] invariants = file.getSCInvariants(null);
 		
 		assertEquals("wrong number of invariants", num, invariants.length);
 	}
 
 	protected void containsGuards(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCGuard[] guards = event.getSCGuards();
+		ISCGuard[] guards = event.getSCGuards(null);
 		
 		assertEquals("wrong number of guards", strings.length, guards.length);
 		
@@ -479,7 +479,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsWitnesses(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCWitness[] witnesses = event.getSCWitnesses();
+		ISCWitness[] witnesses = event.getSCWitnesses(null);
 		
 		assertEquals("wrong number of witnesses", strings.length, witnesses.length);
 		
@@ -491,7 +491,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsAxioms(ISCContext context, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCAxiom[] axioms = context.getSCAxioms();
+		ISCAxiom[] axioms = context.getSCAxioms(null);
 		
 		assertEquals("wrong number of axioms", strings.length, axioms.length);
 		
@@ -503,13 +503,13 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsTheorems(ISCContextFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCTheorem[] theorems = file.getSCTheorems();
+		ISCTheorem[] theorems = file.getSCTheorems(null);
 		
 		containsTheorems(theorems, environment, labels, strings);
 	}
 
 	protected void containsTheorems(ISCMachineFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCTheorem[] theorems = file.getSCTheorems();
+		ISCTheorem[] theorems = file.getSCTheorems(null);
 		
 		containsTheorems(theorems, environment, labels, strings);
 	}
@@ -525,7 +525,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsInvariants(ISCMachineFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCInvariant[] invariants = file.getSCInvariants();
+		ISCInvariant[] invariants = file.getSCInvariants(null);
 		
 		assertEquals("wrong number of invariant", strings.length, invariants.length);
 		
@@ -537,14 +537,14 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected ISCInternalContext[] getInternalContexts(ISCContextFile file, int num) throws RodinDBException {
-		ISCInternalContext[] contexts = file.getAbstractSCContexts();
+		ISCInternalContext[] contexts = file.getAbstractSCContexts(null);
 		
 		assertEquals("wrong number of internal contexts", num, contexts.length);
 		return contexts;
 	}
 
 	protected ISCEvent[] getSCEvents(ISCMachineFile file, String...strings) throws RodinDBException {
-		ISCEvent[] events = file.getSCEvents();
+		ISCEvent[] events = file.getSCEvents(null);
 		
 		assertEquals("wrong number of events", strings.length, events.length);
 		
@@ -560,14 +560,14 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected ISCInternalContext[] getInternalContexts(ISCMachineFile file, int num) throws RodinDBException {
-		ISCInternalContext[] contexts = file.getSCInternalContexts();
+		ISCInternalContext[] contexts = file.getSCSeenContexts(null);
 		
 		assertEquals("wrong number of internal contexts", num, contexts.length);
 		return contexts;
 	}
 
 	protected void containsConstants(ISCContext context, String... strings) throws RodinDBException {
-		ISCConstant[] constants = context.getSCConstants();
+		ISCConstant[] constants = context.getSCConstants(null);
 		
 		assertEquals("wrong number of constants", strings.length, constants.length);
 		
@@ -581,7 +581,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsEvents(ISCMachineFile file, String... strings) throws RodinDBException {
-		ISCEvent[] events = file.getSCEvents();
+		ISCEvent[] events = file.getSCEvents(null);
 		
 		assertEquals("wrong number of events", strings.length, events.length);
 		
@@ -595,7 +595,7 @@ public abstract class BasicTest extends TestCase {
 	}
 	
 	protected void containsActions(ISCEvent event, ITypeEnvironment environment, String[] actionNames, String[] actions) throws RodinDBException {
-		ISCAction[] acts =  event.getSCActions();
+		ISCAction[] acts =  event.getSCActions(null);
 		
 		assertEquals("wrong number of actions", actions.length, acts.length);
 		
@@ -626,7 +626,7 @@ public abstract class BasicTest extends TestCase {
 	}
 			
 	protected void containsVariables(ISCEvent event, String... strings) throws RodinDBException {
-		ISCVariable[] variables = event.getSCVariables();
+		ISCVariable[] variables = event.getSCVariables(null);
 		
 		assertEquals("wrong number of variables", strings.length, variables.length);
 		
@@ -651,7 +651,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {
-		ISCRefinesEvent[] variables = event.getSCRefinesClauses();
+		ISCRefinesEvent[] variables = event.getSCRefinesClauses(null);
 		
 		assertEquals("wrong number of refines clauses", strings.length, variables.length);
 		
@@ -665,7 +665,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected void containsVariables(ISCMachineFile file, String... strings) throws RodinDBException {
-		ISCVariable[] variables = file.getSCVariables();
+		ISCVariable[] variables = file.getSCVariables(null);
 		
 		assertEquals("wrong number of variables", strings.length, variables.length);
 		
@@ -680,7 +680,7 @@ public abstract class BasicTest extends TestCase {
 
 	protected void containsVariant(ISCMachineFile file, ITypeEnvironment environment, String... strings) throws RodinDBException {
 		assert strings.length <= 1;
-		ISCVariant variant = file.getSCVariant();
+		ISCVariant variant = file.getSCVariant(null);
 		
 		
 		
@@ -689,14 +689,14 @@ public abstract class BasicTest extends TestCase {
 		if (strings.length == 0)
 			return;
 		
-		String vs = variant.getExpressionString();
+		String vs = variant.getExpressionString(null);
 		String exp = getNormalizedExpression(strings[0], environment);
 				
 		assertEquals("wrong variant", exp, vs);
 	}
 
 	protected void containsCarrierSets(ISCContext context, String... strings) throws RodinDBException {
-		ISCCarrierSet[] sets = context.getSCCarrierSets();
+		ISCCarrierSet[] sets = context.getSCCarrierSets(null);
 		
 		assertEquals("wrong number of constants", strings.length, sets.length);
 		

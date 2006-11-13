@@ -101,7 +101,7 @@ public class MachineRefinesModule extends ProcessorModule {
 		ISCRefinesMachine scRefinesMachine =
 			(ISCRefinesMachine) target.createInternalElement(
 					ISCRefinesMachine.ELEMENT_TYPE, "REF", null, monitor);
-		scRefinesMachine.setAbstractSCMachine(scMachineFile);
+		scRefinesMachine.setAbstractSCMachine(scMachineFile, null);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class MachineRefinesModule extends ProcessorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCEvent[] events = scMachineFile.getSCEvents();
+		ISCEvent[] events = scMachineFile.getSCEvents(null);
 		
 		for (ISCEvent event : events) {
 			
@@ -153,7 +153,7 @@ public class MachineRefinesModule extends ProcessorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCInternalContexts();
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(null);
 		
 		for (ISCInternalContext context : contexts) {
 			
@@ -161,7 +161,7 @@ public class MachineRefinesModule extends ProcessorModule {
 			
 			contextTable.addContext(component, context);
 			
-			ISCCarrierSet[] sets = context.getSCCarrierSets();
+			ISCCarrierSet[] sets = context.getSCCarrierSets(null);
 			
 			for (ISCCarrierSet set : sets) {
 				IIdentifierSymbolInfo symbolInfo =
@@ -174,7 +174,7 @@ public class MachineRefinesModule extends ProcessorModule {
 				symbolInfo.setImmutable();
 			}
 			
-			ISCConstant[] constants = context.getSCConstants();
+			ISCConstant[] constants = context.getSCConstants(null);
 			
 			for (ISCConstant constant : constants) {
 				IIdentifierSymbolInfo symbolInfo =
@@ -196,7 +196,7 @@ public class MachineRefinesModule extends ProcessorModule {
 			FormulaFactory factory, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		ISCVariable[] variables = scMachineFile.getSCVariables();
+		ISCVariable[] variables = scMachineFile.getSCVariables(null);
 		
 		if (variables.length == 0)
 			return;
@@ -225,13 +225,13 @@ public class MachineRefinesModule extends ProcessorModule {
 			FormulaFactory factory,
 			String component) throws CoreException {
 		
-		String name = identifier.getIdentifierName();
+		String name = identifier.getIdentifierString(null);
 		
 //		this condition cannot be true:
 //		if (identifierSymbolTable.containsKey(name))
 //			return;
 
-		Type type = identifier.getType(factory);
+		Type type = identifier.getType(factory, null);
 		
 		IIdentifierSymbolInfo symbolInfo = 
 			SymbolInfoFactory.createIdentifierSymbolInfo(name, identifier, pointerElement, component);
@@ -284,11 +284,11 @@ public class MachineRefinesModule extends ProcessorModule {
 	private FreeIdentifier[] fetchEventVariables(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCVariable[] variables = event.getSCVariables();
+		ISCVariable[] variables = event.getSCVariables(null);
 		FreeIdentifier[] identifiers = new FreeIdentifier[variables.length];
 		
 		for (int i=0; i<variables.length; i++) {
-			identifiers[i] = variables[i].getIdentifier(factory);
+			identifiers[i] = variables[i].getIdentifier(factory, null);
 		}
 		
 		return identifiers;
@@ -297,11 +297,11 @@ public class MachineRefinesModule extends ProcessorModule {
 	private Predicate[] fetchEventGuards(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCGuard[] guards = event.getSCGuards();
+		ISCGuard[] guards = event.getSCGuards(null);
 		Predicate[] predicates = new Predicate[guards.length];
 		
 		for (int i=0; i<guards.length; i++) {
-			predicates[i] = guards[i].getPredicate(factory);
+			predicates[i] = guards[i].getPredicate(factory, (IProgressMonitor) null);
 		}
 		return predicates;
 	}
@@ -309,11 +309,11 @@ public class MachineRefinesModule extends ProcessorModule {
 	private Assignment[] fetchEventActions(
 			ISCEvent event, 
 			FormulaFactory factory) throws CoreException {
-		ISCAction[] actions = event.getSCActions();
+		ISCAction[] actions = event.getSCActions(null);
 		Assignment[] assignments = new Assignment[actions.length];
 		
 		for (int i=0; i<actions.length; i++) {
-			assignments[i] = actions[i].getAssignment(factory);
+			assignments[i] = actions[i].getAssignment(factory, (IProgressMonitor) null);
 		}
 		return assignments;
 	}
@@ -336,10 +336,10 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		refinesMachine = machineFile.getRefinesClause();
+		refinesMachine = machineFile.getRefinesClause(null);
 		
 		scMachineFile = 
-			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine();
+			(refinesMachine == null) ? null : refinesMachine.getAbstractSCMachine(null);
 		
 		if (scMachineFile != null && !scMachineFile.exists()) {
 			createProblemMarker(

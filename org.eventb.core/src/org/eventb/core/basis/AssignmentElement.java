@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAssignmentElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -26,6 +27,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public abstract class AssignmentElement extends LabeledElement
 		implements IAssignmentElement {
 
@@ -39,7 +41,7 @@ public abstract class AssignmentElement extends LabeledElement
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IAssignmentElement#getAssignment()
 	 */
-	public String getAssignmentString() throws RodinDBException {
+	public String getAssignmentString(IProgressMonitor monitor) throws RodinDBException {
 		return getContents();
 	}
 

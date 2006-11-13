@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISCAxiom;
@@ -53,20 +54,41 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 		return ELEMENT_TYPE;
 	}
 
-	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		return SCContextUtil.getSCCarrierSets(this);
+	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) 
+	throws RodinDBException {
+		return SCContextUtil.getSCCarrierSets(this, monitor);
 	}
 	
+	@Deprecated
+	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
+		return getSCCarrierSets(null);
+	}
+	
+	public ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCConstants(this, monitor);
+	}
+
+	@Deprecated
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		return SCContextUtil.getSCConstants(this);
+		return getSCConstants(null);
 	}
 
+	public ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCAxioms(this, monitor);
+	}
+
+	@Deprecated
 	public ISCAxiom[] getSCAxioms() throws RodinDBException {
-		return SCContextUtil.getSCAxioms(this);
+		return getSCAxioms(null);
 	}
 
+	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCTheorems(this, monitor);
+	}
+
+	@Deprecated
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return SCContextUtil.getSCTheorems(this);
+		return getSCTheorems(null);
 	}
 
 	public IContextFile getContextFile() {
@@ -76,11 +98,16 @@ public class SCContextFile extends RodinFile implements ISCContextFile {
 		return (IContextFile) project.getRodinFile(uName);
 	}
 
-	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
+	public ISCInternalContext[] getAbstractSCContexts(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCInternalContext.ELEMENT_TYPE);
 		ISCInternalContext[] contexts = new ISCInternalContext[list.size()];
 		list.toArray(contexts);
 		return contexts; 
+	}
+	
+	@Deprecated
+	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
+		return getAbstractSCContexts(null); 
 	}
 
 }

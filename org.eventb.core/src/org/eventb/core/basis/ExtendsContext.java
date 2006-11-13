@@ -8,6 +8,8 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
@@ -52,24 +54,44 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractContextName()
 	 */
-	public String getAbstractContextName() throws RodinDBException {
-		return getContents();
+	public String getAbstractContextName(IProgressMonitor monitor) 
+	throws RodinDBException {
+		return getStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, monitor);
+	}
+
+	@Deprecated
+	public String getAbstractContextName() 
+	throws RodinDBException {
+		return getStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractSCContext()
 	 */
-	public ISCContextFile getAbstractSCContext() throws RodinDBException {
-		final String bareName = getAbstractContextName();
+	public ISCContextFile getAbstractSCContext(IProgressMonitor monitor) throws RodinDBException {
+		final String bareName = getAbstractContextName(monitor);
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
 	}
 
+	@Deprecated
+	public ISCContextFile getAbstractSCContext() throws RodinDBException {
+		return getAbstractSCContext(null);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#setAbstractContextName(java.lang.String)
 	 */
-	public void setAbstractContextName(String name) throws RodinDBException {
-		setContents(name);
+	public void setAbstractContextName(String name, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setStringAttribute(EventBAttributes.EXTENDS_ATTRIBUTE, name, monitor);
 	}
+	
+	@Deprecated
+	public void setAbstractContextName(String name) 
+	throws RodinDBException {
+		setAbstractContextName(name, null);
+	}
+
 }

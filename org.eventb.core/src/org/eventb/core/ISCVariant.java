@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -17,9 +18,7 @@ import org.rodinp.core.RodinCore;
 /**
  * Common protocol for Event-B SC variants.
  * <p>
- * An SC variant is a variant that has been statically checked. An SC variant
- * has a name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()}. It contains an
+ * An SC variant is a variant that has been statically checked. It contains an
  * expression that is accessed and manipulated via
  * {@link org.eventb.core.ISCExpressionElement}. This interface itself does not
  * contribute any method.
@@ -28,10 +27,8 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCExpressionElement#getExpression(FormulaFactory,
- *      ITypeEnvironment)
- * @see org.eventb.core.ISCExpressionElement#setExpression(Expression)
+ * @see ISCExpressionElement#getExpression(FormulaFactory,ITypeEnvironment, IProgressMonitor)
+ * @see ISCExpressionElement#setExpression(Expression, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  * 

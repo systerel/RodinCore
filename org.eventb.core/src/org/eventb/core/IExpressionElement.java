@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -26,6 +27,8 @@ import org.rodinp.core.RodinDBException;
 public interface IExpressionElement extends IInternalElement {
 
 	/**
+	 * This method is deprecated; use <code>getExpressionString(IProgressMonitor)</code> instead.
+	 * 
 	 * Returns the string representation of the expression contained in this
 	 * element.
 	 * 
@@ -33,9 +36,12 @@ public interface IExpressionElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	String getExpressionString() throws RodinDBException;
 
 	/**
+	 * This method is deprecated; use <code>setExpressionString(IProgressMonitor)</code> instead.
+	 * 
 	 * Sets the string representation of the expression contained in this
 	 * element.
 	 * 
@@ -44,6 +50,34 @@ public interface IExpressionElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	void setExpressionString(String expression) throws RodinDBException;
+
+	/**
+	 * Returns the string representation of the expression contained in this
+	 * element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the expression of this element as a string
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getExpressionString(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the string representation of the expression contained in this
+	 * element.
+	 * 
+	 * @param expression
+	 *            the string representation of the expression
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setExpressionString(String expression, IProgressMonitor monitor) throws RodinDBException;
 
 }

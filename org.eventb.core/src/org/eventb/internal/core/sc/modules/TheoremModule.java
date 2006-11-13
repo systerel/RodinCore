@@ -67,7 +67,7 @@ public abstract class TheoremModule extends PredicateModule {
 						null, 
 						monitor);
 			scTheorem.setLabel(theorems[i].getLabel(monitor), monitor);
-			scTheorem.setPredicate(predicates[i]);
+			scTheorem.setPredicate(predicates[i], null);
 			scTheorem.setSource(theorems[i], monitor);
 		}
 	}

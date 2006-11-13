@@ -66,7 +66,7 @@ public class WitnessTable implements IWitnessTable {
 		LinkedList<Expression> right = new LinkedList<Expression>();
 	
 		for (int i=0; i<witnesses.length; i++) {
-			final Predicate predicate = witnesses[i].getPredicate(factory, typeEnvironment);
+			final Predicate predicate = witnesses[i].getPredicate(factory, typeEnvironment, null);
 			final String name = witnesses[i].getLabel(monitor);
 			final FreeIdentifier identifier = factory.makeFreeIdentifier(name, null);
 			identifier.typeCheck(typeEnvironment);

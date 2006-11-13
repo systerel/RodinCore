@@ -73,7 +73,7 @@ public class MachineEventActionModule extends AssignmentModule {
 
 		IEvent event = (IEvent) element;
 		
-		IAction[] actions = event.getActions();
+		IAction[] actions = event.getActions(null);
 		
 		Assignment[] assignments = new Assignment[actions.length];
 	
@@ -182,7 +182,7 @@ public class MachineEventActionModule extends AssignmentModule {
 					null, 
 					monitor);
 		scAction.setLabel(label, monitor);
-		scAction.setAssignment(assignment);
+		scAction.setAssignment(assignment, null);
 		scAction.setSource(source, monitor);
 	}
 	

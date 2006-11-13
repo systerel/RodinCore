@@ -9,6 +9,7 @@ package org.eventb.core.basis;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -28,28 +29,28 @@ import org.rodinp.core.basis.RodinElement;
  */
 abstract class SCContextUtil {
 
-	static public ISCCarrierSet[] getSCCarrierSets(RodinElement element) throws RodinDBException {
+	static public ISCCarrierSet[] getSCCarrierSets(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCCarrierSet.ELEMENT_TYPE);
 		SCCarrierSet[] carrierSets = new SCCarrierSet[list.size()];
 		list.toArray(carrierSets);
 		return carrierSets; 
 	}
 
-	static public ISCConstant[] getSCConstants(RodinElement element) throws RodinDBException {
+	static public ISCConstant[] getSCConstants(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCConstant.ELEMENT_TYPE);
 		SCConstant[] constants = new SCConstant[list.size()];
 		list.toArray(constants);
 		return constants; 
 	}
 
-	static public ISCAxiom[] getSCAxioms(RodinElement element) throws RodinDBException {
+	static public ISCAxiom[] getSCAxioms(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCAxiom.ELEMENT_TYPE);
 		SCAxiom[] axioms = new SCAxiom[list.size()];
 		list.toArray(axioms);
 		return axioms; 
 	}
 
-	static public ISCTheorem[] getSCTheorems(RodinElement element) throws RodinDBException {
+	static public ISCTheorem[] getSCTheorems(RodinElement element, IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = element.getFilteredChildrenList(ISCTheorem.ELEMENT_TYPE);
 		SCTheorem[] theorems = new SCTheorem[list.size()];
 		list.toArray(theorems);

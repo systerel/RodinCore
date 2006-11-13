@@ -8,13 +8,14 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -32,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public class SCRefinesMachine extends SCTraceableElement implements
+public class SCRefinesMachine extends EventBElement implements
 		ISCRefinesMachine {
 
 	/**
@@ -47,9 +48,12 @@ public class SCRefinesMachine extends SCTraceableElement implements
 		return ELEMENT_TYPE;
 	}
 
-	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		String contents = getContents();
-		IRodinElement target = RodinCore.valueOf(contents);
+	private IRodinElement getAbstractSCMachineHandle(IProgressMonitor monitor) throws RodinDBException {
+		return getHandleAttribute(EventBAttributes.SCREFINES_ATTRIBUTE, monitor);
+	}
+
+	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement target = getAbstractSCMachineHandle(monitor);
 		if (! (target instanceof ISCMachineFile)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesMachineTypeFailure,
@@ -58,7 +62,18 @@ public class SCRefinesMachine extends SCTraceableElement implements
 		return (ISCMachineFile) target;
 	}
 
+	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setHandleAttribute(EventBAttributes.SCREFINES_ATTRIBUTE, abstractSCMachine, monitor);
+	}
+
+	@Deprecated
+	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
+		return getAbstractSCMachine(null);
+	}
+
+	@Deprecated
 	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine) throws RodinDBException {
-		setContents(abstractSCMachine.getHandleIdentifier());
+		setAbstractSCMachine(abstractSCMachine, null);
 	}
 }

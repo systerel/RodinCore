@@ -38,10 +38,12 @@ public class POIdentifier extends SCIdentifierElement implements IPOIdentifier {
 		return ELEMENT_TYPE;
 	}
 	
+	@Deprecated
 	public String getName() {
 		return getElementName();
 	}
 	
+	@Deprecated
 	public String getType() throws RodinDBException {
 		return getContents();
 	}

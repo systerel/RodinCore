@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
@@ -25,8 +26,8 @@ import org.rodinp.core.RodinCore;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.IExpressionElement#getExpressionString()
- * @see org.eventb.core.IExpressionElement#setExpressionString(String)
+ * @see org.eventb.core.IExpressionElement#getExpressionString(IProgressMonitor)
+ * @see org.eventb.core.IExpressionElement#setExpressionString(String,IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  */

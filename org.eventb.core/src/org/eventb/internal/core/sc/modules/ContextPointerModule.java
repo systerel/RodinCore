@@ -119,9 +119,9 @@ public abstract class ContextPointerModule extends ProcessorModule {
 				
 				String contextName = scIC.getElementName();
 								
-				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets();
+				ISCCarrierSet[] scCarrierSets = scIC.getSCCarrierSets(null);
 				
-				ISCConstant[] scConstants = scIC.getSCConstants(); 
+				ISCConstant[] scConstants = scIC.getSCConstants(null); 
 				
 				List<IIdentifierSymbolInfo> symbolInfos = 
 					contextPointerArray.getIdentifierSymbolInfos(index);
@@ -174,7 +174,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 	 */
 	private void createUpContexts(ISCContextFile scCF, List<ISCContext> upContexts) 
 	throws RodinDBException {
-		ISCInternalContext[] iscic = scCF.getAbstractSCContexts();
+		ISCInternalContext[] iscic = scCF.getAbstractSCContexts(null);
 		
 		ISCContext[] upContextArray = new ISCContext[iscic.length + 1];
 		
@@ -191,7 +191,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			ISCIdentifierElement element) throws RodinDBException {
 		
 		IIdentifierSymbolInfo info = 
-			identifierSymbolTable.getSymbolInfo(element.getIdentifierName());
+			identifierSymbolTable.getSymbolInfo(element.getIdentifierString(null));
 		
 		assert info != null;
 		
@@ -204,7 +204,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 			IContextPointerArray contextPointerArray, 
 			ISCIdentifierElement element) throws CoreException {
 		
-		String name = element.getIdentifierName();
+		String name = element.getIdentifierString(null);
 		
 		IIdentifierSymbolInfo newSymbolInfo = 
 			SymbolInfoFactory.createIdentifierSymbolInfo(
@@ -245,7 +245,7 @@ public abstract class ContextPointerModule extends ProcessorModule {
 		}
 		
 		// finally set the type of the identifier
-		newSymbolInfo.setType(element.getType(factory));
+		newSymbolInfo.setType(element.getType(factory, null));
 		
 		symbolList.add(newSymbolInfo);
 	}

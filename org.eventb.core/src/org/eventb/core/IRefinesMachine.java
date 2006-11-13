@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -45,8 +46,23 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @return the name of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractMachineName(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	String getAbstractMachineName() throws RodinDBException;
+
+	/**
+	 * Returns the name of the machine that is refined by the machine that
+	 * contains this element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the name of the abstract machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getAbstractMachineName(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the name of the machine that is refined by the machine that contains
@@ -56,8 +72,22 @@ public interface IRefinesMachine extends IInternalElement {
 	 *            the name of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAbstractMachineName(String,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAbstractMachineName(String name) throws RodinDBException;
+
+	/**
+	 * Sets the name of the machine that is refined by the machine that contains
+	 * this element.
+	 * 
+	 * @param name
+	 *            the name of the abstract machine
+	 * @param monitor a progress monitor
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setAbstractMachineName(String name, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to the unchecked version of the abstract machine.
@@ -65,8 +95,22 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @return a handle to the unchecked version of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractMachine(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IMachineFile getAbstractMachine() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the unchecked version of the abstract machine.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return a handle to the unchecked version of the abstract machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IMachineFile getAbstractMachine(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to the checked version of the abstract machine, that is
@@ -75,7 +119,22 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @return a handle to the checked version of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractSCMachine(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the checked version of the abstract machine, that is
+	 * the file produced when statically checking that machine.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return a handle to the checked version of the abstract machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException;
 
 }

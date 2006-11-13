@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -26,6 +27,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public abstract class PredicateElement extends LabeledElement
 		implements IPredicateElement {
 	
@@ -33,11 +35,11 @@ public abstract class PredicateElement extends LabeledElement
 		super(name, parent);
 	}
 	
-	public String getPredicateString() throws RodinDBException {
+	public String getPredicateString(IProgressMonitor monitor) throws RodinDBException {
 		return getContents();
 	}
 
-	public void setPredicateString(String predicate) throws RodinDBException {
+	public void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException {
 		setContents(predicate);
 	}
 

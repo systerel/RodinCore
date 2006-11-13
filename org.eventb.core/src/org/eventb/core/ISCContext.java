@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -38,8 +39,21 @@ public interface ISCContext extends IRodinElement {
 	 * @return an array of all SC carrier sets
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCCarrierSets(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCCarrierSet[] getSCCarrierSets() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC carrier sets of this SC context.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all SC carrier sets
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all SC constants of this SC context.
@@ -47,8 +61,22 @@ public interface ISCContext extends IRodinElement {
 	 * @return an array of all SC constants
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCConstants(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCConstant[] getSCConstants() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC constants of this SC context.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all SC constants
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all SC axioms of this SC context.
@@ -56,8 +84,22 @@ public interface ISCContext extends IRodinElement {
 	 * @return an array of all SC axioms
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCAxioms(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCAxiom[] getSCAxioms() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC axioms of this SC context.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all SC axioms
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all SC theorems of this SC context.
@@ -65,7 +107,21 @@ public interface ISCContext extends IRodinElement {
 	 * @return an array of all SC theorems
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCTheorems(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCTheorem[] getSCTheorems() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all SC theorems of this SC context.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return an array of all SC theorems
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException;
 	
 }

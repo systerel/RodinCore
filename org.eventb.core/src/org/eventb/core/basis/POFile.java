@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
@@ -20,6 +21,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -55,12 +57,17 @@ public class POFile extends RodinFile implements IPOFile {
 		return ELEMENT_TYPE;
 	}
 	
-	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException {
+	public IPOPredicateSet getPredicateSet(String name, IProgressMonitor monitor) throws RodinDBException {
 		InternalElement element = getInternalElement(POPredicateSet.ELEMENT_TYPE, name);
 		if(element.exists())
 			return (POPredicateSet) element;
 		else
 			return null;
+	}
+	
+	@Deprecated
+	public IPOPredicateSet getPredicateSet(String name) throws RodinDBException {
+		return getPredicateSet(name, null);
 	}
 	
 	@Deprecated
@@ -71,11 +78,16 @@ public class POFile extends RodinFile implements IPOFile {
 		return identifiers;
 	}
 
-	public IPOSequent[] getSequents() throws RodinDBException {
+	public IPOSequent[] getSequents(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(POSequent.ELEMENT_TYPE);
 		POSequent[] sequents = new POSequent[list.size()];
 		list.toArray(sequents);
 		return sequents;
+	}
+
+	@Deprecated
+	public IPOSequent[] getSequents() throws RodinDBException {
+		return getSequents(null);
 	}
 
 	public ISCContextFile getSCContext() {
@@ -104,6 +116,16 @@ public class POFile extends RodinFile implements IPOFile {
 		final String psName = EventBPlugin.getPSFileName(bareName);
 		final IRodinProject project = (IRodinProject) getParent();
 		return (IPSFile) project.getRodinFile(psName);
+	}
+
+	public IPOPredicateSet[] getPredicateSets(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] elements = getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
+		return (IPOPredicateSet[]) elements;
+	}
+
+	public IPOSequent getSequent(String name, IProgressMonitor monitor) throws RodinDBException {
+		IInternalElement element = getInternalElement(IPOSequent.ELEMENT_TYPE, name);
+		return (IPOSequent) element;
 	}
 
 }

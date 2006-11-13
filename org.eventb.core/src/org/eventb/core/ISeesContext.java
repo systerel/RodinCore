@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -42,8 +43,23 @@ public interface ISeesContext extends IInternalElement {
 	 * @return the name of the seen context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSeenContextName(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	String getSeenContextName() throws RodinDBException;
+
+	/**
+	 * Returns the name of the context that is seen by the machine which
+	 * contains this element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the name of the seen context
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getSeenContextName(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the name of the context that is seen by the machine which contains
@@ -53,17 +69,46 @@ public interface ISeesContext extends IInternalElement {
 	 *            the name of the seen context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setSeenContextName(String,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setSeenContextName(String name) throws RodinDBException;
+
+	/**
+	 * Sets the name of the context that is seen by the machine which contains
+	 * this element.
+	 * 
+	 * @param name
+	 *            the name of the seen context
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setSeenContextName(String name, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to the checked version of the seen context, that is the
 	 * file produced when statically checking that context.
-	 * 
+	 * @return a handle to the checked version of the seen context
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSeenSCContext(IProgressMonitor)</code> instead
+	 */
+	@Deprecated
+	ISCContextFile getSeenSCContext() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the checked version of the seen context, that is the
+	 * file produced when statically checking that context.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return a handle to the checked version of the seen context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCContextFile getSeenSCContext() throws RodinDBException;
+	ISCContextFile getSeenSCContext(IProgressMonitor monitor) throws RodinDBException;
 
 }

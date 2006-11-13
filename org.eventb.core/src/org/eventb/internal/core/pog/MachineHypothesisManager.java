@@ -34,7 +34,7 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 			ISCPredicateElement[] predicateTable) throws CoreException {
 		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME);
 		
-		abstractMachine = ((ISCMachineFile) parentElement).getAbstractSCMachine();
+		abstractMachine = ((ISCMachineFile) parentElement).getAbstractSCMachine(null);
 	}
 
 	public String getStateType() {

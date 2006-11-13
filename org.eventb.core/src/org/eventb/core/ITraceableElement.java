@@ -27,6 +27,9 @@ public interface ITraceableElement extends IInternalElement {
 	/**
 	 * Sets the source element of this traceable element.
 	 * @param source the source element
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException;
@@ -35,6 +38,9 @@ public interface ITraceableElement extends IInternalElement {
 	 * Returns the source element of this traceable element, or <code>null</code> 
 	 * if there is no source element associated with this traceable element.
 	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return the source element
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */

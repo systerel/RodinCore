@@ -57,7 +57,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 
 		IEvent event = (IEvent) element;
 		
-		IVariable[] variables = event.getVariables();
+		IVariable[] variables = event.getVariables(null);
 		
 		if(variables.length != 0)
 			fetchSymbols(

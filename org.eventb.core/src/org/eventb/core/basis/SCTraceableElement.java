@@ -16,6 +16,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public abstract class SCTraceableElement extends EventBElement implements
 		ITraceableElement {
 

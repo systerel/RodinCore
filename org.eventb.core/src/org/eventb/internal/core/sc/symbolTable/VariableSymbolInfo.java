@@ -85,7 +85,7 @@ public class VariableSymbolInfo
 		ISCVariable variable = 
 			(ISCVariable) parent.createInternalElement(
 					ISCVariable.ELEMENT_TYPE, getSymbol(), null, monitor);
-		variable.setType(getType());
+		variable.setType(getType(), null);
 		if (!isLocal()) {
 			variable.setForbidden(isForbidden() || !isConcrete(), monitor);
 			variable.setPreserved(isConcrete() && !isFresh(), monitor);

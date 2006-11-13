@@ -50,7 +50,7 @@ public class MachineTheoremModule extends TheoremModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		ITheorem[] theorems = machineFile.getTheorems();
+		ITheorem[] theorems = machineFile.getTheorems(null);
 		
 		IAbstractEventTable abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
@@ -62,7 +62,7 @@ public class MachineTheoremModule extends TheoremModule {
 		int offset = 0;
 		
 		if (scMachineFile != null) {
-			ISCTheorem[] scTheorems = scMachineFile.getSCTheorems();
+			ISCTheorem[] scTheorems = scMachineFile.getSCTheorems(null);
 			offset = scTheorems.length;
 			copySCPredicates(scTheorems, target, monitor);
 		}

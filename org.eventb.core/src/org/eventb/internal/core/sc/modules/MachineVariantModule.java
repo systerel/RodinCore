@@ -97,7 +97,7 @@ public class MachineVariantModule extends ExpressionModule {
 		
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IVariant variant = machineFile.getVariant();
+		IVariant variant = machineFile.getVariant(null);
 		
 		if (variant == null)
 			return;
@@ -140,7 +140,7 @@ public class MachineVariantModule extends ExpressionModule {
 					VARIANT_NAME_PREFIX, 
 					null, 
 					monitor);
-		scAxiom.setExpression(expression);
+		scAxiom.setExpression(expression, null);
 		scAxiom.setSource(variant, monitor);
 	}
 	

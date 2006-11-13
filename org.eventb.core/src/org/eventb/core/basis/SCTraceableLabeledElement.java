@@ -14,6 +14,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public abstract class SCTraceableLabeledElement extends SCTraceableElement implements
 		ILabeledElement {
 

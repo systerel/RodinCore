@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -17,20 +18,20 @@ import org.rodinp.core.RodinCore;
  * Common protocol for Event-B SC axioms.
  * <p>
  * An SC axiom is an axiom that has been statically checked. An SC axiom has a
- * name that is returned by
- * {@link org.rodinp.core.IRodinElement#getElementName()} and contains a
+ * label that is accessed and manipulated via
+ * {@link ILabeledElement} and contains a
  * predicate that is accessed and manipulated via
- * {@link org.eventb.core.ISCPredicateElement}. This interface itself does not
+ * {@link ISCPredicateElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCPredicateElement#getPredicate(FormulaFactory,
- *      ITypeEnvironment)
- * @see org.eventb.core.ISCPredicateElement#setPredicate(Predicate)
+ * @see ILabeledElement#getLabel(IProgressMonitor)
+ * @see ILabeledElement#setLabel(String, IProgressMonitor)
+ * @see ISCPredicateElement#getPredicate(FormulaFactory,ITypeEnvironment, IProgressMonitor)
+ * @see ISCPredicateElement#setPredicate(Predicate, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  */

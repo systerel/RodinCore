@@ -52,51 +52,76 @@ public class Event extends EventBElement implements IEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IEvent#getRefinesClauses()
 	 */
-	public IRefinesEvent[] getRefinesClauses() throws RodinDBException {
+	public IRefinesEvent[] getRefinesClauses(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IRefinesEvent.ELEMENT_TYPE);
-		RefinesEvent[] events = new RefinesEvent[list.size()];
-		list.toArray(events);
-		return events; 
+		RefinesEvent[] refines = new RefinesEvent[list.size()];
+		list.toArray(refines);
+		return refines; 
+	}
+
+	@Deprecated
+	public IRefinesEvent[] getRefinesClauses() throws RodinDBException {
+		return getRefinesClauses(null); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IEvent#getVariables()
 	 */
-	public IVariable[] getVariables() throws RodinDBException {
+	public IVariable[] getVariables(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IVariable.ELEMENT_TYPE);
 		Variable[] variables = new Variable[list.size()];
 		list.toArray(variables);
 		return variables; 
 	}
 
+	@Deprecated
+	public IVariable[] getVariables() throws RodinDBException {
+		return getVariables(null); 
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IEvent#getWitnesses()
 	 */
-	public IWitness[] getWitnesses() throws RodinDBException {
+	public IWitness[] getWitnesses(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IWitness.ELEMENT_TYPE);
 		Witness[] witnesses = new Witness[list.size()];
 		list.toArray(witnesses);
 		return witnesses; 
 	}
 	
+	@Deprecated
+	public IWitness[] getWitnesses() throws RodinDBException {
+		return getWitnesses(null); 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IEvent#getGuards()
 	 */
-	public IGuard[] getGuards() throws RodinDBException {
+	public IGuard[] getGuards(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IGuard.ELEMENT_TYPE);
 		Guard[] guards = new Guard[list.size()];
 		list.toArray(guards);
 		return guards; 
 	}
 	
+	@Deprecated
+	public IGuard[] getGuards() throws RodinDBException {
+		return getGuards(null); 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IEvent#getActions()
 	 */
-	public IAction[] getActions() throws RodinDBException {
+	public IAction[] getActions(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IAction.ELEMENT_TYPE);
 		Action[] actions = new Action[list.size()];
 		list.toArray(actions);
 		return actions; 
+	}
+
+	@Deprecated
+	public IAction[] getActions() throws RodinDBException {
+		return getActions(); 
 	}
 
 	public boolean isInherited(IProgressMonitor monitor) throws RodinDBException {

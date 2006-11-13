@@ -78,8 +78,9 @@ public abstract class IdentifierModule extends ProcessorModule {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	protected FreeIdentifier parseIdentifier(
-			IIdentifierElement element) throws RodinDBException {
-		return parseIdentifier(element.getIdentifierString(), element, factory, this);
+			IIdentifierElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		return parseIdentifier(element.getIdentifierString(monitor), element, factory, this);
 	}
 
 	/**
@@ -104,7 +105,7 @@ public abstract class IdentifierModule extends ProcessorModule {
 		initAcceptorModules(rules, repository, null);
 		
 		for(IIdentifierElement element : elements) {
-			FreeIdentifier identifier = parseIdentifier(element);
+			FreeIdentifier identifier = parseIdentifier(element, monitor);
 			
 			if(identifier == null)
 				continue;

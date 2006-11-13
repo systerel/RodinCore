@@ -91,7 +91,7 @@ public class MachineHypothesisModule extends Module {
 					IPOPredicateSet.ELEMENT_TYPE, 
 					MachineHypothesisManager.CTX_HYP_NAME, null, monitor);
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCInternalContexts();
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(null);
 		
 		copyContexts(rootSet, contexts, monitor);
 		
@@ -105,12 +105,12 @@ public class MachineHypothesisModule extends Module {
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		
-		fetchVariables(scMachineFile.getSCVariables(), repository, monitor);
+		fetchVariables(scMachineFile.getSCVariables(null), repository, monitor);
 		
 		identifierTable.save(target, monitor);
 		
-		ISCInvariant[] invariants = scMachineFile.getSCInvariants();
-		ISCTheorem[] theorems = scMachineFile.getSCTheorems();
+		ISCInvariant[] invariants = scMachineFile.getSCInvariants(null);
+		ISCTheorem[] theorems = scMachineFile.getSCTheorems(null);
 		
 		invariantTable = new MachineInvariantTable();
 		theoremTable = new MachineTheoremTable();
@@ -158,16 +158,16 @@ public class MachineHypothesisModule extends Module {
 		
 		for (ISCInternalContext context : contexts) {
 			
-			for (ISCCarrierSet set : context.getSCCarrierSets()) {
+			for (ISCCarrierSet set : context.getSCCarrierSets(null)) {
 				fetchIdentifier(set);
 			}
-			for (ISCConstant constant : context.getSCConstants()) {
+			for (ISCConstant constant : context.getSCConstants(null)) {
 				fetchIdentifier(constant);
 			}
-			for (ISCAxiom axiom : context.getSCAxioms()) {
+			for (ISCAxiom axiom : context.getSCAxioms(null)) {
 				savePOPredicate(rootSet, axiom, monitor);
 			}
-			for (ISCTheorem theorem : context.getSCTheorems()) {
+			for (ISCTheorem theorem : context.getSCTheorems(null)) {
 				savePOPredicate(rootSet, theorem, monitor);
 			}
 		}
@@ -176,7 +176,7 @@ public class MachineHypothesisModule extends Module {
 
 	private FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
 		FreeIdentifier identifier = 
-			factory.makeFreeIdentifier(ident.getIdentifierName(), null, ident.getType(factory));
+			factory.makeFreeIdentifier(ident.getIdentifierString(null), null, ident.getType(factory, null));
 		typeEnvironment.addName(identifier.getName(), identifier.getType());
 		identifierTable.addIdentifier(identifier);
 		return identifier;
@@ -210,7 +210,7 @@ public class MachineHypothesisModule extends Module {
 		IPOPredicate predicate =
 			(IPOPredicate) rootSet.createInternalElement(
 					IPOPredicate.ELEMENT_TYPE, PRD_NAME_PREFIX + index++, null, monitor);
-		predicate.setPredicateString(element.getPredicateString(), monitor);
+		predicate.setPredicateString(element.getPredicateString(null), monitor);
 		predicate.setSource(((ITraceableElement) element).getSource(monitor), monitor);
 	}
 

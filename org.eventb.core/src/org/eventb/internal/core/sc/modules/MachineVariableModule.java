@@ -49,7 +49,7 @@ public class MachineVariableModule extends IdentifierModule {
 
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		IVariable[] variables = machineFile.getVariables();
+		IVariable[] variables = machineFile.getVariables(null);
 		
 		if(variables.length == 0)
 			return;

@@ -44,7 +44,7 @@ public class ConstantSymbolInfo
 		ISCConstant constant = 
 			(ISCConstant) parent.createInternalElement(
 					ISCConstant.ELEMENT_TYPE, getSymbol(), null, monitor);
-		constant.setType(getType());
+		constant.setType(getType(), null);
 		constant.setSource(getReferenceElement(), monitor);
 	}
 

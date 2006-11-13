@@ -20,14 +20,13 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * <p>
- * A sequent is a tuple (NAME, TYPE_ENV, HYP, GOAL, HINTS)
+ * A sequent is a tuple (NAME, TYPE_ENV, HYP, GOAL, HINTS) consists of
  * <ul>
- * <li>The name (NAME) identifies uniquely a sequent (resp. proof obligation) in a PO file.</li>
- * <li>The type environment (TYPE_ENV) specifies type of identifiers local to the sequent.
- * (The type environment is contained in the sequent in form of POIdentifiers.)</li>
- * <li>There is one hypothesis (HYP) in the sequent. It is of type POHypothesis.</li>
- * <li>There is one goal (GOAL) in the sequent. It is a POPredicate or a POModifiedPredicate.</li>
- * <li>There is one PODescription associated with the sequent.</li>
+ * <li> a name (<code>String</code>)</li>
+ * <li> a hypothesis (<code>IPOPredicateSet</code>)</li>
+ * <li> a goal (<code>IPOPredicate</code>)</li>
+ * <li> some hints (<code>IPOHint[]</code>)</li>
+ * <li> some handles to the source from which this proof obligation is derived (<code>IPOSource[]</code>)</li>
  * </ul>
  * </p>
  *
@@ -39,21 +38,75 @@ public interface IPOSequent extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSequent"); //$NON-NLS-1$
 	
+	@Deprecated
 	String getName();
 	
 	@Deprecated
 	IPOIdentifier[] getIdentifiers() throws RodinDBException;
+	
+	/**
+	 * Returns the predicate set containing the hypothesis of this proof obligation
+	 * 
+	 * @return the predicate set containing the hypothesis of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getHypothesis(IProgressMonitor)</code> instead
+	 */
+	@Deprecated
 	IPOPredicateSet getHypothesis() throws RodinDBException;
+	
+	/**
+	 * Returns the predicate set containing the hypothesis of this proof obligation
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return the predicate set containing the hypothesis of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	IPOPredicateSet getHypothesis(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns the goal predicate of this proof obligation
+	 * 
+	 * @return the goal predicate of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>getGoal(IProgressMonitor)</code> instead
+	 */
+	@Deprecated
 	IPOPredicate getGoal() throws RodinDBException;
+	
+	/**
+	 * Returns the goal predicate of this proof obligation
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the goal predicate of this proof obligation
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	IPOPredicate getGoal(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns a more descriptive name of a proof obligation.
+	 * Returns a more descriptive name of this proof obligation.
 	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return a descriptive proof obligation name
 	 */
 	String getDescription(IProgressMonitor monitor) throws RodinDBException;
 
+	/**
+	 * Sets the descriptive name of this proof obligation.
+	 * 
+	 * @param description the descriptive name
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
 	void setDescription(String description, IProgressMonitor monitor) throws RodinDBException;
+	
 	/**
 	 * Returns the (most important) source elements of a proof obligation.
 	 * <p>
@@ -65,8 +118,27 @@ public interface IPOSequent extends IInternalElement {
 	 *         contains this description
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSources(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IPOSource[] getSources() throws RodinDBException;
+
+	/**
+	 * Returns the (most important) source elements of a proof obligation.
+	 * <p>
+	 * The returned elements contain handle identifiers to elements of the
+	 * database.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the array of sources associated with the proof obligation that
+	 *         contains this description
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IPOSource[] getSources(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns the hints for a proof obligation.
@@ -75,7 +147,22 @@ public interface IPOSequent extends IInternalElement {
 	 *         contains this description
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getHints(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IPOHint[] getHints() throws RodinDBException;
+
+	/**
+	 * Returns the hints for a proof obligation.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the array of hints associated with the proof obligation that
+	 *         contains this description
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IPOHint[] getHints(IProgressMonitor monitor) throws RodinDBException;
 
 }

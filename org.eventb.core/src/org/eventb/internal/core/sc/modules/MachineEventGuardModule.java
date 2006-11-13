@@ -64,7 +64,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 
 		IEvent event = (IEvent) element;
 		
-		IGuard[] guards = event.getGuards();
+		IGuard[] guards = event.getGuards(null);
 		
 		Predicate[] predicates = new Predicate[guards.length];
 		
@@ -122,7 +122,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule {
 						null, 
 						monitor);
 			scGuard.setLabel(guards[i].getLabel(monitor), monitor);
-			scGuard.setPredicate(predicates[i]);
+			scGuard.setPredicate(predicates[i], null);
 			scGuard.setSource(guards[i], monitor);
 		}
 	}

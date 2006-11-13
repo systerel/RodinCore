@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
@@ -55,7 +56,7 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return ELEMENT_TYPE;
 	}
 
-	public ISCVariable[] getSCVariables() throws RodinDBException {
+	public ISCVariable[] getSCVariables(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = 
 			getFilteredChildrenList(ISCVariable.ELEMENT_TYPE);
 		SCVariable[] variables = new SCVariable[list.size()];
@@ -63,12 +64,22 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return variables;
 	}
 	
-	public ISCEvent[] getSCEvents() throws RodinDBException {
+	@Deprecated
+	public ISCVariable[] getSCVariables() throws RodinDBException {
+		return getSCVariables(null);
+	}
+	
+	public ISCEvent[] getSCEvents(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = 
 			getFilteredChildrenList(ISCEvent.ELEMENT_TYPE);
 		SCEvent[] events = new SCEvent[list.size()];
 		list.toArray(events);
 		return events;
+	}
+	
+	@Deprecated
+	public ISCEvent[] getSCEvents() throws RodinDBException {
+		return getSCEvents(null);
 	}
 	
 	public IMachineFile getMachineFile() {
@@ -78,22 +89,35 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return (IMachineFile) project.getRodinFile(uName);
 	}
 
-	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		ISCRefinesMachine machine = getRefinesClause();
+	public ISCMachineFile getAbstractSCMachine(IProgressMonitor monitor) throws RodinDBException {
+		ISCRefinesMachine machine = getRefinesClause(monitor);
 		if (machine == null)
 			return null;
 		else
-			return machine.getAbstractSCMachine();
+			return machine.getAbstractSCMachine(null);
 	}
 
-	public ISCInternalContext[] getSCInternalContexts() throws RodinDBException {
+	@Deprecated
+	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
+		return getAbstractSCMachine(null);
+	}
+
+	public ISCInternalContext[] getSCSeenContexts(IProgressMonitor monitor) 
+	throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(ISCInternalContext.ELEMENT_TYPE);
 		SCInternalContext[] contexts = new SCInternalContext[list.size()];
 		list.toArray(contexts);
 		return contexts; 
 	}
 
-	public ISCInvariant[] getSCInvariants() throws RodinDBException {
+	@Deprecated
+	public ISCInternalContext[] getSCSeenContexts() 
+	throws RodinDBException {
+		return getSCSeenContexts(null); 
+	}
+
+	public ISCInvariant[] getSCInvariants(IProgressMonitor monitor) 
+	throws RodinDBException {
 		ArrayList<IRodinElement> list =
 			getFilteredChildrenList(ISCInvariant.ELEMENT_TYPE);
 		SCInvariant[] invariants = new SCInvariant[list.size()];
@@ -101,7 +125,14 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return invariants;
 	}
 
-	public ISCTheorem[] getSCTheorems() throws RodinDBException {
+	@Deprecated
+	public ISCInvariant[] getSCInvariants() 
+	throws RodinDBException {
+		return getSCInvariants(null);
+	}
+
+	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) 
+	throws RodinDBException {
 		ArrayList<IRodinElement> list = 
 			getFilteredChildrenList(ISCTheorem.ELEMENT_TYPE);
 		SCTheorem[] theorems = new SCTheorem[list.size()];
@@ -109,16 +140,27 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 		return theorems;
 	}
 
-	private ISCRefinesMachine getRefinesClause() throws RodinDBException {
+	@Deprecated
+	public ISCTheorem[] getSCTheorems() 
+	throws RodinDBException {
+		return getSCTheorems();
+	}
+
+	public ISCRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
 		return (ISCRefinesMachine) getSingletonChild(
 				ISCRefinesMachine.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleRefinesFailure);
 	}
 
-	public ISCVariant getSCVariant() throws RodinDBException {
+	public ISCVariant getSCVariant(IProgressMonitor monitor) throws RodinDBException {
 		return (ISCVariant) getSingletonChild(
 				ISCVariant.ELEMENT_TYPE, 
 				Messages.database_SCMachineMultipleVariantFailure);
+	}
+
+	@Deprecated
+	public ISCVariant getSCVariant() throws RodinDBException {
+		return getSCVariant(null);
 	}
 
 }

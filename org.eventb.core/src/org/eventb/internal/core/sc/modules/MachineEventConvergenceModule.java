@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventConvergence;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ProcessorModule;
@@ -93,22 +93,22 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 					element, 
 					EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 					GraphProblem.InconsistentAbstractConvergenceWarning);
-			return IEventConvergence.ORDINARY;
+			return IConvergenceElement.ORDINARY;
 		} else {
 			ok = false;
-			ok |= abstractConvergence == IEventConvergence.ORDINARY && convergence == IEventConvergence.ORDINARY;
-			ok |= abstractConvergence == IEventConvergence.ANTICIPATED && convergence == IEventConvergence.ANTICIPATED;
-			ok |= abstractConvergence == IEventConvergence.ANTICIPATED && convergence == IEventConvergence.CONVERGENT;
-			ok |= abstractConvergence == IEventConvergence.CONVERGENT && convergence == IEventConvergence.ORDINARY;
+			ok |= abstractConvergence == IConvergenceElement.ORDINARY && convergence == IConvergenceElement.ORDINARY;
+			ok |= abstractConvergence == IConvergenceElement.ANTICIPATED && convergence == IConvergenceElement.ANTICIPATED;
+			ok |= abstractConvergence == IConvergenceElement.ANTICIPATED && convergence == IConvergenceElement.CONVERGENT;
+			ok |= abstractConvergence == IConvergenceElement.CONVERGENT && convergence == IConvergenceElement.ORDINARY;
 			if (!ok) {
 				switch (abstractConvergence) {
-				case IEventConvergence.ORDINARY:
+				case IConvergenceElement.ORDINARY:
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 							GraphProblem.OrdinaryFaultyConvergenceWarning);
 					break;
-				case IEventConvergence.CONVERGENT:
+				case IConvergenceElement.CONVERGENT:
 					createProblemMarker(
 							element, 
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
@@ -120,7 +120,7 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 							EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 							GraphProblem.AnticipatedFaultyConvergence);
 				}
-				return IEventConvergence.ORDINARY;
+				return IConvergenceElement.ORDINARY;
 			}
 		}
 		return convergence;
@@ -131,18 +131,18 @@ public class MachineEventConvergenceModule extends ProcessorModule {
 			int convergence) throws CoreException {
 		
 		if (variantInfo.getExpression() == null)
-			if (convergence == IEventConvergence.ANTICIPATED) {
+			if (convergence == IConvergenceElement.ANTICIPATED) {
 				createProblemMarker(
 						element, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 						GraphProblem.AnticipatedEventNoVariant);
-				return IEventConvergence.ORDINARY;
-			} else if (convergence == IEventConvergence.CONVERGENT) {
+				return IConvergenceElement.ORDINARY;
+			} else if (convergence == IConvergenceElement.CONVERGENT) {
 				createProblemMarker(
 						element, 
 						EventBAttributes.CONVERGENCE_ATTRIBUTE, 
 						GraphProblem.ConvergentEventNoVariant);
-				return IEventConvergence.ORDINARY;
+				return IConvergenceElement.ORDINARY;
 			}
 		return convergence;
 	}

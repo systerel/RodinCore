@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -18,20 +17,18 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * <p>
- * A type expression is a pair (NAME, EXPR).
- * It defines a type with name NAME <code>getName</code> and 
- * described by expression EXPR <code>getType()</code>.
- * </p>
  *
  * @author Stefan Hallerstede
  *
  */
-public interface IPOIdentifier extends IInternalElement, ISCIdentifierElement {
+public interface IPOIdentifier extends ISCIdentifierElement {
 	
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poIdentifier"); //$NON-NLS-1$
 
+	@Deprecated
 	String getName();	
+	
+	@Deprecated
 	String getType() throws RodinDBException;
 }

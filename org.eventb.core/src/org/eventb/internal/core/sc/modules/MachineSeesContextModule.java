@@ -34,12 +34,12 @@ public class MachineSeesContextModule extends ContextPointerModule {
 
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		ISeesContext[] seesContexts = machineFile.getSeesClauses();
+		ISeesContext[] seesContexts = machineFile.getSeesClauses(null);
 		
 		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
 		
 		for(int i=0; i<seesContexts.length; i++) {
-			contextFiles[i] = seesContexts[i].getSeenSCContext();
+			contextFiles[i] = seesContexts[i].getSeenSCContext(null);
 		}
 		
 		IContextPointerArray contextPointerArray = 

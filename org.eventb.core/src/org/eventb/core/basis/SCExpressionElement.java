@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCExpressionElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -33,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCExpressionElement extends SCTraceableElement
+public abstract class SCExpressionElement extends EventBElement
 		implements ISCExpressionElement {
 
 	/**
@@ -43,9 +44,9 @@ public abstract class SCExpressionElement extends SCTraceableElement
 		super(name, parent);
 	}
 
-	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
+	public Expression getExpression(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		
-		String contents = getContents();
+		String contents = getExpressionString(monitor);
 		IParseResult parserResult = factory.parseExpression(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -57,11 +58,16 @@ public abstract class SCExpressionElement extends SCTraceableElement
 		return result;
 	}
 
+	@Deprecated
+	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
+		return getExpression(factory, (IProgressMonitor) null);
+	}
+	
 	public Expression getExpression(
 			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
 		
-		Expression result = getExpression(factory);
+		Expression result = getExpression(factory, (IProgressMonitor) null);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -73,8 +79,22 @@ public abstract class SCExpressionElement extends SCTraceableElement
 		return result;
 	}
 
-	public void setExpression(Expression expression) throws RodinDBException {
-		setContents(expression.toStringWithTypes());
+	@Deprecated
+	public Expression getExpression(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		return getExpression(factory, typenv, null);
+	}
+	
+	public void setExpression(Expression expression, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setExpressionString(expression.toStringWithTypes(), monitor);	
+	}
+	
+	@Deprecated
+	public void setExpression(Expression expression) 
+	throws RodinDBException {
+		setExpression(expression, null);	
 	}
 
 }

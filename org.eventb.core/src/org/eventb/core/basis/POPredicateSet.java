@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -52,29 +53,43 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return ELEMENT_TYPE;
 	}
 	
-	public IPOPredicate[] getPredicates() throws RodinDBException {
+	public IPOPredicate[] getPredicates(IProgressMonitor monitor) throws RodinDBException {
 		ArrayList<IRodinElement> list = getFilteredChildrenList(IPOPredicate.ELEMENT_TYPE);
 		IPOPredicate[] predicates = new IPOPredicate[list.size()];
 		list.toArray(predicates);
 		return predicates;
 	}
 	
-	public IPOPredicateSet getPredicateSet() throws RodinDBException {
-		if (getContents().equals("")) return null;
-		IPOPredicateSet sup = null;
-		
-//		// TODODONE the hack below has to disappear
-//		
-//			if (getOpenable() instanceof IPOFile)
-//			sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
-//			else sup = ((IPRFile) getOpenable()).getPredicateSet(getContents());
-		
-		sup = ((IPOFile) getOpenable()).getPredicateSet(getContents());
-		return sup;
+	@Deprecated
+	public IPOPredicate[] getPredicates() throws RodinDBException {
+		return getPredicates(null);
+	}
+	
+	protected String getParentPredicateSetName(IProgressMonitor monitor) 
+	throws RodinDBException {
+		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
+			return getStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
+		else return null;
+	}
+	
+	public IPOPredicateSet getParentPredicateSet(IProgressMonitor monitor) 
+	throws RodinDBException {
+		String parentPredicateSetName = getParentPredicateSetName(monitor);
+		if (parentPredicateSetName == null)
+			return null;
+		IPOPredicateSet parentSet = 
+			((IPOFile) getOpenable()).getPredicateSet(parentPredicateSetName, monitor);
+		return parentSet;
 	}
 
-	public void setParentPredicateSet(String setName, IProgressMonitor monitor) throws RodinDBException {
-		setContents(setName, monitor);
+	public void setParentPredicateSet(String setName, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
+	}
+
+	@Deprecated
+	public IPOPredicateSet getParentPredicateSet() throws RodinDBException {
+		return getParentPredicateSet(null);
 	}
 
 }

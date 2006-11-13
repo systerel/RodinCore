@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAssignmentElement;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
@@ -33,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCAssignmentElement extends SCTraceableLabeledElement
+public abstract class SCAssignmentElement extends EventBElement
 		implements ISCAssignmentElement {
 
 	/**
@@ -43,9 +44,10 @@ public abstract class SCAssignmentElement extends SCTraceableLabeledElement
 		super(name, parent);
 	}
 
-	public Assignment getAssignment(FormulaFactory factory) throws RodinDBException {
+	public Assignment getAssignment(FormulaFactory factory, IProgressMonitor monitor) 
+	throws RodinDBException {
 		
-		String contents = getAssignmentString();
+		String contents = getAssignmentString(null);
 		IParseResult parserResult = factory.parseAssignment(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -57,11 +59,17 @@ public abstract class SCAssignmentElement extends SCTraceableLabeledElement
 		return result;
 	}
 
+	@Deprecated
+	public Assignment getAssignment(FormulaFactory factory) 
+	throws RodinDBException {
+		return getAssignment(factory, (IProgressMonitor) null);
+	}
+	
 	public Assignment getAssignment(
 			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
 		
-		Assignment result = getAssignment(factory);
+		Assignment result = getAssignment(factory, (IProgressMonitor) null);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -73,8 +81,22 @@ public abstract class SCAssignmentElement extends SCTraceableLabeledElement
 		return result;
 	}
 
-	public void setAssignment(Assignment assignment) throws RodinDBException {
-		setContents(assignment.toStringWithTypes());
+	@Deprecated
+	public Assignment getAssignment(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		return getAssignment(factory, typenv, null);
+	}
+		
+	public void setAssignment(Assignment assignment, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setAssignmentString(assignment.toStringWithTypes(), monitor);
+	}
+
+	@Deprecated
+	public void setAssignment(Assignment assignment) 
+	throws RodinDBException {
+		setAssignment(assignment, null);
 	}
 
 }

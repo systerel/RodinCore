@@ -9,17 +9,17 @@
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOHint;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
- * @author halstefa
+ * @author Stefan Hallerstede
  *
  */
-public class POHint extends InternalElement implements IPOHint {
+public class POHint extends EventBElement implements IPOHint {
 
 	public POHint(String name, IRodinElement parent) {
 		super(name, parent);
@@ -39,13 +39,13 @@ public class POHint extends InternalElement implements IPOHint {
 	public String getName() {
 		return getElementName();
 	}
-
-	public void setValue(String value, IProgressMonitor monitor) throws RodinDBException {
-		setContents(value, monitor);
+	
+	public void setHint(String value, IProgressMonitor monitor) throws RodinDBException {
+		setStringAttribute(EventBAttributes.POHINT_ATTRIBUTE, value, monitor);
 	}
 
-	public String getValue(IProgressMonitor monitor) throws RodinDBException {
-		return getContents(monitor);
+	public String getHint(IProgressMonitor monitor) throws RodinDBException {
+		return getStringAttribute(EventBAttributes.POHINT_ATTRIBUTE, monitor);
 	}
 
 }

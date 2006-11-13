@@ -8,6 +8,8 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -48,15 +50,25 @@ public class RefinesEvent extends InternalElement implements IRefinesEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#getAbstractMachineName()
 	 */
-	public String getAbstractEventLabel() throws RodinDBException {
-		return getContents();
+	public String getAbstractEventLabel(IProgressMonitor monitor) throws RodinDBException {
+		return getStringAttribute(EventBAttributes.REFINES_ATTRIBUTE, monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesEvent#setAbstractMachineName(java.lang.String)
 	 */
+	public void setAbstractEventLabel(String label, IProgressMonitor monitor) throws RodinDBException {
+		setStringAttribute(EventBAttributes.REFINES_ATTRIBUTE, label, monitor);
+	}
+
+	@Deprecated
+	public String getAbstractEventLabel() throws RodinDBException {
+		return getAbstractEventLabel(null);
+	}
+
+	@Deprecated
 	public void setAbstractEventLabel(String label) throws RodinDBException {
-		setContents(label);
+		setAbstractEventLabel(label, null);
 	}
 
 }

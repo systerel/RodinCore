@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -43,8 +44,22 @@ public interface ISCRefinesEvent extends ITraceableElement, IInternalElement {
 	 * @return the abstract SC event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractSCEvent(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ISCEvent getAbstractSCEvent() throws RodinDBException;
+
+	/**
+	 * Returns the abstract event introduced by this refines clause.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the abstract SC event
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCEvent getAbstractSCEvent(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the abstract event introduced by this refines clause.
@@ -53,7 +68,22 @@ public interface ISCRefinesEvent extends ITraceableElement, IInternalElement {
 	 *            the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAbstractSCEvent(ISCEvent,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAbstractSCEvent(ISCEvent abstractSCEvent) throws RodinDBException;
+
+	/**
+	 * Sets the abstract event introduced by this refines clause.
+	 * 
+	 * @param abstractSCEvent
+	 *            the abstract event
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setAbstractSCEvent(ISCEvent abstractSCEvent, IProgressMonitor monitor) throws RodinDBException;
 
 }

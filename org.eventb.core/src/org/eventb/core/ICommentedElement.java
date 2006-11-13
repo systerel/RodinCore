@@ -20,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @author htson
+ * @author Thai Son Hoang
  * 
  */
 public interface ICommentedElement extends IInternalElement {
@@ -31,7 +31,8 @@ public interface ICommentedElement extends IInternalElement {
 	 * @param comment
 	 *            the comment for the element
 	 * @param monitor
-	 *            the progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
@@ -43,7 +44,8 @@ public interface ICommentedElement extends IInternalElement {
 	 * Returns the comment contained in this element.
 	 * 
 	 * @param monitor
-	 *            the progress monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * 
 	 * @return the identifier of this element as a string
 	 * 

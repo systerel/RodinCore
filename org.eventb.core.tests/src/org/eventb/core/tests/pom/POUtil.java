@@ -44,15 +44,15 @@ public class POUtil {
 		addIdents(poFile.getIdentifiers(), globalTypeEnv);
 		
 		Map<String, IProverSequent> result 
-		= new HashMap<String, IProverSequent>(poFile.getSequents().length);
-		for (IPOSequent poSeq:poFile.getSequents()){
+		= new HashMap<String, IProverSequent>(poFile.getSequents(null).length);
+		for (IPOSequent poSeq:poFile.getSequents(null)){
 			String name = poSeq.getName();
 			ITypeEnvironment typeEnv = globalTypeEnv.clone();
 			addIdents(poSeq.getIdentifiers(),typeEnv);
-			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(), typeEnv);
+			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null), typeEnv);
 //			Set<Hypothesis> hypotheses = readHypotheses(poSeq.getHypothesis(),typeEnv);
 //			Set<Hypothesis> localHypotheses = readLocalHypotheses(poSeq.getHypothesis(),typeEnv);
-			Predicate goal = readPredicate(poSeq.getGoal(),typeEnv);
+			Predicate goal = readPredicate(poSeq.getGoal(null),typeEnv);
 			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 //			seq = seq.selectHypotheses(localHypotheses);
 			// System.out.println(name+" : "+seq);
@@ -64,11 +64,11 @@ public class POUtil {
 
 	private static Set<Hypothesis> readPredicates(IPOPredicateSet poPredSet, ITypeEnvironment typeEnv) throws RodinDBException {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
-		for (IPOPredicate poPred:poPredSet.getPredicates()){
+		for (IPOPredicate poPred:poPredSet.getPredicates(null)){
 			result.add(new Hypothesis(readPredicate(poPred,typeEnv)));
 		}
-		if (poPredSet.getPredicateSet() != null) 
-			result.addAll(readPredicates(poPredSet.getPredicateSet(),typeEnv));
+		if (poPredSet.getParentPredicateSet(null) != null) 
+			result.addAll(readPredicates(poPredSet.getParentPredicateSet(null),typeEnv));
 		return result;
 	}
 

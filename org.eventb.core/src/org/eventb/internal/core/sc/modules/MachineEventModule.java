@@ -189,7 +189,7 @@ public class MachineEventModule extends LabeledElementModule {
 			issueRefinementErrorMarker(symbolInfo);
 			
 			for (IRefinesEvent refinesEvent : refinesInfo.getRefinesEvents())
-				if (refinesEvent.getAbstractEventLabel().equals(abstractEventLabel))
+				if (refinesEvent.getAbstractEventLabel(null).equals(abstractEventLabel))
 					createProblemMarker(
 							refinesEvent, 
 							problem,
@@ -238,7 +238,7 @@ public class MachineEventModule extends LabeledElementModule {
 				
 		for (int i=0; i<refinesEvents.length; i++) {
 			
-			String label = refinesEvents[i].getAbstractEventLabel();
+			String label = refinesEvents[i].getAbstractEventLabel(null);
 			
 			// filter duplicates
 			if (abstractLabels != null)
@@ -292,16 +292,16 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			if (actions != null && !actionError)
 				if (firstAction) {
-					for (ISCAction action : abstractEventInfo.getEvent().getSCActions()) {
-						actions.add(action.getAssignmentString());
+					for (ISCAction action : abstractEventInfo.getEvent().getSCActions(null)) {
+						actions.add(action.getAssignmentString(null));
 					}
 					firstAction = false;
 				} else {
-					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions();
+					ISCAction[] scActions = abstractEventInfo.getEvent().getSCActions(null);
 					boolean ok = scActions.length == actions.size();
 					if (ok)
 						for (ISCAction action : scActions) {
-							if (actions.contains(action.getAssignmentString()))
+							if (actions.contains(action.getAssignmentString(null)))
 								continue;
 							ok = false;
 							break;
@@ -447,7 +447,7 @@ public class MachineEventModule extends LabeledElementModule {
 		boolean inherited = event.isInherited(monitor);
 		
 		if (isInit && !inherited) {
-			if (machineFile.getRefinesClause() != null)
+			if (machineFile.getRefinesClause(null) != null)
 				makeImplicitRefinement(event, symbolInfo);
 		}
 		
@@ -456,7 +456,7 @@ public class MachineEventModule extends LabeledElementModule {
 			
 			makeImplicitRefinement(event, symbolInfo);
 		} else {
-			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(), monitor);
+			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses(null), monitor);
 			if (!found && !isInit) {
 				IAbstractEventInfo abstractEventInfo =
 					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
@@ -494,6 +494,7 @@ public class MachineEventModule extends LabeledElementModule {
 					ISCEvent.ELEMENT_TYPE, EVENT_NAME_PREFIX + index, null, monitor);
 		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
 		scEvent.setSource(event, monitor);
+		scEvent.setForbidden(false, monitor);
 		return scEvent;
 	}
 	
@@ -524,7 +525,7 @@ public class MachineEventModule extends LabeledElementModule {
 		super.initModule(element, repository, monitor);
 		IMachineFile machineFile = (IMachineFile) element;
 		
-		events = machineFile.getEvents();
+		events = machineFile.getEvents(null);
 		
 		abstractEventTable =
 			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);

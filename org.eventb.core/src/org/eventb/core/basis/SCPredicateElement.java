@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -33,8 +34,8 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class SCPredicateElement extends SCTraceableLabeledElement
-		implements ISCPredicateElement {
+public abstract class SCPredicateElement extends EventBElement 
+implements ISCPredicateElement {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -43,8 +44,9 @@ public abstract class SCPredicateElement extends SCTraceableLabeledElement
 		super(name, parent);
 	}
 
-	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
-		String contents = getPredicateString();
+	public Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) 
+	throws RodinDBException {
+		String contents = getPredicateString(null);
 		IParseResult parserResult = factory.parsePredicate(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
@@ -56,11 +58,17 @@ public abstract class SCPredicateElement extends SCTraceableLabeledElement
 		return result;
 	}
 
+	@Deprecated
+	public Predicate getPredicate(FormulaFactory factory) 
+	throws RodinDBException {
+		return getPredicate(factory, (IProgressMonitor) null);
+	}
+	
 	public Predicate getPredicate(
 			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+			ITypeEnvironment typenv, IProgressMonitor monitor) throws RodinDBException {
 		
-		Predicate result = getPredicate(factory);
+		Predicate result = getPredicate(factory, monitor);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -71,9 +79,22 @@ public abstract class SCPredicateElement extends SCTraceableLabeledElement
 		assert result.isTypeChecked();
 		return result;
 	}
-
+	
+	@Deprecated
+	public Predicate getPredicate(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
+		return getPredicate(factory, typenv, null);
+	}
+	
+	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
+		setPredicateString(predicate.toStringWithTypes(), monitor);
+	}
+	
+	@Deprecated
 	public void setPredicate(Predicate predicate) throws RodinDBException {
-		setContents(predicate.toStringWithTypes());
+		setPredicate(predicate, null);
 	}
 
 }
+

@@ -42,7 +42,7 @@ public abstract class AssignmentModule extends LabeledFormulaModule {
 		
 		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElement;
 		
-		String assignmentString = assignmentElement.getAssignmentString();
+		String assignmentString = assignmentElement.getAssignmentString(null);
 		
 		// parse the assignment
 		

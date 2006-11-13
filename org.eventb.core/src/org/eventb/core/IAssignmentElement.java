@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -29,10 +30,39 @@ public interface IAssignmentElement extends IInternalElement {
 	 * Returns the string representation of the assignment contained in this
 	 * element.
 	 * 
+	 * @param monitor 
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return the assignment of this element as a string
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	String getAssignmentString(IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the string representation of the assignment contained in this
+	 * element.
+	 * 
+	 * @param assignment
+	 *            the string representation of the assignment
+	 * @param monitor 
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */	
+	void setAssignmentString(String assignment, IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns the string representation of the assignment contained in this
+	 * element.
+	 * 
+	 * @return the assignment of this element as a string
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAssignmentString(IProgressMonitor)</code> instead
+	 */
+	@Deprecated
 	String getAssignmentString() throws RodinDBException;
 
 	/**
@@ -43,7 +73,9 @@ public interface IAssignmentElement extends IInternalElement {
 	 *            the string representation of the assignment
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAssignmentString(String, IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAssignmentString(String assignment) throws RodinDBException;
 
 }

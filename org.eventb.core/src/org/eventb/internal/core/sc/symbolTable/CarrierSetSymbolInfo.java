@@ -60,7 +60,7 @@ public class CarrierSetSymbolInfo
 		ISCCarrierSet set = 
 			(ISCCarrierSet) parent.createInternalElement(
 					ISCCarrierSet.ELEMENT_TYPE, getSymbol(), null, monitor);
-		set.setType(getType());
+		set.setType(getType(), null);
 		set.setSource(getReferenceElement(), monitor);
 	}
 

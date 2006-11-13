@@ -18,6 +18,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 class CommonAttributesUtil {
 	
 	public static String getLabel(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
@@ -44,13 +45,13 @@ class CommonAttributesUtil {
 		element.setStringAttribute(EventBAttributes.COMMENT_ATTRIBUTE, label, monitor);
 	}
 	
-	public static int getSignature(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
-		return element.getIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, monitor);
-	}
-	
-	public static void setSignature(InternalElement element, int signature, IProgressMonitor monitor) throws RodinDBException {
-		element.setIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, signature, monitor);
-	}
+//	public static int getSignature(InternalElement element, IProgressMonitor monitor) throws RodinDBException {
+//		return element.getIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, monitor);
+//	}
+//	
+//	public static void setSignature(InternalElement element, int signature, IProgressMonitor monitor) throws RodinDBException {
+//		element.setIntegerAttribute(EventBAttributes.SIGNATURE_ATTRIBUTE, signature, monitor);
+//	}
 	
 	//	Attributes related to the PR and PS files
 

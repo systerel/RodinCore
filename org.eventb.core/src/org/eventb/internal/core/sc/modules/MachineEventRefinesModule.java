@@ -76,7 +76,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 			
 			for (IRefinesEvent refinesEvent : refines) {
 				
-				String label = refinesEvent.getAbstractEventLabel();
+				String label = refinesEvent.getAbstractEventLabel(null);
 				
 				ISCEvent abstractEvent = abstractEventTable.getAbstractEventInfo(label).getEvent();
 		
@@ -99,7 +99,7 @@ public class MachineEventRefinesModule extends ProcessorModule {
 		ISCRefinesEvent scRefinesEvent = (ISCRefinesEvent) target.createInternalElement(
 				ISCRefinesEvent.ELEMENT_TYPE, 
 				REFINES_NAME_PREFIX + index++, null, monitor);
-		scRefinesEvent.setAbstractSCEvent(abstractEvent);
+		scRefinesEvent.setAbstractSCEvent(abstractEvent, null);
 		scRefinesEvent.setSource(element, monitor);
 		return index;
 	}

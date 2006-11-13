@@ -8,13 +8,14 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -32,7 +33,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefinesEvent {
+public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -45,10 +46,13 @@ public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefi
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
+	
+	private IRodinElement getAbstractSCEventHandle(IProgressMonitor monitor) throws RodinDBException {
+		return getHandleAttribute(EventBAttributes.SCREFINES_ATTRIBUTE, monitor);
+	}
 
-	public ISCEvent getAbstractSCEvent() throws RodinDBException {
-		String contents = getContents();
-		IRodinElement target = RodinCore.valueOf(contents);
+	public ISCEvent getAbstractSCEvent(IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement target = getAbstractSCEventHandle(monitor);
 		if (! (target instanceof ISCEvent)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCRefinesEventTypeFailure,
@@ -57,8 +61,19 @@ public class SCRefinesEvent extends SCTraceableLabeledElement implements ISCRefi
 		return (ISCEvent) target;
 	}
 
+	public void setAbstractSCEvent(ISCEvent abstractSCEvent, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setHandleAttribute(EventBAttributes.SCREFINES_ATTRIBUTE, abstractSCEvent, monitor);
+	}
+
+	@Deprecated
+	public ISCEvent getAbstractSCEvent() throws RodinDBException {
+		return getAbstractSCEvent(null);
+	}
+
+	@Deprecated
 	public void setAbstractSCEvent(ISCEvent abstractSCEvent) throws RodinDBException {
-		setContents(abstractSCEvent.getHandleIdentifier());
+		setAbstractSCEvent(abstractSCEvent, null);
 	}
 
 }

@@ -15,6 +15,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public abstract class LabeledElement extends InternalElement implements ILabeledElement {
 
 	public LabeledElement(String name, IRodinElement parent) {

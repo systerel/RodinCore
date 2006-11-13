@@ -85,7 +85,7 @@ public abstract class Module implements IModule {
 			IPOHint hint =
 				(IPOHint) sequent.createInternalElement(
 						IPOHint.ELEMENT_TYPE, HINT_NAME_PREFIX + idx, null, monitor);
-			hint.setValue(hints[idx].getValue(), monitor);
+			hint.setHint(hints[idx].getValue(), monitor);
 
 		}
 
@@ -105,7 +105,7 @@ public abstract class Module implements IModule {
 				(IPOSource) sequent.createInternalElement(
 						IPOSource.ELEMENT_TYPE, SRC_NAME_PREFIX + idx, null, monitor);
 			source.setSource(sources[idx].getSource().getSource(monitor), monitor);
-			source.setSourceRole(sources[idx].getRoleKey(), monitor);
+			source.setRole(sources[idx].getRoleKey(), monitor);
 		}
 
 	}

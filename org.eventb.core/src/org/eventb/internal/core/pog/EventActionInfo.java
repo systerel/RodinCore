@@ -56,7 +56,7 @@ public abstract class EventActionInfo implements IEventActionTable {
 		
 		for (int i=0; i<actions.length; i++) {
 			
-			assignments[i] = actions[i].getAssignment(factory, typeEnvironment);
+			assignments[i] = actions[i].getAssignment(factory, typeEnvironment, null);
 			
 			fetchAssignedIdentifiers(assignedVars, assignments[i]);
 			

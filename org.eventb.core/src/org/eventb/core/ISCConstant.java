@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalElementType;
@@ -20,7 +21,7 @@ import org.rodinp.core.RodinCore;
  * has a name that is returned by
  * {@link org.rodinp.core.IRodinElement#getElementName()} and contains a type
  * that is accessed and manipulated via
- * {@link org.eventb.core.ISCIdentifierElement}. This interface itself does not
+ * {@link ISCIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
  * <p>
@@ -28,8 +29,8 @@ import org.rodinp.core.RodinCore;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory)
- * @see org.eventb.core.ISCIdentifierElement#setType(Type)
+ * @see ISCIdentifierElement#getType(FormulaFactory, IProgressMonitor)
+ * @see ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  */

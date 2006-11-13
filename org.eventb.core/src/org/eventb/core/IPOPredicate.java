@@ -9,8 +9,6 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.Predicate;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -20,21 +18,22 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * <p>
- * A predicate has a name <code>getName</code> associated as its attribute 
- * and the predicate in string representation <code> getPredicate()</code> in the contents. 
- * </p>
  * @author Stefan Hallerstede
  *
  */
-public interface IPOPredicate extends IInternalElement, ITraceableElement {
+public interface IPOPredicate extends ISCPredicateElement, ITraceableElement {
 	
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicate"); //$NON-NLS-1$
 	
+	@Deprecated
 	String getName();
+	
+	@Deprecated
 	String getPredicate() throws RodinDBException;
 	
-	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
+//	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
+	
+	@Deprecated
 	void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException;
 }

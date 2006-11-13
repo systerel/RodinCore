@@ -356,7 +356,7 @@
             kind="string"
             name="%eventBIdentifierAttribute"/>
       <attributeType
-            id="poDescription"
+            id="poDesc"
             kind="string"
             name="%eventBpoDescriptionAttribute"/>
       <attributeType
@@ -364,7 +364,7 @@
             kind="boolean"
             name="%eventBpreservedVariableAttribute"/>
       <attributeType
-            id="role"
+            id="poRole"
             kind="string"
             name="%eventBpoSourceRoleAttribute"/>
       <attributeType
@@ -391,6 +391,42 @@
             id="autoProof"
             kind="boolean"
             name="%eventBpsAutoProof"/>
+      <attributeType
+            id="type"
+            kind="string"
+            name="%eventBTypeAttribute"/>
+      <attributeType
+            id="parentSet"
+            kind="string"
+            name="%eventBParentSetAttribute"/>
+      <attributeType
+            id="extends"
+            kind="string"
+            name="%eventBExtendsAttribute"/>
+      <attributeType
+            id="predicate"
+            kind="string"
+            name="%eventBPredicateAttribute"/>
+      <attributeType
+            id="assignment"
+            kind="string"
+            name="%eventBAssignmentAttribute"/>
+      <attributeType
+            id="refines"
+            kind="string"
+            name="%eventBRefinesAttribute"/>
+      <attributeType
+            id="scRefines"
+            kind="handle"
+            name="%eventBRefinesAttribute"/>
+      <attributeType
+            id="sees"
+            kind="string"
+            name="%eventBSeesAttribute"/>
+      <attributeType
+            id="expression"
+            kind="string"
+            name="%eventBExpressionAttribute"/>
    </extension>
 
 </plugin>

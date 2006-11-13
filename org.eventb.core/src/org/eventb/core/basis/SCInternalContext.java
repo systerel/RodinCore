@@ -8,6 +8,7 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -48,20 +49,40 @@ public class SCInternalContext extends InternalElement implements
 		return ELEMENT_TYPE;
 	}
 
+	public ISCCarrierSet[] getSCCarrierSets(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCCarrierSets(this, monitor);
+	}
+
+	@Deprecated
 	public ISCCarrierSet[] getSCCarrierSets() throws RodinDBException {
-		return SCContextUtil.getSCCarrierSets(this);
+		return getSCCarrierSets(null);
 	}
 
+	public ISCConstant[] getSCConstants(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCConstants(this, monitor);
+	}
+
+	@Deprecated
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		return SCContextUtil.getSCConstants(this);
+		return getSCConstants(null);
 	}
 
+	public ISCAxiom[] getSCAxioms(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCAxioms(this, monitor);
+	}
+
+	@Deprecated
 	public ISCAxiom[] getSCAxioms() throws RodinDBException {
-		return SCContextUtil.getSCAxioms(this);
+		return getSCAxioms(null);
 	}
 
+	public ISCTheorem[] getSCTheorems(IProgressMonitor monitor) throws RodinDBException {
+		return SCContextUtil.getSCTheorems(this, monitor);
+	}
+
+	@Deprecated
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return SCContextUtil.getSCTheorems(this);
+		return getSCTheorems(null);
 	}
 
 }

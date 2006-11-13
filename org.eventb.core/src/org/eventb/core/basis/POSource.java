@@ -13,15 +13,13 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOSource;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author halstefa
  *
  */
-public class POSource extends InternalElement implements IPOSource {
+public class POSource extends EventBElement implements IPOSource {
 	
 	public POSource(String name, IRodinElement parent) {
 		super(name, parent);
@@ -34,24 +32,17 @@ public class POSource extends InternalElement implements IPOSource {
 	public IInternalElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
-	public String getSourceRole(IProgressMonitor monitor) throws RodinDBException {
-		return getStringAttribute(EventBAttributes.ROLE_ATTRIBUTE, monitor);
+	public String getRole(IProgressMonitor monitor) throws RodinDBException {
+		return getStringAttribute(EventBAttributes.POROLE_ATTRIBUTE, monitor);
 	}
 	
+	@Deprecated
 	public String getSourceHandleIdentifier() throws RodinDBException {
 		return getContents();
 	}
 
-	public void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
-		setContents(source.getHandleIdentifier());
-	}
-
-	public IRodinElement getSource(IProgressMonitor monitor) throws RodinDBException {
-		return RodinCore.valueOf(getContents());
-	}
-
-	public void setSourceRole(String role, IProgressMonitor monitor) throws RodinDBException {
-		setStringAttribute(EventBAttributes.ROLE_ATTRIBUTE, role, monitor);
+	public void setRole(String role, IProgressMonitor monitor) throws RodinDBException {
+		setStringAttribute(EventBAttributes.POROLE_ATTRIBUTE, role, monitor);
 	}
 
 }

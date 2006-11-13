@@ -115,7 +115,7 @@ public class MachineEventGuardModule extends UtilityModule {
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		IAbstractEventGuardTable abstractEventGuardTable = 
 			new AbstractEventGuardTable(
-					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards()),
+					(abstractEvent == null ? new ISCGuard[0] : abstractEvent.getSCGuards(null)),
 					eventTypeEnvironment, 
 					factory);
 		repository.setState(abstractEventGuardTable);

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -79,12 +80,25 @@ public interface IContextFile extends IRodinFile {
 
 	/**
 	 * Returns an array of all extends clauses of this context.
+	 * @return an array of extends clauses
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getExtendsClauses(IProgressMonitor)</code> instead
+	 */
+	@Deprecated
+	IExtendsContext[] getExtendsClauses() throws RodinDBException;
+
+	/**
+	 * Returns an array of all extends clauses of this context.
+	 * @param monitor 
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * 
 	 * @return an array of extends clauses
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	IExtendsContext[] getExtendsClauses() throws RodinDBException;
+	IExtendsContext[] getExtendsClauses(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all carrier sets of this context.
@@ -92,8 +106,22 @@ public interface IContextFile extends IRodinFile {
 	 * @return an array of carrier sets
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getCarrierSets(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ICarrierSet[] getCarrierSets() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all carrier sets of this context.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return an array of carrier sets
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ICarrierSet[] getCarrierSets(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all constants of this context.
@@ -101,8 +129,22 @@ public interface IContextFile extends IRodinFile {
 	 * @return an array of constants
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getConstants(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IConstant[] getConstants() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all constants of this context.
+	 * @param monitor 
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return an array of constants
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IConstant[] getConstants(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all axioms of this context.
@@ -110,8 +152,22 @@ public interface IContextFile extends IRodinFile {
 	 * @return an array of axioms
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAxioms(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	IAxiom[] getAxioms() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all axioms of this context.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return an array of axioms
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IAxiom[] getAxioms(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns an array containing all theorems of this context.
@@ -119,7 +175,21 @@ public interface IContextFile extends IRodinFile {
 	 * @return an array of theorems
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getTheorems(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	ITheorem[] getTheorems() throws RodinDBException;
+
+	/**
+	 * Returns an array containing all theorems of this context.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @return an array of theorems
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ITheorem[] getTheorems(IProgressMonitor monitor) throws RodinDBException;
 
 }

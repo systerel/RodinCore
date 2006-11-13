@@ -50,10 +50,10 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.basis.EventBElement;
 import org.eventb.core.basis.POIdentifier;
 import org.eventb.core.basis.SCCarrierSet;
 import org.eventb.core.basis.SCConstant;
-import org.eventb.core.basis.SCVariable;
 import org.eventb.internal.core.pom.AutoProver;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -215,7 +215,7 @@ public abstract class BuilderTest extends TestCase {
 
 	public static void addSCVariables(IRodinFile rodinFile, String[] names, String[] types) throws RodinDBException {
 		for(int i=0; i<names.length; i++) {
-			SCVariable identifier = (SCVariable) rodinFile.createInternalElement(ISCVariable.ELEMENT_TYPE, names[i], null, null);
+			EventBElement identifier = (EventBElement) rodinFile.createInternalElement(ISCVariable.ELEMENT_TYPE, names[i], null, null);
 			identifier.setContents(types[i]);
 		}
 	}
@@ -323,7 +323,7 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected IRodinElement getSourceElement(IPOSequent poSequent, int sourceIdx) throws RodinDBException {
-		IPOSource[] sources = poSequent.getSources();
+		IPOSource[] sources = poSequent.getSources(null);
 		String memento = sources[sourceIdx].getSourceHandleIdentifier();
 		return RodinCore.valueOf(memento);
 	}

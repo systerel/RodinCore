@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
@@ -45,19 +47,35 @@ public class SeesContext extends InternalElement implements ISeesContext {
 		return ELEMENT_TYPE;
 	}
 
+	@Deprecated
 	public ISCContextFile getSeenSCContext() throws RodinDBException {
-		final String bareName = getSeenContextName();
+		return getSeenSCContext(null);
+	}
+
+	public ISCContextFile getSeenSCContext(IProgressMonitor monitor) throws RodinDBException {
+		final String bareName = getSeenContextName(null);
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
 		return (ISCContextFile) project.getRodinFile(scName);
 	}
 
-	public String getSeenContextName() throws RodinDBException {
-		return getContents();
+	public String getSeenContextName(IProgressMonitor monitor) throws RodinDBException {
+		return getStringAttribute(EventBAttributes.SEES_ATTRIBUTE, monitor);
 	}
 
+	public void setSeenContextName(String name, IProgressMonitor monitor) 
+	throws RodinDBException {
+		setStringAttribute(EventBAttributes.SEES_ATTRIBUTE, name, monitor);
+	}
+
+	@Deprecated
+	public String getSeenContextName() throws RodinDBException {
+		return getSeenContextName(null);
+	}
+
+	@Deprecated
 	public void setSeenContextName(String name) throws RodinDBException {
-		setContents(name);
+		setSeenContextName(name, null);
 	}
 
 }

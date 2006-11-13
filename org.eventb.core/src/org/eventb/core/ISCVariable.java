@@ -30,8 +30,8 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @see org.rodinp.core.IRodinElement#getElementName()
- * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory)
- * @see org.eventb.core.ISCIdentifierElement#setType(Type)
+ * @see org.eventb.core.ISCIdentifierElement#getType(FormulaFactory, IProgressMonitor)
+ * @see org.eventb.core.ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  * 
@@ -46,6 +46,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * cannot be used again. It is "forbidden".
 	 * 
 	 * @param value the "forbidden" status of the variable name
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
@@ -54,6 +57,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	/**
 	 * Returns whether the variable name is forbidden or not.
 	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return whether the variable name is forbidden or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
@@ -64,6 +70,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * are called "preserved". A forbidden variable must not be preserved.
 	 * 
 	 * @param value the "preserved" status of the variable name
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
@@ -72,6 +81,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	/**
 	 * Returns whether the variable name is preserved or not.
 	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
 	 * @return whether the variable name is preserved or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database

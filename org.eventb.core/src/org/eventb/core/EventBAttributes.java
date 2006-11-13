@@ -19,10 +19,7 @@ public final class EventBAttributes {
 	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
 	public static String COMMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".comment";
-	public static String SIGNATURE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".signature";
 	public static String INHERITED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".inherited";
-	public static String DESCRIPTION_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
-	public static String ROLE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".role";
 	public static String FORBIDDEN_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".forbidden";
 	public static String PRESERVED_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".preserved";
 	public static String CONVERGENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".convergence";
@@ -34,6 +31,14 @@ public final class EventBAttributes {
 	public static String EXTENDS_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".extends";
 	public static String SEES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".sees";
 	public static String IDENTIFIER_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".identifier";
+
+	public static String SCREFINES_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".scRefines";
+	
+	public static String PODESC_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poDesc";
+	public static String POROLE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poRole";
+	public static String POSTAMP_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poStamp";
+	public static String POHINT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".poHint";
+	public static String PARENT_SET_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".parentSet";
 
 	// Attributes related to the PR and PS files
 	public static String CONFIDENCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".confidence";

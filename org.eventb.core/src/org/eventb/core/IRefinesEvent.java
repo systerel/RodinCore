@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -46,8 +47,23 @@ public interface IRefinesEvent extends IInternalElement {
 	 * @return the label of the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getAbstractEventLabel(IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	String getAbstractEventLabel() throws RodinDBException;
+
+	/**
+	 * Returns the label of the event that is refined by the event that contains
+	 * this element.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the label of the abstract event
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	String getAbstractEventLabel(IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Sets the label of the event that is refined by the event that contains
@@ -57,8 +73,24 @@ public interface IRefinesEvent extends IInternalElement {
 	 *            the label of the abstract event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>setAbstractEventLabel(String,IProgressMonitor)</code> instead
 	 */
+	@Deprecated
 	void setAbstractEventLabel(String label) throws RodinDBException;
+
+	/**
+	 * Sets the label of the event that is refined by the event that contains
+	 * this element.
+	 * 
+	 * @param label
+	 *            the label of the abstract event
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setAbstractEventLabel(String label, IProgressMonitor monitor) throws RodinDBException;
 
 	// No method getAbstractSCEvent(), as its implementation would involve
 	// non-local operations on the database (essentially, getting to the

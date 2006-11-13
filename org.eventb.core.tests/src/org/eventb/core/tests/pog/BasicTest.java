@@ -96,18 +96,18 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			String predicate) throws Exception {
 		String string = getNormalizedPredicate(predicate, typeEnvironment);
 		assertEquals("goal should be " + string, string, 
-				sequent.getGoal().getPredicate());
+				sequent.getGoal(null).getPredicate());
 	}
 	
 	private HashSet<String> getPredicatesFromSets(IPOPredicateSet predicateSet) throws Exception {
 		HashSet<String> result = new HashSet<String>(4047);
 		IPOPredicateSet set = predicateSet;
 		while (set != null) {
-			IPOPredicate[] predicates = set.getPredicates();
+			IPOPredicate[] predicates = set.getPredicates(null);
 			for (IPOPredicate predicate : predicates) {
 				result.add(predicate.getPredicate());
 			}
-			set = set.getPredicateSet();
+			set = set.getParentPredicateSet(null);
 		}
 		return result;
 	}
@@ -117,7 +117,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			ITypeEnvironment typeEnvironment, 
 			String... strings) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypothesis();
+		IPOPredicateSet predicateSet = sequent.getHypothesis(null);
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		
@@ -131,7 +131,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 
 	protected void sequentHasNoHypotheses(IPOSequent sequent) throws Exception {
 		
-		IPOPredicateSet predicateSet = sequent.getHypothesis();
+		IPOPredicateSet predicateSet = sequent.getHypothesis(null);
 		
 		HashSet<String> predicates = getPredicatesFromSets(predicateSet);
 		

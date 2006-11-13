@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
@@ -23,8 +24,8 @@ import org.rodinp.core.RodinCore;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eventb.core.IIdentifierElement#getIdentifierString()
- * @see org.eventb.core.IIdentifierElement#setIdentifierString(String)
+ * @see org.eventb.core.IIdentifierElement#getIdentifierString(IProgressMonitor)
+ * @see org.eventb.core.IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
  */

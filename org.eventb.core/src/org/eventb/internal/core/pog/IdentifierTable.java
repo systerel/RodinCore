@@ -76,7 +76,7 @@ public class IdentifierTable implements IIdentifierTable {
 			final IPOIdentifier ident = 
 				(IPOIdentifier) parent.createInternalElement(
 						IPOIdentifier.ELEMENT_TYPE, identName, null, monitor);
-			ident.setType(identType);		
+			ident.setType(identType, null);		
 		}
 
 	}
