@@ -431,138 +431,206 @@
       <element
             class="org.rodinp.core.IRodinProject"
             icon="icons/full/obj16/prj_obj.gif"
-            labelProvider="org.eventb.internal.ui.RodinProjectLabelProvider"
             name="%element.rodinProject"
-            priority="0"/>
+            priority="0">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.RodinProjectLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IMachineFile"
             icon="icons/full/obj16/mch_obj.gif"
-            labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"
             name="%element.machineFile"
-            priority="2"/>
+            priority="2">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.IContextFile"
             icon="icons/full/obj16/ctx_obj.gif"
-            labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"
             name="%element.contextFile"
-            priority="1"/>
+            priority="1">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.RodinFileLabelProvider"/>
+      </element>
       <element
             class="org.eventb.core.ISeesContext"
             icon="icons/full/obj16/ctx_obj.gif"
-            labelProvider="org.eventb.internal.ui.SeesContextLabelProvider"
             name="%element.seesContext"
-            priority="2"/>
+            priority="2">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.SeesContextLabelProvider"
+               modifier="org.eventb.internal.ui.SeesContextModifier"/>
+      </element>
       <element
             class="org.eventb.core.IRefinesMachine"
             icon="icons/full/obj16/mch_obj.gif"
-            labelProvider="org.eventb.internal.ui.RefinesMachineLabelProvider"
             name="%element.refinesMachine"
-            priority="3"/>
+            priority="3">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.RefinesMachineLabelProvider"
+               modifier="org.eventb.internal.ui.RefinesMachineModifier"/>
+      </element>
       <element
             class="org.eventb.core.IExtendsContext"
             icon="icons/full/obj16/ctx_obj.gif"
-            labelProvider="org.eventb.internal.ui.ExtendsContextLabelProvider"
             name="%element.extendsContext"
-            priority="3"/>
+            priority="3">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.ExtendsContextLabelProvider"
+               modifier="org.eventb.internal.ui.ExtendsContextModifier"/>
+      </element>
       <element
             class="org.eventb.core.IVariable"
             icon="icons/full/obj16/var_obj.gif"
-            labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.variable"
-            priority="4"/>
+            priority="4">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+      </element>
       <element
             class="org.eventb.core.IInvariant"
             icon="icons/full/obj16/inv_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.invariant"
             priority="5">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
             class="org.eventb.core.ITheorem"
             icon="icons/full/obj16/thm_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.theorem"
             priority="7">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
             class="org.eventb.core.IEvent"
             icon="icons/full/obj16/evt_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.event"
-            priority="9"/>
+            priority="9">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+      </element>
       <element
             class="org.eventb.core.IRefinesEvent"
             icon="icons/full/obj16/evt_obj.gif"
-            labelProvider="org.eventb.internal.ui.RefinesEventLabelProvider"
             name="%element.refinesEvent"
-            priority="0"/>
+            priority="0">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.RefinesEventLabelProvider"
+               modifier="org.eventb.internal.ui.RefinesEventModifier"/>
+      </element>
       <element
             class="org.eventb.core.IGuard"
             icon="icons/full/obj16/grd_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.guard"
             priority="5">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
             class="org.eventb.core.IAction"
             icon="icons/full/obj16/act_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.action"
             priority="7">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.AssignmentLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.AssignmentLabelProvider"
+               modifier="org.eventb.internal.ui.AssignmentModifier"/>
       </element>
       <element
             class="org.eventb.core.ICarrierSet"
             icon="icons/full/obj16/set_obj.gif"
-            labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.carrierSet"
-            priority="4"/>
+            priority="4">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+      </element>
       <element
             class="org.eventb.core.IConstant"
             icon="icons/full/obj16/cst_obj.gif"
-            labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
             name="%element.constant"
-            priority="5"/>
+            priority="5">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+      </element>
       <element
             class="org.eventb.core.IAxiom"
             icon="icons/full/obj16/axm_obj.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.axiom"
             priority="6">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
             class="org.eventb.core.IWitness"
             icon="icons/unattempted.gif"
-            labelProvider="org.eventb.internal.ui.LabelLabelProvider"
             name="%element.witness"
             priority="6">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               modifier="org.eventb.internal.ui.LabelModifier"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               modifier="org.eventb.internal.ui.PredicateModifier"/>
       </element>
       <element
             class="org.eventb.core.IVariant"
             icon="icons/sample.gif"
-            labelProvider="org.eventb.internal.ui.VariantLabelProvider"
             name="%element.variant"
             priority="8">
          <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.VariantLabelProvider"/>
+         <column
                id="content"
-               labelProvider="org.eventb.internal.ui.ExpressionLabelProvider"/>
+               labelProvider="org.eventb.internal.ui.ExpressionLabelProvider"
+               modifier="org.eventb.internal.ui.ExpressionModifier"/>
       </element>
    </extension>
    <extension

@@ -619,7 +619,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	public String getColumnID(int columnIndex) {
 		// TODO Should be implemented dynamically
 		if (columnIndex == 1) return "content";
-		else return "name";
+		else if (columnIndex == 0) return "name";
+		else return "";
 	}
 
 }

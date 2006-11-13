@@ -72,16 +72,6 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="labelProvider" type="string" use="required">
-            <annotation>
-               <documentation>
-                  if the label attribute is not specified, the label provider class will be used to find the label for the element. The class must implement the interface &lt;samp&gt;org.eventb.ui.IElementLabelProvider&lt;/samp&gt;
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.IElementLabelProvider"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
@@ -117,7 +107,17 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.IElementLabelProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="modifier" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.ui.IElementModifier"/>
                </appInfo>
             </annotation>
          </attribute>

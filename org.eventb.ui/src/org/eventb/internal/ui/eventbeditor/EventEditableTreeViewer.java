@@ -22,15 +22,13 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IExpressionElement;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.ui.ElementSorter;
+import org.eventb.ui.ElementUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
@@ -123,6 +121,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -161,31 +160,35 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
+	@Override
 	public void commit(IRodinElement element, int col, String text) {
 
 		switch (col) {
-		case 0: // Commit label / identifier
+		case 0:
 			try {
-				if (element instanceof IIdentifierElement) {
-					IIdentifierElement identifierElement = (IIdentifierElement) element;
-					if (!identifierElement.getIdentifierString().equals(text)) {
-						identifierElement.setIdentifierString(text);
-					}
-				} else if (element instanceof ILabeledElement) {
-					ILabeledElement labelElement = (ILabeledElement) element;
-					if (EventBEditorUtils.DEBUG)
-						EventBEditorUtils.debug("Rename label: "
-								+ labelElement.getLabel(null) + " to " + text);
-					if (!labelElement.getLabel(null).equals(text)) {
-						labelElement.setLabel(text, null);
-					}
-
-				} else if (element instanceof IRefinesEvent) {
-					IRefinesEvent refinesEvent = (IRefinesEvent) element;
-					if (!refinesEvent.getAbstractEventLabel().equals(text)) {
-						refinesEvent.setAbstractEventLabel(text);
-					}
-				}
+				ElementUIRegistry.getDefault().modify(element, this.getColumnID(col), text);
+				// Commit label / identifier
+				// if (element instanceof IIdentifierElement) {
+				// IIdentifierElement identifierElement = (IIdentifierElement)
+				// element;
+				// if (!identifierElement.getIdentifierString().equals(text)) {
+				// identifierElement.setIdentifierString(text);
+				// }
+				// } else if (element instanceof ILabeledElement) {
+				// ILabeledElement labelElement = (ILabeledElement) element;
+				// if (EventBEditorUtils.DEBUG)
+				// EventBEditorUtils.debug("Rename label: "
+				// + labelElement.getLabel(null) + " to " + text);
+				// if (!labelElement.getLabel(null).equals(text)) {
+				// labelElement.setLabel(text, null);
+				// }
+				//
+				// } else if (element instanceof IRefinesEvent) {
+				// IRefinesEvent refinesEvent = (IRefinesEvent) element;
+				// if (!refinesEvent.getAbstractEventLabel().equals(text)) {
+				// refinesEvent.setAbstractEventLabel(text);
+				// }
+				// }
 
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -218,6 +221,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 2;
 
@@ -241,24 +245,28 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	protected boolean isNotSelectable(Object object, int column) {
-		if (column == 0) {
-			if (object instanceof ILabeledElement
-					|| object instanceof IIdentifierElement
-					|| object instanceof IRefinesEvent)
-				return false;
-			else
-				return true;
-		}
-		if (column == 1) {
-			if (object instanceof IAssignmentElement
-					|| object instanceof IPredicateElement
-					|| object instanceof IExpressionElement)
-				return false;
-			else
-				return true;
-		}
-		return false;
+		return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
+
+//		if (column == 0) {
+//			return ElementUIRegistry.getDefault().isNotSelectable(object, this.getColumnID(column));
+			// if (object instanceof ILabeledElement
+			// || object instanceof IIdentifierElement
+			// || object instanceof IRefinesEvent)
+			// return false;
+			// else
+			// return true;
+		// }
+		// if (column == 1) {
+		// if (object instanceof IAssignmentElement
+		// || object instanceof IPredicateElement
+		// || object instanceof IExpressionElement)
+		// return false;
+		// else
+		// return true;
+		//		}
+		//		return false;
 	}
 
 	/*
@@ -266,6 +274,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

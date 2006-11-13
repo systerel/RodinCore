@@ -26,6 +26,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.osgi.framework.Bundle;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -46,6 +48,9 @@ public class ElementUIRegistry {
 	// The default label (value empty string)
 	private static final String DEFAULT_LABEL = ""; //$NON-NLS-1$
 
+	// The default value for editable
+	private static final boolean DEFAULT_EDITABLE = true;
+
 	// The static instance of this singleton class
 	private static ElementUIRegistry instance;
 
@@ -62,10 +67,14 @@ public class ElementUIRegistry {
 		// Configuration information related to the element
 		private IConfigurationElement configuration;
 
-		private IElementLabelProvider labelProvider;
-		
+//		private IElementLabelProvider labelProvider = null;
+
+//		private IElementModifier modifier = null;
+
 		private HashMap<String, IElementLabelProvider> providers;
 		
+		private HashMap<String, IElementModifier> modifiers;
+
 		/**
 		 * The image descriptor for the element (which is lazy loading using
 		 * <code>configuration</code>)
@@ -83,6 +92,7 @@ public class ElementUIRegistry {
 		public ElementUIInfo(IConfigurationElement configuration) {
 			this.configuration = configuration;
 			providers = new HashMap<String, IElementLabelProvider>();
+			modifiers = new HashMap<String, IElementModifier>();
 		}
 
 		/**
@@ -121,7 +131,7 @@ public class ElementUIRegistry {
 		 * @return the label corresponding to the input object
 		 */
 		public String getLabel(Object obj) {
-			return getLabel(obj, "labelProvider");
+			return getLabelAtColumn("name", obj);
 		}
 
 		/**
@@ -161,25 +171,25 @@ public class ElementUIRegistry {
 		 * @return the label according to the input object and the extension
 		 *         names
 		 */
-		private String getLabel(Object obj, String provider) {
-			if (labelProvider != null)
-				return labelProvider.getLabel(obj);
-			
-			try {
-				labelProvider = (IElementLabelProvider) configuration
-						.createExecutableExtension(provider); //$NON-NLS-1$
-				return labelProvider.getLabel(obj);
-			} catch (CoreException e) {
-				String message = "Cannot instantiate the label provider class "
-						+ configuration.getAttribute("secondLabelProvider");
-				UIUtils.log(e, message);
-				if (UIUtils.DEBUG) {
-					System.out.println(message);
-					e.printStackTrace();
-				}
-				return DEFAULT_LABEL;
-			}
-		}
+//		private String getLabel(Object obj, String provider) {
+//			if (labelProvider != null)
+//				return labelProvider.getLabel(obj);
+//
+//			try {
+//				labelProvider = (IElementLabelProvider) configuration
+//						.createExecutableExtension(provider); //$NON-NLS-1$
+//				return labelProvider.getLabel(obj);
+//			} catch (CoreException e) {
+//				String message = "Cannot instantiate the label provider class "
+//						+ configuration.getAttribute(provider);
+//				UIUtils.log(e, message);
+//				if (UIUtils.DEBUG) {
+//					System.out.println(message);
+//					e.printStackTrace();
+//				}
+//				return DEFAULT_LABEL;
+//			}
+//		}
 
 		/**
 		 * Get a secondary label (used for the second column in Event-B Editable
@@ -195,7 +205,7 @@ public class ElementUIRegistry {
 			if (provider != null) {
 				return provider.getLabel(obj);
 			}
-			
+
 			IConfigurationElement[] columns = configuration.getChildren();
 			for (IConfigurationElement column : columns) {
 				String id = column.getAttribute("id"); // $NON-NLS-1$
@@ -207,8 +217,7 @@ public class ElementUIRegistry {
 						return provider.getLabel(obj);
 					} catch (CoreException e) {
 						String message = "Cannot instantiate the label provider class "
-								+ configuration
-										.getAttribute("labelProvider");
+								+ configuration.getAttribute("labelProvider");
 						UIUtils.log(e, message);
 						if (UIUtils.DEBUG) {
 							System.out.println(message);
@@ -219,6 +228,72 @@ public class ElementUIRegistry {
 				}
 			}
 			return DEFAULT_LABEL;
+		}
+
+		public boolean isNotSelectable(Object obj, String columnID) {
+			IElementModifier modifier = modifiers.get(columnID);
+			if (modifier != null) {
+				if (modifier instanceof NullModifier)
+					return true;
+				else
+					return false;
+			}
+
+			IConfigurationElement[] columns = configuration.getChildren();
+			for (IConfigurationElement column : columns) {
+				String id = column.getAttribute("id"); // $NON-NLS-1$
+				if (id.equals(columnID)) {
+					try {
+						modifier = (IElementModifier) column
+								.createExecutableExtension("modifier");
+						modifiers.put(columnID, modifier);
+						return false;
+					} catch (CoreException e) {
+						String message = "Cannot instantiate the label provider class "
+								+ configuration.getAttribute("modifier");
+						UIUtils.log(e, message);
+						if (UIUtils.DEBUG) {
+							System.out.println(message);
+							e.printStackTrace();
+						}
+						return DEFAULT_EDITABLE;
+					}
+				}
+			}
+			return DEFAULT_EDITABLE;
+		}
+
+		public void modify(IRodinElement element, String columnID, String text)
+				throws RodinDBException {
+			IElementModifier modifier = modifiers.get(columnID);
+			if (modifier != null) {
+				if (modifier instanceof NullModifier)
+					return;
+				else
+					modifier.modify(element, text);
+			}
+
+			IConfigurationElement[] columns = configuration.getChildren();
+			for (IConfigurationElement column : columns) {
+				String id = column.getAttribute("id"); // $NON-NLS-1$
+				if (id.equals(columnID)) {
+					try {
+						modifier = (IElementModifier) column
+								.createExecutableExtension("modifier");
+						modifiers.put(columnID, modifier);
+						modifier.modify(element, text);
+					} catch (CoreException e) {
+						String message = "Cannot instantiate the label provider class "
+								+ configuration.getAttribute("modifier");
+						UIUtils.log(e, message);
+						if (UIUtils.DEBUG) {
+							System.out.println(message);
+							e.printStackTrace();
+						}
+						return;
+					}
+				}
+			}
 		}
 
 	}
@@ -381,6 +456,32 @@ public class ElementUIRegistry {
 		}
 
 		return DEFAULT_PRIORITY;
+	}
+
+	public boolean isNotSelectable(Object obj, String columnID) {
+		if (registry == null)
+			loadRegistry();
+
+		Set<Class> classes = registry.keySet();
+		for (Class clazz : classes) {
+			if (clazz.isInstance(obj))
+				return registry.get(clazz).isNotSelectable(obj, columnID);
+		}
+
+		return DEFAULT_EDITABLE;
+	}
+
+	public void modify(IRodinElement element, String columnID, String text)
+			throws RodinDBException {
+		if (registry == null)
+			loadRegistry();
+
+		Set<Class> classes = registry.keySet();
+		for (Class clazz : classes) {
+			if (clazz.isInstance(element))
+				registry.get(clazz).modify(element, columnID, text);
+		}
+
 	}
 
 }
