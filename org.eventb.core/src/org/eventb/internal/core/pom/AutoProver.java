@@ -17,7 +17,6 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
-import org.eventb.core.basis.PRProofTree;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
@@ -97,9 +96,8 @@ public class AutoProver {
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-//			if ((!status.isProofValid()) || (!proofTree.isClosed())) {
 			if ((!status.isProofValid()) || 
-					(status.getProofConfidence() <= IConfidence.PENDING)) {
+					(status.getProofConfidence(null) <= IConfidence.PENDING)) {
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
 						POLoader.readPO(poSequent),
@@ -113,36 +111,24 @@ public class AutoProver {
 				pm.subTask("saving");
 				// Update the tree if it was discharged
 				if (autoProofTree.isClosed()) {
-					// po.updateProofTree(tree);
-					prProofTree.setProofTree(autoProofTree);
+					prProofTree.setProofTree(autoProofTree, null);
 					status.updateStatus();
 					setAutoProven(true,status);
-					// if (proofTree == null) proofTree = po.getProofTree();
-					prProofTree.setAutomaticallyGenerated();
 					prFile.save(null, false);
 					return true;
 				}
 				// If the auto prover made 'some' progress, and no
 				// proof was previously attempted update the proof
-//				if (autoProofTree.getRoot().hasChildren() && 
-//						(
-//								(! prProofTree.proofAttempted()) 
-//								|| (prProofTree.isAutomaticallyGenerated() && !prProofTree.isClosed())
-//						))
 				if (autoProofTree.getRoot().hasChildren() && 
 						(
 								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-								(status.isAutoProven() && !(status.getProofConfidence() > IConfidence.PENDING))
+								(status.isAutoProven() && !(status.getProofConfidence(null) > IConfidence.PENDING))
 						))	
 					
 				{
-					// po.updateProofTree(tree);
-					prProofTree.setProofTree(autoProofTree);
+					prProofTree.setProofTree(autoProofTree, null);
 					status.updateStatus();
 					setAutoProven(true,status);
-					prProofTree.setAutomaticallyGenerated();
-					
-					((PRProofTree)prProofTree).setAutomaticallyGenerated();
 					// in this case no need to save immediately.
 					return true;
 				}

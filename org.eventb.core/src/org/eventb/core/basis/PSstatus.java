@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
@@ -74,12 +75,14 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		setBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid, null);
 	}
 	
-	public int getProofConfidence() throws RodinDBException {
-		return getIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, null);
+
+	public int getProofConfidence(IProgressMonitor monitor) throws RodinDBException {
+		return CommonAttributesUtil.getConfidence(this, monitor);
 	}
 	
-	private void setProofConfidence(int confidence) throws RodinDBException {
-		setIntegerAttribute(EventBAttributes.CONFIDENCE_ATTRIBUTE, confidence, null);
+
+	private void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
+		CommonAttributesUtil.setConfidence(this, confidence, monitor);
 	}
 	
 	public IPOSequent getPOSequent() {
@@ -94,13 +97,13 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		IProverSequent seq =  POLoader.readPO(getPOSequent());
 		final IPRProofTree proofTree = getProofTree();
 		if (proofTree == null) {
-			setProofConfidence(IConfidence.UNATTEMPTED);
+			setProofConfidence(IConfidence.UNATTEMPTED, null);
 			setProofValid(true);
 			return;
 		}
 		IProofDependencies deps = proofTree.getProofDependencies();
 		boolean valid = ProverLib.proofReusable(deps,seq);
-		setProofConfidence(proofTree.getConfidence());
+		setProofConfidence(proofTree.getConfidence(null), null);
 		setProofValid(valid);
 	}
 

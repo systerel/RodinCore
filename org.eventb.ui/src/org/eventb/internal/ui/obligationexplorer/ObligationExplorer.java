@@ -237,10 +237,10 @@ public class ObligationExplorer extends ViewPart implements
 		final IPRProofTree prProofTree = status.getProofTree();
 
 		// TODO : confidence now expresses unattempted as well
-		if (prProofTree == null || (!prProofTree.proofAttempted()))
+		if (prProofTree == null || (prProofTree.getConfidence(null) <= IConfidence.UNATTEMPTED))
 			return UNATTEMPTED;
 
-		int confidence = prProofTree.getConfidence();
+		int confidence = prProofTree.getConfidence(null);
 		if (proofBroken) {
 
 			if (confidence == IConfidence.PENDING)

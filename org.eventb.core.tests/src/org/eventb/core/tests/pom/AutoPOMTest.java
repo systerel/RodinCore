@@ -102,10 +102,10 @@ public class AutoPOMTest extends BuilderTest {
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
-		prs[prs.length-1].getProofTree().setProofTree(proofTree);
+		prs[prs.length-1].getProofTree().setProofTree(proofTree, null);
 		prs[prs.length-1].updateStatus();
 		
-		IProofSkeleton skel = prs[prs.length-1].getProofTree().getRoot().getSkeleton(null);
+		IProofSkeleton skel = prs[prs.length-1].getProofTree().getSkeleton(null);
 		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
 		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
 		
@@ -123,12 +123,12 @@ public class AutoPOMTest extends BuilderTest {
 	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
 		IPSstatus[] statuses = psFile.getStatus();
 		for (IPSstatus status : statuses) {
-			if (status.getProofConfidence() > IConfidence.UNATTEMPTED)
+			if (status.getProofConfidence(null) > IConfidence.UNATTEMPTED)
 			{
 				IPRProofTree prProofTree = status.getProofTree();
 				String name = status.getName();
 				assertNotNull("Proof absent for "+name , prProofTree);
-				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(), status.getProofConfidence());
+				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(null), status.getProofConfidence(null));
 			}
 		}
 		
@@ -177,7 +177,7 @@ public class AutoPOMTest extends BuilderTest {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getName() + " should be closed",
 				IConfidence.PENDING <
-				status.getProofConfidence());
+				status.getProofConfidence(null));
 		assertTrue("PR " + status.getName() + " should be valid",
 				status.isProofValid());
 		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",
@@ -191,7 +191,7 @@ public class AutoPOMTest extends BuilderTest {
 		// IPRProofTree proofTree = status.getProofTree();
 		assertTrue("PO " + status.getName() + " should not be closed",
 				IConfidence.PENDING >=
-				status.getProofConfidence());
+				status.getProofConfidence(null));
 		assertTrue("PR " + status.getName() + " should be valid",
 				status.isProofValid());
 		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",

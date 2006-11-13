@@ -33,13 +33,6 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return ELEMENT_TYPE;
 	}
 	
-//	public IPRProofRule getPRRule() throws RodinDBException {
-//		IRodinElement[] rules =  this.getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
-//		if (rules.length == 0) return null;
-//		assert rules.length == 1;
-//		return (IPRProofRule) rules[0];
-//	}
-	
 	public IProofRule getRule() throws RodinDBException {
 		IRodinElement[] rules =  this.getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 		if (rules.length == 0) return null;
@@ -61,20 +54,37 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return null;
 	}
 	
-	public String getComment() throws RodinDBException {
-		return getContents();
-	}
 	
+//	public String getComment(IProgressMonitor monitor) throws RodinDBException {
+//		return getContents(monitor);
+//	}
+//	
+//	public void setComment(String comment) throws RodinDBException {
+//		setContents(comment);
+//	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#setComment(java.lang.String,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setComment(String comment, IProgressMonitor monitor)
+			throws RodinDBException {
+		CommonAttributesUtil.setComment(this, comment, monitor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public String getComment(IProgressMonitor monitor) throws RodinDBException {
-		return getContents(monitor);
-	}
-	
-	public void setComment(String comment) throws RodinDBException {
-		setContents(comment);
+		return CommonAttributesUtil.getComment(this, monitor);
 	}
 	
 	public IProofSkeleton getSkeleton(final IProgressMonitor monitor) throws RodinDBException {
-		final String comment = getComment();
+		final String comment = getComment(null);
 		final IProofRule proofRule = getRule();
 		final IPRProofTreeNode[] prChildNodes = getChildNodes();
 		final IProofSkeleton[] childNodes = new IProofSkeleton[prChildNodes.length];
@@ -107,12 +117,10 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		
 		IPRProofTreeNode prProofTreeNode = this;
 		
-		prProofTreeNode .setComment(proofTreeNode.getComment());
+		prProofTreeNode .setComment(proofTreeNode.getComment(),null);
 		
 		if (proofTreeNode.isOpen()) return;
-		
-		// writeOutRule(proofTreeNode.getRule(),prProofTreeNode);
-		
+				
 		IPRProofRule prRule = (IPRProofRule)
 		createInternalElement(
 				IPRProofRule.ELEMENT_TYPE,

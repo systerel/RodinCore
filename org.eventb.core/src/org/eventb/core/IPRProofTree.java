@@ -1,7 +1,10 @@
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -31,51 +34,21 @@ public interface IPRProofTree extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTree"); //$NON-NLS-1$
 
+
+	public void initialize(IProofMonitor monitor) throws RodinDBException;
+
+	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor) throws RodinDBException;
+	
 	/**
 	 * Returns the confidence of this proof tree.
+	 * @param monitor TODO
 	 * 
 	 * @return the confidence of this proof tree 
 	 * 			(see {@link org.eventb.core.seqprover.IConfidence})
 	 * @throws RodinDBException 
 	 */
-	int getConfidence() throws RodinDBException;
-
-	/**
-	 * Returns whether or not this proof tree is closed.
-	 * <p>
-	 * This is a shortcut for <code>getConfidence() <= IConfidence.PENDING</code>.
-	 * </p>
-	 * 
-	 * @return <code>true</code> iff this proof tree is closed
-	 * @throws RodinDBException 
-	 */
-	boolean isClosed() throws RodinDBException;
-
-	/**
-	 * Returns whether or not this proof tree is attempted.
-	 * <p>
-	 * This is a shortcut for <code>getConfidence() != IConfidence.UNATTEMPTED</code>.
-	 * </p>
-	 * 
-	 * @return <code>true</code> iff this proof has been attempted
-	 * @throws RodinDBException 
-	 */
-	public boolean proofAttempted() throws RodinDBException;
-
+	int getConfidence(IProgressMonitor monitor) throws RodinDBException;
 	
-	/**
-	 * Returns the root node of this proof tree.
-	 * 
-	 * @return the root node of this proof tree
-	 */
-	public IPRProofTreeNode getRoot() throws RodinDBException;
-
-
-	public void initialize() throws RodinDBException;
-
-	public void setProofTree(IProofTree proofTree) throws RodinDBException;
-
-
 	/**
 	 * Returns the dependency information for this proof tree.
 	 * (see {@link IProofDependencies})
@@ -86,9 +59,6 @@ public interface IPRProofTree extends IInternalElement {
 	 */
 	IProofDependencies getProofDependencies() throws RodinDBException;
 
-
-	boolean isAutomaticallyGenerated() throws RodinDBException;
-
-	void setAutomaticallyGenerated() throws RodinDBException;
+	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
 
 }

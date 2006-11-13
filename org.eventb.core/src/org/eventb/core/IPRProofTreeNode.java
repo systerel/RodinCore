@@ -15,7 +15,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 
-public interface IPRProofTreeNode extends IInternalElement {
+public interface IPRProofTreeNode extends IInternalElement, ICommentedElement {
 		
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTreeNode"); //$NON-NLS-1$
@@ -24,13 +24,7 @@ public interface IPRProofTreeNode extends IInternalElement {
 
 	IPRProofTreeNode[] getChildNodes() throws RodinDBException;
 
-//	public IPRProofRule getPRRule() throws RodinDBException;
-
 	IProofRule getRule() throws RodinDBException;
-
-	void setComment(String comment) throws RodinDBException;
-
-	String getComment() throws RodinDBException;
 
 	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
 

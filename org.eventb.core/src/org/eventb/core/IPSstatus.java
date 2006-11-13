@@ -9,6 +9,7 @@
 package org.eventb.core;
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -73,12 +74,13 @@ public interface IPSstatus extends IInternalElement {
 	
 	/**
 	 * Returns the confidence of the associated proof tree.
+	 * @param monitor TODO
 	 * 
 	 * @return the confidence of the associated proof tree 
 	 * 			(see {@link org.eventb.core.seqprover.IConfidence})
 	 * @throws RodinDBException 
 	 */
-	int getProofConfidence() throws RodinDBException;
+	int getProofConfidence(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns <code>true</code> iff the automatic prover was attempted on

@@ -55,7 +55,7 @@ public class PRFile extends RodinFile implements IPRFile {
 	public IPRProofTree createProofTree(String name) throws RodinDBException {
 		IPRProofTree prProofTree = (IPRProofTree) createInternalElement(
 				IPRProofTree.ELEMENT_TYPE,name, null, null);
-		prProofTree.initialize();
+		prProofTree.initialize(null);
 		return prProofTree;
 	}
 	

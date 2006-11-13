@@ -23,6 +23,7 @@ import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPSstatus;
 import org.eventb.core.seqprover.Hypothesis;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -89,10 +90,9 @@ public class ProofState {
 		final IPRProofTree prProofTree = status.getProofTree();
 		if (prProofTree != null)
 		{
-			final IPRProofTreeNode root = prProofTree.getRoot();
-			if (root != null){
-				IProofSkeleton skel = root.getSkeleton(monitor);
-				ProofBuilder.rebuild(pt.getRoot(),skel);
+			final IProofSkeleton proofSkeleton = prProofTree.getSkeleton(monitor);
+			if (proofSkeleton != null){
+				ProofBuilder.rebuild(pt.getRoot(),proofSkeleton);
 			}
 		}
 		
@@ -115,7 +115,7 @@ public class ProofState {
 			return pt.isClosed();
 		
 		final IPRProofTree prProofTree = status.getProofTree();
-		return (prProofTree != null && prProofTree.isClosed());
+		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 
 	public IPSstatus getPRSequent() {
@@ -180,7 +180,7 @@ public class ProofState {
 		
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor mon) throws CoreException {
-				((IPRProofTree) status.getProofTree().getMutableCopy()).setProofTree(pt);
+				((IPRProofTree) status.getProofTree().getMutableCopy()).setProofTree(pt, null);
 				((IPSstatus) status.getMutableCopy()).updateStatus();
 			}
 		}, status.getSchedulingRule() , monitor);	
@@ -230,7 +230,7 @@ public class ProofState {
 
 	public boolean isSequentDischarged() throws RodinDBException {
 		final IPRProofTree prProofTree = status.getProofTree();
-		return (prProofTree != null && prProofTree.isClosed());
+		return (prProofTree != null && (prProofTree.getConfidence(null) > IConfidence.PENDING));
 	}
 
 	public boolean isProofReusable() throws RodinDBException {

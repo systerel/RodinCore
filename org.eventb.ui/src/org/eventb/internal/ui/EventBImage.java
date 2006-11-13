@@ -286,7 +286,7 @@ public class EventBImage {
 		
 		int confidence;
 		try {
-			confidence = status.getProofConfidence();
+			confidence = status.getProofConfidence(null);
 		} catch (RodinDBException e) {
 			String message = "Cannot get the confidence from the status of"
 				+ status.getElementName();
