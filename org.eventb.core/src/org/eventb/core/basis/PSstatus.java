@@ -101,7 +101,7 @@ public class PSstatus extends InternalElement implements IPSstatus {
 			setProofValid(true);
 			return;
 		}
-		IProofDependencies deps = proofTree.getProofDependencies();
+		IProofDependencies deps = proofTree.getProofDependencies(null);
 		boolean valid = ProverLib.proofReusable(deps,seq);
 		setProofConfidence(proofTree.getConfidence(null), null);
 		setProofValid(valid);

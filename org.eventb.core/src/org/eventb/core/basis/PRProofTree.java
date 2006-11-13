@@ -135,7 +135,7 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 //		return !(rootProofTreeNode.getRule()==null && rootProofTreeNode.getComment().length() == 0);
 //	}
 
-	public IProofDependencies getProofDependencies() throws RodinDBException{
+	public IProofDependencies getProofDependencies(IProgressMonitor monitor) throws RodinDBException{
 		ProofDependencies proofDependencies = new ProofDependencies();
 		return proofDependencies;
 	}

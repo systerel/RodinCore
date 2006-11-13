@@ -34,9 +34,10 @@ public interface IPRProofTree extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prProofTree"); //$NON-NLS-1$
 
-
+	// TODO : find a better name
 	public void initialize(IProofMonitor monitor) throws RodinDBException;
 
+	// TODO : find a better name
 	public void setProofTree(IProofTree proofTree, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
@@ -52,12 +53,13 @@ public interface IPRProofTree extends IInternalElement {
 	/**
 	 * Returns the dependency information for this proof tree.
 	 * (see {@link IProofDependencies})
+	 * @param monitor TODO
 	 * 
 	 * @return the dependency information for this proof tree.
 	 * 
 	 * @throws RodinDBException
 	 */
-	IProofDependencies getProofDependencies() throws RodinDBException;
+	IProofDependencies getProofDependencies(IProgressMonitor monitor) throws RodinDBException;
 
 	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
 
