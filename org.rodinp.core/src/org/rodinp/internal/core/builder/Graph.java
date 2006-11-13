@@ -279,7 +279,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			} catch (CoreException e) {
 				issueToolError(node, file, toolDescription, toolName, e);
 				return;
-			} catch (RuntimeException e) {
+			} catch (Throwable e) {
 				issueToolError(node, file, toolDescription, toolName, e);
 				return;
 			}
@@ -301,7 +301,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			IFile file, 
 			ToolDescription toolDescription, 
 			String toolName, 
-			Exception e) {
+			Throwable e) {
 		Util.log(e, " while running tool " + toolName + " on " + file.getName()); //$NON-NLS-1$
 		MarkerHelper.deleteAllProblemMarkers(file);
 		MarkerHelper.addMarker(
