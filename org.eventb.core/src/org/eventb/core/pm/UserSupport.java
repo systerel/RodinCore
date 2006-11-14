@@ -709,7 +709,7 @@ public class UserSupport implements IElementChangedListener,
 				return;
 			
 			// TODO : Son, why is this next check done? Farhad
-			if (! status.isAutoProven())
+			if (! status.isAutoProven(null))
 				return;
 
 			if (state.isSequentDischarged()) {

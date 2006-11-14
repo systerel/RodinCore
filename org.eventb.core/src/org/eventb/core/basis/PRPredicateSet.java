@@ -10,9 +10,11 @@ package org.eventb.core.basis;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.rodinp.core.IInternalElementType;
@@ -40,17 +42,17 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 		return getElementName();
 	}
 
-	public Set<Predicate> getPredicateSet() throws RodinDBException {
+	public Set<Predicate> getPredicateSet(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 		HashSet<Predicate> result = new HashSet<Predicate>();
 		IRodinElement[] children = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		for (IRodinElement element : children) {
-			result.add(((IPRPredicate)element).getPredicate(FormulaFactory.getDefault(), null));
+			result.add(((IPRPredicate)element).getPredicate(factory, typEnv, monitor));
 		}
 		return result;
 	}
 
 
-	public void setPredicateSet(Set<Predicate> predSet) throws RodinDBException {
+	public void setPredicateSet(Set<Predicate> predSet, IProgressMonitor monitor) throws RodinDBException {
 		// TODO Maybe make a common type environment for a tighter coding
 		//      Problem : maybe two preds have clashing typ envs!
 		//delete previous children, if any.

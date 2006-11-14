@@ -19,6 +19,12 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.basis.PSstatus;
+import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -85,7 +91,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				final IPRProofTree prProof = prFile.getProofTree(name);
 				
 				if (prProof == null) {
-					prFile.createProofTree(name);
+					prFile.createProofTree(name, null);
 				}
 				
 				
@@ -101,7 +107,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 					oldStatus.copy(psFile, null, null, true, null);
 					status = psFile.getStatusOf(name);
 				}
-				status.updateStatus();
+				updateStatus(status,monitor);
 				
 				monitor.worked(1);
 				checkCancellation(monitor, prFile, psFile);
@@ -215,6 +221,23 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			}
 			// psFile.getRodinDB().delete(psFile.getChildren(),true,null);
 		}
+	}
+	
+	
+//	 lock po & pr files before calling this method
+	public static void updateStatus(IPSstatus istatus, IProgressMonitor monitor) throws RodinDBException {
+		PSstatus status = (PSstatus) istatus;
+		IProverSequent seq =  POLoader.readPO(status.getPOSequent());
+		final IPRProofTree proofTree = status.getProofTree();
+		if (proofTree == null) {
+			status.setProofConfidence(IConfidence.UNATTEMPTED, null);
+			status.setProofValid(true, null);
+			return;
+		}
+		IProofDependencies deps = proofTree.getProofDependencies(FormulaFactory.getDefault(), null);
+		boolean valid = ProverLib.proofReusable(deps,seq);
+		status.setProofConfidence(proofTree.getConfidence(null), null);
+		status.setProofValid(valid, null);
 	}
 	
 }

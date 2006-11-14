@@ -10,8 +10,12 @@ package org.eventb.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRProofTreeNode;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -33,13 +37,15 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return ELEMENT_TYPE;
 	}
 	
-	public IProofRule getRule() throws RodinDBException {
+	// TODO : cleanup
+	public IProofRule getRule(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 		IRodinElement[] rules =  this.getChildrenOfType(IPRProofRule.ELEMENT_TYPE);
 		if (rules.length == 0) return null;
 		assert rules.length == 1;
-		return ((IPRProofRule) rules[0]).getProofRule();
+		return ((IPRProofRule) rules[0]).getProofRule(factory, typEnv, monitor);
 	}
-
+	
+	//	TODO : cleanup
 	public IPRProofTreeNode[] getChildNodes() throws RodinDBException {
 		IRodinElement[] rodinElements =  this.getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
 		IPRProofTreeNode[] proofTreeNodes = new IPRProofTreeNode[rodinElements.length];
@@ -49,19 +55,6 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		}
 		return proofTreeNodes;
 	}
-	
-	public IPRProofTreeNode[] getChildNodesRR() throws RodinDBException {
-		return null;
-	}
-	
-	
-//	public String getComment(IProgressMonitor monitor) throws RodinDBException {
-//		return getContents(monitor);
-//	}
-//	
-//	public void setComment(String comment) throws RodinDBException {
-//		setContents(comment);
-//	}
 	
 	/*
 	 * (non-Javadoc)
@@ -83,13 +76,23 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return CommonAttributesUtil.getComment(this, monitor);
 	}
 	
-	public IProofSkeleton getSkeleton(final IProgressMonitor monitor) throws RodinDBException {
+	public IProofSkeleton getSkeleton(FormulaFactory factory, ITypeEnvironment typEnv, final IProgressMonitor monitor) throws RodinDBException {
 		final String comment = getComment(null);
-		final IProofRule proofRule = getRule();
+		final IProofRule proofRule = getRule(factory, typEnv, monitor);
+		IAntecedent[] antecedents = proofRule.getAntecedents();
 		final IPRProofTreeNode[] prChildNodes = getChildNodes();
 		final IProofSkeleton[] childNodes = new IProofSkeleton[prChildNodes.length];
 		for (int i = 0; i < childNodes.length; i++) {
-			childNodes[i] = prChildNodes[i].getSkeleton(monitor);
+			FreeIdentifier[] addedIdents = antecedents[i].getAddedFreeIdents();
+			// TODO : the following may be optimised if typeenvs allow overwritting 
+			if (addedIdents.length == 0)
+				childNodes[i] = prChildNodes[i].getSkeleton(factory, typEnv, monitor);
+			else
+			{
+				final ITypeEnvironment newTypEnv = typEnv.clone();
+				newTypEnv.addAll(addedIdents);
+				childNodes[i] = prChildNodes[i].getSkeleton(factory, newTypEnv, monitor);
+			}
 		}
 		
 		// if (monitor.isCanceled()) throw new OperationCanceledException();
@@ -113,7 +116,7 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 		return skeleton;
 	}
 
-	public void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException {
+	public void setProofTreeNode(IProofTreeNode proofTreeNode, IProgressMonitor monitor) throws RodinDBException {
 		
 		IPRProofTreeNode prProofTreeNode = this;
 		
@@ -127,13 +130,13 @@ public class PRProofTreeNode extends InternalElement implements IPRProofTreeNode
 				proofTreeNode.getRule().generatedBy().getReasonerID(),
 				null,null);
 		
-		prRule.setProofRule(proofTreeNode.getRule());
+		prRule.setProofRule(proofTreeNode.getRule(), monitor);
 		
 		IProofTreeNode[] proofTreeNodeChildren = proofTreeNode.getChildNodes();
 		for (int i = 0; i < proofTreeNodeChildren.length; i++) {
 			IPRProofTreeNode child = (IPRProofTreeNode)
 			createInternalElement(IPRProofTreeNode.ELEMENT_TYPE,Integer.toString(i),null,null);
-			child.setProofTreeNode(proofTreeNodeChildren[i]);
+			child.setProofTreeNode(proofTreeNodeChildren[i], monitor);
 		}
 	}
 	

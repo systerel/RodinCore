@@ -8,6 +8,9 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -23,6 +26,6 @@ public interface IPRHypAction extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prHypAction"); //$NON-NLS-1$
 
-	Action getAction() throws RodinDBException;
-	void setAction(Action hypAction) throws RodinDBException;
+	Action getAction(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
+	void setAction(Action hypAction, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -193,7 +193,7 @@ public class ObligationExplorer extends ViewPart implements
 		// Try to synchronize with the proof tree in memory
 		Collection<UserSupport> userSupports = UserSupportManager
 				.getUserSupports();
-		final boolean proofBroken = (! status.isProofValid());
+		final boolean proofBroken = (! status.isProofValid(null));
 		for (UserSupport userSupport : userSupports) {
 			// UIUtils.debugObligationExplorer("Get US: "
 			// + userSupport);
@@ -335,7 +335,7 @@ public class ObligationExplorer extends ViewPart implements
 
 									int confidence = tree.getConfidence();
 
-									final boolean proofBroken = (! status.isProofValid());
+									final boolean proofBroken = (! status.isProofValid(null));
 									if (confidence == IConfidence.PENDING) {
 										if (false && proofBroken)
 											return registry

@@ -1,6 +1,8 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
@@ -24,9 +26,9 @@ public interface IPRProofTreeNode extends IInternalElement, ICommentedElement {
 
 	IPRProofTreeNode[] getChildNodes() throws RodinDBException;
 
-	IProofRule getRule() throws RodinDBException;
+	IProofRule getRule(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
 
-	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
+	IProofSkeleton getSkeleton(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
 
-	void setProofTreeNode(IProofTreeNode proofTreeNode) throws RodinDBException;
+	void setProofTreeNode(IProofTreeNode proofTreeNode, IProgressMonitor monitor) throws RodinDBException;
 }

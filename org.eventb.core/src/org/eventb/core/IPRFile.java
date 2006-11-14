@@ -8,6 +8,7 @@
 
 package org.eventb.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -62,10 +63,11 @@ public interface IPRFile extends IRodinFile{
 	 * 
 	 * @param name
 	 * 				Name of the proof tree to create.
+	 * @param monitor TODO
 	 * 
 	 * @return the created proof tree
 	 * 
 	 */
-	IPRProofTree createProofTree(String name) throws RodinDBException;
+	IPRProofTree createProofTree(String name, IProgressMonitor monitor) throws RodinDBException;
 	
 }

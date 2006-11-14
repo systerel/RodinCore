@@ -70,7 +70,7 @@ public class AutoProver {
 				}
 				IProgressMonitor subMonitor = new SubProgressMonitor(
 						monitor, 
-						1, 
+						2, 
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK
 				);
 				dirty |= processPo(prFile, status, subMonitor);
@@ -96,7 +96,7 @@ public class AutoProver {
 //				proofTree = prFile.createProofTree(status.getName());
 			pm.worked(1);
 			
-			if ((!status.isProofValid()) || 
+			if ((!status.isProofValid(null)) || 
 					(status.getProofConfidence(null) <= IConfidence.PENDING)) {
 				final IPOSequent poSequent = status.getPOSequent();
 				IProofTree autoProofTree = ProverFactory.makeProofTree(
@@ -112,7 +112,7 @@ public class AutoProver {
 				// Update the tree if it was discharged
 				if (autoProofTree.isClosed()) {
 					prProofTree.setProofTree(autoProofTree, null);
-					status.updateStatus();
+					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
 					setAutoProven(true,status);
 					prFile.save(null, false);
 					return true;
@@ -122,12 +122,12 @@ public class AutoProver {
 				if (autoProofTree.getRoot().hasChildren() && 
 						(
 								// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-								(status.isAutoProven() && !(status.getProofConfidence(null) > IConfidence.PENDING))
+								(status.isAutoProven(null) && !(status.getProofConfidence(null) > IConfidence.PENDING))
 						))	
 					
 				{
 					prProofTree.setProofTree(autoProofTree, null);
-					status.updateStatus();
+					AutoPOM.updateStatus(status,new SubProgressMonitor(pm,1));
 					setAutoProven(true,status);
 					// in this case no need to save immediately.
 					return true;

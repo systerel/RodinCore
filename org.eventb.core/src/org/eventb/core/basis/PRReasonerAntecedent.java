@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
@@ -18,6 +19,7 @@ import org.eventb.core.IPRReasonerAntecedent;
 import org.eventb.core.IPRTypeEnvironment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
@@ -52,12 +54,12 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		throw newNotPresentException();
 	}
 	
-	public IAntecedent getAnticident() throws RodinDBException {
+	public IAntecedent getAnticident(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 		
 		InternalElement child; 
 		
 		child = getChild(IPRPredicate.ELEMENT_TYPE,"goal");
-		Predicate goal = ((IPRPredicate)child).getPredicate(FormulaFactory.getDefault(), null);
+		Predicate goal = ((IPRPredicate)child).getPredicate(factory, typEnv, monitor);
 		
 		// optional entries
 		FreeIdentifier[] addedFreeIdens = null;
@@ -68,14 +70,14 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		if (child.exists()) addedFreeIdens = ((IPRTypeEnvironment)child).getFreeIdentifiers(FormulaFactory.getDefault(), null);
 		
 		child = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"addedHyps");
-		if (child.exists()) addedHyps = ((IPRPredicateSet)child).getPredicateSet();
+		if (child.exists()) addedHyps = ((IPRPredicateSet)child).getPredicateSet(factory, typEnv, null);
 		
 		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
 		{
 			hypAction = new ArrayList<Action>(children.length);
 			for (IRodinElement action : children) {
-				hypAction.add(((IPRHypAction)action).getAction());				
+				hypAction.add(((IPRHypAction)action).getAction(factory, typEnv, null));				
 			}
 		}
 		
@@ -95,14 +97,14 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		if (! antecedent.getAddedHyps().isEmpty()){
 			((IPRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,
 					"addedHyps",
-					null,null))).setPredicateSet(antecedent.getAddedHyps());
+					null,null))).setPredicateSet(antecedent.getAddedHyps(), null);
 		}
 		if (! antecedent.getHypAction().isEmpty()){
 			int count = 0;
 			for (Action action : antecedent.getHypAction()) {
 				((IPRHypAction)(this.createInternalElement(IPRHypAction.ELEMENT_TYPE,
 						"hypAction"+count,
-						null,null))).setAction(action);
+						null,null))).setAction(action, null);
 				count ++;
 			}
 		}

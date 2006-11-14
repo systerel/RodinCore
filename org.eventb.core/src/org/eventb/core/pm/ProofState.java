@@ -18,10 +18,11 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProofTree;
-import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -34,6 +35,7 @@ import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.pm.UserSupportUtils;
+import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -90,7 +92,7 @@ public class ProofState {
 		final IPRProofTree prProofTree = status.getProofTree();
 		if (prProofTree != null)
 		{
-			final IProofSkeleton proofSkeleton = prProofTree.getSkeleton(monitor);
+			final IProofSkeleton proofSkeleton = prProofTree.getSkeleton(FormulaFactory.getDefault(), monitor);
 			if (proofSkeleton != null){
 				ProofBuilder.rebuild(pt.getRoot(),proofSkeleton);
 			}
@@ -105,7 +107,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = ! status.isProofValid();
+		dirty = ! status.isProofValid(null);
 		cached = new HashSet<Hypothesis>();
 		searched = new HashSet<Hypothesis>();
 	}
@@ -180,8 +182,18 @@ public class ProofState {
 		
 		RodinCore.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor mon) throws CoreException {
-				((IPRProofTree) status.getProofTree().getMutableCopy()).setProofTree(pt, null);
-				((IPSstatus) status.getMutableCopy()).updateStatus();
+				try
+				{
+					mon.beginTask("Saving Proof", 2);
+					((IPRProofTree) status.getProofTree().getMutableCopy()).setProofTree(pt, new SubProgressMonitor(mon,1));
+					AutoPOM.updateStatus(
+							((IPSstatus) status.getMutableCopy()),
+							new SubProgressMonitor(mon,1));
+				}
+				finally 
+				{
+					mon.done();
+				}
 			}
 		}, status.getSchedulingRule() , monitor);	
 		
@@ -252,7 +264,7 @@ public class ProofState {
 
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
-		dirty = (! status.isProofValid());
+		dirty = (! status.isProofValid(null));
 	}
 
 	public void unloadProofTree() {

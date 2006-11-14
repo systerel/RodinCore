@@ -7,6 +7,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -16,6 +17,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.tests.BuilderTest;
+import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.IInternalParent;
@@ -103,9 +105,9 @@ public class AutoPOMTest extends BuilderTest {
 		Tactics.norm().apply(proofTree.getRoot(), null);
 		// System.out.println(proofTree.getRoot());
 		prs[prs.length-1].getProofTree().setProofTree(proofTree, null);
-		prs[prs.length-1].updateStatus();
+		AutoPOM.updateStatus(prs[prs.length-1],null);
 		
-		IProofSkeleton skel = prs[prs.length-1].getProofTree().getSkeleton(null);
+		IProofSkeleton skel = prs[prs.length-1].getProofTree().getSkeleton(FormulaFactory.getDefault(), null);
 		IProofTree loadedProofTree = ProverFactory.makeProofTree(seq, null);
 		ProofBuilder.rebuild(loadedProofTree.getRoot(),skel);
 		
@@ -179,11 +181,11 @@ public class AutoPOMTest extends BuilderTest {
 				IConfidence.PENDING <
 				status.getProofConfidence(null));
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.isProofValid());
+				status.isProofValid(null));
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.autoProverAttempted());
+				status.autoProverAttempted(null));
 		assertTrue("PR " + status.getElementName() + " should be auto proven",
-				status.isAutoProven());
+				status.isAutoProven(null));
 		
 	}
 	
@@ -193,9 +195,9 @@ public class AutoPOMTest extends BuilderTest {
 				IConfidence.PENDING >=
 				status.getProofConfidence(null));
 		assertTrue("PR " + status.getElementName() + " should be valid",
-				status.isProofValid());
+				status.isProofValid(null));
 		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
-				status.autoProverAttempted());
+				status.autoProverAttempted(null));
 //		assertFalse("PR " + status.getName() + " should not be auto proven",
 //				status.isAutoProven());
 	}

@@ -15,6 +15,7 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSstatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
@@ -67,12 +68,12 @@ public class PSstatus extends InternalElement implements IPSstatus {
 	}
 
 
-	public boolean isProofValid() throws RodinDBException {
-		return getBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, null);
+	public boolean isProofValid(IProgressMonitor monitor) throws RodinDBException {
+		return getBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, monitor);
 	}
 
-	private void setProofValid(boolean valid) throws RodinDBException {
-		setBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid, null);
+	public void setProofValid(boolean valid, IProgressMonitor monitor) throws RodinDBException {
+		setBooleanAttribute(EventBAttributes.PROOF_VALIDITY_ATTRIBUTE, valid,monitor);
 	}
 	
 
@@ -81,7 +82,7 @@ public class PSstatus extends InternalElement implements IPSstatus {
 	}
 	
 
-	private void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
+	public void setProofConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
 		CommonAttributesUtil.setConfidence(this, confidence, monitor);
 	}
 	
@@ -93,27 +94,27 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		return poSeq;
 	}
 
-	public void updateStatus() throws RodinDBException {
-		IProverSequent seq =  POLoader.readPO(getPOSequent());
-		final IPRProofTree proofTree = getProofTree();
-		if (proofTree == null) {
-			setProofConfidence(IConfidence.UNATTEMPTED, null);
-			setProofValid(true);
-			return;
-		}
-		IProofDependencies deps = proofTree.getProofDependencies(null);
-		boolean valid = ProverLib.proofReusable(deps,seq);
-		setProofConfidence(proofTree.getConfidence(null), null);
-		setProofValid(valid);
+//	public void updateStatus(IProgressMonitor monitor) throws RodinDBException {
+//		IProverSequent seq =  POLoader.readPO(getPOSequent());
+//		final IPRProofTree proofTree = getProofTree();
+//		if (proofTree == null) {
+//			setProofConfidence(IConfidence.UNATTEMPTED, null);
+//			setProofValid(true, null);
+//			return;
+//		}
+//		IProofDependencies deps = proofTree.getProofDependencies(FormulaFactory.getDefault(), null);
+//		boolean valid = ProverLib.proofReusable(deps,seq);
+//		setProofConfidence(proofTree.getConfidence(null), null);
+//		setProofValid(valid, null);
+//	}
+
+	public boolean autoProverAttempted(IProgressMonitor monitor) throws RodinDBException {
+		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
 	}
 
-	public boolean autoProverAttempted() throws RodinDBException {
-		return hasAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, null);
-	}
-
-	public boolean isAutoProven() throws RodinDBException {
-		if (!autoProverAttempted()) return false;
-		return getBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, null);
+	public boolean isAutoProven(IProgressMonitor monitor) throws RodinDBException {
+		if (!autoProverAttempted(monitor)) return false;
+		return getBooleanAttribute(EventBAttributes.AUTO_PROOF_ATTRIBUTE, monitor);
 	}
 	
 }

@@ -10,6 +10,8 @@ package org.eventb.core.basis;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
@@ -65,7 +67,7 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 					setPredicate(proofDependencies.getGoal(), null);
 			((IPRPredicateSet)(prProofTree.createInternalElement(
 					IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
-					setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()));
+					setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()), null);
 			((IPRTypeEnvironment)(prProofTree.createInternalElement(
 					IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
 					setTypeEnvironment(proofDependencies.getUsedFreeIdents(), null);
@@ -76,23 +78,12 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 			// write out the proof skeleton
 			IPRProofTreeNode root = (IPRProofTreeNode)
 			createInternalElement(PRProofTreeNode.ELEMENT_TYPE,"0",null,null);
-			root.setProofTreeNode(pt.getRoot());
+			root.setProofTreeNode(pt.getRoot(), monitor);
 			
 			//	Update the status
 			int confidence = pt.getConfidence();
 			this.setConfidence(confidence, null);
 	}
-	
-//	public IPSstatus getSequent() {
-//		IInternalElement prSequent = ((IPSFile)getOpenable()).getInternalElement(IPSstatus.ELEMENT_TYPE,this.getElementName());
-//		assert prSequent != null;
-//		if (! prSequent.exists()) return null;
-//		return ((IPSstatus)prSequent);
-//	}
-	
-//	public boolean isClosed() throws RodinDBException {
-//		return getConfidence(null) > IConfidence.PENDING;
-//	}
 	
 	public PRProofTreeNode getRoot() throws RodinDBException {
 		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
@@ -100,65 +91,38 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		return (PRProofTreeNode) proofTreeNodes[0];
 	}
 	
-	public Set<Hypothesis> getUsedHypotheses() throws RodinDBException {
+	public Set<Hypothesis> getUsedHypotheses(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 		InternalElement usedFreeIdents = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses");
-		assert usedFreeIdents != null;
+		// assert usedFreeIdents != null;
 		if (! usedFreeIdents.exists()) return null;
-		return Hypothesis.Hypotheses(((IPRPredicateSet)usedFreeIdents).getPredicateSet());
+		return Hypothesis.Hypotheses(((IPRPredicateSet)usedFreeIdents).getPredicateSet(factory, typEnv, null));
 	}
 
-	public ITypeEnvironment getUsedTypeEnvironment() throws RodinDBException {
+	public ITypeEnvironment getUsedTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		InternalElement usedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers");
-		assert usedFreeIdents != null;
+		// assert usedFreeIdents != null;
 		if (! usedFreeIdents.exists()) return null;
-		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment(FormulaFactory.getDefault(), null);
+		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment(factory, monitor);
 	}
 	
-	public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException {
+	public ITypeEnvironment getIntroducedTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		InternalElement introducedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers");
-		assert introducedFreeIdents != null;
+		// assert introducedFreeIdents != null;
 		if (! introducedFreeIdents.exists()) return null;
-		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment(FormulaFactory.getDefault(), null);
+		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment(factory, monitor);
 	}
 	
-	public Predicate getGoal() throws RodinDBException {
+	public Predicate getGoal(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 		InternalElement goal = getInternalElement(IPRPredicate.ELEMENT_TYPE,"goal");
 		assert goal != null;
 		if (! goal.exists()) return null;
-		return ((IPRPredicate)goal).getPredicate(FormulaFactory.getDefault(), null);
+		return ((IPRPredicate)goal).getPredicate(factory, typEnv, monitor);
 	}
 
-//	public boolean proofAttempted() throws RodinDBException {
-//		IRodinElement[] proofTreeNodes = getChildrenOfType(IPRProofTreeNode.ELEMENT_TYPE);
-//		if (proofTreeNodes.length == 0) return false;
-//		
-//		PRProofTreeNode rootProofTreeNode = getRoot();
-//		return !(rootProofTreeNode.getRule()==null && rootProofTreeNode.getComment().length() == 0);
-//	}
-
-	public IProofDependencies getProofDependencies(IProgressMonitor monitor) throws RodinDBException{
-		ProofDependencies proofDependencies = new ProofDependencies();
+	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
+		ProofDependencies proofDependencies = new ProofDependencies(factory, monitor);
 		return proofDependencies;
 	}
-
-//	public int getConfidence(IProgressMonitor monitor) throws RodinDBException {
-//		InternalElement confidence = getInternalElement(IPair.ELEMENT_TYPE,"confidence");
-//		assert confidence != null;
-//		if (! confidence.exists()) throw confidence.newNotPresentException();
-//		return Integer.parseInt(confidence.getContents());
-//	}
-//	
-//	public void setConfidence(int confidence) throws RodinDBException{
-//		InternalElement confidenceAtt = getInternalElement(IPair.ELEMENT_TYPE,"confidence");
-//		assert confidenceAtt != null;
-//		if (! confidenceAtt.exists())
-//			{
-//				this.createInternalElement(IPair.ELEMENT_TYPE,"confidence",null,null).
-//				setContents(Integer.toString(confidence));
-//				return;
-//			}
-//		confidenceAtt.setContents(Integer.toString(confidence));
-//	}
 	
 	public int getConfidence(IProgressMonitor monitor) throws RodinDBException {
 		return CommonAttributesUtil.getConfidence(this, monitor);
@@ -178,18 +142,23 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		final ITypeEnvironment introducedFreeIdents;
 		final boolean valid;
 		
-		/**
-		 * 
-		 */
-		public ProofDependencies() throws RodinDBException{
-			goal = PRProofTree.this.getGoal();
-			usedHypotheses = PRProofTree.this.getUsedHypotheses();
-			usedFreeIdents = PRProofTree.this.getUsedTypeEnvironment();
-			introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment();
-			valid = (goal != null && 
-					usedHypotheses != null && 
-					usedFreeIdents != null &&
-					introducedFreeIdents != null);
+		public ProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
+			if (monitor == null) monitor = new NullProgressMonitor();
+			try{
+				monitor.beginTask("Reading Proof Dependencies", 4);
+				usedFreeIdents = PRProofTree.this.getUsedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
+				introducedFreeIdents = PRProofTree.this.getIntroducedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
+				goal = PRProofTree.this.getGoal(factory,usedFreeIdents,new SubProgressMonitor(monitor,1));
+				usedHypotheses = PRProofTree.this.getUsedHypotheses(factory, usedFreeIdents, new SubProgressMonitor(monitor,1));
+				valid = (goal != null && 
+						usedHypotheses != null && 
+						usedFreeIdents != null &&
+						introducedFreeIdents != null);
+			}
+			finally
+			{
+				monitor.done();
+			}
 		}
 
 		public boolean hasDeps() {
@@ -226,10 +195,20 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		
 	}
 
-	public IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException {
+	public IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		IPRProofTreeNode root = getRoot();
 		if (root == null) return null;
-		return root.getSkeleton(monitor);
+		IProofSkeleton skeleton;
+		try{
+			monitor.beginTask("Reading Proof Skeleton", 11);
+		final ITypeEnvironment typEnv = getUsedTypeEnvironment(factory,new SubProgressMonitor(monitor,1));
+		skeleton = root.getSkeleton(factory,typEnv,new SubProgressMonitor(monitor,10));
+		}
+		finally
+		{
+			monitor.done();
+		}
+		return skeleton;
 	}
 
 	

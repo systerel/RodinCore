@@ -1,6 +1,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
@@ -53,14 +54,14 @@ public interface IPRProofTree extends IInternalElement {
 	/**
 	 * Returns the dependency information for this proof tree.
 	 * (see {@link IProofDependencies})
+	 * @param factory TODO
 	 * @param monitor TODO
-	 * 
 	 * @return the dependency information for this proof tree.
 	 * 
 	 * @throws RodinDBException
 	 */
-	IProofDependencies getProofDependencies(IProgressMonitor monitor) throws RodinDBException;
+	IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 
-	IProofSkeleton getSkeleton(IProgressMonitor monitor) throws RodinDBException;
+	IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
 
 }

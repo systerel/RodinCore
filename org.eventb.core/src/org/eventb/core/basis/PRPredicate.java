@@ -37,7 +37,7 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 	}
 	
 
-	public Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+	public Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv1, IProgressMonitor monitor) throws RodinDBException {
 		// read in the type environment
 		
 		// TODO : refactor code with PRTypeEnv

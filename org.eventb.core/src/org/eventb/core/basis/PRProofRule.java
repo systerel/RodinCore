@@ -9,6 +9,7 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofRule;
@@ -16,6 +17,7 @@ import org.eventb.core.IPRReasonerAntecedent;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofRule;
@@ -70,22 +72,22 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		}
 	}
 	
-	public IProofRule getProofRule()throws RodinDBException {
+	public IProofRule getProofRule(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor)throws RodinDBException {
 		
 		IRodinElement[] rodinElements = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
 		assert rodinElements[0].getElementName().equals("goal");
-		Predicate goal = ((IPRPredicate)rodinElements[0]).getPredicate(FormulaFactory.getDefault(), null);
+		Predicate goal = ((IPRPredicate)rodinElements[0]).getPredicate(factory, typEnv, null);
 		
 		rodinElements = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
 		assert rodinElements[0].getElementName().equals("neededHyps");
-		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(((IPRPredicateSet)rodinElements[0]).getPredicateSet());
+		Set<Hypothesis> neededHyps = Hypothesis.Hypotheses(((IPRPredicateSet)rodinElements[0]).getPredicateSet(factory, typEnv, null));
 		
 		rodinElements = this.getChildrenOfType(IPRReasonerAntecedent.ELEMENT_TYPE);
 		IAntecedent[] anticidents = new IAntecedent[rodinElements.length];
 		for (int i = 0; i < rodinElements.length; i++) {
-			anticidents[i] = ((IPRReasonerAntecedent)rodinElements[i]).getAnticident();
+			anticidents[i] = ((IPRReasonerAntecedent)rodinElements[i]).getAnticident(factory, typEnv, monitor);
 		}
 		
 		String display = this.getInternalElement(IPair.ELEMENT_TYPE,"display").getContents();
@@ -94,7 +96,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		return ProverFactory.makeProofRule(this.getReasoner(),this.getReasonerInput(), goal, neededHyps, confidence, display, anticidents);
 	}
 
-	public void setProofRule(IProofRule proofRule) throws RodinDBException {
+	public void setProofRule(IProofRule proofRule, IProgressMonitor monitor) throws RodinDBException {
 		// delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);

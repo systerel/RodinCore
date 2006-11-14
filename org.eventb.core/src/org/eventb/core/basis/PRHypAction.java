@@ -9,9 +9,12 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPair;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.HypothesesManagement;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.HypothesesManagement.Action;
@@ -37,7 +40,7 @@ public class PRHypAction extends InternalElement implements IPRHypAction {
 		return ELEMENT_TYPE;
 	}
 
-	public Action getAction() throws RodinDBException {
+	public Action getAction(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException {
 	
 		// read in the action type
 		IRodinElement[] pairs = this.getChildrenOfType(IPair.ELEMENT_TYPE);
@@ -47,12 +50,12 @@ public class PRHypAction extends InternalElement implements IPRHypAction {
 		// read in the hypotheses
 		IRodinElement[] predicateSets = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
 		assert predicateSets.length == 1;
-		Set<Hypothesis> hyps = Hypothesis.Hypotheses(((IPRPredicateSet)predicateSets[0]).getPredicateSet());
+		Set<Hypothesis> hyps = Hypothesis.Hypotheses(((IPRPredicateSet)predicateSets[0]).getPredicateSet(factory, typEnv, null));
 		
 		return new Action(actionType,hyps);
 	}
 
-	public void setAction(Action a) throws RodinDBException {
+	public void setAction(Action a, IProgressMonitor monitor) throws RodinDBException {
 		//delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
@@ -63,7 +66,7 @@ public class PRHypAction extends InternalElement implements IPRHypAction {
 		
 		// write out the hypotheses
 		((IPRPredicateSet)this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"",null,null))
-		.setPredicateSet(Hypothesis.Predicates(a.getHyps()));
+		.setPredicateSet(Hypothesis.Predicates(a.getHyps()), null);
 		
 		return;
 	}

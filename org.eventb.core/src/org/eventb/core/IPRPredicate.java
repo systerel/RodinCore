@@ -10,6 +10,7 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -25,6 +26,6 @@ public interface IPRPredicate extends IInternalElement {
 	IInternalElementType ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredicate"); //$NON-NLS-1$
 
-	Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
+	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv, IProgressMonitor monitor) throws RodinDBException;
 	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
 }

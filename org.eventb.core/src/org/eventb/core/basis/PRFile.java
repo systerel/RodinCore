@@ -10,6 +10,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProofTree;
 import org.rodinp.core.IFileElementType;
@@ -52,9 +53,9 @@ public class PRFile extends RodinFile implements IPRFile {
 		return null;
 	}
 
-	public IPRProofTree createProofTree(String name) throws RodinDBException {
+	public IPRProofTree createProofTree(String name, IProgressMonitor monitor) throws RodinDBException {
 		IPRProofTree prProofTree = (IPRProofTree) createInternalElement(
-				IPRProofTree.ELEMENT_TYPE,name, null, null);
+				IPRProofTree.ELEMENT_TYPE,name, null, monitor);
 		prProofTree.initialize(null);
 		return prProofTree;
 	}

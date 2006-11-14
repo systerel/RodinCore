@@ -52,7 +52,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 		InternalElement prPredicate = getInternalElement(IPRPredicate.ELEMENT_TYPE,name);
 		if (! prPredicate.exists()) return null;
 		try {
-			return ((IPRPredicate)prPredicate).getPredicate(FormulaFactory.getDefault(), null);
+			return ((IPRPredicate)prPredicate).getPredicate(FormulaFactory.getDefault(), null, null);
 		} catch (RodinDBException e) {
 			throw new SerializeException(e);
 		}
