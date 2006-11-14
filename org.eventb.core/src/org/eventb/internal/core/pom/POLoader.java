@@ -27,20 +27,33 @@ public final class POLoader {
 	private POLoader() {
 		super();
 	}
+	
+	private static void getTypeEnvironment(
+			final IPOFile poFile, IPOPredicateSet predSet, ITypeEnvironment env) throws RodinDBException {
+		for (IPOIdentifier identifier : predSet.getIdentifiers(null)) {
+			String name = identifier.getElementName();
+			Type type =  identifier.getType(FormulaFactory.getDefault(), null);
+			assert (name!=null && type !=null);
+			env.addName(name,type);
+		}
+		IPOPredicateSet parentSet = predSet.getParentPredicateSet(null);
+		if (parentSet == null)
+			return;
+		else
+			getTypeEnvironment(poFile, parentSet, env);
+	}
 
 	// Run from the builder. Does not lock the pofile
 	public static Map<String, IProverSequent> readPOs(final IPOFile poFile) throws RodinDBException {
 		final IPOSequent[] poSequents = poFile.getSequents(null);
 		Map<String, IProverSequent> result = new HashMap<String, IProverSequent>(poSequents.length);
-		ITypeEnvironment globalTypeEnv = ASTLib.makeTypeEnvironment();
-		addIdents(poFile.getIdentifiers(), globalTypeEnv);		
 		for (IPOSequent poSeq:poSequents){
-			String name = poSeq.getName();
-			ITypeEnvironment typeEnv = globalTypeEnv.clone();
-			addIdents(poSeq.getIdentifiers(),typeEnv);
+			String name = poSeq.getElementName();
+			ITypeEnvironment typeEnv = ASTLib.makeTypeEnvironment();
+			getTypeEnvironment(poFile, poSeq.getHypothesis(null), typeEnv);
 			Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null), typeEnv);
 			Predicate goal = 
-				poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv);
+				poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv, null);
 			IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 			result.put(name,seq);
 		}
@@ -71,10 +84,9 @@ public final class POLoader {
 		if (! poSeq.exists()) return null;
 		IPOFile poFile = (IPOFile) poSeq.getOpenable();
 		ITypeEnvironment typeEnv = ASTLib.makeTypeEnvironment();
-		addIdents(poFile.getIdentifiers(), typeEnv);
-		addIdents(poSeq.getIdentifiers(),typeEnv);
+		getTypeEnvironment(poFile, poSeq.getHypothesis(null), typeEnv);
 		Set<Hypothesis> hypotheses = readPredicates(poSeq.getHypothesis(null),typeEnv);
-		Predicate goal = poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv);
+		Predicate goal = poSeq.getGoal(null).getPredicate(FormulaFactory.getDefault(), typeEnv, null);
 		IProverSequent seq = ProverFactory.makeSequent(typeEnv,hypotheses,goal);
 		return seq;
 	}
@@ -104,7 +116,7 @@ public final class POLoader {
 		Set<Hypothesis> result = new HashSet<Hypothesis>();
 		for (IPOPredicate poPred:poPredSet.getPredicates(null)){
 			result.add(new Hypothesis(
-					poPred.getPredicate(FormulaFactory.getDefault(), typeEnv)));
+					poPred.getPredicate(FormulaFactory.getDefault(), typeEnv, null)));
 		}
 		if (poPredSet.getParentPredicateSet(null) != null) 
 			result.addAll(readPredicates(poPredSet.getParentPredicateSet(null),typeEnv));
@@ -121,14 +133,13 @@ public final class POLoader {
 //			return pred;
 //	}
 
-
-	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
-		for (IPOIdentifier poIdent: poIdents){
-			String name = poIdent.getName();
-			Type type =  poIdent.getType(FormulaFactory.getDefault());
-			assert (name!=null && type !=null);
-			typeEnv.addName(name,type);
-		}
-	}
+//	private static void addIdents(IPOIdentifier[] poIdents, ITypeEnvironment typeEnv) throws RodinDBException {
+//		for (IPOIdentifier poIdent: poIdents){
+//			String name = poIdent.getName();
+//			Type type =  poIdent.getType(FormulaFactory.getDefault());
+//			assert (name!=null && type !=null);
+//			typeEnv.addName(name,type);
+//		}
+//	}
 	
 }
