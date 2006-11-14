@@ -19,6 +19,7 @@ import org.eventb.core.ast.Type;
  * @author Farhad Mehta
  *
  */
+@Deprecated
 public class ASTLib {
 
 	private static FormulaFactory formulaFactory = FormulaFactory.getDefault();

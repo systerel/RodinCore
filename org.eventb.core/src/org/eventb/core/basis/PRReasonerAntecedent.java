@@ -16,6 +16,7 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRReasonerAntecedent;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.ProverFactory;
@@ -56,7 +57,7 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		InternalElement child; 
 		
 		child = getChild(IPRPredicate.ELEMENT_TYPE,"goal");
-		Predicate goal = ((IPRPredicate)child).getPredicate();
+		Predicate goal = ((IPRPredicate)child).getPredicate(FormulaFactory.getDefault(), null);
 		
 		// optional entries
 		FreeIdentifier[] addedFreeIdens = null;
@@ -64,7 +65,7 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		List<Action> hypAction = null;
 		
 		child = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"addedFreeIdents");
-		if (child.exists()) addedFreeIdens = ((IPRTypeEnvironment)child).getFreeIdentifiers();
+		if (child.exists()) addedFreeIdens = ((IPRTypeEnvironment)child).getFreeIdentifiers(FormulaFactory.getDefault(), null);
 		
 		child = getInternalElement(IPRPredicateSet.ELEMENT_TYPE,"addedHyps");
 		if (child.exists()) addedHyps = ((IPRPredicateSet)child).getPredicateSet();
@@ -89,7 +90,7 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		if (antecedent.getAddedFreeIdents().length != 0){
 			((IPRTypeEnvironment)(this.createInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,
 					"addedFreeIdents",
-					null,null))).setTypeEnvironment(antecedent.getAddedFreeIdents());
+					null,null))).setTypeEnvironment(antecedent.getAddedFreeIdents(), null);
 		}
 		if (! antecedent.getAddedHyps().isEmpty()){
 			((IPRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,
@@ -108,7 +109,7 @@ public class PRReasonerAntecedent extends InternalElement implements IPRReasoner
 		
 		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,
 				"goal",
-				null,null))).setPredicate(antecedent.getGoal());
+				null,null))).setPredicate(antecedent.getGoal(), null);
 		
 	}
 

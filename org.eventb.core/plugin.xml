@@ -274,6 +274,10 @@
             class="org.eventb.core.basis.PSstatus"
             id="status"
             name="%eventBpsStatus"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRIdentifier"
+            id="prIdentifier"
+            name="%eventBprIdentifier"/>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">

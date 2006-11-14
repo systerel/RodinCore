@@ -9,12 +9,12 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRTypeEnvironment;
-import org.eventb.core.IPair;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -35,30 +35,26 @@ public class PRTypeEnvironment extends InternalElement implements IPRTypeEnviron
 		return ELEMENT_TYPE;
 	}
 
-	public ITypeEnvironment getTypeEnvironment() throws RodinDBException {
-		ITypeEnvironment typEnv = FormulaFactory.getDefault().makeTypeEnvironment();
-		for (IRodinElement pair : this.getChildrenOfType(IPair.ELEMENT_TYPE)) {
-			Type type = ASTLib.parseType(((IPair)pair).getContents());
-			assert type != null;
-			typEnv.addName(pair.getElementName(),type);
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] children = this.getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
+		ITypeEnvironment typEnv = factory.makeTypeEnvironment();
+		for (int i = 0; i < children.length; i++) {
+			IPRIdentifier prIdent = (IPRIdentifier) children[i];
+			typEnv.addName(prIdent.getElementName(),prIdent.getType(factory, monitor));
 		}
 		return typEnv;
 	}
 	
-	public FreeIdentifier[] getFreeIdentifiers() throws RodinDBException {
-		IRodinElement[] children = this.getChildrenOfType(IPair.ELEMENT_TYPE);
+	public FreeIdentifier[] getFreeIdentifiers(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
+		IRodinElement[] children = this.getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
-			String name = ((IPair)children[i]).getElementName();
-			Type type = ASTLib.parseType(((IPair)children[i]).getContents());
-			assert type != null;
-			freeIdents[i] = FormulaFactory.getDefault().makeFreeIdentifier(name,null,type);
-			assert freeIdents[i].isTypeChecked();
+			freeIdents[i] = ((IPRIdentifier)children[i]).getIdentifier(factory, monitor);			
 		}
 		return freeIdents;
 	}
 
-	public void setTypeEnvironment(ITypeEnvironment typeEnv) throws RodinDBException {
+	public void setTypeEnvironment(ITypeEnvironment typeEnv, IProgressMonitor monitor) throws RodinDBException {
 		//	delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
@@ -66,24 +62,29 @@ public class PRTypeEnvironment extends InternalElement implements IPRTypeEnviron
 		// write out the type environment
 		Set<String> names = typeEnv.getNames();
 		
-		for (String name : names) {
-			this.createInternalElement(IPair.ELEMENT_TYPE,name,null,null)
-			.setContents(typeEnv.getType(name).toString());
+		for (String name : names) {			
+			IPRIdentifier prIdent = (IPRIdentifier) 
+			this.createInternalElement(
+					IPRIdentifier.ELEMENT_TYPE,
+					name,
+					null,monitor);
+			prIdent.setType(typeEnv.getType(name), monitor);			
 		}
 		
 	}
 	
-	public void setTypeEnvironment(FreeIdentifier[] freeIdents) throws RodinDBException {
+	public void setTypeEnvironment(FreeIdentifier[] freeIdents, IProgressMonitor monitor) throws RodinDBException {
 		//	delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);
 		
 		for (int i = 0; i < freeIdents.length; i++) {
+			IPRIdentifier prIdent = (IPRIdentifier) 
 			this.createInternalElement(
-					IPair.ELEMENT_TYPE,
+					IPRIdentifier.ELEMENT_TYPE,
 					freeIdents[i].getName(),
-					null,null)
-			.setContents(freeIdents[i].getType().toString());
+					null,monitor);
+			prIdent.setType(freeIdents[i].getType(), monitor);
 		}
 	}
 

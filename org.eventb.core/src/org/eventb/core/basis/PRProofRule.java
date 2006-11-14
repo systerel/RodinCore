@@ -15,6 +15,7 @@ import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRReasonerAntecedent;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.eventb.core.seqprover.IProofRule;
@@ -74,7 +75,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		IRodinElement[] rodinElements = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
 		assert rodinElements[0].getElementName().equals("goal");
-		Predicate goal = ((IPRPredicate)rodinElements[0]).getPredicate();
+		Predicate goal = ((IPRPredicate)rodinElements[0]).getPredicate(FormulaFactory.getDefault(), null);
 		
 		rodinElements = this.getChildrenOfType(IPRPredicateSet.ELEMENT_TYPE);
 		assert rodinElements.length == 1;
@@ -100,7 +101,7 @@ public class PRProofRule extends InternalElement implements IPRProofRule {
 		
 		// write out the current goal and needed hypotheses
 		((IPRPredicate)(this.createInternalElement(IPRPredicate.ELEMENT_TYPE,"goal",null,null)))
-		.setPredicate(proofRule.getGoal());
+		.setPredicate(proofRule.getGoal(), null);
 		((PRPredicateSet)(this.createInternalElement(IPRPredicateSet.ELEMENT_TYPE,"neededHyps",null,null)))
 		.setHypSet(proofRule.getNeededHyps());
 		// write out the anticidents (next subgoals)

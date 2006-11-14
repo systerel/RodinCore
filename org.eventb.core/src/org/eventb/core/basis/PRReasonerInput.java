@@ -12,6 +12,7 @@ import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRReasonerInput;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputSerializer;
 import org.rodinp.core.IInternalElementType;
@@ -41,7 +42,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 					IPRPredicate.ELEMENT_TYPE,
 					name,
 					null,null)))
-					.setPredicate(predicate);
+					.setPredicate(predicate, null);
 		} catch (RodinDBException e) {
 			throw new SerializeException(e);
 		}
@@ -51,7 +52,7 @@ public class PRReasonerInput extends InternalElement implements IPRReasonerInput
 		InternalElement prPredicate = getInternalElement(IPRPredicate.ELEMENT_TYPE,name);
 		if (! prPredicate.exists()) return null;
 		try {
-			return ((IPRPredicate)prPredicate).getPredicate();
+			return ((IPRPredicate)prPredicate).getPredicate(FormulaFactory.getDefault(), null);
 		} catch (RodinDBException e) {
 			throw new SerializeException(e);
 		}

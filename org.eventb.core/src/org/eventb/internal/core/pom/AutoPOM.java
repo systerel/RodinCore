@@ -58,7 +58,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		final String componentName = 
 			EventBPlugin.getComponentName(prFile.getElementName());
-		final int noOfPOs = poFile.getSequents().length;
+		
+		final IPOSequent[] pos = poFile.getSequents(monitor);
+		final int noOfPOs = pos.length;
 		final int workUnits = 3 + 2 + noOfPOs * 2;
 		// 3 : creating fresh PR file
 		// 1x : updating eash proof status
@@ -75,10 +77,9 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			checkCancellation(monitor, prFile, psFile);
 			
 			// create new proof status
-			IPOSequent[] pos = poFile.getSequents();
 			for (int i = 0; i < pos.length; i++) {
 				
-				final String name = pos[i].getName();
+				final String name = pos[i].getElementName();
 				monitor.subTask("updating status for " + name);
 				
 				final IPRProofTree prProof = prFile.getProofTree(name);
@@ -87,8 +88,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 					prFile.createProofTree(name);
 				}
 				
+				
 				final IPSstatus oldStatus = ((IPSFile) psFile.getSnapshot()).getStatusOf(name);
 				IPSstatus status;
+				// TODO : for some reason, oldStatus is always null
 				if (oldStatus == null)
 				{
 					status = (IPSstatus) psFile.createInternalElement(IPSstatus.ELEMENT_TYPE,name,null,null);
@@ -138,7 +141,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	public void clean(IFile file, IProgressMonitor monitor) throws CoreException {
 		
-		RodinCore.valueOf(file).delete(true, null);
+		IPSFile psFile = (IPSFile) RodinCore.valueOf(file);
+		IPRFile prFile = psFile.getPRFile();
+		
+		psFile.delete(true, null);
+		prFile.delete(true, null);
+		
 //		TODO : something for the PR file maybe
 //		IPSFile psFile = (IPSFile) RodinCore.valueOf(file).getMutableCopy();
 //			
@@ -197,7 +205,16 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		// Create a fresh PS file
 		// TODO : modify once signatures are implemented
-		project.createRodinFile(psFile.getElementName(), true, monitor);
+		if (! psFile.exists()) 
+			project.createRodinFile(psFile.getElementName(), true, monitor);
+		else
+		{
+			IPSstatus[] statuses = psFile.getStatus();
+			for (IPSstatus status : statuses) {
+				status.delete(true, monitor);
+			}
+			// psFile.getRodinDB().delete(psFile.getChildren(),true,null);
+		}
 	}
 	
 }

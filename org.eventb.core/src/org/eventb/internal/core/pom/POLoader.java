@@ -96,7 +96,7 @@ public final class POLoader {
 	public static IProverSequent makeSequent(final IPSstatus prSeq) throws RodinDBException{
 		IPSFile prFile = (IPSFile) prSeq.getOpenable();
 		final IPOFile poFile = prFile.getPOFile();
-		IProverSequent readPO = readPO(poFile,prSeq.getName());
+		IProverSequent readPO = readPO(poFile,prSeq.getElementName());
 		return readPO;
 	}
 		

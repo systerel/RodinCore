@@ -88,7 +88,7 @@ public class AutoProver {
 			IProgressMonitor pm) throws RodinDBException {
 		
 		try {
-			pm.beginTask(status.getName() + ":", 3);
+			pm.beginTask(status.getElementName() + ":", 3);
 			
 			pm.subTask("loading");
 			IPRProofTree prProofTree = status.getProofTree();

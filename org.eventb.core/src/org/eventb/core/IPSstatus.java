@@ -35,7 +35,7 @@ public interface IPSstatus extends IInternalElement {
 	 * @return the name of this proof obligation.
 	 * 
 	 */
-	String getName();
+	// String getElementName();
 	
 	/**
 	 * Returns the proof tree associated to this proof obligation from the

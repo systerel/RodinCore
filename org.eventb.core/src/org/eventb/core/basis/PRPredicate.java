@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPair;
 import org.eventb.core.ast.FormulaFactory;
@@ -35,11 +36,8 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		return ELEMENT_TYPE;
 	}
 	
-//	public String getName() {
-//		return getElementName();
-//	}
 
-	public Predicate getPredicate() throws RodinDBException {
+	public Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException {
 		// read in the type environment
 		
 		// TODO : refactor code with PRTypeEnv
@@ -59,7 +57,7 @@ public class PRPredicate extends InternalElement implements IPRPredicate {
 		return pred;
 	}
 
-	public void setPredicate(Predicate p) throws RodinDBException {
+	public void setPredicate(Predicate p, IProgressMonitor monitor) throws RodinDBException {
 		//delete previous children, if any.
 		if (this.getChildren().length != 0)
 			this.getRodinDB().delete(this.getChildren(),true,null);

@@ -150,7 +150,7 @@ public class ObligationExplorer extends ViewPart implements
 			if (element instanceof PSstatus) {
 				PSstatus sequent = (PSstatus) element;
 
-				if (sequent.getName().indexOf(filterText.getText()) == -1)
+				if (sequent.getElementName().indexOf(filterText.getText()) == -1)
 					return selection;
 				else
 					return !selection;
@@ -411,13 +411,13 @@ public class ObligationExplorer extends ViewPart implements
 					for (ProofState proofState : proofStates) {
 						if (proofState.getPRSequent().equals(obj)) {
 							if (proofState.isDirty())
-								return "* " + ((IPSstatus) obj).getName();
+								return "* " + ((IPSstatus) obj).getElementName();
 							else
-								return ((IPSstatus) obj).getName();
+								return ((IPSstatus) obj).getElementName();
 						}
 					}
 				}
-				return ((IPSstatus) obj).getName();
+				return ((IPSstatus) obj).getElementName();
 			}
 
 			return obj.toString();

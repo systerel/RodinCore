@@ -15,6 +15,7 @@ import org.eventb.core.IPRPredicateSet;
 import org.eventb.core.IPRProofTree;
 import org.eventb.core.IPRProofTreeNode;
 import org.eventb.core.IPRTypeEnvironment;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
@@ -61,16 +62,16 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 			
 			((IPRPredicate)(prProofTree.createInternalElement(
 					IPRPredicate.ELEMENT_TYPE,"goal",null,null))).
-					setPredicate(proofDependencies.getGoal());
+					setPredicate(proofDependencies.getGoal(), null);
 			((IPRPredicateSet)(prProofTree.createInternalElement(
 					IPRPredicateSet.ELEMENT_TYPE,"usedHypotheses",null,null))).
 					setPredicateSet(Hypothesis.Predicates(proofDependencies.getUsedHypotheses()));
 			((IPRTypeEnvironment)(prProofTree.createInternalElement(
 					IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers",null,null))).
-					setTypeEnvironment(proofDependencies.getUsedFreeIdents());
+					setTypeEnvironment(proofDependencies.getUsedFreeIdents(), null);
 			((IPRTypeEnvironment)(prProofTree.createInternalElement(
 					IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers",null,null))).
-					setTypeEnvironment(proofDependencies.getIntroducedFreeIdents());
+					setTypeEnvironment(proofDependencies.getIntroducedFreeIdents(), null);
 			
 			// write out the proof skeleton
 			IPRProofTreeNode root = (IPRProofTreeNode)
@@ -110,21 +111,21 @@ public class PRProofTree extends InternalElement implements IPRProofTree {
 		InternalElement usedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"usedFreeIdentifiers");
 		assert usedFreeIdents != null;
 		if (! usedFreeIdents.exists()) return null;
-		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment();
+		return ((IPRTypeEnvironment)usedFreeIdents).getTypeEnvironment(FormulaFactory.getDefault(), null);
 	}
 	
 	public ITypeEnvironment getIntroducedTypeEnvironment() throws RodinDBException {
 		InternalElement introducedFreeIdents = getInternalElement(IPRTypeEnvironment.ELEMENT_TYPE,"introducedFreeIdentifiers");
 		assert introducedFreeIdents != null;
 		if (! introducedFreeIdents.exists()) return null;
-		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment();
+		return ((IPRTypeEnvironment)introducedFreeIdents).getTypeEnvironment(FormulaFactory.getDefault(), null);
 	}
 	
 	public Predicate getGoal() throws RodinDBException {
 		InternalElement goal = getInternalElement(IPRPredicate.ELEMENT_TYPE,"goal");
 		assert goal != null;
 		if (! goal.exists()) return null;
-		return ((IPRPredicate)goal).getPredicate();
+		return ((IPRPredicate)goal).getPredicate(FormulaFactory.getDefault(), null);
 	}
 
 //	public boolean proofAttempted() throws RodinDBException {

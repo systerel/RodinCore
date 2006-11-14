@@ -126,7 +126,7 @@ public class AutoPOMTest extends BuilderTest {
 			if (status.getProofConfidence(null) > IConfidence.UNATTEMPTED)
 			{
 				IPRProofTree prProofTree = status.getProofTree();
-				String name = status.getName();
+				String name = status.getElementName();
 				assertNotNull("Proof absent for "+name , prProofTree);
 				assertEquals("Proof confidence different for "+name, prProofTree.getConfidence(null), status.getProofConfidence(null));
 			}
@@ -175,26 +175,26 @@ public class AutoPOMTest extends BuilderTest {
 
 	private void assertDischarged(IPSstatus status) throws RodinDBException {
 		// IPRProofTree proofTree = status.getProofTree();
-		assertTrue("PO " + status.getName() + " should be closed",
+		assertTrue("PO " + status.getElementName() + " should be closed",
 				IConfidence.PENDING <
 				status.getProofConfidence(null));
-		assertTrue("PR " + status.getName() + " should be valid",
+		assertTrue("PR " + status.getElementName() + " should be valid",
 				status.isProofValid());
-		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",
+		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
 				status.autoProverAttempted());
-		assertTrue("PR " + status.getName() + " should be auto proven",
+		assertTrue("PR " + status.getElementName() + " should be auto proven",
 				status.isAutoProven());
 		
 	}
 	
 	private void assertNotDischarged(IPSstatus status) throws RodinDBException {
 		// IPRProofTree proofTree = status.getProofTree();
-		assertTrue("PO " + status.getName() + " should not be closed",
+		assertTrue("PO " + status.getElementName() + " should not be closed",
 				IConfidence.PENDING >=
 				status.getProofConfidence(null));
-		assertTrue("PR " + status.getName() + " should be valid",
+		assertTrue("PR " + status.getElementName() + " should be valid",
 				status.isProofValid());
-		assertTrue("PR " + status.getName() + " should be attempted by the auto prover",
+		assertTrue("PR " + status.getElementName() + " should be attempted by the auto prover",
 				status.autoProverAttempted());
 //		assertFalse("PR " + status.getName() + " should not be auto proven",
 //				status.isAutoProven());

@@ -8,23 +8,21 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for typed identifiers in Event-B Proof (PR) files.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
  * @author Farhad Mehta
  *
  */
-public interface IPRPredicate extends IInternalElement {
+public interface IPRIdentifier extends ISCIdentifierElement {
 	
 	IInternalElementType ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPredicate"); //$NON-NLS-1$
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prIdentifier"); //$NON-NLS-1$
 
-	Predicate getPredicate(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException;
-	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
 }

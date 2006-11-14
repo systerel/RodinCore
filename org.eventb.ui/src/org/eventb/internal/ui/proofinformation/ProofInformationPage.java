@@ -100,7 +100,7 @@ public class ProofInformationPage extends Page implements
 
 		ProofState ps = editor.getUserSupport().getCurrentPO();
 		if (ps != null)
-			scrolledForm.setText(ps.getPRSequent().getName());
+			scrolledForm.setText(ps.getPRSequent().getElementName());
 
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -338,7 +338,7 @@ public class ProofInformationPage extends Page implements
 					if (ps != null) {
 						IPSstatus prSequent = ps.getPRSequent();
 						if (prSequent.exists()) {
-							scrolledForm.setText(prSequent.getName());
+							scrolledForm.setText(prSequent.getElementName());
 							setFormText(prSequent);
 							scrolledForm.reflow(true);
 						}

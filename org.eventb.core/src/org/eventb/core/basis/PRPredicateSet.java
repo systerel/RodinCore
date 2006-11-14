@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.eventb.core.IPRPredicate;
 import org.eventb.core.IPRPredicateSet;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.Hypothesis;
 import org.rodinp.core.IInternalElementType;
@@ -43,7 +44,7 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 		HashSet<Predicate> result = new HashSet<Predicate>();
 		IRodinElement[] children = this.getChildrenOfType(IPRPredicate.ELEMENT_TYPE);
 		for (IRodinElement element : children) {
-			result.add(((IPRPredicate)element).getPredicate());
+			result.add(((IPRPredicate)element).getPredicate(FormulaFactory.getDefault(), null));
 		}
 		return result;
 	}
@@ -59,7 +60,7 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 		int i = 1;
 		for (Predicate predicate : predSet) {
 			((IPRPredicate)this.createInternalElement(IPRPredicate.ELEMENT_TYPE, "p" + i++,null,null))
-			.setPredicate(predicate);
+			.setPredicate(predicate, null);
 		}
 		return;
 	}
@@ -74,7 +75,7 @@ public class PRPredicateSet extends InternalElement implements IPRPredicateSet {
 		int i = 1;
 		for (Hypothesis hyp : hypSet) {
 			((IPRPredicate)this.createInternalElement(IPRPredicate.ELEMENT_TYPE,"hyp"+i++,null,null))
-			.setPredicate(hyp.getPredicate());
+			.setPredicate(hyp.getPredicate(), null);
 		}
 		return;
 	}

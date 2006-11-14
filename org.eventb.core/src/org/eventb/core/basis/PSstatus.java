@@ -54,13 +54,13 @@ public class PSstatus extends InternalElement implements IPSstatus {
 		return ELEMENT_TYPE;
 	}
 	
-	public String getName() {
-		return getElementName();
-	}
+//	public String getElementName() {
+//		return getElementName();
+//	}
 	
 	public IPRProofTree getProofTree(){
 		final IPRFile prFile = ((IPSFile)getOpenable()).getPRFile();
-		IPRProofTree proofTree = prFile.getProofTree(getName());
+		IPRProofTree proofTree = prFile.getProofTree(getElementName());
 		// assert proofTree != null;
 		if ( proofTree == null || (!proofTree.exists())) return null;
 		return proofTree;
@@ -88,7 +88,7 @@ public class PSstatus extends InternalElement implements IPSstatus {
 	public IPOSequent getPOSequent() {
 		IPSFile psFile = (IPSFile) getOpenable();
 		IPOFile poFile = psFile.getPOFile();
-		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getName());
+		IPOSequent poSeq = (IPOSequent) poFile.getInternalElement(IPOSequent.ELEMENT_TYPE,getElementName());
 		if (! poSeq.exists()) return null;
 		return poSeq;
 	}
