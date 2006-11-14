@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -161,7 +162,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 	 *      int, java.lang.String)
 	 */
 	@Override
-	public void commit(IRodinElement element, int col, String text) {
+	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
 		switch (col) {
 		case 0:
@@ -200,13 +201,13 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (element instanceof IPredicateElement) {
 					IPredicateElement predicateElement = (IPredicateElement) element;
-					if (!predicateElement.getPredicateString().equals(text)) {
-						predicateElement.setPredicateString(text);
+					if (!predicateElement.getPredicateString(monitor).equals(text)) {
+						predicateElement.setPredicateString(text, monitor);
 					}
 				} else if (element instanceof IAssignmentElement) {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
-					if (!assignmentElement.getAssignmentString().equals(text)) {
-						assignmentElement.setAssignmentString(text);
+					if (!assignmentElement.getAssignmentString(monitor).equals(text)) {
+						assignmentElement.setAssignmentString(text, monitor);
 					}
 				}
 			} catch (RodinDBException e) {

@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.proofinformation;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -109,7 +110,7 @@ public class ProofInformationPage extends Page implements
 
 		formText = new EventBFormText(toolkit.createFormText(body, true));
 		if (ps != null)
-			setFormText(ps.getPRSequent());
+			setFormText(ps.getPRSequent(), new NullProgressMonitor());
 
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
@@ -122,17 +123,14 @@ public class ProofInformationPage extends Page implements
 	 * @param prSequent
 	 *            the current prSequent
 	 */
-	void setFormText(IPSstatus prSequent) {
+	void setFormText(IPSstatus prSequent, IProgressMonitor monitor) {
 		try {
 			String formString = "<form>";
 
-			IPOSource[] sources = prSequent.getPOSequent().getSources();
+			IPOSource[] sources = prSequent.getPOSequent().getSources(monitor);
 			for (IPOSource source : sources) {
-				String id = source.getSourceHandleIdentifier();
-				if (ProofInformationUtils.DEBUG)
-					ProofInformationUtils.debug("ID unchecked model " + id);
-
-				IRodinElement element = RodinCore.valueOf(id);
+				IRodinElement element = source.getSource(monitor);
+				String id = element.getHandleIdentifier();
 				if (ProofInformationUtils.DEBUG) {
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
@@ -150,7 +148,7 @@ public class ProofInformationPage extends Page implements
 									.getLabel(new NullProgressMonitor()))
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(thm.getPredicateString());
+							+ UIUtils.XMLWrapUp(thm.getPredicateString(monitor));
 					formString = formString + "</li>";
 				}
 				if (element instanceof IAxiom) {
@@ -166,7 +164,7 @@ public class ProofInformationPage extends Page implements
 									.getLabel(new NullProgressMonitor()))
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(axm.getPredicateString());
+							+ UIUtils.XMLWrapUp(axm.getPredicateString(monitor));
 					formString = formString + "</li>";
 				} else if (element instanceof IInvariant) {
 					IInvariant inv = (IInvariant) element;
@@ -181,7 +179,7 @@ public class ProofInformationPage extends Page implements
 									.getLabel(new NullProgressMonitor()))
 							+ ": ";
 					formString = formString
-							+ UIUtils.XMLWrapUp(inv.getPredicateString());
+							+ UIUtils.XMLWrapUp(inv.getPredicateString(monitor));
 					formString = formString + "</li>";
 				} else if (element instanceof IEvent) {
 					IEvent evt = (IEvent) element;
@@ -212,13 +210,13 @@ public class ProofInformationPage extends Page implements
 								formString = formString
 										+ UIUtils.makeHyperlink(var
 												.getHandleIdentifier(), var
-												.getIdentifierString());
+												.getIdentifierString(monitor));
 							} else
 								formString = formString
 										+ ", "
 										+ UIUtils.makeHyperlink(var
 												.getHandleIdentifier(), var
-												.getIdentifierString());
+												.getIdentifierString(monitor));
 						}
 						formString = formString + " <b>WHERE</b>";
 						formString = formString + "</li>";
@@ -244,7 +242,7 @@ public class ProofInformationPage extends Page implements
 										.getHandleIdentifier(), guard
 										.getLabel(new NullProgressMonitor()))
 								+ ": "
-								+ UIUtils.XMLWrapUp(guard.getPredicateString());
+								+ UIUtils.XMLWrapUp(guard.getPredicateString(monitor));
 						formString = formString + "</li>";
 					}
 
@@ -264,7 +262,7 @@ public class ProofInformationPage extends Page implements
 										.getLabel(new NullProgressMonitor()))
 								+ ": "
 								+ UIUtils.XMLWrapUp(action
-										.getAssignmentString());
+										.getAssignmentString(monitor));
 						formString = formString + "</li>";
 					}
 					formString = formString
@@ -339,7 +337,7 @@ public class ProofInformationPage extends Page implements
 						IPSstatus prSequent = ps.getPRSequent();
 						if (prSequent.exists()) {
 							scrolledForm.setText(prSequent.getElementName());
-							setFormText(prSequent);
+							setFormText(prSequent, new NullProgressMonitor());
 							scrolledForm.reflow(true);
 						}
 					} else {

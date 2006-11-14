@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -116,6 +117,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -154,7 +156,8 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	public void commit(IRodinElement element, int col, String text) {
+	@Override
+	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 		IConstant cst = (IConstant) element;
 
 		switch (col) {
@@ -162,9 +165,9 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ cst.getIdentifierString() + " to be : " + text);
-				if (!cst.getIdentifierString().equals(text)) {
-					cst.setIdentifierString(text);
+							+ cst.getIdentifierString(monitor) + " to be : " + text);
+				if (!cst.getIdentifierString(monitor).equals(text)) {
+					cst.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -174,6 +177,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 1;
 
@@ -192,6 +196,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof IConstant))
 			return true;
@@ -203,6 +208,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

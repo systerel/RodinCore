@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -58,12 +59,13 @@ public class EventBEditorContributor extends
 	 * 
 	 * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor#setActivePage(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActivePage(IEditorPart part) {
 
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
-//			actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
-//					rename);
+			// actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(),
+			// rename);
 			// actionBars.setGlobalActionHandler(
 			// ActionFactory.UNDO.getId(),
 			// getAction(editor, ITextEditorActionConstants.UNDO));
@@ -106,6 +108,7 @@ public class EventBEditorContributor extends
 						ActionFactory.REFRESH.getId()));
 
 		rename = new Action() {
+			@Override
 			public void run() {
 				IEditorPart part = EventBEditorContributor.this.getPage()
 						.getActiveEditor();
@@ -124,7 +127,7 @@ public class EventBEditorContributor extends
 
 								if (element instanceof IIdentifierElement)
 									name = ((IIdentifierElement) element)
-											.getIdentifierString();
+											.getIdentifierString(new NullProgressMonitor());
 								else if (element instanceof ILabeledElement)
 									name = ((ILabeledElement) element)
 											.getLabel(null);
@@ -136,12 +139,18 @@ public class EventBEditorContributor extends
 								if (text != null) {
 									if (element instanceof IIdentifierElement) {
 										IIdentifierElement identifierElement = (IIdentifierElement) element;
-										if (!identifierElement.getIdentifierString().equals(text))
-											identifierElement.setIdentifierString(text);
-									}
-									else if (element instanceof ILabeledElement) {
+										if (!identifierElement
+												.getIdentifierString(
+														new NullProgressMonitor())
+												.equals(text))
+											identifierElement
+													.setIdentifierString(
+															text,
+															new NullProgressMonitor());
+									} else if (element instanceof ILabeledElement) {
 										ILabeledElement labeledElement = (ILabeledElement) element;
-										if (!labeledElement.getLabel(null).equals(text))
+										if (!labeledElement.getLabel(null)
+												.equals(text))
 											labeledElement.setLabel(text, null);
 									}
 								}
@@ -155,8 +164,9 @@ public class EventBEditorContributor extends
 		};
 		rename.setText("New Variables");
 		rename.setToolTipText("Create new variables for the component");
-		rename.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
+		rename
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 	}
 

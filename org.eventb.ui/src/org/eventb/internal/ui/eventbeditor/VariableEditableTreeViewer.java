@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -118,6 +119,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -140,16 +142,17 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		this.setSorter(new ElementSorter());
 	}
 
-	public void commit(IRodinElement element, int col, String text) {
+	@Override
+	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 		IVariable var = (IVariable) element;
 		switch (col) {
 		case 0: // Commit name
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ var.getIdentifierString() + " to be : " + text);
-				if (!var.getIdentifierString().equals(text)) {
-					var.setIdentifierString(text);
+							+ var.getIdentifierString(monitor) + " to be : " + text);
+				if (!var.getIdentifierString(monitor).equals(text)) {
+					var.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -159,6 +162,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		}
 	}
 
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 1;
 
@@ -178,6 +182,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 		return false;
 	}
 
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

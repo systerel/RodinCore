@@ -15,6 +15,8 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -138,7 +140,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 	 * @param text
 	 *            The new information
 	 */
-	protected abstract void commit(IRodinElement element, int col, String text);
+	protected abstract void commit(IRodinElement element, int col, String text,
+			IProgressMonitor monitor);
 
 	/**
 	 * Select and edit the element in this Viewer.
@@ -311,9 +314,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 			 *      int, java.lang.String)
 			 */
 			@Override
-			public void commit(IRodinElement element, int col,
-					String contents) {
-				EventBEditableTreeViewer.this.commit(element, col, contents);
+			public void commit(IRodinElement element, int col, String contents) {
+				EventBEditableTreeViewer.this.commit(element, col, contents, new NullProgressMonitor());
 			}
 
 			/*
@@ -618,9 +620,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer {
 
 	public String getColumnID(int columnIndex) {
 		// TODO Should be implemented dynamically
-		if (columnIndex == 1) return "content";
-		else if (columnIndex == 0) return "name";
-		else return "";
+		if (columnIndex == 1)
+			return "content";
+		else if (columnIndex == 0)
+			return "name";
+		else
+			return "";
 	}
 
 }

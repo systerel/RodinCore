@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -116,6 +117,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -155,7 +157,8 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	public void commit(IRodinElement element, int col, String text) {
+	@Override
+	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 		ITheorem thm = (ITheorem) element;
 		switch (col) {
 		case 0: // Commit name
@@ -186,6 +189,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 2;
 
@@ -209,6 +213,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof ITheorem))
 			return true;
@@ -220,6 +225,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

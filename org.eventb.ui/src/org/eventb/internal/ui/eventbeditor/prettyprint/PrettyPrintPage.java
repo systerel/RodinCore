@@ -213,7 +213,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 						.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 				if (refines.length != 0) {
 					IRefinesMachine refine = (IRefinesMachine) refines[0];
-					String name = refine.getAbstractMachineName();
+					String name = refine.getAbstractMachineName(monitor);
 					formString += "<li style=\"text\" value=\"\"></li>";
 					formString += "<li style=\"text\" value=\"\"><b>REFINES</b> ";
 					formString += UIUtils.makeHyperlink(EventBPlugin
@@ -234,7 +234,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				if (extendz.length != 0) {
 					IExtendsContext extend = (IExtendsContext) extendz[0];
-					String name = extend.getAbstractContextName();
+					String name = extend.getAbstractContextName(monitor);
 					formString += "<li style=\"text\" value=\"\"></li>";
 					formString += "<li style=\"text\" value=\"\"><b>REFINES</b> ";
 					formString += UIUtils.makeHyperlink(EventBPlugin
@@ -271,7 +271,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += UIUtils
 							.makeHyperlink(rodinFile.getHandleIdentifier(),
 									((SeesContext) seeContexts[i])
-											.getSeenContextName());
+											.getSeenContextName(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get seen context name of "
@@ -310,7 +310,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
 				try {
 					formString += UIUtils.makeHyperlink(var
-							.getHandleIdentifier(), var.getIdentifierString());
+							.getHandleIdentifier(), var.getIdentifierString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for variable "
@@ -360,7 +360,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += UIUtils.makeHyperlink(inv
 							.getHandleIdentifier(), inv.getLabel(monitor));
 					formString += ": "
-							+ UIUtils.XMLWrapUp(inv.getPredicateString());
+							+ UIUtils.XMLWrapUp(inv.getPredicateString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for invariant "
@@ -409,7 +409,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
 				try {
 					formString += UIUtils.makeHyperlink(set
-							.getHandleIdentifier(), set.getIdentifierString());
+							.getHandleIdentifier(), set.getIdentifierString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for carrier set "
@@ -458,7 +458,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 				formString += "<li style=\"text\" value=\"\" bindent = \"20\">";
 				try {
 					formString += UIUtils.makeHyperlink(cst
-							.getHandleIdentifier(), cst.getIdentifierString());
+							.getHandleIdentifier(), cst.getIdentifierString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the identifier string for constant "
@@ -509,7 +509,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += UIUtils.makeHyperlink(axm
 							.getHandleIdentifier(), axm.getLabel(monitor));
 					formString += ": "
-							+ UIUtils.XMLWrapUp(axm.getPredicateString());
+							+ UIUtils.XMLWrapUp(axm.getPredicateString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for axiom "
@@ -559,7 +559,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 					formString += UIUtils.makeHyperlink(thm
 							.getHandleIdentifier(), thm.getLabel(monitor));
 					formString += ": "
-							+ UIUtils.XMLWrapUp(thm.getPredicateString());
+							+ UIUtils.XMLWrapUp(thm.getPredicateString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get details for theorem "
@@ -655,7 +655,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 						try {
 							formString += UIUtils.makeHyperlink(refinesEvent
 									.getHandleIdentifier(), refinesEvent
-									.getAbstractEventLabel());
+									.getAbstractEventLabel(monitor));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get the abstract event label for refines event "
@@ -676,7 +676,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 						try {
 							formString += UIUtils.makeHyperlink(var
 									.getHandleIdentifier(), var
-									.getIdentifierString());
+									.getIdentifierString(monitor));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get the identifier string for local variable "
@@ -715,7 +715,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 								+ UIUtils.makeHyperlink(guard
 										.getHandleIdentifier(), guard
 										.getLabel(monitor)) + ": "
-								+ UIUtils.XMLWrapUp(guard.getPredicateString());
+								+ UIUtils.XMLWrapUp(guard.getPredicateString(monitor));
 					} catch (RodinDBException e) {
 						EventBEditorUtils.debugAndLogError(e,
 								"Cannot get details for guard "
@@ -747,7 +747,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 											.getLabel(monitor))
 									+ ": "
 									+ UIUtils.XMLWrapUp(witness
-											.getPredicateString());
+											.getPredicateString(monitor));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get details for guard "
@@ -782,7 +782,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 										.getLabel(monitor))
 								+ ": "
 								+ UIUtils.XMLWrapUp(action
-										.getAssignmentString());
+										.getAssignmentString(monitor));
 					} catch (RodinDBException e) {
 						EventBEditorUtils.debugAndLogError(e,
 								"Cannot get details for action "
@@ -834,7 +834,7 @@ public class PrettyPrintPage extends EventBEditorPage implements
 				try {
 					formString += UIUtils.makeHyperlink(variant
 							.getHandleIdentifier(), variant
-							.getExpressionString());
+							.getExpressionString(monitor));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the expression string for variant "

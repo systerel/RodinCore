@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -116,6 +117,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -154,16 +156,17 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	public void commit(IRodinElement element, int col, String text) {
+	@Override
+	public void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 		ICarrierSet set = (ICarrierSet) element;
 		switch (col) {
 		case 0: // Commit name
 			try {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Commit : "
-							+ set.getIdentifierString() + " to be : " + text);
-				if (!set.getIdentifierString().equals(text)) {
-					set.setIdentifierString(text);
+							+ set.getIdentifierString(monitor) + " to be : " + text);
+				if (!set.getIdentifierString(monitor).equals(text)) {
+					set.setIdentifierString(text, monitor);
 				}
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -178,6 +181,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 1;
 
@@ -196,6 +200,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (!(object instanceof ICarrierSet))
 			return true;
@@ -207,6 +212,7 @@ public class CarrierSetEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);

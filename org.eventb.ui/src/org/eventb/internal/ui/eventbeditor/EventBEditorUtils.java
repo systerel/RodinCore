@@ -18,6 +18,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -73,25 +74,25 @@ public class EventBEditorUtils {
 
 	public final static String DEBUG_PREFIX = "*** EventBEditor *** ";
 
-	private static IAction newAct;
+	static IAction newAct;
 
 	private static IGuard newGrd;
 
-	private static IVariable newVar;
+	static IVariable newVar;
 
-	private static IInvariant newInv;
+	static IInvariant newInv;
 
-	private static IVariant newVariant;
+	static IVariant newVariant;
 
 	private static ITheorem newThm;
 
-	private static IEvent newEvt;
+	static IEvent newEvt;
 
 	private static IAxiom newAxm;
 
-	private static ICarrierSet newSet;
+	static ICarrierSet newSet;
 
-	private static IConstant newCst;
+	static IConstant newCst;
 
 	private static IRefinesEvent newRefEvt;
 
@@ -223,8 +224,9 @@ public class EventBEditorUtils {
 										IAction.ELEMENT_TYPE, name, null,
 										monitor);
 								newAct.setLabel(label, monitor);
-								newAct
-										.setAssignmentString(EventBUIPlugin.SUB_DEFAULT);
+								newAct.setAssignmentString(
+										EventBUIPlugin.SUB_DEFAULT,
+										new NullProgressMonitor());
 								editor.addNewElement(newAct);
 							}
 
@@ -330,8 +332,8 @@ public class EventBEditorUtils {
 												IWitness.ELEMENT_TYPE, name,
 												null, monitor);
 								newWit.setLabel(label, monitor);
-								newWit
-										.setPredicateString(EventBUIPlugin.PRD_DEFAULT, null);
+								newWit.setPredicateString(
+										EventBUIPlugin.PRD_DEFAULT, null);
 								editor.addNewElement(newWit);
 							}
 
@@ -384,8 +386,8 @@ public class EventBEditorUtils {
 										IGuard.ELEMENT_TYPE, name, null,
 										monitor);
 								newGrd.setLabel(label, monitor);
-								newGrd
-										.setPredicateString(EventBUIPlugin.GRD_DEFAULT, null);
+								newGrd.setPredicateString(
+										EventBUIPlugin.GRD_DEFAULT, null);
 								editor.addNewElement(newGrd);
 							}
 
@@ -439,7 +441,8 @@ public class EventBEditorUtils {
 										.createInternalElement(
 												IVariable.ELEMENT_TYPE, name,
 												null, monitor);
-								newVar.setIdentifierString(identifier);
+								newVar.setIdentifierString(identifier,
+										new NullProgressMonitor());
 								editor.addNewElement(newVar);
 							}
 
@@ -487,7 +490,8 @@ public class EventBEditorUtils {
 									.createInternalElement(
 											IVariable.ELEMENT_TYPE, name, null,
 											monitor);
-							newVar.setIdentifierString(identifier);
+							newVar.setIdentifierString(identifier,
+									new NullProgressMonitor());
 							editor.addNewElement(newVar);
 						}
 
@@ -532,8 +536,8 @@ public class EventBEditorUtils {
 											IInvariant.ELEMENT_TYPE, name,
 											null, monitor);
 							newInv.setLabel(label, monitor);
-							newInv
-									.setPredicateString(EventBUIPlugin.INV_DEFAULT, null);
+							newInv.setPredicateString(
+									EventBUIPlugin.INV_DEFAULT, null);
 							editor.addNewElement(newInv);
 						}
 
@@ -579,8 +583,8 @@ public class EventBEditorUtils {
 											ITheorem.ELEMENT_TYPE, name, null,
 											monitor);
 							newThm.setLabel(label, monitor);
-							newThm
-									.setPredicateString(EventBUIPlugin.THM_DEFAULT, null);
+							newThm.setPredicateString(
+									EventBUIPlugin.THM_DEFAULT, null);
 							editor.addNewElement(newThm);
 						}
 
@@ -657,7 +661,8 @@ public class EventBEditorUtils {
 										newEvt, IVariable.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 
-								newVar.setIdentifierString(prefix + index);
+								newVar.setIdentifierString(prefix + index,
+										new NullProgressMonitor());
 								index = UIUtils.getFreeElementIdentifierIndex(
 										editor, newEvt, IVariable.ELEMENT_TYPE,
 										prefix, index + 1);
@@ -687,8 +692,8 @@ public class EventBEditorUtils {
 								index = UIUtils.getFreeElementLabelIndex(
 										editor, newEvt, IGuard.ELEMENT_TYPE,
 										prefix, index + 1);
-								newGrd
-										.setPredicateString(EventBUIPlugin.GRD_DEFAULT, null);
+								newGrd.setPredicateString(
+										EventBUIPlugin.GRD_DEFAULT, null);
 								editor.addNewElement(newGrd);
 							}
 
@@ -717,8 +722,8 @@ public class EventBEditorUtils {
 								index = UIUtils.getFreeElementLabelIndex(
 										editor, newEvt, IAction.ELEMENT_TYPE,
 										prefix, index + 1);
-								newAct
-										.setAssignmentString(EventBUIPlugin.SUB_DEFAULT);
+								newAct.setAssignmentString(
+										EventBUIPlugin.SUB_DEFAULT, monitor);
 								editor.addNewElement(newAct);
 							}
 						}
@@ -764,8 +769,8 @@ public class EventBEditorUtils {
 							newAxm = (IAxiom) rodinFile.createInternalElement(
 									IAxiom.ELEMENT_TYPE, name, null, monitor);
 							newAxm.setLabel(label, monitor);
-							newAxm
-									.setPredicateString(EventBUIPlugin.AXM_DEFAULT, null);
+							newAxm.setPredicateString(
+									EventBUIPlugin.AXM_DEFAULT, null);
 							editor.addNewElement(newAxm);
 						}
 
@@ -810,7 +815,8 @@ public class EventBEditorUtils {
 									.createInternalElement(
 											IConstant.ELEMENT_TYPE, name, null,
 											monitor);
-							newCst.setIdentifierString(identifier);
+							newCst.setIdentifierString(identifier,
+									new NullProgressMonitor());
 							editor.addNewElement(newCst);
 						}
 
@@ -832,7 +838,8 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addSet(final IEventBEditor editor, final TreeViewer viewer) {
+	public static void addSet(final IEventBEditor editor,
+			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				final IRodinFile rodinFile = editor.getRodinInput();
@@ -855,7 +862,8 @@ public class EventBEditorUtils {
 									.createInternalElement(
 											ICarrierSet.ELEMENT_TYPE, name,
 											null, monitor);
-							newSet.setIdentifierString(identifier);
+							newSet.setIdentifierString(identifier,
+									new NullProgressMonitor());
 							editor.addNewElement(newSet);
 						}
 
@@ -947,7 +955,8 @@ public class EventBEditorUtils {
 												PrefixVarName.QUALIFIED_NAME,
 												PrefixVarName.DEFAULT_PREFIX),
 								null, monitor);
-						newVar.setIdentifierString(name);
+						newVar.setIdentifierString(name,
+								new NullProgressMonitor());
 						editor.addNewElement(newVar);
 
 						Collection<Pair> invariants = dialog.getInvariants();
@@ -1004,7 +1013,7 @@ public class EventBEditorUtils {
 													IAction.ELEMENT_TYPE,
 													actName, null, monitor);
 									newAct.setLabel(actLabel, monitor);
-									newAct.setAssignmentString(init);
+									newAct.setAssignmentString(init, monitor);
 
 									editor.addNewElement(newAct);
 									break;
@@ -1036,7 +1045,7 @@ public class EventBEditorUtils {
 												IAction.ELEMENT_TYPE, actName,
 												null, monitor);
 								newAct.setLabel(actLabel, monitor);
-								newAct.setAssignmentString(init);
+								newAct.setAssignmentString(init, monitor);
 								editor.addNewElement(newAct);
 							}
 						}
@@ -1091,7 +1100,8 @@ public class EventBEditorUtils {
 												PrefixCstName.QUALIFIED_NAME,
 												PrefixCstName.DEFAULT_PREFIX),
 								null, monitor);
-						newCst.setIdentifierString(name);
+						newCst.setIdentifierString(name,
+								new NullProgressMonitor());
 						editor.addNewElement(newCst);
 
 						Collection<Pair> axioms = dialog.getAxioms();
@@ -1231,7 +1241,8 @@ public class EventBEditorUtils {
 							monitor);
 					index = UIUtils.getFreeElementNameIndex(rodinFile,
 							IVariant.ELEMENT_TYPE, prefix, index + 1);
-					newVariant.setExpressionString(expression);
+					newVariant.setExpressionString(expression,
+							new NullProgressMonitor());
 					editor.addNewElement(newVariant);
 				}
 			}, null);

@@ -1,5 +1,6 @@
 package org.eventb.internal.ui;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPredicateElement;
 import org.eventb.ui.IElementModifier;
 import org.rodinp.core.IRodinElement;
@@ -10,7 +11,8 @@ public class PredicateModifier implements IElementModifier {
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IPredicateElement) {
-			((IPredicateElement) element).setPredicateString(text);
+			((IPredicateElement) element).setPredicateString(text,
+					new NullProgressMonitor());
 		}
 		return;
 	}

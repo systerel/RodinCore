@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IAction;
@@ -164,7 +165,7 @@ public class EventMirrorPage extends EventBMirrorPage implements
 						for (int j = 0; j < lvars.length; j++) {
 							if (e.getHref().equals(
 									((IVariable) lvars[j])
-											.getIdentifierString())) {
+											.getIdentifierString(new NullProgressMonitor()))) {
 								editor.edit(lvars[j]);
 							}
 						}

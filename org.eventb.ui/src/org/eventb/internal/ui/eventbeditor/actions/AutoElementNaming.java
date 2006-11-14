@@ -3,6 +3,7 @@ package org.eventb.internal.ui.eventbeditor.actions;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -39,12 +40,14 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 						IRodinElement element = elements[counter - 1];
 						if (element instanceof IIdentifierElement) {
 							if (EventBEditorUtils.DEBUG)
-								EventBEditorUtils.debug("Rename: "
-										+ ((IIdentifierElement) element)
-												.getIdentifierString() + " to "
-										+ prefix + +counter);
+								EventBEditorUtils
+										.debug("Rename: "
+												+ ((IIdentifierElement) element)
+														.getIdentifierString(new NullProgressMonitor())
+												+ " to " + prefix + +counter);
 							((IIdentifierElement) element)
-									.setIdentifierString(prefix + counter);
+									.setIdentifierString(prefix + counter,
+											new NullProgressMonitor());
 						} else if (element instanceof ILabeledElement) {
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Rename: "

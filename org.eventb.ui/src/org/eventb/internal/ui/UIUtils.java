@@ -139,9 +139,7 @@ public class UIUtils {
 			ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, editorId);
 			if (!(obj instanceof IPSFile))
-				editor
-						.setCurrentPO((IPSstatus) obj,
-								new NullProgressMonitor());
+				editor.setCurrentPO((IPSstatus) obj, new NullProgressMonitor());
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null, "Error open the editor");
 			e.printStackTrace();
@@ -329,8 +327,7 @@ public class UIUtils {
 
 				RodinCore.run(new IWorkspaceRunnable() {
 
-					public void run(IProgressMonitor pm)
-							throws CoreException {
+					public void run(IProgressMonitor pm) throws CoreException {
 						String[] varNames = dialog.getVariables();
 						String[] grdNames = dialog.getGrdNames();
 						String[] grdPredicates = dialog.getGrdPredicates();
@@ -338,12 +335,13 @@ public class UIUtils {
 						String[] actSubstitutions = dialog
 								.getActSubstitutions();
 
-						IEvent evt = (IEvent) rodinFile.createInternalElement(
-								IEvent.ELEMENT_TYPE, getFreeElementName(editor,
-										rodinFile, IEvent.ELEMENT_TYPE,
-										PrefixEvtName.QUALIFIED_NAME,
-										PrefixEvtName.DEFAULT_PREFIX), null,
-								pm);
+						IEvent evt = (IEvent) rodinFile
+								.createInternalElement(IEvent.ELEMENT_TYPE,
+										getFreeElementName(editor, rodinFile,
+												IEvent.ELEMENT_TYPE,
+												PrefixEvtName.QUALIFIED_NAME,
+												PrefixEvtName.DEFAULT_PREFIX),
+										null, pm);
 						evt.setLabel(name, pm);
 						editor.addNewElement(evt);
 
@@ -361,7 +359,7 @@ public class UIUtils {
 									.createInternalElement(
 											IVariable.ELEMENT_TYPE, varPrefix
 													+ varIndex, null, pm);
-							var.setIdentifierString(varName);
+							var.setIdentifierString(varName, pm);
 							editor.addNewElement(var);
 							varIndex = getFreeElementNameIndex(evt,
 									IVariable.ELEMENT_TYPE, varPrefix,
@@ -395,7 +393,7 @@ public class UIUtils {
 									IAction.ELEMENT_TYPE, actPrefix + actIndex,
 									null, pm);
 							act.setLabel(actNames[i], pm);
-							act.setAssignmentString(actSubstitutions[i]);
+							act.setAssignmentString(actSubstitutions[i], pm);
 							editor.addNewElement(act);
 							actIndex = getFreeElementNameIndex(evt,
 									IAction.ELEMENT_TYPE, actPrefix, grdIndex);
@@ -443,7 +441,7 @@ public class UIUtils {
 								.createInternalElement(
 										ICarrierSet.ELEMENT_TYPE, setPrefix
 												+ setIndex, null, pm);
-						set.setIdentifierString(name);
+						set.setIdentifierString(name, pm);
 						editor.addNewElement(set);
 						setIndex = getFreeElementNameIndex(rodinFile,
 								ICarrierSet.ELEMENT_TYPE, setPrefix,
@@ -484,7 +482,7 @@ public class UIUtils {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor pm) throws CoreException {
+				public void run(IProgressMonitor monitor) throws CoreException {
 					Collection<String> elements = dialog.getElements();
 
 					ICarrierSet set = (ICarrierSet) rodinFile
@@ -493,8 +491,8 @@ public class UIUtils {
 											ICarrierSet.ELEMENT_TYPE,
 											PrefixSetName.QUALIFIED_NAME,
 											PrefixSetName.DEFAULT_PREFIX),
-									null, pm);
-					set.setIdentifierString(name);
+									null, monitor);
+					set.setIdentifierString(name, monitor);
 					editor.addNewElement(set);
 
 					if (elements.size() == 0)
@@ -516,7 +514,7 @@ public class UIUtils {
 					IAxiom newAxm = (IAxiom) rodinFile.createInternalElement(
 							IAxiom.ELEMENT_TYPE, namePrefix + nameIndex, null,
 							null);
-					newAxm.setLabel(labelPrefix + labelIndex, pm);
+					newAxm.setLabel(labelPrefix + labelIndex, monitor);
 					String axmPred = name + " = {";
 
 					String cstPrefix = getNamePrefix(editor,
@@ -528,8 +526,8 @@ public class UIUtils {
 					for (String element : elements) {
 						IConstant cst = (IConstant) rodinFile
 								.createInternalElement(IConstant.ELEMENT_TYPE,
-										cstPrefix + cstIndex, null, pm);
-						cst.setIdentifierString(element);
+										cstPrefix + cstIndex, null, monitor);
+						cst.setIdentifierString(element, monitor);
 						editor.addNewElement(cst);
 						cstIndex = getFreeElementNameIndex(rodinFile,
 								IConstant.ELEMENT_TYPE, cstPrefix, cstIndex + 1);
@@ -541,10 +539,11 @@ public class UIUtils {
 								labelIndex);
 						IAxiom axm = (IAxiom) rodinFile.createInternalElement(
 								IAxiom.ELEMENT_TYPE, namePrefix + nameIndex,
-								null, pm);
-						axm.setLabel(labelPrefix + labelIndex, pm);
+								null, monitor);
+						axm.setLabel(labelPrefix + labelIndex, monitor);
 
-						axm.setPredicateString(element + " \u2208 " + name, null);
+						axm.setPredicateString(element + " \u2208 " + name,
+								null);
 						axmPred += element;
 						counter++;
 						if (counter != elements.size())
@@ -568,8 +567,8 @@ public class UIUtils {
 							IAxiom axm = (IAxiom) rodinFile
 									.createInternalElement(IAxiom.ELEMENT_TYPE,
 											namePrefix + nameIndex, null,
-											pm);
-							axm.setLabel(labelPrefix + labelIndex, pm);
+											monitor);
+							axm.setLabel(labelPrefix + labelIndex, monitor);
 							axm.setPredicateString(element + " \u2260 "
 									+ element2, null);
 						}
@@ -697,8 +696,8 @@ public class UIUtils {
 		for (i = beginIndex; i < elements.length + beginIndex; i++) {
 			boolean exists = true;
 			for (IRodinElement element : elements) {
-				if (!((IIdentifierElement) element).getIdentifierString()
-						.equals(prefix + i)) {
+				if (!((IIdentifierElement) element).getIdentifierString(
+						new NullProgressMonitor()).equals(prefix + i)) {
 					exists = false;
 					break;
 				}

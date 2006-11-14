@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -111,8 +112,7 @@ public class ExtendsSection extends SectionPart implements
 		RodinCore.addElementChangedListener(this);
 	}
 
-	class ExtendedContextContentProvider implements
-			IStructuredContentProvider {
+	class ExtendedContextContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
 			try {
@@ -128,7 +128,8 @@ public class ExtendsSection extends SectionPart implements
 			// TODO Empty default
 		}
 
-		public void inputChanged(Viewer viewer1, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer1, Object oldInput,
+				Object newInput) {
 			// TODO Empty default
 		}
 
@@ -251,12 +252,12 @@ public class ExtendsSection extends SectionPart implements
 		try {
 			IExtendsContext extended = (IExtendsContext) rodinFile
 					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName(editor,
-									rodinFile, IExtendsContext.ELEMENT_TYPE,
+							UIUtils.getFreeElementName(editor, rodinFile,
+									IExtendsContext.ELEMENT_TYPE,
 									PrefixExtendsContextName.QUALIFIED_NAME,
 									PrefixExtendsContextName.DEFAULT_PREFIX),
 							null, null);
-			extended.setAbstractContextName(context);
+			extended.setAbstractContextName(context, new NullProgressMonitor());
 			// markDirty();
 		} catch (RodinDBException exception) {
 			exception.printStackTrace();
@@ -271,12 +272,12 @@ public class ExtendsSection extends SectionPart implements
 		try {
 			IExtendsContext extended = (IExtendsContext) rodinFile
 					.createInternalElement(IExtendsContext.ELEMENT_TYPE,
-							UIUtils.getFreeElementName(editor,
-									rodinFile, IExtendsContext.ELEMENT_TYPE,
+							UIUtils.getFreeElementName(editor, rodinFile,
+									IExtendsContext.ELEMENT_TYPE,
 									PrefixExtendsContextName.QUALIFIED_NAME,
 									PrefixExtendsContextName.DEFAULT_PREFIX),
 							null, null);
-			extended.setAbstractContextName(context);
+			extended.setAbstractContextName(context, new NullProgressMonitor());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -341,10 +342,11 @@ public class ExtendsSection extends SectionPart implements
 					continue;
 				boolean found = false;
 				for (IRodinElement extendContext : extendedContexts) {
-					if (EventBPlugin.getComponentName(context.getElementName())
+					if (EventBPlugin
+							.getComponentName(context.getElementName())
 							.equals(
 									((IExtendsContext) extendContext)
-											.getAbstractContextName())) {
+											.getAbstractContextName(new NullProgressMonitor()))) {
 						found = true;
 						break;
 					}
@@ -374,7 +376,8 @@ public class ExtendsSection extends SectionPart implements
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				for (IRodinElement extendedContext : extendedContexts) {
 					if (((IExtendsContext) extendedContext)
-							.getAbstractContextName().equals(text)) {
+							.getAbstractContextName(new NullProgressMonitor())
+							.equals(text)) {
 						addButton.setEnabled(false);
 						return;
 					}

@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eventb.core.IConstant;
@@ -57,8 +58,9 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 				if (i != 0)
 					formString = formString + ", ";
 				formString = formString
-						+ UIUtils.makeHyperlink(((IConstant) constants[i])
-								.getIdentifierString());
+						+ UIUtils
+								.makeHyperlink(((IConstant) constants[i])
+										.getIdentifierString(new NullProgressMonitor()));
 			}
 			formString = formString + "</li>";
 		} catch (RodinDBException e) {
@@ -86,8 +88,11 @@ public class ConstantMirrorPage extends EventBMirrorPage implements
 					IConstant[] constants = ((IContextFile) rodinFile)
 							.getConstants(null);
 					for (int i = 0; i < constants.length; i++) {
-						if (e.getHref().equals(
-								constants[i].getIdentifierString())) {
+						if (e
+								.getHref()
+								.equals(
+										constants[i]
+												.getIdentifierString(new NullProgressMonitor()))) {
 							editor.edit(constants[i]);
 						}
 					}

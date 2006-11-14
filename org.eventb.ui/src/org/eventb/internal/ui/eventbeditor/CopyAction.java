@@ -103,6 +103,7 @@ public class CopyAction extends SelectionListenerAction {
 	 * <code>IAction</code> depends on the type of selections to copies
 	 * elements to the clipboard.
 	 */
+	@Override
 	public void run() {
 		IStructuredSelection selection = this.getStructuredSelection();
 		Collection<IRodinElement> elements = new ArrayList<IRodinElement>();
@@ -263,6 +264,7 @@ public class CopyAction extends SelectionListenerAction {
 	 * <code>SelectionListenerAction</code> method enables this action if one
 	 * or more resources of compatible types are selected.
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (!super.updateSelection(selection))
 			return false;

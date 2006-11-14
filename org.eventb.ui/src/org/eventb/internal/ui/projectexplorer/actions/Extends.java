@@ -81,7 +81,7 @@ public class Extends implements IObjectActionDelegate {
 													+ PrefixExtendsContextName.DEFAULT_PREFIX
 													+ 1, null, monitor);
 							extended
-									.setAbstractContextName(abstractContextName);
+									.setAbstractContextName(abstractContextName, monitor);
 							newFile.save(monitor, true);
 						}
 

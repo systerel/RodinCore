@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -54,7 +55,7 @@ import org.rodinp.core.RodinDBException;
 public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 
 	// Group of action that is used.
-	private MainActionGroup groupActionSet;
+	MainActionGroup actionSet;
 
 	/**
 	 * @author htson
@@ -134,6 +135,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			// Do nothing
 		}
 
 		/*
@@ -179,7 +181,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * Creat the actions.
 	 */
 	private void makeActions() {
-		groupActionSet = new MainActionGroup(editor, this);
+		actionSet = new MainActionGroup(editor, this);
 	}
 
 	/**
@@ -193,9 +195,9 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 				ActionContext context = new ActionContext(
 						SyntheticEditableTreeViewer.this.getSelection());
 //				context.setInput(getCurrentProject());
-				groupActionSet.setContext(context);
-				groupActionSet.fillContextMenu(manager);
-				groupActionSet.setContext(null);
+				actionSet.setContext(context);
+				actionSet.fillContextMenu(manager);
+				actionSet.setContext(null);
 			}
 		});
 		Menu menu = menuMgr.createContextMenu(getControl());
@@ -208,6 +210,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#createTreeColumns()
 	 */
+	@Override
 	protected void createTreeColumns() {
 		numColumn = 2;
 
@@ -231,15 +234,16 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#commit(org.rodinp.core.IRodinElement,
 	 *      int, java.lang.String)
 	 */
-	protected void commit(IRodinElement element, int col, String text) {
+	@Override
+	protected void commit(IRodinElement element, int col, String text, IProgressMonitor monitor) {
 
 		switch (col) {
 		case 0: // Commit label / identifier
 			try {
 				if (element instanceof IIdentifierElement) {
 					IIdentifierElement identifierElement = (IIdentifierElement) element;
-					if (!identifierElement.getIdentifierString().equals(text)) {
-						identifierElement.setIdentifierString(text);
+					if (!identifierElement.getIdentifierString(monitor).equals(text)) {
+						identifierElement.setIdentifierString(text, monitor);
 					}
 				} else if (element instanceof ILabeledElement) {
 					ILabeledElement labelElement = (ILabeledElement) element;
@@ -256,8 +260,8 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 					}
 				} else if (element instanceof IExtendsContext) {
 					IExtendsContext extendsContext = (IExtendsContext) element;
-					if (!extendsContext.getAbstractContextName().equals(text)) {
-						extendsContext.setAbstractContextName(text);
+					if (!extendsContext.getAbstractContextName(monitor).equals(text)) {
+						extendsContext.setAbstractContextName(text, monitor);
 					}
 				} else if (element instanceof IRefinesMachine) {
 					IRefinesMachine refinesMachine = (IRefinesMachine) element;
@@ -287,12 +291,12 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 				} else if (element instanceof IAssignmentElement) {
 					IAssignmentElement assignmentElement = (IAssignmentElement) element;
 					if (!assignmentElement.getAssignmentString(null).equals(text)) {
-						assignmentElement.setAssignmentString(text);
+						assignmentElement.setAssignmentString(text, monitor);
 					}
 				} else if (element instanceof IExpressionElement) {
 					IExpressionElement expressionElement = (IExpressionElement) element;
 					if (!expressionElement.getExpressionString(null).equals(text)) {
-						expressionElement.setExpressionString(text);
+						expressionElement.setExpressionString(text, monitor);
 					}
 				}
 			} catch (RodinDBException e) {
@@ -308,6 +312,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#isNotSelectable(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	protected boolean isNotSelectable(Object object, int column) {
 		if (column == 0) {
 			if (object instanceof ILabeledElement
@@ -336,6 +341,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.EventBEditableTreeViewer#edit(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	protected void edit(IRodinElement element) {
 		this.reveal(element);
 		TreeItem item = TreeSupports.findItem(this.getTree(), element);
