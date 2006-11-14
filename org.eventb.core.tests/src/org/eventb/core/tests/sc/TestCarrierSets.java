@@ -17,7 +17,7 @@ import org.eventb.core.ISCInternalContext;
  */
 public class TestCarrierSets extends BasicTest {
 
-	public void testCarrierSets_0() throws Exception {
+	public void testCarrierSets_00_createCarrierSet() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1"));
@@ -32,7 +32,7 @@ public class TestCarrierSets extends BasicTest {
 		
 	}
 
-	public void testCarrierSets_1() throws Exception {
+	public void testCarrierSets_01_twoCarrierSets() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1", "S2"));
@@ -46,7 +46,7 @@ public class TestCarrierSets extends BasicTest {
 		containsCarrierSets(file, "S1", "S2");
 	}
 
-	public void testCarrierSets_2() throws Exception {
+	public void testCarrierSets_02_twoCarrierSetsNameConflict() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1", "S1"));
@@ -61,7 +61,7 @@ public class TestCarrierSets extends BasicTest {
 				
 	}
 
-	public void testCarrierSets_3() throws Exception {
+	public void testCarrierSets_03_carrierSetFaultyName() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S>", "k-1", "#"));
@@ -75,7 +75,7 @@ public class TestCarrierSets extends BasicTest {
 		containsCarrierSets(file);
 	}
 
-	public void testCarrierSets_4() throws Exception {
+	public void testCarrierSets_04_carrierSetOfAbstraction() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1"));
 		
@@ -101,7 +101,7 @@ public class TestCarrierSets extends BasicTest {
 		containsCarrierSets(contexts[0], "S1");
 	}
 
-	public void testCarrierSets_5() throws Exception {
+	public void testCarrierSets_05_carrierSetOfAbstractionNameConflict() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1"));
 		

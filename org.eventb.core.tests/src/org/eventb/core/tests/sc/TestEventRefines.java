@@ -841,5 +841,43 @@ public class TestEventRefines extends BasicTest {
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
 		containsWitnesses(events[1], typeEnvironment, makeSList("x"), makeSList("x=p"));
 	}
+	
+	public void testEvents_27_globalWitnessAbstractVariables() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, "V1", "V2");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"));
+		addEvent(abs, "evt", makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1", "A2"), makeSList("V1:∈ℕ", "V2:∈ℕ"));
+
+		abs.save(null, true);
+		
+		runSC(abs);
+
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "V3");
+		addInvariants(mac, makeSList("I1"), makeSList("V3∈ℕ"));
+		IEvent evt = addEvent(mac, "evt", makeSList(), 
+				makeSList(), makeSList(), makeSList(), makeSList());
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=V2'+V3"));
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1'", factory.makeIntegerType());
+		typeEnvironment.addName("V2'", factory.makeIntegerType());
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, "evt");
+		refinesEvents(events[0], "evt");
+		
+		containsWitnesses(events[0], typeEnvironment, makeSList("V1'", "V2'"), makeSList("⊤", "⊤"));
+		
+	}
 
 }

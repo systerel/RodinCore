@@ -18,7 +18,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestInvariantsAndTheorems extends BasicTest {
 	
-	public void testInvariantsAndTheorems_0() throws Exception {
+	public void testInvariantsAndTheorems_00_createInvariant() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addInvariants(mac, makeSList("I1"), makeSList("ℕ≠∅"));
@@ -33,7 +33,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_1() throws Exception {
+	public void testInvariantsAndTheorems_01_twoInvariantsLabelConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addInvariants(mac, makeSList("I1"), makeSList("ℕ≠∅"));
@@ -49,7 +49,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_2() throws Exception {
+	public void testInvariantsAndTheorems_02_invariantTypeConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addInvariants(mac, makeSList("I1"), makeSList("ℕ≠BOOL"));
@@ -64,7 +64,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_3() throws Exception {
+	public void testInvariantsAndTheorems_03_invariantWithVariableOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -80,7 +80,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_4() throws Exception {
+	public void testInvariantsAndTheorems_04_invariantUndeclaredVariable() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
@@ -95,22 +95,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_5() throws Exception {
-		IMachineFile mac = createMachine("mac");
-
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
-	
-		mac.save(null, true);
-		
-		runSC(mac);
-		
-		ISCMachineFile file = mac.getSCMachineFile();
-		
-		containsInvariants(file, emptyEnv, makeSList(), makeSList());
-		
-	}
-	
-	public void testInvariantsAndTheorems_6() throws Exception {
+	public void testInvariantsAndTheorems_05_carrierSetType() throws Exception {
 		IContextFile con =  createContext("con");
 		addCarrierSets(con, "S1");
 	
@@ -137,7 +122,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_7() throws Exception {
+	public void testInvariantsAndTheorems_06_partialTyping() throws Exception {
 		IContextFile con =  createContext("con");
 		addCarrierSets(con, "S1");
 	
@@ -164,7 +149,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_8() throws Exception {
+	public void testInvariantsAndTheorems_07_createTheorem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addTheorems(mac, makeSList("T1"), makeSList("ℕ≠∅"));
@@ -179,7 +164,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_9() throws Exception {
+	public void testInvariantsAndTheorems_08_twoTheorems() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addTheorems(mac, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
@@ -194,7 +179,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_10() throws Exception {
+	public void testInvariantsAndTheorems_09_twoTheoremsLabelConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addTheorems(mac, makeSList("T1"), makeSList("ℕ≠∅"));
@@ -210,7 +195,7 @@ public class TestInvariantsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testInvariantsAndTheorems_11() throws Exception {
+	public void testInvariantsAndTheorems_10_invariantTheoremLabelConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addInvariants(mac, makeSList("T1"), makeSList("ℕ≠∅"));

@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestEvents extends BasicTest {
 	
-	public void testEvents_0() throws Exception {
+	public void testEvents_00_createEvent() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -34,7 +34,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 
-	public void testEvents_1() throws Exception {
+	public void testEvents_01_createTwoEvents() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -50,7 +50,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_2() throws Exception {
+	public void testEvents_02_createTwoEventsWithNameConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
@@ -66,7 +66,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_3() throws Exception {
+	public void testEvents_03_createGuard() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt1", makeSList(), makeSList("G1"), makeSList("1∈ℕ"), makeSList(), makeSList());
@@ -83,7 +83,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 
-	public void testEvents_4() throws Exception {
+	public void testEvents_04_createTwoGuards() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt1", makeSList(), makeSList("G1", "G2"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
@@ -100,7 +100,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 
-	public void testEvents_5() throws Exception {
+	public void testEvents_05_createTwoGuardsWithLabelConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, "evt1", makeSList(), makeSList("G1", "G1"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
@@ -117,7 +117,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_6() throws Exception {
+	public void testEvents_06_localVariable() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -138,7 +138,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 
-	public void testEvents_7() throws Exception {
+	public void testEvents_07_variableAndLocalVariable() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -163,7 +163,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_8() throws Exception {
+	public void testEvents_08_variableAndLocalVariableWithNameConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -188,7 +188,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_9() throws Exception {
+	public void testEvents_09_localVariablesOfDifferentEvents() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -217,7 +217,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_10() throws Exception {
+	public void testEvents_10_localVariableInAction() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -241,7 +241,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_11() throws Exception {
+	public void testEvents_11_actionSameLHSConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -266,7 +266,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_12() throws Exception {
+	public void testEvents_12_actionGuardNameConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -294,7 +294,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_13() throws Exception {
+	public void testEvents_13_actionAssignFromLocalVariableOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -324,7 +324,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_14() throws Exception {
+	public void testEvents_14_assignmentToLocalVariableProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -354,7 +354,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_15() throws Exception {
+	public void testEvents_15_actionNondetAssignment() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -385,7 +385,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_16() throws Exception {
+	public void testEvents_16_actionMultipleLHSConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -413,7 +413,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_17() throws Exception {
+	public void testEvents_17_initialisationLocalVariableProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addEvent(mac, IEvent.INITIALISATION, makeSList("x"), 
@@ -433,7 +433,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_18() throws Exception {
+	public void testEvents_18_initialisationGuardProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -457,7 +457,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_19() throws Exception {
+	public void testEvents_19_actionFaultyNondetAssignment() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -481,7 +481,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_20() throws Exception {
+	public void testEvents_20_initialisationNondetAssignmentOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -505,7 +505,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_21() throws Exception {
+	public void testEvents_21_initialisationNondetAssignmentReplacedByDefault() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -529,7 +529,7 @@ public class TestEvents extends BasicTest {
 		
 	}
 	
-	public void testEvents_22() throws Exception {
+	public void testEvents_22_initialisationDefaultAssignment() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -550,6 +550,85 @@ public class TestEvents extends BasicTest {
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("GEN"), makeSList("x :∣ ⊤"));
+		
+	}
+	
+	public void testEvents_23_initialisationDefaultWitness() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(abs, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x:∣x'=1"));
+	
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+		typeEnvironment.addName("x'", factory.makeIntegerType());
+		typeEnvironment.addName("y", factory.makeIntegerType());
+
+		addVariables(mac, "y");
+		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"));
+		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x:∣x'=2"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsWitnesses(scEvents[0], typeEnvironment, makeSList("x'"), makeSList("⊤"));
+		
+	}
+	
+	public void testEvents_24_initialisationFaultyWitnessReplacedByDefault() throws Exception {
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "x");
+		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"));
+		addEvent(abs, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x:∣x'∈{1}"));
+	
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+		typeEnvironment.addName("x'", factory.makeIntegerType());
+		typeEnvironment.addName("y", factory.makeIntegerType());
+
+		addVariables(mac, "y");
+		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"));
+		IEvent evt = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("y≔2"));
+		addEventWitnesses(evt, makeSList("x'"), makeSList("x'=y−1"));
+	
+		mac.save(null, true);
+		
+		runSC(mac);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
+		
+		containsWitnesses(scEvents[0], typeEnvironment, makeSList("x'"), makeSList("⊤"));
 		
 	}
 

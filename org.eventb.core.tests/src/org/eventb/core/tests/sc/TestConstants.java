@@ -19,7 +19,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestConstants extends BasicTest {
 
-	public void testConstants_00() throws Exception {
+	public void testConstants_00_createConstantNoType() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -34,7 +34,7 @@ public class TestConstants extends BasicTest {
 		
 	}
 
-	public void testConstants_01() throws Exception {
+	public void testConstants_01_createConstantWithType() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -52,7 +52,7 @@ public class TestConstants extends BasicTest {
 
 	}
 
-	public void testConstants_02() throws Exception {
+	public void testConstants_02_createAndReferConstantNoType() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -69,7 +69,7 @@ public class TestConstants extends BasicTest {
 		numberOfAxioms(file, 0);
 	}
 	
-	public void testConstants_03() throws Exception {
+	public void testConstants_03_constantWithCarrierSetType() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
@@ -89,7 +89,7 @@ public class TestConstants extends BasicTest {
 		numberOfAxioms(file, 1);
 	}
 	
-	public void testConstants_04() throws Exception {
+	public void testConstants_04_constantFromAbstraction() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
@@ -118,7 +118,7 @@ public class TestConstants extends BasicTest {
 
 	}
 	
-	public void testConstants_05() throws Exception {
+	public void testConstants_05_constantFromAbstractionNameConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
@@ -147,7 +147,7 @@ public class TestConstants extends BasicTest {
 
 	}
 
-	public void testConstants_06() throws Exception {
+	public void testConstants_06_constantTypingOK() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, makeSList("d"));

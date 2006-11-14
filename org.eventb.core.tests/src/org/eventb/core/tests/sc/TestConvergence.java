@@ -18,7 +18,7 @@ import org.eventb.core.ISCMachineFile;
  */
 public class TestConvergence extends BasicTest {
 	
-	public void testCvg_00() throws Exception {
+	public void testCvg_00_AllThreeKindsOK() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariant(mac, "1");
@@ -40,7 +40,7 @@ public class TestConvergence extends BasicTest {
 		isConvergent(events[2]);
 	}
 	
-	public void testCvg_01() throws Exception {
+	public void testCvg_01_FaultySetToDefaultOrdinary() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		IEvent evt = addEvent(mac, "evt");
@@ -61,7 +61,7 @@ public class TestConvergence extends BasicTest {
 		isOrdinary(events[2]);
 	}
 	
-	public void testCvg_02() throws Exception {
+	public void testCvg_02_AllRefinedByOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
@@ -101,7 +101,7 @@ public class TestConvergence extends BasicTest {
 		
 	}
 	
-	public void testCvg_03() throws Exception {
+	public void testCvg_03_FaultyRefinedSetToOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
@@ -141,7 +141,7 @@ public class TestConvergence extends BasicTest {
 		
 	}
 	
-	public void testCvg_04() throws Exception {
+	public void testCvg_04_FaultyRefinedSetToOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
@@ -181,7 +181,7 @@ public class TestConvergence extends BasicTest {
 		
 	}
 	
-	public void testCvg_05() throws Exception {
+	public void testCvg_05_mergeFaultySetToOrdinary() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");

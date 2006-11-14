@@ -74,9 +74,6 @@ public class MachineEventWitnessModule extends PredicateModule {
 		
 		Predicate[] predicates = new Predicate[witnesses.length];
 		
-//		if (witnesses.length == 0)
-//			return;
-		
 		// the name space of witness label is distinct from the name space of
 		// other labels. Witness labels are variable names.
 		
@@ -181,14 +178,14 @@ public class MachineEventWitnessModule extends PredicateModule {
 		if (parent == null)
 			return;
 		
-		IEventRefinesInfo refinedEventTable = (IEventRefinesInfo)
+		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
 			repository.getState(IEventRefinesInfo.STATE_TYPE);
 		
-		if (refinedEventTable.isEmpty())
+		if (eventRefinesInfo.isEmpty())
 			return;
 		
 		IAbstractEventInfo abstractEventInfo = 
-			refinedEventTable.getAbstractEventInfos().get(0);
+			eventRefinesInfo.getAbstractEventInfos().get(0);
 		
 		getLocalWitnessNames(parent, abstractEventInfo, witnessNames, monitor);
 		

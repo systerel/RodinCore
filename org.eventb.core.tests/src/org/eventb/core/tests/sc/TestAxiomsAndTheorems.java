@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class TestAxiomsAndTheorems extends BasicTest {
 	
-	public void testAxiomsAndTheorems_0() throws Exception {
+	public void testAxiomsAndTheorems_00_createAxiom() throws Exception {
 		IContextFile con = createContext("con");
 
 		addAxioms(con, makeSList("A1"), makeSList("ℕ≠∅"));
@@ -32,7 +32,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_1() throws Exception {
+	public void testAxiomsAndTheorems_01_twoAxiomsLableConflict() throws Exception {
 		IContextFile con = createContext("con");
 
 		addAxioms(con, makeSList("A1"), makeSList("ℕ≠∅"));
@@ -48,7 +48,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_2() throws Exception {
+	public void testAxiomsAndTheorems_02_axiomTypeConflict() throws Exception {
 		IContextFile con = createContext("con");
 
 		addAxioms(con, makeSList("A1"), makeSList("ℕ≠BOOL"));
@@ -63,7 +63,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_3() throws Exception {
+	public void testAxiomsAndTheorems_03_axiomUsesConstantOK() throws Exception {
 		IContextFile con = createContext("con");
 
 		addConstants(con, "C1");
@@ -79,7 +79,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_4() throws Exception {
+	public void testAxiomsAndTheorems_04_axiomUndeclaredConstant() throws Exception {
 		IContextFile con = createContext("con");
 
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
@@ -94,22 +94,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_5() throws Exception {
-		IContextFile con = createContext("con");
-
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
-	
-		con.save(null, true);
-		
-		runSC(con);
-		
-		ISCContextFile file = con.getSCContextFile();
-		
-		containsAxioms(file, emptyEnv, makeSList(), makeSList());
-		
-	}
-	
-	public void testAxiomsAndTheorems_6() throws Exception {
+	public void testAxiomsAndTheorems_05_axiomPartialTyping() throws Exception {
 		IContextFile con = createContext("con");
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -129,7 +114,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_7() throws Exception {
+	public void testAxiomsAndTheorems_06_axiomPartialTyping() throws Exception {
 		IContextFile con = createContext("con");
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -150,7 +135,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_8() throws Exception {
+	public void testAxiomsAndTheorems_07_createTheorem() throws Exception {
 		IContextFile con = createContext("con");
 
 		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
@@ -165,7 +150,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_9() throws Exception {
+	public void testAxiomsAndTheorems_08_twoTheorems() throws Exception {
 		IContextFile con = createContext("con");
 
 		addTheorems(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
@@ -180,7 +165,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_10() throws Exception {
+	public void testAxiomsAndTheorems_09_twoTheoremsNameConflict() throws Exception {
 		IContextFile con = createContext("con");
 
 		addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
@@ -196,7 +181,7 @@ public class TestAxiomsAndTheorems extends BasicTest {
 		
 	}
 	
-	public void testAxiomsAndTheorems_11() throws Exception {
+	public void testAxiomsAndTheorems_10_axiomTheoremNameConflict() throws Exception {
 		IContextFile con = createContext("con");
 
 		addAxioms(con, makeSList("T1"), makeSList("ℕ≠∅"));

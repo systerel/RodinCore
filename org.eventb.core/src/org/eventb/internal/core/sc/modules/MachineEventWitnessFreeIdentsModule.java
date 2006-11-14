@@ -10,10 +10,12 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IEvent;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.IStateSC;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
@@ -30,6 +32,8 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 
 	FormulaFactory factory;
 	
+	private boolean isInitialisation;
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -39,6 +43,9 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		factory = repository.getFormulaFactory();
+		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		isInitialisation = 
+			currentEvent.getCurrentEvent().getLabel(monitor).equals(IEvent.INITIALISATION);
 	}
 
 	/* (non-Javadoc)
@@ -58,8 +65,15 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete()) {
 				String label = ((IWitness) element).getLabel(monitor);
-				if (!label.equals(freeIdentifier.getName()))
+				if (primed && !label.equals(freeIdentifier.getName())) {
+					// error: only the primed abstract disappearing variable
+					// of the label may appear in the witness predicate
 					return null;
+				}
+			}
+			if (isInitialisation && !primed) {
+				// error: unprimed variables cannot occur in initialisation witness predicates
+				return null;
 			}
 		}
 		if (symbolInfo == null) { // abstract local variables are not contained in the symbol table

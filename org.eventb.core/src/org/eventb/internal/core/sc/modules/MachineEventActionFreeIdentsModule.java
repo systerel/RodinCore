@@ -45,7 +45,6 @@ public class MachineEventActionFreeIdentsModule extends FormulaFreeIdentsModule 
 	public void endModule(
 			IStateRepository<IStateSC> repository, 
 			IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
 		super.endModule(repository, monitor);
 	}
 
