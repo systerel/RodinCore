@@ -19,7 +19,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
 import org.eventb.core.pog.POGSource;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -43,7 +42,6 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 			ISCInvariant invariant, 
 			String invariantLabel, 
 			Predicate invPredicate, 
-			IIdentifierTable identifierTable,
 			ArrayList<POGPredicate> hyp, 
 			Set<FreeIdentifier> freeIdents,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -61,7 +59,6 @@ public class MachineEventEstablishInvariantModule extends MachineEventInvariantM
 				target, 
 				concreteEventLabel + "/" + invariantLabel + "/INV", 
 				"Invariant " + (isInitialisation ? " establishment" : " preservation"),
-				identifierTable,
 				fullHypothesisName,
 				hyp,
 				new POGPredicate(invariant, predicate),

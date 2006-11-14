@@ -15,7 +15,6 @@ package org.eventb.core;
  */
 public final class EventBAttributes {
 
-	
 	public static String LABEL_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".label";
 	public static String SOURCE_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".source";
 	public static String COMMENT_ATTRIBUTE = EventBPlugin.PLUGIN_ID + ".comment";

@@ -118,7 +118,7 @@ public class ContextStaticChecker extends StaticChecker {
 			for(IExtendsContext extendsContext : extendsContexts) {
 				graph.putUserDependency(
 						source.getResource(), 
-						extendsContext.getAbstractSCContext().getResource(), 
+						extendsContext.getAbstractSCContext(monitor).getResource(), 
 						target.getResource(), 
 						CONTEXT_SC_EXTENDS_ID, 
 						false);

@@ -17,7 +17,6 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
 import org.rodinp.core.IInternalElement;
@@ -41,7 +40,6 @@ public abstract class Module implements IModule {
 			IPOFile file, 
 			String name,
 			String desc,
-			IIdentifierTable identifierTable,
 			String globalHypothesis,
 			List<POGPredicate> localHypothesis,
 			POGPredicate goal,
@@ -53,13 +51,11 @@ public abstract class Module implements IModule {
 			(IPOSequent) file.createInternalElement(
 				IPOSequent.ELEMENT_TYPE, name, null, monitor);
 		
-		putTypeEnvironment(sequent, identifierTable, monitor);
-		
 		IPOPredicateSet hypothesis = 
 			(IPOPredicateSet) sequent.createInternalElement(
 					IPOPredicateSet.ELEMENT_TYPE, SEQ_HYP_NAME, null, monitor);
 		
-		hypothesis.setParentPredicateSet(globalHypothesis, monitor);
+		hypothesis.setParentPredicateSetName(globalHypothesis, monitor);
 		
 		putPOGPredicates(hypothesis, localHypothesis, monitor);
 		
@@ -139,16 +135,6 @@ public abstract class Module implements IModule {
 		poPredicate.setSource(predicate.getSource(), monitor);
 	}
 	
-	private void putTypeEnvironment(
-			IPOSequent sequent, 
-			IIdentifierTable identifierTable, 
-			IProgressMonitor monitor)
-		throws RodinDBException {
-		
-		identifierTable.save(sequent, monitor);
-
-	}
-
 	protected void initModules(
 			IRodinElement element,
 			IPOFile target,

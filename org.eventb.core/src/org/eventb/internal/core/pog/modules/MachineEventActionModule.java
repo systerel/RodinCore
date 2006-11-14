@@ -13,7 +13,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
@@ -32,7 +31,6 @@ public abstract class MachineEventActionModule extends UtilityModule {
 	protected boolean isInitialisation;
 	protected String fullHypothesisName;
 	
-	protected IIdentifierTable eventIdentifierTable;
 	protected IConcreteEventActionTable concreteEventActionTable;
 	
 	/* (non-Javadoc)
@@ -53,13 +51,8 @@ public abstract class MachineEventActionModule extends UtilityModule {
 		concreteEvent = (ISCEvent) element;
 		concreteEventLabel = concreteEvent.getLabel(monitor);
 		isInitialisation = concreteEventLabel.equals("INITIALISATION");
-		fullHypothesisName = 
-			isInitialisation ? 
-					machineHypothesisManager.getContextHypothesisName() : 
-					eventHypothesisManager.getFullHypothesisName();
+		fullHypothesisName = eventHypothesisManager.getFullHypothesisName();
 		
-		eventIdentifierTable =
-			(IIdentifierTable) repository.getState(IIdentifierTable.STATE_TYPE);
 		concreteEventActionTable =
 			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
 	}
@@ -74,7 +67,6 @@ public abstract class MachineEventActionModule extends UtilityModule {
 			IStateRepository<IStatePOG> repository, 
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
-		eventIdentifierTable = null;
 		concreteEventActionTable = null;
 		super.endModule(element, target, repository, monitor);
 	}

@@ -8,7 +8,6 @@
 
 package org.eventb.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -34,6 +33,5 @@ public interface IPOPredicate extends ISCPredicateElement, ITraceableElement {
 	
 //	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
 	
-	@Deprecated
-	void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException;
+//	void setPredicateString(String predicate, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -21,7 +21,6 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGPredicate;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
@@ -84,7 +83,6 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 						(ISCInvariant) invariants.get(i), 
 						invariantLabel, 
 						invPredicates.get(i), 
-						eventIdentifierTable,
 						hyp, 
 						freeIdents,
 						monitor);
@@ -99,7 +97,6 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			ISCInvariant invariant, 
 			String invariantLabel, 
 			Predicate invPredicate, 
-			IIdentifierTable identifierTable,
 			ArrayList<POGPredicate> hyp, 
 			Set<FreeIdentifier> freeIdents,
 			IProgressMonitor monitor) throws RodinDBException;

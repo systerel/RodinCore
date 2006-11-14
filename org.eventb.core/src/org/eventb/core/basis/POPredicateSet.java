@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.rodinp.core.IInternalElementType;
@@ -36,13 +37,8 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 
-	/**
-	 * @param name
-	 * @param parent
-	 */
 	public POPredicateSet(String name, IRodinElement parent) {
 		super(name, parent);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +61,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return getPredicates(null);
 	}
 	
-	protected String getParentPredicateSetName(IProgressMonitor monitor) 
+	public String getParentPredicateSetName(IProgressMonitor monitor) 
 	throws RodinDBException {
 		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor))
 			return getStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
@@ -82,7 +78,7 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 		return parentSet;
 	}
 
-	public void setParentPredicateSet(String setName, IProgressMonitor monitor) 
+	public void setParentPredicateSetName(String setName, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setStringAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
 	}
@@ -90,6 +86,12 @@ public class POPredicateSet extends InternalElement implements IPOPredicateSet {
 	@Deprecated
 	public IPOPredicateSet getParentPredicateSet() throws RodinDBException {
 		return getParentPredicateSet(null);
+	}
+
+	public IPOIdentifier[] getIdentifiers(IProgressMonitor monitor) throws RodinDBException {
+		IPOIdentifier[] identifiers = 
+			(IPOIdentifier[]) getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
+		return identifiers;
 	}
 
 }

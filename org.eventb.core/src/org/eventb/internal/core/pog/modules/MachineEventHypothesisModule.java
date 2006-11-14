@@ -24,7 +24,6 @@ import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IStatePOG;
@@ -35,7 +34,6 @@ import org.eventb.internal.core.pog.AbstractEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
 import org.eventb.internal.core.pog.EventHypothesisManager;
-import org.eventb.internal.core.pog.IdentifierTable;
 import org.eventb.internal.core.pog.WitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -47,7 +45,6 @@ import org.rodinp.core.RodinDBException;
 public class MachineEventHypothesisModule extends Module {
 
 	IEventHypothesisManager eventHypothesisManager;
-	IIdentifierTable eventIdentifierTable;
 	ITypeEnvironment eventTypeEnvironment;
 	FormulaFactory factory;
 
@@ -96,9 +93,12 @@ public class MachineEventHypothesisModule extends Module {
 	private void setEventHypothesisManager(
 			IMachineHypothesisManager machineHypothesisManager, 
 			ISCEvent event, ISCGuard[] guards, 
-			IStateRepository<IStatePOG> repository) throws CoreException {
-		eventHypothesisManager = new EventHypothesisManager(
-				event, guards, machineHypothesisManager.getFullHypothesisName());
+			IStateRepository<IStatePOG> repository,
+			IProgressMonitor monitor) throws CoreException {
+		String fullHypothesisName = (event.getLabel(monitor).equals("INITIALISATION")) ?
+				machineHypothesisManager.getContextHypothesisName() :
+				machineHypothesisManager.getFullHypothesisName();
+		eventHypothesisManager = new EventHypothesisManager(event, guards, fullHypothesisName);
 		
 		eventHypothesisManager.setAbstractEvents(event.getAbstractSCEvents(null));
 		
@@ -118,7 +118,7 @@ public class MachineEventHypothesisModule extends Module {
 			FreeIdentifier primedIdentifier = identifier.withPrime(factory);
 			if (eventTypeEnvironment.contains(primedIdentifier.getName()))
 				continue;
-			eventIdentifierTable.addIdentifier(primedIdentifier);
+			eventHypothesisManager.addIdentifier(primedIdentifier);
 			eventTypeEnvironment.addName(primedIdentifier.getName(), primedIdentifier.getType());
 		}
 	}
@@ -130,7 +130,7 @@ public class MachineEventHypothesisModule extends Module {
 						variable.getIdentifierString(null), null, 
 						variable.getType(factory, null));
 			eventTypeEnvironment.addName(identifier.getName(), identifier.getType());
-			eventIdentifierTable.addIdentifier(identifier);
+			eventHypothesisManager.addIdentifier(identifier);
 		}
 	}
 
@@ -156,10 +156,6 @@ public class MachineEventHypothesisModule extends Module {
 		
 		factory = repository.getFormulaFactory();
 		
-		eventIdentifierTable = new IdentifierTable();
-		
-		repository.setState(eventIdentifierTable);
-	
 		ITypingState typingState =
 			(ITypingState) repository.getState(ITypingState.STATE_TYPE);
 		eventTypeEnvironment = typingState.getTypeEnvironment();
@@ -170,11 +166,12 @@ public class MachineEventHypothesisModule extends Module {
 		
 		ISCGuard[] guards = concreteEvent.getSCGuards(null);
 		
+		setEventHypothesisManager(
+				machineHypothesisManager, concreteEvent, guards, repository, monitor);
+		
 		fetchVariables(concreteEvent.getSCVariables(null));
 		
 		fetchGuards(guards, repository);
-		
-		setEventHypothesisManager(machineHypothesisManager, concreteEvent, guards, repository);
 		
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		
@@ -197,7 +194,6 @@ public class MachineEventHypothesisModule extends Module {
 		
 		eventHypothesisManager.createHypotheses(target, monitor);
 
-		eventIdentifierTable = null;
 		eventTypeEnvironment = null;
 		factory = null;
 	}

@@ -48,7 +48,7 @@ public class MachineVariableFromLocalModule extends AcceptorModule {
 		
 		IIdentifierElement identifierElement = (IIdentifierElement) element;
 		
-		String variableName = identifierElement.getIdentifierString();
+		String variableName = identifierElement.getIdentifierString(monitor);
 		
 		if (abstractEventTable.isLocalVariable(variableName)) {
 			

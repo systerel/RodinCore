@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCAxiom;
@@ -29,15 +30,15 @@ import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
 import org.eventb.core.pog.Module;
-import org.eventb.core.pog.state.IHypothesisManager;
+import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IMachineTheoremTable;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.state.IStateRepository;
-import org.eventb.internal.core.pog.IdentifierTable;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
 import org.eventb.internal.core.pog.MachineTheoremTable;
@@ -55,12 +56,11 @@ public class MachineHypothesisModule extends Module {
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	
-	IHypothesisManager hypothesisManager;
+	IMachineHypothesisManager hypothesisManager;
 	ITypeEnvironment typeEnvironment;
 	FormulaFactory factory;
 	IMachineInvariantTable invariantTable;
 	IMachineTheoremTable theoremTable;
-	IdentifierTable identifierTable;
 	
 	private int index;
 	
@@ -82,8 +82,6 @@ public class MachineHypothesisModule extends Module {
 		
 		repository.setState(new TypingState(typeEnvironment));
 		
-		identifierTable = new IdentifierTable();
-		
 		ISCMachineFile scMachineFile = (ISCMachineFile) element;
 		
 		IPOPredicateSet rootSet =
@@ -91,7 +89,7 @@ public class MachineHypothesisModule extends Module {
 					IPOPredicateSet.ELEMENT_TYPE, 
 					MachineHypothesisManager.CTX_HYP_NAME, null, monitor);
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(null);
+		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts(monitor);
 		
 		copyContexts(rootSet, contexts, monitor);
 		
@@ -99,18 +97,12 @@ public class MachineHypothesisModule extends Module {
 			(IPOPredicateSet) target.createInternalElement(
 					IPOPredicateSet.ELEMENT_TYPE, 
 					MachineHypothesisManager.ABS_HYP_NAME, null, monitor);
-		rootSet.setParentPredicateSet(MachineHypothesisManager.CTX_HYP_NAME, monitor);
+		rootSet.setParentPredicateSetName(MachineHypothesisManager.CTX_HYP_NAME, monitor);
 		
-		String bag = scMachineFile.getMachineFile().getElementName();
+		fetchVariables(scMachineFile.getSCVariables(monitor), rootSet, repository, monitor);
 		
-		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
-		
-		fetchVariables(scMachineFile.getSCVariables(null), repository, monitor);
-		
-		identifierTable.save(target, monitor);
-		
-		ISCInvariant[] invariants = scMachineFile.getSCInvariants(null);
-		ISCTheorem[] theorems = scMachineFile.getSCTheorems(null);
+		ISCInvariant[] invariants = scMachineFile.getSCInvariants(monitor);
+		ISCTheorem[] theorems = scMachineFile.getSCTheorems(monitor);
 		
 		invariantTable = new MachineInvariantTable();
 		theoremTable = new MachineTheoremTable();
@@ -118,6 +110,8 @@ public class MachineHypothesisModule extends Module {
 		repository.setState(invariantTable);
 		repository.setState(theoremTable);
 		
+		String bag = scMachineFile.getMachineFile().getElementName();
+		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		fetchPredicates(predicates, invariantTable, rootSet, invariants, bag, monitor);
 		fetchPredicates(predicates, theoremTable, rootSet, theorems, bag, monitor);
 		
@@ -136,6 +130,7 @@ public class MachineHypothesisModule extends Module {
 	
 	private void fetchVariables(
 			ISCVariable[] variables, 
+			IPOPredicateSet predSet,
 			IStateRepository<IStatePOG> repository,
 			IProgressMonitor monitor) throws CoreException {
 		
@@ -145,6 +140,7 @@ public class MachineHypothesisModule extends Module {
 		
 		for(ISCVariable variable : variables) {
 			FreeIdentifier identifier = fetchIdentifier(variable);
+			createIdentifier(predSet, identifier, monitor);
 			if (variable.isForbidden(monitor))
 				continue;
 			variableTable.add(identifier, variable.isPreserved(monitor));
@@ -159,10 +155,12 @@ public class MachineHypothesisModule extends Module {
 		for (ISCInternalContext context : contexts) {
 			
 			for (ISCCarrierSet set : context.getSCCarrierSets(null)) {
-				fetchIdentifier(set);
+				FreeIdentifier identifier = fetchIdentifier(set);
+				createIdentifier(rootSet, identifier, monitor);
 			}
 			for (ISCConstant constant : context.getSCConstants(null)) {
-				fetchIdentifier(constant);
+				FreeIdentifier identifier = fetchIdentifier(constant);
+				createIdentifier(rootSet, identifier, monitor);
 			}
 			for (ISCAxiom axiom : context.getSCAxioms(null)) {
 				savePOPredicate(rootSet, axiom, monitor);
@@ -174,11 +172,18 @@ public class MachineHypothesisModule extends Module {
 		
 	}
 
+	private void createIdentifier(IPOPredicateSet predSet, FreeIdentifier identifier, IProgressMonitor monitor) throws RodinDBException {
+		String idName = identifier.getName();
+		Type type = identifier.getType();
+		IPOIdentifier poIdentifier = (IPOIdentifier)
+			predSet.createInternalElement(IPOIdentifier.ELEMENT_TYPE, idName, null, monitor);
+		poIdentifier.setType(type, monitor);
+	}
+
 	private FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
 		FreeIdentifier identifier = 
 			factory.makeFreeIdentifier(ident.getIdentifierString(null), null, ident.getType(factory, null));
 		typeEnvironment.addName(identifier.getName(), identifier.getType());
-		identifierTable.addIdentifier(identifier);
 		return identifier;
 	}
 	

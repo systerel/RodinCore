@@ -39,30 +39,57 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		return names;
 	}
 
+	public static final String ALLHYP_NAME = "ALLHYP";
+	
+	protected void getIdentifiersFromPredSets(
+			Set<String> nameSet, 
+			IPOFile file, 
+			String hypName, 
+			boolean forSequent) throws RodinDBException {
+		if (forSequent && hypName.equals(ALLHYP_NAME))
+			return;
+		IPOPredicateSet set = (IPOPredicateSet) file.getPredicateSet(hypName, null);
+		assertNotNull("predicate set should exist", set);
+		for (IPOIdentifier identifier : set.getIdentifiers(null)) {
+			nameSet.add(identifier.getIdentifierString(null));
+		}
+		String parentName = set.getParentPredicateSetName(null);
+		if (parentName == null)
+			return;
+		else
+			getIdentifiersFromPredSets(nameSet, file, parentName, forSequent);
+	}
+	
 	protected void containsIdentifiers(IPOFile file, String... strings) throws RodinDBException {
-		IPOIdentifier[] identifiers = file.getIdentifiers();
 		
-		assertEquals("wrong number of identifiers", strings.length, identifiers.length);
+		Set<String> nameSet = new HashSet<String>(43);
 		
+		getIdentifiersFromPredSets(nameSet, file, ALLHYP_NAME, false);
+		
+		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		if (strings.length == 0)
 			return;
 		
-		Set<String> nameSet = getIdentifierNameSet(identifiers);
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
-
+	
 	protected void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
-		IPOIdentifier[] identifiers = sequent.getIdentifiers();
 		
-		assertEquals("wrong number of identifiers", strings.length, identifiers.length);
+		String hypName = sequent.getHypothesis(null).getParentPredicateSetName(null);
+		
+		Set<String> nameSet = new HashSet<String>(43);
+		
+		IPOFile file = (IPOFile) sequent.getOpenable();
+		
+		getIdentifiersFromPredSets(nameSet, file, hypName, true);
+		
+		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		
 		if (strings.length == 0)
 			return;
 		
-		Set<String> nameSet = getIdentifierNameSet(identifiers);
-	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
@@ -96,7 +123,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 			String predicate) throws Exception {
 		String string = getNormalizedPredicate(predicate, typeEnvironment);
 		assertEquals("goal should be " + string, string, 
-				sequent.getGoal(null).getPredicate());
+				sequent.getGoal(null).getPredicateString(null));
 	}
 	
 	private HashSet<String> getPredicatesFromSets(IPOPredicateSet predicateSet) throws Exception {
@@ -105,7 +132,7 @@ public abstract class BasicTest extends org.eventb.core.tests.sc.BasicTest {
 		while (set != null) {
 			IPOPredicate[] predicates = set.getPredicates(null);
 			for (IPOPredicate predicate : predicates) {
-				result.add(predicate.getPredicate());
+				result.add(predicate.getPredicateString(null));
 			}
 			set = set.getParentPredicateSet(null);
 		}

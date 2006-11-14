@@ -9,10 +9,9 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.rodinp.core.IInternalElement;
+import org.eventb.core.ast.Predicate;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -27,7 +26,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCPredicateElement extends IInternalElement {
+public interface ISCPredicateElement extends IPredicateElement {
 
 	/**
 	 * Returns the predicate string contained in this element.
@@ -39,19 +38,6 @@ public interface ISCPredicateElement extends IInternalElement {
 	 */
 	@Deprecated
 	String getPredicateString()
-			throws RodinDBException;
-
-	/**
-	 * Returns the predicate string contained in this element.
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @return the string representation of the predicate of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	String getPredicateString(IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**

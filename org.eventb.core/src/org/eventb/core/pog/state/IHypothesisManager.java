@@ -12,6 +12,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCPredicateElement;
+import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -19,7 +20,19 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface IHypothesisManager extends IStatePOG {
+public interface IHypothesisManager extends IStatePOG, Iterable<FreeIdentifier> {
+	
+	/**
+	 * Hypotheses are represented by predicate sets.
+	 * Each predicate set may be associated with a type environment which is represented
+	 * by a set of typed identifiers. When the predicate sets of this manager are created, the
+	 * type environment associated with this manager is added to the first predicate set created
+	 * (the one that is included in all other predicate sets of this manager). The identifiers
+	 * of this manager can be accessed via the <code>Iterable</code> interface it implements.
+	 * 
+	 * @param identifier the free identifier to be added
+	 */
+	void addIdentifier(FreeIdentifier identifier);
 	
 	/**
 	 * Returns the parent element from which the hypothesis are taken

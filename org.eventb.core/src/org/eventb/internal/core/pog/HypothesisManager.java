@@ -9,15 +9,20 @@ package org.eventb.internal.core.pog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
+import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -28,6 +33,14 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class HypothesisManager implements IHypothesisManager {
 
+	public Iterator<FreeIdentifier> iterator() {
+		return identifiers.iterator();
+	}
+
+	public void addIdentifier(FreeIdentifier identifier) {
+		identifiers.add(identifier);
+	}
+
 	public static String PRD_NAME_PREFIX = "PRD";
 	private final IRodinElement parentElement;
 	private final ISCPredicateElement[] predicateTable;
@@ -36,6 +49,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 	private final String rootHypName;
 	private final String hypPrefix;
 	private final String allHypName;
+	private final HashSet<FreeIdentifier> identifiers;
 
 	public IRodinElement getParentElement() {
 		return parentElement;
@@ -46,7 +60,8 @@ public abstract class HypothesisManager implements IHypothesisManager {
 			ISCPredicateElement[] predicateTable, 
 			String rootHypName, 
 			String hypPrefix,
-			String allHypName) {
+			String allHypName,
+			int identifierHashSize) {
 		this.parentElement = parentElement;
 		this.rootHypName = rootHypName;
 		this.hypPrefix = hypPrefix;
@@ -54,6 +69,7 @@ public abstract class HypothesisManager implements IHypothesisManager {
 		this.predicateTable = predicateTable;
 		hypothesisNames = new String[predicateTable.length];
 		predicateMap = new Hashtable<String, Integer>(predicateTable.length * 4 / 3 + 1);
+		identifiers = new HashSet<FreeIdentifier>(identifierHashSize * 4 / 3 + 1);
 		
 		for(int i=0; i<predicateTable.length; i++) {
 			predicateMap.put(predicateTable[i].getElementName(), i);
@@ -99,23 +115,41 @@ public abstract class HypothesisManager implements IHypothesisManager {
 	
 	}
 
-	private int addPredicateSet(IPOFile file, String name, int previous, String previousName, int index, int i, IProgressMonitor monitor) throws RodinDBException {
+	private int addPredicateSet(
+			IPOFile file, 
+			String name, 
+			int previous, 
+			String previousName, 
+			int index, 
+			int current, 
+			IProgressMonitor monitor) throws RodinDBException {
 		IPOPredicateSet set = 
 			(IPOPredicateSet) file.createInternalElement(
 					IPOPredicateSet.ELEMENT_TYPE, name, null, monitor);
-		set.setParentPredicateSet(previousName, monitor);
-		for (int k=previous; k<i; k++) {
+		set.setParentPredicateSetName(previousName, monitor);
+		if (index == 0)
+		{
+			for (FreeIdentifier identifier : identifiers) {
+				String idName = identifier.getName();
+				Type type = identifier.getType();
+				IPOIdentifier poIdentifier =
+					(IPOIdentifier) set.createInternalElement(
+							IPOIdentifier.ELEMENT_TYPE, idName, null, monitor);
+				poIdentifier.setType(type, monitor);
+			}
+		}
+		for (int k=previous; k<current; k++) {
 			IPOPredicate predicate =
 				(IPOPredicate) set.createInternalElement(
 						IPOPredicate.ELEMENT_TYPE, 
 						PRD_NAME_PREFIX + index++, null, monitor);
-			predicate.setPredicateString(predicateTable[k].getPredicateString(null), monitor);
+			predicate.setPredicateString(predicateTable[k].getPredicateString(monitor), monitor);
 			predicate.setSource(
 					((ITraceableElement) predicateTable[k]).getSource(monitor), monitor);
 		}
 		return index;
 	}
-
+	
 	public String getFullHypothesisName() {
 		return allHypName;
 	}

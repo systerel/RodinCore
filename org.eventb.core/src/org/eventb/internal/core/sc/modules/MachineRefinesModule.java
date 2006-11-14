@@ -257,7 +257,7 @@ public class MachineRefinesModule extends ProcessorModule {
 		
 		IAbstractEventInfo abstractEventInfo;
 		
-		boolean forbidden = event.isForbidden();
+		boolean forbidden = event.isForbidden(monitor);
 		
 		if (forbidden) {
 			abstractEventInfo =

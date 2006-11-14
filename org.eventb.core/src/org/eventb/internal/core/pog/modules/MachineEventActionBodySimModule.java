@@ -83,7 +83,6 @@ public class MachineEventActionBodySimModule extends
 					target, 
 					concreteEventLabel + "/" + actionLabel + "/SIM", 
 					"Action simulation",
-					eventIdentifierTable,
 					fullHypothesisName,
 					hyp,
 					new POGPredicate(simActions.get(i), predicate),

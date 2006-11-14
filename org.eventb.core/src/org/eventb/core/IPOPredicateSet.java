@@ -34,6 +34,19 @@ public interface IPOPredicateSet extends IInternalElement {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poPredicateSet"); //$NON-NLS-1$
 	
 	/**
+	 * Returns a list of typed identifiers <code>IPOIdentifier</code> that constitutes a type
+	 * environment for all predicates in this predicate set and all predicate sets that are 
+	 * below this predicate set in the predicate set tree.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return a list of typed identifiers
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	IPOIdentifier[] getIdentifiers(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
 	 * @return the predicates contained in this predicate set
 	 * @throws RodinDBException if there was a problem accessing the database
 	 * @deprecated use <code>getPredicates(IProgressMonitor)</code> instead
@@ -76,6 +89,18 @@ public interface IPOPredicateSet extends IInternalElement {
 	IPOPredicateSet getParentPredicateSet(IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
+	 * Returns the name of the parent predicate set of this predicate set, 
+	 * or <code>null</code> if this is the root set.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the name of the parent predicate set, or <code>null</code>
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	String getParentPredicateSetName(IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
 	 * Sets the parent predicate set of this predicate set. The name must be anon-empty string.
 	 * @param name the name of the predicate set
 	 * @param monitor
@@ -83,5 +108,5 @@ public interface IPOPredicateSet extends IInternalElement {
 	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
-	void setParentPredicateSet(String name, IProgressMonitor monitor) throws RodinDBException;
+	void setParentPredicateSetName(String name, IProgressMonitor monitor) throws RodinDBException;
 }

@@ -23,6 +23,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public class IdentifierTable implements IIdentifierTable {
 
 	final private TreeSet<FreeIdentifier> identifiers;

@@ -19,20 +19,22 @@ import org.rodinp.core.IRodinElement;
  */
 public class MachineHypothesisManager extends HypothesisManager implements IMachineHypothesisManager {
 	
-	public static String CTX_HYP_NAME = "CTXHYP";
+	public static final String CTX_HYP_NAME = "CTXHYP";
 	
-	public static String ABS_HYP_NAME = "ABSHYP";
+	public static final String ABS_HYP_NAME = "ABSHYP";
 	
-	public static String HYP_PREFIX = "HYP";
+	public static final String HYP_PREFIX = "HYP";
 	
-	public static String ALLHYP_NAME = "ALLHYP";
+	public static final String ALLHYP_NAME = "ALLHYP";
+	
+	private static final int IDENTIFIER_TABLE_SIZE = 213;
 	
 	private final ISCMachineFile abstractMachine;
 	
 	public MachineHypothesisManager(
 			IRodinElement parentElement, 
 			ISCPredicateElement[] predicateTable) throws CoreException {
-		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME);
+		super(parentElement, predicateTable, ABS_HYP_NAME, HYP_PREFIX, ALLHYP_NAME, IDENTIFIER_TABLE_SIZE);
 		
 		abstractMachine = ((ISCMachineFile) parentElement).getAbstractSCMachine(null);
 	}

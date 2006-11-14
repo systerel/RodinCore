@@ -24,7 +24,6 @@ import org.eventb.core.pog.POGSource;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IEventHypothesisManager;
-import org.eventb.core.pog.state.IIdentifierTable;
 import org.eventb.core.pog.state.IStatePOG;
 import org.eventb.core.pog.state.ITypingState;
 import org.eventb.core.state.IStateRepository;
@@ -76,7 +75,6 @@ public class MachineEventGuardModule extends UtilityModule {
 						target, 
 						eventLabel + "/" + guardLabel + "/WD", 
 						"Well-definedness of Guard",
-						eventIdentifierTable,
 						eventHypothesisManager.getHypothesisName(guards.get(i), monitor),
 						emptyPredicates,
 						new POGPredicate(guards.get(i), wdPredicate),
@@ -91,7 +89,6 @@ public class MachineEventGuardModule extends UtilityModule {
 	
 	IEventHypothesisManager eventHypothesisManager;
 	IConcreteEventGuardTable eventGuardTable;
-	IIdentifierTable eventIdentifierTable;
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
@@ -109,8 +106,6 @@ public class MachineEventGuardModule extends UtilityModule {
 			((ITypingState) repository.getState(ITypingState.STATE_TYPE)).getTypeEnvironment();
 		eventGuardTable = 
 			(IConcreteEventGuardTable) repository.getState(IConcreteEventGuardTable.STATE_TYPE);
-		eventIdentifierTable =
-			(IIdentifierTable) repository.getState(IIdentifierTable.STATE_TYPE);
 
 		ISCEvent abstractEvent = eventHypothesisManager.getFirstAbstractEvent();
 		IAbstractEventGuardTable abstractEventGuardTable = 
@@ -132,7 +127,6 @@ public class MachineEventGuardModule extends UtilityModule {
 			IProgressMonitor monitor) throws CoreException {
 		eventHypothesisManager = null;
 		eventGuardTable = null;
-		eventIdentifierTable = null;
 		super.endModule(element, target, repository, monitor);
 	}
 

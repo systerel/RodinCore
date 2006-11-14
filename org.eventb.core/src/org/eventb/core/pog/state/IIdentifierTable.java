@@ -17,6 +17,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public interface IIdentifierTable extends IStatePOG, Iterable<FreeIdentifier> {
 
 	final static String STATE_TYPE = EventBPlugin.PLUGIN_ID + ".identifierTable";

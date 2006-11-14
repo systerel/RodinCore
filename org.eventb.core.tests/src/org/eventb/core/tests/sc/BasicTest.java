@@ -161,7 +161,7 @@ public abstract class BasicTest extends TestCase {
 			ICarrierSet set = 
 				(ICarrierSet) rodinFile.createInternalElement(ICarrierSet.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			set.setIdentifierString(name);
+			set.setIdentifierString(name, null);
 		}
 			
 	}
@@ -171,7 +171,7 @@ public abstract class BasicTest extends TestCase {
 			IConstant constant = 
 				(IConstant) rodinFile.createInternalElement(IConstant.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			constant.setIdentifierString(name);
+			constant.setIdentifierString(name, null);
 		}
 	}
 
@@ -209,7 +209,7 @@ public abstract class BasicTest extends TestCase {
 			IVariable variable = 
 				(IVariable) event.createInternalElement(IVariable.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			variable.setIdentifierString(vars[i]);
+			variable.setIdentifierString(vars[i], null);
 			
 		}
 		for(int i=0; i<guards.length; i++) {
@@ -223,7 +223,7 @@ public abstract class BasicTest extends TestCase {
 			IAction action = 
 				(IAction) event.createInternalElement(IAction.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			action.setAssignmentString(actions[j]);
+			action.setAssignmentString(actions[j], null);
 			action.setLabel(actionNames[j], null);
 		}
 		return event;
@@ -292,7 +292,7 @@ public abstract class BasicTest extends TestCase {
 		IVariant invariant = 
 				(IVariant) rodinFile.createInternalElement(IVariant.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			invariant.setExpressionString(variant);
+			invariant.setExpressionString(variant, null);
 	}
 
 	public static void addMachineSees(IRodinFile rodinFile, String name) throws RodinDBException {
@@ -313,7 +313,7 @@ public abstract class BasicTest extends TestCase {
 		IExtendsContext extendsContext = 
 			(IExtendsContext) rodinFile.createInternalElement(IExtendsContext.ELEMENT_TYPE, 
 					getUniqueName(), null, null);
-		extendsContext.setAbstractContextName(name);
+		extendsContext.setAbstractContextName(name, null);
 	}
 
 	public static void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems) throws RodinDBException {
@@ -331,7 +331,7 @@ public abstract class BasicTest extends TestCase {
 			IVariable variable = 
 				(IVariable) rodinFile.createInternalElement(IVariable.ELEMENT_TYPE, 
 						getUniqueName(), null, null);
-			variable.setIdentifierString(name);
+			variable.setIdentifierString(name, null);
 		}
 	}
 

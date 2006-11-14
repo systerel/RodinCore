@@ -18,11 +18,13 @@ import org.rodinp.core.IRodinElement;
  */
 public class EventHypothesisManager extends HypothesisManager implements IEventHypothesisManager {
 
-	public static String HYP_PREFIX = "EVTHYP";
+	public static final String HYP_PREFIX = "EVTHYP";
 	
-	public static String ALLHYP_NAME = "EVTALLHYP";
+	public static final String ALLHYP_NAME = "EVTALLHYP";
 	
 	private ISCEvent[] abstractEvents;
+	
+	private static final int IDENTIFIER_TABLE_SIZE = 43;
 	
 	public EventHypothesisManager(
 			IRodinElement parentElement, 
@@ -30,7 +32,8 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 			String rootHypName) {
 		super(parentElement, predicateTable, rootHypName, 
 				HYP_PREFIX + parentElement.getElementName(), 
-				ALLHYP_NAME + parentElement.getElementName());
+				ALLHYP_NAME + parentElement.getElementName(),
+				IDENTIFIER_TABLE_SIZE);
 	}
 
 	public String getStateType() {
