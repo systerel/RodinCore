@@ -66,7 +66,12 @@ public interface IInternalParent extends IParent, IRodinElement {
 	 *                </ul>
 	 * @return a new internal element in this element with the specified type
 	 *         and name
+	 * 
+	 * @deprecated Use directly the
+	 *             {@link IInternalElement#create(IInternalElement, IProgressMonitor)}
+	 *             method on the element to create.
 	 */
+	@Deprecated
 	IInternalElement createInternalElement(IInternalElementType type, String name,
 			IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException;

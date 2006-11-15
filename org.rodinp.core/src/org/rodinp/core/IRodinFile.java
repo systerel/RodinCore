@@ -38,8 +38,8 @@ public interface IRodinFile extends IOpenable, IInternalParent,
 	 *                <ul>
 	 *                <li> The parent of this element does not exist
 	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li>The file provided to the operation exists and force
-	 *                is <code>false</code> (NAME_COLLISION)</li>
+	 *                <li>This file element exists and force is
+	 *                <code>false</code> (NAME_COLLISION)</li>
 	 *                <li> A <code>CoreException</code> occurred while
 	 *                creating an underlying resource
 	 *                </ul>

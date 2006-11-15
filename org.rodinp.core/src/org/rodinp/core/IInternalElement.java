@@ -16,6 +16,33 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 		IElementManipulation, IAttributedElement {
 
 	/**
+	 * Creates this internal element in the database. As a side effect, all
+	 * ancestors of this element are open if they were not already.
+	 * 
+	 * @param nextSibling
+	 *            sibling before which this element should be created (must have
+	 *            the same parent as this element), or <code>null</code> to
+	 *            create this element in the last position
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if the element could not be created. Reasons include:
+	 *                <ul>
+	 *                <li>The parent of this element does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li>The parent of this element is read-only (READ_ONLY)</li>
+	 *                <li>There already exists a child element with the given
+	 *                type and name (NAME_COLLISION)</li>
+	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                accessing an underlying resource
+	 *                </ul>
+	 */
+	void create(IInternalElement nextSibling, IProgressMonitor monitor)
+			throws RodinDBException;
+	
+	/**
 	 * Creates a new Rodin Problem marker for the given attribute of this
 	 * element.
 	 * <p>

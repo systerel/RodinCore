@@ -73,11 +73,18 @@ public abstract class InternalElement extends RodinElement implements IInternalE
 				sibling, rename, monitor);
 	}
 
+	public void create(IInternalElement nextSibling, IProgressMonitor monitor)
+			throws RodinDBException {
+		new CreateInternalElementOperation(this, nextSibling)
+				.runOperation(monitor);
+	}
+
 	@Override
 	public InternalElementInfo createElementInfo() {
 		return new InternalElementInfo();
 	}
 	
+	@Deprecated
 	public InternalElement createInternalElement(IInternalElementType type,
 			String childName, IInternalElement nextSibling,
 			IProgressMonitor monitor) throws RodinDBException {
